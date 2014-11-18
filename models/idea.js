@@ -6,6 +6,8 @@ module.exports = function(sequelize, DataTypes) {
     description: DataTypes.TEXT,
     user_id: DataTypes.INTEGER
   }, {
+    underscored: true,
+    tableName: 'ideas',
     classMethods: {
       associate: function(models) {
         User.hasMany(models.Point)
