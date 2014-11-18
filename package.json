@@ -2,13 +2,12 @@
   "name": "your-priorities-client",
   "version": "0.0.0",
   "dependencies": {
-    "connect": "~2.25.7",
-    "serve-static": "~1.5.3",
     "express-generator": "~4.9.0",
     "express": "~4.10.2",
     "pq": "0.0.3",
     "sequelize": "~2.0.0-rc2",
-    "sequelize-cli": "~0.3.3"
+    "sequelize-cli": "~0.3.3",
+    "pg": "~3.6.3"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
