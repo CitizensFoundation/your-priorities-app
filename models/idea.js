@@ -1,7 +1,9 @@
 "use strict";
 
+// https://www.npmjs.org/package/enum for state of ideas
+
 module.exports = function(sequelize, DataTypes) {
-  var User = sequelize.define("Idea", {
+  var Idea = sequelize.define("Idea", {
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
     user_id: DataTypes.INTEGER
@@ -10,10 +12,10 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'ideas',
     classMethods: {
       associate: function(models) {
-        User.hasMany(models.Point)
+        Idea.hasMany(models.Point)
       }
     }
   });
 
-  return User;
+  return Idea;
 };

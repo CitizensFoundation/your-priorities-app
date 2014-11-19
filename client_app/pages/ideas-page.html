@@ -89,7 +89,7 @@
             <div class="chip-top" style="background:{{item.color}};" hero-id="{{item.id}}-{{item.id}}-art" hero?="{{selectedIdea === item}}"></div>
         <div class="chip-bottom">
           <div class="chip-name-title">{{item.name}}</div>
-          <div class="chip-description">{{item.description}}</div>
+          <div class="chip-description">{{item.description | truncate(8)}}</div>
         </div>
         </div>
 

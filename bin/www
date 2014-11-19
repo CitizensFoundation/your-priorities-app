@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-var debug = require('debug')('your-priorities-client');
+var debug = require('debug')('your-priorities-app');
 var app = require('../api_app');
 
 app.set('port', process.env.PORT || 4242);

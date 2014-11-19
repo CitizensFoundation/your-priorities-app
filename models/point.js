@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var Task = sequelize.define("Point", {
+  var Point = sequelize.define("Point", {
     name: DataTypes.STRING,
     content: DataTypes.TEXT,
     user_id: DataTypes.INTEGER
@@ -10,10 +10,10 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'points',
     classMethods: {
       associate: function(models) {
-        Task.belongsTo(models.Idea);
+        Point.belongsTo(models.Idea);
       }
     }
   });
 
-  return Task;
+  return Point;
 };
