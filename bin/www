@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 var debug = require('debug')('your-priorities-client');
-var app = require('../app');
+var app = require('../api_app');
 
 app.set('port', process.env.PORT || 4242);
 
