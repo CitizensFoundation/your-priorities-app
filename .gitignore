@@ -4,6 +4,7 @@ config/config.json
 test/temp
 .sass-cache
 app/bower_components
+client_app/bower_components
 .tmp
 .idea/*
 test/bower_components/
