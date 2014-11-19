@@ -5,9 +5,9 @@ var models = require("../models");
 /* GET ideas listing. */
 router.get('/', function(req, res) {
   models.Idea.findAll({
-    limit: 10,
+    limit: 100,
     include: [ models.Point ]
-  }).success(function(ideas) {
+  }).then(function(ideas) {
     res.send(ideas);
   });
 });
