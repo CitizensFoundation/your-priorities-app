@@ -92,6 +92,7 @@
         this.params = '{"alt":"json", "q":"chrome"}';
         this.$.ajax.go();
       },
+
       transition: function (e) {
         if (this.page === 0 && e.target.templateInstance.model.idea) {
           this.selectedIdea = e.target.templateInstance.model.idea;
@@ -100,6 +101,7 @@
           this.page = 0;
         }
       },
+
       responseChanged: function (e, detail, sender) {
         this.ideas = detail;
       }
