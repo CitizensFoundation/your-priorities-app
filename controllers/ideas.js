@@ -13,4 +13,12 @@ router.get('/', function(req, res) {
   });
 });
 
+router.get('/DSDS:id', function(req, res) {
+  models.Idea.find(id, {
+    include: [ models.Point, models.Category ]
+  }).then(function(idea) {
+    res.send(idea);
+  });
+});
+
 module.exports = router;

@@ -1,0 +1,41 @@
+<polymer-element name="yrpri-idea" attributes="small idea">
+  <template>
+    <style>
+      section {
+        padding: 20px 0;
+      }
+
+      .category {
+        padding-right: 16px;
+      }
+
+      .description {
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+    </style>
+    <div layout flex>
+      <div layout horizontal flex>
+        <div>
+          <img class="category"
+               src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/categories/icons/000/000/{{idea.Category.id | fillIdValue}}/icon_50/{{idea.Category.icon_file_name}}"/>
+        </div>
+        <div flex>
+          <b>{{idea.name | trim | truncate(small ? 60 : 200) }}</b>
+        </div>
+      </div>
+
+      <div justified layout class="description">
+        {{idea.description | trim | truncate(small ? 300 : 500,"...")}}
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      fillIdValue: function (value) {
+        return ('000' + value).substr(-3);
+      }
+    });
+  </script>
+</polymer-element>

@@ -21,11 +21,10 @@
 </head>
 
 <body unresolved fullbleed vertical layout>
-  <app-router>
-
+  <app-router core-animated-pages transitions="hero-transition cross-fade" >
+    <app-route path="/idea/:id" element="idea-page"></app-route>
     <app-route path="/ideas" element="ideas-page"></app-route>
     <app-route path="/" element="ideas-page"></app-route>
-
   </app-router>
 
   <!-- build:js scripts/app.js -->

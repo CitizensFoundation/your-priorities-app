@@ -1,0 +1,40 @@
+<polymer-element name="yrpri-point" attributes="point">
+  <template>
+    <style>
+      section {
+        padding: 20px 0;
+      }
+
+      .category {
+        padding-right: 16px;
+      }
+
+      .description {
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      .for {
+        color: #900;
+      }
+
+      .against {
+        color: #900;
+      }
+    </style>
+
+    <div layout flex>
+      <div class="{{point.value>0 ? 'for' : 'against'}}">
+        <b>{{point.name}}</b>
+      </div>
+      <template if="{{point.content}}">
+        <div flex class="description">{{point.content}}</div>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+    });
+  </script>
+</polymer-element>
