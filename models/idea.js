@@ -12,7 +12,8 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'ideas',
     classMethods: {
       associate: function(models) {
-        Idea.hasMany(models.Point)
+        Idea.hasMany(models.Point);
+        Idea.belongsTo(models.Category);
       }
     }
   });

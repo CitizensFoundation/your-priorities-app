@@ -8,10 +8,11 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-
+  <link rel="import" href="bower_components/font-roboto/roboto.html">
   <!-- build:css styles/main.css -->
   <link rel="stylesheet" href="styles/main.css">
   <!-- endbuild-->
+
 
   <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
   <!-- build:vulcanized elements/elements.vulcanized.html -->
@@ -23,6 +24,7 @@
   <app-router>
 
     <app-route path="/ideas" element="ideas-page"></app-route>
+    <app-route path="/" element="ideas-page"></app-route>
 
   </app-router>
 

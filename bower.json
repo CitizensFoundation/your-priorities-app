@@ -1,18 +1,18 @@
 {
-  "name": "your-priorities-client",
-  "version": "0.0.0",
+  "name": "your-priorities-app",
+  "version": "0.0.1",
   "dependencies": {
-    "core-elements": "Polymer/core-elements#~0.3.5",
-    "paper-elements": "Polymer/paper-elements#~0.3.5",
-    "polymer": "Polymer/polymer#~0.3.5",
+    "core-elements": "Polymer/core-elements#~0.5.1",
+    "paper-elements": "Polymer/paper-elements#~0.5.1",
+    "polymer": "Polymer/polymer#~0.5.1",
     "app-router": "~0.6.1",
     "polymer-filters": "~0.1.0"
   },
   "devDependencies": {},
   "resolutions": {
-    "polymer": "^0.5.0",
-    "core-meta": "^0.5.0",
-    "core-transition": "^0.5.0",
-    "core-component-page": "^0.5.0"
+    "polymer": "^0.5.1",
+    "core-meta": "^0.5.1",
+    "core-transition": "^0.5.1",
+    "core-component-page": "^0.5.1"
   }
 }

@@ -1,148 +1,95 @@
 <polymer-element name="ideas-page">
   <template>
 
+
     <style>
-      .chip-container {
-        right: 0;
-        left: 0;
+      .card-container {
         text-align: center;
       }
 
-      .chip {
-        display: inline-block;
-        position: relative;
-        border-radius: 3px;
-        margin: 4px;
-        overflow: hidden;
-        text-align: start;
-        background-color: #fff;
-        width: 250px;
-        box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.16);
+      section {
+        padding: 20px 0;
       }
 
-      .chip-top {
-        width: 200px;
-        height: 200px;
-      }
-
-      .chip-bottom {
-        padding: 8px;
-        line-height: 1.5;
-      }
-
-      .chip-name-title {
-        font-weight: bold;
-      }
-
-      #details {
-        padding: 200px 10% 0;
+      section > div {
+        padding: 14px;
+        font-size: 16px;
+        margin: 14px;
       }
 
       .card {
-        height: 400px;
-        border-radius: 3px;
-        text-align: start;
-        overflow: hidden;
-        background: #fff;
-        box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-      }
-
-      .card-left {
+        display: inline-block;
+        background: white;
+        box-sizing: border-box;
         width: 400px;
-      }
-
-      .card-right {
-        padding: 24px;
-      }
-
-      .card-icon {
-        border-radius: 50%;
-        width: 60px;
-        height: 60px;
-        margin-right: 16px;
-      }
-
-      .card-name-title {
-        font-size: 2em;
+        height: 300px;
+        margin: 16px;
+        padding: 16px;
+        border-radius: 2%;
+        text-align: left;
+        vertical-align: top;
       }
     </style>
 
     <core-ajax
-            auto="false"
-            id="ajax"
-            url="/api/ideas"
-            response="{{response}}"
-            handleAs="json">
+      auto="false"
+      id="ajax"
+      url="/api/ideas"
+      response="{{response}}"
+      handleAs="json">
     </core-ajax>
 
-    <div class="green"></div>
-
-    <core-animated-pages selected="{{page}}" transitions="hero-transition" on-core-animated-pages-transition-end="{{complete}}">
-
-      <section>
-
-        <div class="chip-container" hero-p on-tap="{{transition}}">
-
-          <template repeat="{{ideas as item}}">
-
-            <div class="chip" hero-id="{{item.id}}-{{item.id}}" hero?="{{selectedIdea === item }}">
-            <div class="chip-top" style="background:{{item.color}};" hero-id="{{item.id}}-{{item.id}}-art" hero?="{{selectedIdea === item}}"></div>
-        <div class="chip-bottom">
-          <div class="chip-name-title">{{item.name}}</div>
-          <div class="chip-description">{{item.description | truncate(8)}}</div>
-        </div>
-        </div>
-
-  </template>
-
-  </div>
-  </section>
-
-  <section id="details">
-
-    <div class="card" layout horizontal hero-id="{{selectedIdea.id}}-{{selectedIdea.id}}" hero on-tap="{{transition}}">
-      <div class="card-left" style="background:{{selectedIdea.color}};" hero-id="{{selectedIdea.id}}-{{selectedIdea.id}}-art" hero></div>
-      <div class="card-right" flex>
-        <div layout horizontal center>
-          <div>
-            <div class="card-icon" style="background:{{selectedIdea.color}};"></div>
+    <div class="card-container">
+      <template repeat="{{ideas as idea}}">
+        <paper-shadow class="card" z="1" center-center layout>
+          <div layout horizontal flex>
+            <div>
+              <img
+                src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/categories/icons/000/000/{{idea.Category.id | fillIdValue}}/icon_50/{{idea.Category.icon_file_name}}"/>
+            </div>
+            <div flex>{{idea.name | truncate(200) }}</div>
           </div>
-          <div flex>
-            <div class="card-name-title">{{selectedIdea.name}}</div>
-            <div class="card-name-description">{{selectedIdea.description}}</div>
+
+          <div justified layout class="chip-description">{{idea.description | truncate(160,"...")}}</div>
+
+          <div horizontal justified layout>
+            <template if="{{idea.Points[0].content}}">
+              <div flex style="color:#136c22" class="point">{{idea.Points[0].content | truncate(160)}}</div>
+            </template>
+            <template if="{{idea.Points[1].content}}">
+              <div flex style="color:#900" class="table-style">{{idea.Points[1].content | truncate(160)}}</div>
+            </template>
+            <template if="{{!idea.Points[1].content}}">
+              <div flex style="color:#900" class="table-style">Add point against</div>
+            </template>
           </div>
-        </div>
-      </div>
+        </paper-shadow>
+      </template>
     </div>
-
-  </section>
-
-  </core-animated-pages>
-
   </template>
+
   <script>
 
     Polymer('ideas-page', {
 
       page: 0,
 
-      ideas: [
-        { description: 'Tycho', name: 'Fragments', color: '#f4db33' },
-        { description: 'Tycho', name: 'Past Prologue', color: '#972ff8' },
-        { description: 'Tycho', name: 'Spectre', color: '#7dd6fe' },
-        { description: 'Tycho', name: 'Awake', color: '#dc3c84' }
-      ],
+      ideas: [],
 
       selectedIdea: null,
 
-      ready: function() {
+      fillIdValue: function (value) {
+        return ('000' + value).substr(-3);
+      },
+
+      ready: function () {
         this.url = "http://gdata.youtube.com/feeds/api/videos/";
         this.params = '{"alt":"json", "q":"chrome"}';
         this.$.ajax.go();
       },
-      transition: function(e) {
-        if (this.page === 0 && e.target.templateInstance.model.item) {
-          this.selectedIdea = e.target.templateInstance.model.item;
+      transition: function (e) {
+        if (this.page === 0 && e.target.templateInstance.model.idea) {
+          this.selectedIdea = e.target.templateInstance.model.idea;
           this.page = 1;
         } else {
           this.page = 0;

@@ -6,7 +6,8 @@ var models = require("../models");
 router.get('/', function(req, res) {
   models.Idea.findAll({
     limit: 100,
-    include: [ models.Point ]
+    where: "description IS NOT NULL",
+    include: [ models.Point, models.Category ]
   }).then(function(ideas) {
     res.send(ideas);
   });
