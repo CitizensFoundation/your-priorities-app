@@ -11,10 +11,13 @@
         padding: 20px 0;
       }
 
-      section > div {
-        padding: 14px;
-        font-size: 16px;
-        margin: 14px;
+      .category {
+        padding-right: 16px;
+      }
+
+      .description {
+        padding-top: 8px;
+        padding-bottom: 8px;
       }
 
       .card {
@@ -22,7 +25,7 @@
         background: white;
         box-sizing: border-box;
         width: 400px;
-        height: 300px;
+        height: 240px;
         margin: 16px;
         padding: 16px;
         border-radius: 2%;
@@ -44,25 +47,27 @@
         <paper-shadow class="card" z="1" center-center layout>
           <div layout horizontal flex>
             <div>
-              <img
+              <img class="category"
                 src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/categories/icons/000/000/{{idea.Category.id | fillIdValue}}/icon_50/{{idea.Category.icon_file_name}}"/>
             </div>
-            <div flex>{{idea.name | truncate(200) }}</div>
+            <div flex><b>{{idea.name | trim | truncate(60) }}</b></div>
           </div>
 
-          <div justified layout class="chip-description">{{idea.description | truncate(160,"...")}}</div>
+          <div justified layout class="description">{{idea.description | trim | truncate(300,"...")}}</div>
 
-          <div horizontal justified layout>
-            <template if="{{idea.Points[0].content}}">
-              <div flex style="color:#136c22" class="point">{{idea.Points[0].content | truncate(160)}}</div>
-            </template>
-            <template if="{{idea.Points[1].content}}">
-              <div flex style="color:#900" class="table-style">{{idea.Points[1].content | truncate(160)}}</div>
-            </template>
-            <template if="{{!idea.Points[1].content}}">
-              <div flex style="color:#900" class="table-style">Add point against</div>
-            </template>
-          </div>
+          <template if="{{false}}">
+            <div horizontal justified layout>
+              <template if="{{idea.Points[0].content}}">
+                <div flex style="color:#136c22" class="point">{{idea.Points[0].content | truncate(160)}}</div>
+              </template>
+              <template if="{{idea.Points[1].content}}">
+                <div flex style="color:#900" class="table-style">{{idea.Points[1].content | truncate(160)}}</div>
+              </template>
+              <template if="{{!idea.Points[1].content}}">
+                <div flex style="color:#900" class="table-style">Add point against</div>
+              </template>
+            </div>
+          </template>
         </paper-shadow>
       </template>
     </div>
