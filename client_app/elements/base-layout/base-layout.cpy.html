@@ -1,14 +1,11 @@
-<polymer-element name="idea-page" extends="base-page" attributes="contactId contacts" layout vertical>
+<polymer-element name="base-layout" attributes="selected needLogin user pageTitle" extends="logged-in-page">
   <template>
-    <link rel="stylesheet" href="idea-page.css">
-    <!--
-    On larger screens, change the behavior of the header panel so it doesn't
-    scroll away or do the condenses feature. Instead, treat its content like
-    a regular toolbar.
-    -->
-    <core-media-query query="min-width: 640px" queryMatches="{{largeScreen}}">
-    </core-media-query>
-    <h1>Hello world!</h1>
+
+    <link rel="stylesheet" href="base-layout.css">
+
+
+    <core-media-query query="min-width: 640px" queryMatches="{{largeScreen}}"></core-media-query>
+
     <core-scroll-header-panel id="scrollHeaderPanel"
                               condenses?="{{!largeScreen}}"
                               fixed?="{{largeScreen}}"
@@ -18,12 +15,36 @@
         <a href="/" on-click="{{goBack}}">
           <paper-icon-button icon="arrow-back"></paper-icon-button>
         </a>
-        <div id="title" class="bottom indent">Title</div>
+
+        <div id="title" class="bottom indent">{{pageTitle}}</div>
       </core-toolbar>
-      <div content>
-        <h2>Hello world 2</h2>
-      </div>
+
+
+        <core-menu>
+
+          <a active?="{{selected == 'home'}}" href="/">
+            <paper-item>Home</paper-item>
+          </a>
+
+          <a active?="{{selected == 'ideas'}}" href="/ideas">
+            <paper-item>Ideas</paper-item>
+          </a>
+        </core-menu>
+
+        <content select=".title"></content>
+
+        <template if="{{needLogin && !user}}">
+          <shadow></shadow>
+        </template>
+
+        <template bind if="{{!needLogin || user}}">
+          <div class="content">
+            <content></content>
+          </div>
+        </template>
     </core-scroll-header-panel>
+
+
   </template>
   <script>
     (function() {
@@ -41,20 +62,16 @@
         },
         willPrepare: function() {
           this.super();
-
           // Measure the core-scroll-header-panel, otherwise its height will
           // be messed up
           this.$.scrollHeaderPanel.measureHeaderHeight();
-
           // Reset the scroller so every time the user comes to the info page
           // so they see the full profile photo
           this.$.scrollHeaderPanel.scroller.scrollTop = 0;
         },
         contactIdChanged: function(oldVal, newVal) {
           this.contact_ = this.contacts[newVal];
-
           if (this.largeScreen) return;
-
           // Update the core-scroll-header-panel's background image with the
           // user's avatar if we're on a small screen
           this.$.scrollHeaderPanel.$.headerBg.style.background = 'url('+this.contact_.avatar+') 0 / cover no-repeat';
