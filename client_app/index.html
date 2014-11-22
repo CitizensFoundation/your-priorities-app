@@ -3,19 +3,48 @@
 
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Polymer WebApp</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Your Priorities</title>
+  <meta name="description" content="Your Priorities is a web based platform that enables groups of people to prioritize
+                                    their democratic ideas and together discover which are the most important ideas to implement.">
+
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=no">
+
+  <!-- Add to homescreen meta -->
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="images/yrpri_icon_192.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="images/yrpri_icon_192.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="images/yrpri_icon_76.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="images/yrpri_icon_120.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="images/yrpri_icon_152.png">
+
+  <!-- Add to homescreen for Internet Explorer -->
+  <meta name="msapplication-TileImage" content="images/yrpri_icon_144.png">
+  <meta name="msapplication-TileColor" content="#bbb">
+
+  <meta name="theme-color" content="#303F9F">
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-  <link rel="import" href="bower_components/font-roboto/roboto.html">
-  <!-- build:css styles/main.css -->
-  <link rel="stylesheet" href="styles/main.css">
-  <!-- endbuild-->
 
+  <!-- Conditionally load WC polyfills -->
+  <!-- Thanks to https://github.com/geelen/x-gif for the snippet -->
+  <script>
+    if ('registerElement' in document
+      && 'createShadowRoot' in HTMLElement.prototype
+      && 'import' in document.createElement('link')
+      && 'content' in document.createElement('template')) {
+      // We're using a browser with native WC support!
+    } else {
+      document.write('<script src="bower_components/webcomponentsjs/webcomponents.js"><\/script>');
+    }
+  </script>
 
-  <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
-  <!-- build:vulcanized elements/elements.vulcanized.html -->
+  <!-- build:vulcanized /elements/elements.vulcanized.html -->
   <link rel="import" href="elements/elements.html">
   <!-- endbuild-->
 </head>

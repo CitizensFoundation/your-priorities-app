@@ -1,0 +1,49 @@
+<polymer-element name="base-layout" attributes="selected needLogin user pageTitle" extends="logged-in-page" noscript>
+  <template>
+
+    <link rel="stylesheet" href="base-layout.css">
+
+    <core-scaffold>
+
+      <core-media-query query="min-width: 640px" queryMatches="{{largeScreen}}">
+      </core-media-query>
+
+      <core-scroll-header-panel id="scrollHeaderPanel"
+                                condenses?="{{!largeScreen}}"
+                                fixed?="{{largeScreen}}"
+                                flex>
+
+        <core-toolbar class="{{ {tall: !largeScreen} | tokenList}}">
+          <a href="/" on-click="{{goBack}}">
+            <paper-icon-button icon="arrow-back"></paper-icon-button>
+          </a>
+          <div id="title" class="bottom indent">{{pageTitle}}</div>
+        </core-toolbar>
+
+        <core-menu>
+
+          <a active?="{{selected == 'home'}}" href="/">
+            <paper-item>Home</paper-item>
+          </a>
+
+          <a active?="{{selected == 'ideas'}}" href="/ideas">
+            <paper-item>Ideas</paper-item>
+          </a>
+        </core-menu>
+      </core-scroll-header-panel>
+
+      <content select=".title"></content>
+
+      <template if="{{needLogin && !user}}">
+        <shadow></shadow>
+      </template>
+
+      <template bind if="{{!needLogin || user}}">
+        <div class="content">
+          <content></content>
+        </div>
+      </template>
+
+    </core-scaffold>
+  </template>
+</polymer-element>

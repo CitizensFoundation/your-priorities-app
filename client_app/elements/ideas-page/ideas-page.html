@@ -1,23 +1,8 @@
 <polymer-element name="ideas-page">
   <template>
-
-
     <style>
       .card-container {
         text-align: center;
-      }
-
-      section {
-        padding: 20px 0;
-      }
-
-      .category {
-        padding-right: 16px;
-      }
-
-      .description {
-        padding-top: 8px;
-        padding-bottom: 8px;
       }
 
       .card {
@@ -42,13 +27,15 @@
       handleAs="json">
     </core-ajax>
 
-    <div class="card-container">
-      <template repeat="{{ideas as idea}}">
-        <paper-shadow class="card" z="1" center-center layout>
-          <yrpri-idea idea="{{idea}}" small="true"></yrpri-idea>
-        </paper-shadow>
-      </template>
-    </div>
+    <base-layout selected="ideas">
+      <div class="card-container">
+        <template repeat="{{ideas as idea}}">
+          <paper-shadow class="card" z="1" center-center layout>
+            <yrpri-idea idea="{{idea}}" small="true"></yrpri-idea>
+          </paper-shadow>
+        </template>
+      </div>
+    </base-layout>
   </template>
 
   <script>
