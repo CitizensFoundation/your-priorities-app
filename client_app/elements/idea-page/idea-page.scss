@@ -1,94 +1,32 @@
 @import '../styles/variables';
 
-[content] {
-  background-color: #FFFFFF;
+core-scroll-header-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #eee;
 }
+
+/* background for toolbar when it is at its full size */
+core-scroll-header-panel::shadow #headerBg {
+  background-image: url(header.png);
+}
+
 /* background for toolbar when it is condensed */
 core-scroll-header-panel::shadow #condensedHeaderBg {
   background-color: $primary-color;
 }
+
 core-toolbar {
-  color: #F1F1F1;
+  color: #f5f5f5;
+  fill: #f5f5f5;
   background-color: transparent;
 }
-core-toolbar a {
-  color: #F1F1F1;
-}
-core-toolbar paper-icon-button {
-  display: block;
-  padding-left: 0;
-}
-#title {
+
+.title {
   -webkit-transform-origin: 0;
   transform-origin: 0;
   font-size: 40px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.card-header {
-  height: 260px;
-  background: url(header.png);
-  background-size: cover;
-  color: #FFFFFF;
-  position: relative;
-}
-.card-header .single-line {
-  position: absolute;
-  bottom: 16px;
-  left: 16px;
-}
-.card-header core-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-}
-.card-header .card-name {
-  color: #FFFFFF;
-  margin-left: 16px;
-  font-size: 24px;
-}
-.group {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 8px 0;
-  position: relative;
-}
-.item {
-  padding: 10px 72px;
-  color: rgb(102, 102, 102);
-}
-.item core-icon {
-  position: absolute;
-  left: 16px;
-  top: 24px;
-  color: rgb(33, 33, 33);
-}
-.double-line-1 {
-  margin-top: 5px;
-  margin-bottom: 6px;
-}
-.double-line-2 {
-  font-size: 13px;
-  line-height: 13px;
-  color: rgba(0, 0, 0, 0.4);
-}
-@media screen and (min-width: 640px) {
-  :host {
-    background-color: transparent;
-  }
-  [content] {
-    width: 640px;
-    margin: 64px auto;
-  }
-  core-toolbar {
-    color: #F1F1F1;
-    background-color: $primary-color;
-  }
-  #title {
-    font-size: 1.3em;
-  }
-  // paper-fab {
-  //   top: 264px;
-  //   right: 64px;
-  // }
 }
