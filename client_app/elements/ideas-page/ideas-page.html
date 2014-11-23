@@ -31,7 +31,7 @@
       <div class="card-container">
         <template repeat="{{ideas as idea}}">
           <paper-shadow class="card" z="1" center-center layout>
-            <yrpri-idea idea="{{idea}}" small="true"></yrpri-idea>
+            <yrpri-idea idea="{{idea}}" small="true" on-tap="{{goToIdea}}"></yrpri-idea>
           </paper-shadow>
         </template>
       </div>
@@ -46,6 +46,10 @@
 
       ready: function () {
         this.$.ajax.go();
+      },
+
+      goToIdea: function () {
+        window.location='/#/ideas/1';
       },
 
       responseChanged: function (e, detail, sender) {

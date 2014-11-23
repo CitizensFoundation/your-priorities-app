@@ -17,13 +17,16 @@
           </div>
         </core-toolbar>
         <core-menu selected="0" excludedLocalNames="div" on-core-select="{{menuSelect}}">
-          <paper-item>Ideas</paper-item>
-          <paper-item>Categories</paper-item>
-          <paper-item>People</paper-item>
-          <div class="separator">Your Priorities</div>
-          <paper-item>1. Priority</paper-item>
-          <paper-item>2. Priority</paper-item>
-          <paper-item>3. Priority</paper-item>
+          <div class="separator">Betri Reykavík</div>
+          <paper-item>Hugmyndasvæði</paper-item>
+          <div class="separator">Betri Laugardalur 2015</div>
+          <paper-item>Heim</paper-item>
+          <paper-item>Hugmyndir</paper-item>
+          <paper-item>Fólk</paper-item>
+          <div class="separator">Þínar hugmyndir</div>
+          <paper-item>1. Hugmynd</paper-item>
+          <paper-item>2. Hugmynd</paper-item>
+          <paper-item>3. Hugmynd</paper-item>
           <template repeat="{{l in labels}}">
             <paper-item label="{{l.name}}" icon="label" class="{{l.color}}"></paper-item>
           </template>
@@ -42,8 +45,6 @@
           <paper-icon-button icon="search" class="fade-on-drawer-open" on-tap="{{toggleSearch}}"></paper-icon-button>
 
           <paper-icon-button icon="archive" class="selected-items" on-tap="{{archiveAll}}"></paper-icon-button>
-          <paper-icon-button icon="delete" class="selected-items"></paper-icon-button>
-          <paper-icon-button icon="mail" class="selected-items"></paper-icon-button>
 
           <paper-menu-button class="selected-items" layout horizontal>
             <paper-icon-button icon="more-vert"></paper-icon-button>
