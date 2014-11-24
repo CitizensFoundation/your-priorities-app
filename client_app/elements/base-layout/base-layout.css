@@ -22,7 +22,7 @@
 
 #drawerPanel core-scroll-header-panel::shadow #headerBg {
   background: url(header.png) no-repeat;
-  background-size: 1400px;
+  background-size: 100%;
   background-color: #9e9e9e; }
 
 #drawerPanel core-scroll-header-panel::shadow #condensedHeaderBg {

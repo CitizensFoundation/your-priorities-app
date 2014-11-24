@@ -26,7 +26,17 @@
       </div>
 
       <div justified layout class="description">
-        {{idea.description | trim | truncate(small ? 300 : 500,"...")}}
+        {{idea.description | trim | truncate(small ? 200 : 500,"...")}}
+      </div>
+      <div layout horizontal flex style="margin-top:8px;">
+        <div layout horizontal>
+          <div style="font-size: 20px;text-align:center;vertical-align: middle;color:#090;padding-top:8px;margin-right:16px;">0</div>
+          <paper-fab mini icon="thumb-up" style="background-color:#090;margin-right:16px;"></paper-fab>
+        </div>
+        <div layout horizontal>
+          <div style="font-size: 20px;text-align:center;vertical-align: middle;color:#900;padding-top:8px;">0</div>
+          <paper-fab mini icon="thumb-down" style="background-color:#900;"></paper-fab>
+        </div>
       </div>
     </div>
   </template>

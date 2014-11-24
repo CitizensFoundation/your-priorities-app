@@ -6,14 +6,14 @@
     <material-search id="search" narrow="{{narrow}}"
                      previousSearches="{{previousSearches}}"></material-search>
 
-    <core-drawer-panel id="drawerPanel" narrow="{{narrow}}">
+    <core-drawer-panel id="drawerPanel" narrow="{{narrow}}" responsiveWidth="1200px">
 
       <core-header-panel mode="scroll" drawer>
         <core-toolbar id="navheader" class="tall">
           <img class="middle profile" src="{{user.profile}}" hidden?="{{!user.profile}}">
           <div class="bottom" layout vertical>
-            <span>Username</span>
-            <span>50 social points</span>
+            <span>Róbert Bjarnason</span>
+            <span>50 samfélagsstig</span>
           </div>
         </core-toolbar>
         <core-menu selected="0" excludedLocalNames="div" on-core-select="{{menuSelect}}">
@@ -45,13 +45,15 @@
           <paper-icon-button icon="search" class="fade-on-drawer-open" on-tap="{{toggleSearch}}"></paper-icon-button>
 
           <paper-icon-button icon="archive" class="selected-items" on-tap="{{archiveAll}}"></paper-icon-button>
+          <paper-icon-button icon="help" class="selected-items" on-tap="{{archiveAll}}"></paper-icon-button>
 
           <paper-menu-button class="selected-items" layout horizontal>
             <paper-icon-button icon="more-vert"></paper-icon-button>
             <paper-dropdown class="dropdown" halign="right">
-              <paper-item>About</paper-item>
-              <paper-item>Help</paper-item>
-              <paper-item>Settings</paper-item>
+              <paper-item>Mín síða</paper-item>
+              <paper-item>Um þessa síðu</paper-item>
+              <paper-item>Hjálp</paper-item>
+              <paper-item>Stillingar</paper-item>
             </paper-dropdown>
           </paper-menu-button>
 
@@ -73,6 +75,7 @@
               <content></content>
             </div>
           </template>
+        <paper-fab id="addAction" icon="add"></paper-fab>
       </core-scroll-header-panel>
 
     </core-drawer-panel>
