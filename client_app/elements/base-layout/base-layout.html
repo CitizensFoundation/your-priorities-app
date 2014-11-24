@@ -3,6 +3,8 @@
 
     <link rel="stylesheet" href="base-layout.css">
 
+    <core-media-query query="max-width: 550px" queryMatches="{{smallScreen}}"></core-media-query>
+
     <material-search id="search" narrow="{{narrow}}"
                      previousSearches="{{previousSearches}}"></material-search>
 
@@ -17,12 +19,14 @@
           </div>
         </core-toolbar>
         <core-menu selected="0" excludedLocalNames="div" on-core-select="{{menuSelect}}">
-          <div class="separator">Betri Reykavík</div>
-          <paper-item>Hugmyndahópar</paper-item>
-          <div class="separator">Betri Laugardalur 2015</div>
-          <paper-item>Heim</paper-item>
-          <paper-item>Hugmyndir</paper-item>
-          <paper-item>Fólk</paper-item>
+          <div class="separator" style="color:#F57C00">Betri Reykavík</div>
+          <paper-item><core-icon icon="group-work" style="padding-right:16px;"></core-icon>Hugmyndahópar</paper-item>
+          news
+          <div class="separator" style="color:#FFB74D">Betri Laugardalur 2015</div>
+          <paper-item><core-icon icon="av:news" style="padding-right:16px;"></core-icon>Heim</paper-item>
+          <paper-item><core-icon icon="image:flash-on" style="padding-right:16px;"></core-icon>Hugmyndir</paper-item>
+          <paper-item><core-icon icon="social:people" style="padding-right:16px;"></core-icon>Fólk</paper-item>
+
           <div class="separator">Þínar hugmyndir</div>
           <paper-item>1. Hugmynd</paper-item>
           <paper-item>2. Hugmynd</paper-item>
@@ -34,7 +38,7 @@
       </core-header-panel>
 
       <core-scroll-header-panel id="scrollheader" main condenses keepCondensedHeader on-trackstart="{{onRefreshStart}}"  on-tracky="{{onMainAreaTrack}}" on-trackend="{{onRefreshUp}}">
-        <core-toolbar id="mainheader" class="tall {{ {'core-narrow': narrow, 'selected-threads': selectedThreads.length} | tokenList }}">
+        <core-toolbar id="mainheader" class="tall">
           <paper-icon-button icon="arrow-back" class="selected-item" on-tap="{{deselectAll}}"></paper-icon-button>
 
           <paper-icon-button id="navicon" icon="menu" core-drawer-toggle></paper-icon-button>
@@ -44,7 +48,16 @@
         </span>
           <paper-icon-button icon="search" class="fade-on-drawer-open" on-tap="{{toggleSearch}}"></paper-icon-button>
 
-          <paper-icon-button icon="archive" class="selected-items" on-tap="{{archiveAll}}"></paper-icon-button>
+          <paper-menu-button class="selected-items" layout horizontal>
+            <paper-icon-button icon="filter-list"></paper-icon-button>
+            <paper-dropdown class="dropdown" halign="right">
+              <paper-item>Efstu hugmyndir</paper-item>
+              <paper-item>Nýjustu hugmyndir</paper-item>
+              <paper-item>Hugmyndir af handahófi</paper-item>
+              <paper-item>Hugmyndir þinna vina</paper-item>
+            </paper-dropdown>
+          </paper-menu-button>
+
           <paper-icon-button icon="help" class="selected-items" on-tap="{{archiveAll}}"></paper-icon-button>
 
           <paper-menu-button class="selected-items" layout horizontal>
@@ -75,7 +88,6 @@
               <content></content>
             </div>
           </template>
-        <paper-fab id="addAction" icon="add"></paper-fab>
       </core-scroll-header-panel>
 
     </core-drawer-panel>
@@ -83,20 +95,36 @@
   <script>
     Polymer({
       previousSearches: ["Blah","Hello"],
+      smallScreen: false,
       selectedThreads: [],
       toggleSearch: function (e) {
         this.$.search.toggle();
       },
       domReady: function() {
-        var titleStyle = this.shadowRoot.querySelector('.title').style;
+        this.titleStyle = this.shadowRoot.querySelector('.title').style;
+        this.checkForSmallScreen();
+
+        window.onresize = function(event) {
+          this.checkForSmallScreen();
+        }.bind(this);
+
+        var localTitleStyle = this.titleStyle;
+
         addEventListener('core-header-transform', function(e) {
           var d = e.detail;
           var m = d.height - d.condensedHeight;
           var scale = Math.max(0.75, (m - d.y) / (m / 0.25)  + 0.75);
-          titleStyle.transform = titleStyle.webkitTransform =
+          localTitleStyle.transform = localTitleStyle.webkitTransform =
             'scale(' + scale + ') translateZ(0)';
         });
       },
+      checkForSmallScreen: function () {
+        if (this.smallScreen===true) {
+           this.titleStyle.fontSize="24px";
+        } else {
+           this.titleStyle.fontSize="40px";
+        }
+      }
     });
   </script>
 </polymer-element>

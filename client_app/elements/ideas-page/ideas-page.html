@@ -1,23 +1,6 @@
 <polymer-element name="ideas-page">
   <template>
-    <style>
-      .card-container {
-        text-align: center;
-      }
-
-      .card {
-        display: inline-block;
-        background: white;
-        box-sizing: border-box;
-        width: 400px;
-        height: 240px;
-        margin: 16px;
-        padding: 16px;
-        border-radius: 2%;
-        text-align: left;
-        vertical-align: top;
-      }
-    </style>
+    <link rel="stylesheet" href="ideas-page.css">
 
     <core-ajax
       auto="false"
@@ -35,7 +18,7 @@
           </paper-shadow>
         </template>
         <a href="/add" on-click="{{navigate}}">
-          <paper-fab icon="create" class="blue" title="create"></paper-fab>
+          <paper-fab icon="add" class="createIdea" title="create"></paper-fab>
         </a>
       </div>
     </base-layout>

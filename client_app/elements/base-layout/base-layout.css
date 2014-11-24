@@ -40,10 +40,11 @@ paper-item.core-selected::shadow core-icon {
   color: #757575; }
 
 #navheader {
-  background-image: url("yrpri_sheader.png");
+  background: url("br_logso.png") no-repeat;
   background-blend-mode: multiply;
+  background-size: 50%;
   background-repeat: no-repeat;
-  background-color: #999;
+  background-color: #9e9e9e;
   background-size: cover;
   font-size: inherit;
   color: white; }
