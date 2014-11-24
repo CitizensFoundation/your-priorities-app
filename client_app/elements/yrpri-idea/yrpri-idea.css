@@ -4,6 +4,10 @@ section {
 .category {
   padding-right: 16px; }
 
+.header {
+  color: #616161; }
+
 .description {
   padding-top: 8px;
-  padding-bottom: 8px; }
+  padding-bottom: 8px;
+  color: #616161; }
