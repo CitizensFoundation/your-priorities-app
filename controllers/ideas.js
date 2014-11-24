@@ -13,8 +13,8 @@ router.get('/', function(req, res) {
   });
 });
 
-router.get('/DSDS:id', function(req, res) {
-  models.Idea.find(id, {
+router.get('/:id', function(req, res) {
+  models.Idea.find(req.params.id, {
     include: [ models.Point, models.Category ]
   }).then(function(idea) {
     res.send(idea);

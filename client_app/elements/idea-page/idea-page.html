@@ -16,20 +16,32 @@
         <div flex></div>
         <core-icon-button icon="search"></core-icon-button>
         <core-icon-button icon="more-vert"></core-icon-button>
-        <div class="bottom indent title">{{idea.title}}</div>
-
+        <template if="{{idea}}">
+          <div class="bottom indent title">{{idea.name}}</div>
+        </template>
       </core-toolbar>
 
       <div class="content">
-
+        <template if="{{idea}}">
+          <yrpri-idea idea="{{idea}}"></yrpri-idea>
+        </template>
       </div>
 
     </core-scroll-header-panel>
+
+    <core-ajax
+      auto="false"
+      id="ajax"
+      url="/api/ideas/{{idea_id}}"
+      response="{{response}}"
+      handleAs="json">
+    </core-ajax>
   </template>
   <script>
     (function() {
       Polymer({
-        domReady: function() {
+        responseChanged: function (e, detail, sender) {
+          this.idea = detail;
           var titleStyle = this.shadowRoot.querySelector('.title').style;
           addEventListener('core-header-transform', function(e) {
             var d = e.detail;
@@ -38,6 +50,9 @@
             titleStyle.transform = titleStyle.webkitTransform =
               'scale(' + scale + ') translateZ(0)';
           });
+        },
+        domReady: function() {
+          this.$.ajax.go();
         },
         willPrepare: function() {
           this.super();

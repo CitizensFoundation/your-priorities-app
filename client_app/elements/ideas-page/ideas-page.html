@@ -34,8 +34,8 @@
         this.$.ajax.go();
       },
 
-      goToIdea: function () {
-        window.location='/#/ideas/1';
+      goToIdea: function (e) {
+        window.location='/#/ideas/'+e.srcElement.idea.id;
       },
 
       responseChanged: function (e, detail, sender) {
