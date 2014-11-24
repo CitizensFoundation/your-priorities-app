@@ -1,0 +1,34 @@
+<polymer-element name="idea-action-bar" attributes="small idea">
+  <template>
+
+    <link rel="stylesheet" href="idea-action-bar.css">
+
+    <div layout horizontal justified class="action_bar">
+
+      <div layout horizontal>
+        <paper-icon-button icon="thumb-up" class="action_up" style="margin-right:4px;"></paper-icon-button>
+        <div class="action_text action_up" style="margin-right:2px;">{{1000 | getRandomNumber}}</div>
+      </div>
+
+      <div layout horizontal>
+        <paper-icon-button icon="communication:message" class="action_debate" style="padding-right:10px;"></paper-icon-button>
+        <div class="action_text action_debate">{{100 | getRandomNumber}}</div>
+      </div>
+
+      <div layout horizontal style="margin-right: 32px;">
+        <div class="action_text action_down">{{100 | getRandomNumber}}</div>
+        <paper-icon-button icon="thumb-down" class="action_down"></paper-icon-button>
+      </div>
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      getRandomNumber: function (value) {
+        return Math.floor((Math.random() * value) + 1);
+      }
+    });
+  </script>
+</polymer-element>

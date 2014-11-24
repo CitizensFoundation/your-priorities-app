@@ -1,0 +1,21 @@
+.action_bar {
+  margin-top: 8px;
+  position: absolute;
+  width: 100%;
+  bottom: 5px;
+  vertical-align: bottom !important; }
+
+.action_text {
+  font-size: 18px;
+  text-align: right;
+  vertical-align: bottom;
+  padding-top: 8px; }
+
+.action_up {
+  color: #009900; }
+
+.action_debate {
+  color: #616161; }
+
+.action_down {
+  color: #990000; }

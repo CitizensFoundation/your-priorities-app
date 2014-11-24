@@ -1,0 +1,32 @@
+@import '../styles/variables';
+
+.action_bar {
+  margin-top:8px;
+  position:absolute;
+  width:100%;
+  bottom:5px;
+  vertical-align: bottom !important;
+}
+
+.action_text {
+  font-size: 18px;
+  text-align:right;
+  vertical-align: bottom;
+  padding-top:8px;
+}
+
+.action_up {
+  color: $primary-up-color;
+}
+
+.action_debate {
+  color: $primary-color-darker;
+}
+
+.action_down {
+  color: $primary-down-color;
+}
+
+.action_bar {
+
+}

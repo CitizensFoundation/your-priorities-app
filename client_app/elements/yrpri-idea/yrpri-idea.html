@@ -28,20 +28,8 @@
       <div justified layout class="description">
         {{idea.description | trim | truncate(small ? 200 : 500,"...")}}
       </div>
-      <div layout horizontal justified style="margin-top:8px;position:absolute;width:100%;bottom:5px;vertical-align: bottom !important;">
-        <div layout horizontal>
-          <paper-icon-button icon="thumb-up" style="color:#090;margin-right:4px;"></paper-icon-button>
-          <div style="font-size: 18px;text-align:center;vertical-align: bottom;color:#090;padding-top:8px;margin-right:2px;">{{1000 | getRandomNumber}}</div>
-        </div>
-        <div layout horizontal>
-          <paper-icon-button icon="communication:message" style="color:#616161;padding-right:10px;"></paper-icon-button>
-          <div style="font-size: 18px;text-align:right;vertical-align: bottom;color:#616161;padding-top:8px;">{{100 | getRandomNumber}}</div>
-        </div>
-        <div layout horizontal style="margin-right: 32px;">
-          <div style="font-size: 18px;text-align:center;vertical-align: bottom;color:#900;padding-top:8px;">{{100 | getRandomNumber}}</div>
-          <paper-icon-button icon="thumb-down" style="color:#900;"></paper-icon-button>
-        </div>
-      </div>
+
+      <idea-action-bar idea="{{idea}}" small="{{small}}"></idea-action-bar>
     </div>
   </template>
 
@@ -49,9 +37,6 @@
     Polymer({
       fillIdValue: function (value) {
         return ('000' + value).substr(-3);
-      },
-      getRandomNumber: function(value) {
-        return Math.floor((Math.random() * value) + 1);
       }
     });
   </script>
