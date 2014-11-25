@@ -25,11 +25,11 @@
         <template if="{{idea}}">
           <div layout horizontal center-justified fill>
             <paper-shadow class="card" z="2" center-center layout>
-              <div layout vertical flex>
+              <div layout vertical>
                 <div>
                   <yrpri-idea idea="{{idea}}"></yrpri-idea>
                 </div>
-                <div>
+                <div style="margin-top: 16px;">
                   <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
                     <paper-tab>Rökræða</paper-tab>
                     <paper-tab>Fréttir</paper-tab>
