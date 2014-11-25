@@ -13,14 +13,18 @@
           <div flex class="header">
             <b>{{idea.name | trim | truncate(small ? 60 : 200) }}</b>
           </div>
+          <template if="{{!small}}">
+            <idea-action-bar idea="{{idea}}" small="{{small}}" style=""></idea-action-bar>
+          </template>
         </div>
 
         <div layout class="description">
           {{idea.description | trim | truncate(small ? 200 : 10000,"...")}}
         </div>
+        <template if="{{small}}">
+          <idea-action-bar idea="{{idea}}" small="{{small}}" style=""></idea-action-bar>
+        </template>
       </div>
-
-      <idea-action-bar idea="{{idea}}" small="{{small}}" style="padding-right:100px;vertical-align: top;"></idea-action-bar>
     </div>
   </template>
 

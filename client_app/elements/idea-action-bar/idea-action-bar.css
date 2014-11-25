@@ -1,3 +1,7 @@
+.action_bar {
+  margin-top: 8px;
+  width: 200px; }
+
 .action_bar_small {
   margin-top: 8px;
   position: absolute;
@@ -5,20 +9,10 @@
   bottom: 5px;
   vertical-align: bottom !important; }
 
-.action_bar {
-  position: absolute;
-  width: 100%;
-  padding-left: 8px;
-  vertical-align: top !important; }
-
-.action_text_small {
+.action_text {
   font-size: 18px;
   text-align: right;
   vertical-align: bottom;
-  padding-top: 8px; }
-
-.action_text {
-  font-size: 18px;
   padding-top: 8px; }
 
 .action_up {

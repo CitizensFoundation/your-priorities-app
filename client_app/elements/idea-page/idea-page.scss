@@ -19,6 +19,10 @@ core-scroll-header-panel::shadow #condensedHeaderBg {
   background-color: $primary-color;
 }
 
+:host /deep/ #selectionBar {
+  background-color: $accent-color;
+}
+
 core-toolbar {
   color: #f5f5f5;
   fill: #f5f5f5;
