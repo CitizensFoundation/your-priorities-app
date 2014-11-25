@@ -8,7 +8,7 @@
   display: inline-block;
   background: white;
   box-sizing: border-box;
-  width: 320px;
+  width: 400px;
   height: 240px;
   margin: 16px;
   padding: 16px;
@@ -22,4 +22,11 @@
   position: fixed;
   bottom:24px;
   right: 28px;
+}
+
+@media (max-width: 500px) {
+  .card {
+    width: 320px;
+    height: 250px;
+  }
 }
