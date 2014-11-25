@@ -32,6 +32,6 @@ core-toolbar {
   margin: 16px;
   padding: 16px;
   padding-bottom: 50px;
-  border-radius: 1%;
+  border-radius: 0%;
   text-align: left;
   vertical-align: top; }
