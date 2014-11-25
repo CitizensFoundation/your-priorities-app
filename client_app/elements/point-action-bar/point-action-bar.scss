@@ -2,6 +2,7 @@
 
 .action_bar {
   width:450px;
+  margin-top: 16px;
 }
 
 .action_bar_small {
@@ -24,7 +25,8 @@
 .action_text {
   font-size: 12px;
   text-align:right;
-  vertical-align: top;
+  position:absolute;
+  bottom: 10px;
 }
 
 .action_up {
