@@ -6,6 +6,5 @@ server_api/test/temp
 app/bower_components
 client_app/bower_components
 .tmp
-.idea/*
 test/bower_components/
 projectFilesBackup/
