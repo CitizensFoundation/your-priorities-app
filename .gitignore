@@ -1,7 +1,7 @@
 node_modules
 dist
-config/config.json
-test/temp
+server_api/config/config.json
+server_api/test/temp
 .sass-cache
 app/bower_components
 client_app/bower_components
