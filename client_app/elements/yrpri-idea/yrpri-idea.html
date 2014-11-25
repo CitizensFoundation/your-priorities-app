@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="yrpri-idea.css">
 
     <div layout horizontal?="{{!small}}" flex>
-      <div layout style="vertical-align: top;">
+      <div layout style="vertical-align: top;width:100%;">
         <div layout horizontal around-justified flex>
           <div>
             <img class="category"
@@ -17,6 +17,19 @@
             <div flex style="">
               <idea-action-bar idea="{{idea}}" small="{{small}}" flex style="float:right; clear:right;"></idea-action-bar>
             </div>
+            <core-icon-button icon="report" style="color:#eee;"></core-icon-button>
+            <paper-icon-button icon="social:share"></paper-icon-button>
+            <template if="{{false}}">
+              <paper-menu-button class="selected-items" layout horizontal>
+                <paper-icon-button icon="more-vert"></paper-icon-button>
+                <paper-dropdown class="dropdown" halign="right">
+                  <div class="separator">Admin</div>
+                  <paper-item>Breyta</paper-item>
+                  <paper-item>Staða</paper-item>
+                  <paper-item>Eyða</paper-item>
+                </paper-dropdown>
+              </paper-menu-button>
+            </template>
           </template>
         </div>
 
