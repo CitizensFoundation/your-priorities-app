@@ -1,6 +1,6 @@
 @import '../styles/variables';
 
-.action_bar {
+.action_bar_small {
   margin-top:8px;
   position:absolute;
   width:100%;
@@ -8,10 +8,22 @@
   vertical-align: bottom !important;
 }
 
-.action_text {
+.action_bar {
+  position:absolute;
+  width:100%;
+  padding-left: 8px;
+  vertical-align: top !important;
+}
+
+.action_text_small {
   font-size: 18px;
   text-align:right;
   vertical-align: bottom;
+  padding-top:8px;
+}
+
+.action_text {
+  font-size: 18px;
   padding-top:8px;
 }
 

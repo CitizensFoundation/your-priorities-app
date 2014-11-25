@@ -23,3 +23,15 @@ core-toolbar {
   -webkit-transform-origin: 0;
   transform-origin: 0;
   font-size: 40px; }
+
+.card {
+  display: inline-block;
+  background: white;
+  box-sizing: border-box;
+  height: 100%;
+  margin: 16px;
+  padding: 16px;
+  padding-bottom: 50px;
+  border-radius: 1%;
+  text-align: left;
+  vertical-align: top; }

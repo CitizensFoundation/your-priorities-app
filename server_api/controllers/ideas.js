@@ -14,7 +14,8 @@ router.get('/', function(req, res) {
 });
 
 router.get('/:id', function(req, res) {
-  models.Idea.find(req.params.id, {
+  models.Idea.find({
+    where: {id: req.params.id},
     include: [ models.Point, models.Category ]
   }).then(function(idea) {
     res.send(idea);

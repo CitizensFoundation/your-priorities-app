@@ -23,7 +23,11 @@
 
       <div class="content">
         <template if="{{idea}}">
-          <yrpri-idea idea="{{idea}}"></yrpri-idea>
+          <div layout horizontal center-justified>
+            <paper-shadow class="card" z="2" center-center layout>
+              <yrpri-idea idea="{{idea}}"></yrpri-idea>
+            </paper-shadow>
+          </div>
         </template>
       </div>
 
