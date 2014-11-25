@@ -10,7 +10,7 @@
         <div layout flex class="point">
 
           <paper-shadow z="1" class="pointText">
-            <paper-input-decorator floatingLabel label="{{updown===upPoints ? 'Þín rök með' : 'Þín rök á móti'}}">
+            <paper-input-decorator class="{{updown===upPoints ? 'up_point' : 'down_point'}}" floatingLabel label="{{updown===upPoints ? 'Þín rök með...' : 'Þín rök á móti...'}}">
               <paper-autogrow-textarea id="a1">
                 <textarea id="{{updown===upPoints ? 'up_point' : 'down_point'}}"></textarea>
               </paper-autogrow-textarea>
