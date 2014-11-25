@@ -19,7 +19,9 @@
         </div>
 
         <div layout class="description">
-          {{idea.description | trim | truncate(small ? 200 : 10000,"...")}}
+          <template if="{{idea.description}}">
+            {{idea.description | trim | truncate(small ? 200 : 10000,"...")}}
+          </template>
         </div>
         <template if="{{small}}">
           <idea-action-bar idea="{{idea}}" small="{{small}}" style=""></idea-action-bar>

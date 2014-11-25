@@ -23,7 +23,7 @@
 
       <div class="content">
         <template if="{{idea}}">
-          <div layout horizontal center-justified>
+          <div layout horizontal center-justified fill>
             <paper-shadow class="card" z="2" center-center layout>
               <div layout vertical flex>
                 <div>
@@ -37,9 +37,9 @@
                   </paper-tabs>
 
                   <core-animated-pages notap selected="{{selected}}" transitions="slide-from-right">
-                    <section> aha </section>
-                    <section> bha </section>
-                    <section> cha </section>
+                    <section-points points="{{idea.Points}}"></section-points>
+                    <section> bha</section>
+                    <section> cha</section>
                   </core-animated-pages>
 
                 </div>
@@ -52,31 +52,31 @@
     </core-scroll-header-panel>
 
     <core-ajax
-      auto="false"
-      id="ajax"
-      url="/api/ideas/{{idea_id}}"
-      response="{{response}}"
-      handleAs="json">
+            auto="false"
+            id="ajax"
+            url="/api/ideas/{{idea_id}}"
+            response="{{response}}"
+            handleAs="json">
     </core-ajax>
   </template>
   <script>
-    (function() {
+    (function () {
       Polymer({
         responseChanged: function (e, detail, sender) {
           this.idea = detail;
           var titleStyle = this.shadowRoot.querySelector('.title').style;
-          addEventListener('core-header-transform', function(e) {
+          addEventListener('core-header-transform', function (e) {
             var d = e.detail;
             var m = d.height - d.condensedHeight;
-            var scale = Math.max(0.75, (m - d.y) / (m / 0.25)  + 0.75);
+            var scale = Math.max(0.75, (m - d.y) / (m / 0.25) + 0.75);
             titleStyle.transform = titleStyle.webkitTransform =
-              'scale(' + scale + ') translateZ(0)';
+                    'scale(' + scale + ') translateZ(0)';
           });
         },
-        domReady: function() {
+        domReady: function () {
           this.$.ajax.go();
         },
-        willPrepare: function() {
+        willPrepare: function () {
           this.super();
 
           // Measure the core-scroll-header-panel, otherwise its height will

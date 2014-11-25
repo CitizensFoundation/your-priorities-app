@@ -4,7 +4,8 @@ module.exports = function(sequelize, DataTypes) {
   var Point = sequelize.define("Point", {
     name: DataTypes.STRING,
     content: DataTypes.TEXT,
-    user_id: DataTypes.INTEGER
+    user_id: DataTypes.INTEGER,
+    value: DataTypes.INTEGER
   }, {
     underscored: true,
     tableName: 'points',

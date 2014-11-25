@@ -1,0 +1,31 @@
+<polymer-element name="section-points" attributes="points">
+  <template>
+
+    <link rel="stylesheet" href="section-points.css">
+
+    <div layout horizontal flex>
+      <template repeat="{{[upPoints,downPoints] as updown}}">
+        <div layout flex class="point">
+          <template repeat="{{updown as point}}">
+            <yrpri-point point="{{point}}"></yrpri-point>
+          </template>
+        </div>
+      </template>
+    </div>
+
+  </template>
+  <script>
+    (function () {
+      Polymer({
+
+        upPoints: [],
+        downPoints: [],
+
+        ready: function () {
+          this.upPoints = this.points.filter(function(x) { return x.value > 0; });
+          this.downPoints = this.points.filter(function(x) { return x.value < 0; });
+        }
+      });
+    })();
+  </script>
+</polymer-element>

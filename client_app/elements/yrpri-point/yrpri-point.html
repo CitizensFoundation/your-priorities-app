@@ -24,12 +24,9 @@
     </style>
 
     <div layout flex>
-      <div class="{{point.value>0 ? 'for' : 'against'}}">
-        <b>{{point.name}}</b>
+      <div class="description {{point.value>0 ? 'for' : 'against'}}">
+        {{point.name}}. {{point.content}}
       </div>
-      <template if="{{point.content}}">
-        <div flex class="description">{{point.content}}</div>
-      </template>
     </div>
   </template>
 

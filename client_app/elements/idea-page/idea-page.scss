@@ -20,7 +20,7 @@ core-scroll-header-panel::shadow #condensedHeaderBg {
 }
 
 :host /deep/ #selectionBar {
-  background-color: $accent-color;
+  background-color: $primary-color;
 }
 
 core-toolbar {
@@ -39,8 +39,9 @@ core-toolbar {
   display: inline-block;
   background: white;
   box-sizing: border-box;
-  height: 100%;
+  width: 1000px;
   margin: 16px;
+  height: 800px;
   padding: 16px;
   padding-bottom: 50px;
   border-radius: 0%;
