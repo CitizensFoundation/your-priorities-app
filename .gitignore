@@ -8,3 +8,7 @@ client_app/bower_components
 .tmp
 test/bower_components/
 projectFilesBackup/
+.idea/*
+.jshintrc
+.yo-rc.json
+.editorconfig
