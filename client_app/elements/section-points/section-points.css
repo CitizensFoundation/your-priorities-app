@@ -18,21 +18,21 @@
 .up_point /deep/ .label-text,
 .up_point /deep/ .error {
   /* inline label,  floating label, error message and error icon color when the input is unfocused */
-  color: rgba(0, 153, 0, 0.6); }
+  color: rgba(0, 153, 0, 0.55); }
 
 .up_point /deep/ ::-webkit-input-placeholder {
   /* platform specific rules for placeholder text */
-  color: rgba(0, 153, 0, 0.6); }
+  color: rgba(0, 153, 0, 0.55); }
 
 .up_point /deep/ ::-moz-placeholder {
-  color: rgba(0, 153, 0, 0.6); }
+  color: rgba(0, 153, 0, 0.55); }
 
 .up_point /deep/ :-ms-input-placeholder {
-  color: rgba(0, 153, 0, 0.6); }
+  color: rgba(0, 153, 0, 0.55); }
 
 .up_point /deep/ .unfocused-underline {
   /* line color when the input is unfocused */
-  background-color: rgba(0, 153, 0, 0.6); }
+  background-color: rgba(0, 153, 0, 0.55); }
 
 .up_point[focused] /deep/ .floating-label .label-text {
   /* floating label color when the input is focused */
@@ -59,21 +59,21 @@
 .down_point /deep/ .label-text,
 .down_point /deep/ .error {
   /* inline label,  floating label, error message and error icon color when the input is unfocused */
-  color: rgba(153, 0, 0, 0.6); }
+  color: rgba(153, 0, 0, 0.55); }
 
 .down_point /deep/ ::-webkit-input-placeholder {
   /* platform specific rules for placeholder text */
-  color: rgba(153, 0, 0, 0.6); }
+  color: rgba(153, 0, 0, 0.55); }
 
 .down_point /deep/ ::-moz-placeholder {
-  color: rgba(153, 0, 0, 0.6); }
+  color: rgba(153, 0, 0, 0.55); }
 
 .down_point /deep/ :-ms-input-placeholder {
-  color: rgba(153, 0, 0, 0.6); }
+  color: rgba(153, 0, 0, 0.55); }
 
 .down_point /deep/ .unfocused-underline {
   /* line color when the input is unfocused */
-  background-color: rgba(153, 0, 0, 0.6); }
+  background-color: rgba(153, 0, 0, 0.55); }
 
 .down_point[focused] /deep/ .floating-label .label-text {
   /* floating label color when the input is focused */

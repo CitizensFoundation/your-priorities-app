@@ -1,25 +1,9 @@
 @import '../styles/variables';
 
 .action_bar {
-  width:450px;
   margin-top: 16px;
-}
-
-.action_bar_small {
-  position:absolute;
   width:100%;
-  bottom:5px;
   vertical-align: bottom !important;
-  /*General*/
-  transform: scale(2, 5);
-  /*Firefox*/
-  -moz-transform: scale(2, 5);
-  /*Microsoft Internet Explorer*/
-  -ms-transform: scale(2, 5);
-  /*Chrome, Safari*/
-  -webkit-transform: scale(2, 5);
-  /*Opera*/
-  -o-transform: scale(2, 5);
 }
 
 .action_text {
@@ -30,11 +14,11 @@
 }
 
 .action_up {
-  color: $primary-up-color-lighter;
+  color: $primary-up-color-more-lighter;
 }
 
 .action_down {
-  color: $primary-down-color-lighter;
+  color: $primary-down-color-more-lighter;
 }
 
 .action_bar {

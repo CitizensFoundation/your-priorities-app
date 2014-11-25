@@ -1,18 +1,18 @@
-<polymer-element name="point-action-bar" attributes="small point">
+<polymer-element name="point-action-bar" attributes="point">
   <template>
 
     <link rel="stylesheet" href="point-action-bar.css">
 
-    <div layout horizontal around-justified class="{{small ? 'action_bar_small' : 'action_bar'}}">
+    <div layout horizontal justified class="action_bar">
 
       <div layout horizontal>
-        <paper-icon-button icon="thumb-up" class="action_up" style="margin-right:4px;"></paper-icon-button>
-        <div class="action_text action_up" style="margin-right:2px;">{{100 | getRandomNumber | formatNumber}}</div>
+        <paper-icon-button icon="thumb-up" class="action_up" style="margin-right:0px;"></paper-icon-button>
+        <div class="action_text action_up" style="margin-right:0px;">{{100 | getRandomNumber | formatNumber}}</div>
       </div>
 
-      <div layout horizontal style="">
-        <div class="action_text action_down">{{10 | getRandomNumber | formatNumber}}</div>
-        <paper-icon-button size="16x16" icon="thumb-down" class="action_down"></paper-icon-button>
+      <div layout horizontal style="text-align: left;">
+        <div class="action_text action_down" style="">{{10 | getRandomNumber | formatNumber}}</div>
+        <paper-icon-button size="16x16" icon="thumb-down" class="action_down" style="margin-left:16px;"></paper-icon-button>
       </div>
 
     </div>

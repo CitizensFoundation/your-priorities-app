@@ -1,22 +1,7 @@
 .action_bar {
-  width: 450px;
-  margin-top: 16px; }
-
-.action_bar_small {
-  position: absolute;
+  margin-top: 16px;
   width: 100%;
-  bottom: 5px;
-  vertical-align: bottom !important;
-  /*General*/
-  transform: scale(2, 5);
-  /*Firefox*/
-  -moz-transform: scale(2, 5);
-  /*Microsoft Internet Explorer*/
-  -ms-transform: scale(2, 5);
-  /*Chrome, Safari*/
-  -webkit-transform: scale(2, 5);
-  /*Opera*/
-  -o-transform: scale(2, 5); }
+  vertical-align: bottom !important; }
 
 .action_text {
   font-size: 12px;
@@ -25,10 +10,10 @@
   bottom: 10px; }
 
 .action_up {
-  color: rgba(0, 153, 0, 0.6); }
+  color: rgba(0, 153, 0, 0.42); }
 
 .action_down {
-  color: rgba(153, 0, 0, 0.6); }
+  color: rgba(153, 0, 0, 0.42); }
 
 paper-icon-button::shadow #icon {
   width: 16px;
