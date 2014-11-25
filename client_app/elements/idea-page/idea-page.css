@@ -32,10 +32,16 @@ core-toolbar {
   background: white;
   box-sizing: border-box;
   width: 1000px;
-  margin: 16px;
-  height: 1800px;
-  padding: 16px;
-  padding-bottom: 50px;
+  margin: 8px;
+  height: 100% !important;
+  padding: 24px 24px 24px 24px;
   border-radius: 0%;
   text-align: left;
   vertical-align: top; }
+
+#paper_tabs {
+  width: 100%; }
+
+.cardTabs {
+  height: 2400px !important;
+  padding: 8px 24px 24px 24px; }

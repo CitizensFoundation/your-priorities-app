@@ -23,26 +23,29 @@
 
       <div class="content">
         <template if="{{idea}}">
-          <div layout horizontal center-justified fill>
+
+          <div layout vertical center-center>
+
             <paper-shadow class="card" z="2" center-center layout>
-              <div layout vertical>
-                <div>
-                  <yrpri-idea idea="{{idea}}"></yrpri-idea>
-                </div>
-                <div style="margin-top: 16px;">
+              <yrpri-idea idea="{{idea}}"></yrpri-idea>
+            </paper-shadow>
+
+            <paper-shadow class="card cardTabs" z="1" center-center layout>
+
+              <div layout vertical style="width:100%;">
+
                   <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
                     <paper-tab>Rökræða (7)</paper-tab>
                     <paper-tab>Fréttir</paper-tab>
                     <paper-tab>Umræður</paper-tab>
                   </paper-tabs>
 
-                  <core-animated-pages notap selected="{{selected}}" transitions="slide-from-right">
+                  <core-animated-pages notap selected="{{selected}}" style="width:100%;" transitions="slide-from-right">
                     <section-points points="{{idea.Points}}"></section-points>
                     <section> bha</section>
                     <section> cha</section>
                   </core-animated-pages>
 
-                </div>
               </div>
             </paper-shadow>
           </div>
