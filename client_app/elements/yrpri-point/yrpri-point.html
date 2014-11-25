@@ -11,6 +11,12 @@
 
       .description {
         padding: 16px;
+        padding-bottom: 0px !important;
+      }
+
+      .card {
+        padding: 16px;
+        padding-bottom: 0px !important;
         margin-bottom: 24px;
       }
 
@@ -24,10 +30,11 @@
     </style>
 
     <div layout flex>
-      <paper-shadow z="1">
+      <paper-shadow z="1" class="card">
         <div class="description {{point.value>0 ? 'for' : 'against'}}">
           {{point.name}}. {{point.content}}
         </div>
+        <point-action-bar point="{{point}}"></point-action-bar>
       </paper-shadow>
     </div>
   </template>

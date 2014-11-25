@@ -1,0 +1,33 @@
+.action_bar {
+  width: 450px; }
+
+.action_bar_small {
+  position: absolute;
+  width: 100%;
+  bottom: 5px;
+  vertical-align: bottom !important;
+  /*General*/
+  transform: scale(2, 5);
+  /*Firefox*/
+  -moz-transform: scale(2, 5);
+  /*Microsoft Internet Explorer*/
+  -ms-transform: scale(2, 5);
+  /*Chrome, Safari*/
+  -webkit-transform: scale(2, 5);
+  /*Opera*/
+  -o-transform: scale(2, 5); }
+
+.action_text {
+  font-size: 12px;
+  text-align: right;
+  vertical-align: top; }
+
+.action_up {
+  color: rgba(0, 153, 0, 0.6); }
+
+.action_down {
+  color: rgba(153, 0, 0, 0.6); }
+
+paper-icon-button::shadow #icon {
+  width: 16px;
+  height: 16px; }

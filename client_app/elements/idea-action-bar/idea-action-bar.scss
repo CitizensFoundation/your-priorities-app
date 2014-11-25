@@ -2,7 +2,10 @@
 
 .action_bar {
   margin-top:8px;
-  width:200px;
+  position:absolute;
+  width:100%;
+  bottom:5px;
+  vertical-align: bottom !important;
 }
 
 .action_bar_small {
@@ -21,7 +24,7 @@
 }
 
 .action_up {
-  color: $primary-up-color;
+  color: $primary-up-color-lighter;
 }
 
 .action_debate {
@@ -29,7 +32,7 @@
 }
 
 .action_down {
-  color: $primary-down-color;
+  color: $primary-down-color-lighter;
 }
 
 .action_bar {

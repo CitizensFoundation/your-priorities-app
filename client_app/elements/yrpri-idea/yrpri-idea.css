@@ -5,7 +5,8 @@ section {
   padding-right: 16px; }
 
 .header {
-  color: #616161; }
+  color: #616161;
+  cursor: pointer; }
 
 .description {
   padding-top: 8px;

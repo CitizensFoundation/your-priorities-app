@@ -14,7 +14,7 @@
       <div class="card-container">
         <template repeat="{{ideas as idea}}">
           <paper-shadow class="card" z="1" center-center layout>
-            <yrpri-idea idea="{{idea}}" small="true" on-tap="{{goToIdea}}"></yrpri-idea>
+            <yrpri-idea idea="{{idea}}" small="true"></yrpri-idea>
           </paper-shadow>
         </template>
         <a href="/add" on-click="{{navigate}}">
@@ -32,10 +32,6 @@
 
       ready: function () {
         this.$.ajax.go();
-      },
-
-      goToIdea: function (e) {
-        window.location='/#/ideas/'+e.srcElement.idea.id;
       },
 
       responseChanged: function (e, detail, sender) {

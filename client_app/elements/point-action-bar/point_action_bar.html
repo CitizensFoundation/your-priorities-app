@@ -1,0 +1,32 @@
+<polymer-element name="point-action-bar" attributes="small point">
+  <template>
+
+    <link rel="stylesheet" href="point-action-bar.css">
+
+    <div layout horizontal around-justified class="{{small ? 'action_bar_small' : 'action_bar'}}">
+
+      <div layout horizontal>
+        <paper-icon-button icon="thumb-up" class="action_up" style="margin-right:4px;"></paper-icon-button>
+        <div class="action_text action_up" style="margin-right:2px;">{{100 | getRandomNumber | formatNumber}}</div>
+      </div>
+
+      <div layout horizontal style="">
+        <div class="action_text action_down">{{10 | getRandomNumber | formatNumber}}</div>
+        <paper-icon-button size="16x16" icon="thumb-down" class="action_down"></paper-icon-button>
+      </div>
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      getRandomNumber: function (value) {
+        return Math.floor((Math.random() * value) + 1);
+      },
+      formatNumber: function (value) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+    });
+  </script>
+</polymer-element>
