@@ -10,8 +10,8 @@
       }
 
       .description {
-        padding-top: 8px;
-        padding-bottom: 8px;
+        padding: 16px;
+        margin-bottom: 24px;
       }
 
       .for {
@@ -24,9 +24,11 @@
     </style>
 
     <div layout flex>
-      <div class="description {{point.value>0 ? 'for' : 'against'}}">
-        {{point.name}}. {{point.content}}
-      </div>
+      <paper-shadow z="1">
+        <div class="description {{point.value>0 ? 'for' : 'against'}}">
+          {{point.name}}. {{point.content}}
+        </div>
+      </paper-shadow>
     </div>
   </template>
 

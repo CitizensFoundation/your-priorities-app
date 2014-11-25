@@ -1,4 +1,13 @@
 .point {
   width: 250px;
-  padding: 16px;
-  margin: 16px; }
+  padding: 8px;
+  margin: 8px; }
+
+#up_point {
+  color: rgba(0, 153, 0, 0.6); }
+
+#down_point {
+  color: #990000; }
+
+.pointText {
+  margin-bottom: 50px; }

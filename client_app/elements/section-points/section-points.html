@@ -4,12 +4,24 @@
     <link rel="stylesheet" href="section-points.css">
 
     <div layout horizontal flex>
+
       <template repeat="{{[upPoints,downPoints] as updown}}">
+
         <div layout flex class="point">
+
+          <div class="pointText">
+            <paper-input-decorator floatingLabel label="{{updown===upPoints ? 'Þín rök með' : 'Þín rök á móti'}}">
+              <paper-autogrow-textarea id="a1">
+                <textarea id="{{updown===upPoints ? 'up_point' : 'down_point'}}"></textarea>
+              </paper-autogrow-textarea>
+            </paper-input-decorator>
+          </div>
+
           <template repeat="{{updown as point}}">
             <yrpri-point point="{{point}}"></yrpri-point>
           </template>
         </div>
+
       </template>
     </div>
 

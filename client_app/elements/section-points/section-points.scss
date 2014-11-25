@@ -2,6 +2,18 @@
 
 .point {
   width: 250px;
-  padding: 16px;
-  margin: 16px;
+  padding: 8px;
+  margin: 8px;
+}
+
+#up_point {
+  color: $primary-up-color;
+}
+
+#down_point {
+  color: $primary-down-color;
+}
+
+.pointText {
+  margin-bottom: 50px;
 }
