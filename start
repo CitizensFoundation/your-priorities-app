@@ -1,0 +1,1 @@
+cd server_api;DEBUG=your-priorities-app node ./bin/www
