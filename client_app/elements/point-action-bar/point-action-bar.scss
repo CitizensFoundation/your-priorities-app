@@ -1,7 +1,8 @@
 @import '../styles/variables';
 
 .action_bar {
-  margin-top: 16px;
+  margin-top: 8px;
+  padding-bottom: 8px;
   width:100%;
   vertical-align: bottom !important;
 }
@@ -11,6 +12,7 @@
   text-align:right;
   position:absolute;
   bottom: 10px;
+  padding-bottom: 8px;
 }
 
 .action_up {

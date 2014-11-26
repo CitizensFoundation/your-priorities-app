@@ -13,11 +13,14 @@ $accent-color-darker: #F57C00;
 $primary-up-color: rgba(0,153,0,1);
 $primary-down-color: rgba(153,0,0,1);
 
-$primary-up-color-bit-lighter: rgba(0,153,0,0.9);
-$primary-down-color-bit-lighter: rgba(153,0,0,0.9);
+$primary-up-color-bit-lighter: rgba(0,153,0,1);
+$primary-down-color-bit-lighter: rgba(153,0,0,0.85);
 
 $primary-up-color-lighter: rgba(0,153,0,0.55);
 $primary-down-color-lighter: rgba(153,0,0,0.55);
+
+$primary-up-color-medium-lighter: rgba(0,153,0,0.75);
+$primary-down-color-medium-lighter: rgba(153,0,0,0.75);
 
 $primary-up-color-more-lighter: rgba(0,153,0,0.42);
 $primary-down-color-more-lighter: rgba(153,0,0,0.42);
@@ -33,7 +36,6 @@ $light-text: rgba($lightest-color, 1);
 $light-text-secondary: rgba($lightest-color, 0.7);
 $light-text-disabled: rgba($lightest-color, 0.3);
 $light-text-dividers: rgba($lightest-color, 0.12);
-
 
 // Metrics & keylines
 // http://www.google.com/design/spec/layout/metrics-keylines.html

@@ -37,6 +37,7 @@ core-toolbar {
   padding: 24px 24px 24px 24px;
   border-radius: 0%;
   text-align: left;
+  margin-top: 16px;
   vertical-align: top; }
 
 #paper_tabs {
@@ -44,4 +45,5 @@ core-toolbar {
 
 .cardTabs {
   height: 2400px !important;
-  padding: 8px 24px 24px 24px; }
+  padding: 8px 24px 24px 24px;
+  margin-top: 8px; }

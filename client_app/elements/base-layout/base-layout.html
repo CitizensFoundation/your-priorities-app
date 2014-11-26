@@ -8,7 +8,7 @@
     <material-search id="search" narrow="{{narrow}}"
                      previousSearches="{{previousSearches}}"></material-search>
 
-    <core-drawer-panel id="drawerPanel" narrow="{{narrow}}" responsiveWidth="1200px">
+    <core-drawer-panel id="drawerPanel" narrow="{{narrow}}" responsiveWidth="2000px">
 
       <core-header-panel mode="scroll" drawer>
         <core-toolbar id="navheader" class="tall">
@@ -43,19 +43,27 @@
           <paper-icon-button id="navicon" icon="menu" core-drawer-toggle></paper-icon-button>
           <div flex></div>
         <span class="bottom indent title">
-          {{selectedThreads.length ? selectedThreads.length : 'Betri Laugardalur 2015'}}
+          <div layout vertical>
+            <div layout horizontal>
+              <div style="padding-right: 4px;padding-top:8px;">
+                {{selectedThreads.length ? selectedThreads.length : 'Betri Laugardalur 2015'}}
+              </div>
+              <paper-menu-button class="selected-items" layout horizontal style="padding-top: 4px;">
+                <paper-icon-button icon="filter-list"></paper-icon-button>
+                <paper-dropdown class="dropdown" halign="right">
+                  <paper-item>Efstu hugmyndir</paper-item>
+                  <paper-item>Nýjustu hugmyndir</paper-item>
+                  <paper-item>Hugmyndir af handahófi</paper-item>
+                  <paper-item>Hugmyndir þinna vina</paper-item>
+                </paper-dropdown>
+              </paper-menu-button>
+            </div>
+            <div style="font-size:14px;margin-bottom: 8px;padding-bottom:8px; padding-left:4px;">
+              Efstu hugmyndir
+            </div>
+          </div>
         </span>
           <paper-icon-button icon="search" class="fade-on-drawer-open" on-tap="{{toggleSearch}}"></paper-icon-button>
-
-          <paper-menu-button class="selected-items" layout horizontal>
-            <paper-icon-button icon="filter-list"></paper-icon-button>
-            <paper-dropdown class="dropdown" halign="right">
-              <paper-item>Efstu hugmyndir</paper-item>
-              <paper-item>Nýjustu hugmyndir</paper-item>
-              <paper-item>Hugmyndir af handahófi</paper-item>
-              <paper-item>Hugmyndir þinna vina</paper-item>
-            </paper-dropdown>
-          </paper-menu-button>
 
           <paper-icon-button icon="social:group-add" class="selected-items" on-tap="{{archiveAll}}"></paper-icon-button>
 
