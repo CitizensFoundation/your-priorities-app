@@ -15,6 +15,7 @@ module.exports = function(sequelize, DataTypes) {
         Idea.hasMany(models.Point);
         Idea.hasMany(models.IdeaRevision);
         Idea.belongsTo(models.Category);
+        Idea.belongsTo(models.User);
       }
     }
   });

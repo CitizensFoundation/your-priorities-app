@@ -16,7 +16,19 @@ router.get('/', function(req, res) {
 router.get('/:id', function(req, res) {
   models.Idea.find({
     where: {id: req.params.id},
-    include: [ models.Point, models.Category, models.IdeaRevision ]
+    include: [
+      { model: models.Point,
+        include: [
+          { model: models.PointRevision,
+            include: [
+              { model: models.User, attributes: ["id", "login", "facebook_uid", "buddy_icon_file_name"] }
+            ]
+          },
+        ]
+      },
+      models.Category,
+      models.IdeaRevision
+    ]
   }).then(function(idea) {
     res.send(idea);
   });

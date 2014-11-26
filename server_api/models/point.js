@@ -12,6 +12,8 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         Point.belongsTo(models.Idea);
+        Point.belongsTo(models.User);
+        Point.hasMany(models.PointRevision);
       }
     }
   });

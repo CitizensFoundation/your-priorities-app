@@ -69,6 +69,7 @@
       Polymer({
         responseChanged: function (e, detail, sender) {
           this.idea = detail;
+          debugger;
           if (this.idea.description===null) {
             this.idea.description = this.idea.Points[0].content;
             this.idea.Points.shift();

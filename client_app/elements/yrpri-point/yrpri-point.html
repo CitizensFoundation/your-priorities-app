@@ -5,10 +5,22 @@
 
     <div layout flex>
       <paper-shadow z="2" class="card">
-        <div class="description {{point.value>0 ? 'for' : 'against'}}">
-          <b>{{point.name}}.</b> {{point.content}}
+        <div layout vertical>
+          <div class="pointUser">
+            <div layout horizontal>
+              <div>
+                <core-image src="http://graph.facebook.com/{{point.PointRevisions[0].User.facebook_uid}}/picture"></core-image>
+              </div>
+              <div>
+                {{point.PointRevisions[0].User.login}}
+              </div>
+            </div>
+          </div>
+          <div class="description {{point.value>0 ? 'for' : 'against'}}">
+            <b>{{point.name}}.</b> {{point.content}}
+          </div>
+          <point-action-bar point="{{point}}"></point-action-bar>
         </div>
-        <point-action-bar point="{{point}}"></point-action-bar>
       </paper-shadow>
     </div>
   </template>
