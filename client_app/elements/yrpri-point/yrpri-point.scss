@@ -1,0 +1,28 @@
+@import '../styles/variables';
+
+section {
+  padding: 20px 0;
+}
+
+.category {
+  padding-right: 8px;
+}
+
+.description {
+  padding: 8px;
+  padding-bottom: 0px !important;
+}
+
+.card {
+  padding: 16px;
+  padding-bottom: 0px !important;
+  margin-bottom: 24px;
+}
+
+.for {
+  color: $primary-up-color-bit-lighter;
+}
+
+.against {
+  color: $primary-down-color-bit-lighter;
+}

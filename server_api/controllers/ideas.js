@@ -7,7 +7,7 @@ router.get('/', function(req, res) {
   models.Idea.findAll({
     limit: 300,
     where: "description IS NOT NULL AND sub_instance_id = 36 AND status != 'deleted'",
-    include: [ models.Point, models.Category ]
+    include: [ models.Point, models.Category, models.IdeaRevision ]
   }).then(function(ideas) {
     res.send(ideas);
   });
@@ -16,7 +16,7 @@ router.get('/', function(req, res) {
 router.get('/:id', function(req, res) {
   models.Idea.find({
     where: {id: req.params.id},
-    include: [ models.Point, models.Category ]
+    include: [ models.Point, models.Category, models.IdeaRevision ]
   }).then(function(idea) {
     res.send(idea);
   });

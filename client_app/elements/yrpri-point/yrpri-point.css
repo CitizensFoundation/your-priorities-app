@@ -1,0 +1,20 @@
+section {
+  padding: 20px 0; }
+
+.category {
+  padding-right: 8px; }
+
+.description {
+  padding: 8px;
+  padding-bottom: 0px !important; }
+
+.card {
+  padding: 16px;
+  padding-bottom: 0px !important;
+  margin-bottom: 24px; }
+
+.for {
+  color: rgba(0, 153, 0, 0.9); }
+
+.against {
+  color: rgba(153, 0, 0, 0.9); }

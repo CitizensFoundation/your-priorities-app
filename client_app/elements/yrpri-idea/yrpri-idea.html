@@ -34,6 +34,9 @@
         </div>
 
         <div layout class="description">
+          <template if="{{idea.IdeaRevision[0]}}">
+            {{idea.IdeaRevision[0].description | trim | truncate(small ? 200 : 10000,"...")}}
+          </template>
           <template if="{{idea.description}}">
             {{idea.description | trim | truncate(small ? 200 : 10000,"...")}}
           </template>

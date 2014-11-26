@@ -15,6 +15,12 @@
   padding: 16px;
   padding-top: 8px; }
 
+.upPointAction {
+  background-color: #009900; }
+
+.downPointAction {
+  background-color: #990000; }
+
 .up_point /deep/ .label-text,
 .up_point /deep/ .error {
   /* inline label,  floating label, error message and error icon color when the input is unfocused */

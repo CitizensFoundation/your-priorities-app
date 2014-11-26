@@ -13,6 +13,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         Idea.hasMany(models.Point);
+        Idea.hasMany(models.IdeaRevision);
         Idea.belongsTo(models.Category);
       }
     }

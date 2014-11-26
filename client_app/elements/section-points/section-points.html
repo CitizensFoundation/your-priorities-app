@@ -5,22 +5,56 @@
 
     <div layout horizontal flex>
 
-      <template repeat="{{[upPoints,downPoints] as updown}}">
+        <div layout flex class="point">
+
+          <paper-shadow z="1" class="pointText">
+
+            <paper-input-decorator class="up_point" floatingLabel
+                                   label="Þín rök með...">
+              <paper-autogrow-textarea id="a1">
+                <textarea value="{{textValueUp}}" id="up_point""></textarea>
+              </paper-autogrow-textarea>
+            </paper-input-decorator>
+
+            <template if="{{textValueUp.length>20}}">
+              <div layout justified style="width:100%;text-align: center;padding-top: 10px;">
+                <paper-fab icon="add" mini z="1"
+                           class="upPointAction" title="Bættu við rökum með"></paper-fab>
+              </div>
+            </template>
+
+          </paper-shadow>
+
+          <template repeat="{{upPoints as point}}">
+            <yrpri-point point="{{point}}"></yrpri-point>
+          </template>
+        </div>
 
         <div layout flex class="point">
 
           <paper-shadow z="1" class="pointText">
-            <paper-input-decorator class="{{updown===upPoints ? 'up_point' : 'down_point'}}" floatingLabel label="{{updown===upPoints ? 'Þín rök með...' : 'Þín rök á móti...'}}">
-              <paper-autogrow-textarea id="a1">
-                <textarea id="{{updown===upPoints ? 'up_point' : 'down_point'}}"></textarea>
+
+            <paper-input-decorator class="down_point" floatingLabel
+                                   label="Þín rök á móti...">
+              <paper-autogrow-textarea id="a2">
+                <textarea value="{{textValueDown}}" id="down_point"></textarea>
               </paper-autogrow-textarea>
             </paper-input-decorator>
+
+            <template if="{{textValueDown.length>20}}">
+              <div layout justified id="downPointAction" style="width:100%;text-align: center;padding-top: 10px;">
+                <paper-fab icon="add" mini z="1"
+                           class="downPointAction" title="Bættum við rökum á móti"></paper-fab>
+              </div>
+            </template>
+
           </paper-shadow>
 
-          <template repeat="{{updown as point}}">
+          <template repeat="{{downPoints as point}}">
             <yrpri-point point="{{point}}"></yrpri-point>
           </template>
         </div>
+
 
       </template>
     </div>
@@ -32,6 +66,25 @@
 
         upPoints: [],
         downPoints: [],
+
+        textChanged: function (e, detail) {
+          this.$.upPointAction.style.display="none";
+          debugger;
+          var text = e.srcElement;
+          if (text.value.length>=42) {
+            if (text.id==='up_point') {
+              this.$.upPointAction.style.display="none";
+            } else {
+              this.$.downPointAction.style.display="none";
+            }
+          } else {
+            if (text.id==='up_point') {
+              this.$.upPointAction.style.display="none";
+            } else {
+              this.$.downPointAction.style.display="none";
+            }
+          }
+        },
 
         ready: function () {
           this.upPoints = this.points.filter(function(x) { return x.value > 0; });

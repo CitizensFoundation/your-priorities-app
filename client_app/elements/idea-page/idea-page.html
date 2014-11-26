@@ -24,26 +24,28 @@
       <div class="content">
         <template if="{{idea}}">
 
-          <div layout vertical center-center>
+          <div layout vertical center-center flex>
 
-            <paper-shadow class="card" z="2" center-center layout>
+            <paper-shadow class="card" z="2" center-center>
               <yrpri-idea idea="{{idea}}"></yrpri-idea>
             </paper-shadow>
 
-            <paper-shadow class="card cardTabs" z="1" center-center layout>
+            <paper-shadow class="card cardTabs" z="1" center-center>
 
               <div layout vertical style="width:100%;">
 
                   <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-                    <paper-tab>Rökræða (7)</paper-tab>
+                    <paper-tab>Rökræða ({{idea.Points.length}})</paper-tab>
                     <paper-tab>Fréttir</paper-tab>
-                    <paper-tab>Umræður</paper-tab>
+                    <paper-tab>Myndir</paper-tab>
+                    <paper-tab>Lausnir</paper-tab>
                   </paper-tabs>
 
                   <core-animated-pages notap selected="{{selected}}" style="width:100%;" transitions="slide-from-right">
                     <section-points points="{{idea.Points}}"></section-points>
                     <section> bha</section>
                     <section> cha</section>
+                    <section> dha</section>
                   </core-animated-pages>
 
               </div>
@@ -67,6 +69,10 @@
       Polymer({
         responseChanged: function (e, detail, sender) {
           this.idea = detail;
+          if (this.idea.description===null) {
+            this.idea.description = this.idea.Points[0].content;
+            this.idea.Points.shift();
+          }
           var titleStyle = this.shadowRoot.querySelector('.title').style;
           addEventListener('core-header-transform', function (e) {
             var d = e.detail;
