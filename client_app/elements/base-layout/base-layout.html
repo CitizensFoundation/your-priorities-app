@@ -82,22 +82,28 @@
                     {{name}}
                   </div>
 
-                  <template if="{{showFilter}}">
-                    <paper-menu-button class="selected-items" layout horizontal style="padding-top: 4px;">
-                      <paper-icon-button class="filterIcon" icon="editor:merge-type"></paper-icon-button>
-                      <paper-dropdown class="dropdown" halign="right">
-                        <paper-item>Efstu hugmyndir</paper-item>
-                        <paper-item>Nýjustu hugmyndir</paper-item>
-                        <paper-item>Hugmyndir af handahófi</paper-item>
-                        <paper-item>Hugmyndir þinna vina</paper-item>
-                      </paper-dropdown>
-                    </paper-menu-button>
-                  </template>
 
                 </div>
 
                 <div style="font-size:16px;margin-bottom: 8px;padding-bottom:8px; padding-left:4px;">
-                  {{subTitle}}
+                  <div layout horizontal>
+                    <div>
+                      {{subTitle}}
+                    </div>
+                    <div>
+                      <template if="{{showFilter}}">
+                        <paper-menu-button class="selected-items" layout horizontal style="padding-left:0px;padding-top: 0px;margin-top: -8px;">
+                          <paper-icon-button class="filterIcon" icon="editor:merge-type"></paper-icon-button>
+                          <paper-dropdown class="dropdown" halign="right">
+                            <paper-item>Efstu hugmyndir</paper-item>
+                            <paper-item>Nýjustu hugmyndir</paper-item>
+                            <paper-item>Hugmyndir af handahófi</paper-item>
+                            <paper-item>Hugmyndir þinna vina</paper-item>
+                          </paper-dropdown>
+                        </paper-menu-button>
+                      </template>
+                    </div>
+                  </div>
                 </div>
 
               </div>
