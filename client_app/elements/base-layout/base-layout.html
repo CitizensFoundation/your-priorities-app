@@ -1,4 +1,4 @@
-<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner" extends="logged-in-page">
+<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner showLogo showFilter title subTitle" extends="logged-in-page">
   <template>
 
     <link rel="stylesheet" href="base-layout.css">
@@ -58,28 +58,39 @@
           <div flex></div>
           <paper-shadow z="2" class="bottom indent title titleBottom">
             <div layout horizontal>
-              <div style="padding-right:16px;padding-top:8px;padding-bottom:8px;">
-                <core-image sizing="cover" style="width:100px;height:100px;margin-left:0px;padding-right:8px;margin-top:4px;"
-                            src="logo.png"></core-image>
-              </div>
+
+              <template if="{{showLogo}}">
+                <div style="padding-right:16px;padding-top:8px;padding-bottom:8px;">
+                  <core-image sizing="cover" style="width:100px;height:100px;margin-left:0px;padding-right:8px;margin-top:4px;"
+                              src="logo.png"></core-image>
+                </div>
+              </template>
+
               <div layout vertical>
                 <div layout horizontal>
+
                   <div style="padding-right: 4px;padding-top:8px;vertical-align: top;text-align: start;">
-                    {{selectedThreads.length ? selectedThreads.length : 'Betri Laugardalur 2015'}}
+                    {{title}}
                   </div>
-                  <paper-menu-button class="selected-items" layout horizontal style="padding-top: 4px;">
-                    <paper-icon-button class="filterIcon" icon="editor:merge-type"></paper-icon-button>
-                    <paper-dropdown class="dropdown" halign="right">
-                      <paper-item>Efstu hugmyndir</paper-item>
-                      <paper-item>Nýjustu hugmyndir</paper-item>
-                      <paper-item>Hugmyndir af handahófi</paper-item>
-                      <paper-item>Hugmyndir þinna vina</paper-item>
-                    </paper-dropdown>
-                  </paper-menu-button>
+
+                  <template if="{{showFilter}}">
+                    <paper-menu-button class="selected-items" layout horizontal style="padding-top: 4px;">
+                      <paper-icon-button class="filterIcon" icon="editor:merge-type"></paper-icon-button>
+                      <paper-dropdown class="dropdown" halign="right">
+                        <paper-item>Efstu hugmyndir</paper-item>
+                        <paper-item>Nýjustu hugmyndir</paper-item>
+                        <paper-item>Hugmyndir af handahófi</paper-item>
+                        <paper-item>Hugmyndir þinna vina</paper-item>
+                      </paper-dropdown>
+                    </paper-menu-button>
+                  </template>
+
                 </div>
+
                 <div style="font-size:16px;margin-bottom: 8px;padding-bottom:8px; padding-left:4px;">
-                  Efstu hugmyndir í Framkvæmdum
+                  {{subTitle}}
                 </div>
+
               </div>
             </div>
           </paper-shadow>
@@ -106,7 +117,7 @@
           <div layout horizontal center-justified style="padding-top:16px;">
             <paper-spinner id="spinner"></paper-spinner>
           </div>
-          <div class="content" style="margin-top:56px;">
+          <div class="content" style="margin-top:24px;">
             <content></content>
           </div>
         </template>
