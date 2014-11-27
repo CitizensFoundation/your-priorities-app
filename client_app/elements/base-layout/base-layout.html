@@ -56,7 +56,7 @@
 
           <paper-icon-button id="navicon" icon="menu" core-drawer-toggle></paper-icon-button>
           <div flex></div>
-          <paper-shadow z="2" class="bottom indent title titleBottom">
+          <paper-shadow z="3" class="bottom indent title titleBottom">
             <div layout horizontal>
 
               <template if="{{showLogo}}">
@@ -151,7 +151,7 @@
         addEventListener('core-header-transform', function (e) {
           var d = e.detail;
           var m = 250 - d.condensedHeight;
-          var scale = Math.max(0.55, (m - d.y) / (m / 0.25) + 0.75);
+          var scale = Math.max(0.15, (m - d.y) / (m / 0.25) + 0.75);
           localTitleStyle.transform = localTitleStyle.webkitTransform =
                   'scale(' + scale + ') translateZ(0)';
         });
