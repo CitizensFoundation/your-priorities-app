@@ -39,6 +39,7 @@ router.get('/:id', function(req, res) {
         ]
       },
       models.Category,
+      models.User,
       models.IdeaRevision
     ]
   }).then(function(idea) {

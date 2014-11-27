@@ -14,7 +14,7 @@
       <div class="card-container">
         <template repeat="{{ideas as idea}}">
           <paper-shadow class="card" z="1" center-center layout>
-            <yrpri-idea idea="{{idea}}" small="true"></yrpri-idea>
+            <yrpri-idea idea="{{idea}}" showCategory="true" small="true"></yrpri-idea>
           </paper-shadow>
         </template>
         <a href="/add" on-click="{{navigate}}">
