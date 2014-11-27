@@ -25,10 +25,13 @@ router.get('/:id', function(req, res) {
               { model: models.User, attributes: ["id", "login", "facebook_uid", "buddy_icon_file_name"] }
             ]
           },
-
         ]
       },
-      models.Endorsement,
+      { model: models.Endorsement,
+        include: [
+          { model: models.User, attributes: ["id", "login", "facebook_uid", "buddy_icon_file_name"] }
+        ]
+      },
       models.Category,
       models.IdeaRevision
     ]

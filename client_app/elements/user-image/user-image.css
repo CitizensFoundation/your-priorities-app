@@ -1,0 +1,11 @@
+.small {
+  height: 32px;
+  margin: 0px;
+  width: 32px;
+  background-color: #e0e0e0; }
+
+.medium {
+  height: 50px;
+  width: 50px;
+  margin: 0px;
+  background-color: #e0e0e0; }

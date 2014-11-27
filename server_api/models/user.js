@@ -12,6 +12,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         User.hasMany(models.Idea);
         User.hasMany(models.Point);
+        User.hasMany(models.Endorsement);
       }
     }
   });
