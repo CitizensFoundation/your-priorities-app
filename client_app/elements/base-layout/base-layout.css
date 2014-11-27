@@ -1,3 +1,12 @@
+.filterIcon {
+  -moz-transform: scaleY(-1);
+  -o-transform: scaleY(-1);
+  -webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
+  filter: FlipV;
+  -ms-filter: "FlipV";
+  padding-right: 0px; }
+
 #drawerPanel:not([narrow]) core-scroll-header-panel [content] {
   padding: 30px 0; }
 
@@ -22,14 +31,7 @@
 
 #drawerPanel core-scroll-header-panel::shadow #headerBg {
   background: url(header.png) center center no-repeat;
-  background-size: 100%;
-  background: -moz-linear-gradient(top, rgba(255, 255, 255, 0) 41%, #666666 100%), url(header.png) center center no-repeat;
-  background: -webkit-gradient(left top, left bottom, color-stop(41%, rgba(255, 255, 255, 0)), color-stop(100%, #666666)), url(header.png) center center no-repeat;
-  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 41%, #666666 100%), url(header.png) center center no-repeat;
-  background: -o-linear-gradient(top, rgba(255, 255, 255, 0) 41%, #666666 100%), url(header.png) center center no-repeat;
-  background: -ms-linear-gradient(top, rgba(255, 255, 255, 0) 41%, #666666 100%), url(header.png) center center no-repeat;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 41%, #666666 100%), url(header.png) center center no-repeat;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#666666', GradientType=0 ); }
+  background-size: 100%; }
 
 #drawerPanel core-scroll-header-panel::shadow #condensedHeaderBg {
   background-color: #9e9e9e;

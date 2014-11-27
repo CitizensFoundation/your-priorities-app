@@ -49,7 +49,7 @@
                 {{selectedThreads.length ? selectedThreads.length : 'Betri Laugardalur 2015'}}
               </div>
               <paper-menu-button class="selected-items" layout horizontal style="padding-top: 4px;">
-                <paper-icon-button icon="editor:mode-edit"></paper-icon-button>
+                <paper-icon-button class="filterIcon" icon="editor:merge-type"></paper-icon-button>
                 <paper-dropdown class="dropdown" halign="right">
                   <paper-item>Efstu hugmyndir</paper-item>
                   <paper-item>Nýjustu hugmyndir</paper-item>
@@ -91,7 +91,7 @@
           </template>
 
           <template bind if="{{!needLogin || user}}">
-            <div class="content" style="margin-top:32px;">
+            <div class="content" style="margin-top:40px;">
               <content></content>
             </div>
           </template>
