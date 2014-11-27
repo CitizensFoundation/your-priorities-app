@@ -2,8 +2,7 @@
 
 module.exports = function(sequelize, DataTypes) {
   var PointQuality = sequelize.define("PointQuality", {
-    name: DataTypes.STRING,
-    content: DataTypes.TEXT,
+    value: DataTypes.INTEGER,
     user_id: DataTypes.INTEGER
   }, {
     underscored: true,

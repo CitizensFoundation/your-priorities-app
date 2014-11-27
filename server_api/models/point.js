@@ -14,6 +14,7 @@ module.exports = function(sequelize, DataTypes) {
         Point.belongsTo(models.Idea);
         Point.belongsTo(models.User);
         Point.hasMany(models.PointRevision);
+        Point.hasMany(models.PointQuality);
       }
     }
   });

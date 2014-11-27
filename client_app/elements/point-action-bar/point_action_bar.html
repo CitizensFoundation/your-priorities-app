@@ -7,11 +7,11 @@
 
       <div layout horizontal>
         <paper-icon-button icon="thumb-up" class="action_up" style="margin-right:0px;"></paper-icon-button>
-        <div class="action_text action_up" style="margin-right:0px;">{{100 | getRandomNumber | formatNumber}}</div>
+        <div class="action_text action_up" style="margin-right:0px;">{{point.PointQualities | upVoteCount}}</div>
       </div>
 
       <div layout horizontal style="text-align: left;">
-        <div class="action_text action_down" style="">{{10 | getRandomNumber | formatNumber}}</div>
+        <div class="action_text action_down" style="">{{point.PointQualities | downVoteCount}}</div>
         <paper-icon-button size="16x16" icon="thumb-down" class="action_down" style="margin-left:16px;"></paper-icon-button>
       </div>
 
@@ -26,6 +26,22 @@
       },
       formatNumber: function (value) {
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      },
+      upVoteCount: function (endorsements) {
+        var upCount = 0;
+        for(var i = 0; i< endorsements.length; i++) {
+          if (endorsements[i].value>0)
+            upCount++;
+        }
+        return upCount;
+      },
+      downVoteCount: function (endorsements) {
+        var upCount = 0;
+        for(var i = 0; i< endorsements.length; i++) {
+          if (endorsements[i].value==0)
+            upCount++;
+        }
+        return upCount;
       }
     });
   </script>

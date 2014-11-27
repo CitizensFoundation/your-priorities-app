@@ -19,8 +19,14 @@ router.get('/:id', function(req, res) {
     where: {id: req.params.id},
     include: [
       { model: models.Point,
+        order: 'Point.position DESC',
         include: [
           { model: models.PointRevision ,
+            include: [
+              { model: models.User, attributes: ["id", "login", "facebook_uid", "buddy_icon_file_name"] }
+            ]
+          },
+          { model: models.PointQuality ,
             include: [
               { model: models.User, attributes: ["id", "login", "facebook_uid", "buddy_icon_file_name"] }
             ]
