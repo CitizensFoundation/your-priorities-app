@@ -6,6 +6,10 @@
   border-top: 1px solid #e0e0e0;
 }
 
+:host /deep/ #selectionBar {
+  background-color: $primary-color;
+}
+
 .title {
   -webkit-transform-origin: 0;
   transform-origin: 0;

@@ -9,6 +9,9 @@ $primary-color-more-darker: #424242;
   font-size: 14px;
   border-top: 1px solid #e0e0e0; }
 
+:host /deep/ #selectionBar {
+  background-color: #616161; }
+
 .title {
   -webkit-transform-origin: 0;
   transform-origin: 0;
