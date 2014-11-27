@@ -42,14 +42,14 @@
 
           <paper-icon-button id="navicon" icon="menu" core-drawer-toggle></paper-icon-button>
           <div flex></div>
-        <span class="bottom indent title">
+        <paper-shadow z="3" class="bottom indent title titleBottom">
           <div layout vertical>
             <div layout horizontal>
               <div style="padding-right: 4px;padding-top:8px;">
                 {{selectedThreads.length ? selectedThreads.length : 'Betri Laugardalur 2015'}}
               </div>
               <paper-menu-button class="selected-items" layout horizontal style="padding-top: 4px;">
-                <paper-icon-button icon="filter-list"></paper-icon-button>
+                <paper-icon-button icon="editor:mode-edit"></paper-icon-button>
                 <paper-dropdown class="dropdown" halign="right">
                   <paper-item>Efstu hugmyndir</paper-item>
                   <paper-item>Nýjustu hugmyndir</paper-item>
@@ -62,7 +62,7 @@
               Efstu hugmyndir í Framkvæmdum
             </div>
           </div>
-        </span>
+        </paper-shadow>
           <paper-icon-button icon="search" class="fade-on-drawer-open" on-tap="{{toggleSearch}}"></paper-icon-button>
 
           <paper-icon-button icon="social:group-add" class="selected-items" on-tap="{{archiveAll}}"></paper-icon-button>
@@ -91,7 +91,7 @@
           </template>
 
           <template bind if="{{!needLogin || user}}">
-            <div class="content">
+            <div class="content" style="margin-top:32px;">
               <content></content>
             </div>
           </template>

@@ -113,6 +113,16 @@ paper-item.core-selected::shadow core-icon {
   font-size: 36px;
   transform-origin: 0px 50%;
   margin-left: 70px;
+  padding-top: 8px;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 4px;
+  background-color: #fff;
+  border-radius: 1%;
+  opacity: 1;
+  background-color: $primary-color;
+  color: #fff;
+  margin-bottom: 0px !important;
 }
 
 #mainheader.selected-threads {
