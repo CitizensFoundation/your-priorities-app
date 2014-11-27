@@ -1,4 +1,4 @@
-<polymer-element name="base-layout" attributes="selected needLogin user pageTitle" extends="logged-in-page">
+<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner" extends="logged-in-page">
   <template>
 
     <link rel="stylesheet" href="base-layout.css">
@@ -13,6 +13,7 @@
       <core-header-panel mode="scroll" drawer>
         <core-toolbar id="navheader" class="tall">
           <img class="middle profile" src="{{user.profile}}" hidden?="{{!user.profile}}">
+
           <div class="bottom" layout vertical>
             <span>Róbert Bjarnason</span>
             <span>50 samfélagsstig</span>
@@ -20,11 +21,23 @@
         </core-toolbar>
         <core-menu selected="0" excludedLocalNames="div" on-core-select="{{menuSelect}}">
           <div class="separator" style="color:#F57C00">Betri Laugardalur 2015</div>
-          <paper-item><core-icon icon="av:news" style="padding-right:16px;"></core-icon>Heim</paper-item>
-          <paper-item><core-icon icon="image:wb-sunny" style="padding-right:16px;"></core-icon>Hugmyndir</paper-item>
-          <paper-item><core-icon icon="social:people" style="padding-right:16px;"></core-icon>Fólk</paper-item>
+          <paper-item>
+            <core-icon icon="av:news" style="padding-right:16px;"></core-icon>
+            Heim
+          </paper-item>
+          <paper-item>
+            <core-icon icon="image:wb-sunny" style="padding-right:16px;"></core-icon>
+            Hugmyndir
+          </paper-item>
+          <paper-item>
+            <core-icon icon="social:people" style="padding-right:16px;"></core-icon>
+            Fólk
+          </paper-item>
           <div class="separator" style="color:#FFB74D">Betri Reykavík</div>
-          <paper-item><core-icon icon="group-work" style="padding-right:16px;"></core-icon>Hugmyndahópar</paper-item>
+          <paper-item>
+            <core-icon icon="group-work" style="padding-right:16px;"></core-icon>
+            Hugmyndahópar
+          </paper-item>
 
           <div class="separator">Þínar hugmyndir</div>
           <paper-item>1. Hugmynd</paper-item>
@@ -36,33 +49,40 @@
         </core-menu>
       </core-header-panel>
 
-      <core-scroll-header-panel id="scrollheader" main condenses keepCondensedHeader on-trackstart="{{onRefreshStart}}"  on-tracky="{{onMainAreaTrack}}" on-trackend="{{onRefreshUp}}">
+      <core-scroll-header-panel id="scrollheader" main condenses keepCondensedHeader on-trackstart="{{onRefreshStart}}"
+                                on-tracky="{{onMainAreaTrack}}" on-trackend="{{onRefreshUp}}">
         <core-toolbar id="mainheader" class="tall">
           <paper-icon-button icon="arrow-back" class="selected-item" on-tap="{{deselectAll}}"></paper-icon-button>
 
           <paper-icon-button id="navicon" icon="menu" core-drawer-toggle></paper-icon-button>
           <div flex></div>
-        <paper-shadow z="3" class="bottom indent title titleBottom">
-          <div layout vertical>
+          <paper-shadow z="2" class="bottom indent title titleBottom">
             <div layout horizontal>
-              <div style="padding-right: 4px;padding-top:8px;">
-                {{selectedThreads.length ? selectedThreads.length : 'Betri Laugardalur 2015'}}
+              <div style="padding-right:16px;padding-top:8px;padding-bottom:8px;">
+                <core-image sizing="cover" style="width:100px;height:100px;margin-left:0px;padding-right:8px;margin-top:4px;"
+                            src="logo.png"></core-image>
               </div>
-              <paper-menu-button class="selected-items" layout horizontal style="padding-top: 4px;">
-                <paper-icon-button class="filterIcon" icon="editor:merge-type"></paper-icon-button>
-                <paper-dropdown class="dropdown" halign="right">
-                  <paper-item>Efstu hugmyndir</paper-item>
-                  <paper-item>Nýjustu hugmyndir</paper-item>
-                  <paper-item>Hugmyndir af handahófi</paper-item>
-                  <paper-item>Hugmyndir þinna vina</paper-item>
-                </paper-dropdown>
-              </paper-menu-button>
+              <div layout vertical>
+                <div layout horizontal>
+                  <div style="padding-right: 4px;padding-top:8px;vertical-align: top;text-align: start;">
+                    {{selectedThreads.length ? selectedThreads.length : 'Betri Laugardalur 2015'}}
+                  </div>
+                  <paper-menu-button class="selected-items" layout horizontal style="padding-top: 4px;">
+                    <paper-icon-button class="filterIcon" icon="editor:merge-type"></paper-icon-button>
+                    <paper-dropdown class="dropdown" halign="right">
+                      <paper-item>Efstu hugmyndir</paper-item>
+                      <paper-item>Nýjustu hugmyndir</paper-item>
+                      <paper-item>Hugmyndir af handahófi</paper-item>
+                      <paper-item>Hugmyndir þinna vina</paper-item>
+                    </paper-dropdown>
+                  </paper-menu-button>
+                </div>
+                <div style="font-size:16px;margin-bottom: 8px;padding-bottom:8px; padding-left:4px;">
+                  Efstu hugmyndir í Framkvæmdum
+                </div>
+              </div>
             </div>
-            <div style="font-size:16px;margin-bottom: 8px;padding-bottom:8px; padding-left:4px;">
-              Efstu hugmyndir í Framkvæmdum
-            </div>
-          </div>
-        </paper-shadow>
+          </paper-shadow>
           <paper-icon-button icon="search" class="fade-on-drawer-open" on-tap="{{toggleSearch}}"></paper-icon-button>
 
           <paper-icon-button icon="social:group-add" class="selected-items" on-tap="{{archiveAll}}"></paper-icon-button>
@@ -76,60 +96,60 @@
               <paper-item>Stillingar</paper-item>
             </paper-dropdown>
           </paper-menu-button>
-
-          <div id="refresh" class="bottom fit"
-               layout horizontal center-center on-transitionend="{{onRefreshTransitionEnd}}">
-            <div class="paper-shadow-bottom-z-1">
-              <paper-spinner id="refreshspinner"></paper-spinner>
-            </div>
-          </div>
-
         </core-toolbar>
 
-          <template if="{{needLogin && !user}}">
-            <shadow></shadow>
-          </template>
+        <template if="{{needLogin && !user}}">
+          <shadow></shadow>
+        </template>
 
-          <template bind if="{{!needLogin || user}}">
-            <div class="content" style="margin-top:40px;">
-              <content></content>
-            </div>
-          </template>
+        <template bind if="{{!needLogin || user}}">
+          <div layout horizontal center-justified style="padding-top:16px;">
+            <paper-spinner id="spinner"></paper-spinner>
+          </div>
+          <div class="content" style="margin-top:56px;">
+            <content></content>
+          </div>
+        </template>
       </core-scroll-header-panel>
 
     </core-drawer-panel>
   </template>
   <script>
     Polymer({
-      previousSearches: ["Blah","Hello"],
+      previousSearches: ["Blah", "Hello"],
       smallScreen: false,
       selectedThreads: [],
+
+      setSpinner: function(value) {
+        this.$.spinner.active = value;
+      },
+
       toggleSearch: function (e) {
         this.$.search.toggle();
       },
-      domReady: function() {
+      domReady: function () {
         this.titleStyle = this.shadowRoot.querySelector('.title').style;
         this.checkForSmallScreen();
 
-        window.onresize = function(event) {
+        window.onresize = function (event) {
           this.checkForSmallScreen();
         }.bind(this);
 
         var localTitleStyle = this.titleStyle;
 
-        addEventListener('core-header-transform', function(e) {
+        addEventListener('core-header-transform', function (e) {
           var d = e.detail;
           var m = d.height - d.condensedHeight;
-          var scale = Math.max(0.75, (m - d.y) / (m / 0.25)  + 0.75);
+          var scale = Math.max(0.75, (m - d.y) / (m / 0.25) + 0.75);
           localTitleStyle.transform = localTitleStyle.webkitTransform =
-            'scale(' + scale + ') translateZ(0)';
+                  'scale(' + scale + ') translateZ(0)';
         });
       },
       checkForSmallScreen: function () {
-        if (this.smallScreen===true) {
-           this.titleStyle.fontSize="24px";
+        if (this.smallScreen === true) {
+          this.titleStyle.fontSize = "24px";
         } else {
-           this.titleStyle.fontSize="40px";
+          this.titleStyle.fontSize = "40px";
         }
       }
     });

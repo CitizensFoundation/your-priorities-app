@@ -10,7 +10,7 @@
       handleAs="json">
     </core-ajax>
 
-    <base-layout selected="ideas">
+    <base-layout id="layout" selected="ideas">
       <div class="card-container">
         <template repeat="{{ideas as idea}}">
           <paper-shadow class="card" z="1" center-center layout>
@@ -31,10 +31,12 @@
       ideas: [],
 
       ready: function () {
+        this.$.layout.setSpinner(true);
         this.$.ajax.go();
       },
 
       responseChanged: function (e, detail, sender) {
+        this.$.layout.setSpinner(false);
         this.ideas = detail;
       }
     });
