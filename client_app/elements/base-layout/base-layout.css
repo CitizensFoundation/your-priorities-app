@@ -94,7 +94,8 @@ paper-item.core-selected::shadow core-icon {
 
 #mainheader {
   color: #fff;
-  background-color: transparent; }
+  background-color: transparent;
+  height: 255px; }
 
 #mainheader .title {
   font-size: 36px;
