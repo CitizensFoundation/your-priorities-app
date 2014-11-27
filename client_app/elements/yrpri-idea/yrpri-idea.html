@@ -46,7 +46,7 @@
           <idea-action-bar idea="{{idea}}" small="{{small}}" style=""></idea-action-bar>
         </template>
         <template if="{{!small}}">
-          <div style="padding-top: 16px;">
+          <div style="padding-top: 16px; opacity: 0.80;">
             <template repeat="{{idea.Endorsements as endorsement}}">
               <user-image user="{{endorsement.User}}" small></user-image>
             </template>
