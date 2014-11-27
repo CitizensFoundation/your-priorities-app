@@ -1,5 +1,19 @@
 @import '../styles/variables';
 
+.baseImageContainer {
+  padding-right:16px;
+  margin-top:8px;
+  padding-top:8px;
+  padding-bottom:16px
+}
+.baseImage {
+  width:100px;
+  height:100px;
+  margin-left:8px;
+  padding-right:8px;
+  margin-top:4px;
+}
+
 .filterIcon {
   -moz-transform: scaleY(-1);
   -o-transform: scaleY(-1);

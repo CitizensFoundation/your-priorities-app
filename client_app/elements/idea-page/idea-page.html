@@ -1,5 +1,5 @@
-<polymer-element name="idea-page" extends="base-page" attributes="contactId contacts" layout vertical>
-  <template>
+<polymer-element name="idea-page" extends="base-page" attributes="contactId contacts ideaName" layout vertical>
+  <template bind>
     <link rel="stylesheet" href="idea-page.css">
     <!--
     On larger screens, change the behavior of the header panel so it doesn't
@@ -8,53 +8,39 @@
     -->
     <core-media-query query="min-width: 640px" queryMatches="{{largeScreen}}">
     </core-media-query>
-    <core-scroll-header-panel condenses keepCondensedHeader>
 
-      <core-toolbar class="tall">
+    <base-layout id="layout" selected="idea" category="{{idea.Category}}" name="{{idea.name}}" subTitle="Betri Laugardalur 2015">
+      <template if="{{idea}}">
 
-        <core-icon-button icon="arrow-back"></core-icon-button>
-        <div flex></div>
-        <core-icon-button icon="search"></core-icon-button>
-        <core-icon-button icon="more-vert"></core-icon-button>
-        <template if="{{idea}}">
-          <div class="bottom indent title">{{idea.name}}</div>
-        </template>
-      </core-toolbar>
+        <div layout vertical center-center flex>
 
-      <div class="content">
-        <template if="{{idea}}">
+          <paper-shadow class="card" z="2" center-center>
+            <yrpri-idea idea="{{idea}}"></yrpri-idea>
+          </paper-shadow>
 
-          <div layout vertical center-center flex>
+          <paper-shadow class="card cardTabs" z="1" center-center>
 
-            <paper-shadow class="card" z="2" center-center>
-              <yrpri-idea idea="{{idea}}"></yrpri-idea>
-            </paper-shadow>
+            <div layout vertical style="width:100%;">
 
-            <paper-shadow class="card cardTabs" z="1" center-center>
+              <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+                <paper-tab>Rökræða ({{idea.Points.length}})</paper-tab>
+                <paper-tab>Fréttir</paper-tab>
+                <paper-tab>Myndir</paper-tab>
+                <paper-tab>Lausnir</paper-tab>
+              </paper-tabs>
 
-              <div layout vertical style="width:100%;">
+              <core-animated-pages notap selected="{{selected}}" style="width:100%;" transitions="slide-from-right">
+                <section-points points="{{idea.Points}}"></section-points>
+                <section> bha</section>
+                <section> cha</section>
+                <section> dha</section>
+              </core-animated-pages>
 
-                  <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-                    <paper-tab>Rökræða ({{idea.Points.length}})</paper-tab>
-                    <paper-tab>Fréttir</paper-tab>
-                    <paper-tab>Myndir</paper-tab>
-                    <paper-tab>Lausnir</paper-tab>
-                  </paper-tabs>
-
-                  <core-animated-pages notap selected="{{selected}}" style="width:100%;" transitions="slide-from-right">
-                    <section-points points="{{idea.Points}}"></section-points>
-                    <section> bha</section>
-                    <section> cha</section>
-                    <section> dha</section>
-                  </core-animated-pages>
-
-              </div>
-            </paper-shadow>
-          </div>
-        </template>
-      </div>
-
-    </core-scroll-header-panel>
+            </div>
+          </paper-shadow>
+        </div>
+      </template>
+    </base-layout>
 
     <core-ajax
             auto="false"
@@ -68,6 +54,7 @@
     (function () {
       Polymer({
         responseChanged: function (e, detail, sender) {
+          this.$.layout.setSpinner(false);
           this.idea = detail;
           if (this.idea.description===null) {
             this.idea.description = this.idea.Points[0].content;
@@ -83,6 +70,7 @@
           });
         },
         domReady: function () {
+          this.$.layout.setSpinner(true);
           this.$.ajax.go();
         },
         willPrepare: function () {

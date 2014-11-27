@@ -1,4 +1,4 @@
-<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner showLogo showFilter title subTitle" extends="logged-in-page">
+<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner showLogo showFilter name subTitle category" extends="logged-in-page">
   <template>
 
     <link rel="stylesheet" href="base-layout.css">
@@ -60,9 +60,18 @@
             <div layout horizontal>
 
               <template if="{{showLogo}}">
-                <div style="padding-right:16px;margin-top:8px;padding-top:8px;padding-bottom:16px;">
-                  <core-image sizing="cover" style="width:100px;height:100px;margin-left:8px;padding-right:8px;margin-top:4px;"
-                              src="logo.png"></core-image>
+                <div class="baseImageContainer">
+                  <core-image sizing="cover" class="baseImage" src="logo.png"></core-image>
+                </div>
+              </template>
+
+              <template if="{{!showLogo && category}}">
+                <div class="baseImageContainer">
+                  <core-image sizing="contain"
+                              preload
+                              class="baseImage"
+                              src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/categories/icons/000/000/{{category.id | fillIdValue}}/icon_100/{{category.icon_file_name}}">
+                  </core-image>
                 </div>
               </template>
 
@@ -70,7 +79,7 @@
                 <div layout horizontal>
 
                   <div style="padding-right: 4px;padding-top:8px;margin-top:16px;vertical-align: top;text-align: start;">
-                    {{title}}
+                    {{name}}
                   </div>
 
                   <template if="{{showFilter}}">
@@ -130,6 +139,10 @@
       previousSearches: ["Blah", "Hello"],
       smallScreen: false,
       selectedThreads: [],
+
+      fillIdValue: function (value) {
+        return ('000' + value).substr(-3);
+      },
 
       setSpinner: function(value) {
         this.$.spinner.active = value;

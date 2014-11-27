@@ -10,7 +10,7 @@
       handleAs="json">
     </core-ajax>
 
-    <base-layout id="layout" selected="ideas" showLogo="true" showFilter="true" title="Betri Laugardalur 2015" subTitle="Efstu hugmyndir í Framkvæmdum">
+    <base-layout id="layout" selected="ideas" showLogo="true" categoryId="{{idea.Category.id}}" showFilter="true" name="Betri Laugardalur 2015" subTitle="Efstu hugmyndir í Framkvæmdum">
       <div class="card-container">
         <template repeat="{{ideas as idea}}">
           <paper-shadow class="card" z="1" center-center layout>
