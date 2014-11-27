@@ -6,6 +6,7 @@ var models = require("../models");
 router.get('/', function(req, res) {
   models.Idea.findAll({
     limit: 300,
+    order: 'position DESC',
     where: "description IS NOT NULL AND sub_instance_id = 36 AND status != 'deleted'",
     include: [ models.Point, models.Category, models.IdeaRevision, models.Endorsement ]
   }).then(function(ideas) {
