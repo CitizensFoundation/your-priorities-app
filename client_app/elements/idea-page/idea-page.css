@@ -4,6 +4,12 @@ $primary-color-lighter: #E0E0E0;
 $primary-color-darker: #616161;
 $primary-color-more-darker: #424242;
 */
+/*
+$primary-color: #616161;
+$primary-color-lighter: #9E9E9E;
+$primary-color-darker: #424242;
+$primary-color-more-darker: #222222;
+*/
 #drawerPanel core-header-panel .separator {
   padding: 16px;
   font-size: 14px;

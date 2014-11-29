@@ -9,13 +9,13 @@
     <core-media-query query="min-width: 640px" queryMatches="{{largeScreen}}">
     </core-media-query>
 
-    <base-layout id="layout" selected="idea" category="{{idea.Category}}" name="{{idea.name}}" subTitle="Betri Laugardalur 2015">
+    <base-layout id="layout" selected="idea" showLogo="true" category="{{idea.Category}}" name="Betri Laugardalur 2015" subTitle="{{idea.name}}">
       <template if="{{idea}}">
 
         <div layout vertical center-center flex>
 
           <paper-shadow class="card" z="2" center-center>
-            <yrpri-idea idea="{{idea}}"></yrpri-idea>
+            <yrpri-idea idea="{{idea}}" showCategory="true"></yrpri-idea>
           </paper-shadow>
 
           <paper-shadow class="card cardTabs" z="1" center-center>

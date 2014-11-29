@@ -1,4 +1,4 @@
-<polymer-element name="yrpri-idea" attributes="small idea showCategory showUser">
+<polymer-element name="yrpri-idea" attributes="small idea showCategory showName">
   <template>
 
     <link rel="stylesheet" href="yrpri-idea.css">
@@ -17,9 +17,11 @@
             <div>
               <b>{{idea.name | trim | truncate(small ? 60 : 200) }}</b>
             </div>
-            <div class="userScreenname">
-              {{idea.User.login}}
-            </div>
+            <template if="{{showName}}">
+              <div class="userScreenname">
+                {{idea.User.login}}
+              </div>
+            </template>
           </div>
           <template if="{{!small}}">
             <div flex style="">

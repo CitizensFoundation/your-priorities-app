@@ -1,16 +1,15 @@
 @import '../styles/variables';
 
-section {
-  padding: 20px 0;
-}
-
 .category {
   padding-right: 8px;
 }
 
 .description {
   padding: 8px;
+  padding-left:0px;
+  padding-right:0px;
   padding-bottom: 0px !important;
+  line-height: $description-line-height;
 }
 
 .pointUser {
@@ -31,4 +30,9 @@ section {
 
 .against {
   color: $primary-down-color-bit-lighter;
+}
+
+.name {
+  color: $primary-color-lighter;
+  padding-left: 0px;
 }

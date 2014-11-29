@@ -4,14 +4,20 @@ $primary-color-lighter: #E0E0E0;
 $primary-color-darker: #616161;
 $primary-color-more-darker: #424242;
 */
+/*
+$primary-color: #616161;
+$primary-color-lighter: #9E9E9E;
+$primary-color-darker: #424242;
+$primary-color-more-darker: #222222;
+*/
 .small {
   height: 32px;
   margin: 0px;
   width: 32px;
-  background-color: #9e9e9e; }
+  background-color: #616161; }
 
 .medium {
   height: 50px;
   width: 50px;
   margin: 0px;
-  background-color: #9e9e9e; }
+  background-color: #616161; }

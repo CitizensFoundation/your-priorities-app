@@ -4,15 +4,21 @@ $primary-color-lighter: #E0E0E0;
 $primary-color-darker: #616161;
 $primary-color-more-darker: #424242;
 */
-section {
-  padding: 20px 0; }
-
+/*
+$primary-color: #616161;
+$primary-color-lighter: #9E9E9E;
+$primary-color-darker: #424242;
+$primary-color-more-darker: #222222;
+*/
 .category {
   padding-right: 8px; }
 
 .description {
   padding: 8px;
-  padding-bottom: 0px !important; }
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px !important;
+  line-height: 1.3; }
 
 .pointUser {
   padding: 0px;
@@ -29,3 +35,7 @@ section {
 
 .against {
   color: rgba(153, 0, 0, 0.85); }
+
+.name {
+  color: #616161;
+  padding-left: 0px; }
