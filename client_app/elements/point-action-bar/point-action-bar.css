@@ -1,14 +1,14 @@
 /*
-$primary-color: #9E9E9E;
-$primary-color-lighter: #E0E0E0;
-$primary-color-darker: #616161;
-$primary-color-more-darker: #424242;
-*/
-/*
 $primary-color: #616161;
 $primary-color-lighter: #9E9E9E;
 $primary-color-darker: #424242;
 $primary-color-more-darker: #222222;
+*/
+/*
+$primary-color: #616161;
+$primary-color-lighter: #616161;
+$primary-color-darker: #222222;
+$primary-color-more-darker: #000;
 */
 .action_bar {
   margin-top: 8px;
