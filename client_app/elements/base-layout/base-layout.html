@@ -36,7 +36,7 @@
           <div class="separator" style="color:#FFB74D">Betri Reykavík</div>
           <paper-item>
             <core-icon icon="group-work" style="padding-right:16px;"></core-icon>
-            Hugmyndahópar
+            Hópar
           </paper-item>
 
           <div class="separator">Þínar hugmyndir</div>
@@ -70,7 +70,7 @@
                   <core-image sizing="contain"
                               preload
                               class="baseImage"
-                              src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/categories/icons/000/000/{{category.id | fillIdValue}}/icon_100/{{category.icon_file_name}}">
+                              src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/categories/icons/000/000/{{category.id | padNumber}}/icon_100/{{category.icon_file_name}}">
                   </core-image>
                 </div>
               </template>
@@ -143,16 +143,12 @@
       smallScreen: false,
       selectedThreads: [],
 
-      fillIdValue: function (value) {
-        return ('000' + value).substr(-3);
-      },
-
       setSpinner: function(value) {
         this.$.spinner.active = value;
         if (value===true) {
           this.$.spinner.style.paddingTop="72px";
         } else {
-          this.$.spinner.style.paddingTop="0px";
+          this.$.spinner.style.paddingTop="16px";
         }
       },
 
