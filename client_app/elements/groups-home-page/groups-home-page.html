@@ -1,0 +1,67 @@
+<polymer-element name="groups-home-page">
+  <template>
+    <link rel="stylesheet" href="groups-home-page.css">
+
+    <core-ajax
+            auto="false"
+            id="ajax"
+            url="/api/groups"
+            response="{{response}}"
+            handleAs="json">
+    </core-ajax>
+
+    <base-layout id="layout" selected="groupsHome" showLogo="true"
+                 showFilter="true"
+                 name="{{name}}" subTitle="{{subTitle}}">
+      <div class="card-container">
+        <template repeat="{{groups as group}}">
+          <paper-shadow class="card" z="1" center-center layout>
+            <yrpri-group group="{{group}}" small="true"></yrpri-group>
+          </paper-shadow>
+        </template>
+        <a href="/addGroup" on-click="{{navigate}}">
+          <paper-fab icon="social:group" z="1" class="createIdea" title="create"></paper-fab>
+        </a>
+      </div>
+
+    </base-layout>
+  </template>
+
+  <script>
+
+    Polymer({
+
+      shortName: null,
+      groupHome: false,
+      name: "Betri Reykjavík",
+      subTitle: "Veldu hugmyndahóp",
+      groups: [],
+
+      ready: function () {
+        this.$.layout.setSpinner(true);
+        this.$.ajax.go();
+        debugger;
+      },
+
+      responseChanged: function (e, detail, sender) {
+        debugger;
+        this.$.layout.setSpinner(false);
+        this.groups = detail;
+      },
+
+      getQueryParams: function(qs) {
+        qs = qs.split("+").join(" ");
+
+        var params = {}, tokens,
+                re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(qs)) {
+          params[decodeURIComponent(tokens[1])]
+                  = decodeURIComponent(tokens[2]);
+        }
+
+        return params;
+      }
+    });
+  </script>
+</polymer-element>

@@ -7,9 +7,7 @@ module.exports = function(sequelize, DataTypes) {
     name: DataTypes.STRING,
     short_name: DataTypes.STRING,
     top_banner_file_name: DataTypes.STRING,
-    description: DataTypes.TEXT,
-    user_id: DataTypes.INTEGER,
-    position: DataTypes.INTEGER
+    description: DataTypes.TEXT
   }, {
     underscored: true,
     tableName: 'sub_instances',

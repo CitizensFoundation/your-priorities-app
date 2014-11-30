@@ -1,0 +1,43 @@
+<polymer-element name="home-page">
+  <template>
+    <link rel="stylesheet" href="home-page.css">
+    <app-globals id="globals"></app-globals>
+
+    <template if="{{true}}">
+      <core-ajax
+              auto="true"
+              id="ajax"
+              url="/api/groups"
+              response="{{groupsResponse}}"
+              handleAs="json">
+      </core-ajax>
+      <groups-home-page></groups-home-page>
+    </template>
+  </template>
+
+  <script>
+
+    Polymer({
+
+      shortName: null,
+      groupHome: false,
+
+      ready: function () {
+      },
+
+      getQueryParams: function(qs) {
+        qs = qs.split("+").join(" ");
+
+        var params = {}, tokens,
+                re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(qs)) {
+          params[decodeURIComponent(tokens[1])]
+                  = decodeURIComponent(tokens[2]);
+        }
+
+        return params;
+      }
+    });
+  </script>
+</polymer-element>
