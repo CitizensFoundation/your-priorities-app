@@ -1,4 +1,4 @@
-<polymer-element name="yrpri-idea" attributes="small idea showCategory showName">
+<polymer-element name="yrpri-idea" attributes="small idea showCategory showName userImagesLimit">
   <template>
 
     <link rel="stylesheet" href="yrpri-idea.css">
@@ -57,8 +57,18 @@
         </template>
         <template if="{{!small}}">
           <div style="padding-top: 16px; opacity: 0.80;">
-            <template repeat="{{idea.Endorsements as endorsement}}">
+            <template repeat="{{endorsement, endorsementIndex in idea.Endorsements | limitTo(userImagesLimit)}}">
               <user-image user="{{endorsement.User}}" small></user-image>
+            </template>
+
+            <template if="{{idea.Endorsements.length>userImagesLimit}}">
+              <paper-icon-button class="more" id="moreImagesButton" icon="add" on-tap="{{moreUserImages}}"></paper-icon-button>
+              <span id="numberOfMoreUserImages" style="display:none;margin-bottom:16px;padding-left:0px;margin-left:0px;">{{0 | countUserImagesLeft}}</span>
+              <span id="restOfUserImages" style="display: none;">
+                <template repeat="{{endorsement, endorsementIndex in idea.Endorsements | limitFrom(userImagesLimit,idea.Endorsements.length)}}">
+                  <user-image user="{{endorsement.User}}" small></user-image>
+                </template>
+              </span>
             </template>
           </div>
         </template>
@@ -68,6 +78,19 @@
 
   <script>
     Polymer({
+
+      userImagesLimit: 42,
+
+      countUserImagesLeft: function(e) {
+        return this.idea.Endorsements.length-this.userImagesLimit;
+      },
+
+      moreUserImages: function() {
+        this.$.moreImagesButton.style.display = "none";
+        this.$.numberOfMoreUserImages.style.display = "none";
+        this.$.restOfUserImages.style.display = "inline";
+      },
+
       goToIdea: function (e) {
         window.location='/#/ideas/'+this.idea.id;
       }
