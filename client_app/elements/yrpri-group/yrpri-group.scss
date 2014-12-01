@@ -11,10 +11,11 @@ section {
 .header {
   color: $primary-color-more-darker;
   cursor: pointer;
+  padding-top: 16px;
 }
 
 .description {
-  padding-top: 8px;
+  padding-top: 32px;
   padding-bottom: 8px;
   color: $primary-color-more-darker;
   line-height: $description-line-height;

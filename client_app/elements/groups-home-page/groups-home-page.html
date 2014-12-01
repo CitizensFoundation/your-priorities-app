@@ -40,27 +40,27 @@
       ready: function () {
         this.$.layout.setSpinner(true);
         this.$.ajax.go();
-        debugger;
       },
 
       responseChanged: function (e, detail, sender) {
-        debugger;
         this.$.layout.setSpinner(false);
-        this.groups = detail;
+        this.groups = this.defaultGroupFirst(detail);
+        debugger;
       },
 
-      getQueryParams: function(qs) {
-        qs = qs.split("+").join(" ");
-
-        var params = {}, tokens,
-                re = /[?&]?([^=]+)=([^&]*)/g;
-
-        while (tokens = re.exec(qs)) {
-          params[decodeURIComponent(tokens[1])]
-                  = decodeURIComponent(tokens[2]);
+      defaultGroupFirst: function (items) {
+        var filtered = [];
+        var defaultGroup = null;
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          if (item.short_name!="default") {
+            filtered.push(item);
+          } else {
+            defaultGroup = item;
+          }
         }
-
-        return params;
+        filtered.unshift(defaultGroup);
+        return filtered;
       }
     });
   </script>

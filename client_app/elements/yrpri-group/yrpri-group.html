@@ -1,4 +1,4 @@
-<polymer-element name="yrpri-group" attributes="small group">
+<polymer-element name="yrpri-group" attributes="small group showShortName">
   <template>
     <link rel="stylesheet" href="yrpri-group.css">
     <app-globals id="globals"></app-globals>
@@ -13,8 +13,10 @@
           </div>
           <div flex class="header" on-tap="{{goToGroup}}" layout vertical>
             <div>
-              <b>{{group.name | trim | truncate(small ? 60 : 200) }}</b><br>
-              {{group.short_name}}
+              <b>{{group.name | trim | truncate(small ? 60 : 200) }}</b>
+              <template if="showShortName">
+                <br>{{group.short_name}}
+              </template>
             </div>
           <template if="{{!small}}">
             <div flex style="">

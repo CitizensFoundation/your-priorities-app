@@ -4,13 +4,6 @@
     <app-globals id="globals"></app-globals>
 
     <template if="{{true}}">
-      <core-ajax
-              auto="true"
-              id="ajax"
-              url="/api/groups"
-              response="{{groupsResponse}}"
-              handleAs="json">
-      </core-ajax>
       <groups-home-page></groups-home-page>
     </template>
   </template>
