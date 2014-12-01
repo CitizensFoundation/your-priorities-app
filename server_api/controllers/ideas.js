@@ -14,7 +14,23 @@ router.get('/', function(req, res) {
   });
 });
 
+router.get('/:id/endorsements', function(req, res) {
+  console.log("ID Endorsements");
+  models.Endorsement.findAll({
+    where: {idea_id: req.params.id, status: 'active'},
+    order: "created_at DESC",
+    include: [
+      { model: models.User,
+        attributes: ["id", "login", "facebook_uid", "buddy_icon_file_name"]
+      }
+    ]
+  }).then(function(endorsements) {
+    res.send(endorsements);
+  });
+});
+
 router.get('/:id', function(req, res) {
+  console.log("ID");
   models.Idea.find({
     where: {id: req.params.id},
     include: [
@@ -31,11 +47,6 @@ router.get('/:id', function(req, res) {
               { model: models.User, attributes: ["id", "login", "facebook_uid", "buddy_icon_file_name"] }
             ]
           },
-        ]
-      },
-      { model: models.Endorsement,
-        include: [
-          { model: models.User, attributes: ["id", "login", "facebook_uid", "buddy_icon_file_name"] }
         ]
       },
       models.Category,

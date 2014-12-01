@@ -56,33 +56,58 @@
           <idea-action-bar idea="{{idea}}" small="{{small}}" style=""></idea-action-bar>
         </template>
         <template if="{{!small}}">
-          <div style="padding-top: 16px; opacity: 0.80;">
-            <template repeat="{{endorsement, endorsementIndex in idea.Endorsements | limitTo(userImagesLimit)}}">
-              <user-image user="{{endorsement.User}}" small></user-image>
-            </template>
-
-            <template if="{{idea.Endorsements.length>userImagesLimit}}">
-              <paper-icon-button class="more" id="moreImagesButton" icon="add" on-tap="{{moreUserImages}}"></paper-icon-button>
-              <span id="numberOfMoreUserImages" style="display:none;margin-bottom:16px;padding-left:0px;margin-left:0px;">{{0 | countUserImagesLeft}}</span>
+          <paper-spinner id="spinner" style="padding-top:4px;display:block;" active></paper-spinner>
+          <template if="{{endorsements}}">
+            <div style="padding-top: 16px; opacity: 0.80;">
+              <template repeat="{{endorsement, endorsementIndex in endorsements | limitTo(userImagesLimit)}}">
+                <user-image user="{{endorsement.User}}" small></user-image>
+              </template>
+              <div id="moreImages" style="display:none;">
+                <paper-icon-button class="more" id="moreImagesButton" icon="add" on-tap="{{moreUserImages}}"></paper-icon-button>
+                <span id="numberOfMoreUserImages" style="display:none;margin-bottom:16px;padding-left:0px;margin-left:0px;">{{0 | countUserImagesLeft}}</span>
               <span id="restOfUserImages" style="display: none;">
-                <template repeat="{{endorsement, endorsementIndex in idea.Endorsements | limitFrom(userImagesLimit,idea.Endorsements.length)}}">
+                <template repeat="{{endorsement, endorsementIndex in endorsements | limitFrom(userImagesLimit,endorsements.length)}}">
                   <user-image user="{{endorsement.User}}" small></user-image>
                 </template>
               </span>
-            </template>
-          </div>
+                </div>
+            </div>
+          </template>
         </template>
       </div>
     </div>
+
+    <core-ajax
+            auto="true"
+            id="endorsementAjax"
+            url="/api/ideas/{{idea.id}}/endorsements"
+            response="{{response}}"
+            handleAs="json">
+    </core-ajax>
   </template>
 
   <script>
     Polymer({
 
       userImagesLimit: 42,
+      endorsements: [],
+
+      allEndorsementsLength: function(idea) {
+        return (this.endorsements.length);
+      },
 
       countUserImagesLeft: function(e) {
-        return this.idea.Endorsements.length-this.userImagesLimit;
+        return this.allEndorsementsLength(this.idea)-this.userImagesLimit;
+      },
+
+      responseChanged: function (e, detail, sender) {
+        this.$.spinner.active = false;
+        this.endorsements = detail;
+        if (this.endorsements.length>this.userImagesLimit) {
+          this.$.spinner.style.display = "none";
+          this.$.moreImages.style.display = "inline";
+
+        }
       },
 
       moreUserImages: function() {

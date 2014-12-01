@@ -6,7 +6,7 @@ var models = require("../models");
 router.get('/', function(req, res) {
   models.Group.findAll({
     limit: 300,
-    order: "created_at DESC",
+    order: "counter_ideas DESC",
     where: "top_banner_file_name IS NOT NULL"
   }).then(function(groups) {
     res.send(groups);

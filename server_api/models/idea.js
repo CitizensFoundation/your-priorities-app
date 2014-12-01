@@ -7,7 +7,14 @@ module.exports = function(sequelize, DataTypes) {
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
     user_id: DataTypes.INTEGER,
-    position: DataTypes.INTEGER
+    position: DataTypes.INTEGER,
+    counter_endorsements_up: DataTypes.INTEGER,
+    counter_endorsements_down: DataTypes.INTEGER,
+    counter_points: DataTypes.INTEGER,
+    counter_comments: DataTypes.INTEGER,
+    counter_all_activities: DataTypes.INTEGER,
+    counter_main_activities: DataTypes.INTEGER,
+    impressions_count: DataTypes.INTEGER
   }, {
     underscored: true,
     tableName: 'ideas',
