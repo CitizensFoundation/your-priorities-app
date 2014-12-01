@@ -1,6 +1,7 @@
 <polymer-element name="ideas-page" extends="base-page">
   <template bind>
     <link rel="stylesheet" href="ideas-page.css">
+    <app-globals id="globals"></app-globals>
 
     <core-ajax
       auto="false"
@@ -10,7 +11,7 @@
       handleAs="json">
     </core-ajax>
 
-    <base-layout id="layout" selected="ideas" showLogo="true" categoryId="{{idea.Category.id}}" showFilter="true" name="{{groupName}}" subTitle="Efstu hugmyndir í Framkvæmdum">
+    <base-layout id="layout" selected="ideas" showLogo="true" categoryId="{{idea.Category.id}}" showFilter="true" name="{{groupName}}" subTitle="{{'ideas.top' | t}} í Framkvæmdum">
       <div class="card-container">
         <template repeat="{{ideas as idea}}">
           <paper-shadow class="card" z="1" center-center layout>

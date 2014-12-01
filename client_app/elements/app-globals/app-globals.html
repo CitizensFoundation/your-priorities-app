@@ -1,11 +1,14 @@
-<polymer-element name="app-globals">
+<polymer-element name="app-globals" attributes="i18n">
+
   <script>
     (function() {
       var selectedGroupId = null;
 
       Polymer({
+
         ready: function() {
-          this.selectedGroupId = null;
+
+          this.selectedGroupId = 1;
         }
       });
     })();
