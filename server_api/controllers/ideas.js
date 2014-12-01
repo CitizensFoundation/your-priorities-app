@@ -50,6 +50,7 @@ router.get('/:id', function(req, res) {
         ]
       },
       models.Category,
+      models.Group,
       models.User,
       models.IdeaRevision
     ]

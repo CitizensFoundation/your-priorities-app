@@ -77,13 +77,15 @@
       </div>
     </div>
 
-    <core-ajax
-            auto="true"
-            id="endorsementAjax"
-            url="/api/ideas/{{idea.id}}/endorsements"
-            response="{{response}}"
-            handleAs="json">
-    </core-ajax>
+    <template if="{{!small}}">
+      <core-ajax
+              auto="true"
+              id="endorsementAjax"
+              url="/api/ideas/{{idea.id}}/endorsements"
+              response="{{response}}"
+              handleAs="json">
+      </core-ajax>
+    </template>
   </template>
 
   <script>
@@ -102,11 +104,10 @@
 
       responseChanged: function (e, detail, sender) {
         this.$.spinner.active = false;
+        this.$.spinner.style.display = "none";
         this.endorsements = detail;
         if (this.endorsements.length>this.userImagesLimit) {
-          this.$.spinner.style.display = "none";
           this.$.moreImages.style.display = "inline";
-
         }
       },
 

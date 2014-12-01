@@ -25,7 +25,7 @@ module.exports = function(sequelize, DataTypes) {
         Idea.hasMany(models.IdeaRevision);
         Idea.belongsTo(models.Category);
         Idea.belongsTo(models.User);
-        Idea.belongsTo(models.Group);
+        Idea.belongsTo(models.Group, {foreignKey: "sub_instance_id"});
       }
     }
   });

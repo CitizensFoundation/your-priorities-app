@@ -13,4 +13,15 @@ router.get('/', function(req, res) {
   });
 });
 
+router.get('/:id/ideas', function(req, res) {
+  models.Idea.findAll({
+    limit: 50,
+    order: 'position DESC',
+    where: "description IS NOT NULL AND sub_instance_id = "+req.params.id+" AND status = 'published'",
+    include: [ models.Group, models.Point, models.Category, models.IdeaRevision, models.Endorsement ]
+  }).then(function(ideas) {
+    res.send(ideas);
+  });
+});
+
 module.exports = router;

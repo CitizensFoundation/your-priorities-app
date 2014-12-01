@@ -9,7 +9,10 @@
     <core-media-query query="min-width: 640px" queryMatches="{{largeScreen}}">
     </core-media-query>
 
-    <base-layout id="layout" selected="idea" showLogo="true" category="{{idea.Category}}" name="Betri Laugardalur 2015" subTitle="{{idea.name}}">
+    <base-layout id="layout" selected="idea" showLogo="true"
+                 category="{{idea.Category}}"
+                 name="{{idea.Group.name}}"
+                 subTitle="{{idea.name}}">
       <template if="{{idea}}">
 
         <div layout vertical center-center flex>
