@@ -57,20 +57,20 @@ $primary-color-more-darker: #000;
 
 .up_point[focused] /deep/ .floating-label .label-text {
   /* floating label color when the input is focused */
-  color: #e0e0e0; }
+  color: #b0b0b0; }
 
 .up_point /deep/ .focused-underline {
   /* line color when the input is focused */
-  background-color: #e0e0e0; }
+  background-color: #b0b0b0; }
 
 .up_point /deep/ .cursor {
   /* cursor color during the focus transition */
-  background-color: #e0e0e0; }
+  background-color: #b0b0b0; }
 
 .up_point.invalid[focused] /deep/ .floated-label .label-text,
 .up_point[focused] /deep/ .error {
   /* floating label, error message nad error icon color when the input is invalid and focused */
-  color: #e0e0e0; }
+  color: #b0b0b0; }
 
 .up_point.invalid /deep/ .focused-underline,
 .up_point.invalid /deep/ .cursor {
@@ -107,19 +107,19 @@ $primary-color-more-darker: #000;
 
 .down_point[focused] /deep/ .floating-label .label-text {
   /* floating label color when the input is focused */
-  color: #e0e0e0; }
+  color: #b0b0b0; }
 
 .down_point /deep/ .floating-label .label-text {
   /* floating label color when the input is focused */
-  color: #e0e0e0; }
+  color: #b0b0b0; }
 
 .down_point /deep/ .focused-underline {
   /* line color when the input is focused */
-  background-color: #e0e0e0; }
+  background-color: #b0b0b0; }
 
 .down_point /deep/ .cursor {
   /* cursor color during the focus transition */
-  background-color: #e0e0e0; }
+  background-color: #b0b0b0; }
 
 .down_point.invalid[focused] /deep/ .floated-label .label-text,
 .down_point[focused] /deep/ .error {

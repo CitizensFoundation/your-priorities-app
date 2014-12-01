@@ -22,6 +22,12 @@
                 {{idea.User.login}}
               </div>
             </template>
+            <template if="{{showCategory && !small}}">
+              <div class="categoryName">
+                {{idea.Category.name}}
+              </div>
+            </template>
+
           </div>
           <template if="{{!small}}">
             <div flex style="">

@@ -37,8 +37,13 @@ section {
 .userScreenname {
   padding-top: 4px;
   padding-bottom: 4px;
-  color: #e0e0e0; }
+  color: #b0b0b0; }
 
 .more {
   padding-right: 16px;
   margin-top: 8px; }
+
+.categoryName {
+  color: #b0b0b0;
+  padding-top: 4px;
+  padding-bottom: 4px; }
