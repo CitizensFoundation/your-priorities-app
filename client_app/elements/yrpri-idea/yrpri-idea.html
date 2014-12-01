@@ -57,6 +57,9 @@
           <template if="{{idea.description}}">
             {{idea.description | trim | truncate(small ? 200 : 10000,"...")}}
           </template>
+          <template if="{{!idea.description}}">
+            {{idea.Points[0].content | trim | truncate(small ? 200 : 10000,"...")}}
+          </template>
         </div>
         <template if="{{small}}">
           <idea-action-bar idea="{{idea}}" small="{{small}}" style=""></idea-action-bar>
