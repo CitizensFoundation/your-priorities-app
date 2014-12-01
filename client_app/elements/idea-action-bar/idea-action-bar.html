@@ -28,28 +28,7 @@
 
   <script>
     Polymer({
-      getRandomNumber: function (value) {
-        return Math.floor((Math.random() * value) + 1);
-      },
-      formatNumber: function (value) {
-        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      },
-      upVoteCount: function (endorsements) {
-        var upCount = 0;
-        for(var i = 0; i< endorsements.length; i++) {
-          if (endorsements[i].value>0)
-            upCount++;
-        }
-        return upCount;
-      },
-      downVoteCount: function (endorsements) {
-        var upCount = 0;
-        for(var i = 0; i< endorsements.length; i++) {
-          if (endorsements[i].value<0)
-            upCount++;
-        }
-        return upCount;
-      }
+
     });
   </script>
 </polymer-element>

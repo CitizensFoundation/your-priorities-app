@@ -1,4 +1,4 @@
-<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner showLogo showFilter name subTitle category" extends="logged-in-page">
+<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner idea showLogo showFilter name subTitle category" extends="logged-in-page">
   <template>
 
     <link rel="stylesheet" href="base-layout.css">
@@ -23,11 +23,26 @@
           <div class="separator" style="color:#F57C00">Betri Laugardalur 2015</div>
           <paper-item>
             <core-icon icon="av:news" style="padding-right:16px;"></core-icon>
-            Heim
+            <template if="{{idea}}">
+              <a href="/#/groups/{{idea.Group.id}}/ideas/{{idea.Group.name}}">
+                Heim
+              </a>
+            </template>
+            <template if="{{!idea}}">
+              Heim
+            </template>
           </paper-item>
           <paper-item>
             <core-icon icon="image:wb-sunny" style="padding-right:16px;"></core-icon>
-            Hugmyndir
+            <template if="{{idea}}">
+              <a href="/#/groups/{{idea.Group.id}}/ideas/{{idea.Group.name}}">
+                Hugmyndir
+              </a>
+            </template>
+            <template if="{{!idea}}">
+              Hugmyndir
+            </template>
+
           </paper-item>
           <paper-item>
             <core-icon icon="social:people" style="padding-right:16px;"></core-icon>
@@ -36,7 +51,9 @@
           <div class="separator" style="color:#FFB74D">Betri Reykavík</div>
           <paper-item>
             <core-icon icon="group-work" style="padding-right:16px;"></core-icon>
-            Hópar
+            <a href="/">
+              Hópar
+            </a>
           </paper-item>
 
           <div class="separator">Þínar hugmyndir</div>
@@ -52,9 +69,16 @@
       <core-scroll-header-panel id="scrollheader" main condenses keepCondensedHeader on-trackstart="{{onRefreshStart}}"
                                 on-tracky="{{onMainAreaTrack}}" on-trackend="{{onRefreshUp}}">
         <core-toolbar id="mainheader" class="tall">
-          <paper-icon-button icon="arrow-back" class="selected-item" on-tap="{{deselectAll}}"></paper-icon-button>
 
-          <paper-icon-button id="navicon" icon="menu" core-drawer-toggle></paper-icon-button>
+          <template if="{{idea}}">
+            <a href="/#/groups/{{idea.Group.id}}/ideas/{{idea.Group.name}}">
+              <paper-icon-button icon="arrow-back" style="color:#fff;" on-tap="{{goBack}}"></paper-icon-button>
+            </a>
+          </template>
+          <template if="{{!idea}}">
+            <paper-icon-button id="navicon" icon="menu" core-drawer-toggle></paper-icon-button>
+          </template>
+
           <div flex></div>
           <paper-shadow z="2" class="bottom indent title titleBottom">
             <div layout horizontal>
@@ -155,6 +179,7 @@
       toggleSearch: function (e) {
         this.$.search.toggle();
       },
+
       domReady: function () {
         this.titleStyle = this.shadowRoot.querySelector('.title').style;
         this.checkForSmallScreen();
@@ -173,6 +198,7 @@
                   'scale(' + scale + ') translateZ(0)';
         });
       },
+
       checkForSmallScreen: function () {
         if (this.smallScreen === true) {
           this.titleStyle.fontSize = "24px";

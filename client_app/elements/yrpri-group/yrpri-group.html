@@ -8,7 +8,7 @@
         <div layout vertical around-justified flex>
           <div>
             <image width="568" class="groupImage"
-                        src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/sub_instances/top_banners/000/000/{{group.id | padNumber}}/icon_full/{{group.top_banner_file_name}}"/>
+                   src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/sub_instances/top_banners/000/000/{{group.id | padNumber}}/icon_full/{{group.top_banner_file_name}}"/>
 
           </div>
           <div flex class="header" on-tap="{{goToGroup}}" layout vertical>
@@ -18,33 +18,35 @@
                 <br>{{group.short_name}}
               </template>
             </div>
-          <template if="{{!small}}">
-            <div flex style="">
-              <idea-action-bar idea="{{idea}}" small="{{small}}" flex style="float:right; clear:right;"></idea-action-bar>
-            </div>
-            <core-icon-button icon="report" style="color:#eee;"></core-icon-button>
-            <paper-icon-button class="share" style="color:#b0b0b0;" icon="image:remove-red-eye"></paper-icon-button>
-            <paper-icon-button class="share" icon="social:share"></paper-icon-button>
-            <template if="{{false}}">
-              <paper-menu-button class="selected-items" layout horizontal>
-                <paper-icon-button icon="more-vert"></paper-icon-button>
-                <paper-dropdown class="dropdown" halign="right">
-                  <div class="separator">Admin</div>
-                  <paper-item>Breyta</paper-item>
-                  <paper-item>Staða</paper-item>
-                  <paper-item>Eyða</paper-item>
-                </paper-dropdown>
-              </paper-menu-button>
+            <template if="{{!small}}">
+              <div flex style="">
+                <idea-action-bar idea="{{idea}}" small="{{small}}" flex
+                                 style="float:right; clear:right;"></idea-action-bar>
+              </div>
+              <core-icon-button icon="report" style="color:#eee;"></core-icon-button>
+              <paper-icon-button class="share" style="color:#b0b0b0;" icon="image:remove-red-eye"></paper-icon-button>
+              <paper-icon-button class="share" icon="social:share"></paper-icon-button>
+              <template if="{{false}}">
+                <paper-menu-button class="selected-items" layout horizontal>
+                  <paper-icon-button icon="more-vert"></paper-icon-button>
+                  <paper-dropdown class="dropdown" halign="right">
+                    <div class="separator">Admin</div>
+                    <paper-item>Breyta</paper-item>
+                    <paper-item>Staða</paper-item>
+                    <paper-item>Eyða</paper-item>
+                  </paper-dropdown>
+                </paper-menu-button>
+              </template>
             </template>
-          </template>
-        </div>
+          </div>
 
-        <div layout class="description">
-          <template if="{{group.description}}">
-            {{group.description | trim | truncate(small ? 200 : 10000,"...")}}
-          </template>
+          <div layout class="description">
+            <template if="{{group.description}}">
+              {{group.description | trim | truncate(small ? 200 : 10000,"...")}}
+            </template>
+          </div>
+          <group-action-bar group="{{group}}"></group-action-bar>
         </div>
-      </div>
       </div>
     </div>
   </template>
@@ -52,8 +54,8 @@
   <script>
     Polymer({
       goToGroup: function (e) {
-        this.$.globals.groupId=this.group.id;
-        window.location='/#/groups/'+this.group.id+"/ideas/"+this.group.name;
+        this.$.globals.groupId = this.group.id;
+        window.location = '/#/groups/' + this.group.id + "/ideas/" + this.group.name;
       }
     });
   </script>

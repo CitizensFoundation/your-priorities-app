@@ -1,0 +1,34 @@
+<polymer-element name="group-action-bar" attributes="group">
+  <template>
+
+    <link rel="stylesheet" href="group-action-bar.css">
+
+    <div layout horizontal flex justified class="action_bar">
+
+      <div layout horizontal>
+        <core-icon icon="image:wb-sunny" class="ideas" style="margin-right:4px;"></core-icon>
+        <div class="action_text ideas" style="margin-right:32px;">{{group.counter_ideas | formatNumber}}</div>
+
+        <core-icon icon="communication:message" class="ideas" style="margin-right:4px;"></core-icon>
+        <div class="action_text ideas" style="margin-right:32px;">{{group.counter_points | formatNumber}}</div>
+
+        <core-icon icon="social:people" class="ideas" style="margin-right:4px;"></core-icon>
+        <div class="action_text ideas">{{group.counter_users | formatNumber}}</div>
+      </div>
+
+      <div layout horizontal style="margin-right: 32px;">
+        <div layout horizontal flex>
+          <paper-icon-button icon="social:group-add" class="action"></paper-icon-button>
+          <paper-icon-button icon="social:share" class="action"></paper-icon-button>
+        </div>
+      </div>
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+    });
+  </script>
+</polymer-element>
