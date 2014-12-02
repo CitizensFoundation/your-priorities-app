@@ -1,4 +1,4 @@
-<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner idea showLogo showFilter name subTitle category" extends="logged-in-page">
+<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner idea showLogo categories showFilter name subTitle category" extends="logged-in-page">
   <template>
 
     <link rel="stylesheet" href="base-layout.css">
@@ -116,20 +116,25 @@
                       <template if="{{showFilter}}">
                         <paper-menu-button class="selected-items" layout horizontal style="padding-left:0px;padding-top: 0px;margin-top: -8px;">
                           <paper-icon-button class="filterIcon" icon="editor:merge-type"></paper-icon-button>
-                          <paper-dropdown class="dropdown" halign="left">
+                          <paper-dropdown id="filterDropdown" class="dropdown" halign="left">
                             <div layout horizontal>
                               <div>
-                                <paper-item>Efstu hugmyndir</paper-item>
-                                <paper-item>Nýjustu hugmyndir</paper-item>
-                                <paper-item>Hugmyndir af handahófi</paper-item>
-                                <paper-item>Hugmyndir þinna vina</paper-item>
+                                <core-selector on-core-select="{{ changeFilter }}">
+                                  <paper-item data-filter="top">{{'ideas.top' | t}}</paper-item>
+                                  <paper-item data-filter="newest">{{'ideas.newest' | t}}</paper-item>
+                                  <paper-item data-filter="random">{{'ideas.random' | t}}</paper-item>
+                                  <paper-item data-filter="inProgress">{{'ideas.inProgress' | t}}</paper-item>
+                                </core-selector>
                               </div>
-                              <div>
-                                <paper-item>Efstu hugmyndir</paper-item>
-                                <paper-item>Nýjustu hugmyndir</paper-item>
-                                <paper-item>Hugmyndir af handahófi</paper-item>
-                                <paper-item>Hugmyndir þinna vina</paper-item>
-                              </div>
+                              <template if="{{categories}}">
+                                <div>
+                                  <core-selector on-core-select="{{ changeCategory }}">
+                                    <template repeat="{{category in categories}}">
+                                      <paper-item data-category-id="{{category.id}}">{{category.name}}</paper-item>
+                                    </template>
+                                  </core-selector>
+                                </div>
+                              </template>
                             </div>
                           </paper-dropdown>
                         </paper-menu-button>
@@ -177,6 +182,14 @@
       previousSearches: ["Blah", "Hello"],
       smallScreen: false,
       selectedThreads: [],
+
+      changeFilter: function(e, detail) {
+        var filter = detail.item.dataset.filter;
+      },
+
+      changeCategory: function(e, detail) {
+        var categoryId = detail.item.dataset.categoryId;
+      },
 
       setSpinner: function(value) {
         this.$.spinner.active = value;

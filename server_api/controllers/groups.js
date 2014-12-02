@@ -24,4 +24,13 @@ router.get('/:id/ideas', function(req, res) {
   });
 });
 
+router.get('/:id/categories', function(req, res) {
+  models.Category.findAll({
+    where: "sub_instance_id = "+req.params.id,
+    limit: 20
+  }).then(function(categories) {
+    res.send(categories);
+  });
+});
+
 module.exports = router;
