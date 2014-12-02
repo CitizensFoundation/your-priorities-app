@@ -3,8 +3,7 @@
 module.exports = function(sequelize, DataTypes) {
   var IsoCountry = sequelize.define("IsoCountry", {
     code: DataTypes.STRING,
-    country_english_name: DataTypes.STRING,
-    map_coordinates: DataTypes.TEXT
+    country_english_name: DataTypes.STRING
   }, {
     underscored: true,
     tableName: 'tr8n_iso_countries',

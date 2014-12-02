@@ -33,16 +33,26 @@
   <script type="text/javascript" src="scripts/i18next-1.7.4.min.js"></script>
 
   <script>
-    i18n.init({ lng: "en" });
+    i18n.init({ lng: "is" });
     window.i18n = i18n;
 
     <!-- Temporary ugly hard-coding of those values -->
+    /*
     window.s3bucketName = "yrpri-paperclip-production";
     window.instanceName = "Your Priorities";
     window.instanceLogoFilename = "yrpri_logo.png";
     window.defaultGroupImage = "https://s3.amazonaws.com/yrpri-paperclip-production/instances/top_banners/000/000/001/icon_full/Yp_header_Default.png";
     window.defaultGroupFirst = false;
     window.isoCountryImagePath = "https://djoagb1gye72x.cloudfront.net/assets/flags/64/";
+    */
+
+    window.s3bucketName = "better-reykjavik-paperclip-production";
+    window.instanceName = "Betri Reykjavik";
+    window.instanceLogoFilename = "br_logo.png";
+    window.defaultGroupImage = "https://s3.amazonaws.com/yrpri-paperclip-production/instances/top_banners/000/000/001/icon_full/Yp_header_Default.png";
+    window.defaultGroupFirst = false;
+    window.isoCountryImagePath = "https://djoagb1gye72x.cloudfront.net/assets/flags/64/";
+
   </script>
 
   <!-- Conditionally load WC polyfills -->
