@@ -1,4 +1,4 @@
-<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner idea showLogo categories showFilter name subTitle category" extends="logged-in-page">
+<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner idea groupId groupName showLogo categories showFilter name subTitle category" extends="logged-in-page">
   <template>
 
     <link rel="stylesheet" href="base-layout.css">
@@ -182,13 +182,29 @@
       previousSearches: ["Blah", "Hello"],
       smallScreen: false,
       selectedThreads: [],
+      group: null,
 
       changeFilter: function(e, detail) {
-        var filter = detail.item.dataset.filter;
+        window.selectedFilter = detail.item.dataset.filter;
+        this.updateAfterFiltering();
       },
 
       changeCategory: function(e, detail) {
         var categoryId = detail.item.dataset.categoryId;
+        if (categoryId!=-1) {
+          window.categoryId = categoryId;
+        } else {
+          window.categoryId = null;
+        }
+        this.updateAfterFiltering();
+      },
+
+      updateAfterFiltering: function () {
+        var newLocation = "/#/groups/"+this.groupId+"/ideas/"+window.selectedFilter+"/"+this.groupName;
+        if (window.categoryId) {
+          newLocation+="?categoryId="+window.categoryId;
+        }
+        window.location = newLocation;
       },
 
       setSpinner: function(value) {
