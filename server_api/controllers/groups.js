@@ -13,10 +13,32 @@ router.get('/', function(req, res) {
   });
 });
 
-router.get('/:id/ideas', function(req, res) {
+router.get('/:id/ideas/:filter', function(req, res) {
+
+  var where = "sub_instance_id = "+req.params.id;
+  var order = "(counter_endorsements_up-counter_endorsements_down) DESC";
+
+  if (req.params.filter!="inProgress") {
+    where+=" AND status = 'published'";
+  } else {
+    where+=" AND status != 'published' AND status != 'deleted'";
+  }
+
+  if (req.params.filter=="newest") {
+    order = "created_at DESC";
+  } else if (req.params.filter=="random") {
+    order = "random()";
+  }
+
+  if (req.params.categoryId) {
+    where+=" AND category_id = "+ req.params.categoryId;
+  }
+
+  console.log(where);
+  console.log(order);
   models.Idea.findAll({
-    order: '(counter_endorsements_up-counter_endorsements_down) DESC',
-    where: "sub_instance_id = "+req.params.id+" AND status = 'published'",
+    order: order,
+    where: where,
     limit: 100,
     include: [ models.Category, models.IdeaRevision, models.Point ]
   }).then(function(ideas) {

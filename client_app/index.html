@@ -45,6 +45,7 @@
     window.defaultGroupFirst = false;
     window.isoCountryImagePath = "https://djoagb1gye72x.cloudfront.net/assets/flags/64/";
     window.selectedFilter="top";
+    window.categoryId = null;
     */
 
     window.s3bucketName = "better-reykjavik-paperclip-production";
@@ -54,6 +55,7 @@
     window.defaultGroupFirst = false;
     window.isoCountryImagePath = "https://djoagb1gye72x.cloudfront.net/assets/flags/64/";
     window.selectedFilter="top";
+    window.categoryId = null;
   </script>
 
   <!-- Conditionally load WC polyfills -->
@@ -78,7 +80,7 @@
 <!--core-animated-pages transitions="hero-transition cross-fade"-->
   <app-router>
     <app-route path="/ideas/:idea_id" element="idea-page"></app-route>
-    <app-route path="/groups/:groupId/ideas/*/:groupName" element="ideas-page"></app-route>
+    <app-route path="/groups/:groupId/ideas/:filter/:groupName" element="ideas-page"></app-route>
     <app-route path="/" element="home-page"></app-route>
   </app-router>
 

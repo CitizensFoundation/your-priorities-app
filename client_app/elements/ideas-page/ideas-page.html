@@ -6,7 +6,7 @@
     <core-ajax
       auto="false"
       id="ideasAjax"
-      url="/api/groups/{{groupId}}/ideas"
+      url=""
       response="{{ideasResponse}}"
       handleAs="json">
     </core-ajax>
@@ -42,7 +42,14 @@
       categories: [],
 
       domReady: function () {
+        if (this.filter) {
+          window.selectedFilter = this.filter;
+        }
         this.$.layout.setSpinner(true);
+        this.$.ideasAjax.url = "/api/groups/"+this.groupId+"/ideas/"+window.selectedFilter;
+        if (window.categoryId!=null) {
+          this.$.ideasAjax.url += "?categoryId="+window.categoryId;
+        }
         this.$.ideasAjax.go();
       },
 
