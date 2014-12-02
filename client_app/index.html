@@ -32,6 +32,11 @@
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
   <script type="text/javascript" src="../../scripts/i18next-1.7.4.min.js"></script>
 
+  <script>
+    i18n.init({ lng: "is" });
+    window.i18n = i18n;
+  </script>
+
   <!-- Conditionally load WC polyfills -->
   <!-- Thanks to https://github.com/geelen/x-gif for the snippet -->
   <script>
@@ -44,7 +49,6 @@
       document.write('<script src="bower_components/webcomponentsjs/webcomponents.js"><\/script>');
     }
   </script>
-
 
 
   <!-- build:vulcanized /elements/elements.vulcanized.html -->
@@ -61,13 +65,7 @@
   </app-router>
 
   <!-- build:js scripts/app.js -->
-
   <script src="scripts/app.js"></script>
-  <script type="text/javascript" src="../../scripts/i18next-1.7.4.min.js"></script>
-  <script>
-    i18n.init({ lng: "is" });
-    window.i18n = i18n;
-  </script>
 
   <!-- endbuild-->
 </body>
