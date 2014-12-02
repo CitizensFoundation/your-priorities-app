@@ -1,6 +1,8 @@
 {
   "ideas": {
-    "top": "Efstu hugmyndir"
+    "top": "Efstu hugmyndir",
+    "groups": "Hugmyndahópar",
+    "group": "Hugmyndahópur"
   },
   "points": {
     "point": "Rök"

@@ -22,6 +22,7 @@ module.exports = function(sequelize, DataTypes) {
         Group.hasMany(models.Endorsement, {foreignKey: "sub_instance_id"});
         Group.hasMany(models.Category, {foreignKey: "sub_instance_id"});
         Group.hasMany(models.User, {foreignKey: "sub_instance_id"});
+        Group.belongsTo(models.IsoCountry, {foreignKey: "iso_country_id"});
       }
     }
   });

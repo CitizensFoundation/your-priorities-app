@@ -33,8 +33,8 @@
 
       shortName: null,
       groupHome: false,
-      name: "Betri Reykjavík",
-      subTitle: "Hugmyndahópar",
+      name: PolymerExpressions.prototype.instanceName(),
+      subTitle: PolymerExpressions.prototype.t("ideas.groups"),
       groups: [],
 
       ready: function () {
@@ -44,7 +44,11 @@
 
       responseChanged: function (e, detail, sender) {
         this.$.layout.setSpinner(false);
-        this.groups = this.defaultGroupFirst(detail);
+        if (window.defaultGroupFirst) {
+          this.groups = this.defaultGroupFirst(detail);
+        } else {
+          this.groups = this.noTestGroup(detail);
+        }
       },
 
       defaultGroupFirst: function (items) {
@@ -60,7 +64,19 @@
         }
         filtered.unshift(defaultGroup);
         return filtered;
+      },
+
+      noTestGroup: function (items) {
+        var filtered = [];
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          if (item.short_name!="test") {
+            filtered.push(item);
+          }
+        }
+        return filtered;
       }
+
     });
   </script>
 </polymer-element>

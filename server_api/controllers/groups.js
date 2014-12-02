@@ -5,9 +5,9 @@ var models = require("../models");
 /* GET ideas listing. */
 router.get('/', function(req, res) {
   models.Group.findAll({
-    limit: 300,
+    limit: 100,
     order: "counter_ideas DESC",
-    where: "top_banner_file_name IS NOT NULL"
+    include: [ models.IsoCountry ]
   }).then(function(groups) {
     res.send(groups);
   });

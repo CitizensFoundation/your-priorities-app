@@ -30,11 +30,19 @@
 
   <meta name="theme-color" content="#303F9F">
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-  <script type="text/javascript" src="../../scripts/i18next-1.7.4.min.js"></script>
+  <script type="text/javascript" src="scripts/i18next-1.7.4.min.js"></script>
 
   <script>
-    i18n.init({ lng: "is" });
+    i18n.init({ lng: "en" });
     window.i18n = i18n;
+
+    <!-- Temporary ugly hard-coding of those values -->
+    window.s3bucketName = "yrpri-paperclip-production";
+    window.instanceName = "Your Priorities";
+    window.instanceLogoFilename = "yrpri_logo.png";
+    window.defaultGroupImage = "https://s3.amazonaws.com/yrpri-paperclip-production/instances/top_banners/000/000/001/icon_full/Yp_header_Default.png";
+    window.defaultGroupFirst = false;
+    window.isoCountryImagePath = "https://djoagb1gye72x.cloudfront.net/assets/flags/64/";
   </script>
 
   <!-- Conditionally load WC polyfills -->
@@ -49,7 +57,6 @@
       document.write('<script src="bower_components/webcomponentsjs/webcomponents.js"><\/script>');
     }
   </script>
-
 
   <!-- build:vulcanized /elements/elements.vulcanized.html -->
   <link rel="import" href="elements/elements.html">
