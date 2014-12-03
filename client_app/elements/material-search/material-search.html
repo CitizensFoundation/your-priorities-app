@@ -42,7 +42,7 @@
     <core-header-panel mode="standard" fit>
       <core-toolbar class="{{ {'core-narrow' : narrow} | tokenList}}">
         <paper-icon-button icon="arrow-back" on-tap="{{toggle}}"></paper-icon-button>
-        <input id="searchbox" placeholder="Search ideas" value="{{term}}" flex>
+        <input id="searchbox" placeholder="{{'ideas.search' | t}}" value="{{term}}" flex>
         <paper-icon-button icon="av:mic"></paper-icon-button>
       </core-toolbar>
       <core-menu on-core-select="{{onSelect}}">

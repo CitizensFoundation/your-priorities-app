@@ -4,7 +4,9 @@
     "newest": "Latest ideas",
     "random": "Random ideas",
     "inProgress": "Ideas in progress",
-    "groups": "Ideas groups"
+    "groups": "Ideas groups",
+    "search": "Search for ideas"
+
   },
   "short_word": {
     "in": "in"
