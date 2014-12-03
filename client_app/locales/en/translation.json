@@ -10,7 +10,8 @@
     "in": "in"
   },
   "categories": {
-    "all": "all categories"
+    "all": "all categories",
+    "the_all": "All categories"
   },
   "points": {
     "point": "Point"

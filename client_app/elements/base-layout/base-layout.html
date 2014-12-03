@@ -58,7 +58,7 @@
                 <div style="font-size:16px;margin-bottom: 8px;padding-bottom:8px;padding-top:4px;padding-left:4px;">
                   <div layout horizontal>
                     <template if="{{ideasFilter}}">
-                      <ideas-filter categories="{{categories}}" filter="{{filter}}" groupId="{{groupId}}" groupName="{{groupName}}"></ideas-filter>
+                      <ideas-filter id="filter" categories="{{categories}}" filter="{{filter}}" groupId="{{groupId}}" groupName="{{groupName}}"></ideas-filter>
                     </template>
 
                     <template if="{{!ideasFilter}}">
@@ -139,6 +139,10 @@
           localTitleStyle.transform = localTitleStyle.webkitTransform =
                   'scale(' + scale + ') translateZ(0)';
         });
+      },
+
+      updateFilter: function() {
+        this.$.filter.updateFilter();
       },
 
       checkForSmallScreen: function () {

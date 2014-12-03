@@ -20,7 +20,7 @@
     </core-ajax>
 
     <base-layout id="layout" selected="ideas" filter="{{filter}}" groupName="{{groupName}}" groupId="{{groupId}}" showLogo="true" categoryId="{{idea.Category.id}}"
-                 categories="{{categories}}" ideasFilter="true" name="{{groupName}}" subTitle="{{'ideas.top' | t}} í Framkvæmdum">
+                 categories="{{categories}}" ideasFilter="true" name="{{groupName}}">
       <div class="card-container">
         <template repeat="{{ideas as idea}}">
           <paper-shadow class="card" z="1" center-center layout>
@@ -60,6 +60,17 @@
 
       categoriesResponseChanged: function (e, detail, sender) {
         this.categories = detail;
+        if (this.categoryId) {
+          for (var i = 0; i < this.categories.length; i++) {
+            if (this.categories[i].id == this.categoryId) {
+              window.selectedCategoryName = this.categories[i].name;
+              this.$.layout.updateFilter();
+            }
+          }
+        } else {
+          window.selectedCategoryName = "categories.all";
+          this.$.layout.updateFilter();
+        }
       }
     });
   </script>

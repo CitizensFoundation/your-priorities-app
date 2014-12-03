@@ -23,6 +23,9 @@
               <template if="{{categories}}">
                 <div>
                   <core-selector on-core-select="{{ changeCategory }}">
+                    <paper-item data-category-id="{{-1}}">
+                      {{'categories.the_all' | t}}
+                    </paper-item>
                     <template repeat="{{category in categories}}">
                       <paper-item data-category-id="{{category.id}}" data-category-name="{{category.name}}">
                         {{category.name}}
@@ -43,6 +46,10 @@
       subTitle: "",
 
       domReady: function () {
+        this.updateFilter();
+      },
+
+      updateFilter: function () {
         window.selectedFilterName = "ideas."+this.filter;
         var filterName = PolymerExpressions.prototype.t(window.selectedFilterName);
         var categoryName = PolymerExpressions.prototype.t(window.selectedCategoryName);
@@ -59,7 +66,7 @@
       changeCategory: function (e, detail) {
         var categoryId = detail.item.dataset.categoryId;
         window.selectedCategoryName = detail.item.dataset.categoryName;
-        if (categoryId != -1) {
+        if (categoryId != "-1") {
           window.categoryId = categoryId;
         } else {
           window.categoryId = null;

@@ -10,7 +10,8 @@
     "in": "í"
   },
   "categories": {
-    "all": "öllum flokkum"
+    "all": "öllum flokkum",
+    "the_all": "Allir flokkar"
   },
   "points": {
     "point": "Rök"
