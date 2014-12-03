@@ -1,0 +1,68 @@
+<polymer-element name="base-nav-left" attributes="idea user">
+  <template>
+
+    <link rel="stylesheet" href="base-nav-left.css">
+
+      <core-toolbar id="navheader" class="tall">
+        <img class="middle profile" src="{{user.profile}}" hidden?="{{!user.profile}}">
+
+        <div class="bottom" layout vertical>
+          <span>Róbert Bjarnason</span>
+          <span>50 samfélagsstig</span>
+        </div>
+      </core-toolbar>
+
+      <core-menu selected="0" excludedLocalNames="div" on-core-select="{{menuSelect}}">
+        <div class="separator" style="color:#F57C00">Betri Laugardalur 2015</div>
+        <paper-item>
+          <core-icon icon="av:news" style="padding-right:16px;"></core-icon>
+          <template if="{{idea}}">
+            <a href="/#/groups/{{idea.Group.id}}/ideas/{{idea.Group.name}}">
+              Heim
+            </a>
+          </template>
+          <template if="{{!idea}}">
+            Heim
+          </template>
+        </paper-item>
+        <paper-item>
+          <core-icon icon="image:wb-sunny" style="padding-right:16px;"></core-icon>
+          <template if="{{idea}}">
+            <a href="/#/groups/{{idea.Group.id}}/ideas/{{idea.Group.name}}">
+              Hugmyndir
+            </a>
+          </template>
+          <template if="{{!idea}}">
+            Hugmyndir
+          </template>
+
+        </paper-item>
+        <paper-item>
+          <core-icon icon="social:people" style="padding-right:16px;"></core-icon>
+          Fólk
+        </paper-item>
+        <div class="separator" style="color:#FFB74D">{{'' | instanceName}}</div>
+        <paper-item>
+          <core-icon icon="group-work" style="padding-right:16px;"></core-icon>
+          <a href="/">
+            Hópar
+          </a>
+        </paper-item>
+
+        <div class="separator">Þínar hugmyndir</div>
+        <paper-item>1. Hugmynd</paper-item>
+        <paper-item>2. Hugmynd</paper-item>
+        <paper-item>3. Hugmynd</paper-item>
+        <template repeat="{{l in labels}}">
+          <paper-item label="{{l.name}}" icon="label" class="{{l.color}}"></paper-item>
+        </template>
+      </core-menu>
+
+  </template>
+  <script>
+
+    Polymer({
+
+    });
+  </script>
+</polymer-element>
