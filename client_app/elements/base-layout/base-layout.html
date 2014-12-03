@@ -202,7 +202,7 @@
       updateAfterFiltering: function () {
         var newLocation = "/#/groups/"+this.groupId+"/ideas/"+window.selectedFilter+"/"+this.groupName;
         if (window.categoryId) {
-          newLocation+="?categoryId="+window.categoryId;
+          newLocation+="/"+window.categoryId;
         }
         window.location = newLocation;
       },

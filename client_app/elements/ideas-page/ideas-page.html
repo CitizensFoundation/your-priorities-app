@@ -47,8 +47,8 @@
         }
         this.$.layout.setSpinner(true);
         this.$.ideasAjax.url = "/api/groups/"+this.groupId+"/ideas/"+window.selectedFilter;
-        if (window.categoryId!=null) {
-          this.$.ideasAjax.url += "?categoryId="+window.categoryId;
+        if (this.categoryId) {
+          this.$.ideasAjax.url += "/"+this.categoryId;
         }
         this.$.ideasAjax.go();
       },

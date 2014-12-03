@@ -13,7 +13,7 @@ router.get('/', function(req, res) {
   });
 });
 
-router.get('/:id/ideas/:filter', function(req, res) {
+router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
 
   var where = "sub_instance_id = "+req.params.id;
   var order = "(counter_endorsements_up-counter_endorsements_down) DESC";
@@ -29,10 +29,15 @@ router.get('/:id/ideas/:filter', function(req, res) {
   } else if (req.params.filter=="random") {
     order = "random()";
   }
+  console.log("a1");
 
-  if (req.params.categoryId) {
+  console.log(req.param["categoryId"]);
+  console.log(req.params);
+
+  if (req.params.categoryId!=undefined) {
     where+=" AND category_id = "+ req.params.categoryId;
   }
+  console.log("A2");
 
   console.log(where);
   console.log(order);
