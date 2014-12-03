@@ -14,7 +14,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/:id/search/:term', function(req, res) {
-  models.Idea.search(req.params.term,req.params.id)
+  models.Idea.search(req.params.term,req.params.id, models.Category)
       .then(function(ideas) {
         res.send(ideas);
       });

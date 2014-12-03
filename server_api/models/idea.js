@@ -63,7 +63,7 @@ module.exports = function(sequelize, DataTypes) {
 
       },
 
-      search: function(query, groupId) {
+      search: function(query, groupId, modelCategory) {
         console.log("In search for " + query);
 
         if(sequelize.options.dialect !== 'postgres') {
@@ -76,8 +76,17 @@ module.exports = function(sequelize, DataTypes) {
         query = sequelize.getQueryInterface().escape(query);
         console.log(query);
 
-        return sequelize
-            .query('SELECT * FROM "' + Idea.tableName + '" WHERE "' + Idea.getSearchVector() + '" @@ plainto_tsquery(\'english\', ' + query + ')'+'AND sub_instance_id = '+groupId, Idea);
+        var where = '"'+Idea.getSearchVector() + '" @@ plainto_tsquery(\'english\', ' + query + ')';
+
+        return Idea.findAll({
+          order: "created_at DESC",
+          where: where,
+          limit: 100,
+          include: [ modelCategory ]
+        });
+
+//        return sequelize
+ //           .query('SELECT * FROM "' + Idea.tableName + '" WHERE "' + Idea.getSearchVector() + '" @@ plainto_tsquery(\'english\', ' + query + ')'+'AND sub_instance_id = '+groupId, Idea);
       }
     }
   });
