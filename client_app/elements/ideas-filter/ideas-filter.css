@@ -12,3 +12,11 @@ $primary-color-more-darker: #000;
 */
 .filterIcon {
   padding-right: 16px; }
+
+.filterIconTransform {
+  -moz-transform: scaleY(-1);
+  -o-transform: scaleY(-1);
+  -webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
+  filter: FlipV;
+  -ms-filter: "FlipV"; }
