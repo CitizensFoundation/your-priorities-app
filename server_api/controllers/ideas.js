@@ -29,13 +29,6 @@ router.get('/:id/endorsements', function(req, res) {
   });
 });
 
-router.get('/:search/:term', function(req, res) {
-  Idea.search(req.params.term)
-      .then(function(ideas) {
-        res.send(ideas);
-      });
-});
-
 router.get('/:id', function(req, res) {
   console.log("ID");
   models.Idea.find({

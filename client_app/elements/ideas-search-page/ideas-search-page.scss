@@ -1,0 +1,33 @@
+@import '../styles/variables';
+
+.card-container {
+  text-align: center;
+  padding-top: 16px;
+}
+
+.card {
+  display: inline-block;
+  background: white;
+  box-sizing: border-box;
+  width: 400px;
+  height: 240px;
+  margin: 16px;
+  padding: 16px;
+  border-radius: 2%;
+  text-align: left;
+  vertical-align: top;
+}
+
+.createIdea {
+  background-color: $accent-color-darker;
+  position: fixed;
+  bottom:24px;
+  right: 28px;
+}
+
+@media (max-width: 500px) {
+  .card {
+    width: 320px;
+    height: 250px;
+  }
+}

@@ -63,7 +63,9 @@ module.exports = function(sequelize, DataTypes) {
 
       },
 
-      search: function(query) {
+      search: function(query, groupId) {
+        console.log("In search for " + query);
+
         if(sequelize.options.dialect !== 'postgres') {
           console.log('Search is only implemented on POSTGRES database');
           return;
@@ -75,7 +77,7 @@ module.exports = function(sequelize, DataTypes) {
         console.log(query);
 
         return sequelize
-            .query('SELECT * FROM "' + Idea.tableName + '" WHERE "' + Idea.getSearchVector() + '" @@ plainto_tsquery(\'english\', ' + query + ')', Idea);
+            .query('SELECT * FROM "' + Idea.tableName + '" WHERE "' + Idea.getSearchVector() + '" @@ plainto_tsquery(\'english\', ' + query + ')'+'AND sub_instance_id = '+groupId, Idea);
       }
     }
   });

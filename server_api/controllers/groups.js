@@ -13,6 +13,13 @@ router.get('/', function(req, res) {
   });
 });
 
+router.get('/:id/search/:term', function(req, res) {
+  models.Idea.search(req.params.term,req.params.id)
+      .then(function(ideas) {
+        res.send(ideas);
+      });
+});
+
 router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
 
   var where = "sub_instance_id = "+req.params.id;

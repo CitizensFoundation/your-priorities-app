@@ -84,6 +84,7 @@
 <!--core-animated-pages transitions="hero-transition cross-fade"-->
   <app-router>
     <app-route path="/ideas/:idea_id" element="idea-page"></app-route>
+    <app-route path="/groups/:groupId/search/:term" element="ideas-search-page"></app-route>
     <app-route path="/groups/:groupId/ideas/:filter/:groupName" element="ideas-page"></app-route>
     <app-route path="/groups/:groupId/ideas/:filter/:groupName/:categoryId" element="ideas-page"></app-route>
     <app-route path="/" element="home-page"></app-route>
