@@ -1,4 +1,4 @@
-<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner idea groupId groupName showLogo categories showFilter name subTitle category" extends="logged-in-page">
+<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner idea groupId groupName showLogo categories ideasFilter name subTitle category" extends="logged-in-page">
   <template>
 
     <link rel="stylesheet" href="base-layout.css">
@@ -61,31 +61,8 @@
                       {{subTitle}}
                     </div>
                     <div>
-                      <template if="{{showFilter}}">
-                        <paper-menu-button class="selected-items" layout horizontal style="padding-left:0px;padding-top: 0px;margin-top: -8px;">
-                          <paper-icon-button class="filterIcon" icon="editor:merge-type"></paper-icon-button>
-                          <paper-dropdown id="filterDropdown" class="dropdown" halign="left">
-                            <div layout horizontal>
-                              <div>
-                                <core-selector on-core-select="{{ changeFilter }}">
-                                  <paper-item data-filter="top">{{'ideas.top' | t}}</paper-item>
-                                  <paper-item data-filter="newest">{{'ideas.newest' | t}}</paper-item>
-                                  <paper-item data-filter="random">{{'ideas.random' | t}}</paper-item>
-                                  <paper-item data-filter="inProgress">{{'ideas.inProgress' | t}}</paper-item>
-                                </core-selector>
-                              </div>
-                              <template if="{{categories}}">
-                                <div>
-                                  <core-selector on-core-select="{{ changeCategory }}">
-                                    <template repeat="{{category in categories}}">
-                                      <paper-item data-category-id="{{category.id}}">{{category.name}}</paper-item>
-                                    </template>
-                                  </core-selector>
-                                </div>
-                              </template>
-                            </div>
-                          </paper-dropdown>
-                        </paper-menu-button>
+                      <template if="{{ideasFilter}}">
+                        <ideas-filter categories="{{categories}}" groupId="{{groupId}}" groupName="{{groupName}}"></ideas-filter>
                       </template>
                     </div>
                   </div>
@@ -131,29 +108,6 @@
       smallScreen: false,
       selectedThreads: [],
       group: null,
-
-      changeFilter: function(e, detail) {
-        window.selectedFilter = detail.item.dataset.filter;
-        this.updateAfterFiltering();
-      },
-
-      changeCategory: function(e, detail) {
-        var categoryId = detail.item.dataset.categoryId;
-        if (categoryId!=-1) {
-          window.categoryId = categoryId;
-        } else {
-          window.categoryId = null;
-        }
-        this.updateAfterFiltering();
-      },
-
-      updateAfterFiltering: function () {
-        var newLocation = "/#/groups/"+this.groupId+"/ideas/"+window.selectedFilter+"/"+this.groupName;
-        if (window.categoryId) {
-          newLocation+="/"+window.categoryId;
-        }
-        window.location = newLocation;
-      },
 
       setSpinner: function(value) {
         this.$.spinner.active = value;
