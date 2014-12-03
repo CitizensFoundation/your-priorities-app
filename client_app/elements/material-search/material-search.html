@@ -1,4 +1,4 @@
-<polymer-element name="material-search" attributes="active previousSearches narrow" fit>
+<polymer-element name="material-search" attributes="active previousSearches narrow groupId" fit>
   <template>
     <style>
       :host {
@@ -42,7 +42,7 @@
     <core-header-panel mode="standard" fit>
       <core-toolbar class="{{ {'core-narrow' : narrow} | tokenList}}">
         <paper-icon-button icon="arrow-back" on-tap="{{toggle}}"></paper-icon-button>
-        <input id="searchbox" placeholder="Search ideas" flex>
+        <input id="searchbox" placeholder="Search ideas" value="{{term}}" flex>
         <paper-icon-button icon="av:mic"></paper-icon-button>
       </core-toolbar>
       <core-menu on-core-select="{{onSelect}}">
@@ -51,6 +51,7 @@
         </template>
       </core-menu>
     </core-header-panel>
+    <core-a11y-keys target="{{searchbox}}" keys="enter" on-keys-pressed="{{enterHandler}}"></core-a11y-keys>
   </template>
   <script>
     Polymer({
@@ -58,6 +59,11 @@
         narrow: {value: false, reflect: true},
         active: {value: false, reflect: true}
       },
+
+      enterHandler: function () {
+        window.location = "/#/groups/" + this.groupId + "/search/"+ this.term;
+      },
+
       created: function() {
         this.previousSearches = [];
       },
