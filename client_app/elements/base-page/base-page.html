@@ -19,8 +19,10 @@
           this.fire('change-route', sender.href);
         },
         goBack: function(e) {
-          e.preventDefault();
-          this.fire('change-route-back');
+          debugger;
+          window.history.back();
+//          e.preventDefault();
+  //        this.fire('change-route-back');
         }
       });
     })();
