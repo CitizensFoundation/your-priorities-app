@@ -1,4 +1,4 @@
-<polymer-element name="base-layout" attributes="selected needLogin user pageTitle spinner idea groupId groupName showLogo categories ideasFilter name subTitle category" extends="logged-in-page">
+<polymer-element name="base-layout" attributes="selected needLogin user filter pageTitle spinner idea groupId groupName showLogo categories ideasFilter name subTitle category" extends="logged-in-page">
   <template>
 
     <link rel="stylesheet" href="base-layout.css">
@@ -57,17 +57,17 @@
 
                 <div style="font-size:16px;margin-bottom: 8px;padding-bottom:8px;padding-top:4px;padding-left:4px;">
                   <div layout horizontal>
-                    <div>
-                      {{subTitle}}
-                    </div>
-                    <div>
-                      <template if="{{ideasFilter}}">
-                        <ideas-filter categories="{{categories}}" groupId="{{groupId}}" groupName="{{groupName}}"></ideas-filter>
-                      </template>
-                    </div>
+                    <template if="{{ideasFilter}}">
+                      <ideas-filter categories="{{categories}}" filter="{{filter}}" groupId="{{groupId}}" groupName="{{groupName}}"></ideas-filter>
+                    </template>
+
+                    <template if="{{!ideasFilter}}">
+                      <div>
+                        {{subTitle}}
+                      </div>
+                    </template>
                   </div>
                 </div>
-
               </div>
             </div>
           </paper-shadow>

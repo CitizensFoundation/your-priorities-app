@@ -1,8 +1,16 @@
 {
   "ideas": {
     "top": "Efstu hugmyndir",
-    "groups": "Hugmyndahópar",
-    "group": "Hugmyndahópur"
+    "newest": "Nýjustu hugmyndir",
+    "random": "Hugmyndir af handahófi",
+    "inProgress": "Hugmyndir í ferli",
+    "groups": "Hugmyndahópar"
+  },
+  "short_word": {
+    "in": "í"
+  },
+  "categories": {
+    "all": "öllum flokkum"
   },
   "points": {
     "point": "Rök"

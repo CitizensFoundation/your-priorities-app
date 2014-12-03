@@ -1,7 +1,16 @@
 {
   "ideas": {
     "top": "Top ideas",
+    "newest": "Latest ideas",
+    "random": "Random ideas",
+    "inProgress": "Ideas in progress",
     "groups": "Ideas groups"
+  },
+  "short_word": {
+    "in": "in"
+  },
+  "categories": {
+    "all": "all categories"
   },
   "points": {
     "point": "Point"

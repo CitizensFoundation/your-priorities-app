@@ -1,44 +1,64 @@
-<polymer-element name="ideas-filter" attributes="categories groupId groupName">
+<polymer-element name="ideas-filter" attributes="categories groupId groupName filter">
   <template>
 
     <link rel="stylesheet" href="ideas-filter.css">
-
-    <paper-menu-button class="selected-items" layout horizontal
-                       style="padding-left:0px;padding-top: 0px;margin-top: -8px;">
-      <paper-icon-button class="filterIcon" icon="editor:merge-type"></paper-icon-button>
-      <paper-dropdown id="filterDropdown" class="dropdown" halign="left">
-        <div layout horizontal>
-          <div>
-            <core-selector on-core-select="{{ changeFilter }}">
-              <paper-item data-filter="top">{{'ideas.top' | t}}</paper-item>
-              <paper-item data-filter="newest">{{'ideas.newest' | t}}</paper-item>
-              <paper-item data-filter="random">{{'ideas.random' | t}}</paper-item>
-              <paper-item data-filter="inProgress">{{'ideas.inProgress' | t}}</paper-item>
-            </core-selector>
-          </div>
-          <template if="{{categories}}">
-            <div>
-              <core-selector on-core-select="{{ changeCategory }}">
-                <template repeat="{{category in categories}}">
-                  <paper-item data-category-id="{{category.id}}">{{category.name}}</paper-item>
-                </template>
-              </core-selector>
+    <div layout horizontal>
+      <div>
+        {{subTitle}}
+      </div>
+      <div>
+        <paper-menu-button class="selected-items" layout horizontal
+                           style="padding-left:0px;padding-top: 0px;margin-top: -8px;">
+          <paper-icon-button class="filterIcon" icon="editor:merge-type"></paper-icon-button>
+          <paper-dropdown id="filterDropdown" class="dropdown" halign="left">
+            <div layout horizontal>
+              <div>
+                <core-selector on-core-select="{{ changeFilter }}">
+                  <paper-item data-filter="top">{{'ideas.top' | t}}</paper-item>
+                  <paper-item data-filter="newest">{{'ideas.newest' | t}}</paper-item>
+                  <paper-item data-filter="random">{{'ideas.random' | t}}</paper-item>
+                  <paper-item data-filter="inProgress">{{'ideas.inProgress' | t}}</paper-item>
+                </core-selector>
+              </div>
+              <template if="{{categories}}">
+                <div>
+                  <core-selector on-core-select="{{ changeCategory }}">
+                    <template repeat="{{category in categories}}">
+                      <paper-item data-category-id="{{category.id}}" data-category-name="{{category.name}}">
+                        {{category.name}}
+                      </paper-item>
+                    </template>
+                  </core-selector>
+                </div>
+              </template>
             </div>
-          </template>
-        </div>
-      </paper-dropdown>
-    </paper-menu-button>
+          </paper-dropdown>
+        </paper-menu-button>
+      </div>
+    </div>
   </template>
   <script>
     Polymer({
 
+      subTitle: "",
+
+      domReady: function () {
+        window.selectedFilterName = "ideas."+this.filter;
+        var filterName = PolymerExpressions.prototype.t(window.selectedFilterName);
+        var categoryName = PolymerExpressions.prototype.t(window.selectedCategoryName);
+        var inWord = PolymerExpressions.prototype.t("short_word.in");
+        this.subTitle = filterName + " " + inWord + " " + categoryName;
+      },
+
       changeFilter: function (e, detail) {
         window.selectedFilter = detail.item.dataset.filter;
+        window.selectedFilterName = "ideas."+window.selectedFilter;
         this.updateAfterFiltering();
       },
 
       changeCategory: function (e, detail) {
         var categoryId = detail.item.dataset.categoryId;
+        window.selectedCategoryName = detail.item.dataset.categoryName;
         if (categoryId != -1) {
           window.categoryId = categoryId;
         } else {
