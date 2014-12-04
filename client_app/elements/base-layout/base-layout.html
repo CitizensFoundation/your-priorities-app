@@ -3,6 +3,14 @@
 
     <link rel="stylesheet" href="base-layout.css">
 
+    <template if="{{groupId=='474' || groupId=='368'}}">
+      <style>
+        #drawerPanel core-scroll-header-panel::shadow #headerBg {
+          background: url(nhs-citizen.jpg) center center no-repeat;
+          background-size: 100%;
+        }
+      </style>
+    </template>
     <app-globals id="globals"></app-globals>
 
     <core-media-query query="max-width: 550px" queryMatches="{{smallScreen}}"></core-media-query>
