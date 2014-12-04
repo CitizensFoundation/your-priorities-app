@@ -11,7 +11,11 @@ $primary-color-darker: #222222;
 $primary-color-more-darker: #000;
 */
 .filterIcon {
-  padding-right: 16px; }
+  padding-right: 32px;
+  margin-left: 12px;
+  margin-bottom: 4px;
+  background-color: #f7f7f7;
+  color: #444; }
 
 .filterIconTransform {
   -moz-transform: scaleY(-1);
