@@ -51,12 +51,16 @@
             </template>
           </div>
 
-          <div layout class="description">
-            <template if="{{group.description}}">
-              {{group.description | trim | truncate(small ? 200 : 10000,"...")}}
-            </template>
+          <div layout class="description" horizontal>
             <template if="{{group.IsoCountry}}">
-              <core-image src="{{'' | isoCountryImagePath}}{{group.IsoCountry.code | lowercase}}.png"></core-image>
+              <div style="padding-right:16px;">
+                <core-image src="{{'' | isoCountryImagePath}}{{group.IsoCountry.code | lowercase}}.png"></core-image>
+              </div>
+            </template>
+            <template if="{{group.description}}">
+              <div>
+                {{group.description | trim | truncate(small ? 200 : 10000,"...")}}
+              </div>
             </template>
           </div>
           <group-action-bar group="{{group}}"></group-action-bar>
@@ -67,7 +71,6 @@
 
   <script>
     Polymer({
-
       goToGroup: function (e) {
         this.$.globals.groupId = this.group.id;
         window.location = '/#/groups/' + this.group.id + "/ideas/top/" + this.group.name;
