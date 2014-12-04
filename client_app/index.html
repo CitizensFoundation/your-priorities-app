@@ -33,11 +33,11 @@
   <script type="text/javascript" src="scripts/i18next-1.7.4.min.js"></script>
 
   <script>
-    i18n.init({ lng: "is" });
+    i18n.init({ lng: "en" });
     window.i18n = i18n;
 
     <!-- Temporary ugly hard-coding of those values -->
-    /*
+    // Your Priorities
     window.s3bucketName = "yrpri-paperclip-production";
     window.instanceName = "Your Priorities";
     window.instanceLogoFilename = "yrpri_logo.png";
@@ -48,8 +48,9 @@
     window.selectedFilterName = "ideas.top";
     window.categoryId = null;
     window.selectedCategoryName = "categories.all";
-    */
 
+    /*
+    // Better Reykjavik
     window.s3bucketName = "better-reykjavik-paperclip-production";
     window.instanceName = "Betri Reykjavik";
     window.instanceLogoFilename = "br_logo.png";
@@ -60,6 +61,7 @@
     window.selectedFilterName = "ideas.top";
     window.categoryId = null;
     window.selectedCategoryName = "categories.all";
+     */
   </script>
 
   <!-- Conditionally load WC polyfills -->

@@ -16,6 +16,9 @@ section {
 .category {
   padding-right: 16px; }
 
+.groupImage {
+  cursor: pointer; }
+
 .header {
   color: #424242;
   cursor: pointer;

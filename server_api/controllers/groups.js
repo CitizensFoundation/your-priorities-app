@@ -59,8 +59,15 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
 });
 
 router.get('/:id/categories', function(req, res) {
+  var where;
+  console.log(req.params.id);
+  if (req.params.id=="default") {
+    where = "sub_instance_id IS NULL";
+  } else {
+    where = "sub_instance_id = "+req.params.id;
+  }
   models.Category.findAll({
-    where: "sub_instance_id = "+req.params.id,
+    where: where,
     limit: 20
   }).then(function(categories) {
     res.send(categories);

@@ -67,9 +67,10 @@
 
   <script>
     Polymer({
+
       goToGroup: function (e) {
         this.$.globals.groupId = this.group.id;
-        window.location = '/#/groups/' + this.group.id + "/ideas/newest/" + this.group.name;
+        window.location = '/#/groups/' + this.group.id + "/ideas/top/" + this.group.name;
       }
     });
   </script>

@@ -29,6 +29,13 @@
 
   <script>
     Polymer({
+      ready: function () {
+        // Inaccurate fudge for Your Priorities country pages that mostly have a common user database not connected to
+        // the group
+        if (this.group.IsoCountry) {
+          this.group.counter_users = this.group.counter_users*40;
+        }
+      }
     });
   </script>
 </polymer-element>

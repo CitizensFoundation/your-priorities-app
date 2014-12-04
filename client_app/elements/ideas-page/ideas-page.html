@@ -12,7 +12,7 @@
     </core-ajax>
 
     <core-ajax
-            auto="true"
+            auto="false"
             id="categoryAjax"
             url="/api/groups/{{groupId}}/categories"
             response="{{categoriesResponse}}"
@@ -40,6 +40,7 @@
 
       ideas: [],
       categories: [],
+      defaultCategories: false,
 
       domReady: function () {
         if (this.filter) {
@@ -51,6 +52,7 @@
           this.$.ideasAjax.url += "/"+this.categoryId;
         }
         this.$.ideasAjax.go();
+        this.$.categoryAjax.go();
       },
 
       ideasResponseChanged: function (e, detail, sender) {
@@ -59,17 +61,23 @@
       },
 
       categoriesResponseChanged: function (e, detail, sender) {
-        this.categories = detail;
-        if (this.categoryId) {
-          for (var i = 0; i < this.categories.length; i++) {
-            if (this.categories[i].id == this.categoryId) {
-              window.selectedCategoryName = this.categories[i].name;
-              this.$.layout.updateFilter();
+        if (detail.length==0 && !this.defaultCategories) {
+          this.defaultCategories = true;
+          this.$.categoryAjax.url = "default";
+          this.$.categoryAjax.go();
+        } else if (detail!=null) {
+          this.categories = detail;
+          if (this.categoryId) {
+            for (var i = 0; i < this.categories.length; i++) {
+              if (this.categories[i].id == this.categoryId) {
+                window.selectedCategoryName = this.categories[i].name;
+                this.$.layout.updateFilter();
+              }
             }
+          } else {
+            window.selectedCategoryName = "categories.all";
+            this.$.layout.updateFilter();
           }
-        } else {
-          window.selectedCategoryName = "categories.all";
-          this.$.layout.updateFilter();
         }
       }
     });
