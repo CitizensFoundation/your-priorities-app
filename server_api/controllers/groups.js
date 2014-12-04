@@ -51,7 +51,7 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
   models.Idea.findAll({
     order: order,
     where: where,
-    limit: 100,
+    limit: 42,
     include: [ models.Category, models.IdeaRevision, models.Point ]
   }).then(function(ideas) {
     res.send(ideas);

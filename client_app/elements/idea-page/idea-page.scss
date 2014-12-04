@@ -16,11 +16,25 @@
   font-size: 40px;
 }
 
+.topCard {
+  display: inline-block;
+  background: white;
+  box-sizing: border-box;
+  max-width: 1000px;
+  margin: 8px;
+  max-height: 5400px !important;
+  padding: 24px 24px 24px 24px;
+  border-radius: 0%;
+  text-align: left;
+  margin-top: 16px;
+  vertical-align: top;
+}
+
 .card {
   display: inline-block;
   background: white;
   box-sizing: border-box;
-  width: 1000px;
+  max-width: 1000px;
   margin: 8px;
   height: 100% !important;
   padding: 24px 24px 24px 24px;
@@ -35,7 +49,8 @@
 }
 
 .cardTabs {
-  height: 2400px !important;
+  height: 3200px !important;
   padding: 8px 24px 24px 24px;
   margin-top: 8px;
+  width: 100%;
 }

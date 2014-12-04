@@ -16,9 +16,9 @@
                  idea="{{idea}}">
       <template if="{{idea}}">
 
-        <div layout vertical center-center flex>
+        <div layout vertical center-center>
 
-          <paper-shadow class="card" z="2" center-center>
+          <paper-shadow id="topCard" class="topCard" z="2" center-center>
             <yrpri-idea idea="{{idea}}" showCategory="true"></yrpri-idea>
           </paper-shadow>
 
@@ -64,6 +64,7 @@
             this.idea.description = this.idea.Points[0].content;
             this.idea.Points.shift();
           }
+          this.$.topCard.update();
         },
         domReady: function () {
           this.$.layout.setSpinner(true);
