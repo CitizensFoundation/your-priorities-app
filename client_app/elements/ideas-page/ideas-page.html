@@ -19,6 +19,14 @@
             handleAs="json">
     </core-ajax>
 
+    <core-ajax
+            auto="false"
+            id="categoryDefaultAjax"
+            url="/api/groups/default/categories"
+            response="{{categoriesResponse}}"
+            handleAs="json">
+    </core-ajax>
+
     <base-layout id="layout" selected="ideas" filter="{{filter}}" groupName="{{groupName}}" groupId="{{groupId}}" showLogo="true" categoryId="{{idea.Category.id}}"
                  categories="{{categories}}" ideasFilter="true" name="{{groupName}}">
       <div class="card-container">
@@ -61,10 +69,9 @@
       },
 
       categoriesResponseChanged: function (e, detail, sender) {
-        if (detail.length==0 && !this.defaultCategories) {
+        if (detail && detail.length==0 && !this.defaultCategories) {
           this.defaultCategories = true;
-          this.$.categoryAjax.url = "default";
-          this.$.categoryAjax.go();
+          this.$.categoryDefaultAjax.go();
         } else if (detail!=null) {
           this.categories = detail;
           if (this.categoryId) {

@@ -2,6 +2,7 @@
   <template>
 
     <link rel="stylesheet" href="base-layout.css">
+
     <app-globals id="globals"></app-globals>
 
     <core-media-query query="max-width: 550px" queryMatches="{{smallScreen}}"></core-media-query>
@@ -19,10 +20,10 @@
                                 on-tracky="{{onMainAreaTrack}}" on-trackend="{{onRefreshUp}}">
         <core-toolbar id="mainheader" class="tall">
 
-          <template if="{{idea || selected=='ideas-search'}}">
+          <template if="{{selected!='groups'}}">
               <paper-icon-button icon="arrow-back" style="color:#fff;margin-left:48px;" on-tap="{{goBack}}"></paper-icon-button>
           </template>
-          <template if="{{!idea && selected!='ideas-search'}}">
+          <template if="{{false && !idea && selected!='ideas-search'}}">
             <paper-icon-button id="navicon" icon="menu" core-drawer-toggle></paper-icon-button>
           </template>
 
@@ -108,7 +109,11 @@
       group: null,
 
       goBack: function () {
-        window.history.back();
+        if (this.selected=="ideas") {
+          window.location = "/";
+        } else {
+          window.history.back();
+        }
       },
 
       setSpinner: function(value) {

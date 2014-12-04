@@ -62,7 +62,7 @@ router.get('/:id/categories', function(req, res) {
   var where;
   console.log(req.params.id);
   if (req.params.id=="default") {
-    where = "sub_instance_id IS NULL";
+    where = "sub_instance_id = 262";
   } else {
     where = "sub_instance_id = "+req.params.id;
   }

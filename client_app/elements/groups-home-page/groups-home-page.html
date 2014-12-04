@@ -10,7 +10,7 @@
             handleAs="json">
     </core-ajax>
 
-    <base-layout id="layout" selected="groupsHome" showLogo="true"
+    <base-layout id="layout" selected="groups" showLogo="true"
                  name="{{name}}" subTitle="{{subTitle}}">
       <div class="card-container">
         <template repeat="{{groups as group}}">
@@ -69,7 +69,7 @@
         var filtered = [];
         for (var i = 0; i < items.length; i++) {
           var item = items[i];
-          if (item.short_name!="test") {
+          if (item.short_name!="test" && item.short_name!="ac-ideas") {
             filtered.push(item);
           }
         }
