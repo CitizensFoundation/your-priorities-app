@@ -19,7 +19,7 @@
       <div layout horizontal style="margin-right: 32px;">
         <div layout horizontal flex>
           <paper-icon-button icon="social:group-add" class="action" on-tap="{{inviteToGroup}}"></paper-icon-button>
-          <paper-icon-button icon="social:share" class="action"></paper-icon-button>
+          <paper-icon-button icon="social:share" class="action" on-tap="{{shareGroup}}"></paper-icon-button>
         </div>
       </div>
 
@@ -29,6 +29,12 @@
 
   <script>
     Polymer({
+
+      shareGroup: function () {
+        window.globals.activity("Anonymous","open","shareGroup");
+        window.globals.openDialog("groups.share_group");
+      },
+
       inviteToGroup: function () {
         window.globals.activity("Anonymous","open","inviteToGroup");
         window.globals.openDialog("groups.invite_to_group");

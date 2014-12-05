@@ -6,7 +6,19 @@
     "inProgress": "Ideas in progress",
     "groups": "Idea groups",
     "search": "Search for ideas",
-    "add_new":"Add new idea"
+    "add_new":"Add new idea",
+    "up_vote":"Vote idea up",
+    "down_vote":"Vote idea down",
+    "report": "Report idea",
+    "notify": "Notify me about this idea",
+    "share": "Share this idea",
+    "tabs": {
+      "debate": "Debate",
+      "newsfeed": "Newsfeed",
+      "photos": "Photos",
+      "solutions": "Solutions",
+      "not_implemented": "No implemented yet"
+    }
   },
   "short_word": {
     "in": "in"
@@ -18,13 +30,17 @@
   "points": {
     "point": "Point"
   },
+  "point": {
+    "for": "Point for...",
+    "against": "Point against..."
+  },
   "notice": {
     "ok": "Ok",
-    "feature_not_implemented_a": "This feature has not yet been implemented in this read-only preview of the next version of Your Priorities 6.0.",
+    "feature_not_implemented_a": "This feature has not yet been implemented in this read-only preview of Your Priorities 6.0.",
     "feature_not_implemented_b": "Let us know what you think :)"
   },
   "groups": {
-    "new": "Add a new idea group",
+    "new": "New idea group",
     "invite": "Invite a friend"
   },
   "menu": {

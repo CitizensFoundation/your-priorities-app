@@ -71,7 +71,9 @@
   <script>
     Polymer({
       goToGroup: function (e) {
-        window.location = '/#/groups/' + this.group.id + "/ideas/top/" + this.group.name;
+        var groupUrl = '/#/groups/' + this.group.id + "/ideas/top/" + this.group.name;
+        window.globals.activity("Anonymous","open","group",groupUrl);
+        window.location = groupUrl;
       }
     });
   </script>

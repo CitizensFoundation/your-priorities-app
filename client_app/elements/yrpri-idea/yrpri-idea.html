@@ -33,9 +33,9 @@
             <div flex style="">
               <idea-action-bar idea="{{idea}}" small="{{small}}" flex style="float:right; clear:right;"></idea-action-bar>
             </div>
-            <core-icon-button icon="report" style="color:#eee;"></core-icon-button>
-            <paper-icon-button class="share" style="color:#b0b0b0;" icon="image:remove-red-eye"></paper-icon-button>
-            <paper-icon-button class="share" icon="social:share"></paper-icon-button>
+            <core-icon-button icon="report" on-tap="{{report}}" style="color:#eee;"></core-icon-button>
+            <paper-icon-button class="share" on-tap="{{notify}}" style="color:#b0b0b0;" icon="image:remove-red-eye"></paper-icon-button>
+            <paper-icon-button class="share" on-tap="{{share}}" icon="social:share"></paper-icon-button>
             <template if="{{false}}">
               <paper-menu-button class="selected-items" layout horizontal>
                 <paper-icon-button icon="more-vert"></paper-icon-button>
@@ -102,6 +102,21 @@
 
       userImagesLimit: 42,
       endorsements: [],
+
+      share: function () {
+        window.globals.activity("Anonymous","open","ideaShare");
+        window.globals.openDialog("ideas.share");
+      },
+
+      report: function () {
+        window.globals.activity("Anonymous","open","ideaReport");
+        window.globals.openDialog("ideas.report");
+      },
+
+      notify: function () {
+        window.globals.activity("Anonymous","open","ideaNotify");
+        window.globals.openDialog("ideas.notify");
+      },
 
       allEndorsementsLength: function(idea) {
         return (this.endorsements.length);

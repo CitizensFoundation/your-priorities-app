@@ -10,7 +10,7 @@
         <paper-menu-button class="selected-items" layout horizontal
                            style="padding-left:0px;padding-top: 0px;margin-top: -8px;">
 
-          <paper-fab class="filterIcon filterIconTransform" icon="editor:merge-type"  mini z="3"></paper-fab>
+          <paper-fab class="filterIcon filterIconTransform" icon="editor:merge-type" on-tap="{{openFilter}}" mini z="3"></paper-fab>
 
           <paper-dropdown id="filterDropdown" class="dropdown" halign="left">
             <div layout horizontal>
@@ -80,6 +80,10 @@
         this.updateFilter();
       },
 
+      openFilter: function() {
+        window.globals.activity("Anonymous","open","filter");
+      },
+
       updateFilter: function () {
         window.selectedFilterName = "ideas."+this.filter;
         var filterName = PolymerExpressions.prototype.t(window.selectedFilterName);
@@ -110,6 +114,7 @@
         if (window.categoryId) {
           newLocation += "/" + window.categoryId;
         }
+        window.globals.activity("Anonymous","change","filter",newLocation);
         window.location = newLocation;
       }
 

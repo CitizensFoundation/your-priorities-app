@@ -10,9 +10,9 @@
           <paper-shadow z="1" class="pointText" animated>
 
             <paper-input-decorator class="up_point" floatingLabel
-                                   label="Þín rök með...">
+                                   label="{{'point.for' | t}}">
               <paper-autogrow-textarea id="a1">
-                <textarea value="{{textValueUp}}" id="up_point" on-focus="{{focusTextArea}}" on-blur="{{blurTextArea}}"></textarea>
+                <textarea value="{{textValueUp}}" id="up_point" on-tap="{{focusUpPoint}}" on-focus="{{focusTextArea}}" on-blur="{{blurTextArea}}"></textarea>
               </paper-autogrow-textarea>
             </paper-input-decorator>
 
@@ -35,9 +35,9 @@
           <paper-shadow z="1" class="pointText" animated>
 
             <paper-input-decorator class="down_point" floatingLabel
-                                   label="Þín rök á móti...">
+                                   label="{{'point.against' | t}}">
               <paper-autogrow-textarea id="a2">
-                <textarea value="{{textValueDown}}" id="down_point" on-focus="{{focusTextArea}}" on-blur="{{blurTextArea}}"></textarea>
+                <textarea value="{{textValueDown}}" id="down_point" on-tap="{{focusDownPoint}}" on-focus="{{focusTextArea}}" on-blur="{{blurTextArea}}"></textarea>
               </paper-autogrow-textarea>
             </paper-input-decorator>
 
@@ -66,6 +66,14 @@
 
         upPoints: [],
         downPoints: [],
+
+        focusUpPoint: function () {
+          window.globals.activity("Anonymous","focus","pointUp");
+        },
+
+        focusDownPoint: function () {
+          window.globals.activity("Anonymous","focus","pointDown");
+        },
 
         focusTextArea: function(e) {
           e.srcElement.parentElement.parentElement.parentElement.setZ(3); //= "4";
