@@ -69,7 +69,9 @@
         var filtered = [];
         for (var i = 0; i < items.length; i++) {
           var item = items[i];
-          if (item.short_name!="test" && item.short_name!="ac-ideas") {
+          if (item.short_name!="test" &&
+              item.short_name!="ac-ideas" &&
+              item.short_name!="development") {
             filtered.push(item);
           }
         }

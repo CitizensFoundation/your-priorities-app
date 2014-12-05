@@ -11,6 +11,16 @@
         }
       </style>
     </template>
+
+    <template if="{{groupId=='28'}}">
+      <style>
+        #drawerPanel core-scroll-header-panel::shadow #headerBg {
+          background: url(bulgaria_by_Stella.png) center center no-repeat;
+          background-size: 100%;
+        }
+      </style>
+    </template>
+
     <app-globals id="globals"></app-globals>
 
     <core-media-query query="max-width: 550px" queryMatches="{{smallScreen}}"></core-media-query>
