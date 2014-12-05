@@ -1,7 +1,6 @@
 <polymer-element name="groups-home-page">
   <template>
     <link rel="stylesheet" href="groups-home-page.css">
-    <app-globals id="globals"></app-globals>
 
     <core-ajax
             auto="false"
@@ -42,8 +41,8 @@
       },
 
       newGroup: function () {
-        this.$.globals.activity("Anonymous","open","newGroup");
-        this.$.globals.openDialog("groups.new");
+        this.$.layout.globals.activity("Anonymous","open","newGroup");
+        this.$.layout.globals.openDialog("groups.new");
       },
 
       responseChanged: function (e, detail, sender) {

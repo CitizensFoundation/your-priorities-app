@@ -24,6 +24,14 @@
     "feature_not_implemented_b": "Let us know what you think :)"
   },
   "groups": {
-    "new": "Add a new idea group"
+    "new": "Add a new idea group",
+    "invite": "Invite a friend"
+  },
+  "menu": {
+    "my_pages": "My profile",
+    "about": "About",
+    "help": "Help",
+    "settings": "Settings"
+
   }
 }

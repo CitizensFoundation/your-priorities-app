@@ -1,4 +1,4 @@
-<polymer-element name="material-search" attributes="active previousSearches narrow groupId" fit>
+<polymer-element name="material-search" attributes="active previousSearches narrow groupId globals"  fit>
   <template>
     <style>
       :host {
@@ -67,6 +67,7 @@
       created: function() {
         this.previousSearches = [];
       },
+
       onSelect: function(e, detail, sender) {
         if (detail.isSelected) {
           this.async(function() {
@@ -74,7 +75,9 @@
           }, null, 250); // Introduce small delay so user sees ripple.
         }
       },
+
       toggle: function() {
+        this.globals.activity("Anonymous","toggle","search",this.active);
         this.active = !this.active;
         if (this.active) {
           this.$.searchbox.focus();

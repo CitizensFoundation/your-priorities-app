@@ -1,7 +1,6 @@
 <polymer-element name="yrpri-group" attributes="small group showShortName">
   <template>
     <link rel="stylesheet" href="yrpri-group.css">
-    <app-globals id="globals"></app-globals>
 
     <div layout horizontal?="{{!small}}" flex>
       <div layout style="vertical-align: top;width:100%;">
@@ -72,7 +71,6 @@
   <script>
     Polymer({
       goToGroup: function (e) {
-        this.$.globals.groupId = this.group.id;
         window.location = '/#/groups/' + this.group.id + "/ideas/top/" + this.group.name;
       }
     });
