@@ -1,4 +1,4 @@
-<polymer-element name="material-search" attributes="active previousSearches narrow groupId globals"  fit>
+<polymer-element name="material-search" attributes="active previousSearches narrow groupId"  fit>
   <template>
     <style>
       :host {
@@ -77,7 +77,7 @@
       },
 
       toggle: function() {
-        this.globals.activity("Anonymous","toggle","search",this.active);
+        window.globals.activity("Anonymous","toggle","search",this.active);
         this.active = !this.active;
         if (this.active) {
           this.$.searchbox.focus();

@@ -15,7 +15,7 @@
       <div class="card-container">
         <template repeat="{{groups as group}}">
           <paper-shadow class="card" z="1" center-center layout>
-            <yrpri-group group="{{group}}" small="true"></yrpri-group>
+            <yrpri-group globals="{{globals}}" group="{{group}}" small="true"></yrpri-group>
           </paper-shadow>
         </template>
         <paper-fab icon="group-work" z="1" class="createIdea" title="create" on-tap="{{newGroup}}">
@@ -41,8 +41,8 @@
       },
 
       newGroup: function () {
-        this.$.layout.globals.activity("Anonymous","open","newGroup");
-        this.$.layout.globals.openDialog("groups.new");
+        window.globals.activity("Anonymous","open","newGroup");
+        window.globals.openDialog("groups.new");
       },
 
       responseChanged: function (e, detail, sender) {

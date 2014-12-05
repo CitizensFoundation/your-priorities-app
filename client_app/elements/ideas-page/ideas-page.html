@@ -1,7 +1,6 @@
 <polymer-element name="ideas-page" extends="base-page">
   <template bind>
     <link rel="stylesheet" href="ideas-page.css">
-    <app-globals id="globals"></app-globals>
 
     <core-ajax
       auto="false"
@@ -51,8 +50,8 @@
       defaultCategories: false,
 
       newIdea: function () {
-        this.$.layout.globals.activity("Anonymous","open","newIdea");
-        this.$.layout.globals.openDialog("ideas.add_new");
+        window.globals.activity("Anonymous","open","newIdea");
+        window.globals.openDialog("ideas.add_new");
       },
 
       domReady: function () {

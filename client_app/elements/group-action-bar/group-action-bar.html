@@ -18,7 +18,7 @@
 
       <div layout horizontal style="margin-right: 32px;">
         <div layout horizontal flex>
-          <paper-icon-button icon="social:group-add" class="action"></paper-icon-button>
+          <paper-icon-button icon="social:group-add" class="action" on-tap="{{inviteToGroup}}"></paper-icon-button>
           <paper-icon-button icon="social:share" class="action"></paper-icon-button>
         </div>
       </div>
@@ -29,6 +29,11 @@
 
   <script>
     Polymer({
+      inviteToGroup: function () {
+        window.globals.activity("Anonymous","open","inviteToGroup");
+        window.globals.openDialog("groups.invite_to_group");
+      },
+
       ready: function () {
         // Inaccurate fudge for Your Priorities country pages that mostly have a common user database not connected to
         // the group

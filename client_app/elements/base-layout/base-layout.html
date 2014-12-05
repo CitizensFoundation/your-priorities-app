@@ -27,7 +27,7 @@
     <core-media-query query="max-width: 550px" queryMatches="{{smallScreen}}"></core-media-query>
 
     <material-search id="search" narrow="{{narrow}}" groupId="{{groupId}}"
-                     globals="{{globals}}" previousSearches="{{previousSearches}}"></material-search>
+                     previousSearches="{{previousSearches}}"></material-search>
 
     <core-drawer-panel id="drawerPanel" narrow="{{narrow}}" responsiveWidth="2000px">
 
@@ -126,7 +126,6 @@
       smallScreen: false,
       selectedThreads: [],
       group: null,
-      globals: null,
 
       openMenu: function () {
         this.$.globals.activity("Anonymous","open","menu");
@@ -165,8 +164,6 @@
       },
 
       domReady: function () {
-        this.globals = this.$.globals;
-
         this.titleStyle = this.shadowRoot.querySelector('.title').style;
         this.checkForSmallScreen();
 
