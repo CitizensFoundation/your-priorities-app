@@ -36,3 +36,13 @@ $primary-color-more-darker: #000;
   .card {
     width: 320px;
     height: 250px; } }
+button {
+  margin: 8px 4px; }
+
+html /deep/ [autofocus] {
+  color: #03a9f4; }
+
+.actionButton {
+  border: 1px solid #0f9d58;
+  background-color: #b7e1cd;
+  color: red !important; }

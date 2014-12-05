@@ -5,8 +5,8 @@
     "random": "Random ideas",
     "inProgress": "Ideas in progress",
     "groups": "Idea groups",
-    "search": "Search for ideas"
-
+    "search": "Search for ideas",
+    "add_new":"Add new idea"
   },
   "short_word": {
     "in": "in"
@@ -17,5 +17,12 @@
   },
   "points": {
     "point": "Point"
+  },
+  "notice": {
+    "ok": "Ok",
+    "feature_not_implemented": "This feature has not yet been implemented in this readonly preview of this new version of Your Priorities. Please visit https://www.yrpri.org/ for the current live version of Your Priorities."
+  },
+  "groups": {
+    "new": "Add a new idea group"
   }
 }

@@ -2,11 +2,16 @@
 
   <script>
     (function() {
-      var selectedGroupId = null;
 
       Polymer({
+        activity: function(actor, verb, object, context) {
+          var logString = "actionLog: "+actor+" "+verb+" "+object;
+          if (context)
+            logString += " "+context;
+          console.log(logString);
+        },
+
         ready: function() {
-          this.selectedGroupId = 1;
         }
       });
     })();

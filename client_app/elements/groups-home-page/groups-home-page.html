@@ -1,6 +1,7 @@
 <polymer-element name="groups-home-page">
   <template>
     <link rel="stylesheet" href="groups-home-page.css">
+    <app-globals id="globals"></app-globals>
 
     <core-ajax
             auto="false"
@@ -18,9 +19,12 @@
             <yrpri-group group="{{group}}" small="true"></yrpri-group>
           </paper-shadow>
         </template>
-        <a href="/addGroup" on-click="{{navigate}}">
-          <paper-fab icon="group-work" z="1" class="createIdea" title="create"></paper-fab>
-        </a>
+        <paper-fab icon="group-work" z="1" class="createIdea" title="create" on-tap="{{newGroup}}">
+        </paper-fab>
+        <paper-action-dialog id="newGroup" heading="{{'groups.new' | t}}" backdrop>
+          <p>{{'notice.feature_not_implemented' | t}}</p>
+          <paper-button style="color:#F57C00;border: 1px solid #F57C00;" affirmative autofocus>{{'notice.ok' | t}}</paper-button>
+        </paper-action-dialog>
       </div>
 
     </base-layout>
@@ -39,6 +43,11 @@
       ready: function () {
         this.$.layout.setSpinner(true);
         this.$.ajax.go();
+      },
+
+      newGroup: function () {
+        this.$.globals.activity("Anonymous","open","newGroup");
+        this.$.newGroup.opened=true;
       },
 
       responseChanged: function (e, detail, sender) {
