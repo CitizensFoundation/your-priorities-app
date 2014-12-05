@@ -33,6 +33,7 @@
 
       domReady: function () {
         this.$.layout.setSpinner(true);
+        window.globals.activity("Anonymous","search","ideas",this.$.ideasAjax.url);
         this.$.ideasAjax.go();
       },
 

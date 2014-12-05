@@ -32,7 +32,11 @@
   },
   "point": {
     "for": "Point for...",
-    "against": "Point against..."
+    "against": "Point against...",
+    "add_up": "Add point for",
+    "add_down": "Add point against",
+    "helpful": "Vote point up as helpful",
+    "not_helpful": "Vote point down as not helpful"
   },
   "notice": {
     "ok": "Ok",

@@ -29,17 +29,17 @@
             <div layout vertical style="width:100%;">
 
               <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-                <paper-tab>Rökræða ({{idea.Points.length}})</paper-tab>
-                <paper-tab>Fréttir</paper-tab>
-                <paper-tab>Myndir</paper-tab>
-                <paper-tab>Lausnir</paper-tab>
+                <paper-tab>{{'ideas.tabs.debate' | t}} ({{idea.Points.length}})</paper-tab>
+                <paper-tab>{{'ideas.tabs.newsfeed' | t}}</paper-tab>
+                <paper-tab>{{'ideas.tabs.photos' | t}}</paper-tab>
+                <paper-tab>{{'ideas.tabs.solutions' | t}}</paper-tab>
               </paper-tabs>
 
               <core-animated-pages notap selected="{{selected}}" style="width:100%;" transitions="slide-from-right">
                 <section-points points="{{idea.Points}}"></section-points>
-                <section> bha</section>
-                <section> cha</section>
-                <section> dha</section>
+                <section><center><br><br><h1>{{'ideas.tabs.not_implemented' | t}}</h1></center></section>
+                <section><center><br><br><h1>{{'ideas.tabs.not_implemented' | t}}</h1></center></section>
+                <section><center><br><br><h1>{{'ideas.tabs.not_implemented' | t}}</h1></center></section>
               </core-animated-pages>
 
             </div>
@@ -67,6 +67,18 @@
             this.idea.Points.shift();
           }
         },
+
+        selectedChanged: function (previous,selected) {
+          if (selected==0)
+            window.globals.activity("Anonymous","open","pointsTab");
+          else if (selected==1)
+            window.globals.activity("Anonymous","open","newsfeedTab");
+          else if (selected==2)
+            window.globals.activity("Anonymous","open","photosTab");
+          else if (selected==3)
+            window.globals.activity("Anonymous","open","solutionsTab");
+        },
+
         domReady: function () {
           this.$.layout.setSpinner(true);
           this.$.ajax.go();

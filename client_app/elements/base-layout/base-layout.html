@@ -146,6 +146,8 @@
         this.$.globals.activity("Anonymous","open","back",this.selected);
         if (this.selected=="ideas") {
           window.location = "/";
+        } else if (this.selected=="ideas-search") {
+          window.history.back();
         } else {
           window.location = "/#/groups/"+this.groupId+"/ideas/top/"+this.groupName;
         }

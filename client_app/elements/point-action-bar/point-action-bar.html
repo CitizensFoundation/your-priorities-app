@@ -6,13 +6,13 @@
     <div layout horizontal justified class="action_bar">
 
       <div layout horizontal>
-        <paper-icon-button icon="thumb-up" class="action_up" style="margin-right:0px;"></paper-icon-button>
+        <paper-icon-button icon="thumb-up" class="action_up" style="margin-right:0px;" on-tap="{{pointHelpful}}"></paper-icon-button>
         <div class="action_text action_up" style="margin-right:0px;">{{point.PointQualities | upVoteCount}}</div>
       </div>
 
       <div layout horizontal style="text-align: left;">
         <div class="action_text action_down" style="">{{point.PointQualities | downVoteCount}}</div>
-        <paper-icon-button size="16x16" icon="thumb-down" class="action_down" style="margin-left:16px;"></paper-icon-button>
+        <paper-icon-button size="16x16" icon="thumb-down" class="action_down" style="margin-left:16px;" on-tap="{{pointNotHelpful}}"></paper-icon-button>
       </div>
 
     </div>
@@ -21,6 +21,17 @@
 
   <script>
     Polymer({
+
+      pointHelpful: function () {
+        window.globals.activity("Anonymous","vote","pointHelpful");
+        window.globals.openDialog("point.helpful");
+      },
+
+      pointNotHelpful: function () {
+        window.globals.activity("Anonymous","vote","pointNotHelpful");
+        window.globals.openDialog("point.not_helpful");
+      },
+
       getRandomNumber: function (value) {
         return Math.floor((Math.random() * value) + 1);
       },
