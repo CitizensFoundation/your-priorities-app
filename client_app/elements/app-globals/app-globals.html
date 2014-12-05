@@ -1,14 +1,39 @@
 <polymer-element name="app-globals" attributes="">
 
+  <template>
+    <paper-action-dialog id="dialog" heading="{{heading | t}}" backdrop style="max-width: 500px;">
+      <p>{{'notice.feature_not_implemented_a' | t}}</p>
+      <p>{{'notice.feature_not_implemented_b' | t}}</p>
+      <p>
+        Your Priorities current version<br>
+        <a href="https://www.yrpri.org/">www.yrpri.org</a>
+      </p>
+      <p>
+        The Citizens Foundation of Iceland<br>
+        <a target="_blank" href="https://www.citizens.is/">www.citizens.is</a><br>
+        <a target="_blank" href="mailto:citizens@citizens.is">citizens@citizens.is</a><br>
+
+      </p>
+      <paper-button style="color:#F57C00;border: 1px solid #F57C00;" affirmative autofocus>{{'notice.ok' | t}}</paper-button>
+    </paper-action-dialog>
+  </template>
   <script>
     (function() {
 
       Polymer({
+
+        heading: "",
+
         activity: function(actor, verb, object, context) {
-          var logString = "actionLog: "+actor+" "+verb+" "+object;
+          var logString = "activity stream: "+actor+" "+verb+" "+object;
           if (context)
             logString += " "+context;
           console.log(logString);
+        },
+
+        openDialog: function(heading) {
+          this.heading = heading;
+          this.$.dialog.opened = true;
         },
 
         ready: function() {

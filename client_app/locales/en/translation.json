@@ -20,7 +20,8 @@
   },
   "notice": {
     "ok": "Ok",
-    "feature_not_implemented": "This feature has not yet been implemented in this readonly preview of this new version of Your Priorities. Please visit https://www.yrpri.org/ for the current live version of Your Priorities."
+    "feature_not_implemented_a": "This feature has not yet been implemented in this read-only preview of the next version of Your Priorities 6.0.",
+    "feature_not_implemented_b": "Let us know what you think :)"
   },
   "groups": {
     "new": "Add a new idea group"

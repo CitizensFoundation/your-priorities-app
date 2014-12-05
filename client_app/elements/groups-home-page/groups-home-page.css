@@ -41,8 +41,3 @@ button {
 
 html /deep/ [autofocus] {
   color: #03a9f4; }
-
-.actionButton {
-  border: 1px solid #0f9d58;
-  background-color: #b7e1cd;
-  color: red !important; }

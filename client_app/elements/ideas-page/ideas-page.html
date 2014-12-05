@@ -37,10 +37,6 @@
         </template>
         <a href="/add" on-click="{{navigate}}">
           <paper-fab icon="add" z="1" class="createIdea" title="{{'ideas.add_new' | t}}" on-tap="{{newIdea}}"></paper-fab>
-          <paper-action-dialog id="newIdea" heading="{{'ideas.add_new' | t}}" backdrop>
-            <p>{{'notice.feature_not_implemented' | t}}</p>
-            <paper-button style="color:#F57C00;border: 1px solid #F57C00;" affirmative autofocus>{{'notice.ok' | t}}</paper-button>
-          </paper-action-dialog>
         </a>
       </div>
     </base-layout>
@@ -56,7 +52,7 @@
 
       newIdea: function () {
         this.$.globals.activity("Anonymous","open","newIdea");
-        this.$.newIdea.opened=true;
+        this.$.globals.openDialog("ideas.add_new");
       },
 
       domReady: function () {

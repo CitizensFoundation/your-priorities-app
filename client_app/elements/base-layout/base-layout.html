@@ -2,6 +2,7 @@
   <template>
 
     <link rel="stylesheet" href="base-layout.css">
+    <app-globals id="globals"></app-globals>
 
     <!-- Temporary hardcoding of those images until they get added to the database -->
 
@@ -22,8 +23,6 @@
         }
       </style>
     </template>
-    
-    <app-globals id="globals"></app-globals>
 
     <core-media-query query="max-width: 550px" queryMatches="{{smallScreen}}"></core-media-query>
 
@@ -129,6 +128,7 @@
       group: null,
 
       goBack: function () {
+        this.$.globals.activity("Anonymous","open","back",this.selected);
         if (this.selected=="ideas") {
           window.location = "/";
         } else {
@@ -146,6 +146,7 @@
       },
 
       toggleSearch: function (e) {
+        this.$.globals.activity("Anonymous","toggle","search");
         this.$.search.toggle();
       },
 
