@@ -3,6 +3,8 @@
 
     <link rel="stylesheet" href="base-layout.css">
 
+    <!-- Temporary hardcoding of those images until they get added to the database -->
+
     <template if="{{groupId=='474' || groupId=='368'}}">
       <style>
         #drawerPanel core-scroll-header-panel::shadow #headerBg {
@@ -20,7 +22,7 @@
         }
       </style>
     </template>
-
+    
     <app-globals id="globals"></app-globals>
 
     <core-media-query query="max-width: 550px" queryMatches="{{smallScreen}}"></core-media-query>
