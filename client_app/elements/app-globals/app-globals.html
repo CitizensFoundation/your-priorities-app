@@ -73,7 +73,8 @@
           activityAjax.handleAs = 'json';
           activityAjax.url = 'http://your-priorities-preview.org:9200/activity-stream/activity/?timestamp='+date.toISOString();
           activityAjax.method = 'POST';
-          activityAjax.body = JSON.stringify({ actor: actor, verb: verb, object: object, context: context, event_time: date.toISOString(), user_agent: navigator.userAgent });
+          activityAjax.body = JSON.stringify({ actor: actor, verb: verb, object: object, context: context, event_time: date.toISOString(),
+                                               session_id: this.getSessionFromCookie(), user_agent: navigator.userAgent });
           activityAjax.go();
         },
 
@@ -97,6 +98,19 @@
         setSeenWelcome: function () {
           this.seenWelcome = true;
           localStorage.setItem('yrpri-welcome-status', true);
+        },
+
+        getSessionFromCookie: function () {
+          var strCookies = document.cookie;
+          var cookiearray = strCookies.split(';');
+          var sid='';
+          for(var i=0; i<cookiearray.length; i++){
+            name = cookiearray[i].split('=')[0];
+            var value = cookiearray[i].split('=')[1];
+            if(name == ' connect.sid')
+              sid = value;
+          }
+          return sid;
         }
       });
     })();
