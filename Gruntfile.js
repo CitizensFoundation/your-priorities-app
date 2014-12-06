@@ -19,8 +19,8 @@ module.exports = function (grunt) {
 
   // configurable paths
   var yeomanConfig = {
-    app: 'app',
-    dist: 'dist'
+    app: 'client_app',
+    dist: 'client_dist'
   };
 
   grunt.initConfig({
@@ -292,7 +292,7 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
-      'sass:server',
+   //   'sass:server',
       'copy:styles',
       'autoprefixer:server',
       'connect:livereload',
@@ -309,13 +309,13 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
-    'sass',
+    //'sass',
     'copy',
-    'useminPrepare',
-    'imagemin',
-    'concat',
+   // 'useminPrepare',
+  //  'imagemin',
+    //'concat',
     'autoprefixer',
-    'uglify',
+    //'uglify',
     'vulcanize',
     'usemin',
     'minifyHtml'
