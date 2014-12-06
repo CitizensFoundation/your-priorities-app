@@ -1,7 +1,7 @@
 <polymer-element name="app-globals" attributes="seenWelcome">
 
   <template>
-    
+
     <paper-action-dialog id="dialog" heading="{{heading | t}}" backdrop style="max-width: 500px;">
       <p>{{'notice.feature_not_implemented_a' | t}}</p>
       <p>{{'notice.feature_not_implemented_b' | t}}</p>
@@ -15,61 +15,66 @@
         <a target="_blank" href="mailto:citizens@citizens.is">citizens@citizens.is</a><br><br>
         <a target="_blank" href="https://github.com/rbjarnason/your-priorities-app">This website on github</a><br>
       </p>
-      <paper-button style="color:#F57C00;border: 1px solid #F57C00;" affirmative autofocus>{{'notice.ok' | t}}</paper-button>
+      <paper-button style="color:#F57C00;border: 1px solid #F57C00;" affirmative autofocus>
+        {{'notice.ok' | t}}
+      </paper-button>
     </paper-action-dialog>
 
-      <paper-action-dialog id="welcomeDialog" heading="{{'notice.welcome_heading' | t}}" backdrop style="max-width: 500px;">
-        <p>{{'notice.welcome_a' | t}}</p>
-        <p>{{'notice.welcome_b' | t}}</p>
-        <p>
-          Your Priorities current version<br>
-          <a href="https://www.yrpri.org/">www.yrpri.org</a>
-        </p>
-        <p>
-          The Citizens Foundation of Iceland<br>
-          <a target="_blank" href="https://www.citizens.is/">www.citizens.is</a><br>
-          <a target="_blank" href="mailto:citizens@citizens.is">citizens@citizens.is</a><br><br>
-          <a target="_blank" href="https://github.com/rbjarnason/your-priorities-app">This website on github</a><br>
-        </p>
-        <paper-button on-tap="{{setSeenWelcome}}" style="color:#F57C00;border: 1px solid #F57C00;" affirmative autofocus>{{'notice.continue' | t}}</paper-button>
+    <paper-action-dialog id="welcomeDialog" heading="{{'notice.welcome_heading' | t}}" backdrop
+                         style="max-width: 500px;">
+      <p>{{'notice.welcome_a' | t}}</p>
+      <p>{{'notice.welcome_b' | t}}</p>
+      <p>
+        Your Priorities current version<br>
+        <a target="_blank" href="https://www.yrpri.org/">www.yrpri.org</a>
+      </p>
+      <p>
+        The Citizens Foundation of Iceland<br>
+        <a target="_blank" href="https://www.citizens.is/">www.citizens.is</a><br>
+        <a target="_blank" href="mailto:citizens@citizens.is">citizens@citizens.is</a><br><br>
+        <a target="_blank" href="https://github.com/rbjarnason/your-priorities-app">This website on github</a><br>
+      </p>
+      <paper-button on-tap="{{setSeenWelcome}}" style="color:#F57C00;border: 1px solid #F57C00;" affirmative autofocus>
+        {{'notice.continue' | t}}
+      </paper-button>
     </paper-action-dialog>
 
   </template>
   <script>
-    (function() {
+    (function () {
 
       Polymer({
 
         heading: "",
         seenWelcome: false,
 
-        activity: function(actor, verb, object, context) {
-          var logString = "activity stream: "+actor+" "+verb+" "+object;
+        activity: function (actor, verb, object, context) {
+          var logString = "activity stream: " + actor + " " + verb + " " + object;
           if (context)
-            logString += " "+context;
+            logString += " " + context;
           console.log(logString);
         },
 
-        openDialog: function(heading) {
+        openDialog: function (heading) {
           this.heading = heading;
           this.$.dialog.opened = true;
         },
 
-        ready: function() {
+        ready: function () {
           window.globals = this;
         },
 
-        domReady: function() {
-          this.seenWelcome = localStorage.getItem('yrpri-welcome-status')=="true";
+        domReady: function () {
+          this.seenWelcome = localStorage.getItem('yrpri-welcome-status') == "true";
 
           if (!this.seenWelcome) {
-            this.$.welcomeDialog.opened=true;
+            this.$.welcomeDialog.opened = true;
           }
         },
 
-        setSeenWelcome: function() {
+        setSeenWelcome: function () {
           this.seenWelcome = true;
-          localStorage.setItem('yrpri-welcome-status',true);
+          localStorage.setItem('yrpri-welcome-status', true);
         }
       });
     })();
