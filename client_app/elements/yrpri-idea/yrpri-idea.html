@@ -142,7 +142,9 @@
       },
 
       goToIdea: function (e) {
-        window.location='/#/ideas/'+this.idea.id;
+        var ideaUrl = '/#/ideas/'+this.idea.id;
+        window.globals.activity("Anonymous","open","idea",ideaUrl);
+        window.location = ideaUrl;
       }
     });
   </script>

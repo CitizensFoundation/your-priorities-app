@@ -42,14 +42,16 @@
     "ok": "Ok",
     "feature_not_implemented_a": "This feature has not yet been implemented in this read-only preview of Your Priorities 6.0.",
     "feature_not_implemented_b": "Let us know what you think :)",
-    "welcome_a": "This is a read-only preview of Your Priorities version 6.0.",
-    "welcome_b": "This website only works on Chrome but will support all major browsers by release date in Q1 2015.",
-    "welcome_heading": "Welcome to this Your Priorities technology preview",
-    "continue": "Continue"
+    "welcome_a": "This is a read-only preview of Your Priorities 6.0 so you can only view content, not add to it. Feedback is most appreciated.",
+    "welcome_b": "Currently it only works in Chrome but will support all major browsers by release date in Q1 2015.",
+    "welcome_heading": "Welcome to Your Priorities 6.0 technology preview",
+    "continue": "Continue to preview"
   },
   "groups": {
     "new": "New idea group",
-    "invite": "Invite a friend"
+    "invite": "Invite a friend",
+    "invite_to_group": "Invite friend to this group",
+    "share_group": "Share this group"
   },
   "menu": {
     "my_pages": "My profile",

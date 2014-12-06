@@ -10,10 +10,9 @@
         <a href="https://www.yrpri.org/">www.yrpri.org</a>
       </p>
       <p>
-        The Citizens Foundation of Iceland<br>
-        <a target="_blank" href="https://www.citizens.is/">www.citizens.is</a><br>
+        <a target="_blank" href="https://www.citizens.is/">The Citizens Foundation of Iceland</a> -
         <a target="_blank" href="mailto:citizens@citizens.is">citizens@citizens.is</a><br><br>
-        <a target="_blank" href="https://github.com/rbjarnason/your-priorities-app">This website on github</a><br>
+        <a target="_blank" href="https://github.com/rbjarnason/your-priorities-app">Open source on github</a><br>
       </p>
       <paper-button style="color:#F57C00;border: 1px solid #F57C00;" affirmative autofocus>
         {{'notice.ok' | t}}
@@ -29,10 +28,9 @@
         <a target="_blank" href="https://www.yrpri.org/">www.yrpri.org</a>
       </p>
       <p>
-        The Citizens Foundation of Iceland<br>
-        <a target="_blank" href="https://www.citizens.is/">www.citizens.is</a><br>
+        <a target="_blank" href="https://www.citizens.is/">The Citizens Foundation of Iceland</a> -
         <a target="_blank" href="mailto:citizens@citizens.is">citizens@citizens.is</a><br><br>
-        <a target="_blank" href="https://github.com/rbjarnason/your-priorities-app">This website on github</a><br>
+        <a target="_blank" href="https://github.com/rbjarnason/your-priorities-app">Open source on github</a><br>
       </p>
       <paper-button on-tap="{{setSeenWelcome}}" style="color:#F57C00;border: 1px solid #F57C00;" affirmative autofocus>
         {{'notice.continue' | t}}
@@ -47,12 +45,36 @@
 
         heading: "",
         seenWelcome: false,
+        createIndex: false,
 
         activity: function (actor, verb, object, context) {
           var logString = "activity stream: " + actor + " " + verb + " " + object;
+          console.log(logString);
+
           if (context)
             logString += " " + context;
-          console.log(logString);
+
+          if(verb=='open')
+            ga('send', 'pageview');
+
+          ga('send', 'event', object, verb);
+
+          if (this.createIndex) {
+            var activityAjax = document.createElement('core-ajax');
+            activityAjax.handleAs = 'json';
+            activityAjax.url = 'http://your-priorities-preview.org:9200/activity-stream/';
+            activityAjax.method = 'POST';
+            activityAjax.body = JSON.stringify({ mappings: { "activity": { "_timestamp" : { "enabled" : false, "path": "event_time" }}} });
+            activityAjax.go();
+          }
+
+          var activityAjax = document.createElement('core-ajax');
+          var date = new Date();
+          activityAjax.handleAs = 'json';
+          activityAjax.url = 'http://your-priorities-preview.org:9200/activity-stream/activity/?timestamp='+date.toISOString();
+          activityAjax.method = 'POST';
+          activityAjax.body = JSON.stringify({ actor: actor, verb: verb, object: object, context: context, event_time: date.toISOString(), user_agent: navigator.userAgent });
+          activityAjax.go();
         },
 
         openDialog: function (heading) {
