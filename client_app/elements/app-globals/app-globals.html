@@ -1,11 +1,7 @@
 <polymer-element name="app-globals" attributes="seenWelcome">
 
   <template>
-
-    <template is="auto-binding">
-      <core-localstorage name="yrpri-welcome-status" value="{{seenWelcome}}"></core-localstorage>
-    </template>
-
+    
     <paper-action-dialog id="dialog" heading="{{heading | t}}" backdrop style="max-width: 500px;">
       <p>{{'notice.feature_not_implemented_a' | t}}</p>
       <p>{{'notice.feature_not_implemented_b' | t}}</p>
