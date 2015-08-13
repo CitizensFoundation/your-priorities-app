@@ -5,7 +5,7 @@ var models = require("../models");
 /* GET ideas listing. */
 router.get('/', function(req, res) {
   models.Group.findAll({
-    limit: 65,
+    limit: 565,
     order: "counter_ideas DESC",
     include: [ models.IsoCountry ]
   }).then(function(groups) {

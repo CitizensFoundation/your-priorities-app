@@ -35,10 +35,12 @@
           <paper-shadow z="1" class="pointText" animated>
 
             <paper-input-decorator class="down_point" floatingLabel
-                                   label="{{'point.against' | t}}">
+                                   label="{{'point.against' | t}}"  maxlength="500">
               <paper-autogrow-textarea id="a2">
-                <textarea value="{{textValueDown}}" id="down_point" on-tap="{{focusDownPoint}}" on-focus="{{focusTextArea}}" on-blur="{{blurTextArea}}"></textarea>
+                <textarea value="{{textValueDown}}" maxlength="500" id="down_point" on-tap="{{focusDownPoint}}" on-focus="{{focusTextArea}}" on-blur="{{blurTextArea}}"></textarea>
+                <paper-char-counter class="counter" target="down_point"></paper-char-counter>
               </paper-autogrow-textarea>
+
             </paper-input-decorator>
 
             <template if="{{textValueDown.length>20}}">
