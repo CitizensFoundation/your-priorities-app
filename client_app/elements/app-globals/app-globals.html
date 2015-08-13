@@ -1,10 +1,9 @@
-<polymer-element name="app-globals" attributes="seenWelcome">
-
+<dom-module id="app-globals">
   <template>
 
-    <paper-action-dialog id="dialog" heading="{{heading | t}}" backdrop style="max-width: 500px;">
-      <p>{{'notice.feature_not_implemented_a' | t}}</p>
-      <p>{{'notice.feature_not_implemented_b' | t}}</p>
+    <paper-action-dialog id="dialog" heading="{{t(heading)}}" backdrop="" style="max-width: 500px;">
+      <p>{{computeExpression1()}}</p>
+      <p>{{computeExpression2()}}</p>
       <p>
         Your Priorities current version<br>
         <a href="https://www.yrpri.org/">www.yrpri.org</a>
@@ -14,15 +13,14 @@
         <a target="_blank" href="mailto:citizens@citizens.is">citizens@citizens.is</a><br><br>
         <a target="_blank" href="https://github.com/rbjarnason/your-priorities-app">Open source on github</a><br>
       </p>
-      <paper-button style="color:#F57C00;border: 1px solid #F57C00;" affirmative autofocus>
-        {{'notice.ok' | t}}
+      <paper-button style="color:#F57C00;border: 1px solid #F57C00;" affirmative="" autofocus="">
+        <span>{{computeExpression3()}}</span>
       </paper-button>
     </paper-action-dialog>
 
-    <paper-action-dialog id="welcomeDialog" heading="{{'notice.welcome_heading' | t}}" backdrop
-                         style="max-width: 500px;">
-      <p>{{'notice.welcome_a' | t}}</p>
-      <p>{{'notice.welcome_b' | t}}</p>
+    <paper-action-dialog id="welcomeDialog" heading="{{computeHeading()}}" backdrop="" style="max-width: 500px;">
+      <p>{{computeExpression4()}}</p>
+      <p>{{computeExpression5()}}</p>
       <p>
         Your Priorities current version<br>
         <a target="_blank" href="https://www.yrpri.org/">www.yrpri.org</a>
@@ -32,88 +30,122 @@
         <a target="_blank" href="mailto:citizens@citizens.is">citizens@citizens.is</a><br><br>
         <a target="_blank" href="https://github.com/rbjarnason/your-priorities-app">Open source on github</a><br>
       </p>
-      <paper-button on-tap="{{setSeenWelcome}}" style="color:#F57C00;border: 1px solid #F57C00;" affirmative autofocus>
-        {{'notice.continue' | t}}
+      <paper-button on-tap="setSeenWelcome" style="color:#F57C00;border: 1px solid #F57C00;" affirmative="" autofocus="">
+        <span>{{computeExpression6()}}</span>
       </paper-button>
     </paper-action-dialog>
 
   </template>
   <script>
     (function () {
-
       Polymer({
-
-        heading: "",
-        seenWelcome: false,
-        createIndex: false,
-
+        is: 'app-globals',
+        properties: {
+          createIndex: {
+            type: Boolean,
+            value: false
+          },
+          heading: {
+            type: String,
+            value: ''
+          },
+          seenWelcome: {
+            type: Boolean,
+            value: false,
+            notify: true
+          }
+        },
         activity: function (actor, verb, object, context) {
-          var logString = "activity stream: " + actor + " " + verb + " " + object;
+          var logString = 'activity stream: ' + actor + ' ' + verb + ' ' + object;
           console.log(logString);
-
           if (context)
-            logString += " " + context;
-
-          if(verb=='open')
+            logString += ' ' + context;
+          if (verb == 'open')
             ga('send', 'pageview');
-
           ga('send', 'event', object, verb);
-
           if (this.createIndex) {
             var activityAjax = document.createElement('core-ajax');
             activityAjax.handleAs = 'json';
             activityAjax.url = 'http://your-priorities-preview.org:9200/activity-stream/';
             activityAjax.method = 'POST';
-            activityAjax.body = JSON.stringify({ mappings: { "activity": { "_timestamp" : { "enabled" : false, "path": "event_time" }}} });
+            activityAjax.body = JSON.stringify({
+              mappings: {
+                'activity': {
+                  '_timestamp': {
+                    'enabled': false,
+                    'path': 'event_time'
+                  }
+                }
+              }
+            });
             activityAjax.go();
           }
-
           var activityAjax = document.createElement('core-ajax');
           var date = new Date();
           activityAjax.handleAs = 'json';
-          activityAjax.url = 'http://your-priorities-preview.org:9200/activity-stream/activity/?timestamp='+date.toISOString();
+          activityAjax.url = 'http://your-priorities-preview.org:9200/activity-stream/activity/?timestamp=' + date.toISOString();
           activityAjax.method = 'POST';
-          activityAjax.body = JSON.stringify({ actor: actor, verb: verb, object: object, context: context, event_time: date.toISOString(),
-                                               session_id: this.getSessionFromCookie(), user_agent: navigator.userAgent });
+          activityAjax.body = JSON.stringify({
+            actor: actor,
+            verb: verb,
+            object: object,
+            context: context,
+            event_time: date.toISOString(),
+            session_id: this.getSessionFromCookie(),
+            user_agent: navigator.userAgent
+          });
           activityAjax.go();
         },
-
         openDialog: function (heading) {
           this.heading = heading;
           this.$.dialog.opened = true;
         },
-
         ready: function () {
           window.globals = this;
-          this.activity("Anonymous","open","page",window.location.href);
-        },
-
-        domReady: function () {
-          this.seenWelcome = localStorage.getItem('yrpri-welcome-status') == "true";
-
+          this.activity('Anonymous', 'open', 'page', window.location.href);
+          this.seenWelcome = localStorage.getItem('yrpri-welcome-status') == 'true';
           if (!this.seenWelcome) {
             this.$.welcomeDialog.opened = true;
           }
         },
-
         setSeenWelcome: function () {
           this.seenWelcome = true;
           localStorage.setItem('yrpri-welcome-status', true);
         },
-
         getSessionFromCookie: function () {
           var strCookies = document.cookie;
           var cookiearray = strCookies.split(';');
-          var sid='';
-          for(var i=0; i<cookiearray.length; i++){
+          var sid = '';
+          for (var i = 0; i < cookiearray.length; i++) {
             name = cookiearray[i].split('=')[0];
             var value = cookiearray[i].split('=')[1];
-            if(name == ' connect.sid')
+            if (name == ' connect.sid')
               sid = value;
           }
           return sid;
+        },
+        computeHeading: function () {
+          return this.t('notice.welcome_heading');
+        },
+        computeExpression1: function () {
+          return this.t('notice.feature_not_implemented_a');
+        },
+        computeExpression2: function () {
+          return this.t('notice.feature_not_implemented_b');
+        },
+        computeExpression3: function () {
+          return this.t('notice.ok');
+        },
+        computeExpression4: function () {
+          return this.t('notice.welcome_a');
+        },
+        computeExpression5: function () {
+          return this.t('notice.welcome_b');
+        },
+        computeExpression6: function () {
+          return this.t('notice.continue');
         }
       });
-    })();
+    }());
   </script>
-</polymer-element>
+</dom-module>

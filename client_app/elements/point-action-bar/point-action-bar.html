@@ -1,59 +1,75 @@
-<polymer-element name="point-action-bar" attributes="point">
+  <!--
+      TODO(polyup): unable to infer path to components
+      directory. This import path is probably incomplete.
+   -->
+  <link rel="import" href="iron-flex-layout/iron-flex-layout.html">
+<dom-module id="point-action-bar">
+  <style>
+    /* TODO(polyup): For speed, consider reworking these styles with .classes
+                     and #ids rather than [attributes].
+    */
+    [layout] {
+      @apply(--layout);
+    }
+    [layout][horizontal] {
+      @apply(--layout-horizontal);
+    }
+    [layout][justified] {
+      @apply(--layout-justified);
+    }
+  </style>
+  <link rel="import" type="css" href="point-action-bar.css">
   <template>
 
-    <link rel="stylesheet" href="point-action-bar.css">
+    <div layout="" horizontal="" justified="" class="action_bar">
 
-    <div layout horizontal justified class="action_bar">
-
-      <div layout horizontal>
-        <paper-icon-button icon="thumb-up" class="action_up" style="margin-right:0px;" on-tap="{{pointHelpful}}"></paper-icon-button>
-        <div class="action_text action_up" style="margin-right:0px;">{{point.PointQualities | upVoteCount}}</div>
+      <div layout="" horizontal="">
+        <paper-icon-button icon="thumb-up" class="action_up" style="margin-right:0px;" on-tap="pointHelpful"></paper-icon-button>
+        <div class="action_text action_up" style="margin-right:0px;">{{upVoteCount(point.PointQualities)}}</div>
       </div>
 
-      <div layout horizontal style="text-align: left;">
-        <div class="action_text action_down" style="">{{point.PointQualities | downVoteCount}}</div>
-        <paper-icon-button size="16x16" icon="thumb-down" class="action_down" style="margin-left:16px;" on-tap="{{pointNotHelpful}}"></paper-icon-button>
+      <div layout="" horizontal="" style="text-align: left;">
+        <div class="action_text action_down" style="">{{downVoteCount(point.PointQualities)}}</div>
+        <paper-icon-button size="16x16" icon="thumb-down" class="action_down" style="margin-left:16px;" on-tap="pointNotHelpful"></paper-icon-button>
       </div>
 
     </div>
 
   </template>
-
   <script>
     Polymer({
-
+      is: 'point-action-bar',
+      properties: { point: { notify: true } },
       pointHelpful: function () {
-        window.globals.activity("Anonymous","vote","pointHelpful");
-        window.globals.openDialog("point.helpful");
+        window.globals.activity('Anonymous', 'vote', 'pointHelpful');
+        window.globals.openDialog('point.helpful');
       },
-
       pointNotHelpful: function () {
-        window.globals.activity("Anonymous","vote","pointNotHelpful");
-        window.globals.openDialog("point.not_helpful");
+        window.globals.activity('Anonymous', 'vote', 'pointNotHelpful');
+        window.globals.openDialog('point.not_helpful');
       },
-
       getRandomNumber: function (value) {
-        return Math.floor((Math.random() * value) + 1);
+        return Math.floor(Math.random() * value + 1);
       },
       formatNumber: function (value) {
-        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
       },
       upVoteCount: function (endorsements) {
         var upCount = 0;
-        for(var i = 0; i< endorsements.length; i++) {
-          if (endorsements[i].value>0)
+        for (var i = 0; i < endorsements.length; i++) {
+          if (endorsements[i].value > 0)
             upCount++;
         }
         return upCount;
       },
       downVoteCount: function (endorsements) {
         var upCount = 0;
-        for(var i = 0; i< endorsements.length; i++) {
-          if (endorsements[i].value== 0)
+        for (var i = 0; i < endorsements.length; i++) {
+          if (endorsements[i].value == 0)
             upCount++;
         }
         return upCount;
       }
     });
   </script>
-</polymer-element>
+</dom-module>

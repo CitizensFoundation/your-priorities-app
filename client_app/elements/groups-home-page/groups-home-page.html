@@ -10,8 +10,7 @@
             handleAs="json">
     </core-ajax>
 
-    <base-layout id="layout" selected="groups" showLogo="true"
-                 name="{{name}}" subTitle="{{subTitle}}">
+    <base-layout id="layout" selected="groups" showLogo="true" name="{{name}}" subTitle="{{subTitle}}">
       <div class="card-container">
         <template repeat="{{groups as group}}">
           <paper-shadow class="card" z="1" center-center layout>
@@ -21,7 +20,6 @@
         <paper-fab icon="group-work" z="1" class="createIdea" title="create" on-tap="{{newGroup}}">
         </paper-fab>
       </div>
-
     </base-layout>
   </template>
 
@@ -30,9 +28,13 @@
     Polymer({
 
       shortName: null,
+
       groupHome: false,
+
       name: PolymerExpressions.prototype.instanceName(),
+
       subTitle: PolymerExpressions.prototype.t("ideas.groups"),
+
       groups: [],
 
       ready: function () {
@@ -83,7 +85,6 @@
         }
         return filtered;
       }
-
     });
   </script>
 </polymer-element>
