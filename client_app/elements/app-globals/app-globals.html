@@ -10,7 +10,8 @@
 <dom-module id="app-globals">
 
   <template>
-    <paper-dialog id="dialog" heading="[[t(heading)]]" style="max-width: 500px;">
+    <paper-dialog id="dialog" style="max-width: 500px;">
+      <h2>[[t(dialogHeading)]]</h2>
       <p>[[t('notice.feature_not_implemented_a')]]</p>
       <p>[[t('notice.feature_not_implemented_b')]]</p>
       <p>
@@ -27,7 +28,7 @@
       </paper-button>
     </paper-dialog>
 
-    <paper-dialog id="welcomeDialog" heading="[[t('notice.welcome_heading')]]" style="max-width: 500px;">
+    <paper-dialog id="welcomeDialog" dialogHeading="[[t('notice.welcome_heading')]]" style="max-width: 500px;">
       <p>[[t('notice.welcome_a')]]</p>
       <p>[[t('notice.welcome_b')]]</p>
       <p>
@@ -51,9 +52,12 @@
 
         is: 'app-globals',
 
-        properties: {
+        behaviors: [
+          Polymer.i18nTranslation
+        ],
 
-          heading: {
+        properties: {
+          dialogHeading: {
             type: String,
             value: ''
           },
@@ -66,13 +70,9 @@
 
           activityHost: {
             type: String,
-            value: ""
+            value: "http://your-priorities-preview.org:9200"
           }
         },
-
-        behaviors: [
-          Polymer.i18nTranslation
-        ],
 
         activity: function (actor, verb, object, context) {
           var logString = 'activity stream: ' + actor + ' ' + verb + ' ' + object;
@@ -121,8 +121,8 @@
           activityAjax.generateRequest();
         },
 
-        openDialog: function (heading) {
-          this.heading = heading;
+        openDialog: function (dialogHeading) {
+          this.dialogHeading = dialogHeading;
           this.$.dialog.opened = true;
         },
 

@@ -56,8 +56,8 @@
 
       i18n.init({ lng: "en" });
       window.i18n = i18n;
-
     });
+
     teardown(function() {
       server.restore();
     });
@@ -65,45 +65,64 @@
     test('can access through window.global', function() {
       var globals = fixture('basic');
       var windowAppGlobals = window.globals;
+      expect(windowAppGlobals.localName).to.be.ok;
       expect(windowAppGlobals.localName).to.be.equal("app-globals");
-
-      debugger;
     });
 
-    test('badge is positioned correctly after being dynamically set', function(done) {
+    test('can send activity', function(done) {
       var globals = fixture('basic');
       var windowAppGlobals = window.globals;
 
-
-      badge._setPosition();
+      windowAppGlobals.activity("actor","verb","object","context");
 
       Polymer.Base.async(function() {
-        var contentRect = badge.getBoundingClientRect();
-        expect(contentRect.left).to.not.be.equal(100 - 11);
 
-        badge.for = 'target';
-        badge._setPosition();
+        var request = server.requests[2];
 
-        Polymer.Base.async(function() {
-          var divRect = f.querySelector('#target').getBoundingClientRect();
-          expect(divRect.width).to.be.equal(100);
-          expect(divRect.height).to.be.equal(20);
+        expect(request.requestBody).to.include("actor");
+        expect(request.requestBody).to.include("verb");
+        expect(request.requestBody).to.include("object");
+        expect(request.requestBody).to.include("context");
 
-          var contentRect = badge.getBoundingClientRect();
-          expect(contentRect.width).to.be.equal(22);
-          expect(contentRect.height).to.be.equal(22);
+        done();
+      });
+    });
 
-          // The target div is 100 x 20, and the badge is centered on the
-          // top right corner.
-          expect(contentRect.left).to.be.equal(100 - 11);
-          expect(contentRect.top).to.be.equal(0 - 11);
+    test('automatically open welcome dialog when new', function(done) {
+      var globals = fixture('basic');
+      var windowAppGlobals = window.globals;
 
-          // Also check the math, just in case.
-          expect(contentRect.left).to.be.equal(divRect.width - 11);
-          expect(contentRect.top).to.be.equal(divRect.top - 11);
+      windowAppGlobals.activity("actor","verb","object","context");
 
-          done();
-        });
+      Polymer.Base.async(function() {
+
+        var request = server.requests[2];
+
+        expect(request.requestBody).to.include("actor");
+        expect(request.requestBody).to.include("verb");
+        expect(request.requestBody).to.include("object");
+        expect(request.requestBody).to.include("context");
+
+        done();
+      });
+    });
+
+    test('do not open open welcome dialog when not new', function(done) {
+      var globals = fixture('basic');
+      var windowAppGlobals = window.globals;
+
+      windowAppGlobals.activity("actor","verb","object","context");
+
+      Polymer.Base.async(function() {
+
+        var request = server.requests[2];
+
+        expect(request.requestBody).to.include("actor");
+        expect(request.requestBody).to.include("verb");
+        expect(request.requestBody).to.include("object");
+        expect(request.requestBody).to.include("context");
+
+        done();
       });
     });
 
