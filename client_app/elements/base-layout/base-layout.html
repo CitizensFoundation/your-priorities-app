@@ -1,13 +1,38 @@
-<polymer-element name="base-layout" attributes="selected needLogin user filter pageTitle spinner idea groupId groupName showLogo categories ideasFilter name subTitle category" extends="logged-in-page">
+  <!--
+      TODO(polyup): unable to infer path to components
+      directory. This import path is probably incomplete.
+   -->
+  <link rel="import" href="iron-flex-layout/iron-flex-layout.html">
+<!--
+    TODO(polyup): Inheriting from other custom elements is not yet supported.
+    See: https://www.polymer-project.org/1.0/docs/migration.html#inheritance
+ -->
+<dom-module id="base-layout">
+  <style>
+    /* TODO(polyup): For speed, consider reworking these styles with .classes
+                     and #ids rather than [attributes].
+    */
+    [layout] {
+      @apply(--layout);
+    }
+    [layout][horizontal] {
+      @apply(--layout-horizontal);
+    }
+    [layout][vertical] {
+      @apply(--layout-vertical);
+    }
+    [layout][center-justified] {
+      @apply(--layout-center-justified);
+    }
+  </style>
+  <link rel="import" type="css" href="base-layout.css">
   <template>
-
-    <link rel="stylesheet" href="base-layout.css">
 
     <app-globals id="globals"></app-globals>
 
     <!-- Temporary hardcoding of those images until they get added to the database -->
 
-    <template if="{{groupId=='474' || groupId=='368'}}">
+    <template is="dom-if" if="{{computeIf(groupId)}}">
       <style>
         #drawerPanel core-scroll-header-panel::shadow #headerBg {
           background: url(nhs-citizen.jpg) center center no-repeat;
@@ -16,7 +41,7 @@
       </style>
     </template>
 
-    <template if="{{groupId=='28'}}">
+    <template is="dom-if" if="{{computeIf2(groupId)}}">
       <style>
         #drawerPanel core-scroll-header-panel::shadow #headerBg {
           background: url(bulgaria_by_Stella.png) center center no-repeat;
@@ -25,177 +50,233 @@
       </style>
     </template>
 
-    <core-media-query query="max-width: 550px" queryMatches="{{smallScreen}}"></core-media-query>
+    <iron-media-query query="max-width: 550px" query-matches="{{smallScreen}}"></iron-media-query>
 
-    <material-search id="search" narrow="{{narrow}}" groupId="{{groupId}}"
-                     previousSearches="{{previousSearches}}"></material-search>
+    <material-search id="search" narrow="{{narrow}}" groupid="{{groupId}}" previoussearches="{{previousSearches}}"></material-search>
 
-    <core-drawer-panel id="drawerPanel" narrow="{{narrow}}" responsiveWidth="2000px">
+    <paper-drawer-panel id="drawerPanel" narrow="{{narrow}}" responsive-width="2000px">
 
-      <core-header-panel mode="scroll" drawer>
+      <paper-header-panel mode="scroll" drawer="">
         <base-nav-left user="{{user}}" idea="{{idea}}"></base-nav-left>
-      </core-header-panel>
+      </paper-header-panel>
 
-      <core-scroll-header-panel id="scrollheader" main condenses keepCondensedHeader on-trackstart="{{onRefreshStart}}"
-                                on-tracky="{{onMainAreaTrack}}" on-trackend="{{onRefreshUp}}">
-        <core-toolbar id="mainheader" class="tall">
+      <paper-scroll-header-panel id="scrollheader" main="" condenses="" keep-condensed-header="" on-trackstart="onRefreshStart" on-tracky="onMainAreaTrack" on-trackend="onRefreshUp">
+        <paper-toolbar id="mainheader" class="tall">
 
-          <template if="{{selected!='groups'}}">
-              <paper-icon-button icon="arrow-back" style="color:#fff;margin-left:48px;" on-tap="{{goBack}}"></paper-icon-button>
+          <template is="dom-if" if="{{computeIf3(selected)}}">
+              <paper-icon-button icon="arrow-back" style="color:#fff;margin-left:48px;" on-tap="goBack"></paper-icon-button>
           </template>
-          <template if="{{false && !idea && selected!='ideas-search'}}">
-            <paper-icon-button id="navicon" icon="menu" core-drawer-toggle></paper-icon-button>
+          <template is="dom-if" if="{{computeIf4(idea, selected)}}">
+            <paper-icon-button id="navicon" icon="menu" core-drawer-toggle=""></paper-icon-button>
           </template>
 
-          <div flex></div>
-          <paper-shadow z="2" class="bottom indent title titleBottom">
-            <div layout horizontal>
+          <div flex=""></div>
+          <paper-material elevation="2" class="bottom indent title titleBottom">
+            <div layout="" horizontal="">
 
-              <template if="{{showLogo}}">
+              <template is="dom-if" if="{{showLogo}}">
                 <div class="baseImageContainer">
-                  <image sizing="cover" height="100" class="baseImage" src="/images/{{'' | instanceLogoFilename}}"></image>
+                  <img sizing="cover" height="100" class="baseImage" src="{{computeSrc()}}">
                 </div>
               </template>
 
-              <template if="{{!showLogo && category}}">
+              <template is="dom-if" if="{{computeIf5(category, showLogo)}}">
                 <div class="baseImageContainer">
-                  <core-image sizing="contain"
-                              preload
-                              class="baseImage"
-                              src="https://s3.amazonaws.com/{{'' | s3bucketName}}/categories/icons/000/000/{{category.id | padNumber}}/icon_100/{{category.icon_file_name}}">
-                  </core-image>
+                  <iron-image sizing="contain" preload="" class="baseImage" src="{{computeSrc2(category)}}">
+                  </iron-image>
                 </div>
               </template>
 
-              <div layout vertical>
-                <div layout horizontal>
+              <div layout="" vertical="">
+                <div layout="" horizontal="">
                   <div style="padding-right: 4px;padding-top:8px;margin-top:16px;vertical-align: top;text-align: start;">
-                    {{name}}
+                    <span>{{name}}</span>
                   </div>
                 </div>
 
                 <div style="font-size:16px;margin-bottom: 8px;padding-bottom:8px;padding-top:4px;padding-left:4px;">
-                  <div layout horizontal>
-                    <template if="{{ideasFilter}}">
-                      <ideas-filter id="filter" categories="{{categories}}" filter="{{filter}}" groupId="{{groupId}}" groupName="{{groupName}}"></ideas-filter>
+                  <div layout="" horizontal="">
+                    <template is="dom-if" if="{{ideasFilter}}">
+                      <ideas-filter id="filter" categories="{{categories}}" filter="{{filter}}" groupid="{{groupId}}" groupname="{{groupName}}"></ideas-filter>
                     </template>
 
-                    <template if="{{!ideasFilter}}">
+                    <template is="dom-if" if="{{!ideasFilter}}">
                       <div>
-                        {{subTitle}}
+                        <span>{{subTitle}}</span>
                       </div>
                     </template>
                   </div>
                 </div>
               </div>
             </div>
-          </paper-shadow>
-          <paper-icon-button icon="search" class="fade-on-drawer-open" on-tap="{{toggleSearch}}"></paper-icon-button>
+          </paper-material>
+          <paper-icon-button icon="search" class="fade-on-drawer-open" on-tap="toggleSearch"></paper-icon-button>
 
-          <paper-icon-button icon="social:group-add" class="selected-items" on-tap="{{inviteUser}}"></paper-icon-button>
+          <paper-icon-button icon="social:group-add" class="selected-items" on-tap="inviteUser"></paper-icon-button>
 
-          <paper-menu-button class="selected-items" layout horizontal>
-            <paper-icon-button icon="more-vert" on-tap="{{openMenu}}"></paper-icon-button>
-            <paper-dropdown class="dropdown" halign="right">
-              <paper-item on-tap="{{openMenuItem}}">{{'menu.my_pages' | t}}</paper-item>
-              <paper-item on-tap="{{openMenuItem}}">{{'menu.about' | t}}</paper-item>
-              <paper-item on-tap="{{openMenuItem}}">{{'menu.help' | t}}</paper-item>
-              <paper-item on-tap="{{openMenuItem}}">{{'menu.settings' | t}}</paper-item>
-            </paper-dropdown>
+          <paper-menu-button class="selected-items" layout="" horizontal="">
+            <paper-icon-button icon="more-vert" on-tap="openMenu"></paper-icon-button>
+            <iron-dropdown class="dropdown" horizontal-align="right">
+              <paper-item on-tap="openMenuItem">{{computeExpression3()}}</paper-item>
+              <paper-item on-tap="openMenuItem">{{computeExpression4()}}</paper-item>
+              <paper-item on-tap="openMenuItem">{{computeExpression5()}}</paper-item>
+              <paper-item on-tap="openMenuItem">{{computeExpression6()}}</paper-item>
+            </iron-dropdown>
           </paper-menu-button>
-        </core-toolbar>
+        </paper-toolbar>
 
-        <template if="{{needLogin && !user}}">
+        <template is="dom-if" if="{{computeIf6(needLogin, user)}}">
           <shadow></shadow>
         </template>
 
-        <template bind if="{{!needLogin || user}}">
-          <div layout horizontal center-justified>
+        <template is="dom-if" bind="" if="{{computeIf7(needLogin, user)}}">
+          <div layout="" horizontal="" center-justified="">
             <paper-spinner id="spinner" style="padding-top:72px;"></paper-spinner>
           </div>
           <div class="content" style="margin-top:24px;">
             <content></content>
           </div>
         </template>
-      </core-scroll-header-panel>
+      </paper-scroll-header-panel>
 
-    </core-drawer-panel>
+    </paper-drawer-panel>
   </template>
   <script>
     Polymer({
-      previousSearches: ["Blah", "Hello"],
-      smallScreen: false,
-      selectedThreads: [],
-      group: null,
-
-      openMenu: function () {
-        this.$.globals.activity("Anonymous","open","menu");
+      is: 'base-layout',
+      properties: {
+        categories: { notify: true },
+        category: { notify: true },
+        filter: { notify: true },
+        group: { value: null },
+        groupId: { notify: true },
+        groupName: { notify: true },
+        idea: { notify: true },
+        ideasFilter: { notify: true },
+        name: { notify: true },
+        needLogin: { notify: true },
+        pageTitle: { notify: true },
+        previousSearches: {
+          type: Array,
+          value: function () {
+            return [
+              'Blah',
+              'Hello'
+            ];
+          }
+        },
+        selected: { notify: true },
+        selectedThreads: {
+          type: Array,
+          value: function () {
+            return [];
+          }
+        },
+        showLogo: { notify: true },
+        smallScreen: {
+          type: Boolean,
+          value: false
+        },
+        spinner: { notify: true },
+        subTitle: { notify: true },
+        user: { notify: true }
       },
-
-      openMenuItem: function(item) {
-        this.$.globals.activity("Anonymous","menu_open",item.srcElement.innerHTML);
+      openMenu: function () {
+        this.$.globals.activity('Anonymous', 'open', 'menu');
+      },
+      openMenuItem: function (item) {
+        this.$.globals.activity('Anonymous', 'menu_open', item.srcElement.innerHTML);
         this.$.globals.openDialog(item.srcElement.innerHTML);
       },
-
       inviteUser: function () {
-        this.$.globals.activity("Anonymous","invite","user");
-        this.$.globals.openDialog("groups.invite");
+        this.$.globals.activity('Anonymous', 'invite', 'user');
+        this.$.globals.openDialog('groups.invite');
       },
-
       goBack: function () {
-        this.$.globals.activity("Anonymous","open","back",this.selected);
-        if (this.selected=="ideas") {
-          window.location = "/";
-        } else if (this.selected=="ideas-search") {
+        this.$.globals.activity('Anonymous', 'open', 'back', this.selected);
+        if (this.selected == 'ideas') {
+          window.location = '/';
+        } else if (this.selected == 'ideas-search') {
           window.history.back();
         } else {
-          window.location = "/#/groups/"+this.groupId+"/ideas/top/"+this.groupName;
+          window.location = '/#/groups/' + this.groupId + '/ideas/top/' + this.groupName;
         }
       },
-
-      setSpinner: function(value) {
+      setSpinner: function (value) {
         this.$.spinner.active = value;
-        if (value===true) {
-          this.$.spinner.style.paddingTop="72px";
+        if (value === true) {
+          this.$.spinner.style.paddingTop = '72px';
         } else {
-          this.$.spinner.style.paddingTop="16px";
+          this.$.spinner.style.paddingTop = '16px';
         }
       },
-
       toggleSearch: function (e) {
         this.$.search.toggle();
       },
-
-      domReady: function () {
+      updateFilter: function () {
+        this.$.filter.updateFilter();
+      },
+      checkForSmallScreen: function () {
+        if (this.smallScreen === true) {
+          this.titleStyle.fontSize = '24px';
+        } else {
+          this.titleStyle.fontSize = '40px';
+        }
+      },
+      ready: function () {
         this.titleStyle = this.shadowRoot.querySelector('.title').style;
         this.checkForSmallScreen();
-
         window.onresize = function (event) {
           this.checkForSmallScreen();
         }.bind(this);
-
         var localTitleStyle = this.titleStyle;
-
         addEventListener('core-header-transform', function (e) {
           var d = e.detail;
           var m = 250 - d.condensedHeight;
           var scale = Math.max(0.15, (m - d.y) / (m / 0.25) + 0.75);
-          localTitleStyle.transform = localTitleStyle.webkitTransform =
-                  'scale(' + scale + ') translateZ(0)';
+          localTitleStyle.transform = localTitleStyle.webkitTransform = 'scale(' + scale + ') translateZ(0)';
         });
       },
-
-      updateFilter: function() {
-        this.$.filter.updateFilter();
+      extends: 'logged-in-page',
+      computeIf: function (groupId) {
+        return groupId == '474' || groupId == '368';
       },
-
-      checkForSmallScreen: function () {
-        if (this.smallScreen === true) {
-          this.titleStyle.fontSize = "24px";
-        } else {
-          this.titleStyle.fontSize = "40px";
-        }
+      computeIf2: function (groupId) {
+        return groupId == '28';
+      },
+      computeIf3: function (selected) {
+        return selected != 'groups';
+      },
+      computeIf4: function (idea, selected) {
+        return false && !idea && selected != 'ideas-search';
+      },
+      computeIf5: function (category, showLogo) {
+        return !showLogo && category;
+      },
+      computeIf6: function (needLogin, user) {
+        return needLogin && !user;
+      },
+      computeIf7: function (needLogin, user) {
+        return !needLogin || user;
+      },
+      computeSrc: function () {
+        return '/images/' + this.instanceLogoFilename('');
+      },
+      computeSrc2: function (category) {
+        return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(category.id) + '/icon_100/' + category.icon_file_name;
+      },
+      computeExpression3: function () {
+        return this.t('menu.my_pages');
+      },
+      computeExpression4: function () {
+        return this.t('menu.about');
+      },
+      computeExpression5: function () {
+        return this.t('menu.help');
+      },
+      computeExpression6: function () {
+        return this.t('menu.settings');
       }
     });
   </script>
-</polymer-element>
+</dom-module>

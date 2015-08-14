@@ -1,35 +1,34 @@
-<polymer-element name="home-page">
+<dom-module id="home-page">
+  <link rel="import" type="css" href="home-page.css">
   <template>
-    <link rel="stylesheet" href="home-page.css">
 
-    <template if="{{true}}">
+    <template is="dom-if" if="{{computeIf()}}">
       <groups-home-page></groups-home-page>
     </template>
   </template>
-
   <script>
-
     Polymer({
-
-      shortName: null,
-      groupHome: false,
-
+      is: 'home-page',
+      properties: {
+        groupHome: {
+          type: Boolean,
+          value: false
+        },
+        shortName: { value: null }
+      },
       ready: function () {
       },
-
-      getQueryParams: function(qs) {
-        qs = qs.split("+").join(" ");
-
-        var params = {}, tokens,
-                re = /[?&]?([^=]+)=([^&]*)/g;
-
+      getQueryParams: function (qs) {
+        qs = qs.split('+').join(' ');
+        var params = {}, tokens, re = /[?&]?([^=]+)=([^&]*)/g;
         while (tokens = re.exec(qs)) {
-          params[decodeURIComponent(tokens[1])]
-                  = decodeURIComponent(tokens[2]);
+          params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
         }
-
         return params;
+      },
+      computeIf: function () {
+        return true;
       }
     });
   </script>
-</polymer-element>
+</dom-module>

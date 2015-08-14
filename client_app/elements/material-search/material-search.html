@@ -1,6 +1,41 @@
-<polymer-element name="material-search" attributes="active previousSearches narrow groupId"  fit>
-  <template>
-    <style>
+  <style is="custom-style">
+    /* TODO(polyup): For speed, consider reworking these styles with .classes
+                     and #ids rather than [attributes].
+    */
+    [fit] {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+  </style>
+  <!--
+      TODO(polyup): unable to infer path to components
+      directory. This import path is probably incomplete.
+   -->
+  <link rel="import" href="iron-flex-layout/iron-flex-layout.html">
+<dom-module id="material-search">
+  <style>
+    /* TODO(polyup): For speed, consider reworking these styles with .classes
+                     and #ids rather than [attributes].
+    */
+    :host[fit] {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+    [fit] {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+  </style>
+  <style>
       :host {
         display: none;
         margin: 0;
@@ -39,50 +74,77 @@
         margin-right: 24px !important;
       }
     </style>
-    <core-header-panel mode="standard" fit>
-      <core-toolbar class="{{ {'core-narrow' : narrow} | tokenList}}">
-        <paper-icon-button icon="arrow-back" on-tap="{{toggle}}"></paper-icon-button>
-        <input id="searchbox" placeholder="{{'ideas.search' | t}}" value="{{term}}" flex>
+  <template>
+    <paper-header-panel mode="standard" fit="">
+      <paper-toolbar class$="{{computeClass(narrow)}}">
+        <paper-icon-button icon="arrow-back" on-tap="toggle"></paper-icon-button>
+        <input id="searchbox" placeholder="{{computePlaceholder()}}" value="{{term::input}}" flex="">
         <paper-icon-button icon="av:mic"></paper-icon-button>
-      </core-toolbar>
-      <core-menu on-core-select="{{onSelect}}">
-        <template repeat="{{p in previousSearches}}">
+      </paper-toolbar>
+      <paper-menu on-core-select="onSelect">
+        <template is="dom-repeat" items="{{previousSearches}}" as="p">
           <paper-item icon="history" label="{{p}}"></paper-item>
         </template>
-      </core-menu>
-    </core-header-panel>
-    <core-a11y-keys target="{{searchbox}}" keys="enter" on-keys-pressed="{{enterHandler}}"></core-a11y-keys>
+      </paper-menu>
+    </paper-header-panel>
+    <iron-a11y-keys target="{{searchbox}}" keys="enter" on-keys-pressed="enterHandler"></iron-a11y-keys>
   </template>
   <script>
     Polymer({
-      publish: {
-        narrow: {value: false, reflect: true},
-        active: {value: false, reflect: true}
+      is: 'material-search',
+      properties: {
+        active: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          reflectToAttribute: true
+        },
+        groupId: { notify: true },
+        narrow: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          reflectToAttribute: true
+        },
+        previousSearches: { notify: true }
       },
-
       enterHandler: function () {
-        window.location = "/#/groups/" + this.groupId + "/search/"+ this.term;
+        window.location = '/#/groups/' + this.groupId + '/search/' + this.term;
       },
-
-      created: function() {
+      created: function () {
         this.previousSearches = [];
       },
-
-      onSelect: function(e, detail, sender) {
+      onSelect: function (e, detail, sender) {
         if (detail.isSelected) {
-          this.async(function() {
+          this.async(function () {
             this.toggle();
-          }, null, 250); // Introduce small delay so user sees ripple.
+          }, null, 250);
         }
       },
-
-      toggle: function() {
-        window.globals.activity("Anonymous","toggle","search",this.active);
+      // Introduce small delay so user sees ripple.
+      toggle: function () {
+        window.globals.activity('Anonymous', 'toggle', 'search', this.active);
         this.active = !this.active;
         if (this.active) {
           this.$.searchbox.focus();
         }
+      },
+      hostAttributes: { 'fit': '' },
+      computeClass: function (narrow) {
+        return this.tokenList({ 'core-narrow': narrow });
+      },
+      computePlaceholder: function () {
+        return this.t('ideas.search');
+      },
+      tokenList: function (obj) {
+        var pieces = [];
+        for (key in obj) {
+          if (obj[key]) {
+            pieces.push(key);
+          }
+        }
+        return pieces.join(' ');
       }
     });
   </script>
-</polymer-element>
+</dom-module>

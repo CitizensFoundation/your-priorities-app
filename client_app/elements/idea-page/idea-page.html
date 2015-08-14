@@ -1,100 +1,156 @@
-<polymer-element name="idea-page" extends="base-page" attributes="contactId contacts ideaName" layout vertical>
-  <template bind>
-    <link rel="stylesheet" href="idea-page.css">
+  <style is="custom-style">
+    /* TODO(polyup): For speed, consider reworking these styles with .classes
+                     and #ids rather than [attributes].
+    */
+    [layout] {
+      @apply(--layout);
+    }
+    [layout][vertical] {
+      @apply(--layout-vertical);
+    }
+  </style>
+  <!--
+      TODO(polyup): unable to infer path to components
+      directory. This import path is probably incomplete.
+   -->
+  <link rel="import" href="iron-flex-layout/iron-flex-layout.html">
+<!--
+    TODO(polyup): Inheriting from other custom elements is not yet supported.
+    See: https://www.polymer-project.org/1.0/docs/migration.html#inheritance
+ -->
+<dom-module id="idea-page">
+  <style>
+    /* TODO(polyup): For speed, consider reworking these styles with .classes
+                     and #ids rather than [attributes].
+    */
+    :host[layout] {
+      @apply(--layout);
+    }
+    :host[layout][vertical] {
+      @apply(--layout-vertical);
+    }
+    [layout] {
+      @apply(--layout);
+    }
+    [layout][vertical] {
+      @apply(--layout-vertical);
+    }
+    [layout][center-center] {
+      @apply(--layout-center-center);
+    }
+  </style>
+  <link rel="import" type="css" href="idea-page.css">
+  <template bind="">
     <!--
     On larger screens, change the behavior of the header panel so it doesn't
     scroll away or do the condenses feature. Instead, treat its content like
     a regular toolbar.
     -->
-    <core-media-query query="min-width: 640px" queryMatches="{{largeScreen}}">
-    </core-media-query>
+    <iron-media-query query="min-width: 640px" query-matches="{{largeScreen}}">
+    </iron-media-query>
 
-    <base-layout id="layout" selected="idea" showLogo="true"
-                 category="{{idea.Category}}"
-                 name="{{idea.Group.name}}"
-                 subTitle="{{idea.name}}"
-                 idea="{{idea}}"
-                 groupId="{{idea.Group.id}}"
-                 groupName="{{idea.Group.name}}">
-      <template if="{{idea}}">
+    <base-layout id="layout" selected="idea" showlogo="true" category="{{idea.Category}}" name="{{idea.Group.name}}" subtitle="{{idea.name}}" idea="{{idea}}" groupid="{{idea.Group.id}}" groupname="{{idea.Group.name}}">
+      <template is="dom-if" if="{{idea}}">
 
-        <div layout vertical center-center>
+        <div layout="" vertical="" center-center="">
 
-          <paper-shadow id="topCard" class="topCard" z="2" center-center>
-            <yrpri-idea idea="{{idea}}" showCategory="true"></yrpri-idea>
-          </paper-shadow>
+          <paper-material id="topCard" class="topCard" elevation="2" center-center="">
+            <yrpri-idea idea="{{idea}}" showcategory="true"></yrpri-idea>
+          </paper-material>
 
-          <paper-shadow class="card cardTabs" z="1" center-center>
+          <paper-material class="card cardTabs" elevation="1" center-center="">
 
-            <div layout vertical style="width:100%;">
+            <div layout="" vertical="" style="width:100%;">
 
-              <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-                <paper-tab>{{'ideas.tabs.debate' | t}} ({{idea.Points.length}})</paper-tab>
-                <paper-tab>{{'ideas.tabs.newsfeed' | t}}</paper-tab>
-                <paper-tab>{{'ideas.tabs.photos' | t}}</paper-tab>
-                <paper-tab>{{'ideas.tabs.solutions' | t}}</paper-tab>
+              <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+                <paper-tab><span>{{computeExpression1()}}</span> (<span>{{idea.Points.length}}</span>)</paper-tab>
+                <paper-tab>{{computeExpression3()}}</paper-tab>
+                <paper-tab>{{computeExpression4()}}</paper-tab>
+                <paper-tab>{{computeExpression5()}}</paper-tab>
               </paper-tabs>
 
-              <core-animated-pages notap selected="{{selected}}" style="width:100%;" transitions="slide-from-right">
+              <neon-animated-pages notap="" selected="{{selected}}" style="width:100%;" transitions="slide-from-right">
                 <section-points points="{{idea.Points}}"></section-points>
-                <section><center><br><br><h1>{{'ideas.tabs.not_implemented' | t}}</h1></center></section>
-                <section><center><br><br><h1>{{'ideas.tabs.not_implemented' | t}}</h1></center></section>
-                <section><center><br><br><h1>{{'ideas.tabs.not_implemented' | t}}</h1></center></section>
-              </core-animated-pages>
+                <section><center><br><br><h1>{{computeExpression8()}}</h1></center></section>
+                <section><center><br><br><h1>{{computeExpression8()}}</h1></center></section>
+                <section><center><br><br><h1>{{computeExpression8()}}</h1></center></section>
+              </neon-animated-pages>
 
             </div>
-          </paper-shadow>
+          </paper-material>
         </div>
       </template>
     </base-layout>
 
-    <core-ajax
-            auto="false"
-            id="ajax"
-            url="/api/ideas/{{idea_id}}"
-            response="{{response}}"
-            handleAs="json">
-    </core-ajax>
+    <iron-ajax auto="false" id="ajax" url="{{computeUrl(idea_id)}}" last-response="{{response}}" handle-as="json">
+    </iron-ajax>
   </template>
   <script>
     (function () {
       Polymer({
-        responseChanged: function (e, detail, sender) {
+        is: 'idea-page',
+        properties: {
+          contactId: { notify: true },
+          contacts: { notify: true },
+          ideaName: { notify: true },
+          response: { observer: 'responseChanged' },
+          selected: { observer: 'selectedChanged' }
+        },
+        responseChanged: function (detail, e, sender) {
           this.$.layout.setSpinner(false);
           this.idea = detail;
-          if (this.idea.description===null) {
+          if (this.idea.description === null) {
             this.idea.description = this.idea.Points[0].content;
             this.idea.Points.shift();
           }
         },
-
-        selectedChanged: function (previous,selected) {
-          if (selected==0)
-            window.globals.activity("Anonymous","open","pointsTab");
-          else if (selected==1)
-            window.globals.activity("Anonymous","open","newsfeedTab");
-          else if (selected==2)
-            window.globals.activity("Anonymous","open","photosTab");
-          else if (selected==3)
-            window.globals.activity("Anonymous","open","solutionsTab");
-        },
-
-        domReady: function () {
-          this.$.layout.setSpinner(true);
-          this.$.ajax.go();
+        selectedChanged: function (selected, previous) {
+          if (selected == 0)
+            window.globals.activity('Anonymous', 'open', 'pointsTab');
+          else if (selected == 1)
+            window.globals.activity('Anonymous', 'open', 'newsfeedTab');
+          else if (selected == 2)
+            window.globals.activity('Anonymous', 'open', 'photosTab');
+          else if (selected == 3)
+            window.globals.activity('Anonymous', 'open', 'solutionsTab');
         },
         willPrepare: function () {
           this.super();
-
           // Measure the core-scroll-header-panel, otherwise its height will
           // be messed up
           this.$.scrollHeaderPanel.measureHeaderHeight();
-
           // Reset the scroller so every time the user comes to the info page
           // so they see the full profile photo
           this.$.scrollHeaderPanel.scroller.scrollTop = 0;
+        },
+        hostAttributes: {
+          'layout': '',
+          'vertical': ''
+        },
+        ready: function () {
+          this.$.layout.setSpinner(true);
+          this.$.ajax.go();
+        },
+        extends: 'base-page',
+        computeUrl: function (idea_id) {
+          return '/api/ideas/' + idea_id;
+        },
+        computeExpression1: function () {
+          return this.t('ideas.tabs.debate');
+        },
+        computeExpression3: function () {
+          return this.t('ideas.tabs.newsfeed');
+        },
+        computeExpression4: function () {
+          return this.t('ideas.tabs.photos');
+        },
+        computeExpression5: function () {
+          return this.t('ideas.tabs.solutions');
+        },
+        computeExpression8: function () {
+          return this.t('ideas.tabs.not_implemented');
         }
       });
-    })();
+    }());
   </script>
-</polymer-element>
+</dom-module>

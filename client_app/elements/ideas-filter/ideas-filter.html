@@ -1,123 +1,164 @@
-<polymer-element name="ideas-filter" attributes="categories groupId groupName filter">
+  <!--
+      TODO(polyup): unable to infer path to components
+      directory. This import path is probably incomplete.
+   -->
+  <link rel="import" href="iron-flex-layout/iron-flex-layout.html">
+<dom-module id="ideas-filter">
+  <style>
+    /* TODO(polyup): For speed, consider reworking these styles with .classes
+                     and #ids rather than [attributes].
+    */
+    [layout] {
+      @apply(--layout);
+    }
+    [layout][horizontal] {
+      @apply(--layout-horizontal);
+    }
+    [layout][vertical] {
+      @apply(--layout-vertical);
+    }
+  </style>
+  <link rel="import" type="css" href="ideas-filter.css">
   <template>
-
-    <link rel="stylesheet" href="ideas-filter.css">
-    <div layout horizontal>
+    <div layout="" horizontal="">
       <div>
-        {{subTitle}}
+        <span>{{subTitle}}</span>
       </div>
       <div>
-        <paper-menu-button class="selected-items" layout horizontal
-                           style="padding-left:0px;padding-top: 0px;margin-top: -8px;">
+        <paper-menu-button class="selected-items" layout="" horizontal="" style="padding-left:0px;padding-top: 0px;margin-top: -8px;">
 
-          <paper-fab class="filterIcon filterIconTransform" icon="editor:merge-type" on-tap="{{openFilter}}" mini z="3"></paper-fab>
+          <paper-fab class="filterIcon filterIconTransform" icon="editor:merge-type" on-tap="openFilter" mini="" z="3"></paper-fab>
 
-          <paper-dropdown id="filterDropdown" class="dropdown" halign="left">
-            <div layout horizontal>
+          <iron-dropdown id="filterDropdown" class="dropdown" horizontal-align="left">
+            <div layout="" horizontal="">
               <div>
-                <core-selector on-core-select="{{ changeFilter }}">
+                <iron-selector on-core-select=" changeFilter ">
                   <paper-item data-filter="top">
-                    <core-icon icon="trending-up" class="filterIcon"></core-icon>
-                    {{'ideas.top' | t}}
+                    <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
+                    <span>{{computeExpression2()}}</span>
                   </paper-item>
                   <paper-item data-filter="newest">
-                    <core-icon icon="av:new-releases" class="filterIcon"></core-icon>
-                    {{'ideas.newest' | t}}
+                    <iron-icon icon="av:new-releases" class="filterIcon"></iron-icon>
+                    <span>{{computeExpression3()}}</span>
                   </paper-item>
                   <paper-item data-filter="random">
-                    <core-icon icon="cached" class="filterIcon"></core-icon>
-                    {{'ideas.random' | t}}
+                    <iron-icon icon="cached" class="filterIcon"></iron-icon>
+                    <span>{{computeExpression4()}}</span>
                   </paper-item>
                   <paper-item data-filter="inProgress">
-                    <core-icon icon="av:hearing" class="filterIcon"></core-icon>
-                    {{'ideas.inProgress' | t}}
+                    <iron-icon icon="av:hearing" class="filterIcon"></iron-icon>
+                    <span>{{computeExpression5()}}</span>
                   </paper-item>
-                </core-selector>
+                </iron-selector>
               </div>
-              <template if="{{categories && categories.length>0}}">
+              <template is="dom-if" if="{{computeIf(categories)}}">
                 <div>
-                  <core-selector on-core-select="{{ changeCategory }}">
-                    <paper-item data-category-id="{{-1}}">
-                      <core-icon icon="select-all" class="filterIcon"></core-icon>
-                      {{'categories.the_all' | t}}
+                  <iron-selector on-core-select=" changeCategory ">
+                    <paper-item data-category-id$="{{computeData-category-id()}}">
+                      <iron-icon icon="select-all" class="filterIcon"></iron-icon>
+                      <span>{{computeExpression6()}}</span>
                     </paper-item>
-                  </core-selector>
-                    <div layout horizontal>
-                      <template repeat="{{categoriesGroups in categories | splitArray(7)}}">
-                        <div layout vertical>
-                          <core-selector on-core-select="{{ changeCategory }}">
-                            <template repeat="{{category in categoriesGroups}}">
-                              <paper-item data-category-id="{{category.id}}" data-category-name="{{category.name}}">
-                                <core-image sizing="contain"
-                                            preload
-                                            height="24"
-                                            width="24"
-                                            class="filterIcon"
-                                            src="https://s3.amazonaws.com/{{'' | s3bucketName}}/categories/icons/000/000/{{category.id | padNumber}}/icon_100/{{category.icon_file_name}}">
-                                </core-image>
-                                {{category.name}}
+                  </iron-selector>
+                    <div layout="" horizontal="">
+                      <template is="dom-repeat" items="{{computeItems(categories)}}" as="categoriesGroups">
+                        <div layout="" vertical="">
+                          <iron-selector on-core-select=" changeCategory ">
+                            <template is="dom-repeat" items="{{categoriesGroups}}" as="category">
+                              <paper-item data-category-id$="{{category.id}}" data-category-name$="{{category.name}}">
+                                <iron-image sizing="contain" preload="" height="24" width="24" class="filterIcon" src="{{computeSrc(category)}}">
+                                </iron-image>
+                                <span>{{category.name}}</span>
                               </paper-item>
                             </template>
-                          </core-selector>
+                          </iron-selector>
                         </div>
                       </template>
                     </div>
-                  </core-selector>
+                  
                 </div>
               </template>
             </div>
-          </paper-dropdown>
+          </iron-dropdown>
         </paper-menu-button>
       </div>
     </div>
   </template>
   <script>
     Polymer({
-
-      subTitle: "",
-
-      domReady: function () {
-        this.updateFilter();
+      is: 'ideas-filter',
+      properties: {
+        categories: { notify: true },
+        filter: { notify: true },
+        groupId: { notify: true },
+        groupName: { notify: true },
+        subTitle: {
+          type: String,
+          value: ''
+        }
       },
-
-      openFilter: function() {
-        window.globals.activity("Anonymous","open","filter");
+      openFilter: function () {
+        window.globals.activity('Anonymous', 'open', 'filter');
       },
-
       updateFilter: function () {
-        window.selectedFilterName = "ideas."+this.filter;
+        window.selectedFilterName = 'ideas.' + this.filter;
         var filterName = PolymerExpressions.prototype.t(window.selectedFilterName);
         var categoryName = PolymerExpressions.prototype.t(window.selectedCategoryName);
-        var inWord = PolymerExpressions.prototype.t("short_word.in");
-        this.subTitle = filterName + " " + inWord + " " + categoryName;
+        var inWord = PolymerExpressions.prototype.t('short_word.in');
+        this.subTitle = filterName + ' ' + inWord + ' ' + categoryName;
       },
-
       changeFilter: function (e, detail) {
         window.selectedFilter = detail.item.dataset.filter;
-        window.selectedFilterName = "ideas."+window.selectedFilter;
+        window.selectedFilterName = 'ideas.' + window.selectedFilter;
         this.updateAfterFiltering();
       },
-
       changeCategory: function (e, detail) {
         var categoryId = detail.item.dataset.categoryId;
         window.selectedCategoryName = detail.item.dataset.categoryName;
-        if (categoryId != "-1") {
+        if (categoryId != '-1') {
           window.categoryId = categoryId;
         } else {
           window.categoryId = null;
         }
         this.updateAfterFiltering();
       },
-
       updateAfterFiltering: function () {
-        var newLocation = "/#/groups/" + this.groupId + "/ideas/" + window.selectedFilter + "/" + this.groupName;
+        var newLocation = '/#/groups/' + this.groupId + '/ideas/' + window.selectedFilter + '/' + this.groupName;
         if (window.categoryId) {
-          newLocation += "/" + window.categoryId;
+          newLocation += '/' + window.categoryId;
         }
-        window.globals.activity("Anonymous","change","filter",newLocation);
+        window.globals.activity('Anonymous', 'change', 'filter', newLocation);
         window.location = newLocation;
+      },
+      ready: function () {
+        this.updateFilter();
+      },
+      computeIf: function (categories) {
+        return categories && categories.length > 0;
+      },
+      computeData-category-id: function () {
+        return -1;
+      },
+      computeItems: function (categories) {
+        return this.splitArray(categories, 7);
+      },
+      computeSrc: function (category) {
+        return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(category.id) + '/icon_100/' + category.icon_file_name;
+      },
+      computeExpression2: function () {
+        return this.t('ideas.top');
+      },
+      computeExpression3: function () {
+        return this.t('ideas.newest');
+      },
+      computeExpression4: function () {
+        return this.t('ideas.random');
+      },
+      computeExpression5: function () {
+        return this.t('ideas.inProgress');
+      },
+      computeExpression6: function () {
+        return this.t('categories.the_all');
       }
-
     });
   </script>
-</polymer-element>
+</dom-module>

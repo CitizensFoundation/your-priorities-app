@@ -1,29 +1,54 @@
-<polymer-element name="yrpri-point" attributes="point">
+  <!--
+      TODO(polyup): unable to infer path to components
+      directory. This import path is probably incomplete.
+   -->
+  <link rel="import" href="iron-flex-layout/iron-flex-layout.html">
+<dom-module id="yrpri-point">
+  <style>
+    /* TODO(polyup): For speed, consider reworking these styles with .classes
+                     and #ids rather than [attributes].
+    */
+    [layout] {
+      @apply(--layout);
+    }
+    [layout][flex] {
+      @apply(--layout-flex);
+    }
+    [layout][vertical] {
+      @apply(--layout-vertical);
+    }
+    [layout][horizontal] {
+      @apply(--layout-horizontal);
+    }
+  </style>
+  <link rel="import" type="css" href="yrpri-point.css">
   <template>
 
-    <link rel="stylesheet" href="yrpri-point.css">
-
-    <div layout flex>
-      <paper-shadow z="2" class="card">
-        <div layout vertical>
+    <div layout="" flex="">
+      <paper-material elevation="2" class="card">
+        <div layout="" vertical="">
           <div class="pointUser">
-            <div layout horizontal>
+            <div layout="" horizontal="">
               <div class="name">
-                {{point.PointRevisions[0].User.login}}
+                <span>{{point.PointRevisions[0].User.login}}</span>
               </div>
             </div>
           </div>
-          <div class="description {{point.value>0 ? 'for' : 'against'}}">
-            <b>{{point.name}}.</b> {{point.content}}
+          <div class$="{{computeClass(point)}}">
+            <b><span>{{point.name}}</span>.</b> <span>{{point.content}}</span>
           </div>
           <point-action-bar point="{{point}}"></point-action-bar>
         </div>
-      </paper-shadow>
+      </paper-material>
     </div>
   </template>
-
   <script>
     Polymer({
+      is: 'yrpri-point',
+      properties: { point: { notify: true } },
+      computeClass: function (point) {
+        return 'description ' + point.value > 0 ? 'for' : 'against';
+      }
     });
   </script>
-</polymer-element>
+</dom-module>

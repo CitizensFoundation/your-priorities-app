@@ -1,82 +1,105 @@
-<polymer-element name="yrpri-idea" attributes="small idea showCategory showName userImagesLimit">
+  <!--
+      TODO(polyup): unable to infer path to components
+      directory. This import path is probably incomplete.
+   -->
+  <link rel="import" href="iron-flex-layout/iron-flex-layout.html">
+<dom-module id="yrpri-idea">
+  <style>
+    /* TODO(polyup): For speed, consider reworking these styles with .classes
+                     and #ids rather than [attributes].
+    */
+    [layout] {
+      @apply(--layout);
+    }
+    [layout][flex] {
+      @apply(--layout-flex);
+    }
+    [layout][horizontal] {
+      @apply(--layout-horizontal);
+    }
+    [layout][around-justified] {
+      @apply(--layout-around-justified);
+    }
+    [layout][vertical] {
+      @apply(--layout-vertical);
+    }
+  </style>
+  <link rel="import" type="css" href="yrpri-idea.css">
   <template>
 
-    <link rel="stylesheet" href="yrpri-idea.css">
-
-    <div layout horizontal?="{{!small}}" flex>
-      <div layout style="vertical-align: top;width:100%;">
-        <div layout horizontal around-justified flex>
-          <template if="{{showCategory}}">
+    <div layout="" flex="" horizontal$="{{!small}}">
+      <div layout="" style="vertical-align: top;width:100%;">
+        <div layout="" horizontal="" around-justified="" flex="">
+          <template is="dom-if" if="{{showCategory}}">
             <div>
-              <core-image class="category"
-                        src="https://s3.amazonaws.com/{{'' | s3bucketName}}/categories/icons/000/000/{{idea.Category.id | padNumber}}/icon_50/{{idea.Category.icon_file_name}}"/>
+              <iron-image class="category" src="{{computeSrc(idea)}}">
 
-            </div>
+            </iron-image></div>
           </template>
-          <div flex class="header" on-tap="{{goToIdea}}" layout vertical>
+          <div flex="" class="header" on-tap="goToIdea" layout="" vertical="">
             <div>
-              <b>{{idea.name | trim | truncate(small ? 60 : 200) }}</b>
+              <b>{{computeExpression1(idea, small)}}</b>
             </div>
-            <template if="{{showName}}">
+            <template is="dom-if" if="{{showName}}">
               <div class="userScreenname">
-                {{idea.User.login}}
+                <span>{{idea.User.login}}</span>
               </div>
             </template>
-            <template if="{{showCategory && !small}}">
+            <template is="dom-if" if="{{computeIf(showCategory, small)}}">
               <div class="categoryName">
-                {{idea.Category.name}}
+                <span>{{idea.Category.name}}</span>
               </div>
             </template>
 
           </div>
-          <template if="{{!small}}">
-            <div flex style="">
-              <idea-action-bar idea="{{idea}}" small="{{small}}" flex style="float:right; clear:right;"></idea-action-bar>
+          <template is="dom-if" if="{{!small}}">
+            <div flex="" style="">
+              <idea-action-bar idea="{{idea}}" small="{{small}}" flex="" style="float:right; clear:right;"></idea-action-bar>
             </div>
-            <core-icon-button icon="report" on-tap="{{report}}" style="color:#eee;"></core-icon-button>
-            <paper-icon-button class="share" on-tap="{{notify}}" style="color:#b0b0b0;" icon="image:remove-red-eye"></paper-icon-button>
-            <paper-icon-button class="share" on-tap="{{share}}" icon="social:share"></paper-icon-button>
-            <template if="{{false}}">
-              <paper-menu-button class="selected-items" layout horizontal>
+            <paper-icon-button icon="report" on-tap="report" style="color:#eee;"></paper-icon-button>
+            <paper-icon-button class="share" on-tap="notify" style="color:#b0b0b0;" icon="image:remove-red-eye"></paper-icon-button>
+            <paper-icon-button class="share" on-tap="share" icon="social:share"></paper-icon-button>
+            <template is="dom-if" if="{{computeIf2()}}">
+              <paper-menu-button class="selected-items" layout="" horizontal="">
                 <paper-icon-button icon="more-vert"></paper-icon-button>
-                <paper-dropdown class="dropdown" halign="right">
+                <iron-dropdown class="dropdown" horizontal-align="right">
                   <div class="separator">Admin</div>
                   <paper-item>Breyta</paper-item>
                   <paper-item>Staða</paper-item>
                   <paper-item>Eyða</paper-item>
-                </paper-dropdown>
+                </iron-dropdown>
               </paper-menu-button>
             </template>
           </template>
         </div>
 
-        <div layout class="description">
-          <template if="{{idea.IdeaRevision[0]}}">
-            {{idea.IdeaRevision[0].description | trim | truncate(small ? 200 : 10000,"...")}}
+        <div layout="" class="description">
+          <template is="dom-if" if="{{idea.IdeaRevision[0]}}">
+            <span>{{computeExpression4(idea, small)}}</span>
           </template>
-          <template if="{{idea.description}}">
-            {{idea.description | trim | truncate(small ? 200 : 10000,"...")}}
+          <template is="dom-if" if="{{idea.description}}">
+            <span>{{computeExpression5(idea, small)}}</span>
           </template>
-          <template if="{{!idea.description}}">
-            {{idea.Points[0].content | trim | truncate(small ? 200 : 10000,"...")}}
+          <template is="dom-if" if="{{!idea.description}}">
+            <span>{{computeExpression6(idea, small)}}</span>
           </template>
         </div>
-        <template if="{{small}}">
+        <template is="dom-if" if="{{small}}">
           <idea-action-bar idea="{{idea}}" small="{{small}}" style=""></idea-action-bar>
         </template>
-        <template if="{{!small}}">
-          <paper-spinner id="spinner" style="padding-top:4px;display:block;" active></paper-spinner>
-          <template if="{{endorsements}}">
+        <template is="dom-if" if="{{!small}}">
+          <paper-spinner id="spinner" style="padding-top:4px;display:block;" active=""></paper-spinner>
+          <template is="dom-if" if="{{endorsements}}">
             <div style="padding-top: 16px; opacity: 0.80;">
-              <template repeat="{{endorsement, endorsementIndex in endorsements | limitTo(userImagesLimit)}}">
-                <user-image user="{{endorsement.User}}" small></user-image>
+              <template is="dom-repeat" items="{{limitTo(endorsements, userImagesLimit)}}" as="endorsement" index-as="endorsementIndex">
+                <user-image user="{{endorsement.User}}" small=""></user-image>
               </template>
               <div id="moreImages" style="display:none;">
-                <paper-icon-button class="more" id="moreImagesButton" icon="add" on-tap="{{moreUserImages}}"></paper-icon-button>
-                <span id="numberOfMoreUserImages" style="display:none;margin-bottom:16px;padding-left:0px;margin-left:0px;">{{0 | countUserImagesLeft}}</span>
+                <paper-icon-button class="more" id="moreImagesButton" icon="add" on-tap="moreUserImages"></paper-icon-button>
+                <span id="numberOfMoreUserImages" style="display:none;margin-bottom:16px;padding-left:0px;margin-left:0px;">{{computeExpression7()}}</span>
               <span id="restOfUserImages" style="display: none;">
-                <template repeat="{{endorsement, endorsementIndex in endorsements | limitFrom(userImagesLimit,endorsements.length)}}">
-                  <user-image user="{{endorsement.User}}" small></user-image>
+                <template is="dom-repeat" items="{{limitFrom(endorsements, userImagesLimit, endorsements.length)}}" as="endorsement" index-as="endorsementIndex">
+                  <user-image user="{{endorsement.User}}" small=""></user-image>
                 </template>
               </span>
                 </div>
@@ -86,66 +109,95 @@
       </div>
     </div>
 
-    <template if="{{!small}}">
-      <core-ajax
-              auto="true"
-              id="endorsementAjax"
-              url="/api/ideas/{{idea.id}}/endorsements"
-              response="{{response}}"
-              handleAs="json">
-      </core-ajax>
+    <template is="dom-if" if="{{!small}}">
+      <iron-ajax auto="true" id="endorsementAjax" url="{{computeUrl(idea)}}" last-response="{{response}}" handle-as="json">
+      </iron-ajax>
     </template>
   </template>
-
   <script>
     Polymer({
-
-      userImagesLimit: 42,
-      endorsements: [],
-
-      share: function () {
-        window.globals.activity("Anonymous","open","ideaShare");
-        window.globals.openDialog("ideas.share");
-      },
-
-      report: function () {
-        window.globals.activity("Anonymous","open","ideaReport");
-        window.globals.openDialog("ideas.report");
-      },
-
-      notify: function () {
-        window.globals.activity("Anonymous","open","ideaNotify");
-        window.globals.openDialog("ideas.notify");
-      },
-
-      allEndorsementsLength: function(idea) {
-        return (this.endorsements.length);
-      },
-
-      countUserImagesLeft: function(e) {
-        return this.allEndorsementsLength(this.idea)-this.userImagesLimit;
-      },
-
-      responseChanged: function (e, detail, sender) {
-        this.$.spinner.active = false;
-        this.$.spinner.style.display = "none";
-        this.endorsements = detail;
-        if (this.endorsements.length>this.userImagesLimit) {
-          this.$.moreImages.style.display = "inline";
+      is: 'yrpri-idea',
+      properties: {
+        endorsements: {
+          type: Array,
+          value: function () {
+            return [];
+          }
+        },
+        idea: { notify: true },
+        response: { observer: 'responseChanged' },
+        showCategory: { notify: true },
+        showName: { notify: true },
+        small: { notify: true },
+        userImagesLimit: {
+          type: Number,
+          value: 42,
+          notify: true
         }
       },
-
-      moreUserImages: function() {
-        this.$.moreImagesButton.style.display = "none";
-        this.$.numberOfMoreUserImages.style.display = "none";
-        this.$.restOfUserImages.style.display = "inline";
+      share: function () {
+        window.globals.activity('Anonymous', 'open', 'ideaShare');
+        window.globals.openDialog('ideas.share');
       },
-
+      report: function () {
+        window.globals.activity('Anonymous', 'open', 'ideaReport');
+        window.globals.openDialog('ideas.report');
+      },
+      notify: function () {
+        window.globals.activity('Anonymous', 'open', 'ideaNotify');
+        window.globals.openDialog('ideas.notify');
+      },
+      allEndorsementsLength: function (idea) {
+        return this.endorsements.length;
+      },
+      countUserImagesLeft: function (e) {
+        return this.allEndorsementsLength(this.idea) - this.userImagesLimit;
+      },
+      responseChanged: function (detail, e, sender) {
+        this.$.spinner.active = false;
+        this.$.spinner.style.display = 'none';
+        this.endorsements = detail;
+        if (this.endorsements.length > this.userImagesLimit) {
+          this.$.moreImages.style.display = 'inline';
+        }
+      },
+      moreUserImages: function () {
+        this.$.moreImagesButton.style.display = 'none';
+        this.$.numberOfMoreUserImages.style.display = 'none';
+        this.$.restOfUserImages.style.display = 'inline';
+      },
       goToIdea: function (e) {
-        var ideaUrl = '/#/ideas/'+this.idea.id;
-        window.globals.activity("Anonymous","open","idea",ideaUrl);
+        var ideaUrl = '/#/ideas/' + this.idea.id;
+        window.globals.activity('Anonymous', 'open', 'idea', ideaUrl);
         window.location = ideaUrl;
+      },
+      computeIf: function (showCategory, small) {
+        return showCategory && !small;
+      },
+      computeSrc: function (idea) {
+        return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(idea.Category.id) + '/icon_50/' + idea.Category.icon_file_name;
+      },
+      computeIf2: function () {
+        return false;
+      },
+      computeUrl: function (idea) {
+        return '/api/ideas/' + idea.id + '/endorsements';
+      },
+      computeExpression1: function (idea, small) {
+        return this.truncate(this.trim(idea.name), small ? 60 : 200);
+      },
+      computeExpression4: function (idea, small) {
+        return this.truncate(this.trim(idea.IdeaRevision[0].description), small ? 200 : 10000, '...');
+      },
+      computeExpression5: function (idea, small) {
+        return this.truncate(this.trim(idea.description), small ? 200 : 10000, '...');
+      },
+      computeExpression6: function (idea, small) {
+        return this.truncate(this.trim(idea.Points[0].content), small ? 200 : 10000, '...');
+      },
+      computeExpression7: function () {
+        return this.countUserImagesLeft(0);
       }
     });
   </script>
-</polymer-element>
+</dom-module>
