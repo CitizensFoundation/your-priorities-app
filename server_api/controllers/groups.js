@@ -48,6 +48,7 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
 
   console.log(where);
   console.log(order);
+
   models.Idea.findAll({
     order: order,
     where: where,

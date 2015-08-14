@@ -30,7 +30,7 @@ router.get('/:id/endorsements', function(req, res) {
 });
 
 router.get('/:id', function(req, res) {
-  console.log("ID");
+
   models.Idea.find({
     where: {id: req.params.id},
     include: [

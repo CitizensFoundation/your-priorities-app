@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>app-globals tests</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../bower_components/web-component-tester/browser.js"></script>
+  <script src="../../../bower_components/test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../../bower_components/test-fixture/test-fixture.html">
+  <script type="text/javascript" src="../../../scripts/i18next-1.7.4.min.js"></script>
+
+  <link rel="import" href="../app-globals.html">
+
+</head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+</style>
+<body>
+
+<test-fixture id="basic">
+  <template>
+    <app-globals></app-globals>
+  </template>
+</test-fixture>
+
+<script>
+  suite('basic', function() {
+
+    var responseHeaders = {
+      json: { 'Content-Type': 'application/json' }
+    };
+
+    var ajax;
+    var request;
+    var server;
+
+    setup(function() {
+      server = sinon.fakeServer.create();
+      server.respondWith(
+              'GET',
+              /\/activity-stream\/activity\/?timestamp=*/,
+              [
+                200,
+                responseHeaders,
+                '{"status":"ok"}'
+              ]
+      );
+
+      server.autoRespond = true;
+
+      i18n.init({ lng: "en" });
+      window.i18n = i18n;
+
+    });
+    teardown(function() {
+      server.restore();
+    });
+
+    test('can access through window.global', function() {
+      var globals = fixture('basic');
+      var windowAppGlobals = window.globals;
+      expect(windowAppGlobals.localName).to.be.equal("app-globals");
+
+      debugger;
+    });
+
+    test('badge is positioned correctly after being dynamically set', function(done) {
+      var globals = fixture('basic');
+      var windowAppGlobals = window.globals;
+
+
+      badge._setPosition();
+
+      Polymer.Base.async(function() {
+        var contentRect = badge.getBoundingClientRect();
+        expect(contentRect.left).to.not.be.equal(100 - 11);
+
+        badge.for = 'target';
+        badge._setPosition();
+
+        Polymer.Base.async(function() {
+          var divRect = f.querySelector('#target').getBoundingClientRect();
+          expect(divRect.width).to.be.equal(100);
+          expect(divRect.height).to.be.equal(20);
+
+          var contentRect = badge.getBoundingClientRect();
+          expect(contentRect.width).to.be.equal(22);
+          expect(contentRect.height).to.be.equal(22);
+
+          // The target div is 100 x 20, and the badge is centered on the
+          // top right corner.
+          expect(contentRect.left).to.be.equal(100 - 11);
+          expect(contentRect.top).to.be.equal(0 - 11);
+
+          // Also check the math, just in case.
+          expect(contentRect.left).to.be.equal(divRect.width - 11);
+          expect(contentRect.top).to.be.equal(divRect.top - 11);
+
+          done();
+        });
+      });
+    });
+
+    suite('badge is inside a custom element', function() {
+      test('badge is positioned correctly', function(done) {
+        var f = fixture('custom');
+        var badge = f.$.badge;
+        var actualbadge = Polymer.dom(badge.root).querySelector('#badge');
+        assert.equal(actualbadge.textContent, "1");
+
+        badge._setPosition();
+
+        Polymer.Base.async(function() {
+          var divRect = f.$.button.getBoundingClientRect();
+          expect(divRect.width).to.be.equal(100);
+          expect(divRect.height).to.be.equal(20);
+
+          var contentRect = badge.getBoundingClientRect();
+          expect(contentRect.width).to.be.equal(22);
+          expect(contentRect.height).to.be.equal(22);
+
+          // The target div is 100 x 20, and the badge is centered on the
+          // top right corner.
+          expect(contentRect.left).to.be.equal(100 - 11);
+          expect(contentRect.top).to.be.equal(0 - 11);
+
+          // Also check the math, just in case.
+          expect(contentRect.left).to.be.equal(divRect.width - 11);
+          expect(contentRect.top).to.be.equal(divRect.top - 11);
+
+          done();
+        });
+      });
+    });
+  });
+</script>
+</body>
+</html>

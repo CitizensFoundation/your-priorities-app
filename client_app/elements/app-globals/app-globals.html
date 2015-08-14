@@ -1,9 +1,18 @@
-<dom-module id="app-globals">
-  <template>
+<link rel="import" href="../../bower_components/polymer/polymer.html">
 
-    <paper-action-dialog id="dialog" heading="{{t(heading)}}" backdrop="" style="max-width: 500px;">
-      <p>{{computeExpression1()}}</p>
-      <p>{{computeExpression2()}}</p>
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="i18n-translation.html">
+
+<dom-module id="app-globals">
+
+  <template>
+    <paper-dialog id="dialog" heading="[[t(heading)]]" style="max-width: 500px;">
+      <p>[[t('notice.feature_not_implemented_a')]]</p>
+      <p>[[t('notice.feature_not_implemented_b')]]</p>
       <p>
         Your Priorities current version<br>
         <a href="https://www.yrpri.org/">www.yrpri.org</a>
@@ -13,14 +22,14 @@
         <a target="_blank" href="mailto:citizens@citizens.is">citizens@citizens.is</a><br><br>
         <a target="_blank" href="https://github.com/rbjarnason/your-priorities-app">Open source on github</a><br>
       </p>
-      <paper-button style="color:#F57C00;border: 1px solid #F57C00;" affirmative="" autofocus="">
-        <span>{{computeExpression3()}}</span>
+      <paper-button style="color:#F57C00;border: 1px solid #F57C00;" dialog-confirm autofocus>
+        <span>[[t('notice.ok')]]</span>
       </paper-button>
-    </paper-action-dialog>
+    </paper-dialog>
 
-    <paper-action-dialog id="welcomeDialog" heading="{{computeHeading()}}" backdrop="" style="max-width: 500px;">
-      <p>{{computeExpression4()}}</p>
-      <p>{{computeExpression5()}}</p>
+    <paper-dialog id="welcomeDialog" heading="[[t('notice.welcome_heading')]]" style="max-width: 500px;">
+      <p>[[t('notice.welcome_a')]]</p>
+      <p>[[t('notice.welcome_b')]]</p>
       <p>
         Your Priorities current version<br>
         <a target="_blank" href="https://www.yrpri.org/">www.yrpri.org</a>
@@ -30,60 +39,57 @@
         <a target="_blank" href="mailto:citizens@citizens.is">citizens@citizens.is</a><br><br>
         <a target="_blank" href="https://github.com/rbjarnason/your-priorities-app">Open source on github</a><br>
       </p>
-      <paper-button on-tap="setSeenWelcome" style="color:#F57C00;border: 1px solid #F57C00;" affirmative="" autofocus="">
-        <span>{{computeExpression6()}}</span>
+      <paper-button on-tap="setSeenWelcome" style="color:#F57C00;border: 1px solid #F57C00;" dialog-confirm autofocus>
+        <span>[[t('notice.continue')]]</span>
       </paper-button>
-    </paper-action-dialog>
-
+    </paper-dialog>
   </template>
+
   <script>
     (function () {
       Polymer({
+
         is: 'app-globals',
+
         properties: {
-          createIndex: {
-            type: Boolean,
-            value: false
-          },
+
           heading: {
             type: String,
             value: ''
           },
+
           seenWelcome: {
             type: Boolean,
             value: false,
             notify: true
+          },
+
+          activityHost: {
+            type: String,
+            value: ""
           }
         },
+
+        behaviors: [
+          Polymer.i18nTranslation
+        ],
+
         activity: function (actor, verb, object, context) {
           var logString = 'activity stream: ' + actor + ' ' + verb + ' ' + object;
+
           console.log(logString);
+
           if (context)
             logString += ' ' + context;
+
           if (verb == 'open')
-            ga('send', 'pageview');
-          ga('send', 'event', object, verb);
-          if (this.createIndex) {
-            var activityAjax = document.createElement('core-ajax');
-            activityAjax.handleAs = 'json';
-            activityAjax.url = 'http://your-priorities-preview.org:9200/activity-stream/';
-            activityAjax.method = 'POST';
-            activityAjax.body = JSON.stringify({
-              mappings: {
-                'activity': {
-                  '_timestamp': {
-                    'enabled': false,
-                    'path': 'event_time'
-                  }
-                }
-              }
-            });
-            activityAjax.go();
-          }
-          var activityAjax = document.createElement('core-ajax');
+            this.sendToGoogleAnalytics('send', 'pageview', null, null);
+          this.sendToGoogleAnalytics('send', 'event', object, verb);
+
+          var activityAjax = document.createElement('iron-ajax');
           var date = new Date();
           activityAjax.handleAs = 'json';
-          activityAjax.url = 'http://your-priorities-preview.org:9200/activity-stream/activity/?timestamp=' + date.toISOString();
+          activityAjax.url = this.activityHost+'/activity-stream/activity/?timestamp=' + date.toISOString();
           activityAjax.method = 'POST';
           activityAjax.body = JSON.stringify({
             actor: actor,
@@ -94,12 +100,32 @@
             session_id: this.getSessionFromCookie(),
             user_agent: navigator.userAgent
           });
-          activityAjax.go();
+          activityAjax.generateRequest();
         },
+
+        createActivityIndex: function () {
+          var activityAjax = document.createElement('iron-ajax');
+          activityAjax.handleAs = 'json';
+          activityAjax.url = this.activityHost+'/activity-stream/';
+          activityAjax.method = 'POST';
+          activityAjax.body = JSON.stringify({
+            mappings: {
+              'activity': {
+                '_timestamp': {
+                  'enabled': false,
+                  'path': 'event_time'
+                }
+              }
+            }
+          });
+          activityAjax.generateRequest();
+        },
+
         openDialog: function (heading) {
           this.heading = heading;
           this.$.dialog.opened = true;
         },
+
         ready: function () {
           window.globals = this;
           this.activity('Anonymous', 'open', 'page', window.location.href);
@@ -108,10 +134,12 @@
             this.$.welcomeDialog.opened = true;
           }
         },
+
         setSeenWelcome: function () {
           this.seenWelcome = true;
           localStorage.setItem('yrpri-welcome-status', true);
         },
+
         getSessionFromCookie: function () {
           var strCookies = document.cookie;
           var cookiearray = strCookies.split(';');
@@ -124,26 +152,21 @@
           }
           return sid;
         },
+
+        sendToGoogleAnalytics: function (a, b, c, d) {
+          if (typeof ga == 'function') {
+            if (c && d) {
+              ga(a,b,c,d);
+            } else {
+              ga(a, b);
+            }
+          } else {
+            console.warn("Google analytics message not sent for a:"+a+" b:"+b+" c:"+c+" d:"+d);
+          }
+        },
+
         computeHeading: function () {
-          return this.t('notice.welcome_heading');
-        },
-        computeExpression1: function () {
-          return this.t('notice.feature_not_implemented_a');
-        },
-        computeExpression2: function () {
-          return this.t('notice.feature_not_implemented_b');
-        },
-        computeExpression3: function () {
-          return this.t('notice.ok');
-        },
-        computeExpression4: function () {
-          return this.t('notice.welcome_a');
-        },
-        computeExpression5: function () {
-          return this.t('notice.welcome_b');
-        },
-        computeExpression6: function () {
-          return this.t('notice.continue');
+          return this.t('');
         }
       });
     }());
