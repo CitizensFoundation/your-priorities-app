@@ -108,12 +108,15 @@
         },
         previousSearches: { notify: true }
       },
+
       enterHandler: function () {
         window.location = '/#/groups/' + this.groupId + '/search/' + this.term;
       },
+
       created: function () {
         this.previousSearches = [];
       },
+
       onSelect: function (e, detail, sender) {
         if (detail.isSelected) {
           this.async(function () {
@@ -121,6 +124,7 @@
           }, null, 250);
         }
       },
+
       // Introduce small delay so user sees ripple.
       toggle: function () {
         window.globals.activity('Anonymous', 'toggle', 'search', this.active);
@@ -129,13 +133,17 @@
           this.$.searchbox.focus();
         }
       },
+
       hostAttributes: { 'fit': '' },
+
       computeClass: function (narrow) {
         return this.tokenList({ 'core-narrow': narrow });
       },
+
       computePlaceholder: function () {
         return this.t('ideas.search');
       },
+
       tokenList: function (obj) {
         var pieces = [];
         for (key in obj) {
