@@ -12,7 +12,7 @@
   <link rel="import" href="../../../bower_components/test-fixture/test-fixture.html">
   <script type="text/javascript" src="../../../scripts/i18next-1.7.4.min.js"></script>
 
-  <link rel="import" href="../app-globals.html">
+  <link rel="import" href="../yp-app-globals.html">
 
 </head>
 <style>
@@ -25,13 +25,13 @@
 
 <test-fixture id="basic">
   <template>
-    <app-globals></app-globals>
+    <yp-app-globals></yp-app-globals>
   </template>
 </test-fixture>
 
 <test-fixture id="resetSeenWelcome">
   <template>
-    <app-globals reset-seen-welcome></app-globals>
+    <yp-app-globals reset-seen-welcome></yp-app-globals>
   </template>
 </test-fixture>
 
@@ -72,7 +72,7 @@
       var globals = fixture('basic');
       var windowAppGlobals = window.globals;
       expect(windowAppGlobals.localName).to.be.ok;
-      expect(windowAppGlobals.localName).to.be.equal("app-globals");
+      expect(windowAppGlobals.localName).to.be.equal("yp-app-globals");
     });
 
     test('automatically open welcome dialog when new', function(done) {

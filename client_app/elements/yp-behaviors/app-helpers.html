@@ -1,0 +1,68 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+
+  Array.prototype.chunk = function(chunkSize) {
+    var array=this;
+    return [].concat.apply([],
+            array.map(function(elem,i) {
+              return i%chunkSize ? [] : [array.slice(i,i+chunkSize)];
+            })
+    );
+  };
+
+  /*
+   Polymer.appHelpers for app functions
+   @polymerBehavior
+   */
+  Polymer.appHelpers = {
+
+    t: function(key) {
+      var translation = window.i18n.t(key);
+      if (translation=='')
+        translation = key;
+      return translation;
+    },
+
+    formatNumber: function (value) {
+      if (value) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      } else {
+        return "";
+      }
+    },
+
+    getRandomNumber: function (value) {
+      return Math.floor((Math.random() * value) + 1);
+    },
+
+    padNumber: function (value) {
+      return ('000' + value).substr(-3);
+    },
+
+    splitArray: function (a, n) {
+      return a.chunk(n);
+    },
+
+    s3bucketName: function () {
+      return window.s3bucketName;
+    },
+
+    instanceName: function () {
+      return window.instanceName;
+    },
+
+    instanceLogoFilename: function () {
+      return window.instanceLogoFilename;
+    },
+
+    defaultGroupImage: function () {
+      return window.defaultGroupImage;
+    },
+
+    isoCountryImagePath: function () {
+      return window.isoCountryImagePath;
+    }
+
+  };
+</script>

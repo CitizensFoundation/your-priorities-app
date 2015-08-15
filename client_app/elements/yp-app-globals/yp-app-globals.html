@@ -5,9 +5,9 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
-<link rel="import" href="i18n-translation.html">
+<link rel="import" href="../yp-behaviors/app-helpers.html">
 
-<dom-module id="app-globals">
+<dom-module id="yp-app-globals">
 
   <template>
     <paper-dialog id="dialog" style="max-width: 500px;">
@@ -51,10 +51,10 @@
     (function () {
       Polymer({
 
-        is: 'app-globals',
+        is: 'yp-app-globals',
 
         behaviors: [
-          Polymer.i18nTranslation
+          Polymer.appHelpers
         ],
 
         properties: {
