@@ -50,15 +50,19 @@
   <script>
     Polymer({
       is: 'group-action-bar',
+
       properties: { group: { notify: true } },
+
       shareGroup: function () {
         window.globals.activity('Anonymous', 'open', 'shareGroup');
         window.globals.openDialog('groups.share_group');
       },
+
       inviteToGroup: function () {
         window.globals.activity('Anonymous', 'open', 'inviteToGroup');
         window.globals.openDialog('groups.invite_to_group');
       },
+
       ready: function () {
         // Inaccurate fudge for Your Priorities country pages that mostly have a common user database not connected to
         // the group
