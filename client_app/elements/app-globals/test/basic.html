@@ -29,6 +29,12 @@
   </template>
 </test-fixture>
 
+<test-fixture id="resetSeenWelcome">
+  <template>
+    <app-globals reset-seen-welcome></app-globals>
+  </template>
+</test-fixture>
+
 <script>
   suite('basic', function() {
 
@@ -69,6 +75,31 @@
       expect(windowAppGlobals.localName).to.be.equal("app-globals");
     });
 
+    test('automatically open welcome dialog when new', function(done) {
+      var globals = fixture('resetSeenWelcome');
+
+      Polymer.Base.async(function() {
+        var welcomeDialog = globals.querySelector('#welcomeDialog');
+        expect(welcomeDialog.opened).to.be.equal(true);
+        var seenWelcomeButton = globals.querySelector('#seenWelcomeButton');
+        seenWelcomeButton.click()
+        Polymer.Base.async(function() {
+          expect(welcomeDialog.opened).to.be.equal(false);
+          done();
+        });
+      });
+    });
+
+    test('welcome dialog closed on second use', function(done) {
+      var globalsTwo = fixture('basic');
+
+      Polymer.Base.async(function() {
+        var welcomeDialog = globalsTwo.querySelector('#welcomeDialog');
+        expect(welcomeDialog.opened).to.be.equal(false);
+        done();
+      });
+    });
+
     test('can send activity', function(done) {
       var globals = fixture('basic');
       var windowAppGlobals = window.globals;
@@ -88,71 +119,19 @@
       });
     });
 
-    test('automatically open welcome dialog when new', function(done) {
+    test('can open default dialogue and close it', function(done) {
       var globals = fixture('basic');
-      var windowAppGlobals = window.globals;
-
-      windowAppGlobals.activity("actor","verb","object","context");
+      var defaultDialog = globals.querySelector('#dialog');
+      globals.openDialog("this.is.test");
 
       Polymer.Base.async(function() {
-
-        var request = server.requests[2];
-
-        expect(request.requestBody).to.include("actor");
-        expect(request.requestBody).to.include("verb");
-        expect(request.requestBody).to.include("object");
-        expect(request.requestBody).to.include("context");
-
-        done();
-      });
-    });
-
-    test('do not open open welcome dialog when not new', function(done) {
-      var globals = fixture('basic');
-      var windowAppGlobals = window.globals;
-
-      windowAppGlobals.activity("actor","verb","object","context");
-
-      Polymer.Base.async(function() {
-
-        var request = server.requests[2];
-
-        expect(request.requestBody).to.include("actor");
-        expect(request.requestBody).to.include("verb");
-        expect(request.requestBody).to.include("object");
-        expect(request.requestBody).to.include("context");
-
-        done();
-      });
-    });
-
-    suite('badge is inside a custom element', function() {
-      test('badge is positioned correctly', function(done) {
-        var f = fixture('custom');
-        var badge = f.$.badge;
-        var actualbadge = Polymer.dom(badge.root).querySelector('#badge');
-        assert.equal(actualbadge.textContent, "1");
-
-        badge._setPosition();
-
+        debugger;
+        expect(defaultDialog.opened).to.be.equal(true);
+        expect(defaultDialog.innerHTML).to.include("this.is.test");
+        var defaultOkButton = globals.querySelector('#defaultOkButton');
+        defaultOkButton.click()
         Polymer.Base.async(function() {
-          var divRect = f.$.button.getBoundingClientRect();
-          expect(divRect.width).to.be.equal(100);
-          expect(divRect.height).to.be.equal(20);
-
-          var contentRect = badge.getBoundingClientRect();
-          expect(contentRect.width).to.be.equal(22);
-          expect(contentRect.height).to.be.equal(22);
-
-          // The target div is 100 x 20, and the badge is centered on the
-          // top right corner.
-          expect(contentRect.left).to.be.equal(100 - 11);
-          expect(contentRect.top).to.be.equal(0 - 11);
-
-          // Also check the math, just in case.
-          expect(contentRect.left).to.be.equal(divRect.width - 11);
-          expect(contentRect.top).to.be.equal(divRect.top - 11);
-
+          expect(defaultDialog.opened).to.be.equal(false);
           done();
         });
       });

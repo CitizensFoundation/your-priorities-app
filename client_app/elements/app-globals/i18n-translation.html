@@ -7,7 +7,10 @@
    */
   Polymer.i18nTranslation = {
     t: function(key) {
-      return window.i18n.t(key);
+      var translation = window.i18n.t(key);
+      if (translation=='')
+        translation = key;
+      return translation;
     }
   };
 </script>

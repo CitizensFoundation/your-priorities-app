@@ -23,12 +23,13 @@
         <a target="_blank" href="mailto:citizens@citizens.is">citizens@citizens.is</a><br><br>
         <a target="_blank" href="https://github.com/rbjarnason/your-priorities-app">Open source on github</a><br>
       </p>
-      <paper-button style="color:#F57C00;border: 1px solid #F57C00;" dialog-confirm autofocus>
+      <paper-button id="defaultOkButton" style="color:#F57C00;border: 1px solid #F57C00;" dialog-confirm autofocus>
         <span>[[t('notice.ok')]]</span>
       </paper-button>
     </paper-dialog>
 
-    <paper-dialog id="welcomeDialog" dialogHeading="[[t('notice.welcome_heading')]]" style="max-width: 500px;">
+    <paper-dialog id="welcomeDialog" style="max-width: 500px;">
+      <h2>[[t('notice.welcome_heading')]]</h2>
       <p>[[t('notice.welcome_a')]]</p>
       <p>[[t('notice.welcome_b')]]</p>
       <p>
@@ -40,7 +41,7 @@
         <a target="_blank" href="mailto:citizens@citizens.is">citizens@citizens.is</a><br><br>
         <a target="_blank" href="https://github.com/rbjarnason/your-priorities-app">Open source on github</a><br>
       </p>
-      <paper-button on-tap="setSeenWelcome" style="color:#F57C00;border: 1px solid #F57C00;" dialog-confirm autofocus>
+      <paper-button id="seenWelcomeButton" on-tap="setSeenWelcome" style="color:#F57C00;border: 1px solid #F57C00;" dialog-confirm autofocus>
         <span>[[t('notice.continue')]]</span>
       </paper-button>
     </paper-dialog>
@@ -71,6 +72,11 @@
           activityHost: {
             type: String,
             value: "http://your-priorities-preview.org:9200"
+          },
+
+          resetSeenWelcome: {
+            type: Boolean,
+            value: false
           }
         },
 
@@ -123,15 +129,18 @@
 
         openDialog: function (dialogHeading) {
           this.dialogHeading = dialogHeading;
-          this.$.dialog.opened = true;
+          this.$.dialog.open();
         },
 
         ready: function () {
           window.globals = this;
+          if (this.resetSeenWelcome) {
+            localStorage.setItem('yrpri-welcome-status', false);
+          }
           this.activity('Anonymous', 'open', 'page', window.location.href);
           this.seenWelcome = localStorage.getItem('yrpri-welcome-status') == 'true';
           if (!this.seenWelcome) {
-            this.$.welcomeDialog.opened = true;
+            this.$.welcomeDialog.open();
           }
         },
 

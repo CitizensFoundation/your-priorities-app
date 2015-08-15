@@ -2,10 +2,10 @@
   "name": "your-priorities-app",
   "version": "0.5.0",
   "dependencies": {
-    "iron-elements": "PolymerElements/iron-elements#master",
-    "paper-elements": "PolymerElements/paper-elements#master",
-    "platinum-elements": "PolymerElements/platinum-elements#master",
-    "neon-elements": "PolymerElements/neon-elements#master",
+    "iron-elements": "PolymerElements/iron-elements",
+    "paper-elements": "PolymerElements/paper-elements",
+    "platinum-elements": "PolymerElements/platinum-elements",
+    "neon-elements": "PolymerElements/neon-elements",
     "page": "visionmedia/page.js#~1.6.3"
   },
   "devDependencies": {
