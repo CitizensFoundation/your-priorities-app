@@ -1,43 +1,102 @@
-  <!--
-      TODO(polyup): unable to infer path to components
-      directory. This import path is probably incomplete.
-   -->
-  <link rel="import" href="iron-flex-layout/iron-flex-layout.html">
-<dom-module id="idea-action-bar">
-  <style>
-    /* TODO(polyup): For speed, consider reworking these styles with .classes
-                     and #ids rather than [attributes].
-    */
-    [layout] {
-      @apply(--layout);
-    }
-    [layout][horizontal] {
-      @apply(--layout-horizontal);
-    }
-    [layout][justified] {
-      @apply(--layout-justified);
-    }
-  </style>
-  <link rel="import" type="css" href="idea-action-bar.css">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-idea-actions">
+
   <template>
 
-    <div layout="" horizontal="" justified="" class$="{{computeClass(small)}}">
+    <style>
+      :host {
+        display: block;
+      }
 
-      <div layout="" horizontal="">
-        <paper-icon-button icon="thumb-up" class="action_up" style="margin-right:4px;" on-tap="upVote"></paper-icon-button>
-        <div class="action_text action_up" style="margin-right:2px;">{{idea.counter_endorsements_up}}</div>
+      .action-bar {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+        margin-top: 2px;
+        width: 250px;
+      }
+
+      .action-bar-small {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+        margin-top: 8px;
+        position: absolute;
+        width: 100%;
+        bottom: 5px;
+        vertical-align: bottom !important;
+      }
+
+      .action-text {
+        font-size: 18px;
+        text-align: right;
+        vertical-align: bottom;
+        padding-top: 8px;
+        margin-right: 2px;
+        padding-right: 8px;
+      }
+
+      .action-icon {
+      }
+
+      .action-up {
+        @apply(--layout-horizontal);
+        @apply(--layout-start-justified);
+        color: var(--primary-up-color-lighter, rgba(0,153,0,0.55));
+      }
+
+      .action-debate {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+        @apply(--layout-center-justified);
+        color: var(--primary-color, #9E9E9E);
+      }
+
+      .debate-icon {
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      .action-down {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+        color: var(--primary-down-color-lighter, rgba(153,0,0,0.55));
+      }
+
+      .down-text {
+        padding-right: 4px;
+      }
+
+      .down-icon {
+        padding-left: 0px;
+      }
+    </style>
+
+    <div class$="[[computeActionClass(small)]]">
+
+      <div class="action-up">
+        <paper-icon-button icon="thumb-up" class="action-icon" on-tap="upVote"></paper-icon-button>
+        <div class="action-text">{{idea.counter_endorsements_up}}</div>
       </div>
 
-      <template is="dom-if" if="{{small}}">
-        <div layout="" horizontal="">
-          <iron-icon icon="communication:message" class="action_debate" style="padding-right:10px;margin-top:6px;"></iron-icon>
-          <div class="action_text action_debate">{{idea.counter_points}}</div>
-        </div>
-      </template>
+      <div class="action-debate" hidden$="[[small]]">
+        <iron-icon icon="communication:message" class="action-icon debate-icon"></iron-icon>
+        <div class="action-text ">{{idea.counter_points}}</div>
+      </div>
 
-      <div layout="" horizontal="" style="margin-right: 32px;">
-        <div class="action_text action_down">{{idea.counter_endorsements_down}}</div>
-        <paper-icon-button icon="thumb-down" class="action_down" on-tap="downVote"></paper-icon-button>
+      <div class="action-debate" hidden$="[[!small]]">
+      </div>
+
+      <div class="action-down">
+        <div class="action-text down-text">{{idea.counter_endorsements_down}}</div>
+        <paper-icon-button icon="thumb-down" class="action-icon down-icon" on-tap="downVote"></paper-icon-button>
       </div>
 
     </div>
@@ -48,8 +107,14 @@
       is: 'yp-idea-actions',
 
       properties: {
-        idea: { notify: true },
-        small: { notify: true }
+        idea: {
+          type: Object
+        },
+
+        small: {
+          type: Boolean,
+          value: true
+        }
       },
 
       upVote: function () {
@@ -62,8 +127,8 @@
         window.globals.openDialog('ideas.down_vote');
       },
 
-      computeClass: function (small) {
-        return small ? 'action_bar_small' : 'action_bar';
+      computeActionClass: function (small) {
+        return small ? 'action-bar-small' : 'action-bar';
       }
     });
   </script>
