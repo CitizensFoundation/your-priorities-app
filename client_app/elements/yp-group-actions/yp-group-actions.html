@@ -10,7 +10,7 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
-<dom-module id="yp-group-action-bar">
+<dom-module id="yp-group-actions">
 
   <template>
 
@@ -76,7 +76,7 @@
 
   <script>
     Polymer({
-      is: 'yp-group-action-bar',
+      is: 'yp-group-actions',
 
       behaviors: [
         Polymer.appHelpers
@@ -84,8 +84,7 @@
 
       properties: {
         group: {
-          type: Object,
-          notify: true
+          type: Object
         }
       },
 

@@ -45,19 +45,23 @@
   </template>
   <script>
     Polymer({
-      is: 'idea-action-bar',
+      is: 'yp-idea-actions',
+
       properties: {
         idea: { notify: true },
         small: { notify: true }
       },
+
       upVote: function () {
         window.globals.activity('Anonymous', 'up_vote', this.idea.id);
         window.globals.openDialog('ideas.up_vote');
       },
+
       downVote: function () {
         window.globals.activity('Anonymous', 'down_vote', this.idea.id);
         window.globals.openDialog('ideas.down_vote');
       },
+
       computeClass: function (small) {
         return small ? 'action_bar_small' : 'action_bar';
       }
