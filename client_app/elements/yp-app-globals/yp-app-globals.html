@@ -77,6 +77,11 @@
           resetSeenWelcome: {
             type: Boolean,
             value: false
+          },
+
+          disableWelcome: {
+            type: Boolean,
+            value: false
           }
         },
 
@@ -134,7 +139,9 @@
 
         ready: function () {
           window.globals = this;
-          if (this.resetSeenWelcome) {
+          if (this.disableWelcome) {
+            localStorage.setItem('yrpri-welcome-status', true);
+          } else if (this.resetSeenWelcome) {
             localStorage.setItem('yrpri-welcome-status', false);
           }
           this.activity('Anonymous', 'open', 'page', window.location.href);

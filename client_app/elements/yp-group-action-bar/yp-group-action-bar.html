@@ -1,0 +1,111 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-group-action-bar">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+        padding-top: 16px;
+        margin-top: 16px;
+        position: absolute;
+        width: 100%;
+        bottom: 5px;
+        vertical-align: bottom !important;
+      }
+
+      .information {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      .actions {
+        @apply(--layout-horizontal);
+        vertical-align: top;
+      }
+
+      .action-text {
+        font-size: 18px;
+        text-align:right;
+        vertical-align: bottom;
+        padding-right:16px;
+      }
+
+      .action {
+        color: var(--primary-color, #9E9E9E);
+      }
+
+      .ideas {
+        color: var(--primary-color-lighter, #B0B0B0);
+        margin-right:4px;
+      }
+    </style>
+
+    <div class="information">
+      <iron-icon icon="image:wb-sunny" class="ideas"></iron-icon>
+      <div class="action-text ideas" style="">{{formatNumber(group.counter_ideas)}}</div>
+
+      <iron-icon icon="communication:message" class="ideas"></iron-icon>
+      <div class="action-text ideas">{{formatNumber(group.counter_points)}}</div>
+
+      <iron-icon icon="social:people" class="ideas"></iron-icon>
+      <div class="action-text ideas">{{formatNumber(group.counter_users)}}</div>
+    </div>
+
+    <div class="actions">
+      <paper-icon-button icon="social:group-add" class="action group-invite" on-tap="inviteToGroup"></paper-icon-button>
+      <paper-icon-button icon="social:share" class="action group-share" on-tap="shareGroup"></paper-icon-button>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-group-action-bar',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        group: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      shareGroup: function () {
+        window.globals.activity('Anonymous', 'open', 'shareGroup');
+        window.globals.openDialog('groups.share_group');
+      },
+
+      inviteToGroup: function () {
+        window.globals.activity('Anonymous', 'open', 'inviteToGroup');
+        window.globals.openDialog('groups.invite_to_group');
+      },
+
+      ready: function () {
+        // Inaccurate fudge for Your Priorities country pages that mostly have a common user database not connected to
+        // the group
+        if (this.group.IsoCountry) {
+          this.group.counter_users = this.group.counter_users * 30;
+        }
+      }
+    });
+  </script>
+</dom-module>
