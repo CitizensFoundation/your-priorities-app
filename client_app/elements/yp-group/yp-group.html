@@ -1,12 +1,13 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-group-actions/yp-group-actions.html">
@@ -38,10 +39,16 @@
       }
 
       .description {
+        @apply(--layout-horizontal);
         padding-top: 32px;
         padding-bottom: 64px;
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--description-line-height, 1.3);
+      }
+
+      .iso-image {
+        vertical-align: top;
+        padding-right: 8px;
       }
 
       .separator {
@@ -51,7 +58,7 @@
       }
     </style>
 
-    <img width="568" class="groupImage" on-tap="goToGroup" src="[[groupImagePath(group)]]">
+    <img width="568" class="groupImage" on-tap="goToGroup" src$="[[groupImagePath(group)]]">
 
     <div class="header" on-tap="goToGroup">
       <b>[[groupName(group)]]</b>
@@ -59,9 +66,7 @@
 
     <div class="description">
       <template is="dom-if" if="[[group.IsoCountry]]">
-        <div style="padding-right:16px;">
-          <iron-image src="[[getIsoCountryImagePath(group)]]"></iron-image>
-        </div>
+        <iron-image class="iso-image" src$="[[getIsoCountryImagePath(group)]]"></iron-image>
       </template>
 
       <div>[[groupDescription(group)]]</div>
@@ -81,7 +86,8 @@
 
       properties: {
         group: {
-          type: Object
+          type: Object,
+          notify: true
         }
       },
 
@@ -101,7 +107,7 @@
       },
 
       getIsoCountryImagePath: function (group) {
-        return this.isoCountryImagePath() + this.toLowerCase(group.IsoCountry.code) + '.png';
+        return this.isoCountryImagePath() + group.IsoCountry.code.toLowerCase() + '.png';
       },
 
       groupName: function (group) {
