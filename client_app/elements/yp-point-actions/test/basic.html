@@ -50,7 +50,7 @@
       expect(pointActions.innerHTML).to.include("3");
     });
 
-    test('up vote dialog is displayed', function(done) {
+    test('point up vote dialog is displayed', function(done) {
       var pointActions = fixture('basic', {point: {PointQualities: [{value: 1},{value: -1},{value: 1},{value: -1},
         {value: -1},{value: 1},{value: 1},{value: 1}]}});
 
@@ -64,7 +64,7 @@
       });
     });
 
-    test('down vote dialog is displayed', function(done) {
+    test('point down vote dialog is displayed', function(done) {
       var pointActions = fixture('basic', {point: {PointQualities: [{value: 1},{value: -1},{value: 1},{value: -1},
         {value: -1},{value: 1},{value: 1},{value: 1}]}});
 

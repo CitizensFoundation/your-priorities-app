@@ -44,6 +44,37 @@
       return a.chunk(n);
     },
 
+    truncate: function (input, length, killwords, end) {
+      var orig = input;
+      length = length || 255;
+
+      if (input.length <= length)
+        return input;
+
+      if (killwords) {
+        input = input.substring(0, length);
+      } else {
+        var idx = input.lastIndexOf(' ', length);
+        if (idx === -1) {
+          idx = length;
+        }
+
+        input = input.substring(0, idx);
+      }
+
+      input += (end !== undefined && end !== null) ? end : '...';
+      return input;
+    },
+
+    capitalize: function (string) {
+      string = string.toLowerCase();
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    },
+
+    trim: function(input){
+      return input.replace(/^\s*|\s*$/g, '');
+    },
+
     s3bucketName: function () {
       return window.s3bucketName;
     },
