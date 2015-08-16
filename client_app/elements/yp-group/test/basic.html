@@ -20,15 +20,13 @@
 
 <yp-app-globals disable-welcome setup-defaults></yp-app-globals>
 
-<div style="width:300px;height:300px;">
-  <test-fixture id="basic">
-    <template is="dom-template">
-      <div id="card" style="width:400px;height:450px;">
-        <yp-group id="group" group="{{group}}"></yp-group>
-      </div>
-    </template>
-  </test-fixture>
-</div>
+<test-fixture id="basic">
+  <template is="dom-template">
+    <div id="card" style="width:500px;">
+      <yp-group id="group" group="{{group}}"></yp-group>
+    </div>
+  </template>
+</test-fixture>
 
 <script>
   suite('basic', function() {
@@ -63,7 +61,7 @@
       Polymer.Base.async(function() {
         expect(basicGroup.innerHTML).to.include("assets/flags/64/is.png");
         done();
-      });
+      },10000);
     });
   });
 </script>

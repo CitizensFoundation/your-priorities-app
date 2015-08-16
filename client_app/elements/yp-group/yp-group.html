@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-group-actions/yp-group-actions.html">
@@ -58,21 +59,25 @@
       }
     </style>
 
-    <img width="568" class="groupImage" on-tap="goToGroup" src$="[[groupImagePath(group)]]">
+    <paper-card heading$="[[groupName(group)]]" class="pink"
+                image$="[[groupImagePath(group)]]">
+      <div class="card-content">
+        <div class="description">
+          <template is="dom-if" if="[[group.IsoCountry]]">
+            <iron-image class="iso-image" src$="[[getIsoCountryImagePath(group)]]"></iron-image>
+          </template>
 
-    <div class="header" on-tap="goToGroup">
-      <b>[[groupName(group)]]</b>
-    </div>
+          <div>[[groupDescription(group)]]</div>
+        </div>      </div>
+      <div class="card-actions">
+        <yp-group-actions group="[[group]]"></yp-group-actions>
+      </div>
+    </paper-card>
 
-    <div class="description">
-      <template is="dom-if" if="[[group.IsoCountry]]">
-        <iron-image class="iso-image" src$="[[getIsoCountryImagePath(group)]]"></iron-image>
-      </template>
 
-      <div>[[groupDescription(group)]]</div>
-    </div>
 
-    <yp-group-actions group="[[group]]"></yp-group-actions>
+
+
 
   </template>
 
