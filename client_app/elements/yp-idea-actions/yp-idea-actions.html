@@ -74,7 +74,7 @@
         padding-right: 4px;
       }
 
-      .down-icon {
+      .down-vote-icon {
         padding-left: 0px;
       }
     </style>
@@ -82,21 +82,21 @@
     <div class$="[[computeActionClass(small)]]">
 
       <div class="action-up">
-        <paper-icon-button icon="thumb-up" class="action-icon" on-tap="upVote"></paper-icon-button>
-        <div class="action-text">{{idea.counter_endorsements_up}}</div>
+        <paper-icon-button icon="thumb-up" class="action-icon up-vote-icon" on-tap="upVote"></paper-icon-button>
+        <div class="action-text">{{formatNumber(idea.counter_endorsements_up)}}</div>
       </div>
 
       <div class="action-debate" hidden$="[[small]]">
         <iron-icon icon="communication:message" class="action-icon debate-icon"></iron-icon>
-        <div class="action-text ">{{idea.counter_points}}</div>
+        <div class="action-text ">{{formatNumber(idea.counter_points)}}</div>
       </div>
 
       <div class="action-debate" hidden$="[[!small]]">
       </div>
 
       <div class="action-down">
-        <div class="action-text down-text">{{idea.counter_endorsements_down}}</div>
-        <paper-icon-button icon="thumb-down" class="action-icon down-icon" on-tap="downVote"></paper-icon-button>
+        <div class="action-text down-text">{{formatNumber(idea.counter_endorsements_down)}}</div>
+        <paper-icon-button icon="thumb-down" class="action-icon down-vote-icon" on-tap="downVote"></paper-icon-button>
       </div>
 
     </div>
@@ -106,6 +106,10 @@
     Polymer({
       is: 'yp-idea-actions',
 
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
       properties: {
         idea: {
           type: Object
@@ -113,7 +117,7 @@
 
         small: {
           type: Boolean,
-          value: true
+          value: false
         }
       },
 

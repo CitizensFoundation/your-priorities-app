@@ -38,22 +38,27 @@
     test('displays counters', function() {
       var ideaActions = fixture('basic', {idea: {counter_endorsements_up: 2000, counter_points: 1500, counter_endorsements_down: 9000}});
       var idea = ideaActions.idea;
-
-      debugger;
-
-      expect(group.counter_ideas).to.be.equal(100);
-      expect(group.counter_points).to.be.equal(1500);
-      expect(group.counter_users).to.be.equal(10000);
-      expect(groupActionBar.innerHTML).to.include("100");
-      expect(groupActionBar.innerHTML).to.include("1,500");
-      expect(groupActionBar.innerHTML).to.include("10,000");
+      expect(idea.counter_endorsements_up).to.be.equal(2000);
+      expect(idea.counter_points).to.be.equal(1500);
+      expect(idea.counter_endorsements_down).to.be.equal(9000);
+      expect(ideaActions.innerHTML).to.include("2,000");
+      expect(ideaActions.innerHTML).to.include("1,500");
+      expect(ideaActions.innerHTML).to.include("9,000");
+      expect(ideaActions.querySelectorAll('.action-debate')[0].hidden).to.be.equal(false);
+      expect(ideaActions.querySelectorAll('.action-debate')[1].hidden).to.be.equal(true);
     });
 
-    test('share dialog is displayed', function(done) {
-      var groupActionBar = fixture('basic', {group: {counter_ideas: 100, counter_points: 1500, counter_users: 10000}});
+    test('hidden debate when small', function() {
+      var ideaActions = fixture('basicSmall', {idea: {counter_endorsements_up: 2000, counter_points: 1500, counter_endorsements_down: 9000}});
+      expect(ideaActions.querySelectorAll('.action-debate')[0].hidden).to.be.equal(true);
+      expect(ideaActions.querySelectorAll('.action-debate')[1].hidden).to.be.equal(false);
+    });
 
-      var shareButton = groupActionBar.querySelector('.group-share');
-      shareButton.click();
+    test('up vote dialog is displayed', function(done) {
+      var ideaActions = fixture('basic', {idea: {counter_endorsements_up: 2000, counter_points: 1500, counter_endorsements_down: 9000}});
+
+      var button = ideaActions.querySelector('.up-vote-icon');
+      button.click();
 
       Polymer.Base.async(function() {
         var defaultDialog = document.querySelector('#dialog');
@@ -62,11 +67,11 @@
       });
     });
 
-    test('invite to group dialog is displayed', function(done) {
-      var groupActionBar = fixture('basic', {group: {counter_ideas: 100, counter_points: 1500, counter_users: 10000}});
+    test('up vote dialog is displayed', function(done) {
+      var ideaActions = fixture('basic', {idea: {counter_endorsements_up: 2000, counter_points: 1500, counter_endorsements_down: 9000}});
 
-      var inviteButton = groupActionBar.querySelector('.group-invite');
-      inviteButton.click();
+      var button = ideaActions.querySelector('.down-vote-icon');
+      button.click();
 
       Polymer.Base.async(function() {
         var defaultDialog = document.querySelector('#dialog');
