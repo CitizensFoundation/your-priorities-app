@@ -67,6 +67,7 @@
 
       .debate-text {
         padding-left: 8px;
+        padding-top: 10px;
       }
 
       .action-down {
@@ -77,6 +78,11 @@
 
       .down-text {
         padding-right: 4px;
+        padding-top: 10px;
+      }
+
+      .up-text {
+        padding-top: 10px;
       }
 
       .down-vote-icon {
@@ -87,7 +93,7 @@
     <div class$="[[computeActionClass(small)]]">
       <div class="action-up">
         <paper-icon-button icon$="[[votingModeIcon(votingMode,'up')]]" class="action-icon up-vote-icon" on-tap="upVote"></paper-icon-button>
-        <div class="action-text">{{formatNumber(idea.counter_endorsements_up)}}</div>
+        <div class="action-text up-text">{{formatNumber(idea.counter_endorsements_up)}}</div>
       </div>
 
       <div class="action-debate" hidden$="[[small]]">
