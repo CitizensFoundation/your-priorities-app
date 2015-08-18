@@ -64,6 +64,10 @@
         padding-bottom: 8px;
       }
 
+      .debate-text {
+        padding-left: 8px;
+      }
+
       .action-down {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
@@ -88,7 +92,7 @@
 
       <div class="action-debate" hidden$="[[small]]">
         <iron-icon icon="communication:message" class="action-icon debate-icon"></iron-icon>
-        <div class="action-text ">{{formatNumber(idea.counter_points)}}</div>
+        <div class="action-text debate-text">{{formatNumber(idea.counter_points)}}</div>
       </div>
 
       <div class="action-debate" hidden$="[[!small]]">

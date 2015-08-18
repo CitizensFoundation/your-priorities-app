@@ -33,10 +33,11 @@
       }
 
       .action-text {
+        color: var(--primary-color-lighter, #B0B0B0);
         font-size: 18px;
         text-align:right;
         vertical-align: bottom;
-        padding-right:16px;
+        padding-right:8px;
       }
 
       .action {
@@ -45,24 +46,20 @@
 
       .ideas {
         color: var(--primary-color-lighter, #B0B0B0);
+        padding-left:8px;
         margin-right:4px;
       }
     </style>
 
     <div class="information">
       <iron-icon icon="image:wb-sunny" class="ideas"></iron-icon>
-      <div class="action-text ideas" style="">{{formatNumber(group.counter_ideas)}}</div>
+      <div class="action-text" style="">{{formatNumber(group.counter_ideas)}}</div>
 
       <iron-icon icon="communication:message" class="ideas"></iron-icon>
-      <div class="action-text ideas">{{formatNumber(group.counter_points)}}</div>
+      <div class="action-text">{{formatNumber(group.counter_points)}}</div>
 
       <iron-icon icon="social:people" class="ideas"></iron-icon>
-      <div class="action-text ideas">{{formatNumber(group.counter_users)}}</div>
-    </div>
-
-    <div class="actions">
-      <paper-icon-button icon="social:group-add" class="action group-invite" on-tap="inviteToGroup"></paper-icon-button>
-      <paper-icon-button icon="social:share" class="action group-share" on-tap="shareGroup"></paper-icon-button>
+      <div class="action-text">{{formatNumber(group.counter_users)}}</div>
     </div>
 
   </template>
@@ -94,7 +91,7 @@
       ready: function () {
         // Inaccurate fudge for Your Priorities country pages that mostly have a common user database not connected to
         // the group
-        if (this.group.IsoCountry) {
+        if (this.group && this.group.IsoCountry) {
           this.group.counter_users = this.group.counter_users * 30;
         }
       }

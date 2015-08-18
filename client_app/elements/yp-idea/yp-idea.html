@@ -12,8 +12,9 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-group-actions/yp-group-actions.html">
+<link rel="import" href="../yp-idea-actions/yp-idea-actions.html">
 
-<dom-module id="yp-group">
+<dom-module id="yp-idea">
 
   <template>
 
@@ -41,6 +42,14 @@
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--description-line-height, 1.3);
+      }
+
+      .voting {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        text-align: center;
+        padding-right: 24px;
+        padding-left: 24px;
       }
 
       .join-button {
@@ -81,12 +90,13 @@
           <div class="description">
             <h2 class="group-name">[[groupName(group)]]</h2>
             <div>[[groupDescription(group)]]</div>
-            <yp-group-actions class="stats" group="[[group]]"></yp-group-actions>
           </div>
         </div>
+        <div class="card-actions">
+          <yp-idea-actions class="voting" idea="[[idea]]"></yp-idea-actions>
+        </div>
         <div class="card-actions join-button">
-          <paper-button>{{t('Join group')}}</paper-button>
-          <paper-button class="join-button-secondary">{{t('view')}}</paper-button>
+          <paper-button>{{t('View')}}</paper-button>
         </div>
       </paper-card>
     </template>
@@ -94,7 +104,7 @@
 
   <script>
     Polymer({
-      is: 'yp-group',
+      is: 'yp-idea',
 
       behaviors: [
         Polymer.appHelpers
@@ -104,7 +114,13 @@
         group: {
           type: Object,
           notify: true
+        },
+
+        idea: {
+          type: Object,
+          notify: true
         }
+
       },
 
       goToGroup: function (e) {
@@ -155,6 +171,10 @@
         } else {
           return "";
         }
+      },
+
+      ready: function () {
+        this.idea = {counter_endorsements_up: 1237, counter_points: 347, counter_endorsements_down: 432};
       }
     });
   </script>
