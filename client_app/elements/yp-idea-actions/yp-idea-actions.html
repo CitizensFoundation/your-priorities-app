@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html" >
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
@@ -84,9 +85,8 @@
     </style>
 
     <div class$="[[computeActionClass(small)]]">
-
       <div class="action-up">
-        <paper-icon-button icon="thumb-up" class="action-icon up-vote-icon" on-tap="upVote"></paper-icon-button>
+        <paper-icon-button icon$="[[votingModeIcon(votingMode,'up')]]" class="action-icon up-vote-icon" on-tap="upVote"></paper-icon-button>
         <div class="action-text">{{formatNumber(idea.counter_endorsements_up)}}</div>
       </div>
 
@@ -100,9 +100,8 @@
 
       <div class="action-down">
         <div class="action-text down-text">{{formatNumber(idea.counter_endorsements_down)}}</div>
-        <paper-icon-button icon="thumb-down" class="action-icon down-vote-icon" on-tap="downVote"></paper-icon-button>
+        <paper-icon-button icon$="[[votingModeIcon(votingMode,'down')]]" class="action-icon down-vote-icon" on-tap="downVote"></paper-icon-button>
       </div>
-
     </div>
 
   </template>
@@ -122,7 +121,29 @@
         small: {
           type: Boolean,
           value: false
+        },
+
+        votingMode: {
+          type: String,
+          value: "thumbs"
         }
+      },
+
+      votingModeIcon: function (votingMode, upDown) {
+        if (votingMode=="thumbs" && upDown=='up') {
+          return "thumb-up";
+        } else if (votingMode=="thumbs" && upDown=='down') {
+          return "thumb-down";
+        } else if (votingMode=="love" && upDown=='up') {
+          return "favorite";
+        } else if (votingMode=="love" && upDown=='down') {
+          return "block";
+        } else if (votingMode=="arrow" && upDown=='up') {
+          return "hardware:keyboard-arrow-down";
+        } else if (votingMode=="arrow" && upDown=='down') {
+          return "hardware:keyboard-arrow-up";
+        }
+
       },
 
       upVote: function () {

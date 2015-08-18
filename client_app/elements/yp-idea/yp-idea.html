@@ -11,7 +11,7 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-group-actions/yp-group-actions.html">
+<link rel="import" href="../yp-group-stats/yp-group-stats.html">
 <link rel="import" href="../yp-idea-actions/yp-idea-actions.html">
 
 <dom-module id="yp-idea">
@@ -93,7 +93,7 @@
           </div>
         </div>
         <div class="card-actions">
-          <yp-idea-actions class="voting" idea="[[idea]]"></yp-idea-actions>
+          <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
         </div>
         <div class="card-actions join-button">
           <paper-button>{{t('View')}}</paper-button>
@@ -119,6 +119,10 @@
         idea: {
           type: Object,
           notify: true
+        },
+
+        votingMode: {
+          type: String
         }
 
       },

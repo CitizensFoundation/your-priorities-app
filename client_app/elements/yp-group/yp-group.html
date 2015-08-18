@@ -11,7 +11,7 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-group-actions/yp-group-actions.html">
+<link rel="import" href="../yp-group-stats/yp-group-stats.html">
 
 <dom-module id="yp-group">
 
@@ -81,7 +81,7 @@
           <div class="description">
             <h2 class="group-name">[[groupName(group)]]</h2>
             <div>[[groupDescription(group)]]</div>
-            <yp-group-actions class="stats" group="[[group]]"></yp-group-actions>
+            <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
           </div>
         </div>
         <div class="card-actions join-button">
