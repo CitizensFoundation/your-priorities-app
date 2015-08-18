@@ -44,6 +44,7 @@
       }
 
       .join-button {
+        @apply(--layout-left);
         color: var(--accent-color-lighter, #FFB74D);
       }
 
@@ -75,8 +76,7 @@
     </style>
 
     <template is="dom-if" if="group">
-      <paper-card class="pink"
-                  image$="[[groupImagePath(group)]]">
+      <paper-card class="pink" image$="[[groupImagePath(group)]]">
         <div class="card-content">
           <div class="description">
             <h2 class="group-name">[[groupName(group)]]</h2>
@@ -85,7 +85,7 @@
           </div>
         </div>
         <div class="card-actions join-button">
-          <paper-button>{{t('Join group')}}</paper-button>
+          <paper-button>{{t('join')}}</paper-button>
           <paper-button class="join-button-secondary">{{t('view')}}</paper-button>
         </div>
       </paper-card>
