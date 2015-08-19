@@ -2,7 +2,7 @@
   "name": "your-priorities-app",
   "version": "0.5.0",
   "dependencies": {
-    "polymer": "Polymer/Polymer#master",
+    "polymer": "Polymer/polymer#^1.1.0",
     "iron-elements": "PolymerElements/iron-elements#master",
     "paper-elements": "PolymerElements/paper-elements#master",
     "platinum-elements": "PolymerElements/platinum-elements#master",

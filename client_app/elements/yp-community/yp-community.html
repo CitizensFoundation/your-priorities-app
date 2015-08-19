@@ -11,11 +11,12 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-group-stats/yp-group-stats.html">
+<link rel="import" href="../yp-community-stats/yp-community-stats.html">
 
-<dom-module id="yp-group">
+<dom-module id="yp-community">
 
   <template>
+
     <style>
       :host {
         display: block;
@@ -27,7 +28,7 @@
         padding-right: 16px;
       }
 
-      .groupImage {
+      .communityImage {
         cursor: pointer;
       }
 
@@ -58,15 +59,13 @@
 
       .stats {
         @apply(--layout-self-center);
+        padding-top: 16px;
       }
 
-      .group-name {
+      .community-name {
         padding: 0px;
         padding-bottom: 4px;
         margin: 0px;
-      }
-
-      .idea-image {
       }
 
       .separator {
@@ -76,20 +75,17 @@
       }
     </style>
 
-    <template is="dom-if" if="[[group]]">
-      <paper-card class="pink" image$="">
+    <template is="dom-if" if="community">
+      <paper-card class="pink" image$="[[communityImagePath(community)]]">
         <div class="card-content">
           <div class="description">
-            <h2 class="group-name">[[groupName(group)]]</h2>
-            <div>[[groupDescription(group)]]</div>
+            <h2 class="community-name">[[communityName(community)]]</h2>
+            <div>[[communityDescription(community)]]</div>
+            <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
           </div>
         </div>
-        <img src="[[groupImagePath(group)]]" class="idea-image">
-        <div class="card-content">
-          <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-        </div>
         <div class="card-actions join-button">
-          <paper-button>{{t('join group')}}</paper-button>
+          <paper-button>{{t('join community')}}</paper-button>
           <paper-button class="join-button-secondary">{{t('view')}}</paper-button>
         </div>
       </paper-card>
@@ -98,35 +94,33 @@
 
   <script>
     Polymer({
-      is: 'yp-group',
+      is: 'yp-community',
 
       behaviors: [
         Polymer.appHelpers
       ],
 
       properties: {
-        group: {
+        community: {
           type: Object,
           notify: true
         }
       },
 
       goToGroup: function (e) {
-        var groupUrl = '/#/groups/' + this.group.id + '/ideas/top/' + this.group.name;
-        window.globals.activity('Anonymous', 'open', 'group', groupUrl);
-        window.location = groupUrl;
+        var communityUrl = '/#/communities/' + this.community.id + '/ideas/top/' + this.community.name;
+        window.globals.activity('Anonymous', 'open', 'community', communityUrl);
+        window.location = communityUrl;
       },
 
-      groupImagePath: function (group) {
-        return this.randomStockImage();
-
-        if (this.group.IsoCountry) {
-          return this.isoCountryImagePath() + group.IsoCountry.code.toLowerCase() + '.png';
+      communityImagePath: function (community) {
+        if (this.community.IsoCountry) {
+          return this.isoCountryImagePath() + community.IsoCountry.code.toLowerCase() + '.png';
         }
-        else if (group.name.indexOf("NHS") > -1) {
+        else if (community.name.indexOf("NHS") > -1) {
           return "https://i.imgur.com/uavPcDU.jpg"
         }
-        else if (group.name.indexOf("Iceland") > -1) {
+        else if (community.name.indexOf("Iceland") > -1) {
           return "https://i.imgur.com/v2SyyDl.png"
         }
         else if (true) {
@@ -135,29 +129,29 @@
         else if (false) {
           return "https://placehold.it/384x216"
         }
-        else if (group.top_banner_file_name) {
-          return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(group.id) + '/icon_full/' + group.top_banner_file_name;
+        else if (community.top_banner_file_name) {
+          return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(community.id) + '/icon_full/' + community.top_banner_file_name;
         } else
         {
           return this.defaultGroupImage('');
         }
       },
 
-      getIsoCountryImagePath: function (group) {
-        return this.isoCountryImagePath() + group.IsoCountry.code.toLowerCase() + '.png';
+      getIsoCountryImagePath: function (community) {
+        return this.isoCountryImagePath() + community.IsoCountry.code.toLowerCase() + '.png';
       },
 
-      groupName: function (group) {
-        if (group.name) {
-          return this.truncate(this.trim(group.name), 200);
+      communityName: function (community) {
+        if (community.name) {
+          return this.truncate(this.trim(community.name), 200);
         } else {
-          return group.short_name;
+          return community.short_name;
         }
       },
 
-      groupDescription: function (group) {
-        if (group.description) {
-          return this.truncate(this.trim(group.description), 10000, '...');
+      communityDescription: function (community) {
+        if (community.description) {
+          return this.truncate(this.trim(community.description), 10000, '...');
         } else {
           return "";
         }

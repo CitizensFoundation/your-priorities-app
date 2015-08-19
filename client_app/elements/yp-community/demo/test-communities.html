@@ -3,7 +3,6 @@
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../../bower_components/iron-icons/hardware-icons.html" >
 <link rel="import" href="../../../bower_components/iron-icons/image-icons.html" >
 <link rel="import" href="../../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../../bower_components/iron-image/iron-image.html" >
@@ -11,7 +10,7 @@
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../bower_components/paper-card/paper-card.html">
 
-<dom-module id="test-ideas">
+<dom-module id="test-communities">
 
   <template>
 
@@ -24,69 +23,74 @@
         @apply(--layout-vertical);
       }
 
-      yp-idea {
+      yp-group {
         padding: 8px;
       }
 
     </style>
 
     <div class="grid">
-      <yp-idea voting-mode="love" id="idea1"></yp-idea>
-      <yp-idea id="idea2"></yp-idea>
-      <yp-idea voting-mode="arrow" id="idea4"></yp-idea>
-      <yp-idea id="idea3"></yp-idea>
-      <yp-idea id="idea5"></yp-idea>
+      <yp-group id="group1"></yp-group>
+      <yp-group id="group2"></yp-group>
+      <yp-group id="group4"></yp-group>
+      <yp-group id="group3"></yp-group>
+      <yp-group id="group5"></yp-group>
     </div>
 
   </template>
 
   <script>
     Polymer({
-      is: 'test-ideas',
+      is: 'test-communities',
 
       behaviors: [
         Polymer.appHelpers
       ],
 
       ready: function (e) {
-        this.$.idea3.idea = {id: 105,
+        this.$.group3.group = {id: 368,
           name:'NHS Citizen',
           top_banner_file_name: 'NHScitizen_logo_final2c.png',
           description:'This is a test version of the NHS Citizen Gather space; it helps people identify and discuss the issues that the NHS should be talking about. Ideas that generate the most discussion and support or whith the right people.',
-          Category: {id: 101, icon_file_name: "NationalManagement.png" },
-          counter_endorsements_up: 1233, counter_points: 1656, counter_endorsements_down: 648
+          counter_ideas: 232,
+          counter_points: 1500,
+          counter_users: 10000
         };
 
-        this.$.idea2.idea = {id: 101,
+        this.$.group2.group = {id: 361,
           name:'Iceland top ideas',
           top_banner_file_name: 'NHScitizen_logo_final2c.png',
           description:'Your ideas and participation will help provide a series of recommendations to the European Commission on the best strategies, policies and funding instruments.',
-          Category: {id: 105, icon_file_name: "NHS_icons_GG-2.png" },
-          counter_endorsements_up: 5454, counter_points: 7778, counter_endorsements_down: 1232
+          counter_ideas: 433,
+          counter_points: 1500,
+          counter_users: 500
         };
 
-        this.$.idea1.idea = {id: 328,
+        this.$.group1.group = {id: 328,
           name:'Educational priorities',
           top_banner_file_name: 'NHScitizen_logo_final2c.png',
           description:'Learn about transparency and the prioritization of ideas. Students are posting what they would like to see happen in the classroom and the ideas with many upvotes will be discussed and implemented.',
-          Category: {id: 107, icon_file_name: "MyVoice.png" },
-          counter_endorsements_up: 1233, counter_points: 1656, counter_endorsements_down: 648
+          counter_ideas: 64,
+          counter_points: 123,
+          counter_users: 123
         };
 
-        this.$.idea4.idea = {id: 361,
+        this.$.group4.group = {id: 361,
           name:'Iceland top ideas',
           top_banner_file_name: 'NHScitizen_logo_final2c.png',
           description:'Your ideas and participation will help provide a series of recommendations to the European Commission on the best strategies, policies and funding instruments.',
-          Category: {id: 107, icon_file_name: "MyVoice.png" },
-          counter_endorsements_up: 1233, counter_points: 1656, counter_endorsements_down: 648
+          counter_ideas: 433,
+          counter_points: 1500,
+          counter_users: 500
         };
 
-        this.$.idea5.idea = {id: 361,
+        this.$.group5.group = {id: 361,
           name:'Iceland top ideas',
           top_banner_file_name: 'NHScitizen_logo_final2c.png',
           description:'Your ideas and participation will help provide a series of recommendations to the European Commission on the best strategies, policies and funding instruments.',
-          Category: {id: 101, icon_file_name: "NationalManagement.png" },
-          counter_endorsements_up: 1233, counter_points: 1656, counter_endorsements_down: 648
+          counter_ideas: 433,
+          counter_points: 1500,
+          counter_users: 500
         };
       }
     });

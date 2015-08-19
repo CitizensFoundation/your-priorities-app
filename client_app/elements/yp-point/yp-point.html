@@ -1,0 +1,162 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-user-image/yp-user-image.html">
+<link rel="import" href="../yp-point-actions/yp-point-actions.html">
+
+<dom-module id="yp-point">
+
+  <template>
+    
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+        width: 420px;
+      }
+
+      .category {
+        padding-right: 8px;
+      }
+
+      .description {
+        padding-left:0px;
+        padding-right:0px;
+        padding-bottom: 0px !important;
+      }
+
+      .pointUser {
+        padding: 0px;
+        padding-bottom: 0px;
+        color: var(--primary-color, #9E9E9E);
+      }
+
+      .point {
+        padding: 16px;
+        padding-bottom: 0px !important;
+      }
+
+      .for {
+        color: var(--primary-up-color-bit-lighter, #003300);
+      }
+
+      .against {
+        color: var(--primary-down-color-bit-lighter, #4C0000);
+      }
+
+      .name {
+        color: var(--primary-color-darker, #111);
+        font-weigth: bold;
+      }
+
+      .point-container {
+        @apply(--layout-horizontal);
+      }
+
+      .point-content {
+        @apply(--layout-vertical);
+      }
+
+
+      .user-image {
+        width: 240px;
+      }
+
+      yp-point-actions {
+      }
+
+    </style>
+
+    <template is="dom-if" if="[[point]]">
+
+      <div class="point-container">
+
+        <template is="dom-if" if="[[upVote(point)]]">
+          <div class="user-image">
+            <yp-user-image user="[[user]]"></yp-user-image>
+          </div>
+        </template>
+
+        <div class="point-content">
+
+          <div class="name">
+            <span>[[loginName()]]</span>
+          </div>
+
+          <div class$="[[computeClass(point)]]">
+            <span>[[point.name]]</span>. <span>[[point.content]]</span>
+          </div>
+
+          <yp-point-actions point="[[point]]"></yp-point-actions>
+
+        </div>
+
+        <template is="dom-if" if="[[downVote(point)]]">
+          <div class="user-image">
+            <yp-user-image user="[[user]]"></yp-user-image>
+          </div>
+        </template>
+
+      </div>
+
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-point',
+
+      properties: {
+
+        point: {
+          type: Object,
+          notify: true,
+          observer: "_pointChanged"
+        },
+
+        user: {
+          type: Object,
+          value: null
+        }
+
+      },
+
+      _pointChanged: function(old, newValue) {
+        this.user = this.point.PointRevisions[0].User;
+      },
+
+      loginName: function () {
+        return this.point.PointRevisions[0].User.login;
+      },
+
+      upVote: function(point) {
+        return point.value>0;
+      },
+
+      downVote: function(point) {
+        return point.value<0;
+      },
+
+      computeClass: function (point) {
+        var ret = 'description ';
+        if (point.value>0)
+          ret += 'for';
+        else
+          ret += 'against';
+        return ret;
+      }
+    });
+  </script>
+</dom-module>

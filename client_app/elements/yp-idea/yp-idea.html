@@ -11,7 +11,6 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-group-stats/yp-group-stats.html">
 <link rel="import" href="../yp-idea-actions/yp-idea-actions.html">
 
 <dom-module id="yp-idea">
@@ -29,7 +28,7 @@
         padding-right: 16px;
       }
 
-      .groupImage {
+      .ideaImage {
         cursor: pointer;
       }
 
@@ -70,26 +69,32 @@
         padding-top: 16px;
       }
 
-      .group-name {
+      .idea-name {
         padding: 0px;
         padding-bottom: 4px;
         margin: 0px;
       }
 
-      .separator {
-        padding: 16px;
-        font-size: 14px;
-        border-top: 1px solid #e0e0e0;
+      .category-icon {
+        width: 64px;
+        height: 64px;
+      }
+
+      .category-image-container {
+        text-align: right;
+        margin-top: -52px;
       }
     </style>
 
-    <template is="dom-if" if="group">
-      <paper-card class="pink"
-                  image$="[[groupImagePath(group)]]">
+    <template is="dom-if" if="[[idea]]">
+      <paper-card class="pink" image$="[[ideaImagePath(idea)]]">
         <div class="card-content">
+          <div class="category-image-container">
+            <iron-image class="category-icon" sizing="contain" src$="[[getCategoryImagePath(idea)]]"></iron-image>
+          </div>
           <div class="description">
-            <h2 class="group-name">[[groupName(group)]]</h2>
-            <div>[[groupDescription(group)]]</div>
+            <h2 class="idea-name">[[ideaName(idea)]]</h2>
+            <div>[[ideaDescription(idea)]]</div>
           </div>
         </div>
         <div class="card-actions">
@@ -111,7 +116,7 @@
       ],
 
       properties: {
-        group: {
+        idea: {
           type: Object,
           notify: true
         },
@@ -128,19 +133,22 @@
       },
 
       goToGroup: function (e) {
-        var groupUrl = '/#/groups/' + this.group.id + '/ideas/top/' + this.group.name;
-        window.globals.activity('Anonymous', 'open', 'group', groupUrl);
-        window.location = groupUrl;
+        var ideaUrl = '/#/ideas/' + this.idea.id + '/ideas/top/' + this.idea.name;
+        window.globals.activity('Anonymous', 'open', 'idea', ideaUrl);
+        window.location = ideaUrl;
       },
 
-      groupImagePath: function (group) {
-        if (this.group.IsoCountry) {
-          return this.isoCountryImagePath() + group.IsoCountry.code.toLowerCase() + '.png';
+      ideaImagePath: function (idea) {
+
+        return this.randomStockImage();
+
+        if (this.idea.IsoCountry) {
+          return this.isoCountryImagePath() + idea.IsoCountry.code.toLowerCase() + '.png';
         }
-        else if (group.name.indexOf("NHS") > -1) {
-          return "https://i.imgur.com/uavPcDU.jpg"
+        else if (idea.name.indexOf("NHS") > -1) {
+          return "http://i.imgur.com/BKR5vE6.jpg"
         }
-        else if (group.name.indexOf("Iceland") > -1) {
+        else if (idea.name.indexOf("Iceland") > -1) {
           return "https://i.imgur.com/v2SyyDl.png"
         }
         else if (true) {
@@ -149,36 +157,40 @@
         else if (false) {
           return "https://placehold.it/384x216"
         }
-        else if (group.top_banner_file_name) {
-          return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(group.id) + '/icon_full/' + group.top_banner_file_name;
+        else if (idea.top_banner_file_name) {
+          return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(idea.id) + '/icon_full/' + idea.top_banner_file_name;
         } else
         {
           return this.defaultGroupImage('');
         }
       },
 
-      getIsoCountryImagePath: function (group) {
-        return this.isoCountryImagePath() + group.IsoCountry.code.toLowerCase() + '.png';
+      getIsoCountryImagePath: function (idea) {
+        return this.isoCountryImagePath() + idea.IsoCountry.code.toLowerCase() + '.png';
       },
 
-      groupName: function (group) {
-        if (group.name) {
-          return this.truncate(this.trim(group.name), 200);
+      ideaName: function (idea) {
+        if (idea.name) {
+          return this.truncate(this.trim(idea.name), 200);
         } else {
-          return group.short_name;
+          return idea.short_name;
         }
       },
 
-      groupDescription: function (group) {
-        if (group.description) {
-          return this.truncate(this.trim(group.description), 10000, '...');
+      ideaDescription: function (idea) {
+        if (idea.description) {
+          return this.truncate(this.trim(idea.description), 10000, '...');
         } else {
           return "";
         }
       },
 
+      getCategoryImagePath: function (idea) {
+        return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(idea.Category.id) + '/icon_100/' + idea.Category.icon_file_name;
+      },
+
       ready: function () {
-        this.idea = {counter_endorsements_up: 1237, counter_points: 347, counter_endorsements_down: 432};
+        //this.idea = {counter_endorsements_up: 1237, counter_points: 347, counter_endorsements_down: 432};
       }
     });
   </script>

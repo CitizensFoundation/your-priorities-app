@@ -36,6 +36,10 @@
       return Math.floor((Math.random() * value) + 1);
     },
 
+    getRandomFromArray: function(items) {
+      return items[Math.floor(Math.random()*items.length)];
+    },
+
     padNumber: function (value) {
       return ('000' + value).substr(-3);
     },
@@ -93,6 +97,14 @@
 
     isoCountryImagePath: function () {
       return window.isoCountryImagePath;
+    },
+
+    randomStockImage: function () {
+      var images = ["http://i.imgur.com/ZSgsITo.jpg","http://i.imgur.com/BKR5vE6.jpg",
+        "http://i.imgur.com/lIk6iLD.jpg",
+        "http://i.imgur.com/OjyTHRv.jpg"]
+
+      return this.getRandomFromArray(images);
     }
 
   };
