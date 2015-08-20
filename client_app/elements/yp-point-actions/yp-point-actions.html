@@ -45,13 +45,13 @@
     </style>
 
     <div class="action-up">
-      <paper-icon-button icon="thumb-up" class="point-up-vote-icon" on-tap="pointHelpful"></paper-icon-button>
-      <div class="action-text">{{voteCount(point.PointQualities,'up')}}</div>
     </div>
 
-    <div class="middle"></div>
+    <div class="middle" hidden$="[[hideNotHelpful]]"></div>
 
-    <div class="action-down">
+    <div class="action-down" hidden$="[[hideNotHelpful]]">
+      <div class="action-text action-up">{{voteCount(point.PointQualities,'up')}}</div>
+      <paper-icon-button icon="thumb-up" class="point-up-vote-icon action-up" on-tap="pointHelpful"></paper-icon-button>
       <div class="action-text">{{voteCount(point.PointQualities,'down')}}</div>
       <paper-icon-button size="16x16" icon="thumb-down" class="point-down-vote-icon" on-tap="pointNotHelpful"></paper-icon-button>
     </div>
@@ -68,6 +68,11 @@
       properties: {
         point: {
           type: Object
+        },
+
+        hideNotHelpful: {
+          type: Boolean,
+          value: false
         }
       },
 

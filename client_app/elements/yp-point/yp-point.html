@@ -69,7 +69,12 @@
 
 
       .user-image {
-        width: 240px;
+        padding-right: 16px;
+      }
+      
+      .user-image-right {
+        padding-right: 0px;
+        padding-left: 16px;
       }
 
       yp-point-actions {
@@ -89,20 +94,18 @@
 
         <div class="point-content">
 
-          <div class="name">
+          <div class="name" hidden$="[[hideName]]">
             <span>[[loginName()]]</span>
           </div>
 
           <div class$="[[computeClass(point)]]">
             <span>[[point.name]]</span>. <span>[[point.content]]</span>
+            <yp-point-actions point="[[point]]"></yp-point-actions>
           </div>
-
-          <yp-point-actions point="[[point]]"></yp-point-actions>
-
         </div>
 
         <template is="dom-if" if="[[downVote(point)]]">
-          <div class="user-image">
+          <div class="user-image user-image-right">
             <yp-user-image user="[[user]]"></yp-user-image>
           </div>
         </template>
@@ -129,8 +132,12 @@
         user: {
           type: Object,
           value: null
-        }
+        },
 
+        hideName: {
+          type: Boolean,
+          value: true
+        }
       },
 
       _pointChanged: function(old, newValue) {

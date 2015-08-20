@@ -9,6 +9,8 @@
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-idea-actions/yp-idea-actions.html">
@@ -84,10 +86,31 @@
         text-align: right;
         margin-top: -52px;
       }
+
+      google-streetview-pano {
+        height: 216px;
+      }
+
+      google-map {
+        height: 216px;
+      }
+
     </style>
 
     <template is="dom-if" if="[[idea]]">
       <paper-card class="pink" image$="[[ideaImagePath(idea)]]">
+        <template is="dom-if" if="[[streetView]]">
+          <google-streetview-pano
+                  pano-id="CkmCkfwvIGUAAAQW-qy0KQ"
+                  heading="330"
+                  pitch="2"
+                  zoom="0.8"
+                  disable-default-ui>
+          </google-streetview-pano>
+        </template>
+        <template is="dom-if" if="[[map]]">
+          <google-map></google-map>
+        </template>
         <div class="card-content">
           <div class="category-image-container">
             <iron-image class="category-icon" sizing="contain" src$="[[getCategoryImagePath(idea)]]"></iron-image>
@@ -128,6 +151,23 @@
 
         votingMode: {
           type: String
+        },
+
+        image: {
+          type: Boolean,
+          value: true
+        },
+
+        streetView: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+
+        map: {
+          type: Boolean,
+          value: false,
+          notify: true
         }
 
       },
@@ -140,7 +180,10 @@
 
       ideaImagePath: function (idea) {
 
-        return this.randomStockImage();
+        if (this.streetView || this.map)
+          return "";
+        else
+          return this.randomStockImage();
 
         if (this.idea.IsoCountry) {
           return this.isoCountryImagePath() + idea.IsoCountry.code.toLowerCase() + '.png';
