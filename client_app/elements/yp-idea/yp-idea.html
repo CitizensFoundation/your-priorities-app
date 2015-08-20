@@ -27,38 +27,23 @@
     scroll away or do the condenses feature. Instead, treat its content like
     a regular toolbar.
     -->
-    <iron-media-query query="min-width: 640px" query-matches="{{largeScreen}}">
-    </iron-media-query>
-
-    <base-layout id="layout" selected="idea" showlogo="true" category="{{idea.Category}}" name="{{idea.Group.name}}" subtitle="{{idea.name}}" idea="{{idea}}" groupid="{{idea.Group.id}}" groupname="{{idea.Group.name}}">
-      <template is="dom-if" if="{{idea}}">
-
         <div layout="" vertical="" center-center="">
 
-          <paper-material id="topCard" class="topCard" elevation="2" center-center="">
-            <yrpri-idea idea="{{idea}}" showcategory="true"></yrpri-idea>
-          </paper-material>
+          <yrpri-idea-header idea="{{idea}}" showcategory="true"></yrpri-idea-header>
 
-          <paper-material class="card cardTabs" elevation="1" center-center="">
+          <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+            <paper-tab><span>{{computeExpression1()}}</span> (<span>{{idea.Points.length}}</span>)</paper-tab>
+            <paper-tab>{{computeExpression3()}}</paper-tab>
+            <paper-tab>{{computeExpression4()}}</paper-tab>
+            <paper-tab>{{computeExpression5()}}</paper-tab>
+          </paper-tabs>
 
-            <div layout="" vertical="" style="width:100%;">
-
-              <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
-                <paper-tab><span>{{computeExpression1()}}</span> (<span>{{idea.Points.length}}</span>)</paper-tab>
-                <paper-tab>{{computeExpression3()}}</paper-tab>
-                <paper-tab>{{computeExpression4()}}</paper-tab>
-                <paper-tab>{{computeExpression5()}}</paper-tab>
-              </paper-tabs>
-
-              <neon-animated-pages notap="" selected="{{selected}}" style="width:100%;" transitions="slide-from-right">
-                <section-points points="{{idea.Points}}"></section-points>
-                <section><center><br><br><h1>{{computeExpression8()}}</h1></center></section>
-                <section><center><br><br><h1>{{computeExpression8()}}</h1></center></section>
-                <section><center><br><br><h1>{{computeExpression8()}}</h1></center></section>
-              </neon-animated-pages>
-
-            </div>
-          </paper-material>
+          <neon-animated-pages notap="" selected="{{selected}}" style="width:100%;" transitions="slide-from-right">
+            <yp-idea-points points="{{idea.Points}}"></yp-idea-points>
+            <section><center><br><br><h1>{{computeExpression8()}}</h1></center></section>
+            <section><center><br><br><h1>{{computeExpression8()}}</h1></center></section>
+            <section><center><br><br><h1>{{computeExpression8()}}</h1></center></section>
+          </neon-animated-pages>
         </div>
       </template>
     </base-layout>
@@ -69,7 +54,9 @@
   <script>
     (function () {
       Polymer({
+
         is: 'yp-idea',
+
         properties: {
           contactId: { notify: true },
           contacts: { notify: true },
@@ -77,6 +64,7 @@
           response: { observer: 'responseChanged' },
           selected: { observer: 'selectedChanged' }
         },
+
         responseChanged: function (detail, e, sender) {
           this.$.layout.setSpinner(false);
           this.idea = detail;
@@ -85,6 +73,7 @@
             this.idea.Points.shift();
           }
         },
+
         selectedChanged: function (selected, previous) {
           if (selected == 0)
             window.globals.activity('Anonymous', 'open', 'pointsTab');
@@ -95,24 +84,12 @@
           else if (selected == 3)
             window.globals.activity('Anonymous', 'open', 'solutionsTab');
         },
-        willPrepare: function () {
-          this.super();
-          // Measure the core-scroll-header-panel, otherwise its height will
-          // be messed up
-          this.$.scrollHeaderPanel.measureHeaderHeight();
-          // Reset the scroller so every time the user comes to the info page
-          // so they see the full profile photo
-          this.$.scrollHeaderPanel.scroller.scrollTop = 0;
-        },
-        hostAttributes: {
-          'layout': '',
-          'vertical': ''
-        },
+
         ready: function () {
           this.$.layout.setSpinner(true);
           this.$.ajax.go();
         },
-        extends: 'base-page',
+
         computeUrl: function (idea_id) {
           return '/api/ideas/' + idea_id;
         },

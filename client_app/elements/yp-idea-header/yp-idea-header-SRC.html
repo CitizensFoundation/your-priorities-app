@@ -64,22 +64,7 @@
         </template>
         <template is="dom-if" if="[[!small]]">
           <paper-spinner id="spinner" style="padding-top:4px;display:block;" active=""></paper-spinner>
-          <template is="dom-if" if="[[endorsements]]">
-            <div style="padding-top: 16px; opacity: 0.80;">
-              <template is="dom-repeat" items="[[limitTo(endorsements, userImagesLimit)]]" as="endorsement" index-as="endorsementIndex">
-                <user-image user="[[endorsement.User]]" small=""></user-image>
-              </template>
-              <div id="moreImages" style="display:none;">
-                <paper-icon-button class="more" id="moreImagesButton" icon="add" on-tap="moreUserImages"></paper-icon-button>
-                <span id="numberOfMoreUserImages" style="display:none;margin-bottom:16px;padding-left:0px;margin-left:0px;">[[computeExpression7()]]</span>
-              <span id="restOfUserImages" style="display: none;">
-                <template is="dom-repeat" items="[[limitFrom(endorsements, userImagesLimit, endorsements.length)]]" as="endorsement" index-as="endorsementIndex">
-                  <user-image user="[[endorsement.User]]" small=""></user-image>
-                </template>
-              </span>
-                </div>
-            </div>
-          </template>
+
         </template>
       </div>
     </div>
@@ -155,7 +140,7 @@
         this.$.spinner.style.display = 'none';
         this.endorsements = detail;
         if (this.endorsements.length > this.userImagesLimit) {
-          this.$.moreImages.style.display = 'inline';
+          this.$$.moreImages.style.display = 'inline';
         }
       },
 
@@ -203,7 +188,7 @@
         return this.truncate(this.trim(idea.Points[0].content), small ? 200 : 10000, '...');
       },
 
-      computeExpression7: function () {
+      userImagesCount: function () {
         return this.countUserImagesLeft(0);
       }
     });

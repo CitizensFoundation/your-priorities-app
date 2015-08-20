@@ -1,0 +1,97 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-user-image/yp-user-image.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+
+<dom-module id="yp-idea-users">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <template is="dom-if" if="[[endorsements]]">
+
+      <div class="users">
+
+        <template is="dom-repeat" items="[[limitTo(endorsements, userImagesLimit)]]" as="endorsement" index-as="endorsementIndex">
+          <yp-user-image user="[[endorsement.User]]"></yp-user-image>
+        </template>
+
+        <div id="moreImages" style="display:none;">
+
+          <paper-icon-button class="more" id="moreImagesButton" icon="add" on-tap="_moreUserImages"></paper-icon-button>
+
+          <span id="numberOfMoreUserImages" style="margin-bottom:16px;padding-left:0px;margin-left:0px;">[[_userImagesCount()]]</span>
+
+          <span id="restOfUserImages" style="display: none;">
+            <template is="dom-repeat" items="[[limitFrom(endorsements, userImagesLimit, endorsements.length)]]" as="endorsement" index-as="endorsementIndex">
+              <user-image user="[[endorsement.User]]" small=""></user-image>
+            </template>
+          </span>
+
+        </div>
+      </div>
+
+    </template>
+
+    <template is="dom-if" if="[[idea]]">
+      <yp-ajax auto="true" id="endorsementAjax" use-error-dialog=false url="[[_computeUrl(idea)]]" on-response="[[_response]]" handle-as="json"></yp-ajax>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-idea-users',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        endorsements: {
+          type: Object
+        },
+
+        userImagesLimit: {
+          type: Number,
+          value: 42
+        },
+
+        idea: {
+          type: Object
+        }
+      },
+
+      _response: function (detail, e, sender) {
+        this.endorsements = detail;
+        if (this.endorsements.length > this.userImagesLimit) {
+          this.$$("moreImages").style.display = 'inline';
+        }
+      },
+
+      _moreUserImages: function () {
+        this.$$("moreImagesButton").style.display = 'none';
+        this.$$("numberOfMoreUserImages").style.display = 'none';
+        this.$$("restOfUserImages").style.display = 'inline';
+      },
+
+      _computeUrl: function (idea) {
+        return '/api/ideas/' + idea.id + '/endorsements';
+      },
+
+      _userImagesCount: function () {
+        return this.countUserImagesLeft(0);
+      }
+
+    });
+  </script>
+</dom-module>

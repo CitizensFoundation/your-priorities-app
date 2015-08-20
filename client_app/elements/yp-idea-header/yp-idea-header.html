@@ -14,6 +14,7 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-idea-actions/yp-idea-actions.html">
+<link rel="import" href="../yp-idea-users/yp-idea-users.html">
 
 <dom-module id="yp-idea-header">
 
@@ -106,6 +107,7 @@
         <template is="dom-if" if="[[map]]">
           <google-map></google-map>
         </template>
+
         <div class="container">
           <div class="card-content">
             <div class="category-image-container">
@@ -119,6 +121,7 @@
           <div class="card-actions">
             <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
           </div>
+          <yp-idea-users idea="[[idea]]"></yp-idea-users>
         </div>
       </div>
     </template>
@@ -133,10 +136,6 @@
       ],
 
       properties: {
-        idea: {
-          type: Object,
-          notify: true
-        },
 
         idea: {
           type: Object,
