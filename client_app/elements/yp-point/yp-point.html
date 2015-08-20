@@ -25,38 +25,12 @@
         width: 420px;
       }
 
-      .category {
-        padding-right: 8px;
-      }
-
-      .description {
-        padding-left:0px;
-        padding-right:0px;
-        padding-bottom: 0px !important;
-      }
-
-      .pointUser {
-        padding: 0px;
-        padding-bottom: 0px;
-        color: var(--primary-color, #9E9E9E);
-      }
-
-      .point {
-        padding: 16px;
-        padding-bottom: 0px !important;
-      }
-
       .for {
         color: var(--primary-up-color-bit-lighter, #003300);
       }
 
       .against {
         color: var(--primary-down-color-bit-lighter, #4C0000);
-      }
-
-      .name {
-        color: var(--primary-color-darker, #111);
-        font-weigth: bold;
       }
 
       .point-container {
@@ -94,10 +68,6 @@
 
         <div class="point-content">
 
-          <div class="name" hidden$="[[hideName]]">
-            <span>[[loginName()]]</span>
-          </div>
-
           <div class$="[[computeClass(point)]]">
             <span>[[point.name]]</span>. <span>[[point.content]]</span>
             <yp-point-actions point="[[point]]"></yp-point-actions>
@@ -132,11 +102,6 @@
         user: {
           type: Object,
           value: null
-        },
-
-        hideName: {
-          type: Boolean,
-          value: true
         }
       },
 

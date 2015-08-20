@@ -23,19 +23,6 @@
         width: 384px;
       }
 
-      .category {
-        padding-right: 16px;
-      }
-
-      .groupImage {
-        cursor: pointer;
-      }
-
-      .header {
-        color: var(--primary-color-more-darker, #424242);
-        cursor: pointer;
-      }
-
       .description {
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
@@ -89,7 +76,7 @@
           <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
         </div>
         <div class="card-actions join-button">
-          <paper-button>{{t('join group')}}</paper-button>
+          <paper-button>{{t('join')}}</paper-button>
           <paper-button class="join-button-secondary">{{t('view')}}</paper-button>
         </div>
       </paper-card>
