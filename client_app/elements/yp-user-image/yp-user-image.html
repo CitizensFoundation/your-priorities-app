@@ -4,17 +4,14 @@
 <dom-module id="yp-user-image">
   <template>
     <style>
-      .small {
-        height: 48px;
-        margin: 0px;
-        width: 48px;
-        background-color: var(--primary-color-lighter,#434343);
+      :host {
+        display: block;
+        vertical-align: text-top;
       }
 
-      .medium {
-        height: 50px;
-        width: 50px;
-        margin: 0px;
+      .small {
+        height: 48px;
+        width: 48px;
         background-color: var(--primary-color-lighter,#434343);
       }
 
@@ -24,13 +21,25 @@
         border-radius: 25px;
         display: block;
       }
+
+      .rounded-more {
+        -webkit-border-radius: 30px;
+        -moz-border-radius: 30px;
+        border-radius: 30px;
+        display: block;
+        vertical-align: top;
+        align: top;
+      }
+
       .rounded img { opacity: 0; }
+
+      .rounded-more img { opacity: 0; }
 
     </style>
 
     <template is="dom-if" if="[[user]]">
 
-      <template is="dom-if" if="[[user.facebook_uid]]">
+      <template is="dom-if" if="[[!user.facebook_uid]]">
         <iron-image sizing="cover" title="{{user.login}}" preload src$="[[computeFacebookSrc(user)]]" class$="[[computeClass(small)]]"></iron-image>
       </template>
 
@@ -38,8 +47,8 @@
         <span>{{user.id}}</span> <span>{{user.buddy_icon_file_name}}</span><br>
       </template>
 
-      <template is="dom-if" if="[[!user.facebook_uid]]">
-        <iron-image sizing="cover" title="{{user.login}}" preload="" src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class$="{{computeClass(small)}}"></iron-image>
+      <template is="dom-if" if="[[user.facebook_uid]]">
+        <iron-image sizing="cover" title="{{user.login}}" preload src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class="rounded small"></iron-image>
       </template>
 
     </template>
@@ -67,7 +76,7 @@
       },
 
       computeClass: function (small) {
-        return small ? 'small rounded' : 'small rounded';
+        return 'small rounded';
       },
 
       computeFacebookSrc: function (user) {
