@@ -1,0 +1,232 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-idea-actions/yp-idea-actions.html">
+
+<dom-module id="yp-idea-header">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-horizontal);
+        width: 896px;
+      }
+
+      .description {
+        @apply(--layout-vertical);
+        color: var(--primary-color-more-darker, #424242);
+        line-height: var(--description-line-height, 1.3);
+        font-size: 18px;
+      }
+
+      .voting {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        text-align: center;
+        padding-right: 24px;
+        padding-left: 24px;
+      }
+
+      .join-button {
+        color: var(--accent-color-lighter, #FFB74D);
+      }
+
+      .container {
+        @apply(--layout-horizontal);
+      }
+
+      .top-container {
+        @apply(--layout-vertical);
+      }
+
+      .idea-name {
+        padding: 0px;
+        padding-bottom: 4px;
+        margin: 0px;
+      }
+
+      .category-icon {
+        width: 80px;
+        height: 80px;
+      }
+
+      .category-image-container {
+        text-align: center;
+        margin-top: -44px;
+      }
+
+      google-streetview-pano {
+        height: 504px;
+      }
+
+      google-map {
+        height: 504px;
+      }
+
+      .main-image {
+        height: 504px;
+      }
+
+      .card-actions {
+        padding-top: 32px;
+      }
+
+    </style>
+
+    <template is="dom-if" if="[[idea]]">
+      <div class="top-container">
+
+        <img class="main-image" hidden$="[[!ideaImagePath()]]" src="[[ideaImagePath()]]">
+
+        <template is="dom-if" if="[[streetView]]">
+          <google-streetview-pano
+                  pano-id="CkmCkfwvIGUAAAQW-qy0KQ"
+                  heading="330"
+                  pitch="2"
+                  zoom="0.8"
+                  disable-default-ui>
+          </google-streetview-pano>
+        </template>
+        <template is="dom-if" if="[[map]]">
+          <google-map></google-map>
+        </template>
+        <div class="container">
+          <div class="card-content">
+            <div class="category-image-container">
+              <iron-image class="category-icon" sizing="contain" src$="[[getCategoryImagePath(idea)]]"></iron-image>
+            </div>
+            <div class="description">
+              <h1 class="idea-name">[[ideaName(idea)]]</h1>
+              <div>[[ideaDescription(idea)]]</div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
+          </div>
+        </div>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-idea-header',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        idea: {
+          type: Object,
+          notify: true
+        },
+
+        idea: {
+          type: Object,
+          notify: true
+        },
+
+        votingMode: {
+          type: String
+        },
+
+        image: {
+          type: Boolean,
+          value: true
+        },
+
+        streetView: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+
+        map: {
+          type: Boolean,
+          value: false,
+          notify: true
+        }
+
+      },
+
+      goToGroup: function (e) {
+        var ideaUrl = '/#/ideas/' + this.idea.id + '/ideas/top/' + this.idea.name;
+        window.globals.activity('Anonymous', 'open', 'idea', ideaUrl);
+        window.location = ideaUrl;
+      },
+
+      ideaImagePath: function (idea) {
+
+        if (this.streetView || this.map)
+          return null;
+        else
+          return this.randomStockImage();
+
+        if (this.idea.IsoCountry) {
+          return this.isoCountryImagePath() + idea.IsoCountry.code.toLowerCase() + '.png';
+        }
+        else if (idea.name.indexOf("NHS") > -1) {
+          return "http://i.imgur.com/BKR5vE6.jpg"
+        }
+        else if (idea.name.indexOf("Iceland") > -1) {
+          return "https://i.imgur.com/v2SyyDl.png"
+        }
+        else if (true) {
+          return "https://i.imgur.com/OPpnjwm.jpg"
+        }
+        else if (false) {
+          return "https://placehold.it/384x216"
+        }
+        else if (idea.top_banner_file_name) {
+          return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(idea.id) + '/icon_full/' + idea.top_banner_file_name;
+        } else
+        {
+          return this.defaultGroupImage('');
+        }
+      },
+
+      getIsoCountryImagePath: function (idea) {
+        return this.isoCountryImagePath() + idea.IsoCountry.code.toLowerCase() + '.png';
+      },
+
+      ideaName: function (idea) {
+        if (idea.name) {
+          return this.truncate(this.trim(idea.name), 200);
+        } else {
+          return idea.short_name;
+        }
+      },
+
+      ideaDescription: function (idea) {
+        if (idea.description) {
+          return this.truncate(this.trim(idea.description), 10000, '...');
+        } else {
+          return "";
+        }
+      },
+
+      getCategoryImagePath: function (idea) {
+        return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(idea.Category.id) + '/icon_100/' + idea.Category.icon_file_name;
+      },
+
+      ready: function () {
+        //this.idea = {counter_endorsements_up: 1237, counter_points: 347, counter_endorsements_down: 432};
+      }
+    });
+  </script>
+</dom-module>

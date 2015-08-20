@@ -1,24 +1,5 @@
-  <style is="custom-style">
-    /* TODO(polyup): For speed, consider reworking these styles with .classes
-                     and #ids rather than [attributes].
-    */
-    [layout] {
-      @apply(--layout);
-    }
-    [layout][vertical] {
-      @apply(--layout-vertical);
-    }
-  </style>
-  <!--
-      TODO(polyup): unable to infer path to components
-      directory. This import path is probably incomplete.
-   -->
-  <link rel="import" href="iron-flex-layout/iron-flex-layout.html">
-<!--
-    TODO(polyup): Inheriting from other custom elements is not yet supported.
-    See: https://www.polymer-project.org/1.0/docs/migration.html#inheritance
- -->
-<dom-module id="idea-page">
+
+<dom-module id="yp-idea">
   <style>
     /* TODO(polyup): For speed, consider reworking these styles with .classes
                      and #ids rather than [attributes].
@@ -39,7 +20,7 @@
       @apply(--layout-center-center);
     }
   </style>
-  <link rel="import" type="css" href="idea-page.css">
+  <link rel="import" type="css" href="yp-idea.css">
   <template bind="">
     <!--
     On larger screens, change the behavior of the header panel so it doesn't
@@ -82,13 +63,13 @@
       </template>
     </base-layout>
 
-    <iron-ajax auto="false" id="ajax" url="{{computeUrl(idea_id)}}" last-response="{{response}}" handle-as="json">
+    <iron-ajax auto="false" id="ajax" url$="{{computeUrl(idea_id)}}" last-response="{{response}}" handle-as="json">
     </iron-ajax>
   </template>
   <script>
     (function () {
       Polymer({
-        is: 'idea-page',
+        is: 'yp-idea',
         properties: {
           contactId: { notify: true },
           contacts: { notify: true },
