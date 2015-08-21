@@ -54,6 +54,10 @@
         @apply(--layout-vertical);
       }
 
+      .stats-container {
+        @apply(--layout-horizontal);
+      }
+
       .idea-name {
         padding: 0px;
         padding-bottom: 4px;
@@ -118,10 +122,12 @@
               <div>[[ideaDescription(idea)]]</div>
             </div>
           </div>
-          <div class="card-actions">
-            <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
+          <div class="stats-container">
+            <div class="card-actions">
+              <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
+            </div>
+            <yp-idea-users idea="[[idea]]"></yp-idea-users>
           </div>
-          <yp-idea-users idea="[[idea]]"></yp-idea-users>
         </div>
       </div>
     </template>

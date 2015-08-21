@@ -16,13 +16,13 @@
 <dom-module id="yp-idea-points">
   <template>
     <style>
+
       .main-container {
         @apply(--layout-horizontal);
         @apply(--layout-flex);
       }
 
       .point {
-        width: 250px;
         padding: 8px;
         margin: 8px;
         @apply(--layout-vertical);
@@ -41,12 +41,8 @@
         <div class="point">
 
           <paper-material elevation="1" class="pointText" animated>
-            <paper-input-container id="inputUpContainer" always-float-label attr-for-value="[[textValueUp::input]]">
-              <paper-autogrow-textarea id="a1">
-                <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                                label="[[computeLabel()]]" char-counter rows="2" max-rows="5" maxlength="[[computeLabel2()]]"></paper-textarea>
-              </paper-autogrow-textarea>
-            </paper-input-container>
+            <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
+                            bind-value="{{textValueUp}}" label="[[computeLabel()]]" char-counter rows="2" max-rows="5" maxlength="[[computeLabel()]]"></paper-textarea>
 
             <template is="dom-if" if="[[computeIf(textValueUp)]]">
               <div style="width:100%;text-align: center;padding-top: 10px;">
@@ -65,12 +61,8 @@
 
           <paper-material elevation="1" class="pointText" animated>
 
-            <paper-input-container id="inputDownContainer" always-float-label attr-for-value="[[textValueUp::input]]">
-              <paper-autogrow-textarea id="a1">
-                <paper-textarea id="down_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                                label="[[computeLabel()]]" char-counter rows="2" max-rows="5" maxlength="[[computeLabel()]]"></paper-textarea>
-              </paper-autogrow-textarea>
-            </paper-input-container>
+            <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
+                            bind-value="{{textValueDown}}" label="[[computeLabel()]]" char-counter rows="2" max-rows="5" maxlength="[[computeLabel()]]"></paper-textarea>
 
             <template is="dom-if" if="[[computeIf2(textValueDown)]]">
               <div id="downPointAction" style="width:100%;text-align: center;padding-top: 10px;">
@@ -117,6 +109,16 @@
             value: function () {
               return [];
             }
+          },
+
+          textValueUp: {
+            type: String,
+            value: ""
+          },
+
+          textValueDown: {
+            type: String,
+            value: ""
           }
         },
 
@@ -173,7 +175,6 @@
           this.downPoints = this.points.filter(function (x) {
             return x.value < 0;
           });
-          debugger;
         },
 
         computeLabel: function () {

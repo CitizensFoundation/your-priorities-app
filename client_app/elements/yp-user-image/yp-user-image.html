@@ -10,6 +10,12 @@
       }
 
       .small {
+        height: 32px;
+        width: 32px;
+        background-color: var(--primary-color-lighter,#434343);
+      }
+
+      .medium {
         height: 48px;
         width: 48px;
         background-color: var(--primary-color-lighter,#434343);
@@ -43,12 +49,12 @@
         <iron-image sizing="cover" title="{{user.login}}" preload src$="[[computeFacebookSrc(user)]]" class$="[[computeClass(small)]]"></iron-image>
       </template>
 
-      <template is="dom-if" if="computeIf(user)">
+      <template is="dom-if" if="[[computeIf(user)]]">
         <span>{{user.id}}</span> <span>{{user.buddy_icon_file_name}}</span><br>
       </template>
 
       <template is="dom-if" if="[[!user.facebook_uid]]">
-        <iron-image sizing="cover" title="{{user.login}}" preload src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class="rounded small"></iron-image>
+        <iron-image sizing="cover" title="{{user.login}}" preload src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class$="[[computeClass(small)]]"></iron-image>
       </template>
 
     </template>
@@ -76,7 +82,10 @@
       },
 
       computeClass: function (small) {
-        return 'small rounded';
+        if (this.small)
+          return 'small rounded';
+        else
+          return 'medium rounded';
       },
 
       computeFacebookSrc: function (user) {

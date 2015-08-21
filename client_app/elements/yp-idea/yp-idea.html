@@ -13,25 +13,42 @@
 <dom-module id="yp-idea">
   <template>
     <style>
+      :host {
+      }
+
       .container {
-        @apply(--layout-vertical)
+        @apply(--layout-vertical);
+        width: 896px;
+      }
+
+      .flex {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
+      yp-idea-points {
       }
     </style>
+
     <div class="container">
+
       <yp-ajax auto id="ajax" url$="[[computeUrl(ideaId)]]" on-response="_response" handle-as="json"></yp-ajax>
+
       <yp-idea-header idea="[[idea]]" showcategory="true"></yp-idea-header>
 
-      <paper-tabs selected="[[selected]]" id="paper_tabs" focused="">
+      <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
         <paper-tab><span>[[computeExpression1()]]</span> (<span>[[idea.Points.length]]</span>)</paper-tab>
         <paper-tab>[[computeExpression3()]]</paper-tab>
         <paper-tab>[[computeExpression4()]]</paper-tab>
         <paper-tab>[[computeExpression5()]]</paper-tab>
       </paper-tabs>
 
-      <neon-animated-pages notap="" selected="[[selected]]" style="width:100%;" transitions="slide-from-right">
+      <neon-animated-pages id="pages" class="fdlex" selected="[[selected]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
+
         <template is="dom-if" if="[[idea]]">
           <yp-idea-points points="[[idea.Points]]"></yp-idea-points>
         </template>
+
         <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
         <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
         <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
@@ -52,13 +69,18 @@
         properties: {
           ideaId: {
             type: String,
-            value: 519
+            value: 239
           },
 
           contactId: { notify: true },
           contacts: { notify: true },
           ideaName: { notify: true },
-          selected: { observer: 'selectedChanged' }
+
+          selected: {
+            type: Number,
+            value: 0,
+            observer: 'selectedChanged'
+          }
         },
 
         _response: function (event, detail, sender) {

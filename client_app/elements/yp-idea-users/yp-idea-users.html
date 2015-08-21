@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
@@ -13,6 +15,15 @@
       :host {
         display: block;
       }
+
+      .users {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+      }
+
+      yp-user-image {
+        padding: 4px;
+      }
     </style>
 
     <template is="dom-if" if="[[endorsements]]">
@@ -20,7 +31,9 @@
       <div class="users">
 
         <template is="dom-repeat" items="[[limitTo(endorsements, userImagesLimit)]]" as="endorsement" index-as="endorsementIndex">
-          <yp-user-image user="[[endorsement.User]]"></yp-user-image>
+          <template is="dom-if" if="[[endorsement.User.facebook_uid]]">
+            <yp-user-image small user="[[endorsement.User]]"></yp-user-image>
+          </template>
         </template>
 
         <div id="moreImages" style="display:none;">
@@ -97,7 +110,6 @@
       },
 
       _userImagesCount: function () {
-        debugger;
         return this.countUserImagesLeft(0);
       }
 
