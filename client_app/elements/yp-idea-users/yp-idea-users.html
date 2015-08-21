@@ -18,7 +18,6 @@
 
       .users {
         @apply(--layout-horizontal);
-        @apply(--layout-flex);
       }
 
       yp-user-image {
@@ -40,7 +39,7 @@
 
           <paper-icon-button class="more" id="moreImagesButton" icon="add" on-tap="_moreUserImages"></paper-icon-button>
 
-          <span id="numberOfMoreUserImages" style="margin-bottom:16px;padding-left:0px;margin-left:0px;">[[_userImagesCount()]]</span>
+          <span id="numberOfMoreUserImages">[[_userImagesCount()]]</span>
 
           <span id="restOfUserImages" style="display: none;">
             <template is="dom-repeat" items="[[limitFrom(endorsements, userImagesLimit, endorsements.length)]]" as="endorsement" index-as="endorsementIndex">
@@ -87,14 +86,14 @@
       _response: function (event, detail, sender) {
         this.endorsements = detail.response;
         if (this.endorsements.length > this.userImagesLimit) {
-          this.$$("moreImages").style.display = 'inline';
+          this.$.moreImages.style.display = 'inline';
         }
       },
 
       _moreUserImages: function () {
-        this.$$("moreImagesButton").style.display = 'none';
-        this.$$("numberOfMoreUserImages").style.display = 'none';
-        this.$$("restOfUserImages").style.display = 'inline';
+        this.$$("#moreImagesButton").style.display = 'none';
+        this.$$("#numberOfMoreUserImages").style.display = 'none';
+        this.$.restOfUserImages.style.display = 'inline';
       },
 
       _computeUrl: function (idea) {
