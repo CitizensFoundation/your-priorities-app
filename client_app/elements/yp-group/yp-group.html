@@ -18,6 +18,7 @@
 
       :host {
         @apply(--layout-horizontal);
+        @apply(--layout-fit);
       }
 
       .createIdea {
@@ -28,16 +29,14 @@
       }
 
       .card-container {
+        @apply(--layout-horizontal);
         @apply(--layout-fit);
-      }
-
-      iron-list {
-        @apply(--layout-flex);
       }
 
       yp-idea-card {
         @apply(--layout-horizontal);
         width: 384px !important;
+        padding: 16px;
       }
 
     </style>
@@ -50,11 +49,9 @@
 
     <div class="card-container">
       <template is="dom-if" if="[[ideas]]">
-        <iron-list class="list" items="[[ideas]]" as="idea">
-          <template>
-            <yp-idea-card idea="[[idea]]" showcategory></yp-idea-card>
-          </template>
-        </iron-list>
+        <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
+          <yp-idea-card idea="[[idea]]" showcategory></yp-idea-card>
+        </template>
       </template>
       <a href="/add" on-click="navigate">
         <paper-fab icon="add" z="1" class="createIdea" title="[[computeTitle()]]" on-tap="newIdea"></paper-fab>
@@ -89,7 +86,7 @@
 
         groupId: {
           type: Number,
-          value: 20
+          value: 368
         }
       },
 
