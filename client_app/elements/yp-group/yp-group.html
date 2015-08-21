@@ -1,0 +1,146 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-idea/yp-idea.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+<link rel="import" href="../yp-idea-card/yp-idea-card.html">
+
+<dom-module id="yp-group">
+  <template>
+    <style>
+
+      :host {
+        @apply(--layout-horizontal);
+      }
+
+      .createIdea {
+        background-color: --var(accent-color-darker,#f57c00);
+        position: fixed;
+        bottom:24px;
+        right: 28px;
+      }
+
+      .card-container {
+        @apply(--layout-fit);
+      }
+
+      iron-list {
+        @apply(--layout-flex);
+      }
+
+      yp-idea-card {
+        @apply(--layout-horizontal);
+        width: 384px !important;
+      }
+
+    </style>
+
+    <yp-ajax auto="false" id="ideasAjax" url="" on-response="_ideasResponse"></yp-ajax>
+
+    <yp-ajax auto="false" id="categoryAjax" url="[[computeUrl(groupId)]]" on-response="_categoriesResponse"></yp-ajax>
+
+    <yp-ajax auto="false" id="categoryDefaultAjax" url="/api/groups/default/categories" on-response="_categoriesResponse"></yp-ajax>
+
+    <div class="card-container">
+      <template is="dom-if" if="[[ideas]]">
+        <iron-list class="list" items="[[ideas]]" as="idea">
+          <template>
+            <yp-idea-card idea="[[idea]]" showcategory></yp-idea-card>
+          </template>
+        </iron-list>
+      </template>
+      <a href="/add" on-click="navigate">
+        <paper-fab icon="add" z="1" class="createIdea" title="[[computeTitle()]]" on-tap="newIdea"></paper-fab>
+      </a>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-group',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        categories: {
+          type: Array
+          },
+
+        defaultCategories: {
+          type: Boolean,
+          value: false
+        },
+
+        ideas: {
+          type: Array,
+          value: null
+        },
+
+        groupId: {
+          type: Number,
+          value: 20
+        }
+      },
+
+      newIdea: function () {
+        window.globals.activity('Anonymous', 'open', 'newIdea');
+        window.globals.openDialog('ideas.add_new');
+      },
+
+      _ideasResponse: function (event, detail, sender) {
+        this.ideas = detail.response;
+      },
+
+      _categoriesResponse: function (event, detail, sender) {
+        if (detail && detail.response && !this.defaultCategories) {
+          this.defaultCategories = true;
+          this.$.categoryDefaultAjax.generateRequest();
+        } else if (detail.response != null) {
+          this.categories = detail.response;
+          if (this.categoryId) {
+            for (var i = 0; i < this.categories.length; i++) {
+              if (this.categories[i].id == this.categoryId) {
+                window.selectedCategoryName = this.categories[i].name;
+                //this.$.layout.updateFilter();
+              }
+            }
+          } else {
+            window.selectedCategoryName = 'categories.all';
+            //this.$.layout.updateFilter();
+          }
+        }
+      },
+
+      ready: function () {
+        if (this.filter) {
+          window.selectedFilter = this.filter;
+        }
+        this.$.ideasAjax.url = '/api/groups/' + this.groupId + '/ideas/' + window.selectedFilter;
+        if (this.categoryId) {
+          this.$.ideasAjax.url += '/' + this.categoryId;
+        }
+        this.$.ideasAjax.generateRequest();
+        this.$.categoryAjax.generateRequest();
+      },
+
+      computeUrl: function (groupId) {
+        return '/api/groups/' + groupId + '/categories';
+      },
+
+      computeTitle: function () {
+        return this.t('ideas.add_new');
+      }
+    });
+  </script>
+</dom-module>
