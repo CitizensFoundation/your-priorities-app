@@ -18,7 +18,9 @@
 
       .container {
         @apply(--layout-vertical);
+        @apply(--layout-around-justified);
         width: 896px;
+        margin: auto;
       }
 
       .flex {
@@ -34,14 +36,17 @@
 
       <yp-ajax auto id="ajax" url$="[[computeUrl(ideaId)]]" on-response="_response" handle-as="json"></yp-ajax>
 
-      <yp-idea-header idea="[[idea]]" showcategory="true"></yp-idea-header>
+      <paper-material elevation="0" class="pointText" animated>
 
-      <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-        <paper-tab><span>[[computeExpression1()]]</span> (<span>[[idea.Points.length]]</span>)</paper-tab>
-        <paper-tab>[[computeExpression3()]]</paper-tab>
-        <paper-tab>[[computeExpression4()]]</paper-tab>
-        <paper-tab>[[computeExpression5()]]</paper-tab>
-      </paper-tabs>
+        <yp-idea-header idea="[[idea]]" showcategory="true"></yp-idea-header>
+
+        <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+          <paper-tab><span>[[computeExpression1()]]</span> (<span>[[idea.Points.length]]</span>)</paper-tab>
+          <paper-tab>[[computeExpression3()]]</paper-tab>
+          <paper-tab>[[computeExpression4()]]</paper-tab>
+          <paper-tab>[[computeExpression5()]]</paper-tab>
+        </paper-tabs>
+      </paper-material>
 
       <neon-animated-pages id="pages" class="fdlex" selected="[[selected]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
 
@@ -69,7 +74,7 @@
         properties: {
           ideaId: {
             type: String,
-            value: 239
+            value: 528
           },
 
           contactId: { notify: true },

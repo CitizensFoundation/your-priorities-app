@@ -32,7 +32,7 @@
         margin-bottom: 16px;
         margin-top: 16px;
         padding: 16px;
-        padding-top: 8px;
+        padding-top: 24px;
       }
     </style>
 
@@ -40,7 +40,7 @@
 
         <div class="point">
 
-          <paper-material elevation="1" class="pointText" animated>
+          <paper-material elevation="0" class="pointText" animated>
             <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                             bind-value="{{textValueUp}}" label="[[computeLabel()]]" char-counter rows="2" max-rows="5" maxlength="[[computeLabel()]]"></paper-textarea>
 
@@ -59,7 +59,7 @@
 
         <div class="point">
 
-          <paper-material elevation="1" class="pointText" animated>
+          <paper-material elevation="0" class="pointText" animated>
 
             <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                             bind-value="{{textValueDown}}" label="[[computeLabel()]]" char-counter rows="2" max-rows="5" maxlength="[[computeLabel()]]"></paper-textarea>

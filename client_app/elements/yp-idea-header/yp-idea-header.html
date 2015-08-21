@@ -56,6 +56,7 @@
 
       .stats-container {
         @apply(--layout-horizontal);
+        padding-top: 24px;
       }
 
       .idea-name {
@@ -123,10 +124,13 @@
             </div>
           </div>
           <div class="stats-container">
+
+            <yp-idea-users idea="[[idea]]"></yp-idea-users>
+
             <div class="card-actions">
               <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
             </div>
-            <yp-idea-users idea="[[idea]]"></yp-idea-users>
+
           </div>
         </div>
       </div>

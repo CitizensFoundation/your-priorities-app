@@ -46,7 +46,9 @@
   </template>
   <script>
     Polymer({
+
       is: 'ideas-page',
+
       properties: {
         categories: {
           type: Array,
@@ -54,27 +56,34 @@
             return [];
           }
         },
+
         categoriesResponse: { observer: 'categoriesResponseChanged' },
+
         defaultCategories: {
           type: Boolean,
           value: false
         },
+
         ideas: {
           type: Array,
           value: function () {
             return [];
           }
         },
+
         ideasResponse: { observer: 'ideasResponseChanged' }
       },
+
       newIdea: function () {
         window.globals.activity('Anonymous', 'open', 'newIdea');
         window.globals.openDialog('ideas.add_new');
       },
+
       ideasResponseChanged: function (detail, e, sender) {
         this.$.layout.setSpinner(false);
         this.ideas = detail;
       },
+
       categoriesResponseChanged: function (detail, e, sender) {
         if (detail && detail.length == 0 && !this.defaultCategories) {
           this.defaultCategories = true;
@@ -94,6 +103,7 @@
           }
         }
       },
+
       ready: function () {
         if (this.filter) {
           window.selectedFilter = this.filter;
