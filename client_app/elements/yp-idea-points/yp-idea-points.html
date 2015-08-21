@@ -1,94 +1,115 @@
-  <!--
-      TODO(polyup): unable to infer path to components
-      directory. This import path is probably incomplete.
-   -->
-  <link rel="import" href="iron-flex-layout/iron-flex-layout.html">
-<dom-module id="section-points">
-  <style>
-    /* TODO(polyup): For speed, consider reworking these styles with .classes
-                     and #ids rather than [attributes].
-    */
-    [layout] {
-      @apply(--layout);
-    }
-    [layout][horizontal] {
-      @apply(--layout-horizontal);
-    }
-    [layout][flex] {
-      @apply(--layout-flex);
-    }
-    [layout][justified] {
-      @apply(--layout-justified);
-    }
-  </style>
-  <link rel="import" type="css" href="section-points.css">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input-char-counter.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-point/yp-point.html">
+
+<dom-module id="yp-idea-points">
   <template>
+    <style>
+      .main-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+      }
 
-    <div layout="" horizontal="" flex="">
+      .point {
+        width: 250px;
+        padding: 8px;
+        margin: 8px;
+        @apply(--layout-vertical);
+      }
 
-        <div layout="" flex="" class="point">
+      .pointText {
+        margin-bottom: 16px;
+        margin-top: 16px;
+        padding: 16px;
+        padding-top: 8px;
+      }
+    </style>
 
-          <paper-material elevation="1" class="pointText" animated="">
+    <div class="main-container">
 
-            <paper-input-decorator class="up_point" floatinglabel="" label="{{computeLabel()}}">
+        <div class="point">
+
+          <paper-material elevation="1" class="pointText" animated>
+            <paper-input-decorator class="up_point" floatinglabel label="[[computeLabel()]]">
               <paper-autogrow-textarea id="a1">
-                <textarea value="{{textValueUp::input}}" id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"></textarea>
+                <textarea value="[[textValueUp::input]]" id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"></textarea>
               </paper-autogrow-textarea>
             </paper-input-decorator>
 
-            <template is="dom-if" if="{{computeIf(textValueUp)}}">
-              <div layout="" justified="" style="width:100%;text-align: center;padding-top: 10px;">
-                <paper-fab icon="add" mini="" z="2" on-tap="addPointUp" class="upPointAction" title="{{computeTitle()}}"></paper-fab>
+            <template is="dom-if" if="[[computeIf(textValueUp)]]">
+              <div style="width:100%;text-align: center;padding-top: 10px;">
+                <paper-fab icon="add" mini="" z="2" on-tap="addPointUp" class="upPointAction" title="[[computeTitle()]]"></paper-fab>
               </div>
             </template>
-
           </paper-material>
 
-          <template is="dom-repeat" items="{{upPoints}}" as="point">
-            <yrpri-point point="{{point}}"></yrpri-point>
+          <template is="dom-repeat" items="[[upPoints]]" as="point">
+            <yp-point point="[[point]]"></yp-point>
           </template>
+
         </div>
 
-        <div layout="" flex="" class="point">
+        <div class="point">
 
-          <paper-material elevation="1" class="pointText" animated="">
-
-            <paper-input-decorator class="down_point" floatinglabel="" label="{{computeLabel()}}" maxlength="{{computeLabel2()}}">
+          <paper-material elevation="1" class="pointText" animated>
+            <paper-input-decorator class="down_point" floatinglabel="" label="[[computeLabel()]]" maxlength="[[computeLabel2()]]">
               <paper-autogrow-textarea id="a2">
-                <textarea value="{{textValueDown::input}}" maxlength="500" id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"></textarea>
-                <paper-char-counter class="counter" target="down_point"></paper-char-counter>
+                <textarea value="[[textValueDown::input]]" maxlength="500" id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"></textarea>
+                <paper-input-char-counter class="counter" target="down_point"></paper-input-char-counter>
               </paper-autogrow-textarea>
-
             </paper-input-decorator>
 
-            <template is="dom-if" if="{{computeIf2(textValueDown)}}">
-              <div layout="" justified="" id="downPointAction" style="width:100%;text-align: center;padding-top: 10px;">
-                <paper-fab icon="add" mini="" z="2" on-tap="addPointDown" class="downPointAction" title="{{computeTitle2()}}"></paper-fab>
+            <template is="dom-if" if="[[computeIf2(textValueDown)]]">
+              <div id="downPointAction" style="width:100%;text-align: center;padding-top: 10px;">
+                <paper-fab icon="add" mini="" z="2" on-tap="addPointDown" class="downPointAction" title="[[computeTitle2()]]"></paper-fab>
               </div>
             </template>
-
           </paper-material>
 
-          <template is="dom-repeat" items="{{downPoints}}" as="point">
-            <yrpri-point point="{{point}}"></yrpri-point>
+          <template is="dom-repeat" items="[[downPoints]]" as="point">
+            <yp-point point="[[point]]"></yp-point>
           </template>
         </div>
 
+      </div>
+  </template>
 
-      </div></template>
   <script>
     (function () {
       Polymer({
-        is: 'section-points',
+
+        is: 'yp-idea-points',
+
+        behaviors: [
+          Polymer.appHelpers
+        ],
+
         properties: {
+
           downPoints: {
             type: Array,
             value: function () {
               return [];
             }
           },
+
           points: { notify: true },
-          text: { observer: 'textChanged' },
+
+          text: {
+            observer: 'textChanged'
+          },
+
           upPoints: {
             type: Array,
             value: function () {
@@ -96,28 +117,33 @@
             }
           }
         },
+
         addPointUp: function () {
           window.globals.activity('Anonymous', 'add', 'pointUp');
           window.globals.openDialog('point.add_up');
         },
+
         addPointDown: function () {
           window.globals.activity('Anonymous', 'add', 'pointDown');
           window.globals.openDialog('point.add_down');
         },
+
         focusUpPoint: function () {
           window.globals.activity('Anonymous', 'focus', 'pointUp');
         },
+
         focusDownPoint: function () {
           window.globals.activity('Anonymous', 'focus', 'pointDown');
         },
+
         focusTextArea: function (e) {
           e.srcElement.parentElement.parentElement.parentElement.setZ(3);
         },
-        //= "4";
+
         blurTextArea: function (e) {
           e.srcElement.parentElement.parentElement.parentElement.setZ(1);
         },
-        // = "4";
+
         textChanged: function (detail, e) {
           this.$.upPointAction.style.display = 'none';
           debugger;
@@ -136,29 +162,37 @@
             }
           }
         },
+
         ready: function () {
           this.upPoints = this.points.filter(function (x) {
             return x.value > 0;
           });
+
           this.downPoints = this.points.filter(function (x) {
             return x.value < 0;
           });
         },
+
         computeLabel: function () {
           return this.t('point.for');
         },
+
         computeIf: function (textValueUp) {
           return textValueUp.length > 20;
         },
+
         computeLabel2: function () {
           return this.t('point.against');
         },
+
         computeIf2: function (textValueDown) {
           return textValueDown.length > 20;
         },
+
         computeTitle: function () {
           return this.t('points.add_up');
         },
+
         computeTitle2: function () {
           return this.t('points.add_down');
         }

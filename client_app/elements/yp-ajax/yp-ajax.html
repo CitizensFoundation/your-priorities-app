@@ -72,7 +72,7 @@
           value: ""
         },
 
-        useErrorDialog: {
+        useDialog: {
           type: Boolean,
           value: true,
           notify: true
@@ -96,7 +96,7 @@
 
       _error: function (event) {
         this.$.spinner.active = false;
-        if (this.useErrorDialog) {
+        if (this.useDialog) {
           this.showErrorDialog(event.detail.error);
         }
       },

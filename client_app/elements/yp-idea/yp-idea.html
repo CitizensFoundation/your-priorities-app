@@ -1,71 +1,67 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-idea-header/yp-idea-header.html">
+<link rel="import" href="../yp-idea-points/yp-idea-points.html">
 
 <dom-module id="yp-idea">
-  <style>
-    /* TODO(polyup): For speed, consider reworking these styles with .classes
-                     and #ids rather than [attributes].
-    */
-    :host[layout] {
-      @apply(--layout);
-    }
-    :host[layout][vertical] {
-      @apply(--layout-vertical);
-    }
-    [layout] {
-      @apply(--layout);
-    }
-    [layout][vertical] {
-      @apply(--layout-vertical);
-    }
-    [layout][center-center] {
-      @apply(--layout-center-center);
-    }
-  </style>
-  <link rel="import" type="css" href="yp-idea.css">
-  <template bind="">
-    <!--
-    On larger screens, change the behavior of the header panel so it doesn't
-    scroll away or do the condenses feature. Instead, treat its content like
-    a regular toolbar.
-    -->
-        <div layout="" vertical="" center-center="">
+  <template>
+    <style>
+      .container {
+        @apply(--layout-vertical)
+      }
+    </style>
+    <div class="container">
+      <yp-idea-header idea="[[idea]]" showcategory="true"></yp-idea-header>
 
-          <yrpri-idea-header idea="{{idea}}" showcategory="true"></yrpri-idea-header>
+      <paper-tabs selected="[[selected]]" id="paper_tabs" focused="">
+        <paper-tab><span>[[computeExpression1()]]</span> (<span>[[idea.Points.length]]</span>)</paper-tab>
+        <paper-tab>[[computeExpression3()]]</paper-tab>
+        <paper-tab>[[computeExpression4()]]</paper-tab>
+        <paper-tab>[[computeExpression5()]]</paper-tab>
+      </paper-tabs>
 
-          <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
-            <paper-tab><span>{{computeExpression1()}}</span> (<span>{{idea.Points.length}}</span>)</paper-tab>
-            <paper-tab>{{computeExpression3()}}</paper-tab>
-            <paper-tab>{{computeExpression4()}}</paper-tab>
-            <paper-tab>{{computeExpression5()}}</paper-tab>
-          </paper-tabs>
-
-          <neon-animated-pages notap="" selected="{{selected}}" style="width:100%;" transitions="slide-from-right">
-            <yp-idea-points points="{{idea.Points}}"></yp-idea-points>
-            <section><center><br><br><h1>{{computeExpression8()}}</h1></center></section>
-            <section><center><br><br><h1>{{computeExpression8()}}</h1></center></section>
-            <section><center><br><br><h1>{{computeExpression8()}}</h1></center></section>
-          </neon-animated-pages>
-        </div>
-      </template>
-    </base-layout>
-
-    <iron-ajax auto="false" id="ajax" url$="{{computeUrl(idea_id)}}" last-response="{{response}}" handle-as="json">
-    </iron-ajax>
+      <neon-animated-pages notap="" selected="[[selected]]" style="width:100%;" transitions="slide-from-right">
+        <template is="dom-if" if="[[idea]]">
+          <yp-idea-points points="[[idea.Points]]"></yp-idea-points>
+        </template>
+        <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
+        <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
+        <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
+      </neon-animated-pages>
+    </div>
+    <yp-ajax auto id="ajax" url$="[[computeUrl(ideaId)]]" on-response="_response" handle-as="json"></yp-ajax>
   </template>
+
   <script>
     (function () {
       Polymer({
 
         is: 'yp-idea',
 
+        behaviors: [
+          Polymer.appHelpers
+        ],
+
         properties: {
+          ideaId: {
+            type: String,
+            value: 392
+          },
+
           contactId: { notify: true },
           contacts: { notify: true },
           ideaName: { notify: true },
-          response: { observer: 'responseChanged' },
           selected: { observer: 'selectedChanged' }
         },
 
-        responseChanged: function (detail, e, sender) {
+        _response: function (detail, e, sender) {
           this.$.layout.setSpinner(false);
           this.idea = detail;
           if (this.idea.description === null) {
@@ -86,8 +82,6 @@
         },
 
         ready: function () {
-          this.$.layout.setSpinner(true);
-          this.$.ajax.go();
         },
 
         computeUrl: function (idea_id) {

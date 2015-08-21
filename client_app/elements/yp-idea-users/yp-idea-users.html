@@ -41,7 +41,7 @@
     </template>
 
     <template is="dom-if" if="[[idea]]">
-      <yp-ajax auto="true" id="endorsementAjax" use-error-dialog=false url="[[_computeUrl(idea)]]" on-response="[[_response]]" handle-as="json"></yp-ajax>
+      <yp-ajax auto="true" id="endorsementAjax" use-dialog="false" url="[[_computeUrl(idea)]]" on-response="_response" handle-as="json"></yp-ajax>
     </template>
 
   </template>
