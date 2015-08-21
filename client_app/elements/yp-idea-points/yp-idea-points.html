@@ -41,11 +41,12 @@
         <div class="point">
 
           <paper-material elevation="1" class="pointText" animated>
-            <paper-input-decorator class="up_point" floatinglabel label="[[computeLabel()]]">
+            <paper-input-container id="inputUpContainer" always-float-label attr-for-value="[[textValueUp::input]]">
               <paper-autogrow-textarea id="a1">
-                <textarea value="[[textValueUp::input]]" id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"></textarea>
+                <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
+                                label="[[computeLabel()]]" char-counter rows="2" max-rows="5" maxlength="[[computeLabel2()]]"></paper-textarea>
               </paper-autogrow-textarea>
-            </paper-input-decorator>
+            </paper-input-container>
 
             <template is="dom-if" if="[[computeIf(textValueUp)]]">
               <div style="width:100%;text-align: center;padding-top: 10px;">
@@ -63,12 +64,13 @@
         <div class="point">
 
           <paper-material elevation="1" class="pointText" animated>
-            <paper-input-decorator class="down_point" floatinglabel="" label="[[computeLabel()]]" maxlength="[[computeLabel2()]]">
-              <paper-autogrow-textarea id="a2">
-                <textarea value="[[textValueDown::input]]" maxlength="500" id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"></textarea>
-                <paper-input-char-counter class="counter" target="down_point"></paper-input-char-counter>
+
+            <paper-input-container id="inputDownContainer" always-float-label attr-for-value="[[textValueUp::input]]">
+              <paper-autogrow-textarea id="a1">
+                <paper-textarea id="down_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
+                                label="[[computeLabel()]]" char-counter rows="2" max-rows="5" maxlength="[[computeLabel()]]"></paper-textarea>
               </paper-autogrow-textarea>
-            </paper-input-decorator>
+            </paper-input-container>
 
             <template is="dom-if" if="[[computeIf2(textValueDown)]]">
               <div id="downPointAction" style="width:100%;text-align: center;padding-top: 10px;">
@@ -171,6 +173,7 @@
           this.downPoints = this.points.filter(function (x) {
             return x.value < 0;
           });
+          debugger;
         },
 
         computeLabel: function () {

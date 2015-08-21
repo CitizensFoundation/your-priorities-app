@@ -71,8 +71,8 @@
         }
       },
 
-      _response: function (detail, e, sender) {
-        this.endorsements = detail;
+      _response: function (event, detail, sender) {
+        this.endorsements = detail.response;
         if (this.endorsements.length > this.userImagesLimit) {
           this.$$("moreImages").style.display = 'inline';
         }
@@ -88,7 +88,16 @@
         return '/api/ideas/' + idea.id + '/endorsements';
       },
 
+      allEndorsementsLength: function (idea) {
+        return this.endorsements.length;
+      },
+
+      countUserImagesLeft: function (e) {
+        return this.allEndorsementsLength(this.idea) - this.userImagesLimit;
+      },
+
       _userImagesCount: function () {
+        debugger;
         return this.countUserImagesLeft(0);
       }
 

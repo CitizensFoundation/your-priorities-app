@@ -18,6 +18,7 @@
       }
     </style>
     <div class="container">
+      <yp-ajax auto id="ajax" url$="[[computeUrl(ideaId)]]" on-response="_response" handle-as="json"></yp-ajax>
       <yp-idea-header idea="[[idea]]" showcategory="true"></yp-idea-header>
 
       <paper-tabs selected="[[selected]]" id="paper_tabs" focused="">
@@ -36,7 +37,6 @@
         <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
       </neon-animated-pages>
     </div>
-    <yp-ajax auto id="ajax" url$="[[computeUrl(ideaId)]]" on-response="_response" handle-as="json"></yp-ajax>
   </template>
 
   <script>
@@ -52,7 +52,7 @@
         properties: {
           ideaId: {
             type: String,
-            value: 392
+            value: 519
           },
 
           contactId: { notify: true },
@@ -61,9 +61,8 @@
           selected: { observer: 'selectedChanged' }
         },
 
-        _response: function (detail, e, sender) {
-          this.$.layout.setSpinner(false);
-          this.idea = detail;
+        _response: function (event, detail, sender) {
+          this.idea = detail.response;
           if (this.idea.description === null) {
             this.idea.description = this.idea.Points[0].content;
             this.idea.Points.shift();
