@@ -38,8 +38,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
 
     page('/idea/:id', function (data) {
-      app.route = 'yp-idea';
+      app.route = 'idea';
       app.params = data.params;
+      debugger;
       app.scrollPageToTop();
     });
 
