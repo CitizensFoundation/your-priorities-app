@@ -1,126 +1,164 @@
 <!doctype html>
-<html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<html lang="">
 
 <head>
   <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="Polymer Starter Kit" />
+  <title>Polymer Starter Kit</title>
+  <!-- Place favicon.ico in the `app/` directory -->
 
-  <title>Your Priorities 6.0 Technology Preview</title>
+  <!-- Chrome for Android theme color -->
+  <meta name="theme-color" content="#303F9F">
 
-  <meta property="og:title" content="Your Priorities 6.0 Technology Preview" />
+  <!-- Web Application Manifest -->
+  <link rel="manifest" href="manifest.json">
 
-  <meta property="og:url" content="http://your-priorities-preview.org/" />
-
-  <meta name="description" content="This is a read-only preview of Your Priorities 6.0 so you can only view content, not add to it.
-                                    Feedback is most appreciated. Currently it only works in Chrome but will support all major browsers by release date in Q1 2015."/>
-
-  <meta property='og:description' content="This is a read-only preview of Your Priorities 6.0 so you can only view content, not add to it.
-                                           Feedback is most appreciated. Currently it only works in Chrome but will support all major browsers by release date in Q1 2015."/>
-
-  <meta property="og:image" content="https://s3.amazonaws.com/yrpri-paperclip-production/sub_instances/logos/000/000/262/icon_full/YP_Header_Default.png" />
-
-  <meta content='We believe democracy worldwide is vulnerable. Lack of trust and participation especially by young people is worrying. Your Priorities is a powerful
-  eDemocracy web application designed by the non profit Citizens Foundation to help groups of people speak with one voice.' >
-
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=no">
-
-  <!-- Add to homescreen meta -->
+  <!-- Tile color for Win8 -->
+  <meta name="msapplication-TileColor" content="#3372DF">
 
   <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes">
-  <link rel="icon" sizes="192x192" href="images/yrpri_icon_192.png">
+  <meta name="application-name" content="PSK">
+  <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
 
   <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <link rel="apple-touch-icon" href="images/yrpri_icon_192.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="images/yrpri_icon_76.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="images/yrpri_icon_120.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="images/yrpri_icon_152.png">
+  <meta name="apple-mobile-web-app-title" content="Polymer Starter Kit">
+  <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
 
-  <!-- Add to homescreen for Internet Explorer -->
-  <meta name="msapplication-TileImage" content="images/yrpri_icon_144.png">
-  <meta name="msapplication-TileColor" content="#bbb">
+  <!-- Tile icon for Win8 (144x144) -->
+  <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
 
-  <meta name="theme-color" content="#303F9F">
-  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-  <script type="text/javascript" src="scripts/i18next-1.7.4.min.js"></script>
-
-  <script>
-    i18n.init({ lng: "en" });
-    window.i18n = i18n;
-
-    <!-- Temporary ugly hard-coding of those values -->
-    // Your Priorities
-    window.s3bucketName = "yrpri-paperclip-production";
-    window.instanceName = "Your Priorities";
-    window.instanceLogoFilename = "yrpri_logo.png";
-    window.defaultGroupImage = "https://s3.amazonaws.com/yrpri-paperclip-production/instances/top_banners/000/000/001/icon_full/Yp_header_Default.png";
-    window.defaultGroupFirst = false;
-    window.isoCountryImagePath = "https://djoagb1gye72x.cloudfront.net/assets/flags/64/";
-    window.selectedFilter="top";
-    window.selectedFilterName = "ideas.top";
-    window.categoryId = null;
-    window.selectedCategoryName = "categories.all";
-    window.top_header_url = "yrpri_people.jpg";
-
-    // Better Reykjavik
-    /*
-    window.s3bucketName = "better-reykjavik-paperclip-production";
-    window.instanceName = "Betri Reykjavik";
-    window.instanceLogoFilename = "br_logo.png";
-    window.defaultGroupImage = "https://s3.amazonaws.com/yrpri-paperclip-production/instances/top_banners/000/000/001/icon_full/Yp_header_Default.png";
-    window.defaultGroupFirst = false;
-    window.isoCountryImagePath = "https://djoagb1gye72x.cloudfront.net/assets/flags/64/";
-    window.selectedFilter="top";
-    window.selectedFilterName = "ideas.top";
-    window.categoryId = null;
-    window.selectedCategoryName = "categories.all";
-    window.top_header_url = "header.png";
-    */
-  </script>
-
-  <!-- Conditionally load WC polyfills -->
-  <!-- Thanks to https://github.com/geelen/x-gif for the snippet -->
-  <script>
-    if ('registerElement' in document
-      && 'createShadowRoot' in HTMLElement.prototype
-      && 'import' in document.createElement('link')
-      && 'content' in document.createElement('template')) {
-      // We're using a browser with native WC support!
-    } else {
-      document.write('<script src="bower_components/webcomponentsjs/webcomponents.js"><\/script>');
-    }
-  </script>
-
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-7086040-13', 'auto');
-    ga('send', 'pageview');
-
-  </script>
-
-  <!-- build:vulcanized /elements/elements.vulcanized.html -->
-  <link rel="import" href="elements/elements.html">
+  <!-- build:css styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
   <!-- endbuild-->
+
+  <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <!-- endbuild -->
+
+  <!-- will be replaced with elements/elements.vulcanized.html -->
+  <link rel="import" href="elements/elements.html">
+  <!-- endreplace-->
 </head>
 
-<body unresolved vertical layout>
-<!--core-animated-pages transitions="hero-transition cross-fade"-->
-  <app-router>
-    <app-route path="/ideas/:idea_id" element="idea-page"></app-route>
-    <app-route path="/groups/:groupId/search/:term" element="ideas-search-page"></app-route>
-    <app-route path="/groups/:groupId/ideas/:filter/:groupName" element="ideas-page"></app-route>
-    <app-route path="/groups/:groupId/ideas/:filter/:groupName/:categoryId" element="ideas-page"></app-route>
-    <app-route path="/" element="home-page"></app-route>
-  </app-router>
+<body unresolved class="fullbleed layout vertical">
+  <yp-app-globals disable-welcome setup-defaults></yp-app-globals>
+
+  <span id="browser-sync-binding"></span>
+  <template is="dom-bind" id="app">
+
+    <paper-drawer-panel id="paperDrawerPanel">
+      <!-- Drawer Scroll Header Panel -->
+      <paper-scroll-header-panel drawer fixed>
+
+        <!-- Drawer Toolbar -->
+        <paper-toolbar id="drawerToolbar">
+          <span class="paper-font-title">Menu</span>
+        </paper-toolbar>
+
+        <!-- Drawer Content -->
+        <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
+          <a data-route="home" href="/" on-click="onDataRouteClick">
+            <iron-icon icon="home"></iron-icon>
+            <span>Home</span>
+          </a>
+
+          <a data-route="users" href="/users" on-click="onDataRouteClick">
+            <iron-icon icon="info"></iron-icon>
+            <span>Users</span>
+          </a>
+
+          <a data-route="contact" href="/contact" on-click="onDataRouteClick">
+            <iron-icon icon="mail"></iron-icon>
+            <span>Contact</span>
+          </a>
+        </paper-menu>
+      </paper-scroll-header-panel>
+
+      <!-- Main Area -->
+      <paper-scroll-header-panel main condenses keep-condensed-header>
+
+        <!-- Main Toolbar -->
+        <paper-toolbar id="mainToolbar" class="tall">
+          <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+          <span class="flex"></span>
+
+          <!-- Toolbar icons -->
+          <paper-icon-button icon="refresh"></paper-icon-button>
+          <paper-icon-button icon="search"></paper-icon-button>
+
+          <!-- Application name -->
+          <div class="middle middle-container center horizontal layout">
+            <div class="app-name">Betri Reykjavík</div>
+          </div>
+
+          <!-- Application sub title -->
+          <div class="bottom bottom-container center horizontal layout">
+            <div class="bottom-title paper-font-subhead">Þín rödd í ráðum borgarinnar</div>
+          </div>
+
+        </paper-toolbar>
+
+        <!-- Main Content -->
+        <div class="content">
+          <iron-pages attr-for-selected="data-route" selected="{{route}}">
+
+            <section data-route="home">
+             <yp-community></yp-community>
+            </section>
+
+            <section data-route="users">
+              <yp-group></yp-group>
+            </section>
+
+            <section data-route="user-info">
+              <yp-idea></yp-idea>
+            </section>
+
+            <section data-route="contact">
+              <yp-idea></yp-idea>
+            </section>
+
+          </iron-pages>
+        </div>
+      </paper-scroll-header-panel>
+    </paper-drawer-panel>
+
+    <!-- Uncomment next block to enable Service Worker support (1/2) -->
+    <!--
+    <paper-toast id="caching-complete"
+                 duration="6000"
+                 text="Caching complete! This app will work offline.">
+    </paper-toast>
+
+    <platinum-sw-register auto-register
+                          clients-claim
+                          skip-waiting
+                          on-service-worker-installed="displayInstalledToast">
+      <platinum-sw-cache default-cache-strategy="fastest"
+                         cache-config-file="cache-config.json">
+      </platinum-sw-cache>
+    </platinum-sw-register>
+    -->
+
+  </template>
 
   <!-- build:js scripts/app.js -->
   <script src="scripts/app.js"></script>
-
   <!-- endbuild-->
 </body>
 

@@ -1,0 +1,101 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-point-actions">
+
+  <template>
+    <style>
+      :host {
+        @apply(--layout-horizontal);
+      }
+
+      .action-text {
+        font-size: 12px;
+        padding-top: 12px;
+      }
+
+      .action-up {
+        @apply(--layout-horizontal);
+        @apply(--layout-start-justified);
+        color: var(--primary-up-color-more-lighter, rgba(0,153,0,0.32));
+      }
+
+      .middle {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+        @apply(--layout-center-justified);
+      }
+
+      .action-down {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+        color: var(--primary-down-color-more-lighter, rgba(153,0,0,0.32));
+      }
+
+      paper-icon-button::shadow #icon {
+        width: 16px;
+        height: 16px;
+      }
+    </style>
+
+    <div class="action-up">
+    </div>
+
+    <div class="middle" hidden$="[[hideNotHelpful]]"></div>
+
+    <div class="action-down" hidden$="[[hideNotHelpful]]">
+      <div class="action-text action-up">{{voteCount(point.PointQualities,'up')}}</div>
+      <paper-icon-button icon="thumb-up" class="point-up-vote-icon action-up" on-tap="pointHelpful"></paper-icon-button>
+      <div class="action-text">{{voteCount(point.PointQualities,'down')}}</div>
+      <paper-icon-button size="16x16" icon="thumb-down" class="point-down-vote-icon" on-tap="pointNotHelpful"></paper-icon-button>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'yp-point-actions',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        point: {
+          type: Object
+        },
+
+        hideNotHelpful: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      pointHelpful: function () {
+        window.globals.activity('Anonymous', 'vote', 'pointHelpful');
+        window.globals.openDialog('point.helpful');
+      },
+
+      pointNotHelpful: function () {
+        window.globals.activity('Anonymous', 'vote', 'pointNotHelpful');
+        window.globals.openDialog('point.not_helpful');
+      },
+
+      voteCount: function (endorsements,type) {
+        var count = 0;
+        for (var i = 0; i < endorsements.length; i++) {
+          if (type=='up' && endorsements[i].value > 0)
+            count++;
+          if (type=='down' && endorsements[i].value < 0)
+            count++;
+        }
+        return this.formatNumber(count);
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,154 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-group-stats/yp-group-stats.html">
+
+<dom-module id="yp-group-card">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+        width: 384px;
+      }
+
+      .description {
+        @apply(--layout-vertical);
+        color: var(--primary-color-more-darker, #424242);
+        line-height: var(--description-line-height, 1.3);
+      }
+
+      .join-button {
+        @apply(--layout-left);
+        color: var(--accent-color-lighter, #FFB74D);
+      }
+
+      .join-button-secondary {
+        color: var(--primary-color-more-darker, #777);
+      }
+
+      .iso-image {
+        vertical-align: top;
+        padding-right: 8px;
+      }
+
+      .stats {
+        @apply(--layout-self-center);
+      }
+
+      .group-name {
+        padding: 0px;
+        padding-bottom: 4px;
+        margin: 0px;
+      }
+
+      .idea-image {
+      }
+
+      .separator {
+        padding: 16px;
+        font-size: 14px;
+        border-top: 1px solid #e0e0e0;
+      }
+    </style>
+
+    <template is="dom-if" if="[[group]]">
+      <paper-card class="pink" image$="">
+        <div class="card-content">
+          <div class="description">
+            <h2 class="group-name">[[groupName(group)]]</h2>
+            <div>[[groupDescription(group)]]</div>
+          </div>
+        </div>
+        <img src="[[groupImagePath(group)]]" class="idea-image">
+        <div class="card-content">
+          <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
+        </div>
+        <div class="card-actions join-button">
+          <paper-button>{{t('join')}}</paper-button>
+          <paper-button class="join-button-secondary">{{t('view')}}</paper-button>
+        </div>
+      </paper-card>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-group-card',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        group: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      goToGroup: function (e) {
+        var groupUrl = '/#/groups/' + this.group.id + '/ideas/top/' + this.group.name;
+        window.globals.activity('Anonymous', 'open', 'group', groupUrl);
+        window.location = groupUrl;
+      },
+
+      groupImagePath: function (group) {
+        return this.randomStockImage();
+
+        if (this.group.IsoCountry) {
+          return this.isoCountryImagePath() + group.IsoCountry.code.toLowerCase() + '.png';
+        }
+        else if (group.name.indexOf("NHS") > -1) {
+          return "https://i.imgur.com/uavPcDU.jpg"
+        }
+        else if (group.name.indexOf("Iceland") > -1) {
+          return "https://i.imgur.com/v2SyyDl.png"
+        }
+        else if (true) {
+          return "https://i.imgur.com/OPpnjwm.jpg"
+        }
+        else if (false) {
+          return "https://placehold.it/384x216"
+        }
+        else if (group.top_banner_file_name) {
+          return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(group.id) + '/icon_full/' + group.top_banner_file_name;
+        } else
+        {
+          return this.defaultGroupImage('');
+        }
+      },
+
+      getIsoCountryImagePath: function (group) {
+        return this.isoCountryImagePath() + group.IsoCountry.code.toLowerCase() + '.png';
+      },
+
+      groupName: function (group) {
+        if (group.name) {
+          return this.truncate(this.trim(group.name), 200);
+        } else {
+          return group.short_name;
+        }
+      },
+
+      groupDescription: function (group) {
+        if (group.description) {
+          return this.truncate(this.trim(group.description), 10000, '...');
+        } else {
+          return "";
+        }
+      }
+    });
+  </script>
+</dom-module>
