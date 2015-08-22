@@ -18,7 +18,6 @@
 
       :host {
         @apply(--layout-horizontal);
-        @apply(--layout-fit);
       }
 
       .createIdea {
@@ -30,12 +29,10 @@
 
       .card-container {
         @apply(--layout-horizontal);
-        @apply(--layout-fit);
+        @apply(--layout-wrap);
       }
 
       yp-idea-card {
-        @apply(--layout-horizontal);
-        width: 384px !important;
         padding: 16px;
       }
 
@@ -50,7 +47,7 @@
     <div class="card-container">
       <template is="dom-if" if="[[ideas]]">
         <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
-          <yp-idea-card idea="[[idea]]" showcategory></yp-idea-card>
+          <yp-idea-card idea="[[idea]]" on-mouseover="_ideaCardMouseOver" on-mouseout="_ideaCardMouseOut"></yp-idea-card>
         </template>
       </template>
       <a href="/add" on-click="navigate">
@@ -88,6 +85,14 @@
           type: Number,
           value: 368
         }
+      },
+
+      _ideaCardMouseOver: function (event) {
+        event.currentTarget.elevation = 5;
+      },
+
+      _ideaCardMouseOut: function (event) {
+        event.currentTarget.elevation = 1;
       },
 
       newIdea: function () {

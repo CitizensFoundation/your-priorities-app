@@ -26,9 +26,10 @@
 
     formatNumber: function (value) {
       if (value) {
+        value = value * 10;
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       } else {
-        return "";
+        return "0";
       }
     },
 
