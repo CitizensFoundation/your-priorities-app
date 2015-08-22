@@ -83,7 +83,22 @@
 
         groupId: {
           type: Number,
-          value: null
+          value: null,
+          observer: "_groupIdChanged"
+        }
+      },
+
+      _groupIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          if (this.filter) {
+            window.selectedFilter = this.filter;
+          }
+          this.$.ideasAjax.url = '/api/groups/' + this.groupId + '/ideas/' + window.selectedFilter;
+          if (this.categoryId) {
+            this.$.ideasAjax.url += '/' + this.categoryId;
+          }
+          this.$.ideasAjax.generateRequest();
+          this.$.categoryAjax.generateRequest();
         }
       },
 
@@ -125,15 +140,7 @@
       },
 
       ready: function () {
-        if (this.filter) {
-          window.selectedFilter = this.filter;
-        }
-        this.$.ideasAjax.url = '/api/groups/' + this.groupId + '/ideas/' + window.selectedFilter;
-        if (this.categoryId) {
-          this.$.ideasAjax.url += '/' + this.categoryId;
-        }
-        this.$.ideasAjax.generateRequest();
-        this.$.categoryAjax.generateRequest();
+
       },
 
       computeUrl: function (groupId) {
