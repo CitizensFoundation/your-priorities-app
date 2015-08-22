@@ -7,7 +7,7 @@
     "paper-elements": "PolymerElements/paper-elements#master",
     "platinum-elements": "PolymerElements/platinum-elements#master",
     "neon-elements": "PolymerElements/neon-elements#master",
-    "page": "visionmedia/page.js#~1.6.3",
+    "page": "visionmedia/page.js#master",
     "google-streetview-pano": "GoogleWebComponents/google-streetview-pano",
     "google-map": "GoogleWebComponents/google-map"
   },
