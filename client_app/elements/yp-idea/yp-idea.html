@@ -36,28 +36,32 @@
 
       <yp-ajax auto id="ajax" url$="[[computeUrl(ideaId)]]" on-response="_response" handle-as="json"></yp-ajax>
 
-      <paper-material elevation="0" class="pointText" animated>
+      <template is="dom-if" if="[[idea]]">
 
-        <yp-idea-header idea="[[idea]]" showcategory="true"></yp-idea-header>
+        <paper-material elevation="0" class="pointText" animated>
 
-        <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-          <paper-tab><span>[[computeExpression1()]]</span> (<span>[[idea.Points.length]]</span>)</paper-tab>
-          <paper-tab>[[computeExpression3()]]</paper-tab>
-          <paper-tab>[[computeExpression4()]]</paper-tab>
-          <paper-tab>[[computeExpression5()]]</paper-tab>
-        </paper-tabs>
-      </paper-material>
+          <yp-idea-header idea="[[idea]]" showcategory="true"></yp-idea-header>
 
-      <neon-animated-pages id="pages" class="fdlex" selected="[[selected]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
+          <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+            <paper-tab><span>[[computeExpression1()]]</span> (<span>[[idea.Points.length]]</span>)</paper-tab>
+            <paper-tab>[[computeExpression3()]]</paper-tab>
+            <paper-tab>[[computeExpression4()]]</paper-tab>
+            <paper-tab>[[computeExpression5()]]</paper-tab>
+          </paper-tabs>
+        </paper-material>
 
-        <template is="dom-if" if="[[idea]]">
-          <yp-idea-points points="[[idea.Points]]"></yp-idea-points>
-        </template>
+        <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
 
-        <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
-        <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
-        <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
-      </neon-animated-pages>
+          <template is="dom-if" if="[[idea]]">
+            <yp-idea-points points="[[idea.Points]]"></yp-idea-points>
+          </template>
+
+          <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
+          <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
+          <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
+        </neon-animated-pages>
+
+      </template>
     </div>
   </template>
 
@@ -72,9 +76,10 @@
         ],
 
         properties: {
+
           ideaId: {
-            type: String,
-            value: 528
+            type: Number,
+            value: null
           },
 
           contactId: { notify: true },

@@ -17,6 +17,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     // More info: https://visionmedia.github.io/page.js/
     page('/', function () {
       app.route = 'home';
+      debugger;
       app.scrollPageToTop();
     });
 
@@ -27,6 +28,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     page('/users/:name', function (data) {
       app.route = 'user-info';
+      app.params = data.params;
+      app.scrollPageToTop();
+    });
+
+    page('/group/:id', function (data) {
+      app.route = 'yp-group';
+      app.params = data.params;
+      app.scrollPageToTop();
+    });
+
+    page('/idea/:id', function (data) {
+      app.route = 'yp-idea';
       app.params = data.params;
       app.scrollPageToTop();
     });
