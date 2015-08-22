@@ -118,19 +118,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
             <section data-route="home">
-              <yp-idea idea-id="530"></yp-idea>
+              <yp-community></yp-community>
             </section>
 
-            <section data-route="users">
-              <yp-group></yp-group>
+            <section data-route="group">
+              <yp-group group-id="{{params.id}}"></yp-group>
             </section>
 
             <section data-route="idea">
               <yp-idea idea-id="{{params.id}}"></yp-idea>
-            </section>
-
-            <section data-route="contact">
-              <yp-idea></yp-idea>
             </section>
 
           </iron-pages>

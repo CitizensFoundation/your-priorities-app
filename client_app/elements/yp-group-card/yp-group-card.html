@@ -76,7 +76,7 @@
           <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
         </div>
         <div class="card-actions join-button">
-          <paper-button>{{t('join')}}</paper-button>
+          <paper-button on-tap="_goToGroup">{{t('join')}}</paper-button>
           <paper-button class="join-button-secondary">{{t('view')}}</paper-button>
         </div>
       </paper-card>
@@ -98,8 +98,8 @@
         }
       },
 
-      goToGroup: function (e) {
-        var groupUrl = '/#/groups/' + this.group.id + '/ideas/top/' + this.group.name;
+      _goToGroup: function (e) {
+        var groupUrl = '/#!/group/' + this.group.id;
         window.globals.activity('Anonymous', 'open', 'group', groupUrl);
         window.location = groupUrl;
       },

@@ -110,7 +110,7 @@
           <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
         </div>
         <div class="card-actions">
-          <paper-button class="join-button">{{t('View')}}</paper-button>
+          <paper-button class="join-button" on-tap="_goToIdea">{{t('View')}}</paper-button>
           <paper-button>{{t('Follow')}}</paper-button>
         </div>
       </paper-card>
@@ -159,8 +159,8 @@
 
       },
 
-      goToGroup: function (e) {
-        var ideaUrl = '/#/ideas/' + this.idea.id + '/ideas/top/' + this.idea.name;
+      _goToIdea: function (e) {
+        var ideaUrl = '/#!/idea/' + this.idea.id;
         window.globals.activity('Anonymous', 'open', 'idea', ideaUrl);
         window.location = ideaUrl;
       },

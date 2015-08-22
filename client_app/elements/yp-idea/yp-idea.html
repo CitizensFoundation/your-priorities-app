@@ -79,7 +79,8 @@
 
           ideaId: {
             type: Number,
-            value: null
+            value: 532,
+            observer: "_ideaIdChanged"
           },
 
           contactId: { notify: true },
@@ -91,6 +92,9 @@
             value: 0,
             observer: 'selectedChanged'
           }
+        },
+
+        _ideaIdChanged: function (oldValue, newValue) {
         },
 
         _response: function (event, detail, sender) {
