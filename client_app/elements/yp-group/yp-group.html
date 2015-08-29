@@ -40,7 +40,7 @@
 
     <yp-ajax auto="false" id="ideasAjax" url="" on-response="_ideasResponse"></yp-ajax>
 
-    <yp-ajax auto="false" id="categoryAjax" url="[[computeUrl(groupId)]]" on-response="_categoriesResponse"></yp-ajax>
+    <yp-ajax auto="false" id="categoryAjax" on-response="_categoriesResponse"></yp-ajax>
 
     <yp-ajax auto="false" id="categoryDefaultAjax" url="/api/groups/default/categories" on-response="_categoriesResponse"></yp-ajax>
 
@@ -94,10 +94,12 @@
             window.selectedFilter = this.filter;
           }
           this.$.ideasAjax.url = '/api/groups/' + this.groupId + '/ideas/' + window.selectedFilter;
+          this.$.categoryAjax.url = '/api/groups/' + this.groupId + '/categories';
           if (this.categoryId) {
             this.$.ideasAjax.url += '/' + this.categoryId;
           }
           this.$.ideasAjax.generateRequest();
+          debugger;
           this.$.categoryAjax.generateRequest();
         }
       },
@@ -120,6 +122,7 @@
       },
 
       _categoriesResponse: function (event, detail, sender) {
+        debugger;
         if (detail && detail.response && !this.defaultCategories) {
           this.defaultCategories = true;
           this.$.categoryDefaultAjax.generateRequest();
@@ -140,11 +143,7 @@
       },
 
       ready: function () {
-
-      },
-
-      computeUrl: function (groupId) {
-        return '/api/groups/' + groupId + '/categories';
+        debugger;
       },
 
       computeTitle: function () {

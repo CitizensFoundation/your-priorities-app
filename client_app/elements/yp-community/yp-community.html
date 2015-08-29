@@ -46,9 +46,7 @@
           <yp-group-card group="[[group]]" on-mouseover="_groupCardMouseOver" on-mouseout="_groupCardMouseOut"></yp-group-card>
         </template>
       </template>
-      <a href="/add" on-click="navigate">
-        <paper-fab icon="add" z="1" class="createGroup" title="[[t('group.add')]" on-tap=" newGroup"></paper-fab>
-      </a>
+      <paper-fab icon="add" z="1" class="createGroup" title="[[t('group.add')]" on-tap="_newGroup"></paper-fab>
     </div>
   </template>
 
@@ -79,7 +77,7 @@
         }
       },
 
-      newGroup: function () {
+      _newGroup: function () {
         window.globals.activity('Anonymous', 'open', 'newGroup');
         window.globals.openDialog('groups.new');
       },

@@ -122,11 +122,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </section>
 
             <section data-route="idea">
-              <yp-idea idea-id="{{params.id}}"></yp-idea>
+              <template is="dom-if" if="[[params]]">
+                <yp-idea idea-id="{{params.id}}"></yp-idea>
+              </template>
             </section>
 
             <section data-route="group">
-              <yp-group group-id="{{params.id}}"></yp-group>
+              <template is="dom-if" if="[[params]]">
+                <yp-group group-id="{{params.id}}"></yp-group>
+              </template>
             </section>
 
           </iron-pages>
