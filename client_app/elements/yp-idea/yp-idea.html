@@ -52,9 +52,7 @@
 
         <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
 
-          <template is="dom-if" if="[[idea]]">
-            <yp-idea-points points="[[idea.Points]]"></yp-idea-points>
-          </template>
+          <yp-idea-points id="pointsSection" points="[[idea.Points]]"></yp-idea-points>
 
           <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
           <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
@@ -83,6 +81,12 @@
             observer: "_ideaIdChanged"
           },
 
+          idea: {
+            type: Object,
+            value: null,
+            observer: "_ideaChanged"
+          },
+
           contactId: { notify: true },
           contacts: { notify: true },
           ideaName: { notify: true },
@@ -94,16 +98,20 @@
           }
         },
 
+        _ideaChanged: function (newValue, oldValue) {
+          debugger;
+        },
+
         _ideaIdChanged: function (newValue, oldValue) {
           if (newValue) {
             this.$.ajax.url = '/api/ideas/' + this.ideaId;
-            this.idea = null;
             this.$.ajax.generateRequest();
           }
         },
 
         _response: function (event, detail, sender) {
           this.idea = detail.response;
+          this.$.pages.render();
           if (this.idea.description === null) {
             this.idea.description = this.idea.Points[0].content;
             this.idea.Points.shift();
