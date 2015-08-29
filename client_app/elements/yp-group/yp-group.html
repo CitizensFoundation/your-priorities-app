@@ -99,7 +99,6 @@
             this.$.ideasAjax.url += '/' + this.categoryId;
           }
           this.$.ideasAjax.generateRequest();
-          debugger;
           this.$.categoryAjax.generateRequest();
         }
       },
@@ -122,7 +121,6 @@
       },
 
       _categoriesResponse: function (event, detail, sender) {
-        debugger;
         if (detail && detail.response && !this.defaultCategories) {
           this.defaultCategories = true;
           this.$.categoryDefaultAjax.generateRequest();
@@ -143,7 +141,6 @@
       },
 
       ready: function () {
-        debugger;
       },
 
       computeTitle: function () {

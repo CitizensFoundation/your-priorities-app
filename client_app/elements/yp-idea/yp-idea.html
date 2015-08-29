@@ -34,7 +34,7 @@
 
     <div class="container">
 
-      <yp-ajax auto id="ajax" url$="[[computeUrl(ideaId)]]" on-response="_response" handle-as="json"></yp-ajax>
+      <yp-ajax id="ajax" on-response="_response" handle-as="json"></yp-ajax>
 
       <template is="dom-if" if="[[idea]]">
 
@@ -94,7 +94,12 @@
           }
         },
 
-        _ideaIdChanged: function (oldValue, newValue) {
+        _ideaIdChanged: function (newValue, oldValue) {
+          if (newValue) {
+            this.$.ajax.url = '/api/ideas/' + this.ideaId;
+            this.idea = null;
+            this.$.ajax.generateRequest();
+          }
         },
 
         _response: function (event, detail, sender) {
