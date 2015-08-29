@@ -22,7 +22,7 @@
     <style>
       :host {
         display: block;
-        width: 384px;
+        width: 512px;
       }
 
       .description {
@@ -160,9 +160,9 @@
       },
 
       _goToIdea: function (e) {
-        var ideaUrl = '/#!/idea/' + this.idea.id;
+        var ideaUrl = '/idea/' + this.idea.id;
         window.globals.activity('Anonymous', 'open', 'idea', ideaUrl);
-        window.location = ideaUrl;
+        page(ideaUrl);
       },
 
       ideaImagePath: function (idea) {
