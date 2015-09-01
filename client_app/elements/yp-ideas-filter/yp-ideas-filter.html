@@ -1,0 +1,197 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html" >
+
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-ideas-filter">
+  <template>
+    <style>
+      .filterIcon {
+        padding-right: 32px;
+        margin-left: 12px;
+        margin-bottom: 4px;
+        margin-top: 8px;
+        background-color: #f7f7f7;
+        color: #444;
+      }
+
+      .filterIconTransform {
+        -moz-transform: scaleY(-1);
+        -o-transform: scaleY(-1);
+        -webkit-transform: scaleY(-1);
+        transform: scaleY(-1);
+        filter: FlipV;
+        -ms-filter: "FlipV";
+      }
+    </style>
+
+    <div layout="" horizontal="">
+      <div>
+        <span>{{subTitle}}</span>
+      </div>
+      <div>
+        <paper-menu-button class="selected-items" layout="" horizontal="" style="padding-left:0px;padding-top: 0px;margin-top: -8px;">
+
+          <paper-fab class="filterIcon filterIconTransform" icon="editor:merge-type" on-tap="openFilter" mini="" z="3"></paper-fab>
+
+          <iron-dropdown id="filterDropdown" class="dropdown" horizontal-align="left">
+            <div layout="" horizontal="">
+              <div>
+                <iron-selector on-core-select=" changeFilter ">
+                  <paper-item data-filter="top">
+                    <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
+                    <span>{{computeExpression2()}}</span>
+                  </paper-item>
+                  <paper-item data-filter="newest">
+                    <iron-icon icon="av:new-releases" class="filterIcon"></iron-icon>
+                    <span>{{computeExpression3()}}</span>
+                  </paper-item>
+                  <paper-item data-filter="random">
+                    <iron-icon icon="cached" class="filterIcon"></iron-icon>
+                    <span>{{computeExpression4()}}</span>
+                  </paper-item>
+                  <paper-item data-filter="inProgress">
+                    <iron-icon icon="av:hearing" class="filterIcon"></iron-icon>
+                    <span>{{computeExpression5()}}</span>
+                  </paper-item>
+                </iron-selector>
+              </div>
+              <template is="dom-if" if="{{computeIf(categories)}}">
+                <div>
+                  <iron-selector on-core-select=" changeCategory ">
+                    <paper-item data-category-id$="{{computeData-category-id()}}">
+                      <iron-icon icon="select-all" class="filterIcon"></iron-icon>
+                      <span>{{computeExpression6()}}</span>
+                    </paper-item>
+                  </iron-selector>
+                    <div layout="" horizontal="">
+                      <template is="dom-repeat" items="{{computeItems(categories)}}" as="categoriesGroups">
+                        <div layout="" vertical="">
+                          <iron-selector on-core-select=" changeCategory ">
+                            <template is="dom-repeat" items="{{categoriesGroups}}" as="category">
+                              <paper-item data-category-id$="{{category.id}}" data-category-name$="{{category.name}}">
+                                <iron-image sizing="contain" preload="" height="24" width="24" class="filterIcon" src="{{computeSrc(category)}}">
+                                </iron-image>
+                                <span>{{category.name}}</span>
+                              </paper-item>
+                            </template>
+                          </iron-selector>
+                        </div>
+                      </template>
+                    </div>
+
+                </div>
+              </template>
+            </div>
+          </iron-dropdown>
+        </paper-menu-button>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+
+      is: 'yp-ideas-filter',
+
+      properties: {
+
+        categories: { notify: true },
+
+        filter: { notify: true },
+
+        groupId: { notify: true },
+
+        groupName: { notify: true },
+
+        subTitle: {
+          type: String,
+          value: ''
+        }
+      },
+
+      openFilter: function () {
+        window.globals.activity('Anonymous', 'open', 'filter');
+      },
+
+      updateFilter: function () {
+        window.selectedFilterName = 'ideas.' + this.filter;
+        var filterName = PolymerExpressions.prototype.t(window.selectedFilterName);
+        var categoryName = PolymerExpressions.prototype.t(window.selectedCategoryName);
+        var inWord = PolymerExpressions.prototype.t('short_word.in');
+        this.subTitle = filterName + ' ' + inWord + ' ' + categoryName;
+      },
+
+      changeFilter: function (e, detail) {
+        window.selectedFilter = detail.item.dataset.filter;
+        window.selectedFilterName = 'ideas.' + window.selectedFilter;
+        this.updateAfterFiltering();
+      },
+
+      changeCategory: function (e, detail) {
+        var categoryId = detail.item.dataset.categoryId;
+        window.selectedCategoryName = detail.item.dataset.categoryName;
+        if (categoryId != '-1') {
+          window.categoryId = categoryId;
+        } else {
+          window.categoryId = null;
+        }
+        this.updateAfterFiltering();
+      },
+
+      updateAfterFiltering: function () {
+        var newLocation = '/#/groups/' + this.groupId + '/ideas/' + window.selectedFilter + '/' + this.groupName;
+        if (window.categoryId) {
+          newLocation += '/' + window.categoryId;
+        }
+        window.globals.activity('Anonymous', 'change', 'filter', newLocation);
+        window.location = newLocation;
+      },
+
+      ready: function () {
+        this.updateFilter();
+      },
+
+      computeIf: function (categories) {
+        return categories && categories.length > 0;
+      },
+
+      computeData-category-id: function () {
+        return -1;
+      },
+      computeItems: function (categories) {
+        return this.splitArray(categories, 7);
+      },
+      computeSrc: function (category) {
+        return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(category.id) + '/icon_100/' + category.icon_file_name;
+      },
+      computeExpression2: function () {
+        return this.t('ideas.top');
+      },
+      computeExpression3: function () {
+        return this.t('ideas.newest');
+      },
+      computeExpression4: function () {
+        return this.t('ideas.random');
+      },
+      computeExpression5: function () {
+        return this.t('ideas.inProgress');
+      },
+      computeExpression6: function () {
+        return this.t('categories.the_all');
+      }
+    });
+  </script>
+</dom-module>
