@@ -22,13 +22,15 @@
     <style>
       :host {
         display: block;
-        width: 512px;
+        width: 420px;
       }
 
       .description {
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--description-line-height, 1.3);
+        background-color: rgba(255,255,255,0.75);
+        padding: 8px;
       }
 
       .voting {
@@ -70,7 +72,7 @@
 
       .category-image-container {
         text-align: right;
-        margin-top: -52px;
+        margin-top: -238px;
       }
 
       google-streetview-pano {
@@ -111,7 +113,6 @@
         </div>
         <div class="card-actions">
           <paper-button class="join-button" on-tap="_goToIdea">{{t('View')}}</paper-button>
-          <paper-button>{{t('Follow')}}</paper-button>
         </div>
       </paper-card>
     </template>
@@ -209,7 +210,7 @@
 
       ideaDescription: function (idea) {
         if (idea.description) {
-          return this.truncate(this.trim(idea.description), 10000, '...');
+          return this.truncate(this.trim(idea.description), 200, '...');
         } else {
           return "";
         }

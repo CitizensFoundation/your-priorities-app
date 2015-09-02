@@ -40,7 +40,7 @@
 
     <div layout="" horizontal="">
       <div>
-        <span>{{subTitle}}</span>
+        <span>[[subTitle]]</span>
       </div>
       <div>
         <paper-menu-button class="selected-items" layout="" horizontal="" style="padding-left:0px;padding-top: 0px;margin-top: -8px;">
@@ -53,39 +53,39 @@
                 <iron-selector on-core-select=" changeFilter ">
                   <paper-item data-filter="top">
                     <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
-                    <span>{{computeExpression2()}}</span>
+                    <span>[[t('ideas.top')]]</span>
                   </paper-item>
                   <paper-item data-filter="newest">
                     <iron-icon icon="av:new-releases" class="filterIcon"></iron-icon>
-                    <span>{{computeExpression3()}}</span>
+                    <span>[[t('ideas.newest')]]</span>
                   </paper-item>
                   <paper-item data-filter="random">
                     <iron-icon icon="cached" class="filterIcon"></iron-icon>
-                    <span>{{computeExpression4()}}</span>
+                    <span>[[t('ideas.random')]]</span>
                   </paper-item>
                   <paper-item data-filter="inProgress">
                     <iron-icon icon="av:hearing" class="filterIcon"></iron-icon>
-                    <span>{{computeExpression5()}}</span>
+                    <span>[[t('ideas.inProgress')]]</span>
                   </paper-item>
                 </iron-selector>
               </div>
-              <template is="dom-if" if="{{computeIf(categories)}}">
+              <template is="dom-if" if="[[computeIf(categories)]]">
                 <div>
-                  <iron-selector on-core-select=" changeCategory ">
-                    <paper-item data-category-id$="{{computeData-category-id()}}">
+                  <iron-selector on-core-select="_changeCategory">
+                    <paper-item data-category-id$="[[computeData-category-id()]]">
                       <iron-icon icon="select-all" class="filterIcon"></iron-icon>
-                      <span>{{computeExpression6()}}</span>
+                      <span>[[t('categories.the_all')]]</span>
                     </paper-item>
                   </iron-selector>
                     <div layout="" horizontal="">
-                      <template is="dom-repeat" items="{{computeItems(categories)}}" as="categoriesGroups">
+                      <template is="dom-repeat" items="[[computeItems(categories)]]" as="categoriesGroups">
                         <div layout="" vertical="">
                           <iron-selector on-core-select=" changeCategory ">
-                            <template is="dom-repeat" items="{{categoriesGroups}}" as="category">
-                              <paper-item data-category-id$="{{category.id}}" data-category-name$="{{category.name}}">
-                                <iron-image sizing="contain" preload="" height="24" width="24" class="filterIcon" src="{{computeSrc(category)}}">
+                            <template is="dom-repeat" items="[[categoriesGroups]]" as="category">
+                              <paper-item data-category-id$="[[category.id]]" data-category-name$="[[category.name]]">
+                                <iron-image sizing="contain" preload="" height="24" width="24" class="filterIcon" src="[[computeSrc(category)]]">
                                 </iron-image>
-                                <span>{{category.name}}</span>
+                                <span>[[category.name]]</span>
                               </paper-item>
                             </template>
                           </iron-selector>
@@ -140,7 +140,7 @@
         this.updateAfterFiltering();
       },
 
-      changeCategory: function (e, detail) {
+      _changeCategory: function (e, detail) {
         var categoryId = detail.item.dataset.categoryId;
         window.selectedCategoryName = detail.item.dataset.categoryName;
         if (categoryId != '-1') {
@@ -171,27 +171,15 @@
       computeData-category-id: function () {
         return -1;
       },
+
       computeItems: function (categories) {
         return this.splitArray(categories, 7);
       },
+
       computeSrc: function (category) {
         return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(category.id) + '/icon_100/' + category.icon_file_name;
-      },
-      computeExpression2: function () {
-        return this.t('ideas.top');
-      },
-      computeExpression3: function () {
-        return this.t('ideas.newest');
-      },
-      computeExpression4: function () {
-        return this.t('ideas.random');
-      },
-      computeExpression5: function () {
-        return this.t('ideas.inProgress');
-      },
-      computeExpression6: function () {
-        return this.t('categories.the_all');
       }
+
     });
   </script>
 </dom-module>
