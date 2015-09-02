@@ -51,7 +51,7 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
 
   models.Idea.findAll({
     order: order,
-    where: where,
+    where: [where, []],
     limit: 42,
     include: [ models.Category, models.IdeaRevision, models.Point ]
   }).then(function(ideas) {
@@ -68,7 +68,7 @@ router.get('/:id/categories', function(req, res) {
     where = "sub_instance_id = "+req.params.id;
   }
   models.Category.findAll({
-    where: where,
+    where: [where, []],
     limit: 20
   }).then(function(categories) {
     res.send(categories);

@@ -46,7 +46,7 @@ router.get('/:id', function(req, res) {
             include: [
               { model: models.User, attributes: ["id", "login", "facebook_uid", "buddy_icon_file_name"] }
             ]
-          },
+          }
         ]
       },
       models.Category,

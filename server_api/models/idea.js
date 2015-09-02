@@ -47,15 +47,15 @@ module.exports = function(sequelize, DataTypes) {
         var vectorName = Idea.getSearchVector();
         sequelize
             .query('ALTER TABLE "' + Idea.tableName + '" ADD COLUMN "' + vectorName + '" TSVECTOR')
-            .success(function() {
+            .then(function() {
               return sequelize
                   .query('UPDATE "' + Idea.tableName + '" SET "' + vectorName + '" = to_tsvector(\'english\', ' + searchFields.join(' || \' \' || ') + ')')
                   .error(console.log);
-            }).success(function() {
+            }).then(function() {
               return sequelize
                   .query('CREATE INDEX post_search_idx ON "' + Idea.tableName + '" USING gin("' + vectorName + '");')
                   .error(console.log);
-            }).success(function() {
+            }).then(function() {
               return sequelize
                   .query('CREATE TRIGGER post_vector_update BEFORE INSERT OR UPDATE ON "' + Idea.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + searchFields.join(', ') + ')')
                   .error(console.log);
