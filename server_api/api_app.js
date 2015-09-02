@@ -6,27 +6,52 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var passport = require('passport')
+    , LocalStrategy = require('passport-local').Strategy;
+
 var routes = require('./controllers/index');
 var ideas = require('./controllers/ideas');
 var groups = require('./controllers/groups');
 
 var app = express();
 
-app.use(session({
-  secret: 'my_unsecure_secret',
-  resave: false,
-  cookie: { httpOnly: false},
-  saveUninitialized: true
-}));
+app.configure(function() {
+  app.use(express.static(path.join(__dirname, '../client_app')));
+  app.use(express.cookieParser());
+  app.use(express.bodyParser.json());
+  app.use(express.session({ secret: 'keyboard cat' }));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(app.router);
+});
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../client_app')));
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
 
+passport.deserializeUser(function(id, done) {
+  models.User.find({
+    where: {id: id}
+  }).then(function(user) {
+    done(err, user);
+  });
+});
+
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+      models.User.find({
+        where: {email: username}
+      }).then(function(user) {
+        if (!user) {
+          return done(null, false, { message: 'Incorrect username.' });
+        }
+        user.validPassword(password)) {
+          return done(null, false, { message: 'Incorrect password.' });
+        }
+        return done(null, user);
+      });
+    }
+));
 
 app.use('/', routes);
 app.use('/api/ideas', ideas);
@@ -63,6 +88,5 @@ if (app.get('env') === 'development') {
     });
   });
 }
-
 
 module.exports = app;

@@ -17,7 +17,11 @@ module.exports = function(sequelize, DataTypes) {
     impressions_count: DataTypes.INTEGER
   }, {
     underscored: true,
+
+    timestamps: true,
+
     tableName: 'ideas',
+
     classMethods: {
       associate: function(models) {
         Idea.hasMany(models.Point);
@@ -80,7 +84,7 @@ module.exports = function(sequelize, DataTypes) {
 
         return Idea.findAll({
           order: "created_at DESC",
-          where: where,
+          where: [where, []],
           limit: 100,
           include: [ modelCategory ]
         });

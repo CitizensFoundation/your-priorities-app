@@ -60,15 +60,18 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
 });
 
 router.get('/:id/categories', function(req, res) {
-  var where;
+  var groupId;
+
   console.log(req.params.id);
+
   if (req.params.id=="default") {
-    where = "sub_instance_id = 262";
+    groupId = 262;
   } else {
-    where = "sub_instance_id = "+req.params.id;
+    groupId = req.params.id;
   }
+
   models.Category.findAll({
-    where: [where, []],
+    where: { sub_instance_id: groupdId },
     limit: 20
   }).then(function(categories) {
     res.send(categories);
