@@ -4,7 +4,7 @@ module.exports = function(sequelize, DataTypes) {
   var Category = sequelize.define("Category", {
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
-    sub_instance_id: DataTypes.INTEGER,
+    group_id: DataTypes.INTEGER,
     icon_file_name: DataTypes.STRING
   }, {
     underscored: true,

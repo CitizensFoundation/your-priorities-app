@@ -22,7 +22,7 @@ router.get('/:id/search/:term', function(req, res) {
 
 router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
 
-  var where = "sub_instance_id = "+req.params.id;
+  var where = "group_id = "+req.params.id;
   var order = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
   if (req.params.filter!="inProgress") {
@@ -71,7 +71,7 @@ router.get('/:id/categories', function(req, res) {
   }
 
   models.Category.findAll({
-    where: { sub_instance_id: groupdId },
+    where: { group_id: groupdId },
     limit: 20
   }).then(function(categories) {
     res.send(categories);

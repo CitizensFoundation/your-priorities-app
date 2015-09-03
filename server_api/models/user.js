@@ -37,7 +37,11 @@ module.exports = function(sequelize, DataTypes) {
                 return verified;
               }
             });
-            done(verified);
+            if (verified) {
+              done(null, user);
+            } else {
+              done(null, false, { message: 'Incorrect password.' });
+            }
           });
         }
       }

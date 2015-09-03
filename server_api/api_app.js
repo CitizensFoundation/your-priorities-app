@@ -9,14 +9,17 @@ var bodyParser = require('body-parser');
 var passport = require('passport')
     , LocalStrategy = require('passport-local').Strategy;
 
-var routes = require('./controllers/index');
+var index = require('./controllers/index');
 var ideas = require('./controllers/ideas');
 var groups = require('./controllers/groups');
+
+var User = require('./models/idea');
 
 var app = express();
 
 app.configure(function() {
   app.use(express.static(path.join(__dirname, '../client_app')));
+  app.use(morgan('combined'));
   app.use(express.cookieParser());
   app.use(express.bodyParser.json());
   app.use(express.session({ secret: 'keyboard cat' }));
@@ -30,7 +33,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-  models.User.find({
+  User.find({
     where: {id: id}
   }).then(function(user) {
     done(err, user);
@@ -39,21 +42,64 @@ passport.deserializeUser(function(id, done) {
 
 passport.use(new LocalStrategy(
     function(username, password, done) {
-      models.User.find({
-        where: {email: username}
+      User.find({
+        where: { email: username }
       }).then(function(user) {
         if (!user) {
           return done(null, false, { message: 'Incorrect username.' });
         }
-        user.validPassword(password)) {
-          return done(null, false, { message: 'Incorrect password.' });
-        }
-        return done(null, user);
+        user.validPassword(password,done);
       });
     }
 ));
 
-app.use('/', routes);
+var isAuthenticated = function (req, res, next) {
+  if (req.isAuthenticated())
+    return next();
+  res.send(401, 'Unauthorized');
+}
+
+var needsGroup = function(groupId) {
+  return function(req, res, next) {
+    if (req.user && req.user.group === groupId)
+      next();
+    else
+      res.send(401, 'Unauthorized');
+  };
+};
+
+var needsAdmin = function() {
+  return function(req, res, next) {
+    if (req.user && req.user.is_admin)
+      next();
+    else
+      res.send(401, 'Unauthorized');
+  };
+};
+
+var needsRoot = function() {
+  return function(req, res, next) {
+    if (req.user && req.user.is_root)
+      next();
+    else
+      res.send(401, 'Unauthorized');
+  };
+};
+
+app.get('/loggedin', function(req, res) {
+  res.send(req.isAuthenticated() ? req.user : '0');
+});
+
+app.post('/login', passport.authenticate('local'), function(req, res) {
+  res.send(req.user);
+});
+
+app.post('/logout', function(req, res){
+  req.logOut();
+  res.send(200);
+});
+
+app.use('/', index);
 app.use('/api/ideas', ideas);
 app.use('/api/groups', groups);
 

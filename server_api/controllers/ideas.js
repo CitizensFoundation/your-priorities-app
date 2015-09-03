@@ -7,7 +7,7 @@ router.get('/', function(req, res) {
   models.Idea.findAll({
     limit: 300,
     order: 'position DESC',
-    where: ["description IS NOT NULL AND sub_instance_id = 36 AND status != 'deleted'",[]],
+    where: ["description IS NOT NULL AND group_id = 36 AND status != 'deleted'",[]],
     include: [ models.Point, models.Category, models.IdeaRevision, models.Endorsement ]
   }).then(function(ideas) {
     res.send(ideas);
@@ -32,7 +32,7 @@ router.get('/:id/endorsements', function(req, res) {
 router.get('/:id', function(req, res) {
 
   models.Idea.find({
-    where: {id: req.params.id},
+    where: { id: req.params.id },
     include: [
       { model: models.Point,
         order: 'Point.position DESC',

@@ -29,7 +29,7 @@ module.exports = function(sequelize, DataTypes) {
         Idea.hasMany(models.IdeaRevision);
         Idea.belongsTo(models.Category);
         Idea.belongsTo(models.User);
-        Idea.belongsTo(models.Group, {foreignKey: "sub_instance_id"});
+        Idea.belongsTo(models.Group, {foreignKey: "group_id"});
       },
 
       getSearchVector: function() {
@@ -90,7 +90,7 @@ module.exports = function(sequelize, DataTypes) {
         });
 
 //        return sequelize
- //           .query('SELECT * FROM "' + Idea.tableName + '" WHERE "' + Idea.getSearchVector() + '" @@ plainto_tsquery(\'english\', ' + query + ')'+'AND sub_instance_id = '+groupId, Idea);
+ //           .query('SELECT * FROM "' + Idea.tableName + '" WHERE "' + Idea.getSearchVector() + '" @@ plainto_tsquery(\'english\', ' + query + ')'+'AND group_id = '+groupId, Idea);
       }
     }
   });
