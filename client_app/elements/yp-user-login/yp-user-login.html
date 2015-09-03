@@ -77,8 +77,8 @@
       </div>
     </paper-dialog>
 
-    <yp-ajax id="loginAjax" url="/api/user/login" on-response="_loginResponse"></yp-ajax>
-    <yp-ajax id="registerAjax" url="/api/user/register" on-response="_registerResponse"></yp-ajax>
+    <yp-ajax id="loginAjax" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
+    <yp-ajax id="registerAjax" method="POST" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
 
   </template>
 

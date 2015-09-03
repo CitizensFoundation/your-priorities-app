@@ -13,6 +13,7 @@ var passport = require('passport')
 var index = require('./controllers/index');
 var ideas = require('./controllers/ideas');
 var groups = require('./controllers/groups');
+var users = require('./controllers/users');
 
 var User = require('./models/idea');
 
@@ -84,22 +85,12 @@ var needsRoot = function() {
   };
 };
 
-app.get('/loggedin', function(req, res) {
-  res.send(req.isAuthenticated() ? req.user : '0');
-});
 
-app.post('/login', passport.authenticate('local'), function(req, res) {
-  res.send(req.user);
-});
-
-app.post('/logout', function(req, res){
-  req.logOut();
-  res.send(200);
-});
 
 app.use('/', index);
 app.use('/api/ideas', ideas);
 app.use('/api/groups', groups);
+app.use('/api/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
