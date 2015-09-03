@@ -13,7 +13,6 @@ var passport = require('passport')
 var index = require('./controllers/index');
 var ideas = require('./controllers/ideas');
 var groups = require('./controllers/groups');
-var users = require('./controllers/users');
 
 var User = require('./models/idea');
 
@@ -40,15 +39,19 @@ passport.deserializeUser(function(id, done) {
 });
 
 passport.use(new LocalStrategy(
-    function(username, password, done) {
-      User.find({
+    {
+      usernameField: "email"
+    },
+    function(email, password, done) {
+      /*User.find({
         where: { email: username }
-      }).then(function(user) {
+      }).then(function(email) {
         if (!user) {
           return done(null, false, { message: 'Incorrect username.' });
         }
         user.validPassword(password,done);
-      });
+      });*/
+      return done()
     }
 ));
 
@@ -85,12 +88,25 @@ var needsRoot = function() {
   };
 };
 
+app.get('/api/user/loggedin', function(req, res) {
+  res.send(req.isAuthenticated() ? req.user : '0');
+});
 
+
+app.post('/api/user/logout', function(req, res){
+  req.logOut();
+  res.send(200);
+});
 
 app.use('/', index);
 app.use('/api/ideas', ideas);
 app.use('/api/groups', groups);
-app.use('/api/users', users);
+//app.use('/api/users', users);
+
+app.get('/api/users/login',  passport.authenticate('local'), function(req, res) {
+  res.send(200);
+//  res.send(req.user);
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

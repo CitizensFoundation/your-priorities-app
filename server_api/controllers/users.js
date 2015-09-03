@@ -9,8 +9,9 @@ router.get('/loggedin', function(req, res) {
 });
 
 router.post('/login', passport.authenticate('local'), function(req, res) {
-  console.log("In login");
-  res.send(req.user);
+  res.send(200);
+//  console.log("In login");
+//  res.send(req.user);
 });
 
 router.post('/logout', function(req, res) {
