@@ -1,0 +1,217 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<!--
+A material login form asking for login and password.
+
+Example:
+
+    <yp-user-login on-login="handleLogin" credentials="{{_user}}">
+    </yp-user-login>
+
+@demo
+-->
+
+<dom-module id="yp-user-login">
+
+  <style>
+    :host {
+      display: block;
+      box-sizing: border-box;
+      text-align: center;
+      margin: 5px;
+      max-width: 250px;
+      min-width: 200px;
+    }
+
+    :host > h3 {
+      margin-top: 5px;
+    }
+
+    :host ::content img {
+      border-radius: 50%;
+    }
+
+    :host paper-input{
+      margin-left: auto;
+      margin-right: auto;
+      width: 90%;
+    }
+
+    :host paper-material{
+      padding: 15px;
+    }
+
+    #submitbutton {
+      margin-top: 10px;
+      width: 90%;
+      background: #4285f4;
+      color: white;
+    }
+  </style>
+
+  <template>
+
+    <paper-dialog id="dialog" modal>
+      <h3>[[heading]]</h3>
+
+      <content select="[avatar]"></content>
+
+      <form is="iron-form" id="form">
+        <paper-input id="email"
+                     type="text"
+                     label="[[t('login.email')]]"
+                     value="{{email}}"
+                     auto-validate pattern="[[emailValidationPattern]]"
+                     error-message="[[emailErrorMessage]]">
+        </paper-input>
+
+        <paper-input id="password"
+                     type="password"
+                     label="[[t('login.password')]]"
+                     value="{{password}}"
+                     auto-validate pattern="[[passwordValidationPattern]]"
+                     error-message="[[passwordErrorMessage]]">
+        </paper-input>
+
+      </form>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus on-tap="_validateAndSend">[[submitText]]</paper-button>
+      </div>
+    </paper-dialog>
+
+    <yp-ajax id="loginAjax" url="/api/user/login" on-response="_loginResponse"></yp-ajax>
+    <yp-ajax id="registerAjax" url="/api/user/register" on-response="_registerResponse"></yp-ajax>
+
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-user-login',
+
+    behaviors: [
+      Polymer.appHelpers
+    ],
+
+    properties: {
+
+      emailValidationPattern: {
+        type: String,
+        value: "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+      },
+
+      passwordValidationPattern: {
+        type: String,
+        value: '^[a-zA-Z0-9]+$'
+      },
+
+      emailErrorMessage: {
+        type: String,
+        value: t('login.email.error')
+      },
+
+      passwordErrorMessage: {
+        type: String,
+        value: t('login.email.error')
+      },
+
+      email: {
+        type: String
+      },
+
+      password: {
+        type: String
+      },
+
+      credentials: {
+        type: String,
+        notify: true,
+        computed: '_computeCredentials(email, password)'
+      },
+
+      register: {
+        type: Boolean,
+        value: false
+      },
+
+      submitText: {
+        type: String
+      },
+
+      redirectTo: {
+        type: String
+      }
+    },
+
+    // Element Lifecycle
+
+    ready: function() {
+    },
+
+    attached: function() {},
+
+    detached: function() {},
+
+    _setTexts: function () {
+      if (this.register) {
+        this.header = t('login.registerHeader');
+        this.submitText = t('login.submit');
+      } else {
+        this.header = t('login.header');
+        this.submitText = t('login.register.submit');
+      }
+    },
+
+    _computeCredentials: function(email, password) {
+      return JSON.stringify({
+        email: email,
+        password: password
+      });
+    },
+
+    _validateAndSend: function(e) {
+      if (this.$.form.checkValidity() && this.email && this.password){
+        if (this.register) {
+          this.$.registerAjax.body = this.credentials;
+          this.$.registerAjax.generateRequest();
+        } else {
+          this.$.loginAjax.body = this.credentials;
+          this.$.loginAjax.generateRequest();
+        }
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    _registerResponse: function(event, detail) {
+      debugger;
+      this._loginCompleted(detail.user);
+      if (this.redirectTo)
+        page(this.redirectTo)
+    },
+
+    _loginCompleted: function (user) {
+      window.globals.setUser(user);
+      this.fire("login");
+    },
+
+    open: function(redirectTo) {
+      this.redirectTo = redirectTo;
+      this.$.dialog.open();
+    }
+
+  });
+</script>

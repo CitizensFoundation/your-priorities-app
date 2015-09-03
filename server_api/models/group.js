@@ -13,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
     counter_points: DataTypes.INTEGER,
     counter_comments: DataTypes.INTEGER,
     counter_users: DataTypes.INTEGER,
-    public: DateType.BOOLEAN
+    public: DataTypes.BOOLEAN
   }, {
     underscored: true,
 
@@ -25,7 +25,7 @@ module.exports = function(sequelize, DataTypes) {
         Group.hasMany(models.Point, {foreignKey: "group_id"});
         Group.hasMany(models.Endorsement, {foreignKey: "group_id"});
         Group.hasMany(models.Category, {foreignKey: "group_id"});
-        Group.belongsToMany(User, { through: 'UserProject' });
+        Group.belongsToMany(models.User, { through: 'UserProject' });
         Group.hasMany(models.User, {foreignKey: "group_id"});
         Group.belongsTo(models.IsoCountry, {foreignKey: "iso_country_id"});
       }

@@ -6,10 +6,13 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-session/yp-session.html">
 
 <dom-module id="yp-app-globals">
 
   <template>
+    <yp-session id="session"></yp-session>
+
     <paper-dialog id="dialog" style="max-width: 500px;">
       <h2>[[t(dialogHeading)]]</h2>
       <p>[[t('notice.feature_not_implemented_a')]]</p>
@@ -87,7 +90,24 @@
           setupDefaults: {
             type: Boolean,
             value: false
+          },
+
+          user: {
+            type: Object,
+            notify: true
           }
+        },
+
+        getUser: function () {
+          this.$.session.get('user');
+        },
+
+        setUser: function (user) {
+          this.$.session.set('user', user);
+        },
+
+        loggedIn: function () {
+          return this.$.session.has('user');
         },
 
         activity: function (actor, verb, object, context) {

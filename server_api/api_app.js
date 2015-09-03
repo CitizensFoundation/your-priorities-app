@@ -5,6 +5,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var morgan = require('morgan');
 
 var passport = require('passport')
     , LocalStrategy = require('passport-local').Strategy;
@@ -17,16 +18,13 @@ var User = require('./models/idea');
 
 var app = express();
 
-app.configure(function() {
-  app.use(express.static(path.join(__dirname, '../client_app')));
-  app.use(morgan('combined'));
-  app.use(express.cookieParser());
-  app.use(express.bodyParser.json());
-  app.use(express.session({ secret: 'keyboard cat' }));
-  app.use(passport.initialize());
-  app.use(passport.session());
-  app.use(app.router);
-});
+app.use(express.static(path.join(__dirname, '../client_app')));
+app.use(morgan('combined'));
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(session({ secret: 'keyboard cat' }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 passport.serializeUser(function(user, done) {
   done(null, user.id);
