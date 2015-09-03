@@ -5,6 +5,7 @@ var bcrypt = require('bcrypt');
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define("User", {
     login: DataTypes.STRING,
+    email: DataTypes.STRING,
     facebook_uid: DataTypes.INTEGER,
     buddy_icon_file_name: DataTypes.STRING,
     twitter_profile_image_url:  DataTypes.STRING

@@ -14,7 +14,7 @@ var index = require('./controllers/index');
 var ideas = require('./controllers/ideas');
 var groups = require('./controllers/groups');
 
-var User = require('./models/idea');
+var models = require('./models');
 
 var app = express();
 
@@ -31,7 +31,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-  User.find({
+  models.User.find({
     where: {id: id}
   }).then(function(user) {
     done(err, user);
@@ -43,14 +43,14 @@ passport.use(new LocalStrategy(
       usernameField: "email"
     },
     function(email, password, done) {
-      /*User.find({
-        where: { email: username }
-      }).then(function(email) {
+      models.User.find({
+        where: { email: email }
+      }).then(function(user) {
         if (!user) {
           return done(null, false, { message: 'Incorrect username.' });
         }
         user.validPassword(password,done);
-      });*/
+      });
       return done()
     }
 ));
