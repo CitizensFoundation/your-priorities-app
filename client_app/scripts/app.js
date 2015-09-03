@@ -66,6 +66,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
   };
 
+  app.onOpenLogin = function() {
+    document.querySelector('#loginDialog').open();
+  };
+
   // Scroll page to top and expand header
   app.scrollPageToTop = function() {
     document.getElementById('mainContainer').scrollTop = 0;

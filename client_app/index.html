@@ -57,6 +57,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <body unresolved class="fullbleed layout vertical">
   <yp-app-globals disable-welcome setup-defaults></yp-app-globals>
+  <yp-user-login id="loginDialog"></yp-user-login>
 
   <span id="browser-sync-binding"></span>
   <template is="dom-bind" id="app">
@@ -86,6 +87,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <iron-icon icon="mail"></iron-icon>
             <span>Contact</span>
           </a>
+
+          <paper-button on-tap="onOpenLogin">Login</paper-button>
         </paper-menu>
       </paper-scroll-header-panel>
 

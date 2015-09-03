@@ -5,20 +5,9 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
-<link rel="import" href="../../bower_components/paper-">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-
-<!--
-A material login form asking for login and password.
-
-Example:
-
-    <yp-user-login on-login="handleLogin" credentials="{{_user}}">
-    </yp-user-login>
-
-@demo
--->
 
 <dom-module id="yp-user-login">
 
@@ -84,7 +73,7 @@ Example:
 
       </form>
       <div class="buttons">
-        <paper-button dialog-confirm autofocus on-tap="_validateAndSend">[[submitText]]</paper-button>
+        <paper-button autofocus on-tap="_validateAndSend">[[submitText]]</paper-button>
       </div>
     </paper-dialog>
 
@@ -118,13 +107,11 @@ Example:
       },
 
       emailErrorMessage: {
-        type: String,
-        value: t('login.email.error')
+        type: String
       },
 
       passwordErrorMessage: {
-        type: String,
-        value: t('login.email.error')
+        type: String
       },
 
       email: {
@@ -165,6 +152,8 @@ Example:
     detached: function() {},
 
     _setTexts: function () {
+      this.emailErrorMessage = this.t('login.email.error');
+      this.passwordErrorMessage = this.t('login.password.error');
       if (this.register) {
         this.header = t('login.registerHeader');
         this.submitText = t('login.submit');
@@ -182,6 +171,7 @@ Example:
     },
 
     _validateAndSend: function(e) {
+      debugger;
       if (this.$.form.checkValidity() && this.email && this.password){
         if (this.register) {
           this.$.registerAjax.body = this.credentials;
