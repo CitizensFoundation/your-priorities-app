@@ -94,7 +94,6 @@ app.get('/api/user/loggedin', function(req, res) {
   res.send(req.isAuthenticated() ? req.user : '0');
 });
 
-
 app.post('/api/user/logout', function(req, res){
   req.logOut();
   res.send(200);
@@ -110,8 +109,19 @@ app.get('/api/users/login',  passport.authenticate('local'), function(req, res) 
 });
 
 app.post('/api/users/register', function(req, res) {
-  var email = req.body.email;
-  res.send(req.user);
+
+  var user = models.User.build({
+    email: req.body.email
+  });
+
+  user.createPasswordHash(req.body.password);
+
+  user.save().then(function() {
+    req.user = user;
+    res.send(200);
+  }).catch(function(error) {
+    res.sendStatus(500);
+  });
 });
 
 // catch 404 and forward to error handler
