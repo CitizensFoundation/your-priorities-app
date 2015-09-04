@@ -13,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         Community.hasMany(models.Group, { foreignKey: "group_id" });
-        Community.belongsTo(models.Domain, {foreignKey: "community_id"});
+        Community.belongsTo(models.Domain, {foreignKey: "domain_id"});
       }
     }
   });

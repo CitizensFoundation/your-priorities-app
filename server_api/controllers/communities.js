@@ -10,4 +10,12 @@ router.get('/', function(req, res) {
   });
 });
 
+router.post('/', function(req, res) {
+  
+  models.Community.findAll({
+  }).then(function(communities) {
+    res.send(communities);
+  });
+});
+
 module.exports = router;

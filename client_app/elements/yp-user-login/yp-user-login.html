@@ -203,12 +203,17 @@
     _registerResponse: function(event, detail) {
       debugger;
       this._loginCompleted(detail.response);
-      if (this.redirectTo)
-        page(this.redirectTo)
+    },
+
+    _loginResponse: function(event, detail) {
+      debugger;
+      this._loginCompleted(detail.response);
     },
 
     _loginCompleted: function (user) {
       window.globals.setUser(user);
+      if (this.redirectTo)
+        page(this.redirectTo)
       this.fire("login");
     },
 

@@ -34,7 +34,7 @@ module.exports = function(sequelize, DataTypes) {
       validatePassword: function(password, done) {
         var verified = bcrypt.compareSync(password, this.encrypted_password);
         if (verified) {
-          done(true);
+          done(null, this);
         } else {
           models.UserLegacyPassword.findAll({
             where: { user_id: this.id }
@@ -45,7 +45,7 @@ module.exports = function(sequelize, DataTypes) {
               }
             });
             if (verified) {
-              done(null, user);
+              done(null, this);
             } else {
               done(null, false, { message: 'Incorrect password.' });
             }
