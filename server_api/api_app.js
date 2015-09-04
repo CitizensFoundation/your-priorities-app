@@ -104,8 +104,11 @@ app.use('/api/groups', groups);
 //app.use('/api/users', users);
 
 app.get('/api/users/login',  passport.authenticate('local'), function(req, res) {
-  res.send(200);
-//  res.send(req.user);
+  res.send(req.user);
+});
+
+app.post('/api/users/register', function(req, res) {
+  res.send(req.user);
 });
 
 // catch 404 and forward to error handler

@@ -130,9 +130,15 @@
         computed: '_computeCredentials(email, password)'
       },
 
+      credentialsParams: {
+        type: String,
+        notify: true,
+        computed: '_computeCredentialsParams(email, password)'
+      },
+
       register: {
         type: Boolean,
-        value: false
+        value: true
       },
 
       submitText: {
@@ -166,7 +172,14 @@
     },
 
     _computeCredentials: function(email, password) {
-     return {
+     return  JSON.stringify({
+        email: email,
+        password: password
+      });
+    },
+
+    _computeCredentialsParams: function(email, password) {
+      return {
         email: email,
         password: password
       };
@@ -178,8 +191,7 @@
           this.$.registerAjax.body = this.credentials;
           this.$.registerAjax.generateRequest();
         } else {
-          this.$.loginAjax.body = this.credentials;
-          this.$.loginAjax.params = this.credentials;
+          this.$.loginAjax.params = this.credentialsParams;
           this.$.loginAjax.generateRequest();
         }
         return true;
