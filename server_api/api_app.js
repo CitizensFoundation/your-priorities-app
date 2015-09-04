@@ -6,6 +6,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
+var multer = require('multer');
 
 var passport = require('passport')
     , LocalStrategy = require('passport-local').Strategy;
@@ -21,7 +22,8 @@ var app = express();
 app.use(express.static(path.join(__dirname, '../client_app')));
 app.use(morgan('combined'));
 app.use(cookieParser());
-app.use(bodyParser.json());
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(session({ secret: 'keyboard cat' }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -108,6 +110,7 @@ app.get('/api/users/login',  passport.authenticate('local'), function(req, res) 
 });
 
 app.post('/api/users/register', function(req, res) {
+  var email = req.body.email;
   res.send(req.user);
 });
 

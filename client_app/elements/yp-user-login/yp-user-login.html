@@ -188,6 +188,7 @@
     _validateAndSend: function(e) {
       if (this.$.form.checkValidity() && this.email && this.password){
         if (this.register) {
+          debugger;
           this.$.registerAjax.body = this.credentials;
           this.$.registerAjax.generateRequest();
         } else {
