@@ -36,7 +36,7 @@ passport.deserializeUser(function(id, done) {
   models.User.find({
     where: {id: id}
   }).then(function(user) {
-    done(err, user);
+    done(null, user);
   });
 });
 
@@ -51,9 +51,8 @@ passport.use(new LocalStrategy(
         if (!user) {
           return done(null, false, { message: 'Incorrect username.' });
         }
-        user.validPassword(password,done);
+        user.validatePassword(password,done);
       });
-      return done()
     }
 ));
 
@@ -117,8 +116,13 @@ app.post('/api/users/register', function(req, res) {
   user.createPasswordHash(req.body.password);
 
   user.save().then(function() {
-    req.user = user;
-    res.send(200);
+    req.logIn(user, function(err) {
+      if (err) {
+        return res.sendStatus(401);
+      } else {
+        res.send(user);
+      }
+    });
   }).catch(function(error) {
     res.sendStatus(500);
   });

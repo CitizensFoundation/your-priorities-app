@@ -8,7 +8,8 @@ module.exports = function(sequelize, DataTypes) {
     email: DataTypes.STRING,
     facebook_uid: DataTypes.INTEGER,
     buddy_icon_file_name: DataTypes.STRING,
-    twitter_profile_image_url:  DataTypes.STRING
+    twitter_profile_image_url:  DataTypes.STRING,
+    encrypted_password: DataTypes.STRING
   }, {
     underscored: true,
 
@@ -30,7 +31,7 @@ module.exports = function(sequelize, DataTypes) {
         this.encrypted_password = bcrypt.hashSync(password, salt);
       },
 
-      verifyPassword: function(password, done) {
+      validatePassword: function(password, done) {
         var verified = bcrypt.compareSync(password, this.encrypted_password);
         if (verified) {
           done(true);

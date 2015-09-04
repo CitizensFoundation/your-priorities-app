@@ -138,7 +138,7 @@
 
       register: {
         type: Boolean,
-        value: true
+        value: false
       },
 
       submitText: {
@@ -188,7 +188,6 @@
     _validateAndSend: function(e) {
       if (this.$.form.checkValidity() && this.email && this.password){
         if (this.register) {
-          debugger;
           this.$.registerAjax.body = this.credentials;
           this.$.registerAjax.generateRequest();
         } else {
@@ -203,7 +202,7 @@
 
     _registerResponse: function(event, detail) {
       debugger;
-      this._loginCompleted(detail.user);
+      this._loginCompleted(detail.response);
       if (this.redirectTo)
         page(this.redirectTo)
     },
