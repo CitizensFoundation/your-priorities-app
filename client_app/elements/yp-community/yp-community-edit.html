@@ -1,0 +1,118 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
+
+<dom-module id="yp-community-edit">
+
+  <template>
+    <yp-edit-dialog id="editDialog" action="[[action]]" save-text="[[saveText]]">
+      <h2>[[editHeaderText]]</h2>
+
+      <paper-input id="name"
+                   type="text"
+                   label="[[t('name')]]"
+                   value="{{community.name}}">
+      </paper-input>
+
+      <paper-input id="description"
+                   type="text"
+                   label="[[t('description')]]"
+                   value="{{community.description}}">
+      </paper-input>
+
+      <div class="openToggle">
+        <paper-toggle-button id="open" checked$="{{community.open}}"></paper-toggle-button><span>[[t('open')]]</span>
+      </div>
+    </yp-edit-dialog>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-community-edit',
+
+    behaviors: [
+      Polymer.appHelpers
+    ],
+
+    properties: {
+
+      editHeaderText: {
+        type: String
+      },
+
+      saveText: {
+        type: String
+      },
+
+      action: {
+        type: String,
+        value: "/api/communities"
+      },
+
+      method: {
+        type: String,
+        value: "POST"
+      },
+
+      community: {
+        type: Object,
+        value: { name: '', description: '', open: true }
+      },
+
+      name: {
+        type: String
+      },
+
+      description: {
+        type: String
+      },
+
+      open: {
+        type: Boolean,
+        value: true
+      },
+
+      new: {
+        type: Boolean,
+        value: true
+      }
+    },
+
+    ready: function () {
+      this._setup();
+    },
+
+    _setup: function () {
+      if (this.new) {
+        this.editHeaderText = this.t('community.edit.new');
+        this.saveText = this.t('save');
+      } else {
+        this.editHeaderText = this.t('community.edit.update');
+        this.saveText = this.t('update');
+        this.method = "PUT";
+      }
+    },
+
+    open: function () {
+      this.$.editDialog.open();
+    },
+
+    close: function () {
+      this.$.editDialog.close();
+    }
+
+  });
+</script>

@@ -1,0 +1,227 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/fix-dialog.html">
+
+<link rel="import" href="yp-fullscreen-dialog.html">
+
+<dom-module id="yp-edit-dialog">
+
+  <template>
+    <style>
+      .fullScreenDialog {
+        position: absolute;
+        display: block;
+        top: 0;
+        bottom: 0;
+        margin: 0;
+        min-width: 360px;
+        @apply(--paper-fullscreen-dialog);
+      }
+
+      .fullScreenDialog {
+        left: 0;
+        right: 0;
+        min-width: auto;
+        max-width: 100%;
+        @apply(--paper-fullscreen-dialog-narrow);
+      }
+
+      [main] {
+        background-color: var(--primary-background-color);
+      }
+
+      #toolbar {
+        background-color: var(--default-primary-color);
+        color: var(--text-primary_color);
+      }
+
+      #dismissBtn {
+        margin-left: 0px;
+        margin-right: 32px;
+        @apply(--paper-fullscreen-dialog-dismissbtn);
+      }
+
+      paper-button[dialog-confirm] {
+        background: none;
+        min-width: 44px;
+        margin: 6px 0 0 16px;
+        line-height: 20px;
+      }
+
+      #scroller {
+        @apply(--paper-fullscreen-dialog-content);
+        padding: 16px;
+      }
+
+      .title ::content h2 {
+      @apply(--paper-font-title);
+      }
+    </style>
+    <paper-dialog id="editDialog" class="fullScreenDialog" modal>
+
+      <iron-media-query query="[[_computeMediaQuery(responsiveWidth)]]" query-matches="{{narrow}}"></iron-media-query>
+
+      <paper-header-panel main id="headerPanel" class="no-padding" mode="{{mode}}">
+        <paper-toolbar id="toolbar">
+          <paper-icon-button id="dismissBtn" icon="close" on-tap="dismiss" dialog-dismiss></paper-icon-button>
+          <div class="title flex"><content select="h2"></content></div>
+          <paper-button dialog-confirm on-tap="_submit">[[saveText]]</paper-button>
+        </paper-toolbar>
+        <div id="scroller" class="flex">
+          <form is="iron-form" id="form" name="ypForm" action="[[action]]" method="[[method]]">
+            <content></content>
+          </form>
+        </div>
+      </paper-header-panel>
+
+      <paper-spinner id="spinner"></paper-spinner>
+
+    </paper-dialog>
+
+    <paper-dialog id="formErrorDialog" modal>
+      <p id="errorText">[[errorText]]</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus on-tap="_clearErrorText">[[t('ok')]]</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+
+</dom-module>
+
+<script>
+  (function() {
+    Polymer({
+
+      is: 'yp-edit-dialog',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.FixDialog
+      ],
+
+      properties: {
+
+        action: {
+          type: String
+        },
+
+        method: {
+          type: String,
+          value: "POST"
+        },
+
+        buttonText: {
+          type: String
+        },
+
+        errorText: {
+          type: String
+        },
+
+        response: {
+          type: Object,
+          notify: true
+        },
+
+        dialogOpen: {
+          type: Boolean,
+          value: true
+        },
+
+        saveText: {
+          type: String
+        },
+
+        narrow: {
+          type: Boolean,
+          reflectToAttribute: true,
+          observer: '_narrowChanged',
+          notify: true
+        }
+      },
+
+      _narrowChanged: function() {
+        this.fire('paper-responsive-change', {narrow: this.narrow});
+      },
+
+      listeners: {
+        'iron-form-submit': '_formSubmitted',
+        'iron-form-response': '_formResponse',
+        'iron-form-error': '_formError',
+        'iron-form-invalid': '_formInvalid'
+      },
+
+      open: function() {
+        this.$.editDialog.open();
+      },
+
+      close: function() {
+        this.$.dialogOpen.close();
+      },
+
+      _formSubmitted: function(event) {
+      },
+
+      _formResponse: function(response) {
+        this.$.spinner.active = false;
+        this.response = response;
+        this.close();
+      },
+
+      _formError: function(event, detail) {
+        console.log("Form error: ", detail.error);
+        this._showErrorDialog(detail.error);
+        this.$.spinner.active = false;
+      },
+
+      _formInvalid: function(event) {
+        this.$.spinner.active = false;
+      },
+
+      _submit: function() {
+        this.$.form.submit();
+        this.$.spinner.active = true;
+      },
+
+      submitForce: function() {
+        this.$.spinner.active = true;
+        this.$.form.submit();
+      },
+
+      getForm: function() {
+        return this.$.form;
+      },
+
+      stopSpinner: function() {
+        this.$.spinner.active = false;
+      },
+
+      validate: function() {
+        return this.$.form.validate();
+      },
+
+      _showErrorDialog: function(errorText) {
+        this.errorText = errorText;
+        this.setDialog(true,"formErrorDialog");
+        this.$.formErrorDialog.open();
+      },
+
+      _clearErrorText: function(event) {
+        this.$.formErrorDialog.close();
+        this.$.errorText="";
+      }
+
+    })
+  })();
+
+</script>
+

@@ -11,11 +11,14 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-  
-  models.Community.findAll({
-  }).then(function(communities) {
-    res.send(communities);
-  });
+  models.Community
+    .create({ name: req.body.name, description: req.body.name, public: req.body.public })
+    .save()
+    .then(function(community) {
+      res.send(community);
+    }).catch(function(error) {
+      res.sendStatus(403);
+    });
 });
 
 module.exports = router;
