@@ -12,7 +12,7 @@ router.get('/', function(req, res) {
 
 router.post('/', function(req, res) {
   models.Community
-    .create({ name: req.body.name, description: req.body.name, public: req.body.public })
+    .create({ name: req.body.name, description: req.body.description, public: req.body.open })
     .save()
     .then(function(community) {
       res.send(community);

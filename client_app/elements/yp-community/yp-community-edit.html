@@ -13,6 +13,18 @@
 
 <dom-module id="yp-community-edit">
 
+  <style>
+    .openToggle {
+      @apply(--layout-horizontal);
+      padding-top: 24px;
+    }
+
+    .toggleText {
+      padding-left: 16px;
+      font-size: 18px;
+    }
+  </style>
+
   <template>
     <yp-edit-dialog id="editDialog" action="[[action]]" save-text="[[saveText]]">
       <h2>[[editHeaderText]]</h2>
@@ -30,7 +42,7 @@
       </paper-input>
 
       <div class="openToggle">
-        <paper-toggle-button id="open" checked$="{{community.open}}"></paper-toggle-button><span>[[t('open')]]</span>
+        <paper-toggle-button id="open" checked$="{{community.open}}"></paper-toggle-button><span class="toggleText">[[t('open')]]</span>
       </div>
     </yp-edit-dialog>
   </template>
