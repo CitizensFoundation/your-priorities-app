@@ -30,19 +30,21 @@
       <h2>[[editHeaderText]]</h2>
 
       <paper-input id="name"
+                   name="name"
                    type="text"
                    label="[[t('name')]]"
                    value="{{community.name}}">
       </paper-input>
 
       <paper-input id="description"
+                   name="description"
                    type="text"
                    label="[[t('description')]]"
                    value="{{community.description}}">
       </paper-input>
 
       <div class="openToggle">
-        <paper-toggle-button id="open" checked$="{{community.open}}"></paper-toggle-button><span class="toggleText">[[t('open')]]</span>
+        <paper-toggle-button id="open" name="open" checked$="{{community.open}}"></paper-toggle-button><span class="toggleText">[[t('open')]]</span>
       </div>
     </yp-edit-dialog>
   </template>
