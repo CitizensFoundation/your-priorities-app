@@ -21,23 +21,7 @@ module.exports = function(sequelize, DataTypes) {
             .spread(function(domain, created) {
               req.ypDomain = domain;
               next();
-            }.bind(this)).catch(function(error) {
-              res.sendStatus(500);
             });
-      },
-
-      setYpHostname: function (req,res,next) {
-        var hostname = Domain.extractHost(req.headers.host);
-        if (hostname && hostname!="www") {
-          Community.find({
-            where: {hostname: hostname}
-          }).then(function(community) {
-            req.ypCommunity = community;
-            next();
-          }).catch(function(error) {
-            res.sendStatus(500);
-          });
-        }
       },
 
       extractDomain: function(url) {
@@ -48,19 +32,6 @@ module.exports = function(sequelize, DataTypes) {
           domain = domain.substring(dot+1,domain.length);
         }
         return domain;
-      },
-
-      extractHost: function(url) {
-        var domain,host,dot;
-        domain = url.split(':')[0];
-        if ((domain.match(/./g) || []).length>1) {
-          domain = url.split(':')[0];
-          dot = domain.indexOf('.');
-          host = domain.substring(0,dot);
-          return host;
-        } else {
-          return null;
-        }
       },
 
       associate: function(models) {

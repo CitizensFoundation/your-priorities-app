@@ -14,6 +14,31 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'communities',
     classMethods: {
 
+      setYpCommunity: function (req,res,next) {
+        var hostname = Community.extractHost(req.headers.host);
+        if (hostname && hostname!="www") {
+          Community.find({
+            where: { hostname: hostname }
+          }).then(function(community) {
+            req.ypCommunity = community;
+            next();
+          }.bind(this));
+        }
+      },
+
+      extractHost: function(url) {
+        var domain,host,dot;
+        domain = url.split(':')[0];
+        if ((domain.match(/./g) || []).length>1) {
+          domain = url.split(':')[0];
+          dot = domain.indexOf('.');
+          host = domain.substring(0,dot);
+          return host;
+        } else {
+          return null;
+        }
+      },
+
       convertAccessFromCheckboxes: function(body) {
         var access = 0;
         if (body.public) {
