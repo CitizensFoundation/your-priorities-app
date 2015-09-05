@@ -23,10 +23,11 @@
         bottom: 0;
         margin: 0;
         min-width: 360px;
+        max-width: 480px;
         @apply(--paper-fullscreen-dialog);
       }
 
-      .fullScreenDialog {
+      .fullScreenDsialog {
         left: 0;
         right: 0;
         min-width: auto;
@@ -62,9 +63,10 @@
       }
 
       .title ::content h2 {
-      @apply(--paper-font-title);
+        @apply(--paper-font-title);
       }
     </style>
+
     <paper-dialog id="editDialog" class="fullScreenDialog" modal>
 
       <iron-media-query query="[[_computeMediaQuery(responsiveWidth)]]" query-matches="{{narrow}}"></iron-media-query>
@@ -73,7 +75,7 @@
         <paper-toolbar id="toolbar">
           <paper-icon-button id="dismissBtn" icon="close" on-tap="dismiss" dialog-dismiss></paper-icon-button>
           <div class="title flex"><content select="h2"></content></div>
-          <paper-button dialog-confirm on-tap="_submit">[[saveText]]</paper-button>
+          <paper-button on-tap="_submit">[[saveText]]</paper-button>
         </paper-toolbar>
         <div id="scroller" class="flex">
           <form is="iron-form" id="form" name="ypForm" action="[[action]]" method="[[method]]">
@@ -165,7 +167,7 @@
       },
 
       close: function() {
-        this.$.dialogOpen.close();
+        this.$.editDialog.close();
       },
 
       _formSubmitted: function(event) {
@@ -188,7 +190,6 @@
       },
 
       _submit: function() {
-        debugger;
         this.$.form.submit();
         this.$.spinner.active = true;
       },

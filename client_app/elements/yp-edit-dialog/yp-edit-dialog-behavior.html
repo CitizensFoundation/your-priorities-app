@@ -1,0 +1,58 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<script>
+  Polymer.ypEditDialogBehavior = {
+
+    behaviors: [
+      Polymer.appHelpers
+    ],
+
+    properties: {
+
+      new: {
+        type: Boolean,
+        value: true
+      },
+
+      editHeaderText: {
+        type: String
+      },
+
+      saveText: {
+        type: String
+      }
+    },
+
+    ready: function () {
+     this._setupNewUpdateState();
+    },
+
+    _setupNewUpdateState: function () {
+      if (this.new) {
+        this.saveText = this.t('save');
+      } else {
+        this.saveText = this.t('update');
+        this.method = "PUT";
+      }
+      this._setupTranslation();
+    },
+
+    open: function (newOrUpdate) {
+      if (newOrUpdate) {
+        if (newOrUpdate==="new") {
+          this.new = true;
+        } else {
+          this.new = false;
+        }
+        this._setupNewUpdateState();
+      }
+      this.$.editDialog.open();
+    },
+
+    close: function () {
+      this.$.editDialog.close();
+    }
+  };
+
+</script>

@@ -1,31 +1,36 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 
 <dom-module id="yp-community-edit">
-
-  <style>
-    .openToggle {
-      @apply(--layout-horizontal);
-      padding-top: 24px;
-    }
-
-    .toggleText {
-      padding-left: 16px;
-      font-size: 18px;
-    }
-  </style>
-
   <template>
+
+    <style>
+      .access {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+
+      .accessHeader {
+        color: var(--default-primary-color,#777);
+        font-weight: normal;
+        margin-bottom: 0px;
+      }
+
+      paper-radio-button {
+        display: block;
+      }
+    </style>
+
     <yp-edit-dialog id="editDialog" action="[[action]]" save-text="[[saveText]]">
       <h2>[[editHeaderText]]</h2>
 
@@ -33,19 +38,36 @@
                    name="name"
                    type="text"
                    label="[[t('name')]]"
-                   value="{{community.name}}">
+                   value="{{community.name}}"
+                   maxlength="60"
+                   char-counter>
       </paper-input>
 
-      <paper-input id="description"
-                   name="description"
+      <paper-textarea id="description"
+                      name="description"
+                      bind-value="{{community.description}}"
+                      label="[[t('description')]]"
+                      char-counter
+                      rows="2"
+                      max-rows="5"
+                      maxlength="200">
+      </paper-textarea>
+
+      <paper-input id="website"
+                   name="website"
                    type="text"
-                   label="[[t('description')]]"
-                   value="{{community.description}}">
+                   label="[[t('website')]]"
+                   value="{{community.website}}"
+                   maxlength="2083">
       </paper-input>
 
-      <div class="openToggle">
-        <paper-toggle-button id="open" name="open" checked$="{{community.open}}"></paper-toggle-button><span class="toggleText">[[t('open')]]</span>
-      </div>
+      <h3 class="accessHeader">[[t('access')]]</h3>
+      <paper-radio-group class="access" selected="{{community.access}}">
+        <paper-radio-button name="2">[[t('public')]]</paper-radio-button>
+        <paper-radio-button name="1">[[t('closed')]]</paper-radio-button>
+        <paper-radio-button name="0">[[t('secret')]]</paper-radio-button>
+      </paper-radio-group>
+
     </yp-edit-dialog>
   </template>
 
@@ -58,75 +80,29 @@
     is: 'yp-community-edit',
 
     behaviors: [
-      Polymer.appHelpers
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior
     ],
 
     properties: {
-
-      editHeaderText: {
-        type: String
-      },
-
-      saveText: {
-        type: String
-      },
 
       action: {
         type: String,
         value: "/api/communities"
       },
 
-      method: {
-        type: String,
-        value: "POST"
-      },
-
       community: {
         type: Object,
-        value: { name: '', description: '', open: true }
-      },
-
-      name: {
-        type: String
-      },
-
-      description: {
-        type: String
-      },
-
-      open: {
-        type: Boolean,
-        value: true
-      },
-
-      new: {
-        type: Boolean,
-        value: true
+        value: { name: '', description: '', access: "0" }
       }
     },
 
-    ready: function () {
-      this._setup();
-    },
-
-    _setup: function () {
+    _setupTranslation: function () {
       if (this.new) {
         this.editHeaderText = this.t('community.edit.new');
-        this.saveText = this.t('save');
       } else {
         this.editHeaderText = this.t('community.edit.update');
-        this.saveText = this.t('update');
-        this.method = "PUT";
       }
-    },
-
-    open: function () {
-      this.$.editDialog.open();
-    },
-
-    close: function () {
-      this.$.editDialog.close();
     }
-
   });
 </script>
