@@ -11,10 +11,19 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
+  var access = 0;
+  if (req.body.public) {
+    access = 2;
+  } else if (req.body.closed) {
+    access = 1;
+  } else if (req.body.secret) {
+    access = 0;
+  }
   var community = models.Community.build({
     name: req.body.name,
     description: req.body.description,
-    open: true
+    access:access,
+    website: req.body.website
   });
 
   community.save().then(function() {

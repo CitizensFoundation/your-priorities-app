@@ -31,7 +31,7 @@
       }
     </style>
 
-    <yp-edit-dialog id="editDialog" action="[[action]]" save-text="[[saveText]]">
+    <yp-edit-dialog id="editDialog" action="[[action]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
       <paper-input id="name"
@@ -45,12 +45,12 @@
 
       <paper-textarea id="description"
                       name="description"
-                      bind-value="{{community.description}}"
+                      value="{{community.description}}"
                       label="[[t('description')]]"
                       char-counter
                       rows="2"
                       max-rows="5"
-                      maxlength="200">
+                      maxlength="300">
       </paper-textarea>
 
       <paper-input id="website"
@@ -62,10 +62,10 @@
       </paper-input>
 
       <h3 class="accessHeader">[[t('access')]]</h3>
-      <paper-radio-group class="access" selected="{{community.access}}">
-        <paper-radio-button name="2">[[t('public')]]</paper-radio-button>
-        <paper-radio-button name="1">[[t('closed')]]</paper-radio-button>
-        <paper-radio-button name="0">[[t('secret')]]</paper-radio-button>
+      <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
+        <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
+        <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>
+        <paper-radio-button name="secret">[[t('secret')]]</paper-radio-button>
       </paper-radio-group>
 
     </yp-edit-dialog>
@@ -93,15 +93,35 @@
 
       community: {
         type: Object,
-        value: { name: '', description: '', access: "0" }
+        observer: "_communityChanged"
+      },
+
+      communityAccess: {
+        type: String
       }
+    },
+
+    _communityChanged: function (newValue, oldValue) {
+      if (this.community.access===0) {
+        this.communityAccess = "secret"
+      } else if (this.community.access===1) {
+        this.communityAccess = "open"
+      } else if (this.community.access===2) {
+        this.communityAccess = "public"
+      }
+    },
+
+    _clear: function () {
+      this.community = { name: '', description: '', access: "public" }
     },
 
     _setupTranslation: function () {
       if (this.new) {
-        this.editHeaderText = this.t('community.edit.new');
+        this.editHeaderText = this.t('New community');
+        this.toastText = this.t('community.toast.created');
       } else {
         this.editHeaderText = this.t('community.edit.update');
+        this.toastText = this.t('community.toast.updated');
       }
     }
   });

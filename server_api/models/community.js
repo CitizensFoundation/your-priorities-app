@@ -6,7 +6,8 @@ module.exports = function(sequelize, DataTypes) {
   var Community = sequelize.define("Community", {
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
-    open: DataTypes.BOOLEAN
+    access: DataTypes.INTEGER,
+    website: DataTypes.TEXT
   }, {
     underscored: true,
     tableName: 'communities',

@@ -21,6 +21,10 @@
 
       saveText: {
         type: String
+      },
+
+      toastText: {
+        type: String
       }
     },
 
@@ -30,7 +34,7 @@
 
     _setupNewUpdateState: function () {
       if (this.new) {
-        this.saveText = this.t('save');
+        this.saveText = this.t('create');
       } else {
         this.saveText = this.t('update');
         this.method = "PUT";
@@ -42,6 +46,7 @@
       if (newOrUpdate) {
         if (newOrUpdate==="new") {
           this.new = true;
+          this._clear();
         } else {
           this.new = false;
         }

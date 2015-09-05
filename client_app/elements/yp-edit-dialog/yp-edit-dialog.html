@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/fix-dialog.html">
@@ -22,8 +23,9 @@
         top: 0;
         bottom: 0;
         margin: 0;
+        width: 480px;
         min-width: 360px;
-        max-width: 480px;
+        max-width: 1024px;
         @apply(--paper-fullscreen-dialog);
       }
 
@@ -65,6 +67,10 @@
       .title ::content h2 {
         @apply(--paper-font-title);
       }
+
+      paper-toast {
+        z-index: 9999;
+      }
     </style>
 
     <paper-dialog id="editDialog" class="fullScreenDialog" modal>
@@ -73,7 +79,7 @@
 
       <paper-header-panel main id="headerPanel" class="no-padding" mode="{{mode}}">
         <paper-toolbar id="toolbar">
-          <paper-icon-button id="dismissBtn" icon="close" on-tap="dismiss" dialog-dismiss></paper-icon-button>
+          <paper-icon-button id="dismissBtn" icon="close" dialog-dismiss></paper-icon-button>
           <div class="title flex"><content select="h2"></content></div>
           <paper-button on-tap="_submit">[[saveText]]</paper-button>
         </paper-toolbar>
@@ -94,6 +100,8 @@
         <paper-button dialog-confirm autofocus on-tap="_clearErrorText">[[t('ok')]]</paper-button>
       </div>
     </paper-dialog>
+
+    <paper-toast id="toast" text="[[toastTextCombined]]"></paper-toast>
 
   </template>
 
@@ -126,6 +134,14 @@
         },
 
         errorText: {
+          type: String
+        },
+
+        toastText: {
+          type: String
+        },
+
+        toastTextCombined: {
           type: String
         },
 
@@ -173,10 +189,12 @@
       _formSubmitted: function(event) {
       },
 
-      _formResponse: function(response) {
+      _formResponse: function(response, detail) {
         this.$.spinner.active = false;
         this.response = response;
         this.close();
+        this.toastTextCombined = this.toastText + " " + detail.name;
+        this.$.toast.show();
       },
 
       _formError: function(event, detail) {
