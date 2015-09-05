@@ -11,22 +11,16 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-  var access = 0;
-  if (req.body.public) {
-    access = 2;
-  } else if (req.body.closed) {
-    access = 1;
-  } else if (req.body.secret) {
-    access = 0;
-  }
+
   var community = models.Community.build({
     name: req.body.name,
     description: req.body.description,
-    access:access,
+    access: models.Community.convertAccessFromCheckboxes(req.body),
     website: req.body.website
   });
 
   community.save().then(function() {
+     // Automatically add user to community
      res.send(community);
   }).catch(function(error) {
     res.sendStatus(403);

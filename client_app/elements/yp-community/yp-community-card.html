@@ -1,0 +1,154 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-community-stats/yp-community-stats.html">
+
+<dom-module id="yp-community-card">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+        width: 384px;
+      }
+
+      .description {
+        @apply(--layout-vertical);
+        color: var(--primary-color-more-darker, #424242);
+        line-height: var(--description-line-height, 1.3);
+      }
+
+      .join-button {
+        @apply(--layout-left);
+        color: var(--accent-color-lighter, #FFB74D);
+      }
+
+      .join-button-secondary {
+        color: var(--primary-color-more-darker, #777);
+      }
+
+      .iso-image {
+        vertical-align: top;
+        padding-right: 8px;
+      }
+
+      .stats {
+        @apply(--layout-self-center);
+      }
+
+      .community-name {
+        padding: 0px;
+        padding-bottom: 4px;
+        margin: 0px;
+      }
+
+      .idea-image {
+      }
+
+      .separator {
+        padding: 16px;
+        font-size: 14px;
+        border-top: 1px solid #e0e0e0;
+      }
+    </style>
+
+    <template is="dom-if" if="[[community]]">
+      <paper-card class="pink" image$="">
+        <div class="card-content">
+          <div class="description">
+            <h2 class="community-name">[[communityName(community)]]</h2>
+            <div>[[communityDescription(community)]]</div>
+          </div>
+        </div>
+        <img src="[[communityImagePath(community)]]" class="idea-image">
+        <div class="card-content">
+          <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+        </div>
+        <div class="card-actions join-button">
+          <paper-button on-tap="_goToCommunity">{{t('join')}}</paper-button>
+          <paper-button class="join-button-secondary">{{t('view')}}</paper-button>
+        </div>
+      </paper-card>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-community-card',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        community: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      _goToCommunity: function (e) {
+        var communityUrl = '/community/' + this.community.id;
+        window.globals.activity('Anonymous', 'open', 'community', communityUrl);
+        page(communityUrl);
+      },
+
+      communityImagePath: function (community) {
+        return this.randomStockImage();
+
+        if (this.community.IsoCountry) {
+          return this.isoCountryImagePath() + community.IsoCountry.code.toLowerCase() + '.png';
+        }
+        else if (community.name.indexOf("NHS") > -1) {
+          return "https://i.imgur.com/uavPcDU.jpg"
+        }
+        else if (community.name.indexOf("Iceland") > -1) {
+          return "https://i.imgur.com/v2SyyDl.png"
+        }
+        else if (true) {
+          return "https://i.imgur.com/OPpnjwm.jpg"
+        }
+        else if (false) {
+          return "https://placehold.it/384x216"
+        }
+        else if (community.top_banner_file_name) {
+          return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(community.id) + '/icon_full/' + community.top_banner_file_name;
+        } else
+        {
+          return this.defaultCommunityImage('');
+        }
+      },
+
+      getIsoCountryImagePath: function (community) {
+        return this.isoCountryImagePath() + community.IsoCountry.code.toLowerCase() + '.png';
+      },
+
+      communityName: function (community) {
+        if (community.name) {
+          return this.truncate(this.trim(community.name), 200);
+        } else {
+          return community.short_name;
+        }
+      },
+
+      communityDescription: function (community) {
+        if (community.description) {
+          return this.truncate(this.trim(community.description), 300, '...');
+        } else {
+          return "";
+        }
+      }
+    });
+  </script>
+</dom-module>

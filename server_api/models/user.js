@@ -22,6 +22,8 @@ module.exports = function(sequelize, DataTypes) {
         User.hasMany(models.Idea);
         User.hasMany(models.Point);
         User.hasMany(models.Endorsement);
+        User.belongsToMany(models.Group, { through: 'GroupUser' });
+        User.belongsToMany(models.Community, { through: 'CommunityUser' });
       }
     },
 

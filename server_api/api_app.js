@@ -30,6 +30,14 @@ app.use(session({ secret: 'keyboard cat' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(function (req, res, next) {
+  models.Domain.setYpDomain(req, res, function () {
+    models.Domain.setYpHostname(req, res, function () {
+      next();
+    });
+  });
+});
+
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });

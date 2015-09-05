@@ -25,7 +25,7 @@ module.exports = function(sequelize, DataTypes) {
         Group.hasMany(models.Point, {foreignKey: "group_id"});
         Group.hasMany(models.Endorsement, {foreignKey: "group_id"});
         Group.hasMany(models.Category, {foreignKey: "group_id"});
-        Group.belongsToMany(models.User, { through: 'UserProject' });
+        Group.belongsToMany(models.User, { through: 'GroupUser' });
         Group.hasMany(models.User, {foreignKey: "group_id"});
         Group.belongsTo(models.IsoCountry, {foreignKey: "iso_country_id"});
       }
