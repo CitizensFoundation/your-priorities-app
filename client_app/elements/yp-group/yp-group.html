@@ -11,6 +11,7 @@
 <link rel="import" href="../yp-idea/yp-idea.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-idea/yp-idea-card.html">
+<link rel="import" href="../yp-idea/yp-idea-edit.html">
 
 <dom-module id="yp-group">
   <template>
@@ -40,15 +41,15 @@
 
     <yp-ajax auto="false" id="ideasAjax" url="" on-response="_ideasResponse"></yp-ajax>
 
+    <yp-idea-edit id="ideaEdit" on-iron-form-response="_refresh"></yp-idea-edit>
+
     <div class="card-container">
       <template is="dom-if" if="[[ideas]]">
         <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
           <yp-idea-card idea="[[idea]]" on-mouseover="_ideaCardMouseOver" on-mouseout="_ideaCardMouseOut"></yp-idea-card>
         </template>
       </template>
-      <a href="/add" on-click="navigate">
-        <paper-fab icon="add" z="1" class="createIdea" title="[[computeTitle()]]" on-tap="newIdea"></paper-fab>
-      </a>
+      <paper-fab icon="add" z="1" class="createIdea" title="[[computeTitle()]]" on-tap="newIdea"></paper-fab>
     </div>
   </template>
 
@@ -88,6 +89,10 @@
         }
       },
 
+      _refresh: function () {
+        this.$.ajax.generateRequest();
+      },
+
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue) {
           this.set("ideas",[]);
@@ -112,6 +117,7 @@
 
       newIdea: function () {
         window.globals.activity('Anonymous', 'open', 'newIdea');
+        this.$.ideaEdit.open('new', {group: this.groupId});
         window.globals.openDialog('ideas.add_new');
       },
 

@@ -1,0 +1,115 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
+
+<dom-module id="yp-idea-edit">
+  <template>
+
+    <style>
+      .access {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+
+      .accessHeader {
+        color: var(--default-primary-color,#777);
+        font-weight: normal;
+        margin-bottom: 0px;
+      }
+
+      paper-radio-button {
+        display: block;
+      }
+    </style>
+
+    <yp-edit-dialog id="editDialog" action="[[action]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <h2>[[editHeaderText]]</h2>
+
+      <paper-input id="name"
+                   name="name"
+                   type="text"
+                   label="[[t('name')]]"
+                   value="{{idea.name}}"
+                   maxlength="60"
+                   char-counter>
+      </paper-input>
+
+      <paper-textarea id="description"
+                      name="description"
+                      value="{{idea.description}}"
+                      label="[[t('description')]]"
+                      char-counter
+                      rows="2"
+                      max-rows="5"
+                      maxlength="200">
+      </paper-textarea>
+
+      <template is="bind-if" if="[[new]]">
+        <paper-textarea id="pointFor"
+                        name="pointFor"
+                        value="{{idea.pointFor}}"
+                        label="[[t('point.for')]]"
+                        char-counter
+                        rows="2"
+                        max-rows="5"
+                        maxlength="200">
+        </paper-textarea>
+      </template>
+
+    </yp-edit-dialog>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-idea-edit',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/ideas"
+      },
+
+      idea: {
+        type: Object,
+        observer: "_ideaChanged"
+      },
+
+      ideaAccess: {
+        type: String
+      }
+    },
+
+    _clear: function () {
+      this.idea = { name: '', description: '', pointFor: '', categoryId: null }
+    },
+
+    _setupTranslation: function () {
+      if (this.new) {
+        this.editHeaderText = this.t('New idea');
+        this.toastText = this.t('idea.toast.created');
+      } else {
+        this.editHeaderText = this.t('idea.edit.update');
+        this.toastText = this.t('idea.toast.updated');
+      }
+    }
+  });
+</script>

@@ -39,7 +39,7 @@ router.get('/:id/search/:term', function(req, res) {
 
 router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
 
-  var where = "group_id = "+req.params.id;
+  var where = '"Idea"."group_id" = '+req.params.id;
   var order = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
   if (req.params.filter!="inProgress") {
@@ -77,7 +77,6 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
     models.Idea.findAll({
       order: order,
       where: [where, []],
-      limit: 42,
       include: [ models.Category, models.IdeaRevision, models.Point ]
     }).then(function(ideas) {
       res.send({group: group, Ideas: ideas});
