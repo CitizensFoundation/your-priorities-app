@@ -27,9 +27,11 @@ module.exports = function(sequelize, DataTypes) {
       extractDomain: function(url) {
         var domain,host,dot;
         domain = url.split(':')[0];
-        if ((domain.match(/./g) || []).length>1) {
-          dot = domain.indexOf('.');
-          domain = domain.substring(dot+1,domain.length);
+        if (domain!="192.168.42.213") {
+          if ((domain.match(/./g) || []).length>1) {
+            dot = domain.indexOf('.');
+            domain = domain.substring(dot+1,domain.length);
+          }
         }
         return domain;
       },

@@ -39,13 +39,15 @@ module.exports = function(sequelize, DataTypes) {
       extractHost: function(url) {
         var domain,host,dot;
         domain = url.split(':')[0];
-        if ((domain.match(/./g) || []).length>1) {
-          domain = url.split(':')[0];
-          dot = domain.indexOf('.');
-          host = domain.substring(0,dot);
-          return host;
-        } else {
-          return null;
+        if (domain!="192.168.42.213") {
+          if ((domain.match(/./g) || []).length>1) {
+            domain = url.split(':')[0];
+            dot = domain.indexOf('.');
+            host = domain.substring(0,dot);
+            return host;
+          } else {
+            return null;
+          }
         }
       },
 

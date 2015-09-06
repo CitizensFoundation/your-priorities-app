@@ -20,7 +20,7 @@
       :host {
         display: block;
         @apply(--layout-vertical);
-        width: 384px;
+        width: 300px;
       }
 
       .description {
@@ -54,6 +54,7 @@
       }
 
       .idea-image {
+        width: 100%;
       }
 
       .separator {
@@ -65,13 +66,13 @@
 
     <template is="dom-if" if="[[community]]">
       <paper-card class="pink" image$="">
+        <iron-image preload src="[[communityImagePath(community)]]" class="idea-image"/>
         <div class="card-content">
           <div class="description">
             <h2 class="community-name">[[communityName(community)]]</h2>
             <div>[[communityDescription(community)]]</div>
           </div>
         </div>
-        <img src="[[communityImagePath(community)]]" class="idea-image">
         <div class="card-content">
           <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
         </div>
