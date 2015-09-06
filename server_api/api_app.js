@@ -15,7 +15,7 @@ var index = require('./controllers/index');
 var ideas = require('./controllers/ideas');
 var groups = require('./controllers/groups');
 var communities = require('./controllers/communities');
-var domains = require('./controllers/communities');
+var domains = require('./controllers/domains');
 
 var models = require('./models');
 

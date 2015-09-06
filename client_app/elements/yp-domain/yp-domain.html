@@ -1,0 +1,111 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-idea/yp-idea.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+<link rel="import" href="../yp-community/yp-community-card.html">
+
+<dom-module id="yp-domain">
+  <template>
+    <style>
+
+      :host {
+        @apply(--layout-horizontal);
+      }
+
+      .createCommunity {
+        background-color: --var(accent-color-darker,#f57c00);
+        position: fixed;
+        bottom:24px;
+        right: 28px;
+      }
+
+      .card-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+      }
+
+      yp-community-card {
+        padding: 16px;
+      }
+
+    </style>
+
+    <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
+
+    <yp-community-edit id="communityEdit" on-iron-form-response="_refresh"></yp-community-edit>
+
+    <div class="card-container">
+      <template is="dom-if" if="[[communities]]">
+        <template is="dom-repeat" class="list" items="[[communities]]" as="community">
+          <yp-community-card community="[[community]]" on-mouseover="_communityCardMouseOver" on-mouseout="_communityCardMouseOut"></yp-community-card>
+        </template>
+      </template>
+      <paper-fab icon="add" z="1" class="createCommunity" title="[[t('community.add')]" on-tap="_newCommunity"></paper-fab>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-domain',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        communities: {
+          type: Array
+        },
+
+        domainId: {
+          type: Number,
+          value: null,
+          observer: "_domainIdChanged"
+        },
+
+        url: {
+          type: String
+        }
+      },
+
+      _domainIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set(this.idea,null);
+          this.$.ajax.url = '/api/domains/' + this.domainId;
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      _refresh: function () {
+        this.$.ajax.generateRequest();
+      },
+
+      _newCommunity: function () {
+        window.globals.activity('Anonymous', 'open', 'newCommunity');
+        window.globals.openDialog('communities.new');
+      },
+
+      _response: function (event, detail, sender) {
+        this.set(this.communities,detail.response);
+      },
+
+      _communityCardMouseOver: function (event) {
+        event.currentTarget.elevation = 5;
+      },
+
+      _communityCardMouseOut: function (event) {
+        event.currentTarget.elevation = 1;
+      }
+
+    });
+  </script>
+</dom-module>
