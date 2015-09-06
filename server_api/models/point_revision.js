@@ -12,6 +12,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         PointRevision.belongsTo(models.Point);
         PointRevision.belongsTo(models.User);
+        PointRevision.belongsTo(models.Group);
       }
     }
   });

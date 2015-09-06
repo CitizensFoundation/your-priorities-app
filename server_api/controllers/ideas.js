@@ -30,7 +30,6 @@ router.get('/:id/endorsements', function(req, res) {
 });
 
 router.get('/:id', function(req, res) {
-
   models.Idea.find({
     where: { id: req.params.id },
     include: [
@@ -56,6 +55,40 @@ router.get('/:id', function(req, res) {
     ]
   }).then(function(idea) {
     res.send(idea);
+  });
+});
+
+router.post('/:groupId', function(req, res) {
+  var idea = models.Idea.build({
+    name: req.body.name,
+    description: req.body.description,
+    group_id: req.params.groupId,
+    status: 'published'
+  });
+  idea.save().then(function() {
+    var ideaRevision = models.IdeaRevision.build({
+      name: idea.name,
+      description: idea.description,
+      group_id: idea.groupId,
+      idea_id: idea.id
+    });
+    ideaRevision.save().then(function() {
+      var point = models.Point.build({
+        content: req.body.pointFor,
+        group_id: idea.groupId,
+        idea_id: idea.id
+      });
+      point.save().then(function() {
+        var pointRevision = models.PointRevision.build({
+          content: point.content,
+          group_id: point.groupId,
+          idea_id: idea.id
+        });
+        pointRevision.save().then(function() {
+          res.send(idea);
+        });
+      });
+    });
   });
 });
 

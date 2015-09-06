@@ -39,7 +39,7 @@
 
     </style>
 
-    <yp-ajax auto="false" id="ideasAjax" url="" on-response="_ideasResponse"></yp-ajax>
+    <yp-ajax auto="false" id="ajax" url="" on-response="_ideasResponse"></yp-ajax>
 
     <yp-idea-edit id="ideaEdit" on-iron-form-response="_refresh"></yp-idea-edit>
 
@@ -99,11 +99,11 @@
           if (this.filter) {
             window.selectedFilter = this.filter;
           }
-          this.$.ideasAjax.url = '/api/groups/' + this.groupId + '/ideas/' + window.selectedFilter;
+          this.$.ajax.url = '/api/groups/' + this.groupId + '/ideas/' + window.selectedFilter;
           if (this.categoryId) {
-            this.$.ideasAjax.url += '/' + this.categoryId;
+            this.$.ajax.url += '/' + this.categoryId;
           }
-          this.$.ideasAjax.generateRequest();
+          this.$.ajax.generateRequest();
         }
       },
 
@@ -117,33 +117,31 @@
 
       newIdea: function () {
         window.globals.activity('Anonymous', 'open', 'newIdea');
-        this.$.ideaEdit.open('new', {group: this.groupId});
+        this.$.ideaEdit.open('new', {groupId: this.groupId});
       },
 
       _ideasResponse: function (event, detail, sender) {
         var group = detail.response.group;
         this.set("ideas", detail.response.Ideas);
         this.set("group", group);
+        debugger;
         this._processCategories();
         this.fire("change-header", { headerTitle: group.name,
                                      headerDescription: group.description });
       },
 
       _processCategories: function () {
-          if (this.categoryId) {
-            for (var i = 0; i < this.group.Categories.length; i++) {
-              if (this.group.Categories[i].id == this.categoryId) {
-                window.selectedCategoryName = this.group.Categories[i].name;
-                //this.$.layout.updateFilter();
-              }
+        if (this.categoryId) {
+          for (var i = 0; i < this.group.Categories.length; i++) {
+            if (this.group.Categories[i].id == this.categoryId) {
+              window.selectedCategoryName = this.group.Categories[i].name;
+              //this.$.layout.updateFilter();
             }
-          } else {
-            window.selectedCategoryName = 'categories.all';
-            //this.$.layout.updateFilter();
           }
-      },
-
-      ready: function () {
+        } else {
+          window.selectedCategoryName = 'categories.all';
+          //this.$.layout.updateFilter();
+        }
       },
 
       computeTitle: function () {

@@ -32,7 +32,7 @@
       }
     </style>
 
-    <yp-edit-dialog id="editDialog" action="[[action]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" action="[[action]]" save-text="[[saveText]]" toast-text="[[toastText]]" params="[[params]]">
       <h2>[[editHeaderText]]</h2>
 
       <paper-input id="name"
@@ -90,12 +90,7 @@
       },
 
       idea: {
-        type: Object,
-        observer: "_ideaChanged"
-      },
-
-      ideaAccess: {
-        type: String
+        type: Object
       }
     },
 
