@@ -28,6 +28,14 @@
       }
     },
 
+    listeners: {
+      'iron-form-response': '_formResponse',
+    },
+
+    _formResponse: {
+      this._clear();
+    },
+
     ready: function () {
      this._setupNewUpdateState();
     },
@@ -46,7 +54,6 @@
       if (newOrUpdate) {
         if (newOrUpdate==="new") {
           this.new = true;
-          this._clear();
         } else {
           this.new = false;
         }
