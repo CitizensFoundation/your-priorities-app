@@ -1,0 +1,120 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
+
+<dom-module id="yp-group-edit">
+  <template>
+
+    <style>
+      .access {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+
+      .accessHeader {
+        color: var(--default-primary-color,#777);
+        font-weight: normal;
+        margin-bottom: 0px;
+      }
+
+      paper-radio-button {
+        display: block;
+      }
+    </style>
+
+    <yp-edit-dialog id="editDialog" action="[[action]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <h2>[[editHeaderText]]</h2>
+
+      <paper-input id="name"
+                   name="name"
+                   type="text"
+                   label="[[t('name')]]"
+                   value="{{group.name}}"
+                   maxlength="60"
+                   char-counter>
+      </paper-input>
+
+      <paper-textarea id="description"
+                      name="description"
+                      value="{{group.description}}"
+                      label="[[t('description')]]"
+                      char-counter
+                      rows="2"
+                      max-rows="5"
+                      maxlength="300">
+      </paper-textarea>
+
+      <h3 class="accessHeader">[[t('access')]]</h3>
+      <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
+        <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
+        <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>
+        <paper-radio-button name="secret">[[t('secret')]]</paper-radio-button>
+      </paper-radio-group>
+
+    </yp-edit-dialog>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-group-edit',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/groups"
+      },
+
+      group: {
+        type: Object,
+        observer: "_groupChanged"
+      },
+
+      groupAccess: {
+        type: String
+      }
+    },
+
+    _groupChanged: function (newValue, oldValue) {
+      if (this.group.access===0) {
+        this.groupAccess = "secret"
+      } else if (this.group.access===1) {
+        this.groupAccess = "open"
+      } else if (this.group.access===2) {
+        this.groupAccess = "public"
+      }
+    },
+
+    _clear: function () {
+      this.group = { name: '', description: '', access: 2 }
+    },
+
+    _setupTranslation: function () {
+      if (this.new) {
+        this.editHeaderText = this.t('New group');
+        this.toastText = this.t('group.toast.created');
+      } else {
+        this.editHeaderText = this.t('group.edit.update');
+        this.toastText = this.t('group.toast.updated');
+      }
+    }
+  });
+</script>

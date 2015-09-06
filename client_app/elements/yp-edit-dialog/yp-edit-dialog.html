@@ -84,7 +84,7 @@
           <paper-button on-tap="_submit">[[saveText]]</paper-button>
         </paper-toolbar>
         <div id="scroller" class="flex">
-          <form is="iron-form" id="form" name="ypForm" action="[[action]]" method="[[method]]">
+          <form is="iron-form" id="form" name="ypForm" action="[[action]]" method="[[method]]" params="[[params]]">
             <content></content>
           </form>
         </div>
@@ -121,6 +121,10 @@
       properties: {
 
         action: {
+          type: String
+        },
+
+        baseAction: {
           type: String
         },
 
@@ -164,6 +168,10 @@
           reflectToAttribute: true,
           observer: '_narrowChanged',
           notify: true
+        },
+
+        params: {
+          type: String
         }
       },
 
@@ -189,6 +197,10 @@
       _formSubmitted: function(event) {
       },
 
+      ready: function() {
+        this.baseAction = this.action;
+      },
+
       _formResponse: function(response, detail) {
         this.$.spinner.active = false;
         this.response = response;
@@ -208,6 +220,7 @@
       },
 
       _submit: function() {
+        this.action = this.baseAction + '/'+this.params.communityId;
         this.$.form.submit();
         this.$.spinner.active = true;
       },

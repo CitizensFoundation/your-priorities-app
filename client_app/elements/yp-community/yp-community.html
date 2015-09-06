@@ -11,6 +11,7 @@
 <link rel="import" href="../yp-idea/yp-idea.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-group/yp-group-card.html">
+<link rel="import" href="../yp-group/yp-group-edit.html">
 
 <dom-module id="yp-community">
   <template>
@@ -40,9 +41,11 @@
 
     <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
 
+    <yp-group-edit id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
+
     <div class="card-container">
-      <template is="dom-if" if="[[communities]]">
-        <template is="dom-repeat" class="list" items="[[communities]]" as="group">
+      <template is="dom-if" if="[[groups]]">
+        <template is="dom-repeat" class="list" items="[[groups]]" as="group">
           <yp-group-card group="[[group]]" on-mouseover="_groupCardMouseOver" on-mouseout="_groupCardMouseOut"></yp-group-card>
         </template>
       </template>
@@ -82,12 +85,13 @@
 
       _newGroup: function () {
         window.globals.activity('Anonymous', 'open', 'newGroup');
-        window.globals.openDialog('communities.new');
+        this.$.groupEdit.open('new', {communityId: this.communityId});
       },
 
       _response: function (event, detail, sender) {
         var community = detail.response;
-        this.set("groups", community.groups);
+        debugger;
+        this.set("groups", community.Groups);
         this.fire("change-header", { headerTitle: community.name,
                                      headerDescription: community.description });
       },
@@ -124,6 +128,10 @@
 
       _groupCardMouseOut: function (event) {
         event.currentTarget.elevation = 1;
+      },
+
+      _refresh: function () {
+        this.$.ajax.generateRequest();
       },
 
       ready: function () {

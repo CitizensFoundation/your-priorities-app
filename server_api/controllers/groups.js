@@ -2,14 +2,6 @@ var express = require('express');
 var router = express.Router();
 var models = require("../models");
 
-/* Add current domain */
-router.use(function(req, res, next) {
-  // do logging
-  console.log('Something is happening.');
-  next(); // make sure we go to the next routes and don't stop here
-});
-
-
 /* GET ideas listing. */
 router.get('/', function(req, res) {
   models.Group.findAll({
@@ -18,6 +10,23 @@ router.get('/', function(req, res) {
     include: [ models.IsoCountry ]
   }).then(function(groups) {
     res.send(groups);
+  });
+});
+
+router.post('/:communityId', function(req, res) {
+  var group = models.Group.build({
+    name: req.body.name,
+    description: req.body.description,
+    access: models.Community.convertAccessFromCheckboxes(req.body),
+    domain_id: req.ypDomain.id,
+    community_id: req.params.communityId
+  });
+
+  group.save().then(function() {
+    // Automatically add user to community
+    res.send(group);
+  }).catch(function(error) {
+    res.sendStatus(403);
   });
 });
 

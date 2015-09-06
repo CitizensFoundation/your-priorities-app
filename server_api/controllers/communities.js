@@ -12,7 +12,7 @@ router.get('/', function(req, res) {
 
 
 router.get('/:id', function(req, res) {
-  models.Domain.find({
+  models.Community.find({
     where: { id: req.params.id },
     include: [
       { model: models.Group,

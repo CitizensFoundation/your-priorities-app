@@ -25,6 +25,10 @@
 
       toastText: {
         type: String
+      },
+
+      params: {
+        type: String
       }
     },
 
@@ -50,7 +54,7 @@
       this._setupTranslation();
     },
 
-    open: function (newOrUpdate) {
+    open: function (newOrUpdate,params) {
       if (newOrUpdate) {
         if (newOrUpdate==="new") {
           this.new = true;
@@ -59,6 +63,8 @@
         }
         this._setupNewUpdateState();
       }
+      if (params)
+        this.params = params;
       this.$.editDialog.open();
     },
 
