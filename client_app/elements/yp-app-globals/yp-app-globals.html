@@ -101,11 +101,15 @@
 
           currentCommunities: {
             type: Object
-          },
-
-          startTime: {
-            type: Date
           }
+        },
+
+        _removeSplash: function () {
+          var loadContainer = document.getElementById('splash');
+          loadContainer.addEventListener('transitionend',function(event) {
+            loadContainer.parentNode.removeChild(loadContainer);
+          });
+          document.body.classList.remove('loading');
         },
 
         _bootResponse: function (event, detail) {
@@ -114,15 +118,13 @@
           console.log("Difference: "+difference);
           if (difference<2000) {
             difference = (2000-difference);
+            console.log("Wait: "+difference);
+            Polymer.Base.async(function() {
+              this._removeSplash();
+            }.bind(this), difference);
+          } else {
+            this._removeSplash();
           }
-          console.log("Wait: "+difference);
-          Polymer.Base.async(function() {
-            var loadContainer = document.getElementById('splash');
-            loadContainer.addEventListener('transitionend',function(event) {
-              loadContainer.parentNode.removeChild(loadContainer);
-            });
-            document.body.classList.remove('loading');
-          }, difference);
         },
 
         getUser: function () {
