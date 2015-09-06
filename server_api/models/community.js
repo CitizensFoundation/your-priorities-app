@@ -18,6 +18,8 @@ module.exports = function(sequelize, DataTypes) {
 
       setYpCommunity: function (req,res,next) {
         var hostname = Community.extractHost(req.headers.host);
+        if (!hostname && req.params.communityHostname)
+          hostname = req.params.communityHostname;
         if (hostname && hostname!="www" && hostname!="new") {
           Community.find({
             where: {hostname: hostname}

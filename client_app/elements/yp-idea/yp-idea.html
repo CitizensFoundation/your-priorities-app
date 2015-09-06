@@ -82,9 +82,7 @@
           },
 
           idea: {
-            type: Object,
-            value: null,
-            observer: "_ideaChanged"
+            type: Object
           },
 
           contactId: { notify: true },
@@ -98,20 +96,16 @@
           }
         },
 
-        _ideaChanged: function (newValue, oldValue) {
-          debugger;
-        },
-
         _ideaIdChanged: function (newValue, oldValue) {
           if (newValue) {
-            this.set(this.idea,null);
+            this.set("idea",null);
             this.$.ajax.url = '/api/ideas/' + this.ideaId;
             this.$.ajax.generateRequest();
           }
         },
 
         _response: function (event, detail, sender) {
-          this.set(this.idea, detail.response);
+          this.set("idea", detail.response);
           if (this.idea.description === null) {
             this.idea.description = this.idea.Points[0].content;
             this.idea.Points.shift();

@@ -4,9 +4,9 @@ var models = require("../models");
 
 router.get('/', function(req, res) {
   if (req.ypCommunity) {
-    res.send({communityId: req.ypCommunity.id})
+    res.send({community: req.ypCommunity, domain: req.ypDomain})
   } else {
-    res.send({domainId: req.ypDomain.id})
+    res.send({domain: req.ypDomain})
   }
 });
 
@@ -22,7 +22,6 @@ router.get('/:id', function(req, res) {
     res.send(community);
   });
 });
-
 
 router.post('/', function(req, res) {
   var domain = models.Domain.build({

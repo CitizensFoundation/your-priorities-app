@@ -58,12 +58,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <body unresolved class="fullbleed layout vertical loading">
   <div id="splash"></div>
 
-  <yp-app-globals disable-welcome setup-defaults></yp-app-globals>
-  <yp-user-login id="loginDialog"></yp-user-login>
-
   <span id="browser-sync-binding"></span>
 
   <template is="dom-bind" id="app">
+
+    <yp-app-globals disable-welcome setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
+    <yp-user-login id="loginDialog"></yp-user-login>
 
     <paper-drawer-panel id="paperDrawerPanel">
       <!-- Drawer Scroll Header Panel -->
@@ -111,12 +111,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <!-- Application name -->
           <div class="middle middle-container center horizontal layout">
-            <div class="app-name">Betri Reykjavík</div>
+            <div class="app-name">[[headerTitle]]</div>
           </div>
 
           <!-- Application sub title -->
           <div class="bottom bottom-container center horizontal layout">
-            <div class="bottom-title paper-font-subhead">Þín rödd í ráðum borgarinnar</div>
+            <div class="bottom-title paper-font-subhead">[[headerDescription]]</div>
           </div>
 
         </paper-toolbar>
@@ -125,30 +125,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
-            <section data-route="splash">
+            <section data-route="home">
             </section>
 
             <section data-route="domain">
               <template is="dom-if" if="[[params]]">
-                <yp-domain domain-id="{{params.id}}"></yp-domain>
+                <yp-domain domain-id="{{params.domainId}}" on-change-header="onChangeHeader"></yp-domain>
               </template>
             </section>
 
             <section data-route="community">
-              <template is="dom-if" if="[[params]]">
-                <yp-community community-id="{{params.id}}"></yp-community>
-              </template>
-            </section>
-
-            <section data-route="idea">
-              <template is="dom-if" if="[[params]]">
-                <yp-idea idea-id="{{params.id}}"></yp-idea>
+              <template is="dom-if" if="[[params.communityId]]">
+                <yp-community community-id="{{params.communityId}}" on-change-header="onChangeHeader"></yp-community>
               </template>
             </section>
 
             <section data-route="group">
-              <template is="dom-if" if="[[params]]">
-                <yp-group group-id="{{params.id}}"></yp-group>
+              <template is="dom-if" if="[[params.groupId]]">
+                <yp-group group-id="{{params.groupId}}" on-change-header="onChangeHeader"></yp-group>
+              </template>
+            </section>
+
+            <section data-route="idea">
+              <template is="dom-if" if="[[params.ideaId]]">
+                <yp-idea idea-id="{{params.ideaId}}" on-change-header="onChangeHeader"></yp-idea>
               </template>
             </section>
 

@@ -99,8 +99,13 @@
             notify: true
           },
 
-          currentCommunities: {
+          currentDomain: {
             type: Object
+          },
+
+          minSplashMs: {
+            type: Number,
+            value: 700
           }
         },
 
@@ -112,12 +117,11 @@
           document.body.classList.remove('loading');
         },
 
-        _bootResponse: function (event, detail) {
-          this.currentCommunities = detail.response;
+        _removeSplashWithDelay: function () {
           var difference = (new Date() - window.appStartTime);
           console.log("Difference: "+difference);
-          if (difference<2000) {
-            difference = (2000-difference);
+          if (difference<this.minSplashMs) {
+            difference = (this.minSplashMs-difference);
             console.log("Wait: "+difference);
             Polymer.Base.async(function() {
               this._removeSplash();
@@ -125,6 +129,21 @@
           } else {
             this._removeSplash();
           }
+        },
+
+        _bootResponse: function (event, detail) {
+          this.currentDomain = detail.response.domain;
+          var hash = window.location.hash;
+          if (hash===null || hash==="") {
+            if (detail.response.community_id) {
+              page("#!/community/"+detail.response.community_id);
+            } else {
+              page("#!/domain/" + this.currentDomain.id);
+              this.fire("change-header", { headerTitle: this.currentDomain.domain_name,
+                headerDescription: this.currentDomain.description});
+            }
+          }
+          this._removeSplashWithDelay();
         },
 
         getUser: function () {

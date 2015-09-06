@@ -78,7 +78,7 @@
 
         ideas: {
           type: Array,
-          value: null
+          value: []
         },
 
         groupId: {
@@ -90,6 +90,7 @@
 
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue) {
+          this.set("ideas",[]);
           if (this.filter) {
             window.selectedFilter = this.filter;
           }
@@ -117,7 +118,7 @@
       },
 
       _ideasResponse: function (event, detail, sender) {
-        this.ideas = detail.response;
+        this.set("ideas",detail.response);
       },
 
       _categoriesResponse: function (event, detail, sender) {

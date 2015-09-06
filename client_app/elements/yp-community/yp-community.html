@@ -10,7 +10,7 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-idea/yp-idea.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
-<link rel="import" href="yp-community-card.html">
+<link rel="import" href="../yp-group/yp-group-card.html">
 
 <dom-module id="yp-community">
   <template>
@@ -20,7 +20,7 @@
         @apply(--layout-horizontal);
       }
 
-      .createCommunity {
+      .createGroup {
         background-color: --var(accent-color-darker,#f57c00);
         position: fixed;
         bottom:24px;
@@ -32,7 +32,7 @@
         @apply(--layout-wrap);
       }
 
-      yp-community-card {
+      yp-group-card {
         padding: 16px;
       }
 
@@ -42,11 +42,11 @@
 
     <div class="card-container">
       <template is="dom-if" if="[[communities]]">
-        <template is="dom-repeat" class="list" items="[[communities]]" as="community">
-          <yp-community-card community="[[community]]" on-mouseover="_communityCardMouseOver" on-mouseout="_communityCardMouseOut"></yp-community-card>
+        <template is="dom-repeat" class="list" items="[[communities]]" as="group">
+          <yp-group-card group="[[group]]" on-mouseover="_groupCardMouseOver" on-mouseout="_groupCardMouseOut"></yp-group-card>
         </template>
       </template>
-      <paper-fab icon="add" z="1" class="createCommunity" title="[[t('community.add')]" on-tap="_newCommunity"></paper-fab>
+      <paper-fab icon="add" z="1" class="createGroup" title="[[t('group.add')]" on-tap="_newGroup"></paper-fab>
     </div>
   </template>
 
@@ -60,46 +60,54 @@
       ],
 
       properties: {
-
-        communityHome: {
-          type: Boolean,
-          value: false
+        groups: {
+          type: Array,
+          value: []
         },
 
-        communities: {
-          type: Array
-        },
-
-        shortName: {
-          type: String
+        communityId: {
+          type: Number,
+          value: null,
+          observer: "_communityIdChanged"
         }
       },
 
-      _newCommunity: function () {
-        window.globals.activity('Anonymous', 'open', 'newCommunity');
+      _communityIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("groups",[]);
+          this.$.ajax.url = '/api/communities/' + this.communityId;
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      _newGroup: function () {
+        window.globals.activity('Anonymous', 'open', 'newGroup');
         window.globals.openDialog('communities.new');
       },
 
       _response: function (event, detail, sender) {
-        this.set(this.communities,detail.response);
+        var community = detail.response;
+        this.set("groups", community.groups);
+        this.fire("change-header", { headerTitle: community.name,
+                                     headerDescription: community.description });
       },
 
-      defaultCommunityFirst: function (items) {
+      defaultGroupFirst: function (items) {
         var filtered = [];
-        var defaultCommunity = null;
+        var defaultGroup = null;
         for (var i = 0; i < items.length; i++) {
           var item = items[i];
           if (item.short_name != 'default') {
             filtered.push(item);
           } else {
-            defaultCommunity = item;
+            defaultGroup = item;
           }
         }
-        filtered.unshift(defaultCommunity);
+        filtered.unshift(defaultGroup);
         return filtered;
       },
 
-      noTestCommunity: function (items) {
+      noTestGroup: function (items) {
         var filtered = [];
         for (var i = 0; i < items.length; i++) {
           var item = items[i];
@@ -110,11 +118,11 @@
         return filtered;
       },
 
-      _communityCardMouseOver: function (event) {
+      _groupCardMouseOver: function (event) {
         event.currentTarget.elevation = 5;
       },
 
-      _communityCardMouseOut: function (event) {
+      _groupCardMouseOut: function (event) {
         event.currentTarget.elevation = 1;
       },
 

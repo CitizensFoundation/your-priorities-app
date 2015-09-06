@@ -10,12 +10,27 @@ router.get('/', function(req, res) {
   });
 });
 
+
+router.get('/:id', function(req, res) {
+  models.Domain.find({
+    where: { id: req.params.id },
+    include: [
+      { model: models.Group,
+        order: 'Group.created_at DESC'
+      }
+    ]
+  }).then(function(community) {
+    res.send(community);
+  });
+});
+
 router.post('/', function(req, res) {
 
   var community = models.Community.build({
     name: req.body.name,
     description: req.body.description,
     access: models.Community.convertAccessFromCheckboxes(req.body),
+    domain_id: req.ypDomain.id,
     website: req.body.website
   });
 

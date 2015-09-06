@@ -4,7 +4,7 @@
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
@@ -63,7 +63,8 @@
 
       properties: {
         communities: {
-          type: Array
+          type: Array,
+          value: []
         },
 
         domainId: {
@@ -79,7 +80,7 @@
 
       _domainIdChanged: function (newValue, oldValue) {
         if (newValue) {
-          this.set(this.idea,null);
+          this.set("communities",[]);
           this.$.ajax.url = '/api/domains/' + this.domainId;
           this.$.ajax.generateRequest();
         }
@@ -91,11 +92,16 @@
 
       _newCommunity: function () {
         window.globals.activity('Anonymous', 'open', 'newCommunity');
-        window.globals.openDialog('communities.new');
+        this.$.communityEdit.open('new');
       },
 
       _response: function (event, detail, sender) {
-        this.set(this.communities,detail.response);
+        var domain = detail.response;
+        if (domain.Communities) {
+          this.set("communities",domain.Communities);
+        }
+        this.fire("change-header", { headerTitle: domain.domain_name,
+                                     headerDescription: domain.description});
       },
 
       _communityCardMouseOver: function (event) {
