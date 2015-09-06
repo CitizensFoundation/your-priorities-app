@@ -2,12 +2,14 @@ var express = require('express');
 var router = express.Router();
 var models = require("../models");
 
-/* GET ideas listing. */
 router.get('/', function(req, res) {
-  models.Domain.findAll({
-  }).then(function(communities) {
-    res.send(communities);
-  });
+  if (req.ypCommunity) {
+    res.send({loadCommunityId: req.ypCommunity.id})
+  } else {
+    req.ypDomain.getCommunities().then(function (communities) {
+      res.send({domain: req.ypDomain, communities: communities })
+    });
+  }
 });
 
 router.post('/', function(req, res) {

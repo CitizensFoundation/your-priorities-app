@@ -55,11 +55,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- endreplace-->
 </head>
 
-<body unresolved class="fullbleed layout vertical">
+<body unresolved class="fullbleed layout vertical loading">
+  <div id="splash"></div>
+
   <yp-app-globals disable-welcome setup-defaults></yp-app-globals>
   <yp-user-login id="loginDialog"></yp-user-login>
 
   <span id="browser-sync-binding"></span>
+
   <template is="dom-bind" id="app">
 
     <paper-drawer-panel id="paperDrawerPanel">
@@ -124,8 +127,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
-            <section data-route="home">
-              <yp-community></yp-community>
+            <section data-route="splash">
+            </section>
+
+            <section data-route="community">
+              <template is="dom-if" if="[[params]]">
+                <yp-community></yp-community>
+              </template>
             </section>
 
             <section data-route="idea">

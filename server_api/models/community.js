@@ -16,13 +16,19 @@ module.exports = function(sequelize, DataTypes) {
 
       setYpCommunity: function (req,res,next) {
         var hostname = Community.extractHost(req.headers.host);
-        if (hostname && hostname!="www") {
+        if (hostname && hostname!="www" && hostname!="new") {
           Community.find({
-            where: { hostname: hostname }
-          }).then(function(community) {
-            req.ypCommunity = community;
-            next();
+            where: {hostname: hostname}
+          }).then(function (community) {
+            if (community) {
+              req.ypCommunity = community;
+              next();
+            } else {
+              res.sendStatus(404);
+            }
           }.bind(this));
+        } else {
+          next();
         }
       },
 

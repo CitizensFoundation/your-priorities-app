@@ -28,6 +28,9 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(session({ secret: 'keyboard cat' }));
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Setup the current domain from the host
 app.use(function (req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
@@ -41,9 +44,6 @@ app.use(function (req, res, next) {
     next();
   });
 });
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 passport.serializeUser(function(user, done) {
   done(null, user.id);

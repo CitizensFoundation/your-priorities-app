@@ -48,6 +48,8 @@
         <span>[[t('notice.continue')]]</span>
       </paper-button>
     </paper-dialog>
+
+    <yp-ajax id="boot" auto url="/api/domains" on-response="_bootResponse"></yp-ajax>
   </template>
 
   <script>
@@ -95,7 +97,32 @@
           user: {
             type: Object,
             notify: true
+          },
+
+          currentCommunities: {
+            type: Object
+          },
+
+          startTime: {
+            type: Date
           }
+        },
+
+        _bootResponse: function (event, detail) {
+          this.currentCommunities = detail.response;
+          var difference = (new Date() - window.appStartTime);
+          console.log("Difference: "+difference);
+          if (difference<2000) {
+            difference = (2000-difference);
+          }
+          console.log("Wait: "+difference);
+          Polymer.Base.async(function() {
+            var loadContainer = document.getElementById('splash');
+            loadContainer.addEventListener('transitionend',function(event) {
+              loadContainer.parentNode.removeChild(loadContainer);
+            });
+            document.body.classList.remove('loading');
+          }, difference);
         },
 
         getUser: function () {
