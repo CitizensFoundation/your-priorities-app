@@ -104,14 +104,14 @@
 
         _ideaIdChanged: function (newValue, oldValue) {
           if (newValue) {
+            this.set(this.idea,null);
             this.$.ajax.url = '/api/ideas/' + this.ideaId;
             this.$.ajax.generateRequest();
           }
         },
 
         _response: function (event, detail, sender) {
-          this.idea = detail.response;
-          this.$.pages.render();
+          this.set(this.idea, detail.response);
           if (this.idea.description === null) {
             this.idea.description = this.idea.Points[0].content;
             this.idea.Points.shift();
