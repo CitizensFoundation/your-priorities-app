@@ -69,10 +69,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   };
 
   app.onChangeHeader = function(event, header) {
-    if (header.headerTitle)
       app.headerTitle = header.headerTitle;
-
-    if (header.headerDescription)
       app.headerDescription = header.headerDescription;
   };
 

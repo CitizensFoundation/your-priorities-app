@@ -5,6 +5,7 @@
 module.exports = function(sequelize, DataTypes) {
   var Idea = sequelize.define("Idea", {
     name: DataTypes.STRING,
+    status: DataTypes.STRING,
     description: DataTypes.TEXT,
     user_id: DataTypes.INTEGER,
     position: DataTypes.INTEGER,
