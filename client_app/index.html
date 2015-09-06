@@ -130,9 +130,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <section data-route="splash">
             </section>
 
+            <section data-route="domain">
+              <template is="dom-if" if="[[params]]">
+                <yp-domain domain-id="{{params.id}}"></yp-domain>
+              </template>
+            </section>
+
             <section data-route="community">
               <template is="dom-if" if="[[params]]">
-                <yp-community></yp-community>
+                <yp-community community-id="{{params.id}}"></yp-community>
               </template>
             </section>
 

@@ -11,7 +11,7 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-community-stats/yp-community-stats.html">
+<link rel="import" href="yp-community-stats.html">
 
 <dom-module id="yp-community-card">
 
@@ -106,28 +106,6 @@
 
       communityImagePath: function (community) {
         return this.randomStockImage();
-
-        if (this.community.IsoCountry) {
-          return this.isoCountryImagePath() + community.IsoCountry.code.toLowerCase() + '.png';
-        }
-        else if (community.name.indexOf("NHS") > -1) {
-          return "https://i.imgur.com/uavPcDU.jpg"
-        }
-        else if (community.name.indexOf("Iceland") > -1) {
-          return "https://i.imgur.com/v2SyyDl.png"
-        }
-        else if (true) {
-          return "https://i.imgur.com/OPpnjwm.jpg"
-        }
-        else if (false) {
-          return "https://placehold.it/384x216"
-        }
-        else if (community.top_banner_file_name) {
-          return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(community.id) + '/icon_full/' + community.top_banner_file_name;
-        } else
-        {
-          return this.defaultCommunityImage('');
-        }
       },
 
       getIsoCountryImagePath: function (community) {

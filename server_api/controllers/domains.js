@@ -4,13 +4,25 @@ var models = require("../models");
 
 router.get('/', function(req, res) {
   if (req.ypCommunity) {
-    res.send({loadCommunityId: req.ypCommunity.id})
+    res.send({communityId: req.ypCommunity.id})
   } else {
-    req.ypDomain.getCommunities().then(function (communities) {
-      res.send({domain: req.ypDomain, communities: communities })
-    });
+    res.send({domainId: req.ypDomain.id})
   }
 });
+
+router.get('/:id', function(req, res) {
+  models.Domain.find({
+    where: { id: req.params.id },
+    include: [
+      { model: models.Community,
+        order: 'Community.created_at DESC'
+      }
+    ]
+  }).then(function(community) {
+    res.send(community);
+  });
+});
+
 
 router.post('/', function(req, res) {
   var domain = models.Domain.build({
