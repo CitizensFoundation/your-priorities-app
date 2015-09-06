@@ -66,29 +66,28 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
   console.log(where);
   console.log(order);
 
-  models.Idea.findAll({
-    order: order,
-    where: [where, []],
-    limit: 42,
-    include: [ models.Category, models.IdeaRevision, models.Point ]
-  }).then(function(ideas) {
-    res.send(ideas);
+  models.Group.find({
+    where: { id: req.params.id },
+    include: [
+      {
+        model: models.Category
+      }
+    ]
+  }).then(function(group) {
+    models.Idea.findAll({
+      order: order,
+      where: [where, []],
+      limit: 42,
+      include: [ models.Category, models.IdeaRevision, models.Point ]
+    }).then(function(ideas) {
+      res.send({group: group, Ideas: ideas});
+    });
   });
 });
 
 router.get('/:id/categories', function(req, res) {
-  var groupId;
-
-  console.log(req.params.id);
-
-  if (req.params.id=="default") {
-    groupId = 262;
-  } else {
-    groupId = req.params.id;
-  }
-
   models.Category.findAll({
-    where: { group_id: groupdId },
+    where: { group_id: req.params.id },
     limit: 20
   }).then(function(categories) {
     res.send(categories);

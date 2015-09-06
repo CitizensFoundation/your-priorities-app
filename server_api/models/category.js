@@ -4,7 +4,6 @@ module.exports = function(sequelize, DataTypes) {
   var Category = sequelize.define("Category", {
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
-    group_id: DataTypes.INTEGER,
     icon_file_name: DataTypes.STRING
   }, {
     underscored: true,
@@ -12,6 +11,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         Category.hasMany(models.Idea);
+        Category.belongsTo(models.Group)
       }
     }
   });

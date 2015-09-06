@@ -40,10 +40,6 @@
 
     <yp-ajax auto="false" id="ideasAjax" url="" on-response="_ideasResponse"></yp-ajax>
 
-    <yp-ajax auto="false" id="categoryAjax" on-response="_categoriesResponse"></yp-ajax>
-
-    <yp-ajax auto="false" id="categoryDefaultAjax" url="/api/groups/default/categories" on-response="_categoriesResponse"></yp-ajax>
-
     <div class="card-container">
       <template is="dom-if" if="[[ideas]]">
         <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
@@ -85,6 +81,10 @@
           type: Number,
           value: null,
           observer: "_groupIdChanged"
+        },
+
+        group: {
+          type: Object
         }
       },
 
@@ -95,12 +95,10 @@
             window.selectedFilter = this.filter;
           }
           this.$.ideasAjax.url = '/api/groups/' + this.groupId + '/ideas/' + window.selectedFilter;
-          this.$.categoryAjax.url = '/api/groups/' + this.groupId + '/categories';
           if (this.categoryId) {
             this.$.ideasAjax.url += '/' + this.categoryId;
           }
           this.$.ideasAjax.generateRequest();
-          this.$.categoryAjax.generateRequest();
         }
       },
 
@@ -118,19 +116,16 @@
       },
 
       _ideasResponse: function (event, detail, sender) {
-        this.set("ideas",detail.response);
+        this.set("ideas", detail.response.Ideas);
+        this.set("group", detail.response.group);
+        this._processCategories();
       },
 
-      _categoriesResponse: function (event, detail, sender) {
-        if (detail && detail.response && !this.defaultCategories) {
-          this.defaultCategories = true;
-          this.$.categoryDefaultAjax.generateRequest();
-        } else if (detail.response != null) {
-          this.categories = detail.response;
+      _processCategories: function () {
           if (this.categoryId) {
-            for (var i = 0; i < this.categories.length; i++) {
-              if (this.categories[i].id == this.categoryId) {
-                window.selectedCategoryName = this.categories[i].name;
+            for (var i = 0; i < this.group.Categories.length; i++) {
+              if (this.group.Categories[i].id == this.categoryId) {
+                window.selectedCategoryName = this.group.Categories[i].name;
                 //this.$.layout.updateFilter();
               }
             }
@@ -138,7 +133,6 @@
             window.selectedCategoryName = 'categories.all';
             //this.$.layout.updateFilter();
           }
-        }
       },
 
       ready: function () {
