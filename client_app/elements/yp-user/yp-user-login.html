@@ -46,6 +46,10 @@
       background: #4285f4;
       color: white;
     }
+
+    paper-toast {
+      z-index: 9999;
+    }
   </style>
 
   <template>
@@ -196,12 +200,10 @@
     },
 
     _registerResponse: function(event, detail) {
-      debugger;
       this._loginCompleted(detail.response);
     },
 
     _loginResponse: function(event, detail) {
-      debugger;
       this._loginCompleted(detail.response);
     },
 
@@ -217,6 +219,10 @@
     open: function(redirectTo) {
       this.redirectTo = redirectTo;
       this.$.dialog.open();
+    },
+
+    close: function() {
+      this.$.dialog.close();
     }
 
   });

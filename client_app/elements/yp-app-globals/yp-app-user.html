@@ -51,8 +51,7 @@
         },
 
         loggedIn: function () {
-          var a = this.$.session.has('user');
-          debugger;
+          return this.$.session.has('user');
         },
 
         ready: function () {
@@ -62,7 +61,7 @@
 
         _handleLogin: function () {
           if (this.loginForEditParams) {
-            debugger;
+            this.$.userLogin.close();
             this.loginForEditParams.editDialog.open(this.loginForEditParams.newOrUpdate,this.loginForEditParams.params);
           }
           this.fire("login")
