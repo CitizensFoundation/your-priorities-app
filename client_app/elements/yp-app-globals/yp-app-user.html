@@ -1,0 +1,82 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-session/yp-session.html">
+<link rel="import" href="../yp-user/yp-user-login.html">
+
+<dom-module id="yp-app-user">
+
+  <template>
+    <yp-session id="session"></yp-session>
+    <yp-user-login id="userLogin" register="true" on-login="_handleLogin"></yp-user-login>
+    <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-app-user',
+
+        behaviors: [
+          Polymer.appHelpers
+        ],
+
+        properties: {
+          loginForEditParams: {
+            type: Object
+          }
+        },
+
+        loginForEdit: function(editDialog,newOrUpdate,params) {
+          this.loginForEditParams = { editDialog: editDialog, newOrUpdate: newOrUpdate, params: params };
+          this.$.userLogin.open();
+        },
+
+        getUser: function () {
+          this.$.session.get('user');
+        },
+
+        setUser: function (user) {
+          this.$.session.set('user', user);
+        },
+
+        removeUserSession: function () {
+          this.$.session.unset('user');
+        },
+
+        loggedIn: function () {
+          var a = this.$.session.has('user');
+          debugger;
+        },
+
+        ready: function () {
+          window.appUser = this;
+          this.$.isLoggedInAjax.generateRequest();
+        },
+
+        _handleLogin: function () {
+          if (this.loginForEditParams) {
+            debugger;
+            this.loginForEditParams.editDialog.open(this.loginForEditParams.newOrUpdate,this.loginForEditParams.params);
+          }
+          this.fire("login")
+        },
+
+        _isLoggedInResponse: function(event, detail) {
+          if (detail.response===0) {
+            this.removeUserSession();
+          } else if (detail.response.login) {
+            this.setUser(detail.response);
+            this.fire("is-logged-in")
+          }
+        }
+      });
+    }());
+  </script>
+</dom-module>

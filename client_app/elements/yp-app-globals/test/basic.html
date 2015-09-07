@@ -70,7 +70,7 @@
 
     test('can access through window.global', function() {
       var globals = fixture('basic');
-      var windowAppGlobals = window.globals;
+      var windowAppGlobals = window.appGlobals;
       expect(windowAppGlobals.localName).to.be.ok;
       expect(windowAppGlobals.localName).to.be.equal("yp-app-globals");
     });
@@ -102,7 +102,7 @@
 
     test('can send activity', function(done) {
       var globals = fixture('basic');
-      var windowAppGlobals = window.globals;
+      var windowAppGlobals = window.appGlobals;
 
       windowAppGlobals.activity("actor","verb","object","context");
 

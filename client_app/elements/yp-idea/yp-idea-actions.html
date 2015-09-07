@@ -180,16 +180,16 @@
         if (this.votingMode=="love") {
           this.$.actionUp.className += " " + "love-up-selected";
         }
-        window.globals.activity('Anonymous', 'up_vote', this.idea.id);
-//        window.globals.openDialog('ideas.up_vote');
+        window.appGlobals.activity('Anonymous', 'up_vote', this.idea.id);
+//        window.appGlobals.openDialog('ideas.up_vote');
       },
 
       downVote: function (event) {
         if (this.votingMode=="love") {
           this.$.actionDown.className += " " + "love-down-selected";
         }
-        window.globals.activity('Anonymous', 'down_vote', this.idea.id);
-//        window.globals.openDialog('ideas.down_vote');
+        window.appGlobals.activity('Anonymous', 'down_vote', this.idea.id);
+//        window.appGlobals.openDialog('ideas.down_vote');
       },
 
       computeActionClass: function (small) {

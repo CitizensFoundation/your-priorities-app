@@ -135,7 +135,7 @@
 
       // Introduce small delay so user sees ripple.
       toggle: function () {
-        window.globals.activity('Anonymous', 'toggle', 'search', this.active);
+        window.appGlobals.activity('Anonymous', 'toggle', 'search', this.active);
         this.active = !this.active;
         if (this.active) {
           this.$.searchbox.focus();

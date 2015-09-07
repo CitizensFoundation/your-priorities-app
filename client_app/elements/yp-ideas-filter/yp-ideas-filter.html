@@ -123,7 +123,7 @@
       },
 
       openFilter: function () {
-        window.globals.activity('Anonymous', 'open', 'filter');
+        window.appGlobals.activity('Anonymous', 'open', 'filter');
       },
 
       updateFilter: function () {
@@ -156,7 +156,7 @@
         if (window.categoryId) {
           newLocation += '/' + window.categoryId;
         }
-        window.globals.activity('Anonymous', 'change', 'filter', newLocation);
+        window.appGlobals.activity('Anonymous', 'change', 'filter', newLocation);
         window.location = newLocation;
       },
 

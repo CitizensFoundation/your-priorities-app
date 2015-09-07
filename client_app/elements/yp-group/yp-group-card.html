@@ -100,7 +100,7 @@
 
       _goToGroup: function (e) {
         var groupUrl = '/group/' + this.group.id;
-        window.globals.activity('Anonymous', 'open', 'group', groupUrl);
+        window.appGlobals.activity('Anonymous', 'open', 'group', groupUrl);
         page(groupUrl);
       },
 

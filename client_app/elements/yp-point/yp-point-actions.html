@@ -77,13 +77,13 @@
       },
 
       pointHelpful: function () {
-        window.globals.activity('Anonymous', 'vote', 'pointHelpful');
-        window.globals.openDialog('point.helpful');
+        window.appGlobals.activity('Anonymous', 'vote', 'pointHelpful');
+        window.appGlobals.openDialog('point.helpful');
       },
 
       pointNotHelpful: function () {
-        window.globals.activity('Anonymous', 'vote', 'pointNotHelpful');
-        window.globals.openDialog('point.not_helpful');
+        window.appGlobals.activity('Anonymous', 'vote', 'pointNotHelpful');
+        window.appGlobals.openDialog('point.not_helpful');
       },
 
       voteCount: function (endorsements,type) {

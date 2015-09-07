@@ -55,18 +55,21 @@
     },
 
     open: function (newOrUpdate,params) {
-      if (newOrUpdate) {
-        if (newOrUpdate==="new") {
-          this.new = true;
-        } else {
-          this.new = false;
+      if (window.appUser.loggedIn()) {
+        if (newOrUpdate) {
+          if (newOrUpdate==="new") {
+            this.new = true;
+          } else {
+            this.new = false;
+          }
+          this._setupNewUpdateState();
         }
-        this._setupNewUpdateState();
+        if (params)
+          this.params = params;
+        this.$.editDialog.open();
+      } else {
+        window.appUser.loginForEdit(newOrUpdate,params);
       }
-      if (params)
-        this.params = params;
-      debugger;
-      this.$.editDialog.open();
     },
 
     close: function () {

@@ -123,21 +123,21 @@
         },
 
         addPointUp: function () {
-          window.globals.activity('Anonymous', 'add', 'pointUp');
-          window.globals.openDialog('point.add_up');
+          window.appGlobals.activity('Anonymous', 'add', 'pointUp');
+          window.appGlobals.openDialog('point.add_up');
         },
 
         addPointDown: function () {
-          window.globals.activity('Anonymous', 'add', 'pointDown');
-          window.globals.openDialog('point.add_down');
+          window.appGlobals.activity('Anonymous', 'add', 'pointDown');
+          window.appGlobals.openDialog('point.add_down');
         },
 
         focusUpPoint: function () {
-          window.globals.activity('Anonymous', 'focus', 'pointUp');
+          window.appGlobals.activity('Anonymous', 'focus', 'pointUp');
         },
 
         focusDownPoint: function () {
-          window.globals.activity('Anonymous', 'focus', 'pointDown');
+          window.appGlobals.activity('Anonymous', 'focus', 'pointDown');
         },
 
         focusTextArea: function (e) {

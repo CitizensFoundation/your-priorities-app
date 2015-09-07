@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
@@ -52,8 +53,6 @@
     <paper-dialog id="dialog" modal>
       <h3>[[heading]]</h3>
 
-      <content select="[avatar]"></content>
-
       <form is="iron-form" id="form">
         <paper-input id="email"
                      type="text"
@@ -80,6 +79,7 @@
     <yp-ajax id="loginAjax" method="GET" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
     <yp-ajax id="registerAjax" method="POST" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
 
+    <paper-toast id="loginToast" text="[[toastTextCombined]]"></paper-toast>
   </template>
 
 </dom-module>
@@ -147,17 +147,12 @@
 
       redirectTo: {
         type: String
+      },
+
+      toastTextCombined: {
+        type: String
       }
     },
-
-    // Element Lifecycle
-
-    ready: function() {
-    },
-
-    attached: function() {},
-
-    detached: function() {},
 
     _setTexts: function () {
       this.emailErrorMessage = this.t('login.email.error');
@@ -211,7 +206,9 @@
     },
 
     _loginCompleted: function (user) {
-      window.globals.setUser(user);
+      this.toastTextCombined = this.t("login.complete.for")+ " " + user.email;
+      this.$.loginToast.show();
+      window.appUser.setUser(user);
       if (this.redirectTo)
         page(this.redirectTo)
       this.fire("login");

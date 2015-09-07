@@ -116,7 +116,7 @@
       },
 
       newIdea: function () {
-        window.globals.activity('Anonymous', 'open', 'newIdea');
+        window.appGlobals.activity('Anonymous', 'open', 'newIdea');
         this.$.ideaEdit.open('new', {groupId: this.groupId});
       },
 
@@ -124,7 +124,6 @@
         var group = detail.response.group;
         this.set("ideas", detail.response.Ideas);
         this.set("group", group);
-        debugger;
         this._processCategories();
         this.fire("change-header", { headerTitle: group.name,
                                      headerDescription: group.description });

@@ -16,6 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // and give it some initial binding values
   // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
   var app = document.querySelector('#app');
+  app.appTitle = "Your Priorities";
 
   app.displayInstalledToast = function() {
     // Check to make sure caching is actually enabled—it won't be in the dev environment.
@@ -69,7 +70,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   };
 
   app.onChangeHeader = function(event, header) {
-    app.headerTitle = header.headerTitle;
+    app.headerTitle = document.title = header.headerTitle;
     app.headerDescription = header.headerDescription;
   };
 

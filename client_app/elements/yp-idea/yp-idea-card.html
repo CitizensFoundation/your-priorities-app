@@ -160,7 +160,7 @@
 
       _goToIdea: function (e) {
         var ideaUrl = '/idea/' + this.idea.id;
-        window.globals.activity('Anonymous', 'open', 'idea', ideaUrl);
+        window.appGlobals.activity('Anonymous', 'open', 'idea', ideaUrl);
         page(ideaUrl);
       },
 

@@ -114,13 +114,13 @@
 
         selectedChanged: function (selected, previous) {
           if (selected == 0)
-            window.globals.activity('Anonymous', 'open', 'pointsTab');
+            window.appGlobals.activity('Anonymous', 'open', 'pointsTab');
           else if (selected == 1)
-            window.globals.activity('Anonymous', 'open', 'newsfeedTab');
+            window.appGlobals.activity('Anonymous', 'open', 'newsfeedTab');
           else if (selected == 2)
-            window.globals.activity('Anonymous', 'open', 'photosTab');
+            window.appGlobals.activity('Anonymous', 'open', 'photosTab');
           else if (selected == 3)
-            window.globals.activity('Anonymous', 'open', 'solutionsTab');
+            window.appGlobals.activity('Anonymous', 'open', 'solutionsTab');
         },
 
         ready: function () {

@@ -106,11 +106,11 @@ var needsRoot = function() {
   };
 };
 
-app.get('/api/user/loggedin', function(req, res) {
+app.get('/api/users/isloggedin', function(req, res) {
   res.send(req.isAuthenticated() ? req.user : '0');
 });
 
-app.post('/api/user/logout', function(req, res){
+app.post('/api/users/logout', function(req, res){
   req.logOut();
   res.send(200);
 });

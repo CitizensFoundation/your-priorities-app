@@ -101,7 +101,7 @@
 
       _goToCommunity: function (e) {
         var communityUrl = '/community/' + this.community.id;
-        window.globals.activity('Anonymous', 'open', 'community', communityUrl);
+        window.appGlobals.activity('Anonymous', 'open', 'community', communityUrl);
         page(communityUrl);
       },
 

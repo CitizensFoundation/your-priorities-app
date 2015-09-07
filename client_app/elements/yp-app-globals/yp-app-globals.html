@@ -94,11 +94,6 @@
             value: false
           },
 
-          user: {
-            type: Object,
-            notify: true
-          },
-
           currentDomain: {
             type: Object
           },
@@ -106,11 +101,18 @@
           minSplashMs: {
             type: Number,
             value: 1500
+          },
+
+          requestInProgress: {
+           type: Boolean,
+           value: false
           }
         },
 
-        boot: function() {
-         this.$.boot.generateRequest();
+        reBoot: function() {
+          if (!this.requestInProgress) {
+            this.$.boot.generateRequest();
+          }
         },
 
         _removeSplash: function () {
@@ -136,6 +138,7 @@
         },
 
         _bootResponse: function (event, detail) {
+          this.requestInProgress = false;
           this.currentDomain = detail.response.domain;
           var hash = window.location.hash;
           if (hash===null || hash==="") {
@@ -150,18 +153,6 @@
           if (document.getElementById('splash')) {
             this._removeSplashWithDelay();
           }
-        },
-
-        getUser: function () {
-          this.$.session.get('user');
-        },
-
-        setUser: function (user) {
-          this.$.session.set('user', user);
-        },
-
-        loggedIn: function () {
-          return this.$.session.has('user');
         },
 
         activity: function (actor, verb, object, context) {
@@ -231,7 +222,9 @@
         },
 
         ready: function () {
-          window.globals = this;
+          this.requestInProgress = true;
+          this.$.boot.generateRequest();
+          window.appGlobals = this;
           if (this.setupDefaults) {
             this.setupDefaultValues();
           }
