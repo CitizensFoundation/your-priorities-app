@@ -27,13 +27,36 @@ module.exports = function(sequelize, DataTypes) {
       extractDomain: function(url) {
         var domain,host,dot;
         domain = url.split(':')[0];
-        if (domain!="192.168.42.213") {
+        if (!Domain.isIpAddress(domain)) {
           if ((domain.match(/./g) || []).length>1) {
             dot = domain.indexOf('.');
             domain = domain.substring(dot+1,domain.length);
           }
         }
         return domain;
+      },
+
+      extractHost: function(url) {
+        var domain,host,dot;
+        domain = url.split(':')[0];
+        if (!Domain.isIpAddress(domain)) {
+          if ((domain.match(/./g) || []).length>1) {
+            domain = url.split(':')[0];
+            dot = domain.indexOf('.');
+            host = domain.substring(0,dot);
+            return host;
+          }
+        }
+        return null;
+      },
+
+      isIpAddress: function (domain)
+      {
+        if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(domain)) {
+          return true;
+        } else {
+          return false;
+        }
       },
 
       associate: function(models) {

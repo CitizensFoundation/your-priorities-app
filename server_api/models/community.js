@@ -17,7 +17,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
 
       setYpCommunity: function (req,res,next) {
-        var hostname = Community.extractHost(req.headers.host);
+        var hostname = sequelize.models.Domain.extractHost(req.headers.host);
         if (!hostname && req.params.communityHostname)
           hostname = req.params.communityHostname;
         if (hostname && hostname!="www" && hostname!="new") {
@@ -33,21 +33,6 @@ module.exports = function(sequelize, DataTypes) {
           }.bind(this));
         } else {
           next();
-        }
-      },
-
-      extractHost: function(url) {
-        var domain,host,dot;
-        domain = url.split(':')[0];
-        if (domain!="192.168.42.213") {
-          if ((domain.match(/./g) || []).length>1) {
-            domain = url.split(':')[0];
-            dot = domain.indexOf('.');
-            host = domain.substring(0,dot);
-            return host;
-          } else {
-            return null;
-          }
         }
       },
 
