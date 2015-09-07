@@ -2,6 +2,12 @@ var express = require('express');
 var router = express.Router();
 var models = require("../models");
 
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated())
+    return next();
+  res.send(401, 'Unauthorized');
+};
+
 /* GET ideas listing. */
 router.get('/', function(req, res) {
   models.Idea.findAll({
@@ -58,11 +64,12 @@ router.get('/:id', function(req, res) {
   });
 });
 
-router.post('/:groupId', function(req, res) {
+router.post('/:groupId', isAuthenticated, function(req, res) {
   var idea = models.Idea.build({
     name: req.body.name,
     description: req.body.description,
     group_id: req.params.groupId,
+    user_id: req.user.id,
     status: 'published'
   });
   idea.save().then(function() {
@@ -70,18 +77,21 @@ router.post('/:groupId', function(req, res) {
       name: idea.name,
       description: idea.description,
       group_id: idea.groupId,
+      user_id: req.user.id,
       idea_id: idea.id
     });
     ideaRevision.save().then(function() {
       var point = models.Point.build({
         content: req.body.pointFor,
         group_id: idea.groupId,
+        user_id: req.user.id,
         idea_id: idea.id
       });
       point.save().then(function() {
         var pointRevision = models.PointRevision.build({
           content: point.content,
           group_id: point.groupId,
+          user_id: req.user.id,
           idea_id: idea.id
         });
         pointRevision.save().then(function() {

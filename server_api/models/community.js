@@ -52,6 +52,7 @@ module.exports = function(sequelize, DataTypes) {
         Community.hasMany(models.Group, { foreignKey: "community_id" });
         Community.belongsTo(models.Domain, {foreignKey: "domain_id"});
         Community.belongsToMany(models.User, { through: 'CommunityUser' });
+        Community.belongsTo(models.User);
       }
     }
   });

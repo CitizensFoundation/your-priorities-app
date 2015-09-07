@@ -2,6 +2,12 @@ var express = require('express');
 var router = express.Router();
 var models = require("../models");
 
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated())
+    return next();
+  res.send(401, 'Unauthorized');
+};
+
 /* GET ideas listing. */
 router.get('/', function(req, res) {
   models.Community.findAll({
@@ -9,7 +15,6 @@ router.get('/', function(req, res) {
     res.send(communities);
   });
 });
-
 
 router.get('/:id', function(req, res) {
   models.Community.find({
@@ -24,13 +29,13 @@ router.get('/:id', function(req, res) {
   });
 });
 
-router.post('/', function(req, res) {
-
+router.post('/', isAuthenticated, function(req, res) {
   var community = models.Community.build({
     name: req.body.name,
     description: req.body.description,
     access: models.Community.convertAccessFromCheckboxes(req.body),
     domain_id: req.ypDomain.id,
+    user_id: req.user.id,
     website: req.body.website
   });
 

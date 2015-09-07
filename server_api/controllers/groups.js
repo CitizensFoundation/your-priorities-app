@@ -2,6 +2,12 @@ var express = require('express');
 var router = express.Router();
 var models = require("../models");
 
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated())
+    return next();
+  res.send(401, 'Unauthorized');
+};
+
 /* GET ideas listing. */
 router.get('/', function(req, res) {
   models.Group.findAll({
@@ -13,12 +19,13 @@ router.get('/', function(req, res) {
   });
 });
 
-router.post('/:communityId', function(req, res) {
+router.post('/:communityId', isAuthenticated, function(req, res) {
   var group = models.Group.build({
     name: req.body.name,
     description: req.body.description,
     access: models.Community.convertAccessFromCheckboxes(req.body),
     domain_id: req.ypDomain.id,
+    user_id: req.user.id,
     community_id: req.params.communityId
   });
 
