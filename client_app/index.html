@@ -63,7 +63,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template is="dom-bind" id="app">
 
     <yp-app-globals id="appGlobals" disable-welcome setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
-    <yp-app-user id="appUser"></yp-app-user>
+    <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
 
     <paper-drawer-panel id="paperDrawerPanel">
       <!-- Drawer Scroll Header Panel -->
@@ -91,9 +91,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <span>Contact</span>
           </a>
 
-          <paper-button on-tap="onOpenLogin">Login</paper-button>
+          <div class="layout horizontal">
+            <h3>[[currentUserEmail]]</h3>
+          </div>
 
-          <paper-button on-tap="onOpenNewCommunity">New community</paper-button>
+          <template is="dom-if" if="[[currentUserEmail]]">
+            <paper-button on-tap="onLogout">Logout</paper-button>
+          </template>
+
         </paper-menu>
       </paper-scroll-header-panel>
 

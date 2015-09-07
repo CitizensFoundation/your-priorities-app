@@ -56,7 +56,6 @@
 
     open: function (newOrUpdate,params) {
       if (window.appUser.loggedIn()===true) {
-        debugger;
         if (newOrUpdate) {
           if (newOrUpdate==="new") {
             this.new = true;
@@ -69,7 +68,6 @@
           this.params = params;
         this.$.editDialog.open();
       } else {
-        debugger;
         window.appUser.loginForEdit(this,newOrUpdate,params);
       }
     },

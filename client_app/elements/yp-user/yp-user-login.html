@@ -18,37 +18,6 @@
       box-sizing: border-box;
       text-align: center;
       margin: 5px;
-      max-width: 250px;
-      min-width: 200px;
-    }
-
-    :host > h3 {
-      margin-top: 5px;
-    }
-
-    :host ::content img {
-      border-radius: 50%;
-    }
-
-    :host paper-input{
-      margin-left: auto;
-      margin-right: auto;
-      width: 90%;
-    }
-
-    :host paper-material{
-      padding: 15px;
-    }
-
-    #submitbutton {
-      margin-top: 10px;
-      width: 90%;
-      background: #4285f4;
-      color: white;
-    }
-
-    paper-toast {
-      z-index: 9999;
     }
   </style>
 
@@ -83,7 +52,6 @@
     <yp-ajax id="loginAjax" method="GET" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
     <yp-ajax id="registerAjax" method="POST" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
 
-    <paper-toast id="loginToast" text="[[toastTextCombined]]"></paper-toast>
   </template>
 
 </dom-module>
@@ -151,10 +119,6 @@
 
       redirectTo: {
         type: String
-      },
-
-      toastTextCombined: {
-        type: String
       }
     },
 
@@ -208,8 +172,6 @@
     },
 
     _loginCompleted: function (user) {
-      this.toastTextCombined = this.t("login.complete.for")+ " " + user.email;
-      this.$.loginToast.show();
       window.appUser.setUser(user);
       if (this.redirectTo)
         page(this.redirectTo)

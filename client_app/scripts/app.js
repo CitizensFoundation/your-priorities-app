@@ -74,13 +74,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     app.headerDescription = header.headerDescription;
   };
 
-  app.onOpenLogin = function() {
-    document.querySelector('#loginDialog').open();
+  app.onLogout = function() {
+    document.querySelector('#appUser').logout();
   };
 
   app.onOpenNewCommunity = function() {
     document.querySelector('#communityEdit').open('new');
   };
+
+  app.onUserChanged = function(event, detail) {
+    if (detail) {
+      app.currentUserEmail = detail.email;
+    } else {
+      app.currentUserEmail = "";
+    }
+  }
 
   // Scroll page to top and expand header
   app.scrollPageToTop = function() {

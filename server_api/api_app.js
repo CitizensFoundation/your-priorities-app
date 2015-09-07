@@ -111,6 +111,10 @@ app.get('/api/users/isloggedin', function(req, res) {
 });
 
 app.post('/api/users/logout', function(req, res){
+  var userEmail = "";
+  if (req.user) {
+    userEmail = req.user.email;
+  }
   req.logOut();
   res.send(200);
 });

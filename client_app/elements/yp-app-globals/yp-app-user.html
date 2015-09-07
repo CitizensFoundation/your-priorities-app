@@ -10,11 +10,21 @@
 <link rel="import" href="../yp-user/yp-user-login.html">
 
 <dom-module id="yp-app-user">
+    <template>
+      <style>
+        paper-toast {
+          z-index: 9999;
+        }
+      </style>
 
-  <template>
-    <yp-session id="session"></yp-session>
-    <yp-user-login id="userLogin" register="true" on-login="_handleLogin"></yp-user-login>
-    <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
+      <yp-session id="session"></yp-session>
+      <yp-user-login id="userLogin" register="true" on-login="_handleLogin"></yp-user-login>
+
+      <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
+      <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
+
+      <paper-toast id="loginToast" text="[[toastLoginTextCombined]]"></paper-toast>
+      <paper-toast id="logoutToast" text="[[toastLogoutTextCombined]]"></paper-toast>
   </template>
 
   <script>
@@ -30,6 +40,19 @@
         properties: {
           loginForEditParams: {
             type: Object
+          },
+
+          toastLoginTextCombined: {
+            type: String
+          },
+
+          toastLogoutTextCombined: {
+            type: String
+          },
+
+          user: {
+            type: Object,
+            observer: "_onUserChanged"
           }
         },
 
@@ -39,19 +62,26 @@
         },
 
         getUser: function () {
-          this.$.session.get('user');
+          return this.$.session.get('user');
         },
 
         setUser: function (user) {
           this.$.session.set('user', user);
+          this.user = user;
         },
 
         removeUserSession: function () {
           this.$.session.unset('user');
+          this.user = null;
         },
 
         loggedIn: function () {
           return this.$.session.has('user');
+        },
+
+        logout: function () {
+          this.$.logoutAjax.body = {};
+          this.$.logoutAjax.generateRequest();
         },
 
         ready: function () {
@@ -59,18 +89,30 @@
           this.$.isLoggedInAjax.generateRequest();
         },
 
+        _onUserChanged: function (newValue, oldValue) {
+          this.fire("user-changed", newValue)
+        },
+
         _handleLogin: function () {
+          this.$.userLogin.close();
+          this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.email;
+          this.$.loginToast.show();
           if (this.loginForEditParams) {
-            this.$.userLogin.close();
             this.loginForEditParams.editDialog.open(this.loginForEditParams.newOrUpdate,this.loginForEditParams.params);
           }
           this.fire("login")
         },
 
+        _logoutResponse: function (event, detail) {
+          this.toastLogoutTextCombined = this.t("logout.complete.for")+ " " + this.user.email;
+          this.removeUserSession();
+          this.$.logoutToast.show();
+        },
+
         _isLoggedInResponse: function(event, detail) {
           if (detail.response===0) {
             this.removeUserSession();
-          } else if (detail.response.login) {
+          } else if (detail.response.email) {
             this.setUser(detail.response);
             this.fire("is-logged-in")
           }
