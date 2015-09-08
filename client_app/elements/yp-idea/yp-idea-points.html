@@ -9,6 +9,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input-char-counter.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-point/yp-point.html">
@@ -44,7 +45,8 @@
 
           <paper-material elevation="0" class="pointText" animated>
             <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                            bind-value="{{textValueUp}}" label="[[computeLabel()]]" char-counter rows="2" max-rows="5" maxlength="[[computeLabel()]]"></paper-textarea>
+                            bind-value="{{textValueUp}}" label="[[t('point.for')]]" char-counter rows="2"
+                            max-rows="5" maxlength="500"></paper-textarea>
 
             <template is="dom-if" if="[[computeIf(textValueUp)]]">
               <div style="width:100%;text-align: center;padding-top: 10px;">
@@ -64,11 +66,12 @@
           <paper-material elevation="0" class="pointText" animated>
 
             <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                            bind-value="{{textValueDown}}" label="[[computeLabel()]]" char-counter rows="2" max-rows="5" maxlength="[[computeLabel()]]"></paper-textarea>
+                            bind-value="{{textValueDown}}" label="[[t('point.against')]]" char-counter rows="2"
+                            max-rows="5" maxlength="500"></paper-textarea>
 
             <template is="dom-if" if="[[computeIf2(textValueDown)]]">
               <div id="downPointAction" style="width:100%;text-align: center;padding-top: 10px;">
-                <paper-fab icon="add" mini="" z="2" on-tap="addPointDown" class="downPointAction" title="[[computeTitle2()]]"></paper-fab>
+                <paper-fab icon="add" mini="" z="2" on-tap="addPointDown" class="downPointAction" title="[[t('points.add_down')]]"></paper-fab>
               </div>
             </template>
           </paper-material>
@@ -80,6 +83,8 @@
 
       </div>
     </template>
+    <yp-ajax id="newPointAjax" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
+    <paper-toast id="newPointToast" text="[[toastLoginTextCombined]]"></paper-toast>
   </template>
 
   <script>
@@ -119,13 +124,15 @@
           },
 
           textValueUp: {
-            type: String,
-            value: ""
+            type: String
           },
 
           textValueDown: {
-            type: String,
-            value: ""
+            type: String
+          },
+
+          newPointTextCombined: {
+            type: String
           }
         },
 
@@ -144,14 +151,33 @@
           }
         },
 
+        _newPoint_response: function (event, detail) {
+          var point = detail.response;
+          if (point.value>0) {
+            this.newPointTextCombined = this.t("new.point.for.added")+ " " + this.truncate(point.content,21);
+            this.textValueUp = "";
+          } else {
+            this.newPointTextCombined = this.t("new.point.against.added")+ " " +  this.truncate(point.content,21);
+            this.textValueDown = "";
+          }
+          this.$.newPointToast.show();
+        },
+
         addPointUp: function () {
+          this._addPoint(this.textValueUp, 1);
           window.appGlobals.activity('Anonymous', 'add', 'pointUp');
-          window.appGlobals.openDialog('point.add_up');
         },
 
         addPointDown: function () {
+          this._addPoint(this.textValueDown, -1);
           window.appGlobals.activity('Anonymous', 'add', 'pointDown');
-          window.appGlobals.openDialog('point.add_down');
+        },
+
+        _addPoint: function (content, value) {
+          this.$.newPointAjax.body = { group_id: this.idea.group_id,
+                                       idea_id: this.idea.id,
+                                       content: content, value: value };
+          this.$.newPointAjax.generateRequest();
         },
 
         focusUpPoint: function () {
@@ -163,11 +189,11 @@
         },
 
         focusTextArea: function (e) {
-          e.srcElement.parentElement.parentElement.parentElement.setZ(3);
+          e.srcElement.parentElement.parentElement.parentElement.elevation=3;
         },
 
         blurTextArea: function (e) {
-          e.srcElement.parentElement.parentElement.parentElement.setZ(1);
+          e.srcElement.parentElement.parentElement.parentElement.elevation=1;
         },
 
         textChanged: function (detail, e) {
@@ -188,28 +214,12 @@
           }
         },
 
-        computeLabel: function () {
-          return this.t('point.for');
-        },
-
         computeIf: function (textValueUp) {
           return textValueUp.length > 20;
         },
 
-        computeLabel2: function () {
-          return this.t('point.against');
-        },
-
         computeIf2: function (textValueDown) {
           return textValueDown.length > 20;
-        },
-
-        computeTitle: function () {
-          return this.t('points.add_up');
-        },
-
-        computeTitle2: function () {
-          return this.t('points.add_down');
         }
       });
     }());

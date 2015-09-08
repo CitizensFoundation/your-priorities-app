@@ -83,7 +83,6 @@
       </div>
 
     </template>
-
   </template>
 
   <script>
@@ -108,6 +107,8 @@
       _pointChanged: function(newValue, oldValue) {
         if (newValue) {
           this.user = this.point.PointRevisions[0].User;
+        } else {
+          this.user = null;
         }
       },
 
