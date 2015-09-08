@@ -106,7 +106,7 @@
       _response: function (event, detail, sender) {
         var domain = detail.response;
         if (domain.Communities) {
-          if (community.Communities.length>0)
+          if (domain.Communities.length>0)
             this.domainNotEmpty = true;
           this.set("communities",domain.Communities);
         }
