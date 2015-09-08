@@ -58,6 +58,29 @@
 
     <template is="dom-if" if="[[point]]">
 
+      <div class="point-container">
+
+        <template is="dom-if" if="[[upVote(point)]]">
+          <div class="user-image">
+            <yp-user-image user="[[user]]"></yp-user-image>
+          </div>
+        </template>
+
+        <div class="point-content">
+
+          <div class$="[[computeClass(point)]]">
+            <span>[[point.name]]</span>. <span>[[point.content]]</span>
+            <yp-point-actions point="[[point]]"></yp-point-actions>
+          </div>
+        </div>
+
+        <template is="dom-if" if="[[downVote(point)]]">
+          <div class="user-image user-image-right">
+            <yp-user-image user="[[user]]"></yp-user-image>
+          </div>
+        </template>
+
+      </div>
 
     </template>
 
@@ -84,7 +107,6 @@
 
       _pointChanged: function(newValue, oldValue) {
         if (newValue) {
-          debugger;
           this.user = this.point.PointRevisions[0].User;
         }
       },

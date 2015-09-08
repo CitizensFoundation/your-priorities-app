@@ -102,6 +102,7 @@
 
         _ideaIdChanged: function (newValue, oldValue) {
           if (newValue) {
+            this.set("idea.Points",null);
             this.set("idea",null);
             this.$.ajax.url = '/api/ideas/' + this.ideaId;
             this.$.ajax.generateRequest();

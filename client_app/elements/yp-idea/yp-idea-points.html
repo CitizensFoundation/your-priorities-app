@@ -36,7 +36,9 @@
       }
     </style>
 
-    <div class="main-container">
+    <template is="dom-if" if="[[points]]">
+
+      <div class="main-container">
 
         <div class="point">
 
@@ -77,6 +79,7 @@
         </div>
 
       </div>
+    </template>
   </template>
 
   <script>
@@ -98,7 +101,11 @@
             }
           },
 
-          points: { notify: true },
+          points: {
+            type: Array,
+            notify: true,
+            observer: "_pointsChanged"
+          },
 
           text: {
             observer: 'textChanged'
@@ -119,6 +126,19 @@
           textValueDown: {
             type: String,
             value: ""
+          }
+        },
+
+        _pointsChanged: function (newValue, oldValue) {
+          if (newValue) {
+            this.upPoints = this.points.filter(function (x) {
+              return x.value > 0;
+            });
+
+            this.downPoints = this.points.filter(function (x) {
+              return x.value < 0;
+            });
+
           }
         },
 
@@ -164,16 +184,6 @@
               this.$.downPointAction.style.display = 'none';
             }
           }
-        },
-
-        ready: function () {
-          this.upPoints = this.points.filter(function (x) {
-            return x.value > 0;
-          });
-
-          this.downPoints = this.points.filter(function (x) {
-            return x.value < 0;
-          });
         },
 
         computeLabel: function () {
