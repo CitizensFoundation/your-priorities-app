@@ -138,7 +138,9 @@
             this.downPoints = this.points.filter(function (x) {
               return x.value < 0;
             });
-
+          } else {
+            this.upPoints = [];
+            this.downPoints = [];
           }
         },
 
