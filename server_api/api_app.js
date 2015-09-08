@@ -16,6 +16,7 @@ var ideas = require('./controllers/ideas');
 var groups = require('./controllers/groups');
 var communities = require('./controllers/communities');
 var domains = require('./controllers/domains');
+var points = require('./controllers/points');
 
 var models = require('./models');
 
@@ -124,6 +125,7 @@ app.use('/api/ideas', ideas);
 app.use('/api/groups', groups);
 app.use('/api/communities', communities);
 app.use('/api/domains', domains);
+app.use('/api/points', points);
 //app.use('/api/users', users);
 
 app.get('/api/users/login',  passport.authenticate('local'), function(req, res) {
