@@ -45,6 +45,7 @@
 
     <div class="card-container">
       <template is="dom-if" if="[[groups]]">
+        <h2 hidden$="[[communityNotEmpty]]">[[t('community.is.empty')]]</h2>
         <template is="dom-repeat" class="list" items="[[groups]]" as="group">
           <yp-group-card group="[[group]]" on-mouseover="_groupCardMouseOver" on-mouseout="_groupCardMouseOut"></yp-group-card>
         </template>
@@ -72,6 +73,11 @@
           type: Number,
           value: null,
           observer: "_communityIdChanged"
+        },
+
+        communityNotEmpty: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -80,6 +86,8 @@
           this.set("groups",[]);
           this.$.ajax.url = '/api/communities/' + this.communityId;
           this.$.ajax.generateRequest();
+        } else {
+          this.communityNotEmpty = false;
         }
       },
 
@@ -91,6 +99,8 @@
       _response: function (event, detail, sender) {
         var community = detail.response;
         this.set("groups", community.Groups);
+        if (community.Groups.length>0)
+          this.communityNotEmpty = true;
         this.fire("change-header", { headerTitle: community.name,
                                      headerDescription: community.description });
       },

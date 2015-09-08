@@ -44,6 +44,7 @@
 
     <div class="card-container">
       <template is="dom-if" if="[[communities]]">
+        <h2 hidden$="[[domainNotEmpty]]">[[t('domain.is.empty')]]</h2>
         <template is="dom-repeat" class="list" items="[[communities]]" as="community">
           <yp-community-card community="[[community]]" on-mouseover="_communityCardMouseOver" on-mouseout="_communityCardMouseOut"></yp-community-card>
         </template>
@@ -75,6 +76,11 @@
 
         url: {
           type: String
+        },
+
+        domainNotEmpty: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -83,6 +89,8 @@
           this.set("communities",[]);
           this.$.ajax.url = '/api/domains/' + this.domainId;
           this.$.ajax.generateRequest();
+        } else {
+          this.domainNotEmpty = false;
         }
       },
 
@@ -98,6 +106,8 @@
       _response: function (event, detail, sender) {
         var domain = detail.response;
         if (domain.Communities) {
+          if (community.Communities.length>0)
+            this.domainNotEmpty = true;
           this.set("communities",domain.Communities);
         }
         this.fire("change-header", { headerTitle: domain.domain_name,
