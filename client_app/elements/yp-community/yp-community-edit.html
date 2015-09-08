@@ -101,6 +101,10 @@
       }
     },
 
+    _customRedirect: function (communityId) {
+      page("#!/community/"+communityId);
+    },
+
     _communityChanged: function (newValue, oldValue) {
       if (this.community.access===0) {
         this.communityAccess = "secret"

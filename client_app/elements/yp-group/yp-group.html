@@ -45,6 +45,7 @@
 
     <div class="card-container">
       <template is="dom-if" if="[[ideas]]">
+        <h2 hidden$="[[groupNotEmpty]]">[[t('group.is.empty')]]</h2>
         <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
           <yp-idea-card idea="[[idea]]" on-mouseover="_ideaCardMouseOver" on-mouseout="_ideaCardMouseOut"></yp-idea-card>
         </template>
@@ -86,6 +87,11 @@
 
         group: {
           type: Object
+        },
+
+        groupNotEmpty: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -104,6 +110,8 @@
             this.$.ajax.url += '/' + this.categoryId;
           }
           this.$.ajax.generateRequest();
+        } else {
+          this.groupNotEmpty = false;
         }
       },
 
@@ -127,6 +135,8 @@
         this._processCategories();
         this.fire("change-header", { headerTitle: group.name,
                                      headerDescription: group.description });
+        if (detail.response.Ideas.length>0)
+          this.groupNotEmpty = true;
       },
 
       _processCategories: function () {

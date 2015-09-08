@@ -82,17 +82,18 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
     });
     ideaRevision.save().then(function() {
       var point = models.Point.build({
-        content: req.body.pointFor,
         group_id: idea.groupId,
-        user_id: req.user.id,
-        idea_id: idea.id
+        idea_id: idea.id,
+        content: req.body.pointFor,
+        value: 1,
+        user_id: req.user.id
       });
       point.save().then(function() {
         var pointRevision = models.PointRevision.build({
-          content: point.content,
           group_id: point.groupId,
-          user_id: req.user.id,
-          idea_id: idea.id
+          idea_id: idea.id,
+          content: point.content,
+          user_id: req.user.id
         });
         pointRevision.save().then(function() {
           res.send(idea);

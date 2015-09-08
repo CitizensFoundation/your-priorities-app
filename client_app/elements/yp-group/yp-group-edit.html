@@ -93,6 +93,10 @@
       }
     },
 
+    _customRedirect: function (groupId) {
+      page("#!/group/"+groupId);
+    },
+
     _groupChanged: function (newValue, oldValue) {
       if (this.group.access===0) {
         this.groupAccess = "secret"

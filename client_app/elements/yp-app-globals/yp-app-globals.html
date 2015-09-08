@@ -100,7 +100,7 @@
 
           minSplashMs: {
             type: Number,
-            value: 1500
+            value: 2000
           },
 
           requestInProgress: {
@@ -116,11 +116,13 @@
         },
 
         _removeSplash: function () {
-          var loadContainer = document.getElementById('splash');
-          loadContainer.addEventListener('transitionend',function(event) {
-            loadContainer.parentNode.removeChild(loadContainer);
-          });
-          document.body.classList.remove('loading');
+          var splash = document.getElementById('splash');
+          if (splash) {
+            splash.addEventListener('transitionend',function(event) {
+              splash.parentNode.removeChild(splash);
+            });
+            document.body.classList.remove('loading');
+          }
         },
 
         _removeSplashWithDelay: function () {

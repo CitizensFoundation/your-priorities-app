@@ -33,10 +33,13 @@
     },
 
     listeners: {
-      'iron-form-response': '_formResponse',
+      'iron-form-response': '_formResponse'
     },
 
-    _formResponse: function () {
+    _formResponse: function (event, detail) {
+      if (typeof this._customRedirect == 'function') {
+        this._customRedirect(detail.id);
+      }
       this._clear();
     },
 

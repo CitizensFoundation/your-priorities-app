@@ -7,6 +7,12 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
+function onSplashClick() {
+  var loadContainer = document.getElementById('splash');
+  loadContainer.parentNode.removeChild(loadContainer);
+  document.body.classList.remove('loading');
+}
+
 (function(document) {
   'use strict';
 
