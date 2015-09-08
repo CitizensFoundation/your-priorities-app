@@ -82,7 +82,8 @@
           },
 
           idea: {
-            type: Object
+            type: Object,
+            observer: "_ideaChanged"
           },
 
           contactId: { notify: true },
@@ -96,11 +97,16 @@
           }
         },
 
+        _ideaChanged: function (newValue, oldValue) {
+        },
+
         _ideaIdChanged: function (newValue, oldValue) {
           if (newValue) {
             this.set("idea",null);
             this.$.ajax.url = '/api/ideas/' + this.ideaId;
             this.$.ajax.generateRequest();
+          } else {
+            this.set("idea",null);
           }
         },
 

@@ -216,16 +216,15 @@
       },
 
       ideaName: function (idea) {
-        debugger;
-        if (idea.name) {
+        if (idea && idea.name) {
           return this.truncate(this.trim(idea.name), 200);
-        } else {
+        } else if (idea) {
           return idea.short_name;
         }
       },
 
       ideaDescription: function (idea) {
-        if (idea.description) {
+        if (idea && idea.description) {
           return this.truncate(this.trim(idea.description), 10000, '...');
         } else {
           return "";
