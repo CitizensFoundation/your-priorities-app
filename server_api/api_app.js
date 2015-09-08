@@ -116,7 +116,7 @@ app.post('/api/users/logout', function(req, res){
     userEmail = req.user.email;
   }
   req.logOut();
-  res.send(200);
+  res.sendStatus(200);
 });
 
 app.use('/', index);

@@ -93,7 +93,8 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
           group_id: point.groupId,
           idea_id: idea.id,
           content: point.content,
-          user_id: req.user.id
+          user_id: req.user.id,
+          point_id: point.id
         });
         pointRevision.save().then(function() {
           res.send(idea);

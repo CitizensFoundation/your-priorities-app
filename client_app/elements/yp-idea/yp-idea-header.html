@@ -216,6 +216,7 @@
       },
 
       ideaName: function (idea) {
+        debugger;
         if (idea.name) {
           return this.truncate(this.trim(idea.name), 200);
         } else {
@@ -232,7 +233,7 @@
       },
 
       getCategoryImagePath: function (idea) {
-        if (idea.Category) {
+        if (idea && idea.Category) {
           return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(idea.Category.id) + '/icon_100/' + idea.Category.icon_file_name;
         } else {
           return "";
