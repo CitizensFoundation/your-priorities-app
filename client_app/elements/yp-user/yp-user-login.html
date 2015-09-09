@@ -175,7 +175,7 @@
       window.appUser.setUser(user);
       if (this.redirectTo)
         page(this.redirectTo)
-      this.fire("login");
+      this.fire("login",user);
     },
 
     open: function(redirectTo) {

@@ -146,7 +146,8 @@
 
       properties: {
         idea: {
-          type: Object
+          type: Object,
+          observer: "_onIdeaChanged"
         },
 
         small: {
@@ -157,6 +158,15 @@
         votingMode: {
           type: String,
           value: "love"
+        }
+      },
+
+      _onIdeaChanged: function (newValue, oldValue) {
+        if (newValue && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
+          var thisIdeasEndorsement = window.appUser.endorsementIdeasIndex[newValue.id];
+          if (thisIdeasEndorsement) {
+            this._setEndorsement(thisIdeasEndorsement.value);
+          }
         }
       },
 
@@ -176,18 +186,27 @@
         }
       },
 
-      _endorseResponse: function (event, detail) {
+      _setEndorsement: function (value) {
         if (this.votingMode=="love") {
-          if (detail.response.value > 0)
+          if (detail.response.value > 0) {
             this.$.actionUp.className += " " + "love-up-selected";
-          else
+            this.removeClass(this.$.actionDown, "love-down-selected");
+          } else {
             this.$.actionDown.className += " " + "love-down-selected";
+            this.removeClass(this.$.actionUp,"love-up-selected");
+          }
         }
       },
 
+      _endorseResponse: function (event, detail) {
+        this._setEndorsement(detail.response.value);
+        window.appUser.updateEndorsementForIdea(this.idea.id, detail.response);
+      },
+
       _generateEndorsement: function (value) {
+        this.$.endorseAjax.url = "/ideas/" + this.idea.id + "/endorse"
         this.$.endorseAjax.body = { idea_id: this.idea.id, value: value };
-        this.$.generateRequest();
+        this.$.endorseAjax.generateRequest();
       },
 
       upVote: function (event) {

@@ -17,6 +17,7 @@ var groups = require('./controllers/groups');
 var communities = require('./controllers/communities');
 var domains = require('./controllers/domains');
 var points = require('./controllers/points');
+var users = require('./controllers/users');
 
 var models = require('./models');
 
@@ -52,7 +53,8 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(id, done) {
   models.User.find({
-    where: {id: id}
+    where: {id: id},
+    include: [ models.Endorsement ]
   }).then(function(user) {
     done(null, user);
   });
@@ -74,84 +76,13 @@ passport.use(new LocalStrategy(
     }
 ));
 
-var isAuthenticated = function (req, res, next) {
-  if (req.isAuthenticated())
-    return next();
-  res.send(401, 'Unauthorized');
-}
-
-var needsGroup = function(groupId) {
-  return function(req, res, next) {
-    if (req.user && req.user.group === groupId)
-      next();
-    else
-      res.send(401, 'Unauthorized');
-  };
-};
-
-var needsAdmin = function() {
-  return function(req, res, next) {
-    if (req.user && req.user.is_admin)
-      next();
-    else
-      res.send(401, 'Unauthorized');
-  };
-};
-
-var needsRoot = function() {
-  return function(req, res, next) {
-    if (req.user && req.user.is_root)
-      next();
-    else
-      res.send(401, 'Unauthorized');
-  };
-};
-
-app.get('/api/users/isloggedin', function(req, res) {
-  res.send(req.isAuthenticated() ? req.user : '0');
-});
-
-app.post('/api/users/logout', function(req, res){
-  var userEmail = "";
-  if (req.user) {
-    userEmail = req.user.email;
-  }
-  req.logOut();
-  res.sendStatus(200);
-});
-
 app.use('/', index);
 app.use('/api/ideas', ideas);
 app.use('/api/groups', groups);
 app.use('/api/communities', communities);
 app.use('/api/domains', domains);
 app.use('/api/points', points);
-//app.use('/api/users', users);
-
-app.get('/api/users/login',  passport.authenticate('local'), function(req, res) {
-  res.send(req.user);
-});
-
-app.post('/api/users/register', function(req, res) {
-
-  var user = models.User.build({
-    email: req.body.email
-  });
-
-  user.createPasswordHash(req.body.password);
-
-  user.save().then(function() {
-    req.logIn(user, function(err) {
-      if (err) {
-        return res.sendStatus(401);
-      } else {
-        res.send(user);
-      }
-    });
-  }).catch(function(error) {
-    res.sendStatus(500);
-  });
-});
+app.use('/api/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

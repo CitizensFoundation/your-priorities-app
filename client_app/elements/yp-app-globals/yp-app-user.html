@@ -53,6 +53,10 @@
           user: {
             type: Object,
             observer: "_onUserChanged"
+          },
+
+          endorsementIdeasIndex: {
+            type: Object
           }
         },
 
@@ -89,12 +93,39 @@
           this.$.isLoggedInAjax.generateRequest();
         },
 
-        _onUserChanged: function (newValue, oldValue) {
-          this.fire("user-changed", newValue)
+        updateEndorsementForIdea: function (ideaId, endorsement) {
+          if (this.user.Endorsements) {
+            var hasChanged = false;
+            for(var i=0; i<this.user.Endorsements.length; i++) {
+              if (this.user.Endorsements[i].idea_id===ideaId) {
+                this.user.Endorsements[i] = endorsement;
+                hasChanged = true;
+              }
+              if (hasChanged)
+                _updateEndorsementIdeasIndex(this.user);
+            }
+          }
         },
 
-        _handleLogin: function () {
+        _updateEndorsementIdeasIndex: function (user) {
+          if (user && user.Endorsements && user.Endorsements>0) {
+            this.endorsementIdeasIndex = {};
+            for(var i=0; i<user.Endorsements.length; i++){
+              this.endorsementIdeasIndex[ user.Endorsements[i].idea_id ] = user.Endorsements[i];
+            }
+          } else {
+            this.endorsementIdeasIndex = {}
+          }
+        },
+
+        _onUserChanged: function (newValue, oldValue) {
+          this.fire("user-changed", newValue);
+          this._updateEndorsementIdeasIndex(newValue);
+        },
+
+        _handleLogin: function (event, user) {
           this.$.userLogin.close();
+          this.setUser(user);
           this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.email;
           this.$.loginToast.show();
           if (this.loginForEditParams) {

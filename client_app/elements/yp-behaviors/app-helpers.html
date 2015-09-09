@@ -24,6 +24,17 @@
       return translation;
     },
 
+    removeClass: function(element, classToRemove) {
+      var newClassName = "";
+      var classes = element.className.split(" ");
+      for(var i = 0; i < classes.length; i++) {
+        if(classes[i] !== classToRemove) {
+          newClassName += classes[i] + " ";
+        }
+      }
+      element.className = newClassName;
+    },
+
     formatNumber: function (value) {
       if (value) {
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
