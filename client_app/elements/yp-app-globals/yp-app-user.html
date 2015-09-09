@@ -108,13 +108,12 @@
               }
             }
             if (hasChanged)
-              _updateEndorsementIdeasIndex(this.user);
+              this._updateEndorsementIdeasIndex(this.user);
           }
         },
 
         _updateEndorsementIdeasIndex: function (user) {
           if (user && user.Endorsements && user.Endorsements.length>0) {
-            debugger;
             this.endorsementIdeasIndex = {};
             for(var i=0; i<user.Endorsements.length; i++){
               this.endorsementIdeasIndex[ user.Endorsements[i].idea_id ] = user.Endorsements[i];
@@ -147,7 +146,6 @@
         },
 
         _isLoggedInResponse: function(event, detail) {
-          debugger;
           if (detail.response===0) {
             this.removeUserSession();
           } else if (detail.response.email) {

@@ -127,15 +127,15 @@ router.post('/:id/endorse', isAuthenticated, function(req, res) {
 
 router.delete('/:id/endorse', isAuthenticated, function(req, res) {
   models.Endorsement.find({
-    where: { idea_id: req.params.id, user_id: req.user.id, status: 'active' }
+    where: { idea_id: req.params.id, user_id: req.user.id }
   }).then(function(endorsement) {
     if (endorsement) {
-      endorsement.status = 'disabled';
+      endorsement.value = 0;
       endorsement.save().then(function() {
-        res.sendStatus(200);
+        res.status(200).send(endorsement);
       });
     } else {
-      res.sendStatus(200);
+      res.sendStatus(404);
     }
   });
 });

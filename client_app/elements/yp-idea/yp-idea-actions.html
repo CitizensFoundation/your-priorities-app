@@ -197,14 +197,18 @@
           if (value > 0) {
             this.$.actionUp.className += " " + "love-up-selected";
             this.removeClass(this.$.actionDown, "love-down-selected");
-          } else {
+          } else if (value < 0) {
             this.$.actionDown.className += " " + "love-down-selected";
             this.removeClass(this.$.actionUp,"love-up-selected");
+          } else {
+            this.removeClass(this.$.actionUp,"love-up-selected");
+            this.removeClass(this.$.actionDown, "love-down-selected");
           }
         }
       },
 
       _endorseResponse: function (event, detail) {
+        debugger;
         this._setEndorsement(detail.response.value);
         window.appUser.updateEndorsementForIdea(this.idea.id, detail.response);
       },
@@ -214,6 +218,8 @@
         this.$.endorseAjax.body = { idea_id: this.idea.id, value: value };
         if (this.endorseValue === value) {
           this.$.endorseAjax.method = "DELETE";
+        } else {
+          this.$.endorseAjax.method = "POST";
         }
         this.$.endorseAjax.generateRequest();
       },
@@ -224,7 +230,7 @@
       },
 
       downVote: function (event) {
-        this._generateEndorsement(0);
+        this._generateEndorsement(-1);
         window.appGlobals.activity('Anonymous', 'down_vote', this.idea.id);
       },
 
