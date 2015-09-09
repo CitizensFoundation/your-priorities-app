@@ -50,9 +50,9 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
   var order = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
   if (req.params.filter!="inProgress") {
-    where+=" AND status = 'published'";
+    //where+=' AND "Idea"."status" = "published"';
   } else {
-    where+=" AND status != 'published' AND status != 'deleted'";
+    where+=' AND "Idea"."status" != "published" AND "Idea"."status" != "deleted"';
   }
 
   if (req.params.filter=="newest") {
@@ -60,7 +60,6 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
   } else if (req.params.filter=="random") {
     order = "random()";
   }
-  console.log("a1");
 
   console.log(req.param["categoryId"]);
   console.log(req.params);
@@ -68,10 +67,6 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
   if (req.params.categoryId!=undefined) {
     where+=" AND category_id = "+ req.params.categoryId;
   }
-  console.log("A2");
-
-  console.log(where);
-  console.log(order);
 
   models.Group.find({
     where: { id: req.params.id },

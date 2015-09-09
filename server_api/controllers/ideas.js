@@ -104,4 +104,15 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
   });
 });
 
+router.post('/:id/endorse', isAuthenticated, function(req, res) {
+  var endorsement = models.Endorsement.create({
+    idea_id: req.params.id,
+    value: req.body.value,
+    user_id: req.user.id,
+    status: 'active'
+  }).save().then(function() {
+    res.send(endorsement);
+  });
+});
+
 module.exports = router;

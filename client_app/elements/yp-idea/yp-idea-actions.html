@@ -134,7 +134,7 @@
         <paper-icon-button icon$="[[votingModeIcon(votingMode,'down')]]" class="action-icon down-vote-icon" on-tap="downVote"></paper-icon-button>
       </div>
     </div>
-
+    <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
   </template>
   <script>
     Polymer({
@@ -176,20 +176,28 @@
         }
       },
 
-      upVote: function (event) {
+      _endorseResponse: function (event, detail) {
         if (this.votingMode=="love") {
-          this.$.actionUp.className += " " + "love-up-selected";
+          if (detail.response.value > 0)
+            this.$.actionUp.className += " " + "love-up-selected";
+          else
+            this.$.actionDown.className += " " + "love-down-selected";
         }
+      },
+
+      _generateEndorsement: function (value) {
+        this.$.endorseAjax.body = { idea_id: this.idea.id, value: value };
+        this.$.generateRequest();
+      },
+
+      upVote: function (event) {
+        this._generateEndorsement(1);
         window.appGlobals.activity('Anonymous', 'up_vote', this.idea.id);
-//        window.appGlobals.openDialog('ideas.up_vote');
       },
 
       downVote: function (event) {
-        if (this.votingMode=="love") {
-          this.$.actionDown.className += " " + "love-down-selected";
-        }
+        this._generateEndorsement(0);
         window.appGlobals.activity('Anonymous', 'down_vote', this.idea.id);
-//        window.appGlobals.openDialog('ideas.down_vote');
       },
 
       computeActionClass: function (small) {
