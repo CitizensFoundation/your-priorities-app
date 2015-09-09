@@ -5,7 +5,7 @@ var models = require("../models");
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated())
     return next();
-  res.send(401, 'Unauthorized');
+  res.status(401).send('Unauthorized');
 }
 
 router.post('/', isAuthenticated, function(req, res) {
@@ -25,7 +25,18 @@ router.post('/', isAuthenticated, function(req, res) {
       point_id: point.id
     });
     pointRevision.save().then(function() {
-      res.send(point);
+      models.Point.find({
+        where: { id: point.id },
+        include: [
+          { model: models.PointRevision ,
+            include: [
+              { model: models.User, attributes: ["id", "login", "facebook_uid", "buddy_icon_file_name"] }
+            ]
+          }
+        ]
+      }).then(function(point) {
+        res.send(point);
+      });
     });
   }).catch(function(error) {
     res.sendStatus(403);

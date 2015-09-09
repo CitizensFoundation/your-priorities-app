@@ -51,7 +51,7 @@
 
           <paper-material id="pointUpMaterial" elevation="0" class="pointText" animated>
             <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                            bind-value="{{textValueUp}}" label="[[t('point.for')]]" char-counter rows="2"
+                            bind-value="{{textValueUp}}" value=[[textValueUp]] label="[[t('point.for')]]" char-counter rows="2"
                             max-rows="5" maxlength="500"></paper-textarea>
 
             <template is="dom-if" if="[[computeIf(textValueUp)]]">
@@ -61,9 +61,11 @@
             </template>
           </paper-material>
 
-          <template is="dom-repeat" items="[[upPoints]]" as="point">
-            <yp-point point="[[point]]"></yp-point>
-          </template>
+          <div id="allUpPoints">
+            <template is="dom-repeat" items="[[upPoints]]" as="point">
+              <yp-point point="[[point]]"></yp-point>
+            </template>
+          </div>
 
         </div>
 
@@ -72,7 +74,7 @@
           <paper-material id="pointDownMaterial" elevation="0" class="pointText" animated>
 
             <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                            bind-value="{{textValueDown}}" label="[[t('point.against')]]" char-counter rows="2"
+                            bind-value="{{textValueDown}}" value=[[textValueDown]] label="[[t('point.against')]]" char-counter rows="2"
                             max-rows="5" maxlength="500"></paper-textarea>
 
             <template is="dom-if" if="[[computeIf2(textValueDown)]]">
@@ -82,15 +84,16 @@
             </template>
           </paper-material>
 
-          <template is="dom-repeat" items="[[downPoints]]" as="point">
-            <yp-point point="[[point]]"></yp-point>
-          </template>
+          <div id="allDownPoints">
+            <template is="dom-repeat" items="[[downPoints]]" as="point">
+              <yp-point point="[[point]]"></yp-point>
+            </template>
+          </div>
         </div>
-
       </div>
     </template>
     <yp-ajax id="newPointAjax" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
-    <paper-toast id="newPointToast" text="[[toastLoginTextCombined]]"></paper-toast>
+    <paper-toast id="newPointToast" text="[[newPointTextCombined]]"></paper-toast>
   </template>
 
   <script>
@@ -160,20 +163,26 @@
           }
         },
 
+        _insertNewPoint: function (point) {
+          var pointElement = document.createElement('yp-point');
+          pointElement.point = point;
+          if (point.value>0) {
+            this.$$('#allUpPoints').insertBefore(pointElement, this.$$('#allUpPoints').firstChild);
+          }
+          else if (point.value<0)
+            this.$$('#allDownPoints').insertBefore(pointElement, this.$$('#allDownPoints').firstChild);
+        },
+
         _newPointResponse: function (event, detail) {
           var point = detail.response;
           if (point.value>0) {
             this.newPointTextCombined = this.t("new.point.for.added")+ " " + this.truncate(point.content,21);
-            this.textValueUp = "";
-            var newPoints = this.upPoints;
-            debugger;
-            this.set("upPoints",newPoints);
+            this.set("textValueUp","");
           } else {
             this.newPointTextCombined = this.t("new.point.against.added")+ " " +  this.truncate(point.content,21);
-            this.textValueDown = "";
-            this.downPoints.unshift(point);
-            this.set("downPoints",this.upPoints);
+            this.set("textValueDown","");
           }
+          this._insertNewPoint(point);
           this.$.newPointToast.show();
         },
 

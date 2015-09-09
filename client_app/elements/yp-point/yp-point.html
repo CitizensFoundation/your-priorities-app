@@ -69,7 +69,7 @@
         <div class="point-content">
 
           <div class$="[[computeClass(point)]]">
-            <span>[[point.name]]</span>. <span>[[point.content]]</span>
+            <span hidden$="[[!point.name]]"><span>[[point.name]]</span>. </span><span>[[point.content]]</span>
             <yp-point-actions point="[[point]]"></yp-point-actions>
           </div>
         </div>

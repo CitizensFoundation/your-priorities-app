@@ -118,19 +118,19 @@
             <div class="category-image-container">
               <iron-image class="category-icon" sizing="contain" src$="[[getCategoryImagePath(idea)]]"></iron-image>
             </div>
-            <div class="description">
-              <h1 class="idea-name">[[ideaName(idea)]]</h1>
-              <div>[[ideaDescription(idea)]]</div>
+            <div class="layout horizontal">
+              <div class="description">
+                <h1 class="idea-name">[[ideaName(idea)]]</h1>
+                <div>[[ideaDescription(idea)]]</div>
+              </div>
+              <div class="layout vertical">
+                <div class="card-actions">
+                  <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
+                </div>
+                <yp-idea-users idea="[[idea]]"></yp-idea-users>
+              </div>
             </div>
-          </div>
-          <div class="stats-container">
-
-            <yp-idea-users idea="[[idea]]"></yp-idea-users>
-
-            <div class="card-actions">
-              <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
-            </div>
-
+            <div class="stats-container"></div>
           </div>
         </div>
       </div>
