@@ -204,7 +204,7 @@
       },
 
       _generateEndorsement: function (value) {
-        this.$.endorseAjax.url = "/ideas/" + this.idea.id + "/endorse"
+        this.$.endorseAjax.url = "/api/ideas/" + this.idea.id + "/endorse"
         this.$.endorseAjax.body = { idea_id: this.idea.id, value: value };
         this.$.endorseAjax.generateRequest();
       },

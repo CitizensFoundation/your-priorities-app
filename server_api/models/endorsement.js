@@ -2,7 +2,7 @@
 
 module.exports = function(sequelize, DataTypes) {
   var Endorsement = sequelize.define("Endorsement", {
-    value: DataTypes.TEXT,
+    value: DataTypes.INTEGER,
     idea_id: DataTypes.INTEGER,
     user_id: DataTypes.INTEGER,
     status: DataTypes.STRING
