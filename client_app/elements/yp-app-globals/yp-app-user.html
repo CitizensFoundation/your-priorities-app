@@ -56,13 +56,8 @@
           },
 
           endorsementIdeasIndex: {
-            type: Object,
-            observer: "_onEndorsementIdeasIndexChanged"
+            type: Object
           }
-        },
-
-        _onEndorsementIdeasIndexChanged: function (newValue, oldValue) {
-          debugger;
         },
 
         loginForEdit: function(editDialog,newOrUpdate,params) {
@@ -152,6 +147,7 @@
         },
 
         _isLoggedInResponse: function(event, detail) {
+          debugger;
           if (detail.response===0) {
             this.removeUserSession();
           } else if (detail.response.email) {

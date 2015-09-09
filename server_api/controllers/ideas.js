@@ -125,4 +125,19 @@ router.post('/:id/endorse', isAuthenticated, function(req, res) {
   });
 });
 
+router.delete('/:id/endorse', isAuthenticated, function(req, res) {
+  models.Endorsement.find({
+    where: { idea_id: req.params.id, user_id: req.user.id, status: 'active' }
+  }).then(function(endorsement) {
+    if (endorsement) {
+      endorsement.status = 'disabled';
+      endorsement.save().then(function() {
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
 module.exports = router;

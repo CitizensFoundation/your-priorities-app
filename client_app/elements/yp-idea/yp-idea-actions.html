@@ -158,12 +158,16 @@
         votingMode: {
           type: String,
           value: "love"
+        },
+
+        endorseValue: {
+          type: Number,
+          value: 0
         }
       },
 
       _onIdeaChanged: function (newValue, oldValue) {
         if (newValue && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
-          debugger;
           var thisIdeasEndorsement = window.appUser.endorsementIdeasIndex[newValue.id];
           if (thisIdeasEndorsement) {
             this._setEndorsement(thisIdeasEndorsement.value);
@@ -188,6 +192,7 @@
       },
 
       _setEndorsement: function (value) {
+        this.endorseValue = value;
         if (this.votingMode=="love") {
           if (value > 0) {
             this.$.actionUp.className += " " + "love-up-selected";
@@ -207,6 +212,9 @@
       _generateEndorsement: function (value) {
         this.$.endorseAjax.url = "/api/ideas/" + this.idea.id + "/endorse"
         this.$.endorseAjax.body = { idea_id: this.idea.id, value: value };
+        if (this.endorseValue === value) {
+          this.$.endorseAjax.method = "DELETE";
+        }
         this.$.endorseAjax.generateRequest();
       },
 

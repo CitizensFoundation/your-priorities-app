@@ -54,7 +54,9 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(id, done) {
   models.User.find({
     where: {id: id},
-    include: [ models.Endorsement ]
+    include: [ {
+      model: models.Endorsement
+    } ]
   }).then(function(user) {
     done(null, user);
   });
