@@ -56,8 +56,13 @@
           },
 
           endorsementIdeasIndex: {
-            type: Object
+            type: Object,
+            observer: "_onEndorsementIdeasIndexChanged"
           }
+        },
+
+        _onEndorsementIdeasIndexChanged: function (newValue, oldValue) {
+          debugger;
         },
 
         loginForEdit: function(editDialog,newOrUpdate,params) {
@@ -93,22 +98,28 @@
           this.$.isLoggedInAjax.generateRequest();
         },
 
-        updateEndorsementForIdea: function (ideaId, endorsement) {
+        updateEndorsementForIdea: function (ideaId, newEndorsement) {
           if (this.user.Endorsements) {
             var hasChanged = false;
             for(var i=0; i<this.user.Endorsements.length; i++) {
               if (this.user.Endorsements[i].idea_id===ideaId) {
-                this.user.Endorsements[i] = endorsement;
+                if (newEndorsement) {
+                  this.user.Endorsements[i] = newEndorsement;
+                } else {
+                  this.user.Endorsements[i].splice(i, 1);
+                }
                 hasChanged = true;
+                break;
               }
-              if (hasChanged)
-                _updateEndorsementIdeasIndex(this.user);
             }
+            if (hasChanged)
+              _updateEndorsementIdeasIndex(this.user);
           }
         },
 
         _updateEndorsementIdeasIndex: function (user) {
-          if (user && user.Endorsements && user.Endorsements>0) {
+          if (user && user.Endorsements && user.Endorsements.length>0) {
+            debugger;
             this.endorsementIdeasIndex = {};
             for(var i=0; i<user.Endorsements.length; i++){
               this.endorsementIdeasIndex[ user.Endorsements[i].idea_id ] = user.Endorsements[i];

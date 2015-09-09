@@ -163,6 +163,7 @@
 
       _onIdeaChanged: function (newValue, oldValue) {
         if (newValue && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
+          debugger;
           var thisIdeasEndorsement = window.appUser.endorsementIdeasIndex[newValue.id];
           if (thisIdeasEndorsement) {
             this._setEndorsement(thisIdeasEndorsement.value);
@@ -188,7 +189,7 @@
 
       _setEndorsement: function (value) {
         if (this.votingMode=="love") {
-          if (detail.response.value > 0) {
+          if (value > 0) {
             this.$.actionUp.className += " " + "love-up-selected";
             this.removeClass(this.$.actionDown, "love-down-selected");
           } else {
