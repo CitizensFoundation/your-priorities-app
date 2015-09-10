@@ -43,7 +43,7 @@
        }
     </style>
 
-    <template is="dom-if" if="[[points]]">
+    <template is="dom-if" if="[[idea]]">
 
       <div class="main-container">
 
@@ -115,11 +115,6 @@
             }
           },
 
-          points: {
-            type: Array,
-            observer: "_pointsChanged"
-          },
-
           text: {
             observer: 'textChanged'
           },
@@ -144,16 +139,20 @@
           },
 
           idea: {
-            type: Object
+            type: Object,
+            observer: "_ideaChanged"
           }
         },
 
-        _pointsChanged: function (newValue, oldValue) {
+        _ideaChanged: function (newValue, oldValue) {
+          // Remove any manually inserted points when the list is updated
+          this.removeElementsByClass(this, 'inserted-outside-list');
+
           if (newValue) {
-            this.upPoints = this.points.filter(function (x) {
+            this.upPoints = newValue.Points.filter(function (x) {
               return x.value > 0;
             });
-            this.downPoints = this.points.filter(function (x) {
+            this.downPoints = newValue.Points.filter(function (x) {
               return x.value < 0;
             });
           } else {
@@ -165,11 +164,14 @@
         _insertNewPoint: function (point) {
           var pointElement = document.createElement('yp-point');
           pointElement.point = point;
+          pointElement.className += "inserted-outside-list";
+          debugger;
           if (point.value>0) {
             this.$$('#allUpPoints').insertBefore(pointElement, this.$$('#allUpPoints').firstChild);
           }
-          else if (point.value<0)
+          else if (point.value<0) {
             this.$$('#allDownPoints').insertBefore(pointElement, this.$$('#allDownPoints').firstChild);
+          }
         },
 
         _newPointResponse: function (event, detail) {

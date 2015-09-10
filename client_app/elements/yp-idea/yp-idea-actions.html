@@ -169,9 +169,8 @@
       _onIdeaChanged: function (newValue, oldValue) {
         if (newValue && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
           var thisIdeasEndorsement = window.appUser.endorsementIdeasIndex[newValue.id];
-          if (thisIdeasEndorsement) {
+          if (thisIdeasEndorsement)
             this._setEndorsement(thisIdeasEndorsement.value);
-          }
         }
       },
 
@@ -215,19 +214,18 @@
         debugger;
         if (oldEndorsementValue) {
           if (oldEndorsementValue>0)
-            this.set('idea.counter_endorsements_up', this.idea.counter_endorsements_up-1)
-            ;
+            this.set('idea.counter_endorsements_up', this.idea.counter_endorsements_up-1);
           else if (oldEndorsementValue<0)
-            this.set('idea.counter_endorsements_down', this.idea.counter_endorsements_down-1)
+            this.set('idea.counter_endorsements_down', this.idea.counter_endorsements_down-1);
         }
         if (endorsement.value>0)
-          this.set('idea.counter_endorsements_up', this.idea.counter_endorsements_up+1)
+          this.set('idea.counter_endorsements_up', this.idea.counter_endorsements_up+1);
         else if (endorsement.value<0)
           this.set('idea.counter_endorsements_down', this.idea.counter_endorsements_down+1)
       },
 
       _generateEndorsement: function (value) {
-        this.$.endorseAjax.url = "/api/ideas/" + this.idea.id + "/endorse"
+        this.$.endorseAjax.url = "/api/ideas/" + this.idea.id + "/endorse";
         this.$.endorseAjax.body = { idea_id: this.idea.id, value: value };
         if (this.endorseValue === value) {
           this.$.endorseAjax.method = "DELETE";

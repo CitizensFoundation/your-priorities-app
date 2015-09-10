@@ -35,6 +35,13 @@
       element.className = newClassName;
     },
 
+    removeElementsByClass: function (rootElement, className) {
+      var elements = rootElement.getElementsByClassName(className);
+      while(elements.length > 0){
+        elements[0].parentNode.removeChild(elements[0]);
+      }
+    },
+
     formatNumber: function (value) {
       if (value) {
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
