@@ -170,7 +170,6 @@
         },
 
         _newPointResponse: function (event, detail) {
-          debugger;
           var point = detail.response;
           if (point.value>0) {
             this.newPointTextCombined = this.t("new.point.for.added")+ " " + this.truncate(point.content,21);

@@ -46,6 +46,14 @@
             type: Object
           },
 
+          loginForEndorseParams: {
+            type: Object
+          },
+
+          loginForPointQualityParams: {
+            type: Object
+          },
+
           toastLoginTextCombined: {
             type: String
           },
@@ -78,18 +86,36 @@
           this.$.userLogin.open();
         },
 
+        loginForEndorse: function(ideaActionElement, params) {
+          this.loginForEndorseParams = { ideaActionElement: ideaActionElement, params: params };
+          this.$.userLogin.open();
+        },
+
         _handleLogin: function (event, user) {
           this.$.userLogin.close();
           this.setUser(user);
           this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.email;
           this.$.loginToast.show();
           if (this.loginForEditParams) {
+
             var loginParams = this.loginForEditParams;
             loginParams.editDialog.open(loginParams.newOrUpdate,loginParams.params);
             this.loginForEditParams = null;
           } else if (this.loginForNewPointParams) {
+
             var newPointParams = this.loginForNewPointParams;
             newPointParams.ideaPointsElement.addPoint(newPointParams.params.content, newPointParams.params.value);
+            this.loginForNewPointParams = null;
+          } else if (this.loginForEndorseParams) {
+
+            var endorseParams = this.loginForEndorseParams;
+            endorseParams.ideaActionElement.generateEndorsement(endorseParams.params.value);
+            this.loginForEndorseParams = null;
+          } else if (this.loginForPointQualityParams) {
+
+            var pointQualityParams = this.loginForPointQualityParams;
+            endorseParams.pointActionElement.voteUp(pointQualityParams.params.value);
+            this.loginForPointQualityParams = null;
           }
           this.fire("login")
         },

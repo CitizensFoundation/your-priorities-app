@@ -223,25 +223,31 @@
           this.set('idea.counter_endorsements_down', this.idea.counter_endorsements_down+1)
       },
 
-      _generateEndorsement: function (value) {
-        this.$.endorseAjax.url = "/api/ideas/" + this.idea.id + "/endorse";
-        this.$.endorseAjax.body = { idea_id: this.idea.id, value: value };
-        if (this.endorseValue === value) {
-          this.$.endorseAjax.method = "DELETE";
+      generateEndorsement: function (value) {
+        if (window.appUser.loggedIn()===true) {
+          this.$.endorseAjax.url = "/api/ideas/" + this.idea.id + "/endorse";
+          this.$.endorseAjax.body = { idea_id: this.idea.id, value: value };
+          if (this.endorseValue === value) {
+            this.$.endorseAjax.method = "DELETE";
+          } else {
+            this.$.endorseAjax.method = "POST";
+          }
+          this.$.endorseAjax.generateRequest();
+          if (value>0)
+            window.appGlobals.activity('Anonymous', 'up_vote', this.idea.id);
+          else if (value<0)
+            window.appGlobals.activity('Anonymous', 'down_vote', this.idea.id);
         } else {
-          this.$.endorseAjax.method = "POST";
+          window.appUser.loginForEndorse(this, { value: value } );
         }
-        this.$.endorseAjax.generateRequest();
       },
 
       upVote: function (event) {
-        this._generateEndorsement(1);
-        window.appGlobals.activity('Anonymous', 'up_vote', this.idea.id);
+        this.generateEndorsement(1);
       },
 
       downVote: function (event) {
-        this._generateEndorsement(-1);
-        window.appGlobals.activity('Anonymous', 'down_vote', this.idea.id);
+        this.generateEndorsement(-1);
       },
 
       computeActionClass: function (small) {
