@@ -132,14 +132,18 @@
       },
 
       _generatePointQuality: function (value) {
-        this.$.pointQualityAjax.url = "/api/points/" + this.point.id + "/pointQuality";
-        this.$.pointQualityAjax.body = { point_id: this.point.id, value: value };
-        if (this.pointQualityValue === value) {
-          this.$.pointQualityAjax.method = "DELETE";
+        if (window.appUser.loggedIn()===true) {
+          this.$.pointQualityAjax.url = "/api/points/" + this.point.id + "/pointQuality";
+          this.$.pointQualityAjax.body = { point_id: this.point.id, value: value };
+          if (this.pointQualityValue === value) {
+            this.$.pointQualityAjax.method = "DELETE";
+          } else {
+            this.$.pointQualityAjax.method = "POST";
+          }
+          this.$.pointQualityAjax.generateRequest();
         } else {
-          this.$.pointQualityAjax.method = "POST";
+          window.appUser.loginForPointQuality(this, { value: value } );
         }
-        this.$.pointQualityAjax.generateRequest();
       },
 
       pointHelpful: function () {
