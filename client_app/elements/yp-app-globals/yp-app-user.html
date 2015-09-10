@@ -42,6 +42,10 @@
             type: Object
           },
 
+          loginForNewPointParams: {
+            type: Object
+          },
+
           toastLoginTextCombined: {
             type: String
           },
@@ -67,6 +71,27 @@
         loginForEdit: function(editDialog,newOrUpdate,params) {
           this.loginForEditParams = { editDialog: editDialog, newOrUpdate: newOrUpdate, params: params };
           this.$.userLogin.open();
+        },
+
+        loginForNewPoint: function(ideaPointsElement, params) {
+          this.loginForNewPointParams = { ideaPointsElement: ideaPointsElement, params: params };
+          this.$.userLogin.open();
+        },
+
+        _handleLogin: function (event, user) {
+          this.$.userLogin.close();
+          this.setUser(user);
+          this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.email;
+          this.$.loginToast.show();
+          if (this.loginForEditParams) {
+            var loginParams = this.loginForEditParams;
+            loginParams.editDialog.open(loginParams.newOrUpdate,loginParams.params);
+            this.loginForEditParams = null;
+          } else if (this.loginForNewPointParams) {
+            var newPointParams = this.loginForNewPointParams;
+            newPointParams.ideaPointsElement.addPoint(newPointParams.params.content, newPointParams.params.value);
+          }
+          this.fire("login")
         },
 
         getUser: function () {
@@ -161,17 +186,6 @@
           this.fire("user-changed", newValue);
           this._updateEndorsementIdeasIndex(newValue);
           this._updatePointQualitiesIndex(newValue);
-        },
-
-        _handleLogin: function (event, user) {
-          this.$.userLogin.close();
-          this.setUser(user);
-          this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.email;
-          this.$.loginToast.show();
-          if (this.loginForEditParams) {
-            this.loginForEditParams.editDialog.open(this.loginForEditParams.newOrUpdate,this.loginForEditParams.params);
-          }
-          this.fire("login")
         },
 
         _logoutResponse: function (event, detail) {

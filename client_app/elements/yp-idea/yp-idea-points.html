@@ -170,6 +170,7 @@
         },
 
         _newPointResponse: function (event, detail) {
+          debugger;
           var point = detail.response;
           if (point.value>0) {
             this.newPointTextCombined = this.t("new.point.for.added")+ " " + this.truncate(point.content,21);
@@ -180,25 +181,31 @@
           }
           this._insertNewPoint(point);
           this.set('idea.counter_points',this.idea.counter_points+1);
-          debugger;
           this.$.newPointToast.show();
         },
 
         addPointUp: function () {
-          this._addPoint(this.textValueUp, 1);
+          this.addPoint(this.textValueUp, 1);
           window.appGlobals.activity('Anonymous', 'add', 'pointUp');
         },
 
         addPointDown: function () {
-          this._addPoint(this.textValueDown, -1);
+          this.addPoint(this.textValueDown, -1);
           window.appGlobals.activity('Anonymous', 'add', 'pointDown');
         },
 
-        _addPoint: function (content, value) {
-          this.$.newPointAjax.body = { groupId: this.idea.group_id,
-                                       ideaId: this.idea.id,
-                                       content: content, value: value };
-          this.$.newPointAjax.generateRequest();
+        addPoint: function (content, value) {
+          if (window.appUser.loggedIn()===true) {
+            this.$.newPointAjax.body = {
+              groupId: this.idea.group_id,
+              ideaId: this.idea.id,
+              content: content,
+              value: value
+            };
+            this.$.newPointAjax.generateRequest();
+          } else {
+            window.appUser.loginForNewPoint(this, { content: content, value: value });
+          }
         },
 
         focusUpPoint: function () {
