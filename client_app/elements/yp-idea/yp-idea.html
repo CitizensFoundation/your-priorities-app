@@ -44,7 +44,7 @@
 
           <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
             <paper-tab><span>[[t('debate')]]</span> &nbsp; (<span>[[idea.Points.length]]</span>)</paper-tab>
-            <paper-tab>[[t('newsfeed')]]</paper-tab>
+            <paper-tab>[[t('news')]]</paper-tab>
             <paper-tab>[[t('location')]]</paper-tab>
             <paper-tab>[[t('photos')]]</paper-tab>
           </paper-tabs>
@@ -117,6 +117,8 @@
             this.idea.description = this.idea.Points[0].content;
             this.idea.Points.shift();
           }
+          this.fire("change-header", { headerTitle: this.truncate(this.idea.name,45),
+                                       headerDescription: this.truncate(this.idea.description,45) });
         },
 
         selectedChanged: function (selected, previous) {
