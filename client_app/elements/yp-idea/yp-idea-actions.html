@@ -211,7 +211,6 @@
         var oldEndorsementValue = detail.response.oldEndorsementValue;
         this._setEndorsement(endorsement.value);
         window.appUser.updateEndorsementForIdea(this.idea.id, endorsement);
-        debugger;
         if (oldEndorsementValue) {
           if (oldEndorsementValue>0)
             this.set('idea.counter_endorsements_up', this.idea.counter_endorsements_up-1);

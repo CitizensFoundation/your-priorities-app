@@ -54,7 +54,7 @@
                             bind-value="{{textValueUp}}" value=[[textValueUp]] label="[[t('point.for')]]" char-counter rows="2"
                             max-rows="5" maxlength="500"></paper-textarea>
 
-            <template is="dom-if" if="[[computeIf(textValueUp)]]">
+            <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
               <div style="width:100%;text-align: center;padding-top: 10px;">
                 <paper-fab icon="add" mini="" z="3" on-tap="addPointUp" class="upPointAction" title="[[t('points.add_up')]]"></paper-fab>
               </div>
@@ -77,7 +77,7 @@
                             bind-value="{{textValueDown}}" value=[[textValueDown]] label="[[t('point.against')]]" char-counter rows="2"
                             max-rows="5" maxlength="500"></paper-textarea>
 
-            <template is="dom-if" if="[[computeIf2(textValueDown)]]">
+            <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
               <div id="downPointAction" style="width:100%;text-align: center;padding-top: 10px;">
                 <paper-fab icon="add" mini="" z="3" on-tap="addPointDown" class="downPointAction" title="[[t('points.add_down')]]"></paper-fab>
               </div>
@@ -113,10 +113,6 @@
             value: function () {
               return [];
             }
-          },
-
-          text: {
-            observer: 'textChanged'
           },
 
           upPoints: {
@@ -165,7 +161,6 @@
           var pointElement = document.createElement('yp-point');
           pointElement.point = point;
           pointElement.className += "inserted-outside-list";
-          debugger;
           if (point.value>0) {
             this.$$('#allUpPoints').insertBefore(pointElement, this.$$('#allUpPoints').firstChild);
           }
@@ -220,31 +215,10 @@
           event.currentTarget.parentElement.elevation=0;
         },
 
-        textChanged: function (detail, e) {
-          this.$.upPointAction.style.display = 'none';
-          var text = e.srcElement;
-          if (text.value.length >= 42) {
-            if (text.id === 'up_point') {
-              this.$.upPointAction.style.display = 'none';
-            } else {
-              this.$.downPointAction.style.display = 'none';
-            }
-          } else {
-            if (text.id === 'up_point') {
-              this.$.upPointAction.style.display = 'none';
-            } else {
-              this.$.downPointAction.style.display = 'none';
-            }
-          }
-        },
-
-        computeIf: function (textValueUp) {
-          return textValueUp.length > 20;
-        },
-
-        computeIf2: function (textValueDown) {
-          return textValueDown.length > 20;
+        ifLengthIsRight: function (textValue) {
+          return textValue.length > 20;
         }
+
       });
     }());
   </script>
