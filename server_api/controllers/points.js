@@ -72,7 +72,13 @@ router.post('/', isAuthenticated, function(req, res) {
           }
         ]
       }).then(function(point) {
-        res.send(point);
+        models.Idea.find({
+          where: { id: point.idea_id }
+        }).then(function(idea) {
+            idea.increment('counter_points').then(function(){
+              res.send(point);
+            });
+          });
       });
     });
   }).catch(function(error) {

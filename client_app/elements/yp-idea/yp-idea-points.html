@@ -179,6 +179,8 @@
             this.set("textValueDown","");
           }
           this._insertNewPoint(point);
+          this.set('idea.counter_points',this.idea.counter_points+1);
+          debugger;
           this.$.newPointToast.show();
         },
 
