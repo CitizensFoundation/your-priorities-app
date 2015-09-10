@@ -8,6 +8,8 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-user-login">
@@ -16,8 +18,7 @@
     :host {
       display: block;
       box-sizing: border-box;
-      text-align: center;
-      margin: 5px;
+      padding: 16px;
     }
   </style>
 
@@ -25,6 +26,11 @@
 
     <paper-dialog id="dialog" modal>
       <h3>[[heading]]</h3>
+
+      <paper-tabs selected="{{register}}" id="paper_tabs" focused>
+        <paper-tab>[[t('login')]]</paper-tab>
+        <paper-tab>[[t('register')]]</paper-tab>
+      </paper-tabs>
 
       <form is="iron-form" id="form">
 
@@ -126,7 +132,8 @@
       },
 
       submitText: {
-        type: String
+        type: String,
+        value: ""
       },
 
       redirectTo: {
@@ -139,7 +146,8 @@
       this.passwordErrorMessage = this.t('login.password.error');
       if (this.register) {
         this.header = t('login.registerHeader');
-        this.submitText = t('login.submit');
+        this.set('submitText',t('login.submit'));
+        debugger;
       } else {
         this.header = t('login.header');
         this.submitText = t('login.register.submit');
