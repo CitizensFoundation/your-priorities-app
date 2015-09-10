@@ -43,16 +43,16 @@
           <yp-idea-header idea="[[idea]]" showcategory="true"></yp-idea-header>
 
           <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-            <paper-tab><span>[[computeExpression1()]]</span> (<span>[[idea.Points.length]]</span>)</paper-tab>
-            <paper-tab>[[computeExpression3()]]</paper-tab>
-            <paper-tab>[[computeExpression4()]]</paper-tab>
-            <paper-tab>[[computeExpression5()]]</paper-tab>
+            <paper-tab><span>[[t('debate')]]</span> &nbsp; (<span>[[idea.Points.length]]</span>)</paper-tab>
+            <paper-tab>[[t('newsfeed')]]</paper-tab>
+            <paper-tab>[[t('location')]]</paper-tab>
+            <paper-tab>[[t('photos')]]</paper-tab>
           </paper-tabs>
         </paper-material>
 
         <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
 
-          <yp-idea-points id="pointsSection" idea="[[idea]]""></yp-idea-points>
+          <yp-idea-points id="pointsSection" idea="[[idea]]"></yp-idea-points>
 
           <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
           <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
@@ -136,18 +136,7 @@
         computeUrl: function (idea_id) {
           return '/api/ideas/' + idea_id;
         },
-        computeExpression1: function () {
-          return this.t('ideas.tabs.debate');
-        },
-        computeExpression3: function () {
-          return this.t('ideas.tabs.newsfeed');
-        },
-        computeExpression4: function () {
-          return this.t('ideas.tabs.photos');
-        },
-        computeExpression5: function () {
-          return this.t('ideas.tabs.solutions');
-        },
+
         computeExpression8: function () {
           return this.t('ideas.tabs.not_implemented');
         }
