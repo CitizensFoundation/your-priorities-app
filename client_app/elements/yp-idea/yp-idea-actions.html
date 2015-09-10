@@ -208,9 +208,22 @@
       },
 
       _endorseResponse: function (event, detail) {
+        var endorsement = detail.response.endorsement;
+        var oldEndorsementValue = detail.response.oldEndorsementValue;
+        this._setEndorsement(endorsement.value);
+        window.appUser.updateEndorsementForIdea(this.idea.id, endorsement);
         debugger;
-        this._setEndorsement(detail.response.value);
-        window.appUser.updateEndorsementForIdea(this.idea.id, detail.response);
+        if (oldEndorsementValue) {
+          if (oldEndorsementValue>0)
+            this.set('idea.counter_endorsements_up', this.idea.counter_endorsements_up-1)
+            ;
+          else if (oldEndorsementValue<0)
+            this.set('idea.counter_endorsements_down', this.idea.counter_endorsements_down-1)
+        }
+        if (endorsement.value>0)
+          this.set('idea.counter_endorsements_up', this.idea.counter_endorsements_up+1)
+        else if (endorsement.value<0)
+          this.set('idea.counter_endorsements_down', this.idea.counter_endorsements_down+1)
       },
 
       _generateEndorsement: function (value) {

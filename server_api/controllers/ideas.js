@@ -165,12 +165,15 @@ router.post('/:id/endorse', isAuthenticated, function(req, res) {
       decrementOldCountersIfNeeded(oldEndorsementValue, req.params.id, endorsement, function () {
         if (endorsement.value>0) {
           changeIdeaCounter(req.params.id, 'counter_endorsements_up', 1, function () {
-            res.send(endorsement);
+            res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
           })
         } else if (endorsement.value<0) {
           changeIdeaCounter(req.params.id, 'counter_endorsements_down', 1, function () {
-            res.send(endorsement);
+            res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
           })
+        } else {
+          console.error("Strange state of endorsements")
+          res.status(500);
         }
       })
     });
@@ -191,15 +194,15 @@ router.delete('/:id/endorse', isAuthenticated, function(req, res) {
       endorsement.save().then(function() {
         if (oldEndorsementValue>0) {
           changeIdeaCounter(req.params.id, 'counter_endorsements_up', -1, function () {
-            res.status(200).send(endorsement);
+            res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
           })
         } else if (oldEndorsementValue<0) {
           changeIdeaCounter(req.params.id, 'counter_endorsements_down', -1, function () {
-            res.status(200).send(endorsement);
+            res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
           })
         } else {
           console.error("Strange state of endorsements")
-          res.status(200).send(endorsement);
+          res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
         }
       });
     } else {
