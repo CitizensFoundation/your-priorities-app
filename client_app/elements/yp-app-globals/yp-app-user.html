@@ -57,6 +57,10 @@
 
           endorsementIdeasIndex: {
             type: Object
+          },
+
+          pointQualitiesIndex: {
+            type: Object
           }
         },
 
@@ -123,9 +127,40 @@
           }
         },
 
+        updatePointQualityForIdea: function (pointId, newPointQuality) {
+          if (this.user.PointQualities) {
+            var hasChanged = false;
+            for(var i=0; i<this.user.PointQualities.length; i++) {
+              if (this.user.PointQualities[i].point_id===pointId) {
+                if (newPointQuality) {
+                  this.user.PointQualities[i] = newPointQuality;
+                } else {
+                  this.user.PointQualities[i].splice(i, 1);
+                }
+                hasChanged = true;
+                break;
+              }
+            }
+            if (hasChanged)
+              this._updateEndorsementIdeasIndex(this.user);
+          }
+        },
+
+        _updatePointQualitiesIndex: function (user) {
+          if (user && user.PointQualities && user.PointQualities.length>0) {
+            this.pointQualitiesIndex = {};
+            for(var i=0; i<user.PointQualities.length; i++){
+              this.pointQualitiesIndex[ user.PointQualities[i].point_id ] = user.PointQualities[i];
+            }
+          } else {
+            this.pointQualitiesIndex = {}
+          }
+        },
+
         _onUserChanged: function (newValue, oldValue) {
           this.fire("user-changed", newValue);
           this._updateEndorsementIdeasIndex(newValue);
+          this._updatePointQualitiesIndex(newValue);
         },
 
         _handleLogin: function (event, user) {

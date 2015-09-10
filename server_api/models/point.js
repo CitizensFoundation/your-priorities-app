@@ -5,7 +5,10 @@ module.exports = function(sequelize, DataTypes) {
     name: DataTypes.STRING,
     content: DataTypes.TEXT,
     user_id: DataTypes.INTEGER,
-    value: DataTypes.INTEGER
+    value: DataTypes.INTEGER,
+    counter_quality_up: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_quality_down: { type: DataTypes.INTEGER, defaultValue: 0 }
+
   }, {
     underscored: true,
     tableName: 'points',

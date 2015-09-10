@@ -25,7 +25,8 @@ router.get('/login',  passport.authenticate('local'), function(req, res) {
 router.post('/register', function(req, res) {
 
     var user = models.User.build({
-        email: req.body.email
+        email: req.body.email,
+        name: req.body.name
     });
 
     user.createPasswordHash(req.body.password);

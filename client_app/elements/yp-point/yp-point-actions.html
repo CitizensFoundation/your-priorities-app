@@ -23,7 +23,19 @@
       .action-up {
         @apply(--layout-horizontal);
         @apply(--layout-start-justified);
-        color: var(--primary-up-color-more-lighter, rgba(0,153,0,0.32));
+      }
+
+      .action-down {
+        @apply(--layout-horizontal);
+        @apply(--layout-start-justified);
+      }
+
+      .up-selected {
+        color: var(--primary-up-color-more-lighter, rgba(0,153,0,0.72));
+      }
+
+      .down-selected {
+        color: var(--primary-down-color-more-lighter, rgba(153,0,0,0.72));
       }
 
       .middle {
@@ -32,10 +44,10 @@
         @apply(--layout-center-justified);
       }
 
-      .action-down {
+      .all-actions {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
-        color: var(--primary-down-color-more-lighter, rgba(153,0,0,0.32));
+        color: var(--primary-love-color-up, rgba(50,50,50,0.45));
       }
 
       paper-icon-button::shadow #icon {
@@ -44,18 +56,17 @@
       }
     </style>
 
-    <div class="action-up">
+    <div class="all-actions" hidden$="[[hideNotHelpful]]">
+      <div id="actionUp">
+        <div class="action-text action-up">{{point.counter_quality_up}}</div>
+        <paper-icon-button icon="thumb-up" class="point-up-vote-icon" on-tap="pointHelpful"></paper-icon-button>
+      </div>
+      <div id="actionDown">
+        <div class="action-text">{{point.counter_quality_down}}</div>
+        <paper-icon-button size="16x16" icon="thumb-down" class="point-down-vote-icon" on-tap="pointNotHelpful"></paper-icon-button>
+      </div>
     </div>
-
-    <div class="middle" hidden$="[[hideNotHelpful]]"></div>
-
-    <div class="action-down" hidden$="[[hideNotHelpful]]">
-      <div class="action-text action-up">{{voteCount(point.PointQualities,'up')}}</div>
-      <paper-icon-button icon="thumb-up" class="point-up-vote-icon action-up" on-tap="pointHelpful"></paper-icon-button>
-      <div class="action-text">{{voteCount(point.PointQualities,'down')}}</div>
-      <paper-icon-button size="16x16" icon="thumb-down" class="point-down-vote-icon" on-tap="pointNotHelpful"></paper-icon-button>
-    </div>
-
+    <yp-ajax id="pointQualityAjax" method="POST" on-response="_pointQualityResponse"></yp-ajax>
   </template>
   <script>
     Polymer({
@@ -67,34 +78,79 @@
 
       properties: {
         point: {
-          type: Object
+          type: Object,
+          observer: "_onPointChanged"
         },
 
         hideNotHelpful: {
           type: Boolean,
           value: false
+        },
+
+        pointQualityValue: {
+          type: Number,
+          value: 0
         }
+      },
+
+      _onPointChanged: function (newValue, oldValue) {
+        if (newValue && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.PointQualities) {
+          var thisPointQuality = window.appUser.pointQualitiesIndex[newValue.id];
+          if (thisPointQuality)
+            this._setPointQuality(thisPointQuality.value);
+        }
+      },
+
+      _setPointQuality: function (value) {
+        this.pointQualityValue = value;
+        if (value > 0) {
+          this.$.actionUp.className += " " + "up-selected";
+          this.removeClass(this.$.actionDown, "down-selected");
+        } else if (value < 0) {
+          this.$.actionDown.className += " " + "down-selected";
+          this.removeClass(this.$.actionUp,"up-selected");
+        } else {
+          this.removeClass(this.$.actionUp,"up-selected");
+          this.removeClass(this.$.actionDown, "down-selected");
+        }
+      },
+
+      _pointQualityResponse: function (event, detail) {
+        var pointQuality = detail.response.pointQuality;
+        var oldPointQualityValue = detail.response.oldPointQualityValue;
+        this._setPointQuality(pointQuality.value);
+        window.appUser.updatePointQualityForIdea(this.point.id, pointQuality);
+        if (oldPointQualityValue) {
+          if (oldPointQualityValue>0)
+            this.set('point.counter_quality_up', this.point.counter_quality_up-1);
+          else if (oldPointQualityValue<0)
+            this.set('point.counter_quality_down', this.point.counter_quality_down-1);
+        }
+        if (pointQuality.value>0)
+          this.set('point.counter_quality_up', this.point.counter_quality_up+1);
+        else if (pointQuality.value<0)
+          this.set('point.counter_quality_down', this.point.counter_quality_down+1)
+      },
+
+      _generatePointQuality: function (value) {
+        this.$.pointQualityAjax.url = "/api/points/" + this.point.id + "/pointQuality";
+        this.$.pointQualityAjax.body = { point_id: this.point.id, value: value };
+        if (this.pointQualityValue === value) {
+          this.$.pointQualityAjax.method = "DELETE";
+        } else {
+          this.$.pointQualityAjax.method = "POST";
+        }
+        this.$.pointQualityAjax.generateRequest();
       },
 
       pointHelpful: function () {
         window.appGlobals.activity('Anonymous', 'vote', 'pointHelpful');
-        window.appGlobals.openDialog('point.helpful');
+        this._generatePointQuality(1);
       },
 
       pointNotHelpful: function () {
         window.appGlobals.activity('Anonymous', 'vote', 'pointNotHelpful');
-        window.appGlobals.openDialog('point.not_helpful');
-      },
-
-      voteCount: function (endorsements,type) {
-        var count = 0;
-        for (var i = 0; i < endorsements.length; i++) {
-          if (type=='up' && endorsements[i].value > 0)
-            count++;
-          if (type=='down' && endorsements[i].value < 0)
-            count++;
-        }
-        return this.formatNumber(count);
+        this._generatePointQuality(-1);
       }
     });
   </script>

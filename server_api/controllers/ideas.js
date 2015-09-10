@@ -64,7 +64,7 @@ router.get('/:id/endorsements', function(req, res) {
     order: "created_at DESC",
     include: [
       { model: models.User,
-        attributes: ["id", "login", "facebook_uid", "buddy_icon_file_name"]
+        attributes: ["id", "name", "facebook_uid", "buddy_icon_file_name"]
       }
     ]
   }).then(function(endorsements) {
@@ -81,12 +81,12 @@ router.get('/:id', function(req, res) {
         include: [
           { model: models.PointRevision ,
             include: [
-              { model: models.User, attributes: ["id", "login", "facebook_uid", "buddy_icon_file_name"] }
+              { model: models.User, attributes: ["id", "name", "facebook_uid", "buddy_icon_file_name"] }
             ]
           },
           { model: models.PointQuality ,
             include: [
-              { model: models.User, attributes: ["id", "login", "facebook_uid", "buddy_icon_file_name"] }
+              { model: models.User, attributes: ["id", "name", "facebook_uid", "buddy_icon_file_name"] }
             ]
           }
         ]

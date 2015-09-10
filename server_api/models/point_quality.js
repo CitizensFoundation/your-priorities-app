@@ -3,7 +3,7 @@
 module.exports = function(sequelize, DataTypes) {
   var PointQuality = sequelize.define("PointQuality", {
     value: DataTypes.INTEGER,
-    user_id: DataTypes.INTEGER
+    status: DataTypes.STRING
   }, {
     underscored: true,
     tableName: 'point_qualities',

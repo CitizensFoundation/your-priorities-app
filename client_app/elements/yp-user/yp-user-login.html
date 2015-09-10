@@ -27,6 +27,13 @@
       <h3>[[heading]]</h3>
 
       <form is="iron-form" id="form">
+
+        <paper-input id="name"
+                     type="text"
+                     label="[[t('login.name')]]"
+                     value="{{name}}">
+        </paper-input>
+
         <paper-input id="email"
                      type="text"
                      label="[[t('login.email')]]"
@@ -86,6 +93,11 @@
         type: String
       },
 
+      name: {
+        type: String,
+        value: "Róbert Viðar Bjarnason"
+      },
+
       email: {
         type: String,
         value: "robert@this.is"
@@ -99,13 +111,13 @@
       credentials: {
         type: String,
         notify: true,
-        computed: '_computeCredentials(email, password)'
+        computed: '_computeCredentials(name, email, password)'
       },
 
       credentialsParams: {
         type: String,
         notify: true,
-        computed: '_computeCredentialsParams(email, password)'
+        computed: '_computeCredentialsParams(name, email, password)'
       },
 
       register: {
@@ -134,15 +146,17 @@
       }
     },
 
-    _computeCredentials: function(email, password) {
+    _computeCredentials: function(name, email, password) {
      return  JSON.stringify({
+        name: name,
         email: email,
         password: password
       });
     },
 
-    _computeCredentialsParams: function(email, password) {
+    _computeCredentialsParams: function(name, email, password) {
       return {
+        name: name,
         email: email,
         password: password
       };
