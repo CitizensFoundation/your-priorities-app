@@ -181,7 +181,7 @@ router.post('/:id/endorse', isAuthenticated, function(req, res) {
 });
 
 router.delete('/:id/endorse', isAuthenticated, function(req, res) {
-  console.log("User id "+req.user.id);
+  console.log("user: "+req.user.id + " idea: " + req.params.id);
   models.Endorsement.find({
     where: { idea_id: req.params.id, user_id: req.user.id }
   }).then(function(endorsement) {
@@ -207,7 +207,8 @@ router.delete('/:id/endorse', isAuthenticated, function(req, res) {
         }
       });
     } else {
-      res.sendStatus(404);
+      console.error("Can't find endorsement to delete");
+      res.sendStatus(500);
     }
   });
 });

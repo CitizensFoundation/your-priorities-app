@@ -155,7 +155,7 @@
       this.passwordErrorMessage = this.t('login.password.error');
       if (this.registerMode===1) {
         this.header = this.t('login.registerHeader');
-        this.set('submitText',this.t('create user'));
+        this.set('submitText',this.t('create'));
       } else {
         this.header = this.t('login.header');
         this.submitText = this.t('login');
@@ -180,7 +180,6 @@
 
     _validateAndSend: function(e) {
       if (this.$.form.checkValidity() && this.email && this.password){
-        debugger;
         if (this.registerMode===1) {
           this.$.registerAjax.body = this.credentials;
           this.$.registerAjax.generateRequest();
