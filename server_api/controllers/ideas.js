@@ -181,6 +181,7 @@ router.post('/:id/endorse', isAuthenticated, function(req, res) {
 });
 
 router.delete('/:id/endorse', isAuthenticated, function(req, res) {
+  console.log("User id "+req.user.id);
   models.Endorsement.find({
     where: { idea_id: req.params.id, user_id: req.user.id }
   }).then(function(endorsement) {

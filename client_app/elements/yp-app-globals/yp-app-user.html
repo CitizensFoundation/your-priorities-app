@@ -218,6 +218,7 @@
           this.toastLogoutTextCombined = this.t("logout.complete.for")+ " " + this.user.email;
           this.removeUserSession();
           this.$.logoutToast.show();
+          page("/");
         },
 
         _isLoggedInResponse: function(event, detail) {
