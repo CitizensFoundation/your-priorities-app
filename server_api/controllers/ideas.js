@@ -6,7 +6,44 @@ function isAuthenticated(req, res, next) {
   if (req.isAuthenticated())
     return next();
   res.send(401, 'Unauthorized');
-};
+}
+
+function changeIdeaCounter(ideaId, column, upDown, next) {
+  models.Idea.find({
+    where: { id: ideaId }
+  }).then(function(idea) {
+    if (idea && upDown===1) {
+      idea.increment(column).then(function(){
+        next();
+      });
+    } else if (idea && upDown===-1) {
+      idea.decrement(column).then(function(){
+        next();
+      });
+    } else {
+      next();
+    }
+  });
+}
+
+function decrementOldCountersIfNeeded(oldEndorsementValue, ideaId, endorsement, next) {
+  if (oldEndorsementValue) {
+    if (oldEndorsementValue>0) {
+      changeIdeaCounter(ideaId, 'counter_endorsements_up', -1, function () {
+        next();
+      })
+    } else if (oldEndorsementValue<0) {
+      changeIdeaCounter(ideaId, 'counter_endorsements_down', -1, function () {
+        next();
+      })
+    } else {
+      console.error("Strange state of endorsements")
+      next();
+    }
+  } else {
+    next();
+  }
+}
 
 /* GET ideas listing. */
 router.get('/', function(req, res) {
@@ -108,7 +145,12 @@ router.post('/:id/endorse', isAuthenticated, function(req, res) {
   models.Endorsement.find({
     where: { idea_id: req.params.id, user_id: req.user.id}
   }).then(function(endorsement) {
+    var oldEndorsementValue;
     if (endorsement) {
+      if (endorsement.value>0)
+        oldEndorsementValue = 1;
+      else if (endorsement.value<0)
+        oldEndorsementValue = -1;
       endorsement.value = req.body.value;
       endorsement.status = 'active';
     } else {
@@ -120,7 +162,17 @@ router.post('/:id/endorse', isAuthenticated, function(req, res) {
       })
     }
     endorsement.save().then(function() {
-      res.send(endorsement);
+      decrementOldCountersIfNeeded(oldEndorsementValue, req.params.id, endorsement, function () {
+        if (endorsement.value>0) {
+          changeIdeaCounter(req.params.id, 'counter_endorsements_up', 1, function () {
+            res.send(endorsement);
+          })
+        } else if (endorsement.value<0) {
+          changeIdeaCounter(req.params.id, 'counter_endorsements_down', 1, function () {
+            res.send(endorsement);
+          })
+        }
+      })
     });
   });
 });
@@ -130,9 +182,25 @@ router.delete('/:id/endorse', isAuthenticated, function(req, res) {
     where: { idea_id: req.params.id, user_id: req.user.id }
   }).then(function(endorsement) {
     if (endorsement) {
+      var oldEndorsementValue;
+      if (endorsement.value>0)
+        oldEndorsementValue = 1;
+      else if (endorsement.value<0)
+        oldEndorsementValue = -1;
       endorsement.value = 0;
       endorsement.save().then(function() {
-        res.status(200).send(endorsement);
+        if (oldEndorsementValue>0) {
+          changeIdeaCounter(req.params.id, 'counter_endorsements_up', -1, function () {
+            res.status(200).send(endorsement);
+          })
+        } else if (oldEndorsementValue<0) {
+          changeIdeaCounter(req.params.id, 'counter_endorsements_down', -1, function () {
+            res.status(200).send(endorsement);
+          })
+        } else {
+          console.error("Strange state of endorsements")
+          res.status(200).send(endorsement);
+        }
       });
     } else {
       res.sendStatus(404);
