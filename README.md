@@ -1,7 +1,8 @@
-## Your Priorities Version 6
+# Your Priorities Version 6
+
+## To run (all commands in the root folder)
 
 ```
-To run (all commands in the root folder)
 
 npm install & bower install
 
