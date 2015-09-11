@@ -36,7 +36,7 @@ body {
   z-index: 2;
   background: url(https://s3.amazonaws.com/yrpri-direct-asset/YP_FinalLogo_light_grey.png) no-repeat 50% 50%;
   background-size: 312px;
-  background-color: #FF5722;
+  background-color: #fff;
 }
 
 body.loading #splash {

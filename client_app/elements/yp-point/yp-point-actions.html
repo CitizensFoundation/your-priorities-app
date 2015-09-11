@@ -131,7 +131,7 @@
           this.set('point.counter_quality_down', this.point.counter_quality_down+1)
       },
 
-      _generatePointQuality: function (value) {
+      generatePointQuality: function (value) {
         if (window.appUser.loggedIn()===true) {
           this.$.pointQualityAjax.url = "/api/points/" + this.point.id + "/pointQuality";
           this.$.pointQualityAjax.body = { point_id: this.point.id, value: value };
@@ -147,13 +147,13 @@
       },
 
       pointHelpful: function () {
-        window.appGlobals.activity('Anonymous', 'vote', 'pointHelpful');
-        this._generatePointQuality(1);
+        window.appGlobals.activity('clicked', 'pointHelpful', this.point.id);
+        this.generatePointQuality(1);
       },
 
       pointNotHelpful: function () {
-        window.appGlobals.activity('Anonymous', 'vote', 'pointNotHelpful');
-        this._generatePointQuality(-1);
+        window.appGlobals.activity('clicked', 'pointNotHelpful', this.point.id);
+        this.generatePointQuality(-1);
       }
     });
   </script>

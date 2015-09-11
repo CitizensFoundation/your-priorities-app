@@ -185,12 +185,12 @@
 
         addPointUp: function () {
           this.addPoint(this.textValueUp, 1);
-          window.appGlobals.activity('Anonymous', 'add', 'pointUp');
+          window.appGlobals.activity('add', 'pointUp');
         },
 
         addPointDown: function () {
           this.addPoint(this.textValueDown, -1);
-          window.appGlobals.activity('Anonymous', 'add', 'pointDown');
+          window.appGlobals.activity('add', 'pointDown');
         },
 
         addPoint: function (content, value) {
@@ -208,11 +208,11 @@
         },
 
         focusUpPoint: function () {
-          window.appGlobals.activity('Anonymous', 'focus', 'pointUp');
+          window.appGlobals.activity('focus', 'pointUp');
         },
 
         focusDownPoint: function () {
-          window.appGlobals.activity('Anonymous', 'focus', 'pointDown');
+          window.appGlobals.activity('focus', 'pointDown');
         },
 
         focusTextArea: function (event) {

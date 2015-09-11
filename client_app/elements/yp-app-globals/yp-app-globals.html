@@ -100,7 +100,7 @@
 
           minSplashMs: {
             type: Number,
-            value: 2000
+            value: 2500
           },
 
           requestInProgress: {
@@ -157,7 +157,15 @@
           }
         },
 
-        activity: function (actor, verb, object, context) {
+        activity: function (verb, object, context) {
+          var actor;
+
+          if (window.appUser && window.appUser.user) {
+            actor = window.appUser.user.id;
+          } else {
+            actor = "-1";
+          }
+
           var logString = 'activity stream: ' + actor + ' ' + verb + ' ' + object;
 
           console.log(logString);

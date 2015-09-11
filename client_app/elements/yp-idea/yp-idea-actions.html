@@ -233,10 +233,6 @@
             this.$.endorseAjax.method = "POST";
           }
           this.$.endorseAjax.generateRequest();
-          if (value>0)
-            window.appGlobals.activity('Anonymous', 'up_vote', this.idea.id);
-          else if (value<0)
-            window.appGlobals.activity('Anonymous', 'down_vote', this.idea.id);
         } else {
           window.appUser.loginForEndorse(this, { value: value } );
         }
@@ -244,10 +240,12 @@
 
       upVote: function (event) {
         this.generateEndorsement(1);
+        window.appGlobals.activity('clicked', 'endorse_up', this.idea.id);
       },
 
       downVote: function (event) {
         this.generateEndorsement(-1);
+        window.appGlobals.activity('clicked', 'endorse_down', this.idea.id);
       },
 
       computeActionClass: function (small) {

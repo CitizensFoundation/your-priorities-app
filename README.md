@@ -1,8 +1,9 @@
 # Your Priorities Version 6
 
-## To run (all commands in the root folder)
+## To run
 
 ```
+# In app root folder
 npm install & bower install
 
 cp server_api/config/config.json.dist server_api/config/config.json

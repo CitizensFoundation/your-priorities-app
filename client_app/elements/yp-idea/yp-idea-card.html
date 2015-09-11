@@ -81,36 +81,36 @@
         height: 216px;
       }
 
+      .ideaCardCursor {
+        cursor: pointer;
+      }
     </style>
 
     <template is="dom-if" if="[[idea]]">
-      <paper-card class="pink" elevation="[[elevation]]" image$="[[ideaImagePath(idea)]]">
-        <template is="dom-if" if="[[streetView]]">
-          <google-streetview-pano
-                  pano-id="CkmCkfwvIGUAAAQW-qy0KQ"
-                  heading="330"
-                  pitch="2"
-                  zoom="0.8"
-                  disable-default-ui>
-          </google-streetview-pano>
-        </template>
-        <template is="dom-if" if="[[map]]">
-          <google-map></google-map>
-        </template>
+      <paper-card class="ideaCard" elevation="[[elevation]]" image$="[[ideaImagePath(idea)]]">
         <div class="card-content">
+          <template is="dom-if" if="[[streetView]]">
+            <google-streetview-pano
+              pano-id="CkmCkfwvIGUAAAQW-qy0KQ"
+              heading="330"
+              pitch="2"
+              zoom="0.8"
+              disable-default-ui>
+            </google-streetview-pano>
+          </template>
+          <template is="dom-if" if="[[map]]">
+            <google-map></google-map>
+          </template>
           <div class="category-image-container">
             <iron-image class="category-icon" sizing="contain" src$="[[getCategoryImagePath(idea)]]"></iron-image>
           </div>
-          <div class="description">
+          <div class="description ideaCardCursor" on-tap="_goToIdea">
             <h2 class="idea-name">[[ideaName(idea)]]</h2>
             <div>[[ideaDescription(idea)]]</div>
           </div>
         </div>
         <div class="card-actions">
           <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
-        </div>
-        <div class="card-actions">
-          <paper-button class="join-button" on-tap="_goToIdea">{{t('View')}}</paper-button>
         </div>
       </paper-card>
     </template>
@@ -160,7 +160,7 @@
 
       _goToIdea: function (e) {
         var ideaUrl = '/idea/' + this.idea.id;
-        window.appGlobals.activity('Anonymous', 'open', 'idea', ideaUrl);
+        window.appGlobals.activity('open', 'idea', ideaUrl);
         page(ideaUrl);
       },
 

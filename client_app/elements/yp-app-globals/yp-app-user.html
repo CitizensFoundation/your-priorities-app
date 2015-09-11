@@ -91,6 +91,11 @@
           this.$.userLogin.open();
         },
 
+        loginForPointQuality: function(pointActionElement, params) {
+          this.loginForPointQualityParams = { pointActionElement: pointActionElement, params: params };
+          this.$.userLogin.open();
+        },
+
         _handleLogin: function (event, user) {
           this.$.userLogin.close();
           this.setUser(user);
@@ -114,7 +119,7 @@
           } else if (this.loginForPointQualityParams) {
 
             var pointQualityParams = this.loginForPointQualityParams;
-            endorseParams.pointActionElement.voteUp(pointQualityParams.params.value);
+            pointQualityParams.pointActionElement.generatePointQuality(pointQualityParams.params.value);
             this.loginForPointQualityParams = null;
           }
           this.fire("login")
@@ -218,7 +223,9 @@
           this.toastLogoutTextCombined = this.t("logout.complete.for")+ " " + this.user.email;
           this.removeUserSession();
           this.$.logoutToast.show();
-          page("/");
+          this.async(function() {
+            location.reload();
+          },1200);
         },
 
         _isLoggedInResponse: function(event, detail) {

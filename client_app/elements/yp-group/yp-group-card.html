@@ -61,10 +61,14 @@
         font-size: 14px;
         border-top: 1px solid #e0e0e0;
       }
+
+      .groupCard {
+        cursor: pointer;
+      }
     </style>
 
     <template is="dom-if" if="[[group]]">
-      <paper-card class="pink" image$="">
+      <paper-card class="groupCard" image$="" on-tap="_goToGroup">
         <div class="card-content">
           <div class="description">
             <h2 class="group-name">[[groupName(group)]]</h2>
@@ -74,10 +78,6 @@
         <img src="[[groupImagePath(group)]]" class="idea-image">
         <div class="card-content">
           <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-        </div>
-        <div class="card-actions join-button">
-          <paper-button on-tap="_goToGroup">{{t('join')}}</paper-button>
-          <paper-button class="join-button-secondary">{{t('view')}}</paper-button>
         </div>
       </paper-card>
     </template>
@@ -100,7 +100,7 @@
 
       _goToGroup: function (e) {
         var groupUrl = '/group/' + this.group.id;
-        window.appGlobals.activity('Anonymous', 'open', 'group', groupUrl);
+        window.appGlobals.activity('open', 'group', groupUrl);
         page(groupUrl);
       },
 
