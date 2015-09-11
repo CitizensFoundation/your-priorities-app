@@ -1,9 +1,12 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-user/yp-user-image.html">
@@ -15,9 +18,21 @@
       :host {
         display: block;
       }
+
+      .big {
+        height: 42px;
+        width: 42px;
+        padding-right: 4px;
+      }
+
+      .location-button {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+      }
     </style>
-    <div class="layout horizontal">
-      <
+    <div class="location-button">
+      <iron-icon class="big" icon="communication:location-on"></iron-icon>
+      <paper-button raised on-tap="[[openLocationDialog]]">[[t('location.set')]]</paper-button>
     </div>
 
   </template>
@@ -33,13 +48,8 @@
 
       properties: {
 
-        endorsements: {
+        location: {
           type: Object
-        },
-
-        userImagesLimit: {
-          type: Number,
-          value: 42
         },
 
         idea: {
@@ -50,11 +60,8 @@
 
       _ideaChanged: function  (newValue, oldValue) {
         if (newValue) {
-          this.set("endorsements",null);
-          this.$.endorsementAjax.url = this._computeUrl(newValue);
-          this.$.endorsementAjax.generateRequest();
         } else {
-          this.set("endorsements",null);
+          this.set("location",null);
         }
       },
 
@@ -69,22 +76,6 @@
         this.$$("#moreImagesButton").style.display = 'none';
         this.$$("#numberOfMoreUserImages").style.display = 'none';
         this.$.restOfUserImages.style.display = 'inline';
-      },
-
-      _computeUrl: function (idea) {
-        return '/api/ideas/' + idea.id + '/endorsements';
-      },
-
-      allEndorsementsLength: function (idea) {
-        return this.endorsements.length;
-      },
-
-      countUserImagesLeft: function (e) {
-        return this.allEndorsementsLength(this.idea) - this.userImagesLimit;
-      },
-
-      _userImagesCount: function () {
-        return this.countUserImagesLeft(0);
       }
 
     });

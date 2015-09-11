@@ -94,7 +94,7 @@ function onSplashClick() {
     } else {
       app.currentUserEmail = "";
     }
-  }
+  };
 
   // Scroll page to top and expand header
   app.scrollPageToTop = function() {

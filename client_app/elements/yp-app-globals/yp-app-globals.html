@@ -232,9 +232,13 @@
         },
 
         ready: function () {
+          window.appGlobals = this;
           this.requestInProgress = true;
           this.$.boot.generateRequest();
-          window.appGlobals = this;
+
+          i18n.init({ lng: "en" });
+          window.i18n = i18n;
+
           if (this.setupDefaults) {
             this.setupDefaultValues();
           }

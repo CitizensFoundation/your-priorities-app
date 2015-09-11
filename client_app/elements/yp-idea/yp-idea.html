@@ -30,6 +30,11 @@
 
       yp-idea-points {
       }
+
+      .ideaHeader {
+        padding: 16px;
+        padding-bottom: 0px;
+      }
     </style>
 
     <div class="container">
@@ -38,7 +43,7 @@
 
       <template is="dom-if" if="[[idea]]">
 
-        <paper-material elevation="0" class="pointText" animated>
+        <paper-material elevation="2" class="ideaHeader" animated>
 
           <yp-idea-header idea="[[idea]]" showcategory="true"></yp-idea-header>
 

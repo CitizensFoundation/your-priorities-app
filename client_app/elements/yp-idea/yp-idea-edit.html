@@ -12,6 +12,8 @@
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 
+<link rel="import" href="yp-idea-location.html">
+
 <dom-module id="yp-idea-edit">
   <template>
 
@@ -65,6 +67,8 @@
                         maxlength="500">
         </paper-textarea>
       </template>
+
+      <yp-idea-location idea="[[idea]]"></yp-idea-location>
 
     </yp-edit-dialog>
   </template>
