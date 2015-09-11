@@ -9,5 +9,5 @@ cp server_api/config/config.json.dist server_api/config/config.json
 vi server_api/config/config.json # Add information about an empty postgres database
 ./start
 
-Got localhost:4242 in your browser
+Go to localhost:4242 in your browser
 ```
