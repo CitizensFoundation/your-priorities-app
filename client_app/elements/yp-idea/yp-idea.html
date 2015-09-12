@@ -21,9 +21,9 @@
       .container {
         @apply(--layout-vertical);
         @apply(--layout-flex);
-        width: 950px;
+        width: 1000px;
         margin: auto;
-        margin-top: 0px;
+        margin-top: -72px;
         padding-top: 0px;
       }
 
@@ -39,6 +39,11 @@
         padding: 16px;
         padding-bottom: 0px;
       }
+
+      .tabsMaterial {
+        margin-top: 16px;
+        min-height: 500px;
+      }
     </style>
 
     <div class="container">
@@ -53,24 +58,27 @@
             <yp-idea-header idea="[[idea]]" showcategory="true"></yp-idea-header>
           </paper-material>
 
-          <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-            <paper-tab><span>[[t('idea.debate')]]</span> &nbsp; (<span>[[idea.Points.length]]</span>)</paper-tab>
-            <paper-tab>[[t('idea.news')]]</paper-tab>
-            <paper-tab>[[t('idea.location')]]</paper-tab>
-            <paper-tab>[[t('idea.photos')]]</paper-tab>
-          </paper-tabs>
+          <paper-material elevation="2" class="ideaHeader tabsMaterial" animated>
+            <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+              <paper-tab><span>[[t('idea.debate')]]</span> &nbsp; (<span>[[idea.Points.length]]</span>)</paper-tab>
+              <paper-tab>[[t('idea.news')]]</paper-tab>
+              <paper-tab>[[t('idea.location')]]</paper-tab>
+              <paper-tab>[[t('idea.photos')]]</paper-tab>
+            </paper-tabs>
+
+            <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
+
+              <yp-idea-points id="pointsSection" idea="[[idea]]"></yp-idea-points>
+
+              <section>
+              </section>
+              <section>
+              </section>
+              <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
+            </neon-animated-pages>
+          </paper-material>
+
         </paper-material>
-
-        <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
-
-          <yp-idea-points id="pointsSection" idea="[[idea]]"></yp-idea-points>
-
-          <section>
-          </section>
-          <section>
-          </section>
-          <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
-        </neon-animated-pages>
 
       </template>
     </div>
