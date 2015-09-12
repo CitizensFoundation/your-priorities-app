@@ -23,7 +23,7 @@ router.post('/:communityId', isAuthenticated, function(req, res) {
   var group = models.Group.build({
     name: req.body.name,
     description: req.body.description,
-    access: models.Community.convertAccessFromCheckboxes(req.body),
+    access: models.Community.convertAccessFromRadioButtons(req.body),
     domain_id: req.ypDomain.id,
     user_id: req.user.id,
     community_id: req.params.communityId

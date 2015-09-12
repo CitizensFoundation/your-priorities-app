@@ -36,7 +36,7 @@ module.exports = function(sequelize, DataTypes) {
         }
       },
 
-      convertAccessFromCheckboxes: function(body) {
+      convertAccessFromRadioButtons: function(body) {
         var access = 0;
         if (body.public) {
           access = 2;

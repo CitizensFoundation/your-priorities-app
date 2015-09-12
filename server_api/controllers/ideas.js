@@ -106,8 +106,9 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
     name: req.body.name,
     description: req.body.description,
     group_id: req.params.groupId,
-    longitude: req.body.longitude,
-    latitude: req.body.latitude,
+    longitude: req.body.longitude != "" ? req.body.longitude : null,
+    latitude: req.body.latitude != "" ? req.body.latitude : null,
+    cover_media_type: req.body.coverMediaType,
     user_id: req.user.id,
     status: 'published'
   });

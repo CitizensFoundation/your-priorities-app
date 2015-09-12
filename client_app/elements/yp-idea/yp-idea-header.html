@@ -102,7 +102,7 @@
 
         <img class="main-image" hidden$="[[!ideaImagePath()]]" src="[[ideaImagePath()]]">
 
-        <template is="dom-if" if="[[streetView]]">
+        <template is="dom-if" if="[[_withCoverMediaType('streetView')]]">
           <google-streetview-pano
                   position="[[_getMapPosition()]]"
                   heading="330"
@@ -111,7 +111,7 @@
                   disable-default-ui>
           </google-streetview-pano>
         </template>
-        <template is="dom-if" if="[[map]]">
+        <template is="dom-if" if="[[_withCoverMediaType('map')]]">
           <google-map class="map" latitude="[[idea.latitude]]" longitude="[[idea.longitude]]"></google-map>
         </template>
 
@@ -150,31 +150,12 @@
       properties: {
 
         idea: {
-          type: Object,
-          notify: true
-        },
-
-        votingMode: {
-          type: String
-        },
-
-        image: {
-          type: Boolean,
-          value: false
-        },
-
-        streetView: {
-          type: Boolean,
-          value: true,
-          notify: true
-        },
-
-        map: {
-          type: Boolean,
-          value: false,
-          notify: true
+          type: Object
         }
+      },
 
+      _withCoverMediaType: function (mediaType) {
+        return (this.idea && this.idea.cover_media_type===mediaType);
       },
 
       _getMapPosition: function () {
@@ -188,7 +169,7 @@
       },
 
       ideaImagePath: function (idea) {
-        if (this.streetView || this.map)
+        if (this.idea.cover_media_type!="image")
           return null;
         else
           return this.randomStockImage();

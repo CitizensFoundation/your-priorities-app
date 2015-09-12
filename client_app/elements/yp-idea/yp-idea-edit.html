@@ -86,6 +86,17 @@
 
       <input type="hidden" name="latitude" value="[[location.lat]]">
       <input type="hidden" name="longitude" value="[[location.lng]]">
+      <input type="hidden" name="coverMediaType" value="[[selectedCoverMediaType]]">
+
+      <h3 class="accessHeader">[[t('idea.cover.media')]]</h3>
+      <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType" selected="{{selectedCoverMediaType}}">
+        <paper-radio-button name="none">[[t('cover.none')]]</paper-radio-button>
+        <paper-radio-button name="image">[[t('cover.image')]]</paper-radio-button>
+        <template is="dom-if" if="[[location]]">
+          <paper-radio-button name="map">[[t('cover.map')]]</paper-radio-button>
+          <paper-radio-button name="streetView">[[t('cover.streetView')]]</paper-radio-button>
+        </template>
+      </paper-radio-group>
 
     </yp-edit-dialog>
   </template>
@@ -116,7 +127,20 @@
 
       location: {
         type: Object
+      },
+
+      selectedCoverMediaType: {
+        type: String,
+        observer: "_coverMediaTypeValueChanged"
       }
+    },
+
+    _coverMediaTypeValueChanged: function(newValue, oldValue) {
+      debugger;
+    },
+
+    _coverMediaTypeChanged: function(event, detail) {
+      debugger;
     },
 
     _clear: function () {
