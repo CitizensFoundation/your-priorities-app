@@ -68,5 +68,8 @@
 
   "location": {
     "set": "Set location"
+  },
+  "image": {
+    "upload": "Upload image"
   }
 }

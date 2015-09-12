@@ -12,6 +12,9 @@
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 
+<link rel="import" href="../yp-image-uploader/yp-image-uploader.html">
+
+
 <link rel="import" href="yp-idea-location.html">
 
 <dom-module id="yp-idea-edit">
@@ -26,11 +29,19 @@
       .accessHeader {
         color: var(--default-primary-color,#777);
         font-weight: normal;
-        margin-bottom: 0px;
+        margin-bottom: 0;
       }
 
       paper-radio-button {
         display: block;
+      }
+
+      .additionalSettings {
+        padding-top: 24px;
+      }
+
+      .additionalButton {
+        padding-bottom: 16px;
       }
     </style>
 
@@ -68,7 +79,10 @@
         </paper-textarea>
       </template>
 
-      <yp-idea-location idea="[[idea]]"></yp-idea-location>
+      <div class="layout vertical additionalSettings">
+        <yp-idea-location idea="[[idea]]" class="additionalButton"></yp-idea-location>
+        <yp-image-uploader class="additionalButton"></yp-image-uploader>
+      </div>
 
     </yp-edit-dialog>
   </template>
