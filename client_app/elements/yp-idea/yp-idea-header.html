@@ -11,6 +11,7 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html">
 <link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="yp-idea-actions.html">
@@ -24,7 +25,7 @@
       :host {
         display: block;
         @apply(--layout-horizontal);
-        width: 896px;
+        @apply(--layout-flex);
       }
 
       .description {
@@ -77,15 +78,13 @@
       }
 
       google-streetview-pano {
-        height: 504px;
+        width: 885px;
+        height: 420px;
       }
 
       google-map {
-        height: 504px;
-      }
-
-      .main-image {
-        height: 504px;
+        width: 885px;
+        height: 420px;
       }
 
       .card-actions {
@@ -93,48 +92,58 @@
         width: 420px;
       }
 
+      .main-image {
+        width: 885px;
+        height: 420px;
+      }
+
       .map {
       }
     </style>
 
-    <template is="dom-if" if="[[idea]]">
       <div class="top-container">
 
-        <img class="main-image" hidden$="[[!ideaImagePath()]]" src="[[ideaImagePath()]]">
+        <template restamp="true" is="dom-if" if="[[idea]]">
+          <img class="main-image" hidden$="[[!ideaImagePath()]]" src="[[ideaImagePath()]]">
 
-        <template is="dom-if" if="[[_withCoverMediaType('streetView')]]">
-          <google-streetview-pano
-                  position="[[_getMapPosition()]]"
-                  heading="330"
-                  pitch="2"
-                  zoom="0.8"
-                  disable-default-ui>
-          </google-streetview-pano>
-        </template>
-        <template is="dom-if" if="[[_withCoverMediaType('map')]]">
-          <google-map class="map" latitude="[[idea.latitude]]" longitude="[[idea.longitude]]"></google-map>
+          <template is="dom-if" restamp="true" if="[[_withCoverMediaType('streetView')]]">
+            <google-streetview-pano
+                    position="[[_getMapPosition()]]"
+                    heading="330"
+                    pitch="2"
+                    zoom="0.8"
+                    disable-default-ui>
+            </google-streetview-pano>
+          </template>
+          <template is="dom-if" restamp="true" if="[[_withCoverMediaType('map')]]">
+            <google-map class="map" fit-to-markers>
+              <google-map-marker latitude="[[idea.latitude]]" longitude="[[idea.longitude]]"></google-map-marker>
+            </google-map>
+          </template>
         </template>
 
-        <div class="container">
-          <div class="card-content">
-            <div class="category-image-container">
-              <iron-image class="category-icon" sizing="contain" src$="[[getCategoryImagePath(idea)]]"></iron-image>
-            </div>
-            <div class="layout horizontal">
-              <div class="description">
-                <h1 class="idea-name">[[ideaName(idea)]]</h1>
-                <div>[[ideaDescription(idea)]]</div>
+        <template is="dom-if" if="[[idea]]">
+          <div class="container">
+            <div class="card-content">
+              <div class="category-image-container">
+                <iron-image class="category-icon" sizing="contain" src$="[[getCategoryImagePath(idea)]]"></iron-image>
               </div>
-              <div class="layout vertical">
-                <div class="card-actions">
-                  <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
+              <div class="layout horizontal">
+                <div class="description">
+                  <h1 class="idea-name">[[ideaName(idea)]]</h1>
+                  <div>[[ideaDescription(idea)]]</div>
                 </div>
-                <yp-idea-users idea="[[idea]]"></yp-idea-users>
+                <div class="layout vertical">
+                  <div class="card-actions">
+                    <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
+                  </div>
+                  <yp-idea-users idea="[[idea]]"></yp-idea-users>
+                </div>
               </div>
+              <div class="stats-container"></div>
             </div>
-            <div class="stats-container"></div>
           </div>
-        </div>
+        </template>
       </div>
     </template>
   </template>
@@ -150,8 +159,13 @@
       properties: {
 
         idea: {
-          type: Object
+          type: Object,
+          notify: true,
+          observer: "_ideaChanged"
         }
+      },
+
+      _ideaChanged: function(newValue, oldValue) {
       },
 
       _withCoverMediaType: function (mediaType) {

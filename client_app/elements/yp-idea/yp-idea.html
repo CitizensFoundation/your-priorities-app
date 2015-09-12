@@ -20,9 +20,11 @@
 
       .container {
         @apply(--layout-vertical);
-        @apply(--layout-around-justified);
-        width: 896px;
+        @apply(--layout-flex);
+        width: 950px;
         margin: auto;
+        margin-top: 0px;
+        padding-top: 0px;
       }
 
       .flex {
@@ -45,9 +47,11 @@
 
       <template is="dom-if" if="[[idea]]">
 
-        <paper-material elevation="2" class="ideaHeader" animated>
+        <paper-material elevation="0" class="ideaHeader" animated>
 
-          <yp-idea-header idea="[[idea]]" showcategory="true"></yp-idea-header>
+          <paper-material elevation="2" class="ideaHeader" animated>
+            <yp-idea-header idea="[[idea]]" showcategory="true"></yp-idea-header>
+          </paper-material>
 
           <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
             <paper-tab><span>[[t('idea.debate')]]</span> &nbsp; (<span>[[idea.Points.length]]</span>)</paper-tab>
@@ -92,6 +96,7 @@
 
           idea: {
             type: Object,
+            notify: true,
             observer: "_ideaChanged"
           },
 
