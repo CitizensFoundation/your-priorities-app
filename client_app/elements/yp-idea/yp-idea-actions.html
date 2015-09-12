@@ -120,7 +120,7 @@
 
     <div class$="[[computeActionClass(small)]]">
       <div id="actionUp" class="action-up">
-        <paper-icon-button icon$="[[votingModeIcon(votingMode,'up')]]" class="action-icon up-vote-icon" on-tap="upVote"></paper-icon-button>
+        <paper-icon-button icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">{{formatNumber(idea.counter_endorsements_up)}}</div>
       </div>
 
@@ -131,7 +131,7 @@
 
       <div id="actionDown" class="action-down">
         <div class="action-text down-text">{{formatNumber(idea.counter_endorsements_down)}}</div>
-        <paper-icon-button icon$="[[votingModeIcon(votingMode,'down')]]" class="action-icon down-vote-icon" on-tap="downVote"></paper-icon-button>
+        <paper-icon-button icon$="[[endorseModeIcon(endorseMode,'down')]]" class="action-icon down-vote-icon" on-tap="downVote"></paper-icon-button>
       </div>
     </div>
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
@@ -155,7 +155,7 @@
           value: false
         },
 
-        votingMode: {
+        endorseMode: {
           type: String,
           value: "love"
         },
@@ -174,25 +174,25 @@
         }
       },
 
-      votingModeIcon: function (votingMode, upDown) {
-        if (votingMode=="thumbs" && upDown=='up') {
+      endorseModeIcon: function (endorseMode, upDown) {
+        if (endorseMode=="thumbs" && upDown=='up') {
           return "thumb-up";
-        } else if (votingMode=="thumbs" && upDown=='down') {
+        } else if (endorseMode=="thumbs" && upDown=='down') {
           return "thumb-down";
-        } else if (votingMode=="love" && upDown=='up') {
+        } else if (endorseMode=="love" && upDown=='up') {
           return "favorite";
-        } else if (votingMode=="love" && upDown=='down') {
+        } else if (endorseMode=="love" && upDown=='down') {
           return "thumb-down";
-        } else if (votingMode=="arrow" && upDown=='up') {
+        } else if (endorseMode=="arrow" && upDown=='up') {
           return "hardware:keyboard-arrow-down";
-        } else if (votingMode=="arrow" && upDown=='down') {
+        } else if (endorseMode=="arrow" && upDown=='down') {
           return "hardware:keyboard-arrow-up";
         }
       },
 
       _setEndorsement: function (value) {
         this.endorseValue = value;
-        if (this.votingMode=="love") {
+        if (this.endorseMode=="love") {
           if (value > 0) {
             this.$.actionUp.className += " " + "love-up-selected";
             this.removeClass(this.$.actionDown, "love-down-selected");
@@ -220,7 +220,8 @@
         if (endorsement.value>0)
           this.set('idea.counter_endorsements_up', this.idea.counter_endorsements_up+1);
         else if (endorsement.value<0)
-          this.set('idea.counter_endorsements_down', this.idea.counter_endorsements_down+1)
+          this.set('idea.counter_endorsements_down', this.idea.counter_endorsements_down+1);
+        this.fire("new-user-endorsement", endorsement);
       },
 
       generateEndorsement: function (value) {
@@ -253,7 +254,7 @@
       },
 
       ready: function() {
-        if (this.votingMode) {
+        if (this.endorseMode) {
           this.$.actionDown.className += " " + "love-down";
           this.$.actionUp.className += " " + "love-up";
         }

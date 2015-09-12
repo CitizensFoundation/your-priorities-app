@@ -110,7 +110,7 @@
           </div>
         </div>
         <div class="card-actions">
-          <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
+          <yp-idea-actions endorse-mode="[[endorseMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
         </div>
       </paper-card>
     </template>
@@ -130,7 +130,7 @@
           notify: true
         },
 
-        votingMode: {
+        endorseMode: {
           type: String
         },
 

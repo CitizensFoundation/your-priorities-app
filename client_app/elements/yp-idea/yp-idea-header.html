@@ -135,9 +135,9 @@
                 </div>
                 <div class="layout vertical">
                   <div class="card-actions">
-                    <yp-idea-actions voting-mode="[[votingMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
+                    <yp-idea-actions endorse-mode="[[endorseMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
                   </div>
-                  <yp-idea-users idea="[[idea]]"></yp-idea-users>
+                  <yp-idea-users id="ideaUsers" idea="[[idea]]"></yp-idea-users>
                 </div>
               </div>
               <div class="stats-container"></div>
@@ -163,6 +163,10 @@
           notify: true,
           observer: "_ideaChanged"
         }
+      },
+
+      addEndorsement: function (endorsement) {
+        this.$$("#ideaUsers").addEndorsement(endorsement);
       },
 
       _ideaChanged: function(newValue, oldValue) {

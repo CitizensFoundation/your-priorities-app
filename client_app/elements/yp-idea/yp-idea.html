@@ -55,7 +55,7 @@
         <paper-material elevation="0" class="ideaHeader" animated>
 
           <paper-material elevation="2" class="ideaHeader" animated>
-            <yp-idea-header idea="[[idea]]" showcategory="true"></yp-idea-header>
+            <yp-idea-header id="ideaHeader" idea="[[idea]]" showcategory="true"></yp-idea-header>
           </paper-material>
 
           <paper-material elevation="2" class="ideaHeader tabsMaterial" animated>
@@ -70,11 +70,9 @@
 
               <yp-idea-points id="pointsSection" idea="[[idea]]"></yp-idea-points>
 
-              <section>
-              </section>
-              <section>
-              </section>
-              <section><center><br><br><h1>[[computeExpression8()]]</h1></center></section>
+              <section></section>
+              <section></section>
+              <section></section>
             </neon-animated-pages>
           </paper-material>
 
@@ -117,6 +115,14 @@
             value: 0,
             observer: 'selectedChanged'
           }
+        },
+
+        listeners: {
+          'new-user-endorsement': 'addEndorsement'
+        },
+
+        addEndorsement: function (event, detail) {
+          this.$$("#ideaHeader").addEndorsement(detail);
         },
 
         _ideaChanged: function (newValue, oldValue) {
