@@ -104,14 +104,14 @@
 
         <template is="dom-if" if="[[streetView]]">
           <google-streetview-pano
-                  pano-id="CkmCkfwvIGUAAAQW-qy0KQ"
+                  position="[[_getMapPosition()]]"
                   heading="330"
                   pitch="2"
                   zoom="0.8"
                   disable-default-ui>
           </google-streetview-pano>
         </template>
-        <template is="dom-if" if="[[idea.latitude]]">
+        <template is="dom-if" if="[[map]]">
           <google-map class="map" latitude="[[idea.latitude]]" longitude="[[idea.longitude]]"></google-map>
         </template>
 
@@ -160,12 +160,12 @@
 
         image: {
           type: Boolean,
-          value: true
+          value: false
         },
 
         streetView: {
           type: Boolean,
-          value: false,
+          value: true,
           notify: true
         },
 
@@ -175,6 +175,10 @@
           notify: true
         }
 
+      },
+
+      _getMapPosition: function () {
+        return { lat: this.idea.latitude, lng: this.idea.longitude }
       },
 
       goToGroup: function (e) {

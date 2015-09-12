@@ -17,7 +17,8 @@ module.exports = function(sequelize, DataTypes) {
     counter_main_activities: { type: DataTypes.INTEGER, defaultValue: 0 },
     impressions_count: { type: DataTypes.INTEGER, defaultValue: 0 },
     latitude: DataTypes.FLOAT,
-    longitude: DataTypes.FLOAT
+    longitude: DataTypes.FLOAT,
+    cover_media_type: DataTypes.STRING
   }, {
     underscored: true,
 
