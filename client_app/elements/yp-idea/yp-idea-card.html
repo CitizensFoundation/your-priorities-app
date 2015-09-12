@@ -14,6 +14,7 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="yp-idea-actions.html">
+<link rel="import" href="yp-idea-cover-media.html">
 
 <dom-module id="yp-idea-card">
 
@@ -84,26 +85,18 @@
       .ideaCardCursor {
         cursor: pointer;
       }
+
+      yp-idea-cover-media {
+        position: relative;
+        width: 420px;
+        height: 200px;
+      }
     </style>
 
     <template is="dom-if" if="[[idea]]">
-      <paper-card class="ideaCard" elevation="[[elevation]]" image$="[[ideaImagePath(idea)]]">
+      <paper-card class="ideaCard" elevation="[[elevation]]">
+        <yp-idea-cover-media idea="[[idea]]"></yp-idea-cover-media>
         <div class="card-content">
-          <template is="dom-if" if="[[streetView]]">
-            <google-streetview-pano
-              pano-id="CkmCkfwvIGUAAAQW-qy0KQ"
-              heading="330"
-              pitch="2"
-              zoom="0.8"
-              disable-default-ui>
-            </google-streetview-pano>
-          </template>
-          <template is="dom-if" if="[[map]]">
-            <google-map></google-map>
-          </template>
-          <div class="category-image-container">
-            <iron-image class="category-icon" sizing="contain" src$="[[getCategoryImagePath(idea)]]"></iron-image>
-          </div>
           <div class="description ideaCardCursor" on-tap="_goToIdea">
             <h2 class="idea-name">[[ideaName(idea)]]</h2>
             <div>[[ideaDescription(idea)]]</div>
@@ -139,18 +132,6 @@
           value: true
         },
 
-        streetView: {
-          type: Boolean,
-          value: false,
-          notify: true
-        },
-
-        map: {
-          type: Boolean,
-          value: false,
-          notify: true
-        },
-
         elevation: {
           type: Number,
           value: 1
@@ -165,11 +146,7 @@
       },
 
       ideaImagePath: function (idea) {
-
-        if (this.streetView || this.map)
-          return "";
-        else
-          return this.randomStockImage();
+        return this.randomStockImage();
 
         if (this.idea.IsoCountry) {
           return this.isoCountryImagePath() + idea.IsoCountry.code.toLowerCase() + '.png';

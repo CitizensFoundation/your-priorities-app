@@ -16,6 +16,7 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="yp-idea-actions.html">
 <link rel="import" href="yp-idea-users.html">
+<link rel="import" href="yp-idea-cover-media.html">
 
 <dom-module id="yp-idea-header">
 
@@ -24,8 +25,8 @@
     <style>
       :host {
         display: block;
-        @apply(--layout-horizontal);
-        @apply(--layout-flex);
+        width: 100%;
+        height: 100%;
       }
 
       .description {
@@ -77,50 +78,21 @@
         padding-right: 72px;
       }
 
-      google-streetview-pano {
-        width: 935px;
-        height: 420px;
-      }
-
-      google-map {
-        width: 935px;
-        height: 420px;
-      }
-
       .card-actions {
         padding-top: 8px;
         width: 420px;
       }
 
-      .main-image {
+      yp-idea-cover-media {
+        position: relative;
         width: 935px;
-        height: 420px;
-      }
-
-      .map {
+        height: 300px;
       }
     </style>
 
       <div class="top-container">
 
-        <template restamp="true" is="dom-if" if="[[idea]]">
-          <img class="main-image" hidden$="[[!ideaImagePath()]]" src="[[ideaImagePath()]]">
-
-          <template is="dom-if" restamp="true" if="[[_withCoverMediaType('streetView')]]">
-            <google-streetview-pano
-                    position="[[_getMapPosition()]]"
-                    heading="330"
-                    pitch="2"
-                    zoom="0.8"
-                    disable-default-ui>
-            </google-streetview-pano>
-          </template>
-          <template is="dom-if" restamp="true" if="[[_withCoverMediaType('map')]]">
-            <google-map class="map" fit-to-markers>
-              <google-map-marker latitude="[[idea.latitude]]" longitude="[[idea.longitude]]"></google-map-marker>
-            </google-map>
-          </template>
-        </template>
+       <yp-idea-cover-media idea="[[idea]]"></yp-idea-cover-media>
 
         <template is="dom-if" if="[[idea]]">
           <div class="container">
@@ -172,47 +144,10 @@
       _ideaChanged: function(newValue, oldValue) {
       },
 
-      _withCoverMediaType: function (mediaType) {
-        return (this.idea && this.idea.cover_media_type===mediaType);
-      },
-
-      _getMapPosition: function () {
-        return { lat: this.idea.latitude, lng: this.idea.longitude }
-      },
-
       goToGroup: function (e) {
         var ideaUrl = '/#/ideas/' + this.idea.id + '/ideas/top/' + this.idea.name;
         window.appGlobals.activity('open', 'idea', ideaUrl);
         window.location = ideaUrl;
-      },
-
-      ideaImagePath: function (idea) {
-        if (this.idea.cover_media_type!="image")
-          return null;
-        else
-          return this.randomStockImage();
-
-        if (this.idea.IsoCountry) {
-          return this.isoCountryImagePath() + idea.IsoCountry.code.toLowerCase() + '.png';
-        }
-        else if (idea.name.indexOf("NHS") > -1) {
-          return "http://i.imgur.com/BKR5vE6.jpg"
-        }
-        else if (idea.name.indexOf("Iceland") > -1) {
-          return "https://i.imgur.com/v2SyyDl.png"
-        }
-        else if (true) {
-          return "https://i.imgur.com/OPpnjwm.jpg"
-        }
-        else if (false) {
-          return "https://placehold.it/384x216"
-        }
-        else if (idea.top_banner_file_name) {
-          return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(idea.id) + '/icon_full/' + idea.top_banner_file_name;
-        } else
-        {
-          return this.defaultGroupImage('');
-        }
       },
 
       getIsoCountryImagePath: function (idea) {

@@ -1,0 +1,139 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="yp-idea-actions.html">
+<link rel="import" href="yp-idea-users.html">
+
+<dom-module id="yp-idea-cover-media">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+      }
+
+      google-streetview-pano {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      google-map {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .main-image {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .mapCanvas {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+
+    <template is="dom-if" if="[[idea]]" restamp="true">
+      <div class="mapCanvas">
+        <template is="dom-if" if="[[_withCoverMediaType('image')]]">
+          <iron-image class="main-image" src="[[ideaImagePath()]]"></iron-image>
+        </template>
+
+        <template is="dom-if" if="[[_withCoverMediaType('streetView')]]">
+          <google-streetview-pano
+            position="[[_getMapPosition()]]"
+            heading="330"
+            pitch="2"
+            zoom="0.8"
+            disable-default-ui>
+          </google-streetview-pano>
+        </template>
+
+        <template is="dom-if" if="[[_withCoverMediaType('map')]]">
+          <google-map class="map" fit-to-markers>
+            <google-map-marker latitude="[[idea.latitude]]" longitude="[[idea.longitude]]"></google-map-marker>
+          </google-map>
+        </template>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-idea-cover-media',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        idea: {
+          type: Object,
+          notify: true,
+          observer: "_ideaChanged"
+        }
+      },
+
+      _ideaChanged: function(newValue, oldValue) {
+      },
+
+      _withCoverMediaType: function (mediaType) {
+        return (this.idea && this.idea.cover_media_type===mediaType);
+      },
+
+      _getMapPosition: function () {
+        return { lat: this.idea.latitude, lng: this.idea.longitude }
+      },
+
+      ideaImagePath: function (idea) {
+        if (this.idea.cover_media_type!="image")
+          return null;
+        else
+          return this.randomStockImage();
+
+        if (this.idea.IsoCountry) {
+          return this.isoCountryImagePath() + idea.IsoCountry.code.toLowerCase() + '.png';
+        }
+        else if (idea.name.indexOf("NHS") > -1) {
+          return "http://i.imgur.com/BKR5vE6.jpg"
+        }
+        else if (idea.name.indexOf("Iceland") > -1) {
+          return "https://i.imgur.com/v2SyyDl.png"
+        }
+        else if (true) {
+          return "https://i.imgur.com/OPpnjwm.jpg"
+        }
+        else if (false) {
+          return "https://placehold.it/384x216"
+        }
+        else if (idea.top_banner_file_name) {
+          return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(idea.id) + '/icon_full/' + idea.top_banner_file_name;
+        } else
+        {
+          return this.defaultGroupImage('');
+        }
+      }
+    });
+  </script>
+</dom-module>

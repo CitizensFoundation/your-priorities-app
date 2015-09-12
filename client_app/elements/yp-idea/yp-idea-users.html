@@ -86,11 +86,9 @@
         if (this.endorsements) {
           this.endorsements.unshift(endorsement);
         }
-        debugger;
       },
 
       _ideaChanged: function  (newValue, oldValue) {
-        debugger;
         if (newValue) {
           this.set("endorsements",null);
           this.$.endorsementAjax.url = this._computeUrl(newValue);

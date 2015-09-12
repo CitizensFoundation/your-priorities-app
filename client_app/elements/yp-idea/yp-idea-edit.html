@@ -136,15 +136,14 @@
     },
 
     _coverMediaTypeValueChanged: function(newValue, oldValue) {
-      debugger;
     },
 
     _coverMediaTypeChanged: function(event, detail) {
-      debugger;
     },
 
     _clear: function () {
-      this.idea = { name: '', description: '', pointFor: '', categoryId: null }
+      this.set('idea', { name: '', description: '', pointFor: '', categoryId: null });
+      this.set('location', null)
     },
 
     _setupTranslation: function () {
