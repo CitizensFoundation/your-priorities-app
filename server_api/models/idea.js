@@ -15,7 +15,9 @@ module.exports = function(sequelize, DataTypes) {
     counter_comments: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_all_activities: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_main_activities: { type: DataTypes.INTEGER, defaultValue: 0 },
-    impressions_count: { type: DataTypes.INTEGER, defaultValue: 0 }
+    impressions_count: { type: DataTypes.INTEGER, defaultValue: 0 },
+    latitude: DataTypes.FLOAT,
+    longitude: DataTypes.FLOAT
   }, {
     underscored: true,
 
@@ -31,6 +33,7 @@ module.exports = function(sequelize, DataTypes) {
         Idea.belongsTo(models.Category);
         Idea.belongsTo(models.User);
         Idea.belongsTo(models.Group, {foreignKey: "group_id"});
+        Idea.belongsToMany(models.Image, { through: 'IdeaImage' });
       },
 
       getSearchVector: function() {

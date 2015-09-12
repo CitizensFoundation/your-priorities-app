@@ -19,10 +19,8 @@
         display: block;
       }
 
-      .big {
-        height: 42px;
-        width: 42px;
-        padding-right: 8px;
+      .icon {
+        padding-right: 2px;
       }
 
       .upload-button {
@@ -31,8 +29,10 @@
       }
     </style>
     <div class="upload-button">
-      <iron-icon class="big" icon="image:photo-camera"></iron-icon>
-      <paper-button raised on-tap="[[openLocationDialog]]">[[t('image.upload')]]</paper-button>
+      <paper-button raised on-tap="[[openLocationDialog]]">
+        <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+        <span>[[t('image.upload')]]</span>
+      </paper-button>
     </div>
 
   </template>

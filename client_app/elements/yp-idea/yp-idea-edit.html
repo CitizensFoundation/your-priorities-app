@@ -80,9 +80,12 @@
       </template>
 
       <div class="layout vertical additionalSettings">
-        <yp-idea-location idea="[[idea]]" class="additionalButton"></yp-idea-location>
+        <yp-idea-location location="{{location}}" idea="[[idea]]" class="additionalButton"></yp-idea-location>
         <yp-image-uploader class="additionalButton"></yp-image-uploader>
       </div>
+
+      <input type="hidden" name="latitude" value="[[location.lat]]">
+      <input type="hidden" name="longitude" value="[[location.lng]]">
 
     </yp-edit-dialog>
   </template>
@@ -108,6 +111,10 @@
       },
 
       idea: {
+        type: Object
+      },
+
+      location: {
         type: Object
       }
     },

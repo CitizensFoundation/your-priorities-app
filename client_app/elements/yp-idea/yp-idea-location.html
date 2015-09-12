@@ -45,8 +45,11 @@
       }
     </style>
     <div class="location-button">
-      <iron-icon class="big" icon="communication:location-on"></iron-icon>
-      <paper-button raised on-tap="_openLocationDialog">[[t('location.set')]]</paper-button>
+
+      <paper-button raised on-tap="_openLocationDialog">
+        <iron-icon icon="communication:location-on"></iron-icon>
+        <span>[[t('location.set')]]</span>
+      </paper-button>
     </div>
 
     <paper-dialog id="dialog" class="dialog" modal>
@@ -73,7 +76,8 @@
 
         location: {
           type: Object,
-          observer: "_locationChanged"
+          observer: "_locationChanged",
+          notify: true
         },
 
         idea: {

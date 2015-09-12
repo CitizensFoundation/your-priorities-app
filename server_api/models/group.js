@@ -28,6 +28,7 @@ module.exports = function(sequelize, DataTypes) {
         Group.belongsToMany(models.User, { through: 'GroupUser' });
         Group.belongsTo(models.IsoCountry, {foreignKey: "iso_country_id"});
         Group.belongsTo(models.User);
+        Group.belongsToMany(models.Image, { through: 'GroupImage' });
       }
     }
   });
