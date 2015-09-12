@@ -93,6 +93,8 @@
         width: 420px;
       }
 
+      .map {
+      }
     </style>
 
     <template is="dom-if" if="[[idea]]">
@@ -109,8 +111,8 @@
                   disable-default-ui>
           </google-streetview-pano>
         </template>
-        <template is="dom-if" if="[[map]]">
-          <google-map></google-map>
+        <template is="dom-if" if="[[idea.latitude]]">
+          <google-map class="map" latitude="[[idea.latitude]]" longitude="[[idea.longitude]]"></google-map>
         </template>
 
         <div class="container">

@@ -1,5 +1,7 @@
 "use strict";
 
+var Upload = require('s3-uploader');
+
 module.exports = function(sequelize, DataTypes) {
   var Image = sequelize.define("Image", {
     name: DataTypes.STRING,
