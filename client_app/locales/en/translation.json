@@ -1,5 +1,5 @@
 {
-  "ideas": {
+  "idea": {
     "top": "Top ideas",
     "newest": "Latest ideas",
     "random": "Random ideas",
@@ -35,10 +35,8 @@
     "all": "all categories",
     "the_all": "All categories"
   },
-  "points": {
-    "point": "Point"
-  },
   "point": {
+    "point": "Point",
     "for": "Point for...",
     "against": "Point against...",
     "add_up": "Add point for",

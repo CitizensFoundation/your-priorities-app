@@ -88,13 +88,13 @@
       <input type="hidden" name="longitude" value="[[location.lng]]">
       <input type="hidden" name="coverMediaType" value="[[selectedCoverMediaType]]">
 
-      <h3 class="accessHeader">[[t('ideas.cover.media')]]</h3>
+      <h3 class="accessHeader">[[t('idea.cover.media')]]</h3>
       <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType" selected="{{selectedCoverMediaType}}">
-        <paper-radio-button name="none">[[t('ideas.cover.none')]]</paper-radio-button>
-        <paper-radio-button name="image">[[t('ideas.cover.image')]]</paper-radio-button>
+        <paper-radio-button name="none">[[t('idea.cover.none')]]</paper-radio-button>
+        <paper-radio-button name="image">[[t('idea.cover.image')]]</paper-radio-button>
         <template is="dom-if" if="[[location]]">
-          <paper-radio-button name="map">[[t('ideas.cover.map')]]</paper-radio-button>
-          <paper-radio-button name="streetView">[[t('ideas.cover.streetview')]]</paper-radio-button>
+          <paper-radio-button name="map">[[t('idea.cover.map')]]</paper-radio-button>
+          <paper-radio-button name="streetView">[[t('idea.cover.streetview')]]</paper-radio-button>
         </template>
       </paper-radio-group>
 
