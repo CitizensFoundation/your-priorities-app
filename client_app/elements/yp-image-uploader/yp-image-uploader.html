@@ -29,7 +29,8 @@
       }
     </style>
     <div class="upload-button">
-      <paper-button raised on-tap="[[openLocationDialog]]">
+      <input type="file" style="display: none;" id="fileUploader" name="filename" />
+      <paper-button raised on-tap="_openUploadFile">
         <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
         <span>[[t('image.upload')]]</span>
       </paper-button>
@@ -52,6 +53,10 @@
           type: Object,
           observer: "_ideaChanged"
         }
+      },
+
+      _openUploadFile: function () {
+        this.$.fileUploader.click();
       },
 
       _ideaChanged: function  (newValue, oldValue) {
