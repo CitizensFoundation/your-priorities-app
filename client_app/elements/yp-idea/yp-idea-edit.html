@@ -7,6 +7,8 @@
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 
+<link rel="import" href="../../bower_components/file-upload/file-upload.html">
+
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
@@ -81,12 +83,16 @@
 
       <div class="layout vertical additionalSettings">
         <yp-idea-location location="{{location}}" idea="[[idea]]" class="additionalButton"></yp-idea-location>
-        <yp-image-uploader class="additionalButton"></yp-image-uploader>
+        <file-upload droppable="false" raised="true" multi="false" target="/api/images" method="POST" on-success="_imageUploaded">
+          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+          <span>[[t('image.upload')]]</span>
+        </file-upload>
       </div>
 
       <input type="hidden" name="latitude" value="[[location.lat]]">
       <input type="hidden" name="longitude" value="[[location.lng]]">
       <input type="hidden" name="coverMediaType" value="[[selectedCoverMediaType]]">
+      <input type="hidden" name="uploadedImageId" value="[[uploadedImageId]]">
 
       <h3 class="accessHeader">[[t('idea.cover.media')]]</h3>
       <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType" selected="{{selectedCoverMediaType}}">
@@ -132,7 +138,15 @@
       selectedCoverMediaType: {
         type: String,
         observer: "_coverMediaTypeValueChanged"
+      },
+
+      uploadedImageId: {
+        type: String
       }
+    },
+
+    _imageUploaded: function (event, detail) {
+      debugger;
     },
 
     _coverMediaTypeValueChanged: function(newValue, oldValue) {

@@ -6,7 +6,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
-var multer = require('multer');
 
 var passport = require('passport')
     , LocalStrategy = require('passport-local').Strategy;
@@ -18,6 +17,7 @@ var communities = require('./controllers/communities');
 var domains = require('./controllers/domains');
 var points = require('./controllers/points');
 var users = require('./controllers/users');
+var images = require('./controllers/images');
 
 var models = require('./models');
 
@@ -93,6 +93,7 @@ app.use('/api/communities', communities);
 app.use('/api/domains', domains);
 app.use('/api/points', points);
 app.use('/api/users', users);
+app.use('/api/images', images);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

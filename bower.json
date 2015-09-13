@@ -2,14 +2,15 @@
   "name": "your-priorities-app",
   "version": "0.6.0",
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.1.0",
+    "file-upload": "~1.5.3",
+    "google-map": "GoogleWebComponents/google-map",
+    "google-streetview-pano": "https://github.com/rbjarnason/your-priorities-app.git",
     "iron-elements": "PolymerElements/iron-elements#master",
-    "paper-elements": "PolymerElements/paper-elements#master",
-    "platinum-elements": "PolymerElements/platinum-elements#master",
     "neon-elements": "PolymerElements/neon-elements#master",
     "page": "visionmedia/page.js#master",
-    "google-streetview-pano": "https://github.com/rbjarnason/your-priorities-app.git",
-    "google-map": "GoogleWebComponents/google-map"
+    "paper-elements": "PolymerElements/paper-elements#master",
+    "platinum-elements": "PolymerElements/platinum-elements#master",
+    "polymer": "Polymer/polymer#^1.1.0"
   },
   "devDependencies": {
     "web-component-tester": "*",
