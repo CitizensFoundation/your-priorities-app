@@ -38,11 +38,13 @@
       .ideaHeader {
         padding: 16px;
         padding-bottom: 0px;
+        background-color: #fefefe;
       }
 
       .tabsMaterial {
         margin-top: 16px;
         min-height: 500px;
+        background-color: #fefefe;
       }
     </style>
 
@@ -52,31 +54,28 @@
 
       <template is="dom-if" if="[[idea]]">
 
-        <paper-material elevation="0" class="ideaHeader" animated>
-
-          <paper-material elevation="2" class="ideaHeader" animated>
-            <yp-idea-header id="ideaHeader" idea="[[idea]]" showcategory="true"></yp-idea-header>
-          </paper-material>
-
-          <paper-material elevation="2" class="ideaHeader tabsMaterial" animated>
-            <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-              <paper-tab><span>[[t('idea.tabs.debate')]]</span> &nbsp; (<span>[[idea.Points.length]]</span>)</paper-tab>
-              <paper-tab>[[t('idea.tabs.news')]]</paper-tab>
-              <paper-tab>[[t('idea.tabs.location')]]</paper-tab>
-              <paper-tab>[[t('idea.tabs.photos')]]</paper-tab>
-            </paper-tabs>
-
-            <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
-
-              <yp-idea-points id="pointsSection" idea="[[idea]]"></yp-idea-points>
-
-              <section></section>
-              <section></section>
-              <section></section>
-            </neon-animated-pages>
-          </paper-material>
-
+        <paper-material elevation="3" class="ideaHeader" animated>
+          <yp-idea-header id="ideaHeader" idea="[[idea]]" showcategory="true"></yp-idea-header>
         </paper-material>
+
+        <paper-material elevation="2" class="ideaHeader tabsMaterial" animated>
+          <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+            <paper-tab><span>[[t('idea.tabs.debate')]]</span> &nbsp; (<span>[[idea.Points.length]]</span>)</paper-tab>
+            <paper-tab>[[t('idea.tabs.news')]]</paper-tab>
+            <paper-tab>[[t('idea.tabs.location')]]</paper-tab>
+            <paper-tab>[[t('idea.tabs.photos')]]</paper-tab>
+          </paper-tabs>
+
+          <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
+
+            <yp-idea-points id="pointsSection" idea="[[idea]]"></yp-idea-points>
+
+            <section></section>
+            <section></section>
+            <section></section>
+          </neon-animated-pages>
+        </paper-material>
+
 
       </template>
     </div>
