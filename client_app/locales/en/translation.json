@@ -14,7 +14,8 @@
     "share": "Share this idea",
     "tabs": {
       "debate": "Debate",
-      "newsfeed": "Newsfeed",
+      "news": "News",
+      "location": "Location",
       "photos": "Photos",
       "solutions": "Solutions",
       "not_implemented": "No implemented yet"
