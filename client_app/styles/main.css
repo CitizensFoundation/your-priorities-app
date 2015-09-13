@@ -42,3 +42,7 @@ body {
 body.loading #splash {
   opacity: 1;
 }
+html, body {
+  height: 100%;
+  margin: 0;
+}
