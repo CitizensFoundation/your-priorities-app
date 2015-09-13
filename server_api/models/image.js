@@ -10,22 +10,25 @@ module.exports = function(sequelize, DataTypes) {
     cc_url: DataTypes.STRING,
     original_url: DataTypes.STRING,
     photographer_name: DataTypes.STRING,
-    s3_bucket_name: DataTypes.STRING,
-    s3_name: DataTypes.STRING
+    formats: DataTypes.TEXT,
+    original_filename: DataTypes.STRING,
+    s3_bucket_name: DataTypes.STRING
   }, {
+
     underscored: true,
+
     tableName: 'images',
+
     classMethods: {
-      getUploadClient: function () {
-        var client = new Upload('my_s3_bucket', {
+      getUploadClient: function (s3BucketName) {
+        return new Upload(s3BucketName, {
           aws: {
-            path: 'images/',
             region: 'us-east-1',
             acl: 'public-read'
           },
 
           cleanup: {
-            versions: true,
+            versions: false,
             original: false
           },
 
@@ -43,20 +46,6 @@ module.exports = function(sequelize, DataTypes) {
             maxWidth: 780,
             aspect: '3:2!h',
             suffix: '-medium'
-          },{
-            maxWidth: 320,
-            aspect: '16:9!h',
-            suffix: '-small'
-          },{
-            maxHeight: 100,
-            aspect: '1:1',
-            format: 'png',
-            suffix: '-thumb1'
-          },{
-            maxHeight: 250,
-            maxWidth: 250,
-            aspect: '1:1',
-            suffix: '-thumb2'
           }]
         });
       },

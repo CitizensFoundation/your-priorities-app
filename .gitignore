@@ -2,6 +2,7 @@ node_modules
 dist
 server_api/config/config.json
 server_api/test/temp
+server_api/bin/uploads
 .sass-cache
 app/bower_components
 client_app/bower_components
