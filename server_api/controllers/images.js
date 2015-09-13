@@ -10,10 +10,13 @@ function isAuthenticated(req, res, next) {
   res.status(401).send('Unauthorized');
 }
 
-function createFormatFromVersions(versions) {
+function createFormatsFromVersions(versions) {
   var formats = [];
   versions.forEach(function(version) {
-    formats.push(version.url);
+    var n = version.url.lastIndexOf(process.env.S3_BUCKET);
+    var path = version.url.substring(n+process.env.S3_BUCKET.length, version.url.length);
+    var newUrl = "https://"+process.env.S3_BUCKET+".s3.amazonaws.com"+path;
+    formats.push(newUrl);
   });
   return formats;
 }
@@ -28,7 +31,7 @@ router.post('/', isAuthenticated, function(req, res) {
         user_id: req.user.id,
         s3_bucket_name: process.env.S3_BUCKET,
         original_filename: req.file.originalname,
-        formats: JSON.stringify(createFormatFromVersions(versions))
+        formats: JSON.stringify(createFormatsFromVersions(versions))
       });
       image.save().then(function() {
         res.send(image);

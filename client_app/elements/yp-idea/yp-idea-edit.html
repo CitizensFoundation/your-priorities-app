@@ -146,7 +146,8 @@
     },
 
     _imageUploaded: function (event, detail) {
-      debugger;
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedImageId', image.id);
     },
 
     _coverMediaTypeValueChanged: function(newValue, oldValue) {
@@ -157,7 +158,8 @@
 
     _clear: function () {
       this.set('idea', { name: '', description: '', pointFor: '', categoryId: null });
-      this.set('location', null)
+      this.set('location', null);
+      this.set('uploadedImageId',null);
     },
 
     _setupTranslation: function () {

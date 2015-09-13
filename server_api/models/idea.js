@@ -93,9 +93,39 @@ module.exports = function(sequelize, DataTypes) {
           limit: 100,
           include: [ modelCategory ]
         });
+      }
+    },
 
-//        return sequelize
- //           .query('SELECT * FROM "' + Idea.tableName + '" WHERE "' + Idea.getSearchVector() + '" @@ plainto_tsquery(\'english\', ' + query + ')'+'AND group_id = '+groupId, Idea);
+    instanceMethods: {
+      setupAfterSave: function(req, res, idea) {
+        var ideaRevision = sequelize.models.IdeaRevision.build({
+          name: idea.name,
+          description: idea.description,
+          group_id: idea.groupId,
+          user_id: req.user.id,
+          idea_id: idea.id
+        });
+        ideaRevision.save().then(function() {
+          var point = sequelize.models.Point.build({
+            group_id: idea.groupId,
+            idea_id: idea.id,
+            content: req.body.pointFor,
+            value: 1,
+            user_id: req.user.id
+          });
+          point.save().then(function() {
+            var pointRevision = sequelize.models.PointRevision.build({
+              group_id: point.groupId,
+              idea_id: idea.id,
+              content: point.content,
+              user_id: req.user.id,
+              point_id: point.id
+            });
+            pointRevision.save().then(function() {
+              res.send(idea);
+            });
+          });
+        });
       }
     }
   });

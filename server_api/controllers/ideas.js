@@ -113,34 +113,17 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
     status: 'published'
   });
   idea.save().then(function() {
-    var ideaRevision = models.IdeaRevision.build({
-      name: idea.name,
-      description: idea.description,
-      group_id: idea.groupId,
-      user_id: req.user.id,
-      idea_id: idea.id
-    });
-    ideaRevision.save().then(function() {
-      var point = models.Point.build({
-        group_id: idea.groupId,
-        idea_id: idea.id,
-        content: req.body.pointFor,
-        value: 1,
-        user_id: req.user.id
+    if (req.body.uploadedImageId) {
+      models.Image.find({
+        where: { id: req.body.uploadedImageId }
+      }).then(function(image) {
+        if (image)
+          idea.addImage(image);
+        idea.setupAfterSave(req, res, idea);
       });
-      point.save().then(function() {
-        var pointRevision = models.PointRevision.build({
-          group_id: point.groupId,
-          idea_id: idea.id,
-          content: point.content,
-          user_id: req.user.id,
-          point_id: point.id
-        });
-        pointRevision.save().then(function() {
-          res.send(idea);
-        });
-      });
-    });
+    } else {
+      idea.setupAfterSave(req, res, idea);
+    }
   });
 });
 

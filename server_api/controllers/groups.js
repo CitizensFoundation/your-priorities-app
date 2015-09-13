@@ -79,7 +79,7 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
     models.Idea.findAll({
       order: order,
       where: [where, []],
-      include: [ models.Category, models.IdeaRevision, models.Point ]
+      include: [ models.Category, models.IdeaRevision, models.Point, models.Image ]
     }).then(function(ideas) {
       res.send({group: group, Ideas: ideas});
     });
