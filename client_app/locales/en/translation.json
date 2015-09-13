@@ -18,6 +18,13 @@
       "photos": "Photos",
       "solutions": "Solutions",
       "not_implemented": "No implemented yet"
+    },
+    "cover": {
+      "media": "Choose cover media",
+      "map": "Map",
+      "streetview": "Street View",
+      "image": "Image",
+      "none": "None"
     }
   },
   "short_word": {
