@@ -13,6 +13,11 @@ body {
   color: #333;
 }
 
+.currentUser {
+  padding-left: 20px;
+  padding-top: 8px;
+}
+
 #splash {
   display: flex;
   position: absolute;
