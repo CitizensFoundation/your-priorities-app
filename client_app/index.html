@@ -81,26 +81,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <iron-icon icon="home"></iron-icon>
             <span>Home</span>
           </a>
-
-          <a data-route="users" href="/users" on-click="onDataRouteClick">
-            <iron-icon icon="info"></iron-icon>
-            <span>Users</span>
-          </a>
-
-          <a data-route="contact" href="/contact" on-click="onDataRouteClick">
-            <iron-icon icon="mail"></iron-icon>
-            <span>Contact</span>
-          </a>
-
-          <div class="layout horizontal">
-            <h3>[[currentUserEmail]]</h3>
-          </div>
-
+        </paper-menu>
+        <div class="currentUser">
           <template is="dom-if" if="[[currentUserEmail]]">
+            <b>[[currentUserEmail]]</b><br>
             <paper-button on-tap="onLogout">Logout</paper-button>
           </template>
-
-        </paper-menu>
+        </div>
       </paper-scroll-header-panel>
 
       <!-- Main Area -->
