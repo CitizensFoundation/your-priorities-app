@@ -15,6 +15,7 @@ router.get('/:id', function(req, res) {
     where: { id: req.params.id },
     include: [
       { model: models.Community,
+        include: [ models.Image ],
         order: 'Community.created_at DESC'
       }
     ]

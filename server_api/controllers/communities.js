@@ -11,6 +11,7 @@ function isAuthenticated(req, res, next) {
 /* GET ideas listing. */
 router.get('/', function(req, res) {
   models.Community.findAll({
+      include: [ models.Image ]
   }).then(function(communities) {
     res.send(communities);
   });
@@ -22,8 +23,9 @@ router.get('/:id', function(req, res) {
     include: [
       { model: models.Group,
         order: 'Group.created_at DESC'
-      }
-    ]
+      },
+      models.Image
+  ]
   }).then(function(community) {
     res.send(community);
   });
@@ -38,10 +40,19 @@ router.post('/', isAuthenticated, function(req, res) {
     user_id: req.user.id,
     website: req.body.website
   });
-
   community.save().then(function() {
+    if (req.body.uploadedImageId) {
+      models.Image.find({
+        where: { id: req.body.uploadedImageId }
+      }).then(function(image) {
+        if (image)
+          community.addImage(image);
+        res.send(community);
+      });
+    } else {
+      res.send(community);
+    }
      // Automatically add user to community
-     res.send(community);
   }).catch(function(error) {
     res.sendStatus(403);
   });

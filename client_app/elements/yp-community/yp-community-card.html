@@ -20,7 +20,7 @@
       :host {
         display: block;
         @apply(--layout-vertical);
-        width: 255px;
+        width: 285px !important;
       }
 
       .description {
@@ -66,12 +66,19 @@
       .communityCard {
         cursor: pointer;
       }
+
+      iron-image {
+        width: 256px !important;
+        height: 256px !important;
+      }
     </style>
 
     <template is="dom-if" if="[[community]]">
       <paper-card class="communityCard" image$="" on-tap="_goToCommunity">
-        <iron-image preload src="[[communityImagePath(community)]]" class="idea-image"/>
         <div class="card-content">
+          <div class="layout">
+            <iron-image sizing="cover" preload src="[[communityImagePath(community)]]" class="idea-image"/>
+          </div>
           <div class="description">
             <h2 class="community-name">[[communityName(community)]]</h2>
             <div>[[communityDescription(community)]]</div>
@@ -106,7 +113,14 @@
       },
 
       communityImagePath: function (community) {
-        return this.randomStockImage();
+        debugger;
+        if (this.community.Images && this.community.Images.length>0) {
+          var formats = JSON.parse(this.community.Images[0].formats);
+          if (formats && formats.length>0)
+            return formats[1];
+        } else {
+          return "";
+        }
       },
 
       getIsoCountryImagePath: function (community) {

@@ -36,17 +36,22 @@ module.exports = function(sequelize, DataTypes) {
             awsImageAcl: 'private'
           },
 
-          versions: [{
-            maxHeight: 1040,
-            maxWidth: 1040,
-            format: 'jpg',
-            suffix: '-large',
-            quality: 80
-          },{
-            maxWidth: 780,
-            aspect: '3:2!h',
-            suffix: '-medium'
-          }]
+          versions: [
+            {
+              maxWidth: 945,
+              format: 'jpg',
+              suffix: '-16_9',
+              aspect: '16:9!h',
+              quality: 80
+            },
+            {
+              maxHeight: 512,
+              maxWidth: 512,
+              format: 'jpg',
+              suffix: '-box',
+              quality: 80
+            }
+          ]
         });
       },
       associate: function(models) {

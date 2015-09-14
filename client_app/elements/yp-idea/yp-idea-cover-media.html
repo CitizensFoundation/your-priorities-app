@@ -56,7 +56,7 @@
     <template is="dom-if" if="[[idea]]" restamp="true">
       <div class="mapCanvas">
         <template is="dom-if" if="[[_withCoverMediaType('image')]]">
-          <iron-image class="main-image" src="[[ideaImagePath()]]"></iron-image>
+          <iron-image sizing="cover" class="main-image" src="[[ideaImagePath()]]"></iron-image>
         </template>
 
         <template is="dom-if" if="[[_withCoverMediaType('streetView')]]">
