@@ -110,6 +110,10 @@
             this.domainNotEmpty = true;
           this.set("communities",domain.Communities);
         }
+        var headerPanel = app.$.mainScrollHeaderPanel;
+
+        headerPanel.style.background =  "#9E9E9E";
+
         this.fire("change-header", { headerTitle: domain.domain_name,
                                      headerDescription: domain.description});
       },

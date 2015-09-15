@@ -110,9 +110,7 @@
         var community = detail.response;
         var headerPanel = app.$.mainScrollHeaderPanel;
         var url = this._communityHeaderUrl(community);
-        headerPanel.style.background = "#f3f3f3 url('"+url+"')";
-
-//        headerPanel.style.backgroundImage =  "url("+url+") !important";
+        headerPanel.style.backgroundImage =  "url("+url+")";
 
         this.set("groups", community.Groups);
         if (community.Groups.length>0)
