@@ -40,7 +40,8 @@
         <paper-input id="name"
                      type="text"
                      label="[[t('login.name')]]"
-                     value="{{name}}">
+                     value="{{name}}"
+                     hidden$="[[!registerMode]]">
         </paper-input>
 
         <paper-input id="email"
