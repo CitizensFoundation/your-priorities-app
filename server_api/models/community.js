@@ -53,7 +53,8 @@ module.exports = function(sequelize, DataTypes) {
         Community.belongsTo(models.Domain, {foreignKey: "domain_id"});
         Community.belongsToMany(models.User, { through: 'CommunityUser' });
         Community.belongsTo(models.User);
-        Community.belongsToMany(models.Image, { through: 'CommunityImage' });
+        Community.belongsToMany(models.Image, { as: 'CommunityLogoImages', through: 'CommunityLogoImage' });
+        Community.belongsToMany(models.Image, { as: 'CommunityHeaderImages', through: 'CommunityHeaderImage' });
       }
     }
   });

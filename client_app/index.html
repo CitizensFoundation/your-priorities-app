@@ -55,7 +55,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- endreplace-->
 </head>
 
-<body unresolved class="fullbleed layout vertical loading">
+<body class="fullbleed layout vertical loading">
 
   <div id="splash" onclick="onSplashClick()"></div>
 
@@ -66,7 +66,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <yp-app-globals id="appGlobals" disable-welcome setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
     <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
 
-    <paper-drawer-panel id="paperDrawerPanel">
+    <paper-drawer-panel responsive-width="961px" id="paperDrawerPanel">
       <!-- Drawer Scroll Header Panel -->
       <paper-scroll-header-panel drawer fixed>
 
@@ -91,7 +91,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </paper-scroll-header-panel>
 
       <!-- Main Area -->
-      <paper-scroll-header-panel main condenses waterfall-tall>
+      <paper-scroll-header-panel id="mainScrollHeaderPanel" main condenses waterfall-tall>
 
         <!-- Main Toolbar -->
         <paper-toolbar id="mainToolbar" class="tall">
@@ -169,6 +169,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <!-- build:js scripts/app.js -->
+  <script src="scripts/i18next-1.7.4.min.js"></script>
   <script src="scripts/app.js"></script>
   <!-- endbuild-->
 </body>

@@ -25,6 +25,18 @@
         width: 420px;
       }
 
+      @media (max-width: 961px) {
+        :host {
+          width: 300px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        :host {
+          width: 140px;
+        }
+      }
+
       .for {
         color: var(--primary-up-color-bit-lighter, #003300);
       }
@@ -41,11 +53,15 @@
         @apply(--layout-vertical);
       }
 
-
       .user-image {
         padding-right: 16px;
       }
 
+      @media (max-width: 600px) {
+        .user-image {
+          display: none;
+        }
+      }
       .user-image-right {
         padding-right: 0px;
         padding-left: 16px;

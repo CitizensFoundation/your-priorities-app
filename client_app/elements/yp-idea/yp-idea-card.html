@@ -80,14 +80,6 @@
         margin-top: -52px;
       }
 
-      google-streetview-pano {
-        height: 216px;
-      }
-
-      google-map {
-        height: 216px;
-      }
-
       .ideaCardCursor {
         cursor: pointer;
       }
@@ -97,6 +89,13 @@
         width: 420px;
         height: 200px;
       }
+
+      @media (max-width: 600px) {
+        yp-idea-cover-media {
+          width: 285px !important;
+        }
+      }
+
     </style>
 
     <template is="dom-if" if="[[idea]]">

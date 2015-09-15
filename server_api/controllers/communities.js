@@ -24,8 +24,13 @@ router.get('/:id', function(req, res) {
       { model: models.Group,
         order: 'Group.created_at DESC'
       },
-      models.Image
-  ]
+      {
+        model: models.Image, as: 'CommunityLogoImages'
+      },
+      {
+        model: models.Image, as: 'CommunityHeaderImages'
+      }
+    ]
   }).then(function(community) {
     res.send(community);
   });
@@ -41,13 +46,23 @@ router.post('/', isAuthenticated, function(req, res) {
     website: req.body.website
   });
   community.save().then(function() {
-    if (req.body.uploadedImageId) {
+    if (req.body.uploadedLogoImageId) {
       models.Image.find({
-        where: { id: req.body.uploadedImageId }
+        where: { id: req.body.uploadedLogoImageId }
       }).then(function(image) {
         if (image)
-          community.addImage(image);
-        res.send(community);
+          community.addCommunityLogoImage(image);
+        if (req.body.uploadedHeaderImageId) {
+          models.Image.find({
+            where: { id: req.body.uploadedHeaderImageId }
+          }).then(function(image) {
+            if (image)
+              community.addCommunityHeaderImage(image);
+              res.send(community);
+          });
+        } else {
+          res.send(community);
+        }
       });
     } else {
       res.send(community);

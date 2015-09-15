@@ -21,10 +21,22 @@
       .container {
         @apply(--layout-vertical);
         @apply(--layout-flex);
-        width: 1000px;
+        width: 961px;
         margin: auto;
         margin-top: -62px;
         padding-top: 0px;
+      }
+
+      @media (max-width: 961px) {
+        .container {
+          width: 600px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          width: 300px;
+        }
       }
 
       .flex {

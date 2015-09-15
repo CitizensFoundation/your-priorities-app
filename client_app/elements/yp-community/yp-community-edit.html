@@ -64,13 +64,21 @@
       </paper-input>
 
       <div class="layout vertical additionalSettings">
-        <file-upload droppable="false" raised="true" multi="false" target="/api/images" method="POST" on-success="_imageUploaded">
+        <file-upload droppable="false" raised="true" multi="false" target="/api/images" method="POST" on-success="_logoImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.upload')]]</span>
+          <span>[[t('image.logo.upload')]]</span>
         </file-upload>
       </div>
 
-      <input type="hidden" name="uploadedImageId" value="[[uploadedImageId]]">
+      <div class="layout vertical additionalSettings">
+        <file-upload droppable="false" raised="true" multi="false" target="/api/images" method="POST" on-success="_headerImageUploaded">
+          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+          <span>[[t('image.header.upload')]]</span>
+        </file-upload>
+      </div>
+
+      <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
+      <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
       <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
@@ -112,9 +120,14 @@
       }
     },
 
-    _imageUploaded: function (event, detail) {
+    _logoImageUploaded: function (event, detail) {
       var image = JSON.parse(detail.xhr.response);
-      this.set('uploadedImageId', image.id);
+      this.set('uploadedLogoImageId', image.id);
+    },
+
+    _headerImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedHeaderImageId', image.id);
     },
 
     _customRedirect: function (communityId) {

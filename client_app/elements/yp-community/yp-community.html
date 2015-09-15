@@ -81,6 +81,17 @@
         }
       },
 
+      _communityHeaderUrl: function (community) {
+        debugger;
+        if (community.CommunityHeaderImages && community.CommunityHeaderImages.length>0) {
+          var formats = JSON.parse(community.CommunityHeaderImages[0].formats);
+          if (formats && formats.length>0)
+            return formats[0];
+        } else {
+          return "";
+        }
+      },
+
       _communityIdChanged: function (newValue, oldValue) {
         if (newValue) {
           this.set("groups",[]);
@@ -98,6 +109,11 @@
 
       _response: function (event, detail, sender) {
         var community = detail.response;
+        var headerPanel = app.$.mainScrollHeaderPanel;
+        debugger;
+        var url = this._communityHeaderUrl(community);
+        debugger;
+        headerPanel.style.backgroundImage = "url("+url+")";
         this.set("groups", community.Groups);
         if (community.Groups.length>0)
           this.communityNotEmpty = true;

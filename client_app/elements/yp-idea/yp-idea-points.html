@@ -32,8 +32,21 @@
       .pointText {
         margin-bottom: 16px;
         padding: 16px;
-        max-width: 410px;
         width: 410px;
+      }
+
+      @media (max-width: 961px) {
+        .pointText {
+          width: 210px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .pointText {
+          width: 140px;
+          font-size: 30px;
+          padding-right: 0px;
+        }
       }
 
        paper-toast {

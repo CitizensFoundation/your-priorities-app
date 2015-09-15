@@ -128,8 +128,8 @@
       },
 
       communityImagePath: function (community) {
-        if (this.community.Images && this.community.Images.length>0) {
-          var formats = JSON.parse(this.community.Images[0].formats);
+        if (this.community.CommunityLogoImages && this.community.CommunityLogoImages.length>0) {
+          var formats = JSON.parse(this.community.CommunityLogoImages[0].formats);
           if (formats && formats.length>0)
             return formats[1];
         } else {

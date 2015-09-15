@@ -58,8 +58,8 @@ module.exports = function(sequelize, DataTypes) {
         Image.belongsTo(models.User);
         Image.belongsToMany(models.Idea, { through: 'IdeaImage' });
         Image.belongsToMany(models.Group, { through: 'GroupImage' });
-        Image.belongsToMany(models.Community, { through: 'CommunityImage' });
-      }
+        Image.belongsToMany(models.Community, { as: 'CommunityLogoImages', through: 'CommunityLogoImage' });
+        Image.belongsToMany(models.Community, { as: 'CommunityHeaderImages', through: 'CommunityHeaderImage' });      }
     }
   });
 
