@@ -4,7 +4,7 @@
   "dependencies": {
     "file-upload": "~1.5.3",
     "google-map": "GoogleWebComponents/google-map",
-    "google-streetview-pano": "rbjarnason/google-streetview-pano",
+    "google-streetview-pano": "rbjarnason/google-streetview-pano#add-position-support",
     "iron-elements": "PolymerElements/iron-elements#master",
     "neon-elements": "PolymerElements/neon-elements#master",
     "page": "visionmedia/page.js#master",
