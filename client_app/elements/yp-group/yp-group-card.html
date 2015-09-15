@@ -20,7 +20,13 @@
       :host {
         display: block;
         @apply(--layout-vertical);
-        width: 384px;
+        width: 416px;
+      }
+
+      @media (max-width: 600px) {
+        :host {
+          width: 285px !important;
+        }
       }
 
       .description {

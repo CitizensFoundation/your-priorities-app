@@ -20,7 +20,13 @@
       :host {
         display: block;
         @apply(--layout-vertical);
-        width: 285px !important;
+        width: 416px;
+      }
+
+      @media (max-width: 600px) {
+        :host {
+          width: 285px !important;
+        }
       }
 
       .description {
@@ -68,9 +74,18 @@
       }
 
       iron-image {
-        width: 256px !important;
-        height: 256px !important;
+        width: 400px;
+        height: 400px;
       }
+
+      @media (max-width: 600px) {
+        iron-image {
+          width: 256px !important;
+          height: 256px !important;
+        }
+      }
+
+
     </style>
 
     <template is="dom-if" if="[[community]]">
