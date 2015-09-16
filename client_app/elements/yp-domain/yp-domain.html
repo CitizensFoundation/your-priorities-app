@@ -40,7 +40,7 @@
 
     <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
 
-    <yp-community-edit id="communityEdit" on-iron-form-response="_refresh"></yp-community-edit>
+    <yp-community-edit id="communityNew" on-iron-form-response="_refresh"></yp-community-edit>
 
     <div class="card-container">
       <template is="dom-if" if="[[communities]]">
@@ -100,7 +100,7 @@
 
       _newCommunity: function () {
         window.appGlobals.activity('open', 'newCommunity');
-        this.$.communityEdit.open('new');
+        this.$.communityNew.open('new');
       },
 
       _response: function (event, detail, sender) {

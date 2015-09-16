@@ -25,10 +25,10 @@ router.get('/:id', function(req, res) {
         order: 'Group.created_at DESC'
       },
       {
-        model: models.Image, as: 'CommunityLogoImages'
+        model: models.Image, as: 'CommunityLogoImages', order: 'updated_at DESC'
       },
       {
-        model: models.Image, as: 'CommunityHeaderImages'
+        model: models.Image, as: 'CommunityHeaderImages', order: 'updated_at DESC'
       }
     ]
   }).then(function(community) {
@@ -46,31 +46,48 @@ router.post('/', isAuthenticated, function(req, res) {
     website: req.body.website
   });
   community.save().then(function() {
-    if (req.body.uploadedLogoImageId) {
-      models.Image.find({
-        where: { id: req.body.uploadedLogoImageId }
-      }).then(function(image) {
-        if (image)
-          community.addCommunityLogoImage(image);
-        if (req.body.uploadedHeaderImageId) {
-          models.Image.find({
-            where: { id: req.body.uploadedHeaderImageId }
-          }).then(function(image) {
-            if (image)
-              community.addCommunityHeaderImage(image);
-              res.send(community);
-          });
-        } else {
-          res.send(community);
+    async.parallel([
+      function(callback) {
+        community.setupImages(req.body, function (err) {
+          if (err) return callback(err);
+           callback();
         }
-      });
-    } else {
+      },
+      function(callback) {
+        db.save('xxx', 'b', callback); //If we just pass in the task callback, it will automatically be called with an eror, if the db.save() call fails
+      }
+    ], function(err) {
+      if (err) {
+        throw err; //Or pass it on to an outer callback, log it or whatever suits your needs
+      }
+      console.log('Both a and b are saved now');
+    });
+
+    community.setupImages(req.body, function () {
       res.send(community);
-    }
+    });
      // Automatically add user to community
   }).catch(function(error) {
     res.sendStatus(403);
   });
 });
+
+router.put('/:id', isAuthenticated, function(req, res) {
+  models.Community.find({
+    where: { id: req.params.id }
+  }).then(function(community) {
+    community.name = req.body.name;
+    community.description = req.body.description;
+    community.access = models.Community.convertAccessFromRadioButtons(req.body);
+    community.save().then(function () {
+      community.setupImages(req.body, function () {
+        res.send(community);
+      });
+    });
+  }).catch(function(error) {
+    res.sendStatus(403);
+  });
+});
+
 
 module.exports = router;

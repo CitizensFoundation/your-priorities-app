@@ -88,10 +88,6 @@ function onSplashClick() {
     document.querySelector('#appUser').logout();
   };
 
-  app.onOpenNewCommunity = function() {
-    document.querySelector('#communityEdit').open('new');
-  };
-
   app.onUserChanged = function(event, detail) {
     if (detail) {
       app.currentUserEmail = detail.email;

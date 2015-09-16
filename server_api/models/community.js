@@ -14,6 +14,36 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     underscored: true,
     tableName: 'communities',
+
+    instanceMethods: {
+
+      setupLogoImage: function(body, done) {
+        if (body.uploadedLogoImageId) {
+          models.Image.find({
+            where: {id: body.uploadedLogoImageId}
+          }).then(function (image) {
+            if (image)
+              this.addCommunityLogoImage(image);
+            done();
+          });
+        } else {
+          done();
+        }
+      },
+
+      setupHeaderImage: function(body, done) {
+        if (body.uploadedHeaderImageId) {
+          models.Image.find({
+            where: {id: body.uploadedHeaderImageId}
+          }).then(function (image) {
+            if (image)
+              this.addCommunityHeaderImage(image);
+            done();
+          });
+        }
+      },
+    },
+
     classMethods: {
 
       setYpCommunity: function (req,res,next) {

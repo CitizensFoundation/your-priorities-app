@@ -17,10 +17,10 @@ router.get('/:id', function(req, res) {
       { model: models.Community,
         include: [
           {
-            model: models.Image, as: 'CommunityLogoImages'
+            model: models.Image, as: 'CommunityLogoImages', order: 'updatedAt DESC'
           },
           {
-            model: models.Image, as: 'CommunityHeaderImages'
+            model: models.Image, as: 'CommunityHeaderImages', order: 'updatedAt DESC'
           }
         ],
         order: 'Community.created_at DESC'
