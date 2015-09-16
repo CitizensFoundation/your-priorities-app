@@ -57,7 +57,7 @@ router.post('/', isAuthenticated, function(req, res) {
   });
 });
 
-router.put('/:id', isAuthenticated, function(req, res) {
+router.post('/:id', isAuthenticated, function(req, res) {
   models.Community.find({
     where: { id: req.params.id }
   }).then(function(community) {

@@ -103,7 +103,7 @@
       },
 
       _openEdit: function () {
-        this.$.communityEdit.open('edit');
+        this.$.communityEdit.open('edit', {communityId: this.community.id });
       },
 
       _communityHeaderUrl: function (community) {
