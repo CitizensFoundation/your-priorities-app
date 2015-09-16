@@ -85,7 +85,7 @@
         if (community.CommunityHeaderImages && community.CommunityHeaderImages.length>0) {
           var formats = JSON.parse(community.CommunityHeaderImages[0].formats);
           if (formats && formats.length>0)
-            return formats[0];
+            return formats[2];
         } else {
           return "";
         }

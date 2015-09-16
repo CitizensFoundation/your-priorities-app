@@ -50,6 +50,12 @@ module.exports = function(sequelize, DataTypes) {
               format: 'jpg',
               suffix: '-box',
               quality: 80
+            },
+            {
+              maxWidth: 945,
+              format: 'jpg',
+              suffix: '-header',
+              quality: 80
             }
           ]
         });
