@@ -39,7 +39,7 @@ router.get('/:id', function(req, res) {
 router.post('/', isAuthenticated, function(req, res) {
   var community = models.Community.build({
     name: req.body.name,
-    objectives: req.body.objectives,
+    description: req.body.description,
     access: models.Community.convertAccessFromRadioButtons(req.body),
     domain_id: req.ypDomain.id,
     user_id: req.user.id,

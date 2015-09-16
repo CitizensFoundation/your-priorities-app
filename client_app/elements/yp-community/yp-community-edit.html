@@ -45,10 +45,10 @@
                    char-counter>
       </paper-input>
 
-      <paper-textarea id="objectives"
-                      name="objectives"
-                      value="{{community.objectives}}"
-                      label="[[t('objectives')]]"
+      <paper-textarea id="description"
+                      name="description"
+                      value="{{community.description}}"
+                      label="[[t('description')]]"
                       char-counter
                       rows="2"
                       max-rows="5"
@@ -137,7 +137,7 @@
     },
 
     _clear: function () {
-      this.community = { name: '', objectives: '', access: 2 }
+      this.community = { name: '', description: '', access: 2 }
     },
 
     _setupTranslation: function () {

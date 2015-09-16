@@ -6,7 +6,7 @@ module.exports = function(sequelize, DataTypes) {
   var Community = sequelize.define("Community", {
     name: DataTypes.STRING,
     hostname: DataTypes.STRING,
-    objectives: DataTypes.TEXT,
+    description: DataTypes.TEXT,
     access: DataTypes.INTEGER,
     website: DataTypes.TEXT,
     counter_groups: DataTypes.INTEGER,

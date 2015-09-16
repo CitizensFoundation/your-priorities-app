@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
     short_name: DataTypes.STRING,
     top_banner_file_name: DataTypes.STRING,
     logo_file_name: DataTypes.STRING,
-    description: DataTypes.TEXT,
+    objectives: DataTypes.TEXT,
     counter_ideas: DataTypes.INTEGER,
     counter_points: DataTypes.INTEGER,
     counter_comments: DataTypes.INTEGER,

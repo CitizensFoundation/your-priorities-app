@@ -43,10 +43,10 @@
                    char-counter>
       </paper-input>
 
-      <paper-textarea id="description"
-                      name="description"
-                      value="{{group.description}}"
-                      label="[[t('description')]]"
+      <paper-textarea id="objectives"
+                      name="objectives"
+                      value="{{group.objectives}}"
+                      label="[[t('objectives')]]"
                       char-counter
                       rows="2"
                       max-rows="5"
@@ -108,7 +108,7 @@
     },
 
     _clear: function () {
-      this.group = { name: '', description: '', access: 2 }
+      this.group = { name: '', objectives: '', access: 2 }
     },
 
     _setupTranslation: function () {
