@@ -39,7 +39,7 @@
       <paper-input id="name"
                    name="name"
                    type="text"
-                   label="[[t('name')]]"
+                   label="[[t('Name')]]"
                    value="{{community.name}}"
                    maxlength="60"
                    char-counter>
@@ -48,7 +48,7 @@
       <paper-textarea id="description"
                       name="description"
                       value="{{community.description}}"
-                      label="[[t('description')]]"
+                      label="[[t('Description')]]"
                       char-counter
                       rows="2"
                       max-rows="5"
@@ -72,7 +72,7 @@
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
-      <h3 class="accessHeader">[[t('access')]]</h3>
+      <h3 class="accessHeader">[[t('Access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
         <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
         <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>
@@ -145,7 +145,7 @@
         this.editHeaderText = this.t('New community');
         this.toastText = this.t('community.toast.created');
       } else {
-        this.editHeaderText = this.t('community.edit.update');
+        this.editHeaderText = this.t('Update community info');
         this.toastText = this.t('community.toast.updated');
       }
     }
