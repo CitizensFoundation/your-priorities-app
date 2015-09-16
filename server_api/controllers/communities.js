@@ -46,29 +46,14 @@ router.post('/', isAuthenticated, function(req, res) {
     website: req.body.website
   });
   community.save().then(function() {
-    async.parallel([
-      function(callback) {
-        community.setupImages(req.body, function (err) {
-          if (err) return callback(err);
-           callback();
-        }
-      },
-      function(callback) {
-        db.save('xxx', 'b', callback); //If we just pass in the task callback, it will automatically be called with an eror, if the db.save() call fails
-      }
-    ], function(err) {
+    community.setupImages(req.body, function(err) {
       if (err) {
-        throw err; //Or pass it on to an outer callback, log it or whatever suits your needs
+        res.sendStatus(403);
+        console.error(err);
+      } else {
+        res.send(community);
       }
-      console.log('Both a and b are saved now');
     });
-
-    community.setupImages(req.body, function () {
-      res.send(community);
-    });
-     // Automatically add user to community
-  }).catch(function(error) {
-    res.sendStatus(403);
   });
 });
 
@@ -80,14 +65,16 @@ router.put('/:id', isAuthenticated, function(req, res) {
     community.description = req.body.description;
     community.access = models.Community.convertAccessFromRadioButtons(req.body);
     community.save().then(function () {
-      community.setupImages(req.body, function () {
-        res.send(community);
+      community.setupImages(req.body, function(err) {
+        if (err) {
+          res.sendStatus(403);
+          console.error(err);
+        } else {
+          res.send(community);
+        }
       });
     });
-  }).catch(function(error) {
-    res.sendStatus(403);
   });
 });
-
 
 module.exports = router;

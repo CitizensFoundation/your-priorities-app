@@ -26,9 +26,7 @@ module.exports = function(sequelize, DataTypes) {
               this.addCommunityLogoImage(image);
             done();
           });
-        } else {
-          done();
-        }
+        } else done();
       },
 
       setupHeaderImage: function(body, done) {
@@ -40,8 +38,27 @@ module.exports = function(sequelize, DataTypes) {
               this.addCommunityHeaderImage(image);
             done();
           });
-        }
+        } else done();
       },
+
+      setupImages: function(body, done) {
+        async.parallel([
+          function(callback) {
+            this.setupLogoImage(req.body, function (err) {
+              if (err) return callback(err);
+              callback();
+            });
+          },
+          function(callback) {
+            this.setupHeaderImage(req.body, function (err) {
+              if (err) return callback(err);
+              callback();
+            });
+          }
+        ], function(err) {
+          done(err);
+        });
+      }
     },
 
     classMethods: {
