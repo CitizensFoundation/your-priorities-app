@@ -50,7 +50,7 @@
 
     <div class="card-container">
       <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>
-      <template is="dom-i f" if="[[groups]]">
+      <template is="dom-if" if="[[groups]]">
         <h2 hidden$="[[communityNotEmpty]]">[[t('community.is.empty')]]</h2>
         <template is="dom-repeat" class="list" items="[[groups]]" as="group">
           <yp-group-card group="[[group]]" on-mouseover="_groupCardMouseOver" on-mouseout="_groupCardMouseOut"></yp-group-card>

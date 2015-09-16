@@ -25,10 +25,10 @@ router.get('/:id', function(req, res) {
         order: 'Group.created_at DESC'
       },
       {
-        model: models.Image, as: 'CommunityLogoImages', order: 'updated_at DESC'
+        model: models.Image, as: 'CommunityLogoImages', order: 'Image.updated_at DESC'
       },
       {
-        model: models.Image, as: 'CommunityHeaderImages', order: 'updated_at DESC'
+        model: models.Image, as: 'CommunityHeaderImages', order: 'Image.updated_at DESC'
       }
     ]
   }).then(function(community) {
