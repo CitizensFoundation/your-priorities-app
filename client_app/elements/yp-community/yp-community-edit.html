@@ -45,23 +45,15 @@
                    char-counter>
       </paper-input>
 
-      <paper-textarea id="description"
-                      name="description"
-                      value="{{community.description}}"
-                      label="[[t('description')]]"
+      <paper-textarea id="objectives"
+                      name="objectives"
+                      value="{{community.objectives}}"
+                      label="[[t('objectives')]]"
                       char-counter
                       rows="2"
                       max-rows="5"
                       maxlength="300">
       </paper-textarea>
-
-      <paper-input id="website"
-                   name="website"
-                   type="text"
-                   label="[[t('website')]]"
-                   value="{{community.website}}"
-                   maxlength="2083">
-      </paper-input>
 
       <div class="layout vertical additionalSettings">
         <file-upload droppable="false" raised="true" multi="false" target="/api/images" method="POST" on-success="_logoImageUploaded">
@@ -145,7 +137,7 @@
     },
 
     _clear: function () {
-      this.community = { name: '', description: '', access: 2 }
+      this.community = { name: '', objectives: '', access: 2 }
     },
 
     _setupTranslation: function () {
