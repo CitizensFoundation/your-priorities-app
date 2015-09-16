@@ -25,10 +25,10 @@ router.get('/:id', function(req, res) {
         order: 'Group.created_at DESC'
       },
       {
-        model: models.Image, as: 'CommunityLogoImages'
+        model: models.Image, as: 'CommunityLogoImages', order: 'updated_at DESC'
       },
       {
-        model: models.Image, as: 'CommunityHeaderImages'
+        model: models.Image, as: 'CommunityHeaderImages', order: 'updated_at DESC'
       }
     ]
   }).then(function(community) {
@@ -46,30 +46,34 @@ router.post('/', isAuthenticated, function(req, res) {
     website: req.body.website
   });
   community.save().then(function() {
-    if (req.body.uploadedLogoImageId) {
-      models.Image.find({
-        where: { id: req.body.uploadedLogoImageId }
-      }).then(function(image) {
-        if (image)
-          community.addCommunityLogoImage(image);
-        if (req.body.uploadedHeaderImageId) {
-          models.Image.find({
-            where: { id: req.body.uploadedHeaderImageId }
-          }).then(function(image) {
-            if (image)
-              community.addCommunityHeaderImage(image);
-              res.send(community);
-          });
+    community.setupImages(req.body, function(err) {
+      if (err) {
+        res.sendStatus(403);
+        console.error(err);
+      } else {
+        res.send(community);
+      }
+    });
+  });
+});
+
+router.post('/:id', isAuthenticated, function(req, res) {
+  models.Community.find({
+    where: { id: req.params.id }
+  }).then(function(community) {
+    community.name = req.body.name;
+    community.description = req.body.description;
+    community.access = models.Community.convertAccessFromRadioButtons(req.body);
+    community.save().then(function () {
+      community.setupImages(req.body, function(err) {
+        if (err) {
+          res.sendStatus(403);
+          console.error(err);
         } else {
           res.send(community);
         }
       });
-    } else {
-      res.send(community);
-    }
-     // Automatically add user to community
-  }).catch(function(error) {
-    res.sendStatus(403);
+    });
   });
 });
 

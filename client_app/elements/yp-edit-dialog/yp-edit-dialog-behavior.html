@@ -12,7 +12,8 @@
 
       new: {
         type: Boolean,
-        value: true
+        value: true,
+        observer: "_setupNewUpdateState"
       },
 
       editHeaderText: {
@@ -43,16 +44,12 @@
       this._clear();
     },
 
-    ready: function () {
-     this._setupNewUpdateState();
-    },
-
     _setupNewUpdateState: function () {
       if (this.new) {
         this.saveText = this.t('create');
       } else {
         this.saveText = this.t('update');
-        this.method = "PUT";
+       // this.method = "PUT";
       }
       this._setupTranslation();
     },
@@ -65,7 +62,6 @@
           } else {
             this.new = false;
           }
-          this._setupNewUpdateState();
         }
         if (params)
           this.params = params;

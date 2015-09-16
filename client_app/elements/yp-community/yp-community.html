@@ -6,12 +6,15 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-idea/yp-idea.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-group/yp-group-card.html">
 <link rel="import" href="../yp-group/yp-group-edit.html">
+
+<link rel="import" href="yp-community-edit.html">
 
 <dom-module id="yp-community">
   <template>
@@ -41,10 +44,13 @@
 
     <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
 
-    <yp-group-edit id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
+    <yp-group-edit new id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
+
+    <yp-community-edit new="false" id="communityEdit" community="{{community}}" on-iron-form-response="_refresh"></yp-community-edit>
 
     <div class="card-container">
-      <template is="dom-if" if="[[groups]]">
+      <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>
+      <template is="dom-i f" if="[[groups]]">
         <h2 hidden$="[[communityNotEmpty]]">[[t('community.is.empty')]]</h2>
         <template is="dom-repeat" class="list" items="[[groups]]" as="group">
           <yp-group-card group="[[group]]" on-mouseover="_groupCardMouseOver" on-mouseout="_groupCardMouseOut"></yp-group-card>
@@ -75,10 +81,29 @@
           observer: "_communityIdChanged"
         },
 
+        community: {
+          type: Object
+        },
+
         communityNotEmpty: {
           type: Boolean,
           value: false
         }
+      },
+
+      _hideEdit: function () {
+        debugger;
+        if (!this.community)
+          return true;
+
+        if (!window.appUser.loggedIn())
+          return true;
+
+        return (window.appUser.user.id!=this.community.user_id);
+      },
+
+      _openEdit: function () {
+        this.$.communityEdit.open('edit', {communityId: this.community.id });
       },
 
       _communityHeaderUrl: function (community) {
@@ -107,18 +132,15 @@
       },
 
       _response: function (event, detail, sender) {
-        var community = detail.response;
+        this.set('community', detail.response);
         var headerPanel = app.$.mainScrollHeaderPanel;
-        var url = this._communityHeaderUrl(community);
-//        headerPanel.style.backgroundImage =  "url("+url+") no-repeat";
-//        headerPanel.style.backgroundImage =  "url("+url+") no-repeat";
-
+        var url = this._communityHeaderUrl(this.community);
         headerPanel.style.background = "#f5f5f5 url('"+url+"') no-repeat center top";
-        this.set("groups", community.Groups);
-        if (community.Groups.length>0)
+        this.set("groups", this.community.Groups);
+        if (this.community.Groups.length>0)
           this.communityNotEmpty = true;
-        this.fire("change-header", { headerTitle: community.name,
-                                     headerDescription: community.description });
+        this.fire("change-header", { headerTitle: this.community.name,
+                                     headerDescription: this.community.description });
       },
 
       defaultGroupFirst: function (items) {
