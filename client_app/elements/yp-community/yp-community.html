@@ -44,12 +44,12 @@
 
     <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
 
-    <yp-group-edit id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
+    <yp-group-edit new id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
 
-    <yp-community-edit id="communityEdit" new="false" community="{{community}}" on-iron-form-response="_refresh"></yp-community-edit>
+    <yp-community-edit new="false" id="communityEdit" community="{{community}}" on-iron-form-response="_refresh"></yp-community-edit>
 
     <div class="card-container">
-      <paper-fab mini icon="edit" on-tap="_openEdit"></paper-fab>
+      <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>
       <template is="dom-i f" if="[[groups]]">
         <h2 hidden$="[[communityNotEmpty]]">[[t('community.is.empty')]]</h2>
         <template is="dom-repeat" class="list" items="[[groups]]" as="group">

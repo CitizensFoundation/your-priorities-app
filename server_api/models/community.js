@@ -1,3 +1,5 @@
+var async = require("async");
+
 "use strict";
 
 // https://www.npmjs.org/package/enum for state of ideas
@@ -19,42 +21,42 @@ module.exports = function(sequelize, DataTypes) {
 
       setupLogoImage: function(body, done) {
         if (body.uploadedLogoImageId) {
-          models.Image.find({
+          sequelize.models.Image.find({
             where: {id: body.uploadedLogoImageId}
           }).then(function (image) {
             if (image)
               this.addCommunityLogoImage(image);
             done();
-          });
+          }.bind(this));
         } else done();
       },
 
       setupHeaderImage: function(body, done) {
         if (body.uploadedHeaderImageId) {
-          models.Image.find({
+          sequelize.models.Image.find({
             where: {id: body.uploadedHeaderImageId}
           }).then(function (image) {
             if (image)
               this.addCommunityHeaderImage(image);
             done();
-          });
+          }.bind(this));
         } else done();
       },
 
       setupImages: function(body, done) {
         async.parallel([
           function(callback) {
-            this.setupLogoImage(req.body, function (err) {
+            this.setupLogoImage(body, function (err) {
               if (err) return callback(err);
               callback();
             });
-          },
+          }.bind(this),
           function(callback) {
-            this.setupHeaderImage(req.body, function (err) {
+            this.setupHeaderImage(body, function (err) {
               if (err) return callback(err);
               callback();
             });
-          }
+          }.bind(this)
         ], function(err) {
           done(err);
         });
