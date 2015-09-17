@@ -37,7 +37,7 @@
       <paper-input id="name"
                    name="name"
                    type="text"
-                   label="[[t('name')]]"
+                   label="[[t('Name')]]"
                    value="{{group.name}}"
                    maxlength="60"
                    char-counter>
@@ -46,14 +46,14 @@
       <paper-textarea id="objectives"
                       name="objectives"
                       value="{{group.objectives}}"
-                      label="[[t('objectives')]]"
+                      label="[[t('Objectives')]]"
                       char-counter
                       rows="2"
                       max-rows="5"
                       maxlength="300">
       </paper-textarea>
 
-      <h3 class="accessHeader">[[t('access')]]</h3>
+      <h3 class="accessHeader">[[t('Access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
         <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
         <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>
