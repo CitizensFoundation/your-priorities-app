@@ -49,13 +49,15 @@
     <yp-community-edit new="false" id="communityEdit" community="{{community}}" on-iron-form-response="_refresh"></yp-community-edit>
 
     <div class="card-container">
-      <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>
-      <template is="dom-if" if="[[groups]]">
-        <h2 hidden$="[[communityNotEmpty]]">[[t('community.is.empty')]]</h2>
-        <template is="dom-repeat" class="list" items="[[groups]]" as="group">
-          <yp-group-card group="[[group]]" on-mouseover="_groupCardMouseOver" on-mouseout="_groupCardMouseOut"></yp-group-card>
+      <div class="layout vertical">
+        <template is="dom-if" if="[[groups]]">
+          <h2 hidden$="[[communityNotEmpty]]">[[t('community.is.empty')]]</h2>
+          <template is="dom-repeat" class="list" items="[[groups]]" as="group">
+            <yp-group-card group="[[group]]" on-mouseover="_groupCardMouseOver" on-mouseout="_groupCardMouseOut"></yp-group-card>
+          </template>
         </template>
-      </template>
+        <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>
+      </div>
       <paper-fab icon="social:group" z="1" class="createGroup" title="[[t('group.add')]" on-tap="_newGroup"></paper-fab>
     </div>
   </template>
