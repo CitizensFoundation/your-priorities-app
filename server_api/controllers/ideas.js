@@ -94,7 +94,7 @@ router.get('/:id', function(req, res) {
       models.Category,
       models.Group,
       models.User,
-      { model: models.Image, as: 'IdeaHeaderImages' },
+      { model: models.Image, as: 'IdeaHeaderImages', order: [['Image.updated_at','ASC']] },
       models.IdeaRevision
     ]
   }).then(function(idea) {
