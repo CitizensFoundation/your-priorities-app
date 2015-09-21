@@ -65,7 +65,7 @@
 
       <yp-ajax id="ajax" on-response="_response"></yp-ajax>
 
-      <yp-idea-edit new id="ideaEdit" on-iron-form-response="_refresh"></yp-idea-edit>
+      <yp-idea-edit new="false" id="ideaEdit" method="[[method]]" idea="{{idea}}" on-iron-form-response="_refresh"></yp-idea-edit>
 
       <template is="dom-if" if="[[idea]]">
 
@@ -134,6 +134,10 @@
 
         listeners: {
           'new-user-endorsement': 'addEndorsement'
+        },
+
+        _refresh: function () {
+          this.$.ajax.generateRequest();
         },
 
         _openEdit: function () {

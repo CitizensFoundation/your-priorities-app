@@ -47,7 +47,7 @@
       }
     </style>
 
-    <yp-edit-dialog id="editDialog" action="[[action]]" save-text="[[saveText]]" toast-text="[[toastText]]" params="[[params]]">
+    <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" save-text="[[saveText]]" toast-text="[[toastText]]" params="[[params]]">
       <h2>[[editHeaderText]]</h2>
 
       <paper-input id="name"
@@ -69,7 +69,7 @@
                       maxlength="200">
       </paper-textarea>
 
-      <template is="dom-if" if="[[new]]">
+      <template is="dom-if" restamp if="[[new]]">
         <paper-textarea id="pointFor"
                         name="pointFor"
                         value="{{idea.pointFor}}"
@@ -83,7 +83,7 @@
 
       <div class="layout vertical additionalSettings">
         <yp-idea-location location="{{location}}" idea="[[idea]]" class="additionalButton"></yp-idea-location>
-        <file-upload droppable="false" raised="true" multi="false" target="/api/images" method="POST" on-success="_imageUploaded">
+        <file-upload id="imageFileUpload" droppable="false" raised="true" multi="false" target="/api/images" method="POST" on-success="_imageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.upload')]]</span>
         </file-upload>
@@ -157,9 +157,12 @@
     },
 
     _clear: function () {
-      this.set('idea', { name: '', description: '', pointFor: '', categoryId: null });
-      this.set('location', null);
-      this.set('uploadedHeaderImageId',null);
+      if (this.new) {
+        this.set('idea', { name: '', description: '', pointFor: '', categoryId: null });
+        this.set('location', null);
+        this.set('uploadedHeaderImageId',null);
+        this.$.imageFileUpload.clear();
+      }
     },
 
     _setupTranslation: function () {

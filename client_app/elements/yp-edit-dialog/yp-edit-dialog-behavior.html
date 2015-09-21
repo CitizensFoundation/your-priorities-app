@@ -30,6 +30,11 @@
 
       params: {
         type: String
+      },
+
+      method: {
+        type: String,
+        value: "POST"
       }
     },
 
@@ -47,6 +52,7 @@
     _setupNewUpdateState: function () {
       if (this.new) {
         this.saveText = this.t('create');
+        this.method = "POST";
       } else {
         this.saveText = this.t('update');
         this.method = "PUT";

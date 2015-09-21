@@ -94,7 +94,7 @@ router.get('/:id', function(req, res) {
       models.Category,
       models.Group,
       models.User,
-      { model: models.Image, as: 'IdeaHeaderImages', order: 'Image.updated_at DESC' },
+      { model: models.Image, as: 'IdeaHeaderImages' },
       models.IdeaRevision
     ]
   }).then(function(idea) {
@@ -115,6 +115,53 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
   });
   idea.save().then(function() {
     idea.setupAfterSave(req, res, function () {
+      idea.setupImages(req.body, function (err) {
+        if (err) {
+          res.sendStatus(403);
+          console.error(err);
+        } else {
+          res.send(idea);
+        }
+      })
+    });
+  });
+});
+
+router.post('/:groupId', isAuthenticated, function(req, res) {
+  var idea = models.Idea.build({
+    name: req.body.name,
+    description: req.body.description,
+    group_id: req.params.groupId,
+    longitude: req.body.longitude != "" ? req.body.longitude : null,
+    latitude: req.body.latitude != "" ? req.body.latitude : null,
+    cover_media_type: req.body.coverMediaType,
+    user_id: req.user.id,
+    status: 'published'
+  });
+  idea.save().then(function() {
+    idea.setupAfterSave(req, res, function () {
+      idea.setupImages(req.body, function (err) {
+        if (err) {
+          res.sendStatus(403);
+          console.error(err);
+        } else {
+          res.send(idea);
+        }
+      })
+    });
+  });
+});
+
+router.put('/:id', isAuthenticated, function(req, res) {
+  models.Idea.find({
+    where: {id: req.params.id}
+  }).then(function (idea) {
+    idea.name = req.body.name;
+    idea.description = req.body.description;
+    idea.longitude = req.body.longitude != "" ? req.body.longitude : null;
+    idea.latitude = req.body.latitude != "" ? req.body.latitude : null;
+    idea.cover_media_type = req.body.coverMediaType;
+    idea.save().then(function () {
       idea.setupImages(req.body, function (err) {
         if (err) {
           res.sendStatus(403);
