@@ -10,7 +10,8 @@
     "page": "visionmedia/page.js#master",
     "paper-elements": "PolymerElements/paper-elements#master",
     "platinum-elements": "PolymerElements/platinum-elements#master",
-    "polymer": "Polymer/polymer#^1.1.0"
+    "polymer": "Polymer/polymer#^1.1.0",
+    "iron-form": "rbjarnason/iron-form#add-put-support"
   },
   "devDependencies": {
     "web-component-tester": "*",

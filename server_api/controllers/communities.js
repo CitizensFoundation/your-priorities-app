@@ -25,10 +25,10 @@ router.get('/:id', function(req, res) {
         order: 'Group.created_at DESC'
       },
       {
-        model: models.Image, as: 'CommunityLogoImages', order: 'Image.updated_at DESC'
+        model: models.Image, as: 'CommunityLogoImages'
       },
       {
-        model: models.Image, as: 'CommunityHeaderImages', order: 'Image.updated_at DESC'
+        model: models.Image, as: 'CommunityHeaderImages'
       }
     ]
   }).then(function(community) {
@@ -57,7 +57,7 @@ router.post('/', isAuthenticated, function(req, res) {
   });
 });
 
-router.post('/:id', isAuthenticated, function(req, res) {
+router.put('/:id', isAuthenticated, function(req, res) {
   models.Community.find({
     where: { id: req.params.id }
   }).then(function(community) {

@@ -107,8 +107,9 @@
       },
 
       ideaImagePath: function () {
-        if (this.idea.Images.length>0) {
-          var formats = JSON.parse(this.idea.Images[0].formats);
+        var headerImages = this.idea.IdeaHeaderImages;
+        if (headerImages && headerImages.length>0) {
+          var formats = JSON.parse(headerImages[headerImages.length-1].formats);
           if (formats && formats.length>0)
             return formats[0];
         } else {

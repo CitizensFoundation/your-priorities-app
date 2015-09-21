@@ -37,6 +37,19 @@ router.post('/:communityId', isAuthenticated, function(req, res) {
   });
 });
 
+router.put('/:id', isAuthenticated, function(req, res) {
+  models.Group.find({
+    where: {id: req.params.id}
+  }).then(function (group) {
+    group.name =req.body.name;
+    group.objectives = req.body.objectives;
+    group.access = models.Community.convertAccessFromRadioButtons(req.body);
+    group.save().then(function () {
+      res.send(group);
+    });
+  });
+});
+
 router.get('/:id/search/:term', function(req, res) {
   models.Idea.search(req.params.term,req.params.id, models.Category)
       .then(function(ideas) {
@@ -79,7 +92,9 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
     models.Idea.findAll({
       order: order,
       where: [where, []],
-      include: [ models.Category, models.IdeaRevision, models.Point, models.Image ]
+      include: [ models.Category, models.IdeaRevision, models.Point,
+        { model: models.Image, as: 'IdeaHeaderImages', order: 'Image.updated_at DESC' }
+    ]
     }).then(function(ideas) {
       res.send({group: group, Ideas: ideas});
     });

@@ -11,6 +11,7 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="yp-idea-header.html">
 <link rel="import" href="yp-idea-points.html">
+<link rel="import" href="yp-idea-edit.html">
 
 <dom-module id="yp-idea">
   <template>
@@ -64,10 +65,13 @@
 
       <yp-ajax id="ajax" on-response="_response"></yp-ajax>
 
+      <yp-idea-edit new id="ideaEdit" on-iron-form-response="_refresh"></yp-idea-edit>
+
       <template is="dom-if" if="[[idea]]">
 
         <paper-material elevation="3" class="ideaHeader" animated>
           <yp-idea-header id="ideaHeader" idea="[[idea]]" showcategory="true"></yp-idea-header>
+          <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>
         </paper-material>
 
         <paper-material elevation="2" class="ideaHeader tabsMaterial" animated>
@@ -130,6 +134,10 @@
 
         listeners: {
           'new-user-endorsement': 'addEndorsement'
+        },
+
+        _openEdit: function () {
+          this.$.ideaEdit.open('edit', { ideaId: this.idea.id });
         },
 
         addEndorsement: function (event, detail) {

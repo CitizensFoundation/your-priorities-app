@@ -92,7 +92,7 @@
       <input type="hidden" name="latitude" value="[[location.lat]]">
       <input type="hidden" name="longitude" value="[[location.lng]]">
       <input type="hidden" name="coverMediaType" value="[[selectedCoverMediaType]]">
-      <input type="hidden" name="uploadedImageId" value="[[uploadedImageId]]">
+      <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
       <h3 class="accessHeader">[[t('idea.cover.media')]]</h3>
       <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType" selected="{{selectedCoverMediaType}}">
@@ -140,14 +140,14 @@
         observer: "_coverMediaTypeValueChanged"
       },
 
-      uploadedImageId: {
+      uploadedHeaderImageId: {
         type: String
       }
     },
 
     _imageUploaded: function (event, detail) {
       var image = JSON.parse(detail.xhr.response);
-      this.set('uploadedImageId', image.id);
+      this.set('uploadedHeaderImageId', image.id);
     },
 
     _coverMediaTypeValueChanged: function(newValue, oldValue) {
@@ -159,7 +159,7 @@
     _clear: function () {
       this.set('idea', { name: '', description: '', pointFor: '', categoryId: null });
       this.set('location', null);
-      this.set('uploadedImageId',null);
+      this.set('uploadedHeaderImageId',null);
     },
 
     _setupTranslation: function () {

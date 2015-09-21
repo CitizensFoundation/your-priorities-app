@@ -94,7 +94,7 @@ router.get('/:id', function(req, res) {
       models.Category,
       models.Group,
       models.User,
-      models.Image,
+      { model: models.Image, as: 'IdeaHeaderImages', order: 'Image.updated_at DESC' },
       models.IdeaRevision
     ]
   }).then(function(idea) {
@@ -114,17 +114,16 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
     status: 'published'
   });
   idea.save().then(function() {
-    if (req.body.uploadedImageId) {
-      models.Image.find({
-        where: { id: req.body.uploadedImageId }
-      }).then(function(image) {
-        if (image)
-          idea.addImage(image);
-        idea.setupAfterSave(req, res, idea);
-      });
-    } else {
-      idea.setupAfterSave(req, res, idea);
-    }
+    idea.setupAfterSave(req, res, function () {
+      idea.setupImages(req.body, function (err) {
+        if (err) {
+          res.sendStatus(403);
+          console.error(err);
+        } else {
+          res.send(idea);
+        }
+      })
+    });
   });
 });
 

@@ -1,3 +1,5 @@
+var async = require("async");
+
 "use strict";
 
 // https://www.npmjs.org/package/enum for state of ideas
@@ -34,7 +36,8 @@ module.exports = function(sequelize, DataTypes) {
         Idea.belongsTo(models.Category);
         Idea.belongsTo(models.User);
         Idea.belongsTo(models.Group, {foreignKey: "group_id"});
-        Idea.belongsToMany(models.Image, { through: 'IdeaImage' });
+        Idea.belongsToMany(models.Image, { as: 'IdeaImages', through: 'IdeaImage' });
+        Idea.belongsToMany(models.Image, { as: 'IdeaHeaderImages', through: 'IdeaHeaderImage' });
       },
 
       getSearchVector: function() {
@@ -97,15 +100,42 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     instanceMethods: {
-      setupAfterSave: function(req, res, idea) {
-        var ideaRevision = sequelize.models.IdeaRevision.build({
+
+      setupHeaderImage: function(body, done) {
+        if (body.uploadedHeaderImageId) {
+          sequelize.models.Image.find({
+            where: {id: body.uploadedHeaderImageId}
+          }).then(function (image) {
+            if (image)
+              this.addIdeaHeaderImage(image);
+            done();
+          }.bind(this));
+        } else done();
+      },
+
+      setupImages: function(body, done) {
+        async.parallel([
+          function(callback) {
+            this.setupHeaderImage(body, function (err) {
+              if (err) return callback(err);
+              callback();
+            });
+          }.bind(this)
+        ], function(err) {
+          done(err);
+        });
+      },
+
+      setupAfterSave: function(req, res, done) {
+        var idea = this;
+        var thisRevision = sequelize.models.IdeaRevision.build({
           name: idea.name,
           description: idea.description,
           group_id: idea.groupId,
           user_id: req.user.id,
-          idea_id: idea.id
+          this_id: idea.id
         });
-        ideaRevision.save().then(function() {
+        thisRevision.save().then(function() {
           var point = sequelize.models.Point.build({
             group_id: idea.groupId,
             idea_id: idea.id,
@@ -122,7 +152,7 @@ module.exports = function(sequelize, DataTypes) {
               point_id: point.id
             });
             pointRevision.save().then(function() {
-              res.send(idea);
+              done();
             });
           });
         });
