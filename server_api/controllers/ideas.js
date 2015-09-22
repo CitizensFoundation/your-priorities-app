@@ -75,6 +75,9 @@ router.get('/:id/endorsements', function(req, res) {
 router.get('/:id', function(req, res) {
   models.Idea.find({
     where: { id: req.params.id },
+    order: [
+      [ { model: models.Image, as: 'IdeaHeaderImages' } ,'updated_at', 'asc' ]
+    ],
     include: [
       { model: models.Point,
         order: 'Point.position DESC',
@@ -94,7 +97,7 @@ router.get('/:id', function(req, res) {
       models.Category,
       models.Group,
       models.User,
-      { model: models.Image, as: 'IdeaHeaderImages', order: [['Image.updated_at','ASC']] },
+      { model: models.Image, as: 'IdeaHeaderImages' },
       models.IdeaRevision
     ]
   }).then(function(idea) {
