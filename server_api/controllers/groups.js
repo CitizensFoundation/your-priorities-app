@@ -93,7 +93,7 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
       order: order,
       where: [where, []],
       include: [ models.Category, models.IdeaRevision, models.Point,
-        { model: models.Image, as: 'IdeaHeaderImages', order: 'Image.updated_at DESC' }
+        { model: models.Image, as: 'IdeaHeaderImages' }
     ]
     }).then(function(ideas) {
       res.send({group: group, Ideas: ideas});
