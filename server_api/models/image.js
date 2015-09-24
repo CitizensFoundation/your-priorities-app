@@ -1,3 +1,5 @@
+var async = require("async");
+
 "use strict";
 
 var Upload = require('s3-uploader');
@@ -20,23 +22,28 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'images',
 
     classMethods: {
-      getUploadClient: function (s3BucketName) {
-        return new Upload(s3BucketName, {
-          aws: {
-            region: 'us-east-1',
-            acl: 'public-read'
-          },
+      getUploadClient: function (s3BucketName, itemType) {
+        var versions;
 
-          cleanup: {
-            versions: false,
-            original: false
-          },
-
-          original: {
-            awsImageAcl: 'private'
-          },
-
-          versions: [
+        if (itemType && itemType === 'user-profile') {
+          versions = [
+            {
+              maxHeight: 200,
+              maxWidth: 200,
+              format: 'jpg',
+              suffix: '-large',
+              quality: 80
+            },
+            {
+              maxHeight: 50,
+              maxWidth: 50,
+              format: 'jpg',
+              suffix: '-small',
+              quality: 80
+            }
+          ]
+        } else {
+          versions = [
             {
               maxWidth: 945,
               format: 'jpg',
@@ -58,15 +65,37 @@ module.exports = function(sequelize, DataTypes) {
               quality: 80
             }
           ]
+        }
+
+        return new Upload(s3BucketName, {
+          aws: {
+            region: 'us-east-1',
+            acl: 'public-read'
+          },
+
+          cleanup: {
+            versions: false,
+            original: false
+          },
+
+          original: {
+            awsImageAcl: 'private'
+          },
+
+          versions: versions
         });
       },
+
       associate: function(models) {
         Image.belongsTo(models.User);
         Image.belongsToMany(models.Idea, { as: 'IdeaImages', through: 'IdeaImage' });
         Image.belongsToMany(models.Idea, { as: 'IdeaHeaderImages', through: 'IdeaHeaderImage' });
         Image.belongsToMany(models.Group, { through: 'GroupImage' });
         Image.belongsToMany(models.Community, { as: 'CommunityLogoImages', through: 'CommunityLogoImage' });
-        Image.belongsToMany(models.Community, { as: 'CommunityHeaderImages', through: 'CommunityHeaderImage' });      }
+        Image.belongsToMany(models.Community, { as: 'CommunityHeaderImages', through: 'CommunityHeaderImage' });
+        Image.belongsToMany(models.User, { as: 'UserProfileImages', through: 'UserProfileImage' });
+        Image.belongsToMany(models.User, { as: 'UserHeaderImages', through: 'UserHeaderImage' });
+      }
     }
   });
 

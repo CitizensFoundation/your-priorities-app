@@ -240,9 +240,10 @@
           this.action = this.baseAction + '/'+this.params.groupId;
         } else if (this.params && this.params.ideaId) {
           this.action = this.baseAction + '/'+this.params.ideaId;
+        } else if (this.params && this.params.userId) {
+          this.action = this.baseAction + '/'+this.params.userId;
         }
         var a = this.method;
-        debugger;
         this.$.form.submit();
         this.$.spinner.active = true;
       },

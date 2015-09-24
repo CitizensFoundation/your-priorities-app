@@ -1,0 +1,48 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html" >
+<link rel="import" href="../../bower_components/paper-button/paper-button.html" >
+
+<link rel="import" href="yp-user-edit.html" >
+
+<dom-module id="yp-user-info">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <template restamp is="dom-if" if="[[user]]">
+      <b>[[user.email]]</b><br>
+      <paper-button on-tap="onLogout">Logout</paper-button>
+      <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>
+      <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
+    </template>
+
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-user-info',
+
+      properties: {
+        user: {
+          type: Object,
+          value: null
+        }
+      },
+
+      _openEdit: function () {
+        this.$$("#userEdit").open('edit', { userId: this.user.id });
+      },
+
+      onLogout: function() {
+        document.querySelector('#appUser').logout();
+      }
+    });
+  </script>
+</dom-module>

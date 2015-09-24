@@ -83,7 +83,7 @@
 
       <div class="layout vertical additionalSettings">
         <yp-idea-location location="{{location}}" idea="[[idea]]" class="additionalButton"></yp-idea-location>
-        <file-upload id="imageFileUpload" droppable="false" raised="true" multi="false" target="/api/images" method="POST" on-success="_imageUploaded">
+        <file-upload id="imageFileUpload" droppable="false" raised="true" multi="false" target="/api/images?itemType=idea-header" method="POST" on-success="_imageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.upload')]]</span>
         </file-upload>

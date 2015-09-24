@@ -27,6 +27,7 @@ function onSplashClick() {
   // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
   var app = document.querySelector('#app');
   app.appTitle = "Your Priorities";
+  app.user = null;
 
   app.displayInstalledToast = function() {
     // Check to make sure caching is actually enabled—it won't be in the dev environment.
@@ -84,15 +85,11 @@ function onSplashClick() {
     app.headerDescription = header.headerDescription;
   };
 
-  app.onLogout = function() {
-    document.querySelector('#appUser').logout();
-  };
-
   app.onUserChanged = function(event, detail) {
     if (detail) {
-      app.currentUserEmail = detail.email;
+      app.user = detail;
     } else {
-      app.currentUserEmail = "";
+      app.user = null;
     }
   };
 

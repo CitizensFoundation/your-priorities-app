@@ -41,7 +41,9 @@
                      type="text"
                      label="[[t('login.name')]]"
                      value="{{name}}"
-                     hidden$="[[!registerMode]]">
+                     hidden$="[[!registerMode]]"
+                     maxlength="50"
+                     char-counter>
         </paper-input>
 
         <paper-input id="email"

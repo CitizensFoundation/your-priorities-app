@@ -83,11 +83,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </a>
         </paper-menu>
         <div class="currentUser">
-          <template is="dom-if" if="[[currentUserEmail]]">
-            <b>[[currentUserEmail]]</b><br>
-            <paper-button on-tap="onLogout">Logout</paper-button>
+          <template is="dom-if" if="[[user]]">
+            <yp-user-info user="{{user}}"></yp-user-info>
           </template>
         </div>
+
       </paper-scroll-header-panel>
 
       <!-- Main Area -->

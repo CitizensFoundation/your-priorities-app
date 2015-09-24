@@ -44,6 +44,25 @@ router.post('/register', function(req, res) {
     });
 });
 
+router.put('/:id', isAuthenticated, function(req, res) {
+    models.User.find({
+        where: { id: req.params.id }
+    }).then(function(user) {
+        user.name = req.body.name;
+        user.email = req.body.email;
+        user.save().then(function () {
+            user.setupImages(req.body, function(err) {
+                if (err) {
+                    res.sendStatus(403);
+                    console.error(err);
+                } else {
+                    res.send(user);
+                }
+            });
+        });
+    });
+});
+
 router.get('/isloggedin', function(req, res) {
     res.send(req.isAuthenticated() ? req.user : '0');
 });

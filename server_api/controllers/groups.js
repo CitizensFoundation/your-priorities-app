@@ -60,7 +60,9 @@ router.get('/:id/search/:term', function(req, res) {
 router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
 
   var where = '"Idea"."group_id" = '+req.params.id;
-  var order = "(counter_endorsements_up-counter_endorsements_down) DESC";
+  //  var ideaOrder = [models.sequelize.fn('subtraction', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'];
+
+  var ideaOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
   if (req.params.filter!="inProgress") {
     //where+=' AND "Idea"."status" = "published"';
@@ -69,9 +71,9 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
   }
 
   if (req.params.filter=="newest") {
-    order = "created_at DESC";
+    ideaOrder = "created_at DESC";
   } else if (req.params.filter=="random") {
-    order = "random()";
+    ideaOrder = "random()";
   }
 
   console.log(req.param["categoryId"]);
@@ -90,8 +92,11 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
     ]
   }).then(function(group) {
     models.Idea.findAll({
-      order: order,
       where: [where, []],
+      order: [
+//          ideaOrder,
+          [ { model: models.Image, as: 'IdeaHeaderImages' } ,'updated_at', 'asc' ]
+      ],
       include: [ models.Category, models.IdeaRevision, models.Point,
         { model: models.Image, as: 'IdeaHeaderImages' }
     ]
