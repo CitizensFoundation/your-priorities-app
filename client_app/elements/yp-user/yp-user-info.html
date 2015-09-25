@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html" >
 
 <link rel="import" href="yp-user-edit.html" >
+<link rel="import" href="yp-user-image.html" >
 
 <dom-module id="yp-user-info">
   <template>
@@ -15,6 +16,7 @@
     </style>
 
     <template restamp is="dom-if" if="[[user]]">
+      <yp-user-image user="[[user]]"></yp-user-image>
       <b>[[user.email]]</b><br>
       <paper-button on-tap="onLogout">Logout</paper-button>
       <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>

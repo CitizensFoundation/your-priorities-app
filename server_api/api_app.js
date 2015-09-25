@@ -63,6 +63,12 @@ passport.deserializeUser(function(id, done) {
       {
         model: models.PointQuality,
         attributes: ['id', 'value', 'point_id']
+      },
+      {
+        model: models.Image, as: 'UserProfileImages'
+      },
+      {
+        model: models.Image, as: 'UserHeaderImages'
       }
     ]
   }).then(function(user) {

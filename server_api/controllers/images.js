@@ -24,7 +24,7 @@ function createFormatsFromVersions(versions) {
 router.post('/', isAuthenticated, function(req, res) {
   multerMultipartResolver(req, res, function (err) {
     if (err) { throw err; }
-    var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET);
+    var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, req.query.itemType);
     s3UploadClient.upload(req.file.path, {}, function(err, versions, meta) {
       if (err) { throw err; }
       var image = models.Image.build({
