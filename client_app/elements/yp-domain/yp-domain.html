@@ -43,8 +43,8 @@
     <yp-community-edit id="communityNew" on-iron-form-response="_refresh"></yp-community-edit>
 
     <div class="card-container">
+      <h2 hidden$="[[!domainEmpty]]">[[t('domain.is.empty')]]</h2>
       <template is="dom-if" if="[[communities]]">
-        <h2 hidden$="[[domainNotEmpty]]">[[t('domain.is.empty')]]</h2>
         <template is="dom-repeat" class="list" items="[[communities]]" as="community">
           <yp-community-card community="[[community]]" on-mouseover="_communityCardMouseOver" on-mouseout="_communityCardMouseOut"></yp-community-card>
         </template>
@@ -78,7 +78,7 @@
           type: String
         },
 
-        domainNotEmpty: {
+        domainEmpty: {
           type: Boolean,
           value: false
         }
@@ -86,11 +86,9 @@
 
       _domainIdChanged: function (newValue, oldValue) {
         if (newValue) {
-          this.set("communities",[]);
+          this.set("communities",null);
           this.$.ajax.url = '/api/domains/' + this.domainId;
           this.$.ajax.generateRequest();
-        } else {
-          this.domainNotEmpty = false;
         }
       },
 
@@ -106,8 +104,10 @@
       _response: function (event, detail, sender) {
         var domain = detail.response;
         if (domain.Communities) {
-          if (domain.Communities.length>0)
-            this.domainNotEmpty = true;
+          if (detail.response.Communities.length===0)
+            this.domainEmpty = true;
+          else
+            this.domainEmpty = false;
           this.set("communities",domain.Communities);
         }
         var headerPanel = app.$.mainScrollHeaderPanel;

@@ -43,7 +43,7 @@
 
     </style>
 
-    <template is="dom-if" if="[[user]]">
+    <template restamp is="dom-if" if="[[user]]">
 
       <template is="dom-if" if="[[profileImageUrl]]">
         <iron-image sizing="cover" title="{{user.name}}" preload src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>

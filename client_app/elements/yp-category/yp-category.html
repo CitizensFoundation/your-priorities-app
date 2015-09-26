@@ -71,7 +71,7 @@
 
         categories: {
           type: Array
-          },
+        },
 
         defaultCategories: {
           type: Boolean,
@@ -140,7 +140,7 @@
         this.set("group", group);
         this._processCategories();
         this.fire("change-header", { headerTitle: group.name,
-                                     headerDescription: group.objectives });
+          headerDescription: group.objectives });
         if (detail.response.Ideas.length===0)
           this.groupEmpty = true;
         else
