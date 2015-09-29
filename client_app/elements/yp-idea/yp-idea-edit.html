@@ -128,7 +128,8 @@
       },
 
       idea: {
-        type: Object
+        type: Object,
+        observer: "_ideaChanged"
       },
 
       location: {
@@ -143,6 +144,14 @@
       uploadedHeaderImageId: {
         type: String
       }
+    },
+
+    _ideaChanged: function(newIdea, oldIdea) {
+      if (newIdea && newIdea.latitude && newIdea.longitude) {
+        this.location = { lat: newIdea.latitude, lng: newIdea.longitude }
+      }
+      if (newIdea && newIdea.cover_media_type)
+        this.selectedCoverMediaType = newIdea.cover_media_type;
     },
 
     _imageUploaded: function (event, detail) {
