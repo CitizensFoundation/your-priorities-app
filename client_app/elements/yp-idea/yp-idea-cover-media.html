@@ -59,7 +59,7 @@
           <iron-image sizing="cover" class="main-image" src="[[ideaImagePath()]]"></iron-image>
         </template>
 
-        <template is="dom-if" if="[[_withCoverMediaType('streetView')]]">
+        <template restamp="true" is="dom-if" if="[[_withCoverMediaType('streetView')]]">
           <google-streetview-pano
             position="[[_getMapPosition()]]"
             heading="330"
@@ -70,7 +70,7 @@
         </template>
 
         <template is="dom-if" if="[[_withCoverMediaType('map')]]">
-          <google-map class="map" fit-to-markers>
+          <google-map class="map" libraries="places" fit-to-markers>
             <google-map-marker latitude="[[idea.latitude]]" longitude="[[idea.longitude]]"></google-map-marker>
           </google-map>
         </template>

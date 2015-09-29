@@ -54,7 +54,7 @@
 
     <paper-dialog id="dialog" class="dialog" modal>
 
-      <google-map id="map" class="map" click-events on-google-map-click="_setLocation" fit-to-markers></google-map>
+      <google-map id="map" libraries="places" class="map" click-events on-google-map-click="_setLocation" fit-to-markers></google-map>
 
       <div class="buttons">
         <paper-button on-tap="_closeDialog">[[t('close')]]</paper-button>

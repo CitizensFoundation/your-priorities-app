@@ -87,7 +87,7 @@
       yp-idea-cover-media {
         position: relative;
         width: 420px;
-        height: 200px;
+        height: 232px;
       }
 
       @media (max-width: 600px) {
@@ -102,7 +102,7 @@
       <paper-card class="ideaCard" elevation="[[elevation]]">
         <yp-idea-cover-media idea="[[idea]]"></yp-idea-cover-media>
         <div class="card-content">
-          <div class="description ideaCardCursor" on-tap="_goToIdea">
+          <div class="description ideaCardCursor" on-tap="goToIdea">
             <h2 class="idea-name">[[ideaName(idea)]]</h2>
             <div>[[ideaDescription(idea)]]</div>
           </div>
@@ -144,12 +144,6 @@
 
       },
 
-      _goToIdea: function (e) {
-        var ideaUrl = '/idea/' + this.idea.id;
-        window.appGlobals.activity('open', 'idea', ideaUrl);
-        page(ideaUrl);
-      },
-
       ideaImagePath: function (idea) {
         return this.randomStockImage();
 
@@ -182,7 +176,7 @@
 
       ideaName: function (idea) {
         if (idea.name) {
-          return this.truncate(this.trim(idea.name), 200);
+          return this.truncate(this.trim(idea.name), 60);
         } else {
           return idea.short_name;
         }
@@ -190,7 +184,7 @@
 
       ideaDescription: function (idea) {
         if (idea.description) {
-          return this.truncate(this.trim(idea.description), 200, '...');
+          return this.truncate(this.trim(idea.description), 500, '...');
         } else {
           return "";
         }

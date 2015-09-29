@@ -24,6 +24,12 @@
       return translation;
     },
 
+    goToIdea: function (event) {
+      var ideaUrl = '/idea/' + this.idea.id;
+      window.appGlobals.activity('open', 'idea', ideaUrl);
+      page(ideaUrl);
+    },
+
     removeClass: function(element, classToRemove) {
       var newClassName = "";
       var classes = element.className.split(" ");

@@ -120,18 +120,18 @@
 
     <div class$="[[computeActionClass(small)]]">
       <div id="actionUp" class="action-up">
-        <paper-icon-button icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon" on-tap="upVote"></paper-icon-button>
+        <paper-icon-button title="[[t('idea.vote.up')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">{{formatNumber(idea.counter_endorsements_up)}}</div>
       </div>
 
-      <div class="action-debate" hidden$="[[small]]">
+      <div class="action-debate layout vertical" hidden$="[[small]]">
         <div class="action-text debate-text">{{formatNumber(idea.counter_points)}}</div>
-        <iron-icon icon="communication:message" class="action-icon debate-icon"></iron-icon>
+        <paper-icon-button title="[[t('idea.debate')]]" icon="communication:message" class="action-icon debate-icon" on-tap="goToIdea"></paper-icon-button>
       </div>
 
       <div id="actionDown" class="action-down">
         <div class="action-text down-text">{{formatNumber(idea.counter_endorsements_down)}}</div>
-        <paper-icon-button icon$="[[endorseModeIcon(endorseMode,'down')]]" class="action-icon down-vote-icon" on-tap="downVote"></paper-icon-button>
+        <paper-icon-button title="[[t('idea.vote.down')]]" icon$="[[endorseModeIcon(endorseMode,'down')]]" class="action-icon down-vote-icon" on-tap="downVote"></paper-icon-button>
       </div>
     </div>
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
