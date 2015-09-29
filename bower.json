@@ -3,6 +3,7 @@
   "version": "0.6.0",
   "dependencies": {
     "file-upload": "~1.5.3",
+    "google-apis": "rbjarnason/google-apis",
     "google-map": "GoogleWebComponents/google-map",
     "google-streetview-pano": "rbjarnason/google-streetview-pano#add-position-support",
     "iron-elements": "PolymerElements/iron-elements#master",
