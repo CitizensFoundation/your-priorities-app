@@ -94,8 +94,10 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
     models.Idea.findAll({
       where: [where, []],
       order: [
-//          ideaOrder,
-          [ { model: models.Image, as: 'IdeaHeaderImages' } ,'updated_at', 'asc' ]
+        models.sequelize.literal(ideaOrder),
+        [
+          { model: models.Image, as: 'IdeaHeaderImages' } ,'updated_at', 'asc'
+        ]
       ],
       include: [ models.Category, models.IdeaRevision, models.Point,
         { model: models.Image, as: 'IdeaHeaderImages' }
