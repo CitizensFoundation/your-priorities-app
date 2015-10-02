@@ -14,6 +14,7 @@
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
 <link rel="import" href="yp-group-stats.html">
 <link rel="import" href="yp-group-behaviors.html">
+<link rel="import" href="yp-group-edit.html">
 
 <dom-module id="yp-group-card-large">
 
@@ -50,7 +51,6 @@
       }
 
       .groupCard {
-        cursor: pointer;
         width: 420px;
         background-color: var(--secondary-primary-color);
         color: #FFF;
@@ -60,9 +60,9 @@
 
       .edit {
         color: var( --primary-background-color,#F2F2F2);
-        position: relative;
-        top: 16px;
-        right: 16px;
+        position: absolute;
+        top: 8px;
+        right: 8px;
       }
     </style>
 
@@ -78,7 +78,9 @@
         <div class="card-content">
           <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
         </div>
+        <paper-fab mini class="edit" icon="create" on-tap="_openEdit"></paper-fab>
       </paper-card>
+      <yp-group-edit new="false" id="groupEdit" group="{{group}}" on-iron-form-response="_refresh"></yp-group-edit>
     </template>
   </template>
 

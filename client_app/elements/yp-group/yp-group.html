@@ -13,6 +13,7 @@
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-idea/yp-idea-card.html">
 <link rel="import" href="../yp-idea/yp-idea-edit.html">
+<link rel="import" href="../yp-idea/yp-idea-card-add.html">
 
 <link rel="import" href="yp-group-card-large.html">
 
@@ -46,17 +47,15 @@
 
     <yp-idea-edit id="ideaEdit" on-iron-form-response="_refresh"></yp-idea-edit>
 
-    <yp-group-edit new="false" id="groupEdit" group="{{group}}" on-iron-form-response="_refresh"></yp-group-edit>
-
     <div class="card-container">
-      <yp-group-card-large id="groupCard" class="card" group="[[group]]"></yp-group-card-large>
+      <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
       <template is="dom-if" if="[[ideas]]">
         <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
           <yp-idea-card class="card" idea="[[idea]]" on-mouseover="_ideaCardMouseOver" on-mouseout="_ideaCardMouseOut"></yp-idea-card>
         </template>
       </template>
-      <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>
-      <paper-fab icon="add" z="1" class="createIdea" title="[[computeTitle()]]" on-tap="newIdea"></paper-fab>
+      <yp-idea-card-add class="card" on-tap="newIdea" on-mouseover="_ideaCardMouseOver" on-mouseout="_ideaCardMouseOut"></yp-idea-card-add>
+      <paper-fab icon="add" elevation="1" class="createIdea" title="[[computeTitle()]]" on-tap="newIdea"></paper-fab>
     </div>
   </template>
 

@@ -1,0 +1,70 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-idea-card-add">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+        width: 416px;
+      }
+
+      @media (max-width: 600px) {
+        :host {
+          width: 285px !important;
+        }
+      }
+
+      .ideaCard {
+        width: 420px;
+        height: 500px;
+        padding: 16px;
+      }
+
+      paper-icon-button {
+        height: 250px !important;
+        width: 250px !important;
+        color: var(--accent-color)
+      }
+
+      .header {
+        padding: 0;
+        margin: 0;
+        padding-top: 16px;
+      }
+
+      .icon {
+        --iron-icon-height: 220px;
+        --iron-icon-width: 220px;
+      }
+    </style>
+
+    <paper-card elevation="[[elevation]]" class="layout vertical center ideaCard">
+      <h2 class="header">[[t('idea.new')]]</h2>
+      <paper-icon-button class="icon" icon="add"></paper-icon-button>
+    </paper-card>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-idea-card-add',
+
+      behaviors: [
+        Polymer.appHelpers
+    ]
+    });
+  </script>
+</dom-module>
