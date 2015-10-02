@@ -6,7 +6,7 @@ function isAuthenticated(req, res, next) {
   if (req.isAuthenticated())
     return next();
   res.send(401, 'Unauthorized');
-};
+}
 
 /* GET ideas listing. */
 router.get('/', function(req, res) {

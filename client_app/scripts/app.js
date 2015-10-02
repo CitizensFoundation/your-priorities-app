@@ -83,6 +83,8 @@ function onSplashClick() {
   app.onChangeHeader = function(event, header) {
     app.headerTitle = document.title = header.headerTitle;
     app.headerDescription = header.headerDescription;
+    if (header.headerIcon)
+      app.headerIcon = header.headerIcon;
   };
 
   app.onUserChanged = function(event, detail) {

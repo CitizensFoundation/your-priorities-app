@@ -1,0 +1,57 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  Polymer.CommunityBehaviors = {
+
+    properties: {
+      community: {
+        type: Object,
+        notify: true
+      }
+    },
+
+    _goToCommunity: function (e) {
+      var communityUrl = '/community/' + this.community.id;
+      window.appGlobals.activity('open', 'community', communityUrl);
+      page(communityUrl);
+    },
+
+    communityLogoImagePath: function (community) {
+      var communityLogos = this.community.CommunityLogoImages;
+      if (communityLogos && communityLogos.length>0) {
+        var formats = JSON.parse(communityLogos[communityLogos.length-1].formats);
+        if (formats && formats.length>0)
+          return formats[1];
+      } else {
+        return "";
+      }
+    },
+
+    communityHeaderImagePath: function (community) {
+      var communityHeaders = this.community.CommunityHeaderImages;
+      if (communityHeaders && communityHeaders.length>0) {
+        var formats = JSON.parse(communityHeaders[communityHeaders.length-1].formats);
+        if (formats && formats.length>0)
+          return formats[1];
+      } else {
+        return "";
+      }
+    },
+
+    communityName: function (community) {
+      if (community.name) {
+        return this.truncate(this.trim(community.name), 200);
+      } else {
+        return community.short_name;
+      }
+    },
+
+    communityDescription: function (community) {
+      if (community.description) {
+        return this.truncate(this.trim(community.description), 300, '...');
+      } else {
+        return "";
+      }
+    }
+  };
+</script>

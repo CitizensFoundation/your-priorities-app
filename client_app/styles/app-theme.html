@@ -22,12 +22,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   /* Application theme */
 
   :root {
-    --pallet-one-500: #9E9E9E;
+    --pallet-one-500: #4285f4;
     --pallet-two-500: #FF9800;
     --pallet-two-accent-400: #FF6D00;
 
-    --default-primary-color: var(--pallet-one-500);
+    --main-background-color: #F2F2F2;
+    --primary-background-color: #F2F2F2;
 
+    --default-primary-color: var(--pallet-one-500);
     --accent-color: var(--pallet-two-accent-400);
 
     --paper-dialog-button-color: var(--pallet-two-500);
@@ -38,7 +40,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     --light-primary-color: #FFCC80;
     --text-primary-color: #fff;
     --dark-primary-color: #F57C00;
-    --primary-background-color: #fff;
     --primary-text-color: #212121;
     --secondary-text-color: #727272;
     --disabled-text-color: #bdbdbd;
@@ -49,15 +50,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       text-transform: uppercase;
      };
 
+    --paper-fab-mini: {
+      background: var(--main-background-color);
+      color: #555 !important;
+    };
     /* Components */
 
     /* paper-drawer-panel */
     --drawer-menu-color: #ffffff;
     --drawer-border-color: 1px solid #ccc;
-    --drawer-toolbar-border-color: 1px solid rgba(0, 0, 0, 0.22);
-
     /* paper-menu */
-    --paper-menu-background-color: #fff;
+    --paper-menu-background-color: var(--main-background-color);
     --menu-link-color: #111111;
   }
 
@@ -75,21 +78,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: var(--paper-white , #fff);
+    background-color: var(--main-background-color , #fff);
   /* background for toolbar when it is at its full size */
   --paper-scroll-header-panel-full-header: {
    };
   /* background for toolbar when it is condensed */
   --paper-scroll-header-panel-condensed-header: {
-     background-color: var(--default-primary-color);
+     background-color: var(--main-background-color);
    };
   }
 
   /* General styles */
 
+  paper-scroll-header-panel {
+    background-color: var(--main-background-color);
+  }
+
   #drawerToolbar {
     color: var(--secondary-text-color);
-    background-color: var(--drawer-menu-color);
+    background-color: var(--main-background-color);
     border-bottom: var(--drawer-toolbar-border-color);
   }
 
@@ -153,10 +160,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   }
 
   #mainToolbar:not(.tall) .middle {
-    font-size: 18px;
+    font-size: 26px;
     padding-bottom: 0;
+    background-color: var(--main-background-color)
   }
 
+
+  .headerIcon {
+    padding-right: 12px;
+    width: 38px;
+    height: 38px;
+  }
   #mainToolbar .bottom {
     margin-left: 48px;
     /* Required for main area's paper-scroll-header-panel custom condensing transformation */
@@ -164,9 +178,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     transform-origin: left center;
   }
 
+  #mainToolbar {
+    background-color: var(--main-background-color);
+    color: #333;
+  }
+
   /* Height of the scroll area */
   .content {
-    background-color: #f5f5f5;
+    background-color: var(--main-background-color);
     height: 1200px;
   }
 

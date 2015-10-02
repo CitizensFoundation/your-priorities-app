@@ -1,0 +1,66 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  Polymer.GroupBehaviors = {
+
+    properties: {
+      group: {
+        type: Object,
+        notify: true
+      }
+    },
+
+    _goToGroup: function (e) {
+      var groupUrl = '/group/' + this.group.id;
+      window.appGlobals.activity('open', 'group', groupUrl);
+      page(groupUrl);
+    },
+
+    groupImagePath: function (group) {
+      return "";
+      return this.randomStockImage();
+
+      if (this.group.IsoCountry) {
+        return this.isoCountryImagePath() + group.IsoCountry.code.toLowerCase() + '.png';
+      }
+      else if (group.name.indexOf("NHS") > -1) {
+        return "https://i.imgur.com/uavPcDU.jpg"
+      }
+      else if (group.name.indexOf("Iceland") > -1) {
+        return "https://i.imgur.com/v2SyyDl.png"
+      }
+      else if (true) {
+        return "https://i.imgur.com/OPpnjwm.jpg"
+      }
+      else if (false) {
+        return "https://placehold.it/384x216"
+      }
+      else if (group.top_banner_file_name) {
+        return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(group.id) + '/icon_full/' + group.top_banner_file_name;
+      } else
+      {
+        return this.defaultGroupImage('');
+      }
+    },
+
+    getIsoCountryImagePath: function (group) {
+      return this.isoCountryImagePath() + group.IsoCountry.code.toLowerCase() + '.png';
+    },
+
+    groupName: function (group) {
+      if (group.name) {
+        return this.truncate(this.trim(group.name), 200);
+      } else {
+        return group.short_name;
+      }
+    },
+
+    groupObjectives: function (group) {
+      if (group.objectives) {
+        return this.truncate(this.trim(group.objectives), 10000, '...');
+      } else {
+        return "";
+      }
+    }
+  };
+</script>
