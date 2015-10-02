@@ -53,8 +53,8 @@
     "welcome_heading": "Welcome to Your Priorities 6.0 technology preview",
     "continue": "Continue to preview"
   },
-  "groups": {
-    "new": "New idea group",
+  "group": {
+    "new": "New group",
     "invite": "Invite a friend",
     "invite_to_group": "Invite friend to this group",
     "share_group": "Share this group"
