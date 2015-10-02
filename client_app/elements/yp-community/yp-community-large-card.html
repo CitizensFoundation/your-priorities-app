@@ -11,6 +11,7 @@
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
 <link rel="import" href="yp-community-behaviors.html">
 <link rel="import" href="yp-community-stats.html">
 
@@ -95,7 +96,7 @@
     </style>
 
     <template is="dom-if" if="[[community]]">
-      <paper-material id="large-card" elevation="5" animated class="large-card">
+      <paper-material id="card" elevation="5" animated class="large-card">
         <div class="layout horizontal">
           <iron-image class="image" src$="[[communityLogoImagePath(community)]]"></iron-image>
           <div class="layout vertical description-and-stats">
@@ -119,7 +120,8 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.CommunityBehaviors
+        Polymer.CommunityBehaviors,
+        Polymer.LargeCardBehaviors
       ],
 
       _openEdit: function () {
@@ -128,22 +130,6 @@
 
       _refresh: function () {
         this.fire("update-community");
-      },
-
-      lowerCommunityCardLater: function () {
-        this.async( function() {
-          this.setElevation(1);
-        }, 3500);
-      },
-
-      setElevation: function (value) {
-        var card = this.$$("#large-card");
-        if (card)
-          card.elevation = value;
-      },
-
-      ready: function () {
-        this.lowerCommunityCardLater();
       }
     });
   </script>
