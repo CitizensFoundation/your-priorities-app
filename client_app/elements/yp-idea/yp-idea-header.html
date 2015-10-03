@@ -190,8 +190,11 @@
       },
 
       getCategoryImagePath: function (idea) {
-        if (idea && idea.Category) {
-          return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(idea.Category.id) + '/icon_100/' + idea.Category.icon_file_name;
+        var iconImages = this.idea.Category.CategoryIconImages;
+        if (iconImages && iconImages.length>0) {
+          var formats = JSON.parse(iconImages[iconImages.length-1].formats);
+          if (formats && formats.length>0)
+            return formats[0];
         } else {
           return "";
         }
