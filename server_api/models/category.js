@@ -1,3 +1,5 @@
+var async = require("async");
+
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
@@ -59,7 +61,9 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         Category.hasMany(models.Idea);
-        Category.belongsTo(models.Group)
+        Category.belongsTo(models.Group);
+        Category.belongsToMany(models.Image, { as: 'CategoryIconImages', through: 'CategoryIconImage' });
+        Category.belongsToMany(models.Image, { as: 'CategoryHeaderImages', through: 'CategoryHeaderImage' });
       }
     }
   });

@@ -32,6 +32,9 @@
   "short_word": {
     "in": "in"
   },
+  "category": {
+    "new": "New category"
+  },
   "categories": {
     "all": "all categories",
     "the_all": "All categories"
@@ -56,6 +59,7 @@
   },
   "group": {
     "new": "Add new group",
+    "edit": "Edit group",
     "invite": "Invite a friend",
     "invite_to_group": "Invite friend to this group",
     "share_group": "Share this group"

@@ -9,9 +9,17 @@
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
+<link rel="import" href="../yp-category/yp-category-edit.html">
+
 <link rel="import" href="yp-group-stats.html">
 <link rel="import" href="yp-group-behaviors.html">
 <link rel="import" href="yp-group-edit.html">
@@ -59,10 +67,17 @@
       }
 
       .edit {
+        color: #FFF;
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+
+      .newCategory {
         color: var( --primary-background-color,#F2F2F2);
         position: absolute;
-        top: 8px;
-        right: 8px;
+        top: 64px;
+        right: 0;
       }
     </style>
 
@@ -78,9 +93,16 @@
         <div class="card-content">
           <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
         </div>
-        <paper-fab mini class="edit" icon="create" on-tap="_openEdit"></paper-fab>
+        <paper-menu-button class="edit">
+          <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+          <paper-menu class="dropdown-content">
+            <paper-item on-tap="_openEdit">[[t('group.edit')]]</paper-item>
+            <paper-item on-tap="_newCategory">[[t('category.new')]]</paper-item>
+          </paper-menu>
+        </paper-menu-button>
       </paper-card>
       <yp-group-edit new="false" id="groupEdit" group="{{group}}" on-iron-form-response="_refresh"></yp-group-edit>
+      <yp-category-edit new id="newCategory" group="[[group]]"></yp-category-edit>
     </template>
   </template>
 
@@ -96,6 +118,11 @@
 
       _openEdit: function () {
         this.$$("#groupEdit").open('edit', { groupId: this.group.id });
+      },
+
+      _newCategory: function () {
+        window.appGlobals.activity('open', 'category.new');
+        this.$$("#newCategory").open('new', { groupId: this.group.id });
       },
 
       _refresh: function () {
