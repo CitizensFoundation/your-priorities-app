@@ -150,6 +150,7 @@ router.put('/:id', isAuthenticated, function(req, res) {
   }).then(function (idea) {
     idea.name = req.body.name;
     idea.description = req.body.description;
+    idea.category_id = req.body.categoryId != "" ? req.body.categoryId : null;
     idea.longitude = req.body.longitude != "" ? req.body.longitude : null;
     idea.latitude = req.body.latitude != "" ? req.body.latitude : null;
     idea.cover_media_type = req.body.coverMediaType;
