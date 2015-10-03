@@ -38,6 +38,7 @@ module.exports = function(sequelize, DataTypes) {
         Idea.belongsTo(models.Group, {foreignKey: "group_id"});
         Idea.belongsToMany(models.Image, { as: 'IdeaImages', through: 'IdeaImage' });
         Idea.belongsToMany(models.Image, { as: 'IdeaHeaderImages', through: 'IdeaHeaderImage' });
+        Idea.belongsToMany(models.Image, { as: 'IdeaUserImages', through: 'IdeaUserImage' });
       },
 
       getSearchVector: function() {

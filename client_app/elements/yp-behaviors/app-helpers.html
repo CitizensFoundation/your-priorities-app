@@ -30,6 +30,15 @@
       page(ideaUrl);
     },
 
+    getPositionInArrayFromId: function (collection, id) {
+      for(var i = 0; i < collection.length; i++) {
+        if (collection[i].id==id) {
+          return i;
+        }
+      }
+      return null;
+    },
+
     removeClass: function(element, classToRemove) {
       var newClassName = "";
       var classes = element.className.split(" ");

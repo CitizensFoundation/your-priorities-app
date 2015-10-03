@@ -6,6 +6,9 @@
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
 
@@ -81,6 +84,17 @@
         </paper-textarea>
       </template>
 
+      <template is="dom-if" if="[[_showCategories(group)]]">
+        <paper-dropdown-menu label="[[t('category.select')]]">
+          <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
+            <template is="dom-repeat" items="[[group.Categories]]" as="category">
+              <paper-item name="[[category.id]]">[[category.name]]</paper-item>
+            </template>
+          </paper-menu>
+        </paper-dropdown-menu>
+        <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
+      </template>
+
       <div class="layout vertical additionalSettings">
         <yp-idea-location location="{{location}}" idea="[[idea]]" class="additionalButton"></yp-idea-location>
         <file-upload id="imageFileUpload" droppable="false" raised="true" multi="false" target="/api/images?itemType=idea-header" method="POST" on-success="_imageUploaded">
@@ -132,8 +146,21 @@
         observer: "_ideaChanged"
       },
 
+      group: {
+        type: Object
+      },
+
       location: {
         type: Object
+      },
+
+      selectedCategoryArrayId: {
+        type: Number,
+        observer: "_selectedCategoryChanged"
+      },
+
+      selectedCategoryId: {
+        type: Number
       },
 
       selectedCoverMediaType: {
@@ -146,12 +173,32 @@
       }
     },
 
-    _ideaChanged: function(newIdea, oldIdea) {
-      if (newIdea && newIdea.latitude && newIdea.longitude) {
-        this.location = { lat: newIdea.latitude, lng: newIdea.longitude }
+    _selectedCategoryChanged: function (newCategoryArrayId, oldValue) {
+      if (newCategoryArrayId)
+        this.selectedCategoryId = this.group.Categories[newCategoryArrayId].id;
+    },
+
+    _showCategories: function (group) {
+      if (group && group.Categories) {
+        return group.Categories.length>0;
+      } else {
+        return false;
       }
-      if (newIdea && newIdea.cover_media_type)
-        this.selectedCoverMediaType = newIdea.cover_media_type;
+    },
+
+    _ideaChanged: function(newIdea, oldIdea) {
+      if (newIdea){
+        if (newIdea.latitude && newIdea.longitude) {
+          this.location = { lat: newIdea.latitude, lng: newIdea.longitude }
+        }
+        if (newIdea.cover_media_type)
+          this.selectedCoverMediaType = newIdea.cover_media_type;
+        if (newIdea.category_id) {
+          this.selectedCategoryId = newIdea.category_id;
+          debugger;
+          this.selectedCategoryArrayId = this.getPositionInArrayFromId(this.group.Categories, newIdea.category_id);
+        }
+      }
     },
 
     _imageUploaded: function (event, detail) {
@@ -169,6 +216,8 @@
       if (this.new) {
         this.set('idea', { name: '', description: '', pointFor: '', categoryId: null });
         this.set('location', null);
+        this.set('selectedCategoryArrayId',null);
+        this.set('selectedCategoryId',null);
         this.set('uploadedHeaderImageId',null);
         this.$.imageFileUpload.clear();
       }

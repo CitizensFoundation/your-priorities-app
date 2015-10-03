@@ -21,6 +21,10 @@ module.exports = function(sequelize, DataTypes) {
 
     tableName: 'images',
 
+    defaultScope: {
+      order: 'updated_at ASC'
+    },
+
     classMethods: {
       getUploadClient: function (s3BucketName, itemType) {
         var versions;
@@ -90,6 +94,7 @@ module.exports = function(sequelize, DataTypes) {
         Image.belongsTo(models.User);
         Image.belongsToMany(models.Idea, { as: 'IdeaImages', through: 'IdeaImage' });
         Image.belongsToMany(models.Idea, { as: 'IdeaHeaderImages', through: 'IdeaHeaderImage' });
+        Image.belongsToMany(models.Idea, { as: 'IdeaUserImages', through: 'IdeaUserImage' });
         Image.belongsToMany(models.Group, { through: 'GroupImage' });
         Image.belongsToMany(models.Community, { as: 'CommunityLogoImages', through: 'CommunityLogoImage' });
         Image.belongsToMany(models.Community, { as: 'CommunityHeaderImages', through: 'CommunityHeaderImage' });

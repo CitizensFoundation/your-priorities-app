@@ -45,7 +45,7 @@
 
     <yp-ajax auto="false" id="ajax" url="" on-response="_ideasResponse"></yp-ajax>
 
-    <yp-idea-edit id="ideaEdit" on-iron-form-response="_refresh"></yp-idea-edit>
+    <yp-idea-edit id="ideaEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-idea-edit>
 
     <div class="card-container">
       <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>

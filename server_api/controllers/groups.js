@@ -95,11 +95,23 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
       where: [where, []],
       order: [
         models.sequelize.literal(ideaOrder),
-        [
-          { model: models.Image, as: 'IdeaHeaderImages' } ,'updated_at', 'asc'
-        ]
+        [ { model: models.Image, as: 'IdeaHeaderImages' } ,'updated_at', 'asc' ]
       ],
-      include: [ models.Category, models.IdeaRevision, models.Point,
+      include: [
+        {
+          model: models.Category,
+          include: [
+            {
+              model: models.Image,
+              as: 'CategoryIconImages',
+              order: [
+                [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
+              ]
+            }
+          ]
+        },
+        models.IdeaRevision,
+        models.Point,
         { model: models.Image, as: 'IdeaHeaderImages' }
     ]
     }).then(function(ideas) {

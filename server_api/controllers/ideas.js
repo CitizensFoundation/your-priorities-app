@@ -75,10 +75,28 @@ router.get('/:id/endorsements', function(req, res) {
 router.get('/:id', function(req, res) {
   models.Idea.find({
     where: { id: req.params.id },
-    order: [
-      [ { model: models.Image, as: 'IdeaHeaderImages' } ,'updated_at', 'asc' ]
-    ],
     include: [
+      {
+        model: models.Category,
+        include: [
+          {
+            model: models.Image,
+            as: 'CategoryIconImages'
+          }
+        ]
+      },
+      {
+        model: models.Group,
+        include: [
+          models.Category
+        ]
+      },
+      models.User,
+      {
+        model: models.Image,
+        as: 'IdeaHeaderImages'
+      },
+      models.IdeaRevision,
       { model: models.Point,
         order: 'Point.position DESC',
         include: [
@@ -93,12 +111,7 @@ router.get('/:id', function(req, res) {
             ]
           }
         ]
-      },
-      models.Category,
-      models.Group,
-      models.User,
-      { model: models.Image, as: 'IdeaHeaderImages' },
-      models.IdeaRevision
+      }
     ]
   }).then(function(idea) {
     res.send(idea);
@@ -110,31 +123,7 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
     name: req.body.name,
     description: req.body.description,
     group_id: req.params.groupId,
-    longitude: req.body.longitude != "" ? req.body.longitude : null,
-    latitude: req.body.latitude != "" ? req.body.latitude : null,
-    cover_media_type: req.body.coverMediaType,
-    user_id: req.user.id,
-    status: 'published'
-  });
-  idea.save().then(function() {
-    idea.setupAfterSave(req, res, function () {
-      idea.setupImages(req.body, function (err) {
-        if (err) {
-          res.sendStatus(403);
-          console.error(err);
-        } else {
-          res.send(idea);
-        }
-      })
-    });
-  });
-});
-
-router.post('/:groupId', isAuthenticated, function(req, res) {
-  var idea = models.Idea.build({
-    name: req.body.name,
-    description: req.body.description,
-    group_id: req.params.groupId,
+    category_id: req.body.categoryId != "" ? req.body.categoryId : null,
     longitude: req.body.longitude != "" ? req.body.longitude : null,
     latitude: req.body.latitude != "" ? req.body.latitude : null,
     cover_media_type: req.body.coverMediaType,
