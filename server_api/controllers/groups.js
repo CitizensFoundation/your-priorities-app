@@ -8,16 +8,6 @@ function isAuthenticated(req, res, next) {
   res.send(401, 'Unauthorized');
 }
 
-router.delete('/:id', isAuthenticated, function(req, res) {
-  models.Group.find({
-    where: {id: req.params.id}
-  }).then(function (group) {
-    group.deleted = true;
-    group.save().then(function () {
-      res.sendStatus(200);
-    });
-  });
-});
 
 /* GET ideas listing. */
 router.get('/', function(req, res) {
@@ -74,6 +64,17 @@ router.put('/:id', isAuthenticated, function(req, res) {
   });
 });
 
+router.delete('/:id', isAuthenticated, function(req, res) {
+  models.Group.find({
+    where: {id: req.params.id}
+  }).then(function (group) {
+    group.deleted = true;
+    group.save().then(function () {
+      res.sendStatus(200);
+    });
+  });
+});
+
 router.get('/:id/search/:term', function(req, res) {
   models.Idea.search(req.params.term,req.params.id, models.Category)
       .then(function(ideas) {
@@ -83,7 +84,7 @@ router.get('/:id/search/:term', function(req, res) {
 
 router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
 
-  var where = '"Idea"."group_id" = '+req.params.id;
+  var where = '"Idea"."deleted" = false AND "Idea"."group_id" = '+req.params.id;
   //  var ideaOrder = [models.sequelize.fn('subtraction', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'];
 
   var ideaOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";

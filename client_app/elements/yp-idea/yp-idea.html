@@ -2,6 +2,11 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
@@ -9,6 +14,7 @@
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-delete-dialog/yp-delete-dialog.html">
 <link rel="import" href="yp-idea-header.html">
 <link rel="import" href="yp-idea-points.html">
 <link rel="import" href="yp-idea-edit.html">
@@ -72,7 +78,13 @@
 
         <paper-material elevation="3" class="ideaHeader" animated>
           <yp-idea-header id="ideaHeader" idea="[[idea]]" showcategory="true"></yp-idea-header>
-          <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>
+          <paper-menu-button class="edit">
+            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+            <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+              <paper-item id="editMenuItem">[[t('idea.edit')]]</paper-item>
+              <paper-item id="deleteMenuItem">[[t('idea.delete')]]</paper-item>
+            </paper-menu>
+          </paper-menu-button>
         </paper-material>
 
         <paper-material elevation="2" class="ideaHeader tabsMaterial" animated>
@@ -93,7 +105,9 @@
           </neon-animated-pages>
         </paper-material>
 
-
+        <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('idea.deleteConfirmation')]]"
+                          action="/api/ideas/" action-id="[[idea.id]]">
+        </yp-delete-dialog>
       </template>
     </div>
   </template>
@@ -141,8 +155,20 @@
           this.$.ajax.generateRequest();
         },
 
+        _menuSelection: function (event, detail) {
+          if (detail.item.id=="editMenuItem")
+            this._openEdit();
+          else if (detail.item.id=="deleteMenuItem")
+            this.$$("#deleteDialog").open();
+          this.selectedMenuItem = null;
+        },
+
         _openEdit: function () {
           this.$.ideaEdit.open('edit', { ideaId: this.idea.id });
+        },
+
+        _onDeleted: function () {
+          page("#!/group/"+this.idea.group_id);
         },
 
         addEndorsement: function (event, detail) {

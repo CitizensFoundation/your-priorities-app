@@ -27,7 +27,9 @@
       "streetview": "Street View",
       "image": "Image",
       "none": "None"
-    }
+    },
+    "edit": "Edit idea",
+    "delete": "Delete idea"
   },
   "short_word": {
     "in": "in"

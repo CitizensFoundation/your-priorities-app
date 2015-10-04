@@ -204,6 +204,17 @@ router.post('/:id/endorse', isAuthenticated, function(req, res) {
   });
 });
 
+router.delete('/:id', isAuthenticated, function(req, res) {
+  models.Idea.find({
+    where: {id: req.params.id}
+  }).then(function (idea) {
+    idea.deleted = true;
+    idea.save().then(function () {
+      res.sendStatus(200);
+    });
+  });
+});
+
 router.delete('/:id/endorse', isAuthenticated, function(req, res) {
   console.log("user: "+req.user.id + " idea: " + req.params.id);
   models.Endorsement.find({
