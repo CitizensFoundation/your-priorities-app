@@ -51,10 +51,10 @@
       <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
       <template is="dom-if" if="[[ideas]]">
         <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
-          <yp-idea-card class="card" idea="[[idea]]" on-mouseover="_cardMouseOver" on-mouseout="_cardMouseOut"></yp-idea-card>
+          <yp-idea-card class="card" idea="[[idea]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card>
         </template>
       </template>
-      <yp-idea-card-add class="card" on-tap="newIdea" on-mouseover="_cardMouseOver" on-mouseout="_cardMouseOut"></yp-idea-card-add>
+      <yp-idea-card-add class="card" on-tap="newIdea" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card-add>
       <paper-fab icon="add" elevation="1" class="createIdea" title="[[t('idea.add_new')]]" on-tap="newIdea"></paper-fab>
     </div>
   </template>

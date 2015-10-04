@@ -39,12 +39,22 @@
       return null;
     },
 
-    _cardMouseOver: function (event) {
+    cardMouseOver: function (event) {
       event.currentTarget.elevation = 5;
     },
 
-    _cardMouseOut: function (event) {
+    cardMouseOut: function (event) {
       event.currentTarget.elevation = 1;
+    },
+
+    getImageFormatUrl: function(images, formatId) {
+      if (images && images.length>0) {
+        var formats = JSON.parse(images[images.length-1].formats);
+        if (formats && formats.length>0)
+          return formats[formatId];
+      } else {
+        return "";
+      }
     },
 
     removeClass: function(element, classToRemove) {

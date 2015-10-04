@@ -54,10 +54,10 @@
           <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
           <template is="dom-if" if="[[groups]]">
             <template is="dom-repeat" class="list" items="[[groups]]" as="group">
-              <yp-group-card class="card" group="[[group]]" on-mouseover="_cardMouseOver" on-mouseout="_cardMouseOut"></yp-group-card>
+              <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
             </template>
           </template>
-          <yp-group-card-add class="card" on-tap="_newGroup" on-mouseover="_cardMouseOver" on-mouseout="_cardMouseOut"></yp-group-card-add>
+          <yp-group-card-add class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
         </div>
       </div>
       <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]" on-tap="_newGroup"></paper-fab>
@@ -105,14 +105,7 @@
       },
 
       _communityHeaderUrl: function (community) {
-        var headerImages = community.CommunityHeaderImages;
-        if (headerImages && headerImages.length>0) {
-          var formats = JSON.parse(headerImages[headerImages.length-1].formats);
-          if (formats && formats.length>0)
-            return formats[2];
-        } else {
-          return "";
-        }
+        return this.getImageFormatUrl(community.CommunityHeaderImages, 2);
       },
 
       _communityIdChanged: function (newValue, oldValue) {

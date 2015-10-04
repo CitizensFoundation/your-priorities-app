@@ -46,7 +46,7 @@
       <h2 hidden$="[[!domainEmpty]]">[[t('domain.is.empty')]]</h2>
       <template is="dom-if" if="[[communities]]">
         <template is="dom-repeat" class="list" items="[[communities]]" as="community">
-          <yp-community-card community="[[community]]" on-mouseover="_cardMouseOver" on-mouseout="_cardMouseOut"></yp-community-card>
+          <yp-community-card community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
         </template>
       </template>
       <paper-fab icon="group-work" z="1" class="createCommunity" title="[[t('community.add')]" on-tap="_newCommunity"></paper-fab>

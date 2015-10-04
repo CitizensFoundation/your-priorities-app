@@ -17,25 +17,11 @@
     },
 
     communityLogoImagePath: function (community) {
-      var communityLogos = this.community.CommunityLogoImages;
-      if (communityLogos && communityLogos.length>0) {
-        var formats = JSON.parse(communityLogos[communityLogos.length-1].formats);
-        if (formats && formats.length>0)
-          return formats[1];
-      } else {
-        return "";
-      }
+      return this.getImageFormatUrl(community.CommunityLogoImages, 1);
     },
 
     communityHeaderImagePath: function (community) {
-      var communityHeaders = this.community.CommunityHeaderImages;
-      if (communityHeaders && communityHeaders.length>0) {
-        var formats = JSON.parse(communityHeaders[communityHeaders.length-1].formats);
-        if (formats && formats.length>0)
-          return formats[1];
-      } else {
-        return "";
-      }
+      return this.getImageFormatUrl(community.CommunityHeaderImages, 0);
     },
 
     communityName: function (community) {

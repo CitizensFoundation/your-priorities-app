@@ -190,14 +190,7 @@
       },
 
       getCategoryImagePath: function (idea) {
-        var iconImages = this.idea.Category.CategoryIconImages;
-        if (iconImages && iconImages.length>0) {
-          var formats = JSON.parse(iconImages[iconImages.length-1].formats);
-          if (formats && formats.length>0)
-            return formats[0];
-        } else {
-          return "";
-        }
+        return this.getImageFormatUrl(idea.Category.CategoryIconImages, 0);
       },
 
       ready: function () {

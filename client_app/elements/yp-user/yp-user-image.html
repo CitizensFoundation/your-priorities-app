@@ -71,6 +71,10 @@
 
       is: 'yp-user-image',
 
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
       properties: {
         small: {
           type: Boolean,
@@ -87,13 +91,11 @@
         }
       },
 
-      _userChanged: function (newValue, oldValue) {
-        if (newValue && newValue.UserProfileImages && newValue.UserProfileImages.length > 0) {
-          var profileImages = newValue.UserProfileImages;
-          var formats = JSON.parse(profileImages[profileImages.length - 1].formats);
-          if (formats && formats.length > 0) {
-            this.profileImageUrl = formats[0];
-          }
+      _userChanged: function (newUser, oldValue) {
+        if (newUser && newUser.UserProfileImages && newUser.UserProfileImages.length > 0) {
+          var formatUrl = this.getImageFormatUrl(newUser.UserProfileImages, 0);
+          if (formatUrl && formatUrl!="")
+            this.profileImageUrl = formatUrl;
         }
       },
 
