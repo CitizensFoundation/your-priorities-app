@@ -51,11 +51,11 @@
       <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
       <template is="dom-if" if="[[ideas]]">
         <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
-          <yp-idea-card class="card" idea="[[idea]]" on-mouseover="_ideaCardMouseOver" on-mouseout="_ideaCardMouseOut"></yp-idea-card>
+          <yp-idea-card class="card" idea="[[idea]]" on-mouseover="_cardMouseOver" on-mouseout="_cardMouseOut"></yp-idea-card>
         </template>
       </template>
-      <yp-idea-card-add class="card" on-tap="newIdea" on-mouseover="_ideaCardMouseOver" on-mouseout="_ideaCardMouseOut"></yp-idea-card-add>
-      <paper-fab icon="add" elevation="1" class="createIdea" title="[[computeTitle()]]" on-tap="newIdea"></paper-fab>
+      <yp-idea-card-add class="card" on-tap="newIdea" on-mouseover="_cardMouseOver" on-mouseout="_cardMouseOut"></yp-idea-card-add>
+      <paper-fab icon="add" elevation="1" class="createIdea" title="[[t('idea.add_new')]]" on-tap="newIdea"></paper-fab>
     </div>
   </template>
 
@@ -90,11 +90,6 @@
 
         group: {
           type: Object
-        },
-
-        groupEmpty: {
-          type: Boolean,
-          value: false
         }
       },
 
@@ -122,14 +117,6 @@
         }
       },
 
-      _ideaCardMouseOver: function (event) {
-        event.currentTarget.elevation = 5;
-      },
-
-      _ideaCardMouseOut: function (event) {
-        event.currentTarget.elevation = 1;
-      },
-
       newIdea: function () {
         window.appGlobals.activity('open', 'newIdea');
         this.$.ideaEdit.open('new', {groupId: this.groupId});
@@ -145,11 +132,6 @@
                                      headerIcon: "social:group" });
         this.$.groupCard.setElevation(5);
         this.$.groupCard.lowerCardLater();
-
-        if (detail.response.Ideas.length===0)
-          this.groupEmpty = true;
-        else
-          this.groupEmpty = false;
       },
 
       _processCategories: function () {
@@ -164,10 +146,6 @@
           window.selectedCategoryName = 'categories.all';
           //this.$.layout.updateFilter();
         }
-      },
-
-      computeTitle: function () {
-        return this.t('idea.add_new');
       }
     });
   </script>

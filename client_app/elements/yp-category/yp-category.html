@@ -50,7 +50,7 @@
       <h2 hidden$="[[!groupEmpty]]">[[t('group.is.empty')]]</h2>
       <template is="dom-if" if="[[ideas]]">
         <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
-          <yp-idea-card idea="[[idea]]" on-mouseover="_ideaCardMouseOver" on-mouseout="_ideaCardMouseOut"></yp-idea-card>
+          <yp-idea-card idea="[[idea]]" on-mouseover="_cardMouseOver" on-mouseout="_cardMouseOut"></yp-idea-card>
         </template>
       </template>
       <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>
@@ -119,14 +119,6 @@
         } else {
           this.set("ideas",null);
         }
-      },
-
-      _ideaCardMouseOver: function (event) {
-        event.currentTarget.elevation = 5;
-      },
-
-      _ideaCardMouseOut: function (event) {
-        event.currentTarget.elevation = 1;
       },
 
       newIdea: function () {

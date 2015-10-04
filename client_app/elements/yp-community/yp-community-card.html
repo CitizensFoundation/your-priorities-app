@@ -68,7 +68,7 @@
     </style>
 
     <template is="dom-if" if="[[community]]">
-      <paper-card class="communityCard" image$="" on-tap="_goToCommunity">
+      <paper-card class="communityCard" elevation="[[elevation]]" on-tap="_goToCommunity">
         <div class="card-content">
           <div class="layout">
             <iron-image sizing="cover" preload src="[[communityLogoImagePath(community)]]" class="idea-image"/>

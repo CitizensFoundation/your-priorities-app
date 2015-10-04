@@ -54,10 +54,10 @@
           <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
           <template is="dom-if" if="[[groups]]">
             <template is="dom-repeat" class="list" items="[[groups]]" as="group">
-              <yp-group-card class="card" group="[[group]]" on-mouseover="_groupCardMouseOver" on-mouseout="_groupCardMouseOut"></yp-group-card>
+              <yp-group-card class="card" group="[[group]]" on-mouseover="_cardMouseOver" on-mouseout="_cardMouseOut"></yp-group-card>
             </template>
           </template>
-          <yp-group-card-add class="card" on-tap="_newGroup" on-mouseover="_groupCardMouseOver" on-mouseout="_groupCardMouseOut"></yp-group-card-add>
+          <yp-group-card-add class="card" on-tap="_newGroup" on-mouseover="_cardMouseOver" on-mouseout="_cardMouseOut"></yp-group-card-add>
         </div>
       </div>
       <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]" on-tap="_newGroup"></paper-fab>
@@ -170,14 +170,6 @@
           }
         }
         return filtered;
-      },
-
-      _groupCardMouseOver: function (event) {
-        event.currentTarget.elevation = 5;
-      },
-
-      _groupCardMouseOut: function (event) {
-        event.currentTarget.elevation = 1;
       },
 
       _refresh: function () {
