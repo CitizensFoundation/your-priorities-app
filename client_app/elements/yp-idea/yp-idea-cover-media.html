@@ -53,13 +53,13 @@
       }
     </style>
 
-    <template is="dom-if" if="[[idea]]" restamp="true">
+    <template is="dom-if" if="[[idea]]" restamp>
       <div class="mapCanvas">
         <template is="dom-if" if="[[_withCoverMediaType('image')]]">
           <iron-image sizing="cover" class="main-image" src="[[ideaImagePath()]]"></iron-image>
         </template>
 
-        <template restamp="true" is="dom-if" if="[[_withCoverMediaType('streetView')]]">
+        <template is="dom-if" if="[[_withCoverMediaType('streetView')]]">
           <google-streetview-pano
             position="[[_getMapPosition()]]"
             heading="330"
