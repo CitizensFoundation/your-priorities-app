@@ -95,9 +95,9 @@
         </div>
         <paper-menu-button class="edit">
           <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-          <paper-menu class="dropdown-content">
-            <paper-item on-tap="_openEdit">[[t('group.edit')]]</paper-item>
-            <paper-item on-tap="_newCategory">[[t('category.new')]]</paper-item>
+          <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+            <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
+            <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
           </paper-menu>
         </paper-menu-button>
       </paper-card>
@@ -115,6 +115,14 @@
         Polymer.GroupBehaviors,
         Polymer.LargeCardBehaviors
       ],
+
+      _menuSelection: function (event, detail) {
+        if (detail.item.id=="editMenuItem")
+          this._openEdit();
+        else if (detail.item.id=="newCategoryMenuItem")
+          this._newCategory();
+        this.selectedMenuItem = null;
+      },
 
       _openEdit: function () {
         this.$$("#groupEdit").open('edit', { groupId: this.group.id });
