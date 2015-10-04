@@ -87,4 +87,15 @@ router.put('/:id', isAuthenticated, function(req, res) {
   });
 });
 
+router.delete('/:id', isAuthenticated, function(req, res) {
+  models.Community.find({
+    where: {id: req.params.id}
+  }).then(function (community) {
+    community.deleted = true;
+    community.save().then(function () {
+      res.sendStatus(200);
+    });
+  });
+});
+
 module.exports = router;

@@ -7,11 +7,18 @@
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
+<link rel="import" href="../yp-delete-dialog/yp-delete-dialog.html">
+
+
 <link rel="import" href="yp-community-behaviors.html">
 <link rel="import" href="yp-community-stats.html">
 
@@ -48,16 +55,10 @@
       .community-name {
         padding: 0;
         padding-bottom: 4px;
+        padding-right: 1px;
         margin: 0;
       }
 
-      .idea-image {
-        width: 100%;
-      }
-
-      .communityCard {
-        cursor: pointer;
-      }
 
       iron-image {
         width: 300px;
@@ -86,12 +87,13 @@
       }
 
       .edit {
-        color: var( --primary-background-color,#F2F2F2);
+        color: #FFF;
         position: absolute;
-        top: 8px;
-        right: 8px;
+        top: 0;
+        right: 0;
+        padding-right: 0;
+        margin-right: 0;
       }
-
 
     </style>
 
@@ -106,11 +108,20 @@
             </div>
             <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
           </div>
-          <paper-fab mini class="edit" icon="create" on-tap="_openEdit"></paper-fab>
+          <paper-menu-button class="edit">
+            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+            <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+              <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
+              <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
+            </paper-menu>
+          </paper-menu-button>
         </div>
       </paper-material>
 
       <yp-community-edit new="false" id="communityEdit" community="{{community}}" on-iron-form-response="_refresh"></yp-community-edit>
+      <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('community.deleteConfirmation')]]"
+                        action="/api/communities/" action-id="[[community.id]]">
+      </yp-delete-dialog>
     </template>
   </template>
 
@@ -124,8 +135,20 @@
         Polymer.LargeCardBehaviors
       ],
 
+      _menuSelection: function (event, detail) {
+        if (detail.item.id=="editMenuItem")
+          this._openEdit();
+        else if (detail.item.id=="deleteMenuItem")
+          this.$$("#deleteDialog").open();
+        this.selectedMenuItem = null;
+      },
+
       _openEdit: function () {
         this.$$("#communityEdit").open('edit', {communityId: this.community.id });
+      },
+
+      _onDeleted: function () {
+        page("#!/domain/"+this.community.domain_id);
       },
 
       _refresh: function () {
