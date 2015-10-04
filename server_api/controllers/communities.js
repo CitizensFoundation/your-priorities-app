@@ -21,8 +21,18 @@ router.get('/:id', function(req, res) {
   models.Community.find({
     where: { id: req.params.id },
     include: [
-      { model: models.Group,
-        order: 'Group.created_at DESC'
+      {
+        model: models.Group,
+        order: 'Group.created_at DESC',
+        where: {
+          deleted: false
+        },
+        required: false,
+        include: [
+          {
+            model: models.Image, as: 'GroupLogoImages'
+          }
+        ]
       },
       {
         model: models.Image, as: 'CommunityLogoImages'

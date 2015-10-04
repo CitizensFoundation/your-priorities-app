@@ -18,10 +18,17 @@ module.exports = function(sequelize, DataTypes) {
     counter_all_activities: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_main_activities: { type: DataTypes.INTEGER, defaultValue: 0 },
     impressions_count: { type: DataTypes.INTEGER, defaultValue: 0 },
-    latitude: DataTypes.FLOAT,
-    longitude: DataTypes.FLOAT,
-    cover_media_type: DataTypes.STRING
+    location: DataTypes.JSONB,
+    cover_media_type: DataTypes.STRING,
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
+
+    defaultScope: {
+      where: {
+        deleted: false
+      }
+    },
+
     underscored: true,
 
     timestamps: true,

@@ -243,7 +243,6 @@
         } else if (this.params && this.params.userId) {
           this.action = this.baseAction + '/'+this.params.userId;
         }
-        var a = this.method;
         this.$.form.submit();
         this.$.spinner.active = true;
       },

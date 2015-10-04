@@ -102,6 +102,10 @@ module.exports = function(sequelize, DataTypes) {
         Image.belongsToMany(models.User, { as: 'UserHeaderImages', through: 'UserHeaderImage' });
         Image.belongsToMany(models.Category, { as: 'CategoryIconImages', through: 'CategoryIconImage' });
         Image.belongsToMany(models.Category, { as: 'CategoryHeaderImages', through: 'CategoryHeaderImage' });
+        Image.belongsToMany(models.Group, { as: 'GroupLogoImages', through: 'GroupLogoImage' });
+        Image.belongsToMany(models.Group, { as: 'GroupHeaderImages', through: 'GroupHeaderImage' });
+        Image.belongsToMany(models.Domain, { as: 'DomainLogoImages', through: 'DomainLogoImage' });
+        Image.belongsToMany(models.Domain, { as: 'DomainHeaderImages', through: 'DomainHeaderImage' });
       }
     }
   });

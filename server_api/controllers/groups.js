@@ -30,8 +30,14 @@ router.post('/:communityId', isAuthenticated, function(req, res) {
   });
 
   group.save().then(function() {
-    // Automatically add user to community
-    res.send(group);
+    group.setupImages(req.body, function(err) {
+      if (err) {
+        res.sendStatus(403);
+        console.error(err);
+      } else {
+        res.send(group);
+      }
+    });
   }).catch(function(error) {
     res.sendStatus(403);
   });
@@ -45,7 +51,14 @@ router.put('/:id', isAuthenticated, function(req, res) {
     group.objectives = req.body.objectives;
     group.access = models.Community.convertAccessFromRadioButtons(req.body);
     group.save().then(function () {
-      res.send(group);
+      group.setupImages(req.body, function(err) {
+        if (err) {
+          res.sendStatus(403);
+          console.error(err);
+        } else {
+          res.send(group);
+        }
+      });
     });
   });
 });
@@ -86,8 +99,9 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
   models.Group.find({
     where: { id: req.params.id },
     include: [
+      models.Category,
       {
-        model: models.Category
+        model: models.Image, as: 'GroupLogoImages'
       }
     ]
   }).then(function(group) {

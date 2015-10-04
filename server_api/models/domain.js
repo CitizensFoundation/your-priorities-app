@@ -1,3 +1,5 @@
+var async = require("async");
+
 "use strict";
 
 var Community = require('./community');
@@ -12,6 +14,52 @@ module.exports = function(sequelize, DataTypes) {
     underscored: true,
 
     tableName: 'domains',
+
+    instanceMethods: {
+
+      setupLogoImage: function(body, done) {
+        if (body.uploadedLogoImageId) {
+          sequelize.models.Image.find({
+            where: {id: body.uploadedLogoImageId}
+          }).then(function (image) {
+            if (image)
+              this.addDomainLogoImage(image);
+            done();
+          }.bind(this));
+        } else done();
+      },
+
+      setupHeaderImage: function(body, done) {
+        if (body.uploadedHeaderImageId) {
+          sequelize.models.Image.find({
+            where: {id: body.uploadedHeaderImageId}
+          }).then(function (image) {
+            if (image)
+              this.addDomainHeaderImage(image);
+            done();
+          }.bind(this));
+        } else done();
+      },
+
+      setupImages: function(body, done) {
+        async.parallel([
+          function(callback) {
+            this.setupLogoImage(body, function (err) {
+              if (err) return callback(err);
+              callback();
+            });
+          }.bind(this),
+          function(callback) {
+            this.setupHeaderImage(body, function (err) {
+              if (err) return callback(err);
+              callback();
+            });
+          }.bind(this)
+        ], function(err) {
+          done(err);
+        });
+      }
+    },
 
     classMethods: {
 
@@ -61,6 +109,8 @@ module.exports = function(sequelize, DataTypes) {
 
       associate: function(models) {
         Domain.hasMany(models.Community, { foreignKey: "domain_id" });
+        Domain.belongsToMany(models.Image, { as: 'DomainLogoImages', through: 'DomainLogoImage' });
+        Domain.belongsToMany(models.Image, { as: 'DomainHeaderImages', through: 'DomainHeaderImage' });
       }
     }
   });

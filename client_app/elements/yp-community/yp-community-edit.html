@@ -120,16 +120,6 @@
       }
     },
 
-    _logoImageUploaded: function (event, detail) {
-      var image = JSON.parse(detail.xhr.response);
-      this.set('uploadedLogoImageId', image.id);
-    },
-
-    _headerImageUploaded: function (event, detail) {
-      var image = JSON.parse(detail.xhr.response);
-      this.set('uploadedHeaderImageId', image.id);
-    },
-
     _customRedirect: function (communityId) {
       page("#!/community/"+communityId);
     },

@@ -42,6 +42,16 @@
       'iron-form-response': '_formResponse'
     },
 
+    _logoImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedLogoImageId', image.id);
+    },
+
+    _headerImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedHeaderImageId', image.id);
+    },
+
     _formResponse: function (event, detail) {
       if (typeof this._customRedirect == 'function') {
         this._customRedirect(detail.id);

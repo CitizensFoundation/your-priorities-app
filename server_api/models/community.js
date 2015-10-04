@@ -12,8 +12,16 @@ module.exports = function(sequelize, DataTypes) {
     access: DataTypes.INTEGER,
     website: DataTypes.TEXT,
     counter_groups: DataTypes.INTEGER,
-    counter_users: DataTypes.INTEGER
+    counter_users: DataTypes.INTEGER,
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
+
+    defaultScope: {
+      where: {
+        deleted: false
+      }
+    },
+
     underscored: true,
     tableName: 'communities',
 

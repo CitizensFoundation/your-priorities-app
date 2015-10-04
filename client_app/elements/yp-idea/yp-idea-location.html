@@ -54,7 +54,7 @@
 
     <paper-dialog id="dialog" class="dialog" modal>
 
-      <google-map id="map" libraries="places" class="map" click-events on-google-map-click="_setLocation" fit-to-markers></google-map>
+      <google-map id="map" libraries="places" class="map" click-events on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers></google-map>
 
       <div class="buttons">
         <paper-button on-tap="_closeDialog">[[t('close')]]</paper-button>
@@ -80,6 +80,11 @@
           notify: true
         },
 
+        encodedLocation: {
+          type: String,
+          notify: true
+        },
+
         idea: {
           type: Object,
           observer: "_ideaChanged"
@@ -97,17 +102,27 @@
         }
       },
 
-      _locationChanged: function (newValue, oldValue) {
-        if (newValue) {
+      _zoomChanged: function (event, detail) {
+        if (detail && detail.value) {
+          this.set('location.zoom', detail.value);
+          this.encodedLocation = JSON.stringify(this.location);
+        }
+      },
+
+      _locationChanged: function (newLocationValue, oldValue) {
+        if (newLocationValue) {
           this._createMarkerIfNeeded();
-          this.marker.setAttribute('latitude', newValue.lat);
-          this.marker.setAttribute('longitude', newValue.lng);
+          this.marker.setAttribute('latitude', newLocationValue.latitude);
+          this.marker.setAttribute('longitude', newLocationValue.longitude);
+          if (newLocationValue.map_zoom)
+            this.$.map.zoom = newLocationValue.map_zoom;
+          this.encodedLocation = JSON.stringify(newLocationValue);
         }
       },
 
       _setLocation: function (event, detail) {
         this._createMarkerIfNeeded();
-        this.location = { lat: detail.latLng.lat(), lng: detail.latLng.lng() }
+        this.location = { latitude: detail.latLng.lat(), longitude: detail.latLng.lng(), zoom: this.$.map.zoom }
       },
 
       _openLocationDialog: function (event) {
@@ -116,7 +131,7 @@
           navigator.geolocation.getCurrentPosition(function(position) {
             this._createMarkerIfNeeded();
             if (!this.location)
-              this.location = { lat: position.coords.latitude, lng: position.coords.longitude }
+              this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, zoom: 10 }
           }.bind(this));
         }
       },
@@ -130,21 +145,7 @@
         } else {
           this.set("location",null);
         }
-      },
-
-      _response: function (event, detail, sender) {
-        this.endorsements = detail.response;
-        if (this.endorsements.length > this.userImagesLimit) {
-          this.$$("#moreImages").style.display = 'inline';
-        }
-      },
-
-      _moreUserImages: function () {
-        this.$$("#moreImagesButton").style.display = 'none';
-        this.$$("#numberOfMoreUserImages").style.display = 'none';
-        this.$.restOfUserImages.style.display = 'inline';
       }
-
     });
   </script>
 </dom-module>

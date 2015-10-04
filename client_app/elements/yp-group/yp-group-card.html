@@ -2,10 +2,10 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
-<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
@@ -30,6 +30,16 @@
         }
       }
 
+      .logo {
+        width: 416px;
+        height: 101px;
+      }
+
+      .groupCard {
+        cursor: pointer;
+        height: 400px;
+      }
+
       .objectives {
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
@@ -49,25 +59,21 @@
       .idea-image {
       }
 
-      .groupCard {
-        cursor: pointer;
-        height: 300px;
-      }
-
       yp-group-stats {
         color: var(--primary-color-lighter, #B0B0B0);
       }
+
     </style>
 
     <template is="dom-if" if="[[group]]">
-      <paper-card elevation="[[elevation]]" class="groupCard" image$="" on-tap="_goToGroup">
+      <paper-card elevation="[[elevation]]" class="groupCard" on-tap="_goToGroup">
         <div class="card-content">
           <div class="objectives">
             <h2 class="group-name">[[groupName(group)]]</h2>
             <div>[[groupObjectives(group)]]</div>
           </div>
         </div>
-        <img src="[[groupImagePath(group)]]" class="idea-image">
+        <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
         <div class="card-content">
           <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
         </div>

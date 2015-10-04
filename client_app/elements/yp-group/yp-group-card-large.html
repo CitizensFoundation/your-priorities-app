@@ -40,22 +40,15 @@
         }
       }
 
-      .objectives {
-        @apply(--layout-vertical);
-        line-height: var(--objectives-line-height, 1.3);
-      }
-
-      .stats {
-        @apply(--layout-self-center);
-      }
-
       .group-name {
-        padding: 0;
         padding-bottom: 4px;
         margin: 0;
       }
 
-      .idea-image {
+      .objectives {
+        @apply(--layout-vertical);
+        line-height: var(--objectives-line-height, 1.3);
+        heiht:
       }
 
       .groupCard {
@@ -63,7 +56,10 @@
         background-color: var(--secondary-primary-color);
         color: #FFF;
         height: 500px;
-        padding: 16px;
+      }
+
+      .stats {
+        @apply(--layout-self-center);
       }
 
       .edit {
@@ -71,6 +67,8 @@
         position: absolute;
         top: 0;
         right: 0;
+        padding-right: 0;
+        margin-right: 0;
       }
 
       .newCategory {
@@ -78,6 +76,11 @@
         position: absolute;
         top: 64px;
         right: 0;
+      }
+
+      .logo {
+        width: 420px;
+        height: 100px;
       }
     </style>
 
@@ -89,7 +92,7 @@
             <div>[[groupObjectives(group)]]</div>
           </div>
         </div>
-        <img src="[[groupImagePath(group)]]" class="idea-image">
+        <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
         <div class="card-content">
           <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
         </div>

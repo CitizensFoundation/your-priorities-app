@@ -71,7 +71,7 @@
 
         <template is="dom-if" if="[[_withCoverMediaType('map')]]">
           <google-map class="map" libraries="places" fit-to-markers>
-            <google-map-marker latitude="[[idea.latitude]]" longitude="[[idea.longitude]]"></google-map-marker>
+            <google-map-marker latitude="[[idea.location.latitude]]" longitude="[[idea.location.longitude]]"></google-map-marker>
           </google-map>
         </template>
       </div>
@@ -103,7 +103,7 @@
       },
 
       _getMapPosition: function () {
-        return { lat: this.idea.latitude, lng: this.idea.longitude }
+        return { lat: this.idea.location.latitude, lng: this.idea.location.longitude }
       },
 
       ideaImagePath: function () {

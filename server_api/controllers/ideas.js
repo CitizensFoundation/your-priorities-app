@@ -124,8 +124,7 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
     description: req.body.description,
     group_id: req.params.groupId,
     category_id: req.body.categoryId != "" ? req.body.categoryId : null,
-    longitude: req.body.longitude != "" ? req.body.longitude : null,
-    latitude: req.body.latitude != "" ? req.body.latitude : null,
+    location: req.body.location != "" ? JSON.parse(req.body.location) : null,
     cover_media_type: req.body.coverMediaType,
     user_id: req.user.id,
     status: 'published'
@@ -151,8 +150,7 @@ router.put('/:id', isAuthenticated, function(req, res) {
     idea.name = req.body.name;
     idea.description = req.body.description;
     idea.category_id = req.body.categoryId != "" ? req.body.categoryId : null;
-    idea.longitude = req.body.longitude != "" ? req.body.longitude : null;
-    idea.latitude = req.body.latitude != "" ? req.body.latitude : null;
+    idea.location = req.body.location != "" ? JSON.parse(req.body.location) : null;
     idea.cover_media_type = req.body.coverMediaType;
     idea.save().then(function () {
       idea.setupImages(req.body, function (err) {

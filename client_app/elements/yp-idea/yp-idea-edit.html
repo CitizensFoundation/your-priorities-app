@@ -88,7 +88,7 @@
         <paper-dropdown-menu label="[[t('category.select')]]">
           <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
             <template is="dom-repeat" items="[[group.Categories]]" as="category">
-              <paper-item name="[[category.id]]">[[category.name]]</paper-item>
+              <paper-item>[[category.name]]</paper-item>
             </template>
           </paper-menu>
         </paper-dropdown-menu>
@@ -96,15 +96,14 @@
       </template>
 
       <div class="layout vertical additionalSettings">
-        <yp-idea-location location="{{location}}" idea="[[idea]]" class="additionalButton"></yp-idea-location>
+        <yp-idea-location encoded-location="{{encodedLocation}}" location="{{location}}" idea="[[idea]]" class="additionalButton"></yp-idea-location>
         <file-upload id="imageFileUpload" droppable="false" raised="true" multi="false" target="/api/images?itemType=idea-header" method="POST" on-success="_imageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.upload')]]</span>
         </file-upload>
       </div>
 
-      <input type="hidden" name="latitude" value="[[location.lat]]">
-      <input type="hidden" name="longitude" value="[[location.lng]]">
+      <input type="hidden" name="location" value="[[encodedLocation]]">
       <input type="hidden" name="coverMediaType" value="[[selectedCoverMediaType]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
@@ -154,6 +153,10 @@
         type: Object
       },
 
+      encodedLocation: {
+        type: String
+      },
+
       selectedCategoryArrayId: {
         type: Number,
         observer: "_selectedCategoryChanged"
@@ -173,6 +176,10 @@
       }
     },
 
+    _encodeJson: function(json) {
+      return JSON.stringify(json);
+    },
+
     _selectedCategoryChanged: function (newCategoryArrayId, oldValue) {
       debugger;
       if (newCategoryArrayId)
@@ -189,8 +196,8 @@
 
     _ideaChanged: function(newIdea, oldIdea) {
       if (newIdea){
-        if (newIdea.latitude && newIdea.longitude) {
-          this.location = { lat: newIdea.latitude, lng: newIdea.longitude }
+        if (newIdea.location) {
+          this.location = newIdea.location;
         }
         if (newIdea.cover_media_type)
           this.selectedCoverMediaType = newIdea.cover_media_type;

@@ -20,35 +20,12 @@
       page(groupUrl);
     },
 
-    groupImagePath: function (group) {
-      return "";
-      return this.randomStockImage();
-
-      if (this.group.IsoCountry) {
-        return this.isoCountryImagePath() + group.IsoCountry.code.toLowerCase() + '.png';
-      }
-      else if (group.name.indexOf("NHS") > -1) {
-        return "https://i.imgur.com/uavPcDU.jpg"
-      }
-      else if (group.name.indexOf("Iceland") > -1) {
-        return "https://i.imgur.com/v2SyyDl.png"
-      }
-      else if (true) {
-        return "https://i.imgur.com/OPpnjwm.jpg"
-      }
-      else if (false) {
-        return "https://placehold.it/384x216"
-      }
-      else if (group.top_banner_file_name) {
-        return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(group.id) + '/icon_full/' + group.top_banner_file_name;
-      } else
-      {
-        return this.defaultGroupImage('');
-      }
+    groupLogoImagePath: function (group) {
+      return this.getImageFormatUrl(group.GroupLogoImages, 1);
     },
 
-    getIsoCountryImagePath: function (group) {
-      return this.isoCountryImagePath() + group.IsoCountry.code.toLowerCase() + '.png';
+    groupHeaderImagePath: function (group) {
+      return this.getImageFormatUrl(group.GroupHeaderImages, 0);
     },
 
     groupName: function (group) {
