@@ -19,6 +19,8 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
 <link rel="import" href="../yp-category/yp-category-edit.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+<link rel="import" href="../yp-delete-dialog/yp-delete-dialog.html">
 
 <link rel="import" href="yp-group-stats.html">
 <link rel="import" href="yp-group-behaviors.html">
@@ -101,11 +103,15 @@
           <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
             <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
             <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
+            <paper-item id="deleteGroupMenuItem">[[t('group.delete')]]</paper-item>
           </paper-menu>
         </paper-menu-button>
       </paper-card>
       <yp-group-edit new="false" id="groupEdit" group="{{group}}" on-iron-form-response="_refresh"></yp-group-edit>
       <yp-category-edit new id="newCategory" group="[[group]]" on-iron-form-response="_refresh"></yp-category-edit>
+      <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('group.deleteConfirmation')]]"
+                        action="/api/groups/" action-id="[[group.id]]">
+      </yp-delete-dialog>
     </template>
   </template>
 
@@ -124,11 +130,17 @@
           this._openEdit();
         else if (detail.item.id=="newCategoryMenuItem")
           this._newCategory();
+        else if (detail.item.id=="deleteGroupMenuItem")
+          this.$$("#deleteDialog").open();
         this.selectedMenuItem = null;
       },
 
       _openEdit: function () {
         this.$$("#groupEdit").open('edit', { groupId: this.group.id });
+      },
+
+      _onDeleted: function () {
+        page("#!/community/"+this.group.community_id);
       },
 
       _newCategory: function () {

@@ -8,6 +8,17 @@ function isAuthenticated(req, res, next) {
   res.send(401, 'Unauthorized');
 }
 
+router.delete('/:id', isAuthenticated, function(req, res) {
+  models.Group.find({
+    where: {id: req.params.id}
+  }).then(function (group) {
+    group.deleted = true;
+    group.save().then(function () {
+      res.sendStatus(200);
+    });
+  });
+});
+
 /* GET ideas listing. */
 router.get('/', function(req, res) {
   models.Group.findAll({
