@@ -1,4 +1,9 @@
 {
+
+  "domain": {
+    "edit": "Edit domain"
+  },
+
   "community": {
     "edit": "Edit community",
     "delete": "Delete community"
