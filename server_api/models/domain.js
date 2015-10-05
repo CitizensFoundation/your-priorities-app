@@ -9,7 +9,9 @@ module.exports = function(sequelize, DataTypes) {
   var Domain = sequelize.define("Domain", {
     name: DataTypes.STRING,
     domain_name: DataTypes.STRING,
-    description: DataTypes.TEXT
+    description: DataTypes.TEXT,
+    counter_communities: DataTypes.INTEGER,
+    counter_users: DataTypes.INTEGER
   }, {
     underscored: true,
 

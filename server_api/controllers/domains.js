@@ -2,6 +2,12 @@ var express = require('express');
 var router = express.Router();
 var models = require("../models");
 
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated())
+    return next();
+  res.send(401, 'Unauthorized');
+}
+
 router.get('/', function(req, res) {
   if (req.ypCommunity) {
     res.send({community: req.ypCommunity, domain: req.ypDomain})
@@ -14,6 +20,12 @@ router.get('/:id', function(req, res) {
   models.Domain.find({
     where: { id: req.params.id },
     include: [
+      {
+        model: models.Image, as: 'DomainLogoImages'
+      },
+      {
+        model: models.Image, as: 'DomainHeaderImages'
+      },
       { model: models.Community,
         include: [
           {
@@ -23,25 +35,42 @@ router.get('/:id', function(req, res) {
             model: models.Image, as: 'CommunityHeaderImages', order: 'updatedAt DESC'
           }
         ],
-        order: 'Community.created_at DESC'
+        order: 'Community.created_at DESC',
+        required: false
       }
     ]
-  }).then(function(community) {
-    res.send(community);
+  }).then(function(domain) {
+    res.send(domain);
   });
 });
 
-router.post('/', function(req, res) {
-  var domain = models.Domain.build({
-    name: req.body.name,
-    description: req.body.description,
-    domain_name: req.body.domain_name
+router.put('/:id', isAuthenticated, function(req, res) {
+  models.Domain.find({
+    where: { id: req.params.id }
+  }).then(function(domain) {
+    domain.name = req.body.name;
+    domain.description = req.body.description;
+    domain.save().then(function () {
+      domain.setupImages(req.body, function(err) {
+        if (err) {
+          res.sendStatus(403);
+          console.error(err);
+        } else {
+          res.send(domain);
+        }
+      });
+    });
   });
+});
 
-  domain.save().then(function() {
-     res.send(domain);
-  }).catch(function(error) {
-    res.sendStatus(403);
+router.delete('/:id', isAuthenticated, function(req, res) {
+  models.Domain.find({
+    where: {id: req.params.id}
+  }).then(function (domain) {
+    domain.deleted = true;
+    domain.save().then(function () {
+      res.sendStatus(200);
+    });
   });
 });
 

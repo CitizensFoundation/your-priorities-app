@@ -9,11 +9,14 @@
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 
 <dom-module id="yp-delete-dialog">
+  <style>
+    :host {
+      display: block;
+      height: 0;
+    }
+  </style>
+
   <template>
-    <style>
-
-    </style>
-
     <yp-ajax method="DELETE" id="deleteAjax" on-response="_deleteResponse"></yp-ajax>
     <paper-dialog id="deleteConfirmationDialog">
       <div>[[confirmationText]]</div>

@@ -1,0 +1,69 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-domain-stats">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-horizontal);
+      }
+
+      .stats {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      .stats-text {
+        font-size: 18px;
+        text-align:right;
+        vertical-align: bottom;
+        padding-right:8px;
+      }
+
+      .stats-icon {
+        padding-left:8px;
+        margin-right:4px;
+      }
+    </style>
+
+    <div class="stats">
+      <iron-icon icon="image:wb-sunny" class="stats-icon"></iron-icon>
+      <div class="stats-text" style="">{{formatNumber(domain.counter_communities)}}</div>
+
+      <iron-icon icon="social:people" class="stats-icon"></iron-icon>
+      <div class="stats-text">{{formatNumber(domain.counter_users)}}</div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-community-stats',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        community: {
+          type: Object
+        }
+      }
+
+    });
+  </script>
+</dom-module>

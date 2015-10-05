@@ -20,7 +20,8 @@ module.exports = function(sequelize, DataTypes) {
     impressions_count: { type: DataTypes.INTEGER, defaultValue: 0 },
     location: DataTypes.JSONB,
     cover_media_type: DataTypes.STRING,
-    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    legacy_idea_id: DataTypes.INTEGER
   }, {
 
     defaultScope: {

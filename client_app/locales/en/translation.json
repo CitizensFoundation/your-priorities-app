@@ -1,4 +1,9 @@
 {
+  "community": {
+    "edit": "Edit community",
+    "delete": "Delete community"
+  },
+
   "idea": {
     "new": "New idea",
     "top": "Top ideas",
@@ -70,6 +75,7 @@
     "share_group": "Share this group",
     "delete": "Delete group"
   },
+
   "menu": {
     "my_pages": "My profile",
     "about": "About",
@@ -77,11 +83,12 @@
     "settings": "Settings"
 
   },
+
   "login": {
     "name": "Login name",
     "email": "Email",
     "password": "Password"
-  },
+  },7
 
   "location": {
     "set": "Set location"
