@@ -122,7 +122,7 @@
 
       _setLocation: function (event, detail) {
         this._createMarkerIfNeeded();
-        this.location = { latitude: detail.latLng.lat(), longitude: detail.latLng.lng(), zoom: this.$.map.zoom }
+        this.location = { latitude: detail.latLng.lat(), longitude: detail.latLng.lng(), map_zoom: this.$.map.zoom }
       },
 
       _openLocationDialog: function (event) {
@@ -131,7 +131,7 @@
           navigator.geolocation.getCurrentPosition(function(position) {
             this._createMarkerIfNeeded();
             if (!this.location)
-              this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, zoom: 10 }
+              this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, map_zoom: 10 }
           }.bind(this));
         }
       },

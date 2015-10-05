@@ -88,7 +88,7 @@
     "name": "Login name",
     "email": "Email",
     "password": "Password"
-  },7
+  },
 
   "location": {
     "set": "Set location"

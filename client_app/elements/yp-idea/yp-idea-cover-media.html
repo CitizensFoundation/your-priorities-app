@@ -55,11 +55,11 @@
 
     <template is="dom-if" if="[[idea]]" restamp>
       <div class="mapCanvas">
-        <template is="dom-if" if="[[_withCoverMediaType('image')]]">
+        <template is="dom-if" if="[[_withCoverMediaType(idea,'image')]]">
           <iron-image sizing="cover" class="main-image" src="[[ideaImagePath()]]"></iron-image>
         </template>
 
-        <template is="dom-if" if="[[_withCoverMediaType('streetView')]]">
+        <template is="dom-if" if="[[_withCoverMediaType(idea,'streetView')]]">
           <google-streetview-pano
             position="[[_getMapPosition()]]"
             heading="330"
@@ -69,8 +69,8 @@
           </google-streetview-pano>
         </template>
 
-        <template is="dom-if" if="[[_withCoverMediaType('map')]]">
-          <google-map class="map" libraries="places" fit-to-markers>
+        <template is="dom-if" if="[[_withCoverMediaType(idea,'map')]]">
+          <google-map class="map" libraries="places" fit-to-markers zoom="[[_zoomLevel(idea)]]">
             <google-map-marker latitude="[[idea.location.latitude]]" longitude="[[idea.location.longitude]]"></google-map-marker>
           </google-map>
         </template>
@@ -98,7 +98,16 @@
       _ideaChanged: function(newValue, oldValue) {
       },
 
-      _withCoverMediaType: function (mediaType) {
+      _zoomLevel: function (idea) {
+        if (idea)
+          return idea.location.map_zoom;
+        else
+          return "10";
+      },
+
+      _withCoverMediaType: function (idea, mediaType) {
+        if (!idea)
+          return false;
         return (this.idea && this.idea.cover_media_type===mediaType);
       },
 
