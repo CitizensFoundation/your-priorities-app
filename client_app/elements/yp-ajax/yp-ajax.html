@@ -9,6 +9,12 @@
 <link rel="import" href="../yp-behaviors/fix-dialog.html">
 
 <dom-module id="yp-ajax">
+  <style>
+    :host {
+      height: 0;
+      width: 0;
+    }
+  </style>
   <template>
 
     <paper-spinner id="spinner" $hidden="[[!useSpinner]]"></paper-spinner>

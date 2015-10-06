@@ -34,7 +34,12 @@
 
       @media (max-width: 600px) {
         :host {
-          width: 235px !important;
+          width: 360px !important;
+        }
+
+        iron-image {
+          width: 256px !important;
+          height: 256px !important;
         }
       }
 
@@ -61,21 +66,14 @@
 
 
       iron-image {
-        width: 300px;
-        height: 400px;
-      }
-
-      @media (max-width: 600px) {
-        iron-image {
-          width: 256px !important;
-          height: 256px !important;
-        }
+        width: 432px;
+        height: 335px;
       }
 
       .large-card {
         background-color: var(--default-primary-color, #000);
         color: #fff;
-        height: 400px;
+        height: 335px;
       }
 
       .image {
@@ -100,7 +98,7 @@
     <template is="dom-if" if="[[community]]">
       <paper-material id="card" elevation="5" animated class="large-card">
         <div class="layout horizontal">
-          <iron-image class="image" src$="[[communityLogoImagePath(community)]]"></iron-image>
+          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
           <div class="layout vertical description-and-stats">
             <div class="description">
               <h2 class="community-name">[[communityName(community)]]</h2>

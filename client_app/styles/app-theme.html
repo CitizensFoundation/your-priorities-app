@@ -197,11 +197,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   /* Small */
   @media (max-width: 600px) {
 
+    iron-pages {
+      padding: 0;
+      margin: 0;
+    }
+
     paper-material {
       --menu-container-display: none;
       width: calc(97.33% - 32px);
-      padding-left: 16px;
-      padding-right: 16px;
+      padding: 0;
+      margin: 0;
     }
 
     .paper-font-display1 {
@@ -264,6 +269,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) { }
   /* mobile-large-landscape */
   @media all and (min-width: 481px) and (orientation: landscape) { }
+
+
   /* tablet-small-landscape */
   @media all and (min-width: 600px) and (max-width: 960px) and (orientation: landscape) { }
   /* tablet-large-landscape */
@@ -272,6 +279,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   @media all and (min-width: 600px) and (orientation: portrait) { }
   /* tablet-large */
   @media all and (min-width: 601px) and (max-width: 840px) and (orientation : portrait) { }
+
+
   /* desktop-x-small-landscape */
   @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) { }
   /* desktop-x-small */

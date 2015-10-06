@@ -30,14 +30,10 @@
         }
       }
 
-      .logo {
-        width: 416px;
-        height: 101px;
-      }
 
       .groupCard {
         cursor: pointer;
-        height: 400px;
+        height: 335px;
       }
 
       .objectives {
@@ -59,6 +55,11 @@
       .idea-image {
       }
 
+      iron-image {
+        width: 416px;
+        height: 100px;
+      }
+
       yp-group-stats {
         color: var(--primary-color-lighter, #B0B0B0);
       }
@@ -67,16 +68,14 @@
 
     <template is="dom-if" if="[[group]]">
       <paper-card elevation="[[elevation]]" class="groupCard" on-tap="_goToGroup">
+        <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
         <div class="card-content">
           <div class="objectives">
             <h2 class="group-name">[[groupName(group)]]</h2>
             <div>[[groupObjectives(group)]]</div>
           </div>
         </div>
-        <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
-        <div class="card-content">
-          <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-        </div>
+        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
       </paper-card>
     </template>
   </template>

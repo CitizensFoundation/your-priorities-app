@@ -26,7 +26,7 @@
       .createCommunity {
         background-color: --var(accent-color-darker,#f57c00);
         position: fixed;
-        bottom:24px;
+        bottom: 24px;
         right: 28px;
       }
 
@@ -37,6 +37,20 @@
 
       .card {
         padding: 16px;
+      }
+
+      @media (max-width: 400px) {
+        .card {
+          padding-left: 0;
+          padding-right: 0;
+          padding-bottom: 8px;
+          padding-top: 8px;
+        }
+
+        .card-container {
+          padding: 0;
+          margin: 0;
+        }
       }
 
     </style>

@@ -31,9 +31,26 @@
         width: 665px;
       }
 
-      @media (max-width: 600px) {
+
+      @media (max-width: 800px) {
         :host {
-          width: 235px !important;
+          width: 360px;
+        }
+
+        iron-image {
+          width: 360px !important;
+          height: 160px !important;
+        }
+      }
+
+      @media (max-width: 320px) {
+        :host {
+          width: 320px;
+        }
+
+        iron-image {
+          width: 320px !important;
+          height: 130px !important;
         }
       }
 
@@ -63,13 +80,6 @@
         height: 270px;
       }
 
-      @media (max-width: 600px) {
-        iron-image {
-          width: 256px !important;
-          height: 256px !important;
-        }
-      }
-
       .large-card {
         background-color: var(--third-primary-color, #000);
         color: #fff;
@@ -78,6 +88,7 @@
 
       .image {
         width: 665px;
+        height: 233px;
       }
 
       .description-and-stats {

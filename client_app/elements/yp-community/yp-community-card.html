@@ -24,12 +24,6 @@
         width: 316px;
       }
 
-      @media (max-width: 600px) {
-        :host {
-          width: 235px !important;
-        }
-      }
-
       .description {
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
@@ -60,10 +54,37 @@
         height: 220px;
       }
 
-      @media (max-width: 600px) {
+
+      @media (max-width: 800px) {
+        :host {
+          width: 344px;
+        }
+
+        .communityCard {
+          margin-left: 16px;
+          height: 600px;
+        }
+
         iron-image {
-          width: 256px !important;
-          height: 256px !important;
+          width: 296px !important;
+          height: 296px !important;
+        }
+      }
+
+      @media (max-width: 320px) {
+        :host {
+          width: 304px;
+          padding-left: 8px;
+        }
+
+        .communityCard {
+          margin-left: 16px;
+          height: 600px;
+        }
+
+        iron-image {
+          width: 260px !important;
+          height: 260px !important;
         }
       }
     </style>
