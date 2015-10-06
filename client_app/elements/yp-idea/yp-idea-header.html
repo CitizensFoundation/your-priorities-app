@@ -85,7 +85,7 @@
 
       yp-idea-cover-media {
         position: relative;
-        width: 935px;
+        width: 400px;
         height: 300px;
       }
 
@@ -94,7 +94,7 @@
           width: 300px;
         }
         yp-idea-cover-media {
-          width: 600px;
+          width: 400px;
         }
       }
 
@@ -116,10 +116,12 @@
         <template is="dom-if" if="[[idea]]">
           <div class="container">
             <div class="card-content">
-              <div class="category-image-container">
-                <iron-image class="category-icon" sizing="contain" src$="[[getCategoryImagePath(idea)]]"></iron-image>
-              </div>
-              <div class="layout horizontal">
+              <template is="dom-if" if="[[idea.Category]]">
+                <div class="category-image-container">
+                  <iron-image class="category-icon" sizing="contain" src$="[[getCategoryImagePath(idea)]]"></iron-image>
+                </div>
+              </template>
+              <div class="layout vertical">
                 <div class="description">
                   <h1 class="idea-name">[[ideaName(idea)]]</h1>
                   <div>[[ideaDescription(idea)]]</div>
@@ -174,6 +176,7 @@
       },
 
       ideaName: function (idea) {
+        debugger;
         if (idea && idea.name) {
           return this.truncate(this.trim(idea.name), 200);
         } else if (idea) {
@@ -190,7 +193,6 @@
       },
 
       getCategoryImagePath: function (idea) {
-        debugger;
         return this.getImageFormatUrl(idea.Category.CategoryIconImages, 0);
       },
 
