@@ -63,6 +63,9 @@
 
       .stats {
         @apply(--layout-self-center);
+        position: absolute;
+        bottom: 16px;
+        left: 16px;
       }
 
       .edit {
@@ -96,9 +99,7 @@
           </div>
         </div>
         <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
-        <div class="card-content">
-          <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-        </div>
+        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
         <paper-menu-button class="edit">
           <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
           <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
