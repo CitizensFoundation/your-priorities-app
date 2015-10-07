@@ -6,10 +6,13 @@
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 
@@ -18,6 +21,9 @@
 <link rel="import" href="yp-idea-header.html">
 <link rel="import" href="yp-idea-points.html">
 <link rel="import" href="yp-idea-edit.html">
+<link rel="import" href="yp-idea-actions.html">
+<link rel="import" href="yp-idea-users.html">
+<link rel="import" href="yp-idea-cover-media.html">
 
 <dom-module id="yp-idea">
   <template>
@@ -28,10 +34,9 @@
       .container {
         @apply(--layout-vertical);
         @apply(--layout-flex);
-        width: 961px;
-        margin: auto;
-        margin-top: -62px;
-        padding-top: 0px;
+        max-width: 1400px;
+        padding-top: 16px;
+        height: 100%;
       }
 
       @media (max-width: 961px) {
@@ -51,13 +56,9 @@
         @apply(--layout-flex);
       }
 
-      yp-idea-points {
-      }
-
       .ideaHeader {
         padding: 16px;
-        padding-bottom: 0;
-        margin-top: 32px;
+        padding-bottom: 16px;
         background-color: #fefefe;
       }
 
@@ -65,6 +66,20 @@
         margin-top: 16px;
         min-height: 500px;
         background-color: #fefefe;
+      }
+
+      .coverMediaColumn {
+        width: 360px;
+        padding: 16px;
+        margin-left: 16px;
+        margin-right: 16px;
+        background-color: #fff;
+        margin-bottom: 16px;
+      }
+
+      yp-idea-cover-media {
+        width: 360px !important;
+        height: 188px !important;
       }
     </style>
 
@@ -76,34 +91,51 @@
 
       <template is="dom-if" if="[[idea]]">
 
-        <paper-material elevation="3" class="ideaHeader" animated>
-          <yp-idea-header id="ideaHeader" idea="[[idea]]" showcategory="true"></yp-idea-header>
-          <paper-menu-button class="edit">
-            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-            <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-              <paper-item id="editMenuItem">[[t('idea.edit')]]</paper-item>
-              <paper-item id="deleteMenuItem">[[t('idea.delete')]]</paper-item>
-            </paper-menu>
-          </paper-menu-button>
-        </paper-material>
+        <div class="layout horizontal">
+          <div class="layout vertical">
+            <paper-material elevation="1" class="layout vertical coverMediaColumn">
+              <yp-idea-cover-media idea="[[idea]]"></yp-idea-cover-media>
+            </paper-material >
+            <paper-material elevation="1" class="layout vertical coverMediaColumn">
+              <h1>Staða hugmyndar</h1>
+              <div>...</div>
+            </paper-material >
+          </div>
+          <div class="layout vertical">
+            <paper-material elevation="1" class="layout horizontal ideaHeader">
+              <div class="description">
+                <h1 class="idea-name">[[ideaName(idea)]]</h1>
+                <div>[[ideaDescription(idea)]]</div>
+              </div>
+              <div class="layout vertical">
+                <div class="card-actions">
+                  <yp-idea-actions endorse-mode="[[endorseMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
+                </div>
+                <yp-idea-users id="ideaUsers" idea="[[idea]]"></yp-idea-users>
+              </div>
+            </paper-material>
+            <div>
+              <paper-material elevation="2" class="ideaHeader tabsMaterial mainPage" animated>
+                <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+                  <paper-tab><span>[[t('idea.tabs.debate')]]</span> &nbsp; (<span>[[idea.Points.length]]</span>)</paper-tab>
+                  <paper-tab>[[t('idea.tabs.news')]]</paper-tab>
+                  <paper-tab>[[t('idea.tabs.location')]]</paper-tab>
+                  <paper-tab>[[t('idea.tabs.photos')]]</paper-tab>
+                </paper-tabs>
 
-        <paper-material elevation="2" class="ideaHeader tabsMaterial" animated>
-          <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-            <paper-tab><span>[[t('idea.tabs.debate')]]</span> &nbsp; (<span>[[idea.Points.length]]</span>)</paper-tab>
-            <paper-tab>[[t('idea.tabs.news')]]</paper-tab>
-            <paper-tab>[[t('idea.tabs.location')]]</paper-tab>
-            <paper-tab>[[t('idea.tabs.photos')]]</paper-tab>
-          </paper-tabs>
+                <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
 
-          <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
+                  <yp-idea-points id="pointsSection" idea="[[idea]]"></yp-idea-points>
 
-            <yp-idea-points id="pointsSection" idea="[[idea]]"></yp-idea-points>
+                  <section><h1>Fréttir</h1></section>
+                  <section><h1>Kort</h1></section>
+                  <section><h1>Myndir</h1></section>
+                </neon-animated-pages>
+              </paper-material>
+            </div>
+          </div>
+        </div>
 
-            <section></section>
-            <section></section>
-            <section></section>
-          </neon-animated-pages>
-        </paper-material>
 
         <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('idea.deleteConfirmation')]]"
                           action="/api/ideas/" action-id="[[idea.id]]">
@@ -136,10 +168,6 @@
             observer: "_ideaChanged"
           },
 
-          contactId: { notify: true },
-          contacts: { notify: true },
-          ideaName: { notify: true },
-
           selected: {
             type: Number,
             value: 0,
@@ -149,6 +177,22 @@
 
         listeners: {
           'new-user-endorsement': 'addEndorsement'
+        },
+
+        ideaName: function (idea) {
+          if (idea && idea.name) {
+            return this.truncate(this.trim(idea.name), 200);
+          } else if (idea) {
+            return idea.short_name;
+          }
+        },
+
+        ideaDescription: function (idea) {
+          if (idea && idea.description) {
+            return this.truncate(this.trim(idea.description), 10000, '...');
+          } else {
+            return "";
+          }
         },
 
         _refresh: function () {
