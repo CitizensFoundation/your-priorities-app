@@ -48,74 +48,112 @@
       .additionalButton {
         padding-bottom: 16px;
       }
+
+      .container {
+        width: 900px;
+        height: 150%;
+      }
+
+      .subContainer {
+        width: 46%;
+        vertical-align: top;
+        display: inline-block;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          width: 100%;
+          height: 100%;
+        }
+
+        .subContainer {
+          width: 100%;
+        }
+      }
+
+      .leftContainer {
+        padding-right: 48px;
+      }
+
+      .rightContainer {
+      }
+
+      #point {
+        padding-bottom: 16px;
+      }
     </style>
 
     <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" save-text="[[saveText]]" toast-text="[[toastText]]" params="[[params]]">
       <h2>[[editHeaderText]]</h2>
+      <div class="layout horizontal wrap container">
+        <div class="layout self-start subContainer leftContainer">
+          <paper-input id="name"
+                       name="name"
+                       type="text"
+                       label="[[t('name')]]"
+                       value="{{idea.name}}"
+                       maxlength="60"
+                       char-counter>
+          </paper-input>
 
-      <paper-input id="name"
-                   name="name"
-                   type="text"
-                   label="[[t('name')]]"
-                   value="{{idea.name}}"
-                   maxlength="60"
-                   char-counter>
-      </paper-input>
+          <paper-textarea id="description"
+                          name="description"
+                          value="{{idea.description}}"
+                          label="[[t('description')]]"
+                          char-counter
+                          rows="2"
+                          max-rows="5"
+                          maxlength="500">
+          </paper-textarea>
+        </div>
 
-      <paper-textarea id="description"
-                      name="description"
-                      value="{{idea.description}}"
-                      label="[[t('description')]]"
-                      char-counter
-                      rows="2"
-                      max-rows="5"
-                      maxlength="500">
-      </paper-textarea>
+        <div class="layout self-start subContainer rightContainer">
+          <template is="dom-if" restamp if="[[new]]">
+            <paper-textarea id="pointFor"
+                            name="pointFor"
+                            value="{{idea.pointFor}}"
+                            label="[[t('point.for')]]"
+                            char-counter
+                            rows="2"
+                            max-rows="5"
+                            maxlength="500">
+            </paper-textarea>
+          </template>
 
-      <template is="dom-if" restamp if="[[new]]">
-        <paper-textarea id="pointFor"
-                        name="pointFor"
-                        value="{{idea.pointFor}}"
-                        label="[[t('point.for')]]"
-                        char-counter
-                        rows="2"
-                        max-rows="5"
-                        maxlength="500">
-        </paper-textarea>
-      </template>
+          <template is="dom-if" if="[[_showCategories(group)]]">
+            <paper-dropdown-menu label="[[t('category.select')]]">
+              <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
+                <template is="dom-repeat" items="[[group.Categories]]" as="category">
+                  <paper-item>[[category.name]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-dropdown-menu>
+            <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
+          </template>
 
-      <template is="dom-if" if="[[_showCategories(group)]]">
-        <paper-dropdown-menu label="[[t('category.select')]]">
-          <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
-            <template is="dom-repeat" items="[[group.Categories]]" as="category">
-              <paper-item>[[category.name]]</paper-item>
+          <div class="layout vertical additionalSettings">
+            <yp-idea-location encoded-location="{{encodedLocation}}" location="{{location}}" idea="[[idea]]" class="additionalButton"></yp-idea-location>
+            <file-upload id="imageFileUpload" droppable="false" raised="true" multi="false" target="/api/images?itemType=idea-header" method="POST" on-success="_imageUploaded">
+              <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+              <span>[[t('image.upload')]]</span>
+            </file-upload>
+          </div>
+
+          <input type="hidden" name="location" value="[[encodedLocation]]">
+          <input type="hidden" name="coverMediaType" value="[[selectedCoverMediaType]]">
+          <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+
+          <h3 class="accessHeader">[[t('idea.cover.media')]]</h3>
+          <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType" selected="{{selectedCoverMediaType}}">
+            <paper-radio-button name="none">[[t('idea.cover.none')]]</paper-radio-button>
+            <paper-radio-button name="image">[[t('idea.cover.image')]]</paper-radio-button>
+            <template is="dom-if" if="[[location]]">
+              <paper-radio-button name="map">[[t('idea.cover.map')]]</paper-radio-button>
+              <paper-radio-button name="streetView">[[t('idea.cover.streetview')]]</paper-radio-button>
             </template>
-          </paper-menu>
-        </paper-dropdown-menu>
-        <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
-      </template>
-
-      <div class="layout vertical additionalSettings">
-        <yp-idea-location encoded-location="{{encodedLocation}}" location="{{location}}" idea="[[idea]]" class="additionalButton"></yp-idea-location>
-        <file-upload id="imageFileUpload" droppable="false" raised="true" multi="false" target="/api/images?itemType=idea-header" method="POST" on-success="_imageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.upload')]]</span>
-        </file-upload>
+          </paper-radio-group>
+        </div>
       </div>
-
-      <input type="hidden" name="location" value="[[encodedLocation]]">
-      <input type="hidden" name="coverMediaType" value="[[selectedCoverMediaType]]">
-      <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-
-      <h3 class="accessHeader">[[t('idea.cover.media')]]</h3>
-      <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType" selected="{{selectedCoverMediaType}}">
-        <paper-radio-button name="none">[[t('idea.cover.none')]]</paper-radio-button>
-        <paper-radio-button name="image">[[t('idea.cover.image')]]</paper-radio-button>
-        <template is="dom-if" if="[[location]]">
-          <paper-radio-button name="map">[[t('idea.cover.map')]]</paper-radio-button>
-          <paper-radio-button name="streetView">[[t('idea.cover.streetview')]]</paper-radio-button>
-        </template>
-      </paper-radio-group>
 
     </yp-edit-dialog>
   </template>

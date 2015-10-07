@@ -32,22 +32,19 @@
       }
 
       .container {
-        @apply(--layout-vertical);
-        @apply(--layout-flex);
-        max-width: 1400px;
         padding-top: 16px;
         height: 100%;
       }
 
       @media (max-width: 961px) {
-        .container {
+        .ideaHeader {
           width: 600px;
         }
       }
 
       @media (max-width: 600px) {
-        .container {
-          width: 300px;
+        .ideaHeader {
+          width: 400px;
         }
       }
 
@@ -60,8 +57,11 @@
         padding: 16px;
         padding-bottom: 16px;
         background-color: #fefefe;
+        width: 940px;
       }
 
+      .mainPage {
+      }
       .tabsMaterial {
         margin-top: 16px;
         min-height: 500px;
@@ -91,7 +91,7 @@
 
       <template is="dom-if" if="[[idea]]">
 
-        <div class="layout horizontal">
+        <div class="layout horizontal wrap">
           <div class="layout vertical">
             <paper-material elevation="1" class="layout vertical coverMediaColumn">
               <yp-idea-cover-media idea="[[idea]]"></yp-idea-cover-media>
@@ -115,7 +115,7 @@
               </div>
             </paper-material>
             <div>
-              <paper-material elevation="2" class="ideaHeader tabsMaterial mainPage" animated>
+              <paper-material elevation="2" class="tabsMaterial mainPage" animated>
                 <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
                   <paper-tab><span>[[t('idea.tabs.debate')]]</span> &nbsp; (<span>[[idea.Points.length]]</span>)</paper-tab>
                   <paper-tab>[[t('idea.tabs.news')]]</paper-tab>
