@@ -35,7 +35,7 @@ router.get('/:id', function(req, res) {
             model: models.Image, as: 'CommunityHeaderImages', order: 'updatedAt DESC'
           }
         ],
-        order: 'Community.created_at DESC',
+        order: 'Community.updated_at DESC',
         required: false
       }
     ]

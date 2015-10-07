@@ -39,7 +39,7 @@
       <paper-input id="name"
                    name="name"
                    type="text"
-                   label="[[t('Name')]]"
+                   label="[[t('name')]]"
                    value="{{group.name}}"
                    maxlength="50"
                    char-counter>
@@ -48,7 +48,7 @@
       <paper-textarea id="objectives"
                       name="objectives"
                       value="{{group.objectives}}"
-                      label="[[t('Objectives')]]"
+                      label="[[t('group.objectives')]]"
                       char-counter
                       rows="2"
                       max-rows="5"
@@ -72,7 +72,7 @@
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
-      <h3 class="accessHeader">[[t('Access')]]</h3>
+      <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
         <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
         <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>

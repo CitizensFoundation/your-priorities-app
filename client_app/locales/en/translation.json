@@ -1,12 +1,15 @@
 {
 
+  "name": "Name",
+
   "domain": {
     "edit": "Edit domain"
   },
 
   "community": {
     "edit": "Edit community",
-    "delete": "Delete community"
+    "delete": "Delete community",
+    "new": "Create community"
   },
 
   "idea": {
@@ -78,7 +81,8 @@
     "invite": "Invite a friend",
     "invite_to_group": "Invite friend to this group",
     "share_group": "Share this group",
-    "delete": "Delete group"
+    "delete": "Delete group",
+    "objectives": "Objectives"
   },
 
   "menu": {
@@ -99,6 +103,15 @@
     "set": "Set location"
   },
   "image": {
-    "upload": "Upload image"
+    "upload": "Upload image",
+    "logo": {
+      "upload": "Upload logo"
+    },
+    "header": {
+      "upload": "Upload header"
+    },
+    "profile": {
+      "upload": "Upload profile image"
+    }
   }
 }
