@@ -11,7 +11,9 @@ module.exports = function(sequelize, DataTypes) {
     domain_name: DataTypes.STRING,
     description: DataTypes.TEXT,
     counter_communities: DataTypes.INTEGER,
-    counter_users: DataTypes.INTEGER
+    counter_users: DataTypes.INTEGER,
+    counter_groups: DataTypes.INTEGER,
+    counter_ideas: DataTypes.INTEGER
   }, {
     underscored: true,
 

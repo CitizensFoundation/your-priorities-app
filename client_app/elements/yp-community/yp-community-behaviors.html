@@ -32,9 +32,9 @@
       }
     },
 
-    communityDescription: function (community) {
+    communityDescription: function (community, showAll) {
       if (community.description) {
-        return this.truncate(this.trim(community.description), 300, '...');
+        return this.truncate(this.trim(community.description), showAll ? 300 : 170, '...');
       } else {
         return "";
       }

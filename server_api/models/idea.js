@@ -110,6 +110,43 @@ module.exports = function(sequelize, DataTypes) {
 
     instanceMethods: {
 
+      updateAllAddedCounters: function(req, direction, done) {
+        async.parallel([
+          function(callback) {
+            sequelize.models.Group.find({
+              where: {id: this.group_id}
+            }).then(function (group) {
+              if (group && direction=='up')
+                group.increment('counter_ideas');
+              else if (group && direction=='down')
+                group.decrement('counter_ideas');
+              sequelize.models.Community.find({
+                where: {id: group.community_id}
+              }).then(function (community) {
+                if (community && direction=='up')
+                  community.increment('counter_ideas');
+                else if (community && direction=='down')
+                  community.decrement('counter_ideas');
+                callback();
+              }.bind(this));
+            }.bind(this))
+          },
+          function(callback) {
+            if (req.ypDomain) {
+              if (direction=='up')
+                req.ypDomain.increment('counter_ideas');
+              else if (direction=='down')
+                req.ypDomain.decrement('counter_ideas');
+              callback();
+            } else {
+              callback();
+            }
+          }.bind(this)
+        ], function(err) {
+          done(err);
+        });
+      },
+
       setupHeaderImage: function(body, done) {
         if (body.uploadedHeaderImageId) {
           sequelize.models.Image.find({

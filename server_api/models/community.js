@@ -11,6 +11,7 @@ module.exports = function(sequelize, DataTypes) {
     description: DataTypes.TEXT,
     access: DataTypes.INTEGER,
     website: DataTypes.TEXT,
+    counter_ideas: DataTypes.INTEGER,
     counter_groups: DataTypes.INTEGER,
     counter_users: DataTypes.INTEGER,
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
