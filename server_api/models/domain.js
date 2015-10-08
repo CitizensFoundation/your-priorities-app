@@ -11,7 +11,9 @@ module.exports = function(sequelize, DataTypes) {
     domain_name: DataTypes.STRING,
     description: DataTypes.TEXT,
     counter_communities: { type: DataTypes.INTEGER, defaultValue: 0 },
-    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 }
+    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_ideas: { type: DataTypes.INTEGER, defaultValue: 0 }
   }, {
     underscored: true,
 
@@ -113,7 +115,9 @@ module.exports = function(sequelize, DataTypes) {
         Domain.hasMany(models.Community, { foreignKey: "domain_id" });
         Domain.belongsToMany(models.Image, { as: 'DomainLogoImages', through: 'DomainLogoImage' });
         Domain.belongsToMany(models.Image, { as: 'DomainHeaderImages', through: 'DomainHeaderImage' });
-        Domain.belongsToMany(models.User, { as: 'DomainUsers', through: 'DomainUser' });
+        Domain.belongsToMany(models.User, { through: 'DomainUser' });
+        User.belongsToMany(models.Domain, { as: 'DomainUsers', through: 'DomainUser' });
+
       }
     }
   });

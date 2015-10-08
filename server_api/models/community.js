@@ -11,7 +11,8 @@ module.exports = function(sequelize, DataTypes) {
     description: DataTypes.TEXT,
     access: DataTypes.INTEGER,
     website: DataTypes.TEXT,
-
+    counter_ideas: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
@@ -31,9 +32,9 @@ module.exports = function(sequelize, DataTypes) {
       updateAllExternalCounters: function(req, direction, done) {
         if (req.ypDomain) {
           if (direction=='up')
-            req.ypDomain.increment('counter_communities');
+            req.ypDomain.increment('counter_groups');
           else if (direction=='down')
-            req.ypDomain.decrement('counter_communities');
+            req.ypDomain.decrement('counter_groups');
           done();
         } else {
           done();
