@@ -37,7 +37,7 @@ function decrementOldCountersIfNeeded(oldEndorsementValue, ideaId, endorsement, 
         next();
       })
     } else {
-      console.error("Strange state of endorsements")
+      console.error("Strange state of endorsements");
       next();
     }
   } else {
@@ -132,13 +132,15 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
   idea.save().then(function() {
     idea.setupAfterSave(req, res, function () {
       idea.updateAllExternalCounters(req, 'up', function () {
-        idea.setupImages(req.body, function (err) {
-          if (err) {
-            res.sendStatus(403);
-            console.error(err);
-          } else {
-            res.send(idea);
-          }
+        models.Group.addUserToGroupIfNeeded(idea.group_id, req, function () {
+          idea.setupImages(req.body, function (err) {
+            if (err) {
+              res.sendStatus(403);
+              console.error(err);
+            } else {
+              res.send(idea);
+            }
+          })
         })
       })
     });
@@ -169,7 +171,13 @@ router.put('/:id', isAuthenticated, function(req, res) {
 
 router.post('/:id/endorse', isAuthenticated, function(req, res) {
   models.Endorsement.find({
-    where: { idea_id: req.params.id, user_id: req.user.id}
+    where: {
+      idea_id: req.params.id,
+      user_id: req.user.id
+    },
+    include: [
+        models.Idea
+    ]
   }).then(function(endorsement) {
     var oldEndorsementValue;
     if (endorsement) {
@@ -188,19 +196,21 @@ router.post('/:id/endorse', isAuthenticated, function(req, res) {
       })
     }
     endorsement.save().then(function() {
-      decrementOldCountersIfNeeded(oldEndorsementValue, req.params.id, endorsement, function () {
-        if (endorsement.value>0) {
-          changeIdeaCounter(req.params.id, 'counter_endorsements_up', 1, function () {
-            res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-          })
-        } else if (endorsement.value<0) {
-          changeIdeaCounter(req.params.id, 'counter_endorsements_down', 1, function () {
-            res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-          })
-        } else {
-          console.error("Strange state of endorsements");
-          res.status(500);
-        }
+      models.Group.addUserToGroupIfNeeded(endorsement.Idea.group_id, req, function () {
+        decrementOldCountersIfNeeded(oldEndorsementValue, req.params.id, endorsement, function () {
+          if (endorsement.value>0) {
+            changeIdeaCounter(req.params.id, 'counter_endorsements_up', 1, function () {
+              res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+            })
+          } else if (endorsement.value<0) {
+            changeIdeaCounter(req.params.id, 'counter_endorsements_down', 1, function () {
+              res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+            })
+          } else {
+            console.error("Strange state of endorsements");
+            res.status(500);
+          }
+        });
       })
     });
   });
@@ -212,7 +222,7 @@ router.delete('/:id', isAuthenticated, function(req, res) {
   }).then(function (idea) {
     idea.deleted = true;
     idea.save().then(function () {
-      idea.updateAllExternalCounters(req, 'up', function () {
+      idea.updateAllExternalCounters(req, 'down', function () {
         res.sendStatus(200);
       });
     });

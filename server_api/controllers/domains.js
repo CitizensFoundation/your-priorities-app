@@ -21,6 +21,11 @@ router.get('/:id', function(req, res) {
     where: { id: req.params.id },
     include: [
       {
+        model: models.User, as: 'DomainUsers',
+        attributes: ['id'],
+        required: false
+      },
+      {
         model: models.Image, as: 'DomainLogoImages'
       },
       {

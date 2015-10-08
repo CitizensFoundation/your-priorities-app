@@ -56,13 +56,15 @@ router.post('/', isAuthenticated, function(req, res) {
     website: req.body.website
   });
   community.save().then(function() {
-    community.setupImages(req.body, function(err) {
-      if (err) {
-        res.sendStatus(403);
-        console.error(err);
-      } else {
-        res.send(community);
-      }
+    community.updateAllExternalCounters(req, 'up', function () {
+      community.setupImages(req.body, function(err) {
+        if (err) {
+          res.sendStatus(403);
+          console.error(err);
+        } else {
+          res.send(community);
+        }
+      });
     });
   });
 });
@@ -93,7 +95,9 @@ router.delete('/:id', isAuthenticated, function(req, res) {
   }).then(function (community) {
     community.deleted = true;
     community.save().then(function () {
-      res.sendStatus(200);
+      community.updateAllExternalCounters(req, 'down', function () {
+        res.sendStatus(200);
+      });
     });
   });
 });

@@ -27,6 +27,7 @@ module.exports = function(sequelize, DataTypes) {
         User.hasMany(models.PointQuality);
         User.belongsToMany(models.Group, { through: 'GroupUser' });
         User.belongsToMany(models.Community, { through: 'CommunityUser' });
+        User.belongsToMany(models.Domain, { as: 'DomainUsers', through: 'DomainUser' });
         User.belongsToMany(models.Image, { as: 'UserProfileImages', through: 'UserProfileImage' });
         User.belongsToMany(models.Image, { as: 'UserHeaderImages', through: 'UserHeaderImage' });
       }
@@ -100,7 +101,7 @@ module.exports = function(sequelize, DataTypes) {
             } else {
               done(null, false, { message: 'Incorrect password.' });
             }
-          });
+          }.bind(this));
         }
       }
     }

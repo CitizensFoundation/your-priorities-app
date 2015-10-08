@@ -31,6 +31,35 @@ module.exports = function(sequelize, DataTypes) {
 
     instanceMethods: {
 
+      updateAllExternalCounters: function(req, direction, done) {
+        async.parallel([
+          function(callback) {
+            sequelize.models.Community.find({
+              where: {id: this.community_id}
+            }).then(function (community) {
+              if (direction=='up')
+                community.increment('counter_groups');
+              else if (direction=='down')
+                community.decrement('counter_groups');
+              callback();
+            }.bind(this));
+          }.bind(this),
+          function(callback) {
+            if (req.ypDomain) {
+              if (direction=='up')
+                req.ypDomain.increment('counter_groups');
+              else if (direction=='down')
+                req.ypDomain.decrement('counter_groups');
+              callback();
+            } else {
+              callback();
+            }
+          }.bind(this)
+        ], function(err) {
+          done(err);
+        });
+      },
+
       setupLogoImage: function(body, done) {
         if (body.uploadedLogoImageId) {
           sequelize.models.Image.find({
@@ -76,6 +105,55 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     classMethods: {
+
+      addUserToGroupIfNeeded: function (groupId, req, done) {
+        sequelize.models.Group.find({
+          where: {id: groupId}
+        }).then(function (group) {
+          group.hasUser(req.user).then(function(result) {
+            if (!result) {
+              async.parallel([
+                function(callback) {
+                  group.addUser(req.user).then(function (result) {
+                    callback();
+                  })
+                },
+                function(callback) {
+                  sequelize.models.Community.find({
+                    where: {id: group.community_id}
+                  }).then(function (community) {
+                    community.hasUser(req.user).then(function(result) {
+                      if (result) {
+                        callback();
+                      } else {
+                        community.addUser(req.user).then(function (result) {
+                          callback();
+                        });
+                      }
+                    });
+                  }.bind(this));
+                }.bind(this),
+                function(callback) {
+                  req.ypDomain.hasUser(req.user).then(function(result) {
+                    if (result) {
+                      callback();
+                    } else {
+                      req.ypDomain.addUser(req.user).then(function(result) {
+                        callback();
+                      });
+                    }
+                  });
+                }.bind(this)
+              ], function(err) {
+                done(err);
+              });
+            } else {
+              done();
+            }
+          });
+        })
+      },
+
       associate: function(models) {
         Group.hasMany(models.Idea, {foreignKey: "group_id"});
         Group.hasMany(models.Point, {foreignKey: "group_id"});

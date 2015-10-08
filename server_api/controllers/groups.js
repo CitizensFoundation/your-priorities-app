@@ -31,17 +31,21 @@ router.post('/:communityId', isAuthenticated, function(req, res) {
   });
 
   group.save().then(function() {
-    group.setupImages(req.body, function(err) {
-      if (err) {
-        res.sendStatus(403);
-        console.error(err);
-      } else {
-        res.send(group);
-      }
-    });
+    group.updateAllExternalCounters(req, 'up', function () {
+      models.Group.addUserToGroupIfNeeded(group.id, req, function () {
+        group.setupImages(req.body, function(err) {
+          if (err) {
+            res.sendStatus(403);
+            console.error(err);
+          } else {
+            res.send(group);
+          }
+        });
+      });
+    })
   }).catch(function(error) {
     res.sendStatus(403);
-  });
+  });;
 });
 
 router.put('/:id', isAuthenticated, function(req, res) {
@@ -70,7 +74,9 @@ router.delete('/:id', isAuthenticated, function(req, res) {
   }).then(function (group) {
     group.deleted = true;
     group.save().then(function () {
-      res.sendStatus(200);
+      group.updateAllExternalCounters(req, 'down', function () {
+        res.sendStatus(200);
+      });
     });
   });
 });
