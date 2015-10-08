@@ -116,7 +116,7 @@ module.exports = function(sequelize, DataTypes) {
         Domain.belongsToMany(models.Image, { as: 'DomainLogoImages', through: 'DomainLogoImage' });
         Domain.belongsToMany(models.Image, { as: 'DomainHeaderImages', through: 'DomainHeaderImage' });
         Domain.belongsToMany(models.User, { through: 'DomainUser' });
-        User.belongsToMany(models.Domain, { as: 'DomainUsers', through: 'DomainUser' });
+        Domain.belongsToMany(models.User, { as: 'DomainUsers', through: 'DomainUser' });
 
       }
     }
