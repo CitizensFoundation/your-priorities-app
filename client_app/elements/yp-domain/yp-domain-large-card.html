@@ -117,7 +117,7 @@
             <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
           </div>
         </div>
-        <paper-menu-button class="edit">
+        <paper-menu-button class="edit" hidden$="[[!hasDomainAccess(domain)]]">
           <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
           <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
             <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>

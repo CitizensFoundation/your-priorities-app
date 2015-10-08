@@ -237,6 +237,22 @@
 
     headerImageEnabled: function () {
       return false;
+    },
+
+    hasAccess: function(object) {
+      if (window.appUser && window.appUser.user) {
+        return object.user_id === window.appUser.user.id;
+      } else {
+        return false;
+      }
+    },
+
+    hasDomainAccess: function(domain) {
+      if (window.appUser && window.appUser.user) {
+        return window.appUser.user.email==="robert@citizens.is" || window.appUser.user.email==="gunnar@citizens.is";
+      } else {
+        return false;
+      }
     }
   };
 </script>

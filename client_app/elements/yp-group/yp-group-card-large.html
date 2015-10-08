@@ -100,7 +100,7 @@
         </div>
         <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-        <paper-menu-button class="edit">
+        <paper-menu-button class="edit" hidden$="[[!hasAccess(group)]]">
           <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
           <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
             <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
