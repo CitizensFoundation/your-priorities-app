@@ -149,7 +149,7 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
 
 router.put('/:id', isAuthenticated, function(req, res) {
   models.Idea.find({
-    where: {id: req.params.id}
+    where: {id: req.params.id, user_id: req.user.id }
   }).then(function (idea) {
     idea.name = req.body.name;
     idea.description = req.body.description;
@@ -218,7 +218,7 @@ router.post('/:id/endorse', isAuthenticated, function(req, res) {
 
 router.delete('/:id', isAuthenticated, function(req, res) {
   models.Idea.find({
-    where: {id: req.params.id}
+    where: {id: req.params.id, user_id: req.user.id }
   }).then(function (idea) {
     idea.deleted = true;
     idea.save().then(function () {

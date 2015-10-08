@@ -81,7 +81,7 @@ router.post('/', isAuthenticated, function(req, res) {
 
 router.put('/:id', isAuthenticated, function(req, res) {
   models.Community.find({
-    where: { id: req.params.id }
+    where: { id: req.params.id, user_id: req.user.id }
   }).then(function(community) {
     community.name = req.body.name;
     community.description = req.body.description;
@@ -101,7 +101,7 @@ router.put('/:id', isAuthenticated, function(req, res) {
 
 router.delete('/:id', isAuthenticated, function(req, res) {
   models.Community.find({
-    where: {id: req.params.id}
+    where: {id: req.params.id, user_id: req.user.id }
   }).then(function (community) {
     community.deleted = true;
     community.save().then(function () {

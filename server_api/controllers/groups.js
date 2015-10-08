@@ -50,7 +50,7 @@ router.post('/:communityId', isAuthenticated, function(req, res) {
 
 router.put('/:id', isAuthenticated, function(req, res) {
   models.Group.find({
-    where: {id: req.params.id}
+    where: {id: req.params.id, user_id: req.user.id }
   }).then(function (group) {
     group.name =req.body.name;
     group.objectives = req.body.objectives;
@@ -70,7 +70,7 @@ router.put('/:id', isAuthenticated, function(req, res) {
 
 router.delete('/:id', isAuthenticated, function(req, res) {
   models.Group.find({
-    where: {id: req.params.id}
+    where: {id: req.params.id, user_id: req.user.id }
   }).then(function (group) {
     group.deleted = true;
     group.save().then(function () {
