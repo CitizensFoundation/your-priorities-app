@@ -11,9 +11,9 @@ module.exports = function(sequelize, DataTypes) {
     description: DataTypes.TEXT,
     access: DataTypes.INTEGER,
     website: DataTypes.TEXT,
-    counter_ideas: DataTypes.INTEGER,
-    counter_groups: DataTypes.INTEGER,
-    counter_users: DataTypes.INTEGER,
+    counter_ideas: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
 
@@ -24,6 +24,7 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     underscored: true,
+
     tableName: 'communities',
 
     instanceMethods: {

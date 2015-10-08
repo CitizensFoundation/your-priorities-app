@@ -11,10 +11,10 @@ module.exports = function(sequelize, DataTypes) {
     top_banner_file_name: DataTypes.STRING,
     logo_file_name: DataTypes.STRING,
     objectives: DataTypes.TEXT,
-    counter_ideas: DataTypes.INTEGER,
-    counter_points: DataTypes.INTEGER,
-    counter_comments: DataTypes.INTEGER,
-    counter_users: DataTypes.INTEGER,
+    counter_ideas: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_comments: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
     public: DataTypes.BOOLEAN,
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {

@@ -131,13 +131,15 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
   });
   idea.save().then(function() {
     idea.setupAfterSave(req, res, function () {
-      idea.setupImages(req.body, function (err) {
-        if (err) {
-          res.sendStatus(403);
-          console.error(err);
-        } else {
-          res.send(idea);
-        }
+      idea.updateAllExternalCounters(req, 'up', function () {
+        idea.setupImages(req.body, function (err) {
+          if (err) {
+            res.sendStatus(403);
+            console.error(err);
+          } else {
+            res.send(idea);
+          }
+        })
       })
     });
   });
@@ -196,7 +198,7 @@ router.post('/:id/endorse', isAuthenticated, function(req, res) {
             res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
           })
         } else {
-          console.error("Strange state of endorsements")
+          console.error("Strange state of endorsements");
           res.status(500);
         }
       })
@@ -210,7 +212,9 @@ router.delete('/:id', isAuthenticated, function(req, res) {
   }).then(function (idea) {
     idea.deleted = true;
     idea.save().then(function () {
-      res.sendStatus(200);
+      idea.updateAllExternalCounters(req, 'up', function () {
+        res.sendStatus(200);
+      });
     });
   });
 });

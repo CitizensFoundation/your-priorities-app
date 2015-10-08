@@ -10,10 +10,10 @@ module.exports = function(sequelize, DataTypes) {
     name: DataTypes.STRING,
     domain_name: DataTypes.STRING,
     description: DataTypes.TEXT,
-    counter_communities: DataTypes.INTEGER,
-    counter_users: DataTypes.INTEGER,
-    counter_groups: DataTypes.INTEGER,
-    counter_ideas: DataTypes.INTEGER
+    counter_communities: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_ideas: { type: DataTypes.INTEGER, defaultValue: 0 }
   }, {
     underscored: true,
 

@@ -110,27 +110,27 @@ module.exports = function(sequelize, DataTypes) {
 
     instanceMethods: {
 
-      updateAllAddedCounters: function(req, direction, done) {
+      updateAllExternalCounters: function(req, direction, done) {
         async.parallel([
           function(callback) {
             sequelize.models.Group.find({
               where: {id: this.group_id}
             }).then(function (group) {
-              if (group && direction=='up')
+              if (direction=='up')
                 group.increment('counter_ideas');
-              else if (group && direction=='down')
+              else if (direction=='down')
                 group.decrement('counter_ideas');
               sequelize.models.Community.find({
                 where: {id: group.community_id}
               }).then(function (community) {
-                if (community && direction=='up')
+                if (direction=='up')
                   community.increment('counter_ideas');
-                else if (community && direction=='down')
+                else if (direction=='down')
                   community.decrement('counter_ideas');
                 callback();
               }.bind(this));
             }.bind(this))
-          },
+          }.bind(this),
           function(callback) {
             if (req.ypDomain) {
               if (direction=='up')
