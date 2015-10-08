@@ -124,7 +124,6 @@
 
       _ideasResponse: function (event, detail, sender) {
         var group = detail.response.group;
-        debugger;
         this.set("ideas", detail.response.Ideas);
         this.set("group", group);
         this._processCategories();

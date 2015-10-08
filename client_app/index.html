@@ -100,6 +100,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <!-- Toolbar icons -->
           <paper-icon-button icon="search"></paper-icon-button>
+          <template is="dom-if" if="[[user]]">
+            <paper-icon-button on-tap="openEdit" icon="face"></paper-icon-button>
+            <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
+          </template>
 
           <!-- Application name -->
           <div class="middle middle-container center horizontal layout">

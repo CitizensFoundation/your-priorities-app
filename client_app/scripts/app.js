@@ -19,14 +19,14 @@ function onSplashClick() {
 
   window.appStartTime = new Date();
 
-  i18n.init({ lng: "is" });
+  i18n.init({ lng: "en" });
   window.i18n = i18n;
 
   // Grab a reference to our auto-binding template
   // and give it some initial binding values
   // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
   var app = document.querySelector('#app');
-  app.appTitle = "Betri Reykjavík";
+  app.appTitle = "Your Priorities";
   app.user = null;
 
   app.displayInstalledToast = function() {
@@ -78,6 +78,11 @@ function onSplashClick() {
     if (drawerPanel.narrow) {
       drawerPanel.closeDrawer();
     }
+  };
+
+  app.openEdit = function () {
+    var userEdit = document.querySelector('#userEdit');
+    userEdit.open('edit', { userId: app.user.id });
   };
 
   app.onChangeHeader = function(event, header) {

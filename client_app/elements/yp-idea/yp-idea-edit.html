@@ -105,9 +105,7 @@
                           max-rows="5"
                           maxlength="500">
           </paper-textarea>
-        </div>
 
-        <div class="layout self-start subContainer rightContainer">
           <template is="dom-if" restamp if="[[new]]">
             <paper-textarea id="pointFor"
                             name="pointFor"
@@ -120,6 +118,9 @@
             </paper-textarea>
           </template>
 
+        </div>
+
+        <div class="layout self-start subContainer rightContainer">
           <template is="dom-if" if="[[_showCategories(group)]]">
             <paper-dropdown-menu label="[[t('category.select')]]">
               <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
