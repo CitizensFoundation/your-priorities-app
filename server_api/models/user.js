@@ -25,8 +25,8 @@ module.exports = function(sequelize, DataTypes) {
         User.hasMany(models.Point);
         User.hasMany(models.Endorsement);
         User.hasMany(models.PointQuality);
-        User.belongsToMany(models.Group, { through: 'GroupUser' });
-        User.belongsToMany(models.Community, { through: 'CommunityUser' });
+        User.belongsToMany(models.Group, { as: 'GroupUsers', through: 'GroupUser' });
+        User.belongsToMany(models.Community, { as: 'CommunityUsers', through: 'CommunityUser' });
         User.belongsToMany(models.Domain, { as: 'DomainUsers', through: 'DomainUser' });
         User.belongsToMany(models.Image, { as: 'UserProfileImages', through: 'UserProfileImage' });
         User.belongsToMany(models.Image, { as: 'UserHeaderImages', through: 'UserHeaderImage' });

@@ -22,6 +22,11 @@ router.get('/:id', function(req, res) {
     where: { id: req.params.id },
     include: [
       {
+        model: models.User, as: 'CommunityUsers',
+        attributes: ['id'],
+        required: false
+      },
+      {
         model: models.Group,
         order: 'Group.created_at DESC',
         where: {
@@ -31,6 +36,11 @@ router.get('/:id', function(req, res) {
         include: [
           {
             model: models.Image, as: 'GroupLogoImages'
+          },
+          {
+            model: models.User, as: 'GroupUsers',
+            attributes: ['id'],
+            required: false
           }
         ]
       },

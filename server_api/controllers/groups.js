@@ -30,7 +30,7 @@ router.post('/:communityId', isAuthenticated, function(req, res) {
     community_id: req.params.communityId
   });
 
-  group.save().then(function() {
+  group.save().then(function(group) {
     group.updateAllExternalCounters(req, 'up', function () {
       models.Group.addUserToGroupIfNeeded(group.id, req, function () {
         group.setupImages(req.body, function(err) {
@@ -120,6 +120,11 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
       models.Category,
       {
         model: models.Image, as: 'GroupLogoImages'
+      },
+      {
+        model: models.User, as: 'GroupUsers',
+        attributes: ['id'],
+        required: false
       }
     ]
   }).then(function(group) {

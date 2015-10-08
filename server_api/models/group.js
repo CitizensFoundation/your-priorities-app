@@ -110,11 +110,13 @@ module.exports = function(sequelize, DataTypes) {
         sequelize.models.Group.find({
           where: {id: groupId}
         }).then(function (group) {
-          group.hasUser(req.user).then(function(result) {
+          var a=group;
+          var b=req.user;
+          group.hasGroupUser(req.user).then(function(result) {
             if (!result) {
               async.parallel([
                 function(callback) {
-                  group.addUser(req.user).then(function (result) {
+                  group.addGroupUser(req.user).then(function (result) {
                     callback();
                   })
                 },
@@ -122,11 +124,11 @@ module.exports = function(sequelize, DataTypes) {
                   sequelize.models.Community.find({
                     where: {id: group.community_id}
                   }).then(function (community) {
-                    community.hasUser(req.user).then(function(result) {
+                    community.hasCommunityUser(req.user).then(function(result) {
                       if (result) {
                         callback();
                       } else {
-                        community.addUser(req.user).then(function (result) {
+                        community.addCommunityUser(req.user).then(function (result) {
                           callback();
                         });
                       }
@@ -134,11 +136,11 @@ module.exports = function(sequelize, DataTypes) {
                   }.bind(this));
                 }.bind(this),
                 function(callback) {
-                  req.ypDomain.hasUser(req.user).then(function(result) {
+                  req.ypDomain.hasDomainUser(req.user).then(function(result) {
                     if (result) {
                       callback();
                     } else {
-                      req.ypDomain.addUser(req.user).then(function(result) {
+                      req.ypDomain.addDomainUser(req.user).then(function(result) {
                         callback();
                       });
                     }
@@ -159,7 +161,7 @@ module.exports = function(sequelize, DataTypes) {
         Group.hasMany(models.Point, {foreignKey: "group_id"});
         Group.hasMany(models.Endorsement, {foreignKey: "group_id"});
         Group.hasMany(models.Category, {foreignKey: "group_id"});
-        Group.belongsToMany(models.User, { through: 'GroupUser' });
+        Group.belongsToMany(models.User, { as: 'GroupUsers', through: 'GroupUser' });
         Group.belongsTo(models.IsoCountry, {foreignKey: "iso_country_id"});
         Group.belongsTo(models.User);
         Group.belongsToMany(models.Image, { through: 'GroupImage' });

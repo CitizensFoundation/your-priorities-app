@@ -38,6 +38,11 @@ router.get('/:id', function(req, res) {
           },
           {
             model: models.Image, as: 'CommunityHeaderImages', order: 'updatedAt DESC'
+          },
+          {
+            model: models.User, as: 'CommunityUsers',
+            attributes: ['id'],
+            required: false
           }
         ],
         order: 'Community.updated_at DESC',
