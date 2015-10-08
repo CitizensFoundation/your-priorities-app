@@ -30,15 +30,11 @@ module.exports = function(sequelize, DataTypes) {
     instanceMethods: {
 
       updateAllExternalCounters: function(req, direction, done) {
-        if (req.ypDomain) {
-          if (direction=='up')
-            req.ypDomain.increment('counter_groups');
-          else if (direction=='down')
-            req.ypDomain.decrement('counter_groups');
-          done();
-        } else {
-          done();
-        }
+        if (direction=='up')
+          req.ypDomain.increment('counter_communities');
+        else if (direction=='down')
+          req.ypDomain.decrement('counter_communities');
+        done();
       },
 
       setupLogoImage: function(body, done) {
