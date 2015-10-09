@@ -17,8 +17,8 @@
 
     <template restamp is="dom-if" if="[[user]]">
       <yp-user-image user="[[user]]"></yp-user-image>
-      <b>[[user.email]]</b><br>
-      <paper-button on-tap="onLogout">Útskrá</paper-button>
+      <b>[[user.email]]</b><br><br>
+      <paper-button on-tap="onLogout">[[t('user.logout')]]</paper-button>
     </template>
 
     </template>
@@ -28,6 +28,10 @@
     Polymer({
 
       is: 'yp-user-info',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
 
       properties: {
         user: {
