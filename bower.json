@@ -1,8 +1,8 @@
 {
   "name": "your-priorities-app",
-  "version": "0.6.0",
+  "version": "0.7.2",
   "dependencies": {
-    "file-upload": "~1.5.3",
+    "file-upload": "rbjarnason/file-upload",
     "google-map": "GoogleWebComponents/google-map",
     "google-streetview-pano": "rbjarnason/google-streetview-pano#timings-fix-maps-api-callback",
     "iron-elements": "PolymerElements/iron-elements#master",

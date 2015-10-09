@@ -99,6 +99,7 @@
 
       _response: function (event) {
         this.$.spinner.active = false;
+        this.fire('response', event.detail);
       },
 
       domReady: function() {

@@ -34,16 +34,56 @@ module.exports = function(sequelize, DataTypes) {
             {
               maxHeight: 200,
               maxWidth: 200,
-              format: 'jpg',
+              format: 'png',
               suffix: '-large',
               quality: 80
             },
             {
               maxHeight: 50,
               maxWidth: 50,
-              format: 'jpg',
+              format: 'png',
               suffix: '-small',
               quality: 80
+            }
+          ]
+        } else if (itemType && itemType === 'domain-logo') {
+            versions = [
+              {
+                maxHeight: 233,
+                maxWidth: 665,
+                format: 'png',
+                suffix: '-large',
+                quality: 99
+              }
+            ]
+        } else if (itemType && itemType === 'community-logo') {
+          versions = [
+            {
+              maxHeight: 335,
+              maxWidth: 432,
+              format: 'png',
+              suffix: '-large',
+              quality: 99
+            }
+          ]
+        } else if (itemType && itemType === 'group-logo') {
+          versions = [
+            {
+              maxHeight: 100,
+              maxWidth: 420,
+              format: 'png',
+              suffix: '-large',
+              quality: 99
+            }
+          ]
+        } else if (itemType && itemType === 'idea-header') {
+          versions = [
+            {
+              maxHeight: 232,
+              maxWidth: 420,
+              format: 'png',
+              suffix: '-large',
+              quality: 99
             }
           ]
         } else {

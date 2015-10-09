@@ -8,32 +8,29 @@ function isAuthenticated(req, res, next) {
   res.send(401, 'Unauthorized');
 }
 
-function changeIdeaCounter(ideaId, column, upDown, next) {
+function changeIdeaCounter(req, ideaId, column, upDown, next) {
   models.Idea.find({
     where: { id: ideaId }
   }).then(function(idea) {
-    if (idea && upDown===1) {
-      idea.increment(column).then(function(){
-        next();
-      });
-    } else if (idea && upDown===-1) {
-      idea.decrement(column).then(function(){
-        next();
-      });
-    } else {
-      next();
+    if (idea && upDown === 1) {
+      idea.increment(column);
+    } else if (idea && upDown === -1) {
+      idea.decrement(column);
     }
+    models.Group.addUserToGroupIfNeeded(idea.group_id, req, function () {
+      next();
+    });
   });
 }
 
-function decrementOldCountersIfNeeded(oldEndorsementValue, ideaId, endorsement, next) {
+function decrementOldCountersIfNeeded(req, oldEndorsementValue, ideaId, endorsement, next) {
   if (oldEndorsementValue) {
     if (oldEndorsementValue>0) {
-      changeIdeaCounter(ideaId, 'counter_endorsements_up', -1, function () {
+      changeIdeaCounter(req, ideaId, 'counter_endorsements_up', -1, function () {
         next();
       })
     } else if (oldEndorsementValue<0) {
-      changeIdeaCounter(ideaId, 'counter_endorsements_down', -1, function () {
+      changeIdeaCounter(req, ideaId, 'counter_endorsements_down', -1, function () {
         next();
       })
     } else {
@@ -196,22 +193,20 @@ router.post('/:id/endorse', isAuthenticated, function(req, res) {
       })
     }
     endorsement.save().then(function() {
-      models.Group.addUserToGroupIfNeeded(endorsement.Idea.group_id, req, function () {
-        decrementOldCountersIfNeeded(oldEndorsementValue, req.params.id, endorsement, function () {
-          if (endorsement.value>0) {
-            changeIdeaCounter(req.params.id, 'counter_endorsements_up', 1, function () {
-              res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-            })
-          } else if (endorsement.value<0) {
-            changeIdeaCounter(req.params.id, 'counter_endorsements_down', 1, function () {
-              res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-            })
-          } else {
-            console.error("Strange state of endorsements");
-            res.status(500);
-          }
-        });
-      })
+      decrementOldCountersIfNeeded(req, oldEndorsementValue, req.params.id, endorsement, function () {
+        if (endorsement.value>0) {
+          changeIdeaCounter(req, req.params.id, 'counter_endorsements_up', 1, function () {
+            res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+          })
+        } else if (endorsement.value<0) {
+          changeIdeaCounter(req, req.params.id, 'counter_endorsements_down', 1, function () {
+            res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+          })
+        } else {
+          console.error("Strange state of endorsements");
+          res.status(500);
+        }
+      });
     });
   });
 });
@@ -243,11 +238,11 @@ router.delete('/:id/endorse', isAuthenticated, function(req, res) {
       endorsement.value = 0;
       endorsement.save().then(function() {
         if (oldEndorsementValue>0) {
-          changeIdeaCounter(req.params.id, 'counter_endorsements_up', -1, function () {
+          changeIdeaCounter(req, req.params.id, 'counter_endorsements_up', -1, function () {
             res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
           })
         } else if (oldEndorsementValue<0) {
-          changeIdeaCounter(req.params.id, 'counter_endorsements_down', -1, function () {
+          changeIdeaCounter(req, req.params.id, 'counter_endorsements_down', -1, function () {
             res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
           })
         } else {
