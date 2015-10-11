@@ -83,6 +83,10 @@
         margin-top: 0px;
         padding-top: 0px;
       }
+
+      .popUpDialog {
+        max-height: 100% !important;
+      }
     </style>
 
     <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop>
@@ -202,6 +206,7 @@
       },
 
       _computeClass: function (narrow) {
+        debugger;
         if (narrow)
           return "fullScreenDialog";
         else
