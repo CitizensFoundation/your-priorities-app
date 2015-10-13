@@ -15,6 +15,8 @@
 <link rel="import" href="../yp-idea/yp-idea-edit.html">
 <link rel="import" href="../yp-idea/yp-idea-card-add.html">
 
+<link rel="import" href="../yp-ideas-filter/yp-ideas-filter.html">
+
 <link rel="import" href="yp-group-card-large.html">
 
 <dom-module id="yp-group">
@@ -41,21 +43,27 @@
         padding: 16px;
       }
 
+      .ideasFilter {
+        padding-left: 32px;
+      }
     </style>
 
     <yp-ajax auto="false" id="ajax" url="" on-response="_ideasResponse"></yp-ajax>
 
     <yp-idea-edit id="ideaEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-idea-edit>
 
-    <div class="card-container">
-      <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
-      <template is="dom-if" if="[[ideas]]">
-        <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
-          <yp-idea-card class="card" idea="[[idea]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card>
+    <div class="layout vertical">
+      <yp-ideas-filter class="ideasFilter" group="[[group]]"></yp-ideas-filter>
+      <div class="card-container">
+        <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
+        <template is="dom-if" if="[[ideas]]">
+          <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
+            <yp-idea-card class="card" idea="[[idea]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card>
+          </template>
         </template>
-      </template>
-      <yp-idea-card-add class="card" on-tap="newIdea" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card-add>
-      <paper-fab icon="add" elevation="1" class="createIdea" title="[[t('idea.add_new')]]" on-tap="newIdea"></paper-fab>
+        <yp-idea-card-add class="card" on-tap="newIdea" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card-add>
+        <paper-fab icon="add" elevation="1" class="createIdea" title="[[t('idea.add_new')]]" on-tap="newIdea"></paper-fab>
+      </div>
     </div>
   </template>
 
@@ -90,6 +98,10 @@
 
         group: {
           type: Object
+        },
+
+        filter: {
+          type: String
         }
       },
 

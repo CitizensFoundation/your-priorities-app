@@ -12,6 +12,7 @@
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
@@ -37,20 +38,17 @@
         -ms-filter: "FlipV";
       }
     </style>
-
-    <div layout="" horizontal="">
-      <div>
-        <span>[[subTitle]]</span>
-      </div>
-      <div>
-        <paper-menu-button class="selected-items" layout="" horizontal="" style="padding-left:0px;padding-top: 0px;margin-top: -8px;">
-
-          <paper-fab class="filterIcon filterIconTransform" icon="editor:merge-type" on-tap="openFilter" mini="" z="3"></paper-fab>
-
-          <iron-dropdown id="filterDropdown" class="dropdown" horizontal-align="left">
-            <div layout="" horizontal="">
+    <template is="dom-if" if="[[group]]">
+      <div class="layout horizontal">
+        <div>
+          <h2>[[subTitle]]</h2>
+        </div>
+        <div>
+          <paper-menu-button id="filterDropdown" class="selected-items" icon="editor:merge-type">
+            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+            <div class="layout horizontal dropdown-content">
               <div>
-                <iron-selector on-core-select=" changeFilter ">
+                <paper-menu on-iron-select="_changeFilter">
                   <paper-item data-filter="top">
                     <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
                     <span>[[t('idea.top')]]</span>
@@ -67,53 +65,56 @@
                     <iron-icon icon="av:hearing" class="filterIcon"></iron-icon>
                     <span>[[t('idea.inProgress')]]</span>
                   </paper-item>
-                </iron-selector>
+                </paper-menu>
               </div>
-              <template is="dom-if" if="[[computeIf(categories)]]">
+
+              <template is="dom-if" if="[[_ifCategories()]]">
                 <div>
-                  <iron-selector on-core-select="_changeCategory">
-                    <paper-item data-category-id$="[[computeData-category-id()]]">
+                  <paper-menu class="dropdown-content" on-iron-select="_changeCategory">
+                    <paper-item data-category-id$="[[-1]]">
                       <iron-icon icon="select-all" class="filterIcon"></iron-icon>
-                      <span>[[t('categories.the_all')]]</span>
+                      <span>[[t('t.categories.all')]]</span>
                     </paper-item>
-                  </iron-selector>
-                    <div layout="" horizontal="">
-                      <template is="dom-repeat" items="[[computeItems(categories)]]" as="categoriesGroups">
-                        <div layout="" vertical="">
-                          <iron-selector on-core-select=" changeCategory ">
-                            <template is="dom-repeat" items="[[categoriesGroups]]" as="category">
-                              <paper-item data-category-id$="[[category.id]]" data-category-name$="[[category.name]]">
-                                <iron-image sizing="contain" preload="" height="24" width="24" class="filterIcon" src="[[computeSrc(category)]]">
-                                </iron-image>
-                                <span>[[category.name]]</span>
-                              </paper-item>
-                            </template>
-                          </iron-selector>
+                    <div class="layout= horizontal">
+                      <template is="dom-repeat" items="[[_computeCategoryItems(categories)]]" as="categoriesGroups">
+                        <div class="layout vertical">
+                          <template is="dom-repeat" items="[[categoriesGroups]]" as="category">
+                            <paper-item data-category-id$="[[category.id]]" data-category-name$="[[category.name]]">
+                              <iron-image sizing="contain" preload="" height="24" width="24" class="filterIcon" src="[[computeSrc(category)]]">
+                              </iron-image>
+                              <span>[[category.name]]</span>
+                            </paper-item>
+                          </template>
                         </div>
                       </template>
                     </div>
+                  </paper-menu>
                 </div>
               </template>
             </div>
-          </iron-dropdown>
-        </paper-menu-button>
+          </paper-menu-button>
+        </div>
       </div>
-    </div>
+    </template>
   </template>
   <script>
     Polymer({
 
       is: 'yp-ideas-filter',
 
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
       properties: {
 
-        categories: { notify: true },
+        filter: {
+          type: String
+        },
 
-        filter: { notify: true },
-
-        groupId: { notify: true },
-
-        groupName: { notify: true },
+        group: {
+          type: Object
+        },
 
         subTitle: {
           type: String,
@@ -126,14 +127,15 @@
       },
 
       updateFilter: function () {
-        window.selectedFilterName = 'ideas.' + this.filter;
-        var filterName = PolymerExpressions.prototype.t(window.selectedFilterName);
-        var categoryName = PolymerExpressions.prototype.t(window.selectedCategoryName);
-        var inWord = PolymerExpressions.prototype.t('short_word.in');
+        if (this.filter)
+          window.selectedFilterName = 'ideas.' + this.filter;
+        var filterName = this.t(window.selectedFilterName);
+        var categoryName = this.t(window.selectedCategoryName);
+        var inWord = this.t('short_word.in');
         this.subTitle = filterName + ' ' + inWord + ' ' + categoryName;
       },
 
-      changeFilter: function (e, detail) {
+      _changeFilter: function (e, detail) {
         window.selectedFilter = detail.item.dataset.filter;
         window.selectedFilterName = 'ideas.' + window.selectedFilter;
         this.updateAfterFiltering();
@@ -151,28 +153,31 @@
       },
 
       updateAfterFiltering: function () {
-        var newLocation = '/#/groups/' + this.groupId + '/ideas/' + window.selectedFilter + '/' + this.groupName;
+        var newLocation = '#!/group/' + this.group.id + '/ideas/' + window.selectedFilter + '/' + this.group.name;
         if (window.categoryId) {
           newLocation += '/' + window.categoryId;
         }
         window.appGlobals.activity('change', 'filter', newLocation);
-        window.location = newLocation;
+        page(newLocation);
       },
 
       ready: function () {
         this.updateFilter();
       },
 
-      computeIf: function (categories) {
-        return categories && categories.length > 0;
+      _ifCategories: function () {
+        return this.group.Categories && this.group.Categories.length > 0;
       },
 
-      computeData-category-id: function () {
+      computeDataCategoryId: function () {
         return -1;
       },
 
-      computeItems: function (categories) {
-        return this.splitArray(categories, 7);
+      _computeCategoryItems: function () {
+        if (this.group.Categories)
+          return this.splitArray(this.group.Categories, 7);
+        else
+          return [];
       },
 
       computeSrc: function (category) {
