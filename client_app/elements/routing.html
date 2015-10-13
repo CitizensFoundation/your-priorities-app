@@ -41,8 +41,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.params = data.params;
     });
 
-    page('/group/:groupId/ideas/:filterValue/:groupName', scrollToTop, function (data) {
-      debugger;
+    page('/group/:groupId/:groupName/ideas/:filterValue', scrollToTop, function (data) {
+      app.route = 'group';
+      app.params = data.params;
+    });
+
+    page('/group/:groupId/:groupName/categoryIdeas/:categoryId', scrollToTop, function (data) {
       app.route = 'group';
       app.params = data.params;
     });

@@ -15,18 +15,21 @@
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 
+
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-ideas-filter">
   <template>
     <style>
+      :host {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+      }
+
       .filterIcon {
-        padding-right: 32px;
-        margin-left: 12px;
+        padding-right: 24px;
+        margin-left: 8px;
         margin-bottom: 4px;
-        margin-top: 8px;
-        background-color: #f7f7f7;
-        color: #444;
       }
 
       .filterIconTransform {
@@ -37,6 +40,11 @@
         filter: FlipV;
         -ms-filter: "FlipV";
       }
+
+      .dropdown-trigger {
+        width: 32px;
+        height: 32px;
+      }
     </style>
     <template is="dom-if" if="[[group]]">
       <div class="layout horizontal">
@@ -45,10 +53,10 @@
         </div>
         <div>
           <paper-menu-button id="filterDropdown" class="selected-items" icon="editor:merge-type">
-            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+            <paper-icon-button icon="filter-list" class="dropdown-trigger"></paper-icon-button>
             <div class="layout horizontal dropdown-content">
               <div>
-                <paper-menu on-iron-select="_changeFilter">
+                <paper-menu class="dropdown-content" on-iron-select="_changeFilter">
                   <paper-item data-filter="top">
                     <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
                     <span>[[t('idea.top')]]</span>
@@ -71,17 +79,16 @@
               <template is="dom-if" if="[[_ifCategories()]]">
                 <div>
                   <paper-menu class="dropdown-content" on-iron-select="_changeCategory">
-                    <paper-item data-category-id$="[[-1]]">
+                    <paper-item data-categoryId="-1">
                       <iron-icon icon="select-all" class="filterIcon"></iron-icon>
-                      <span>[[t('t.categories.all')]]</span>
+                      <span>[[t('categories.all')]]</span>
                     </paper-item>
                     <div class="layout= horizontal">
-                      <template is="dom-repeat" items="[[_computeCategoryItems(categories)]]" as="categoriesGroups">
+                      <template is="dom-repeat" items="[[_categoryItems()]]" as="categoriesGroups">
                         <div class="layout vertical">
                           <template is="dom-repeat" items="[[categoriesGroups]]" as="category">
-                            <paper-item data-category-id$="[[category.id]]" data-category-name$="[[category.name]]">
-                              <iron-image sizing="contain" preload="" height="24" width="24" class="filterIcon" src="[[computeSrc(category)]]">
-                              </iron-image>
+                            <paper-item data-categoryId="-3443">
+                              <img sizing="cover" height="48" width="48" class="filterIcon" src="[[_categoryImageSrc(category)]]">
                               <span>[[category.name]]</span>
                             </paper-item>
                           </template>
@@ -142,6 +149,7 @@
       },
 
       _changeCategory: function (e, detail) {
+        debugger;
         var categoryId = detail.item.dataset.categoryId;
         window.selectedCategoryName = detail.item.dataset.categoryName;
         if (categoryId != '-1') {
@@ -153,11 +161,12 @@
       },
 
       updateAfterFiltering: function () {
-        var newLocation = '#!/group/' + this.group.id + '/ideas/' + window.selectedFilter + '/' + this.group.name;
+        var newLocation = '#!/group/' + this.group.id + '/' + this.group.name + '/ideas/' + window.selectedFilter;
         if (window.categoryId) {
           newLocation += '/' + window.categoryId;
         }
         window.appGlobals.activity('change', 'filter', newLocation);
+        this.fire("refresh-group");
         page(newLocation);
       },
 
@@ -173,17 +182,16 @@
         return -1;
       },
 
-      _computeCategoryItems: function () {
+      _categoryItems: function () {
         if (this.group.Categories)
           return this.splitArray(this.group.Categories, 7);
         else
           return [];
       },
 
-      computeSrc: function (category) {
-        return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(category.id) + '/icon_100/' + category.icon_file_name;
+      _categoryImageSrc: function (category) {
+        return this.getImageFormatUrl(category.CategoryIconImages, 0);
       }
-
     });
   </script>
 </dom-module>

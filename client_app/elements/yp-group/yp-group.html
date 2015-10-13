@@ -44,7 +44,10 @@
       }
 
       .ideasFilter {
-        padding-left: 32px;
+        padding-left: 16px;
+        margin-bottom: 0;
+        padding-bottom: 0;
+        height: 50px;
       }
     </style>
 
@@ -53,7 +56,7 @@
     <yp-idea-edit id="ideaEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-idea-edit>
 
     <div class="layout vertical">
-      <yp-ideas-filter class="ideasFilter" group="[[group]]"></yp-ideas-filter>
+      <yp-ideas-filter class="ideasFilter" on-refresh-group="_refreshGroup" group="[[group]]"></yp-ideas-filter>
       <div class="card-container">
         <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
         <template is="dom-if" if="[[ideas]]">
@@ -115,18 +118,22 @@
 
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue) {
-          this.set("ideas",null);
-          if (this.filter) {
-            window.selectedFilter = this.filter;
-          }
-          this.$.ajax.url = '/api/groups/' + this.groupId + '/ideas/' + window.selectedFilter;
-          if (this.categoryId) {
-            this.$.ajax.url += '/' + this.categoryId;
-          }
-          this.$.ajax.generateRequest();
+          this._refreshGroup();
         } else {
           this.set("ideas",null);
         }
+      },
+
+      _refreshGroup: function () {
+        this.set("ideas",null);
+        if (this.filter) {
+          window.selectedFilter = this.filter;
+        }
+        this.$.ajax.url = '/api/groups/' + this.groupId + '/ideas/' + window.selectedFilter;
+        if (this.categoryId) {
+          this.$.ajax.url += '/' + this.categoryId;
+        }
+        this.$.ajax.generateRequest();
       },
 
       newIdea: function () {

@@ -98,7 +98,7 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
   if (req.params.filter!="inProgress") {
     //where+=' AND "Idea"."status" = "published"';
   } else {
-    where+=' AND "Idea"."status" != "published" AND "Idea"."status" != "deleted"';
+    //where+=' AND "Idea"."status" != "published" AND "Idea"."status" != "deleted"';
   }
 
   if (req.params.filter=="newest") {
@@ -117,7 +117,18 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
   models.Group.find({
     where: { id: req.params.id },
     include: [
-      models.Category,
+      {
+        model: models.Category,
+        include: [
+          {
+            model: models.Image,
+            as: 'CategoryIconImages',
+            order: [
+              [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
+            ]
+          }
+        ]
+      },
       {
         model: models.Image, as: 'GroupLogoImages'
       },

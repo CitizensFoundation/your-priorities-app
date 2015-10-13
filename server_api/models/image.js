@@ -86,6 +86,16 @@ module.exports = function(sequelize, DataTypes) {
               quality: 99
             }
           ]
+        } else if (itemType && itemType === 'category-icon') {
+          versions = [
+            {
+              maxHeight: 200,
+              maxWidth: 200,
+              format: 'png',
+              suffix: '-large',
+              quality: 99
+            }
+          ]
         } else {
           versions = [
             {
