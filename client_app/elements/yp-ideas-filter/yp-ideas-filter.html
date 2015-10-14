@@ -147,7 +147,6 @@
       },
 
       _filterChanged: function (newValue, oldValue) {
-        debugger;
         if (newValue) {
           this.filterName = 'ideas.' + this.filter;
           this._updateTitle();
@@ -156,7 +155,12 @@
 
       _updateTitle: function () {
         var translatedFilterName = this.t(this.filterName);
-        var translatedCategoryName = this.t(this.categoryName);
+        var translatedCategoryName;
+        if (this.categoryName) {
+          translatedCategoryName = this.categoryName;
+        } else {
+          translatedCategoryName = this.t('categories.all');
+        }
         var inWord = this.t('short_word.in');
         this.subTitle = translatedFilterName + ' ' + inWord + ' ' + translatedCategoryName;
       },
@@ -174,8 +178,9 @@
           this.categoryName = detail.item.dataset.categoryName;
         } else {
           this.categoryId = null;
-          this.categoryName = this.t('categories.all');
+          this.categoryName = null;
         }
+        this._updateTitle();
         this.updateAfterFiltering();
       },
 
@@ -187,6 +192,10 @@
         window.appGlobals.activity('change', 'filter', newLocation);
         page(newLocation);
         this.fire("refresh-group");
+      },
+
+      ready: function () {
+        this.categoryName = this.t('categories.all');
       },
 
       _ifCategories: function () {
