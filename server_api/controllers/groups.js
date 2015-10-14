@@ -111,7 +111,7 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
   console.log(req.params);
 
   if (req.params.categoryId!=undefined) {
-    where+=" AND category_id = "+ req.params.categoryId;
+    where+=' AND "Idea"."category_id" = '+ req.params.categoryId;
   }
 
   models.Group.find({

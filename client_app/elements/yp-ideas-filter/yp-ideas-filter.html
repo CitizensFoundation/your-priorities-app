@@ -78,7 +78,7 @@
 
               <template is="dom-if" if="[[_ifCategories()]]">
                 <div>
-                  <paper-menu class="dropdown-content" on-iron-select="_changeCategory">
+                  <paper-menu id="clearMenu" class="dropdown-content" on-iron-select="_changeCategory">
                     <paper-item data-category-id="-1">
                       <iron-icon icon="select-all" class="filterIcon"></iron-icon>
                       <span>[[t('categories.all')]]</span>
@@ -87,7 +87,7 @@
                   <div class="layout= horizontal">
                     <template is="dom-repeat" items="[[_categoryItems()]]" as="categoriesGroups">
                       <div class="layout vertical">
-                        <paper-menu class="dropdown-content" on-iron-select="_changeCategory">
+                        <paper-menu id="categoryMenu" class="dropdown-content" on-iron-select="_changeCategory">
                           <template is="dom-repeat" items="[[categoriesGroups]]" as="category">
                             <paper-item data-category-id$="[[category.id]]" data-category-name$="[[category.name]]">
                               <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
@@ -127,7 +127,8 @@
         },
 
         categoryId: {
-          type: String
+          type: String,
+          observer: "_categoryIdChanged"
         },
 
         categoryName: {
@@ -155,6 +156,12 @@
         }
       },
 
+      _categoryIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this._updateTitle();
+        }
+      },
+
       _updateTitle: function () {
         var translatedFilterName = this.t(this.filterName);
         var translatedCategoryName;
@@ -164,44 +171,49 @@
           translatedCategoryName = this.t('categories.all');
         }
         var inWord = this.t('short_word.in');
-        this.subTitle = translatedFilterName + ' ' + inWord + ' ' + translatedCategoryName;
+        if (this._ifCategories()) {
+          this.subTitle = translatedFilterName + ' ' + inWord + ' ' + translatedCategoryName;
+        } else {
+          this.subTitle = translatedFilterName;
+        }
       },
 
       _changeFilter: function (e, detail) {
         this.set('filter',detail.item.dataset.filter);
-        this.updateAfterFiltering();
+        this._updateAfterFiltering();
       },
 
       _changeCategory: function (e, detail) {
         var categoryId = detail.item.dataset.categoryId;
-        debugger;
         if (categoryId != '-1') {
-          this.categoryId = categoryId;
+          this.set('categoryId',categoryId);
           this.categoryName = detail.item.dataset.categoryName;
         } else {
-          this.categoryId = null;
+          this.set('categoryId',null);
           this.categoryName = null;
+          this.$$("#categoryMenu").selected = null;
+          this.$$("#clearMenu").selected = null;
         }
         this._updateTitle();
-        this.updateAfterFiltering();
+        this._updateAfterFiltering();
       },
 
-      updateAfterFiltering: function () {
+      _updateAfterFiltering: function () {
         var newLocation = '#!/group/' + this.group.id + '/' + this.group.name + '/ideas/' + this.filter;
         if (this.categoryId) {
-          newLocation += '/' + this.categoryId;
+          newLocation += '/' + this.categoryId + '/' + this.categoryName;
         }
         window.appGlobals.activity('change', 'filter', newLocation);
         page(newLocation);
         this.fire("refresh-group");
       },
 
-      ready: function () {
-        this.categoryName = this.t('categories.all');
-      },
-
       _ifCategories: function () {
-        return this.group.Categories && this.group.Categories.length > 0;
+        if (this.group) {
+          return this.group.Categories && this.group.Categories.length > 0;
+        } else {
+          return false;
+        }
       },
 
       _categoryItems: function () {
