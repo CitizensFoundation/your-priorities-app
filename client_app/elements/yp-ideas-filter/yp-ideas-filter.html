@@ -116,6 +116,19 @@
       properties: {
 
         filter: {
+          type: String,
+          observer: "_filterChanged"
+        },
+
+        filterName: {
+          type: String
+        },
+
+        categoryId: {
+          type: String
+        },
+
+        categoryName: {
           type: String
         },
 
@@ -133,58 +146,51 @@
         window.appGlobals.activity('open', 'filter');
       },
 
-      updateFilter: function () {
-        if (this.filter)
-          window.selectedFilterName = 'ideas.' + this.filter;
-        this._updateTitle();
+      _filterChanged: function (newValue, oldValue) {
+        debugger;
+        if (newValue) {
+          this.filterName = 'ideas.' + this.filter;
+          this._updateTitle();
+        }
       },
 
       _updateTitle: function () {
-        var filterName = this.t(window.selectedFilterName);
-        var categoryName = this.t(window.selectedCategoryName);
+        var translatedFilterName = this.t(this.filterName);
+        var translatedCategoryName = this.t(this.categoryName);
         var inWord = this.t('short_word.in');
-        this.subTitle = filterName + ' ' + inWord + ' ' + categoryName;
+        this.subTitle = translatedFilterName + ' ' + inWord + ' ' + translatedCategoryName;
       },
 
       _changeFilter: function (e, detail) {
-        window.selectedFilter = detail.item.dataset.filter;
-        window.selectedFilterName = 'ideas.' + window.selectedFilter;
+        this.set('filter',detail.item.dataset.filter);
         this.updateAfterFiltering();
       },
 
       _changeCategory: function (e, detail) {
+        var categoryId = detail.item.dataset.categoryid;
         debugger;
-        var categoryId = detail.item.dataset.categoryId;
-        window.selectedCategoryName = detail.item.dataset.categoryName;
         if (categoryId != '-1') {
-          window.categoryId = categoryId;
+          this.categoryId = categoryId;
+          this.categoryName = detail.item.dataset.categoryName;
         } else {
-          window.categoryId = null;
+          this.categoryId = null;
+          this.categoryName = this.t('categories.all');
         }
         this.updateAfterFiltering();
       },
 
       updateAfterFiltering: function () {
-        var newLocation = '#!/group/' + this.group.id + '/' + this.group.name + '/ideas/' + window.selectedFilter;
-        if (window.categoryId) {
-          newLocation += '/' + window.categoryId;
+        var newLocation = '#!/group/' + this.group.id + '/' + this.group.name + '/ideas/' + this.filter;
+        if (this.categoryId) {
+          newLocation += '/' + this.categoryId;
         }
         window.appGlobals.activity('change', 'filter', newLocation);
-        this.fire("refresh-group");
-        this._updateTitle();
         page(newLocation);
-      },
-
-      ready: function () {
-        this.updateFilter();
+        this.fire("refresh-group");
       },
 
       _ifCategories: function () {
         return this.group.Categories && this.group.Categories.length > 0;
-      },
-
-      computeDataCategoryId: function () {
-        return -1;
       },
 
       _categoryItems: function () {
