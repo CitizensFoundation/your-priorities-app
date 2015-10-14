@@ -56,7 +56,8 @@
     <yp-idea-edit id="ideaEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-idea-edit>
 
     <div class="layout vertical">
-      <yp-ideas-filter class="ideasFilter" on-refresh-group="_refreshGroup" group="[[group]]" filter="{{filter}}" category-id="{{selectedCategoryId}}"></yp-ideas-filter>
+      <yp-ideas-filter class="ideasFilter" on-refresh-group="_refreshGroup" group="[[group]]" filter="{{filter}}" category-id="{{selectedCategoryId}}">
+      </yp-ideas-filter>
       <div class="card-container">
         <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
         <template is="dom-if" if="[[ideas]]">
@@ -104,12 +105,23 @@
         },
 
         filter: {
-          type: String
+          type: String,
+          observer: "_filterChanged"
         },
 
         selectedCategoryId: {
-          type: String
+          type: String,
+          observer: "_selectedCategoryIdChanged"
+
         }
+      },
+
+      _filterChanged: function (newValue, oldValue) {
+        debugger;
+      },
+
+      _selectedCategoryIdChanged: function (newValue, oldValue) {
+        debugger;
       },
 
       _openEdit: function () {
@@ -129,6 +141,8 @@
       },
 
       _refreshGroup: function () {
+        if (!this.filter)
+          this.set('filter','newest');
         this.set("ideas",null);
         debugger;
         this.$.ajax.url = '/api/groups/' + this.groupId + '/ideas/' + this.filter;

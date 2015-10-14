@@ -79,23 +79,25 @@
               <template is="dom-if" if="[[_ifCategories()]]">
                 <div>
                   <paper-menu class="dropdown-content" on-iron-select="_changeCategory">
-                    <paper-item data-categoryId="-1">
+                    <paper-item data-category-id="-1">
                       <iron-icon icon="select-all" class="filterIcon"></iron-icon>
                       <span>[[t('categories.all')]]</span>
                     </paper-item>
-                    <div class="layout= horizontal">
-                      <template is="dom-repeat" items="[[_categoryItems()]]" as="categoriesGroups">
-                        <div class="layout vertical">
+                  </paper-menu>
+                  <div class="layout= horizontal">
+                    <template is="dom-repeat" items="[[_categoryItems()]]" as="categoriesGroups">
+                      <div class="layout vertical">
+                        <paper-menu class="dropdown-content" on-iron-select="_changeCategory">
                           <template is="dom-repeat" items="[[categoriesGroups]]" as="category">
-                            <paper-item data-categoryId="-3443">
+                            <paper-item data-category-id$="[[category.id]]" data-category-name$="[[category.name]]">
                               <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
                               <span>[[category.name]]</span>
                             </paper-item>
                           </template>
-                        </div>
-                      </template>
-                    </div>
-                  </paper-menu>
+                          </paper-menu>
+                      </div>
+                    </template>
+                  </div>
                 </div>
               </template>
             </div>
@@ -171,7 +173,7 @@
       },
 
       _changeCategory: function (e, detail) {
-        var categoryId = detail.item.dataset.categoryid;
+        var categoryId = detail.item.dataset.categoryId;
         debugger;
         if (categoryId != '-1') {
           this.categoryId = categoryId;
