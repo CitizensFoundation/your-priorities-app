@@ -45,7 +45,7 @@ router.post('/:communityId', isAuthenticated, function(req, res) {
     })
   }).catch(function(error) {
     res.sendStatus(403);
-  });;
+  });
 });
 
 router.put('/:id', isAuthenticated, function(req, res) {

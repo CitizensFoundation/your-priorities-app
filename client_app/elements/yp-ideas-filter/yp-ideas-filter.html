@@ -88,7 +88,7 @@
                         <div class="layout vertical">
                           <template is="dom-repeat" items="[[categoriesGroups]]" as="category">
                             <paper-item data-categoryId="-3443">
-                              <img sizing="cover" height="48" width="48" class="filterIcon" src="[[_categoryImageSrc(category)]]">
+                              <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
                               <span>[[category.name]]</span>
                             </paper-item>
                           </template>
@@ -136,6 +136,10 @@
       updateFilter: function () {
         if (this.filter)
           window.selectedFilterName = 'ideas.' + this.filter;
+        this._updateTitle();
+      },
+
+      _updateTitle: function () {
         var filterName = this.t(window.selectedFilterName);
         var categoryName = this.t(window.selectedCategoryName);
         var inWord = this.t('short_word.in');
@@ -167,6 +171,7 @@
         }
         window.appGlobals.activity('change', 'filter', newLocation);
         this.fire("refresh-group");
+        this._updateTitle();
         page(newLocation);
       },
 
