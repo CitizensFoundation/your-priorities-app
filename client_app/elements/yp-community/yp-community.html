@@ -44,8 +44,6 @@
 
     </style>
 
-    <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
-
     <yp-group-edit new id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
 
     <div class="card-container">
@@ -57,7 +55,8 @@
               <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
             </template>
           </template>
-          <yp-group-card-add class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
+          <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
+          <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
         </div>
       </div>
       <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]" on-tap="_newGroup"></paper-fab>
@@ -91,6 +90,11 @@
         communityEmpty: {
           type: Boolean,
           value: false
+        },
+
+        hideAdd: {
+          type: Boolean,
+          value: true
         }
       },
 
@@ -113,6 +117,7 @@
           this.set("groups",null);
           this.$.ajax.url = '/api/communities/' + this.communityId;
           this.$.ajax.generateRequest();
+          this.hideAdd = true;
         }
       },
 
@@ -136,7 +141,7 @@
         this.fire("change-header", { headerTitle: this.community.name,
                                      headerDescription: this.community.description,
                                      headerIcon: "group-work"});
-
+        this.hideAdd = false;
       },
 
       defaultGroupFirst: function (items) {

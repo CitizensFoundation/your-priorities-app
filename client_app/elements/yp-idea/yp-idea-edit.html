@@ -125,7 +125,7 @@
             <paper-dropdown-menu label="[[t('category.select')]]">
               <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
                 <template is="dom-repeat" items="[[group.Categories]]" as="category">
-                  <paper-item>[[category.name]]</paper-item>
+                  <paper-item data-category-id$="[[category.id]]">[[category.name]]</paper-item>
                 </template>
               </paper-menu>
             </paper-dropdown-menu>
@@ -216,7 +216,7 @@
     },
 
     _selectedCategoryChanged: function (newCategoryArrayId, oldValue) {
-      if (newCategoryArrayId)
+      if (newCategoryArrayId!=null && newCategoryArrayId!=undefined)
         this.selectedCategoryId = this.group.Categories[newCategoryArrayId].id;
     },
 

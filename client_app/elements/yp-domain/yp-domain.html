@@ -67,7 +67,7 @@
             <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
           </template>
         </template>
-        <yp-community-card-add class="card" on-tap="_newCommunity"></yp-community-card-add>
+        <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
         <paper-fab hidden icon="group-work" z="1" class="createCommunity" title="[[t('community.add')]" on-tap="_newCommunity"></paper-fab>
       </div>
     </div>
@@ -105,6 +105,11 @@
 
         domain: {
           type: Object
+        },
+
+        hideAdd: {
+          type: Boolean,
+          value: true
         }
       },
 
@@ -113,6 +118,7 @@
           this.set("communities",null);
           this.$.ajax.url = '/api/domains/' + this.domainId;
           this.$.ajax.generateRequest();
+          this.hideAdd = true;
         }
       },
 
@@ -138,6 +144,7 @@
 
         this.fire("change-header", { headerTitle: this.domain.name,
                                      headerDescription: this.domain.description});
+        this.hideAdd = false;
       }
 
     });

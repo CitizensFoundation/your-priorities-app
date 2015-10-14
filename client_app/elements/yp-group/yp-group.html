@@ -51,8 +51,6 @@
       }
     </style>
 
-    <yp-ajax auto="false" id="ajax" url="" on-response="_ideasResponse"></yp-ajax>
-
     <yp-idea-edit id="ideaEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-idea-edit>
 
     <div class="layout vertical">
@@ -67,7 +65,8 @@
             <yp-idea-card class="card" idea="[[idea]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card>
           </template>
         </template>
-        <yp-idea-card-add class="card" on-tap="newIdea" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card-add>
+        <yp-ajax auto="false" id="ajax" url="" on-response="_ideasResponse"></yp-ajax>
+        <yp-idea-card-add hidden$="[[hideAdd]]" class="card" on-tap="newIdea" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card-add>
         <paper-fab icon="add" elevation="1" class="createIdea" title="[[t('idea.add_new')]]" on-tap="newIdea"></paper-fab>
       </div>
     </div>
@@ -118,6 +117,11 @@
 
         categoryName: {
           type: String
+        },
+
+        hideAdd: {
+          type: Boolean,
+          value: true
         }
       },
 
@@ -152,6 +156,7 @@
           this.$.ajax.url += '/' + this.categoryId;
         }
         this.$.ajax.generateRequest();
+        this.hideAdd = true;
       },
 
       newIdea: function () {
@@ -169,6 +174,7 @@
                                      headerIcon: "social:group" });
         this.$.groupCard.setElevation(5);
         this.$.groupCard.lowerCardLater();
+        this.hideAdd = false;
       },
 
       _processCategories: function () {
