@@ -28,6 +28,7 @@ function onSplashClick() {
   var app = document.querySelector('#app');
   app.appTitle = "Your Priorities";
   app.user = null;
+  app.previousSearches = [];
 
   app.displayInstalledToast = function() {
     // Check to make sure caching is actually enabled—it won't be in the dev environment.
@@ -98,6 +99,16 @@ function onSplashClick() {
     } else {
       app.user = null;
     }
+  };
+
+
+  app._onSearch = function(e) {
+    app.toggleSearch();
+    this.unshift('previousSearches', e.detail.value);
+  };
+
+  app.toggleSearch = function() {
+    app.$.search.toggle();
   };
 
   // Scroll page to top and expand header

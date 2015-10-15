@@ -65,8 +65,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <yp-app-globals id="appGlobals" disable-welcome setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
     <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
-
-    <paper-drawer-panel id="paperDrawerPanel" force-narrow>
+    <material-search id="search" narrow="[[narrow]]"
+                     previous-searches="{{previousSearches}}"
+                     on-search-change="_onSearch" class="fit"></material-search>
+    <paper-drawer-panel id="paperDrawerPanel" narrow="{{narrow}}" force-narrow>
       <!-- Drawer Scroll Header Panel -->
       <paper-scroll-header-panel drawer fixed>
 
@@ -99,7 +101,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <span class="flex"></span>
 
           <!-- Toolbar icons -->
-          <paper-icon-button icon="search"></paper-icon-button>
+          <paper-icon-button icon="search" on-tap="toggleSearch"></paper-icon-button>
+
           <template is="dom-if" if="[[user]]">
             <paper-icon-button on-tap="openEdit" icon="face"></paper-icon-button>
             <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
