@@ -256,7 +256,8 @@
             this.idea.Points.shift();
           }
           this.fire("change-header", { headerTitle: this.truncate(this.idea.name,45),
-                                       headerDescription: this.truncate(this.idea.description,45) });
+                                       headerDescription: this.truncate(this.idea.description,45),
+                                       backPath: "#!/group/" + this.idea.group_id });
         },
 
         selectedChanged: function (selected, previous) {

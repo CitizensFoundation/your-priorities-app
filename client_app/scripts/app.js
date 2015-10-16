@@ -30,6 +30,8 @@ function onSplashClick() {
   app.user = null;
   app.previousSearches = [];
   app.showSearch = false;
+  app.showBack = false;
+  app.backPath = null;
 
   app.displayInstalledToast = function() {
     // Check to make sure caching is actually enabled—it won't be in the dev environment.
@@ -96,6 +98,18 @@ function onSplashClick() {
       this.showSearch = true;
     else
       this.showSearch = false;
+    if (header.backPath) {
+      this.showBack = true;
+      this.backPath = header.backPath;
+    } else {
+      this.showBack = false;
+      this.backPath = null;
+    }
+  };
+
+  app.goBack = function (event, detail) {
+    if (this.backPath)
+      page(this.backPath);
   };
 
   app.onUserChanged = function(event, detail) {

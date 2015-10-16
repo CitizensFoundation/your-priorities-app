@@ -140,7 +140,8 @@
           this.communityEmpty = false;
         this.fire("change-header", { headerTitle: this.community.name,
                                      headerDescription: this.community.description,
-                                     headerIcon: "group-work"});
+                                     headerIcon: "group-work",
+                                     backPath: "#!/domain/" + this.community.domain_id });
         this.hideAdd = false;
       },
 

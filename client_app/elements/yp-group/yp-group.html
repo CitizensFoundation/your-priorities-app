@@ -188,7 +188,8 @@
         this.fire("change-header", { headerTitle: group.name,
                                      headerDescription: group.objectives,
                                      headerIcon: "social:group",
-                                     enableSearch: true });
+                                     enableSearch: true,
+                                     backPath: "#!/community/" + this.group.community_id });
         this.$.groupCard.setElevation(5);
         this.$.groupCard.lowerCardLater();
         this.hideAdd = false;
