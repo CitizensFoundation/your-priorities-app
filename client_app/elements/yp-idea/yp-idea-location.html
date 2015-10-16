@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
@@ -52,8 +53,8 @@
       </paper-button>
     </div>
 
-    <paper-dialog id="dialog" class="dialog" modal>
-
+    <paper-dialog id="dialog" class="dialog" with-backdrop$="[[!narrowPad]]">
+      <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
       <google-map id="map" libraries="places" class="map" click-events on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers></google-map>
 
       <div class="buttons">

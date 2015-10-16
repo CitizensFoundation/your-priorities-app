@@ -89,8 +89,9 @@
       }
     </style>
 
-    <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop>
+    <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop$="[[!narrowPad]]">
       <iron-media-query query="(max-width: 600px)" query-matches="{{narrow}}"></iron-media-query>
+      <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
 
       <template is="dom-if" if="[[narrow]]">
         <paper-header-panel main id="headerPanel" class="no-padding" mode="{{mode}}">
