@@ -149,7 +149,7 @@
       properties: {
         idea: {
           type: Object,
-          observer: "_onIdeaChanged"
+          observer: '_onIdeaChanged'
         },
 
         small: {
@@ -159,7 +159,7 @@
 
         endorseMode: {
           type: String,
-          value: "love"
+          value: 'love'
         },
 
         endorseValue: {
@@ -177,33 +177,33 @@
       },
 
       endorseModeIcon: function (endorseMode, upDown) {
-        if (endorseMode=="thumbs" && upDown=='up') {
-          return "thumb-up";
-        } else if (endorseMode=="thumbs" && upDown=='down') {
-          return "thumb-down";
-        } else if (endorseMode=="love" && upDown=='up') {
-          return "favorite";
-        } else if (endorseMode=="love" && upDown=='down') {
-          return "thumb-down";
-        } else if (endorseMode=="arrow" && upDown=='up') {
-          return "hardware:keyboard-arrow-down";
-        } else if (endorseMode=="arrow" && upDown=='down') {
-          return "hardware:keyboard-arrow-up";
+        if (endorseMode=='thumbs' && upDown=='up') {
+          return 'thumb-up';
+        } else if (endorseMode=='thumbs' && upDown=='down') {
+          return 'thumb-down';
+        } else if (endorseMode=='love' && upDown=='up') {
+          return 'favorite';
+        } else if (endorseMode=='love' && upDown=='down') {
+          return 'thumb-down';
+        } else if (endorseMode=='arrow' && upDown=='up') {
+          return 'hardware:keyboard-arrow-down';
+        } else if (endorseMode=='arrow' && upDown=='down') {
+          return 'hardware:keyboard-arrow-up';
         }
       },
 
       _setEndorsement: function (value) {
         this.endorseValue = value;
-        if (this.endorseMode=="love") {
+        if (this.endorseMode=='love') {
           if (value > 0) {
-            this.$.actionUp.className += " " + "love-up-selected";
-            this.removeClass(this.$.actionDown, "love-down-selected");
+            this.$.actionUp.className += ' ' + 'love-up-selected';
+            this.removeClass(this.$.actionDown, 'love-down-selected');
           } else if (value < 0) {
-            this.$.actionDown.className += " " + "love-down-selected";
-            this.removeClass(this.$.actionUp,"love-up-selected");
+            this.$.actionDown.className += ' ' + 'love-down-selected';
+            this.removeClass(this.$.actionUp,'love-up-selected');
           } else {
-            this.removeClass(this.$.actionUp,"love-up-selected");
-            this.removeClass(this.$.actionDown, "love-down-selected");
+            this.removeClass(this.$.actionUp,'love-up-selected');
+            this.removeClass(this.$.actionDown, 'love-down-selected');
           }
         }
       },
@@ -223,17 +223,17 @@
           this.set('idea.counter_endorsements_up', this.idea.counter_endorsements_up+1);
         else if (endorsement.value<0)
           this.set('idea.counter_endorsements_down', this.idea.counter_endorsements_down+1);
-        this.fire("new-user-endorsement", endorsement);
+        this.fire('new-user-endorsement', endorsement);
       },
 
       generateEndorsement: function (value) {
         if (window.appUser.loggedIn()===true) {
-          this.$.endorseAjax.url = "/api/ideas/" + this.idea.id + "/endorse";
+          this.$.endorseAjax.url = '/api/ideas/' + this.idea.id + '/endorse';
           this.$.endorseAjax.body = { idea_id: this.idea.id, value: value };
           if (this.endorseValue === value) {
-            this.$.endorseAjax.method = "DELETE";
+            this.$.endorseAjax.method = 'DELETE';
           } else {
-            this.$.endorseAjax.method = "POST";
+            this.$.endorseAjax.method = 'POST';
           }
           this.$.endorseAjax.generateRequest();
         } else {
@@ -257,8 +257,8 @@
 
       ready: function() {
         if (this.endorseMode) {
-          this.$.actionDown.className += " " + "love-down";
-          this.$.actionUp.className += " " + "love-up";
+          this.$.actionDown.className += ' ' + 'love-down';
+          this.$.actionUp.className += ' ' + 'love-up';
         }
       }
     });
