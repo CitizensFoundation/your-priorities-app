@@ -39,7 +39,7 @@
 
           <span id="restOfUserImages" style="display: none;">
             <template is="dom-repeat" items="[[limitFrom(endorsements, userImagesLimit, endorsements.length)]]" as="endorsement" index-as="endorsementIndex">
-              <user-image user="[[endorsement.User]]" small=""></user-image>
+              <yp-user-image user="[[endorsement.User]]" small=""></yp-user-image>
             </template>
           </span>
 
