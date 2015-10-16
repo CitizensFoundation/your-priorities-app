@@ -159,6 +159,13 @@ gulp.task('fonts', function () {
     .pipe($.size({title: 'fonts'}));
 });
 
+// Copy locales to dist
+gulp.task('locales', function () {
+  return gulp.src(['client_app/locales/**'])
+      .pipe(gulp.dest('dist/locales'))
+      .pipe($.size({title: 'locales'}));
+});
+
 // Scan your HTML for assets & optimize them
 gulp.task('html', function () {
   return optimizeHtmlTask(
@@ -280,7 +287,7 @@ gulp.task('default', ['clean'], function (cb) {
     ['copy', 'styles'],
     'elements',
 //    [ 'jshint', 'images', 'fonts', 'html'],
-    [ 'images', 'fonts', 'html'],
+    [ 'images', 'locales', 'fonts', 'html'],
     'vulcanize', // 'cache-config',
     cb);
 });
