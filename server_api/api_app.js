@@ -24,7 +24,6 @@ var models = require('./models');
 
 var app = express();
 
-
 app.use(express.static(path.join(__dirname, '../client_app')));
 //app.use(express.static(path.join(__dirname, '../dist')));
 app.use(morgan('combined'));

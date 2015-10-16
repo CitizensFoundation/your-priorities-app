@@ -97,10 +97,13 @@
 
   },
 
-  "login": {
+  "user": {
     "name": "Login name",
     "email": "Email",
-    "password": "Password"
+    "password": "Password",
+    "login": "Login",
+    "create": "Create",
+    "cancel": "Cancel"
   },
 
   "location": {

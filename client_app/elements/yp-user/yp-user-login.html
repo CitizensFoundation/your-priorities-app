@@ -44,7 +44,7 @@
 
         <paper-input id="name"
                      type="text"
-                     label="[[t('login.name')]]"
+                     label="[[t('name')]]"
                      value="{{name}}"
                      hidden$="[[!registerMode]]"
                      maxlength="50"
@@ -53,7 +53,7 @@
 
         <paper-input id="email"
                      type="text"
-                     label="[[t('login.email')]]"
+                     label="[[t('email')]]"
                      value="{{email}}"
                      auto-validate pattern="[[emailValidationPattern]]"
                      error-message="[[emailErrorMessage]]">
@@ -61,7 +61,7 @@
 
         <paper-input id="password"
                      type="password"
-                     label="[[t('login.password')]]"
+                     label="[[t('password')]]"
                      value="{{password}}"
                      auto-validate pattern="[[passwordValidationPattern]]"
                      error-message="[[passwordErrorMessage]]">
@@ -158,15 +158,19 @@
       this._setTexts();
     },
 
+    ready: function () {
+      this._setTexts();
+    },
+
     _setTexts: function () {
-      this.emailErrorMessage = this.t('login.email.error');
-      this.passwordErrorMessage = this.t('login.password.error');
+      this.emailErrorMessage = this.t('user.email.error');
+      this.passwordErrorMessage = this.t('user.password.error');
       if (this.registerMode===1) {
-        this.header = this.t('login.registerHeader');
-        this.set('submitText',this.t('create'));
+        this.header = this.t('user.registerHeader');
+        this.set('submitText',this.t('user.create'));
       } else {
-        this.header = this.t('login.header');
-        this.submitText = this.t('login');
+        this.header = this.t('user.header');
+        this.set('submitText',this.t('user.login'));
       }
     },
 
