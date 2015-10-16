@@ -130,7 +130,7 @@ gulp.task('copy', function () {
   }).pipe(gulp.dest('dist'));
 
   var bower = gulp.src([
-    'bower_components/**/*'
+    'client_app/bower_components/**/*'
   ]).pipe(gulp.dest('dist/bower_components'));
 
   var elements = gulp.src(['client_app/elements/**/*.html',
@@ -173,7 +173,8 @@ gulp.task('vulcanize', function () {
     .pipe($.vulcanize({
       stripComments: true,
       inlineCss: true,
-      inlineScripts: true
+      inlineScripts: true,
+      stripExclude: true
     }))
     .pipe(gulp.dest(DEST_DIR))
     .pipe($.size({title: 'vulcanize'}));
@@ -278,7 +279,8 @@ gulp.task('default', ['clean'], function (cb) {
   runSequence(
     ['copy', 'styles'],
     'elements',
-    ['jshint', 'images', 'fonts', 'html'],
+//    [ 'jshint', 'images', 'fonts', 'html'],
+    [ 'images', 'fonts', 'html'],
     'vulcanize', // 'cache-config',
     cb);
 });
