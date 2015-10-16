@@ -5,13 +5,14 @@
     "file-upload": "rbjarnason/file-upload",
     "google-map": "GoogleWebComponents/google-map",
     "google-streetview-pano": "rbjarnason/google-streetview-pano#timings-fix-maps-api-callback",
-    "iron-elements": "PolymerElements/iron-elements#master",
-    "neon-elements": "PolymerElements/neon-elements#master",
-    "page": "visionmedia/page.js#master",
-    "paper-elements": "PolymerElements/paper-elements#master",
-    "platinum-elements": "PolymerElements/platinum-elements#master",
+    "iron-form": "rbjarnason/iron-form#add-put-support",
+
     "polymer": "Polymer/polymer#^1.1.0",
-    "iron-form": "rbjarnason/iron-form#add-put-support"
+    "iron-elements": "PolymerElements/iron-elements#^1.0.0",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.1",
+    "platinum-elements": "PolymerElements/platinum-elements#^1.1.0",
+    "neon-elements": "PolymerElements/neon-elements#^1.0.0",
+    "page": "visionmedia/page.js#~1.6.3"
   },
   "devDependencies": {
     "web-component-tester": "*",
