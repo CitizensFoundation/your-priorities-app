@@ -187,7 +187,8 @@
         this._processCategories();
         this.fire("change-header", { headerTitle: group.name,
                                      headerDescription: group.objectives,
-                                     headerIcon: "social:group" });
+                                     headerIcon: "social:group",
+                                     enableSearch: true });
         this.$.groupCard.setElevation(5);
         this.$.groupCard.lowerCardLater();
         this.hideAdd = false;

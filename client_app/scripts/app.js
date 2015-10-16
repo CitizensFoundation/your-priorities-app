@@ -29,6 +29,7 @@ function onSplashClick() {
   app.appTitle = "Your Priorities";
   app.user = null;
   app.previousSearches = [];
+  app.showSearch = false;
 
   app.displayInstalledToast = function() {
     // Check to make sure caching is actually enabled—it won't be in the dev environment.
@@ -91,6 +92,10 @@ function onSplashClick() {
     app.headerDescription = header.headerDescription;
     if (header.headerIcon)
       app.headerIcon = header.headerIcon;
+    if (header.enableSearch)
+      this.showSearch = true;
+    else
+      this.showSearch = false;
   };
 
   app.onUserChanged = function(event, detail) {

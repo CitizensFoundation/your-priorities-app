@@ -101,7 +101,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <span class="flex"></span>
 
           <!-- Toolbar icons -->
-          <paper-icon-button icon="search" on-tap="toggleSearch"></paper-icon-button>
+          <paper-icon-button icon="search" on-tap="toggleSearch" hidden$="[[!showSearch]]"></paper-icon-button>
 
           <template is="dom-if" if="[[user]]">
             <paper-icon-button on-tap="openEdit" icon="face"></paper-icon-button>
