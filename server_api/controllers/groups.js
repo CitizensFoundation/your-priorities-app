@@ -82,10 +82,35 @@ router.delete('/:id', isAuthenticated, function(req, res) {
 });
 
 router.get('/:id/search/:term', function(req, res) {
-  models.Idea.search(req.params.term,req.params.id, models.Category)
-      .then(function(ideas) {
-        res.send(ideas);
-      });
+  models.Group.find({
+    where: { id: req.params.id },
+    include: [
+      {
+        model: models.Category,
+        include: [
+          {
+            model: models.Image,
+            as: 'CategoryIconImages',
+            order: [
+              [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
+            ]
+          }
+        ]
+      },
+      {
+        model: models.Image, as: 'GroupLogoImages'
+      },
+      {
+        model: models.User, as: 'GroupUsers',
+        attributes: ['id'],
+        required: false
+      }
+    ]
+  }).then(function(group) {
+    models.Idea.search(req.params.term,req.params.id, models.Category).then(function(ideas) {
+      res.send({group: group, Ideas: ideas});
+    });
+  });
 });
 
 router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {

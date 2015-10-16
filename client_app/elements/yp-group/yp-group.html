@@ -54,8 +54,8 @@
     <yp-idea-edit id="ideaEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-idea-edit>
 
     <div class="layout vertical">
-      <yp-ideas-filter class="ideasFilter" on-refresh-group="_refreshGroup"
-                       group="[[group]]" filter="{{filter}}"
+      <yp-ideas-filter id="ideasFilter" class="ideasFilter" on-refresh-group="_refreshGroup"
+                       group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
                        category-id="{{categoryId}}" category-name="{{categoryName}}">
       </yp-ideas-filter>
       <div class="card-container">
@@ -65,7 +65,7 @@
             <yp-idea-card class="card" idea="[[idea]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card>
           </template>
         </template>
-        <yp-ajax auto="false" id="ajax" url="" on-response="_ideasResponse"></yp-ajax>
+        <yp-ajax id="ajax" url="" on-response="_ideasResponse"></yp-ajax>
         <yp-idea-card-add hidden$="[[hideAdd]]" class="card" on-tap="newIdea" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card-add>
         <paper-fab icon="add" elevation="1" class="createIdea" title="[[t('idea.add_new')]]" on-tap="newIdea"></paper-fab>
       </div>
@@ -107,6 +107,8 @@
 
         filter: {
           type: String,
+          value: "newest",
+          notify: true,
           observer: "_filterChanged"
         },
 
@@ -122,7 +124,17 @@
         hideAdd: {
           type: Boolean,
           value: true
+        },
+
+        searchingFor: {
+          type: String,
+          value: null,
+          observer: "_searchingForChanged"
         }
+      },
+
+      _searchingForChanged: function (newValue, oldValue) {
+        debugger;
       },
 
       _filterChanged: function (newValue, oldValue) {
@@ -132,7 +144,7 @@
       },
 
       _openEdit: function () {
-        this.$.groupEdit.open('edit', {groupId: this.group.id });
+        this.$.groupEdit.open('edit', { groupId: this.group.id });
       },
 
       _refresh: function () {
@@ -151,9 +163,13 @@
         if (!this.filter)
           this.set('filter','newest');
         this.set("ideas",null);
-        this.$.ajax.url = '/api/groups/' + this.groupId + '/ideas/' + this.filter;
-        if (this.categoryId) {
-          this.$.ajax.url += '/' + this.categoryId;
+        if (this.searchingFor) {
+          this.$.ajax.url = '/api/groups/' + this.groupId + '/search/' + this.searchingFor;
+        } else {
+          this.$.ajax.url = '/api/groups/' + this.groupId + '/ideas/' + this.filter;
+          if (this.categoryId) {
+            this.$.ajax.url += '/' + this.categoryId;
+          }
         }
         this.$.ajax.generateRequest();
         this.hideAdd = true;

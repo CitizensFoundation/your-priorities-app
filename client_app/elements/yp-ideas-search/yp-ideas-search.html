@@ -48,7 +48,7 @@
       }
     </style>
 
-    <iron-ajax auto="false" id="ideasAjax" url="{{computeUrl(groupId, term)}}" last-response="{{ideasResponse}}" handle-as="json"></iron-ajax>
+    <iron-ajax id="ideasAjax" url="{{computeUrl(groupId, term)}}" last-response="{{ideasResponse}}" handle-as="json"></iron-ajax>
 
     <base-layout id="layout" selected="ideas-search" name="{{computeName()}}" subtitle="{{term}}" groupname="{{groupName}}" groupid="{{groupId}}" showlogo="true">
       <div class="card-container">

@@ -14,6 +14,7 @@
 
   "idea": {
     "new": "New idea",
+    "searchingFor": "Searching for ",
     "top": "Top ideas",
     "newest": "Latest ideas",
     "random": "Random ideas",
@@ -44,12 +45,15 @@
     "edit": "Edit idea",
     "delete": "Delete idea"
   },
+
   "short_word": {
     "in": "in"
   },
+
   "category": {
     "new": "New category"
   },
+
   "categories": {
     "all": "all categories",
     "the_all": "All categories"

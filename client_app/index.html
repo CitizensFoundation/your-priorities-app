@@ -143,7 +143,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             <section data-route="group">
               <template is="dom-if" if="[[params.groupId]]">
-                <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]"
+                <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]" searching-for="[[params.searchingFor]]"
                           category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
                           on-change-header="onChangeHeader"></yp-group>
               </template>

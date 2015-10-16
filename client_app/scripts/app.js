@@ -101,10 +101,13 @@ function onSplashClick() {
     }
   };
 
-
   app._onSearch = function(e) {
     app.toggleSearch();
     this.unshift('previousSearches', e.detail.value);
+    var ideasFilter =  document.querySelector('#ideasFilter');
+    if (ideasFilter) {
+      ideasFilter.searchFor(e.detail.value);
+    }
   };
 
   app.toggleSearch = function() {

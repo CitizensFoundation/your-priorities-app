@@ -45,13 +45,23 @@
         width: 32px;
         height: 32px;
       }
+
+      .clear-search-trigger {
+        width: 32px;
+        height: 32px;
+        padding-top: 17px;
+        padding-right: 8px;
+      }
     </style>
     <template is="dom-if" if="[[group]]">
       <div class="layout horizontal">
+        <template is="dom-if" if="[[searchingFor]]">
+          <paper-icon-button icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
+        </template>
         <div>
           <h2>[[subTitle]]</h2>
         </div>
-        <div>
+        <template is="dom-if" if="[[showFilter]]">
           <paper-menu-button id="filterDropdown" class="selected-items" icon="editor:merge-type">
             <paper-icon-button icon="filter-list" class="dropdown-trigger"></paper-icon-button>
             <div class="layout horizontal dropdown-content">
@@ -102,7 +112,7 @@
               </template>
             </div>
           </paper-menu-button>
-        </div>
+        </template>
       </div>
     </template>
   </template>
@@ -119,6 +129,7 @@
 
         filter: {
           type: String,
+          value: "newest",
           observer: "_filterChanged"
         },
 
@@ -143,7 +154,33 @@
         subTitle: {
           type: String,
           value: ''
+        },
+
+        searchingFor: {
+          type: String,
+          value: null,
+          notify: true,
+          observer: "_searchingForChanged"
+        },
+
+        showFilter: {
+          type: Boolean,
+          value: true
         }
+      },
+
+      _searchingForChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.showFilter = false;
+        } else {
+          this.showFilter = true;
+        }
+      },
+
+      _clearSearch: function () {
+        this.set('searchingFor', null);
+        this.set('filter', 'newest');
+        this._updateAfterFiltering();
       },
 
       openFilter: function () {
@@ -152,7 +189,7 @@
 
       _filterChanged: function (newValue, oldValue) {
         if (newValue) {
-          this.filterName = 'ideas.' + this.filter;
+          this.filterName = 'idea.' + this.filter;
           this._updateTitle();
         }
       },
@@ -163,19 +200,31 @@
         }
       },
 
+      searchFor: function (value) {
+        this.set('searchingFor', value);
+        var newLocation = '#!/group/' + this.group.id + '/' + this.group.name + '/search/' + this.searchingFor;
+        window.appGlobals.activity('change', 'filter', newLocation);
+        page(newLocation);
+        this.fire("refresh-group");
+      },
+
       _updateTitle: function () {
-        var translatedFilterName = this.t(this.filterName);
-        var translatedCategoryName;
-        if (this.categoryName) {
-          translatedCategoryName = this.categoryName;
+        if (this.searchingFor) {
+          this.subTitle = this.t('idea.searchingFor') + this.searchingFor;
         } else {
-          translatedCategoryName = this.t('categories.all');
-        }
-        var inWord = this.t('short_word.in');
-        if (this._ifCategories()) {
-          this.subTitle = translatedFilterName + ' ' + inWord + ' ' + translatedCategoryName;
-        } else {
-          this.subTitle = translatedFilterName;
+          var translatedFilterName = this.t(this.filterName);
+          var translatedCategoryName;
+          if (this.categoryName) {
+            translatedCategoryName = this.categoryName;
+          } else {
+            translatedCategoryName = this.t('categories.all');
+          }
+          var inWord = this.t('short_word.in');
+          if (this._ifCategories()) {
+            this.subTitle = translatedFilterName + ' ' + inWord + ' ' + translatedCategoryName;
+          } else {
+            this.subTitle = translatedFilterName;
+          }
         }
       },
 
@@ -200,6 +249,8 @@
       },
 
       _updateAfterFiltering: function () {
+        if (!this.filter)
+          this.set('filter','newest');
         var newLocation = '#!/group/' + this.group.id + '/' + this.group.name + '/ideas/' + this.filter;
         if (this.categoryId) {
           newLocation += '/' + this.categoryId + '/' + this.categoryName;
