@@ -24,9 +24,9 @@
       return this.getImageFormatUrl(community.CommunityHeaderImages, 0);
     },
 
-    communityName: function (community) {
+    communityName: function (community, showAll) {
       if (community.name) {
-        return this.truncate(this.trim(community.name), 200);
+        return this.truncate(this.trim(community.name),  showAll ? 300 : 40, '...');
       } else {
         return community.short_name;
       }
@@ -34,7 +34,7 @@
 
     communityDescription: function (community, showAll) {
       if (community.description) {
-        return this.truncate(this.trim(community.description), showAll ? 300 : 170, '...');
+        return this.truncate(this.trim(community.description), showAll ? 300 : 120, '...');
       } else {
         return "";
       }

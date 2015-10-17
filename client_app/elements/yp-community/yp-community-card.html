@@ -55,15 +55,15 @@
         height: 220px;
       }
 
-
-      @media (max-width: 800px) {
+      @media (max-width: 360px) {
         :host {
           width: 344px;
         }
 
         .communityCard {
-          margin-left: 16px;
-          height: 600px;
+          height: 100% !important;
+          margin-left: 8px;
+          margin-right: 8px;
         }
 
         iron-image {
@@ -79,13 +79,32 @@
         }
 
         .communityCard {
-          margin-left: 16px;
-          height: 600px;
+          margin-left: 8px;
+          margin-right: 8px;
+          height: 100% !important;
         }
 
         iron-image {
           width: 260px !important;
           height: 260px !important;
+        }
+      }
+
+      @media (min-width: 481px) and (max-width: 1024px) {
+        :host {
+          width: 290px;
+        }
+
+        .communityCard {
+          margin-left: 0px;
+          margin-right: 0px;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+
+        iron-image {
+          width: 300px;
+          height: 220px;
         }
       }
     </style>

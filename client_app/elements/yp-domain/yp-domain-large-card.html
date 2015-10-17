@@ -104,6 +104,16 @@
         padding-right: 0;
         margin-right: 0;
       }
+
+      @media (min-width: 481px) and (max-width: 1024px) {
+        :host {
+          width: 620px;
+        }
+
+        .image {
+          width: 620px;
+        }
+      }
     </style>
     <template is="dom-if" if="[[domain]]">
       <paper-material id="card" elevation="5" animated class="large-card">
