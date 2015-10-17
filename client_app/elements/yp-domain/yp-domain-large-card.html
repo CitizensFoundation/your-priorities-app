@@ -31,29 +31,6 @@
         width: 665px;
       }
 
-
-      @media (max-width: 800px) {
-        :host {
-          width: 360px;
-        }
-
-        iron-image {
-          width: 360px !important;
-          height: 160px !important;
-        }
-      }
-
-      @media (max-width: 320px) {
-        :host {
-          width: 320px;
-        }
-
-        iron-image {
-          width: 320px !important;
-          height: 130px !important;
-        }
-      }
-
       .description {
         padding: 16px !important;
         line-height: var(--description-line-height, 1.3);
@@ -62,7 +39,7 @@
       .stats {
         @apply(--layout-self-center);
         position: absolute;
-        bottom: 16px;
+        bottom: 0px;
         left: 16px;
       }
 
@@ -112,6 +89,29 @@
 
         .image {
           width: 620px;
+          height: 217px;
+        }
+      }
+
+      @media (max-width: 800px) {
+        :host {
+          width: 360px;
+        }
+
+        iron-image {
+          width: 360px !important;
+          height: 160px !important;
+        }
+      }
+
+      @media (max-width: 320px) {
+        :host {
+          width: 320px;
+        }
+
+        iron-image {
+          width: 320px !important;
+          height: 130px !important;
         }
       }
     </style>

@@ -26,7 +26,7 @@
 
     communityName: function (community, showAll) {
       if (community.name) {
-        return this.truncate(this.trim(community.name),  showAll ? 300 : 40, '...');
+        return this.truncate(this.trim(community.name),  showAll ? 300 : 35, '...');
       } else {
         return community.short_name;
       }
