@@ -60,7 +60,7 @@
     <yp-community-edit id="communityNew" on-iron-form-response="_refresh"></yp-community-edit>
 
     <div class="layout vertical">
-      <div class="card-container layout center-justified">
+      <div class="card-container layout center-center">
         <yp-domain-large-card id="domainCard" class="card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
         <template is="dom-if" if="[[communities]]">
           <template is="dom-repeat" class="list" items="[[communities]]" as="community">

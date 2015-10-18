@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html" >
 
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
@@ -30,17 +31,6 @@
         display: block;
         @apply(--layout-vertical);
         width: 864px;
-      }
-
-      @media (max-width: 600px) {
-        :host {
-          width: 360px !important;
-        }
-
-        iron-image {
-          width: 256px !important;
-          height: 256px !important;
-        }
       }
 
       .description {
@@ -95,19 +85,83 @@
         margin-right: 0;
       }
 
+      .contentContainer {
+        @apply(--layout-horizontal);
+      }
+
+      .description-and-stats {
+        padding-bottom: 32px;
+      }
+
+      @media (max-width: 360px) {
+        :host {
+          width: 328px;
+          @apply(--layout-horizontal);
+        }
+
+        .large-card {
+          height: 100%;
+        }
+
+        .contentContainer {
+          @apply(--layout-vertical);
+        }
+
+        .description-and-stats {
+          width: 100%
+        }
+
+        iron-image {
+          width: 328px !important;
+          height: 328px !important;
+        }
+      }
+
+      @media (max-width: 320px) {
+        :host {
+          width: 300px;
+          @apply(--layout-horizontal);
+        }
+
+        .contentContainer {
+          @apply(--layout-vertical);
+        }
+
+        .description-and-stats {
+          width: 100%
+        }
+
+        .large-card {
+          height: 100%;
+        }
+
+        iron-image {
+          width: 300px !important;
+          height: 300px !important;
+        }
+      }
     </style>
+
+    <iron-media-query query="(max-width: 480px)" query-matches="{{phoneSize}}"></iron-media-query>
 
     <template is="dom-if" if="[[community]]">
       <paper-material id="card" elevation="5" animated class="large-card">
-        <div class="layout horizontal">
-          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
+        <div class="contentContainer">
+          <template is="dom-if" if="[[phoneSize]]">
+            <div>
+              <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
+            </div>
+          </template>
+          <template is="dom-if" if="[[!phoneSize]]">
+            <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
+          </template>
           <div class="layout vertical description-and-stats">
             <div class="description">
               <h2 class="community-name">[[communityName(community,1)]]</h2>
               <div>[[communityDescription(community,1)]]</div>
             </div>
-            <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
           </div>
+          <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
           <paper-menu-button class="edit" hidden$="[[!hasAccess(community)]]">
             <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
             <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
