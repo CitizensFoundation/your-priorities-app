@@ -62,9 +62,6 @@
         <template is="dom-if" if="[[searchingFor]]">
           <paper-icon-button icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
         </template>
-        <div>
-          <h2>[[subTitle]]</h2>
-        </div>
         <template is="dom-if" if="[[showFilter]]">
           <paper-menu-button id="filterDropdown" class="selected-items" icon="editor:merge-type">
             <paper-icon-button icon="filter-list" class="dropdown-trigger"></paper-icon-button>
@@ -116,6 +113,9 @@
               </template>
             </div>
           </paper-menu-button>
+          <div>
+            <h2>[[subTitle]]</h2>
+          </div>
         </template>
       </div>
     </template>

@@ -92,13 +92,13 @@
 
     <template is="dom-if" if="[[group]]">
       <paper-card id="card" elevation="[[elevation]]" animated-shadow class="groupCard">
+        <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
         <div class="card-content">
           <div class="objectives">
             <h2 class="group-name">[[groupName(group)]]</h2>
             <div>[[groupObjectives(group)]]</div>
           </div>
         </div>
-        <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
         <paper-menu-button class="edit" hidden$="[[!hasAccess(group)]]">
           <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
