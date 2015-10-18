@@ -19,6 +19,10 @@ router.get('/', function(req, res) {
 router.get('/:id', function(req, res) {
   models.Domain.find({
     where: { id: req.params.id },
+    order: [
+      [ { model: models.Community } ,'user_id', 'asc' ],
+      [ { model: models.Community } ,'created_at', 'asc' ]
+    ],
     include: [
       {
         model: models.User, as: 'DomainUsers',
@@ -45,7 +49,6 @@ router.get('/:id', function(req, res) {
             required: false
           }
         ],
-        order: 'Community.updated_at DESC',
         required: false
       }
     ]
