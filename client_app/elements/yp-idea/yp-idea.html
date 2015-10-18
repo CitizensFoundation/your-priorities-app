@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
@@ -32,20 +33,9 @@
       }
 
       .container {
-        padding-top: 0px;
+        padding-top: 0;
+        margin-top: 0;
         height: 100%;
-      }
-
-      @media (max-width: 961px) {
-        .ideaHeader {
-          width: 600px;
-        }
-      }
-
-      @media (max-width: 600px) {
-        .ideaHeader {
-          width: 400px;
-        }
       }
 
       .flex {
@@ -53,9 +43,12 @@
         @apply(--layout-flex);
       }
 
+      .centerContainer {
+        @apply(--layout-center-center);
+      }
+
       .ideaHeader {
         padding: 16px;
-        padding-bottom: 16px;
         background-color: #fefefe;
         width: 940px;
       }
@@ -96,15 +89,6 @@
         background-color: #fefefe;
       }
 
-      .coverMediaColumn {
-        width: 360px;
-        padding: 16px;
-        margin-left: 16px;
-        margin-right: 16px;
-        background-color: #fff;
-        margin-bottom: 16px;
-      }
-
       .edit {
         color: #555;
         position: absolute;
@@ -113,19 +97,89 @@
         padding-right: 0;
         margin-right: 0;
       }
+
+
+      @media (max-width: 961px) {
+        .ideaHeader {
+          width: 600px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .ideaHeader {
+          width: 400px;
+        }
+      }
+
+      @media (max-width: 360px) {
+
+        .centerContainer {
+          @apply(--layout-vertical);
+        }
+
+        .ideaHeader {
+          height: 100%;
+          width: 360px;
+          padding: 0;
+        }
+
+        .tabsMaterial {
+          width: 360px;
+        }
+
+        yp-idea-cover-media {
+          width: 320px !important;
+          height: 181px !important;
+          padding-top: 16px;
+          padding-left: 20px;
+        }
+
+        .statusHeader {
+          width: 320px;
+          height: 120px;
+          padding: 0px;
+          padding-left: 20px;
+        }
+
+        .statusColumn {
+          height: 60px;
+          padding: 0px;
+        }
+
+        .description {
+          width: 320px;
+          padding: 8px;
+          padding-left: 20px;
+          padding-bottom: 16px;
+        }
+
+        yp-idea-actions {
+          width: 320px;
+          padding-left: 20px;
+        }
+
+        .statusColumn {
+          width: 320px;
+        }
+
+        paper-tab {
+          font-size: 14px;
+        }
+      }
     </style>
 
     <div class="container">
 
       <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+      <iron-media-query query="(max-width: 360px)" query-matches="{{small}}"></iron-media-query>
 
       <yp-idea-edit new="false" id="ideaEdit" method="[[method]]" idea="{{idea}}" group="[[idea.Group]]" on-iron-form-response="_refresh"></yp-idea-edit>
 
       <template is="dom-if" if="[[idea]]">
 
-        <div class="layout horizontal center-center wrap">
+        <div class$="[[_mainContainerClasses(small)]]">
           <div class="layout vertical">
-            <paper-material elevation="1" class="layout horizontal ideaHeader">
+            <paper-material elevation="1" class$="[[_headerClasses(small)]]">
               <yp-idea-cover-media idea="[[idea]]"></yp-idea-cover-media>
               <div class="description">
                 <h1 class="idea-name">[[ideaName(idea)]]</h1>
@@ -139,7 +193,7 @@
                 </paper-menu>
               </paper-menu-button>
             </paper-material>
-            <paper-material elevation="1" class="layout horizontal statusHeader">
+            <paper-material elevation="1" class="layout horizontal wrap statusHeader">
               <div class="layout horizontal statusColumn">
                 <h1><span>[[t('idea.status')]]</span>: Open</h1>
               </div>
@@ -212,6 +266,22 @@
 
         listeners: {
           'new-user-endorsement': 'addEndorsement'
+        },
+
+        _mainContainerClasses: function(small) {
+          if (small) {
+            return "layout horizontal wrap";
+          } else {
+            return "layout horizontal center-center";
+          }
+        },
+
+        _headerClasses: function(small) {
+          if (small) {
+            return "layout vertical ideaHeader wrap";
+          } else {
+            return "layout horizontal ideaHeader";
+          }
         },
 
         ideaName: function (idea) {

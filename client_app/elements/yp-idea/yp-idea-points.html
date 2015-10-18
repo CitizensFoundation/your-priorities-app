@@ -35,13 +35,7 @@
         padding: 16px;
         width: 420px;
       }
-
-      @media (max-width: 1200px) {
-        .pointText {
-          width: 270px;
-        }
-      }
-
+      
       @media (max-width: 600px) {
         .pointText {
           width: 140px;
@@ -49,7 +43,14 @@
         }
       }
 
-       paper-toast {
+      @media (max-width: 360px) {
+        .pointText {
+          width: 110px;
+          font-size: 9px;
+        }
+      }
+
+      paper-toast {
          z-index: 9999;
        }
     </style>
