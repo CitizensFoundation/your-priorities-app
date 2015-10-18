@@ -16,27 +16,11 @@
 
   <template>
     <style>
-      :host {
-        display: block;
-        @apply(--layout-vertical);
-        width: 416px;
-      }
 
-      @media (max-width: 600px) {
-        :host {
-          width: 285px !important;
-        }
-      }
-
-      .ideaCard {
-        width: 420px;
-        height: 500px;
-        padding: 16px;
-      }
 
       paper-icon-button {
-        height: 250px !important;
-        width: 250px !important;
+        height: 250px;
+        width: 250px;
         color: var(--accent-color)
       }
 
@@ -53,33 +37,25 @@
 
       @media (max-width: 360px) {
         :host {
-          width: 328px;
-          @apply(--layout-horizontal);
+          width: 260px;
         }
 
-        .groupCard {
-          height: 100%;
-        }
-
-        iron-image {
-          width: 328px !important;
-          height: 78px !important;
+        .ideaCard {
+          width: 260px !important;
+          height: 100% !important;
+          padding: 0 !important;
         }
       }
 
       @media (max-width: 320px) {
-        :host {
-          width: 300px;
-          @apply(--layout-horizontal);
+        :host .ideaCard {
+          width: 210px;
         }
 
-        .groupCard {
+        .ideaCard {
+          width: 290px;
           height: 100%;
-        }
-
-        iron-image {
-          width: 300px !important;
-          height: 71px !important;
+          padding: 16px;
         }
       }
     </style>

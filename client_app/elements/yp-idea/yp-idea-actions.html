@@ -3,6 +3,8 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html>
+
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
 <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html" >
@@ -23,9 +25,8 @@
       .action-bar {
         @apply(--layout-horizontal);
         @apply(--layout-flex);
-        margin-top: 2px;
-        width: 250px;
-        padding-right:32px;
+        padding-right:36px;
+        padding-bottom: 8px;
       }
 
       .action-bar-small {
@@ -118,7 +119,33 @@
         height: 40px;
       }
 
+      @media (max-width: 360px) {
+        :host {
+          width: 100%;
+          padding-right:0;
+        }
+
+        .action-bar {
+          padding-right:0px;
+        }
+
+        .action-down {
+          padding-left: 80px;
+        }
+
+        .action-debate {
+          @apply(--layout-flex);
+        }
+      }
+
+      @media (max-width: 320px) {
+        :host {
+          width: 250px;
+        }
+      }
     </style>
+
+    <iron-media-query query="(max-width: 360px)" query-matches="{{small}}"></iron-media-query>
 
     <div class$="[[computeActionClass(small)]]">
       <div id="actionUp" class="action-up">

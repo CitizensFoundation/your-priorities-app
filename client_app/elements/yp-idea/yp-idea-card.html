@@ -26,12 +26,6 @@
         width: 420px;
       }
 
-      @media (max-width: 600px) {
-        :host {
-          width: 285px !important;
-        }
-      }
-
       .description {
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
@@ -79,16 +73,60 @@
         height: 232px;
       }
 
-      @media (max-width: 600px) {
-        yp-idea-cover-media {
-          width: 285px !important;
-        }
-      }
-
       .ideaCard {
         height: 500px;
       }
 
+      @media (max-width: 360px) {
+        :host {
+          width: 344px;
+        }
+
+        .ideaCard {
+          height: 100%;
+          width: 320px !important;
+        }
+
+        .voting {
+          padding-right: 0;
+          padding-left: 0;
+        }
+
+
+        paper-card {
+          width: 320px !important;
+        }
+
+        yp-idea-cover-media {
+          width: 320px;
+          height: 181px;
+        }
+
+        .card-actions {
+          width: 270px !important;
+        }
+
+        .card-content {
+          width: 290px !important;
+          padding-bottom: 48px;
+        }
+      }
+
+      @media (max-width: 320px) {
+        :host {
+          width: 304px;
+        }
+
+        .ideaCard {
+          height: 100% !important;
+          width: 304px !important;
+        }
+
+        yp-idea-cover-media {
+          width: 304px !important;
+          height: 168px !important;
+        }
+      }
     </style>
 
     <template is="dom-if" if="[[idea]]">
