@@ -153,12 +153,12 @@
         <div class="action-text up-text">{{formatNumber(idea.counter_endorsements_up)}}</div>
       </div>
 
-      <div class="action-debate layout vertical" hidden$="[[small]]">
+      <div class="action-debate layout vertical" hidden$="[[_hideDebate(small,forceSmall)]]">
         <div class="action-text debate-text">{{formatNumber(idea.counter_points)}}</div>
         <paper-icon-button title="[[t('idea.debate')]]" icon="communication:message" class="action-icon debate-icon" on-tap="goToIdea"></paper-icon-button>
       </div>
 
-      <div class="flex" hidden$="[[!small]]"></div>
+      <div class="flex" hidden$="[[!_hideDebate(small,forceSmall)]]"></div>
 
       <div id="actionDown" class="action-down">
         <div class="action-text down-text">{{formatNumber(idea.counter_endorsements_down)}}</div>
@@ -186,6 +186,11 @@
           value: false
         },
 
+        forceSmall: {
+          type: Boolean,
+          value: false
+        },
+
         endorseMode: {
           type: String,
           value: 'love'
@@ -195,6 +200,10 @@
           type: Number,
           value: 0
         }
+      },
+
+      _hideDebate: function (small, forceSmall) {
+        return (small || forceSmall)
       },
 
       _onIdeaChanged: function (newValue, oldValue) {

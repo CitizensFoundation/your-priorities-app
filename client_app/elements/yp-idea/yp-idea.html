@@ -60,8 +60,17 @@
         width: 940px;
       }
 
+      .description {
+        width: 750px;
+      }
+
+      yp-idea-actions {
+        width: 190px;
+      }
+
       .mainPage {
       }
+
       .tabsMaterial {
         margin-top: 16px;
         min-height: 500px;
@@ -107,7 +116,7 @@
             </paper-material >
             <paper-material elevation="1" class="layout vertical coverMediaColumn">
               <h1>[[t('idea.status')]]</h1>
-              <div>...</div>
+              <div>To be done</div>
             </paper-material >
           </div>
           <div class="layout vertical">
@@ -118,7 +127,7 @@
               </div>
               <div class="layout vertical">
                 <div class="card-actions">
-                  <yp-idea-actions endorse-mode="[[endorseMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
+                  <yp-idea-actions endorse-mode="[[endorseMode]]" force-small class="voting" idea="[[idea]]"></yp-idea-actions>
                 </div>
                 <yp-idea-users id="ideaUsers" idea="[[idea]]"></yp-idea-users>
               </div>
@@ -143,15 +152,14 @@
 
                   <yp-idea-points id="pointsSection" idea="[[idea]]"></yp-idea-points>
 
-                  <section><h1>...</h1></section>
-                  <section><h1>...</h1></section>
-                  <section><h1>...</h1></section>
+                  <section><h1 style="padding: 32px;">To be done...</h1></section>
+                  <section><h1 style="padding: 32px;">To be done...</h1></section>
+                  <section><h1 style="padding: 32px;">To be done...</h1></section>
                 </neon-animated-pages>
               </paper-material>
             </div>
           </div>
         </div>
-
 
         <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('idea.deleteConfirmation')]]"
                           action="/api/ideas/" action-id="[[idea.id]]">
