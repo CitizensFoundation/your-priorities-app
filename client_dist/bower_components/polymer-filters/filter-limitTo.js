@@ -1,0 +1,63 @@
+function isArray(value) {
+  return toString.call(value) === '[object Array]';
+}
+function isString(value){return typeof value === 'string';}
+
+function int(str) {
+  return parseInt(str, 10);
+}
+
+/**
+ * Creates a new array or string containing only a specified 
+ * number of elements. The elements are taken from either 
+ * the beginning or the end of the source array or string, 
+ * as specified by the value and sign (positive or negative) of `limit`
+ *
+ * Note: this is a straight-up port from the Angular limitTo filter
+ * and they deserve full credit for the implementation.
+ * @param  {Array|string} input input Source array or string to be limited.
+ * @param  {string|number} limit The length of the returned array or string. If the `limit` number 
+ *     is positive, `limit` number of items from the beginning of the source array/string are copied.
+ *     If the number is negative, `limit` number  of items from the end of the source array/string 
+ *     are copied. The `limit` will be trimmed if it exceeds `array.length`
+ * @return {Array|string} A new sub-array or substring of length `limit` or less if input array
+ *     had less than `limit` elements.
+ */
+PolymerExpressions.prototype.limitTo = function(input, limit) {
+  
+    if (!isArray(input) && !isString(input)) return input;
+    
+    limit = int(limit);
+
+    if (isString(input)) {
+      //NaN check on limit
+      if (limit) {
+        return limit >= 0 ? input.slice(0, limit) : input.slice(limit, input.length);
+      } else {
+        return "";
+      }
+    }
+
+    var out = [],
+      i, n;
+
+    // if abs(limit) exceeds maximum length, trim it
+    if (limit > input.length)
+      limit = input.length;
+    else if (limit < -input.length)
+      limit = -input.length;
+
+    if (limit > 0) {
+      i = 0;
+      n = limit;
+    } else {
+      i = input.length + limit;
+      n = input.length;
+    }
+
+    for (; i<n; i++) {
+      out.push(input[i]);
+    }
+
+    return out;
+  };

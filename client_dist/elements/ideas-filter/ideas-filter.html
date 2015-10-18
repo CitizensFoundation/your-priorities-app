@@ -1,0 +1,123 @@
+<polymer-element name="ideas-filter" attributes="categories groupId groupName filter">
+  <template>
+
+    <link rel="stylesheet" href="ideas-filter.css">
+    <div layout horizontal>
+      <div>
+        {{subTitle}}
+      </div>
+      <div>
+        <paper-menu-button class="selected-items" layout horizontal
+                           style="padding-left:0px;padding-top: 0px;margin-top: -8px;">
+
+          <paper-fab class="filterIcon filterIconTransform" icon="editor:merge-type" on-tap="{{openFilter}}" mini z="3"></paper-fab>
+
+          <paper-dropdown id="filterDropdown" class="dropdown" halign="left">
+            <div layout horizontal>
+              <div>
+                <core-selector on-core-select="{{ changeFilter }}">
+                  <paper-item data-filter="top">
+                    <core-icon icon="trending-up" class="filterIcon"></core-icon>
+                    {{'ideas.top' | t}}
+                  </paper-item>
+                  <paper-item data-filter="newest">
+                    <core-icon icon="av:new-releases" class="filterIcon"></core-icon>
+                    {{'ideas.newest' | t}}
+                  </paper-item>
+                  <paper-item data-filter="random">
+                    <core-icon icon="cached" class="filterIcon"></core-icon>
+                    {{'ideas.random' | t}}
+                  </paper-item>
+                  <paper-item data-filter="inProgress">
+                    <core-icon icon="av:hearing" class="filterIcon"></core-icon>
+                    {{'ideas.inProgress' | t}}
+                  </paper-item>
+                </core-selector>
+              </div>
+              <template if="{{categories && categories.length>0}}">
+                <div>
+                  <core-selector on-core-select="{{ changeCategory }}">
+                    <paper-item data-category-id="{{-1}}">
+                      <core-icon icon="select-all" class="filterIcon"></core-icon>
+                      {{'categories.the_all' | t}}
+                    </paper-item>
+                  </core-selector>
+                    <div layout horizontal>
+                      <template repeat="{{categoriesGroups in categories | splitArray(7)}}">
+                        <div layout vertical>
+                          <core-selector on-core-select="{{ changeCategory }}">
+                            <template repeat="{{category in categoriesGroups}}">
+                              <paper-item data-category-id="{{category.id}}" data-category-name="{{category.name}}">
+                                <core-image sizing="contain"
+                                            preload
+                                            height="24"
+                                            width="24"
+                                            class="filterIcon"
+                                            src="https://s3.amazonaws.com/{{'' | s3bucketName}}/categories/icons/000/000/{{category.id | padNumber}}/icon_100/{{category.icon_file_name}}">
+                                </core-image>
+                                {{category.name}}
+                              </paper-item>
+                            </template>
+                          </core-selector>
+                        </div>
+                      </template>
+                    </div>
+                  </core-selector>
+                </div>
+              </template>
+            </div>
+          </paper-dropdown>
+        </paper-menu-button>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+
+      subTitle: "",
+
+      domReady: function () {
+        this.updateFilter();
+      },
+
+      openFilter: function() {
+        window.globals.activity("Anonymous","open","filter");
+      },
+
+      updateFilter: function () {
+        window.selectedFilterName = "ideas."+this.filter;
+        var filterName = PolymerExpressions.prototype.t(window.selectedFilterName);
+        var categoryName = PolymerExpressions.prototype.t(window.selectedCategoryName);
+        var inWord = PolymerExpressions.prototype.t("short_word.in");
+        this.subTitle = filterName + " " + inWord + " " + categoryName;
+      },
+
+      changeFilter: function (e, detail) {
+        window.selectedFilter = detail.item.dataset.filter;
+        window.selectedFilterName = "ideas."+window.selectedFilter;
+        this.updateAfterFiltering();
+      },
+
+      changeCategory: function (e, detail) {
+        var categoryId = detail.item.dataset.categoryId;
+        window.selectedCategoryName = detail.item.dataset.categoryName;
+        if (categoryId != "-1") {
+          window.categoryId = categoryId;
+        } else {
+          window.categoryId = null;
+        }
+        this.updateAfterFiltering();
+      },
+
+      updateAfterFiltering: function () {
+        var newLocation = "/#/groups/" + this.groupId + "/ideas/" + window.selectedFilter + "/" + this.groupName;
+        if (window.categoryId) {
+          newLocation += "/" + window.categoryId;
+        }
+        window.globals.activity("Anonymous","change","filter",newLocation);
+        window.location = newLocation;
+      }
+
+    });
+  </script>
+</polymer-element>

@@ -1,0 +1,100 @@
+<polymer-element name="idea-page" extends="base-page" attributes="contactId contacts ideaName" layout vertical>
+  <template bind>
+    <link rel="stylesheet" href="idea-page.css">
+    <!--
+    On larger screens, change the behavior of the header panel so it doesn't
+    scroll away or do the condenses feature. Instead, treat its content like
+    a regular toolbar.
+    -->
+    <core-media-query query="min-width: 640px" queryMatches="{{largeScreen}}">
+    </core-media-query>
+
+    <base-layout id="layout" selected="idea" showLogo="true"
+                 category="{{idea.Category}}"
+                 name="{{idea.Group.name}}"
+                 subTitle="{{idea.name}}"
+                 idea="{{idea}}"
+                 groupId="{{idea.Group.id}}"
+                 groupName="{{idea.Group.name}}">
+      <template if="{{idea}}">
+
+        <div layout vertical center-center>
+
+          <paper-shadow id="topCard" class="topCard" z="2" center-center>
+            <yrpri-idea idea="{{idea}}" showCategory="true"></yrpri-idea>
+          </paper-shadow>
+
+          <paper-shadow class="card cardTabs" z="1" center-center>
+
+            <div layout vertical style="width:100%;">
+
+              <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+                <paper-tab>{{'ideas.tabs.debate' | t}} ({{idea.Points.length}})</paper-tab>
+                <paper-tab>{{'ideas.tabs.newsfeed' | t}}</paper-tab>
+                <paper-tab>{{'ideas.tabs.photos' | t}}</paper-tab>
+                <paper-tab>{{'ideas.tabs.solutions' | t}}</paper-tab>
+              </paper-tabs>
+
+              <core-animated-pages notap selected="{{selected}}" style="width:100%;" transitions="slide-from-right">
+                <section-points points="{{idea.Points}}"></section-points>
+                <section><center><br><br><h1>{{'ideas.tabs.not_implemented' | t}}</h1></center></section>
+                <section><center><br><br><h1>{{'ideas.tabs.not_implemented' | t}}</h1></center></section>
+                <section><center><br><br><h1>{{'ideas.tabs.not_implemented' | t}}</h1></center></section>
+              </core-animated-pages>
+
+            </div>
+          </paper-shadow>
+        </div>
+      </template>
+    </base-layout>
+
+    <core-ajax
+            auto="false"
+            id="ajax"
+            url="/api/ideas/{{idea_id}}"
+            response="{{response}}"
+            handleAs="json">
+    </core-ajax>
+  </template>
+  <script>
+    (function () {
+      Polymer({
+        responseChanged: function (e, detail, sender) {
+          this.$.layout.setSpinner(false);
+          this.idea = detail;
+          if (this.idea.description===null) {
+            this.idea.description = this.idea.Points[0].content;
+            this.idea.Points.shift();
+          }
+        },
+
+        selectedChanged: function (previous,selected) {
+          if (selected==0)
+            window.globals.activity("Anonymous","open","pointsTab");
+          else if (selected==1)
+            window.globals.activity("Anonymous","open","newsfeedTab");
+          else if (selected==2)
+            window.globals.activity("Anonymous","open","photosTab");
+          else if (selected==3)
+            window.globals.activity("Anonymous","open","solutionsTab");
+        },
+
+        domReady: function () {
+          this.$.layout.setSpinner(true);
+          this.$.ajax.go();
+        },
+        willPrepare: function () {
+          this.super();
+
+          // Measure the core-scroll-header-panel, otherwise its height will
+          // be messed up
+          this.$.scrollHeaderPanel.measureHeaderHeight();
+
+          // Reset the scroller so every time the user comes to the info page
+          // so they see the full profile photo
+          this.$.scrollHeaderPanel.scroller.scrollTop = 0;
+        }
+      });
+    })();
+  </script>
+</polymer-element>

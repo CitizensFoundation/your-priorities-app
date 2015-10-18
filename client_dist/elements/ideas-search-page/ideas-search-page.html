@@ -1,0 +1,47 @@
+<polymer-element name="ideas-search-page" extends="base-page">
+  <template bind>
+    <link rel="stylesheet" href="ideas-search-page.css">
+
+    <core-ajax
+      auto="false"
+      id="ideasAjax"
+      url="/api/groups/{{groupId}}/search/{{term}}"
+      response="{{ideasResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <base-layout id="layout" selected="ideas-search" name="{{'Search' | t}}" subTitle="{{term}}" groupName="{{groupName}}" groupId="{{groupId}}"
+                 showLogo="true">
+      <div class="card-container">
+        <template repeat="{{ideas as idea}}">
+          <paper-shadow class="card" z="1" center-center layout>
+            <yrpri-idea idea="{{idea}}" showCategory="true" small="true"></yrpri-idea>
+          </paper-shadow>
+        </template>
+        <a href="/add" on-click="{{navigate}}">
+          <paper-fab icon="add" z="1" class="createIdea" title="create"></paper-fab>
+        </a>
+      </div>
+    </base-layout>
+  </template>
+
+  <script>
+
+    Polymer({
+
+      ideas: [],
+
+      domReady: function () {
+        this.$.layout.setSpinner(true);
+        window.globals.activity("Anonymous","search","ideas",this.$.ideasAjax.url);
+        this.$.ideasAjax.go();
+      },
+
+      ideasResponseChanged: function (e, detail, sender) {
+        this.$.layout.setSpinner(false);
+        this.ideas = detail;
+      }
+
+    });
+  </script>
+</polymer-element>

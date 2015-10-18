@@ -1,0 +1,37 @@
+/*
+$primary-color: #616161;
+$primary-color-lighter: #9E9E9E;
+$primary-color-darker: #424242;
+$primary-color-more-darker: #222222;
+*/
+/*
+$primary-color: #616161;
+$primary-color-lighter: #616161;
+$primary-color-darker: #222222;
+$primary-color-more-darker: #000;
+*/
+.action_bar {
+  margin-top: 2px;
+  width: 200px; }
+
+.action_bar_small {
+  margin-top: 8px;
+  position: absolute;
+  width: 100%;
+  bottom: 5px;
+  vertical-align: bottom !important; }
+
+.action_text {
+  font-size: 18px;
+  text-align: right;
+  vertical-align: bottom;
+  padding-top: 8px; }
+
+.action_up {
+  color: rgba(0, 153, 0, 0.55); }
+
+.action_debate {
+  color: #9e9e9e; }
+
+.action_down {
+  color: rgba(153, 0, 0, 0.55); }

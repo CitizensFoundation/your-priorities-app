@@ -1,0 +1,63 @@
+{
+  "ideas": {
+    "top": "Top ideas",
+    "newest": "Latest ideas",
+    "random": "Random ideas",
+    "inProgress": "Ideas in progress",
+    "groups": "Idea groups",
+    "search": "Search for ideas",
+    "add_new":"Add new idea",
+    "up_vote":"Vote idea up",
+    "down_vote":"Vote idea down",
+    "report": "Report idea",
+    "notify": "Notify me about this idea",
+    "share": "Share this idea",
+    "tabs": {
+      "debate": "Debate",
+      "newsfeed": "Newsfeed",
+      "photos": "Photos",
+      "solutions": "Solutions",
+      "not_implemented": "No implemented yet"
+    }
+  },
+  "short_word": {
+    "in": "in"
+  },
+  "categories": {
+    "all": "all categories",
+    "the_all": "All categories"
+  },
+  "points": {
+    "point": "Point"
+  },
+  "point": {
+    "for": "Point for...",
+    "against": "Point against...",
+    "add_up": "Add point for",
+    "add_down": "Add point against",
+    "helpful": "Vote point up as helpful",
+    "not_helpful": "Vote point down as not helpful"
+  },
+  "notice": {
+    "ok": "Ok",
+    "feature_not_implemented_a": "This feature has not yet been implemented in this read-only preview of Your Priorities 6.0.",
+    "feature_not_implemented_b": "Let us know what you think :)",
+    "welcome_a": "This is a read-only preview of Your Priorities 6.0 so you can only view content, not add to it. Feedback is most appreciated.",
+    "welcome_b": "Currently it only works in Chrome but will support all major browsers by release date in Q1 2015.",
+    "welcome_heading": "Welcome to Your Priorities 6.0 technology preview",
+    "continue": "Continue to preview"
+  },
+  "groups": {
+    "new": "New idea group",
+    "invite": "Invite a friend",
+    "invite_to_group": "Invite friend to this group",
+    "share_group": "Share this group"
+  },
+  "menu": {
+    "my_pages": "My profile",
+    "about": "About",
+    "help": "Help",
+    "settings": "Settings"
+
+  }
+}

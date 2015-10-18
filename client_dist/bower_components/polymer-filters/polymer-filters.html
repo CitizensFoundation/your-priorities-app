@@ -1,0 +1,191 @@
+<link rel="import" href="../polymer/polymer.html">
+<script src="filter-date.js"></script>
+<script src="filter-limitFrom.js"></script>
+<script src="filter-lowercase.js"></script>
+<script src="filter-uppercase.js"></script>
+<script src="filter-orderBy.js"></script>
+<script src="filter-reverse.js"></script>
+<script src="filter-replace.js"></script>
+<script src="filter-firstlast.js"></script>
+<script src="filter-startsWith.js"></script>
+<script src="filter-wordcount.js"></script>
+<script src="filter-random.js"></script>
+<script src="filter-round.js"></script>
+<script src="filter-truncate.js"></script>
+<script src="filter-titlecase.js"></script>
+<script src="filter-ltrim.js"></script>
+<script src="filter-rtrim.js"></script>
+<script src="filter-trim.js"></script>
+<script src="filter-length.js"></script>
+<script src="filter-list.js"></script>
+<script src="filter-limitTo.js"></script>
+<script src="filter-capitalize.js"></script>
+
+<!--
+A collection of filters for formatting values of [Polymer expressions](http://www.polymer-project.org/docs/polymer/expressions.html) for display to users.
+
+### Examples
+
+####Uppercase
+
+    {{'Hello World' | uppercase}}
+
+> HELLO WORLD
+
+####Lowercase
+
+    {{'Hello World' | lowercase}}
+
+> hello world
+
+####Reverse
+
+    {{'Hello World' | reverse}}
+
+> dlroW olleH
+
+####Replace
+
+    {{'Hello World' | replace('World','Peeps')}}
+
+> Hello Peeps
+
+####LTrim
+
+    {{'    I was a string with leading whitespace' | ltrim}}
+
+> I was a string with leading whitespace
+
+####RTrim
+
+    {{'I was a string with trailing whitespace    ' | rtrim}}
+
+> I was a string with trailing whitespace
+
+####Trim
+
+    {{' I was a string with leading and trailing whitespace    ' | trim}}
+
+> I was a string with leading and trailing whitespace
+
+####Truncate
+
+    {{'Lorem Catsum Itsum' | truncate(8) }}
+
+> Lorem...
+
+    {{'Lorem Catsum Itsum' | truncate(8, true) }}
+
+> Lorem Ca...
+
+    {{'Lorem Catsum Itsum' | truncate(8, true, ' [READ MORE]') }}
+
+> Lorem Ca [READ MORE]
+
+####Title case
+
+    {{'this is a sentence that was not using title case.' | titlecase}}
+
+> This Is A Sentence That Was Not Using Title Case.
+
+####Date
+
+    {{1288323623006 | date('yyyy-MM-dd HH:mm:ss Z')}}
+
+> 2010-10-29 04:40:23 Z
+
+####Order an array by the expression predicate
+
+    <template repeat="{{friends | orderBy('age')}}">
+      {{name}}
+    </template>
+
+> Paul Eric Rob Timothy
+
+####Filter by items starting with a specific letter
+
+    <template repeat="{{friend in friends | startsWith('T')}}">
+      {{ friend.name }}
+    </template>
+
+> Timothy
+
+####Limit selection to a specified number of elements
+
+    <template repeat="{{friends | limitTo(2)}}">
+      {{name}}
+    </template>
+
+> Matt
+> Paul
+
+####Limit displayed items from an array at an offset by a limit
+
+    <template repeat="{{friends | limitFrom(1,2)}}">
+      {{name}}
+    </template>
+
+> Paul
+
+####Word count
+
+    {{'Hello World' | wordcount}}
+
+> 2
+
+####First
+
+    {{ colorsArray | first }}
+
+> red
+
+####Last
+
+    {{ colorsArray | last }}
+
+> yellow
+
+####Random
+
+    {{ colorsArray | random }}
+
+> green
+
+####Length
+
+    {{'Hello World' | length}}
+
+> 11
+
+####Rounding
+
+    {{ 45.35 | round }}
+
+> 45
+
+    {{ 45.35 | round(1, 'floor') }}
+
+> 45.3
+
+####Converting arrays to a list
+
+    {{ arr | list }}
+
+> something,somethingelse,etc
+
+    {{ arr | list(" ") }}
+
+> something, somethingelse, etc
+
+####Capitalize
+
+    {{ "Hello World!" | capitalize }}
+
+> Hello world!
+
+@element polymer-filters
+@blurb A collection of Polymer filters for formatting values of expressions for display to users
+@homepage http://github.com/addyosmani/polymer-filters
+@inspiration http://jinja.pocoo.org/docs/templates/
+-->
+

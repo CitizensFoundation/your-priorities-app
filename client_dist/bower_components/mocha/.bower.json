@@ -1,0 +1,30 @@
+{
+  "name": "mocha",
+  "version": "1.19.0",
+  "main": "mocha.js",
+  "ignore": [
+    "bin",
+    "editors",
+    "images",
+    "lib",
+    "support",
+    "test",
+    ".gitignore",
+    ".npmignore",
+    ".travis.yml",
+    "component.json",
+    "index.js",
+    "Makefile",
+    "package.json"
+  ],
+  "homepage": "https://github.com/visionmedia/mocha",
+  "_release": "1.19.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.19.0",
+    "commit": "bc708c17225f60b1c8ceec5c2f77298273bdf297"
+  },
+  "_source": "git://github.com/visionmedia/mocha.git",
+  "_target": "~1.19.0",
+  "_originalSource": "mocha"
+}

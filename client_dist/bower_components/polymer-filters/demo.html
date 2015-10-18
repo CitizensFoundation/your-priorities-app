@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>polymer-filters Demo</title>
+
+  <script src="../platform/platform.js"></script>
+  <link rel="import" href="polymer-filters.html">
+</head>
+<body unresolved>
+
+<h1>Polymer Filters</h1>
+<h2>A collection of Polymer filters for formatting values of expressions.</h2>
+
+<template id="view" is="auto-binding">
+
+    <h3>uppercase</h3>
+
+    <p>{{greeting | uppercase}}</p>
+
+    <h3>lowercase</h3>
+
+    <p>{{greeting | lowercase}}</p>
+
+    <h3>reverse</h3>
+    {{'Hello World' | reverse}}
+
+    <h3>replace('World','Peeps')</h3>
+    {{'Hello World' | replace('World','Peeps')}}
+
+    <h3>truncate(8, true)</h3>
+    {{'Lorem Catsum Itsum' | truncate(8, true) }}
+
+    <h3>titlecase</h3>
+    {{'this is a sentence that was not using title case.' | titlecase}}
+
+    <h3>startsWith(T)</h3>
+    <template repeat="{{friend in friends | startsWith('T')}}">
+        {{ friend.name }}
+    </template>
+
+    <h3>date('yyyy-MM-dd HH:mm:ss Z')</h3>
+    {{1288323623006 | date('yyyy-MM-dd HH:mm:ss Z')}}
+
+    <h3>orderBy('age')</h3>
+
+    <ul class="phones">
+        <template repeat="{{phones | orderBy(orderProp)}}">
+            <li>
+                <span><strong>{{name}}</strong> - {{snippet}}</span>
+            </li>
+        </template>
+    </ul>
+
+    <h3>limitTo(2)</h3>
+
+    <ul class="phones">
+        <template repeat="{{phones | limitTo(2)}}">
+            <li>
+                <span><strong>{{name}}</strong> - {{snippet}}</span>
+            </li>
+        </template>
+    </ul>
+
+    <h3>limitFrom(1,2)</h3>
+
+    <ul class="phones">
+        <template repeat="{{phones | limitFrom(1,2)}}">
+            <li>
+                <span><strong>{{name}}</strong> - {{snippet}}</span>
+            </li>
+        </template>
+    </ul>
+
+    <h3>wordcount</h3>
+    {{'Hello World' | wordcount}}
+
+    <h3>round</h3>
+    {{ 45.35 | round }}
+
+    <h3>round(1, 'floor')</h3>
+    {{ 45.35 | round(1, 'floor') }}
+
+    <h3>first</h3>
+    {{ colors | first }}
+
+    <h3>last</h3>
+    {{ colors | last }}
+
+    <h3>random</h3>
+    {{ colors | random }}
+
+    <h3>length</h3>
+    {{'Hello World' | length}}
+	
+	<h3>ltrim</h3>
+    {{'    I was a string with leading whitespace' | ltrim}}
+	
+	<h3>rtrim</h3>
+    {{'I was a string with trailing whitespace    ' | rtrim}}
+
+    <h3>trim</h3>
+    {{'    I was a string with leading and trailing whitespace    ' | trim}}
+
+    <h3>list</h3>
+    {{colors | list}}
+
+    <h3>list(" ")</h3>
+    {{colors | list(" ")}}
+
+    <h3>capitalize</h3>
+    {{greeting | capitalize}}
+
+</template>
+  <script>
+	var template = document.getElementById('view');
+	var phones = [{'name':'Nexus S','snippet':'Fast just got faster with Nexus S.','age':1},{'name':'Motorola XOOM with Wi-Fi','snippet':'The Next, Next Generation tablet.','age':2},{'name':'MOTOROLA XOOM','snippet':'The Next, Next Generation tablet.','age':3}];
+	template.phones = phones;
+	template.orderProp = 'age';
+	template.colors = ['red','green','blue','yellow'];
+	template.greeting = 'Hello World';
+	template.friends = [{
+	    name: 'Matt',
+        dinner: 'pizza'       
+	  }, {
+	    name: 'Paul',
+        dinner: 'sushi'
+	  }, {
+	    name: 'Eric',
+        dinner: 'hummus'
+	  }, {
+	    name: 'Rob',
+        dinner: 'burger'
+	  }, {
+	    name: 'Timothy',
+        dinner: 'pasta'
+	  }];
+  </script>
+</body>
+</html>

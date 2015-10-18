@@ -7,7 +7,6 @@ server_api/bin/uploads
 app/bower_components
 client_app/bower_components
 .tmp
-client_dist/*
 test/bower_components/
 projectFilesBackup/
 .idea/*

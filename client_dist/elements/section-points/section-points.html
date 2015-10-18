@@ -1,0 +1,123 @@
+<polymer-element name="section-points" attributes="points">
+  <template>
+
+    <link rel="stylesheet" href="section-points.css">
+
+    <div layout horizontal flex>
+
+        <div layout flex class="point">
+
+          <paper-shadow z="1" class="pointText" animated>
+
+            <paper-input-decorator class="up_point" floatingLabel
+                                   label="{{'point.for' | t}}">
+              <paper-autogrow-textarea id="a1">
+                <textarea value="{{textValueUp}}" id="up_point" on-tap="{{focusUpPoint}}" on-focus="{{focusTextArea}}" on-blur="{{blurTextArea}}"></textarea>
+              </paper-autogrow-textarea>
+            </paper-input-decorator>
+
+            <template if="{{textValueUp.length>20}}">
+              <div layout justified style="width:100%;text-align: center;padding-top: 10px;">
+                <paper-fab icon="add" mini z="2" on-tap="{{addPointUp}}"
+                           class="upPointAction" title="{{'points.add_up' | t}}"></paper-fab>
+              </div>
+            </template>
+
+          </paper-shadow>
+
+          <template repeat="{{upPoints as point}}">
+            <yrpri-point point="{{point}}"></yrpri-point>
+          </template>
+        </div>
+
+        <div layout flex class="point">
+
+          <paper-shadow z="1" class="pointText" animated>
+
+            <paper-input-decorator class="down_point" floatingLabel
+                                   label="{{'point.against' | t}}">
+              <paper-autogrow-textarea id="a2">
+                <textarea value="{{textValueDown}}" id="down_point" on-tap="{{focusDownPoint}}" on-focus="{{focusTextArea}}" on-blur="{{blurTextArea}}"></textarea>
+              </paper-autogrow-textarea>
+            </paper-input-decorator>
+
+            <template if="{{textValueDown.length>20}}">
+              <div layout justified id="downPointAction" style="width:100%;text-align: center;padding-top: 10px;">
+                <paper-fab icon="add" mini z="2" on-tap="{{addPointDown}}"
+                           class="downPointAction" title="{{'points.add_down' | t}}"></paper-fab>
+              </div>
+            </template>
+
+          </paper-shadow>
+
+          <template repeat="{{downPoints as point}}">
+            <yrpri-point point="{{point}}"></yrpri-point>
+          </template>
+        </div>
+
+
+      </template>
+    </div>
+
+  </template>
+  <script>
+    (function () {
+      Polymer({
+
+        upPoints: [],
+        downPoints: [],
+
+
+        addPointUp: function () {
+          window.globals.activity("Anonymous","add","pointUp");
+          window.globals.openDialog("point.add_up");
+        },
+
+        addPointDown: function () {
+          window.globals.activity("Anonymous","add","pointDown");
+          window.globals.openDialog("point.add_down");
+        },
+
+        focusUpPoint: function () {
+          window.globals.activity("Anonymous","focus","pointUp");
+        },
+
+        focusDownPoint: function () {
+          window.globals.activity("Anonymous","focus","pointDown");
+        },
+
+        focusTextArea: function(e) {
+          e.srcElement.parentElement.parentElement.parentElement.setZ(3); //= "4";
+        },
+
+        blurTextArea: function(e) {
+          e.srcElement.parentElement.parentElement.parentElement.setZ(1);// = "4";
+        },
+
+        textChanged: function (e, detail) {
+          this.$.upPointAction.style.display="none";
+          debugger;
+          var text = e.srcElement;
+          if (text.value.length>=42) {
+            if (text.id==='up_point') {
+              this.$.upPointAction.style.display="none";
+            } else {
+              this.$.downPointAction.style.display="none";
+            }
+          } else {
+            if (text.id==='up_point') {
+              this.$.upPointAction.style.display="none";
+            } else {
+              this.$.downPointAction.style.display="none";
+            }
+          }
+        },
+
+        ready: function () {
+          this.upPoints = this.points.filter(function(x) { return x.value > 0; });
+          this.downPoints = this.points.filter(function(x) { return x.value < 0; });
+        }
+      });
+    })();
+  </script>
+</polymer-element>

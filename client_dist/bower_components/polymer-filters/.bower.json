@@ -1,0 +1,29 @@
+{
+  "name": "polymer-filters",
+  "version": "0.1.0",
+  "authors": [
+    "Addy Osmani <addyosmani@gmail.com>"
+  ],
+  "description": "A collection of Polymer filters for formatting values of expressions.",
+  "keywords": "filters, polymer, web-components",
+  "main": "polymer-filters.html",
+  "license": "Apache 2.0",
+  "homepage": "https://github.com/addyosmani/polymer-filters/",
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#>=0.4.0 <1.0.0",
+    "chai": "~1.9.1",
+    "mocha": "~1.19.0"
+  },
+  "_release": "0.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.0",
+    "commit": "d646fa5ad27a97a7ff1213791d7a60a6c40cfc8f"
+  },
+  "_source": "git://github.com/addyosmani/polymer-filters.git",
+  "_target": "~0.1.0",
+  "_originalSource": "polymer-filters"
+}

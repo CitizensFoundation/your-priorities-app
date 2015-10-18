@@ -1,0 +1,132 @@
+/*
+$primary-color: #616161;
+$primary-color-lighter: #9E9E9E;
+$primary-color-darker: #424242;
+$primary-color-more-darker: #222222;
+*/
+/*
+$primary-color: #616161;
+$primary-color-lighter: #616161;
+$primary-color-darker: #222222;
+$primary-color-more-darker: #000;
+*/
+.point {
+  width: 250px;
+  padding: 8px;
+  margin: 8px; }
+
+#up_point {
+  color: #009900; }
+
+#down_point {
+  color: #990000; }
+
+.pointText {
+  margin-bottom: 16px;
+  margin-top: 16px;
+  padding: 16px;
+  padding-top: 8px; }
+
+.upPointAction {
+  background-color: rgba(0, 153, 0, 0.75); }
+
+.downPointAction {
+  background-color: rgba(153, 0, 0, 0.75); }
+
+.up_point /deep/ .label-text,
+.up_point /deep/ .error {
+  /* inline label,  floating label, error message and error icon color when the input is unfocused */
+  color: rgba(0, 153, 0, 0.55); }
+
+.up_point {
+  background-color: #fff; }
+
+.up_point /deep/ ::-webkit-input-placeholder {
+  /* platform specific rules for placeholder text */
+  color: rgba(0, 153, 0, 0.55); }
+
+.up_point /deep/ ::-moz-placeholder {
+  color: rgba(0, 153, 0, 0.55); }
+
+.up_point /deep/ :-ms-input-placeholder {
+  color: rgba(0, 153, 0, 0.55); }
+
+.up_point /deep/ .unfocused-underline {
+  /* line color when the input is unfocused */
+  background-color: rgba(0, 153, 0, 0.55); }
+
+.up_point[focused] /deep/ .floating-label .label-text {
+  /* floating label color when the input is focused */
+  color: #b0b0b0; }
+
+.up_point /deep/ .focused-underline {
+  /* line color when the input is focused */
+  background-color: #b0b0b0; }
+
+.up_point /deep/ .cursor {
+  /* cursor color during the focus transition */
+  background-color: #b0b0b0; }
+
+.up_point.invalid[focused] /deep/ .floated-label .label-text,
+.up_point[focused] /deep/ .error {
+  /* floating label, error message nad error icon color when the input is invalid and focused */
+  color: #b0b0b0; }
+
+.up_point.invalid /deep/ .focused-underline,
+.up_point.invalid /deep/ .cursor {
+  /* line and cursor color when the input is invalid and focused */
+  background-color: salmon; }
+
+.down_point {
+  background-color: #fff; }
+
+#up_point {
+  background-color: #fff; }
+
+#down_point {
+  background-color: #fff; }
+
+.down_point /deep/ .label-text,
+.down_point /deep/ .error {
+  /* inline label,  floating label, error message and error icon color when the input is unfocused */
+  color: rgba(153, 0, 0, 0.55); }
+
+.down_point /deep/ ::-webkit-input-placeholder {
+  /* platform specific rules for placeholder text */
+  color: rgba(153, 0, 0, 0.55); }
+
+.down_point /deep/ ::-moz-placeholder {
+  color: rgba(153, 0, 0, 0.55); }
+
+.down_point /deep/ :-ms-input-placeholder {
+  color: rgba(153, 0, 0, 0.55); }
+
+.down_point /deep/ .unfocused-underline {
+  /* line color when the input is unfocused */
+  background-color: rgba(153, 0, 0, 0.55); }
+
+.down_point[focused] /deep/ .floating-label .label-text {
+  /* floating label color when the input is focused */
+  color: #b0b0b0; }
+
+.down_point /deep/ .floating-label .label-text {
+  /* floating label color when the input is focused */
+  color: #b0b0b0; }
+
+.down_point /deep/ .focused-underline {
+  /* line color when the input is focused */
+  background-color: #b0b0b0; }
+
+.down_point /deep/ .cursor {
+  /* cursor color during the focus transition */
+  background-color: #b0b0b0; }
+
+.down_point.invalid[focused] /deep/ .floated-label .label-text,
+.down_point[focused] /deep/ .error {
+  /* floating label, error message nad error icon color when the input is invalid and focused */
+  color: salmon; }
+
+.down_point.invalid /deep/ .focused-underline,
+.down_point.invalid /deep/ .cursor {
+  /* line and cursor color when the input is invalid and focused */
+  background-color: salmon; }
