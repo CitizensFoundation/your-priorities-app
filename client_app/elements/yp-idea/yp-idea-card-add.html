@@ -16,7 +16,17 @@
 
   <template>
     <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+        width: 416px;
+      }
 
+      .ideaCard {
+        width: 420px;
+        height: 500px;
+        padding: 16px;
+      }
 
       paper-icon-button {
         height: 250px;
