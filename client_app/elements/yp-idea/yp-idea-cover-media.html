@@ -55,6 +55,11 @@
 
     <template is="dom-if" if="[[idea]]" restamp>
       <div class="mapCanvas">
+
+        <template is="dom-if" if="[[_withCoverMediaType(idea,'none')]]">
+          <iron-image sizing="cover" class="main-image" src="https://i.imgur.com/zgjlocB.png"></iron-image>
+        </template>
+
         <template is="dom-if" if="[[_withCoverMediaType(idea,'image')]]">
           <iron-image sizing="cover" class="main-image" src="[[ideaImagePath()]]"></iron-image>
         </template>
@@ -108,7 +113,11 @@
       _withCoverMediaType: function (idea, mediaType) {
         if (!idea)
           return false;
-        return (this.idea && this.idea.cover_media_type===mediaType);
+        if (mediaType==='none') {
+          return (this.idea && (!this.idea.cover_media_type || this.idea.cover_media_type==='none'));
+        } else {
+          return (this.idea && this.idea.cover_media_type===mediaType);
+        }
       },
 
       _getMapPosition: function () {
