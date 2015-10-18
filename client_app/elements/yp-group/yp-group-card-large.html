@@ -37,12 +37,6 @@
         width: 420px;
       }
 
-      @media (max-width: 600px) {
-        :host {
-          width: 285px !important;
-        }
-      }
-
       .group-name {
         padding-bottom: 4px;
         margin: 0;
@@ -64,7 +58,7 @@
       .stats {
         @apply(--layout-self-center);
         position: absolute;
-        bottom: 16px;
+        bottom: 0px;
         left: 16px;
       }
 
@@ -87,6 +81,42 @@
       .logo {
         width: 420px;
         height: 100px;
+      }
+
+      @media (max-width: 360px) {
+        :host {
+          width: 328px;
+          @apply(--layout-horizontal);
+        }
+
+        .groupCard {
+          height: 100%;
+        }
+
+        iron-image {
+          width: 328px !important;
+          height: 78px !important;
+        }
+      }
+
+      @media (max-width: 320px) {
+        :host {
+          width: 300px;
+          @apply(--layout-horizontal);
+        }
+
+        .groupCard {
+          height: 100%;
+        }
+
+        iron-image {
+          width: 300px !important;
+          height: 71px !important;
+        }
+      }
+
+      .card-content {
+        padding-bottom: 40px;
       }
     </style>
 

@@ -50,6 +50,38 @@
         --iron-icon-height: 220px;
         --iron-icon-width: 220px;
       }
+
+      @media (max-width: 360px) {
+        :host {
+          width: 328px;
+          @apply(--layout-horizontal);
+        }
+
+        .groupCard {
+          height: 100%;
+        }
+
+        iron-image {
+          width: 328px !important;
+          height: 78px !important;
+        }
+      }
+
+      @media (max-width: 320px) {
+        :host {
+          width: 300px;
+          @apply(--layout-horizontal);
+        }
+
+        .groupCard {
+          height: 100%;
+        }
+
+        iron-image {
+          width: 300px !important;
+          height: 71px !important;
+        }
+      }
     </style>
 
     <paper-card elevation="[[elevation]]" class="layout vertical center ideaCard">

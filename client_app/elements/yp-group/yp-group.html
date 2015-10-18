@@ -49,6 +49,16 @@
         padding-bottom: 0;
         height: 50px;
       }
+
+      @media (min-width: 1201px) {
+        .card-container {
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .card-container {
+        }
+      }
     </style>
 
     <yp-idea-edit id="ideaEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-idea-edit>
@@ -58,7 +68,7 @@
                        group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
                        category-id="{{categoryId}}" category-name="{{categoryName}}">
       </yp-ideas-filter>
-      <div class="card-container">
+      <div class="card-container layout center-center">
         <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
         <template is="dom-if" if="[[ideas]]">
           <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
