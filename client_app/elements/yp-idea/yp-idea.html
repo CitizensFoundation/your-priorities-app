@@ -32,7 +32,7 @@
       }
 
       .container {
-        padding-top: 16px;
+        padding-top: 0px;
         height: 100%;
       }
 
@@ -60,12 +60,26 @@
         width: 940px;
       }
 
+      .statusHeader {
+        padding: 16px;
+        background-color: #fefefe;
+        width: 940px;
+        margin-top: 16px;
+        height: 48px;
+      }
+
       .description {
-        width: 750px;
+        width: 510px;
+        padding-left: 24px;
       }
 
       yp-idea-actions {
-        width: 190px;
+        width: 270px;
+      }
+
+      .statusColumn {
+        width: 670px;
+        padding-bottom: 16px;
       }
 
       .mainPage {
@@ -111,25 +125,11 @@
 
         <div class="layout horizontal wrap">
           <div class="layout vertical">
-            <paper-material elevation="1" class="layout vertical coverMediaColumn">
-              <yp-idea-cover-media idea="[[idea]]"></yp-idea-cover-media>
-            </paper-material >
-            <paper-material elevation="1" class="layout vertical coverMediaColumn">
-              <h1>[[t('idea.status')]]</h1>
-              <div>To be done</div>
-            </paper-material >
-          </div>
-          <div class="layout vertical">
             <paper-material elevation="1" class="layout horizontal ideaHeader">
+              <yp-idea-cover-media idea="[[idea]]"></yp-idea-cover-media>
               <div class="description">
                 <h1 class="idea-name">[[ideaName(idea)]]</h1>
                 <div>[[ideaDescription(idea)]]</div>
-              </div>
-              <div class="layout vertical">
-                <div class="card-actions">
-                  <yp-idea-actions endorse-mode="[[endorseMode]]" force-small class="voting" idea="[[idea]]"></yp-idea-actions>
-                </div>
-                <yp-idea-users id="ideaUsers" idea="[[idea]]"></yp-idea-users>
               </div>
               <paper-menu-button class="edit" hidden$="[[!hasAccess(idea)]]">
                 <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
@@ -138,6 +138,17 @@
                   <paper-item id="deleteMenuItem">[[t('idea.delete')]]</paper-item>
                 </paper-menu>
               </paper-menu-button>
+            </paper-material>
+            <paper-material elevation="1" class="layout horizontal statusHeader">
+              <div class="layout horizontal statusColumn">
+                <h1><span>[[t('idea.status')]]</span>: Open</h1>
+              </div>
+              <div class="layout vertical">
+                <div class="card-actions">
+                  <yp-idea-actions endorse-mode="[[endorseMode]]" force-small class="voting" idea="[[idea]]"></yp-idea-actions>
+                </div>
+                <yp-idea-users id="ideaUsers" idea="[[idea]]"></yp-idea-users>
+              </div>
             </paper-material>
             <div>
               <paper-material elevation="2" class="tabsMaterial mainPage" animated>
