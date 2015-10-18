@@ -96,7 +96,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <!-- Main Toolbar -->
         <paper-toolbar id="mainToolbar">
-          <paper-icon-button icon="arrow-back" on-tap="goBack" hidden$="[[!showBack]]"></paper-icon-button>
+          <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
+          <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
+          <div class="app-name">[[headerTitle]]</div>
           <span class="flex"></span>
 
           <!-- Toolbar icons -->
@@ -110,17 +112,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
 
           <!-- Application name -->
-          <div class="middle middle-container center horizontal layout">
-            <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]">
-            </iron-icon>
-            <div class="app-name">[[headerTitle]]</div>
-          </div>
 
           <!-- Application sub title -->
-          <div class="bottom bottom-container center horizontal layout">
-            <div class="bottom-title paper-font-subhead app-description">[[headerDescriptionDISABLED]]</div>
-          </div>
-
         </paper-toolbar>
 
         <!-- Main Content -->

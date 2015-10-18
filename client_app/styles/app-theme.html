@@ -159,7 +159,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   #mainToolbar .middle-container  {
     height: 100%;
-    margin-left: 88px;
   }
 
   #mainToolbar:not(.tall) .middle {
@@ -191,6 +190,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     height: 1200px;
   }
 
+  paper-toolbar .app-name {
+    font-size: 24px;
+    font-weight: 400;
+  }
+
+  #paperToggle {
+    margin-right: 0;
+  }
   /* Breakpoints */
 
   /* Small */
@@ -201,6 +208,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       margin: 0;
     }
 
+    paper-icon-button {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
     paper-material {
       --menu-container-display: none;
       width: calc(97.33% - 32px);
@@ -209,16 +221,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     .paper-font-display1 {
-      font-size: 12px;
+      font-size: 18px;
     }
 
-    paper-toolbar.tall .app-name {
-      font-size: 24px;
+    paper-toolbar .app-name {
+      font-size: 18px;
       font-weight: 400;
+      padding-left: 4px;
     }
 
-    #drawer .paper-toolbar {
-      margin-left: 16px;
+    .backIcon {
+      width: 36px;
+      heigh: 36px;
+      padding-left: 0;
+    }
+
+    #mainToolbar {
+      margin-left: 0;
+      margin-right: 0;
     }
 
     #overlay {
