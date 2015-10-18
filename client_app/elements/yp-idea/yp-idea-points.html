@@ -21,7 +21,6 @@
       .main-container {
         @apply(--layout-horizontal);
         @apply(--layout-flex);
-        width: 200px !important;
       }
 
       .point {
@@ -36,10 +35,29 @@
         width: 420px;
       }
 
+      yp-point {
+        width: 440px;
+      }
+
+      @media (max-width: 1024px) {
+        .pointText {
+          width: 420px;
+          font-size: 30px;
+        }
+      }
+
       @media (max-width: 600px) {
         .pointText {
           width: 140px;
           font-size: 30px;
+        }
+
+        yp-point {
+          width: 140px;
+        }
+
+        .main-container {
+          width: 140px;
         }
       }
 
@@ -47,6 +65,14 @@
         .pointText {
           width: 110px;
           font-size: 9px;
+        }
+
+        yp-point {
+          width: 140px;
+        }
+
+        .main-container {
+          width: 110px;
         }
       }
 
