@@ -67,7 +67,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <material-search id="search" narrow="[[narrow]]"
                      previous-searches="{{previousSearches}}"
                      on-search-change="_onSearch" class="fit"></material-search>
-    <paper-drawer-panel id="paperDrawerPanel" narrow="{{narrow}}" force-narrow>
+    <paper-drawer-panel id="paperDrawerPanel" narrow="{{narrow}}" right-drawer force-narrow>
       <!-- Drawer Scroll Header Panel -->
       <paper-scroll-header-panel drawer fixed>
 
@@ -97,7 +97,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <!-- Main Toolbar -->
         <paper-toolbar id="mainToolbar">
           <paper-icon-button icon="arrow-back" on-tap="goBack" hidden$="[[!showBack]]"></paper-icon-button>
-          <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
           <span class="flex"></span>
 
           <!-- Toolbar icons -->
@@ -107,6 +106,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-icon-button on-tap="openEdit" icon="face"></paper-icon-button>
             <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
           </template>
+
+          <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
 
           <!-- Application name -->
           <div class="middle middle-container center horizontal layout">
