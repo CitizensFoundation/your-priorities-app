@@ -1,5 +1,21 @@
 {
-  "ideas": {
+
+  "name": "Name",
+
+  "domain": {
+    "edit": "Edit domain"
+  },
+
+  "community": {
+    "edit": "Edit community",
+    "delete": "Delete community",
+    "new": "Create community"
+  },
+
+  "idea": {
+    "status": "Status of this idea",
+    "new": "New idea",
+    "searchingFor": "Searching for ",
     "top": "Top ideas",
     "newest": "Latest ideas",
     "random": "Random ideas",
@@ -14,23 +30,37 @@
     "share": "Share this idea",
     "tabs": {
       "debate": "Debate",
-      "newsfeed": "Newsfeed",
+      "news": "News",
+      "location": "Location",
       "photos": "Photos",
       "solutions": "Solutions",
       "not_implemented": "No implemented yet"
-    }
+    },
+    "cover": {
+      "media": "Choose cover media",
+      "map": "Map",
+      "streetview": "Street View",
+      "image": "Image",
+      "none": "None"
+    },
+    "edit": "Edit idea",
+    "delete": "Delete idea"
   },
+
   "short_word": {
     "in": "in"
   },
+
+  "category": {
+    "new": "New category"
+  },
+
   "categories": {
     "all": "all categories",
     "the_all": "All categories"
   },
-  "points": {
-    "point": "Point"
-  },
   "point": {
+    "point": "Point",
     "for": "Point for...",
     "against": "Point against...",
     "add_up": "Add point for",
@@ -38,6 +68,7 @@
     "helpful": "Vote point up as helpful",
     "not_helpful": "Vote point down as not helpful"
   },
+
   "notice": {
     "ok": "Ok",
     "feature_not_implemented_a": "This feature has not yet been implemented in this read-only preview of Your Priorities 6.0.",
@@ -45,19 +76,50 @@
     "welcome_a": "This is a read-only preview of Your Priorities 6.0 so you can only view content, not add to it. Feedback is most appreciated.",
     "welcome_b": "Currently it only works in Chrome but will support all major browsers by release date in Q1 2015.",
     "welcome_heading": "Welcome to Your Priorities 6.0 technology preview",
-    "continue": "Continue to preview"
+    "continue": "Continue to preview",
+    "deleteConfirmation": "Do you want to delete this group?"
   },
-  "groups": {
-    "new": "New idea group",
+
+  "group": {
+    "new": "Add new group",
+    "edit": "Edit group",
     "invite": "Invite a friend",
     "invite_to_group": "Invite friend to this group",
-    "share_group": "Share this group"
+    "share_group": "Share this group",
+    "delete": "Delete group",
+    "objectives": "Objectives"
   },
+
   "menu": {
     "my_pages": "My profile",
     "about": "About",
     "help": "Help",
     "settings": "Settings"
 
+  },
+
+  "user": {
+    "name": "Login name",
+    "email": "Email",
+    "password": "Password",
+    "login": "Login",
+    "create": "Create",
+    "cancel": "Cancel"
+  },
+
+  "location": {
+    "set": "Set location"
+  },
+  "image": {
+    "upload": "Upload image",
+    "logo": {
+      "upload": "Upload logo"
+    },
+    "header": {
+      "upload": "Upload header"
+    },
+    "profile": {
+      "upload": "Upload profile image"
+    }
   }
 }

@@ -1,0 +1,231 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="yp-idea-actions.html">
+<link rel="import" href="yp-idea-cover-media.html">
+
+<dom-module id="yp-idea-card">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+        width: 420px;
+      }
+
+      .description {
+        @apply(--layout-vertical);
+        color: var(--primary-color-more-darker, #424242);
+        line-height: var(--description-line-height, 1.3);
+      }
+
+      .voting {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        text-align: center;
+        padding-left: 16px;
+        padding-right: 24px;
+      }
+
+      .card-actions {
+        position: absolute;
+        bottom: 2px;
+        left: 0;
+        width: 420px;
+      }
+
+      .idea-name {
+        padding: 0;
+        padding-bottom: 4px;
+        margin: 0;
+      }
+
+      .category-icon {
+        width: 64px;
+        height: 64px;
+      }
+
+      .category-image-container {
+        text-align: right;
+        margin-top: -52px;
+      }
+
+      .ideaCardCursor {
+        cursor: pointer;
+      }
+
+      yp-idea-cover-media {
+        position: relative;
+        width: 420px;
+        height: 232px;
+      }
+
+      .ideaCard {
+        height: 500px;
+      }
+
+      @media (max-width: 360px) {
+        :host {
+          width: 320px;
+        }
+
+        .ideaCard {
+          height: 100%;
+          width: 320px;
+        }
+
+        yp-idea-cover-media {
+          width: 320px;
+          height: 181px;
+        }
+
+
+        .voting {
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+
+        .card-actions {
+          width: 320px;
+        }
+
+        .card-content {
+          width: 300px !important;
+          padding-bottom: 74px;
+        }
+      }
+
+      @media (max-width: 320px) {
+        :host {
+          width: 304px;
+        }
+
+        .ideaCard {
+          height: 100% !important;
+          width: 304px !important;
+        }
+
+        yp-idea-cover-media {
+          width: 304px !important;
+          height: 168px !important;
+        }
+      }
+    </style>
+
+    <template is="dom-if" if="[[idea]]">
+      <paper-card class="ideaCard" elevation="[[elevation]]">
+        <yp-idea-cover-media idea="[[idea]]"></yp-idea-cover-media>
+        <div class="card-content">
+          <div class="description ideaCardCursor" on-tap="goToIdea">
+            <h2 class="idea-name">[[ideaName(idea)]]</h2>
+            <div>[[ideaDescription(idea)]]</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <yp-idea-actions endorse-mode="[[endorseMode]]" class="voting" idea="[[idea]]"></yp-idea-actions>
+        </div>
+      </paper-card>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-idea-card',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        idea: {
+          type: Object,
+          notify: true
+        },
+
+        endorseMode: {
+          type: String
+        },
+
+        image: {
+          type: Boolean,
+          value: true
+        },
+
+        elevation: {
+          type: Number,
+          value: 1
+        }
+      },
+
+      ideaImagePath: function (idea) {
+        return this.randomStockImage();
+
+        if (this.idea.IsoCountry) {
+          return this.isoCountryImagePath() + idea.IsoCountry.code.toLowerCase() + '.png';
+        }
+        else if (idea.name.indexOf("NHS") > -1) {
+          return "http://i.imgur.com/BKR5vE6.jpg"
+        }
+        else if (idea.name.indexOf("Iceland") > -1) {
+          return "https://i.imgur.com/v2SyyDl.png"
+        }
+        else if (true) {
+          return "https://i.imgur.com/OPpnjwm.jpg"
+        }
+        else if (false) {
+          return "https://placehold.it/384x216"
+        }
+        else if (idea.top_banner_file_name) {
+          return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(idea.id) + '/icon_full/' + idea.top_banner_file_name;
+        } else
+        {
+          return this.defaultGroupImage('');
+        }
+      },
+
+      getIsoCountryImagePath: function (idea) {
+        return this.isoCountryImagePath() + idea.IsoCountry.code.toLowerCase() + '.png';
+      },
+
+      ideaName: function (idea) {
+        if (idea.name) {
+          return this.truncate(this.trim(idea.name), 60);
+        } else {
+          return idea.short_name;
+        }
+      },
+
+      ideaDescription: function (idea) {
+        if (idea.description) {
+          return this.truncate(this.trim(idea.description), 200, '...');
+        } else {
+          return "";
+        }
+      },
+
+      getCategoryImagePath: function (idea) {
+        if (idea.Category) {
+          return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(idea.Category.id) + '/icon_100/' + idea.Category.icon_file_name;
+        } else {
+          return "";
+        }
+      },
+
+      ready: function () {
+      }
+    });
+  </script>
+</dom-module>

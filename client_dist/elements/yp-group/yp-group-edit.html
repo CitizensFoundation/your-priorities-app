@@ -1,0 +1,151 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+
+<link rel="import" href="../../bower_components/file-upload/file-upload.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
+
+<dom-module id="yp-group-edit">
+  <template>
+
+    <style>
+      .access {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+
+      .accessHeader {
+        color: var(--default-primary-color,#777);
+        font-weight: normal;
+        margin-bottom: 0;
+      }
+
+      paper-radio-button {
+        display: block;
+      }
+
+      .additionalSettings {
+        padding-top: 16px;
+      }
+    </style>
+
+    <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <h2>[[editHeaderText]]</h2>
+
+      <paper-input id="name"
+                   name="name"
+                   type="text"
+                   label="[[t('name')]]"
+                   value="{{group.name}}"
+                   maxlength="50"
+                   char-counter>
+      </paper-input>
+
+      <paper-textarea id="objectives"
+                      name="objectives"
+                      value="{{group.objectives}}"
+                      label="[[t('group.objectives')]]"
+                      char-counter
+                      rows="2"
+                      max-rows="5"
+                      maxlength="300">
+      </paper-textarea>
+
+      <div class="layout vertical additionalSettings">
+        <file-upload id="logoImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
+          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+          <span>[[t('image.logo.upload')]]</span>
+        </file-upload>
+      </div>
+
+      <div class="layout vertical additionalSettings" hidden$="[[!headerImageEnabled()]]">
+        <file-upload id="headerImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
+          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+          <span>[[t('image.header.upload')]]</span>
+        </file-upload>
+      </div>
+
+      <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
+      <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+
+      <h3 class="accessHeader">[[t('access')]]</h3>
+      <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
+        <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
+        <paper-radio-button name="closed" disabled>[[t('closed')]]</paper-radio-button>
+        <paper-radio-button name="secret" disabled>[[t('secret')]]</paper-radio-button>
+      </paper-radio-group>
+
+    </yp-edit-dialog>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-group-edit',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/groups"
+      },
+
+      group: {
+        type: Object,
+        observer: "_groupChanged"
+      },
+
+      groupAccess: {
+        type: String
+      }
+    },
+
+    _customRedirect: function (groupId) {
+      page("#!/group/"+groupId);
+    },
+
+    _groupChanged: function (newValue, oldValue) {
+      if (this.group.access===0) {
+        this.groupAccess = "secret"
+      } else if (this.group.access===1) {
+        this.groupAccess = "open"
+      } else if (this.group.access===2) {
+        this.groupAccess = "public"
+      }
+    },
+
+    _clear: function () {
+      this.group = { name: '', objectives: '', access: 2 };
+      this.uploadedLogoImageId = null;
+      this.uploadedHeaderImageId = null;
+      this.$.headerImageUpload.clear();
+      this.$.logoImageUpload.clear();
+    },
+
+    _setupTranslation: function () {
+      if (this.new) {
+        this.editHeaderText = this.t('group.new');
+        this.toastText = this.t('group.toast.created');
+      } else {
+        this.editHeaderText = this.t('group.edit.update');
+        this.toastText = this.t('group.toast.updated');
+      }
+    }
+  });
+</script>

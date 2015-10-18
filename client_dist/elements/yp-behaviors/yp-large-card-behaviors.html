@@ -1,0 +1,23 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+
+  Polymer.LargeCardBehaviors = {
+
+    lowerCardLater: function () {
+      this.async(function () {
+        this.setElevation(0);
+      }, 2500);
+    },
+
+    setElevation: function (value) {
+      var card = this.$$('#card');
+      if (card)
+        card.elevation = value;
+    },
+
+    ready: function () {
+      this.lowerCardLater();
+    }
+  }
+</script>

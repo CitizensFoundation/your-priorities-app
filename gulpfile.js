@@ -3,7 +3,7 @@ Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
 The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
+Code client_distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
@@ -44,7 +44,7 @@ var styleTask = function (stylesPath, srcs) {
     .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
     .pipe(gulp.dest('.tmp/' + stylesPath))
     .pipe($.cssmin())
-    .pipe(gulp.dest('dist/' + stylesPath))
+    .pipe(gulp.dest('client_dist/' + stylesPath))
     .pipe($.size({title: stylesPath}));
 };
 
@@ -67,7 +67,7 @@ var imageOptimizeTask = function (src, dest) {
 };
 
 var optimizeHtmlTask = function (src, dest) {
-  var assets = $.useref.assets({searchPath: ['.tmp', 'client_app', 'dist']});
+  var assets = $.useref.assets({searchPath: ['.tmp', 'client_app', 'client_dist']});
 
   return gulp.src(src)
     // Replace path for vulcanized assets
@@ -116,7 +116,7 @@ gulp.task('jshint', function () {
 
 // Optimize images
 gulp.task('images', function () {
-  return imageOptimizeTask('client_app/images/**/*', 'dist/images');
+  return imageOptimizeTask('client_app/images/**/*', 'client_dist/images');
 });
 
 // Copy all files at the root level (client_app)
@@ -127,42 +127,42 @@ gulp.task('copy', function () {
     '!client_app/cache-config.json'
   ], {
     dot: true
-  }).pipe(gulp.dest('dist'));
+  }).pipe(gulp.dest('client_dist'));
 
   var bower = gulp.src([
     'client_app/bower_components/**/*'
-  ]).pipe(gulp.dest('dist/bower_components'));
+  ]).pipe(gulp.dest('client_dist/bower_components'));
 
   var elements = gulp.src(['client_app/elements/**/*.html',
                            'client_app/elements/**/*.css',
                            'client_app/elements/**/*.js'])
-    .pipe(gulp.dest('dist/elements'));
+    .pipe(gulp.dest('client_dist/elements'));
 
   var swBootstrap = gulp.src(['bower_components/platinum-sw/bootstrap/*.js'])
-    .pipe(gulp.dest('dist/elements/bootstrap'));
+    .pipe(gulp.dest('client_dist/elements/bootstrap'));
 
   var swToolbox = gulp.src(['bower_components/sw-toolbox/*.js'])
-    .pipe(gulp.dest('dist/sw-toolbox'));
+    .pipe(gulp.dest('client_dist/sw-toolbox'));
 
   var vulcanized = gulp.src(['client_app/elements/elements.html'])
     .pipe($.rename('elements.vulcanized.html'))
-    .pipe(gulp.dest('dist/elements'));
+    .pipe(gulp.dest('client_dist/elements'));
 
   return merge(client_app, bower, elements, vulcanized, swBootstrap, swToolbox)
     .pipe($.size({title: 'copy'}));
 });
 
-// Copy web fonts to dist
+// Copy web fonts to client_dist
 gulp.task('fonts', function () {
   return gulp.src(['client_app/fonts/**'])
-    .pipe(gulp.dest('dist/fonts'))
+    .pipe(gulp.dest('client_dist/fonts'))
     .pipe($.size({title: 'fonts'}));
 });
 
-// Copy locales to dist
+// Copy locales to client_dist
 gulp.task('locales', function () {
   return gulp.src(['client_app/locales/**'])
-      .pipe(gulp.dest('dist/locales'))
+      .pipe(gulp.dest('client_dist/locales'))
       .pipe($.size({title: 'locales'}));
 });
 
@@ -170,13 +170,13 @@ gulp.task('locales', function () {
 gulp.task('html', function () {
   return optimizeHtmlTask(
     ['client_app/**/*.html', '!client_app/{elements,test}/**/*.html'],
-    'dist');
+    'client_dist');
 });
 
 // Vulcanize granular configuration
 gulp.task('vulcanize', function () {
-  var DEST_DIR = 'dist/elements';
-  return gulp.src('dist/elements/elements.vulcanized.html')
+  var DEST_DIR = 'client_dist/elements';
+  return gulp.src('client_dist/elements/elements.vulcanized.html')
     .pipe($.vulcanize({
       stripComments: true,
       inlineCss: true,
@@ -195,7 +195,7 @@ gulp.task('vulcanize', function () {
 // See https://github.com/PolymerElements/polymer-starter-kit#enable-service-worker-support
 // for more context.
 gulp.task('cache-config', function (callback) {
-  var dir = 'dist';
+  var dir = 'client_dist';
   var config = {
     cacheId: packageJson.name || path.basename(__dirname),
     disabled: false
@@ -220,7 +220,7 @@ gulp.task('cache-config', function (callback) {
 
 // Clean output directory
 gulp.task('clean', function (cb) {
-  del(['.tmp', 'dist'], cb);
+  del(['.tmp', 'client_dist'], cb);
 });
 
 // Watch files for changes & reload
@@ -257,8 +257,8 @@ gulp.task('serve', ['styles', 'elements', 'images'], function () {
   gulp.watch(['client_app/images/**/*'], reload);
 });
 
-// Build and serve the output from the dist build
-gulp.task('serve:dist', ['default'], function () {
+// Build and serve the output from the client_dist build
+gulp.task('serve:client_dist', ['default'], function () {
   browserSync({
     port: 5001,
     notify: false,
@@ -275,7 +275,7 @@ gulp.task('serve:dist', ['default'], function () {
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
     // https: true,
-    server: 'dist',
+    server: 'client_dist',
     middleware: [ historyApiFallback() ]
   });
 });

@@ -25,7 +25,7 @@ var models = require('./models');
 var app = express();
 
 //app.use(express.static(path.join(__dirname, '../client_app')));
-app.use(express.static(path.join(__dirname, '../dist')));
+app.use(express.static(path.join(__dirname, '../client_dist')));
 app.use(morgan('combined'));
 app.use(cookieParser());
 app.use(bodyParser.json()); // for parsing application/json
