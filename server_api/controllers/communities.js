@@ -39,7 +39,10 @@ router.get('/:id', function(req, res) {
         required: false,
         include: [
           {
-            model: models.Image, as: 'GroupLogoImages'
+            model: models.Image, as: 'GroupLogoImages',
+            order: [
+              [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
+            ],
           },
           {
             model: models.User, as: 'GroupUsers',
