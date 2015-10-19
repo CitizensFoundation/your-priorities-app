@@ -14039,8 +14039,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
        * custom element that uses this behavior should also use
        * Polymer.IronValidatableBehavior and define a custom validation method.
        * Otherwise, a `required` element will always be considered valid.
-       * It's also strongly recomended to provide a visual style for the element
-       * when it's value is invalid.
+       * It's also strongly recommended to provide a visual style for the element
+       * when its value is invalid.
        */
       required: {
         type: Boolean,
@@ -21083,41 +21083,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   });
 
-</script><dom-module id="paper-material" assetpath="../bower_components/paper-material/"><style>
-    :host {
-      display: block;
-      position: relative;
-    }
+</script><dom-module id="paper-material" assetpath="../bower_components/paper-material/"><template><style>
+      :host {
+        display: block;
+        position: relative;
+      }
 
-    :host([animated]) {
-      @apply(--shadow-transition);
-    }
+      :host([animated]) {
+        @apply(--shadow-transition);
+      }
 
-    :host([elevation="1"]) {
-      @apply(--shadow-elevation-2dp);
-    }
+      :host([elevation="1"]) {
+        @apply(--shadow-elevation-2dp);
+      }
 
-    :host([elevation="2"]) {
-      @apply(--shadow-elevation-4dp);
-    }
+      :host([elevation="2"]) {
+        @apply(--shadow-elevation-4dp);
+      }
 
-    :host([elevation="3"]) {
-      @apply(--shadow-elevation-6dp);
-    }
+      :host([elevation="3"]) {
+        @apply(--shadow-elevation-6dp);
+      }
 
-    :host([elevation="4"]) {
-      @apply(--shadow-elevation-8dp);
-    }
+      :host([elevation="4"]) {
+        @apply(--shadow-elevation-8dp);
+      }
 
-    :host([elevation="5"]) {
-      @apply(--shadow-elevation-16dp);
-    }
-  </style><template><content></content></template></dom-module><script>
+      :host([elevation="5"]) {
+        @apply(--shadow-elevation-16dp);
+      }
+    </style><content></content></template></dom-module><script>
   Polymer({
     is: 'paper-material',
 
     properties: {
-
       /**
        * The z-depth of this element, from 0-5. Setting to 0 will remove the
        * shadow, and each increasing number greater than 0 will be "deeper"
@@ -21657,7 +21656,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
 
   </script></dom-module><dom-module id="paper-fab" assetpath="../bower_components/paper-fab/"><template strip-whitespace=""><style include="paper-material">
-
       :host {
         display: inline-block;
         position: relative;
@@ -21755,7 +21753,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         reflectToAttribute: true
       }
     }
-
   });
 </script><dom-module id="paper-item-shared-styles" assetpath="../bower_components/paper-item/"><template><style>
       :host {
@@ -29050,7 +29047,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         vertical-align: middle;
       }
 
-      :host #ink {
+      #ink {
         position: absolute;
         top: -16px;
         left: -16px;
@@ -29061,15 +29058,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         pointer-events: none;
       }
 
-      :host #ink[checked] {
+      :host-context([dir="rtl"]) #ink {
+        right: -15px;
+        left: auto;
+      }
+
+      #ink[checked] {
         color: var(--paper-radio-button-checked-ink-color, --default-primary-color);
       }
 
-      :host #offRadio {
+      #offRadio {
         position: absolute;
         box-sizing: content-box;
         top: 0px;
         left: 0px;
+        right: 0px;
         width: 12px;
         height: 12px;
         border-radius: 50%;
@@ -29079,11 +29082,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         transition: border-color 0.28s;
       }
 
-      :host #onRadio {
+      #onRadio {
         position: absolute;
         box-sizing: content-box;
         top: 4px;
         left: 4px;
+        right: 4px;
         width: 8px;
         height: 8px;
         border-radius: 50%;
@@ -29107,10 +29111,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         position: relative;
         display: inline-block;
         vertical-align: middle;
-        margin-left: 10px;
+        margin-left: var(--paper-radio-button-label-spacing, 10px);
         white-space: normal;
         pointer-events: none;
         color: var(--paper-radio-button-label-color, --primary-text-color);
+      }
+
+      :host-context([dir="rtl"]) #radioLabel {
+        margin-left: 0px;
+        margin-right: var(--paper-radio-button-label-spacing, 10px);
       }
 
       #radioLabel[hidden] {

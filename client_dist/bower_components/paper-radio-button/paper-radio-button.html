@@ -1,4 +1,4 @@
-<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../paper-ripple/paper-ripple.html"><link rel="import" href="../paper-styles/default-theme.html"><link rel="import" href="../paper-behaviors/paper-checked-element-behavior.html"><dom-module id="paper-radio-button"><template strip-whitespace=""><style>
+<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../paper-behaviors/paper-checked-element-behavior.html"><link rel="import" href="../paper-ripple/paper-ripple.html"><link rel="import" href="../paper-styles/default-theme.html"><dom-module id="paper-radio-button"><template strip-whitespace=""><style>
       :host {
         display: inline-block;
         white-space: nowrap;
@@ -17,7 +17,7 @@
         vertical-align: middle;
       }
 
-      :host #ink {
+      #ink {
         position: absolute;
         top: -16px;
         left: -16px;
@@ -28,15 +28,21 @@
         pointer-events: none;
       }
 
-      :host #ink[checked] {
+      :host-context([dir="rtl"]) #ink {
+        right: -15px;
+        left: auto;
+      }
+
+      #ink[checked] {
         color: var(--paper-radio-button-checked-ink-color, --default-primary-color);
       }
 
-      :host #offRadio {
+      #offRadio {
         position: absolute;
         box-sizing: content-box;
         top: 0px;
         left: 0px;
+        right: 0px;
         width: 12px;
         height: 12px;
         border-radius: 50%;
@@ -46,11 +52,12 @@
         transition: border-color 0.28s;
       }
 
-      :host #onRadio {
+      #onRadio {
         position: absolute;
         box-sizing: content-box;
         top: 4px;
         left: 4px;
+        right: 4px;
         width: 8px;
         height: 8px;
         border-radius: 50%;
@@ -74,10 +81,15 @@
         position: relative;
         display: inline-block;
         vertical-align: middle;
-        margin-left: 10px;
+        margin-left: var(--paper-radio-button-label-spacing, 10px);
         white-space: normal;
         pointer-events: none;
         color: var(--paper-radio-button-label-color, --primary-text-color);
+      }
+
+      :host-context([dir="rtl"]) #radioLabel {
+        margin-left: 0px;
+        margin-right: var(--paper-radio-button-label-spacing, 10px);
       }
 
       #radioLabel[hidden] {

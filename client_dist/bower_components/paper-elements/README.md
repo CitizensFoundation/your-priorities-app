@@ -21,6 +21,15 @@ We're currently working hard on honing existing elements and fixing open issues.
 ### Elements planned
 _Elements we're planning on building soon but haven't started yet_
 
+**Short-term**
+_Nothing on the super short-term list_
+
+**Mid-term**
+* `paper-bottom-sheet` - a [material design bottom sheet](https://www.google.com/design/spec/components/bottom-sheets.html) this can easily be created with `neon-animation` ([example](https://googlewebcomponents.github.io/places-app/))
+* `paper date and time pickers` - [material design date and time pickers](https://www.google.com/design/spec/components/pickers.html#)
+* `paper steppers` - [material design steppers](https://www.google.com/design/spec/components/steppers.html#)
+
+**Longer term**
 * `paper-chip` - a [material design chip](http://www.google.com/design/spec/components/chips.html)
 * `paper-data-table` - a [material design data table](http://www.google.com/design/spec/components/data-tables.html). This one is very complex, and tentatively planned for the mid- to distant-future (i.e. months not weeks)
 
