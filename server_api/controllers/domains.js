@@ -42,7 +42,10 @@ router.get('/:id', function(req, res) {
         ],
         include: [
           {
-            model: models.Image, as: 'CommunityLogoImages', order: 'updatedAt DESC'
+            model: models.Image, as: 'CommunityLogoImages',
+            order: [
+              [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ]
+            ],
           },
           {
             model: models.Image, as: 'CommunityHeaderImages', order: 'updatedAt DESC'
