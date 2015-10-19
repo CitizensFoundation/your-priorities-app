@@ -21,8 +21,9 @@ router.get('/:id', function(req, res) {
   models.Community.find({
     where: { id: req.params.id },
     order: [
-      [ { model: models.Group } ,'user_id', 'asc' ],
-      [ { model: models.Group } ,'created_at', 'asc' ]
+      [ { model: models.Group }, 'user_id', 'asc' ],
+      [ { model: models.Group }, 'created_at', 'asc' ],
+      [ { model: models.Image }, 'created_at', 'desc' ]
     ],
     include: [
       {
