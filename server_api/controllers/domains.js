@@ -22,8 +22,7 @@ router.get('/:id', function(req, res) {
     order: [
       [ { model: models.Community } ,'user_id', 'asc' ],
       [ { model: models.Community } ,'created_at', 'asc' ],
-      [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'asc' ],
-      [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ]
+      [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'asc' ]
     ],
     include: [
       {
@@ -38,6 +37,9 @@ router.get('/:id', function(req, res) {
         model: models.Image, as: 'DomainHeaderImages'
       },
       { model: models.Community,
+        order: [
+          [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ]
+        ],
         include: [
           {
             model: models.Image, as: 'CommunityLogoImages', order: 'updatedAt DESC'
