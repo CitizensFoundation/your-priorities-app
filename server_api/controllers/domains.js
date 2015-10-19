@@ -22,7 +22,8 @@ router.get('/:id', function(req, res) {
     order: [
       [ { model: models.Community } ,'user_id', 'asc' ],
       [ { model: models.Community } ,'created_at', 'asc' ],
-      [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'asc' ]
+      [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'asc' ],
+      [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ]
     ],
     include: [
       {
