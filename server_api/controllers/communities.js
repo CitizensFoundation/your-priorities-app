@@ -22,7 +22,8 @@ router.get('/:id', function(req, res) {
     where: { id: req.params.id },
     order: [
       [ { model: models.Group }, 'user_id', 'asc' ],
-      [ { model: models.Group }, 'created_at', 'asc' ]
+      [ { model: models.Group }, 'created_at', 'asc' ],
+      [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
     ],
     include: [
       {
