@@ -22,7 +22,9 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'images',
 
     defaultScope: {
-      order: 'updated_at ASC'
+      order: [
+        ['created_at', 'asc' ]
+      ]
     },
 
     classMethods: {
