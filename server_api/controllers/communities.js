@@ -38,12 +38,15 @@ router.get('/:id', function(req, res) {
           deleted: false
         },
         required: false,
+        order: [
+          [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
+        ],
         include: [
           {
             model: models.Image, as: 'GroupLogoImages',
             order: [
               [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
-            ],
+            ]
           },
           {
             model: models.User, as: 'GroupUsers',
