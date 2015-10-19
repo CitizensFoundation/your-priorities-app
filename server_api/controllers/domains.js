@@ -38,7 +38,7 @@ router.get('/:id', function(req, res) {
       },
       { model: models.Community,
         order: [
-          [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ]
+          [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'desc' ]
         ],
         include: [
           {
