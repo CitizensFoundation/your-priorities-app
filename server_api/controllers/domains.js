@@ -21,7 +21,8 @@ router.get('/:id', function(req, res) {
     where: { id: req.params.id },
     order: [
       [ { model: models.Community } ,'user_id', 'asc' ],
-      [ { model: models.Community } ,'created_at', 'asc' ]
+      [ { model: models.Community } ,'created_at', 'asc' ],
+      [ { model: models.Image } , 'created_at', 'desc' ]
     ],
     include: [
       {
