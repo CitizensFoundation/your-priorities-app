@@ -241,7 +241,7 @@
 
     hasAccess: function(object) {
       if (window.appUser && window.appUser.user) {
-        return object.user_id === window.appUser.user.id;
+        return (object.user_id === window.appUser.user.id) || (window.appUser.user.email==="robert@citizens.is" || window.appUser.user.email==="gunnar@citizens.is");
       } else {
         return false;
       }
