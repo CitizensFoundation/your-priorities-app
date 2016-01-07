@@ -110,8 +110,6 @@ module.exports = function(sequelize, DataTypes) {
         sequelize.models.Group.find({
           where: {id: groupId}
         }).then(function (group) {
-          var a=group;
-          var b=req.user;
           group.hasGroupUser(req.user).then(function(result) {
             if (!result) {
               async.parallel([

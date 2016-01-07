@@ -19,7 +19,7 @@
     "pg": "^3.6.3",
     "pg-hstore": "^2.3.2",
     "s3-uploader": "^1.0.0",
-    "sequelize": "^3.9.0",
+    "sequelize": "^3.17.1",
     "sequelize-cli": "^1.9.0",
     "serve-favicon": "~2.1.6"
   },
