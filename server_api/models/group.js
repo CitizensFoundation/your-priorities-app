@@ -167,6 +167,7 @@ module.exports = function(sequelize, DataTypes) {
         Group.belongsToMany(models.Image, { through: 'GroupImage' });
         Group.belongsToMany(models.Image, { as: 'GroupLogoImages', through: 'GroupLogoImage' });
         Group.belongsToMany(models.Image, { as: 'GroupHeaderImages', through: 'GroupHeaderImage' });
+        Group.belongsToMany(models.User, { as: 'GroupAdmin', through: 'GroupAdmin' });
       }
     }
   });

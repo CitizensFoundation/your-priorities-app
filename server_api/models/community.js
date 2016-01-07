@@ -122,6 +122,7 @@ module.exports = function(sequelize, DataTypes) {
         Community.belongsTo(models.User);
         Community.belongsToMany(models.Image, { as: 'CommunityLogoImages', through: 'CommunityLogoImage' });
         Community.belongsToMany(models.Image, { as: 'CommunityHeaderImages', through: 'CommunityHeaderImage' });
+        Community.belongsToMany(models.User, { as: 'CommunityAdmin', through: 'CommunityAdmin' });
       }
     }
   });

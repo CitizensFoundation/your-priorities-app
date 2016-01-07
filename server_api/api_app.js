@@ -6,6 +6,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
+var ConnectRoles = require('connect-roles');
 
 var passport = require('passport')
     , LocalStrategy = require('passport-local').Strategy;
@@ -19,8 +20,8 @@ var points = require('./controllers/points');
 var users = require('./controllers/users');
 var categories = require('./controllers/categories');
 var images = require('./controllers/images');
-
 var models = require('./models');
+var user = require('./authorisation.js');
 
 var app = express();
 
