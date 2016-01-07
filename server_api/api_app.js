@@ -35,20 +35,7 @@ app.use(session({ secret: 'keyboard cat' }));
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Setup the current domain from the host
-app.use(function (req, res, next) {
-  models.Domain.setYpDomain(req, res, function () {
-    next();
-  });
-});
-
-// Setup the current community from the host
-app.use(function (req, res, next) {
-  models.Community.setYpCommunity(req, res, function () {
-    next();
-  });
-});
+app.use(user.middleware());
 
 passport.serializeUser(function(user, done) {
   done(null, user.id);
@@ -95,6 +82,20 @@ passport.use(new LocalStrategy(
     }
 ));
 
+// Setup the current domain from the host
+app.use(function (req, res, next) {
+  models.Domain.setYpDomain(req, res, function () {
+    next();
+  });
+});
+
+// Setup the current community from the host
+app.use(function (req, res, next) {
+  models.Community.setYpCommunity(req, res, function () {
+    next();
+  });
+});
+
 app.use('/', index);
 app.use('/api/ideas', ideas);
 app.use('/api/groups', groups);
@@ -104,6 +105,14 @@ app.use('/api/points', points);
 app.use('/api/users', users);
 app.use('/api/images', images);
 app.use('/api/categories', categories);
+
+app.use(function(err, req, res, next) {
+  if (err instanceof auth.UnauthorizedError) {
+    res.send(401, 'Unauthorized');
+  } else {
+    next(err);
+  }
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

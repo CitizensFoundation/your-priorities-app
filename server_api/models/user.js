@@ -30,7 +30,6 @@ module.exports = function(sequelize, DataTypes) {
         User.belongsToMany(models.Domain, { as: 'DomainUsers', through: 'DomainUser' });
         User.belongsToMany(models.Image, { as: 'UserProfileImages', through: 'UserProfileImage' });
         User.belongsToMany(models.Image, { as: 'UserHeaderImages', through: 'UserHeaderImage' });
-
         User.belongsToMany(models.Domain, { as: 'DomainAdmin', through: 'DomainAdmin' });
         User.belongsToMany(models.Community, { as: 'CommunityAdmin', through: 'CommunityAdmin' });
         User.belongsToMany(models.Group, { as: 'GroupAdmin', through: 'GroupAdmin' });

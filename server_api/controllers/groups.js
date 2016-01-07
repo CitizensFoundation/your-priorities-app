@@ -8,7 +8,6 @@ function isAuthenticated(req, res, next) {
   res.send(401, 'Unauthorized');
 }
 
-
 /* GET ideas listing. */
 router.get('/', function(req, res) {
   models.Group.findAll({

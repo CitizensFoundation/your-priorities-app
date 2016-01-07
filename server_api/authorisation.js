@@ -1,13 +1,62 @@
-var ConnectRoles = require('connect-roles');
+var auth = require('authorized');
 
-var user = new ConnectRoles({
-    failureHandler: function (req, res, action) {
-        var accept = req.headers.accept || '';
-        res.status(403);
-        res.send('Access Denied - You don\'t have permission to: ' + action);
-    }
+auth.role('domain.admin', function (org, req, done) {
+  if (!req.user) {
+    done();
+  } else {
+    Domain.findOne({
+      where: { id: domain.id }
+    }).then(function (domain) {
+      if (domain.user_id===req.user.id) {
+        done(null, true);
+      } else {
+        domain.hasAdminUser(req.user).then(function (result) {
+          if (result) {
+            done(null, true);
+          } else {
+            done(null, false);
+          }
+        });
+      }
+    });
+  }
 });
 
-// set up all the authorisation rules here
+auth.role('domain.user', function (org, req, done) {
+  if (!req.user) {
+    done();
+  } else {
+    Domain.findOne({
+      where: { id: domain.id }
+    }).then(function (domain) {
+      if (domain.user_id===req.user.id) {
+        done(null, true);
+      } else {
+        domain.hasAdminUser(req.user).then(function (result) {
+          if (result) {
+            done(null, true);
+          } else {
+            done(null, false);
+          }
+        });
+      }
+    });
+  }
+});
 
-module.exports = user;
+auth.entity('domain', function(req, done) {
+  var match = req.url.match(/^\/domains\/(\w+)/);
+  if (!match) {
+    done(new Error('Expected url like /domains/:domainId'));
+    return;
+  } else {
+    var domain = { id: match[1] };
+    done(null, domain)
+  }
+});
+
+auth.action('administer domain', ['domain.admin']);
+auth.action('administer community', ['community.admin']);
+auth.action('administer group', ['group.admin']);
+
+module.exports = auth;
