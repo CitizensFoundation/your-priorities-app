@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
     counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_comments: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
-    public: DataTypes.BOOLEAN,
+    access: DataTypes.INTEGER, // 0: public, 1: closed, 2: secret
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
 

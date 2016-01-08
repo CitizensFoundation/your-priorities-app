@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
     name: DataTypes.STRING,
     hostname: DataTypes.STRING,
     description: DataTypes.TEXT,
-    access: DataTypes.INTEGER,
+    access: DataTypes.INTEGER, // 0: public, 1: closed, 2: secret
     website: DataTypes.TEXT,
     counter_ideas: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },

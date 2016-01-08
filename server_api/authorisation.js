@@ -1,6 +1,6 @@
 var auth = require('authorized');
 
-auth.role('domain.admin', function (org, req, done) {
+auth.role('domain.admin', function (domain, req, done) {
   if (!req.user) {
     done();
   } else {
@@ -22,7 +22,7 @@ auth.role('domain.admin', function (org, req, done) {
   }
 });
 
-auth.role('domain.user', function (org, req, done) {
+auth.role('domain.viewUser', function (org, req, done) {
   if (!req.user) {
     done();
   } else {
