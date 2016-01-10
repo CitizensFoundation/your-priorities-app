@@ -4,8 +4,8 @@ var async = require("async");
 
 module.exports = function(sequelize, DataTypes) {
   var Category = sequelize.define("Category", {
-    name: DataTypes.STRING,
-    description: DataTypes.TEXT,
+    name: { type: DataTypes.STRING, allowNull: false },
+    description: { type: DataTypes.TEXT, allowNull: false },
     icon_file_name: DataTypes.STRING
   }, {
     underscored: true,

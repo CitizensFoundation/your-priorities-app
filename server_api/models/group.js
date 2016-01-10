@@ -6,17 +6,16 @@ var async = require("async");
 
 module.exports = function(sequelize, DataTypes) {
   var Group = sequelize.define("Group", {
-    name: DataTypes.STRING,
-    short_name: DataTypes.STRING,
+    name: { type: DataTypes.STRING, allowNull: false },
+    access: { type: DataTypes.INTEGER, allowNull: false }, // 0: public, 1: closed, 2: secret
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     top_banner_file_name: DataTypes.STRING,
     logo_file_name: DataTypes.STRING,
     objectives: DataTypes.TEXT,
     counter_ideas: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_comments: { type: DataTypes.INTEGER, defaultValue: 0 },
-    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
-    access: DataTypes.INTEGER, // 0: public, 1: closed, 2: secret
-    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 }
   }, {
 
     defaultScope: {

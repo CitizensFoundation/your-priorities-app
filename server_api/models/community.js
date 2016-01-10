@@ -6,15 +6,15 @@ var async = require("async");
 
 module.exports = function(sequelize, DataTypes) {
   var Community = sequelize.define("Community", {
-    name: DataTypes.STRING,
-    hostname: DataTypes.STRING,
+    name: { type: DataTypes.STRING, allowNull: false },
+    hostname: { type: DataTypes.STRING, allowNull: false },
+    access: { type: DataTypes.INTEGER, allowNull: false }, // 0: public, 1: closed, 2: secret
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     description: DataTypes.TEXT,
-    access: DataTypes.INTEGER, // 0: public, 1: closed, 2: secret
     website: DataTypes.TEXT,
     counter_ideas: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
-    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
-    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 }
   }, {
 
     defaultScope: {

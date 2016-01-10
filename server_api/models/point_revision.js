@@ -2,9 +2,8 @@
 
 module.exports = function(sequelize, DataTypes) {
   var PointRevision = sequelize.define("PointRevision", {
-    name: DataTypes.STRING,
-    content: DataTypes.TEXT,
-    user_id: DataTypes.INTEGER
+    name: { type: DataTypes.STRING, allowNull: false },
+    content: { type: DataTypes.TEXT, allowNull: false }
   }, {
     underscored: true,
     tableName: 'revisions',

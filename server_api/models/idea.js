@@ -6,11 +6,10 @@ var async = require("async");
 
 module.exports = function(sequelize, DataTypes) {
   var Idea = sequelize.define("Idea", {
-    name: DataTypes.STRING,
-    status: DataTypes.STRING,
-    description: DataTypes.TEXT,
-    user_id: DataTypes.INTEGER,
-    position: DataTypes.INTEGER,
+    name: { type: DataTypes.STRING, allowNull: false },
+    status: { type: DataTypes.STRING, allowNull: false },
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    description: { type: DataTypes.TEXT, allowNull: false },
     counter_endorsements_up: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_endorsements_down: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -18,9 +17,9 @@ module.exports = function(sequelize, DataTypes) {
     counter_all_activities: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_main_activities: { type: DataTypes.INTEGER, defaultValue: 0 },
     impressions_count: { type: DataTypes.INTEGER, defaultValue: 0 },
+    position: DataTypes.INTEGER,
     location: DataTypes.JSONB,
     cover_media_type: DataTypes.STRING,
-    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     legacy_idea_id: DataTypes.INTEGER
   }, {
 

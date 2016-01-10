@@ -7,10 +7,11 @@ var Community = require('./community');
 
 module.exports = function(sequelize, DataTypes) {
   var Domain = sequelize.define("Domain", {
-    name: DataTypes.STRING,
-    domain_name: DataTypes.STRING,
+    name: { type: DataTypes.STRING, allowNull: false },
+    domain_name:  { type: DataTypes.STRING, allowNull: false },
+    access: { type: DataTypes.INTEGER, allowNull: false }, // 0: public, 1: closed, 2: secret
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     description: DataTypes.TEXT,
-    access: DataTypes.INTEGER, // 0: public, 1: closed, 2: secret
     counter_communities: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },

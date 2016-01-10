@@ -2,14 +2,15 @@
 
 module.exports = function(sequelize, DataTypes) {
   var UserLegacyPassword = sequelize.define("UserLegacyPassword", {
-    user_id: DataTypes.INTEGER,
-    encrypted_password: DataTypes.STRING
+    encrypted_password: { type: DataTypes.STRING, allowNull: false }
   }, {
     underscored: true,
-
-    tableName: 'user_legacy_passwords'
-
+    tableName: 'user_legacy_passwords',
+    classMethods: {
+      associate: function(models) {
+        Point.belongsTo(models.User);
+      }
+    }
   });
-
   return UserLegacyPassword;
 };

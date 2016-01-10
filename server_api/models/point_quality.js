@@ -2,8 +2,8 @@
 
 module.exports = function(sequelize, DataTypes) {
   var PointQuality = sequelize.define("PointQuality", {
-    value: DataTypes.INTEGER,
-    status: DataTypes.STRING
+    value: { type: DataTypes.INTEGER, allowNull: false },
+    status: { type: DataTypes.STRING, allowNull: false }
   }, {
     underscored: true,
     tableName: 'point_qualities',

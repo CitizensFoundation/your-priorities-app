@@ -2,13 +2,11 @@
 
 module.exports = function(sequelize, DataTypes) {
   var Point = sequelize.define("Point", {
-    name: DataTypes.STRING,
-    content: DataTypes.TEXT,
-    user_id: DataTypes.INTEGER,
-    value: DataTypes.INTEGER,
+    name: { type: DataTypes.STRING, allowNull: false },
+    content: { type: DataTypes.TEXT, allowNull: false },
+    value: { type: DataTypes.INTEGER, allowNull: false },
     counter_quality_up: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_quality_down: { type: DataTypes.INTEGER, defaultValue: 0 }
-
   }, {
     underscored: true,
     tableName: 'points',
