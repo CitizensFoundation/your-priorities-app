@@ -83,6 +83,10 @@ module.exports = function(sequelize, DataTypes) {
 
     classMethods: {
 
+      ACCESS_PUBLIC: 0,
+      ACCESS_CLOSED: 1,
+      ACCESS_SECRET: 2,
+
       setYpCommunity: function (req,res,next) {
         var hostname = sequelize.models.Domain.extractHost(req.headers.host);
         if (!hostname && req.params.communityHostname)

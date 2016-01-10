@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
   var Domain = sequelize.define("Domain", {
     name: { type: DataTypes.STRING, allowNull: false },
     domain_name:  { type: DataTypes.STRING, allowNull: false },
-    access: { type: DataTypes.INTEGER, allowNull: false }, // 0: public, 1: closed, 2: secret
+    access: { type: DataTypes.INTEGER, allowNull: false },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     description: DataTypes.TEXT,
     counter_communities: { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -68,6 +68,10 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     classMethods: {
+
+      ACCESS_PUBLIC: 0,
+      ACCESS_CLOSED: 1,
+      ACCESS_SECRET: 2,
 
       setYpDomain: function (req,res,next) {
         var domainName = Domain.extractDomain(req.headers.host);

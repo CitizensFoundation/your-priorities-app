@@ -105,6 +105,10 @@ module.exports = function(sequelize, DataTypes) {
 
     classMethods: {
 
+      ACCESS_PUBLIC: 0,
+      ACCESS_CLOSED: 1,
+      ACCESS_SECRET: 2,
+
       addUserToGroupIfNeeded: function (groupId, req, done) {
         sequelize.models.Group.find({
           where: {id: groupId}
