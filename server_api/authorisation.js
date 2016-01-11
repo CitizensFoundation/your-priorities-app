@@ -1,7 +1,33 @@
 var auth = require('authorized');
 
+auth.role('user.admin', function (user, req, done) {
+  if (!req.isAuthenticated()) {
+    done(null, false);
+  } else {
+    User.findOne({
+      where: { id: user.id }
+    }).then(function (user) {
+      if (user.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        done(null, false);
+      }
+    });
+  }
+});
+
+auth.entity('user', function(req, done) {
+  var match = req.url.match(/^\/users\/(\w+)/);
+  if (!match) {
+    done(new Error('Expected url like /users/:userId'));
+  } else {
+    var user = { id: match[1] };
+    done(null, user)
+  }
+});
+
 auth.role('domain.admin', function (domain, req, done) {
-  if (!req.user) {
+  if (!req.isAuthenticated()) {
     done();
   } else {
     Domain.findOne({
@@ -28,7 +54,7 @@ auth.role('domain.viewUser', function (domain, req, done) {
   }).then(function (domain) {
     if (domain.access === Domain.ACCESS_PUBLIC) {
       done(null, true);
-    }  else if (!req.user) {
+    }  else if (!req.isAuthenticated()) {
       done(null, false);
     } else if (domain.user_id === req.user.id) {
       done(null, true);
@@ -55,7 +81,7 @@ auth.entity('domain', function(req, done) {
 });
 
 auth.role('group.admin', function (group, req, done) {
-  if (!req.user) {
+  if (!req.isAuthenticated()) {
     done();
   } else {
     Group.findOne({
@@ -82,7 +108,7 @@ auth.role('group.viewUser', function (group, req, done) {
   }).then(function (group) {
     if (group.access === Group.ACCESS_PUBLIC) {
       done(null, true);
-    }  else if (!req.user) {
+    }  else if (!req.isAuthenticated()) {
       done(null, false);
     } else if (group.user_id === req.user.id) {
       done(null, true);
@@ -109,7 +135,7 @@ auth.entity('group', function(req, done) {
 });
 
 auth.role('idea.admin', function (idea, req, done) {
-  if (!req.user) {
+  if (!req.isAuthenticated()) {
     done();
   } else {
     Idea.findOne({
@@ -130,7 +156,7 @@ auth.role('idea.viewUser', function (idea, req, done) {
   }).then(function (idea) {
     if (idea.access === Idea.ACCESS_PUBLIC) {
       done(null, true);
-    }  else if (!req.user) {
+    }  else if (!req.isAuthenticated()) {
       done(null, false);
     } else if (idea.user_id === req.user.id) {
       done(null, true);
@@ -160,7 +186,7 @@ auth.role('createGroupIdea.createIdea', function (group, req, done) {
   Group.findOne({
     where: { id: group.id }
   }).then(function (group) {
-    if (!req.user) {
+    if (!req.isAuthenticated()) {
       done(null, false);
     } else if (group.access === Group.ACCESS_PUBLIC) {
       done(null, true);
@@ -192,7 +218,7 @@ auth.role('createCommunityGroup.createGroup', function (community, req, done) {
   Community.findOne({
     where: { id: community.id }
   }).then(function (community) {
-    if (!req.user) {
+    if (!req.isAuthenticated()) {
       done(null, false);
     } else if (community.access === Community.ACCESS_PUBLIC) {
       done(null, true);
@@ -224,7 +250,7 @@ auth.role('createDomainCommunity.createCommunity', function (domain, req, done) 
   Domain.findOne({
     where: { id: domain.id }
   }).then(function (domain) {
-    if (!req.user) {
+    if (!req.isAuthenticated()) {
       done(null, false);
     } else if (domain.access === Domain.ACCESS_PUBLIC) {
       done(null, true);
@@ -256,6 +282,7 @@ auth.action('administer domain', ['domain.admin']);
 auth.action('administer community', ['community.admin']);
 auth.action('administer group', ['group.admin']);
 auth.action('administer idea', ['idea.admin']);
+auth.action('administer user', ['user.admin']);
 
 auth.action('view domain', ['domain.viewUser']);
 auth.action('view community', ['community.viewUser']);
