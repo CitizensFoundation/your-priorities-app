@@ -2,7 +2,9 @@
 
 module.exports = function(sequelize, DataTypes) {
   var Relationship = sequelize.define("Relationship", {
+
     relationship_type: { type: DataTypes.INTEGER, allowNull: false }
+
   }, {
 
     underscored: true,

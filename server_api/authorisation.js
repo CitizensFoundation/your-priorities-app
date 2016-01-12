@@ -1,8 +1,9 @@
 var auth = require('authorized');
 var models = require("./models");
+
 // COMMON
 
-function authNeedsGroupForCreate(group, req, done) {
+auth.authNeedsGroupForCreate = function (group, req, done) {
   models.Group.findOne({
     where: { id: group.id }
   }).then(function (group) {
@@ -22,9 +23,9 @@ function authNeedsGroupForCreate(group, req, done) {
       });
     }
   });
-}
+};
 
-auth.isLoggedIn = function isAuthenticated(req, res, next) {
+auth.isLoggedIn = function (req, res, next) {
   if (req.isAuthenticated())
     return next();
   res.send(401, 'Unauthorized');
@@ -372,7 +373,7 @@ auth.entity('category', function(req, done) {
 // Create category
 
 auth.role('createGroupCategory.createCategory', function (group, req, done) {
-  authNeedsGroupForCreate(group, req, done);
+  auth.authNeedsGroupForCreate(group, req, done);
 });
 
 auth.entity('createGroupCategory', function(req, done) {
@@ -388,7 +389,7 @@ auth.entity('createGroupCategory', function(req, done) {
 // Create post
 
 auth.role('createGroupPost.createPost', function (group, req, done) {
-  authNeedsGroupForCreate(group, req, done);
+  auth.authNeedsGroupForCreate(group, req, done);
 });
 
 auth.entity('createGroupPost', function(req, done) {
@@ -404,7 +405,7 @@ auth.entity('createGroupPost', function(req, done) {
 // Create point
 
 auth.role('createGroupPoint.createPoint', function (group, req, done) {
-  authNeedsGroupForCreate(group, req, done);
+  auth.authNeedsGroupForCreate(group, req, done);
 });
 
 auth.entity('createGroupPoint', function(req, done) {

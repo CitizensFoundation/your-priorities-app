@@ -8,11 +8,23 @@ var config    = require(__dirname + '/../config/config.json')[env];
 var sequelize = new Sequelize(config.database, config.username, config.password, config);
 var db        = {};
 
-
+// Read from local folder
 fs
   .readdirSync(__dirname)
   .filter(function(file) {
     return (file.indexOf(".") !== 0) && (file !== "index.js");
+  })
+  .forEach(function(file) {
+    var model = sequelize["import"](path.join(__dirname, file));
+    db[model.name] = model;
+  });
+
+// Read from active citizen,
+// TODO Load from npm module if not found locally
+fs
+  .readdirSync(__dirname+'/../active_citizen/models')
+  .filter(function(file) {
+     return (file.indexOf(".") !== 0);
   })
   .forEach(function(file) {
     var model = sequelize["import"](path.join(__dirname, file));

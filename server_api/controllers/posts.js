@@ -38,7 +38,6 @@ function decrementOldCountersIfNeeded(req, oldEndorsementValue, postId, endorsem
 }
 
 router.get('/:id/endorsements', auth.can('view post'), function(req, res) {
-  console.log("ID Endorsements");
   models.Endorsement.findAll({
     where: {post_id: req.params.id, status: 'active'},
     order: "created_at DESC",
