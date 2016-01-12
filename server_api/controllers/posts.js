@@ -149,7 +149,7 @@ router.put('/:id', auth.can('edit post'), function(req, res) {
   });
 });
 
-router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
+router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(req, res) {
   models.Endorsement.find({
     where: {
       post_id: req.params.id,
@@ -194,7 +194,7 @@ router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
   });
 });
 
-router.delete('/:id/endorse', auth.can('vote on post'), function(req, res) {
+router.delete('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(req, res) {
   console.log("user: "+req.user.id + " post: " + req.params.id);
   models.Endorsement.find({
     where: { post_id: req.params.id, user_id: req.user.id }
@@ -216,7 +216,7 @@ router.delete('/:id/endorse', auth.can('vote on post'), function(req, res) {
             res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
           })
         } else {
-          console.error("Strange state of endorsements")
+          console.error("Strange state of endorsements");
           res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
         }
       });

@@ -233,8 +233,8 @@
 
         addPoint: function (content, value) {
           if (window.appUser.loggedIn()===true) {
+            this.$.newPointAjax.url = "/api/points/"+this.post.group_id;
             this.$.newPointAjax.body = {
-              groupId: this.post.group_id,
               postId: this.post.id,
               content: content,
               value: value

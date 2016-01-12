@@ -39,7 +39,7 @@ router.post('/register', function (req, res) {
   });
 });
 
-router.put('/:id', isAuthenticated, function (req, res) {
+router.put('/:id', auth.can('edit user'), function (req, res) {
   models.User.find({
     where: {id: req.params.id}
   }).then(function (user) {
@@ -71,7 +71,8 @@ router.post('/logout', function (req, res) {
   res.sendStatus(200);
 });
 
-router.get('/:id/endorsements', function (req, res) {
+/*
+router.get('/:id/endorsements', auth.can('view user'), function (req, res) {
   models.Endorsement.findAll({
     where: {user_id: req.params.id, status: 'active'},
     order: "created_at DESC"
@@ -79,5 +80,6 @@ router.get('/:id/endorsements', function (req, res) {
     res.send(endorsements);
   });
 });
+*/
 
 module.exports = router;

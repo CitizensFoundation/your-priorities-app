@@ -1,4 +1,34 @@
 var auth = require('authorized');
+var models = require("./models");
+// COMMON
+
+function authNeedsGroupForCreate(group, req, done) {
+  models.Group.findOne({
+    where: { id: group.id }
+  }).then(function (group) {
+    if (!req.isAuthenticated()) {
+      done(null, false);
+    } else if (group.access === models.Group.ACCESS_PUBLIC) {
+      done(null, true);
+    } else if (group.user_id === req.user.id) {
+      done(null, true);
+    } else {
+      group.hasUser(req.user).then(function (result) {
+        if (result) {
+          done(null, true);
+        } else {
+          done(null, false);
+        }
+      });
+    }
+  });
+}
+
+auth.isLoggedIn = function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated())
+    return next();
+  res.send(401, 'Unauthorized');
+};
 
 // ADMIN AND VIEW
 
@@ -8,7 +38,7 @@ auth.role('user.admin', function (user, req, done) {
   if (!req.isAuthenticated()) {
     done(null, false);
   } else {
-    User.findOne({
+    models.User.findOne({
       where: { id: user.id }
     }).then(function (user) {
       if (user.user_id === req.user.id) {
@@ -36,7 +66,7 @@ auth.role('domain.admin', function (domain, req, done) {
   if (!req.isAuthenticated()) {
     done();
   } else {
-    Domain.findOne({
+    models.Domain.findOne({
       where: { id: domain.id }
     }).then(function (domain) {
       if (domain.user_id === req.user.id) {
@@ -55,10 +85,10 @@ auth.role('domain.admin', function (domain, req, done) {
 });
 
 auth.role('domain.viewUser', function (domain, req, done) {
-  Domain.findOne({
+  models.Domain.findOne({
     where: { id: domain.id }
   }).then(function (domain) {
-    if (domain.access === Domain.ACCESS_PUBLIC) {
+    if (domain.access === models.Domain.ACCESS_PUBLIC) {
       done(null, true);
     }  else if (!req.isAuthenticated()) {
       done(null, false);
@@ -92,7 +122,7 @@ auth.role('group.admin', function (group, req, done) {
   if (!req.isAuthenticated()) {
     done();
   } else {
-    Group.findOne({
+    models.Group.findOne({
       where: { id: group.id }
     }).then(function (group) {
       if (group.user_id === req.user.id) {
@@ -111,10 +141,10 @@ auth.role('group.admin', function (group, req, done) {
 });
 
 auth.role('group.viewUser', function (group, req, done) {
-  Group.findOne({
+  models.Group.findOne({
     where: { id: group.id }
   }).then(function (group) {
-    if (group.access === Group.ACCESS_PUBLIC) {
+    if (group.access === models.Group.ACCESS_PUBLIC) {
       done(null, true);
     }  else if (!req.isAuthenticated()) {
       done(null, false);
@@ -148,11 +178,11 @@ auth.role('post.admin', function (post, req, done) {
   if (!req.isAuthenticated()) {
     done();
   } else {
-    Post.findOne({
+    models.Post.findOne({
       where: { id: post.id }
     }).then(function (post) {
-      var group = Post.Group;
-      if (group.access === Group.ACCESS_PUBLIC) {
+      var group = post.Group;
+      if (group.access === models.Group.ACCESS_PUBLIC) {
         done(null, true);
       }  else if (!req.isAuthenticated()) {
         done(null, false);
@@ -172,14 +202,14 @@ auth.role('post.admin', function (post, req, done) {
 });
 
 auth.role('post.viewUser', function (post, req, done) {
-  Post.findOne({
+  models.Post.findOne({
     where: { id: post.id },
     include: [
       models.Group
     ]
   }).then(function (post) {
     var group = post.Group;
-    if (group.access === Group.ACCESS_PUBLIC) {
+    if (group.access === models.Group.ACCESS_PUBLIC) {
       done(null, true);
     }  else if (!req.isAuthenticated()) {
       done(null, false);
@@ -207,17 +237,82 @@ auth.entity('post', function(req, done) {
   }
 });
 
+// Post admin and view
+
+auth.role('point.admin', function (point, req, done) {
+  if (!req.isAuthenticated()) {
+    done();
+  } else {
+    models.Point.findOne({
+      where: { id: post.id }
+    }).then(function (point) {
+      var group = Post.Group;
+      if (group.access === models.Group.ACCESS_PUBLIC) {
+        done(null, true);
+      }  else if (!req.isAuthenticated()) {
+        done(null, false);
+      } else if (point.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        group.hasAdminUser(req.user).then(function (result) {
+          if (result) {
+            done(null, true);
+          } else {
+            done(null, false);
+          }
+        });
+      }
+    });
+  }
+});
+
+auth.role('post.viewUser', function (point, req, done) {
+  models.Point.findOne({
+    where: { id: point.id },
+    include: [
+      models.Group
+    ]
+  }).then(function (post) {
+    var group = post.Group;
+    if (group.access === models.Group.ACCESS_PUBLIC) {
+      done(null, true);
+    }  else if (!req.isAuthenticated()) {
+      done(null, false);
+    } else if (point.user_id === req.user.id) {
+      done(null, true);
+    } else {
+      group.hasUser(req.user).then(function (result) {
+        if (result) {
+          done(null, true);
+        } else {
+          done(null, false);
+        }
+      });
+    }
+  });
+});
+
+auth.entity('point', function(req, done) {
+  var match = req.url.match(/^\/points\/(\w+)/);
+  if (!match) {
+    done(new Error('Expected url like /points/:pointId'));
+  } else {
+    var point = { id: match[1] };
+    done(null, point)
+  }
+});
+
 // Category admin and view
 
 auth.role('category.admin', function (category, req, done) {
   if (!req.isAuthenticated()) {
     done();
   } else {
-    Category.findOne({
+    models.Category.findOne({
       where: { id: category.id }
     }).then(function (category) {
       var group = category.Group;
-      if (group.access === Group.ACCESS_PUBLIC) {
+      if (group.access === models.Group.ACCESS_PUBLIC) {
         done(null, true);
       }  else if (!req.isAuthenticated()) {
         done(null, false);
@@ -237,14 +332,14 @@ auth.role('category.admin', function (category, req, done) {
 });
 
 auth.role('category.viewUser', function (category, req, done) {
-  Category.findOne({
+  models.Category.findOne({
     where: { id: category.id },
     include: [
       models.Group
     ]
   }).then(function (category) {
     var group = category.Group;
-    if (group.access === Group.ACCESS_PUBLIC) {
+    if (group.access === models.Group.ACCESS_PUBLIC) {
       done(null, true);
     }  else if (!req.isAuthenticated()) {
       done(null, false);
@@ -268,7 +363,7 @@ auth.entity('category', function(req, done) {
     done(new Error('Expected url like /categories/:categoryId'));
   } else {
     var category = { id: match[1] };
-    done(null, post)
+    done(null, category)
   }
 });
 
@@ -277,25 +372,7 @@ auth.entity('category', function(req, done) {
 // Create category
 
 auth.role('createGroupCategory.createCategory', function (group, req, done) {
-  Group.findOne({
-    where: { id: group.id }
-  }).then(function (group) {
-    if (!req.isAuthenticated()) {
-      done(null, false);
-    } else if (group.access === Group.ACCESS_PUBLIC) {
-      done(null, true);
-    } else if (group.user_id === req.user.id) {
-      done(null, true);
-    } else {
-      group.hasUser(req.user).then(function (result) {
-        if (result) {
-          done(null, true);
-        } else {
-          done(null, false);
-        }
-      });
-    }
-  });
+  authNeedsGroupForCreate(group, req, done);
 });
 
 auth.entity('createGroupCategory', function(req, done) {
@@ -311,25 +388,7 @@ auth.entity('createGroupCategory', function(req, done) {
 // Create post
 
 auth.role('createGroupPost.createPost', function (group, req, done) {
-  Group.findOne({
-    where: { id: group.id }
-  }).then(function (group) {
-    if (!req.isAuthenticated()) {
-      done(null, false);
-    } else if (group.access === Group.ACCESS_PUBLIC) {
-      done(null, true);
-    } else if (group.user_id === req.user.id) {
-      done(null, true);
-    } else {
-      group.hasUser(req.user).then(function (result) {
-        if (result) {
-          done(null, true);
-        } else {
-          done(null, false);
-        }
-      });
-    }
-  });
+  authNeedsGroupForCreate(group, req, done);
 });
 
 auth.entity('createGroupPost', function(req, done) {
@@ -342,15 +401,31 @@ auth.entity('createGroupPost', function(req, done) {
   }
 });
 
+// Create point
+
+auth.role('createGroupPoint.createPoint', function (group, req, done) {
+  authNeedsGroupForCreate(group, req, done);
+});
+
+auth.entity('createGroupPoint', function(req, done) {
+  var match = req.url.match(/^\/points\/(\w+)/);
+  if (!match) {
+    done(new Error('Expected url like /points/:groupId'));
+  } else {
+    var group = { id: match[1] };
+    done(null, group)
+  }
+});
+
 // Create group
 
 auth.role('createCommunityGroup.createGroup', function (community, req, done) {
-  Community.findOne({
+  models.Community.findOne({
     where: { id: community.id }
   }).then(function (community) {
     if (!req.isAuthenticated()) {
       done(null, false);
-    } else if (community.access === Community.ACCESS_PUBLIC) {
+    } else if (community.access === models.Community.ACCESS_PUBLIC) {
       done(null, true);
     } else if (community.user_id === req.user.id) {
       done(null, true);
@@ -379,12 +454,12 @@ auth.entity('createCommunityGroup', function(req, done) {
 // Create community
 
 auth.role('createDomainCommunity.createCommunity', function (domain, req, done) {
-  Domain.findOne({
+  models.Domain.findOne({
     where: { id: domain.id }
   }).then(function (domain) {
     if (!req.isAuthenticated()) {
       done(null, false);
-    } else if (domain.access === Domain.ACCESS_PUBLIC) {
+    } else if (domain.access === models.Domain.ACCESS_PUBLIC) {
       done(null, true);
     } else if (domain.user_id === req.user.id) {
       done(null, true);
@@ -416,16 +491,22 @@ auth.action('edit group', ['group.admin']);
 auth.action('edit post', ['post.admin']);
 auth.action('edit user', ['user.admin']);
 auth.action('edit category', ['category.admin']);
+auth.action('edit point', ['point.admin']);
 
 auth.action('view domain', ['domain.viewUser']);
 auth.action('view community', ['community.viewUser']);
 auth.action('view group', ['group.viewUser']);
 auth.action('view post', ['post.viewUser']);
 auth.action('view category', ['category.viewUser']);
+auth.action('view point', ['point.viewUser']);
+
+auth.action('vote on post', ['post.voteUser']);
+auth.action('vote on point', ['point.voteUser']);
 
 auth.action('create community', ['createDomainCommunity.createCommunity']);
 auth.action('create group', ['createCommunityGroup.createGroup']);
 auth.action('create post', ['createGroupPost.createPost']);
 auth.action('create category', ['createGroupCategory.createCategory']);
+auth.action('create post', ['createGroupPost.createPost']);
 
 module.exports = auth;

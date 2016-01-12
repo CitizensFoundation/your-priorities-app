@@ -40,9 +40,9 @@ function decrementOldPointQualityCountersIfNeeded(oldPointQualityValue, pointId,
   }
 }
 
-router.post('/', isAuthenticated, function(req, res) {
+router.post('/:groupId', auth.can('create point'), function(req, res) {
   var point = models.Point.build({
-    group_id: req.body.groupId,
+    group_id: req.params.groupId,
     post_id: req.body.postId,
     content: req.body.content,
     value: req.body.value,
@@ -81,7 +81,7 @@ router.post('/', isAuthenticated, function(req, res) {
   });
 });
 
-router.post('/:id/pointQuality', isAuthenticated, function(req, res) {
+router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), function(req, res) {
   models.PointQuality.find({
     where: { point_id: req.params.id, user_id: req.user.id }
   }).then(function(pointQuality) {
@@ -120,7 +120,7 @@ router.post('/:id/pointQuality', isAuthenticated, function(req, res) {
   });
 });
 
-router.delete('/:id/pointQuality', isAuthenticated, function(req, res) {
+router.delete('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), function(req, res) {
   models.PointQuality.find({
     where: { point_id: req.params.id, user_id: req.user.id }
   }).then(function(pointQuality) {
@@ -141,7 +141,7 @@ router.delete('/:id/pointQuality', isAuthenticated, function(req, res) {
             res.status(200).send({ pointQuality: pointQuality, oldPointQualityValue: oldPointQualityValue });
           })
         } else {
-          console.error("Strange state of pointQualities")
+          console.error("Strange state of pointQualities");
           res.status(200).send({ pointQuality: pointQuality, oldPointQualityValue: oldPointQualityValue });
         }
       });
