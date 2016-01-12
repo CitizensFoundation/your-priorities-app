@@ -21,7 +21,7 @@ module.exports = function(sequelize, DataTypes) {
 
     classMethods: {
       associate: function(models) {
-        User.hasMany(models.Idea);
+        User.hasMany(models.Post);
         User.hasMany(models.Point);
         User.hasMany(models.Endorsement);
         User.hasMany(models.PointQuality);

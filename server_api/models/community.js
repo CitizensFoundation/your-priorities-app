@@ -2,7 +2,7 @@ var async = require("async");
 
 "use strict";
 
-// https://www.npmjs.org/package/enum for state of ideas
+// https://www.npmjs.org/package/enum for state of posts
 
 module.exports = function(sequelize, DataTypes) {
   var Community = sequelize.define("Community", {
@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     description: DataTypes.TEXT,
     website: DataTypes.TEXT,
-    counter_ideas: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 }
   }, {

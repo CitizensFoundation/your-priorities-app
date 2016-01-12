@@ -11,7 +11,7 @@
     "new": "Nýtt samfélag"
   },
 
-  "idea": {
+  "post": {
     "new": "Ný hugmynd",
     "top": "Efstu hugmyndir",
     "newest": "Nýjustu hugmyndir",
@@ -22,9 +22,9 @@
     "add_new":"Ný hugmynd",
     "up_vote":"Kjósa upp",
     "down_vote":"Kjósa niður",
-    "report": "Report idea",
-    "notify": "Notify me about this idea",
-    "share": "Share this idea",
+    "report": "Report post",
+    "notify": "Notify me about this post",
+    "share": "Share this post",
     "tabs": {
       "debate": "Rökræða",
       "news": "Fréttir",

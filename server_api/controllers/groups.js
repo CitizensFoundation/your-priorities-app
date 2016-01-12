@@ -90,36 +90,36 @@ router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
       }
     ]
   }).then(function(group) {
-    models.Idea.search(req.params.term,req.params.id, models.Category).then(function(ideas) {
-      res.send({group: group, Ideas: ideas});
+    models.Post.search(req.params.term,req.params.id, models.Category).then(function(posts) {
+      res.send({group: group, Posts: posts});
     });
   });
 });
 
-router.get('/:id/ideas/:filter/:categoryId?', auth.can('view group'), function(req, res) {
+router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(req, res) {
 
-  var where = '"Idea"."deleted" = false AND "Idea"."group_id" = '+req.params.id;
-  //  var ideaOrder = [models.sequelize.fn('subtraction', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'];
+  var where = '"Post"."deleted" = false AND "Post"."group_id" = '+req.params.id;
+  //  var postOrder = [models.sequelize.fn('subtraction', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'];
 
-  var ideaOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
+  var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
   if (req.params.filter!="inProgress") {
-    //where+=' AND "Idea"."status" = "published"';
+    //where+=' AND "Post"."status" = "published"';
   } else {
-    //where+=' AND "Idea"."status" != "published" AND "Idea"."status" != "deleted"';
+    //where+=' AND "Post"."status" != "published" AND "Post"."status" != "deleted"';
   }
 
   if (req.params.filter=="newest") {
-    ideaOrder = "created_at DESC";
+    postOrder = "created_at DESC";
   } else if (req.params.filter=="random") {
-    ideaOrder = "random()";
+    postOrder = "random()";
   }
 
   console.log(req.param["categoryId"]);
   console.log(req.params);
 
   if (req.params.categoryId!=undefined) {
-    where+=' AND "Idea"."category_id" = '+ req.params.categoryId;
+    where+=' AND "Post"."category_id" = '+ req.params.categoryId;
   }
 
   models.Group.find({
@@ -147,11 +147,11 @@ router.get('/:id/ideas/:filter/:categoryId?', auth.can('view group'), function(r
       }
     ]
   }).then(function(group) {
-    models.Idea.findAll({
+    models.Post.findAll({
       where: [where, []],
       order: [
-        models.sequelize.literal(ideaOrder),
-        [ { model: models.Image, as: 'IdeaHeaderImages' } ,'updated_at', 'asc' ]
+        models.sequelize.literal(postOrder),
+        [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
       ],
       include: [
         {
@@ -166,12 +166,12 @@ router.get('/:id/ideas/:filter/:categoryId?', auth.can('view group'), function(r
             }
           ]
         },
-        models.IdeaRevision,
+        models.PostRevision,
         models.Point,
-        { model: models.Image, as: 'IdeaHeaderImages' }
+        { model: models.Image, as: 'PostHeaderImages' }
     ]
-    }).then(function(ideas) {
-      res.send({group: group, Ideas: ideas});
+    }).then(function(posts) {
+      res.send({group: group, Posts: posts});
     });
   });
 });

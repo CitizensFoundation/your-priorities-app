@@ -24,10 +24,10 @@
       return translation;
     },
 
-    goToIdea: function (event) {
-      var ideaUrl = '/idea/' + this.idea.id;
-      window.appGlobals.activity('open', 'idea', ideaUrl);
-      page(ideaUrl);
+    goToPost: function (event) {
+      var postUrl = '/post/' + this.post.id;
+      window.appGlobals.activity('open', 'post', postUrl);
+      page(postUrl);
     },
 
     getPositionInArrayFromId: function (collection, id) {

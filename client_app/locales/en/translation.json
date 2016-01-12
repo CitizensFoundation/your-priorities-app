@@ -12,22 +12,22 @@
     "new": "Create community"
   },
 
-  "idea": {
-    "status": "Status of this idea",
-    "new": "New idea",
+  "post": {
+    "status": "Status of this post",
+    "new": "New post",
     "searchingFor": "Searching for ",
-    "top": "Top ideas",
-    "newest": "Latest ideas",
-    "random": "Random ideas",
-    "inProgress": "Ideas in progress",
-    "groups": "Idea groups",
-    "search": "Search for ideas",
-    "add_new":"Add new idea",
-    "up_vote":"Vote idea up",
-    "down_vote":"Vote idea down",
-    "report": "Report idea",
-    "notify": "Notify me about this idea",
-    "share": "Share this idea",
+    "top": "Top posts",
+    "newest": "Latest posts",
+    "random": "Random posts",
+    "inProgress": "Posts in progress",
+    "groups": "Post groups",
+    "search": "Search for posts",
+    "add_new":"Add new post",
+    "up_vote":"Vote post up",
+    "down_vote":"Vote post down",
+    "report": "Report post",
+    "notify": "Notify me about this post",
+    "share": "Share this post",
     "tabs": {
       "debate": "Debate",
       "news": "News",
@@ -43,8 +43,8 @@
       "image": "Image",
       "none": "None"
     },
-    "edit": "Edit idea",
-    "delete": "Delete idea"
+    "edit": "Edit post",
+    "delete": "Delete post"
   },
 
   "short_word": {

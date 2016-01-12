@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'points',
     classMethods: {
       associate: function(models) {
-        Point.belongsTo(models.Idea);
+        Point.belongsTo(models.Post);
         Point.belongsTo(models.User);
         Point.hasMany(models.PointRevision);
         Point.hasMany(models.PointQuality);

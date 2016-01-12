@@ -118,7 +118,7 @@
         var pointQuality = detail.response.pointQuality;
         var oldPointQualityValue = detail.response.oldPointQualityValue;
         this._setPointQuality(pointQuality.value);
-        window.appUser.updatePointQualityForIdea(this.point.id, pointQuality);
+        window.appUser.updatePointQualityForPost(this.point.id, pointQuality);
         if (oldPointQualityValue) {
           if (oldPointQualityValue>0)
             this.set('point.counter_quality_up', this.point.counter_quality_up-1);

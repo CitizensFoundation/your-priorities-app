@@ -143,9 +143,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </template>
             </section>
 
-            <section data-route="idea">
-              <template is="dom-if" if="[[params.ideaId]]">
-                <yp-idea idea-id="{{params.ideaId}}" on-change-header="onChangeHeader"></yp-idea>
+            <section data-route="post">
+              <template is="dom-if" if="[[params.postId]]">
+                <yp-post post-id="{{params.postId}}" on-change-header="onChangeHeader"></yp-post>
               </template>
             </section>
 

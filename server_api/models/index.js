@@ -26,7 +26,7 @@ Object.keys(db).forEach(function(modelName) {
 });
 
 sequelize.sync().done(function() {
-  db.Idea.addFullTextIndex();
+  db.Post.addFullTextIndex();
 });
 
 db.sequelize = sequelize;

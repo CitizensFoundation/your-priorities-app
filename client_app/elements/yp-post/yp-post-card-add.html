@@ -1,0 +1,88 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-post-card-add">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+        width: 416px;
+      }
+
+      .postCard {
+        width: 420px;
+        height: 500px;
+        padding: 16px;
+      }
+
+      paper-icon-button {
+        height: 250px;
+        width: 250px;
+        color: var(--accent-color)
+      }
+
+      .header {
+        padding: 0;
+        margin: 0;
+        padding-top: 16px;
+      }
+
+      .icon {
+        --iron-icon-height: 220px;
+        --iron-icon-width: 220px;
+      }
+
+      @media (max-width: 360px) {
+        :host {
+          width: 260px;
+        }
+
+        .postCard {
+          width: 260px !important;
+          height: 100% !important;
+          padding: 0 !important;
+        }
+      }
+
+      @media (max-width: 320px) {
+        :host .postCard {
+          width: 210px;
+        }
+
+        .postCard {
+          width: 290px;
+          height: 100%;
+          padding: 16px;
+        }
+      }
+    </style>
+
+    <paper-card elevation="[[elevation]]" class="layout vertical center postCard">
+      <h2 class="header">[[t('post.new')]]</h2>
+      <paper-icon-button class="icon" icon="add"></paper-icon-button>
+    </paper-card>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-post-card-add',
+
+      behaviors: [
+        Polymer.appHelpers
+    ]
+    });
+  </script>
+</dom-module>

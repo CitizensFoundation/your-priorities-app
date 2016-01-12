@@ -67,7 +67,7 @@ module.exports = function(sequelize, DataTypes) {
     
     classMethods: {
       associate: function(models) {
-        Category.hasMany(models.Idea);
+        Category.hasMany(models.Post);
         Category.belongsTo(models.Group);
         Category.belongsToMany(models.Image, { as: 'CategoryIconImages', through: 'CategoryIconImage' });
         Category.belongsToMany(models.Image, { as: 'CategoryHeaderImages', through: 'CategoryHeaderImage' });

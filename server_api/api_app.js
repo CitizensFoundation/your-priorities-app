@@ -12,7 +12,7 @@ var passport = require('passport')
     , LocalStrategy = require('passport-local').Strategy;
 
 var index = require('./controllers/index');
-var ideas = require('./controllers/ideas');
+var posts = require('./controllers/posts');
 var groups = require('./controllers/groups');
 var communities = require('./controllers/communities');
 var domains = require('./controllers/domains');
@@ -48,7 +48,7 @@ passport.deserializeUser(function(id, done) {
     include: [
       {
         model: models.Endorsement,
-        attributes: ['id', 'value', 'idea_id']
+        attributes: ['id', 'value', 'post_id']
       },
       {
         model: models.PointQuality,
@@ -97,7 +97,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/', index);
-app.use('/api/ideas', ideas);
+app.use('/api/posts', posts);
 app.use('/api/groups', groups);
 app.use('/api/communities', communities);
 app.use('/api/domains', domains);

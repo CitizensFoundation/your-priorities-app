@@ -68,7 +68,7 @@
             observer: "_onUserChanged"
           },
 
-          endorsementIdeasIndex: {
+          endorsementPostsIndex: {
             type: Object
           },
 
@@ -82,13 +82,13 @@
           this.$.userLogin.open();
         },
 
-        loginForNewPoint: function(ideaPointsElement, params) {
-          this.loginForNewPointParams = { ideaPointsElement: ideaPointsElement, params: params };
+        loginForNewPoint: function(postPointsElement, params) {
+          this.loginForNewPointParams = { postPointsElement: postPointsElement, params: params };
           this.$.userLogin.open();
         },
 
-        loginForEndorse: function(ideaActionElement, params) {
-          this.loginForEndorseParams = { ideaActionElement: ideaActionElement, params: params };
+        loginForEndorse: function(postActionElement, params) {
+          this.loginForEndorseParams = { postActionElement: postActionElement, params: params };
           this.$.userLogin.open();
         },
 
@@ -110,12 +110,12 @@
           } else if (this.loginForNewPointParams) {
 
             var newPointParams = this.loginForNewPointParams;
-            newPointParams.ideaPointsElement.addPoint(newPointParams.params.content, newPointParams.params.value);
+            newPointParams.postPointsElement.addPoint(newPointParams.params.content, newPointParams.params.value);
             this.loginForNewPointParams = null;
           } else if (this.loginForEndorseParams) {
 
             var endorseParams = this.loginForEndorseParams;
-            endorseParams.ideaActionElement.generateEndorsement(endorseParams.params.value);
+            endorseParams.postActionElement.generateEndorsement(endorseParams.params.value);
             this.loginForEndorseParams = null;
           } else if (this.loginForPointQualityParams) {
 
@@ -154,11 +154,11 @@
           this.$.isLoggedInAjax.generateRequest();
         },
 
-        updateEndorsementForIdea: function (ideaId, newEndorsement) {
+        updateEndorsementForPost: function (postId, newEndorsement) {
           if (this.user.Endorsements) {
             var hasChanged = false;
             for(var i=0; i<this.user.Endorsements.length; i++) {
-              if (this.user.Endorsements[i].idea_id===ideaId) {
+              if (this.user.Endorsements[i].post_id===postId) {
                 if (newEndorsement) {
                   this.user.Endorsements[i] = newEndorsement;
                 } else {
@@ -169,22 +169,22 @@
               }
             }
             if (hasChanged)
-              this._updateEndorsementIdeasIndex(this.user);
+              this._updateEndorsementPostsIndex(this.user);
           }
         },
 
-        _updateEndorsementIdeasIndex: function (user) {
+        _updateEndorsementPostsIndex: function (user) {
           if (user && user.Endorsements && user.Endorsements.length>0) {
-            this.endorsementIdeasIndex = {};
+            this.endorsementPostsIndex = {};
             for(var i=0; i<user.Endorsements.length; i++){
-              this.endorsementIdeasIndex[ user.Endorsements[i].idea_id ] = user.Endorsements[i];
+              this.endorsementPostsIndex[ user.Endorsements[i].post_id ] = user.Endorsements[i];
             }
           } else {
-            this.endorsementIdeasIndex = {}
+            this.endorsementPostsIndex = {}
           }
         },
 
-        updatePointQualityForIdea: function (pointId, newPointQuality) {
+        updatePointQualityForPost: function (pointId, newPointQuality) {
           if (this.user.PointQualities) {
             var hasChanged = false;
             for(var i=0; i<this.user.PointQualities.length; i++) {
@@ -199,7 +199,7 @@
               }
             }
             if (hasChanged)
-              this._updateEndorsementIdeasIndex(this.user);
+              this._updateEndorsementPostsIndex(this.user);
           }
         },
 
@@ -216,7 +216,7 @@
 
         _onUserChanged: function (newValue, oldValue) {
           this.fire("user-changed", newValue);
-          this._updateEndorsementIdeasIndex(newValue);
+          this._updateEndorsementPostsIndex(newValue);
           this._updatePointQualitiesIndex(newValue);
         },
 

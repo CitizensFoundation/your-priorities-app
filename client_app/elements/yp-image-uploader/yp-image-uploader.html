@@ -49,9 +49,9 @@
 
       properties: {
 
-        idea: {
+        post: {
           type: Object,
-          observer: "_ideaChanged"
+          observer: "_postChanged"
         }
       },
 
@@ -59,7 +59,7 @@
         this.$.fileUploader.click();
       },
 
-      _ideaChanged: function  (newValue, oldValue) {
+      _postChanged: function  (newValue, oldValue) {
         if (newValue) {
         } else {
           this.set("location",null);

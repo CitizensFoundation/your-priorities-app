@@ -30,9 +30,9 @@
   suite('basic', function() {
 
     test('displays counters', function() {
-      var groupStats = fixture('basic', {group: {counter_ideas: 100, counter_points: 1500, counter_users: 10000}});
+      var groupStats = fixture('basic', {group: {counter_posts: 100, counter_points: 1500, counter_users: 10000}});
       var group = groupStats.group;
-      expect(group.counter_ideas).to.be.equal(100);
+      expect(group.counter_posts).to.be.equal(100);
       expect(group.counter_points).to.be.equal(1500);
       expect(group.counter_users).to.be.equal(10000);
       expect(groupStats.innerHTML).to.include("100");
@@ -41,7 +41,7 @@
     });
 
     test('share dialog is displayed', function(done) {
-      var groupStats = fixture('basic', {group: {counter_ideas: 100, counter_points: 1500, counter_users: 10000}});
+      var groupStats = fixture('basic', {group: {counter_posts: 100, counter_points: 1500, counter_users: 10000}});
 
       var shareButton = groupStats.querySelector('.group-share');
       shareButton.click();
@@ -54,7 +54,7 @@
     });
 
     test('invite to group dialog is displayed', function(done) {
-      var groupStats = fixture('basic', {group: {counter_ideas: 100, counter_points: 1500, counter_users: 10000}});
+      var groupStats = fixture('basic', {group: {counter_posts: 100, counter_points: 1500, counter_users: 10000}});
 
       var inviteButton = groupStats.querySelector('.group-invite');
       inviteButton.click();

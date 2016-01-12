@@ -43,7 +43,7 @@ function decrementOldPointQualityCountersIfNeeded(oldPointQualityValue, pointId,
 router.post('/', isAuthenticated, function(req, res) {
   var point = models.Point.build({
     group_id: req.body.groupId,
-    idea_id: req.body.ideaId,
+    post_id: req.body.postId,
     content: req.body.content,
     value: req.body.value,
     user_id: req.user.id
@@ -51,7 +51,7 @@ router.post('/', isAuthenticated, function(req, res) {
   point.save().then(function() {
     var pointRevision = models.PointRevision.build({
       group_id: point.group_id,
-      idea_id: point.idea_id,
+      post_id: point.post_id,
       content: point.content,
       user_id: req.user.id,
       point_id: point.id
@@ -67,10 +67,10 @@ router.post('/', isAuthenticated, function(req, res) {
           }
         ]
       }).then(function(point) {
-        models.Idea.find({
-          where: { id: point.idea_id }
-        }).then(function(idea) {
-            idea.increment('counter_points').then(function(){
+        models.Post.find({
+          where: { id: point.post_id }
+        }).then(function(post) {
+            post.increment('counter_points').then(function(){
               res.send(point);
             });
           });

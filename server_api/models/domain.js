@@ -3,7 +3,7 @@ var async = require("async");
 "use strict";
 
 var Community = require('./community');
-// https://www.npmjs.org/package/enum for state of ideas
+// https://www.npmjs.org/package/enum for state of posts
 
 module.exports = function(sequelize, DataTypes) {
   var Domain = sequelize.define("Domain", {
@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
     counter_communities: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
-    counter_ideas: { type: DataTypes.INTEGER, defaultValue: 0 }
+    counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 }
   }, {
     underscored: true,
 

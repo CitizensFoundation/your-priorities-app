@@ -1,0 +1,375 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
+
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-delete-dialog/yp-delete-dialog.html">
+<link rel="import" href="yp-post-header.html">
+<link rel="import" href="yp-post-points.html">
+<link rel="import" href="yp-post-edit.html">
+<link rel="import" href="yp-post-actions.html">
+<link rel="import" href="yp-post-users.html">
+<link rel="import" href="yp-post-cover-media.html">
+
+<dom-module id="yp-post">
+  <template>
+    <style>
+      :host {
+      }
+
+      .container {
+        padding-top: 0;
+        margin-top: 0;
+        height: 100%;
+      }
+
+      .flex {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
+      .centerContainer {
+        @apply(--layout-center-center);
+      }
+
+      .postHeader {
+        padding: 16px;
+        background-color: #fefefe;
+        width: 940px;
+      }
+
+      yp-post-cover-media {
+        width: 420px !important;
+        height: 232px !important;
+      }
+
+      .statusHeader {
+        padding: 16px;
+        background-color: #fefefe;
+        width: 940px;
+        margin-top: 16px;
+        height: 48px;
+      }
+
+      .description {
+        width: 510px;
+        padding-left: 24px;
+      }
+
+      yp-post-actions {
+        width: 270px;
+      }
+
+      .statusColumn {
+        width: 670px;
+        padding-bottom: 16px;
+      }
+
+      .mainPage {
+      }
+
+      .tabsMaterial {
+        margin-top: 16px;
+        min-height: 2048px;
+        background-color: #fefefe;
+      }
+
+      .edit {
+        color: #555;
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding-right: 0;
+        margin-right: 0;
+      }
+
+      @media (max-width: 961px) {
+        .postHeader {
+          width: 600px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .postHeader {
+          width: 400px;
+        }
+      }
+
+      @media (max-width: 360px) {
+
+        .centerContainer {
+          @apply(--layout-vertical);
+        }
+
+        .postHeader {
+          height: 100%;
+          width: 360px;
+          padding: 0;
+        }
+
+        .tabsMaterial {
+          width: 360px;
+        }
+
+        yp-post-cover-media {
+          width: 320px !important;
+          height: 181px !important;
+          padding-top: 16px;
+          padding-left: 20px;
+        }
+
+        .statusHeader {
+          width: 360px;
+          height: 120px;
+          padding: 0px;
+          padding-left: 20px;
+        }
+
+        .statusColumn {
+          height: 60px;
+          padding: 0px;
+        }
+
+        .description {
+          width: 320px;
+          padding: 8px;
+          padding-left: 20px;
+          padding-bottom: 16px;
+        }
+
+        yp-post-actions {
+          width: 320px;
+          padding-left: 20px;
+        }
+
+        .statusColumn {
+          width: 320px;
+        }
+
+        paper-tab {
+          font-size: 14px;
+        }
+      }
+    </style>
+
+    <div class="container">
+
+      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+      <iron-media-query query="(max-width: 360px)" query-matches="{{small}}"></iron-media-query>
+
+      <yp-post-edit new="false" id="postEdit" method="[[method]]" post="{{post}}" group="[[post.Group]]" on-iron-form-response="_refresh"></yp-post-edit>
+
+      <template is="dom-if" if="[[post]]">
+
+        <div class$="[[_mainContainerClasses(small)]]">
+          <div class="layout vertical">
+            <paper-material elevation="1" class$="[[_headerClasses(small)]]">
+              <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
+              <div class="description">
+                <h1 class="post-name">[[postName(post)]]</h1>
+                <div>[[postDescription(post)]]</div>
+              </div>
+              <paper-menu-button class="edit" hidden$="[[!hasAccess(post)]]">
+                <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                  <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+                  <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+                </paper-menu>
+              </paper-menu-button>
+            </paper-material>
+            <paper-material elevation="1" class="layout horizontal wrap statusHeader">
+              <div class="layout horizontal statusColumn">
+                <h1><span>[[t('post.status')]]</span>: Open</h1>
+              </div>
+              <div class="layout vertical">
+                <div class="card-actions">
+                  <yp-post-actions endorse-mode="[[endorseMode]]" force-small class="voting" post="[[post]]"></yp-post-actions>
+                </div>
+                <yp-post-users id="postUsers" post="[[post]]"></yp-post-users>
+              </div>
+            </paper-material>
+            <div>
+              <paper-material elevation="2" class="tabsMaterial mainPage" animated>
+                <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+                  <paper-tab><span>[[t('post.tabs.debate')]]</span> &nbsp; (<span>[[post.Points.length]]</span>)</paper-tab>
+                  <paper-tab>[[t('post.tabs.news')]]</paper-tab>
+                  <paper-tab>[[t('post.tabs.location')]]</paper-tab>
+                  <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
+                </paper-tabs>
+
+                <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+
+                  <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
+
+                  <section><h1 style="padding: 32px;">To be done...</h1></section>
+                  <section><h1 style="padding: 32px;">To be done...</h1></section>
+                  <section><h1 style="padding: 32px;">To be done...</h1></section>
+                </neon-animated-pages>
+              </paper-material>
+            </div>
+          </div>
+        </div>
+
+        <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('post.deleteConfirmation')]]"
+                          action="/api/posts/" action-id="[[post.id]]">
+        </yp-delete-dialog>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post',
+
+        behaviors: [
+          Polymer.appHelpers
+        ],
+
+        properties: {
+
+          postId: {
+            type: Number,
+            value: null,
+            observer: "_postIdChanged"
+          },
+
+          post: {
+            type: Object,
+            notify: true,
+            observer: "_postChanged"
+          },
+
+          selected: {
+            type: Number,
+            value: 0,
+            observer: 'selectedChanged'
+          }
+        },
+
+        listeners: {
+          'new-user-endorsement': 'addEndorsement'
+        },
+
+        _mainContainerClasses: function(small) {
+          if (small) {
+            return "layout horizontal wrap";
+          } else {
+            return "layout horizontal center-center";
+          }
+        },
+
+        _headerClasses: function(small) {
+          if (small) {
+            return "layout vertical postHeader wrap";
+          } else {
+            return "layout horizontal postHeader";
+          }
+        },
+
+        postName: function (post) {
+          if (post && post.name) {
+            return this.truncate(this.trim(post.name), 200);
+          } else if (post) {
+            return post.short_name;
+          }
+        },
+
+        postDescription: function (post) {
+          if (post && post.description) {
+            return this.truncate(this.trim(post.description), 10000, '...');
+          } else {
+            return "";
+          }
+        },
+
+        _refresh: function () {
+          this.$.ajax.generateRequest();
+        },
+
+        _menuSelection: function (event, detail) {
+          if (detail.item.id=="editMenuItem")
+            this._openEdit();
+          else if (detail.item.id=="deleteMenuItem")
+            this.$$("#deleteDialog").open();
+          this.selectedMenuItem = null;
+        },
+
+        _openEdit: function () {
+          this.$.postEdit.open('edit', { postId: this.post.id });
+        },
+
+        _onDeleted: function () {
+          page("#!/group/"+this.post.group_id);
+        },
+
+        addEndorsement: function (event, detail) {
+          this.$$("#postHeader").addEndorsement(detail);
+        },
+
+        _postChanged: function (newValue, oldValue) {
+        },
+
+        _postIdChanged: function (newValue, oldValue) {
+          if (newValue) {
+            this.set("post.Points",null);
+            this.set("post",null);
+            this.$.ajax.url = '/api/posts/' + this.postId;
+            this.$.ajax.generateRequest();
+          } else {
+            this.set("post",null);
+          }
+        },
+
+        _response: function (event, detail, sender) {
+          this.set("post", detail.response);
+          if (this.post.description === null) {
+            this.post.description = this.post.Points[0].content;
+            this.post.Points.shift();
+          }
+          this.fire("change-header", { headerTitle: this.truncate(this.post.name,45),
+                                       headerDescription: this.truncate(this.post.description,45),
+                                       backPath: "#!/group/" + this.post.group_id });
+        },
+
+        selectedChanged: function (selected, previous) {
+          if (selected == 0)
+            window.appGlobals.activity('open', 'pointsTab');
+          else if (selected == 1)
+            window.appGlobals.activity('open', 'newsfeedTab');
+          else if (selected == 2)
+            window.appGlobals.activity('open', 'photosTab');
+          else if (selected == 3)
+            window.appGlobals.activity('open', 'solutionsTab');
+        },
+
+        ready: function () {
+        },
+
+        computeUrl: function (post_id) {
+          return '/api/posts/' + post_id;
+        },
+
+        computeExpression8: function () {
+          return this.t('post.tabs.not_implemented');
+        }
+      });
+    }());
+  </script>
+</dom-module>

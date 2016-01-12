@@ -2,7 +2,7 @@ var async = require("async");
 
 "use strict";
 
-// https://www.npmjs.org/package/enum for state of ideas
+// https://www.npmjs.org/package/enum for state of posts
 
 module.exports = function(sequelize, DataTypes) {
   var Group = sequelize.define("Group", {
@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
     top_banner_file_name: DataTypes.STRING,
     logo_file_name: DataTypes.STRING,
     objectives: DataTypes.TEXT,
-    counter_ideas: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_comments: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 }
@@ -158,7 +158,7 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       associate: function(models) {
-        Group.hasMany(models.Idea, {foreignKey: "group_id"});
+        Group.hasMany(models.Post, {foreignKey: "group_id"});
         Group.hasMany(models.Point, {foreignKey: "group_id"});
         Group.hasMany(models.Endorsement, {foreignKey: "group_id"});
         Group.hasMany(models.Category, {foreignKey: "group_id"});

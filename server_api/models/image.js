@@ -78,7 +78,7 @@ module.exports = function(sequelize, DataTypes) {
               quality: 99
             }
           ]
-        } else if (itemType && itemType === 'idea-header') {
+        } else if (itemType && itemType === 'post-header') {
           versions = [
             {
               maxHeight: 232,
@@ -144,9 +144,9 @@ module.exports = function(sequelize, DataTypes) {
 
       associate: function(models) {
         Image.belongsTo(models.User);
-        Image.belongsToMany(models.Idea, { as: 'IdeaImages', through: 'IdeaImage' });
-        Image.belongsToMany(models.Idea, { as: 'IdeaHeaderImages', through: 'IdeaHeaderImage' });
-        Image.belongsToMany(models.Idea, { as: 'IdeaUserImages', through: 'IdeaUserImage' });
+        Image.belongsToMany(models.Post, { as: 'PostImages', through: 'PostImage' });
+        Image.belongsToMany(models.Post, { as: 'PostHeaderImages', through: 'PostHeaderImage' });
+        Image.belongsToMany(models.Post, { as: 'PostUserImages', through: 'PostUserImage' });
         Image.belongsToMany(models.Group, { through: 'GroupImage' });
         Image.belongsToMany(models.Community, { as: 'CommunityLogoImages', through: 'CommunityLogoImage' });
         Image.belongsToMany(models.Community, { as: 'CommunityHeaderImages', through: 'CommunityHeaderImage' });

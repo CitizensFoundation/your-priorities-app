@@ -142,21 +142,21 @@ auth.entity('group', function(req, done) {
   }
 });
 
-// Idea admin and view
+// Post admin and view
 
-auth.role('idea.admin', function (idea, req, done) {
+auth.role('post.admin', function (post, req, done) {
   if (!req.isAuthenticated()) {
     done();
   } else {
-    Idea.findOne({
-      where: { id: idea.id }
-    }).then(function (idea) {
-      var group = Idea.Group;
+    Post.findOne({
+      where: { id: post.id }
+    }).then(function (post) {
+      var group = Post.Group;
       if (group.access === Group.ACCESS_PUBLIC) {
         done(null, true);
       }  else if (!req.isAuthenticated()) {
         done(null, false);
-      } else if (idea.user_id === req.user.id) {
+      } else if (post.user_id === req.user.id) {
         done(null, true);
       } else {
         group.hasAdminUser(req.user).then(function (result) {
@@ -171,19 +171,19 @@ auth.role('idea.admin', function (idea, req, done) {
   }
 });
 
-auth.role('idea.viewUser', function (idea, req, done) {
-  Idea.findOne({
-    where: { id: idea.id },
+auth.role('post.viewUser', function (post, req, done) {
+  Post.findOne({
+    where: { id: post.id },
     include: [
       models.Group
     ]
-  }).then(function (idea) {
-    var group = idea.Group;
+  }).then(function (post) {
+    var group = post.Group;
     if (group.access === Group.ACCESS_PUBLIC) {
       done(null, true);
     }  else if (!req.isAuthenticated()) {
       done(null, false);
-    } else if (idea.user_id === req.user.id) {
+    } else if (post.user_id === req.user.id) {
       done(null, true);
     } else {
       group.hasUser(req.user).then(function (result) {
@@ -197,13 +197,13 @@ auth.role('idea.viewUser', function (idea, req, done) {
   });
 });
 
-auth.entity('idea', function(req, done) {
-  var match = req.url.match(/^\/ideas\/(\w+)/);
+auth.entity('post', function(req, done) {
+  var match = req.url.match(/^\/posts\/(\w+)/);
   if (!match) {
-    done(new Error('Expected url like /ideas/:ideaId'));
+    done(new Error('Expected url like /posts/:postId'));
   } else {
-    var idea = { id: match[1] };
-    done(null, idea)
+    var post = { id: match[1] };
+    done(null, post)
   }
 });
 
@@ -268,7 +268,7 @@ auth.entity('category', function(req, done) {
     done(new Error('Expected url like /categories/:categoryId'));
   } else {
     var category = { id: match[1] };
-    done(null, idea)
+    done(null, post)
   }
 });
 
@@ -308,9 +308,9 @@ auth.entity('createGroupCategory', function(req, done) {
   }
 });
 
-// Create idea
+// Create post
 
-auth.role('createGroupIdea.createIdea', function (group, req, done) {
+auth.role('createGroupPost.createPost', function (group, req, done) {
   Group.findOne({
     where: { id: group.id }
   }).then(function (group) {
@@ -332,10 +332,10 @@ auth.role('createGroupIdea.createIdea', function (group, req, done) {
   });
 });
 
-auth.entity('createGroupIdea', function(req, done) {
-  var match = req.url.match(/^\/ideas\/(\w+)/);
+auth.entity('createGroupPost', function(req, done) {
+  var match = req.url.match(/^\/posts\/(\w+)/);
   if (!match) {
-    done(new Error('Expected url like /ideas/:groupId'));
+    done(new Error('Expected url like /posts/:groupId'));
   } else {
     var group = { id: match[1] };
     done(null, group)
@@ -413,19 +413,19 @@ auth.entity('createDomainCommunity', function(req, done) {
 auth.action('edit domain', ['domain.admin']);
 auth.action('edit community', ['community.admin']);
 auth.action('edit group', ['group.admin']);
-auth.action('edit idea', ['idea.admin']);
+auth.action('edit post', ['post.admin']);
 auth.action('edit user', ['user.admin']);
 auth.action('edit category', ['category.admin']);
 
 auth.action('view domain', ['domain.viewUser']);
 auth.action('view community', ['community.viewUser']);
 auth.action('view group', ['group.viewUser']);
-auth.action('view idea', ['idea.viewUser']);
+auth.action('view post', ['post.viewUser']);
 auth.action('view category', ['category.viewUser']);
 
 auth.action('create community', ['createDomainCommunity.createCommunity']);
 auth.action('create group', ['createCommunityGroup.createGroup']);
-auth.action('create idea', ['createGroupIdea.createIdea']);
+auth.action('create post', ['createGroupPost.createPost']);
 auth.action('create category', ['createGroupCategory.createCategory']);
 
 module.exports = auth;

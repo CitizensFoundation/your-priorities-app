@@ -9,10 +9,10 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-idea/yp-idea.html">
+<link rel="import" href="../yp-post/yp-post.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
-<link rel="import" href="../yp-idea/yp-idea-card.html">
-<link rel="import" href="../yp-idea/yp-idea-edit.html">
+<link rel="import" href="../yp-post/yp-post-card.html">
+<link rel="import" href="../yp-post/yp-post-edit.html">
 
 <dom-module id="yp-category">
   <template>
@@ -22,7 +22,7 @@
         @apply(--layout-horizontal);
       }
 
-      .createIdea {
+      .createPost {
         background-color: --var(accent-color-darker,#f57c00);
         position: fixed;
         bottom:24px;
@@ -34,27 +34,27 @@
         @apply(--layout-wrap);
       }
 
-      yp-idea-card {
+      yp-post-card {
         padding: 16px;
       }
 
     </style>
 
-    <yp-ajax id="ajax" url="" on-response="_ideasResponse"></yp-ajax>
+    <yp-ajax id="ajax" url="" on-response="_postsResponse"></yp-ajax>
 
-    <yp-idea-edit id="ideaEdit" on-iron-form-response="_refresh"></yp-idea-edit>
+    <yp-post-edit id="postEdit" on-iron-form-response="_refresh"></yp-post-edit>
 
     <yp-group-edit new="false" id="groupEdit" group="{{group}}" on-iron-form-response="_refresh"></yp-group-edit>
 
     <div class="card-container">
       <h2 hidden$="[[!groupEmpty]]">[[t('group.is.empty')]]</h2>
-      <template is="dom-if" if="[[ideas]]">
-        <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
-          <yp-idea-card idea="[[idea]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card>
+      <template is="dom-if" if="[[posts]]">
+        <template is="dom-repeat" class="list" items="[[posts]]" as="post">
+          <yp-post-card post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
         </template>
       </template>
       <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>
-      <paper-fab icon="add" z="1" class="createIdea" title="[[computeTitle()]]" on-tap="newIdea"></paper-fab>
+      <paper-fab icon="add" z="1" class="createPost" title="[[computeTitle()]]" on-tap="newPost"></paper-fab>
     </div>
   </template>
 
@@ -78,7 +78,7 @@
           value: false
         },
 
-        ideas: {
+        posts: {
           type: Array
         },
 
@@ -107,33 +107,33 @@
 
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue) {
-          this.set("ideas",null);
+          this.set("posts",null);
           if (this.filter) {
             window.selectedFilter = this.filter;
           }
-          this.$.ajax.url = '/api/groups/' + this.groupId + '/ideas/' + window.selectedFilter;
+          this.$.ajax.url = '/api/groups/' + this.groupId + '/posts/' + window.selectedFilter;
           if (this.categoryId) {
             this.$.ajax.url += '/' + this.categoryId;
           }
           this.$.ajax.generateRequest();
         } else {
-          this.set("ideas",null);
+          this.set("posts",null);
         }
       },
 
-      newIdea: function () {
-        window.appGlobals.activity('open', 'newIdea');
-        this.$.ideaEdit.open('new', {groupId: this.groupId});
+      newPost: function () {
+        window.appGlobals.activity('open', 'newPost');
+        this.$.postEdit.open('new', {groupId: this.groupId});
       },
 
-      _ideasResponse: function (event, detail, sender) {
+      _postsResponse: function (event, detail, sender) {
         var group = detail.response.group;
-        this.set("ideas", detail.response.Ideas);
+        this.set("posts", detail.response.Posts);
         this.set("group", group);
         this._processCategories();
         this.fire("change-header", { headerTitle: group.name,
           headerDescription: group.objectives });
-        if (detail.response.Ideas.length===0)
+        if (detail.response.Posts.length===0)
           this.groupEmpty = true;
         else
           this.groupEmpty = false;
@@ -154,7 +154,7 @@
       },
 
       computeTitle: function () {
-        return this.t('idea.add_new');
+        return this.t('post.add_new');
       }
     });
   </script>

@@ -9,13 +9,13 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-idea/yp-idea.html">
+<link rel="import" href="../yp-post/yp-post.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
-<link rel="import" href="../yp-idea/yp-idea-card.html">
-<link rel="import" href="../yp-idea/yp-idea-edit.html">
-<link rel="import" href="../yp-idea/yp-idea-card-add.html">
+<link rel="import" href="../yp-post/yp-post-card.html">
+<link rel="import" href="../yp-post/yp-post-edit.html">
+<link rel="import" href="../yp-post/yp-post-card-add.html">
 
-<link rel="import" href="../yp-ideas-filter/yp-ideas-filter.html">
+<link rel="import" href="../yp-posts-filter/yp-posts-filter.html">
 
 <link rel="import" href="yp-group-card-large.html">
 
@@ -27,7 +27,7 @@
         @apply(--layout-horizontal);
       }
 
-      .createIdea {
+      .createPost {
         background-color: --var(accent-color-darker,#f57c00);
         position: fixed;
         bottom:24px;
@@ -43,7 +43,7 @@
         padding: 16px;
       }
 
-      .ideasFilter {
+      .postsFilter {
         padding-left: 16px;
         margin-bottom: 0;
         padding-bottom: 0;
@@ -65,23 +65,23 @@
       }
     </style>
 
-    <yp-idea-edit id="ideaEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-idea-edit>
+    <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
 
     <div class="layout vertical">
-      <yp-ideas-filter id="ideasFilter" class="ideasFilter" on-refresh-group="_refreshGroup"
+      <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroup"
                        group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
                        category-id="{{categoryId}}" category-name="{{categoryName}}">
-      </yp-ideas-filter>
+      </yp-posts-filter>
       <div class="card-container layout center-center">
         <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
-        <template is="dom-if" if="[[ideas]]">
-          <template is="dom-repeat" class="list" items="[[ideas]]" as="idea">
-            <yp-idea-card class="card" idea="[[idea]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card>
+        <template is="dom-if" if="[[posts]]">
+          <template is="dom-repeat" class="list" items="[[posts]]" as="post">
+            <yp-post-card class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
           </template>
         </template>
-        <yp-ajax id="ajax" url="" on-response="_ideasResponse"></yp-ajax>
-        <yp-idea-card-add hidden$="[[hideAdd]]" class="card" on-tap="newIdea" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-idea-card-add>
-        <paper-fab icon="add" elevation="1" class="createIdea" title="[[t('idea.add_new')]]" on-tap="newIdea"></paper-fab>
+        <yp-ajax id="ajax" url="" on-response="_postsResponse"></yp-ajax>
+        <yp-post-card-add hidden$="[[hideAdd]]" class="card" on-tap="newPost" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card-add>
+        <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
       </div>
     </div>
   </template>
@@ -106,7 +106,7 @@
           value: false
         },
 
-        ideas: {
+        posts: {
           type: Array
         },
 
@@ -168,18 +168,18 @@
         if (newValue) {
           this._refreshGroup();
         } else {
-          this.set("ideas",null);
+          this.set("posts",null);
         }
       },
 
       _refreshGroup: function () {
         if (!this.filter)
           this.set('filter','newest');
-        this.set("ideas",null);
+        this.set("posts",null);
         if (this.searchingFor) {
           this.$.ajax.url = '/api/groups/' + this.groupId + '/search/' + this.searchingFor;
         } else {
-          this.$.ajax.url = '/api/groups/' + this.groupId + '/ideas/' + this.filter;
+          this.$.ajax.url = '/api/groups/' + this.groupId + '/posts/' + this.filter;
           if (this.categoryId) {
             this.$.ajax.url += '/' + this.categoryId;
           }
@@ -188,14 +188,14 @@
         this.hideAdd = true;
       },
 
-      newIdea: function () {
-        window.appGlobals.activity('open', 'newIdea');
-        this.$.ideaEdit.open('new', {groupId: this.groupId});
+      newPost: function () {
+        window.appGlobals.activity('open', 'newPost');
+        this.$.postEdit.open('new', {groupId: this.groupId});
       },
 
-      _ideasResponse: function (event, detail, sender) {
+      _postsResponse: function (event, detail, sender) {
         var group = detail.response.group;
-        this.set("ideas", detail.response.Ideas);
+        this.set("posts", detail.response.Posts);
         this.set("group", group);
         this._processCategories();
         this.fire("change-header", { headerTitle: group.name,
