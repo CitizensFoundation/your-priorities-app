@@ -3,6 +3,7 @@ var router = express.Router();
 var models = require("../models");
 var multer  = require('multer');
 var multerMultipartResolver = multer({ dest: 'uploads/' }).single('file');
+var auth = require('../authorization');
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated())

@@ -15,8 +15,8 @@ module.exports = function(sequelize, DataTypes) {
       RELATIONSHIP_FOLLOW: 1,
 
       associate: function(models) {
-        Relationship.belongsTo(models.User, { as: 'User1' });
-        Relationship.belongsTo(models.User, { as: 'User2' });
+        Relationship.belongsTo(models.User, { as: 'User' });
+        Relationship.belongsTo(models.User, { as: 'OtherUser' });
       }
     }
   });

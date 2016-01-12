@@ -1,13 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var models = require("../models");
-var auth = require('authorized');
-
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated())
-    return next();
-  res.send(401, 'Unauthorized');
-}
+var auth = require('../authorization');
 
 router.get('/:id', auth.can('view community'), function(req, res) {
   models.Community.find({
@@ -59,7 +53,7 @@ router.get('/:id', auth.can('view community'), function(req, res) {
   });
 });
 
-router.post('/', isAuthenticated, auth.can('create community'), function(req, res) {
+router.post('/', auth.can('create community'), function(req, res) {
   var community = models.Community.build({
     name: req.body.name,
     description: req.body.description,
@@ -82,7 +76,7 @@ router.post('/', isAuthenticated, auth.can('create community'), function(req, re
   });
 });
 
-router.put('/:id', isAuthenticated, auth.can('edit community'), function(req, res) {
+router.put('/:id', auth.can('edit community'), function(req, res) {
   models.Community.find({
     where: { id: req.params.id, user_id: req.user.id }
   }).then(function(community) {
@@ -102,7 +96,7 @@ router.put('/:id', isAuthenticated, auth.can('edit community'), function(req, re
   });
 });
 
-router.delete('/:id', isAuthenticated, auth.can('edit community'), function(req, res) {
+router.delete('/:id', auth.can('edit community'), function(req, res) {
   models.Community.find({
     where: {id: req.params.id, user_id: req.user.id }
   }).then(function (community) {

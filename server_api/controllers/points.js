@@ -1,12 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var models = require("../models");
-
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated())
-    return next();
-  res.status(401).send('Unauthorized');
-}
+var auth = require('../authorization');
 
 function changePointCounter(pointId, column, upDown, next) {
   models.Point.find({

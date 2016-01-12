@@ -1,23 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var models = require("../models");
+var auth = require('../authorization');
 
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated())
-    return next();
-  res.send(401, 'Unauthorized');
-}
-
-/* GET ideas listing. */
-router.get('/', function(req, res) {
-  models.Category.findAll({
-      include: [ models.Image ]
-  }).then(function(categories) {
-    res.send(categories);
-  });
-});
-
-router.get('/:id', function(req, res) {
+router.get('/:id', auth.can('view category'), function(req, res) {
   models.Category.find({
     where: { id: req.params.id },
     include: [
@@ -36,7 +22,7 @@ router.get('/:id', function(req, res) {
   });
 });
 
-router.post('/:groupId', isAuthenticated, function(req, res) {
+router.post('/:groupId', auth.can('create category'), function(req, res) {
   var category = models.Category.build({
     name: req.body.name,
     description: req.body.description,
@@ -55,7 +41,7 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
   });
 });
 
-router.put('/:id', isAuthenticated, function(req, res) {
+router.put('/:id', auth.can('edit category'), function(req, res) {
   models.Category.find({
     where: { id: req.params.id }
   }).then(function(category) {
@@ -70,6 +56,17 @@ router.put('/:id', isAuthenticated, function(req, res) {
           res.send(category);
         }
       });
+    });
+  });
+});
+
+router.delete('/:id', auth.can('edit category'), function(req, res) {
+  models.Category.find({
+    where: {id: req.params.id, user_id: req.user.id }
+  }).then(function (category) {
+    category.deleted = true;
+    category.save().then(function () {
+      res.sendStatus(200);
     });
   });
 });

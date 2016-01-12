@@ -1,12 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var models = require("../models");
-
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated())
-    return next();
-  res.send(401, 'Unauthorized');
-}
+var auth = require('../authorization');
 
 router.get('/', function(req, res) {
   if (req.ypCommunity) {
@@ -16,7 +11,7 @@ router.get('/', function(req, res) {
   }
 });
 
-router.get('/:id', function(req, res) {
+router.get('/:id', auth.can('view domain'), function(req, res) {
   models.Domain.find({
     where: { id: req.params.id },
     order: [
@@ -37,6 +32,11 @@ router.get('/:id', function(req, res) {
         model: models.Image, as: 'DomainHeaderImages'
       },
       { model: models.Community,
+        where: {
+          access: {
+            $ne: models.Community.ACCESS_SECRET
+          }
+        },
         order: [
           [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ],
           [ { model: models.Image, as: 'CommunityHeaderImages' }, 'created_at', 'asc' ]
@@ -66,7 +66,7 @@ router.get('/:id', function(req, res) {
   });
 });
 
-router.put('/:id', isAuthenticated, function(req, res) {
+router.put('/:id', auth.can('edit domain'), function(req, res) {
   models.Domain.find({
     where: { id: req.params.id }
   }).then(function(domain) {
@@ -85,7 +85,7 @@ router.put('/:id', isAuthenticated, function(req, res) {
   });
 });
 
-router.delete('/:id', isAuthenticated, function(req, res) {
+router.delete('/:id', auth.can('edit domain'), function(req, res) {
   models.Domain.find({
     where: {id: req.params.id}
   }).then(function (domain) {

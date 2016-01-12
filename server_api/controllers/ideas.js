@@ -1,12 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var models = require("../models");
-
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated())
-    return next();
-  res.send(401, 'Unauthorized');
-}
+var auth = require('../authorization');
 
 function changeIdeaCounter(req, ideaId, column, upDown, next) {
   models.Idea.find({
@@ -42,19 +37,7 @@ function decrementOldCountersIfNeeded(req, oldEndorsementValue, ideaId, endorsem
   }
 }
 
-/* GET ideas listing. */
-router.get('/', function(req, res) {
-  models.Idea.findAll({
-    limit: 300,
-    order: 'position DESC',
-    where: ["description IS NOT NULL AND group_id = 36 AND status != 'deleted'",[]],
-    include: [ models.Point, models.Category, models.IdeaRevision, models.Endorsement ]
-  }).then(function(ideas) {
-    res.send(ideas);
-  });
-});
-
-router.get('/:id/endorsements', function(req, res) {
+router.get('/:id/endorsements', auth.can('view idea'), function(req, res) {
   console.log("ID Endorsements");
   models.Endorsement.findAll({
     where: {idea_id: req.params.id, status: 'active'},
@@ -69,7 +52,7 @@ router.get('/:id/endorsements', function(req, res) {
   });
 });
 
-router.get('/:id', function(req, res) {
+router.get('/:id', auth.can('view idea'), function(req, res) {
   models.Idea.find({
     where: { id: req.params.id },
     include: [
@@ -115,7 +98,7 @@ router.get('/:id', function(req, res) {
   });
 });
 
-router.post('/:groupId', isAuthenticated, function(req, res) {
+router.post('/:groupId', auth.can('create idea'), function(req, res) {
   var idea = models.Idea.build({
     name: req.body.name,
     description: req.body.description,
@@ -144,7 +127,7 @@ router.post('/:groupId', isAuthenticated, function(req, res) {
   });
 });
 
-router.put('/:id', isAuthenticated, function(req, res) {
+router.put('/:id', auth.can('edit idea'), function(req, res) {
   models.Idea.find({
     where: {id: req.params.id, user_id: req.user.id }
   }).then(function (idea) {
@@ -166,7 +149,7 @@ router.put('/:id', isAuthenticated, function(req, res) {
   });
 });
 
-router.post('/:id/endorse', isAuthenticated, function(req, res) {
+router.post('/:id/endorse', auth.can('vote on idea'), function(req, res) {
   models.Endorsement.find({
     where: {
       idea_id: req.params.id,
@@ -211,20 +194,7 @@ router.post('/:id/endorse', isAuthenticated, function(req, res) {
   });
 });
 
-router.delete('/:id', isAuthenticated, function(req, res) {
-  models.Idea.find({
-    where: {id: req.params.id, user_id: req.user.id }
-  }).then(function (idea) {
-    idea.deleted = true;
-    idea.save().then(function () {
-      idea.updateAllExternalCounters(req, 'down', function () {
-        res.sendStatus(200);
-      });
-    });
-  });
-});
-
-router.delete('/:id/endorse', isAuthenticated, function(req, res) {
+router.delete('/:id/endorse', auth.can('vote on idea'), function(req, res) {
   console.log("user: "+req.user.id + " idea: " + req.params.id);
   models.Endorsement.find({
     where: { idea_id: req.params.id, user_id: req.user.id }
@@ -254,6 +224,19 @@ router.delete('/:id/endorse', isAuthenticated, function(req, res) {
       console.error("Can't find endorsement to delete");
       res.sendStatus(500);
     }
+  });
+});
+
+router.delete('/:id', auth.can('edit idea'), function(req, res) {
+  models.Idea.find({
+    where: {id: req.params.id, user_id: req.user.id }
+  }).then(function (idea) {
+    idea.deleted = true;
+    idea.save().then(function () {
+      idea.updateAllExternalCounters(req, 'down', function () {
+        res.sendStatus(200);
+      });
+    });
   });
 });
 

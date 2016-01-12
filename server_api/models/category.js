@@ -6,11 +6,18 @@ module.exports = function(sequelize, DataTypes) {
   var Category = sequelize.define("Category", {
     name: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: false },
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     icon_file_name: DataTypes.STRING
   }, {
     underscored: true,
     
     tableName: 'categories',
+
+    defaultScope: {
+      where: {
+        deleted: false
+      }
+    },
 
     instanceMethods: {
 

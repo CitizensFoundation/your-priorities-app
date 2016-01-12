@@ -1,25 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var models = require("../models");
+var auth = require('../authorization');
 
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated())
-    return next();
-  res.send(401, 'Unauthorized');
-}
-
-/* GET ideas listing. */
-router.get('/', function(req, res) {
-  models.Group.findAll({
-    limit: 565,
-    order: "counter_ideas DESC",
-    include: [ models.IsoCountry ]
-  }).then(function(groups) {
-    res.send(groups);
-  });
-});
-
-router.post('/:communityId', isAuthenticated, function(req, res) {
+router.post('/:communityId', auth.can('create group'), function(req, res) {
   var group = models.Group.build({
     name: req.body.name,
     objectives: req.body.objectives,
@@ -47,7 +31,7 @@ router.post('/:communityId', isAuthenticated, function(req, res) {
   });
 });
 
-router.put('/:id', isAuthenticated, function(req, res) {
+router.put('/:id', auth.can('edit group'), function(req, res) {
   models.Group.find({
     where: {id: req.params.id, user_id: req.user.id }
   }).then(function (group) {
@@ -67,7 +51,7 @@ router.put('/:id', isAuthenticated, function(req, res) {
   });
 });
 
-router.delete('/:id', isAuthenticated, function(req, res) {
+router.delete('/:id', auth.can('edit group'), function(req, res) {
   models.Group.find({
     where: {id: req.params.id, user_id: req.user.id }
   }).then(function (group) {
@@ -80,7 +64,7 @@ router.delete('/:id', isAuthenticated, function(req, res) {
   });
 });
 
-router.get('/:id/search/:term', function(req, res) {
+router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
   models.Group.find({
     where: { id: req.params.id },
     include: [
@@ -112,7 +96,7 @@ router.get('/:id/search/:term', function(req, res) {
   });
 });
 
-router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
+router.get('/:id/ideas/:filter/:categoryId?', auth.can('view group'), function(req, res) {
 
   var where = '"Idea"."deleted" = false AND "Idea"."group_id" = '+req.params.id;
   //  var ideaOrder = [models.sequelize.fn('subtraction', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'];
@@ -192,7 +176,7 @@ router.get('/:id/ideas/:filter/:categoryId?', function(req, res) {
   });
 });
 
-router.get('/:id/categories', function(req, res) {
+router.get('/:id/categories', auth.can('view group'), function(req, res) {
   models.Category.findAll({
     where: { group_id: req.params.id },
     limit: 20
