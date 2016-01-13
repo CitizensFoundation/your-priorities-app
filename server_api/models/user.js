@@ -11,7 +11,9 @@ module.exports = function(sequelize, DataTypes) {
     facebook_uid: DataTypes.INTEGER,
     buddy_icon_file_name: DataTypes.STRING,
     twitter_profile_image_url:  DataTypes.STRING,
-    encrypted_password: DataTypes.STRING
+    encrypted_password: DataTypes.STRING,
+    reset_password_token: DataTypes.STRING,
+    reset_password_expires: DataTypes.DATE
   }, {
     underscored: true,
 

@@ -43,6 +43,7 @@ module.exports = function(sequelize, DataTypes) {
       CONTENT_NEWSFEED: 2,
       CONTENT_PERSON: 3,
       CONTENT_BLOG: 4,
+      CONTENT_QUESTION: 5,
 
       associate: function(models) {
         Post.hasMany(models.Point);
