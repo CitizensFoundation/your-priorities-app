@@ -5,7 +5,9 @@
 module.exports = function(sequelize, DataTypes) {
   var AcNotification = sequelize.define("AcNotification", {
     priority: { type: DataTypes.INTEGER, allowNull: false },
-    notification_type: { type: DataTypes.INTEGER, allowNull: false }
+    type: { type: DataTypes.INTEGER, allowNull: false },
+    sent_email: { type: DataTypes.INTEGER, allowNull: false, default: false },
+    sent_push: { type: DataTypes.INTEGER, allowNull: false, default: false }
   }, {
     underscored: true,
 
@@ -14,10 +16,6 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         AcNotification.belongsTo(models.AcActivity);
-        AcNotification.belongsTo(models.Community);
-        AcNotification.belongsTo(models.Group);
-        AcNotification.belongsTo(models.Post);
-        AcNotification.belongsTo(models.Point);
         AcNotification.belongsTo(models.User);
       }
     }
