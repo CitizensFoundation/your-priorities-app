@@ -12,6 +12,8 @@ module.exports = function(sequelize, DataTypes) {
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     description: DataTypes.TEXT,
     website: DataTypes.TEXT,
+    admin_email: { type: DataTypes.STRING, allowNull: false },
+    admin_name: { type: DataTypes.STRING, allowNull: false },
     counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 }

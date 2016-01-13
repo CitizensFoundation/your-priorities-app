@@ -71,7 +71,7 @@ router.post('/forgot_password', function(req, res) {
         where: {email: req.body.email}
       }).then(function (user) {
         if (!user) {
-          res.Send('No account with that email address exists.');
+          res.send('No account with that email address exists.');
           return;
         }
 
@@ -193,7 +193,11 @@ router.post('/reset/:token', function(req, res) {
       });
     }
   ], function(err) {
-    res.sendStatus(200);
+    if (err) {
+      res.sendStatus(500);
+    } else {
+      res.sendStatus(200);
+    }
   });
 });
 
