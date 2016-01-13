@@ -7,7 +7,7 @@ var async = require("async");
 module.exports = function(sequelize, DataTypes) {
   var Group = sequelize.define("Group", {
     name: { type: DataTypes.STRING, allowNull: false },
-    access: { type: DataTypes.INTEGER, allowNull: false }, // 0: public, 1: closed, 2: secret
+    access: { type: DataTypes.INTEGER, allowNull: false },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     top_banner_file_name: DataTypes.STRING,
     logo_file_name: DataTypes.STRING,

@@ -13,13 +13,21 @@ module.exports = function(sequelize, DataTypes) {
     twitter_profile_image_url:  DataTypes.STRING,
     encrypted_password: DataTypes.STRING,
     reset_password_token: DataTypes.STRING,
-    reset_password_expires: DataTypes.DATE
+    reset_password_expires: DataTypes.DATE,
+    
   }, {
     underscored: true,
 
     timestamps: true,
 
     tableName: 'users',
+
+    indexes: [
+      {
+        unique: true,
+        fields: ['email']
+      }
+    ],
 
     classMethods: {
       associate: function(models) {

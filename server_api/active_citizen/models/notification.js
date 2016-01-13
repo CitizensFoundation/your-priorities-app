@@ -14,9 +14,23 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'ac_notifications',
 
     classMethods: {
+
+      NOTIFICATION_PASSWORD_RECOVERY: 0,
+
       associate: function(models) {
         AcNotification.belongsTo(models.AcActivity);
         AcNotification.belongsTo(models.User);
+      },
+
+      createPasswordRecovery: function(activity, user, community, token) {
+        var emailLocals = {};
+        emailLocals['user'] = user;
+        emailLocals['community'] = community;
+        emailLocals['token'] = token;
+        emailLocals['subject'] = i18n.t('email.password_recovery');
+        emailLocals['template'] = 'password_recovery';
+
+
       }
     }
   });
