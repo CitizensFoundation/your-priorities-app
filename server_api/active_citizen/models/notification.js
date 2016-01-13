@@ -4,7 +4,8 @@
 
 module.exports = function(sequelize, DataTypes) {
   var AcNotification = sequelize.define("AcNotification", {
-    level: DataTypes.INTEGER
+    priority: { type: DataTypes.INTEGER, allowNull: false },
+    notification_type: { type: DataTypes.INTEGER, allowNull: false }
   }, {
     underscored: true,
 
