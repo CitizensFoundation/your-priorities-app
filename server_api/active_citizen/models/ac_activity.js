@@ -24,6 +24,8 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_PRIVATE: 3,
 
       associate: function(models) {
+        AcActivity.belongsTo(models.Domain);
+        AcActivity.belongsTo(models.Community);
         AcActivity.belongsTo(models.Group);
         AcActivity.belongsTo(models.Post);
         AcActivity.belongsTo(models.Point);

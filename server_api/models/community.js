@@ -112,11 +112,11 @@ module.exports = function(sequelize, DataTypes) {
       convertAccessFromRadioButtons: function(body) {
         var access = 0;
         if (body.public) {
-          access = 2;
+          access = 0;
         } else if (body.closed) {
           access = 1;
         } else if (body.secret) {
-          access = 0;
+          access = 2;
         }
         return access;
       },

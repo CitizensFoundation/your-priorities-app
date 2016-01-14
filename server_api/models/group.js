@@ -158,12 +158,12 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       associate: function(models) {
-        Group.hasMany(models.Post, {foreignKey: "group_id"});
-        Group.hasMany(models.Point, {foreignKey: "group_id"});
-        Group.hasMany(models.Endorsement, {foreignKey: "group_id"});
-        Group.hasMany(models.Category, {foreignKey: "group_id"});
+        Group.hasMany(models.Post, { foreignKey: "group_id" });
+        Group.hasMany(models.Point, { foreignKey: "group_id" });
+        Group.hasMany(models.Endorsement, { foreignKey: "group_id" });
+        Group.hasMany(models.Category, { foreignKey: "group_id" });
         Group.belongsToMany(models.User, { as: 'GroupUsers', through: 'GroupUser' });
-        Group.belongsTo(models.IsoCountry, {foreignKey: "iso_country_id"});
+        Group.belongsTo(models.IsoCountry, { foreignKey: "iso_country_id" });
         Group.belongsTo(models.User);
         Group.belongsToMany(models.Image, { through: 'GroupImage' });
         Group.belongsToMany(models.Image, { as: 'GroupLogoImages', through: 'GroupLogoImage' });

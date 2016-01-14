@@ -14,7 +14,8 @@ module.exports = function(sequelize, DataTypes) {
     encrypted_password: DataTypes.STRING,
     reset_password_token: DataTypes.STRING,
     reset_password_expires: DataTypes.DATE,
-    
+    email_notifications_threshold: { type: DataTypes.BOOLEAN, allowNull: false, default: true },
+    push_notifications_threshold: { type: DataTypes.BOOLEAN, allowNull: false, default: true }
   }, {
     underscored: true,
 
