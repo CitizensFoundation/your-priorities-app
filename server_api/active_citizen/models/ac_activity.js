@@ -3,6 +3,7 @@
 // https://www.w3.org/TR/activitystreams-core/
 
 var jobs = require('./jobs');
+var log = require('../utils/logger');
 
 module.exports = function(sequelize, DataTypes) {
   var AcActivity = sequelize.define("AcActivity", {
@@ -71,9 +72,11 @@ module.exports = function(sequelize, DataTypes) {
               }
             ], function(err) {
               if (err) {
+                log.error('Activity Creation Error', err);
                 done(true);
               } else {
                 jobs.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
+                log.info('Activity Created', activity);
                 done(false);
               }
             });

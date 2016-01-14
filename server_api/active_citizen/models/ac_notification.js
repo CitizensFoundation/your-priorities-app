@@ -1,6 +1,7 @@
 "use strict";
 
 var jobs = require('./jobs');
+var log = require('../utils/logger');
 
 module.exports = function(sequelize, DataTypes) {
   var AcNotification = sequelize.define("AcNotification", {
@@ -31,8 +32,8 @@ module.exports = function(sequelize, DataTypes) {
       createPasswordRecovery: function(activity, done) {
 
         var user = activity.actor.user;
-        var domain = activity.actor.domain;
-        var community = activity.actor.community;
+        var domain = activity.object.domain;
+        var community = activity.object.community;
 
         var notification = models.AcActivity.build({
           type: AcNotification.NOTIFICATION_PASSWORD_RECOVERY,
@@ -44,23 +45,18 @@ module.exports = function(sequelize, DataTypes) {
           if (notification) {
             async.paralell([
               function(done) {
-                notifcation.addUser(user, function (err) {
+                notification.addActivity(user, function (err) {
                   done();
                 });
               },
               function(done) {
-                notifcation.addDomain(domain, function (err) {
-                  done();
-                });
-              },
-              function(done) {
-                notifcation.addCommunity(community, function (err) {
+                notification.addUser(user, function (err) {
                   done();
                 });
               }
             ], function(err) {
               if (err) {
-                //TODO: Send error
+                log.error('Notification Creation Error', err);
                 done();
               } else {
                 var emailLocals = {};
@@ -71,11 +67,12 @@ module.exports = function(sequelize, DataTypes) {
                 emailLocals['subject'] = i18n.t('email.password_recovery');
                 emailLocals['template'] = 'password_recovery';
                 jobs.create('send-one-email', emailLocals).priority('critical').removeOnComplete(true).save();
+                log.info('Notification Created', notification);
                 done();
               }
             });
           } else {
-            //TODO: Send error
+            log.error('Notification Creation Error', err);
             done();
           }
         });
