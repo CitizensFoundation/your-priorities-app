@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
         AcWatching.belongsTo(models.Group);
         AcWatching.belongsTo(models.Post);
         AcWatching.belongsTo(models.Point);
-        AcWatching.belongsTo(models.User, { through: 'WatchingUser' });
+        AcWatching.belongsTo(models.User, { as: 'WatchingUser' });
         AcWatching.belongsTo(models.User);
       },
 
@@ -28,5 +28,5 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
-  return AcNotification;
+  return AcWatching;
 };

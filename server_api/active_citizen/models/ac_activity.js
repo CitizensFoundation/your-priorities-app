@@ -2,11 +2,13 @@
 
 // https://www.w3.org/TR/activitystreams-core/
 
+var jobs = require('./jobs');
+
 module.exports = function(sequelize, DataTypes) {
   var AcActivity = sequelize.define("AcActivity", {
     context: { type: DataTypes.STRING, default: 'http://www.w3.org/ns/activitystreams' },
     access: { type: DataTypes.INTEGER, allowNull: false },
-    type: DataTypes.STRING,
+    type: { type: DataTypes.INTEGER, allowNull: false },
     object: DataTypes.JSONB,
     actor: DataTypes.JSONB,
     target: DataTypes.JSONB
@@ -29,29 +31,57 @@ module.exports = function(sequelize, DataTypes) {
         AcActivity.belongsTo(models.Group);
         AcActivity.belongsTo(models.Post);
         AcActivity.belongsTo(models.Point);
+        AcActivity.belongsTo(models.Invite);
         AcActivity.belongsTo(models.User);
         AcActivity.belongsToMany(models.User, { through: 'OtherUsers' });
       },
 
-      classMethods: {
+      ACTIVITY_PASSWORD_RECOVERY: 0,
 
-        NOTIFICATION_PASSWORD_RECOVERY: 0,
+      createPasswordRecovery: function(user, domain, community, token, done) {
 
-        associate: function(models) {
-          AcNotification.belongsTo(models.AcActivity);
-          AcNotification.belongsTo(models.User);
-        },
+        var activity = models.AcActivity.build({
+          type: models.AcActivity.ACTIVITY_PASSWORD_RECOVERY,
+          actor: { user: user },
+          object: {
+            domain: domain,
+            community: community,
+            token: token
+          },
+          access: models.AcActivity.ACCESS_PRIVATE
+        });
 
-        createPasswordRecovery: function(activity, user, community, token) {
-          var emailLocals = {};
-          emailLocals['user'] = user;
-          emailLocals['community'] = community;
-          emailLocals['token'] = token;
-          emailLocals['subject'] = i18n.t('email.password_recovery');
-          emailLocals['template'] = 'password_recovery';
-        }
+        activity.save().then(function(activity) {
+          if (activity) {
+            async.paralell([
+              function(done) {
+                activity.addUser(user, function (err) {
+                  done();
+                });
+              },
+              function(done) {
+                activity.addDomain(domain, function (err) {
+                  done();
+                });
+              },
+              function(done) {
+                activity.addCommunity(community, function (err) {
+                  done();
+                });
+              }
+            ], function(err) {
+              if (err) {
+                done(true);
+              } else {
+                jobs.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
+                done(false);
+              }
+            });
+          } else {
+            done(true);
+          }
+       });
       }
-
     }
   });
 
