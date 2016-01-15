@@ -4,10 +4,14 @@ var EmailWorker = function () {};
 var path = require('path');
 var EmailTemplate = require('email-templates').EmailTemplate;
 var nodemailer = require('nodemailer');
-var wellknown = require('nodemailer-wellknown');
-var async = require('async');
+var ejs = require('ejs');
+var i18n = require('../utils/i18n');
 
 var templatesDir = path.resolve(__dirname, '..', 'email_templates');
+
+ejs.filters.t = function(text) {
+  return i18n.t(text);
+};
 
 var transport = nodemailer.createTransport({
   service: 'sendgrid',
@@ -19,30 +23,12 @@ var transport = nodemailer.createTransport({
 
 EmailWorker.prototype.sendOne = function (emailLocals, done) {
 
-  emailLocals = {
-    subject: i18n.t('email.subject.password_recovery'),
-    template: 'password_recovery',
-    user: {
-      name: 'Gunnar Grimson',
-      email: 'gunnar@citizens.is'
-    },
-    group: {
-      name: 'Laugardalur 2015'
-    },
-    community: {
-      name: 'Betri Hverfi',
-      admin_email: 'support@yrpri.org',
-      admin_name: 'Your Priorities support'
-    }
-  };
+  var template = new EmailTemplate(path.join(templatesDir, emailLocals.template));
 
-  var template = new EmailTemplate(path.join(templatesDir, local.template));
-
-  template.render(locals, function (err, results) {
+  template.render(emailLocals, function (err, results) {
     if (err) {
       return console.error(err)
     }
-
     transport.sendMail({
       from: emailLocals.community.admin_email,
       to: emailLocals.user.email,
@@ -53,7 +39,7 @@ EmailWorker.prototype.sendOne = function (emailLocals, done) {
       if (err) {
         return console.error(err)
       }
-      console.log(responseStatus.message)
+      console.log(responseStatus.message);
     })
   });
   done();

@@ -4,8 +4,9 @@ var NotificationWorker = function () {};
 var models = require("../models");
 var log = require('../utils/logger');
 var jobs = require('./jobs');
+var i18n = require('../utils/i18n');
 
-NotificationWorker.prototype.process = function (notification, i18n, done) {
+NotificationWorker.prototype.process = function (notification, done) {
 
   var user = notification.activity.actor.user;
   var domain = notification.activity.object.domain;

@@ -1,0 +1,8 @@
+<%- partial('../header.html') %>
+
+<p>Someone has requested a link to change your password, and you can do this through the link below.</p>
+<p>
+  <%= "https://#{community.base_url}/!#/users/reset_password?reset_password_token=#{token}" %>
+</p>
+<p>If you didn't request this, please ignore this email.</p>
+<p>Your password won't change until you access the link above and create a new one.</p>
