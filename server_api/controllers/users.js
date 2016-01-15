@@ -87,25 +87,8 @@ router.post('/forgot_password', function(req, res) {
       });
     },
     function(token, user, done) {
-      var smtpTransport = nodemailer.createTransport('SMTP', {
-        service: 'SendGrid',
-        auth: {
-          user: '!!! YOUR SENDGRID USERNAME !!!',
-          pass: '!!! YOUR SENDGRID PASSWORD !!!'
-        }
-      });
-      var mailOptions = {
-        to: user.email,
-        from: 'passwordreset@yrpri.org',
-        subject: 'Your Priorities Password Reset',
-        text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-        'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-        'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-        'If you did not request this, please ignore this email and your password will remain unchanged.\n'
-      };
-      smtpTransport.sendMail(mailOptions, function(err) {
-        req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
-        done(err, 'done');
+      models.AcActivity.createPasswordRecovery(user, req.ypDomain, req.ypCommunity, token, function (err) {
+        done(err);
       });
     }
   ], function(err) {
