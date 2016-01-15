@@ -51,9 +51,19 @@ module.exports = function(sequelize, DataTypes) {
 
     instanceMethods: {
 
-      setLocale: function (domain, community) {
+      setLocale: function (i18n, domain, community, done) {
         if (this.default_locale && this.default_locale != "") {
-          i18n.
+          i18n.changeLanguage(this.default_locale, function (err, t) {
+            done();
+          });
+        } else if (community.default_locale && community.default_locale != "") {
+          i18n.changeLanguage(community.default_locale, function (err, t) {
+            done();
+          });
+        } else {
+          i18n.changeLanguage(domain.default_locale, function (err, t) {
+            done();
+          });
         }
       },
 

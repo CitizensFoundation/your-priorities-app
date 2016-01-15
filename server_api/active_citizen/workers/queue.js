@@ -1,5 +1,7 @@
 var email = require('./email');
 var activity = require('./activity');
+var notifications = require('./notifications');
+
 var jobs = require('./jobs');
 
 var i18n = require('i18next');
@@ -27,5 +29,9 @@ jobs.process('send-one-email', function(job, done) {
 });
 
 jobs.process('process-activity', function(job, done) {
+  activity.process(job.data, i18n, done);
+});
+
+jobs.process('process-notification', function(job, done) {
   activity.process(job.data, i18n, done);
 });
