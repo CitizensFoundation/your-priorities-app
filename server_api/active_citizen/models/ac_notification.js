@@ -45,7 +45,7 @@ module.exports = function(sequelize, DataTypes) {
           if (notification) {
             async.paralell([
               function(done) {
-                notification.addActivity(user, function (err) {
+                notification.addActivity(activity, function (err) {
                   done();
                 });
               },
@@ -59,14 +59,7 @@ module.exports = function(sequelize, DataTypes) {
                 log.error('Notification Creation Error', err);
                 done();
               } else {
-                var emailLocals = {};
-                emailLocals['user'] = user;
-                emailLocals['community'] = community;
-                emailLocals['domain'] = domain;
-                emailLocals['token'] = activity.object.token;
-                emailLocals['subject'] = i18n.t('email.password_recovery');
-                emailLocals['template'] = 'password_recovery';
-                jobs.create('send-one-email', emailLocals).priority('critical').removeOnComplete(true).save();
+                jobs.create('process-notification', notification).priority('critical').removeOnComplete(true).save();
                 log.info('Notification Created', notification);
                 done();
               }

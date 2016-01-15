@@ -2,8 +2,8 @@
 
 // https://www.w3.org/TR/activitystreams-core/
 
-var jobs = require('./jobs');
 var log = require('../utils/logger');
+var jobs = require('./jobs');
 
 module.exports = function(sequelize, DataTypes) {
   var AcActivity = sequelize.define("AcActivity", {

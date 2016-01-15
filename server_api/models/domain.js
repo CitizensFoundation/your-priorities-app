@@ -11,6 +11,7 @@ module.exports = function(sequelize, DataTypes) {
     domain_name:  { type: DataTypes.STRING, allowNull: false },
     access: { type: DataTypes.INTEGER, allowNull: false },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    default_locale: { type: DataTypes.STRING, allowNull: false, default: 'en' },
     description: DataTypes.TEXT,
     counter_communities: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },

@@ -12,6 +12,7 @@ module.exports = function(sequelize, DataTypes) {
     buddy_icon_file_name: DataTypes.STRING,
     twitter_profile_image_url:  DataTypes.STRING,
     encrypted_password: DataTypes.STRING,
+    default_locale: DataTypes.STRING,
     reset_password_token: DataTypes.STRING,
     reset_password_expires: DataTypes.DATE,
     email_notifications_threshold: { type: DataTypes.BOOLEAN, allowNull: false, default: true },
@@ -49,6 +50,12 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     instanceMethods: {
+
+      setLocale: function (domain, community) {
+        if (this.default_locale && this.default_locale != "") {
+          i18n.
+        }
+      },
 
       setupProfileImage: function(body, done) {
         if (body.uploadedProfileImageId) {

@@ -10,6 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     hostname: { type: DataTypes.STRING, allowNull: false },
     access: { type: DataTypes.INTEGER, allowNull: false }, // 0: public, 1: closed, 2: secret
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    default_locale: { type: DataTypes.STRING, allowNull: false, default: 'en' },
     description: DataTypes.TEXT,
     website: DataTypes.TEXT,
     admin_email: { type: DataTypes.STRING, allowNull: false },
