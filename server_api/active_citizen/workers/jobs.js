@@ -1,7 +1,7 @@
 var kue = require('kue')
   , url = require('url')
   , redis = require('kue/node_modules/redis');
-
+var log = require('../utils/logger');
 var email = require('./email');
 var activity = require('./activity');
 
@@ -14,6 +14,8 @@ kue.redis.createClient = function() {
   if (redisUrl.auth) {
     client.auth(redisUrl.auth.split(":")[1]);
   }
+  log.info('KUE Queue has been created');
+
   return client;
 };
 

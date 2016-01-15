@@ -25,6 +25,7 @@ NotificationWorker.prototype.process = function (notification, done) {
           community: community,
           token: notification.activity.object.token
         }).priority('critical').removeOnComplete(true).save();
+        log.info('Processing Notification Completed', { type: notification.type, user: user });
         done();
         break;
     }

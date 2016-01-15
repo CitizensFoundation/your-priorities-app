@@ -1,5 +1,5 @@
 // https://gist.github.com/mojodna/1251812
-
+var log = require('../utils/logger');
 var EmailWorker = function () {};
 var path = require('path');
 var EmailTemplate = require('email-templates').EmailTemplate;
@@ -27,7 +27,7 @@ EmailWorker.prototype.sendOne = function (emailLocals, done) {
 
   template.render(emailLocals, function (err, results) {
     if (err) {
-      return console.error(err)
+      return log.error('EmailWorker', { err: err });
     }
     transport.sendMail({
       from: emailLocals.community.admin_email,
@@ -37,9 +37,9 @@ EmailWorker.prototype.sendOne = function (emailLocals, done) {
       text: results.text
     }, function (err, responseStatus) {
       if (err) {
-        return console.error(err)
+        return log.error('EmailWorker', { err: err });
       }
-      console.log(responseStatus.message);
+      log.info('EmailWorker Completed', { responseStatusMessage: responseStatus.message });
     })
   });
   done();
