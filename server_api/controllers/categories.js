@@ -21,11 +21,14 @@ router.get('/:id', auth.can('view category'), function(req, res) {
   }).then(function(category) {
     if (category) {
       res.sendStatus(404);
-      log.info('Category Not found', { categoryId: req.params.id, user: req.user });
+      log.warning('Category Not found', { categoryId: req.params.id, user: req.user });
     } else {
       log.info('Category Viewed', { category: category, user: req.user });
       res.send(category);
     }
+  }).catch(function(error) {
+    log.error('Category Error', { err: error, categoryId: req.params.id, user: req.user });
+    res.sendStatus(500);
   });
 });
 
@@ -46,6 +49,9 @@ router.post('/:groupId', auth.can('create category'), function(req, res) {
         res.send(category);
       }
     });
+  }).catch(function(error) {
+    log.error('Category Error', { err: error, user: req.user });
+    res.sendStatus(500);
   });
 });
 
@@ -66,6 +72,9 @@ router.put('/:id', auth.can('edit category'), function(req, res) {
         }
       });
     });
+  }).catch(function(error) {
+    log.error('Category Error', { err: error, user: req.user });
+    res.sendStatus(500);
   });
 });
 
@@ -78,6 +87,9 @@ router.delete('/:id', auth.can('edit category'), function(req, res) {
       log.info('Category Deleted', { category: category, user: req.user });
       res.sendStatus(200);
     });
+  }).catch(function(error) {
+    log.error('Category Error', { err: error, user: req.user });
+    res.sendStatus(500);
   });
 });
 
