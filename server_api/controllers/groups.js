@@ -3,6 +3,25 @@ var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
 
+var sendGroupOrError = function (group, context, user, error, errorStatus) {
+  if (error || !group) {
+    if (errorStatus == 404) {
+      log.warning("Group Not Found", { context: context, group: group, user: req.user, err: error,
+                                       errorStatus: 404 });
+    } else {
+      log.error("Group Error", { context: context, group: group, user: req.user, err: error,
+                                 errorStatus: errorStatus ? errorStatus : 500 });
+    }
+    if (errorStatus) {
+      res.sendStatus(errorStatus);
+    } else {
+      res.sendStatus(500);
+    }
+  } else {
+    res.send(group);
+  }
+};
+
 router.post('/:communityId', auth.can('create group'), function(req, res) {
   var group = models.Group.build({
     name: req.body.name,
@@ -14,20 +33,16 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
   });
 
   group.save().then(function(group) {
+    log.info('Group Created', { group: group, context: 'create', user: req.user });
     group.updateAllExternalCounters(req, 'up', function () {
       models.Group.addUserToGroupIfNeeded(group.id, req, function () {
-        group.setupImages(req.body, function(err) {
-          if (err) {
-            res.sendStatus(403);
-            console.error(err);
-          } else {
-            res.send(group);
-          }
+        group.setupImages(req.body, function(error) {
+          sendGroupOrError(group, 'setupImages', req.user, error);
         });
       });
     })
   }).catch(function(error) {
-    res.sendStatus(403);
+    sendGroupOrError(null, 'create', req.user, error);
   });
 });
 
@@ -35,19 +50,21 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
   models.Group.find({
     where: {id: req.params.id, user_id: req.user.id }
   }).then(function (group) {
-    group.name =req.body.name;
-    group.objectives = req.body.objectives;
-    group.access = models.Community.convertAccessFromRadioButtons(req.body);
-    group.save().then(function () {
-      group.setupImages(req.body, function(err) {
-        if (err) {
-          res.sendStatus(403);
-          console.error(err);
-        } else {
-          res.send(group);
-        }
+    if (group) {
+      group.name =req.body.name;
+      group.objectives = req.body.objectives;
+      group.access = models.Community.convertAccessFromRadioButtons(req.body);
+      group.save().then(function () {
+        log.info('Group Updated', { group: group, context: 'update', user: req.user });
+        group.setupImages(req.body, function(error) {
+          sendGroupOrError(group, 'setupImages', req.user, error);
+        });
       });
-    });
+    } else {
+      sendGroupOrError(req.params.id, 'update', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendGroupOrError(null, 'update', req.user, error);
   });
 });
 
@@ -55,12 +72,19 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
   models.Group.find({
     where: {id: req.params.id, user_id: req.user.id }
   }).then(function (group) {
-    group.deleted = true;
-    group.save().then(function () {
-      group.updateAllExternalCounters(req, 'down', function () {
-        res.sendStatus(200);
+    if (group) {
+      group.deleted = true;
+      group.save().then(function () {
+        log.info('Group Deleted', { group: group, context: 'delete', user: req.user });
+        group.updateAllExternalCounters(req, 'down', function () {
+          res.sendStatus(200);
+        });
       });
-    });
+    } else {
+      sendGroupOrError(req.params.id, 'delete', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendGroupOrError(null, 'delete', req.user, error);
   });
 });
 
@@ -90,9 +114,16 @@ router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
       }
     ]
   }).then(function(group) {
-    models.Post.search(req.params.term,req.params.id, models.Category).then(function(posts) {
-      res.send({group: group, Posts: posts});
-    });
+    if (group) {
+      log.info('Group Viewed', { group: group, context: 'view', user: req.user });
+      models.Post.search(req.params.term,req.params.id, models.Category).then(function(posts) {
+        res.send({group: group, Posts: posts});
+      });
+    } else {
+      sendGroupOrError(req.params.id, 'view', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendGroupOrError(null, 'view', req.user, error);
   });
 });
 
@@ -147,32 +178,39 @@ router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(r
       }
     ]
   }).then(function(group) {
-    models.Post.findAll({
-      where: [where, []],
-      order: [
-        models.sequelize.literal(postOrder),
-        [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
-      ],
-      include: [
-        {
-          model: models.Category,
-          include: [
-            {
-              model: models.Image,
-              as: 'CategoryIconImages',
-              order: [
-                [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
-              ]
-            }
-          ]
-        },
-        models.PostRevision,
-        models.Point,
-        { model: models.Image, as: 'PostHeaderImages' }
-    ]
-    }).then(function(posts) {
-      res.send({group: group, Posts: posts});
-    });
+    if (group) {
+      log.info('Group Viewed', { group: group, context: 'view', user: req.user });
+      models.Post.findAll({
+        where: [where, []],
+        order: [
+          models.sequelize.literal(postOrder),
+          [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
+        ],
+        include: [
+          {
+            model: models.Category,
+            include: [
+              {
+                model: models.Image,
+                as: 'CategoryIconImages',
+                order: [
+                  [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
+                ]
+              }
+            ]
+          },
+          models.PostRevision,
+          models.Point,
+          { model: models.Image, as: 'PostHeaderImages' }
+        ]
+      }).then(function(posts) {
+        res.send({group: group, Posts: posts});
+      });
+    } else {
+      sendGroupOrError(req.params.id, 'view', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendGroupOrError(null, 'view', req.user, error);
   });
 });
 
@@ -181,7 +219,14 @@ router.get('/:id/categories', auth.can('view group'), function(req, res) {
     where: { group_id: req.params.id },
     limit: 20
   }).then(function(categories) {
-    res.send(categories);
+    if (categories) {
+      log.info('Group Categories Viewed', { group: req.params.id, context: 'view', user: req.user });
+      res.send(categories);
+    } else {
+      sendGroupOrError(req.params.id, 'view', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendGroupOrError(null, 'view categories', req.user, error);
   });
 });
 

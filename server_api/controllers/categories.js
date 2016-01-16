@@ -4,6 +4,25 @@ var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
 
+var sendCategoryOrError = function (category, context, user, error, errorStatus) {
+  if (error || !category) {
+    if (errorStatus == 404) {
+      log.warning("Category Not Found", { context: context, category: category, user: req.user, err: error,
+        errorStatus: 404 });
+    } else {
+      log.error("Category Error", { context: context, group: group, user: req.user, err: error,
+        errorStatus: errorStatus ? errorStatus : 500 });
+    }
+    if (errorStatus) {
+      res.sendStatus(errorStatus);
+    } else {
+      res.sendStatus(500);
+    }
+  } else {
+    res.send(category);
+  }
+};
+
 router.get('/:id', auth.can('view category'), function(req, res) {
   models.Category.find({
     where: { id: req.params.id },
@@ -20,15 +39,13 @@ router.get('/:id', auth.can('view category'), function(req, res) {
     ]
   }).then(function(category) {
     if (category) {
-      res.sendStatus(404);
-      log.warning('Category Not found', { categoryId: req.params.id, user: req.user });
-    } else {
-      log.info('Category Viewed', { category: category, user: req.user });
+      log.info('Category Viewed', { category: category, context: 'view', user: req.user });
       res.send(category);
+    } else {
+      sendCategoryOrError(req.params.id, 'view', req.user, 'Not found', 404);
     }
   }).catch(function(error) {
-    log.error('Category Error', { err: error, categoryId: req.params.id, user: req.user });
-    res.sendStatus(500);
+    sendCategoryOrError(null, 'view', req.user, error);
   });
 });
 
@@ -41,17 +58,11 @@ router.post('/:groupId', auth.can('create category'), function(req, res) {
   });
   category.save().then(function() {
     log.info('Category Created', { category: category, user: req.user });
-    category.setupImages(req.body, function(err) {
-      if (err) {
-        res.sendStatus(500);
-        log.error('Category Error Setup images', { category: category, user: req.user, err: err });
-      } else {
-        res.send(category);
-      }
+    category.setupImages(req.body, function(error) {
+      sendCategoryOrError(category, 'setupImages', req.user, error);
     });
   }).catch(function(error) {
-    log.error('Category Error', { err: error, user: req.user });
-    res.sendStatus(500);
+    sendCategoryOrError(null, 'view', req.user, error);
   });
 });
 
@@ -59,22 +70,20 @@ router.put('/:id', auth.can('edit category'), function(req, res) {
   models.Category.find({
     where: { id: req.params.id }
   }).then(function(category) {
-    category.name = req.body.name;
-    category.description = req.body.description;
-    category.save().then(function () {
-      log.info('Category Updated', { category: category, user: req.user });
-      category.setupImages(req.body, function(err) {
-        if (err) {
-          res.sendStatus(500);
-          log.error('Category Setup images failed', { category: category, user: req.user, err: err });
-        } else {
-          res.send(category);
-        }
+    if (category) {
+      category.name = req.body.name;
+      category.description = req.body.description;
+      category.save().then(function () {
+        log.info('Category Updated', { category: category, user: req.user });
+        category.setupImages(req.body, function(err) {
+          sendCategoryOrError(category, 'setupImages', req.user, error);
+        });
       });
-    });
+    } else {
+      sendCategoryOrError(req.params.id, 'update', req.user, 'Not found', 404);
+    }
   }).catch(function(error) {
-    log.error('Category Error', { err: error, user: req.user });
-    res.sendStatus(500);
+    sendCategoryOrError(null, 'update', req.user, error);
   });
 });
 
@@ -82,14 +91,17 @@ router.delete('/:id', auth.can('edit category'), function(req, res) {
   models.Category.find({
     where: {id: req.params.id, user_id: req.user.id }
   }).then(function (category) {
-    category.deleted = true;
-    category.save().then(function () {
-      log.info('Category Deleted', { category: category, user: req.user });
-      res.sendStatus(200);
-    });
+    if (category) {
+      category.deleted = true;
+      category.save().then(function () {
+        log.info('Category Deleted', { category: category, context: 'delete', user: req.user });
+        res.sendStatus(200);
+      });
+    } else {
+      sendCategoryOrError(req.params.id, 'update', req.user, 'Not found', 404);
+    }
   }).catch(function(error) {
-    log.error('Category Error', { err: error, user: req.user });
-    res.sendStatus(500);
+    sendCategoryOrError(null, 'delete', req.user, error);
   });
 });
 
