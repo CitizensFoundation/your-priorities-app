@@ -3,6 +3,7 @@ var router = express.Router();
 var models = require("../models");
 var passport = require('passport');
 var auth = require('../authorization');
+var log = require('../utils/logger');
 
 var needsGroup = function (groupId) {
   return function (req, res, next) {
@@ -32,11 +33,13 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
   }
 };
 
+// Login
 router.get('/login', passport.authenticate('local'), function (req, res) {
   log.info('User Login', { context: 'view', user: req.user });
   res.send(req.user);
 });
 
+// Register
 router.post('/register', function (req, res) {
   var user = models.User.build({
     email: req.body.email,
@@ -53,6 +56,7 @@ router.post('/register', function (req, res) {
   });
 });
 
+// Edit User
 router.put('/:id', auth.can('edit user'), function (req, res) {
   models.User.find({
     where: {id: req.params.id}
@@ -72,6 +76,22 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
   });
 });
 
+router.get('/isloggedin', function (req, res) {
+  log.info('User Is Logged In', { user: req.user, context: 'isLoggedIn'});
+  res.send(req.isAuthenticated() ? req.user : '0');
+});
+
+router.post('/logout', function (req, res) {
+  if (req.isAuthenticated()) {
+    log.info('User Logging Out', { user: req.user, context: 'logout'});
+  } else {
+    log.warning('User Logging Out But not logged in', { user: req.user, context: 'logout'});
+  }
+  req.logOut();
+  res.sendStatus(200);
+});
+
+// Reset password
 router.post('/forgot_password', function(req, res) {
   async.waterfall([
     function(done) {
@@ -90,26 +110,25 @@ router.post('/forgot_password', function(req, res) {
           user.save().then(function () {
             log.info('User Reset Password Token Created', { user: user, context: 'forgotPassword', loggedInUser: req.user });
             done(null, token, user);
-          }).catch(function (error) {
-            log.error('User Reset Password Token Error', { user: user, context: 'forgotPassword', loggedInUser: req.user, errorStatus: 500 });
-            res.sendStatus(500);
-            return;
           });
         } else {
-          log.info('User Reset Password Token Not Found', { user: user, context: 'forgotPassword', loggedInUser: req.user, errorStatus: 404 });
+          log.info('User Reset Password Token Not Found', { user: user, context: 'forgotPassword', loggedInUser: req.user, error: 'Token not found', errorStatus: 404 });
           res.sendStatus(404);
           return;
         }
+      }).catch(function (error) {
+        log.error('User Reset Password Token Error', { user: null, context: 'forgotPassword', loggedInUser: req.user, err: error, errorStatus: 500 });
+        res.sendStatus(500);
       });
     },
     function(token, user, done) {
-      log.error('User Reset Password Token Error', { user: user, context: 'forgotPassword', loggedInUser: req.user });
       models.AcActivity.createPasswordRecovery(user, req.ypDomain, req.ypCommunity, token, function (error) {
         done(error, token, user);
       });
     }
   ], function(error, token, user) {
     if (error) {
+      log.error('User Reset Password Token Error', { user: user, context: 'forgotPassword', loggedInUser: req.user, err: error, errorStatus: 500 });
       res.sendStatus(500);
     } else {
       log.info('User Reset Password Token Activity Created', { user: user, context: 'forgotPassword', loggedInUser: req.user });
@@ -128,11 +147,16 @@ router.get('/reset/:token', function(req, res) {
       }
     }
   }).then(function (user) {
-    if (!user) {
-      res.send('Password reset token is invalid or has expired.');
-      res.sendStatus(401);
+    if (user) {
+      log.info('Get User For Reset Password Token', { user: user, context: 'getUserToken', loggedInUser: req.user, errorStatus: 401 });
+      res.sendStatus(user);
+    } else {
+      log.error('Get User For Reset Password Token Not Found', { user: null, context: 'getUserToken', err: 'Token not found', loggedInUser: req.user, errorStatus: 401 });
+      res.sendStatus(404);
     }
-    res.send(user);
+  }).catch(function (error) {
+    log.error('Get User For Reset Password Token Error', { user: null, context: 'getUserToken', loggedInUser: req.user, err: error, errorStatus: 500 });
+    res.sendStatus(500);
   });
 });
 
@@ -149,70 +173,43 @@ router.post('/reset/:token', function(req, res) {
           }
         }
       }).then(function (user) {
-        if (!user) {
-          res.send('Password reset token is invalid or has expired.');
-          res.sendStatus(401);
-          return
-        }
-        user.password = req.body.password;
-        user.reset_password_token = null;
-        user.reset_password_expires = null;
+        if (user) {
+          user.password = req.body.password;
+          user.reset_password_token = null;
+          user.reset_password_expires = null;
 
-        user.save().then(function () {
-          req.logIn(user, function (err) {
-            if (err) {
-              res.sendStatus(401);
-              return;
-            } else {
-              done(err, user);
-            }
+          user.save().then(function () {
+            req.logIn(user, function (error) {
+              if (error) {
+                log.error('User Reset Password Cant Login, { user: user, context: 'useResetToken', loggedInUser: req.user, err: error, errorStatus: 500 });
+                res.sendStatus(401);
+                return;
+              } else {
+                log.info('User Reset Password User Logged In', { user: user, context: 'useResetToken', loggedInUser: req.user, err: 'Token not found', errorStatus: 404 });
+                done(error, user);
+              }
+            });
           });
-        }).catch(function (error) {
-          res.sendStatus(500);
+        } else {
+          log.info('User Reset Password Token Not Found', { user: user, context: 'useResetToken', loggedInUser: req.user, err: 'Token not found', errorStatus: 404 });
+          res.sendStatus(404);
           return;
-        });
+        }
       });
     },
     function(user, done) {
-      var smtpTransport = nodemailer.createTransport('SMTP', {
-        service: 'SendGrid',
-        auth: {
-          user: '!!! YOUR SENDGRID USERNAME !!!',
-          pass: '!!! YOUR SENDGRID PASSWORD !!!'
-        }
-      });
-      var mailOptions = {
-        to: user.email,
-        from: 'passwordreset@demo.com',
-        subject: 'Your password has been changed',
-        text: 'Hello,\n\n' +
-        'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
-      };
-      smtpTransport.sendMail(mailOptions, function(err) {
-        req.send('Success! Your password has been changed.');
-        done(err);
+      models.AcActivity.createActivity(modes.AcActivity.ACTIVITY_PASSWORD_CHANGED, user, req.ypDomain, req.ypCommunity, function (error) {
+        done(error, user);
       });
     }
-  ], function(err) {
-    if (err) {
+  ], function(error) {
+    if (error) {
+      log.error('User Reset Password Token Error', { user: null, context: 'useResetToken', loggedInUser: req.user, err: error, errorStatus: 500 });
       res.sendStatus(500);
     } else {
       res.sendStatus(200);
     }
   });
-});
-
-router.get('/isloggedin', function (req, res) {
-  res.send(req.isAuthenticated() ? req.user : '0');
-});
-
-router.post('/logout', function (req, res) {
-  var userEmail = "";
-  if (req.user) {
-    userEmail = req.user.email;
-  }
-  req.logOut();
-  res.sendStatus(200);
 });
 
 /*

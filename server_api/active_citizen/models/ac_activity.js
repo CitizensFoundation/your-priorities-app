@@ -8,6 +8,29 @@
 var log = require('../utils/logger');
 var jobs = require('./jobs');
 
+var setupDefaultAssociations = function (user, domain, community, done) {
+  async.paralell([
+    function(done) {
+      activity.addUser(user, function (err) {
+        done();
+      });
+    },
+    function(done) {
+      activity.addDomain(domain, function (err) {
+        done();
+      });
+    },
+    function(done) {
+      activity.addCommunity(community, function (err) {
+        done();
+      });
+    }
+  ], function(error) {
+    done(error)
+  });
+};
+
+
 module.exports = function(sequelize, DataTypes) {
   var AcActivity = sequelize.define("AcActivity", {
     context: { type: DataTypes.STRING, default: 'http://www.w3.org/ns/activitystreams' },
@@ -41,6 +64,40 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       ACTIVITY_PASSWORD_RECOVERY: 0,
+      ACTIVITY_PASSWORD_CHANGED: 1,
+
+      createActivity: function(type, user, domain, community, done) {
+
+        var activity = models.AcActivity.build({
+          type: type,
+          actor: { user: user },
+          object: {
+            domain: domain,
+            community: community
+          },
+          access: models.AcActivity.ACCESS_PRIVATE
+        });
+
+        activity.save().then(function(activity) {
+          if (activity) {
+            setupDefaultAssociations(user, domain, community, function (error) {
+              if (err) {
+                log.error('Activity Creation Error', err);
+                done('Activity Creation Error');
+              } else {
+                jobs.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
+                log.info('Activity Created', { activity: activity, user: user });
+                done(null);
+              }
+            });
+          } else {
+            done('Activity Not Found');
+          }
+        }).catch(function(error) {
+          log.error('Activity Created Error', { err: error });
+          done(error);
+        });
+      },
 
       createPasswordRecovery: function(user, domain, community, token, done) {
 
@@ -57,23 +114,7 @@ module.exports = function(sequelize, DataTypes) {
 
         activity.save().then(function(activity) {
           if (activity) {
-            async.paralell([
-              function(done) {
-                activity.addUser(user, function (err) {
-                  done();
-                });
-              },
-              function(done) {
-                activity.addDomain(domain, function (err) {
-                  done();
-                });
-              },
-              function(done) {
-                activity.addCommunity(community, function (err) {
-                  done();
-                });
-              }
-            ], function(err) {
+            setupDefaultAssociations(user, domain, community, function (error) {
               if (err) {
                 log.error('Activity Creation Error', err);
                 done('Activity Creation Error');
@@ -86,7 +127,10 @@ module.exports = function(sequelize, DataTypes) {
           } else {
             done('Activity Not Found');
           }
-       });
+       }).catch(function(error) {
+          log.error('Activity Created Error', { err: error });
+          done(error);
+        });
       }
     }
   });
