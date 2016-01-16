@@ -21,4 +21,10 @@ kue.redis.createClient = function() {
 
 var jobs = kue.createQueue();
 
+jobs.on('job enqueue', function(id, type){
+  log.info('Job Enqueue', { id: id, type: type });
+}).on('job complete', function(id, result){
+  log.info('Job Completed', { id: id });
+});
+
 module.exports = jobs;

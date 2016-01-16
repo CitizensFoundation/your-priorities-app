@@ -1,17 +1,16 @@
 var email = require('./email');
 var activity = require('./activity');
 var notifications = require('./notifications');
-var jobs = require('./jobs');
+var queue = require('./jobs');
 
-// see https://github.com/learnBoost/kue/ for how to do more than one job at a time
-jobs.process('send-one-email', function(job, done) {
+queue.process('send-one-email', 20, function(job, done) {
   email.sendOne(job.data, done);
 });
 
-jobs.process('process-activity', function(job, done) {
+queue.process('process-activity', 20, function(job, done) {
   activity.process(job.data, done);
 });
 
-jobs.process('process-notification', function(job, done) {
+queue.process('process-notification', 20, function(job, done) {
   activity.process(job.data, done);
 });
