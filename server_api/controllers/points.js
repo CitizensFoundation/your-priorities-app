@@ -44,10 +44,10 @@ var decrementOldPointQualityCountersIfNeeded = function (oldPointQualityValue, p
 var sendPointOrError = function (res, point, context, user, error, errorStatus) {
   if (error || !point) {
     if (errorStatus == 404) {
-      log.warning("Point Not Found", { context: context, point: point, user: req.user, err: error,
+      log.warning("Point Not Found", { context: context, point: point, user: user, err: error,
                                        errorStatus: 404 });
     } else {
-      log.error("Point Error", { context: context, point: point, user: req.user, err: error,
+      log.error("Point Error", { context: context, point: point, user: user, err: error,
                                  errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {

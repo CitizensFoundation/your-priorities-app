@@ -13,29 +13,43 @@ var needsGroup = function (groupId) {
   };
 };
 
+var sendUserOrError = function (res, user, context, error, errorStatus) {
+  if (error || !user) {
+    if (errorStatus == 404) {
+      log.warning("User Not Found", { context: context, err: error, user: user,
+                                      errorStatus: 404 });
+    } else {
+      log.error("User Error", { context: context, post: post, user: user, err: error,
+                                errorStatus: errorStatus ? errorStatus : 500 });
+    }
+    if (errorStatus) {
+      res.sendStatus(errorStatus);
+    } else {
+      res.sendStatus(500);
+    }
+  } else {
+    res.send(user);
+  }
+};
+
 router.get('/login', passport.authenticate('local'), function (req, res) {
+  log.info('User Login', { context: 'view', user: req.user });
   res.send(req.user);
 });
 
 router.post('/register', function (req, res) {
-
   var user = models.User.build({
     email: req.body.email,
     name: req.body.name
   });
-
   user.createPasswordHash(req.body.password);
-
   user.save().then(function () {
-    req.logIn(user, function (err) {
-      if (err) {
-        return res.sendStatus(401);
-      } else {
-        res.send(user);
-      }
+    log.info('User Created', { user: user, context: 'create', loggedInUser: req.user });
+    req.logIn(user, function (error) {
+      sendUserOrError(res, user, 'registerUser', error, 401);
     });
   }).catch(function (error) {
-    res.sendStatus(500);
+    sendUserOrError(res, null, 'create', error);
   });
 });
 
@@ -43,58 +57,62 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
   models.User.find({
     where: {id: req.params.id}
   }).then(function (user) {
-    user.name = req.body.name;
-    user.email = req.body.email;
-    user.save().then(function () {
-      user.setupImages(req.body, function (err) {
-        if (err) {
-          res.sendStatus(403);
-          console.error(err);
-        } else {
-          res.send(user);
-        }
+    if (user) {
+      user.name = req.body.name;
+      user.email = req.body.email;
+      user.save().then(function () {
+        log.info('User Updated', { user: user, context: 'update', loggedInUser: req.user });
+        user.setupImages(req.body, function (error) {
+          sendUserOrError(res, user, 'setupImages', error);
+        });
       });
-    });
+    } else {
+      sendUserOrError(res, req.params.id, 'update', 'Not found', 404);
+    }
   });
 });
 
 router.post('/forgot_password', function(req, res) {
   async.waterfall([
     function(done) {
-      crypto.randomBytes(20, function(err, buf) {
+      crypto.randomBytes(20, function(error, buf) {
         var token = buf.toString('hex');
-        done(err, token);
+        done(error, token);
       });
     },
     function(token, done) {
       models.User.find({
-        where: {email: req.body.email}
+        where: { email: req.body.email }
       }).then(function (user) {
-        if (!user) {
-          res.send('No account with that email address exists.');
+        if (user) {
+          user.reset_password_token = token;
+          user.reset_password_expires = Date.now() + 3600000; // 1 hour
+          user.save().then(function () {
+            log.info('User Reset Password Token Created', { user: user, context: 'forgotPassword', loggedInUser: req.user });
+            done(null, token, user);
+          }).catch(function (error) {
+            log.error('User Reset Password Token Error', { user: user, context: 'forgotPassword', loggedInUser: req.user, errorStatus: 500 });
+            res.sendStatus(500);
+            return;
+          });
+        } else {
+          log.info('User Reset Password Token Not Found', { user: user, context: 'forgotPassword', loggedInUser: req.user, errorStatus: 404 });
+          res.sendStatus(404);
           return;
         }
-
-        user.reset_password_token = token;
-        user.reset_password_expires = Date.now() + 3600000; // 1 hour
-
-        user.save().then(function () {
-          done(err, token, user);
-        }).catch(function (error) {
-          res.sendStatus(500);
-          return;
-        });
       });
     },
     function(token, user, done) {
-      models.AcActivity.createPasswordRecovery(user, req.ypDomain, req.ypCommunity, token, function (err) {
-        done(err);
+      log.error('User Reset Password Token Error', { user: user, context: 'forgotPassword', loggedInUser: req.user });
+      models.AcActivity.createPasswordRecovery(user, req.ypDomain, req.ypCommunity, token, function (error) {
+        done(error, token, user);
       });
     }
-  ], function(err) {
-    if (err) {
+  ], function(error, token, user) {
+    if (error) {
       res.sendStatus(500);
     } else {
+      log.info('User Reset Password Token Activity Created', { user: user, context: 'forgotPassword', loggedInUser: req.user });
       res.sendStatus(200);
     }
   });

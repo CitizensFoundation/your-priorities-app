@@ -7,10 +7,10 @@ var log = require('../utils/logger');
 var sendGroupOrError = function (res, group, context, user, error, errorStatus) {
   if (error || !group) {
     if (errorStatus == 404) {
-      log.warning("Group Not Found", { context: context, group: group, user: req.user, err: error,
+      log.warning("Group Not Found", { context: context, group: group, user: user, err: error,
                                        errorStatus: 404 });
     } else {
-      log.error("Group Error", { context: context, group: group, user: req.user, err: error,
+      log.error("Group Error", { context: context, group: group, user: user, err: error,
                                  errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {

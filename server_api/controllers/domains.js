@@ -7,10 +7,10 @@ var log = require('../utils/logger');
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {
     if (errorStatus == 404) {
-      log.warning("Domain Not Found", { context: context, domain: domain, user: req.user, err: error,
+      log.warning("Domain Not Found", { context: context, domain: domain, user: user, err: error,
         errorStatus: 404 });
     } else {
-      log.error("Domain Error", { context: context, domain: domain, user: req.user, err: error,
+      log.error("Domain Error", { context: context, domain: domain, user: user, err: error,
         errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {

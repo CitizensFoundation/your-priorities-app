@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
+var log = require('../utils/logger');
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
@@ -40,10 +41,10 @@ var decrementOldCountersIfNeeded = function (req, oldEndorsementValue, postId, e
 var sendPostOrError = function (res, post, context, user, error, errorStatus) {
   if (error || !post) {
     if (errorStatus == 404) {
-      log.warning("Post Not Found", { context: context, post: post, user: req.user, err: error,
+      log.warning("Post Not Found", { context: context, post: post, user: user, err: error,
         errorStatus: 404 });
     } else {
-      log.error("Post Error", { context: context, post: post, user: req.user, err: error,
+      log.error("Post Error", { context: context, post: post, user: user, err: error,
         errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {

@@ -7,10 +7,10 @@ var log = require('../utils/logger');
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !group) {
     if (errorStatus == 404) {
-      log.warning("Community Not Found", { context: context, community: community, user: req.user, err: error,
+      log.warning("Community Not Found", { context: context, community: community, user: user, err: error,
         errorStatus: 404 });
     } else {
-      log.error("Community Error", { context: context, community: community, user: req.user, err: error,
+      log.error("Community Error", { context: context, community: community, user: user, err: error,
         errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {

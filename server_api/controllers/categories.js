@@ -7,10 +7,10 @@ var log = require('../utils/logger');
 var sendCategoryOrError = function (res, category, context, user, error, errorStatus) {
   if (error || !category) {
     if (errorStatus == 404) {
-      log.warning("Category Not Found", { context: context, category: category, user: req.user, err: error,
+      log.warning("Category Not Found", { context: context, category: category, user: user, err: error,
         errorStatus: 404 });
     } else {
-      log.error("Category Error", { context: context, group: group, user: req.user, err: error,
+      log.error("Category Error", { context: context, group: group, user: user, err: error,
         errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {

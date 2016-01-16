@@ -76,15 +76,15 @@ module.exports = function(sequelize, DataTypes) {
             ], function(err) {
               if (err) {
                 log.error('Activity Creation Error', err);
-                done(true);
+                done('Activity Creation Error');
               } else {
                 jobs.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
                 log.info('Activity Created', { activity: activity, user: user });
-                done(false);
+                done(null);
               }
             });
           } else {
-            done(true);
+            done('Activity Not Found');
           }
        });
       }
