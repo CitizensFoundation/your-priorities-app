@@ -27,7 +27,7 @@ EmailWorker.prototype.sendOne = function (emailLocals, done) {
 
   template.render(emailLocals, function (err, results) {
     if (err) {
-      return log.error('EmailWorker', { err: err });
+      return log.error('EmailWorker', { err: err, user: emailLocals.user });
     }
     transport.sendMail({
       from: emailLocals.community.admin_email,
@@ -37,9 +37,9 @@ EmailWorker.prototype.sendOne = function (emailLocals, done) {
       text: results.text
     }, function (err, responseStatus) {
       if (err) {
-        return log.error('EmailWorker', { err: err });
+        return log.error('EmailWorker', { err: err, user: emailLocals.user });
       }
-      log.info('EmailWorker Completed', { responseStatusMessage: responseStatus.message });
+      log.info('EmailWorker Completed', { responseStatusMessage: responseStatus.message, user: emailLocals.user });
     })
   });
   done();

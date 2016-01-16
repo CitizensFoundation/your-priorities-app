@@ -56,16 +56,16 @@ module.exports = function(sequelize, DataTypes) {
               }
             ], function(err) {
               if (err) {
-                log.error('Notification Creation Error', err);
+                log.error('Notification Creation Error', { err: err, user: user });
                 done();
               } else {
                 jobs.create('process-notification', notification).priority('critical').removeOnComplete(true).save();
-                log.info('Notification Created', notification);
+                log.info('Notification Created', { notification: notification, user: user });
                 done();
               }
             });
           } else {
-            log.error('Notification Creation Error', err);
+            log.error('Notification Creation Error', { err: err, user: user });
             done();
           }
         });

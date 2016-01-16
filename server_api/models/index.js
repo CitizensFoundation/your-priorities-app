@@ -22,7 +22,7 @@ fs
 // Read from active citizen,
 // TODO Load from npm module if not found locally
 fs
-  .readdirSync(__dirname+'/../active_citizen/models')
+  .readdirSync(__dirname+'/../active_citizen/models/sequelize')
   .filter(function(file) {
      return (file.indexOf(".") !== 0);
   })

@@ -1,6 +1,9 @@
 "use strict";
 
-// https://www.w3.org/TR/activitystreams-core/
+// Currently using Sequelize and Postgresql for fastest possible implementataion.
+// Those model classes could be relatively easily replaces by another database layers
+// Ideally there should be a modular interface for the model layer. All activities are saved to
+// elastic search through the logs. Based on https://www.w3.org/TR/activitystreams-core/
 
 var log = require('../utils/logger');
 var jobs = require('./jobs');
@@ -76,7 +79,7 @@ module.exports = function(sequelize, DataTypes) {
                 done(true);
               } else {
                 jobs.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
-                log.info('Activity Created', activity);
+                log.info('Activity Created', { activity: activity, user: user });
                 done(false);
               }
             });
