@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define("User", {
     name: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: false },
-    facebook_uid: DataTypes.INTEGER,
+    facebook_id: DataTypes.INTEGER,
     twitter_id: DataTypes.INTEGER,
     google_id: DataTypes.INTEGER,
     github_id: DataTypes.INTEGER,

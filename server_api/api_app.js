@@ -9,7 +9,11 @@ var morgan = require('morgan');
 var ConnectRoles = require('connect-roles');
 
 var passport = require('passport')
-    , LocalStrategy = require('passport-local').Strategy;
+    , LocalStrategy = require('passport-local').Strategy
+    , FacebookStrategy = require('passport-facebook').Strategy
+    , GithubStrategy = require('passport-github').Strategy
+    , TwitterStrategy = require('passport-twitter').Strategy
+    , GoogleOAuthStrategy = require('passport-google-oauth').Strategy;
 
 var index = require('./controllers/index');
 var posts = require('./controllers/posts');
@@ -72,6 +76,7 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
+// Username and Password Authentication
 passport.use(new LocalStrategy(
     {
       usernameField: "email"
@@ -81,7 +86,7 @@ passport.use(new LocalStrategy(
         where: { email: email }
       }).then(function(user) {
         if (user) {
-          user.validatePassword(password,done);
+          user.validatePassword(password, done);
         } else {
           log.warning("User LocalStrategy Incorrect username", { context: 'localStrategy', user: user, err: 'Incorrect username', errorStatus: 401 });
           return done(null, false, { message: 'Incorrect username.' });
@@ -91,6 +96,23 @@ passport.use(new LocalStrategy(
         done(error);
       });
     }
+));
+
+// Facebook Authentication
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: "/api/users/facebook/callback",
+    enableProof: false
+  },
+  function(accessToken, refreshToken, profile, done) {
+    var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: 'unknown_'+facebook.id+'@facebook.com';
+    User.findOrCreate({where: { facebook_id: profile.id }, defaults: { email: email, name: profile.displayName }})
+      .spread(function(user, created) {
+        var error = created ? null : 'Could not find or create user';
+        done(error, user)
+      });
+  }
 ));
 
 // Setup the current domain from the host
