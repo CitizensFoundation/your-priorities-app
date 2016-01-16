@@ -1,8 +1,5 @@
-<%- partial('../header.html') %>
-
-<p>Someone has requested a link to change your password, and you can do this through the link below.</p>
-<p>
-  <%= "https://#{community.base_url}/!#/users/reset_password?reset_password_token=#{token}" %>
-</p>
-<p>If you didn't request this, please ignore this email.</p>
-<p>Your password won't change until you access the link above and create a new one.</p>
+<%- partial('../header.text') %>
+<%= t('notification.email.reset_password_1') %>
+  <%= "https://#{community.hostname+'.'+object.domain.domain_name}/!#/users/reset_password?reset_password_token=#{object.token}" %>
+<%= t('notification.email.reset_password_2') %>
+<%= t('notification.email.reset_password_3') %>

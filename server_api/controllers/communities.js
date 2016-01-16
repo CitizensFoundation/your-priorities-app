@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
+var log = require('../utils/logger');
 
 router.get('/:id', auth.can('view community'), function(req, res) {
   models.Community.find({
@@ -49,7 +50,13 @@ router.get('/:id', auth.can('view community'), function(req, res) {
       }
     ]
   }).then(function(community) {
-    res.send(community);
+    if (community) {
+      res.sendStatus(404);
+      log.info('Community Not found', { communityId: req.params.id, user: req.user });
+    } else {
+      log.info('Community Viewed', { community: community, user: req.user });
+      res.send(community);
+    }
   });
 });
 

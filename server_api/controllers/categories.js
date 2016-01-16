@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
+var log = require('../utils/logger');
 
 router.get('/:id', auth.can('view category'), function(req, res) {
   models.Category.find({
@@ -18,7 +19,13 @@ router.get('/:id', auth.can('view category'), function(req, res) {
       }
     ]
   }).then(function(category) {
-    res.send(category);
+    if (category) {
+      res.sendStatus(404);
+      log.info('Category Not found', { categoryId: req.params.id, user: req.user });
+    } else {
+      log.info('Category Viewed', { category: category, user: req.user });
+      res.send(category);
+    }
   });
 });
 
@@ -30,10 +37,11 @@ router.post('/:groupId', auth.can('create category'), function(req, res) {
     group_id: req.params.groupId
   });
   category.save().then(function() {
+    log.info('Category Created', { category: category, user: req.user });
     category.setupImages(req.body, function(err) {
       if (err) {
-        res.sendStatus(403);
-        console.error(err);
+        res.sendStatus(500);
+        log.error('Category Setup images failed', { category: category, user: req.user, err: err });
       } else {
         res.send(category);
       }
@@ -48,10 +56,11 @@ router.put('/:id', auth.can('edit category'), function(req, res) {
     category.name = req.body.name;
     category.description = req.body.description;
     category.save().then(function () {
+      log.info('Category Updated', { category: category, user: req.user });
       category.setupImages(req.body, function(err) {
         if (err) {
-          res.sendStatus(403);
-          console.error(err);
+          res.sendStatus(500);
+          log.error('Category Setup images failed', { category: category, user: req.user, err: err });
         } else {
           res.send(category);
         }
@@ -66,6 +75,7 @@ router.delete('/:id', auth.can('edit category'), function(req, res) {
   }).then(function (category) {
     category.deleted = true;
     category.save().then(function () {
+      log.info('Category Deleted', { category: category, user: req.user });
       res.sendStatus(200);
     });
   });

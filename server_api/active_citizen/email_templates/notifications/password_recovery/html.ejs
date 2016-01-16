@@ -2,7 +2,7 @@
 
 <p><%= t('notification.email.reset_password_1') %></p>
 <p>
-  <%= "https://#{community.host_name+'.'+object.domain.domain_name}/!#/users/reset_password?reset_password_token=#{object.token}" %>
+  <%= "https://#{community.hostname+'.'+object.domain.domain_name}/!#/users/reset_password?reset_password_token=#{object.token}" %>
 </p>
 <p><%= t('notification.email.reset_password_2') %></p>
 <p><%= t('notification.email.reset_password_3') %></p>
