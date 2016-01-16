@@ -1,4 +1,5 @@
 var async = require("async");
+var log = require('../utils/logger');
 
 "use strict";
 
@@ -102,6 +103,7 @@ module.exports = function(sequelize, DataTypes) {
               req.ypCommunity = community;
               next();
             } else {
+              log.warning('Cant find community', { user: user, context: 'setYpCommunity', loggedInUser: req.user, err: 'Community not found', errorStatus: 404 });
               res.sendStatus(404);
             }
           }.bind(this));
