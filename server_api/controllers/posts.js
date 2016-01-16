@@ -3,7 +3,7 @@ var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
 
-function changePostCounter(req, postId, column, upDown, next) {
+var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
     where: { id: postId }
   }).then(function(post) {
@@ -16,9 +16,9 @@ function changePostCounter(req, postId, column, upDown, next) {
       next();
     });
   });
-}
+};
 
-function decrementOldCountersIfNeeded(req, oldEndorsementValue, postId, endorsement, next) {
+var decrementOldCountersIfNeeded = function (req, oldEndorsementValue, postId, endorsement, next) {
   if (oldEndorsementValue) {
     if (oldEndorsementValue>0) {
       changePostCounter(req, postId, 'counter_endorsements_up', -1, function () {
@@ -35,21 +35,26 @@ function decrementOldCountersIfNeeded(req, oldEndorsementValue, postId, endorsem
   } else {
     next();
   }
-}
+};
 
-router.get('/:id/endorsements', auth.can('view post'), function(req, res) {
-  models.Endorsement.findAll({
-    where: {post_id: req.params.id, status: 'active'},
-    order: "created_at DESC",
-    include: [
-      { model: models.User,
-        attributes: ["id", "name", "facebook_uid", "buddy_icon_file_name"]
-      }
-    ]
-  }).then(function(endorsements) {
-    res.send(endorsements);
-  });
-});
+var sendPostOrError = function (res, post, context, user, error, errorStatus) {
+  if (error || !post) {
+    if (errorStatus == 404) {
+      log.warning("Post Not Found", { context: context, post: post, user: req.user, err: error,
+        errorStatus: 404 });
+    } else {
+      log.error("Post Error", { context: context, post: post, user: req.user, err: error,
+        errorStatus: errorStatus ? errorStatus : 500 });
+    }
+    if (errorStatus) {
+      res.sendStatus(errorStatus);
+    } else {
+      res.sendStatus(500);
+    }
+  } else {
+    res.send(post);
+  }
+};
 
 router.get('/:id', auth.can('view post'), function(req, res) {
   models.Post.find({
@@ -93,7 +98,14 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       }
     ]
   }).then(function(post) {
-    res.send(post);
+    if (post) {
+      log.info('Post Viewed', { post: post, context: 'view', user: req.user });
+      res.send(post);
+    } else {
+      sendPostOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendPostOrError(res, null, 'view', req.user, error);
   });
 });
 
@@ -109,20 +121,18 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
     status: 'published'
   });
   post.save().then(function() {
+    log.info('Post Created', { post: post, context: 'create', user: req.user });
     post.setupAfterSave(req, res, function () {
       post.updateAllExternalCounters(req, 'up', function () {
         models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
           post.setupImages(req.body, function (err) {
-            if (err) {
-              res.sendStatus(403);
-              console.error(err);
-            } else {
-              res.send(post);
-            }
+            sendPostOrError(res, post, 'setupImages', req.user, error);
           })
         })
       })
     });
+  }).catch(function(error) {
+    sendPostOrError(res, null, 'view', req.user, error);
   });
 });
 
@@ -130,23 +140,66 @@ router.put('/:id', auth.can('edit post'), function(req, res) {
   models.Post.find({
     where: {id: req.params.id, user_id: req.user.id }
   }).then(function (post) {
-    post.name = req.body.name;
-    post.description = req.body.description;
-    post.category_id = req.body.categoryId != "" ? req.body.categoryId : null;
-    post.location = req.body.location != "" ? JSON.parse(req.body.location) : null;
-    post.cover_media_type = req.body.coverMediaType;
-    post.save().then(function () {
-      post.setupImages(req.body, function (err) {
-        if (err) {
-          res.sendStatus(403);
-          console.error(err);
-        } else {
-          res.send(post);
-        }
-      })
-    });
+    if (post) {
+      post.name = req.body.name;
+      post.description = req.body.description;
+      post.category_id = req.body.categoryId != "" ? req.body.categoryId : null;
+      post.location = req.body.location != "" ? JSON.parse(req.body.location) : null;
+      post.cover_media_type = req.body.coverMediaType;
+      post.save().then(function () {
+        log.info('Post Update', { post: post, context: 'create', user: req.user });
+        post.setupImages(req.body, function (err) {
+          sendPostOrError(res, post, 'setupImages', req.user, error);
+        })
+      });
+    } else {
+      sendPostOrError(res, req.params.id, 'update', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendPostOrError(res, null, 'update', req.user, error);
   });
 });
+
+router.delete('/:id', auth.can('edit post'), function(req, res) {
+  models.Post.find({
+    where: {id: req.params.id, user_id: req.user.id }
+  }).then(function (post) {
+    post.deleted = true;
+    post.save().then(function () {
+      log.info('Post Deleted', { post: post, context: 'delete', user: req.user });
+      post.updateAllExternalCounters(req, 'down', function () {
+        res.sendStatus(200);
+      });
+    });
+  }).catch(function(error) {
+    sendPostOrError(res, null, 'delete', req.user, error);
+  });
+});
+
+router.get('/:id/endorsements', auth.can('view post'), function(req, res) {
+  models.Endorsement.findAll({
+    where: {post_id: req.params.id, status: 'active'},
+    order: "created_at DESC",
+    include: [
+      { model: models.User,
+        attributes: ["id", "name", "facebook_uid", "buddy_icon_file_name"]
+      }
+    ]
+  }).then(function(endorsements) {
+    if (endorsements) {
+      log.info('Endorsements Viewed', { endorsements: endorsements, context: 'view', user: req.user });
+      res.send(endorsements);
+    } else {
+      log.warning("Endorsements Not Found", { context: 'view', post: post, user: req.user,
+        err: error, errorStatus: 404 });
+    }
+  }).catch(function(error) {
+    log.error("Endorsements Error", { context: 'view', endorsements: req.params.id, user: req.user,
+      err: error, errorStatus: 500 });
+  });
+});
+
+
 
 router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(req, res) {
   models.Endorsement.find({
@@ -175,6 +228,7 @@ router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(
       })
     }
     endorsement.save().then(function() {
+      log.info('Endorsements Created', { endorsements: endorsements, context: 'create', user: req.user });
       decrementOldCountersIfNeeded(req, oldEndorsementValue, req.params.id, endorsement, function () {
         if (endorsement.value>0) {
           changePostCounter(req, req.params.id, 'counter_endorsements_up', 1, function () {
@@ -185,11 +239,16 @@ router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(
             res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
           })
         } else {
-          console.error("Strange state of endorsements");
-          res.status(500);
+          log.error("Endorsements Error State", { context: 'create', endorsements: endorsements, user: req.user,
+                                                  err: error, errorStatus: 500 });
+          res.sendStatus(500);
         }
       });
     });
+  }).catch(function(error) {
+    log.error("Endorsements Error", { context: 'create', post: req.params.id, user: req.user,
+                                      err: error, errorStatus: 500 });
+    res.sendStatus(500);
   });
 });
 
@@ -205,6 +264,7 @@ router.delete('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), functio
       else if (endorsement.value<0)
         oldEndorsementValue = -1;
       endorsement.value = 0;
+      //endorsement.deleted = true;
       endorsement.save().then(function() {
         if (oldEndorsementValue>0) {
           changePostCounter(req, req.params.id, 'counter_endorsements_up', -1, function () {
@@ -220,22 +280,14 @@ router.delete('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), functio
         }
       });
     } else {
-      console.error("Can't find endorsement to delete");
-      res.sendStatus(500);
+      log.error("Endorsement Not Found", { context: 'delete', post: req.params.id, user: req.user,
+                                           err: error, errorStatus: 404 });
+      res.sendStatus(404);
     }
-  });
-});
-
-router.delete('/:id', auth.can('edit post'), function(req, res) {
-  models.Post.find({
-    where: {id: req.params.id, user_id: req.user.id }
-  }).then(function (post) {
-    post.deleted = true;
-    post.save().then(function () {
-      post.updateAllExternalCounters(req, 'down', function () {
-        res.sendStatus(200);
-      });
-    });
+  }).catch(function(error) {
+    log.error("Endorsements Error", { context: 'delete', post: req.params.id, user: req.user,
+                                      err: error, errorStatus: 500 });
+    res.sendStatus(500);
   });
 });
 

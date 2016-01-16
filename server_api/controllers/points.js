@@ -2,8 +2,9 @@ var express = require('express');
 var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
+var log = require('../utils/logger');
 
-function changePointCounter(pointId, column, upDown, next) {
+var changePointCounter = function (pointId, column, upDown, next) {
   models.Point.find({
     where: { id: pointId }
   }).then(function(point) {
@@ -19,9 +20,9 @@ function changePointCounter(pointId, column, upDown, next) {
       next();
     }
   });
-}
+};
 
-function decrementOldPointQualityCountersIfNeeded(oldPointQualityValue, pointId, pointQuality, next) {
+var decrementOldPointQualityCountersIfNeeded = function (oldPointQualityValue, pointId, pointQuality, next) {
   if (oldPointQualityValue) {
     if (oldPointQualityValue>0) {
       changePointCounter(pointId, 'counter_quality_up', -1, function () {
@@ -38,7 +39,26 @@ function decrementOldPointQualityCountersIfNeeded(oldPointQualityValue, pointId,
   } else {
     next();
   }
-}
+};
+
+var sendPointOrError = function (res, point, context, user, error, errorStatus) {
+  if (error || !point) {
+    if (errorStatus == 404) {
+      log.warning("Point Not Found", { context: context, point: point, user: req.user, err: error,
+                                       errorStatus: 404 });
+    } else {
+      log.error("Point Error", { context: context, point: point, user: req.user, err: error,
+                                 errorStatus: errorStatus ? errorStatus : 500 });
+    }
+    if (errorStatus) {
+      res.sendStatus(errorStatus);
+    } else {
+      res.sendStatus(500);
+    }
+  } else {
+    res.send(point);
+  }
+};
 
 router.post('/:groupId', auth.can('create point'), function(req, res) {
   var point = models.Point.build({
@@ -49,6 +69,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
     user_id: req.user.id
   });
   point.save().then(function() {
+    log.info('Point Created', { point: point, context: 'create', user: req.user });
     var pointRevision = models.PointRevision.build({
       group_id: point.group_id,
       post_id: point.post_id,
@@ -57,6 +78,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
       point_id: point.id
     });
     pointRevision.save().then(function() {
+      log.info('PointRevision Created', { pointRevision: pointRevision, context: 'create', user: req.user });
       models.Point.find({
         where: { id: point.id },
         include: [
@@ -77,7 +99,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
       });
     });
   }).catch(function(error) {
-    res.sendStatus(403);
+    sendPointOrError(res, null, 'create', req.user, error);
   });
 });
 
@@ -102,6 +124,7 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
       })
     }
     pointQuality.save().then(function() {
+      log.info('PointQuality Created or Updated', { pointQuality: pointQuality, context: 'createOrUpdate', user: req.user });
       decrementOldPointQualityCountersIfNeeded(oldPointQualityValue, req.params.id, pointQuality, function () {
         if (pointQuality.value>0) {
           changePointCounter(req.params.id, 'counter_quality_up', 1, function () {
@@ -112,7 +135,7 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
             res.send({ pointQuality: pointQuality, oldPointQualityValue: oldPointQualityValue });
           })
         } else {
-          console.error("Strange state of pointQualities");
+          log.error('PointQuality Error', { pointQuality: pointQuality, context: 'createOrUpdate', user: req.user });
           res.status(500);
         }
       })
@@ -131,7 +154,9 @@ router.delete('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), f
       else if (pointQuality.value<0)
         oldPointQualityValue = -1;
       pointQuality.value = 0;
+      //pointQuality.deleted = true;
       pointQuality.save().then(function() {
+        log.info('PointQuality Deleted', { pointQuality: pointQuality, context: 'delete', user: req.user });
         if (oldPointQualityValue>0) {
           changePointCounter(req.params.id, 'counter_quality_up', -1, function () {
             res.status(200).send({ pointQuality: pointQuality, oldPointQualityValue: oldPointQualityValue });
@@ -146,6 +171,7 @@ router.delete('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), f
         }
       });
     } else {
+      log.error('PointQuality Not Found', { pointQuality: pointQuality, context: 'delete', user: req.user });
       res.sendStatus(404);
     }
   });

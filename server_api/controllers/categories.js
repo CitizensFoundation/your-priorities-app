@@ -57,7 +57,7 @@ router.post('/:groupId', auth.can('create category'), function(req, res) {
     group_id: req.params.groupId
   });
   category.save().then(function() {
-    log.info('Category Created', { category: category, user: req.user });
+    log.info('Category Created', { category: category, context: 'create', user: req.user });
     category.setupImages(req.body, function(error) {
       sendCategoryOrError(res, category, 'setupImages', req.user, error);
     });
@@ -74,7 +74,7 @@ router.put('/:id', auth.can('edit category'), function(req, res) {
       category.name = req.body.name;
       category.description = req.body.description;
       category.save().then(function () {
-        log.info('Category Updated', { category: category, user: req.user });
+        log.info('Category Updated', { category: category, context: 'update', user: req.user });
         category.setupImages(req.body, function(error) {
           sendCategoryOrError(res, category, 'setupImages', req.user, error);
         });
