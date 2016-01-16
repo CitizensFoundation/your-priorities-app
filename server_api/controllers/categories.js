@@ -44,7 +44,7 @@ router.post('/:groupId', auth.can('create category'), function(req, res) {
     category.setupImages(req.body, function(err) {
       if (err) {
         res.sendStatus(500);
-        log.error('Category Setup images failed', { category: category, user: req.user, err: err });
+        log.error('Category Error Setup images', { category: category, user: req.user, err: err });
       } else {
         res.send(category);
       }
