@@ -1,5 +1,6 @@
 var auth = require('authorized');
 var models = require("./models");
+var log = require('./utils/logger');
 
 // COMMON
 
@@ -26,9 +27,13 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
 };
 
 auth.isLoggedIn = function (req, res, next) {
-  if (req.isAuthenticated())
+  if (req.isAuthenticated()) {
+    log.info('User is Logged in', { community: community, context: 'isLoggedIn', user: req.user });
     return next();
-  res.send(401, 'Unauthorized');
+  } else {
+    log.info('User is Not Logged in', { community: community, context: 'isLoggedIn', user: req.user, errorStatus: 401});
+    res.send(401, 'Unauthorized');
+  }
 };
 
 // ADMIN AND VIEW

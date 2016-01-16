@@ -68,15 +68,15 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
 });
 
 router.get('/isloggedin', function (req, res) {
-  log.info('User Is Logged In', { user: req.user, context: 'isLoggedIn'});
+  log.info('User Logged in', { user: req.user, context: 'isLoggedIn'});
   res.send(req.isAuthenticated() ? req.user : '0');
 });
 
 router.post('/logout', function (req, res) {
   if (req.isAuthenticated()) {
-    log.info('User Logging Out', { user: req.user, context: 'logout'});
+    log.info('User Logging out', { user: req.user, context: 'logout'});
   } else {
-    log.warning('User Logging Out But not logged in', { user: req.user, context: 'logout'});
+    log.warning('User Logging out vut not logged in', { user: req.user, context: 'logout'});
   }
   req.logOut();
   res.sendStatus(200);
@@ -142,7 +142,7 @@ router.get('/reset/:token', function(req, res) {
       log.info('Get User For Reset Password Token', { user: user, context: 'getUserToken', loggedInUser: req.user, errorStatus: 401 });
       res.sendStatus(user);
     } else {
-      log.error('Get User For Reset Password Token Not Found', { user: null, context: 'getUserToken', err: 'Token not found', loggedInUser: req.user, errorStatus: 401 });
+      log.error('Get User For Reset Password Token Not found', { user: null, context: 'getUserToken', err: 'Token not found', loggedInUser: req.user, errorStatus: 401 });
       res.sendStatus(404);
     }
   }).catch(function (error) {
@@ -172,17 +172,17 @@ router.post('/reset/:token', function(req, res) {
           user.save().then(function () {
             req.logIn(user, function (error) {
               if (error) {
-                log.error('User Reset Password Cant Login', { user: user, context: 'useResetToken', loggedInUser: req.user, err: error, errorStatus: 500 });
+                log.error('User Reset Password Cant login', { user: user, context: 'useResetToken', loggedInUser: req.user, err: error, errorStatus: 500 });
                 res.sendStatus(401);
                 return;
               } else {
-                log.info('User Reset Password User Logged In', { user: user, context: 'useResetToken', loggedInUser: req.user });
+                log.info('User Reset Password User logged in', { user: user, context: 'useResetToken', loggedInUser: req.user });
                 done(error, user);
               }
             });
           });
         } else {
-          log.info('User Reset Password Token Not Found', { user: user, context: 'useResetToken'});
+          log.info('User Reset Password Token Not found', { user: user, context: 'useResetToken'});
           res.sendStatus(404);
           return;
         }

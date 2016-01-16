@@ -191,7 +191,7 @@ router.get('/:id/endorsements', auth.can('view post'), function(req, res) {
       log.info('Endorsements Viewed', { endorsements: endorsements, context: 'view', user: req.user });
       res.send(endorsements);
     } else {
-      log.warning("Endorsements Not Found", { context: 'view', post: post, user: req.user,
+      log.warning("Endorsements Not found", { context: 'view', post: post, user: req.user,
         err: error, errorStatus: 404 });
     }
   }).catch(function(error) {
@@ -199,8 +199,6 @@ router.get('/:id/endorsements', auth.can('view post'), function(req, res) {
       err: error, errorStatus: 500 });
   });
 });
-
-
 
 router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(req, res) {
   models.Endorsement.find({
@@ -277,11 +275,13 @@ router.delete('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), functio
           })
         } else {
           console.error("Strange state of endorsements");
-          res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+          log.error("Endorsement Strange state", { context: 'delete', post: req.params.id, user: req.user,
+                                                   err: "Strange state of endorsements", errorStatus: 500 });
+          res.sendStatus(500);
         }
       });
     } else {
-      log.error("Endorsement Not Found", { context: 'delete', post: req.params.id, user: req.user,
+      log.error("Endorsement Not found", { context: 'delete', post: req.params.id, user: req.user,
                                            err: error, errorStatus: 404 });
       res.sendStatus(404);
     }
