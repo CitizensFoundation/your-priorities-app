@@ -4,6 +4,25 @@ var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
 
+var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
+  if (error || !group) {
+    if (errorStatus == 404) {
+      log.warning("Community Not Found", { context: context, community: community, user: req.user, err: error,
+        errorStatus: 404 });
+    } else {
+      log.error("Community Error", { context: context, community: community, user: req.user, err: error,
+        errorStatus: errorStatus ? errorStatus : 500 });
+    }
+    if (errorStatus) {
+      res.sendStatus(errorStatus);
+    } else {
+      res.sendStatus(500);
+    }
+  } else {
+    res.send(community);
+  }
+};
+
 router.get('/:id', auth.can('view community'), function(req, res) {
   models.Community.find({
     where: { id: req.params.id },
@@ -51,15 +70,13 @@ router.get('/:id', auth.can('view community'), function(req, res) {
     ]
   }).then(function(community) {
     if (community) {
-      res.sendStatus(404);
-      log.warning('Community Not found', { communityId: req.params.id, user: req.user });
-    } else {
-      log.info('Community Viewed', { community: community, user: req.user });
+      log.info('Community Viewed', { community: community, context: 'view', user: req.user });
       res.send(community);
+    } else {
+      sendCommunityOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
     }
   }).catch(function(error) {
-    log.error('Community Error', { err: error, communityId: req.params.id, user: req.user });
-    res.sendStatus(500);
+    sendCommunityOrError(res, null, 'view', req.user, error);
   });
 });
 
@@ -73,20 +90,14 @@ router.post('/', auth.can('create community'), function(req, res) {
     website: req.body.website
   });
   community.save().then(function() {
+    log.info('Community Created', { community: community, context: 'create', user: req.user });
     community.updateAllExternalCounters(req, 'up', function () {
-      community.setupImages(req.body, function(err) {
-        if (err) {
-          res.sendStatus(500);
-          log.error('Community Error', { err: error, user: req.user });
-        } else {
-          log.info('Community Created', { community: community, user: req.user });
-          res.send(community);
-        }
+      community.setupImages(req.body, function(error) {
+        sendCommunityOrError(res, community, 'setupImages', req.user, error);
       });
     });
   }).catch(function(error) {
-    log.error('Community Error', { err: error, user: req.user });
-    res.sendStatus(500);
+    sendCommunityOrError(res, null, 'create', req.user, error);
   });
 });
 
@@ -94,23 +105,21 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
   models.Community.find({
     where: { id: req.params.id, user_id: req.user.id }
   }).then(function(community) {
-    community.name = req.body.name;
-    community.description = req.body.description;
-    community.access = models.Community.convertAccessFromRadioButtons(req.body);
-    community.save().then(function () {
-      log.info('Community Updated', { community: community, user: req.user });
-      community.setupImages(req.body, function(err) {
-        if (err) {
-          res.sendStatus(500);
-          log.error('Community Error', { community: community, err: error, user: req.user });
-        } else {
-          res.send(community);
-        }
+    if (community) {
+      community.name = req.body.name;
+      community.description = req.body.description;
+      community.access = models.Community.convertAccessFromRadioButtons(req.body);
+      community.save().then(function () {
+        log.info('Community Updated', { community: community, context: 'update', user: req.user });
+        community.setupImages(req.body, function(error) {
+          sendCommunityOrError(res, community, 'setupImages', req.user, error);
+        });
       });
-    });
+    } else {
+      sendCommunityOrError(res, req.params.id, 'update', req.user, 'Not found', 404);
+    }
   }).catch(function(error) {
-    log.error('Community Error', { err: error, user: req.user });
-    res.sendStatus(500);
+    sendCommunityOrError(res, null, 'update', req.user, error);
   });
 });
 
@@ -118,16 +127,19 @@ router.delete('/:id', auth.can('edit community'), function(req, res) {
   models.Community.find({
     where: {id: req.params.id, user_id: req.user.id }
   }).then(function (community) {
-    community.deleted = true;
-    community.save().then(function () {
-      log.info('Community Deleted', { community: community, user: req.user });
-      community.updateAllExternalCounters(req, 'down', function () {
-        res.sendStatus(200);
+    if (community) {
+      community.deleted = true;
+      community.save().then(function () {
+        log.info('Community Deleted', { community: community, user: req.user });
+        community.updateAllExternalCounters(req, 'down', function () {
+          res.sendStatus(200);
+        });
       });
-    });
+    } else {
+      sendCommunityOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
+    }
   }).catch(function(error) {
-    log.error('Community Error', { err: error, user: req.user });
-    res.sendStatus(500);
+    sendCommunityOrError(res, null, 'delete', req.user, error);
   });
 });
 

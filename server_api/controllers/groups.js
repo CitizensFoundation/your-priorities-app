@@ -2,8 +2,9 @@ var express = require('express');
 var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
+var log = require('../utils/logger');
 
-var sendGroupOrError = function (group, context, user, error, errorStatus) {
+var sendGroupOrError = function (res, group, context, user, error, errorStatus) {
   if (error || !group) {
     if (errorStatus == 404) {
       log.warning("Group Not Found", { context: context, group: group, user: req.user, err: error,
@@ -37,12 +38,12 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
     group.updateAllExternalCounters(req, 'up', function () {
       models.Group.addUserToGroupIfNeeded(group.id, req, function () {
         group.setupImages(req.body, function(error) {
-          sendGroupOrError(group, 'setupImages', req.user, error);
+          sendGroupOrError(res, group, 'setupImages', req.user, error);
         });
       });
     })
   }).catch(function(error) {
-    sendGroupOrError(null, 'create', req.user, error);
+    sendGroupOrError(res, null, 'create', req.user, error);
   });
 });
 
@@ -57,14 +58,14 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       group.save().then(function () {
         log.info('Group Updated', { group: group, context: 'update', user: req.user });
         group.setupImages(req.body, function(error) {
-          sendGroupOrError(group, 'setupImages', req.user, error);
+          sendGroupOrError(res, group, 'setupImages', req.user, error);
         });
       });
     } else {
-      sendGroupOrError(req.params.id, 'update', req.user, 'Not found', 404);
+      sendGroupOrError(res, req.params.id, 'update', req.user, 'Not found', 404);
     }
   }).catch(function(error) {
-    sendGroupOrError(null, 'update', req.user, error);
+    sendGroupOrError(res, null, 'update', req.user, error);
   });
 });
 
@@ -81,10 +82,10 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
         });
       });
     } else {
-      sendGroupOrError(req.params.id, 'delete', req.user, 'Not found', 404);
+      sendGroupOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
     }
   }).catch(function(error) {
-    sendGroupOrError(null, 'delete', req.user, error);
+    sendGroupOrError(res, null, 'delete', req.user, error);
   });
 });
 
@@ -120,10 +121,10 @@ router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
         res.send({group: group, Posts: posts});
       });
     } else {
-      sendGroupOrError(req.params.id, 'view', req.user, 'Not found', 404);
+      sendGroupOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
     }
   }).catch(function(error) {
-    sendGroupOrError(null, 'view', req.user, error);
+    sendGroupOrError(res, null, 'view', req.user, error);
   });
 });
 
@@ -207,10 +208,10 @@ router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(r
         res.send({group: group, Posts: posts});
       });
     } else {
-      sendGroupOrError(req.params.id, 'view', req.user, 'Not found', 404);
+      sendGroupOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
     }
   }).catch(function(error) {
-    sendGroupOrError(null, 'view', req.user, error);
+    sendGroupOrError(res, null, 'view', req.user, error);
   });
 });
 
@@ -223,10 +224,10 @@ router.get('/:id/categories', auth.can('view group'), function(req, res) {
       log.info('Group Categories Viewed', { group: req.params.id, context: 'view', user: req.user });
       res.send(categories);
     } else {
-      sendGroupOrError(req.params.id, 'view', req.user, 'Not found', 404);
+      sendGroupOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
     }
   }).catch(function(error) {
-    sendGroupOrError(null, 'view categories', req.user, error);
+    sendGroupOrError(res, null, 'view categories', req.user, error);
   });
 });
 

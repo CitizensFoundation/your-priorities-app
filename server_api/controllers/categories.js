@@ -4,7 +4,7 @@ var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
 
-var sendCategoryOrError = function (category, context, user, error, errorStatus) {
+var sendCategoryOrError = function (res, category, context, user, error, errorStatus) {
   if (error || !category) {
     if (errorStatus == 404) {
       log.warning("Category Not Found", { context: context, category: category, user: req.user, err: error,
@@ -42,10 +42,10 @@ router.get('/:id', auth.can('view category'), function(req, res) {
       log.info('Category Viewed', { category: category, context: 'view', user: req.user });
       res.send(category);
     } else {
-      sendCategoryOrError(req.params.id, 'view', req.user, 'Not found', 404);
+      sendCategoryOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
     }
   }).catch(function(error) {
-    sendCategoryOrError(null, 'view', req.user, error);
+    sendCategoryOrError(res, null, 'view', req.user, error);
   });
 });
 
@@ -59,10 +59,10 @@ router.post('/:groupId', auth.can('create category'), function(req, res) {
   category.save().then(function() {
     log.info('Category Created', { category: category, user: req.user });
     category.setupImages(req.body, function(error) {
-      sendCategoryOrError(category, 'setupImages', req.user, error);
+      sendCategoryOrError(res, category, 'setupImages', req.user, error);
     });
   }).catch(function(error) {
-    sendCategoryOrError(null, 'view', req.user, error);
+    sendCategoryOrError(res, null, 'view', req.user, error);
   });
 });
 
@@ -75,15 +75,15 @@ router.put('/:id', auth.can('edit category'), function(req, res) {
       category.description = req.body.description;
       category.save().then(function () {
         log.info('Category Updated', { category: category, user: req.user });
-        category.setupImages(req.body, function(err) {
-          sendCategoryOrError(category, 'setupImages', req.user, error);
+        category.setupImages(req.body, function(error) {
+          sendCategoryOrError(res, category, 'setupImages', req.user, error);
         });
       });
     } else {
-      sendCategoryOrError(req.params.id, 'update', req.user, 'Not found', 404);
+      sendCategoryOrError(res, req.params.id, 'update', req.user, 'Not found', 404);
     }
   }).catch(function(error) {
-    sendCategoryOrError(null, 'update', req.user, error);
+    sendCategoryOrError(res, null, 'update', req.user, error);
   });
 });
 
@@ -98,10 +98,10 @@ router.delete('/:id', auth.can('edit category'), function(req, res) {
         res.sendStatus(200);
       });
     } else {
-      sendCategoryOrError(req.params.id, 'update', req.user, 'Not found', 404);
+      sendCategoryOrError(res, req.params.id, 'update', req.user, 'Not found', 404);
     }
   }).catch(function(error) {
-    sendCategoryOrError(null, 'delete', req.user, error);
+    sendCategoryOrError(res, null, 'delete', req.user, error);
   });
 });
 
