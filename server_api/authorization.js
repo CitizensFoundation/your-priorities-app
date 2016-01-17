@@ -122,6 +122,63 @@ auth.entity('domain', function(req, done) {
   }
 });
 
+// Community admin and view
+
+auth.role('community.admin', function (community, req, done) {
+  if (!req.isAuthenticated()) {
+    done();
+  } else {
+    models.Community.findOne({
+      where: { id: community.id }
+    }).then(function (community) {
+      if (community.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        community.hasAdminUser(req.user).then(function (result) {
+          if (result) {
+            done(null, true);
+          } else {
+            done(null, false);
+          }
+        });
+      }
+    });
+  }
+});
+
+auth.role('community.viewUser', function (community, req, done) {
+  models.Community.findOne({
+    where: { id: community.id }
+  }).then(function (community) {
+    if (community.access === models.Community.ACCESS_PUBLIC) {
+      done(null, true);
+    }  else if (!req.isAuthenticated()) {
+      done(null, false);
+    } else if (community.user_id === req.user.id) {
+      done(null, true);
+    } else {
+      community.hasUser(req.user).then(function (result) {
+        if (result) {
+          done(null, true);
+        } else {
+          done(null, false);
+        }
+      });
+    }
+  });
+});
+
+auth.entity('community', function(req, done) {
+  var match = req.url.match(/^\/communities\/(\w+)/);
+  if (!match) {
+    done(new Error('Expected url like /communities/:communityId'));
+  } else {
+    var community = { id: match[1] };
+    done(null, community)
+  }
+});
+
+
 // Group admin and view
 
 auth.role('group.admin', function (group, req, done) {
@@ -272,7 +329,7 @@ auth.role('point.admin', function (point, req, done) {
   }
 });
 
-auth.role('post.viewUser', function (point, req, done) {
+auth.role('point.viewUser', function (point, req, done) {
   models.Point.findOne({
     where: { id: point.id },
     include: [
@@ -506,13 +563,13 @@ auth.action('view post', ['post.viewUser']);
 auth.action('view category', ['category.viewUser']);
 auth.action('view point', ['point.viewUser']);
 
-auth.action('vote on post', ['post.voteUser']);
-auth.action('vote on point', ['point.voteUser']);
+auth.action('vote on post', ['post.viewUser']);
+auth.action('vote on point', ['point.viewUser']);
 
 auth.action('create community', ['createDomainCommunity.createCommunity']);
 auth.action('create group', ['createCommunityGroup.createGroup']);
 auth.action('create post', ['createGroupPost.createPost']);
 auth.action('create category', ['createGroupCategory.createCategory']);
-auth.action('create post', ['createGroupPost.createPost']);
+auth.action('create point', ['createGroupPoint.createPoint']);
 
 module.exports = auth;

@@ -25,7 +25,7 @@ var users = require('./controllers/users');
 var categories = require('./controllers/categories');
 var images = require('./controllers/images');
 var models = require('./models');
-var user = require('./authorisation.js');
+var user = require('./authorization');
 var log = require('./utils/logger');
 
 var app = express();
@@ -44,7 +44,7 @@ app.use(session({ secret: 'keyboard cat' }));
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(user.middleware());
+//app.use(user.middleware());
 
 passport.serializeUser(function(user, done) {
   log.info("User Serialized", { context: 'deserializeUser', userEmail: user.email, userId: user.id });
@@ -103,82 +103,90 @@ passport.use(new LocalStrategy(
 ));
 
 // Facebook Authentication
-passport.use(new FacebookStrategy({
-    clientID: process.env.FACEBOOK_APP_ID,
-    clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: "/api/users/auth/facebook/callback",
-    enableProof: false,
-    profileFields: ['id', 'displayName', 'emails']
-  },
-  function(accessToken, refreshToken, profile, done) {
-    var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
-    User.findOrCreate({where: { facebook_id: profile.id },
-                       defaults: { email: email, name: profile.displayName, facebook_profile: profile }})
-      .spread(function(user, created) {
-        log.info(created ? "User Created from Facebook" : "User Connected to Facebook", { context: 'loginFromFacebook', user: user});
-        done(error, user)
-      }).catch(function (error) {
+if (process.env.FACEBOOK_APP_ID) {
+  passport.use(new FacebookStrategy({
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      callbackURL: "/api/users/auth/facebook/callback",
+      enableProof: false,
+      profileFields: ['id', 'displayName', 'emails']
+    },
+    function(accessToken, refreshToken, profile, done) {
+      var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
+      User.findOrCreate({where: { facebook_id: profile.id },
+          defaults: { email: email, name: profile.displayName, facebook_profile: profile }})
+        .spread(function(user, created) {
+          log.info(created ? "User Created from Facebook" : "User Connected to Facebook", { context: 'loginFromFacebook', user: user});
+          done(error, user)
+        }).catch(function (error) {
         done(error);
-    });
-  }
-));
+      });
+    }
+  ));
+}
 
 // Twitter Authentication
-passport.use(new TwitterStrategy({
-    consumerKey: process.env.TWITTER_CONSUMER_KEY,
-    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-    callbackURL: "/api/users/auth/twitter/callback"
-  },
-  function(token, tokenSecret, profile, done) {
-    var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
-    User.findOrCreate({where: { twitter_id: profile.id },
-        defaults: { email: email, name: profile.displayName, twitter_profile: profile }})
-      .spread(function(user, created) {
-        log.info(created ? "User Created from Twitter" : "User Connected to Twitter", { context: 'loginFromTwitter', user: user});
-        done(error, user)
-      }).catch(function (error) {
-      done(error);
-    });
-  }
-));
+if (process.env.TWITTER_CONSUMER_KEY) {
+  passport.use(new TwitterStrategy({
+      consumerKey: process.env.TWITTER_CONSUMER_KEY,
+      consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+      callbackURL: "/api/users/auth/twitter/callback"
+    },
+    function(token, tokenSecret, profile, done) {
+      var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
+      User.findOrCreate({where: { twitter_id: profile.id },
+          defaults: { email: email, name: profile.displayName, twitter_profile: profile }})
+        .spread(function(user, created) {
+          log.info(created ? "User Created from Twitter" : "User Connected to Twitter", { context: 'loginFromTwitter', user: user});
+          done(error, user)
+        }).catch(function (error) {
+        done(error);
+      });
+    }
+  ));
+}
 
 // Google Authentication
-passport.use(new GoogleStrategy({
-    consumerKey: process.env.GOOGLE_CONSUMER_KEY,
-    consumerSecret: process.env.GOOGLE_CONSUMER_SECRET,
-    callbackURL: "/api/users/auth/google/callback"
-  },
-  function(token, tokenSecret, profile, done) {
-    var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
-    User.findOrCreate({where: { google_id: profile.id },
-        defaults: { email: email, name: profile.displayName, google_profile: profile }})
-      .spread(function(user, created) {
-        log.info(created ? "User Created from Google" : "User Connected to Google", { context: 'loginFromGoogle', user: user});
-        done(error, user)
-      }).catch(function (error) {
-      done(error);
-    });
-  }
-));
+if (process.env.GOOGLE_CONSUMER_KEY) {
+  passport.use(new GoogleStrategy({
+      consumerKey: process.env.GOOGLE_CONSUMER_KEY,
+      consumerSecret: process.env.GOOGLE_CONSUMER_SECRET,
+      callbackURL: "/api/users/auth/google/callback"
+    },
+    function(token, tokenSecret, profile, done) {
+      var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
+      User.findOrCreate({where: { google_id: profile.id },
+          defaults: { email: email, name: profile.displayName, google_profile: profile }})
+        .spread(function(user, created) {
+          log.info(created ? "User Created from Google" : "User Connected to Google", { context: 'loginFromGoogle', user: user});
+          done(error, user)
+        }).catch(function (error) {
+        done(error);
+      });
+    }
+  ));
+}
 
 // Github Authentication
-passport.use(new GitHubStrategy({
-    clientID: process.env.GITHUB_CLIENT_ID,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "/api/users/auth/github/callback"
-  },
-  function(accessToken, refreshToken, profile, done) {
-    var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
-    User.findOrCreate({where: { github_id: profile.id },
-        defaults: { email: email, name: profile.displayName, github_profile: profile }})
-      .spread(function(user, created) {
-        log.info(created ? "User Created from Github" : "User Connected to Github", { context: 'loginFromGoogle', user: user});
-        done(error, user)
-      }).catch(function (error) {
-      done(error);
-    });
-  }
-));
+if (process.env.GITHUB_CLIENT_ID) {
+  passport.use(new GitHubStrategy({
+      clientID: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      callbackURL: "/api/users/auth/github/callback"
+    },
+    function(accessToken, refreshToken, profile, done) {
+      var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
+      User.findOrCreate({where: { github_id: profile.id },
+          defaults: { email: email, name: profile.displayName, github_profile: profile }})
+        .spread(function(user, created) {
+          log.info(created ? "User Created from Github" : "User Connected to Github", { context: 'loginFromGoogle', user: user});
+          done(error, user)
+        }).catch(function (error) {
+        done(error);
+      });
+    }
+  ));
+}
 
 // Setup the current domain from the host
 app.use(function (req, res, next) {
