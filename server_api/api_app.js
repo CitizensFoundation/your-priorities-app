@@ -11,9 +11,9 @@ var ConnectRoles = require('connect-roles');
 var passport = require('passport')
     , LocalStrategy = require('passport-local').Strategy
     , FacebookStrategy = require('passport-facebook').Strategy
-    , GithubStrategy = require('passport-github').Strategy
+    , GitHubStrategy = require('passport-github').Strategy
     , TwitterStrategy = require('passport-twitter').Strategy
-    , GoogleOAuthStrategy = require('passport-google-oauth').Strategy;
+    , GoogleStrategy = require('passport-google-oauth').Strategy;
 
 var index = require('./controllers/index');
 var posts = require('./controllers/posts');
@@ -102,16 +102,73 @@ passport.use(new LocalStrategy(
 passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: "/api/users/facebook/callback",
-    enableProof: false
+    callbackURL: "/api/users/auth/facebook/callback",
+    enableProof: false,
+    profileFields: ['id', 'displayName', 'emails']
   },
   function(accessToken, refreshToken, profile, done) {
-    var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: 'unknown_'+facebook.id+'@facebook.com';
-    User.findOrCreate({where: { facebook_id: profile.id }, defaults: { email: email, name: profile.displayName }})
+    var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
+    User.findOrCreate({where: { facebook_id: profile.id },
+                       defaults: { email: email, name: profile.displayName, facebook_profile: profile }})
       .spread(function(user, created) {
-        var error = created ? null : 'Could not find or create user';
         done(error, user)
-      });
+      }).catch(function (error) {
+        done(error);
+    });
+  }
+));
+
+// Twitter Authentication
+passport.use(new TwitterStrategy({
+    consumerKey: process.env.TWITTER_CONSUMER_KEY,
+    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+    callbackURL: "/api/users/auth/twitter/callback"
+  },
+  function(token, tokenSecret, profile, done) {
+    var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
+    User.findOrCreate({where: { twitter_id: profile.id },
+        defaults: { email: email, name: profile.displayName, twitter_profile: profile }})
+      .spread(function(user, created) {
+        done(error, user)
+      }).catch(function (error) {
+      done(error);
+    });
+  }
+));
+
+// Google Authentication
+passport.use(new GoogleStrategy({
+    consumerKey: process.env.GOOGLE_CONSUMER_KEY,
+    consumerSecret: process.env.GOOGLE_CONSUMER_SECRET,
+    callbackURL: "/api/users/auth/google/callback"
+  },
+  function(token, tokenSecret, profile, done) {
+    var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
+    User.findOrCreate({where: { google_id: profile.id },
+        defaults: { email: email, name: profile.displayName, google_profile: profile }})
+      .spread(function(user, created) {
+        done(error, user)
+      }).catch(function (error) {
+      done(error);
+    });
+  }
+));
+
+// Github Authentication
+passport.use(new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: "/auth/github/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
+    User.findOrCreate({where: { github_id: profile.id },
+        defaults: { email: email, name: profile.displayName, github_profile: profile }})
+      .spread(function(user, created) {
+        done(error, user)
+      }).catch(function (error) {
+      done(error);
+    });
   }
 ));
 

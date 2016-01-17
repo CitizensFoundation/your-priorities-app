@@ -204,6 +204,38 @@ router.post('/reset/:token', function(req, res) {
   });
 });
 
+// Facebook Authentication
+
+app.get('/auth/facebook', passport.authenticate('facebook'));
+
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/' }),
+  function(req, res) {
+    log.info('User Logged in from Facebook', { user: req.user, context: 'facebookCallback' });
+    res.sendStatus(200);
+  });
+
+// Twitter Authentication
+app.get('/auth/twitter',
+  passport.authenticate('twitter'));
+
+app.get('/auth/twitter/callback',
+  passport.authenticate('twitter', { failureRedirect: '/' }),
+  function(req, res) {
+    log.info('User Logged in from Twitter', { user: req.user, context: 'twitterCallback' });
+    res.sendStatus(200);
+  });
+
+// Google Authentication
+app.get('/auth/google', passport.authenticate('google', { scope: 'https://www.google.com/m8/feeds' }));
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/' }),
+  function(req, res) {
+    log.info('User Logged in from Google', { user: req.user, context: 'googleCallback' });
+    res.sendStatus(200);
+  });
+
 /*
 router.get('/:id/endorsements', auth.can('view user'), function (req, res) {
   models.Endorsement.findAll({
