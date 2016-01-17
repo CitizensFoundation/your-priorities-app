@@ -178,7 +178,7 @@ router.put('/:id', auth.can('edit post'), function(req, res) {
       post.cover_media_type = req.body.coverMediaType;
       post.save().then(function () {
         log.info('Post Update', { post: toJson(post), context: 'create', user: toJson(req.user) });
-        post.setupImages(req.body, function (err) {
+        post.setupImages(req.body, function (error) {
           sendPostOrError(res, post, 'setupImages', req.user, error);
         })
       });

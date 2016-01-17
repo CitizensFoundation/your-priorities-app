@@ -242,7 +242,10 @@ auth.role('post.admin', function (post, req, done) {
     done();
   } else {
     models.Post.findOne({
-      where: { id: post.id }
+      where: { id: post.id },
+      include: [
+        models.Group
+      ]
     }).then(function (post) {
       var group = post.Group;
       if (group.access === models.Group.ACCESS_PUBLIC) {
