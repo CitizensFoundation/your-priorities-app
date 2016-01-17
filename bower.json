@@ -1,13 +1,13 @@
 {
   "name": "your-priorities-app",
-  "version": "0.7.2",
+  "version": "0.8.2",
   "dependencies": {
     "file-upload": "rbjarnason/file-upload",
     "google-map": "GoogleWebComponents/google-map",
     "google-streetview-pano": "rbjarnason/google-streetview-pano#timings-fix-maps-api-callback",
     "iron-form": "rbjarnason/iron-form#add-put-support",
 
-    "polymer": "Polymer/polymer#^1.1.0",
+    "polymer": "Polymer/polymer#^1.2.0",
     "iron-elements": "PolymerElements/iron-elements#master",
     "paper-elements": "PolymerElements/paper-elements#master",
     "platinum-elements": "PolymerElements/platinum-elements#^1.1.0",

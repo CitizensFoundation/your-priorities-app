@@ -1,4 +1,6 @@
 var async = require("async");
+var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
 
 "use strict";
 
@@ -81,6 +83,11 @@ module.exports = function(sequelize, DataTypes) {
                                                   default_locale: 'en',
                                                   name: 'Your Priorities Domain' }})
             .spread(function(domain, created) {
+              if (created) {
+                log.info('Domain Created', { domain: toJson(domain), context: 'create' });
+              } else {
+                log.info('Domain Loaded', { domain: toJson(domain), context: 'create' });
+              }
               req.ypDomain = domain;
               next();
             });

@@ -243,10 +243,10 @@ router.get('/auth/google/callback',
   });
 
 // GitHub Authentication
-app.get('/auth/github',
+router.get('/auth/github',
   passport.authenticate('github'));
 
-app.get('/auth/github/callback',
+router.get('/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/' }),
   function(req, res) {
     log.info('User Logged in from GitHub', { user: toJson(req.user), context: 'githubCallback' });
