@@ -13,7 +13,7 @@ var passport = require('passport')
     , FacebookStrategy = require('passport-facebook').Strategy
     , GitHubStrategy = require('passport-github').Strategy
     , TwitterStrategy = require('passport-twitter').Strategy
-    , GoogleStrategy = require('passport-google-oauth').Strategy;
+    , GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var index = require('./controllers/index');
 var posts = require('./controllers/posts');
@@ -30,12 +30,16 @@ var log = require('./utils/logger');
 
 var app = express();
 
-app.use(express.static(path.join(__dirname, '../client_app')));
-//app.use(express.static(path.join(__dirname, '../client_dist')));
+if (app.get('env') === 'development') {
+  app.use(express.static(path.join(__dirname, '../client_app')));
+} else {
+  app.use(express.static(path.join(__dirname, '../client_dist')));
+}
+
 app.use(morgan('combined'));
 app.use(cookieParser());
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({ secret: 'keyboard cat' }));
 
 app.use(passport.initialize());
@@ -158,7 +162,7 @@ passport.use(new GoogleStrategy({
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "/auth/github/callback"
+    callbackURL: "/api/users/auth/github/callback"
   },
   function(accessToken, refreshToken, profile, done) {
     var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
@@ -189,14 +193,14 @@ app.use(function (req, res, next) {
 });
 
 app.use('/', index);
-app.use('/api/posts', posts);
-app.use('/api/groups', groups);
-app.use('/api/communities', communities);
 app.use('/api/domains', domains);
+app.use('/api/communities', communities);
+app.use('/api/groups', groups);
+app.use('/api/posts', posts);
 app.use('/api/points', points);
-app.use('/api/users', users);
 app.use('/api/images', images);
 app.use('/api/categories', categories);
+app.use('/api/users', users);
 
 app.use(function(err, req, res, next) {
   if (err instanceof auth.UnauthorizedError) {
