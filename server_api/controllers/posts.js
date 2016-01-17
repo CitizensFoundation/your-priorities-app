@@ -63,37 +63,64 @@ router.get('/:id', auth.can('view post'), function(req, res) {
     where: { id: req.params.id },
     include: [
       {
+        // Category
         model: models.Category,
+        required: false,
         include: [
           {
             model: models.Image,
+            required: false,
             as: 'CategoryIconImages'
           }
         ]
       },
+      // Group
       {
         model: models.Group,
-        include: [
-          models.Category
+        required: false,
+        include: [{
+          model: models.Category,
+          required: false
+        }
         ]
       },
-      models.User,
+      // User
+      {
+        model: models.User,
+        required: false
+      },
+      // Image
       {
         model: models.Image,
+        required: false,
         as: 'PostHeaderImages'
       },
-      models.PostRevision,
+      // PointRevision
+      {
+        model: models.PostRevision,
+        required: false
+      },
+      // Point
       { model: models.Point,
+        required: false,
         order: 'Point.position DESC',
         include: [
           { model: models.PointRevision ,
+            required: false,
             include: [
-              { model: models.User, attributes: ["id", "name", "facebook_id", "buddy_icon_file_name"] }
+              { model: models.User,
+                attributes: ["id", "name", "facebook_id", "buddy_icon_file_name"],
+                required: false
+              }
             ]
           },
-          { model: models.PointQuality ,
+          { model: models.PointQuality,
+            required: false,
             include: [
-              { model: models.User, attributes: ["id", "name", "facebook_id", "buddy_icon_file_name"] }
+              { model: models.User,
+                attributes: ["id", "name", "facebook_id", "buddy_icon_file_name"],
+                required: false
+              }
             ]
           }
         ]
@@ -128,7 +155,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
     post.setupAfterSave(req, res, function () {
       post.updateAllExternalCounters(req, 'up', function () {
         models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
-          post.setupImages(req.body, function (err) {
+          post.setupImages(req.body, function (error) {
             sendPostOrError(res, post, 'setupImages', req.user, error);
           })
         })

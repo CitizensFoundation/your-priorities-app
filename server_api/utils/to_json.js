@@ -1,6 +1,10 @@
 module.exports = function (item) {
   if (item) {
-    return item.toJSON();
+    if (typeof item.toJSON === "function") {
+      return item.toJSON();
+    } else {
+      return item;
+    }
   } else {
     return null;
   }

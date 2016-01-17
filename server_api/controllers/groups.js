@@ -194,9 +194,11 @@ router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(r
         include: [
           {
             model: models.Category,
+            required: false,
             include: [
               {
                 model: models.Image,
+                required: false,
                 as: 'CategoryIconImages',
                 order: [
                   [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
@@ -204,9 +206,17 @@ router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(r
               }
             ]
           },
-          models.PostRevision,
-          models.Point,
-          { model: models.Image, as: 'PostHeaderImages' }
+          {
+            model: models.PostRevision,
+            required: false
+          },
+          {
+            model: models.Point,
+            required: false
+          },
+          { model: models.Image,
+            as: 'PostHeaderImages',
+            required: false }
         ]
       }).then(function(posts) {
         res.send({group: group, Posts: posts});
