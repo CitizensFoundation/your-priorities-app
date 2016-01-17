@@ -14,6 +14,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Point.belongsTo(models.Post);
         Point.belongsTo(models.User);
+        Point.belongsTo(models.Group);
         Point.hasMany(models.PointRevision);
         Point.hasMany(models.PointQuality);
       }
