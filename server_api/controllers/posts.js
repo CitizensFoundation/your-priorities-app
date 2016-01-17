@@ -3,6 +3,7 @@ var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
@@ -41,10 +42,10 @@ var decrementOldCountersIfNeeded = function (req, oldEndorsementValue, postId, e
 var sendPostOrError = function (res, post, context, user, error, errorStatus) {
   if (error || !post) {
     if (errorStatus == 404) {
-      log.warning("Post Not Found", { context: context, post: post, user: user, err: error,
+      log.warning("Post Not Found", { context: context, post: toJson(post), user: toJson(user), err: error,
         errorStatus: 404 });
     } else {
-      log.error("Post Error", { context: context, post: post, user: user, err: error,
+      log.error("Post Error", { context: context, post: toJson(post), user: toJson(user), err: error,
         errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {
@@ -100,7 +101,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
     ]
   }).then(function(post) {
     if (post) {
-      log.info('Post Viewed', { post: post, context: 'view', user: req.user });
+      log.info('Post Viewed', { post: toJson(post), context: 'view', user: toJson(req.user) });
       res.send(post);
     } else {
       sendPostOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
@@ -122,7 +123,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
     status: 'published'
   });
   post.save().then(function() {
-    log.info('Post Created', { post: post, context: 'create', user: req.user });
+    log.info('Post Created', { post: toJson(post), context: 'create', user: toJson(req.user) });
     post.setupAfterSave(req, res, function () {
       post.updateAllExternalCounters(req, 'up', function () {
         models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
@@ -148,7 +149,7 @@ router.put('/:id', auth.can('edit post'), function(req, res) {
       post.location = req.body.location != "" ? JSON.parse(req.body.location) : null;
       post.cover_media_type = req.body.coverMediaType;
       post.save().then(function () {
-        log.info('Post Update', { post: post, context: 'create', user: req.user });
+        log.info('Post Update', { post: toJson(post), context: 'create', user: toJson(req.user) });
         post.setupImages(req.body, function (err) {
           sendPostOrError(res, post, 'setupImages', req.user, error);
         })
@@ -167,7 +168,7 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
   }).then(function (post) {
     post.deleted = true;
     post.save().then(function () {
-      log.info('Post Deleted', { post: post, context: 'delete', user: req.user });
+      log.info('Post Deleted', { post: toJson(post), context: 'delete', user: toJson(req.user) });
       post.updateAllExternalCounters(req, 'down', function () {
         res.sendStatus(200);
       });
@@ -188,14 +189,14 @@ router.get('/:id/endorsements', auth.can('view post'), function(req, res) {
     ]
   }).then(function(endorsements) {
     if (endorsements) {
-      log.info('Endorsements Viewed', { endorsements: endorsements, context: 'view', user: req.user });
+      log.info('Endorsements Viewed', { endorsements: toJson(endorsements), context: 'view', user: toJson(req.user) });
       res.send(endorsements);
     } else {
-      log.warning("Endorsements Not found", { context: 'view', post: post, user: req.user,
+      log.warning("Endorsements Not found", { context: 'view', post: toJson(post), user: toJson(req.user),
         err: error, errorStatus: 404 });
     }
   }).catch(function(error) {
-    log.error("Endorsements Error", { context: 'view', endorsements: req.params.id, user: req.user,
+    log.error("Endorsements Error", { context: 'view', endorsements: req.params.id, user: toJson(req.user),
       err: error, errorStatus: 500 });
   });
 });
@@ -227,7 +228,7 @@ router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(
       })
     }
     endorsement.save().then(function() {
-      log.info('Endorsements Created', { endorsements: endorsements, context: 'create', user: req.user });
+      log.info('Endorsements Created', { endorsements: toJson(endorsements), context: 'create', user: toJson(req.user) });
       decrementOldCountersIfNeeded(req, oldEndorsementValue, req.params.id, endorsement, function () {
         if (endorsement.value>0) {
           changePostCounter(req, req.params.id, 'counter_endorsements_up', 1, function () {
@@ -238,14 +239,14 @@ router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(
             res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
           })
         } else {
-          log.error("Endorsements Error State", { context: 'create', endorsements: endorsements, user: req.user,
+          log.error("Endorsements Error State", { context: 'create', endorsements: toJson(endorsements), user: toJson(req.user),
                                                   err: error, errorStatus: 500 });
           res.sendStatus(500);
         }
       });
     });
   }).catch(function(error) {
-    log.error("Endorsements Error", { context: 'create', post: req.params.id, user: req.user,
+    log.error("Endorsements Error", { context: 'create', post: req.params.id, user: toJson(req.user),
                                       err: error, errorStatus: 500 });
     res.sendStatus(500);
   });
@@ -275,18 +276,18 @@ router.delete('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), functio
           })
         } else {
           console.error("Strange state of endorsements");
-          log.error("Endorsement Strange state", { context: 'delete', post: req.params.id, user: req.user,
+          log.error("Endorsement Strange state", { context: 'delete', post: req.params.id, user: toJson(req.user),
                                                    err: "Strange state of endorsements", errorStatus: 500 });
           res.sendStatus(500);
         }
       });
     } else {
-      log.error("Endorsement Not found", { context: 'delete', post: req.params.id, user: req.user,
+      log.error("Endorsement Not found", { context: 'delete', post: req.params.id, user: toJson(req.user),
                                            err: error, errorStatus: 404 });
       res.sendStatus(404);
     }
   }).catch(function(error) {
-    log.error("Endorsements Error", { context: 'delete', post: req.params.id, user: req.user,
+    log.error("Endorsements Error", { context: 'delete', post: req.params.id, user: toJson(req.user),
                                       err: error, errorStatus: 500 });
     res.sendStatus(500);
   });

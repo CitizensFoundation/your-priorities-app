@@ -3,6 +3,7 @@
 var ActivityWorker = function () {};
 var AcActivity = require("../models/ac_activity");
 var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
 
 ActivityWorker.prototype.process = function (activity, done) {
   log.info('Processing Activity Started', { type: activity.type });

@@ -5,6 +5,7 @@ var multer  = require('multer');
 var multerMultipartResolver = multer({ dest: 'uploads/' }).single('file');
 var auth = require('../authorization');
 var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
 
 var isAuthenticated = function (req, res, next) {
   if (req.isAuthenticated())
@@ -24,8 +25,8 @@ var createFormatsFromVersions = function (versions) {
 };
 
 var sendError = function (res, image, context, user, error) {
-  log.error("Image Error", { context: context, image: image,
-                             user: user, err: error, errorStatus: 500 });
+  log.error("Image Error", { context: context, image: toJson(image),
+                             user: toJson(user), err: error, errorStatus: 500 });
   res.sendStatus(500);
 };
 
@@ -46,7 +47,7 @@ router.post('/', isAuthenticated, function(req, res) {
             formats: JSON.stringify(createFormatsFromVersions(versions))
           });
           image.save().then(function() {
-            log.info('Image Created', { image: image, context: 'create', user: req.user });
+            log.info('Image Created', { image: toJson(image), context: 'create', user: toJson(req.user) });
             res.send(image);
           }).catch(function(error) {
             sendError(res, req.file.originalname, 'create', res.user, error);

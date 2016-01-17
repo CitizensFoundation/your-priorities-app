@@ -3,14 +3,15 @@ var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {
     if (errorStatus == 404) {
-      log.warning("Domain Not Found", { context: context, domain: domain, user: user, err: error,
+      log.warning("Domain Not Found", { context: context, domain: toJson(domain), user: toJson(user), err: error,
         errorStatus: 404 });
     } else {
-      log.error("Domain Error", { context: context, domain: domain, user: user, err: error,
+      log.error("Domain Error", { context: context, domain: toJson(domain), user: toJson(user), err: error,
         errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {
@@ -25,10 +26,10 @@ var sendDomainOrError = function (res, domain, context, user, error, errorStatus
 
 router.get('/', function(req, res) {
   if (req.ypCommunity) {
-    log.info('Domain Lookup Found Community', { community: eq.ypCommunity, context: 'index', user: req.user });
+    log.info('Domain Lookup Found Community', { community: toJson(req.ypCommunity), context: 'index', user: toJson(req.user) });
     res.send({community: req.ypCommunity, domain: req.ypDomain});
   } else {
-    log.info('Domain Lookup Found Domain', { domain: req.ypDomain, context: 'index', user: req.user });
+    log.info('Domain Lookup Found Domain', { domain: toJson(req.ypDomain), context: 'index', user: toJson(req.user) });
     res.send({domain: req.ypDomain})
   }
 });
@@ -85,12 +86,11 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
     ]
   }).then(function(domain) {
     if (domain) {
-      log.info('Domain Viewed', { domain: domain, context: 'view', user: req.user });
+      log.info('Domain Viewed', { domain: toJson(domain), context: 'view', user: toJson(req.user) });
       res.send(domain);
     } else {
       sendDomainOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
     }
-    res.send(domain);
   }).catch(function(error) {
     sendDomainOrError(res, null, 'view', req.user, error);
   });
@@ -104,11 +104,11 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.name = req.body.name;
       domain.description = req.body.description;
       domain.save().then(function () {
-        log.info('Domain Updated', { domain: domain, user: req.user });
+        log.info('Domain Updated', { domain: toJson(domain), user: toJson(req.user) });
         domain.setupImages(req.body, function(err) {
           if (err) {
             res.sendStatus(500);
-            log.error('Domain Error Setup images', { domain: domain, user: req.user, err: err });
+            log.error('Domain Error Setup images', { domain: toJson(domain), user: toJson(req.user), err: err });
           } else {
             res.send(domain);
           }
@@ -129,7 +129,7 @@ router.delete('/:id', auth.can('edit domain'), function(req, res) {
     if (domain) {
       domain.deleted = true;
       domain.save().then(function () {
-        log.info('Domain Deleted', { group: group, context: 'delete', user: req.user });
+        log.info('Domain Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
         res.sendStatus(200);
       });
     } else {

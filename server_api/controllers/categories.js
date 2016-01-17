@@ -3,14 +3,15 @@ var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
 
 var sendCategoryOrError = function (res, category, context, user, error, errorStatus) {
   if (error || !category) {
     if (errorStatus == 404) {
-      log.warning("Category Not Found", { context: context, category: category, user: user, err: error,
+      log.warning("Category Not Found", { context: context, category: toJson(category), user: toJson(user), err: error,
         errorStatus: 404 });
     } else {
-      log.error("Category Error", { context: context, group: group, user: user, err: error,
+      log.error("Category Error", { context: context, group: toJson(group), user: toJson(user), err: error,
         errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {
@@ -39,7 +40,7 @@ router.get('/:id', auth.can('view category'), function(req, res) {
     ]
   }).then(function(category) {
     if (category) {
-      log.info('Category Viewed', { category: category, context: 'view', user: req.user });
+      log.info('Category Viewed', { category: toJson(category), context: 'view', user: toJson(req.user) });
       res.send(category);
     } else {
       sendCategoryOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
@@ -57,7 +58,7 @@ router.post('/:groupId', auth.can('create category'), function(req, res) {
     group_id: req.params.groupId
   });
   category.save().then(function() {
-    log.info('Category Created', { category: category, context: 'create', user: req.user });
+    log.info('Category Created', { category: category, context: 'create', user: toJson(req.user) });
     category.setupImages(req.body, function(error) {
       sendCategoryOrError(res, category, 'setupImages', req.user, error);
     });
@@ -74,7 +75,7 @@ router.put('/:id', auth.can('edit category'), function(req, res) {
       category.name = req.body.name;
       category.description = req.body.description;
       category.save().then(function () {
-        log.info('Category Updated', { category: category, context: 'update', user: req.user });
+        log.info('Category Updated', { category: toJson(category), context: 'update', user: toJson(req.user) });
         category.setupImages(req.body, function(error) {
           sendCategoryOrError(res, category, 'setupImages', req.user, error);
         });
@@ -94,7 +95,7 @@ router.delete('/:id', auth.can('edit category'), function(req, res) {
     if (category) {
       category.deleted = true;
       category.save().then(function () {
-        log.info('Category Deleted', { category: category, context: 'delete', user: req.user });
+        log.info('Category Deleted', { category: toJson(category), context: 'delete', user: toJson(req.user) });
         res.sendStatus(200);
       });
     } else {

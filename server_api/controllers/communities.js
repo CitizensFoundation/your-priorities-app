@@ -3,14 +3,15 @@ var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !group) {
     if (errorStatus == 404) {
-      log.warning("Community Not Found", { context: context, community: community, user: user, err: error,
+      log.warning("Community Not Found", { context: context, community: toJson(community), user: toJson(user), err: error,
         errorStatus: 404 });
     } else {
-      log.error("Community Error", { context: context, community: community, user: user, err: error,
+      log.error("Community Error", { context: context, community: toJson(community), user: toJson(user), err: error,
         errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {
@@ -70,7 +71,7 @@ router.get('/:id', auth.can('view community'), function(req, res) {
     ]
   }).then(function(community) {
     if (community) {
-      log.info('Community Viewed', { community: community, context: 'view', user: req.user });
+      log.info('Community Viewed', { community: toJson(community), context: 'view', user: toJson(req.user) });
       res.send(community);
     } else {
       sendCommunityOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
@@ -90,7 +91,7 @@ router.post('/', auth.can('create community'), function(req, res) {
     website: req.body.website
   });
   community.save().then(function() {
-    log.info('Community Created', { community: community, context: 'create', user: req.user });
+    log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
     community.updateAllExternalCounters(req, 'up', function () {
       community.setupImages(req.body, function(error) {
         sendCommunityOrError(res, community, 'setupImages', req.user, error);
@@ -110,7 +111,7 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
       community.description = req.body.description;
       community.access = models.Community.convertAccessFromRadioButtons(req.body);
       community.save().then(function () {
-        log.info('Community Updated', { community: community, context: 'update', user: req.user });
+        log.info('Community Updated', { community: toJson(community), context: 'update', user: toJson(req.user) });
         community.setupImages(req.body, function(error) {
           sendCommunityOrError(res, community, 'setupImages', req.user, error);
         });
@@ -130,7 +131,7 @@ router.delete('/:id', auth.can('edit community'), function(req, res) {
     if (community) {
       community.deleted = true;
       community.save().then(function () {
-        log.info('Community Deleted', { community: community, user: req.user });
+        log.info('Community Deleted', { community: toJson(community), user: toJson(req.user) });
         community.updateAllExternalCounters(req, 'down', function () {
           res.sendStatus(200);
         });

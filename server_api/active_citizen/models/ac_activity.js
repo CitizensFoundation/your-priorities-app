@@ -7,6 +7,7 @@
 
 var log = require('../utils/logger');
 var queue = require('../workers/queue');
+var toJson = require('../utils/to_json');
 
 var setupDefaultAssociations = function (user, domain, community, done) {
   async.paralell([
@@ -87,7 +88,7 @@ module.exports = function(sequelize, DataTypes) {
                 done('Activity Creation Error');
               } else {
                 queue.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
-                log.info('Activity Created', { activity: activity, user: user });
+                log.info('Activity Created', { activity: toJson(activity), user: toJson(user) });
                 done(null);
               }
             });
@@ -121,7 +122,7 @@ module.exports = function(sequelize, DataTypes) {
                 done('Activity Creation Error');
               } else {
                 queue.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
-                log.info('Activity Created', { activity: activity, user: user });
+                log.info('Activity Created', { activity: toJson(activity), user: toJson(user)});
                 done(null);
               }
             });

@@ -5,6 +5,7 @@ var models = require("../models");
 var log = require('../utils/logger');
 var jobs = require('./jobs');
 var i18n = require('../utils/i18n');
+var toJson = require('../utils/to_json');
 
 NotificationWorker.prototype.process = function (notification, done) {
 

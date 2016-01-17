@@ -2,6 +2,7 @@
 
 var queue = require('../workers/queue');
 var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
 
 module.exports = function(sequelize, DataTypes) {
   var AcNotification = sequelize.define("AcNotification", {
@@ -61,7 +62,7 @@ module.exports = function(sequelize, DataTypes) {
                 done();
               } else {
                 queue.create('process-notification', notification).priority('critical').removeOnComplete(true).save();
-                log.info('Notification Created', { notification: notification, user: user });
+                log.info('Notification Created', { notification: toJson(notification), user: user });
                 done();
               }
             });

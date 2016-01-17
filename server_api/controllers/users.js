@@ -4,6 +4,7 @@ var models = require("../models");
 var passport = require('passport');
 var auth = require('../authorization');
 var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
 
 var sendUserOrError = function (res, user, context, error, errorStatus) {
   if (error || !user) {
@@ -26,7 +27,7 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
 
 // Login
 router.get('/login', passport.authenticate('local'), function (req, res) {
-  log.info('User Login', { context: 'view', user: req.user });
+  log.info('User Login', { context: 'view', user: toJson(req.user) });
   res.send(req.user);
 });
 
@@ -38,7 +39,7 @@ router.post('/register', function (req, res) {
   });
   user.createPasswordHash(req.body.password);
   user.save().then(function () {
-    log.info('User Created', { user: user, context: 'create', loggedInUser: req.user });
+    log.info('User Created', { user: toJson(user), context: 'create', loggedInUser: toJson(req.user) });
     req.logIn(user, function (error) {
       sendUserOrError(res, user, 'registerUser', error, 401);
     });
@@ -56,7 +57,7 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
       user.name = req.body.name;
       user.email = req.body.email;
       user.save().then(function () {
-        log.info('User Updated', { user: user, context: 'update', loggedInUser: req.user });
+        log.info('User Updated', { user: toJson(user), context: 'update', loggedInUser: toJson(req.user) });
         user.setupImages(req.body, function (error) {
           sendUserOrError(res, user, 'setupImages', error);
         });
@@ -68,15 +69,19 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
 });
 
 router.get('/isloggedin', function (req, res) {
-  log.info('User Logged in', { user: req.user, context: 'isLoggedIn'});
+  if (req.isAuthenticated()) {
+    log.info('User Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
+  } else {
+    log.info('User Not Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
+  }
   res.send(req.isAuthenticated() ? req.user : '0');
 });
 
 router.post('/logout', function (req, res) {
   if (req.isAuthenticated()) {
-    log.info('User Logging out', { user: req.user, context: 'logout'});
+    log.info('User Logging out', { user: toJson(req.user), context: 'logout'});
   } else {
-    log.warning('User Logging out vut not logged in', { user: req.user, context: 'logout'});
+    log.warning('User Logging out vut not logged in', { user: toJson(req.user), context: 'logout'});
   }
   req.logOut();
   res.sendStatus(200);
@@ -99,16 +104,17 @@ router.post('/forgot_password', function(req, res) {
           user.reset_password_token = token;
           user.reset_password_expires = Date.now() + 3600000; // 1 hour
           user.save().then(function () {
-            log.info('User Reset Password Token Created', { user: user, context: 'forgotPassword', loggedInUser: req.user });
+            log.info('User Reset Password Token Created', { user: toJson(user), context: 'forgotPassword', loggedInUser: toJson(req.user) });
             done(null, token, user);
           });
         } else {
-          log.info('User Reset Password Token Not Found', { user: user, context: 'forgotPassword', loggedInUser: req.user, error: 'Token not found', errorStatus: 404 });
+          log.info('User Reset Password Token Not Found', { user: toJson(user), context: 'forgotPassword',
+                                                            loggedInUser: toJson(req.user), error: 'Token not found', errorStatus: 404 });
           res.sendStatus(404);
           return;
         }
       }).catch(function (error) {
-        log.error('User Reset Password Token Error', { user: null, context: 'forgotPassword', loggedInUser: req.user, err: error, errorStatus: 500 });
+        log.error('User Reset Password Token Error', { user: null, context: 'forgotPassword', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
         res.sendStatus(500);
       });
     },
@@ -119,10 +125,10 @@ router.post('/forgot_password', function(req, res) {
     }
   ], function(error, token, user) {
     if (error) {
-      log.error('User Reset Password Token Error', { user: user, context: 'forgotPassword', loggedInUser: req.user, err: error, errorStatus: 500 });
+      log.error('User Reset Password Token Error', { user: toJson(user), context: 'forgotPassword', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
       res.sendStatus(500);
     } else {
-      log.info('User Reset Password Token Activity Created', { user: user, context: 'forgotPassword', loggedInUser: req.user });
+      log.info('User Reset Password Token Activity Created', { user: toJson(user), context: 'forgotPassword', loggedInUser: toJson(req.user) });
       res.sendStatus(200);
     }
   });
@@ -139,14 +145,14 @@ router.get('/reset/:token', function(req, res) {
     }
   }).then(function (user) {
     if (user) {
-      log.info('Get User For Reset Password Token', { user: user, context: 'getUserToken', loggedInUser: req.user, errorStatus: 401 });
+      log.info('Get User For Reset Password Token', { user: toJson(user), context: 'getUserToken', loggedInUser: toJson(req.user), errorStatus: 401 });
       res.sendStatus(user);
     } else {
-      log.error('Get User For Reset Password Token Not found', { user: null, context: 'getUserToken', err: 'Token not found', loggedInUser: req.user, errorStatus: 401 });
+      log.error('Get User For Reset Password Token Not found', { user: null, context: 'getUserToken', err: 'Token not found', loggedInUser: toJson(req.user), errorStatus: 401 });
       res.sendStatus(404);
     }
   }).catch(function (error) {
-    log.error('Get User For Reset Password Token Error', { user: null, context: 'getUserToken', loggedInUser: req.user, err: error, errorStatus: 500 });
+    log.error('Get User For Reset Password Token Error', { user: null, context: 'getUserToken', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
     res.sendStatus(500);
   });
 });
@@ -172,17 +178,17 @@ router.post('/reset/:token', function(req, res) {
           user.save().then(function () {
             req.logIn(user, function (error) {
               if (error) {
-                log.error('User Reset Password Cant login', { user: user, context: 'useResetToken', loggedInUser: req.user, err: error, errorStatus: 500 });
+                log.error('User Reset Password Cant login', { user: toJson(user), context: 'useResetToken', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
                 res.sendStatus(401);
                 return;
               } else {
-                log.info('User Reset Password User logged in', { user: user, context: 'useResetToken', loggedInUser: req.user });
+                log.info('User Reset Password User logged in', { user: toJson(user), context: 'useResetToken', loggedInUser: toJson(req.user) });
                 done(error, user);
               }
             });
           });
         } else {
-          log.info('User Reset Password Token Not found', { user: user, context: 'useResetToken'});
+          log.info('User Reset Password Token Not found', { user: toJson(user), context: 'useResetToken'});
           res.sendStatus(404);
           return;
         }
@@ -195,10 +201,10 @@ router.post('/reset/:token', function(req, res) {
     }
   ], function(error) {
     if (error) {
-      log.error('User Reset Password Token Error', { user: null, context: 'useResetToken', loggedInUser: req.user, err: error, errorStatus: 500 });
+      log.error('User Reset Password Token Error', { user: null, context: 'useResetToken', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
       res.sendStatus(500);
     } else {
-      log.info('User Reset Password Completed', { user: user, context: 'useResetToken', loggedInUser: req.user });
+      log.info('User Reset Password Completed', { user: user, context: 'useResetToken', loggedInUser: toJson(req.user) });
       res.sendStatus(200);
     }
   });
@@ -211,7 +217,7 @@ router.get('/auth/facebook', passport.authenticate('facebook'));
 router.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/' }),
   function(req, res) {
-    log.info('User Logged in from Facebook', { user: req.user, context: 'facebookCallback' });
+    log.info('User Logged in from Facebook', { user: toJson(req.user), context: 'facebookCallback' });
     res.sendStatus(200);
   });
 
@@ -222,7 +228,7 @@ router.get('/auth/twitter',
 router.get('/auth/twitter/callback',
   passport.authenticate('twitter', { failureRedirect: '/' }),
   function(req, res) {
-    log.info('User Logged in from Twitter', { user: req.user, context: 'twitterCallback' });
+    log.info('User Logged in from Twitter', { user: toJson(req.user), context: 'twitterCallback' });
     res.sendStatus(200);
   });
 
@@ -232,10 +238,20 @@ router.get('/auth/google', passport.authenticate('google', { scope: 'https://www
 router.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   function(req, res) {
-    log.info('User Logged in from Google', { user: req.user, context: 'googleCallback' });
+    log.info('User Logged in from Google', { user: toJson(req.user), context: 'googleCallback' });
     res.sendStatus(200);
   });
 
+// GitHub Authentication
+app.get('/auth/github',
+  passport.authenticate('github'));
+
+app.get('/auth/github/callback',
+  passport.authenticate('github', { failureRedirect: '/' }),
+  function(req, res) {
+    log.info('User Logged in from GitHub', { user: toJson(req.user), context: 'githubCallback' });
+    res.sendStatus(200);
+  });
 /*
 router.get('/:id/endorsements', auth.can('view user'), function (req, res) {
   models.Endorsement.findAll({

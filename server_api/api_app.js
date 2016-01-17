@@ -25,8 +25,9 @@ var users = require('./controllers/users');
 var categories = require('./controllers/categories');
 var images = require('./controllers/images');
 var models = require('./models');
-var user = require('./authorization');
+var auth = require('./authorization');
 var log = require('./utils/logger');
+var toJson = require('./utils/to_json');
 
 var app = express();
 
@@ -72,10 +73,10 @@ passport.deserializeUser(function(id, done) {
       }
     ]
   }).then(function(user) {
-    log.info("User Deserialized", { context: 'deserializeUser', user: user});
+    log.info("User Deserialized", { context: 'deserializeUser', user: toJson(user)});
     done(null, user);
   }).catch(function(error) {
-    log.error("User Deserialize Error", { context: 'deserializeUser', user: req.user, err: error, errorStatus: 500 });
+    log.error("User Deserialize Error", { context: 'deserializeUser', user: toJson(req.user), err: error, errorStatus: 500 });
     done(error);
   });
 });
@@ -92,11 +93,11 @@ passport.use(new LocalStrategy(
         if (user) {
           user.validatePassword(password, done);
         } else {
-          log.warning("User LocalStrategy Incorrect username", { context: 'localStrategy', user: user, err: 'Incorrect username', errorStatus: 401 });
+          log.warning("User LocalStrategy Incorrect username", { context: 'localStrategy', user: toJson(user), err: 'Incorrect username', errorStatus: 401 });
           return done(null, false, { message: 'Incorrect username.' });
         }
       }).catch(function(error) {
-        log.error("User LocalStrategy Error", { context: 'localStrategy', user: req.user, err: error, errorStatus: 500 });
+        log.error("User LocalStrategy Error", { context: 'localStrategy', user: toJson(req.user), err: error, errorStatus: 500 });
         done(error);
       });
     }
@@ -116,7 +117,7 @@ if (process.env.FACEBOOK_APP_ID) {
       User.findOrCreate({where: { facebook_id: profile.id },
           defaults: { email: email, name: profile.displayName, facebook_profile: profile }})
         .spread(function(user, created) {
-          log.info(created ? "User Created from Facebook" : "User Connected to Facebook", { context: 'loginFromFacebook', user: user});
+          log.info(created ? "User Created from Facebook" : "User Connected to Facebook", { context: 'loginFromFacebook', user: toJson(user)});
           done(error, user)
         }).catch(function (error) {
         done(error);
@@ -137,7 +138,7 @@ if (process.env.TWITTER_CONSUMER_KEY) {
       User.findOrCreate({where: { twitter_id: profile.id },
           defaults: { email: email, name: profile.displayName, twitter_profile: profile }})
         .spread(function(user, created) {
-          log.info(created ? "User Created from Twitter" : "User Connected to Twitter", { context: 'loginFromTwitter', user: user});
+          log.info(created ? "User Created from Twitter" : "User Connected to Twitter", { context: 'loginFromTwitter', user: toJson(user)});
           done(error, user)
         }).catch(function (error) {
         done(error);
@@ -158,7 +159,7 @@ if (process.env.GOOGLE_CONSUMER_KEY) {
       User.findOrCreate({where: { google_id: profile.id },
           defaults: { email: email, name: profile.displayName, google_profile: profile }})
         .spread(function(user, created) {
-          log.info(created ? "User Created from Google" : "User Connected to Google", { context: 'loginFromGoogle', user: user});
+          log.info(created ? "User Created from Google" : "User Connected to Google", { context: 'loginFromGoogle', user: toJson(user)});
           done(error, user)
         }).catch(function (error) {
         done(error);
@@ -179,7 +180,7 @@ if (process.env.GITHUB_CLIENT_ID) {
       User.findOrCreate({where: { github_id: profile.id },
           defaults: { email: email, name: profile.displayName, github_profile: profile }})
         .spread(function(user, created) {
-          log.info(created ? "User Created from Github" : "User Connected to Github", { context: 'loginFromGoogle', user: user});
+          log.info(created ? "User Created from Github" : "User Connected to Github", { context: 'loginFromGoogle', user: toJson(user)});
           done(error, user)
         }).catch(function (error) {
         done(error);
@@ -191,7 +192,7 @@ if (process.env.GITHUB_CLIENT_ID) {
 // Setup the current domain from the host
 app.use(function (req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
-    log.info("Setup Domain Completed", { context: 'setYpDomain', domain: req.ypDomain });
+    log.info("Setup Domain Completed", { context: 'setYpDomain', domain: toJson(req.ypDomain) });
     next();
   });
 });
@@ -199,7 +200,7 @@ app.use(function (req, res, next) {
 // Setup the current community from the host
 app.use(function (req, res, next) {
   models.Community.setYpCommunity(req, res, function () {
-    log.info("Setup Community Completed", { context: 'setYpCommunity', community: req.ypCommunity });
+    log.info("Setup Community Completed", { context: 'setYpCommunity', community: toJson(req.ypCommunity) });
     next();
   });
 });
@@ -216,7 +217,7 @@ app.use('/api/users', users);
 
 app.use(function(err, req, res, next) {
   if (err instanceof auth.UnauthorizedError) {
-    log.error("User Unauthorized", { context: 'unauthorizedError', user: req.user, err: 'Unauthorized', errorStatus: 401 });
+    log.error("User Unauthorized", { context: 'unauthorizedError', user: toJson(req.user), err: 'Unauthorized', errorStatus: 401 });
     res.sendStatus(401);
   } else {
     next(err);
@@ -227,7 +228,7 @@ app.use(function(err, req, res, next) {
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
-  log.warning("Not Found", { context: 'notFound', user: req.user, err: 'Not Found', errorStatus: 404 });
+  log.warning("Not Found", { context: 'notFound', user: toJson(req.user), err: 'Not Found', errorStatus: 404 });
   next(err);
 });
 
@@ -236,7 +237,7 @@ if (app.get('env') === 'development') {
   console.log("Development mode");
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    log.error("General Error", { context: 'generalError', user: req.user, err: err, errorStatus: 500 });
+    log.error("General Error", { context: 'generalError', user: toJson(req.user), err: err, errorStatus: 500 });
     res.send({
       message: err.message,
       error: err
@@ -245,7 +246,7 @@ if (app.get('env') === 'development') {
 } else {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    log.error("General Error", { context: 'generalError', user: req.user, err: err, errorStatus: 500 });
+    log.error("General Error", { context: 'generalError', user: toJson(req.user), err: err, errorStatus: 500 });
     res.send({
       message: err.message,
       error: {}

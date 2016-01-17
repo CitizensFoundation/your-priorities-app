@@ -6,6 +6,7 @@ var EmailTemplate = require('email-templates').EmailTemplate;
 var nodemailer = require('nodemailer');
 var ejs = require('ejs');
 var i18n = require('../utils/i18n');
+var toJson = require('../utils/to_json');
 
 var templatesDir = path.resolve(__dirname, '..', 'email_templates');
 

@@ -113,7 +113,8 @@ auth.role('domain.viewUser', function (domain, req, done) {
 });
 
 auth.entity('domain', function(req, done) {
-  var match = req.url.match(/^\/domains\/(\w+)/);
+  var match = req.url.match(/\/(\w+)/);
+  log.debug("URL", {url: req.url, match: match });
   if (!match) {
     done(new Error('Expected url like /domains/:domainId'));
   } else {

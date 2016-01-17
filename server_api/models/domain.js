@@ -76,7 +76,10 @@ module.exports = function(sequelize, DataTypes) {
 
       setYpDomain: function (req,res,next) {
         var domainName = Domain.extractDomain(req.headers.host);
-        Domain.findOrCreate({where: { domain_name: domainName }, defaults: { access: Domain.ACCESS_PUBLIC }})
+        Domain.findOrCreate({where: { domain_name: domainName },
+                                      defaults: { access: Domain.ACCESS_PUBLIC,
+                                                  default_locale: 'en',
+                                                  name: 'Your Priorities Domain' }})
             .spread(function(domain, created) {
               req.ypDomain = domain;
               next();

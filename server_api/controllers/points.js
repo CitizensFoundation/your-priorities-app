@@ -3,6 +3,7 @@ var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
 
 var changePointCounter = function (pointId, column, upDown, next) {
   models.Point.find({
@@ -44,10 +45,10 @@ var decrementOldPointQualityCountersIfNeeded = function (oldPointQualityValue, p
 var sendPointOrError = function (res, point, context, user, error, errorStatus) {
   if (error || !point) {
     if (errorStatus == 404) {
-      log.warning("Point Not Found", { context: context, point: point, user: user, err: error,
+      log.warning("Point Not Found", { context: context, point: toJson(point), user: toJson(user), err: error,
                                        errorStatus: 404 });
     } else {
-      log.error("Point Error", { context: context, point: point, user: user, err: error,
+      log.error("Point Error", { context: context, point: toJson(point), user: toJson(user), err: error,
                                  errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {
@@ -69,7 +70,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
     user_id: req.user.id
   });
   point.save().then(function() {
-    log.info('Point Created', { point: point, context: 'create', user: req.user });
+    log.info('Point Created', { point: toJson(point), context: 'create', user: toJson(req.user) });
     var pointRevision = models.PointRevision.build({
       group_id: point.group_id,
       post_id: point.post_id,
@@ -78,7 +79,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
       point_id: point.id
     });
     pointRevision.save().then(function() {
-      log.info('PointRevision Created', { pointRevision: pointRevision, context: 'create', user: req.user });
+      log.info('PointRevision Created', { pointRevision: toJson(pointRevision), context: 'create', user: toJson(req.user) });
       models.Point.find({
         where: { id: point.id },
         include: [
@@ -124,7 +125,7 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
       })
     }
     pointQuality.save().then(function() {
-      log.info('PointQuality Created or Updated', { pointQuality: pointQuality, context: 'createOrUpdate', user: req.user });
+      log.info('PointQuality Created or Updated', { pointQuality: toJson(pointQuality), context: 'createOrUpdate', user: toJson(req.user) });
       decrementOldPointQualityCountersIfNeeded(oldPointQualityValue, req.params.id, pointQuality, function () {
         if (pointQuality.value>0) {
           changePointCounter(req.params.id, 'counter_quality_up', 1, function () {
@@ -135,7 +136,7 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
             res.send({ pointQuality: pointQuality, oldPointQualityValue: oldPointQualityValue });
           })
         } else {
-          log.error('PointQuality Error', { pointQuality: pointQuality, context: 'createOrUpdate', user: req.user });
+          log.error('PointQuality Error', { pointQuality: toJson(pointQuality), context: 'createOrUpdate', user: toJson(req.user) });
           res.status(500);
         }
       })
@@ -156,7 +157,7 @@ router.delete('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), f
       pointQuality.value = 0;
       //pointQuality.deleted = true;
       pointQuality.save().then(function() {
-        log.info('PointQuality Deleted', { pointQuality: pointQuality, context: 'delete', user: req.user });
+        log.info('PointQuality Deleted', { pointQuality: toJson(pointQuality), context: 'delete', user: toJson(req.user) });
         if (oldPointQualityValue>0) {
           changePointCounter(req.params.id, 'counter_quality_up', -1, function () {
             res.status(200).send({ pointQuality: pointQuality, oldPointQualityValue: oldPointQualityValue });
@@ -171,7 +172,7 @@ router.delete('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), f
         }
       });
     } else {
-      log.error('PointQuality Not Found', { pointQuality: pointQuality, context: 'delete', user: req.user });
+      log.error('PointQuality Not Found', { pointQuality: toJson(pointQuality), context: 'delete', user: toJson(req.user) });
       res.sendStatus(404);
     }
   });

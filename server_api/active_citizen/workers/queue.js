@@ -4,6 +4,7 @@ var kue = require('kue')
 var log = require('../utils/logger');
 var email = require('./email');
 var activity = require('./activity');
+var toJson = require('../utils/to_json');
 
 // make sure we use the Heroku Redis To Go URL
 // (put REDISTOGO_URL=redis://localhost:6379 in .env for local testing)

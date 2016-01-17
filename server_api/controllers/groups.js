@@ -3,14 +3,15 @@ var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
 
 var sendGroupOrError = function (res, group, context, user, error, errorStatus) {
   if (error || !group) {
     if (errorStatus == 404) {
-      log.warning("Group Not Found", { context: context, group: group, user: user, err: error,
+      log.warning("Group Not Found", { context: context, group: toJson(group), user: toJson(user), err: error,
                                        errorStatus: 404 });
     } else {
-      log.error("Group Error", { context: context, group: group, user: user, err: error,
+      log.error("Group Error", { context: context, group: toJson(group), user: toJson(user), err: error,
                                  errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {
@@ -34,7 +35,7 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
   });
 
   group.save().then(function(group) {
-    log.info('Group Created', { group: group, context: 'create', user: req.user });
+    log.info('Group Created', { group: toJson(group), context: 'create', user: toJson(req.user) });
     group.updateAllExternalCounters(req, 'up', function () {
       models.Group.addUserToGroupIfNeeded(group.id, req, function () {
         group.setupImages(req.body, function(error) {
@@ -56,7 +57,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       group.objectives = req.body.objectives;
       group.access = models.Community.convertAccessFromRadioButtons(req.body);
       group.save().then(function () {
-        log.info('Group Updated', { group: group, context: 'update', user: req.user });
+        log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
         group.setupImages(req.body, function(error) {
           sendGroupOrError(res, group, 'setupImages', req.user, error);
         });
@@ -76,7 +77,7 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
     if (group) {
       group.deleted = true;
       group.save().then(function () {
-        log.info('Group Deleted', { group: group, context: 'delete', user: req.user });
+        log.info('Group Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
         group.updateAllExternalCounters(req, 'down', function () {
           res.sendStatus(200);
         });
@@ -116,7 +117,7 @@ router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
     ]
   }).then(function(group) {
     if (group) {
-      log.info('Group Viewed', { group: group, context: 'view', user: req.user });
+      log.info('Group Viewed', { group: toJson(group), context: 'view', user: toJson(req.user) });
       models.Post.search(req.params.term,req.params.id, models.Category).then(function(posts) {
         res.send({group: group, Posts: posts});
       });
@@ -180,7 +181,7 @@ router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(r
     ]
   }).then(function(group) {
     if (group) {
-      log.info('Group Viewed', { group: group, context: 'view', user: req.user });
+      log.info('Group Viewed', { group: toJson(group), context: 'view', user: toJson(req.user) });
       models.Post.findAll({
         where: [where, []],
         order: [
@@ -221,7 +222,7 @@ router.get('/:id/categories', auth.can('view group'), function(req, res) {
     limit: 20
   }).then(function(categories) {
     if (categories) {
-      log.info('Group Categories Viewed', { group: req.params.id, context: 'view', user: req.user });
+      log.info('Group Categories Viewed', { group: req.params.id, context: 'view', user: toJson(req.user) });
       res.send(categories);
     } else {
       sendGroupOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
