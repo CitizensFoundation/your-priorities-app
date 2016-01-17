@@ -6,7 +6,7 @@
 // elastic search through the logs. Based on https://www.w3.org/TR/activitystreams-core/
 
 var log = require('../utils/logger');
-var jobs = require('./jobs');
+var jobs = require('../workers/queue');
 
 var setupDefaultAssociations = function (user, domain, community, done) {
   async.paralell([

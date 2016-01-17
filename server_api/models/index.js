@@ -21,13 +21,15 @@ fs
 
 // Read from active citizen,
 // TODO Load from npm module if not found locally
+
+var acDirname = __dirname+'/../active_citizen/models';
 fs
-  .readdirSync(__dirname+'/../active_citizen/models')
+  .readdirSync(acDirname)
   .filter(function(file) {
      return (file.indexOf(".") !== 0);
   })
   .forEach(function(file) {
-    var model = sequelize["import"](path.join(__dirname, file));
+    var model = sequelize["import"](path.join(acDirname, file));
     db[model.name] = model;
   });
 
