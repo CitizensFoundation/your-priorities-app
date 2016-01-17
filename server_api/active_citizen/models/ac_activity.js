@@ -38,7 +38,8 @@ module.exports = function(sequelize, DataTypes) {
     type: { type: DataTypes.INTEGER, allowNull: false },
     object: DataTypes.JSONB,
     actor: DataTypes.JSONB,
-    target: DataTypes.JSONB
+    target: DataTypes.JSONB,
+    user_interaction_profile: DataTypes.JSONB
   }, {
 
     underscored: true,

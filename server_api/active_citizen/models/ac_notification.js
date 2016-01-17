@@ -9,7 +9,8 @@ module.exports = function(sequelize, DataTypes) {
     type: { type: DataTypes.INTEGER, allowNull: false },
     access: { type: DataTypes.INTEGER, allowNull: false },
     sent_email: { type: DataTypes.INTEGER, allowNull: false, default: false },
-    sent_push: { type: DataTypes.INTEGER, allowNull: false, default: false }
+    sent_push: { type: DataTypes.INTEGER, allowNull: false, default: false },
+    user_interaction_profile: DataTypes.JSONB
   }, {
     underscored: true,
 

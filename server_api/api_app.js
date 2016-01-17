@@ -115,6 +115,7 @@ passport.use(new FacebookStrategy({
     User.findOrCreate({where: { facebook_id: profile.id },
                        defaults: { email: email, name: profile.displayName, facebook_profile: profile }})
       .spread(function(user, created) {
+        log.info(created ? "User Created from Facebook" : "User Connected to Facebook", { context: 'loginFromFacebook', user: user});
         done(error, user)
       }).catch(function (error) {
         done(error);
@@ -133,6 +134,7 @@ passport.use(new TwitterStrategy({
     User.findOrCreate({where: { twitter_id: profile.id },
         defaults: { email: email, name: profile.displayName, twitter_profile: profile }})
       .spread(function(user, created) {
+        log.info(created ? "User Created from Twitter" : "User Connected to Twitter", { context: 'loginFromTwitter', user: user});
         done(error, user)
       }).catch(function (error) {
       done(error);
@@ -151,6 +153,7 @@ passport.use(new GoogleStrategy({
     User.findOrCreate({where: { google_id: profile.id },
         defaults: { email: email, name: profile.displayName, google_profile: profile }})
       .spread(function(user, created) {
+        log.info(created ? "User Created from Google" : "User Connected to Google", { context: 'loginFromGoogle', user: user});
         done(error, user)
       }).catch(function (error) {
       done(error);
@@ -169,6 +172,7 @@ passport.use(new GitHubStrategy({
     User.findOrCreate({where: { github_id: profile.id },
         defaults: { email: email, name: profile.displayName, github_profile: profile }})
       .spread(function(user, created) {
+        log.info(created ? "User Created from Github" : "User Connected to Github", { context: 'loginFromGoogle', user: user});
         done(error, user)
       }).catch(function (error) {
       done(error);
