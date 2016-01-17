@@ -6,7 +6,7 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
-  if (error || !group) {
+  if (error || !community) {
     if (errorStatus == 404) {
       log.warn("Community Not Found", { context: context, community: toJson(community), user: toJson(user), err: error,
         errorStatus: 404 });
@@ -82,13 +82,24 @@ router.get('/:id', auth.can('view community'), function(req, res) {
 });
 
 router.post('/:domainId', auth.can('create community'), function(req, res) {
+  var hostname;
+  if (req.hostname=='localhost') {
+    hostname = 'localhost';
+  } else {
+    hostname = sequelize.models.Domain.extractHost(req.headers.host);
+  }
+  var admin_email = req.user.email;
+  var admin_name = "Administrator";
   var community = models.Community.build({
     name: req.body.name,
     description: req.body.description,
     access: models.Community.convertAccessFromRadioButtons(req.body),
     domain_id: req.params.domainId,
     user_id: req.user.id,
-    website: req.body.website
+    hostname: hostname,
+    website: req.body.website,
+    admin_email: admin_email,
+    admin_name: admin_name
   });
   community.save().then(function() {
     log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });

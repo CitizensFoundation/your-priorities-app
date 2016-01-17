@@ -84,17 +84,6 @@ app.use(function (req, res, next) {
 
 passport.serializeUser(function(user, done) {
   log.info("User Serialized", { context: 'deserializeUser', userEmail: user.email, userId: user.id });
-  models.User.find({
-    where: {id: user.id}
-  }).then(function(user) {
-    if (user) {
-      log.info("User Deserialized", { context: 'deserializeUser', user: toJson(user)});
-    } else {
-      log.error("User Deserialized Not found", { context: 'deserializeUser' });
-    }
-  }).catch(function(error) {
-    log.error("User Deserialize Error", { context: 'deserializeUser', user: id, err: error, errorStatus: 500 });
-  });
   done(null, user.id);
 });
 
@@ -102,23 +91,26 @@ passport.deserializeUser(function(id, done) {
   models.User.find({
     where: {id: id},
     attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id", "buddy_icon_file_name"],
-    include: [
-      {
-        model: models.Endorsement,
-        attributes: ['id', 'value', 'post_id']
-      },
-      {
-        model: models.PointQuality,
-        attributes: ['id', 'value', 'point_id']
-      },
-      {
-        model: models.Image, as: 'UserProfileImages'
-      },
-      {
-        model: models.Image, as: 'UserHeaderImages'
-      }
-    ]
-  }).then(function(user) {
+    include: [{
+      model: models.Endorsement,
+      attributes: ['id', 'value', 'post_id'],
+      required: false
+    },
+    {
+      model: models.PointQuality,
+      attributes: ['id', 'value', 'point_id'],
+      required: false
+    },
+    {
+      model: models.Image, as: 'UserProfileImages',
+      required: false
+    },
+    {
+      model: models.Image, as: 'UserHeaderImages',
+      required: false
+    }
+  ]
+}).then(function(user) {
     if (user) {
       log.info("User Deserialized", { context: 'deserializeUser', user: toJson(user)});
       done(null, user);
