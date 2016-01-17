@@ -8,7 +8,6 @@ module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define("User", {
     name: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: true },
-    username: { type: DataTypes.STRING, allowNull: false },
     facebook_id: DataTypes.INTEGER,
     facebook_profile: DataTypes.JSONB,
     twitter_id: DataTypes.INTEGER,
@@ -23,8 +22,11 @@ module.exports = function(sequelize, DataTypes) {
     default_locale: DataTypes.STRING,
     reset_password_token: DataTypes.STRING,
     reset_password_expires: DataTypes.DATE,
-    email_notifications_threshold: { type: DataTypes.BOOLEAN, allowNull: false, default: true },
-    push_notifications_threshold: { type: DataTypes.BOOLEAN, allowNull: false, default: true }
+    email_notifications_profile: { type: DataTypes.JSON },
+    push_notifications_profile: { type: DataTypes.JSON },
+    interaction_profile: DataTypes.JSONB,
+    counter_login: { type: DataTypes.INTEGER, defaultValue: 0 },
+    last_login_at: DataTypes.DATE
   }, {
     underscored: true,
 

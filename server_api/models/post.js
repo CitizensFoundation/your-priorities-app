@@ -21,7 +21,8 @@ module.exports = function(sequelize, DataTypes) {
     position: DataTypes.INTEGER,
     location: DataTypes.JSONB,
     cover_media_type: DataTypes.STRING,
-    legacy_post_id: DataTypes.INTEGER
+    legacy_post_id: DataTypes.INTEGER,
+    user_interaction_profile: DataTypes.JSONB
   }, {
 
     defaultScope: {
