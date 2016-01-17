@@ -2,7 +2,7 @@
 
 module.exports = function(sequelize, DataTypes) {
   var Point = sequelize.define("Point", {
-    name: { type: DataTypes.STRING, allowNull: false },
+    name: { type: DataTypes.STRING, allowNull: true },
     content: { type: DataTypes.TEXT, allowNull: false },
     value: { type: DataTypes.INTEGER, allowNull: false },
     counter_quality_up: { type: DataTypes.INTEGER, defaultValue: 0 },

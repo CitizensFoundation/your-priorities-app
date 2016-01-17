@@ -160,9 +160,11 @@ router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(r
     include: [
       {
         model: models.Category,
+        required: false,
         include: [
           {
             model: models.Image,
+            required: false,
             as: 'CategoryIconImages',
             order: [
               [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
@@ -171,7 +173,8 @@ router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(r
         ]
       },
       {
-        model: models.Image, as: 'GroupLogoImages'
+        model: models.Image, as: 'GroupLogoImages',
+        required: false
       },
       {
         model: models.User, as: 'GroupUsers',

@@ -186,13 +186,13 @@ module.exports = function(sequelize, DataTypes) {
         var thisRevision = sequelize.models.PostRevision.build({
           name: post.name,
           description: post.description,
-          group_id: post.groupId,
+          group_id: post.group_id,
           user_id: req.user.id,
           this_id: post.id
         });
         thisRevision.save().then(function() {
           var point = sequelize.models.Point.build({
-            group_id: post.groupId,
+            group_id: post.group_id,
             post_id: post.id,
             content: req.body.pointFor,
             value: 1,
@@ -200,7 +200,7 @@ module.exports = function(sequelize, DataTypes) {
           });
           point.save().then(function() {
             var pointRevision = sequelize.models.PointRevision.build({
-              group_id: point.groupId,
+              group_id: point.group_id,
               post_id: post.id,
               content: point.content,
               user_id: req.user.id,

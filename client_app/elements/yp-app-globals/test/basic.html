@@ -125,7 +125,6 @@
       globals.openDialog("this.is.test");
 
       Polymer.Base.async(function() {
-        debugger;
         expect(defaultDialog.opened).to.be.equal(true);
         expect(defaultDialog.innerHTML).to.include("this.is.test");
         var defaultOkButton = globals.querySelector('#defaultOkButton');
