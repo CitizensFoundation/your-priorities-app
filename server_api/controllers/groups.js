@@ -8,7 +8,7 @@ var toJson = require('../utils/to_json');
 var sendGroupOrError = function (res, group, context, user, error, errorStatus) {
   if (error || !group) {
     if (errorStatus == 404) {
-      log.warning("Group Not Found", { context: context, group: toJson(group), user: toJson(user), err: error,
+      log.warn("Group Not Found", { context: context, group: toJson(group), user: toJson(user), err: error,
                                        errorStatus: 404 });
     } else {
       log.error("Group Error", { context: context, group: toJson(group), user: toJson(user), err: error,

@@ -8,7 +8,7 @@ var toJson = require('../utils/to_json');
 var sendCategoryOrError = function (res, category, context, user, error, errorStatus) {
   if (error || !category) {
     if (errorStatus == 404) {
-      log.warning("Category Not Found", { context: context, category: toJson(category), user: toJson(user), err: error,
+      log.warn("Category Not Found", { context: context, category: toJson(category), user: toJson(user), err: error,
         errorStatus: 404 });
     } else {
       log.error("Category Error", { context: context, group: toJson(group), user: toJson(user), err: error,

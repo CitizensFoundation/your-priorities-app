@@ -10,7 +10,7 @@ var toJson = require('../utils/to_json');
 // (put REDISTOGO_URL=redis://localhost:6379 in .env for local testing)
 
 kue.redis.createClient = function() {
-  var redisUrl = url.parse(process.env.REDISTOGO_URL)
+  var redisUrl = url.parse(process.env.REDIS_URL ? process.env.REDIS_URL : "localhost:6379")
     , client = redis.createClient(redisUrl.port, redisUrl.hostname);
   if (redisUrl.auth) {
     client.auth(redisUrl.auth.split(":")[1]);

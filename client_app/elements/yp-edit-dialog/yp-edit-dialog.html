@@ -89,7 +89,7 @@
       }
     </style>
 
-    <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop$="[[!narrowPad]]">
+    <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop$="[[!narrowPad]]" modal>
       <iron-media-query query="(max-width: 600px)" query-matches="{{narrow}}"></iron-media-query>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
 
@@ -254,6 +254,7 @@
       },
 
       _submit: function() {
+        debugger;
         if (this.params && this.params.communityId) {
           this.action = this.baseAction + '/'+this.params.communityId;
         } else if (this.params && this.params.groupId) {

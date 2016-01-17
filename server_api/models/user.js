@@ -8,6 +8,7 @@ module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define("User", {
     name: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: true },
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     facebook_id: DataTypes.INTEGER,
     facebook_profile: DataTypes.JSONB,
     twitter_id: DataTypes.INTEGER,
@@ -33,6 +34,12 @@ module.exports = function(sequelize, DataTypes) {
     timestamps: true,
 
     tableName: 'users',
+
+    defaultScope: {
+      where: {
+        deleted: false
+      }
+    },
 
     indexes: [
       {

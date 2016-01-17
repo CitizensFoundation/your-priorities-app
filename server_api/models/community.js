@@ -104,7 +104,7 @@ module.exports = function(sequelize, DataTypes) {
               req.ypCommunity = community;
               next();
             } else {
-              log.warning('Cant find community', { user: toJson(req.user), context: 'setYpCommunity', err: 'Community not found', errorStatus: 404 });
+              log.warn('Cant find community', { user: toJson(req.user), context: 'setYpCommunity', err: 'Community not found', errorStatus: 404 });
               res.sendStatus(404);
             }
           }.bind(this));

@@ -57,7 +57,7 @@ auth.role('user.admin', function (user, req, done) {
 });
 
 auth.entity('user', function(req, done) {
-  var match = req.url.match(/^\/users\/(\w+)/);
+  var match = req.originalUrl.match(/^\/api\/users\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /users/:userId'));
   } else {
@@ -113,8 +113,7 @@ auth.role('domain.viewUser', function (domain, req, done) {
 });
 
 auth.entity('domain', function(req, done) {
-  var match = req.url.match(/\/(\w+)/);
-  log.debug("URL", {url: req.url, match: match });
+  var match = req.originalUrl.match(/^\/api\/domains\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /domains/:domainId'));
   } else {
@@ -170,7 +169,7 @@ auth.role('community.viewUser', function (community, req, done) {
 });
 
 auth.entity('community', function(req, done) {
-  var match = req.url.match(/^\/communities\/(\w+)/);
+  var match = req.originalUrl.match(/^\/api\/communities\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /communities/:communityId'));
   } else {
@@ -227,7 +226,7 @@ auth.role('group.viewUser', function (group, req, done) {
 });
 
 auth.entity('group', function(req, done) {
-  var match = req.url.match(/^\/groups\/(\w+)/);
+  var match = req.originalUrl.match(/^\/api\/groups\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /groups/:groupId'));
   } else {
@@ -292,7 +291,7 @@ auth.role('post.viewUser', function (post, req, done) {
 });
 
 auth.entity('post', function(req, done) {
-  var match = req.url.match(/^\/posts\/(\w+)/);
+  var match = req.originalUrl.match(/^\/api\/posts\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /posts/:postId'));
   } else {
@@ -357,7 +356,7 @@ auth.role('point.viewUser', function (point, req, done) {
 });
 
 auth.entity('point', function(req, done) {
-  var match = req.url.match(/^\/points\/(\w+)/);
+  var match = req.originalUrl.match(/^\/api\/points\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /points/:pointId'));
   } else {
@@ -422,7 +421,7 @@ auth.role('category.viewUser', function (category, req, done) {
 });
 
 auth.entity('category', function(req, done) {
-  var match = req.url.match(/^\/categories\/(\w+)/);
+  var match = req.originalUrl.match(/^\/api\/categories\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /categories/:categoryId'));
   } else {
@@ -440,7 +439,7 @@ auth.role('createGroupCategory.createCategory', function (group, req, done) {
 });
 
 auth.entity('createGroupCategory', function(req, done) {
-  var match = req.url.match(/^\/categories\/(\w+)/);
+  var match = req.originalUrl.match(/^\/api\/categories\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /categories/:groupId'));
   } else {
@@ -456,7 +455,7 @@ auth.role('createGroupPost.createPost', function (group, req, done) {
 });
 
 auth.entity('createGroupPost', function(req, done) {
-  var match = req.url.match(/^\/posts\/(\w+)/);
+  var match = req.originalUrl.match(/^\/api\/posts\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /posts/:groupId'));
   } else {
@@ -472,7 +471,7 @@ auth.role('createGroupPoint.createPoint', function (group, req, done) {
 });
 
 auth.entity('createGroupPoint', function(req, done) {
-  var match = req.url.match(/^\/points\/(\w+)/);
+  var match = req.originalUrl.match(/^\/api\/points\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /points/:groupId'));
   } else {
@@ -506,7 +505,7 @@ auth.role('createCommunityGroup.createGroup', function (community, req, done) {
 });
 
 auth.entity('createCommunityGroup', function(req, done) {
-  var match = req.url.match(/^\/groups\/(\w+)/);
+  var match = req.originalUrl.match(/^\/api\/groups\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /groups/:communityId'));
   } else {
@@ -540,8 +539,7 @@ auth.role('createDomainCommunity.createCommunity', function (domain, req, done) 
 });
 
 auth.entity('createDomainCommunity', function(req, done) {
-  var match = req.url.match(/^\/communities\/(\w+)/);
-  log.info("url", {url: req.url, params: req.params});
+  var match = req.originalUrl.match(/^\/api\/communities\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /communities/:domainId'));
   } else {

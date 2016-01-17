@@ -3,10 +3,11 @@ var session = require('express-session');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
+//var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var ConnectRoles = require('connect-roles');
+var RedisStore = require('connect-redis')(session);
 
 var passport = require('passport')
     , LocalStrategy = require('passport-local').Strategy
@@ -29,6 +30,10 @@ var auth = require('./authorization');
 var log = require('./utils/logger');
 var toJson = require('./utils/to_json');
 
+if (process.env.REDISTOGO_URL) {
+  process.env.REDIS_URL = process.env.REDISTOGO_URL;
+}
+
 var app = express();
 
 if (app.get('env') === 'development') {
@@ -38,17 +43,58 @@ if (app.get('env') === 'development') {
 }
 
 app.use(morgan('combined'));
-app.use(cookieParser());
+//app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({ secret: 'keyboard cat' }));
+
+var sessionConfig = {
+    store: new RedisStore({url: process.env.REDIS_URL}),
+    name: 'yrpri.sid',
+    secret: process.env.SESSION_SECRET ? process.env.SESSION_SECRET : 'provide the env',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {}
+  };
+
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1); // trust first proxy
+  sessionConfig.cookie.secure = true; // serve secure cookies
+}
+
+app.use(session(sessionConfig));
 
 app.use(passport.initialize());
 app.use(passport.session());
-//app.use(user.middleware());
+
+// Setup the current domain from the host
+app.use(function (req, res, next) {
+  models.Domain.setYpDomain(req, res, function () {
+    log.info("Setup Domain Completed", { context: 'setYpDomain', domain: toJson(req.ypDomain) });
+    next();
+  });
+});
+
+// Setup the current community from the host
+app.use(function (req, res, next) {
+  models.Community.setYpCommunity(req, res, function () {
+    log.info("Setup Community Completed", { context: 'setYpCommunity', community: toJson(req.ypCommunity) });
+    next();
+  });
+});
 
 passport.serializeUser(function(user, done) {
   log.info("User Serialized", { context: 'deserializeUser', userEmail: user.email, userId: user.id });
+  models.User.find({
+    where: {id: user.id}
+  }).then(function(user) {
+    if (user) {
+      log.info("User Deserialized", { context: 'deserializeUser', user: toJson(user)});
+    } else {
+      log.error("User Deserialized Not found", { context: 'deserializeUser' });
+    }
+  }).catch(function(error) {
+    log.error("User Deserialize Error", { context: 'deserializeUser', user: id, err: error, errorStatus: 500 });
+  });
   done(null, user.id);
 });
 
@@ -73,8 +119,13 @@ passport.deserializeUser(function(id, done) {
       }
     ]
   }).then(function(user) {
-    log.info("User Deserialized", { context: 'deserializeUser', user: toJson(user)});
-    done(null, user);
+    if (user) {
+      log.info("User Deserialized", { context: 'deserializeUser', user: toJson(user)});
+      done(null, user);
+    } else {
+      log.error("User Deserialized Not found", { context: 'deserializeUser' });
+      done('User Deserialize Error');
+    }
   }).catch(function(error) {
     log.error("User Deserialize Error", { context: 'deserializeUser', user: id, err: error, errorStatus: 500 });
     done(error);
@@ -93,11 +144,11 @@ passport.use(new LocalStrategy(
         if (user) {
           user.validatePassword(password, done);
         } else {
-          log.warning("User LocalStrategy Incorrect username", { context: 'localStrategy', user: toJson(user), err: 'Incorrect username', errorStatus: 401 });
+          log.warn("User LocalStrategy Incorrect username", { context: 'localStrategy', user: toJson(user), err: 'Incorrect username', errorStatus: 401 });
           return done(null, false, { message: 'Incorrect username.' });
         }
       }).catch(function(error) {
-        log.error("User LocalStrategy Error", { context: 'localStrategy', user: toJson(req.user), err: error, errorStatus: 500 });
+        log.error("User LocalStrategy Error", { context: 'localStrategy', user: toJson(user), err: error, errorStatus: 500 });
         done(error);
       });
     }
@@ -189,22 +240,6 @@ if (process.env.GITHUB_CLIENT_ID) {
   ));
 }
 
-// Setup the current domain from the host
-app.use(function (req, res, next) {
-  models.Domain.setYpDomain(req, res, function () {
-    log.info("Setup Domain Completed", { context: 'setYpDomain', domain: toJson(req.ypDomain) });
-    next();
-  });
-});
-
-// Setup the current community from the host
-app.use(function (req, res, next) {
-  models.Community.setYpCommunity(req, res, function () {
-    log.info("Setup Community Completed", { context: 'setYpCommunity', community: toJson(req.ypCommunity) });
-    next();
-  });
-});
-
 app.use('/', index);
 app.use('/api/domains', domains);
 app.use('/api/communities', communities);
@@ -228,7 +263,7 @@ app.use(function(err, req, res, next) {
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
-  log.warning("Not Found", { context: 'notFound', user: toJson(req.user), err: 'Not Found', errorStatus: 404 });
+  log.warn("Not Found", { context: 'notFound', user: toJson(req.user), err: 'Not Found', errorStatus: 404 });
   next(err);
 });
 

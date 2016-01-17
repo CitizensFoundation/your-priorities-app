@@ -128,7 +128,7 @@
 
       _newCommunity: function () {
         window.appGlobals.activity('open', 'newCommunity');
-        this.$.communityNew.open('new');
+        this.$.communityNew.open('new', { domainId: this.domainId });
       },
 
       _response: function (event, detail, sender) {

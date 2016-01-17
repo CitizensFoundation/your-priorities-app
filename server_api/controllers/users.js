@@ -9,10 +9,10 @@ var toJson = require('../utils/to_json');
 var sendUserOrError = function (res, user, context, error, errorStatus) {
   if (error || !user) {
     if (errorStatus == 404) {
-      log.warning("User Not Found", { context: context, err: error, user: user,
+      log.warn("User Not Found", { context: context, err: error, user: user,
                                       errorStatus: 404 });
     } else {
-      log.error("User Error", { context: context, post: post, user: user, err: error,
+      log.error("User Error", { context: context, user: user, err: error,
                                 errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {
@@ -40,7 +40,7 @@ router.post('/register', function (req, res) {
   user.createPasswordHash(req.body.password);
   user.save().then(function () {
     log.info('User Created', { user: toJson(user), context: 'create', loggedInUser: toJson(req.user) });
-    req.logIn(user, function (error) {
+    req.logIn(user, function (error, detail) {
       sendUserOrError(res, user, 'registerUser', error, 401);
     });
   }).catch(function (error) {
@@ -81,7 +81,7 @@ router.post('/logout', function (req, res) {
   if (req.isAuthenticated()) {
     log.info('User Logging out', { user: toJson(req.user), context: 'logout'});
   } else {
-    log.warning('User Logging out vut not logged in', { user: toJson(req.user), context: 'logout'});
+    log.warn('User Logging out vut not logged in', { user: toJson(req.user), context: 'logout'});
   }
   req.logOut();
   res.sendStatus(200);

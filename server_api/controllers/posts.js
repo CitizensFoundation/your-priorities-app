@@ -42,7 +42,7 @@ var decrementOldCountersIfNeeded = function (req, oldEndorsementValue, postId, e
 var sendPostOrError = function (res, post, context, user, error, errorStatus) {
   if (error || !post) {
     if (errorStatus == 404) {
-      log.warning("Post Not Found", { context: context, post: toJson(post), user: toJson(user), err: error,
+      log.warn("Post Not Found", { context: context, post: toJson(post), user: toJson(user), err: error,
         errorStatus: 404 });
     } else {
       log.error("Post Error", { context: context, post: toJson(post), user: toJson(user), err: error,
@@ -192,7 +192,7 @@ router.get('/:id/endorsements', auth.can('view post'), function(req, res) {
       log.info('Endorsements Viewed', { endorsements: toJson(endorsements), context: 'view', user: toJson(req.user) });
       res.send(endorsements);
     } else {
-      log.warning("Endorsements Not found", { context: 'view', post: toJson(post), user: toJson(req.user),
+      log.warn("Endorsements Not found", { context: 'view', post: toJson(post), user: toJson(req.user),
         err: error, errorStatus: 404 });
     }
   }).catch(function(error) {
