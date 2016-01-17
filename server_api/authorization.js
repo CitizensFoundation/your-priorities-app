@@ -541,6 +541,7 @@ auth.role('createDomainCommunity.createCommunity', function (domain, req, done) 
 
 auth.entity('createDomainCommunity', function(req, done) {
   var match = req.url.match(/^\/communities\/(\w+)/);
+  log.info("url", {url: req.url, params: req.params});
   if (!match) {
     done(new Error('Expected url like /communities/:domainId'));
   } else {

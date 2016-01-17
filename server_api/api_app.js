@@ -55,7 +55,7 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(id, done) {
   models.User.find({
     where: {id: id},
-    attributes: ["id", "name", "email", "facebook_uid", "twitter_id", "google_id", "github_id", "buddy_icon_file_name"],
+    attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id", "buddy_icon_file_name"],
     include: [
       {
         model: models.Endorsement,
@@ -76,7 +76,7 @@ passport.deserializeUser(function(id, done) {
     log.info("User Deserialized", { context: 'deserializeUser', user: toJson(user)});
     done(null, user);
   }).catch(function(error) {
-    log.error("User Deserialize Error", { context: 'deserializeUser', user: toJson(req.user), err: error, errorStatus: 500 });
+    log.error("User Deserialize Error", { context: 'deserializeUser', user: id, err: error, errorStatus: 500 });
     done(error);
   });
 });

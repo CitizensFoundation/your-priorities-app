@@ -85,7 +85,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
         include: [
           { model: models.PointRevision ,
             include: [
-              { model: models.User, attributes: ["id", "name", "facebook_uid", "buddy_icon_file_name"] }
+              { model: models.User, attributes: ["id", "name", "facebook_id", "buddy_icon_file_name"] }
             ]
           }
         ]
