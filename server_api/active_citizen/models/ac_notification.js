@@ -1,6 +1,6 @@
 "use strict";
 
-var jobs = require('./jobs');
+var queue = require('../workers/queue');
 var log = require('../utils/logger');
 
 module.exports = function(sequelize, DataTypes) {
@@ -60,7 +60,7 @@ module.exports = function(sequelize, DataTypes) {
                 log.error('Notification Creation Error', { err: err, user: user });
                 done();
               } else {
-                jobs.create('process-notification', notification).priority('critical').removeOnComplete(true).save();
+                queue.create('process-notification', notification).priority('critical').removeOnComplete(true).save();
                 log.info('Notification Created', { notification: notification, user: user });
                 done();
               }

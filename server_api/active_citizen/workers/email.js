@@ -9,21 +9,23 @@ var i18n = require('../utils/i18n');
 
 var templatesDir = path.resolve(__dirname, '..', 'email_templates');
 
-ejs.filters.t = function(text) {
+var i18nFilter = function(text) {
   return i18n.t(text);
 };
 
 var transport = nodemailer.createTransport({
   service: 'sendgrid',
   auth: {
-    user: 'some-user@gmail.com',
-    pass: 'some-password'
+    user: process.env.SENDGRID_USERNAME,
+    pass: process.env.SENDGRID_PASSWORD
   }
 });
 
 EmailWorker.prototype.sendOne = function (emailLocals, done) {
 
   var template = new EmailTemplate(path.join(templatesDir, emailLocals.template));
+
+  emailLocals['t'] = i18nFilter;
 
   template.render(emailLocals, function (err, results) {
     if (err) {

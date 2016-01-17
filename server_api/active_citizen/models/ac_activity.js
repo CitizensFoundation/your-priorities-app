@@ -6,7 +6,7 @@
 // elastic search through the logs. Based on https://www.w3.org/TR/activitystreams-core/
 
 var log = require('../utils/logger');
-var jobs = require('../workers/queue');
+var queue = require('../workers/queue');
 
 var setupDefaultAssociations = function (user, domain, community, done) {
   async.paralell([
@@ -86,7 +86,7 @@ module.exports = function(sequelize, DataTypes) {
                 log.error('Activity Creation Error', err);
                 done('Activity Creation Error');
               } else {
-                jobs.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
+                queue.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
                 log.info('Activity Created', { activity: activity, user: user });
                 done(null);
               }
@@ -120,7 +120,7 @@ module.exports = function(sequelize, DataTypes) {
                 log.error('Activity Creation Error', err);
                 done('Activity Creation Error');
               } else {
-                jobs.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
+                queue.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
                 log.info('Activity Created', { activity: activity, user: user });
                 done(null);
               }

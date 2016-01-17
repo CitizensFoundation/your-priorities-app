@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'user_legacy_passwords',
     classMethods: {
       associate: function(models) {
-        Point.belongsTo(models.User);
+        UserLegacyPassword.belongsTo(models.User);
       }
     }
   });
