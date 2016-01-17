@@ -256,7 +256,7 @@ router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(
       })
     }
     endorsement.save().then(function() {
-      log.info('Endorsements Created', { endorsements: toJson(endorsements), context: 'create', user: toJson(req.user) });
+      log.info('Endorsements Created', { endorsement: toJson(endorsement), context: 'create', user: toJson(req.user) });
       decrementOldCountersIfNeeded(req, oldEndorsementValue, req.params.id, endorsement, function () {
         if (endorsement.value>0) {
           changePostCounter(req, req.params.id, 'counter_endorsements_up', 1, function () {
@@ -267,7 +267,7 @@ router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(
             res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
           })
         } else {
-          log.error("Endorsements Error State", { context: 'create', endorsements: toJson(endorsements), user: toJson(req.user),
+          log.error("Endorsements Error State", { context: 'create', endorsement: toJson(endorsement), user: toJson(req.user),
                                                   err: error, errorStatus: 500 });
           res.sendStatus(500);
         }
