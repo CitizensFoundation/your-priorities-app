@@ -1,0 +1,258 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+
+  Array.prototype.chunk = function(chunkSize) {
+    var array=this;
+    return [].concat.apply([],
+            array.map(function(elem,i) {
+              return i%chunkSize ? [] : [array.slice(i,i+chunkSize)];
+            })
+    );
+  };
+
+  /*
+   Polymer.appHelpers for app functions
+   @polymerBehavior
+   */
+  Polymer.appHelpers = {
+
+    t: function(key) {
+      var translation = window.i18n.t(key);
+      if (translation=='')
+        translation = key;
+      return translation;
+    },
+
+    goToPost: function (event) {
+      var postUrl = '/post/' + this.post.id;
+      window.appGlobals.activity('open', 'post', postUrl);
+      page(postUrl);
+    },
+
+    getPositionInArrayFromId: function (collection, id) {
+      for(var i = 0; i < collection.length; i++) {
+        if (collection[i].id==id) {
+          return i;
+        }
+      }
+      return null;
+    },
+
+    cardMouseOver: function (event) {
+      event.currentTarget.elevation = 5;
+    },
+
+    cardMouseOut: function (event) {
+      event.currentTarget.elevation = 1;
+    },
+
+    getImageFormatUrl: function(images, formatId) {
+      if (images && images.length>0) {
+        var formats = JSON.parse(images[images.length-1].formats);
+        if (formats && formats.length>0)
+          return formats[formatId];
+      } else {
+        return "";
+      }
+    },
+
+    removeClass: function(element, classToRemove) {
+      var newClassName = "";
+      var classes = element.className.split(" ");
+      for(var i = 0; i < classes.length; i++) {
+        if(classes[i] !== classToRemove) {
+          newClassName += classes[i] + " ";
+        }
+      }
+      element.className = newClassName;
+    },
+
+    removeElementsByClass: function (rootElement, className) {
+      var elements = rootElement.getElementsByClassName(className);
+      while(elements.length > 0){
+        elements[0].parentNode.removeChild(elements[0]);
+      }
+    },
+
+    formatNumber: function (value) {
+      if (value) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      } else {
+        return "0";
+      }
+    },
+
+    getRandomNumber: function (value) {
+      return Math.floor((Math.random() * value) + 1);
+    },
+
+    getRandomFromArray: function(items) {
+      return items[Math.floor(Math.random()*items.length)];
+    },
+
+    padNumber: function (value) {
+      return ('000' + value).substr(-3);
+    },
+
+    splitArray: function (a, n) {
+      return a.chunk(n);
+    },
+
+    truncate: function (input, length, killwords, end) {
+      var orig = input;
+      length = length || 255;
+
+      if (input.length <= length)
+        return input;
+
+      if (killwords) {
+        input = input.substring(0, length);
+      } else {
+        var idx = input.lastIndexOf(' ', length);
+        if (idx === -1) {
+          idx = length;
+        }
+
+        input = input.substring(0, idx);
+      }
+
+      input += (end !== undefined && end !== null) ? end : '...';
+      return input;
+    },
+
+    capitalize: function (string) {
+      string = string.toLowerCase();
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    },
+
+    trim: function(input){
+      return input.replace(/^\s*|\s*$/g, '');
+    },
+
+    s3bucketName: function () {
+      return window.s3bucketName;
+    },
+
+    instanceName: function () {
+      return window.instanceName;
+    },
+
+    instanceLogoFilename: function () {
+      return window.instanceLogoFilename;
+    },
+
+    defaultGroupImage: function () {
+      return window.defaultGroupImage;
+    },
+
+    isoCountryImagePath: function () {
+      return window.isoCountryImagePath;
+    },
+
+    randomStockImage: function () {
+      var images = ["http://i.imgur.com/ZSgsITo.jpg","http://i.imgur.com/BKR5vE6.jpg",
+        "http://i.imgur.com/lIk6iLD.jpg",
+        "http://i.imgur.com/OjyTHRv.jpg"]
+
+      return this.getRandomFromArray(images);
+    },
+
+    limitFrom: function (input, offset, limit) {
+      if (!(input instanceof Array) && !(input instanceof String)) return input;
+
+      limit = parseInt(limit, 10);
+
+      if (input instanceof String) {
+        if (limit) {
+          return limit >= 0 ? input.slice(offset, limit) : input.slice(limit, input.length);
+        } else {
+          return "";
+        }
+      }
+
+      var out = [],
+              i, n;
+
+      if (limit > input.length)
+        limit = input.length;
+      else if (limit < -input.length)
+        limit = -input.length;
+
+      if (limit > 0) {
+        i = offset;
+        n = limit;
+      } else {
+        i = input.length + limit;
+        n = input.length;
+      }
+
+      for (; i < n; i++) {
+        out.push(input[i]);
+      }
+
+      return out;
+    },
+
+    isString: function(a) {
+      return "string" == typeof a;
+    },
+
+    limitTo: function(input, limit) {
+
+      if (!Array.isArray(input) && !this.isString(input)) return input;
+
+      if (this.isString(input)) {
+        //NaN check on limit
+        if (limit) {
+          return limit >= 0 ? input.slice(0, limit) : input.slice(limit, input.length);
+        } else {
+          return "";
+        }
+      }
+
+      var out = [],
+              i, n;
+
+      // if abs(limit) exceeds maximum length, trim it
+      if (limit > input.length)
+        limit = input.length;
+      else if (limit < -input.length)
+        limit = -input.length;
+
+      if (limit > 0) {
+        i = 0;
+        n = limit;
+      } else {
+        i = input.length + limit;
+        n = input.length;
+      }
+
+      for (; i<n; i++) {
+        out.push(input[i]);
+      }
+
+      return out;
+    },
+
+    headerImageEnabled: function () {
+      return false;
+    },
+
+    hasAccess: function(object) {
+      if (window.appUser && window.appUser.user) {
+        return (object.user_id === window.appUser.user.id) || (window.appUser.user.email==="robert@citizens.is" || window.appUser.user.email==="gunnar@citizens.is");
+      } else {
+        return false;
+      }
+    },
+
+    hasDomainAccess: function(domain) {
+      if (window.appUser && window.appUser.user) {
+        return window.appUser.user.email==="robert@citizens.is" || window.appUser.user.email==="gunnar@citizens.is";
+      } else {
+        return false;
+      }
+    }
+  };
+</script>

@@ -1,0 +1,303 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/fix-dialog.html">
+
+<link rel="import" href="yp-fullscreen-dialog.html">
+
+<dom-module id="yp-edit-dialog">
+
+  <template>
+    <style>
+      .fullScreenDialog {
+        position: absolute;
+        display: block;
+        top: 0;
+        bottom: 0;
+        margin: 0;
+        min-width: 360px;
+        max-width: 1024px;
+        @apply(--paper-fullscreen-dialog);
+      }
+
+      [main] {
+        background-color: #fff;
+      }
+
+      #toolbar {
+        background-color: var(--default-primary-color);
+        color: var(--text-primary_color);
+      }
+
+      #dismissBtn {
+        margin-left: 0px;
+        margin-right: 32px;
+        @apply(--paper-fullscreen-dialog-dismissbtn);
+      }
+
+      paper-button[dialog-confirm] {
+        background: none;
+        min-width: 44px;
+        margin: 6px 0 0 16px;
+        line-height: 20px;
+      }
+
+      #scroller {
+        @apply(--paper-fullscreen-dialog-content);
+        padding: 16px;
+      }
+
+      .title ::content h2 {
+        @apply(--paper-font-title);
+      }
+
+      paper-toast {
+        z-index: 9999;
+      }
+
+      @media (max-width: 601px) {
+        paper-dialog > * {
+          padding: 0 0;
+        }
+      }
+
+      paper-dialog {
+        background-color: #fff;
+      }
+
+      paper-header-panel {
+        margin-top: 0px;
+        padding-top: 0px !important;
+       }
+
+      paper-toolbar {
+        margin-top: 0px;
+        padding-top: 0px;
+      }
+
+      .popUpDialog {
+        max-height: 100% !important;
+      }
+    </style>
+
+    <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop$="[[!narrowPad]]" modal>
+      <iron-media-query query="(max-width: 600px)" query-matches="{{narrow}}"></iron-media-query>
+      <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
+
+      <template is="dom-if" if="[[narrow]]">
+        <paper-header-panel main id="headerPanel" class="no-padding" mode="{{mode}}">
+          <paper-toolbar id="toolbar">
+            <paper-icon-button id="dismissBtn" icon="close" dialog-dismiss></paper-icon-button>
+            <div class="title flex"><content select="h2"></content></div>
+            <paper-button on-tap="_submit">[[saveText]]</paper-button>
+          </paper-toolbar>
+          <div id="scroller" class="flex">
+            <form is="iron-form" id="form" name="ypForm" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
+              <content></content>
+            </form>
+          </div>
+        </paper-header-panel>
+        <paper-spinner id="spinner"></paper-spinner>
+      </template>
+
+      <template is="dom-if" if="[[!narrow]]">
+        <div class="title"><content select="h2"></content></div>
+        <form is="iron-form" id="form" name="ypForm" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
+          <content></content>
+        </form>
+        <paper-spinner id="spinner"></paper-spinner>
+        <div class="buttons">
+          <paper-button id="dismissBtn" dialog-dismiss>[[t('cancel')]]</paper-button>
+          <paper-button on-tap="_submit">[[saveText]]</paper-button>
+        </div>
+      </template>
+    </paper-dialog>
+
+    <paper-dialog id="formErrorDialog" modal>
+      <p id="errorText">[[errorText]]</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus on-tap="_clearErrorText">[[t('ok')]]</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-toast id="toast" text="[[toastTextCombined]]"></paper-toast>
+
+  </template>
+
+</dom-module>
+
+<script>
+  (function() {
+    Polymer({
+
+      is: 'yp-edit-dialog',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.FixDialog
+      ],
+
+      properties: {
+
+        action: {
+          type: String
+        },
+
+        baseAction: {
+          type: String
+        },
+
+        method: {
+          type: String,
+          value: "POST"
+        },
+
+        buttonText: {
+          type: String
+        },
+
+        errorText: {
+          type: String
+        },
+
+        toastText: {
+          type: String
+        },
+
+        toastTextCombined: {
+          type: String
+        },
+
+        response: {
+          type: Object,
+          notify: true
+        },
+
+        dialogOpen: {
+          type: Boolean,
+          value: true
+        },
+
+        saveText: {
+          type: String
+        },
+
+        narrow: {
+          type: Boolean,
+          observer: '_narrowChanged',
+          notify: true
+        },
+
+        params: {
+          type: String
+        }
+      },
+
+      _narrowChanged: function() {
+        this.fire('paper-responsive-change', {narrow: this.narrow});
+      },
+
+      _computeClass: function (narrow) {
+        if (narrow)
+          return "fullScreenDialog";
+        else
+          return "popUpDialog";
+      },
+
+      listeners: {
+        'iron-form-submit': '_formSubmitted',
+        'iron-form-response': '_formResponse',
+        'iron-form-error': '_formError',
+        'iron-form-invalid': '_formInvalid'
+      },
+
+      open: function() {
+        this.$$("#editDialog").open();
+      },
+
+      close: function() {
+        this.$$("#editDialog").close();
+      },
+
+      _formSubmitted: function(event) {
+      },
+
+      ready: function() {
+        this.baseAction = this.action;
+      },
+
+      _formResponse: function(response, detail) {
+        this.$$("#spinner").active = false;
+        this.response = response;
+        this.close();
+        this.toastTextCombined = this.toastText + " " + detail.name;
+        this.$$("#toast").show();
+      },
+
+      _formError: function(event, detail) {
+        console.log("Form error: ", detail.error);
+        this._showErrorDialog(detail.error);
+        this.$$("#spinner").active = false;
+      },
+
+      _formInvalid: function(event) {
+        this.$$("#spinner").active = false;
+      },
+
+      _submit: function() {
+        if (this.params && this.params.communityId) {
+          this.action = this.baseAction + '/'+this.params.communityId;
+        } else if (this.params && this.params.groupId) {
+          this.action = this.baseAction + '/'+this.params.groupId;
+        } else if (this.params && this.params.postId) {
+          this.action = this.baseAction + '/'+this.params.postId;
+        } else if (this.params && this.params.userId) {
+          this.action = this.baseAction + '/'+this.params.userId;
+        } else if (this.params && this.params.domainId) {
+          this.action = this.baseAction + '/'+this.params.domainId;
+        }
+        this.$$("#form").submit();
+        this.$$("#spinner").active = true;
+      },
+
+      submitForce: function() {
+        this.$$("#spinner").active = true;
+        this.$$("#form").submit();
+      },
+
+      getForm: function() {
+        return this.$$("#form");
+      },
+
+      stopSpinner: function() {
+        this.$$("#spinner").active = false;
+      },
+
+      validate: function() {
+        return this.$$("#form").validate();
+      },
+
+      _showErrorDialog: function(errorText) {
+        this.errorText = errorText;
+        this.setDialog(true,"formErrorDialog");
+        this.$$("#formErrorDialog").open();
+      },
+
+      _clearErrorText: function(event) {
+        this.$$("#formErrorDialog").close();
+        this.$$("#errorText").innerHTML="";
+      }
+    })
+  })();
+
+</script>
+

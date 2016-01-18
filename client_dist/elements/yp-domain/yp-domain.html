@@ -1,0 +1,152 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-post/yp-post.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+<link rel="import" href="../yp-community/yp-community-card.html">
+<link rel="import" href="../yp-community/yp-community-card-add.html">
+
+<link rel="import" href="yp-domain-large-card.html">
+
+<dom-module id="yp-domain">
+  <template>
+    <style>
+
+      :host {
+        @apply(--layout-horizontal);
+      }
+
+      .createCommunity {
+        background-color: --var(accent-color-darker,#f57c00);
+        position: fixed;
+        bottom: 24px;
+        right: 28px;
+      }
+
+      .card-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      @media (max-width: 400px) {
+        .card {
+          padding-left: 0;
+          padding-right: 0;
+          padding-bottom: 8px;
+          padding-top: 8px;
+        }
+
+        .card-container {
+          padding: 0;
+          margin: 0;
+        }
+      }
+
+    </style>
+
+    <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
+
+    <yp-community-edit id="communityNew" on-iron-form-response="_refresh"></yp-community-edit>
+
+    <div class="layout vertical">
+      <div class="card-container layout center-center">
+        <yp-domain-large-card id="domainCard" class="card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
+        <template is="dom-if" if="[[communities]]">
+          <template is="dom-repeat" class="list" items="[[communities]]" as="community">
+            <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+          </template>
+        </template>
+        <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
+        <paper-fab hidden icon="group-work" z="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-domain',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        communities: {
+          type: Array,
+          value: []
+        },
+
+        domainId: {
+          type: Number,
+          value: null,
+          observer: "_domainIdChanged"
+        },
+
+        url: {
+          type: String
+        },
+
+        domainEmpty: {
+          type: Boolean,
+          value: false
+        },
+
+        domain: {
+          type: Object
+        },
+
+        hideAdd: {
+          type: Boolean,
+          value: true
+        }
+      },
+
+      _domainIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("communities",null);
+          this.$.ajax.url = '/api/domains/' + this.domainId;
+          this.$.ajax.generateRequest();
+          this.hideAdd = true;
+        }
+      },
+
+      _refresh: function () {
+        this.$.ajax.generateRequest();
+      },
+
+      _newCommunity: function () {
+        window.appGlobals.activity('open', 'newCommunity');
+        this.$.communityNew.open('new', { domainId: this.domainId });
+      },
+
+      _response: function (event, detail, sender) {
+        this.set('domain', detail.response);
+        if (this.domain.Communities) {
+          this.set("communities",this.domain.Communities);
+        }
+        var headerPanel = app.$.mainScrollHeaderPanel;
+        this.$.domainCard.setElevation(5);
+        this.$.domainCard.lowerCardLater();
+
+//        headerPanel.style.background =  "#9E9E9E";
+
+        this.fire("change-header", { headerTitle: this.domain.name,
+                                     headerDescription: this.domain.description});
+        this.hideAdd = false;
+      }
+
+    });
+  </script>
+</dom-module>

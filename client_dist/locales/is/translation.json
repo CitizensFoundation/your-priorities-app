@@ -1,0 +1,116 @@
+{
+
+  "name": "Nafn",
+  "domain": {
+    "edit": "Breyta vef"
+  },
+
+  "community": {
+    "edit": "Breyta samfélagi",
+    "delete": "Eyða samfélagi",
+    "new": "Nýtt samfélag"
+  },
+
+  "post": {
+    "new": "Ný hugmynd",
+    "top": "Efstu hugmyndir",
+    "newest": "Nýjustu hugmyndir",
+    "random": "Hugmyndir af handahófi",
+    "inProgress": "Hugmyndir í ferli",
+    "groups": "Hugmyndahópar",
+    "search": "Leitaðu að hugmyndum",
+    "add_new":"Ný hugmynd",
+    "up_vote":"Kjósa upp",
+    "down_vote":"Kjósa niður",
+    "report": "Report post",
+    "notify": "Notify me about this post",
+    "share": "Share this post",
+    "tabs": {
+      "debate": "Rökræða",
+      "news": "Fréttir",
+      "location": "Kort",
+      "photos": "Myndir",
+      "solutions": "Lausnir",
+      "not_implemented": "Ekki tilbúið"
+    },
+    "cover": {
+      "media": "Veldu forsíðu",
+      "map": "Kort",
+      "streetview": "StreetView",
+      "image": "Mynd",
+      "none": "Ekkert"
+    },
+    "edit": "Breyta hugmynd",
+    "delete": "Eyða hugmynd"
+  },
+  "short_word": {
+    "in": "í"
+  },
+  "category": {
+    "new": "Nýr flokkur"
+  },
+  "categories": {
+    "all": "öllum flokkum",
+    "the_all": "Allir flokkar"
+  },
+  "point": {
+    "point": "Rök",
+    "for": "Rök með...",
+    "against": "Rök á móti...",
+    "add_up": "Bæta við rökum með",
+    "add_down": "Bæta við rökum á móti",
+    "helpful": "Hjálplegt",
+    "not_helpful": "Ekki hjálplegt"
+  },
+
+  "notice": {
+    "ok": "Ok",
+    "feature_not_implemented_a": "Þessi virkni er ekki tilbúin ennþá.",
+    "feature_not_implemented_b": "Látið okkur vita hvað ykkur finnst :)",
+    "welcome_a": "Þetta er ný prufu útgáfa af Betri Reykjavík. Látið okkur vita hvað ykkur finnst :)",
+    "welcome_b": "Virkar bara í Chrome en mun virka á öllum vöfrum seinna á árinu.",
+    "welcome_heading": "Velkomin á prufu fyrir nýja útgáfu af Betri Reykjavík",
+    "continue": "Haldið áfram á prufu",
+    "deleteConfirmation": "Do you want to delete this group?"
+  },
+
+  "group": {
+    "new": "Nýr hópur",
+    "edit": "Breyt hóp",
+    "invite": "Bjóða",
+    "invite_to_group": "Invite friend to this group",
+    "share_group": "Deila hóp",
+    "delete": "Eyða hóp",
+    "objectives": "Um þennan hóp"
+  },
+
+  "menu": {
+    "my_pages": "Mín síða",
+    "about": "Um",
+    "help": "Hjálp",
+    "settings": "Stillingar"
+
+  },
+
+  "login": {
+    "name": "Nafn",
+    "email": "Tölvupóstur",
+    "password": "Lykilorð"
+  },
+
+  "location": {
+    "set": "Setja staðsettningu"
+  },
+  "image": {
+    "upload": "Setja inn mynd",
+    "logo": {
+      "upload": "Merki"
+    },
+    "header": {
+      "upload": "Höfuðmynd"
+    },
+    "profile": {
+      "upload": "Prófilmynd"
+    }
+  }
+}
