@@ -67,7 +67,7 @@
   },
   "scripts": {
     "test": "gulp test:local",
-    "start": "gulp serve"
+    "start": "node server_api/bin/www"
   },
   "engines": {
     "node": "0.12.7"

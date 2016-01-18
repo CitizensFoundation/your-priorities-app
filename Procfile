@@ -1,1 +1,1 @@
-web: sh start
+web: node server_api/bin/www
