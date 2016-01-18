@@ -39,7 +39,6 @@ auth.isLoggedIn = function (req, res, next) {
 // ADMIN AND VIEW
 
 // User admin
-
 auth.role('user.admin', function (user, req, done) {
   if (!req.isAuthenticated()) {
     done(null, false);
@@ -47,7 +46,7 @@ auth.role('user.admin', function (user, req, done) {
     models.User.findOne({
       where: { id: user.id }
     }).then(function (user) {
-      if (user.user_id === req.user.id) {
+      if (user.id === req.user.id) {
         done(null, true);
       } else {
         done(null, false);
@@ -67,7 +66,6 @@ auth.entity('user', function(req, done) {
 });
 
 // Domain admin and view
-
 auth.role('domain.admin', function (domain, req, done) {
   if (!req.isAuthenticated()) {
     done();
@@ -77,8 +75,11 @@ auth.role('domain.admin', function (domain, req, done) {
     }).then(function (domain) {
       if (domain.user_id === req.user.id) {
         done(null, true);
+        // TODO: Remove hardcoded hack!
+      } else if (req.user.email==='robert@citizens.is' || req.user.email==='gunnar@citizens.is') {
+        done(null, true);
       } else {
-        domain.hasAdminUser(req.user).then(function (result) {
+        domain.hasDomainAdmin(req.user).then(function (result) {
           if (result) {
             done(null, true);
           } else {
@@ -123,7 +124,6 @@ auth.entity('domain', function(req, done) {
 });
 
 // Community admin and view
-
 auth.role('community.admin', function (community, req, done) {
   if (!req.isAuthenticated()) {
     done();
