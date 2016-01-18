@@ -1,0 +1,8 @@
+{
+  "name": "Your Prioritees",
+  "description": "Citizen participation application",
+  "repository": "https://github.com/rbjarnason/your-priorities-app",
+  "logo": "https://s3.amazonaws.com/yrpri-direct-asset/YP_FinalLogo_light_grey.png",
+  "keywords": ["edemocracy", "citizen participation", "open source"],
+  "image": "heroku/nodejs"
+}
