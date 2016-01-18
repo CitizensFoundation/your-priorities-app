@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+
+var debug = require('debug')('your-priorities-app');
 var express = require('express');
 var session = require('express-session');
 var path = require('path');
@@ -35,6 +38,7 @@ if (process.env.REDISTOGO_URL) {
 }
 
 var app = express();
+app.set('port', process.env.PORT || 4242);
 
 if (false && app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_app')));
@@ -280,5 +284,9 @@ if (app.get('env') === 'development') {
     });
   });
 }
+
+var server = app.listen(app.get('port'), function() {
+  debug('Your Priorities server listening on port ' + server.address().port);
+});
 
 module.exports = app;
