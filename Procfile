@@ -1,1 +1,1 @@
-web: server_api/bin/www
+web: start
