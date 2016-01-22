@@ -9,6 +9,8 @@ var toJson = require('../utils/to_json');
 // make sure we use the Heroku Redis To Go URL
 // (put REDISTOGO_URL=redis://localhost:6379 in .env for local testing)
 
+log.info("Starting app access to Kue Queue", {redis_url: process.env.REDIS_URL});
+
 kue.redis.createClient = function() {
   var redisUrl = url.parse(process.env.REDIS_URL ? process.env.REDIS_URL : "localhost:6379")
     , client = redis.createClient(redisUrl.port, redisUrl.hostname);
