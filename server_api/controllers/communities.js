@@ -86,7 +86,7 @@ router.post('/:domainId', auth.can('create community'), function(req, res) {
   if (req.hostname=='localhost') {
     hostname = 'localhost';
   } else {
-    hostname = sequelize.models.Domain.extractHost(req.headers.host);
+    hostname = models.Domain.extractHost(req.headers.host);
   }
   var admin_email = req.user.email;
   var admin_name = "Administrator";
