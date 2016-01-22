@@ -10,7 +10,7 @@ var toJson = require('../utils/to_json');
 // (put REDISTOGO_URL=redis://localhost:6379 in .env for local testing)
 
 log.info("Starting app access to Kue Queue", {redis_url: process.env.REDIS_URL});
-var redisUrl = url.parse(process.env.REDIS_URL ? process.env.REDIS_URL : "localhost:6379");
+var redisUrl = process.env.REDIS_URL ? process.env.REDIS_URL : "localhost:6379";
 
 var queue = kue.createQueue({
   redis: redisUrl
