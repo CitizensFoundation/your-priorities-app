@@ -13,7 +13,7 @@ log.warn("Starting app access to Kue Queue", {redis_url: process.env.REDIS_URL})
 
 kue.redis.createClient = function() {
   var redisUrl = url.parse(process.env.REDIS_URL ? process.env.REDIS_URL : "localhost:6379");
-  log.error("Starting app access to Kue Queue 2", {redis_url: process.env.REDIS_URL});
+  log.error("Starting app access to Kue Queue 2", {redis_url: redisUrl});
 
   var client = redis.createClient(redisUrl.port, redisUrl.hostname);
   if (redisUrl.auth) {
