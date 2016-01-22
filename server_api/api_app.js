@@ -277,7 +277,7 @@ if (app.get('env') === 'development') {
 } else {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    log.error("General Error", { context: 'generalError', user: toJson(req.user), err: err, errorStatus: 500 });
+    log.error("General Error", { context: 'generalError', user: toJson(req.user), err: err, errStack: err.stack, errorStatus: 500 });
     res.send({
       message: err.message,
       error: {}
