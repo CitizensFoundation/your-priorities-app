@@ -157,6 +157,14 @@ router.get('/reset/:token', function(req, res) {
   });
 });
 
+router.post('/createActivity', function(req, res) {
+  models.AcActivity.createActivity(body.type, req.user ? req.user.id : null, req.ypDomain, req.ypDomain, function() {
+    res.sendStatus(200);
+  }).catch(function (error) {
+    log.error('Create Activity Error', { user: null, context: 'createActivity', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
+    res.sendStatus(500);
+  });
+});
 
 router.post('/reset/:token', function(req, res) {
   async.waterfall([
@@ -174,7 +182,6 @@ router.post('/reset/:token', function(req, res) {
           user.password = req.body.password;
           user.reset_password_token = null;
           user.reset_password_expires = null;
-
           user.save().then(function () {
             req.logIn(user, function (error) {
               if (error) {

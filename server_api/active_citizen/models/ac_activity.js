@@ -12,31 +12,39 @@ var toJson = require('../utils/to_json');
 var setupDefaultAssociations = function (user, domain, community, done) {
   async.paralell([
     function(done) {
-      activity.addUser(user, function (err) {
-        done();
+      activity.addDomain(domain, function (error) {
+        done(error);
       });
     },
     function(done) {
-      activity.addDomain(domain, function (err) {
+      if (user) {
+        activity.addUser(user, function (error) {
+          done(error);
+        });
+      } else {
         done();
-      });
+      }
     },
     function(done) {
-      activity.addCommunity(community, function (err) {
+      if (community) {
+        activity.addCommunity(community, function (error) {
+          done(error);
+        });
+      } else {
         done();
-      });
+      }
     }
   ], function(error) {
     done(error)
   });
 };
 
-
 module.exports = function(sequelize, DataTypes) {
   var AcActivity = sequelize.define("AcActivity", {
     context: { type: DataTypes.STRING, default: 'http://www.w3.org/ns/activitystreams' },
     access: { type: DataTypes.INTEGER, allowNull: false },
     type: { type: DataTypes.INTEGER, allowNull: false },
+    type_name: { type: DataTypes.STRING, allowNull: true },
     object: DataTypes.JSONB,
     actor: DataTypes.JSONB,
     target: DataTypes.JSONB,
@@ -67,24 +75,41 @@ module.exports = function(sequelize, DataTypes) {
 
       ACTIVITY_PASSWORD_RECOVERY: 0,
       ACTIVITY_PASSWORD_CHANGED: 1,
+      ACTIVITY_FROM_APP: 2,
 
-      createActivity: function(type, user, domain, community, done) {
+      createActivity: function(type, typeName, objectName, actorName, user, domain, community, done) {
+
+        var actor = {};
+        var object = {};
+
+        if (actorName)
+          actor['name'] = actorName;
+
+        if (user)
+          actor['loggedInUserId'] = user.id;
+
+        if (objectName)
+          object['name'] = objectName;
+
+        if (domain)
+          object['domain'] = domain;
+
+        if (community)
+          object['community'] = community;
 
         var activity = models.AcActivity.build({
           type: type,
-          actor: { user: user },
-          object: {
-            domain: domain,
-            community: community
-          },
+          type_name: typeName,
+          actor: actor,
+          object: object,
           access: models.AcActivity.ACCESS_PRIVATE
         });
 
         activity.save().then(function(activity) {
           if (activity) {
             setupDefaultAssociations(user, domain, community, function (error) {
-              if (err) {
-                log.error('Activity Creation Error', err);
+              if (error) {
+                log.error('Activity Creation Error', error);
                 done('Activity Creation Error');
               } else {
                 queue.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
@@ -117,7 +142,7 @@ module.exports = function(sequelize, DataTypes) {
         activity.save().then(function(activity) {
           if (activity) {
             setupDefaultAssociations(user, domain, community, function (error) {
-              if (err) {
+              if (error) {
                 log.error('Activity Creation Error', err);
                 done('Activity Creation Error');
               } else {
