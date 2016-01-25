@@ -34,6 +34,10 @@ module.exports = function(sequelize, DataTypes) {
 
     instanceMethods: {
 
+      simple: function() {
+        return { id: this.id, name: this.name, hostname: this.hostname };
+      },
+
       updateAllExternalCounters: function(req, direction, done) {
         if (direction=='up')
           req.ypDomain.increment('counter_communities');

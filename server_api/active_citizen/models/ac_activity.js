@@ -41,13 +41,13 @@ var setupDefaultAssociations = function (user, domain, community, done) {
 
 module.exports = function(sequelize, DataTypes) {
   var AcActivity = sequelize.define("AcActivity", {
-    context: { type: DataTypes.STRING, default: 'http://www.w3.org/ns/activitystreams' },
     access: { type: DataTypes.INTEGER, allowNull: false },
     type: { type: DataTypes.INTEGER, allowNull: false },
     type_name: { type: DataTypes.STRING, allowNull: true },
     object: DataTypes.JSONB,
     actor: DataTypes.JSONB,
     target: DataTypes.JSONB,
+    context: DataTypes.JSON,
     user_interaction_profile: DataTypes.JSONB
   }, {
 
@@ -77,31 +77,32 @@ module.exports = function(sequelize, DataTypes) {
       ACTIVITY_PASSWORD_CHANGED: 1,
       ACTIVITY_FROM_APP: 2,
 
-      createActivity: function(type, typeName, objectName, actorName, user, domain, community, done) {
+      createActivity: function(type, subType, actor, object, context, user, domain, community, done) {
 
-        var actor = {};
-        var object = {};
+        if (!object)
+          object = {};
 
-        if (actorName)
-          actor['name'] = actorName;
+        if (!context)
+          context = {};
+
+        if (!actor)
+          actor = {};
 
         if (user)
-          actor['loggedInUserId'] = user.id;
-
-        if (objectName)
-          object['name'] = objectName;
+          actor['user'] = user.simple();
 
         if (domain)
-          object['domain'] = domain;
+          object['domain'] = domain.simple();
 
         if (community)
-          object['community'] = community;
+          object['community'] = community.simple();
 
         var activity = models.AcActivity.build({
           type: type,
-          type_name: typeName,
+          sub_type: subType,
           actor: actor,
           object: object,
+          context: context,
           access: models.AcActivity.ACCESS_PRIVATE
         });
 

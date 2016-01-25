@@ -78,7 +78,7 @@
 
           activityHost: {
             type: String,
-            value: "http://178.62.77.12:9200"
+            value: ""
           },
 
           resetSeenWelcome: {
@@ -159,7 +159,7 @@
           }
         },
 
-        activity: function (verb, object, context) {
+        activity: function (type, object, context) {
           var actor;
 
           if (window.appUser && window.appUser.user) {
@@ -168,48 +168,30 @@
             actor = "-1";
           }
 
-          var logString = 'activity stream: ' + actor + ' ' + verb + ' ' + object;
+          var logString = 'activity stream: ' + actor + ' ' + type + ' ' + object;
 
           console.log(logString);
 
           if (context)
             logString += ' ' + context;
 
-          if (verb == 'open')
+          if (type == 'open')
             this.sendToGoogleAnalytics('send', 'pageview', null, null);
-          this.sendToGoogleAnalytics('send', 'event', object, verb);
+          this.sendToGoogleAnalytics('send', 'event', object, type);
 
           var activityAjax = document.createElement('iron-ajax');
           var date = new Date();
           activityAjax.handleAs = 'json';
-          activityAjax.url = this.activityHost+'/activity-stream/activity/?timestamp=' + date.toISOString();
+          activityAjax.url = '/users/createActivityFromApp?timestamp=' + date.toISOString();
           activityAjax.method = 'POST';
           activityAjax.body = JSON.stringify({
             actor: actor,
-            verb: verb,
+            type: type,
             object: object,
             context: context,
             event_time: date.toISOString(),
             session_id: this.getSessionFromCookie(),
             user_agent: navigator.userAgent
-          });
-          activityAjax.generateRequest();
-        },
-
-        createActivityIndex: function () {
-          var activityAjax = document.createElement('iron-ajax');
-          activityAjax.handleAs = 'json';
-          activityAjax.url = this.activityHost+'/activity-stream/';
-          activityAjax.method = 'POST';
-          activityAjax.body = JSON.stringify({
-            mappings: {
-              'activity': {
-                '_timestamp': {
-                  'enabled': false,
-                  'path': 'event_time'
-                }
-              }
-            }
           });
           activityAjax.generateRequest();
         },

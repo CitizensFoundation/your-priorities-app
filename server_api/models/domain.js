@@ -26,6 +26,10 @@ module.exports = function(sequelize, DataTypes) {
 
     instanceMethods: {
 
+      simple: function() {
+        return { id: this.id, name: this.name, domain_name: this.domain_name };
+      },
+
       setupLogoImage: function(body, done) {
         if (body.uploadedLogoImageId) {
           sequelize.models.Image.find({
