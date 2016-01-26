@@ -202,7 +202,7 @@
 
     _validateAndSend: function(e) {
       if (this.$.form.checkValidity() && this.email && this.password){
-        if (this.registerMode===1) {
+        if (this.registerMode) {
           this.$.registerAjax.body = this.credentials;
           this.$.registerAjax.generateRequest();
         } else {
