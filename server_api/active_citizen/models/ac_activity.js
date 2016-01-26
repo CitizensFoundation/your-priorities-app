@@ -10,7 +10,7 @@ var log = require('../utils/logger');
 var queue = require('../workers/queue');
 var toJson = require('../utils/to_json');
 
-var setupDefaultAssociations = function (activity, user, domain, community, done) {
+var setupDefaultAssociations = function (activity, user, domain, community, group, done) {
   async.parallel([
     function(callback) {
       activity.setDomain(domain).then(function (results) {
@@ -29,6 +29,15 @@ var setupDefaultAssociations = function (activity, user, domain, community, done
     function(callback) {
       if (community) {
         activity.setCommunity(community).then(function (results) {
+          callback(results ? null : true);
+        });
+      } else {
+        callback();
+      }
+    },
+    function(callback) {
+      if (group) {
+        activity.setGroup(group).then(function (results) {
           callback(results ? null : true);
         });
       } else {
@@ -78,7 +87,7 @@ module.exports = function(sequelize, DataTypes) {
       ACTIVITY_PASSWORD_CHANGED: 1,
       ACTIVITY_FROM_APP: 2,
 
-      createActivity: function(type, subType, actor, object, context, user, domain, community, done) {
+      createActivity: function(type, subType, actor, object, context, user, domain, community, group, done) {
 
         if (!object)
           object = {};
@@ -98,6 +107,9 @@ module.exports = function(sequelize, DataTypes) {
         if (community)
           object['community'] = community.simple();
 
+        if (group)
+          object['group'] = group.simple();
+
         sequelize.models.AcActivity.build({
           type: type,
           sub_type: subType,
@@ -107,7 +119,7 @@ module.exports = function(sequelize, DataTypes) {
           access: sequelize.models.AcActivity.ACCESS_PRIVATE
         }).save().then(function(activity) {
           if (activity) {
-            setupDefaultAssociations(activity, user, domain, community, function (error) {
+            setupDefaultAssociations(activity, user, domain, community, group, function (error) {
               if (error) {
                 log.error('Activity Creation Error', error);
                 done('Activity Creation Error');
