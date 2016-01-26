@@ -68,7 +68,7 @@ module.exports = function(sequelize, DataTypes) {
 
     instanceMethods: {
 
-      simple: function() {
+      simple: function () {
         return { id: this.id, name: this.name, email: this.email };
       },
 

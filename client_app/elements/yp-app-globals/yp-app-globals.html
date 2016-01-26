@@ -182,9 +182,10 @@
           var activityAjax = document.createElement('iron-ajax');
           var date = new Date();
           activityAjax.handleAs = 'json';
-          activityAjax.url = '/users/createActivityFromApp?timestamp=' + date.toISOString();
+          activityAjax.contentType = 'application/x-www-form-urlencoded';
+          activityAjax.url = '/api/users/createActivityFromApp';
           activityAjax.method = 'POST';
-          activityAjax.body = JSON.stringify({
+          activityAjax.body = {
             actor: actor,
             type: type,
             object: object,
@@ -192,7 +193,7 @@
             event_time: date.toISOString(),
             session_id: this.getSessionFromCookie(),
             user_agent: navigator.userAgent
-          });
+          };
           activityAjax.generateRequest();
         },
 
@@ -220,7 +221,7 @@
           } else if (this.resetSeenWelcome) {
             localStorage.setItem('yrpri-welcome-status', false);
           }
-          this.activity('Anonymous', 'open', 'page', window.location.href);
+          this.activity('open', 'page', window.location.href);
           this.seenWelcome = localStorage.getItem('yrpri-welcome-status') == 'true';
           if (!this.seenWelcome) {
             this.$.welcomeDialog.open();

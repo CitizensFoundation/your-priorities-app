@@ -158,15 +158,16 @@ router.get('/reset/:token', function(req, res) {
 });
 
 router.post('/createActivityFromApp', function(req, res) {
-  models.AcActivity.createActiviy(models.AcActivity.ACTIVITY_FROM_APP, req.body.type, { appActor: req.body.actor },
+  models.AcActivity.createActivity(models.AcActivity.ACTIVITY_FROM_APP, req.body.type, { appActor: req.body.actor },
                                  { name: req.body.object }, { name: req.body.context, eventTime: req.body.event_time,
-                                                              sessionId: req.body.sessionId, userAgent: req.body.user_agent,
-                                                              clientTimeStamp: req.params.timestamp },
-                                 req.user ? req.user.id : null,  req.ypDomain, req.ypCommunity, function() {
-    res.sendStatus(200);
-  }).catch(function (error) {
-    log.error('Create Activity Error', { user: null, context: 'createActivity', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
-    res.sendStatus(500);
+                                                              sessionId: req.body.sessionId, userAgent: req.body.user_agent },
+                                 req.user,  req.ypDomain, req.ypCommunity, function(error) {
+      if (error) {
+        log.error('Create Activity Error', { user: null, context: 'createActivity', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
+        res.sendStatus(500);
+      } else {
+        res.sendStatus(200);
+      }
   });
 });
 

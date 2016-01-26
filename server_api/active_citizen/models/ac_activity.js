@@ -5,33 +5,34 @@
 // Ideally there should be a modular interface for the model layer. All activities are saved to
 // elastic search through the logs. Based on https://www.w3.org/TR/activitystreams-core/
 
+var async = require("async");
 var log = require('../utils/logger');
 var queue = require('../workers/queue');
 var toJson = require('../utils/to_json');
 
-var setupDefaultAssociations = function (user, domain, community, done) {
-  async.paralell([
-    function(done) {
-      activity.addDomain(domain, function (error) {
-        done(error);
+var setupDefaultAssociations = function (activity, user, domain, community, done) {
+  async.parallel([
+    function(callback) {
+      activity.setDomain(domain).then(function (results) {
+        callback(results ? null : true);
       });
     },
-    function(done) {
+    function(callback) {
       if (user) {
-        activity.addUser(user, function (error) {
-          done(error);
+        activity.setUser(user).then(function (results) {
+          callback(results ? null : true);
         });
       } else {
-        done();
+        callback();
       }
     },
-    function(done) {
+    function(callback) {
       if (community) {
-        activity.addCommunity(community, function (error) {
-          done(error);
+        activity.setCommunity(community).then(function (results) {
+          callback(results ? null : true);
         });
       } else {
-        done();
+        callback();
       }
     }
   ], function(error) {
@@ -97,18 +98,16 @@ module.exports = function(sequelize, DataTypes) {
         if (community)
           object['community'] = community.simple();
 
-        var activity = models.AcActivity.build({
+        sequelize.models.AcActivity.build({
           type: type,
           sub_type: subType,
           actor: actor,
           object: object,
           context: context,
-          access: models.AcActivity.ACCESS_PRIVATE
-        });
-
-        activity.save().then(function(activity) {
+          access: sequelize.models.AcActivity.ACCESS_PRIVATE
+        }).save().then(function(activity) {
           if (activity) {
-            setupDefaultAssociations(user, domain, community, function (error) {
+            setupDefaultAssociations(activity, user, domain, community, function (error) {
               if (error) {
                 log.error('Activity Creation Error', error);
                 done('Activity Creation Error');
