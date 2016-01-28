@@ -189,7 +189,7 @@
             actor: actor,
             type: type,
             object: object,
-            context: context,
+            context: context ? context : "",
             event_time: date.toISOString(),
             session_id: this.getSessionFromCookie(),
             user_agent: navigator.userAgent

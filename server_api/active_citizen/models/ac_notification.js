@@ -37,29 +37,27 @@ module.exports = function(sequelize, DataTypes) {
         var domain = activity.object.domain;
         var community = activity.object.community;
 
-        var notification = models.AcActivity.build({
+       sequelize.models.AcActivity.build({
           type: AcNotification.NOTIFICATION_PASSWORD_RECOVERY,
           priority: 100,
           access: AcNotification.ACCESS_PRIVATE
-        });
-
-        notification.save().then(function(notification) {
+        }).save().then(function(notification) {
           if (notification) {
             async.paralell([
-              function(done) {
-                notification.addActivity(activity, function (err) {
-                  done();
+              function(callback) {
+                notification.setActivity(activity, function (error) {
+                  callback(error);
                 });
               },
-              function(done) {
-                notification.addUser(user, function (err) {
-                  done();
+              function(callback) {
+                notification.setUser(user, function (error) {
+                  callback(error);
                 });
               }
-            ], function(err) {
-              if (err) {
-                log.error('Notification Creation Error', { err: err, user: user });
-                done();
+            ], function(error) {
+              if (error) {
+                log.error('Notification Creation Error', { err: error, user: user });
+                done(error);
               } else {
                 queue.create('process-notification', notification).priority('critical').removeOnComplete(true).save();
                 log.info('Notification Created', { notification: toJson(notification), user: user });
@@ -67,7 +65,7 @@ module.exports = function(sequelize, DataTypes) {
               }
             });
           } else {
-            log.error('Notification Creation Error', { err: err, user: user });
+            log.error('Notification Creation Error', { err: error, user: user });
             done();
           }
         });

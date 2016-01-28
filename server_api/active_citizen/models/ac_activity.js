@@ -140,26 +140,24 @@ module.exports = function(sequelize, DataTypes) {
 
       createPasswordRecovery: function(user, domain, community, token, done) {
 
-        var activity = models.AcActivity.build({
-          type: models.AcActivity.ACTIVITY_PASSWORD_RECOVERY,
+        sequelize.models.AcActivity.build({
+          type: sequelize.models.AcActivity.ACTIVITY_PASSWORD_RECOVERY,
           actor: { user: user },
           object: {
             domain: domain,
             community: community,
             token: token
           },
-          access: models.AcActivity.ACCESS_PRIVATE
-        });
-
-        activity.save().then(function(activity) {
+          access: sequelize.models.AcActivity.ACCESS_PRIVATE
+        }).save().then(function(activity) {
           if (activity) {
-            setupDefaultAssociations(user, domain, community, function (error) {
+            setupDefaultAssociations(activity, user, domain, community, null, function (error) {
               if (error) {
-                log.error('Activity Creation Error', err);
+                log.error('Activity Creation Error', error);
                 done('Activity Creation Error');
               } else {
                 queue.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
-                log.info('Activity Created', { activity: toJson(activity), user: toJson(user)});
+                log.info('Activity Created', { activity: toJson(activity), user: toJson(user) });
                 done(null);
               }
             });
