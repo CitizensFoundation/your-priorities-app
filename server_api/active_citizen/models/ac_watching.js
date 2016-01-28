@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     underscored: true,
 
-    tableName: 'ac_notifications',
+    tableName: 'ac_watching',
 
     classMethods: {
 

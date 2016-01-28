@@ -28,24 +28,28 @@ EmailWorker.prototype.sendOne = function (emailLocals, done) {
 
   emailLocals['t'] = i18nFilter;
 
-  template.render(emailLocals, function (err, results) {
-    if (err) {
-      return log.error('EmailWorker', { err: err, user: emailLocals.user });
+  template.render(emailLocals, function (error, results) {
+    if (error) {
+      return log.errors('EmailWorker', { err: error, user: emailLocals.user });
     }
-    transport.sendMail({
-      from: emailLocals.community.admin_email,
-      to: emailLocals.user.email,
-      subject: emailLocals.subject,
-      html: results.html,
-      text: results.text
-    }, function (err, responseStatus) {
-      if (err) {
-        return log.error('EmailWorker', { err: err, user: emailLocals.user });
-      }
-      log.info('EmailWorker Completed', { responseStatusMessage: responseStatus.message, user: emailLocals.user });
-    })
+    if (process.env.SENDGRID_USERNAME) {
+      transport.sendMail({
+        from: emailLocals.community.admin_email,
+        to: emailLocals.user.email,
+        subject: emailLocals.subject,
+        html: results.html,
+        text: results.text
+      }, function (error, responseStatus) {
+        if (error) {
+          return log.error('EmailWorker', { err: error, user: emailLocals.user });
+        }
+        log.info('EmailWorker Completed', { responseStatusMessage: responseStatus.message, user: emailLocals.user });
+        done();
+      })
+    } else {
+      log.warn('EmailWorker no SMTP server', { emailLocals: emailLocals, resultsHtml: results.html , resultsTxt: results.text })
+    }
   });
-  done();
 };
 
 module.exports = new EmailWorker();

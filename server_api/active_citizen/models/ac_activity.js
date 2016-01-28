@@ -57,7 +57,7 @@ module.exports = function(sequelize, DataTypes) {
     object: DataTypes.JSONB,
     actor: DataTypes.JSONB,
     target: DataTypes.JSONB,
-    context: DataTypes.JSON,
+    context: DataTypes.JSONB,
     user_interaction_profile: DataTypes.JSONB
   }, {
 

@@ -1,9 +1,9 @@
 // https://gist.github.com/mojodna/1251812
 
 var NotificationWorker = function () {};
-var models = require("../models");
+var models = require("../../models");
 var log = require('../utils/logger');
-var jobs = require('./jobs');
+var queue = require('./queue');
 var i18n = require('../utils/i18n');
 var toJson = require('../utils/to_json');
 
@@ -18,7 +18,7 @@ NotificationWorker.prototype.process = function (notification, done) {
 
     switch(notification.type) {
       case models.AcNotification.NOTIFICATION_PASSWORD_RECOVERY:
-        jobs.create('send-one-email', {
+        queue.create('send-one-email', {
           subject: i18n.t('email.password_recovery'),
           template: 'password_recovery',
           user: user,
