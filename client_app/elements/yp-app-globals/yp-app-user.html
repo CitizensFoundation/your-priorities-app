@@ -139,8 +139,8 @@
           this.$.forgotPassword.open();
         },
 
-        _resetPassword: function () {
-          this.$.resetPassword.open();
+        _resetPassword: function (event, detail) {
+          this.$.resetPassword.open(detail);
         },
 
         getUser: function () {

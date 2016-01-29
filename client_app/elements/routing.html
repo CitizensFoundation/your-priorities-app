@@ -61,6 +61,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.params = data.params;
     });
 
+    page('/user/reset_password/:resetPasswordToken', scrollToTop, function (data) {
+      app.route = 'home';
+      app.params = data.params;
+      window.appUser.fire("yp-reset-password", data.params.resetPasswordToken);
+    });
+
     // add #! before urls
     page({
       hashbang: true

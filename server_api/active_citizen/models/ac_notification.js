@@ -33,6 +33,7 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       createPasswordRecovery: function(activity, done) {
+        log.info('AcNotification createPasswordRecovery');
         var user = activity.actor.user;
         var domain = activity.object.domain;
         var community = activity.object.community;
@@ -54,7 +55,9 @@ module.exports = function(sequelize, DataTypes) {
             log.error('Notification Creation Error', { err: "No notification", user: user });
             done();
           }
-        });
+        }).catch(function (error) {
+         log.error('Notification Creation Error', { err: error, user: user });
+       });
       }
     }
   });

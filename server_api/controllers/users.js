@@ -193,18 +193,16 @@ router.post('/reset/:token', function(req, res) {
             req.logIn(user, function (error) {
               if (error) {
                 log.error('User Reset Password Cant login', { user: toJson(user), context: 'useResetToken', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
-                res.sendStatus(401);
-                return;
+                done(error);
               } else {
                 log.info('User Reset Password User logged in', { user: toJson(user), context: 'useResetToken', loggedInUser: toJson(req.user) });
-                done(error, user);
+                done();
               }
             });
           });
         } else {
           log.info('User Reset Password Token Not found', { user: toJson(user), context: 'useResetToken'});
-          res.sendStatus(404);
-          return;
+          done('Not found');
         }
       });
     },
@@ -216,7 +214,11 @@ router.post('/reset/:token', function(req, res) {
   ], function(error) {
     if (error) {
       log.error('User Reset Password Token Error', { user: null, context: 'useResetToken', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
-      res.sendStatus(500);
+      if (error=='Not found') {
+        res.sendStatus(404);
+      } else {
+        res.sendStatus(500);
+      }
     } else {
       log.info('User Reset Password Completed', { user: user, context: 'useResetToken', loggedInUser: toJson(req.user) });
       res.sendStatus(200);
