@@ -21,13 +21,20 @@ var loadActivityFromJsonObject = function(activityJson, done) {
 
 ActivityWorker.prototype.process = function (activity, done) {
   log.info('Processing Activity Started', { type: activity.type });
-  switch(activity.type) {
-    case models.AcActivity.ACTIVITY_PASSWORD_RECOVERY:
-      models.AcNotification.createPasswordRecovery( activity, function (error) {
-        log.info('Processing Activity Completed', { type: activity.type, err: error });
+  try {
+    switch(activity.type) {
+      case models.AcActivity.ACTIVITY_PASSWORD_RECOVERY:
+        models.AcNotification.createPasswordRecovery( activity, function (error) {
+          log.info('Processing Activity Completed', { type: activity.type, err: error });
+          done();
+        });
+        break;
+      default:
         done();
-      });
-      break;
+    }
+  } catch (err) {
+    log.error("Processing Activity Error", {err: err});
+    done();
   }
 };
 

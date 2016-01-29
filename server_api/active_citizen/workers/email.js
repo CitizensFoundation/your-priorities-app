@@ -23,41 +23,45 @@ var transport = nodemailer.createTransport({
 });
 
 EmailWorker.prototype.sendOne = function (emailLocals, done) {
+  try {
+    var template = new EmailTemplate(path.join(templatesDir, emailLocals.template));
 
-  var template = new EmailTemplate(path.join(templatesDir, emailLocals.template));
+    emailLocals['t'] = i18nFilter;
 
-  emailLocals['t'] = i18nFilter;
-
-  if (!emailLocals['community']) {
-    emailLocals['community'] = { hostname: 'www' }
-  }
-
-  template.render(emailLocals, function (error, results) {
-    if (error) {
-      log.errors('EmailWorker', { err: error, user: emailLocals.user });
-      done();
-    } else {
-      if (process.env.SENDGRID_USERNAME) {
-        transport.sendMail({
-          from: emailLocals.community.admin_email,
-          to: emailLocals.user.email,
-          subject: emailLocals.subject,
-          html: results.html,
-          text: results.text
-        }, function (error, responseStatus) {
-          if (error) {
-            log.error('EmailWorker', { err: error, user: emailLocals.user });
-            done(error);
-          }
-          log.info('EmailWorker Completed', { responseStatusMessage: responseStatus.message, user: emailLocals.user });
-          done(error);
-        })
-      } else {
-        log.warn('EmailWorker no SMTP server', { emailLocals: emailLocals, resultsHtml: results.html , resultsText: results.text });
-        done();
-      }
+    if (!emailLocals['community']) {
+      emailLocals['community'] = { hostname: 'www' }
     }
-  });
+
+    template.render(emailLocals, function (error, results) {
+      if (error) {
+        log.errors('EmailWorker', { err: error, user: emailLocals.user });
+        done();
+      } else {
+        if (process.env.SENDGRID_USERNAME) {
+          transport.sendMail({
+            from: emailLocals.community.admin_email,
+            to: emailLocals.user.email,
+            subject: emailLocals.subject,
+            html: results.html,
+            text: results.text
+          }, function (error, responseStatus) {
+            if (error) {
+              log.error('EmailWorker', { err: error, user: emailLocals.user });
+              done(error);
+            }
+            log.info('EmailWorker Completed', { responseStatusMessage: responseStatus.message, user: emailLocals.user });
+            done(error);
+          })
+        } else {
+          log.warn('EmailWorker no SMTP server', { emailLocals: emailLocals, resultsHtml: results.html , resultsText: results.text });
+          done();
+        }
+      }
+    });
+  } catch (err) {
+    log.error("Processing Email Error", {err: err});
+    done();
+  }
 };
 
 module.exports = new EmailWorker();

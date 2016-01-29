@@ -25,6 +25,6 @@ queue.on('job enqueue', function(id, type){
   );
 });
 
-//kue.app.listen(3000);
+kue.app.listen(3000);
 
 module.exports = queue;
