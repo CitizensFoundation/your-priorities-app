@@ -1,8 +1,10 @@
-<%- partial('../header.html') %>
+<% include ../header.html.ejs %>
 
 <p><%= t('notification.email.reset_password_1') %></p>
 <p>
-  <%= "https://#{community.hostname+'.'+object.domain.domain_name}/!#/users/reset_password?reset_password_token=#{object.token}" %>
+  <%= "https://"+community.hostname+'.'+domain.domain_name+"/!#/users/reset_password?reset_password_token="+token %>
 </p>
 <p><%= t('notification.email.reset_password_2') %></p>
 <p><%= t('notification.email.reset_password_3') %></p>
+
+<% include ../footer.html.ejs %>

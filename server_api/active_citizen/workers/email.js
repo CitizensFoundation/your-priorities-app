@@ -8,7 +8,7 @@ var ejs = require('ejs');
 var i18n = require('../utils/i18n');
 var toJson = require('../utils/to_json');
 
-var templatesDir = path.resolve(__dirname, '..', 'email_templates');
+var templatesDir = path.resolve(__dirname, '..', 'email_templates', 'notifications');
 
 var i18nFilter = function(text) {
   return i18n.t(text);
@@ -28,26 +28,34 @@ EmailWorker.prototype.sendOne = function (emailLocals, done) {
 
   emailLocals['t'] = i18nFilter;
 
+  if (!emailLocals['community']) {
+    emailLocals['community'] = { hostname: 'www' }
+  }
+
   template.render(emailLocals, function (error, results) {
     if (error) {
-      return log.errors('EmailWorker', { err: error, user: emailLocals.user });
-    }
-    if (process.env.SENDGRID_USERNAME) {
-      transport.sendMail({
-        from: emailLocals.community.admin_email,
-        to: emailLocals.user.email,
-        subject: emailLocals.subject,
-        html: results.html,
-        text: results.text
-      }, function (error, responseStatus) {
-        if (error) {
-          return log.error('EmailWorker', { err: error, user: emailLocals.user });
-        }
-        log.info('EmailWorker Completed', { responseStatusMessage: responseStatus.message, user: emailLocals.user });
-        done();
-      })
+      log.errors('EmailWorker', { err: error, user: emailLocals.user });
+      done();
     } else {
-      log.warn('EmailWorker no SMTP server', { emailLocals: emailLocals, resultsHtml: results.html , resultsTxt: results.text })
+      if (process.env.SENDGRID_USERNAME) {
+        transport.sendMail({
+          from: emailLocals.community.admin_email,
+          to: emailLocals.user.email,
+          subject: emailLocals.subject,
+          html: results.html,
+          text: results.text
+        }, function (error, responseStatus) {
+          if (error) {
+            log.error('EmailWorker', { err: error, user: emailLocals.user });
+            done(error);
+          }
+          log.info('EmailWorker Completed', { responseStatusMessage: responseStatus.message, user: emailLocals.user });
+          done(error);
+        })
+      } else {
+        log.warn('EmailWorker no SMTP server', { emailLocals: emailLocals, resultsHtml: results.html , resultsText: results.text });
+        done();
+      }
     }
   });
 };

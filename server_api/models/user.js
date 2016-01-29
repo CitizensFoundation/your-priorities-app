@@ -77,7 +77,7 @@ module.exports = function(sequelize, DataTypes) {
           i18n.changeLanguage(this.default_locale, function (err, t) {
             done();
           });
-        } else if (community.default_locale && community.default_locale != "") {
+        } else if (community && community.default_locale && community.default_locale != "") {
           i18n.changeLanguage(community.default_locale, function (err, t) {
             done();
           });
