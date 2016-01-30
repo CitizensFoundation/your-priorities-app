@@ -25,6 +25,8 @@ queue.on('job enqueue', function(id, type){
   );
 });
 
-kue.app.listen(3000);
+kue.app.listen(3000).on('error', function (error) {
+  log.warn("Kue UI already started at port 3000", {err: error});
+});
 
 module.exports = queue;

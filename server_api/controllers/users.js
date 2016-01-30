@@ -207,7 +207,7 @@ router.post('/reset/:token', function(req, res) {
       });
     },
     function(user, done) {
-      models.AcActivity.createActivity(modes.AcActivity.ACTIVITY_PASSWORD_CHANGED, user, req.ypDomain, req.ypCommunity, function (error) {
+      models.AcActivity.createActivity(models.AcActivity.ACTIVITY_PASSWORD_CHANGED, user, req.ypDomain, req.ypCommunity, function (error) {
         done(error, user);
       });
     }
