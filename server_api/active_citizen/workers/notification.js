@@ -52,7 +52,19 @@ NotificationWorker.prototype.process = function (notification, done) {
               community: community,
               token: notification.activity.object.token
             }).priority('critical').removeOnComplete(true).save();
-            log.info('Processing Notification Completed', { type: notification.type, user: user });
+            log.info('Processing NOTIFICATION_PASSWORD_RECOVERY Completed', { type: notification.type, user: user });
+            done();
+            break;
+          case models.AcNotification.NOTIFICATION_PASSWORD_CHANGED:
+            queue.create('send-one-email', {
+              subject: i18n.t('email.password_changed'),
+              template: 'password_changed',
+              user: user,
+              domain: domain,
+              community: community,
+              token: notification.activity.object.token
+            }).priority('critical').removeOnComplete(true).save();
+            log.info('Processing NOTIFICATION_PASSWORD_CHANGED Completed', { type: notification.type, user: user });
             done();
             break;
           default:

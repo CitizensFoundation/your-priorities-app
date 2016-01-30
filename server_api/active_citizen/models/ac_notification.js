@@ -26,22 +26,23 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_PRIVATE: 3,
 
       NOTIFICATION_PASSWORD_RECOVERY: 0,
+      NOTIFICATION_PASSWORD_CHANGED: 1,
 
       associate: function(models) {
         AcNotification.belongsTo(models.AcActivity);
         AcNotification.belongsTo(models.User);
       },
 
-      createPasswordRecovery: function(activity, done) {
-        log.info('AcNotification createPasswordRecovery');
+      createNotification: function(activity, type, access, priority, done) {
+        log.info('AcNotification Notification', {type: type, access: access, priority: priority });
         var user = activity.actor.user;
         var domain = activity.object.domain;
         var community = activity.object.community;
 
        sequelize.models.AcNotification.build({
-         type: sequelize.models.AcNotification.NOTIFICATION_PASSWORD_RECOVERY,
-         priority: 100,
-         access: sequelize.models.AcNotification.ACCESS_PRIVATE,
+         type: type,
+         priority: priority,
+         access: access,
          ac_activity_id: activity.id,
          user_id: user.id
        }).save().then(function(notification) {

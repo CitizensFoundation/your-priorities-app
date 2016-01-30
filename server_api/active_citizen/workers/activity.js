@@ -24,8 +24,14 @@ ActivityWorker.prototype.process = function (activity, done) {
   try {
     switch(activity.type) {
       case models.AcActivity.ACTIVITY_PASSWORD_RECOVERY:
-        models.AcNotification.createPasswordRecovery( activity, function (error) {
-          log.info('Processing Activity Completed', { type: activity.type, err: error });
+        models.AcNotification.createNotification( activity, models.AcNotification.NOTIFICATION_PASSWORD_RECOVERY, models.AcNotification.ACCESS_PRIVATE, 100, function (error) {
+          log.info('Processing ACTIVITY_PASSWORD_RECOVERY Completed', { type: activity.type, err: error });
+          done();
+        });
+        break;
+      case models.AcActivity.ACTIVITY_PASSWORD_CHANGED:
+        models.AcNotification.createNotification( activity, models.AcNotification.NOTIFICATION_PASSWORD_CHANGED, models.AcNotification.ACCESS_PRIVATE, 100, function (error) {
+          log.info('Processing ACTIVITY_PASSWORD_CHANGED Completed', { type: activity.type, err: error });
           done();
         });
         break;
