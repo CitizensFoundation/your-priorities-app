@@ -25,8 +25,10 @@ queue.on('job enqueue', function(id, type){
   );
 });
 
-kue.app.listen(3000).on('error', function (error) {
-  log.warn("Kue UI already started at port 3000", {err: error});
-});
+if (process.env.NODE_ENV === 'development' || process.env.FORCE_KUE_UI) {
+  kue.app.listen(3000).on('error', function (error) {
+    log.warn("Kue UI already started at port 3000", {err: error});
+  });
+}
 
 module.exports = queue;

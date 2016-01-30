@@ -206,10 +206,14 @@ router.post('/reset/:token', function(req, res) {
         }
       });
     },
-    function(user, done) {
-      models.AcActivity.createActivity(models.AcActivity.ACTIVITY_PASSWORD_CHANGED, user, req.ypDomain, req.ypCommunity, function (error) {
-        done(error, user);
-      });
+    function(done) {
+      if (req.user) {
+        models.AcActivity.createActivity(models.AcActivity.ACTIVITY_PASSWORD_CHANGED, "", null, null, null, req.user, req.ypDomain, req.ypCommunity, req.ypGroup, function (error) {
+          done(error);
+        });
+      } else {
+        done('Not found');
+      }
     }
   ], function(error) {
     if (error) {
@@ -220,8 +224,8 @@ router.post('/reset/:token', function(req, res) {
         res.sendStatus(500);
       }
     } else {
-      log.info('User Reset Password Completed', { user: user, context: 'useResetToken', loggedInUser: toJson(req.user) });
-      res.sendStatus(200);
+      log.info('User Reset Password Completed', { user: req.user, context: 'useResetToken', loggedInUser: toJson(req.user) });
+      res.send(req.user);
     }
   });
 });

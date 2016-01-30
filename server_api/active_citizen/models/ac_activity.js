@@ -126,7 +126,7 @@ module.exports = function(sequelize, DataTypes) {
               } else {
                 queue.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
                 log.info('Activity Created', { activity: toJson(activity), user: toJson(user) });
-                done(null);
+                done();
               }
             });
           } else {
