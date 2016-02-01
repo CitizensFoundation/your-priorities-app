@@ -33,7 +33,7 @@ module.exports = function(sequelize, DataTypes) {
         AcNotification.belongsTo(models.User);
       },
 
-      createNotification: function(activity, type, access, priority, done) {
+      createNotificationFromActivity: function(activity, type, access, priority, done) {
         log.info('AcNotification Notification', {type: type, access: access, priority: priority });
         var user = activity.actor.user;
         var domain = activity.object.domain;
