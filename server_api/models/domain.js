@@ -18,7 +18,15 @@ module.exports = function(sequelize, DataTypes) {
     counter_communities: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
-    counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 }
+    counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
+    facebook_client_id: { type: DataTypes.STRING },
+    facebook_client_secret: { type: DataTypes.STRING },
+    twitter_consumer_key: { type: DataTypes.STRING },
+    twitter_consumer_secret: { type: DataTypes.STRING },
+    google_consumer_key: { type: DataTypes.STRING },
+    google_consumer_secret: { type: DataTypes.STRING },
+    github_client_id: { type: DataTypes.STRING },
+    github_client_secret: { type: DataTypes.STRING }
   }, {
     underscored: true,
 

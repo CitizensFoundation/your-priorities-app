@@ -231,15 +231,25 @@ router.post('/reset/:token', function(req, res) {
 });
 
 // Facebook Authentication
+router.get('/auth/facebook/', function(req, res, next) {
+  passport.authenticate(
+    'facebook',
+    { clientID: req.ypDomain.facebook_client_id,
+      clientSecret: req.ypDomain.facebook_client_secret }
+  ) (req, res, next);
+});
 
-router.get('/auth/facebook', passport.authenticate('facebook'));
-
-router.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/' }),
-  function(req, res) {
-    log.info('User Logged in from Facebook', { user: toJson(req.user), context: 'facebookCallback' });
-    res.sendStatus(200);
-  });
+router.get('/auth/facebook/callback', function(req, res, next) {
+  passport.authenticate(
+    'facebook',
+    { clientID: req.ypDomain.facebook_client_id,
+      clientSecret: req.ypDomain.facebook_client_secret }
+  ) (req, res, next) },
+    function(req, res) {
+      log.info('User Logged in from Facebook', { user: toJson(req.user), context: 'facebookCallback' });
+      res.sendStatus(200);
+    }
+);
 
 // Twitter Authentication
 router.get('/auth/twitter',
