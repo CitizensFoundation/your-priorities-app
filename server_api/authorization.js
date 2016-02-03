@@ -178,9 +178,7 @@ auth.entity('community', function(req, done) {
   }
 });
 
-
 // Group admin and view
-
 auth.role('group.admin', function (group, req, done) {
   if (!req.isAuthenticated()) {
     done();

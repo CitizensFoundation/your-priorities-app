@@ -124,19 +124,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </section>
 
             <section data-route="domain">
-              <template is="dom-if" if="[[params]]">
+              <template is="dom-if" if="[[params]]" restamp>
                 <yp-domain domain-id="{{params.domainId}}" on-change-header="onChangeHeader"></yp-domain>
               </template>
             </section>
 
             <section data-route="community">
-              <template is="dom-if" if="[[params.communityId]]">
+              <template is="dom-if" if="[[params.communityId]]" restamp>
                 <yp-community community-id="{{params.communityId}}" on-change-header="onChangeHeader"></yp-community>
               </template>
             </section>
 
             <section data-route="group">
-              <template is="dom-if" if="[[params.groupId]]">
+              <template is="dom-if" if="[[params.groupId]]" restamp>
                 <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]" searching-for="[[params.searchingFor]]"
                           category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
                           on-change-header="onChangeHeader"></yp-group>
@@ -144,7 +144,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </section>
 
             <section data-route="post">
-              <template is="dom-if" if="[[params.postId]]">
+              <template is="dom-if" if="[[params.postId]]" restamp>
                 <yp-post post-id="{{params.postId}}" on-change-header="onChangeHeader"></yp-post>
               </template>
             </section>
