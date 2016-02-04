@@ -6,13 +6,14 @@
     "google-map": "GoogleWebComponents/google-map",
     "google-streetview-pano": "rbjarnason/google-streetview-pano#timings-fix-maps-api-callback",
     "iron-form": "rbjarnason/iron-form#add-put-support",
-
     "polymer": "Polymer/polymer#^1.2.0",
     "iron-elements": "PolymerElements/iron-elements#master",
     "paper-elements": "PolymerElements/paper-elements#master",
     "platinum-elements": "PolymerElements/platinum-elements#^1.1.0",
     "neon-elements": "PolymerElements/neon-elements#^1.0.0",
-    "page": "visionmedia/page.js#~1.6.3"
+    "page": "visionmedia/page.js#~1.6.3",
+    "vaadin-core-elements": "~0.3.0",
+    "moment": "~2.11.2"
   },
   "devDependencies": {
     "web-component-tester": "*",
