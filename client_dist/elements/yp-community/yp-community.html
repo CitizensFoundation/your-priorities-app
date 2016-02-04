@@ -42,6 +42,10 @@
         padding: 16px;
       }
 
+      paper-tabs {
+        padding-bottom: 12px;
+      }
+
     </style>
 
     <yp-group-edit new id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
@@ -54,6 +58,7 @@
             <paper-tab><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
             <paper-tab>[[t('events')]]</paper-tab>
           </paper-tabs>
+
           <div class="layout horizontal center-center wrap">
             <template is="dom-if" if="[[groups]]">
               <template is="dom-repeat" class="list" items="[[groups]]" as="group">
