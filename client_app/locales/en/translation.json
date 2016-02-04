@@ -9,7 +9,11 @@
   "community": {
     "edit": "Edit community",
     "delete": "Delete community",
-    "new": "Create community"
+    "new": "Create community",
+    "public": "Public community",
+    "closed": "Closed community",
+    "secret": "Secret community"
+
   },
 
   "post": {
@@ -87,7 +91,10 @@
     "invite_to_group": "Invite friend to this group",
     "share_group": "Share this group",
     "delete": "Delete group",
-    "objectives": "Objectives"
+    "objectives": "Objectives",
+    "public": "Public group",
+    "closed": "Closed group",
+    "secret": "Secret group"
   },
 
   "menu": {
