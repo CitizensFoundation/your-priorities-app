@@ -1,4 +1,27 @@
-<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../paper-button/paper-button.html"><link rel="import" href="../paper-progress/paper-progress.html"><link rel="import" href="../iron-icons/iron-icons.html"><dom-module id="file-upload"><style type="text/css">
+<!--
+@license
+Copyright (c) 2015 Winston Howes. All rights reserved.
+This code may only be used under the MIT license found at https://github.com/winhowes/file-upload/blob/master/LICENSE
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <file-upload target="/path/to/destination"></file-upload>
+
+@demo
+-->
+
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-progress/paper-progress.html">
+  <link rel="import" href="../iron-icons/iron-icons.html">
+
+<dom-module id="file-upload">
+
+  <style type="text/css">
     .enabled {
       border: 1px dashed #555;
     }
@@ -59,7 +82,41 @@
     paper-progress[error] {
       --paper-progress-active-color: #f40303;
     }
-  </style><template><div><paper-button id="button" icon="file-upload" class="blue" on-click="_fileClick"><content></content></paper-button><div id="UploadBorder"><div id="dropArea" hidden$="{{!_shownDropText}}">{{dropText}}</div><template is="dom-repeat" items="{{files}}"><div class="file"><div class="name"><span>{{item.name}}</span><div class="commands"><iron-icon icon="autorenew" title="{{retryText}}" on-click="_retryUpload" hidden$="{{!item.error}}"></iron-icon><iron-icon icon="cancel" title="{{removeText}}" on-click="_cancelUpload" hidden$="{{item.complete}}"></iron-icon><iron-icon icon="check-circle" title="{{successText}}" hidden$="{{!item.complete}}"></iron-icon></div></div><div class="error" hidden$="{{!item.error}}">{{errorText}}</div><div hidden$="{{progressHidden}}"><paper-progress value$="{{item.progress}}" error$="{{item.error}}"></paper-progress></div></div></template></div></div><input type="file" id="fileInput" on-change="_fileChange" hidden="" multiple="{{multi}}"></template></dom-module><script>
+  </style>
+
+  <template>
+    <div>
+      <paper-button id="button" icon="file-upload" class="blue" on-click="_fileClick">
+        <content></content>
+      </paper-button>
+      <div id='UploadBorder'>
+        <div id="dropArea" hidden$="{{!_shownDropText}}">{{dropText}}</div>
+        <template is="dom-repeat" items="{{files}}">
+          <div class="file">
+            <div class="name">
+              <span>{{item.name}}</span>
+              <div class="commands">
+                <iron-icon icon="autorenew" title="{{retryText}}" on-click="_retryUpload" hidden$="{{!item.error}}"></iron-icon>
+                <iron-icon icon="cancel" title="{{removeText}}" on-click="_cancelUpload" hidden$="{{item.complete}}"></iron-icon>
+                <iron-icon icon="check-circle" title="{{successText}}" hidden$="{{!item.complete}}"></iron-icon>
+              </div>
+            </div>
+            <div class="error" hidden$="{{!item.error}}">{{errorText}}</div>
+            <div hidden$={{progressHidden}}>
+              <paper-progress value$="{{item.progress}}" error$="{{item.error}}"></paper-progress>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+    <input type="file" id="fileInput" on-change="_fileChange" hidden multiple="{{multi}}">
+    <!--<paper-toast id="toastSuccess" text="File uploaded successfully!"></paper-toast>
+    <paper-toast id="toastFail" text="Error uploading file!"></paper-toast>-->
+  </template>
+
+</dom-module>
+
+<script>
 
   Polymer({
 

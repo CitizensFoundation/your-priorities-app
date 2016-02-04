@@ -1,8 +1,46 @@
-<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../google-apis/google-maps-api.html"><link rel="import" href="google-map-point.html"><dom-module id="google-map-poly"><style>
+<!-- Copyright (c) 2015 Google Inc. All rights reserved. -->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../google-apis/google-maps-api.html">
+<link rel="import" href="google-map-point.html">
+
+<!--
+The `google-map-poly` element represents a series of connected line segments (aka a polyline) which
+may also be closed to form a polygon (provided there are at least three points). It is used as a
+child of `google-map` and will contain at least two `google-map-point` child elements.
+
+<b>Example</b>—a simple line:
+
+    <google-map latitude="37.77493" longitude="-122.41942">
+      <google-map-poly>
+        <google-map-point latitude="37.77493" longitude="-122.41942"></google-map-point>
+        <google-map-point latitude="38.77493" longitude="-123.41942"></google-map-point>
+      </google-map-poly>
+    </google-map>
+
+<b>Example</b>—a semi-translucent blue triangle:
+
+    <google-map latitude="37.77493" longitude="-122.41942">
+      <google-map-poly closed fill-color="blue" fill-opacity=".5">
+        <google-map-point latitude="36.77493" longitude="-121.41942"></google-map-point>
+        <google-map-point latitude="38.77493" longitude="-122.41942"></google-map-point>
+        <google-map-point latitude="36.77493" longitude="-123.41942"></google-map-point>
+      </google-map-poly>
+    </google-map>
+-->
+
+<dom-module id="google-map-poly">
+  <style>
     :host {
       display: none;
     }
-  </style><template><content id="points" select="google-map-point"></content></template></dom-module><script>
+  </style>
+  <template>
+    <content id="points" select="google-map-point"></content>
+  </template>
+</dom-module>
+
+<script>
   Polymer({
     is: 'google-map-poly',
 

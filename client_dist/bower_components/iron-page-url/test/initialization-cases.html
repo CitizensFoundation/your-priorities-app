@@ -1,4 +1,7 @@
-<link rel="import" href="../iron-page-url.html"><link rel="import" href="../../polymer/polymer.html"><script>
+<link rel='import' href='../iron-page-url.html'>
+<link rel='import' href='../../polymer/polymer.html'>
+
+<script>
   Polymer({
     is: 'default-value',
     properties: {
@@ -55,12 +58,168 @@
       }.bind(this), 10);
     }
   })
-</script><dom-module id="default-before"><template><default-value value="{{val}}"></default-value><iron-page-url query="{{val}}"></iron-page-url></template><script>Polymer({is: 'default-before', properties: {val: {type: String}}});</script></dom-module><dom-module id="attached-before"><template><on-attached val="{{val}}"></on-attached><iron-page-url query="{{val}}"></iron-page-url></template><script>Polymer({is: 'attached-before', properties: {val: {type: String}}});</script></dom-module><dom-module id="ready-before"><template><on-ready val="{{val}}"></on-ready><iron-page-url query="{{val}}"></iron-page-url></template><script>Polymer({is: 'ready-before', properties: {val: {type: String}}});</script></dom-module><dom-module id="timeout-before"><template><on-timeout val="{{val}}"></on-timeout><iron-page-url query="{{val}}"></iron-page-url></template><script>Polymer({is: 'timeout-before', properties: {val: {type: String}}});</script></dom-module><dom-module id="default-after"><template><iron-page-url query="{{val}}"></iron-page-url><default-value value="{{val}}"></default-value></template><script>Polymer({is: 'default-after', properties: {val: {type: String}}});</script></dom-module><dom-module id="attached-after"><template><iron-page-url query="{{val}}"></iron-page-url><on-attached val="{{val}}"></on-attached></template><script>Polymer({is: 'attached-after', properties: {val: {type: String}}});</script></dom-module><dom-module id="ready-after"><template><iron-page-url query="{{val}}"></iron-page-url><on-ready val="{{val}}"></on-ready></template><script>Polymer({is: 'ready-after', properties: {val: {type: String}}});</script></dom-module><dom-module id="timeout-after"><template><iron-page-url query="{{val}}"></iron-page-url><on-timeout val="{{val}}"></on-timeout></template><script>Polymer({is: 'timeout-after', properties: {val: {type: String}}});</script></dom-module><dom-module id="default-below"><template><iron-page-url query="{{val}}"><default-value value="{{val}}"></default-value></iron-page-url></template><script>Polymer({is: 'default-below', properties: {val: {type: String}}});</script></dom-module><dom-module id="attached-below"><template><iron-page-url query="{{val}}"><on-attached val="{{val}}"></on-attached></iron-page-url></template><script>Polymer({is: 'attached-below', properties: {val: {type: String}}});</script></dom-module><dom-module id="ready-below"><template><iron-page-url query="{{val}}"><on-ready val="{{val}}"></on-ready></iron-page-url></template><script>Polymer({is: 'ready-below', properties: {val: {type: String}}});</script></dom-module><dom-module id="timeout-below"><template><iron-page-url query="{{val}}"><on-timeout val="{{val}}"></on-timeout></iron-page-url></template><script>Polymer({is: 'timeout-below', properties: {val: {type: String}}});</script></dom-module><dom-module id="default-above"><template><default-value value="{{val}}"><iron-page-url query="{{val}}"></iron-page-url></default-value></template><script>Polymer({is: 'default-above', properties: {val: {type: String}}});</script></dom-module><dom-module id="attached-above"><template><on-attached val="{{val}}"><iron-page-url query="{{val}}"></iron-page-url></on-attached></template><script>Polymer({is: 'attached-above', properties: {val: {type: String}}});</script></dom-module><dom-module id="ready-above"><template><on-ready val="{{val}}"><iron-page-url query="{{val}}"></iron-page-url></on-ready></template><script>Polymer({is: 'ready-above', properties: {val: {type: String}}});</script></dom-module><dom-module id="timeout-above"><template><on-timeout val="{{val}}"><iron-page-url query="{{val}}"></iron-page-url></on-timeout></template><script>Polymer({is: 'timeout-above', properties: {val: {type: String}}});</script></dom-module><dom-module id="default-container"><template><iron-page-url query="{{val}}"></iron-page-url></template><script>
+</script>
+
+<dom-module id='default-before'>
+  <template>
+    <default-value value='{{val}}'></default-value>
+    <iron-page-url query='{{val}}'></iron-page-url>
+
+  </template>
+  <script>Polymer({is: 'default-before', properties: {val: {type: String}}});</script>
+</dom-module>
+
+<dom-module id='attached-before'>
+  <template>
+    <on-attached val='{{val}}'></on-attached>
+    <iron-page-url query='{{val}}'></iron-page-url>
+  </template>
+  <script>Polymer({is: 'attached-before', properties: {val: {type: String}}});</script>
+</dom-module>
+
+<dom-module id='ready-before'>
+  <template>
+    <on-ready val='{{val}}'></on-ready>
+    <iron-page-url query='{{val}}'></iron-page-url>
+  </template>
+  <script>Polymer({is: 'ready-before', properties: {val: {type: String}}});</script>
+</dom-module>
+
+<dom-module id='timeout-before'>
+  <template>
+    <on-timeout val='{{val}}'></on-timeout>
+    <iron-page-url query='{{val}}'></iron-page-url>
+  </template>
+  <script>Polymer({is: 'timeout-before', properties: {val: {type: String}}});</script>
+</dom-module>
+
+
+<dom-module id='default-after'>
+  <template>
+    <iron-page-url query='{{val}}'></iron-page-url>
+    <default-value value='{{val}}'></default-value>
+  </template>
+  <script>Polymer({is: 'default-after', properties: {val: {type: String}}});</script>
+</dom-module>
+
+<dom-module id='attached-after'>
+  <template>
+    <iron-page-url query='{{val}}'></iron-page-url>
+    <on-attached val='{{val}}'></on-attached>
+  </template>
+  <script>Polymer({is: 'attached-after', properties: {val: {type: String}}});</script>
+</dom-module>
+
+<dom-module id='ready-after'>
+  <template>
+    <iron-page-url query='{{val}}'></iron-page-url>
+    <on-ready val='{{val}}'></on-ready>
+  </template>
+  <script>Polymer({is: 'ready-after', properties: {val: {type: String}}});</script>
+</dom-module>
+
+<dom-module id='timeout-after'>
+  <template>
+    <iron-page-url query='{{val}}'></iron-page-url>
+    <on-timeout val='{{val}}'></on-timeout>
+  </template>
+  <script>Polymer({is: 'timeout-after', properties: {val: {type: String}}});</script>
+</dom-module>
+
+
+<dom-module id='default-below'>
+  <template>
+    <iron-page-url query='{{val}}'>
+      <default-value value='{{val}}'></default-value>
+    </iron-page-url>
+  </template>
+  <script>Polymer({is: 'default-below', properties: {val: {type: String}}});</script>
+</dom-module>
+
+<dom-module id='attached-below'>
+  <template>
+    <iron-page-url query='{{val}}'>
+      <on-attached val='{{val}}'></on-attached>
+    </iron-page-url>
+  </template>
+  <script>Polymer({is: 'attached-below', properties: {val: {type: String}}});</script>
+</dom-module>
+
+<dom-module id='ready-below'>
+  <template>
+    <iron-page-url query='{{val}}'>
+      <on-ready val='{{val}}'></on-ready>
+    </iron-page-url>
+  </template>
+  <script>Polymer({is: 'ready-below', properties: {val: {type: String}}});</script>
+</dom-module>
+
+<dom-module id='timeout-below'>
+  <template>
+    <iron-page-url query='{{val}}'>
+      <on-timeout val='{{val}}'></on-timeout>
+    </iron-page-url>
+  </template>
+  <script>Polymer({is: 'timeout-below', properties: {val: {type: String}}});</script>
+</dom-module>
+
+
+<dom-module id='default-above'>
+  <template>
+    <default-value value='{{val}}'>
+      <iron-page-url query='{{val}}'></iron-page-url>
+    </default-value>
+  </template>
+  <script>Polymer({is: 'default-above', properties: {val: {type: String}}});</script>
+</dom-module>
+
+<dom-module id='attached-above'>
+  <template>
+    <on-attached val='{{val}}'>
+      <iron-page-url query='{{val}}'>
+      </iron-page-url>
+    </on-attached>
+  </template>
+  <script>Polymer({is: 'attached-above', properties: {val: {type: String}}});</script>
+</dom-module>
+
+<dom-module id='ready-above'>
+  <template>
+    <on-ready val='{{val}}'>
+      <iron-page-url query='{{val}}'>
+      </iron-page-url>
+    </on-ready>
+  </template>
+  <script>Polymer({is: 'ready-above', properties: {val: {type: String}}});</script>
+</dom-module>
+
+<dom-module id='timeout-above'>
+  <template>
+    <on-timeout val='{{val}}'>
+      <iron-page-url query='{{val}}'></iron-page-url>
+    </on-timeout>
+  </template>
+  <script>Polymer({is: 'timeout-above', properties: {val: {type: String}}});</script>
+</dom-module>
+
+
+<dom-module id='default-container'>
+  <template>
+    <iron-page-url query='{{val}}'></iron-page-url>
+  </template>
+  <script>
     Polymer({
       is: 'default-container',
       properties: {val: {type: String, value: 'default-container-val'}}
     });
-  </script></dom-module><dom-module id="attached-container"><template><iron-page-url query="{{val}}"></iron-page-url></template><script>
+  </script>
+</dom-module>
+
+<dom-module id='attached-container'>
+  <template>
+    <iron-page-url query='{{val}}'></iron-page-url>
+  </template>
+  <script>
     Polymer({
       is: 'attached-container',
       properties: {val: {type: String, value: 'container-attached-default-val'}},
@@ -70,14 +229,28 @@
         }
       }
     });
-  </script></dom-module><dom-module id="ready-container"><template><iron-page-url query="{{val}}"></iron-page-url></template><script>
+  </script>
+</dom-module>
+
+<dom-module id='ready-container'>
+  <template>
+    <iron-page-url query='{{val}}'></iron-page-url>
+  </template>
+  <script>
     Polymer({
       is: 'ready-container', properties: {val: {type: String}},
       ready: function() {
         this.val = 'ready-container-val';
       }
     });
-  </script></dom-module><dom-module id="timeout-container"><template><iron-page-url query="{{val}}"></iron-page-url></template><script>Polymer({
+  </script>
+</dom-module>
+
+<dom-module id='timeout-container'>
+  <template>
+    <iron-page-url query='{{val}}'></iron-page-url>
+  </template>
+  <script>Polymer({
     is: 'timeout-container',
     properties: {
       val: {type: String}
@@ -87,4 +260,5 @@
         this.val = 'on-timeout';
       }.bind(this), 10);
     }
-  });</script></dom-module>
+  });</script>
+</dom-module>

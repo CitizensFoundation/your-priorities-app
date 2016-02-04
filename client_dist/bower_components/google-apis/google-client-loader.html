@@ -1,4 +1,47 @@
-<link rel="import" href="../polymer/polymer.html"><link rel="import" href="google-js-api.html"><dom-module id="google-client-loader"><template><google-js-api on-js-api-load="_loadClient"></google-js-api></template></dom-module><script>
+<!--
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at https://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at https://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at https://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at https://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="google-js-api.html">
+
+<!--
+Element for loading a specific client Google API with the JavaScript client library.
+
+For loading `gapi.client` libraries
+
+##### Example
+
+    <google-client-loader id="shortener"
+      name="urlshortener"
+      version="v1"></google-client-loader>
+
+    <script>
+      var shortener = document.getElementById('shortener');
+      shortener.addEventListener('google-api-load', function(event) {
+        var request = shortener.api.url.get({
+           shortUrl: 'http://goo.gl/fbsS'
+        });
+        request.execute(function(resp) {
+          console.log(resp);
+        });
+      });
+    </script>
+
+@demo
+-->
+<dom-module id="google-client-loader">
+  <template>
+    <google-js-api on-js-api-load="_loadClient"></google-js-api>
+  </template>
+</dom-module>
+
+<script>
   (function() {
     'use strict';
 

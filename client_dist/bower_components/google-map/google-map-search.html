@@ -1,4 +1,32 @@
-<link rel="import" href="../polymer/polymer.html"><script>
+<!-- Copyright (c) 2015 Google Inc. All rights reserved. -->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`google-map-search` provides Google Maps Places API functionality.
+
+See https://developers.google.com/maps/documentation/javascript/places for more
+information on the API.
+
+#### Example:
+
+    <template is="dom-bind">
+      <google-map-search map="[[map]]" query="Pizza" results="{{results}}">
+      </google-map-search>
+      <google-map map="{{map}}" latitude="37.779"
+                  longitude="-122.3892">
+        <template is="dom-repeat" items="{{results}}" as="marker">
+          <google-map-marker latitude="{{marker.latitude}}"
+                             longitude="{{marker.longitude}}">
+            <h2>{{marker.name}}</h2>
+            <span>{{marker.formatted_address}}</span>
+          </google-map-marker>
+        </template>
+      </google-map>
+    </template>
+ -->
+
+<script>
 
   Polymer({
 

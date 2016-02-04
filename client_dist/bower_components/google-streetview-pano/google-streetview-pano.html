@@ -1,11 +1,62 @@
-<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../google-apis/google-maps-api.html"><dom-module id="google-streetview-pano"><style>
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../google-apis/google-maps-api.html">
+
+<!--
+Element for generating a Google Maps Street View Panorama.
+
+##### Example
+
+    <google-streetview-pano
+      pano-id="CWskcsTEZBNXaD8gG-zATA"
+      heading="330"
+      pitch="-2"
+      zoom="0.8"
+      disable-default-ui>
+    </google-streetview-pano>
+
+There are tons of great panoramas on the [Google Maps | Views page](https://www.google.com/maps/views/home?gl=us)
+
+To grab a panorama, look at its url in the address bar. For example:
+
+google.com/maps/views/view/102684927602131521305/photo/**1szTnskrdKIAAAGuu3fZRw**
+
+The hash in bold is the `pano-id`. You'll often need to dial in the `heading`, `pitch` and `zoom` manually.
+
+You can also use the position attribute and set it to a position with a computed value. Example: { lat: 42.345573, lng: -71.098326 }
+
+    <google-streetview-pano
+      position="[[_myComputedPosition()]]"
+      heading="330"
+      pitch="-2"
+      zoom="0.8"
+      disable-default-ui>
+    </google-streetview-pano>
+
+@demo
+-->
+
+<dom-module id="google-streetview-pano">
+  <style>
     :host {
       display: block;
     }
     #pano {
       height: 100%;
     }
-  </style><template><google-maps-api api-key="{{apiKey}}" version="{{version}}" libraries="{{libraries}}" client-id="{{clientId}}" language="{{language}}" client="" on-api-load="_mapApiLoaded"></google-maps-api><div id="pano" on-mouseenter="_autoStop" on-mouseleave="_autoUpdate"></div></template></dom-module><script>
+  </style>
+  <template>
+    <google-maps-api api-key="{{apiKey}}" version="{{version}}"
+                     libraries="{{libraries}}"
+                     client-id="{{clientId}}"
+                     language="{{language}}"
+                     client
+                     on-api-load="_mapApiLoaded"></google-maps-api>
+    <div id="pano" on-mouseenter="_autoStop"
+                   on-mouseleave="_autoUpdate"></div>
+  </template>
+</dom-module>
+
+<script>
   "use strict";
 
   Polymer({
