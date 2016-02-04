@@ -1,9 +1,10 @@
-<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../paper-ripple/paper-ripple.html"><link rel="import" href="../paper-styles/default-theme.html"><link rel="import" href="../paper-styles/color.html"><link rel="import" href="../paper-behaviors/paper-checked-element-behavior.html"><dom-module id="paper-checkbox"><template strip-whitespace=""><style>
+<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../paper-styles/default-theme.html"><link rel="import" href="../paper-styles/color.html"><link rel="import" href="../paper-behaviors/paper-checked-element-behavior.html"><dom-module id="paper-checkbox"><template strip-whitespace=""><style>
       :host {
         display: inline-block;
         white-space: nowrap;
         cursor: pointer;
         --calculated-paper-checkbox-size: var(--paper-checkbox-size, 18px);
+        @apply(--paper-font-common-base);
       }
 
       :host(:focus) {
@@ -44,7 +45,7 @@
       }
 
       #ink[checked] {
-        color: var(--paper-checkbox-checked-ink-color, --default-primary-color);
+        color: var(--paper-checkbox-checked-ink-color, --primary-color);
       }
 
       #checkbox {
@@ -84,8 +85,8 @@
       }
 
       #checkbox.checked {
-        background-color: var(--paper-checkbox-checked-color, --default-primary-color);
-        border-color: var(--paper-checkbox-checked-color, --default-primary-color);
+        background-color: var(--paper-checkbox-checked-color, --primary-color);
+        border-color: var(--paper-checkbox-checked-color, --primary-color);
       }
 
       #checkmark {
@@ -98,13 +99,14 @@
         border-right-width: calc(2/15 * var(--calculated-paper-checkbox-size));
         border-bottom-width: calc(2/15 * var(--calculated-paper-checkbox-size));
         border-color: var(--paper-checkbox-checkmark-color, white);
-        transform-origin: 97% 86%;
         -webkit-transform-origin: 97% 86%;
+        transform-origin: 97% 86%;
+        box-sizing: content-box; /* protect against page-level box-sizing */
       }
 
       :host-context([dir="rtl"]) #checkmark {
-        transform-origin: 50% 14%;
         -webkit-transform-origin: 50% 14%;
+        transform-origin: 50% 14%;
       }
 
       /* label */

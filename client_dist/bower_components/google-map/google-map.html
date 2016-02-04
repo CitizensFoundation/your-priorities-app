@@ -70,6 +70,10 @@
      * @event google-map-rightclick
      * @param {google.maps.MouseEvent} event The mouse event.
      */
+
+    /**
+     * Polymer properties for the google-map custom element.
+     */
     properties: {
       /**
        * A Maps API key. To obtain an API key, see developers.google.com/maps/documentation/javascript/tutorial#api_key.
@@ -616,7 +620,7 @@
       });
     },
 
-    attributeChanged: function(attrName, oldVal, newVal) {
+    attributeChanged: function(attrName) {
       if (!this.map) {
         return;
       }

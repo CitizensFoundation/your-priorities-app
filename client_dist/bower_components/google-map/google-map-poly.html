@@ -3,6 +3,7 @@
       display: none;
     }
   </style><template><content id="points" select="google-map-point"></content></template></dom-module><script>
+(function() {
   Polymer({
     is: 'google-map-poly',
 
@@ -78,10 +79,14 @@
      * @event google-map-poly-rightclick
      * @param {google.maps.PolyMouseEvent} event The poly event.
      */
+
+    /**
+     * Polymer properties for the google-map-poly element.
+     */
     properties: {
       /**
        * A Google Maps polyline or polygon object (depending on value of "closed" attribute).
-       * @type google.maps.Polyline|google.maps.Polygon
+       * @type {google.maps.Polyline|google.maps.Polygon}
        */
       poly: {
         type: Object,
@@ -286,7 +291,7 @@
 
     // Attribute/property change watchers.
 
-    attributeChanged: function(attrName, oldVal, newVal) {
+    attributeChanged: function(attrName) {
       if (!this.poly) {
         return;
       }
@@ -520,4 +525,5 @@
       this._points[index].longitude = vertex.lng();
     }
   });
+})();
 </script>

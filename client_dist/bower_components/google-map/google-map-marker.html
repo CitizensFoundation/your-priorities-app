@@ -122,6 +122,7 @@
 
       /**
        * A Google Map Infowindow object.
+       * @type {?Object}
        */
       info: {
         type: Object,
@@ -235,10 +236,8 @@
 
     _updatePosition: function() {
       if (this.marker && this.latitude != null && this.longitude != null) {
-        this.marker.setPosition({
-          lat: parseFloat(this.latitude),
-          lng: parseFloat(this.longitude)
-        });
+        this.marker.setPosition(new google.maps.LatLng(
+          parseFloat(this.latitude), parseFloat(this.longitude)));
       }
     },
 
@@ -400,7 +399,7 @@
       }.bind(this));
     },
 
-    attributeChanged: function(attrName, oldVal, newVal) {
+    attributeChanged: function(attrName) {
       if (!this.marker) {
         return;
       }

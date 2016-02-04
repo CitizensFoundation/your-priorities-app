@@ -78,7 +78,6 @@
 
       /**
        * Returns the loaded API.
-       * @type gapi.client
        */
       get api() {
         if (window.gapi && window.gapi.client &&
@@ -161,7 +160,7 @@
                 this._createSelfRemovingListener(this.errorEventName));
           // Did we get an error when we tried to load this API before?
           } else if (_statuses[this.name] == 'error') {
-            this._fireError();
+            this._fireError(null);
           // Otherwise, looks like we're loading a new API.
           } else {
             var root;

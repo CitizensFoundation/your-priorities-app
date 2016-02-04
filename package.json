@@ -69,6 +69,7 @@
     "test": "gulp test:local",
     "start": "node server_api/api_app.js"
   },
+  "cacheDirectories": ["node_modules"],
   "engines": {
     "node": "0.12.7"
   }
