@@ -1,57 +1,4 @@
-<!-- Copyright (c) 2015 Google Inc. All rights reserved. -->
-
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../google-apis/google-maps-api.html">
-<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
-<link rel="import" href="../iron-selector/iron-selector.html">
-<link rel="import" href="google-map-marker.html">
-<!--
-The `google-map` element renders a Google Map.
-
-<b>Example</b>:
-
-    <style>
-      google-map {
-        height: 600px;
-      }
-    </style>
-    <google-map latitude="37.77493" longitude="-122.41942"></google-map>
-
-<b>Example</b> - add markers to the map and ensure they're in view:
-
-    <google-map latitude="37.77493" longitude="-122.41942" fit-to-markers>
-      <google-map-marker latitude="37.779" longitude="-122.3892"
-          draggable="true" title="Go Giants!"></google-map-marker>
-      <google-map-marker latitude="37.777" longitude="-122.38911"></google-map-marker>
-    </google-map>
-
-<b>Example</b>:
-
-    <google-map disable-default-ui zoom="15"></google-map>
-    <script>
-      var map = document.querySelector('google-map');
-      map.latitude = 37.77493;
-      map.longitude = -122.41942;
-      map.addEventListener('google-map-ready', function(e) {
-        alert('Map loaded!');
-      });
-    </script>
-
-<b>Example</b> - with Google directions, using data-binding inside another Polymer element
-
-    <google-map map="{{map}}"></google-map>
-    <google-map-directions map="{{map}}"
-        start-address="San Francisco" end-address="Mountain View">
-    </google-map-directions>
-
-@demo demo/index.html
-@demo demo/polys.html
-@demo demo/kml.html
--->
-
-<dom-module id="google-map">
-
-  <style>
+<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../google-apis/google-maps-api.html"><link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html"><link rel="import" href="../iron-selector/iron-selector.html"><link rel="import" href="google-map-marker.html"><dom-module id="google-map"><style>
     :host {
       position: relative;
       display: block;
@@ -66,26 +13,7 @@ The `google-map` element renders a Google Map.
       left: 0;
     }
 
-  </style>
-  <template>
-    <google-maps-api id="api"
-      api-key="[[apiKey]]"
-      client-id="[[clientId]]"
-      version="[[version]]"
-      signed-in="[[signedIn]]"
-      language="[[language]]"
-      on-api-load="_mapApiLoaded"></google-maps-api>
-
-    <div id="map"></div>
-
-    <iron-selector id="selector" multi="[[!singleInfoWindow]]" selected-attribute="open" activate-event="google-map-marker-open" on-google-map-marker-close="_deselectMarker">
-      <content id="markers" select="google-map-marker"></content>
-    </iron-selector>
-    <content id="objects" select="*"></content>
-  </template>
-</dom-module>
-
-<script>
+  </style><template><google-maps-api id="api" api-key="[[apiKey]]" client-id="[[clientId]]" version="[[version]]" signed-in="[[signedIn]]" language="[[language]]" on-api-load="_mapApiLoaded"></google-maps-api><div id="map"></div><iron-selector id="selector" multi="[[!singleInfoWindow]]" selected-attribute="open" activate-event="google-map-marker-open" on-google-map-marker-close="_deselectMarker"><content id="markers" select="google-map-marker"></content></iron-selector><content id="objects" select="*"></content></template></dom-module><script>
 
   Polymer({
 

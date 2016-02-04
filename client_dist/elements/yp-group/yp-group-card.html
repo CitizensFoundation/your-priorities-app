@@ -104,7 +104,7 @@
 
     <template is="dom-if" if="[[group]]">
       <paper-card elevation="[[elevation]]" class="groupCard" on-tap="_goToGroup">
-        <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
+        <iron-image class="logo" sizing="contain" preload src="[[groupLogoImagePath(group)]]"></iron-image>
         <div class="card-content">
           <div class="objectives">
             <h2 class="group-name">[[groupName(group)]]</h2>

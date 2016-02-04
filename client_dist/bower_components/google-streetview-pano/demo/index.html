@@ -1,14 +1,4 @@
-<!doctype html>
-<!-- Copyright (c) 2014 Google Inc. All rights reserved. -->
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-
-  <title>google-streetview-pano Demo</title>
-
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-  <link rel="import" href="../google-streetview-pano.html">
-  <style>
+<!doctype html><html><head><meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"><title>google-streetview-pano Demo</title><script src="../../webcomponentsjs/webcomponents-lite.js"></script><link rel="import" href="../google-streetview-pano.html"><style>
     html, body {
       margin: 0;
       padding: 0;
@@ -19,18 +9,7 @@
       display: block;
       height: 80%;
     }
-  </style>
-</head>
-
-<body>
-
-  <google-streetview-pano pano-id="RjEjGqu4ymMAAAAGOtaGAQ" heading="350" pitch="-2" zoom="0.8" disable-default-ui></google-streetview-pano>
-
-  <button onclick="showMachu();">Show me Machu Pichu</button>
-  <button onclick="showBrazil();">Show me Brazil</button>
-  <button onclick="showStatue();">Show me Statue of Vishnu</button>
-
-  <script>
+  </style></head><body><google-streetview-pano pano-id="RjEjGqu4ymMAAAAGOtaGAQ" heading="350" pitch="-2" zoom="0.8" disable-default-ui=""></google-streetview-pano><button onclick="showMachu();">Show me Machu Pichu</button> <button onclick="showBrazil();">Show me Brazil</button> <button onclick="showStatue();">Show me Statue of Vishnu</button><script>
   var pano = document.querySelector('google-streetview-pano');
   function showMachu() {
     pano.heading = 330;
@@ -50,6 +29,4 @@
     pano.zoom = 0.2;
     pano.panoId = 'pVFRQcvJ2IEAAAGuvUxa_w';
   }
-  </script>
-</body>
-</html>
+  </script></body></html>

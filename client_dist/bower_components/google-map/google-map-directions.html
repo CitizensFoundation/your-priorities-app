@@ -1,44 +1,8 @@
-<!-- Copyright (c) 2015 Google Inc. All rights reserved. -->
-
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../google-apis/google-maps-api.html">
-
-<!--
-Provides the Google Maps API Directions Service to provide directions
-between a `startAddress` and `endAddress`.
-
-See https://developers.google.com/maps/documentation/javascript/directions for more
-information on the API.
-
-#### Example:
-
-    <template is="dom-bind">
-      <google-map-directions map="{{map}}"
-          start-address="San Francisco"
-          end-address="Mountain View"
-          travel-mode="BICYCLING"
-          waypoints='[{"location": "Palo Alto"}, {"location": "San Mateo"}]'></google-map-directions>
-      <google-map map="{{map}}" latitude="37.779"
-                  longitude="-122.3892"></google-map>
-    </template>
-
--->
-
-<dom-module id="google-map-directions">
-  <style>
+<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../google-apis/google-maps-api.html"><dom-module id="google-map-directions"><style>
     :host {
       display: none;
     }
-  </style>
-  <template>
-    <google-maps-api
-      api-key="[[apiKey]]"
-      language="[[language]]"
-      on-api-load="_mapApiLoaded"></google-maps-api>
-  </template>
-</dom-module>
-
-<script>
+  </style><template><google-maps-api api-key="[[apiKey]]" language="[[language]]" on-api-load="_mapApiLoaded"></google-maps-api></template></dom-module><script>
   Polymer({
 
     is: 'google-map-directions',
