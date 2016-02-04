@@ -11745,759 +11745,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     });
 
   </script></dom-module><script>
-
-  Polymer({
-
-    is: 'iron-media-query',
-
-    properties: {
-
-      /**
-       * The Boolean return value of the media query.
-       */
-      queryMatches: {
-        type: Boolean,
-        value: false,
-        readOnly: true,
-        notify: true
-      },
-
-      /**
-       * The CSS media query to evaluate.
-       */
-      query: {
-        type: String,
-        observer: 'queryChanged'
-      },
-
-      /**
-       * If true, the query attribute is assumed to be a complete media query
-       * string rather than a single media feature.
-       */
-      full: {
-        type: Boolean,
-        value: false
-      },
-
-      /**
-       * @type {function(MediaQueryList)}
-       */
-      _boundMQHandler: {
-        value: function() {
-          return this.queryHandler.bind(this);
-        }
-      },
-
-      /**
-       * @type {MediaQueryList}
-       */
-      _mq: {
-        value: null
-      }
-    },
-
-    attached: function() {
-      this.style.display = 'none';
-      this.queryChanged();
-    },
-
-    detached: function() {
-      this._remove();
-    },
-
-    _add: function() {
-      if (this._mq) {
-        this._mq.addListener(this._boundMQHandler);
-      }
-    },
-
-    _remove: function() {
-      if (this._mq) {
-        this._mq.removeListener(this._boundMQHandler);
-      }
-      this._mq = null;
-    },
-
-    queryChanged: function() {
-      this._remove();
-      var query = this.query;
-      if (!query) {
-        return;
-      }
-      if (!this.full && query[0] !== '(') {
-        query = '(' + query + ')';
-      }
-      this._mq = window.matchMedia(query);
-      this._add();
-      this.queryHandler(this._mq);
-    },
-
-    queryHandler: function(mq) {
-      this._setQueryMatches(mq.matches);
-    }
-
-  });
-
-</script><dom-module id="paper-drawer-panel" assetpath="../bower_components/paper-drawer-panel/"><template><style>
-      :host {
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-      }
-
-      iron-selector > #drawer {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        background-color: white;
-
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-
-        @apply(--paper-drawer-panel-drawer-container);
-      }
-
-      .transition > #drawer {
-        transition: -webkit-transform ease-in-out 0.3s, width ease-in-out 0.3s, visibility 0.3s;
-        transition: transform ease-in-out 0.3s, width ease-in-out 0.3s, visibility 0.3s;
-      }
-
-      .left-drawer > #drawer {
-        @apply(--paper-drawer-panel-left-drawer-container);
-      }
-
-      .right-drawer > #drawer {
-        left: auto;
-        right: 0;
-
-        @apply(--paper-drawer-panel-right-drawer-container);
-      }
-
-      iron-selector > #main {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-
-        @apply(--paper-drawer-panel-main-container);
-      }
-
-      .transition > #main {
-        transition: left ease-in-out 0.3s, padding ease-in-out 0.3s;
-      }
-
-      .right-drawer > #main {
-        left: 0;
-      }
-
-      .right-drawer.transition > #main {
-        transition: right ease-in-out 0.3s, padding ease-in-out 0.3s;
-      }
-
-      #main > ::content > [main] {
-        height: 100%;
-      }
-
-      #drawer > ::content > [drawer] {
-        height: 100%;
-      }
-
-      #scrim {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        visibility: hidden;
-        opacity: 0;
-        transition: opacity ease-in-out 0.38s, visibility ease-in-out 0.38s;
-        background-color: rgba(0, 0, 0, 0.3);
-
-        @apply(--paper-drawer-panel-scrim);
-      }
-
-      .narrow-layout > #drawer {
-        will-change: transform;
-      }
-
-      .narrow-layout > #drawer.iron-selected {
-        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
-      }
-
-      .right-drawer.narrow-layout > #drawer.iron-selected {
-        box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.15);
-      }
-
-      .narrow-layout > #drawer > ::content > [drawer] {
-        border: 0;
-      }
-
-      .left-drawer.narrow-layout > #drawer:not(.iron-selected) {
-        -webkit-transform: translateX(-100%);
-        transform: translateX(-100%);
-      }
-
-      .right-drawer.narrow-layout > #drawer:not(.iron-selected) {
-        left: auto;
-        visibility: hidden;
-
-        -webkit-transform: translateX(100%);
-        transform: translateX(100%);
-      }
-
-      .right-drawer.narrow-layout.dragging > #drawer:not(.iron-selected),
-      .right-drawer.narrow-layout.peeking > #drawer:not(.iron-selected) {
-        visibility: visible;
-      }
-
-      .narrow-layout > #main {
-        padding: 0;
-      }
-
-      .right-drawer.narrow-layout > #main {
-        left: 0;
-        right: 0;
-      }
-
-      .narrow-layout > #main:not(.iron-selected) > #scrim,
-      .dragging > #main > #scrim {
-        visibility: visible;
-        opacity: var(--paper-drawer-panel-scrim-opacity, 1);
-      }
-
-      .narrow-layout > #main > * {
-        margin: 0;
-        min-height: 100%;
-        left: 0;
-        right: 0;
-
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-      }
-
-      iron-selector:not(.narrow-layout) #main ::content [paper-drawer-toggle] {
-        display: none;
-      }
-    </style><iron-media-query id="mq" on-query-matches-changed="_onQueryMatchesChanged" query="[[_computeMediaQuery(forceNarrow, responsiveWidth)]]"></iron-media-query><iron-selector attr-for-selected="id" class$="[[_computeIronSelectorClass(narrow, _transition, dragging, rightDrawer, peeking)]]" activate-event="" selected="[[selected]]"><div id="main" style$="[[_computeMainStyle(narrow, rightDrawer, drawerWidth)]]" on-transitionend="_onMainTransitionEnd"><content select="[main]"></content><div id="scrim" on-tap="closeDrawer"></div></div><div id="drawer" style$="[[_computeDrawerStyle(drawerWidth)]]"><content select="[drawer]"></content></div></iron-selector></template><script>
-    (function() {
-      'use strict';
-
-      // this would be the only `paper-drawer-panel` in
-      // the whole app that can be in `dragging` state
-      var sharedPanel = null;
-
-      function classNames(obj) {
-        var classes = [];
-        for (var key in obj) {
-          if (obj.hasOwnProperty(key) && obj[key]) {
-            classes.push(key);
-          }
-        }
-
-        return classes.join(' ');
-      }
-
-      Polymer({
-
-        is: 'paper-drawer-panel',
-
-        behaviors: [Polymer.IronResizableBehavior],
-
-        /**
-         * Fired when the narrow layout changes.
-         *
-         * @event paper-responsive-change {{narrow: boolean}} detail -
-         *     narrow: true if the panel is in narrow layout.
-         */
-
-        /**
-         * Fired when the a panel is selected.
-         *
-         * Listening for this event is an alternative to observing changes in the `selected` attribute.
-         * This event is fired both when a panel is selected.
-         *
-         * @event iron-select {{item: Object}} detail -
-         *     item: The panel that the event refers to.
-         */
-
-        /**
-         * Fired when a panel is deselected.
-         *
-         * Listening for this event is an alternative to observing changes in the `selected` attribute.
-         * This event is fired both when a panel is deselected.
-         *
-         * @event iron-deselect {{item: Object}} detail -
-         *     item: The panel that the event refers to.
-         */
-        properties: {
-
-          /**
-           * The panel to be selected when `paper-drawer-panel` changes to narrow
-           * layout.
-           */
-          defaultSelected: {
-            type: String,
-            value: 'main'
-          },
-
-          /**
-           * If true, swipe from the edge is disabled.
-           */
-          disableEdgeSwipe: {
-            type: Boolean,
-            value: false
-          },
-
-          /**
-           * If true, swipe to open/close the drawer is disabled.
-           */
-          disableSwipe: {
-            type: Boolean,
-            value: false
-          },
-
-          /**
-           * Whether the user is dragging the drawer interactively.
-           */
-          dragging: {
-            type: Boolean,
-            value: false,
-            readOnly: true,
-            notify: true
-          },
-
-          /**
-           * Width of the drawer panel.
-           */
-          drawerWidth: {
-            type: String,
-            value: '256px'
-          },
-
-          /**
-           * How many pixels on the side of the screen are sensitive to edge
-           * swipes and peek.
-           */
-          edgeSwipeSensitivity: {
-            type: Number,
-            value: 30
-          },
-
-          /**
-           * If true, ignore `responsiveWidth` setting and force the narrow layout.
-           */
-          forceNarrow: {
-            type: Boolean,
-            value: false
-          },
-
-          /**
-           * Whether the browser has support for the transform CSS property.
-           */
-          hasTransform: {
-            type: Boolean,
-            value: function() {
-              return 'transform' in this.style;
-            }
-          },
-
-          /**
-           * Whether the browser has support for the will-change CSS property.
-           */
-          hasWillChange: {
-            type: Boolean,
-            value: function() {
-              return 'willChange' in this.style;
-            }
-          },
-
-          /**
-           * Returns true if the panel is in narrow layout.  This is useful if you
-           * need to show/hide elements based on the layout.
-           */
-          narrow: {
-            reflectToAttribute: true,
-            type: Boolean,
-            value: false,
-            readOnly: true,
-            notify: true
-          },
-
-          /**
-           * Whether the drawer is peeking out from the edge.
-           */
-          peeking: {
-            type: Boolean,
-            value: false,
-            readOnly: true,
-            notify: true
-          },
-
-          /**
-           * Max-width when the panel changes to narrow layout.
-           */
-          responsiveWidth: {
-            type: String,
-            value: '600px'
-          },
-
-          /**
-           * If true, position the drawer to the right.
-           */
-          rightDrawer: {
-            type: Boolean,
-            value: false
-          },
-
-          /**
-           * The panel that is being selected. `drawer` for the drawer panel and
-           * `main` for the main panel.
-           */
-          selected: {
-            reflectToAttribute: true,
-            notify: true,
-            type: String,
-            value: null
-          },
-
-          /**
-           * The attribute on elements that should toggle the drawer on tap, also elements will
-           * automatically be hidden in wide layout.
-           */
-          drawerToggleAttribute: {
-            type: String,
-            value: 'paper-drawer-toggle'
-          },
-
-          /**
-           * Whether the transition is enabled.
-           */
-          _transition: {
-            type: Boolean,
-            value: false
-          },
-
-        },
-
-        listeners: {
-          tap: '_onTap',
-          track: '_onTrack',
-          down: '_downHandler',
-          up: '_upHandler'
-        },
-
-        observers: [
-          '_forceNarrowChanged(forceNarrow, defaultSelected)'
-        ],
-
-        /**
-         * Toggles the panel open and closed.
-         *
-         * @method togglePanel
-         */
-        togglePanel: function() {
-          if (this._isMainSelected()) {
-            this.openDrawer();
-          } else {
-            this.closeDrawer();
-          }
-        },
-
-        /**
-         * Opens the drawer.
-         *
-         * @method openDrawer
-         */
-        openDrawer: function() {
-          this.selected = 'drawer';
-        },
-
-        /**
-         * Closes the drawer.
-         *
-         * @method closeDrawer
-         */
-        closeDrawer: function() {
-          this.selected = 'main';
-        },
-
-        ready: function() {
-          // Avoid transition at the beginning e.g. page loads and enable
-          // transitions only after the element is rendered and ready.
-          this._transition = true;
-        },
-
-        _onMainTransitionEnd: function (e) {
-          if (e.currentTarget === this.$.main && (e.propertyName === 'left' || e.propertyName === 'right')) {
-            this.notifyResize();
-          }
-        },
-
-        _computeIronSelectorClass: function(narrow, transition, dragging, rightDrawer, peeking) {
-          return classNames({
-            dragging: dragging,
-            'narrow-layout': narrow,
-            'right-drawer': rightDrawer,
-            'left-drawer': !rightDrawer,
-            transition: transition,
-            peeking: peeking
-          });
-        },
-
-        _computeDrawerStyle: function(drawerWidth) {
-          return 'width:' + drawerWidth + ';';
-        },
-
-        _computeMainStyle: function(narrow, rightDrawer, drawerWidth) {
-          var style = '';
-
-          style += 'left:' + ((narrow || rightDrawer) ? '0' : drawerWidth) + ';';
-
-          if (rightDrawer) {
-            style += 'right:' + (narrow ? '' : drawerWidth) + ';';
-          }
-
-          return style;
-        },
-
-        _computeMediaQuery: function(forceNarrow, responsiveWidth) {
-          return forceNarrow ? '' : '(max-width: ' + responsiveWidth + ')';
-        },
-
-        _computeSwipeOverlayHidden: function(narrow, disableEdgeSwipe) {
-          return !narrow || disableEdgeSwipe;
-        },
-
-        _onTrack: function(event) {
-          if (sharedPanel && this !== sharedPanel) {
-            return;
-          }
-          switch (event.detail.state) {
-            case 'start':
-              this._trackStart(event);
-              break;
-            case 'track':
-              this._trackX(event);
-              break;
-            case 'end':
-              this._trackEnd(event);
-              break;
-          }
-
-        },
-
-        _responsiveChange: function(narrow) {
-          this._setNarrow(narrow);
-
-          if (this.narrow) {
-            this.selected = this.defaultSelected;
-          }
-
-          this.setScrollDirection(this._swipeAllowed() ? 'y' : 'all');
-          this.fire('paper-responsive-change', {narrow: this.narrow});
-        },
-
-        _onQueryMatchesChanged: function(event) {
-          this._responsiveChange(event.detail.value);
-        },
-
-        _forceNarrowChanged: function() {
-          // set the narrow mode only if we reached the `responsiveWidth`
-          this._responsiveChange(this.forceNarrow || this.$.mq.queryMatches);
-        },
-
-        _swipeAllowed: function() {
-          return this.narrow && !this.disableSwipe;
-        },
-
-        _isMainSelected: function() {
-          return this.selected === 'main';
-        },
-
-        _startEdgePeek: function() {
-          this.width = this.$.drawer.offsetWidth;
-          this._moveDrawer(this._translateXForDeltaX(this.rightDrawer ?
-              -this.edgeSwipeSensitivity : this.edgeSwipeSensitivity));
-          this._setPeeking(true);
-        },
-
-        _stopEdgePeek: function() {
-          if (this.peeking) {
-            this._setPeeking(false);
-            this._moveDrawer(null);
-          }
-        },
-
-        _downHandler: function(event) {
-          if (!this.dragging && this._isMainSelected() && this._isEdgeTouch(event) && !sharedPanel) {
-            this._startEdgePeek();
-            // cancel selection
-            event.preventDefault();
-            // grab this panel
-            sharedPanel = this;
-          }
-        },
-
-        _upHandler: function() {
-          this._stopEdgePeek();
-          // release the panel
-          sharedPanel = null;
-        },
-
-        _onTap: function(event) {
-          var targetElement = Polymer.dom(event).localTarget;
-          var isTargetToggleElement = targetElement &&
-            this.drawerToggleAttribute &&
-            targetElement.hasAttribute(this.drawerToggleAttribute);
-
-          if (isTargetToggleElement) {
-            this.togglePanel();
-          }
-        },
-
-        _isEdgeTouch: function(event) {
-          var x = event.detail.x;
-
-          return !this.disableEdgeSwipe && this._swipeAllowed() &&
-            (this.rightDrawer ?
-              x >= this.offsetWidth - this.edgeSwipeSensitivity :
-              x <= this.edgeSwipeSensitivity);
-        },
-
-        _trackStart: function(event) {
-          if (this._swipeAllowed()) {
-            sharedPanel = this;
-            this._setDragging(true);
-
-            if (this._isMainSelected()) {
-              this._setDragging(this.peeking || this._isEdgeTouch(event));
-            }
-
-            if (this.dragging) {
-              this.width = this.$.drawer.offsetWidth;
-              this._transition = false;
-            }
-          }
-        },
-
-        _translateXForDeltaX: function(deltaX) {
-          var isMain = this._isMainSelected();
-
-          if (this.rightDrawer) {
-            return Math.max(0, isMain ? this.width + deltaX : deltaX);
-          } else {
-            return Math.min(0, isMain ? deltaX - this.width : deltaX);
-          }
-        },
-
-        _trackX: function(event) {
-          if (this.dragging) {
-            var dx = event.detail.dx;
-
-            if (this.peeking) {
-              if (Math.abs(dx) <= this.edgeSwipeSensitivity) {
-                // Ignore trackx until we move past the edge peek.
-                return;
-              }
-              this._setPeeking(false);
-            }
-
-            this._moveDrawer(this._translateXForDeltaX(dx));
-          }
-        },
-
-        _trackEnd: function(event) {
-          if (this.dragging) {
-            var xDirection = event.detail.dx > 0;
-
-            this._setDragging(false);
-            this._transition = true;
-            sharedPanel = null;
-            this._moveDrawer(null);
-
-            if (this.rightDrawer) {
-              this[xDirection ? 'closeDrawer' : 'openDrawer']();
-            } else {
-              this[xDirection ? 'openDrawer' : 'closeDrawer']();
-            }
-          }
-        },
-
-        _transformForTranslateX: function(translateX) {
-          if (translateX === null) {
-            return '';
-          }
-
-          return this.hasWillChange ? 'translateX(' + translateX + 'px)' :
-              'translate3d(' + translateX + 'px, 0, 0)';
-        },
-
-        _moveDrawer: function(translateX) {
-          this.transform(this._transformForTranslateX(translateX), this.$.drawer);
-        }
-
-      });
-    }());
-  </script></dom-module><style is="custom-style">
-
-  :root {
-    /*
-     * You can use these generic variables in your elements for easy theming.
-     * For example, if all your elements use `--primary-text-color` as its main
-     * color, then switching from a light to a dark theme is just a matter of
-     * changing the value of `--primary-text-color` in your application.
-     */
-    --primary-text-color: var(--light-theme-text-color);
-    --primary-background-color: var(--light-theme-background-color);
-    --secondary-text-color: var(--light-theme-secondary-color);
-    --disabled-text-color: var(--light-theme-disabled-color);
-    --divider-color: var(--light-theme-divider-color);
-
-    /*
-     * Primary and accent colors. Also see color.html for more colors.
-     */
-    --primary-color: #3f51b5;  /* --paper-indigo-500 */
-    --light-primary-color: #c5cae9;  /* --paper-indigo-100 */
-    --dark-primary-color: #303f9f;  /* --paper-indigo-700 */
-
-    --accent-color: #ff4081;  /* --paper-pink-a200 */
-    --light-accent-color: #ff80ab;  /* --paper-pink-a100 */
-    --dark-accent-color: #f50057;  /* --paper-pink-a400 */
-
-    /*
-     * Material Design Light background theme
-     */
-    --light-theme-background-color: #ffffff;
-    --light-theme-base-color: #000000;
-    --light-theme-text-color: #212121;
-    --light-theme-secondary-color: #737373;  /* for secondary text and icons */
-    --light-theme-disabled-color: #9b9b9b;  /* disabled/hint text */
-    --light-theme-divider-color: #dbdbdb;
-
-    /*
-     * Material Design Dark background theme
-     */
-    --dark-theme-background-color: #212121;
-    --dark-theme-base-color: #ffffff;
-    --dark-theme-text-color: #ffffff;
-    --dark-theme-secondary-color: #bcbcbc;  /* for secondary text and icons */
-    --dark-theme-disabled-color: #646464;  /* disabled/hint text */
-    --dark-theme-divider-color: #3c3c3c;
-
-    /*
-     * Deprecated values because of their confusing names.
-     */
-    --text-primary-color: var(--dark-theme-text-color);
-    --default-primary-color: var(--primary-color);
-
-  }
-
-</style><script>
   (function() {
     'use strict';
 
@@ -12930,6 +12177,304 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     };
   })();
+</script><script>
+
+  /**
+   * `Use Polymer.IronValidatableBehavior` to implement an element that validates user input.
+   * Use the related `Polymer.IronValidatorBehavior` to add custom validation logic to an iron-input.
+   *
+   * By default, an `<iron-form>` element validates its fields when the user presses the submit button.
+   * To validate a form imperatively, call the form's `validate()` method, which in turn will
+   * call `validate()` on all its children. By using `Polymer.IronValidatableBehavior`, your
+   * custom element will get a public `validate()`, which
+   * will return the validity of the element, and a corresponding `invalid` attribute,
+   * which can be used for styling.
+   *
+   * To implement the custom validation logic of your element, you must override
+   * the protected `_getValidity()` method of this behaviour, rather than `validate()`.
+   * See [this](https://github.com/PolymerElements/iron-form/blob/master/demo/simple-element.html)
+   * for an example.
+   *
+   * ### Accessibility
+   *
+   * Changing the `invalid` property, either manually or by calling `validate()` will update the
+   * `aria-invalid` attribute.
+   *
+   * @demo demo/index.html
+   * @polymerBehavior
+   */
+  Polymer.IronValidatableBehavior = {
+
+    properties: {
+
+      /**
+       * Namespace for this validator.
+       */
+      validatorType: {
+        type: String,
+        value: 'validator'
+      },
+
+      /**
+       * Name of the validator to use.
+       */
+      validator: {
+        type: String
+      },
+
+      /**
+       * True if the last call to `validate` is invalid.
+       */
+      invalid: {
+        notify: true,
+        reflectToAttribute: true,
+        type: Boolean,
+        value: false
+      },
+
+      _validatorMeta: {
+        type: Object
+      }
+
+    },
+
+    observers: [
+      '_invalidChanged(invalid)'
+    ],
+
+    get _validator() {
+      return this._validatorMeta && this._validatorMeta.byKey(this.validator);
+    },
+
+    ready: function() {
+      this._validatorMeta = new Polymer.IronMeta({type: this.validatorType});
+    },
+
+    _invalidChanged: function() {
+      if (this.invalid) {
+        this.setAttribute('aria-invalid', 'true');
+      } else {
+        this.removeAttribute('aria-invalid');
+      }
+    },
+
+    /**
+     * @return {boolean} True if the validator `validator` exists.
+     */
+    hasValidator: function() {
+      return this._validator != null;
+    },
+
+    /**
+     * Returns true if the `value` is valid, and updates `invalid`. If you want
+     * your element to have custom validation logic, do not override this method;
+     * override `_getValidity(value)` instead.
+
+     * @param {Object} value The value to be validated. By default, it is passed
+     * to the validator's `validate()` function, if a validator is set.
+     * @return {boolean} True if `value` is valid.
+     */
+    validate: function(value) {
+      this.invalid = !this._getValidity(value);
+      return !this.invalid;
+    },
+
+    /**
+     * Returns true if `value` is valid.  By default, it is passed
+     * to the validator's `validate()` function, if a validator is set. You
+     * should override this method if you want to implement custom validity
+     * logic for your element.
+     *
+     * @param {Object} value The value to be validated.
+     * @return {boolean} True if `value` is valid.
+     */
+
+    _getValidity: function(value) {
+      if (this.hasValidator()) {
+        return this._validator.validate(value);
+      }
+      return true;
+    }
+  };
+
+</script><script>
+  /**
+  Polymer.IronFormElementBehavior enables a custom element to be included
+  in an `iron-form`.
+
+  @demo demo/index.html
+  @polymerBehavior
+  */
+  Polymer.IronFormElementBehavior = {
+
+    properties: {
+      /**
+       * Fired when the element is added to an `iron-form`.
+       *
+       * @event iron-form-element-register
+       */
+
+      /**
+       * Fired when the element is removed from an `iron-form`.
+       *
+       * @event iron-form-element-unregister
+       */
+
+      /**
+       * The name of this element.
+       */
+      name: {
+        type: String
+      },
+
+      /**
+       * The value for this element.
+       */
+      value: {
+        notify: true,
+        type: String
+      },
+
+      /**
+       * Set to true to mark the input as required. If used in a form, a
+       * custom element that uses this behavior should also use
+       * Polymer.IronValidatableBehavior and define a custom validation method.
+       * Otherwise, a `required` element will always be considered valid.
+       * It's also strongly recommended to provide a visual style for the element
+       * when its value is invalid.
+       */
+      required: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * The form that the element is registered to.
+       */
+      _parentForm: {
+        type: Object
+      }
+    },
+
+    attached: function() {
+      // Note: the iron-form that this element belongs to will set this
+      // element's _parentForm property when handling this event.
+      this.fire('iron-form-element-register');
+    },
+
+    detached: function() {
+      if (this._parentForm) {
+        this._parentForm.fire('iron-form-element-unregister', {target: this});
+      }
+    }
+
+  };
+
+</script><script>
+
+  /**
+   * Use `Polymer.IronCheckedElementBehavior` to implement a custom element
+   * that has a `checked` property, which can be used for validation if the
+   * element is also `required`. Element instances implementing this behavior
+   * will also be registered for use in an `iron-form` element.
+   *
+   * @demo demo/index.html
+   * @polymerBehavior Polymer.IronCheckedElementBehavior
+   */
+  Polymer.IronCheckedElementBehaviorImpl = {
+
+    properties: {
+      /**
+       * Fired when the checked state changes.
+       *
+       * @event iron-change
+       */
+
+      /**
+       * Gets or sets the state, `true` is checked and `false` is unchecked.
+       */
+      checked: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+        notify: true,
+        observer: '_checkedChanged'
+      },
+
+      /**
+       * If true, the button toggles the active state with each tap or press
+       * of the spacebar.
+       */
+      toggles: {
+        type: Boolean,
+        value: true,
+        reflectToAttribute: true
+      },
+
+      /* Overriden from Polymer.IronFormElementBehavior */
+      value: {
+        type: String,
+        value: 'on',
+        observer: '_valueChanged'
+      }
+    },
+
+    observers: [
+      '_requiredChanged(required)'
+    ],
+
+    created: function() {
+      // Used by `iron-form` to handle the case that an element with this behavior
+      // doesn't have a role of 'checkbox' or 'radio', but should still only be
+      // included when the form is serialized if `this.checked === true`.
+      this._hasIronCheckedElementBehavior = true;
+    },
+
+    /**
+     * Returns false if the element is required and not checked, and true otherwise.
+     * @param {*=} _value Ignored.
+     * @return {boolean} true if `required` is false, or if `required` and `checked` are both true.
+     */
+    _getValidity: function(_value) {
+      return this.disabled || !this.required || (this.required && this.checked);
+    },
+
+    /**
+     * Update the aria-required label when `required` is changed.
+     */
+    _requiredChanged: function() {
+      if (this.required) {
+        this.setAttribute('aria-required', 'true');
+      } else {
+        this.removeAttribute('aria-required');
+      }
+    },
+
+    /**
+     * Fire `iron-changed` when the checked state changes.
+     */
+    _checkedChanged: function() {
+      this.active = this.checked;
+      this.fire('iron-change');
+    },
+
+    /**
+     * Reset value to 'on' if it is set to `undefined`.
+     */
+    _valueChanged: function() {
+      if (this.value === undefined || this.value === null) {
+        this.value = 'on';
+      }
+    }
+  };
+
+  /** @polymerBehavior Polymer.IronCheckedElementBehavior */
+  Polymer.IronCheckedElementBehavior = [
+    Polymer.IronFormElementBehavior,
+    Polymer.IronValidatableBehavior,
+    Polymer.IronCheckedElementBehaviorImpl
+  ];
+
 </script><script>
 
   /**
@@ -14017,6 +13562,1126 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
 </script><script>
 
+  /**
+   * `Polymer.PaperInkyFocusBehavior` implements a ripple when the element has keyboard focus.
+   *
+   * @polymerBehavior Polymer.PaperInkyFocusBehavior
+   */
+  Polymer.PaperInkyFocusBehaviorImpl = {
+
+    observers: [
+      '_focusedChanged(receivedFocusFromKeyboard)'
+    ],
+
+    _focusedChanged: function(receivedFocusFromKeyboard) {
+      if (receivedFocusFromKeyboard) {
+        this.ensureRipple();
+      }
+      if (this.hasRipple()) {
+        this._ripple.holdDown = receivedFocusFromKeyboard;
+      }
+    },
+
+    _createRipple: function() {
+      var ripple = Polymer.PaperRippleBehavior._createRipple();
+      ripple.id = 'ink';
+      ripple.setAttribute('center', '');
+      ripple.classList.add('circle');
+      return ripple;
+    }
+
+  };
+
+  /** @polymerBehavior Polymer.PaperInkyFocusBehavior */
+  Polymer.PaperInkyFocusBehavior = [
+    Polymer.IronButtonState,
+    Polymer.IronControlState,
+    Polymer.PaperRippleBehavior,
+    Polymer.PaperInkyFocusBehaviorImpl
+  ];
+
+</script><script>
+
+  /**
+   * Use `Polymer.PaperCheckedElementBehavior` to implement a custom element
+   * that has a `checked` property similar to `Polymer.IronCheckedElementBehavior`
+   * and is compatible with having a ripple effect.
+   * @polymerBehavior Polymer.PaperCheckedElementBehavior
+   */
+  Polymer.PaperCheckedElementBehaviorImpl = {
+
+    /**
+     * Synchronizes the element's checked state with its ripple effect.
+     */
+    _checkedChanged: function() {
+      Polymer.IronCheckedElementBehaviorImpl._checkedChanged.call(this);
+      if (this.hasRipple()) {
+        if (this.checked) {
+          this._ripple.setAttribute('checked', '');
+        } else {
+          this._ripple.removeAttribute('checked');
+        }
+      }
+    },
+
+    /**
+     * Synchronizes the element's `active` and `checked` state.
+     */
+    _buttonStateChanged: function() {
+      Polymer.PaperRippleBehavior._buttonStateChanged.call(this);
+      if (this.disabled) {
+        return;
+      }
+      if (this.isAttached) {
+        this.checked = this.active;
+      }
+    }
+
+  };
+
+  /** @polymerBehavior Polymer.PaperCheckedElementBehavior */
+  Polymer.PaperCheckedElementBehavior = [
+    Polymer.PaperInkyFocusBehavior,
+    Polymer.IronCheckedElementBehavior,
+    Polymer.PaperCheckedElementBehaviorImpl
+  ];
+
+</script><style is="custom-style">
+
+  :root {
+    /*
+     * You can use these generic variables in your elements for easy theming.
+     * For example, if all your elements use `--primary-text-color` as its main
+     * color, then switching from a light to a dark theme is just a matter of
+     * changing the value of `--primary-text-color` in your application.
+     */
+    --primary-text-color: var(--light-theme-text-color);
+    --primary-background-color: var(--light-theme-background-color);
+    --secondary-text-color: var(--light-theme-secondary-color);
+    --disabled-text-color: var(--light-theme-disabled-color);
+    --divider-color: var(--light-theme-divider-color);
+
+    /*
+     * Primary and accent colors. Also see color.html for more colors.
+     */
+    --primary-color: #3f51b5;  /* --paper-indigo-500 */
+    --light-primary-color: #c5cae9;  /* --paper-indigo-100 */
+    --dark-primary-color: #303f9f;  /* --paper-indigo-700 */
+
+    --accent-color: #ff4081;  /* --paper-pink-a200 */
+    --light-accent-color: #ff80ab;  /* --paper-pink-a100 */
+    --dark-accent-color: #f50057;  /* --paper-pink-a400 */
+
+    /*
+     * Material Design Light background theme
+     */
+    --light-theme-background-color: #ffffff;
+    --light-theme-base-color: #000000;
+    --light-theme-text-color: #212121;
+    --light-theme-secondary-color: #737373;  /* for secondary text and icons */
+    --light-theme-disabled-color: #9b9b9b;  /* disabled/hint text */
+    --light-theme-divider-color: #dbdbdb;
+
+    /*
+     * Material Design Dark background theme
+     */
+    --dark-theme-background-color: #212121;
+    --dark-theme-base-color: #ffffff;
+    --dark-theme-text-color: #ffffff;
+    --dark-theme-secondary-color: #bcbcbc;  /* for secondary text and icons */
+    --dark-theme-disabled-color: #646464;  /* disabled/hint text */
+    --dark-theme-divider-color: #3c3c3c;
+
+    /*
+     * Deprecated values because of their confusing names.
+     */
+    --text-primary-color: var(--dark-theme-text-color);
+    --default-primary-color: var(--primary-color);
+
+  }
+
+</style><dom-module id="paper-radio-button" assetpath="../bower_components/paper-radio-button/"><template strip-whitespace=""><style>
+      :host {
+        display: inline-block;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      :host(:focus) {
+        outline: none;
+      }
+
+      #radioContainer {
+        display: inline-block;
+        position: relative;
+        width: 16px;
+        height: 16px;
+        vertical-align: middle;
+      }
+
+      #ink {
+        position: absolute;
+        top: -16px;
+        left: -16px;
+        width: 48px;
+        height: 48px;
+        color: var(--paper-radio-button-unchecked-ink-color, --primary-text-color);
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      :host-context([dir="rtl"]) #ink {
+        right: -15px;
+        left: auto;
+      }
+
+      #ink[checked] {
+        color: var(--paper-radio-button-checked-ink-color, --default-primary-color);
+      }
+
+      #offRadio {
+        position: absolute;
+        box-sizing: content-box;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: solid 2px;
+        background-color: var(--paper-radio-button-unchecked-background-color, transparent);
+        border-color: var(--paper-radio-button-unchecked-color, --primary-text-color);
+        transition: border-color 0.28s;
+      }
+
+      #onRadio {
+        position: absolute;
+        box-sizing: content-box;
+        top: 4px;
+        left: 4px;
+        right: 4px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--paper-radio-button-checked-color, --default-primary-color);
+        -webkit-transform: scale(0);
+        transform: scale(0);
+        transition: -webkit-transform ease 0.28s;
+        transition: transform ease 0.28s;
+      }
+
+      :host([checked]) #offRadio {
+        border-color: var(--paper-radio-button-checked-color, --default-primary-color);
+      }
+
+      :host([checked]) #onRadio {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+      }
+
+      #radioLabel {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: var(--paper-radio-button-label-spacing, 10px);
+        white-space: normal;
+        pointer-events: none;
+        color: var(--paper-radio-button-label-color, --primary-text-color);
+      }
+
+      :host-context([dir="rtl"]) #radioLabel {
+        margin-left: 0px;
+        margin-right: var(--paper-radio-button-label-spacing, 10px);
+      }
+
+      #radioLabel[hidden] {
+        display: none;
+      }
+
+      /* disabled state */
+      :host([disabled]) {
+        pointer-events: none;
+      }
+
+      :host([disabled]) #offRadio {
+        border-color: var(--paper-radio-button-unchecked-color, --primary-text-color);
+        opacity: 0.5;
+      }
+
+      :host([disabled][checked]) #onRadio {
+        background-color: var(--paper-radio-button-unchecked-color, --primary-text-color);
+        opacity: 0.5;
+      }
+
+      :host([disabled]) #radioLabel {
+        /* slightly darker than the button, so that it's readable */
+        opacity: 0.65;
+      }
+    </style><div id="radioContainer"><div id="offRadio"></div><div id="onRadio"></div></div><div id="radioLabel"><content></content></div></template><script>
+    Polymer({
+      is: 'paper-radio-button',
+
+      behaviors: [
+        Polymer.PaperCheckedElementBehavior
+      ],
+
+      hostAttributes: {
+        role: 'radio',
+        'aria-checked': false,
+        tabindex: 0
+      },
+
+      properties: {
+        /**
+         * Fired when the checked state changes due to user interaction.
+         *
+         * @event change
+         */
+
+        /**
+         * Fired when the checked state changes.
+         *
+         * @event iron-change
+         */
+
+        ariaActiveAttribute: {
+          type: String,
+          value: 'aria-checked'
+        }
+      },
+
+      // create the element ripple inside the `radioContainer`
+      _createRipple: function() {
+        this._rippleContainer = this.$.radioContainer;
+        return Polymer.PaperInkyFocusBehaviorImpl._createRipple.call(this);
+      }
+    })
+  </script></dom-module><dom-module id="paper-radio-group" assetpath="../bower_components/paper-radio-group/"><template><style>
+      :host {
+        display: inline-block;
+      }
+
+      :host ::content > * {
+        padding: 12px;
+      }
+    </style><content id="items" select="*"></content></template></dom-module><script>
+  Polymer({
+    is: 'paper-radio-group',
+
+    behaviors: [
+      Polymer.IronA11yKeysBehavior,
+      Polymer.IronSelectableBehavior
+    ],
+
+    hostAttributes: {
+      role: 'radiogroup',
+      tabindex: 0
+    },
+
+    properties: {
+      /**
+       * Fired when the radio group selection changes.
+       *
+       * @event paper-radio-group-changed
+       */
+
+      /**
+       * Overriden from Polymer.IronSelectableBehavior
+       */
+      attrForSelected: {
+        type: String,
+        value: 'name'
+      },
+
+      /**
+       * Overriden from Polymer.IronSelectableBehavior
+       */
+      selectedAttribute: {
+        type: String,
+        value: 'checked'
+      },
+
+      /**
+       * Overriden from Polymer.IronSelectableBehavior
+       */
+      selectable: {
+        type: String,
+        value: 'paper-radio-button'
+      },
+
+      /**
+       * If true, radio-buttons can be deselected
+       */
+      allowEmptySelection: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    keyBindings: {
+      'left up': 'selectPrevious',
+      'right down': 'selectNext',
+    },
+
+    /**
+     * Selects the given value.
+     */
+     select: function(value) {
+      if (this.selected) {
+        var oldItem = this._valueToItem(this.selected);
+
+        if (this.selected == value) {
+          // If deselecting is allowed we'll have to apply an empty selection.
+          // Otherwise, we should force the selection to stay and make this
+          // action a no-op.
+          if (this.allowEmptySelection) {
+            value = '';
+          } else {
+            if (oldItem)
+              oldItem.checked = true;
+            return;
+          }
+        }
+
+        if (oldItem)
+          oldItem.checked = false;
+      }
+
+      Polymer.IronSelectableBehavior.select.apply(this, [value]);
+      this.fire('paper-radio-group-changed');
+    },
+
+    /**
+     * Selects the previous item. If the previous item is disabled, then it is
+     * skipped, and its previous item is selected
+     */
+    selectPrevious: function() {
+      var length = this.items.length;
+      var newIndex = Number(this._valueToIndex(this.selected));
+
+      do {
+        newIndex = (newIndex - 1 + length) % length;
+      } while (this.items[newIndex].disabled)
+
+      this._itemActivate(this._indexToValue(newIndex), this.items[newIndex]);
+    },
+
+    /**
+     * Selects the next item. If the next item is disabled, then it is
+     * skipped, and the next item after it is selected.
+     */
+    selectNext: function() {
+      var length = this.items.length;
+      var newIndex = Number(this._valueToIndex(this.selected));
+
+      do {
+        newIndex = (newIndex + 1 + length) % length;
+      } while (this.items[newIndex].disabled)
+
+      this._itemActivate(this._indexToValue(newIndex), this.items[newIndex]);
+    },
+  });
+</script><script>
+
+  Polymer({
+
+    is: 'iron-media-query',
+
+    properties: {
+
+      /**
+       * The Boolean return value of the media query.
+       */
+      queryMatches: {
+        type: Boolean,
+        value: false,
+        readOnly: true,
+        notify: true
+      },
+
+      /**
+       * The CSS media query to evaluate.
+       */
+      query: {
+        type: String,
+        observer: 'queryChanged'
+      },
+
+      /**
+       * If true, the query attribute is assumed to be a complete media query
+       * string rather than a single media feature.
+       */
+      full: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * @type {function(MediaQueryList)}
+       */
+      _boundMQHandler: {
+        value: function() {
+          return this.queryHandler.bind(this);
+        }
+      },
+
+      /**
+       * @type {MediaQueryList}
+       */
+      _mq: {
+        value: null
+      }
+    },
+
+    attached: function() {
+      this.style.display = 'none';
+      this.queryChanged();
+    },
+
+    detached: function() {
+      this._remove();
+    },
+
+    _add: function() {
+      if (this._mq) {
+        this._mq.addListener(this._boundMQHandler);
+      }
+    },
+
+    _remove: function() {
+      if (this._mq) {
+        this._mq.removeListener(this._boundMQHandler);
+      }
+      this._mq = null;
+    },
+
+    queryChanged: function() {
+      this._remove();
+      var query = this.query;
+      if (!query) {
+        return;
+      }
+      if (!this.full && query[0] !== '(') {
+        query = '(' + query + ')';
+      }
+      this._mq = window.matchMedia(query);
+      this._add();
+      this.queryHandler(this._mq);
+    },
+
+    queryHandler: function(mq) {
+      this._setQueryMatches(mq.matches);
+    }
+
+  });
+
+</script><dom-module id="paper-drawer-panel" assetpath="../bower_components/paper-drawer-panel/"><template><style>
+      :host {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      iron-selector > #drawer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background-color: white;
+
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+
+        @apply(--paper-drawer-panel-drawer-container);
+      }
+
+      .transition > #drawer {
+        transition: -webkit-transform ease-in-out 0.3s, width ease-in-out 0.3s, visibility 0.3s;
+        transition: transform ease-in-out 0.3s, width ease-in-out 0.3s, visibility 0.3s;
+      }
+
+      .left-drawer > #drawer {
+        @apply(--paper-drawer-panel-left-drawer-container);
+      }
+
+      .right-drawer > #drawer {
+        left: auto;
+        right: 0;
+
+        @apply(--paper-drawer-panel-right-drawer-container);
+      }
+
+      iron-selector > #main {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+
+        @apply(--paper-drawer-panel-main-container);
+      }
+
+      .transition > #main {
+        transition: left ease-in-out 0.3s, padding ease-in-out 0.3s;
+      }
+
+      .right-drawer > #main {
+        left: 0;
+      }
+
+      .right-drawer.transition > #main {
+        transition: right ease-in-out 0.3s, padding ease-in-out 0.3s;
+      }
+
+      #main > ::content > [main] {
+        height: 100%;
+      }
+
+      #drawer > ::content > [drawer] {
+        height: 100%;
+      }
+
+      #scrim {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity ease-in-out 0.38s, visibility ease-in-out 0.38s;
+        background-color: rgba(0, 0, 0, 0.3);
+
+        @apply(--paper-drawer-panel-scrim);
+      }
+
+      .narrow-layout > #drawer {
+        will-change: transform;
+      }
+
+      .narrow-layout > #drawer.iron-selected {
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+      }
+
+      .right-drawer.narrow-layout > #drawer.iron-selected {
+        box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.15);
+      }
+
+      .narrow-layout > #drawer > ::content > [drawer] {
+        border: 0;
+      }
+
+      .left-drawer.narrow-layout > #drawer:not(.iron-selected) {
+        -webkit-transform: translateX(-100%);
+        transform: translateX(-100%);
+      }
+
+      .right-drawer.narrow-layout > #drawer:not(.iron-selected) {
+        left: auto;
+        visibility: hidden;
+
+        -webkit-transform: translateX(100%);
+        transform: translateX(100%);
+      }
+
+      .right-drawer.narrow-layout.dragging > #drawer:not(.iron-selected),
+      .right-drawer.narrow-layout.peeking > #drawer:not(.iron-selected) {
+        visibility: visible;
+      }
+
+      .narrow-layout > #main {
+        padding: 0;
+      }
+
+      .right-drawer.narrow-layout > #main {
+        left: 0;
+        right: 0;
+      }
+
+      .narrow-layout > #main:not(.iron-selected) > #scrim,
+      .dragging > #main > #scrim {
+        visibility: visible;
+        opacity: var(--paper-drawer-panel-scrim-opacity, 1);
+      }
+
+      .narrow-layout > #main > * {
+        margin: 0;
+        min-height: 100%;
+        left: 0;
+        right: 0;
+
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+
+      iron-selector:not(.narrow-layout) #main ::content [paper-drawer-toggle] {
+        display: none;
+      }
+    </style><iron-media-query id="mq" on-query-matches-changed="_onQueryMatchesChanged" query="[[_computeMediaQuery(forceNarrow, responsiveWidth)]]"></iron-media-query><iron-selector attr-for-selected="id" class$="[[_computeIronSelectorClass(narrow, _transition, dragging, rightDrawer, peeking)]]" activate-event="" selected="[[selected]]"><div id="main" style$="[[_computeMainStyle(narrow, rightDrawer, drawerWidth)]]" on-transitionend="_onMainTransitionEnd"><content select="[main]"></content><div id="scrim" on-tap="closeDrawer"></div></div><div id="drawer" style$="[[_computeDrawerStyle(drawerWidth)]]"><content select="[drawer]"></content></div></iron-selector></template><script>
+    (function() {
+      'use strict';
+
+      // this would be the only `paper-drawer-panel` in
+      // the whole app that can be in `dragging` state
+      var sharedPanel = null;
+
+      function classNames(obj) {
+        var classes = [];
+        for (var key in obj) {
+          if (obj.hasOwnProperty(key) && obj[key]) {
+            classes.push(key);
+          }
+        }
+
+        return classes.join(' ');
+      }
+
+      Polymer({
+
+        is: 'paper-drawer-panel',
+
+        behaviors: [Polymer.IronResizableBehavior],
+
+        /**
+         * Fired when the narrow layout changes.
+         *
+         * @event paper-responsive-change {{narrow: boolean}} detail -
+         *     narrow: true if the panel is in narrow layout.
+         */
+
+        /**
+         * Fired when the a panel is selected.
+         *
+         * Listening for this event is an alternative to observing changes in the `selected` attribute.
+         * This event is fired both when a panel is selected.
+         *
+         * @event iron-select {{item: Object}} detail -
+         *     item: The panel that the event refers to.
+         */
+
+        /**
+         * Fired when a panel is deselected.
+         *
+         * Listening for this event is an alternative to observing changes in the `selected` attribute.
+         * This event is fired both when a panel is deselected.
+         *
+         * @event iron-deselect {{item: Object}} detail -
+         *     item: The panel that the event refers to.
+         */
+        properties: {
+
+          /**
+           * The panel to be selected when `paper-drawer-panel` changes to narrow
+           * layout.
+           */
+          defaultSelected: {
+            type: String,
+            value: 'main'
+          },
+
+          /**
+           * If true, swipe from the edge is disabled.
+           */
+          disableEdgeSwipe: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * If true, swipe to open/close the drawer is disabled.
+           */
+          disableSwipe: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * Whether the user is dragging the drawer interactively.
+           */
+          dragging: {
+            type: Boolean,
+            value: false,
+            readOnly: true,
+            notify: true
+          },
+
+          /**
+           * Width of the drawer panel.
+           */
+          drawerWidth: {
+            type: String,
+            value: '256px'
+          },
+
+          /**
+           * How many pixels on the side of the screen are sensitive to edge
+           * swipes and peek.
+           */
+          edgeSwipeSensitivity: {
+            type: Number,
+            value: 30
+          },
+
+          /**
+           * If true, ignore `responsiveWidth` setting and force the narrow layout.
+           */
+          forceNarrow: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * Whether the browser has support for the transform CSS property.
+           */
+          hasTransform: {
+            type: Boolean,
+            value: function() {
+              return 'transform' in this.style;
+            }
+          },
+
+          /**
+           * Whether the browser has support for the will-change CSS property.
+           */
+          hasWillChange: {
+            type: Boolean,
+            value: function() {
+              return 'willChange' in this.style;
+            }
+          },
+
+          /**
+           * Returns true if the panel is in narrow layout.  This is useful if you
+           * need to show/hide elements based on the layout.
+           */
+          narrow: {
+            reflectToAttribute: true,
+            type: Boolean,
+            value: false,
+            readOnly: true,
+            notify: true
+          },
+
+          /**
+           * Whether the drawer is peeking out from the edge.
+           */
+          peeking: {
+            type: Boolean,
+            value: false,
+            readOnly: true,
+            notify: true
+          },
+
+          /**
+           * Max-width when the panel changes to narrow layout.
+           */
+          responsiveWidth: {
+            type: String,
+            value: '600px'
+          },
+
+          /**
+           * If true, position the drawer to the right.
+           */
+          rightDrawer: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * The panel that is being selected. `drawer` for the drawer panel and
+           * `main` for the main panel.
+           */
+          selected: {
+            reflectToAttribute: true,
+            notify: true,
+            type: String,
+            value: null
+          },
+
+          /**
+           * The attribute on elements that should toggle the drawer on tap, also elements will
+           * automatically be hidden in wide layout.
+           */
+          drawerToggleAttribute: {
+            type: String,
+            value: 'paper-drawer-toggle'
+          },
+
+          /**
+           * Whether the transition is enabled.
+           */
+          _transition: {
+            type: Boolean,
+            value: false
+          },
+
+        },
+
+        listeners: {
+          tap: '_onTap',
+          track: '_onTrack',
+          down: '_downHandler',
+          up: '_upHandler'
+        },
+
+        observers: [
+          '_forceNarrowChanged(forceNarrow, defaultSelected)'
+        ],
+
+        /**
+         * Toggles the panel open and closed.
+         *
+         * @method togglePanel
+         */
+        togglePanel: function() {
+          if (this._isMainSelected()) {
+            this.openDrawer();
+          } else {
+            this.closeDrawer();
+          }
+        },
+
+        /**
+         * Opens the drawer.
+         *
+         * @method openDrawer
+         */
+        openDrawer: function() {
+          this.selected = 'drawer';
+        },
+
+        /**
+         * Closes the drawer.
+         *
+         * @method closeDrawer
+         */
+        closeDrawer: function() {
+          this.selected = 'main';
+        },
+
+        ready: function() {
+          // Avoid transition at the beginning e.g. page loads and enable
+          // transitions only after the element is rendered and ready.
+          this._transition = true;
+        },
+
+        _onMainTransitionEnd: function (e) {
+          if (e.currentTarget === this.$.main && (e.propertyName === 'left' || e.propertyName === 'right')) {
+            this.notifyResize();
+          }
+        },
+
+        _computeIronSelectorClass: function(narrow, transition, dragging, rightDrawer, peeking) {
+          return classNames({
+            dragging: dragging,
+            'narrow-layout': narrow,
+            'right-drawer': rightDrawer,
+            'left-drawer': !rightDrawer,
+            transition: transition,
+            peeking: peeking
+          });
+        },
+
+        _computeDrawerStyle: function(drawerWidth) {
+          return 'width:' + drawerWidth + ';';
+        },
+
+        _computeMainStyle: function(narrow, rightDrawer, drawerWidth) {
+          var style = '';
+
+          style += 'left:' + ((narrow || rightDrawer) ? '0' : drawerWidth) + ';';
+
+          if (rightDrawer) {
+            style += 'right:' + (narrow ? '' : drawerWidth) + ';';
+          }
+
+          return style;
+        },
+
+        _computeMediaQuery: function(forceNarrow, responsiveWidth) {
+          return forceNarrow ? '' : '(max-width: ' + responsiveWidth + ')';
+        },
+
+        _computeSwipeOverlayHidden: function(narrow, disableEdgeSwipe) {
+          return !narrow || disableEdgeSwipe;
+        },
+
+        _onTrack: function(event) {
+          if (sharedPanel && this !== sharedPanel) {
+            return;
+          }
+          switch (event.detail.state) {
+            case 'start':
+              this._trackStart(event);
+              break;
+            case 'track':
+              this._trackX(event);
+              break;
+            case 'end':
+              this._trackEnd(event);
+              break;
+          }
+
+        },
+
+        _responsiveChange: function(narrow) {
+          this._setNarrow(narrow);
+
+          if (this.narrow) {
+            this.selected = this.defaultSelected;
+          }
+
+          this.setScrollDirection(this._swipeAllowed() ? 'y' : 'all');
+          this.fire('paper-responsive-change', {narrow: this.narrow});
+        },
+
+        _onQueryMatchesChanged: function(event) {
+          this._responsiveChange(event.detail.value);
+        },
+
+        _forceNarrowChanged: function() {
+          // set the narrow mode only if we reached the `responsiveWidth`
+          this._responsiveChange(this.forceNarrow || this.$.mq.queryMatches);
+        },
+
+        _swipeAllowed: function() {
+          return this.narrow && !this.disableSwipe;
+        },
+
+        _isMainSelected: function() {
+          return this.selected === 'main';
+        },
+
+        _startEdgePeek: function() {
+          this.width = this.$.drawer.offsetWidth;
+          this._moveDrawer(this._translateXForDeltaX(this.rightDrawer ?
+              -this.edgeSwipeSensitivity : this.edgeSwipeSensitivity));
+          this._setPeeking(true);
+        },
+
+        _stopEdgePeek: function() {
+          if (this.peeking) {
+            this._setPeeking(false);
+            this._moveDrawer(null);
+          }
+        },
+
+        _downHandler: function(event) {
+          if (!this.dragging && this._isMainSelected() && this._isEdgeTouch(event) && !sharedPanel) {
+            this._startEdgePeek();
+            // cancel selection
+            event.preventDefault();
+            // grab this panel
+            sharedPanel = this;
+          }
+        },
+
+        _upHandler: function() {
+          this._stopEdgePeek();
+          // release the panel
+          sharedPanel = null;
+        },
+
+        _onTap: function(event) {
+          var targetElement = Polymer.dom(event).localTarget;
+          var isTargetToggleElement = targetElement &&
+            this.drawerToggleAttribute &&
+            targetElement.hasAttribute(this.drawerToggleAttribute);
+
+          if (isTargetToggleElement) {
+            this.togglePanel();
+          }
+        },
+
+        _isEdgeTouch: function(event) {
+          var x = event.detail.x;
+
+          return !this.disableEdgeSwipe && this._swipeAllowed() &&
+            (this.rightDrawer ?
+              x >= this.offsetWidth - this.edgeSwipeSensitivity :
+              x <= this.edgeSwipeSensitivity);
+        },
+
+        _trackStart: function(event) {
+          if (this._swipeAllowed()) {
+            sharedPanel = this;
+            this._setDragging(true);
+
+            if (this._isMainSelected()) {
+              this._setDragging(this.peeking || this._isEdgeTouch(event));
+            }
+
+            if (this.dragging) {
+              this.width = this.$.drawer.offsetWidth;
+              this._transition = false;
+            }
+          }
+        },
+
+        _translateXForDeltaX: function(deltaX) {
+          var isMain = this._isMainSelected();
+
+          if (this.rightDrawer) {
+            return Math.max(0, isMain ? this.width + deltaX : deltaX);
+          } else {
+            return Math.min(0, isMain ? deltaX - this.width : deltaX);
+          }
+        },
+
+        _trackX: function(event) {
+          if (this.dragging) {
+            var dx = event.detail.dx;
+
+            if (this.peeking) {
+              if (Math.abs(dx) <= this.edgeSwipeSensitivity) {
+                // Ignore trackx until we move past the edge peek.
+                return;
+              }
+              this._setPeeking(false);
+            }
+
+            this._moveDrawer(this._translateXForDeltaX(dx));
+          }
+        },
+
+        _trackEnd: function(event) {
+          if (this.dragging) {
+            var xDirection = event.detail.dx > 0;
+
+            this._setDragging(false);
+            this._transition = true;
+            sharedPanel = null;
+            this._moveDrawer(null);
+
+            if (this.rightDrawer) {
+              this[xDirection ? 'closeDrawer' : 'openDrawer']();
+            } else {
+              this[xDirection ? 'openDrawer' : 'closeDrawer']();
+            }
+          }
+        },
+
+        _transformForTranslateX: function(translateX) {
+          if (translateX === null) {
+            return '';
+          }
+
+          return this.hasWillChange ? 'translateX(' + translateX + 'px)' :
+              'translate3d(' + translateX + 'px, 0, 0)';
+        },
+
+        _moveDrawer: function(translateX) {
+          this.transform(this._transformForTranslateX(translateX), this.$.drawer);
+        }
+
+      });
+    }());
+  </script></dom-module><script>
+
   /** @polymerBehavior Polymer.PaperButtonBehavior */
   Polymer.PaperButtonBehaviorImpl = {
 
@@ -14101,46 +14766,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     Polymer.IronControlState,
     Polymer.PaperRippleBehavior,
     Polymer.PaperButtonBehaviorImpl
-  ];
-
-</script><script>
-
-  /**
-   * `Polymer.PaperInkyFocusBehavior` implements a ripple when the element has keyboard focus.
-   *
-   * @polymerBehavior Polymer.PaperInkyFocusBehavior
-   */
-  Polymer.PaperInkyFocusBehaviorImpl = {
-
-    observers: [
-      '_focusedChanged(receivedFocusFromKeyboard)'
-    ],
-
-    _focusedChanged: function(receivedFocusFromKeyboard) {
-      if (receivedFocusFromKeyboard) {
-        this.ensureRipple();
-      }
-      if (this.hasRipple()) {
-        this._ripple.holdDown = receivedFocusFromKeyboard;
-      }
-    },
-
-    _createRipple: function() {
-      var ripple = Polymer.PaperRippleBehavior._createRipple();
-      ripple.id = 'ink';
-      ripple.setAttribute('center', '');
-      ripple.classList.add('circle');
-      return ripple;
-    }
-
-  };
-
-  /** @polymerBehavior Polymer.PaperInkyFocusBehavior */
-  Polymer.PaperInkyFocusBehavior = [
-    Polymer.IronButtonState,
-    Polymer.IronControlState,
-    Polymer.PaperRippleBehavior,
-    Polymer.PaperInkyFocusBehaviorImpl
   ];
 
 </script><dom-module id="paper-icon-button" assetpath="../bower_components/paper-icon-button/"><template strip-whitespace=""><style>
@@ -22267,199 +22892,6 @@ call the form's `submit` method.
     }
 
   });
-
-</script><script>
-  /**
-  Polymer.IronFormElementBehavior enables a custom element to be included
-  in an `iron-form`.
-
-  @demo demo/index.html
-  @polymerBehavior
-  */
-  Polymer.IronFormElementBehavior = {
-
-    properties: {
-      /**
-       * Fired when the element is added to an `iron-form`.
-       *
-       * @event iron-form-element-register
-       */
-
-      /**
-       * Fired when the element is removed from an `iron-form`.
-       *
-       * @event iron-form-element-unregister
-       */
-
-      /**
-       * The name of this element.
-       */
-      name: {
-        type: String
-      },
-
-      /**
-       * The value for this element.
-       */
-      value: {
-        notify: true,
-        type: String
-      },
-
-      /**
-       * Set to true to mark the input as required. If used in a form, a
-       * custom element that uses this behavior should also use
-       * Polymer.IronValidatableBehavior and define a custom validation method.
-       * Otherwise, a `required` element will always be considered valid.
-       * It's also strongly recommended to provide a visual style for the element
-       * when its value is invalid.
-       */
-      required: {
-        type: Boolean,
-        value: false
-      },
-
-      /**
-       * The form that the element is registered to.
-       */
-      _parentForm: {
-        type: Object
-      }
-    },
-
-    attached: function() {
-      // Note: the iron-form that this element belongs to will set this
-      // element's _parentForm property when handling this event.
-      this.fire('iron-form-element-register');
-    },
-
-    detached: function() {
-      if (this._parentForm) {
-        this._parentForm.fire('iron-form-element-unregister', {target: this});
-      }
-    }
-
-  };
-
-</script><script>
-
-  /**
-   * `Use Polymer.IronValidatableBehavior` to implement an element that validates user input.
-   * Use the related `Polymer.IronValidatorBehavior` to add custom validation logic to an iron-input.
-   *
-   * By default, an `<iron-form>` element validates its fields when the user presses the submit button.
-   * To validate a form imperatively, call the form's `validate()` method, which in turn will
-   * call `validate()` on all its children. By using `Polymer.IronValidatableBehavior`, your
-   * custom element will get a public `validate()`, which
-   * will return the validity of the element, and a corresponding `invalid` attribute,
-   * which can be used for styling.
-   *
-   * To implement the custom validation logic of your element, you must override
-   * the protected `_getValidity()` method of this behaviour, rather than `validate()`.
-   * See [this](https://github.com/PolymerElements/iron-form/blob/master/demo/simple-element.html)
-   * for an example.
-   *
-   * ### Accessibility
-   *
-   * Changing the `invalid` property, either manually or by calling `validate()` will update the
-   * `aria-invalid` attribute.
-   *
-   * @demo demo/index.html
-   * @polymerBehavior
-   */
-  Polymer.IronValidatableBehavior = {
-
-    properties: {
-
-      /**
-       * Namespace for this validator.
-       */
-      validatorType: {
-        type: String,
-        value: 'validator'
-      },
-
-      /**
-       * Name of the validator to use.
-       */
-      validator: {
-        type: String
-      },
-
-      /**
-       * True if the last call to `validate` is invalid.
-       */
-      invalid: {
-        notify: true,
-        reflectToAttribute: true,
-        type: Boolean,
-        value: false
-      },
-
-      _validatorMeta: {
-        type: Object
-      }
-
-    },
-
-    observers: [
-      '_invalidChanged(invalid)'
-    ],
-
-    get _validator() {
-      return this._validatorMeta && this._validatorMeta.byKey(this.validator);
-    },
-
-    ready: function() {
-      this._validatorMeta = new Polymer.IronMeta({type: this.validatorType});
-    },
-
-    _invalidChanged: function() {
-      if (this.invalid) {
-        this.setAttribute('aria-invalid', 'true');
-      } else {
-        this.removeAttribute('aria-invalid');
-      }
-    },
-
-    /**
-     * @return {boolean} True if the validator `validator` exists.
-     */
-    hasValidator: function() {
-      return this._validator != null;
-    },
-
-    /**
-     * Returns true if the `value` is valid, and updates `invalid`. If you want
-     * your element to have custom validation logic, do not override this method;
-     * override `_getValidity(value)` instead.
-
-     * @param {Object} value The value to be validated. By default, it is passed
-     * to the validator's `validate()` function, if a validator is set.
-     * @return {boolean} True if `value` is valid.
-     */
-    validate: function(value) {
-      this.invalid = !this._getValidity(value);
-      return !this.invalid;
-    },
-
-    /**
-     * Returns true if `value` is valid.  By default, it is passed
-     * to the validator's `validate()` function, if a validator is set. You
-     * should override this method if you want to implement custom validity
-     * logic for your element.
-     *
-     * @param {Object} value The value to be validated.
-     * @return {boolean} True if `value` is valid.
-     */
-
-    _getValidity: function(value) {
-      if (this.hasValidator()) {
-        return this._validator.validate(value);
-      }
-      return true;
-    }
-  };
 
 </script><script>
 
@@ -30696,439 +31128,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     }());
   </script>
 </dom-module>
-<script>
-
-  /**
-   * Use `Polymer.IronCheckedElementBehavior` to implement a custom element
-   * that has a `checked` property, which can be used for validation if the
-   * element is also `required`. Element instances implementing this behavior
-   * will also be registered for use in an `iron-form` element.
-   *
-   * @demo demo/index.html
-   * @polymerBehavior Polymer.IronCheckedElementBehavior
-   */
-  Polymer.IronCheckedElementBehaviorImpl = {
-
-    properties: {
-      /**
-       * Fired when the checked state changes.
-       *
-       * @event iron-change
-       */
-
-      /**
-       * Gets or sets the state, `true` is checked and `false` is unchecked.
-       */
-      checked: {
-        type: Boolean,
-        value: false,
-        reflectToAttribute: true,
-        notify: true,
-        observer: '_checkedChanged'
-      },
-
-      /**
-       * If true, the button toggles the active state with each tap or press
-       * of the spacebar.
-       */
-      toggles: {
-        type: Boolean,
-        value: true,
-        reflectToAttribute: true
-      },
-
-      /* Overriden from Polymer.IronFormElementBehavior */
-      value: {
-        type: String,
-        value: 'on',
-        observer: '_valueChanged'
-      }
-    },
-
-    observers: [
-      '_requiredChanged(required)'
-    ],
-
-    created: function() {
-      // Used by `iron-form` to handle the case that an element with this behavior
-      // doesn't have a role of 'checkbox' or 'radio', but should still only be
-      // included when the form is serialized if `this.checked === true`.
-      this._hasIronCheckedElementBehavior = true;
-    },
-
-    /**
-     * Returns false if the element is required and not checked, and true otherwise.
-     * @param {*=} _value Ignored.
-     * @return {boolean} true if `required` is false, or if `required` and `checked` are both true.
-     */
-    _getValidity: function(_value) {
-      return this.disabled || !this.required || (this.required && this.checked);
-    },
-
-    /**
-     * Update the aria-required label when `required` is changed.
-     */
-    _requiredChanged: function() {
-      if (this.required) {
-        this.setAttribute('aria-required', 'true');
-      } else {
-        this.removeAttribute('aria-required');
-      }
-    },
-
-    /**
-     * Fire `iron-changed` when the checked state changes.
-     */
-    _checkedChanged: function() {
-      this.active = this.checked;
-      this.fire('iron-change');
-    },
-
-    /**
-     * Reset value to 'on' if it is set to `undefined`.
-     */
-    _valueChanged: function() {
-      if (this.value === undefined || this.value === null) {
-        this.value = 'on';
-      }
-    }
-  };
-
-  /** @polymerBehavior Polymer.IronCheckedElementBehavior */
-  Polymer.IronCheckedElementBehavior = [
-    Polymer.IronFormElementBehavior,
-    Polymer.IronValidatableBehavior,
-    Polymer.IronCheckedElementBehaviorImpl
-  ];
-
-</script><script>
-
-  /**
-   * Use `Polymer.PaperCheckedElementBehavior` to implement a custom element
-   * that has a `checked` property similar to `Polymer.IronCheckedElementBehavior`
-   * and is compatible with having a ripple effect.
-   * @polymerBehavior Polymer.PaperCheckedElementBehavior
-   */
-  Polymer.PaperCheckedElementBehaviorImpl = {
-
-    /**
-     * Synchronizes the element's checked state with its ripple effect.
-     */
-    _checkedChanged: function() {
-      Polymer.IronCheckedElementBehaviorImpl._checkedChanged.call(this);
-      if (this.hasRipple()) {
-        if (this.checked) {
-          this._ripple.setAttribute('checked', '');
-        } else {
-          this._ripple.removeAttribute('checked');
-        }
-      }
-    },
-
-    /**
-     * Synchronizes the element's `active` and `checked` state.
-     */
-    _buttonStateChanged: function() {
-      Polymer.PaperRippleBehavior._buttonStateChanged.call(this);
-      if (this.disabled) {
-        return;
-      }
-      if (this.isAttached) {
-        this.checked = this.active;
-      }
-    }
-
-  };
-
-  /** @polymerBehavior Polymer.PaperCheckedElementBehavior */
-  Polymer.PaperCheckedElementBehavior = [
-    Polymer.PaperInkyFocusBehavior,
-    Polymer.IronCheckedElementBehavior,
-    Polymer.PaperCheckedElementBehaviorImpl
-  ];
-
-</script><dom-module id="paper-radio-button" assetpath="../bower_components/paper-radio-button/"><template strip-whitespace=""><style>
-      :host {
-        display: inline-block;
-        white-space: nowrap;
-        cursor: pointer;
-      }
-
-      :host(:focus) {
-        outline: none;
-      }
-
-      #radioContainer {
-        display: inline-block;
-        position: relative;
-        width: 16px;
-        height: 16px;
-        vertical-align: middle;
-      }
-
-      #ink {
-        position: absolute;
-        top: -16px;
-        left: -16px;
-        width: 48px;
-        height: 48px;
-        color: var(--paper-radio-button-unchecked-ink-color, --primary-text-color);
-        opacity: 0.6;
-        pointer-events: none;
-      }
-
-      :host-context([dir="rtl"]) #ink {
-        right: -15px;
-        left: auto;
-      }
-
-      #ink[checked] {
-        color: var(--paper-radio-button-checked-ink-color, --default-primary-color);
-      }
-
-      #offRadio {
-        position: absolute;
-        box-sizing: content-box;
-        top: 0px;
-        left: 0px;
-        right: 0px;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        border: solid 2px;
-        background-color: var(--paper-radio-button-unchecked-background-color, transparent);
-        border-color: var(--paper-radio-button-unchecked-color, --primary-text-color);
-        transition: border-color 0.28s;
-      }
-
-      #onRadio {
-        position: absolute;
-        box-sizing: content-box;
-        top: 4px;
-        left: 4px;
-        right: 4px;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: var(--paper-radio-button-checked-color, --default-primary-color);
-        -webkit-transform: scale(0);
-        transform: scale(0);
-        transition: -webkit-transform ease 0.28s;
-        transition: transform ease 0.28s;
-      }
-
-      :host([checked]) #offRadio {
-        border-color: var(--paper-radio-button-checked-color, --default-primary-color);
-      }
-
-      :host([checked]) #onRadio {
-        -webkit-transform: scale(1);
-        transform: scale(1);
-      }
-
-      #radioLabel {
-        position: relative;
-        display: inline-block;
-        vertical-align: middle;
-        margin-left: var(--paper-radio-button-label-spacing, 10px);
-        white-space: normal;
-        pointer-events: none;
-        color: var(--paper-radio-button-label-color, --primary-text-color);
-      }
-
-      :host-context([dir="rtl"]) #radioLabel {
-        margin-left: 0px;
-        margin-right: var(--paper-radio-button-label-spacing, 10px);
-      }
-
-      #radioLabel[hidden] {
-        display: none;
-      }
-
-      /* disabled state */
-      :host([disabled]) {
-        pointer-events: none;
-      }
-
-      :host([disabled]) #offRadio {
-        border-color: var(--paper-radio-button-unchecked-color, --primary-text-color);
-        opacity: 0.5;
-      }
-
-      :host([disabled][checked]) #onRadio {
-        background-color: var(--paper-radio-button-unchecked-color, --primary-text-color);
-        opacity: 0.5;
-      }
-
-      :host([disabled]) #radioLabel {
-        /* slightly darker than the button, so that it's readable */
-        opacity: 0.65;
-      }
-    </style><div id="radioContainer"><div id="offRadio"></div><div id="onRadio"></div></div><div id="radioLabel"><content></content></div></template><script>
-    Polymer({
-      is: 'paper-radio-button',
-
-      behaviors: [
-        Polymer.PaperCheckedElementBehavior
-      ],
-
-      hostAttributes: {
-        role: 'radio',
-        'aria-checked': false,
-        tabindex: 0
-      },
-
-      properties: {
-        /**
-         * Fired when the checked state changes due to user interaction.
-         *
-         * @event change
-         */
-
-        /**
-         * Fired when the checked state changes.
-         *
-         * @event iron-change
-         */
-
-        ariaActiveAttribute: {
-          type: String,
-          value: 'aria-checked'
-        }
-      },
-
-      // create the element ripple inside the `radioContainer`
-      _createRipple: function() {
-        this._rippleContainer = this.$.radioContainer;
-        return Polymer.PaperInkyFocusBehaviorImpl._createRipple.call(this);
-      }
-    })
-  </script></dom-module><dom-module id="paper-radio-group" assetpath="../bower_components/paper-radio-group/"><template><style>
-      :host {
-        display: inline-block;
-      }
-
-      :host ::content > * {
-        padding: 12px;
-      }
-    </style><content id="items" select="*"></content></template></dom-module><script>
-  Polymer({
-    is: 'paper-radio-group',
-
-    behaviors: [
-      Polymer.IronA11yKeysBehavior,
-      Polymer.IronSelectableBehavior
-    ],
-
-    hostAttributes: {
-      role: 'radiogroup',
-      tabindex: 0
-    },
-
-    properties: {
-      /**
-       * Fired when the radio group selection changes.
-       *
-       * @event paper-radio-group-changed
-       */
-
-      /**
-       * Overriden from Polymer.IronSelectableBehavior
-       */
-      attrForSelected: {
-        type: String,
-        value: 'name'
-      },
-
-      /**
-       * Overriden from Polymer.IronSelectableBehavior
-       */
-      selectedAttribute: {
-        type: String,
-        value: 'checked'
-      },
-
-      /**
-       * Overriden from Polymer.IronSelectableBehavior
-       */
-      selectable: {
-        type: String,
-        value: 'paper-radio-button'
-      },
-
-      /**
-       * If true, radio-buttons can be deselected
-       */
-      allowEmptySelection: {
-        type: Boolean,
-        value: false
-      }
-    },
-
-    keyBindings: {
-      'left up': 'selectPrevious',
-      'right down': 'selectNext',
-    },
-
-    /**
-     * Selects the given value.
-     */
-     select: function(value) {
-      if (this.selected) {
-        var oldItem = this._valueToItem(this.selected);
-
-        if (this.selected == value) {
-          // If deselecting is allowed we'll have to apply an empty selection.
-          // Otherwise, we should force the selection to stay and make this
-          // action a no-op.
-          if (this.allowEmptySelection) {
-            value = '';
-          } else {
-            if (oldItem)
-              oldItem.checked = true;
-            return;
-          }
-        }
-
-        if (oldItem)
-          oldItem.checked = false;
-      }
-
-      Polymer.IronSelectableBehavior.select.apply(this, [value]);
-      this.fire('paper-radio-group-changed');
-    },
-
-    /**
-     * Selects the previous item. If the previous item is disabled, then it is
-     * skipped, and its previous item is selected
-     */
-    selectPrevious: function() {
-      var length = this.items.length;
-      var newIndex = Number(this._valueToIndex(this.selected));
-
-      do {
-        newIndex = (newIndex - 1 + length) % length;
-      } while (this.items[newIndex].disabled)
-
-      this._itemActivate(this._indexToValue(newIndex), this.items[newIndex]);
-    },
-
-    /**
-     * Selects the next item. If the next item is disabled, then it is
-     * skipped, and the next item after it is selected.
-     */
-    selectNext: function() {
-      var length = this.items.length;
-      var newIndex = Number(this._valueToIndex(this.selected));
-
-      do {
-        newIndex = (newIndex + 1 + length) % length;
-      } while (this.items[newIndex].disabled)
-
-      this._itemActivate(this._indexToValue(newIndex), this.items[newIndex]);
-    },
-  });
-</script><dom-module id="paper-dropdown-menu" assetpath="../bower_components/paper-dropdown-menu/"><template><style>
+<dom-module id="paper-dropdown-menu" assetpath="../bower_components/paper-dropdown-menu/"><template><style>
       :host {
         display: inline-block;
         position: relative;
@@ -33615,7 +33615,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
           <div class="layout vertical additionalSettings">
             <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]" class="additionalButton"></yp-post-location>
-            <file-upload id="imageFileUpload" droppable="false" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
+            <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
               <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
               <span>[[t('image.upload')]]</span>
             </file-upload>
@@ -34963,14 +34963,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       </paper-textarea>
 
       <div class="layout vertical additionalSettings">
-        <file-upload id="logoImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
+        <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.logo.upload')]]</span>
         </file-upload>
       </div>
 
       <div class="layout vertical additionalSettings" hidden$="[[!headerImageEnabled()]]">
-        <file-upload id="headerImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
+        <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.header.upload')]]</span>
         </file-upload>
@@ -35015,7 +35015,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       groupAccess: {
-        type: String
+        type: String,
+        value: "public"
       }
     },
 
@@ -35025,11 +35026,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     _groupChanged: function (newValue, oldValue) {
       if (this.group.access===0) {
-        this.groupAccess = "secret"
-      } else if (this.group.access===1) {
-        this.groupAccess = "open"
-      } else if (this.group.access===2) {
         this.groupAccess = "public"
+      } else if (this.group.access===1) {
+        this.groupAccess = "closed"
+      } else if (this.group.access===2) {
+        this.groupAccess = "secret"
       }
     },
 
@@ -35773,14 +35774,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       </paper-textarea>
 
       <div class="layout vertical additionalSettings">
-        <file-upload id="logoImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=community-logo" method="POST" on-success="_logoImageUploaded">
+        <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=community-logo" method="POST" on-success="_logoImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.logo.upload')]]</span>
         </file-upload>
       </div>
 
       <div class="layout vertical additionalSettings" hidden$="[[!headerImageEnabled()]]">
-        <file-upload id="headerImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=community-header" method="POST" on-success="_headerImageUploaded">
+        <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=community-header" method="POST" on-success="_headerImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.header.upload')]]</span>
         </file-upload>
@@ -35825,7 +35826,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       communityAccess: {
-        type: String
+        type: String,
+        value: "public"
       },
 
       params: {
@@ -35843,11 +35845,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     _communityChanged: function (newValue, oldValue) {
       if (this.community.access===0) {
-        this.communityAccess = "secret"
-      } else if (this.community.access===1) {
-        this.communityAccess = "open"
-      } else if (this.community.access===2) {
         this.communityAccess = "public"
+      } else if (this.community.access===1) {
+        this.communityAccess = "closed"
+      } else if (this.community.access===2) {
+        this.communityAccess = "secret"
       }
     },
 
@@ -36622,7 +36624,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       </paper-textarea>
 
       <div class="layout vertical additionalSettings">
-        <file-upload id="logoImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
+        <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.logo.upload')]]</span>
         </file-upload>

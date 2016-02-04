@@ -134,7 +134,7 @@
 
           <div class="layout vertical additionalSettings">
             <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]" class="additionalButton"></yp-post-location>
-            <file-upload id="imageFileUpload" droppable="false" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
+            <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
               <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
               <span>[[t('image.upload')]]</span>
             </file-upload>
