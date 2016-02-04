@@ -60,7 +60,7 @@
 
         @apply(--paper-dropdown-menu-icon);
       }
-    </style><div role="button"></div><paper-menu-button id="menuButton" vertical-align="[[verticalAlign]]" horizontal-align="[[horizontalAlign]]" vertical-offset="[[_computeMenuVerticalOffset(noLabelFloat)]]" disabled="[[disabled]]" no-animations="[[noAnimations]]" on-iron-select="_onIronSelect" on-iron-deselect="_onIronDeselect" opened="{{opened}}"><div class="dropdown-trigger"><paper-ripple></paper-ripple><paper-input type="text" invalid="[[invalid]]" readonly="" disabled="[[disabled]]" value="[[selectedItemLabel]]" placeholder="[[placeholder]]" always-float-label="[[alwaysFloatLabel]]" no-label-float="[[noLabelFloat]]" label="[[label]]"><iron-icon icon="arrow-drop-down" suffix=""></iron-icon></paper-input></div><content id="content" select=".dropdown-content"></content></paper-menu-button></template><script>
+    </style><div role="button"></div><paper-menu-button id="menuButton" vertical-align="[[verticalAlign]]" horizontal-align="[[horizontalAlign]]" vertical-offset="[[_computeMenuVerticalOffset(noLabelFloat)]]" disabled="[[disabled]]" no-animations="[[noAnimations]]" on-iron-select="_onIronSelect" on-iron-deselect="_onIronDeselect" opened="{{opened}}"><div class="dropdown-trigger"><paper-ripple></paper-ripple><paper-input type="text" invalid="[[invalid]]" readonly="" disabled="[[disabled]]" value="[[selectedItemLabel]]" placeholder="[[placeholder]]" error-message="[[errorMessage]]" always-float-label="[[alwaysFloatLabel]]" no-label-float="[[noLabelFloat]]" label="[[label]]"><iron-icon icon="arrow-drop-down" suffix=""></iron-icon></paper-input></div><content id="content" select=".dropdown-content"></content></paper-menu-button></template><script>
     (function() {
       'use strict';
 
@@ -134,6 +134,13 @@
            */
           placeholder: {
             type: String
+          },
+
+          /**
+           * The error message to display when invalid.
+           */
+          errorMessage: {
+              type: String
           },
 
           /**

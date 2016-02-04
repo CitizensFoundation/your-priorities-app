@@ -4,6 +4,7 @@
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/fix-dialog.html">
@@ -13,6 +14,14 @@
 <dom-module id="yp-app-globals">
 
   <template>
+    <style>
+      paper-toast {
+        z-index: 9999;
+      }
+    </style>
+
+    <paper-toast id="masterToast"></paper-toast>
+
     <yp-session id="session"></yp-session>
 
     <paper-dialog id="dialog" style="max-width: 500px;">
@@ -78,7 +87,7 @@
 
           activityHost: {
             type: String,
-            value: "http://178.62.77.12:9200"
+            value: ""
           },
 
           resetSeenWelcome: {
@@ -109,6 +118,11 @@
            type: Boolean,
            value: false
           }
+        },
+
+        notifyUserViaToast: function (text) {
+          this.$.masterToast.text = text;
+          this.$.masterToast.show();
         },
 
         reBoot: function() {
@@ -159,7 +173,7 @@
           }
         },
 
-        activity: function (verb, object, context) {
+        activity: function (type, object, context) {
           var actor;
 
           if (window.appUser && window.appUser.user) {
@@ -168,49 +182,32 @@
             actor = "-1";
           }
 
-          var logString = 'activity stream: ' + actor + ' ' + verb + ' ' + object;
+          var logString = 'activity stream: ' + actor + ' ' + type + ' ' + object;
 
           console.log(logString);
 
           if (context)
             logString += ' ' + context;
 
-          if (verb == 'open')
+          if (type == 'open')
             this.sendToGoogleAnalytics('send', 'pageview', null, null);
-          this.sendToGoogleAnalytics('send', 'event', object, verb);
+          this.sendToGoogleAnalytics('send', 'event', object, type);
 
           var activityAjax = document.createElement('iron-ajax');
           var date = new Date();
           activityAjax.handleAs = 'json';
-          activityAjax.url = this.activityHost+'/activity-stream/activity/?timestamp=' + date.toISOString();
+          activityAjax.contentType = 'application/x-www-form-urlencoded';
+          activityAjax.url = '/api/users/createActivityFromApp';
           activityAjax.method = 'POST';
-          activityAjax.body = JSON.stringify({
+          activityAjax.body = {
             actor: actor,
-            verb: verb,
+            type: type,
             object: object,
-            context: context,
+            context: context ? context : "",
             event_time: date.toISOString(),
             session_id: this.getSessionFromCookie(),
             user_agent: navigator.userAgent
-          });
-          activityAjax.generateRequest();
-        },
-
-        createActivityIndex: function () {
-          var activityAjax = document.createElement('iron-ajax');
-          activityAjax.handleAs = 'json';
-          activityAjax.url = this.activityHost+'/activity-stream/';
-          activityAjax.method = 'POST';
-          activityAjax.body = JSON.stringify({
-            mappings: {
-              'activity': {
-                '_timestamp': {
-                  'enabled': false,
-                  'path': 'event_time'
-                }
-              }
-            }
-          });
+          };
           activityAjax.generateRequest();
         },
 
@@ -238,7 +235,7 @@
           } else if (this.resetSeenWelcome) {
             localStorage.setItem('yrpri-welcome-status', false);
           }
-          this.activity('Anonymous', 'open', 'page', window.location.href);
+          this.activity('open', 'page', window.location.href);
           this.seenWelcome = localStorage.getItem('yrpri-welcome-status') == 'true';
           if (!this.seenWelcome) {
             this.$.welcomeDialog.open();

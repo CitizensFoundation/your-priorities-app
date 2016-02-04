@@ -25,18 +25,16 @@
             {index: 8, height: 51}
           );
 
-          list.addEventListener('scroll', function() {
-            list.debounce('scroll', function() {
-              assert.equal(isFullOfItems(list), true);
-            });
-          });
-
           simulateScroll({
             list: list,
             contribution: 20,
-            target: 100000
-          }, function() {
-            done();
+            target: 100000,
+            onScrollEnd: done,
+            onScroll: function() {
+              list.debounce('scroll', function() {
+                assert.isTrue(isFullOfItems(list));
+              });
+            }
           });
         });
       });
@@ -51,18 +49,16 @@
         list.items = items;
 
         flush(function() {
-          list.addEventListener('scroll', function() {
-            list.debounce('scroll', function() {
-              assert.equal(isFullOfItems(list), true);
-            });
-          });
-
           simulateScroll({
             list: list,
             contribution: 20,
-            target: 100000
-          }, function() {
-            done();
+            target: 100000,
+            onScrollEnd: done,
+            onScroll: function() {
+              list.debounce('scroll', function() {
+                assert.equal(isFullOfItems(list), true);
+              });
+            }
           });
         });
       });
@@ -75,18 +71,16 @@
         });
 
         flush(function() {
-          list.addEventListener('scroll', function() {
-            list.debounce('scroll', function() {
-              assert.isTrue(isFullOfItems(list));
-            });
-          });
-
           simulateScroll({
             list: list,
             contribution: 20,
-            target: 100000
-          }, function() {
-            done();
+            target: 100000,
+            onScrollEnd: done,
+            onScroll: function() {
+              list.debounce('scroll', function() {
+                assert.isTrue(isFullOfItems(list));
+              });
+            }
           });
         });
       });

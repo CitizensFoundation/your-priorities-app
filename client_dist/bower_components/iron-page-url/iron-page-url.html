@@ -115,7 +115,7 @@
       if (window.performance && window.performance.now) {
         return window.performance.now();
       }
-      return +new Date();
+      return new Date().getTime();
     },
     _hashChanged: function() {
       this.hash = window.location.hash.substring(1);
@@ -158,10 +158,10 @@
         // nothing to do, the URL didn't change
         return;
       }
-
+      var now = this._now();
       var shouldReplace =
-          this._lastChangedAt + this.dwellTime > this._now();
-      this._lastChangedAt = this._now();
+          this._lastChangedAt + this.dwellTime > now;
+      this._lastChangedAt = now;
       if (shouldReplace) {
         window.history.replaceState({}, '', newUrl);
       } else {

@@ -50,7 +50,7 @@
         list.items = buildDataSet(100);
 
         flush(function() {
-          list.updateSizeForItem(list.items[list._physicalCount + 1]);
+          list.updateSizeForItem(list.items[list.items.length - 1]);
           done();
         });
       });

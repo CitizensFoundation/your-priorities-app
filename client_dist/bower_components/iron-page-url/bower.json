@@ -1,6 +1,6 @@
 {
   "name": "iron-page-url",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Bidirectional data binding into the page's URL.",
   "private": true,
   "authors": [
@@ -30,7 +30,7 @@
     "paper-slider": "polymerelements/paper-slider#^1.0.0",
     "paper-styles": "polymerelements/paper-styles#^1.0.0",
     "test-fixture": "polymerelements/test-fixture#^1.0.0",
-    "web-component-tester": "polymer/web-component-tester#^3.4.0",
+    "web-component-tester": "^4.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
   }
 }

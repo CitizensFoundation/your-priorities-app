@@ -7,6 +7,9 @@ iron-page-url.html
 Edit those files, and our readme bot will duplicate them over here!
 Edit this file, and the bot will squash your changes :)
 
+The bot does some handling of markdown. Please file a bug if it does the wrong
+thing! https://github.com/PolymerLabs/tedium/issues
+
 -->
 
 [![Build Status](https://travis-ci.org/PolymerElements/iron-page-url.svg?branch=master)](https://travis-ci.org/PolymerElements/iron-page-url)
@@ -15,8 +18,6 @@ _[Demo and API Docs](https://elements.polymer-project.org/elements/iron-page-url
 
 
 ##&lt;iron-page-url&gt;
-
-
 
 The `iron-page-url` element manages binding to and from the current URL.
 
@@ -29,9 +30,9 @@ changes.
 
 When the URL is: `/search?query=583#details` iron-page-url's properties will be:
 
-  - path: `'/search'`
-  - query: `'query=583'`
-  - hash: `'details'`
+* path: `'/search'`
+* query: `'query=583'`
+* hash: `'details'`
 
 These bindings are bidirectional. Modifying them will in turn modify the URL.
 

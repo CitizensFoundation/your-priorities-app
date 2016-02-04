@@ -7,7 +7,9 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-session/yp-session.html">
-<link rel="import" href="../yp-user/yp-user-login.html">
+<link rel="import" href="../yp-user/yp-login.html">
+<link rel="import" href="../yp-user/yp-forgot-password.html">
+<link rel="import" href="../yp-user/yp-reset-password.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 
 <dom-module id="yp-app-user">
@@ -19,7 +21,9 @@
       </style>
 
       <yp-session id="session"></yp-session>
-      <yp-user-login id="userLogin" register="true" on-login="_handleLogin"></yp-user-login>
+      <yp-login id="userLogin" register="true" on-login="_handleLogin"></yp-login>
+      <yp-forgot-password id="forgotPassword"></yp-forgot-password>
+      <yp-reset-password id="resetPassword"></yp-reset-password>
 
       <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
       <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
@@ -37,6 +41,11 @@
         behaviors: [
           Polymer.appHelpers
         ],
+
+        listeners: {
+          'yp-forgot-password': '_forgotPassword',
+          'yp-reset-password': '_resetPassword'
+        },
 
         properties: {
           loginForEditParams: {
@@ -124,6 +133,14 @@
             this.loginForPointQualityParams = null;
           }
           this.fire("login")
+        },
+
+        _forgotPassword: function () {
+          this.$.forgotPassword.open();
+        },
+
+        _resetPassword: function (event, detail) {
+          this.$.resetPassword.open(detail);
         },
 
         getUser: function () {

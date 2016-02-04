@@ -68,6 +68,39 @@
           assert.equal(collapse.style.height, '0px');
         });
 
+        test('opened changes trigger iron-resize', function() {
+          var spy = sinon.stub();
+          collapse.addEventListener('iron-resize', spy);
+          // No animations for faster test.
+          collapse.noAnimation = true;
+          collapse.opened = false;
+          assert.isTrue(spy.calledOnce, 'iron-resize was fired');
+        });
+
+        test('overflow is hidden while animating', function(done) {
+          collapse.addEventListener('transitionend', function() {
+            // Should still be hidden.
+            assert.equal(getComputedStyle(collapse).overflow, 'hidden');
+            done();
+          });
+          assert.equal(getComputedStyle(collapse).overflow, 'visible');
+          collapse.opened = false;
+          // Immediately updated style.
+          assert.equal(getComputedStyle(collapse).overflow, 'hidden');
+        });
+
+        test('toggle horizontal updates size', function() {
+          collapse.horizontal = false;
+          assert.equal(collapse.style.width, '');
+          assert.equal(collapse.style.height, 'auto');
+          assert.equal(collapse.style.transitionProperty, 'height');
+
+          collapse.horizontal = true;
+          assert.equal(collapse.style.width, 'auto');
+          assert.equal(collapse.style.height, '');
+          assert.equal(collapse.style.transitionProperty, 'width');
+        });
+
       });
 
     </script></body></html>

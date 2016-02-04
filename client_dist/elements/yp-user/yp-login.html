@@ -12,7 +12,7 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
-<dom-module id="yp-user-login">
+<dom-module id="yp-login">
 
   <style>
     :host {
@@ -69,6 +69,7 @@
 
       </form>
       <div class="buttons">
+        <paper-button on-tap="_forgotPassword">[[t('iForgotPassword')]]</paper-button>
         <paper-button dialog-dismiss>[[t('cancel')]]</paper-button>
         <paper-button autofocus on-tap="_validateAndSend">[[submitText]]</paper-button>
       </div>
@@ -85,7 +86,7 @@
 
   Polymer({
 
-    is: 'yp-user-login',
+    is: 'yp-login',
 
     behaviors: [
       Polymer.appHelpers
@@ -151,7 +152,16 @@
 
       redirectTo: {
         type: String
+      },
+
+      forgotPasswordOpen: {
+        type: Boolean,
+        value: false
       }
+    },
+
+    _forgotPassword: function () {
+      this.fire("yp-forgot-password");
     },
 
     _onRegisterChanged: function (newValue, oldValue) {
@@ -192,7 +202,7 @@
 
     _validateAndSend: function(e) {
       if (this.$.form.checkValidity() && this.email && this.password){
-        if (this.registerMode===1) {
+        if (this.registerMode) {
           this.$.registerAjax.body = this.credentials;
           this.$.registerAjax.generateRequest();
         } else {

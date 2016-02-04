@@ -10,13 +10,13 @@
      * Fired when the `path` property is built based on child `google-map-point` elements, either
      * initially or when they are changed.
      * @event google-map-poly-path-built
-     * @param {MVCArray.<LatLng>} path The poly path.
+     * @param {google.maps.MVCArray.<LatLng>} path The poly path.
      */
     /**
      * Fired when the user finishes adding vertices to the poly. The host component can use the
      * provided path to rebuild its list of points.
      * @event google-map-poly-path-updated
-     * @param {MVCArray.<LatLng>} path The poly path.
+     * @param {google.maps.MVCArray.<LatLng>} path The poly path.
      */
     /**
      * Fired when the DOM `click` event is fired on the poly. Requires the clickEvents attribute to
@@ -90,7 +90,7 @@
 
       /**
        * An array of the Google Maps LatLng objects that define the poly shape.
-       * @type MVCArray.<LatLng>
+       * @type google.maps.MVCArray.<LatLng>
        */
       path: {
         type: Object,
@@ -479,6 +479,9 @@
       }
 
       this._listeners = {};
+      this._clickEventsChanged();
+      this._mouseEventsChanged();
+      this._dragEventsChanged();
     },
 
     _forwardEvent: function(name) {

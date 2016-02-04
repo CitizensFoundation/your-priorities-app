@@ -1,13 +1,17 @@
-<link rel="import" href="../polymer/polymer.html"><dom-module id="iron-collapse"><style>
+<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html"><dom-module id="iron-collapse"><style>
 
     :host {
       display: block;
       transition-duration: 300ms;
-      overflow: auto;
+      overflow: visible;
     }
 
     :host(.iron-collapse-closed) {
       display: none;
+    }
+
+    :host(:not(.iron-collapse-opened)) {
+      overflow: hidden;
     }
 
   </style><template><content></content></template></dom-module><script>
@@ -15,6 +19,10 @@
   Polymer({
 
     is: 'iron-collapse',
+
+    behaviors: [
+      Polymer.IronResizableBehavior
+    ],
 
     properties: {
 
@@ -50,6 +58,10 @@
         type: Boolean
       },
 
+    },
+
+    get dimension() {
+      return this.horizontal ? 'width' : 'height';
     },
 
     hostAttributes: {
@@ -130,8 +142,10 @@
     },
 
     _horizontalChanged: function() {
-      this.dimension = this.horizontal ? 'width' : 'height';
       this.style.transitionProperty = this.dimension;
+      var otherDimension = this.dimension === 'width' ? 'height' : 'width';
+      this.style[otherDimension] = '';
+      this.updateSize(this.opened ? 'auto' : '0px', false);
     },
 
     _openedChanged: function() {
@@ -158,6 +172,7 @@
       this.toggleClass('iron-collapse-closed', !this.opened);
       this.toggleClass('iron-collapse-opened', this.opened);
       this._updateTransition(false);
+      this.notifyResize();
     },
 
     _calcSize: function() {

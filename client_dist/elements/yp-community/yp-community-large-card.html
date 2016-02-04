@@ -158,6 +158,7 @@
           <div class="layout vertical description-and-stats">
             <div class="description">
               <h2 class="community-name">[[communityName(community,1)]]</h2>
+              <div class="communityAccess">[[_communityAccessText(community.access)]]</div>
               <div>[[communityDescription(community,1)]]</div>
             </div>
           </div>
@@ -188,6 +189,20 @@
         Polymer.CommunityBehaviors,
         Polymer.LargeCardBehaviors
       ],
+
+      _communityAccessText: function(access) {
+        switch (access) {
+          case 0:
+            return this.t("community.public");
+            break;
+          case 1:
+            return this.t("community.closed");
+            break;
+          case 2:
+            return this.t("community.secret");
+            break;
+        }
+      },
 
       _menuSelection: function (event, detail) {
         if (detail.item.id=="editMenuItem")

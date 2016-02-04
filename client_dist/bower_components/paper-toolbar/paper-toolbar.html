@@ -9,15 +9,15 @@
         /* size */
         height: var(--paper-toolbar-height, 64px);
 
-        background: var(--paper-toolbar-background, --default-primary-color);
-        color: var(--paper-toolbar-color, --text-primary-color);
+        background: var(--paper-toolbar-background, --primary-color);
+        color: var(--paper-toolbar-color, --dark-theme-text-color);
 
         @apply(--paper-toolbar);
       }
 
       :host(.animate) {
         /* transition */
-        transition: height 0.18s ease-in;
+        transition: var(--paper-toolbar-transition, height 0.18s ease-in);
       }
 
       :host(.medium-tall) {

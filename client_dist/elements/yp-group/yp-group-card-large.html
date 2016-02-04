@@ -125,6 +125,7 @@
         <div class="card-content">
           <div class="objectives">
             <h2 class="group-name">[[groupName(group)]]</h2>
+            <div class="groupAccess">[[_groupAccessText(group.access)]]</div>
             <div>[[groupObjectives(group)]]</div>
           </div>
         </div>
@@ -155,6 +156,20 @@
         Polymer.GroupBehaviors,
         Polymer.LargeCardBehaviors
       ],
+
+      _groupAccessText: function(access) {
+        switch (access) {
+          case 0: // Public
+            return this.t("group.public");
+            break;
+          case 1: // Closed
+            return this.t("group.closed");
+            break;
+          case 2: //Secert
+            return this.t("group.secret");
+            break;
+        }
+      },
 
       _menuSelection: function (event, detail) {
         if (detail.item.id=="editMenuItem")

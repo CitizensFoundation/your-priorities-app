@@ -1,17 +1,18 @@
-<!doctype html><html><head><title>Select contacts</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><script src="../../webcomponentsjs/webcomponents-lite.js"></script><link rel="import" href="../../polymer/polymer.html"><link rel="import" href="../../iron-flex-layout/iron-flex-layout.html"><link rel="import" href="../../iron-ajax/iron-ajax.html"><link rel="import" href="../../paper-icon-button/paper-icon-button.html"><link rel="import" href="../../iron-icon/iron-icon.html"><link rel="import" href="../../iron-icons/iron-icons.html"><link rel="import" href="../../paper-toolbar/paper-toolbar.html"><link rel="import" href="../../paper-menu/paper-menu.html"><link rel="import" href="../../paper-item/paper-item.html"><link rel="import" href="../../paper-badge/paper-badge.html"><link rel="import" href="../iron-list.html"><dom-module id="x-app"><style>
+<!doctype html><html><head><title>Select contacts</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><script src="../../webcomponentsjs/webcomponents-lite.js"></script><link rel="import" href="../../polymer/polymer.html"><link rel="import" href="../../iron-flex-layout/iron-flex-layout.html"><link rel="import" href="../../iron-ajax/iron-ajax.html"><link rel="import" href="../../paper-icon-button/paper-icon-button.html"><link rel="import" href="../../iron-icon/iron-icon.html"><link rel="import" href="../../iron-icons/iron-icons.html"><link rel="import" href="../../paper-styles/color.html"><link rel="import" href="../../paper-styles/typography.html"><link rel="import" href="../../app-layout/app-toolbar/app-toolbar.html"><link rel="import" href="../../paper-menu/paper-menu.html"><link rel="import" href="../../paper-item/paper-item.html"><link rel="import" href="../../paper-badge/paper-badge.html"><link rel="import" href="../iron-list.html"><dom-module id="x-app"><style>
       :host {
         @apply(--layout-fit);
         @apply(--layout-vertical);
         @apply(--paper-font-common-base);
-
         display: block;
         font-family: sans-serif;
       }
 
-      .toolbar {
+      app-toolbar {
         background: var(--paper-pink-500);
         box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3);
+        color: white;
         z-index: 1;
+        color: white;
         --paper-toolbar-title: {
           font-size: 16px;
           line-height: 16px;
@@ -20,7 +21,7 @@
         };
       }
 
-      .toolbar paper-icon-button {
+      app-toolbar paper-icon-button {
         --paper-icon-button-ink-color: white;
       }
 
@@ -36,13 +37,10 @@
         border-bottom: 1px solid #DDD;
       }
 
-      .item:hover {
-        background-color: var(--google-grey-100);
-      }
-
       .item:focus,
       .item.selected:focus {
         outline: 0;
+        background-color: #ddd;
       }
 
       .item.selected .star {
@@ -50,7 +48,8 @@
       }
 
       .item.selected {
-        background-color: var(--google-grey-100);
+        background-color: var(--google-grey-300);
+        border-bottom: 1px solid #ccc;
       }
 
       .avatar {
@@ -58,7 +57,7 @@
         width: 40px;
         border-radius: 20px;
         box-sizing: border-box;
-        background-color: #DDD;
+        background-color: #ddd;
       }
 
       .pad {
@@ -106,11 +105,6 @@
         position: relative;
       }
 
-      paper-item:focus {
-        outline: 0;
-        background-color: #ddd;
-      }
-
       paper-item:hover::after {
         content: "－";
         width: 16px;
@@ -144,7 +138,8 @@
       #starredView {
         @apply(--layout-vertical);
       }
-    </style><template><iron-ajax url="data/contacts.json" last-response="{{data}}" auto=""></iron-ajax><paper-toolbar class="toolbar"><div class="title">Selection using iron-list</div><div><paper-icon-button icon="icons:star" alt="Starred" on-tap="_toggleStarredView"></paper-icon-button><paper-badge label$="[[selectedItems.length]]"></paper-badge></div></paper-toolbar><div class="twoColumns"><iron-list id="itemsList" items="[[data]]" selected-items="{{selectedItems}}" selection-enabled="" multi-selection=""><template><div><div tabindex="0" aria-label$="[[_getAriaLabel(item, selected)]]" class$="[[_computedClass(selected)]]"><img class="avatar" src="[[item.image]]"><div class="pad"><div class="primary">[[item.name]]</div><div class="secondary dim">[[item.shortText]]</div></div><iron-icon icon$="[[iconForItem(selected)]]" class="star"></iron-icon></div><div class="border"></div></div></template></iron-list><div id="starredView" hidden$="[[!showSelection]]"><template is="dom-if" if="[[!selectedItems.length]]"><div class="noSelection">Select a contact</div></template><iron-list id="selectedItemsList" items="[[selectedItems]]" hidden$="[[!selectedItems.length]]"><template><paper-item on-tap="_unselect" tabindex="0">[[item.name]]</paper-item></template></iron-list></div></div></template></dom-module><script>
+
+    </style><template><iron-ajax url="data/contacts.json" last-response="{{data}}" auto=""></iron-ajax><app-toolbar><div title="">Selection using iron-list</div><div><paper-icon-button icon="icons:star" alt="Starred" on-tap="_toggleStarredView"></paper-icon-button><paper-badge label$="[[selectedItems.length]]"></paper-badge></div></app-toolbar><div class="twoColumns"><iron-list id="itemsList" items="[[data]]" selected-items="{{selectedItems}}" selection-enabled="" multi-selection=""><template><div><div tabindex$="[[tabIndex]]" aria-label$="Select/Deselect [[item.name]]" class$="[[_computedClass(selected)]]"><img class="avatar" src="[[item.image]]"><div class="pad"><div class="primary">[[item.name]]</div><div class="secondary dim">[[item.shortText]]</div></div><iron-icon icon$="[[iconForItem(selected)]]" class="star"></iron-icon></div><div class="border"></div></div></template></iron-list><div id="starredView" hidden$="[[!showSelection]]"><template is="dom-if" if="[[!selectedItems.length]]"><div class="noSelection">Select a contact</div></template><iron-list id="selectedItemsList" items="[[selectedItems]]" hidden$="[[!selectedItems.length]]"><template><paper-item tabindex$="[[tabIndex]]" on-tap="_unselect" aria-label$="Deselect [[item.name]]">[[item.name]]</paper-item></template></iron-list></div></div></template></dom-module><script>
 
     HTMLImports.whenReady(function() {
 
@@ -186,10 +181,6 @@
 
         _showSelectionChanged: function() {
           this.$.selectedItemsList.fire('resize');
-        },
-
-        _getAriaLabel: function(item, selected) {
-          return selected ? 'Deselect ' + item.name : 'Select ' + item.name;
         }
       });
 
