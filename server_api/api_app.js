@@ -150,45 +150,49 @@ passport.use(new LocalStrategy(
     }
 ));
 
-// Facebook Authentication
-passport.use(new FacebookStrategy({
-    clientID: process.env.FACEBOOK_APP_ID,
-    clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: "/api/users/auth/facebook/callback",
-    enableProof: false,
-    profileFields: ['id', 'displayName', 'emails']
-  },
-  function(accessToken, refreshToken, profile, done) {
-    var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
-    User.findOrCreate({where: { facebook_id: profile.id },
-        defaults: { email: email, name: profile.displayName, facebook_profile: profile }})
-      .spread(function(user, created) {
-        log.info(created ? "User Created from Facebook" : "User Connected to Facebook", { context: 'loginFromFacebook', user: toJson(user)});
-        done(error, user)
-      }).catch(function (error) {
-      done(error);
-    });
-  }
-));
+if (process.env.FACEBOOK_APP_ID) {
+  // Facebook Authentication
+  passport.use(new FacebookStrategy({
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      callbackURL: "/api/users/auth/facebook/callback",
+      enableProof: false,
+      profileFields: ['id', 'displayName', 'emails']
+    },
+    function(accessToken, refreshToken, profile, done) {
+      var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
+      User.findOrCreate({where: { facebook_id: profile.id },
+          defaults: { email: email, name: profile.displayName, facebook_profile: profile }})
+        .spread(function(user, created) {
+          log.info(created ? "User Created from Facebook" : "User Connected to Facebook", { context: 'loginFromFacebook', user: toJson(user)});
+          done(error, user)
+        }).catch(function (error) {
+        done(error);
+      });
+    }
+  ));
+}
 
-// Twitter Authentication
-passport.use(new TwitterStrategy({
-    consumerKey: process.env.TWITTER_CONSUMER_KEY,
-    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-    callbackURL: "/api/users/auth/twitter/callback"
-  },
-  function(token, tokenSecret, profile, done) {
-    var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
-    User.findOrCreate({where: { twitter_id: profile.id },
-        defaults: { email: email, name: profile.displayName, twitter_profile: profile }})
-      .spread(function(user, created) {
-        log.info(created ? "User Created from Twitter" : "User Connected to Twitter", { context: 'loginFromTwitter', user: toJson(user)});
-        done(error, user)
-      }).catch(function (error) {
-      done(error);
-    });
-  }
-));
+if (process.env.TWITTER_CONSUMER_KEY) {
+  // Twitter Authentication
+  passport.use(new TwitterStrategy({
+      consumerKey: process.env.TWITTER_CONSUMER_KEY,
+      consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+      callbackURL: "/api/users/auth/twitter/callback"
+    },
+    function(token, tokenSecret, profile, done) {
+      var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
+      User.findOrCreate({where: { twitter_id: profile.id },
+          defaults: { email: email, name: profile.displayName, twitter_profile: profile }})
+        .spread(function(user, created) {
+          log.info(created ? "User Created from Twitter" : "User Connected to Twitter", { context: 'loginFromTwitter', user: toJson(user)});
+          done(error, user)
+        }).catch(function (error) {
+        done(error);
+      });
+    }
+  ));
+}
 
 // Google Authentication
 if (process.env.GOOGLE_CONSUMER_KEY) {
