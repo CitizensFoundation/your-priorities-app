@@ -1,0 +1,109 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
+
+<link rel="import" href="../yp-user/yp-user-info.html">
+
+<dom-module id="yp-app-drawer">
+
+  <template>
+
+    <style>
+
+      .avatar-container {
+        position: relative;
+        border: 2px solid #00AA8D;
+        border-radius: 50%;
+        height: 90px;
+        padding: 2px;
+        width: 90px;
+        margin: 20px auto;
+      }
+
+      .avatar-container .image {
+        background-image: url('http://app-layout-assets.appspot.com/assets/pesto/avatar.jpg');
+        background-size: contain;
+        border-radius: 50%;
+        height: 100%;
+        width: 100%;
+      }
+
+      .contact-info {
+        margin: 0 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #CCC;
+        text-align: center;
+      }
+
+      .contact-info .name {
+        font-weight: bold;
+      }
+
+      .contact-info .email {
+        color: #999;
+      }
+    </style>
+
+        <app-header-layout has-scrolling-region>
+
+          <app-header fixed>
+            <div class="avatar-container">
+              <div class="image"></div>
+            </div>
+            <div class="contact-info">
+              <div class="name">Jonathan</div>
+              <div class="email">heyfromjonathan@gmail.com</div>
+            </div>
+          </app-header>
+
+          <div class="currentUser">
+            <template is="dom-if" if="[[user]]">
+              <yp-user-info user="{{user}}"></yp-user-info>
+            </template>
+          </div>
+
+        </app-header-layout>
+      </app-drawer>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-app-drawer',
+
+      properties: {
+
+        user: {
+          type: Object
+        },
+
+        opened: {
+          type: Boolean
+        },
+
+        route: {
+          type: String,
+          observer: 'routeChanged'
+        }
+      },
+
+      routeChanged: function(newValue, oldValue) {
+      }
+    });
+  </script>
+</dom-module>

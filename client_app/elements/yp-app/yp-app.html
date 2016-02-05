@@ -24,6 +24,8 @@
 <link rel="import" href="../yp-app-globals/yp-app-globals.html">
 <link rel="import" href="../yp-app-globals/yp-app-user.html">
 
+<link rel="import" href="yp-app-drawer.html">
+
 <dom-module id="yp-app">
 
   <template>
@@ -172,35 +174,8 @@
 
     <app-drawer-layout drawer-width="288px" responsive-width="1280px">
 
-      <!-- nav panel -->
       <app-drawer id="drawer" swipe-open>
-        <app-header-layout has-scrolling-region>
-
-          <app-header fixed>
-            <div class="avatar-container">
-              <div class="image"></div>
-            </div>
-            <div class="contact-info">
-              <div class="name">Jonathan</div>
-              <div class="email">heyfromjonathan@gmail.com</div>
-            </div>
-          </app-header>
-
-          <div class="currentUser">
-            <template is="dom-if" if="[[user]]">
-              <yp-user-info user="{{user}}"></yp-user-info>
-            </template>
-          </div>
-
-          <!-- nav menu -->
-          <paper-listbox selected="{{route}}" attr-for-selected="name">
-            <paper-item name="home">Home</paper-item>
-            <paper-item name="favorites">Favorites</paper-item>
-            <paper-item name="saved">Saved</paper-item>
-            <paper-item name="trending">Trending</paper-item>
-          </paper-listbox>
-
-        </app-header-layout>
+        <yp-app-drawer id="drawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
       </app-drawer>
 
       <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
@@ -377,9 +352,9 @@
       },
 
       routeChanged: function(newValue, oldValue) {
-        if (newValue !== 'detail') this.__selectedRecipe = null;
         if (!this.$.drawer.persistent) this.$.drawer.close();
       }
+
     });
   </script>
 </dom-module>

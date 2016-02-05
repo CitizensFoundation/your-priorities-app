@@ -65,7 +65,6 @@
             <paper-tab>[[t('events')]]</paper-tab>
           </paper-tabs>
 
-          <neon-animated-pages id="pages" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
             <section>
               <div class="layout horizontal center-center wrap">
                 <template is="dom-if" if="[[groups]]">
@@ -78,7 +77,6 @@
             </section>
             <section><h1 style="padding: 32px;">To be done...</h1></section>
             <section><h1 style="padding: 32px;">To be done...</h1></section>
-          </neon-animated-pages>
 
         </div>
         <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
