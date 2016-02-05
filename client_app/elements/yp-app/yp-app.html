@@ -80,7 +80,7 @@
         left: 0;
         width: 100%;
         color: #fff;
-        background-color: #00AA8D;
+        background-color:#FFF;
       }
 
       app-toolbar {
@@ -122,31 +122,12 @@
         width: 1170px;
         margin: 5px auto;
       }
+
       .card-container {
         display: inline-block;
         width: 33.33%;
       }
-      paper-card {
-        display: block;
-        margin: 5px;
-        --paper-card-header-image: {
-          height: 200px;
-        }
-      }
-      paper-card h2 {
-        margin: 4px;
-        font-weight: normal;
-      }
-      paper-card p {
-        margin: 4px;
-        color: #999;
-      }
-      paper-fab {
-        position: fixed;
-        right: 24px;
-        bottom: 24px;
-        --paper-fab-background: #EF5458;
-      }
+
       @media (max-width: 1458px) {
         .content {
           width: 100%;
@@ -185,15 +166,15 @@
         <app-header effects="resize-title" condenses fixed shadow>
           <app-toolbar class="top-toolbar">
             <content select="[drawer-toggle]"></content>
-            <div condensed-title></div>
+            <div condensed-title>[[headerTitle]]</div>
           </app-toolbar>
           <app-toolbar class="bottom-toolbar">
-            <div title></div>
+            <div title>[[headerTitle]]</div>
           </app-toolbar>
           <app-toolbar>
             <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
             <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
-            <div class="app-name">[[headerTitle]]</div>
+
             <span class="flex"></span>
 
             <!-- Toolbar icons -->
