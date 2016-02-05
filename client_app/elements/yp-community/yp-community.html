@@ -56,17 +56,25 @@
           <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
           <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
             <paper-tab><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
+            <paper-tab>[[t('news')]]</paper-tab>
             <paper-tab>[[t('events')]]</paper-tab>
           </paper-tabs>
 
-          <div class="layout horizontal center-center wrap">
-            <template is="dom-if" if="[[groups]]">
-              <template is="dom-repeat" class="list" items="[[groups]]" as="group">
-                <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
-              </template>
-            </template>
-            <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
-          </div>
+          <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+            <section>
+              <div class="layout horizontal center-center wrap">
+                <template is="dom-if" if="[[groups]]">
+                  <template is="dom-repeat" class="list" items="[[groups]]" as="group">
+                    <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+                  </template>
+                </template>
+                <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
+              </div>
+            </section>
+            <section><h1 style="padding: 32px;">To be done...</h1></section>
+            <section><h1 style="padding: 32px;">To be done...</h1></section>
+          </neon-animated-pages>
+
         </div>
         <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
       </div>
