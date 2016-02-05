@@ -1,0 +1,179 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 Citizens Foundation, Robert Bjarnason & Gunnar Grimsson. All rights reserved.
+-->
+
+<html lang="">
+
+<head>
+  <!-- <script type="text/javascript" src="http://fbug.googlecode.com/svn/lite/branches/firebug1.4/content/firebug-lite-dev.js"></script> -->
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Your Priorities</title>
+  <!-- Place favicon.ico in the `app/` directory -->
+
+  <!-- Chrome for Android theme color -->
+  <meta name="theme-color" content="#303F9F">
+
+  <!-- Web Application Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Tile color for Win8 -->
+  <meta name="msapplication-TileColor" content="#3372DF">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="PSK">
+  <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Polymer Starter Kit">
+  <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
+
+  <!-- Tile icon for Win8 (144x144) -->
+  <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+
+  <!-- build:css styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endbuild-->
+
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+  <!-- will be replaced with elements/elements.vulcanized.html -->
+  <link rel="import" href="elements/elements.html">
+  <!-- endreplace-->
+</head>
+
+<body class="fullbleed layout vertical loading">
+
+  <platinum-https-redirect></platinum-https-redirect>
+
+  <div id="splash" onclick="onSplashClick()"></div>
+
+  <span id="browser-sync-binding"></span>
+
+  <template is="dom-bind" id="app">
+
+    <yp-app-globals id="appGlobals" disable-welcome setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
+    <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
+    <material-search id="search" narrow="[[narrow]]"
+                     previous-searches="{{previousSearches}}"
+                     on-search-change="_onSearch" class="fit"></material-search>
+    <paper-drawer-panel id="paperDrawerPanel" narrow="{{narrow}}" right-drawer force-narrow>
+      <!-- Drawer Scroll Header Panel -->
+      <paper-scroll-header-panel drawer fixed>
+
+        <!-- Drawer Toolbar -->
+        <paper-toolbar id="drawerToolbar">
+          <span class="paper-font-title"></span>
+        </paper-toolbar>
+
+        <!-- Drawer Content -->
+        <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
+          <a data-route="home" href="/" on-click="onDataRouteClick">
+            <iron-icon icon="home"></iron-icon>
+            <span>Home</span>
+          </a>
+        </paper-menu>
+        <div class="currentUser">
+          <template is="dom-if" if="[[user]]">
+            <yp-user-info user="{{user}}"></yp-user-info>
+          </template>
+        </div>
+
+      </paper-scroll-header-panel>
+
+      <!-- Main Area -->
+      <paper-header-panel id="mainArea" main mode="waterfall">
+
+        <!-- Main Toolbar -->
+        <paper-toolbar id="mainToolbar">
+          <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
+          <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
+          <div class="app-name">[[headerTitle]]</div>
+          <span class="flex"></span>
+
+          <!-- Toolbar icons -->
+          <paper-icon-button icon="search" on-tap="toggleSearch" hidden$="[[!showSearch]]"></paper-icon-button>
+
+          <template is="dom-if" if="[[user]]">
+            <paper-icon-button on-tap="openEdit" icon="face"></paper-icon-button>
+            <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
+          </template>
+
+          <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+
+          <!-- Application name -->
+
+          <!-- Application sub title -->
+        </paper-toolbar>
+
+        <!-- Main Content -->
+        <div class="content">
+          <iron-pages attr-for-selected="data-route" selected="{{route}}">
+
+            <section data-route="home">
+            </section>
+
+            <section data-route="domain">
+              <template is="dom-if" if="[[params]]" restamp>
+                <yp-domain domain-id="{{params.domainId}}" on-change-header="onChangeHeader"></yp-domain>
+              </template>
+            </section>
+
+            <section data-route="community">
+              <template is="dom-if" if="[[params.communityId]]" restamp>
+                <yp-community community-id="{{params.communityId}}" on-change-header="onChangeHeader"></yp-community>
+              </template>
+            </section>
+
+            <section data-route="group">
+              <template is="dom-if" if="[[params.groupId]]" restamp>
+                <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]" searching-for="[[params.searchingFor]]"
+                          category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
+                          on-change-header="onChangeHeader"></yp-group>
+              </template>
+            </section>
+
+            <section data-route="post">
+              <template is="dom-if" if="[[params.postId]]" restamp>
+                <yp-post post-id="{{params.postId}}" on-change-header="onChangeHeader"></yp-post>
+              </template>
+            </section>
+
+          </iron-pages>
+        </div>
+      </paper-header-panel>
+    </paper-drawer-panel>
+
+    <!-- Uncomment next block to enable Service Worker support (1/2) -->
+    <!--
+    <paper-toast id="caching-complete"
+                 duration="6000"
+                 text="Caching complete! This app will work offline.">
+    </paper-toast>
+
+    <platinum-sw-register auto-register
+                          clients-claim
+                          skip-waiting
+                          on-service-worker-installed="displayInstalledToast">
+      <platinum-sw-cache default-cache-strategy="fastest"
+                         cache-config-file="cache-config.json">
+      </platinum-sw-cache>
+    </platinum-sw-register>
+    -->
+
+  </template>
+
+  <!-- build:js scripts/app.js -->
+  <script src="scripts/i18next-1.7.4.min.js"></script>
+  <script src="scripts/app.js"></script>
+  <!-- endbuild-->
+</body>
+
+</html>
