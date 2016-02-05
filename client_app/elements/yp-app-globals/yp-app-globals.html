@@ -223,6 +223,9 @@
         },
 
         ready: function () {
+          window.appStartTime = new Date();
+          i18n.init({ lng: "en" });
+          window.i18n = i18n;
           window.appGlobals = this;
           this.requestInProgress = true;
           this.$.boot.generateRequest();

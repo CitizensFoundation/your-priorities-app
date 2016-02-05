@@ -1,12 +1,7 @@
 <!doctype html>
 <!--
 @license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+Copyright (c) 2015 Citizens Foundation, Robert Bjarnason & Gunnar Grimsson. All rights reserved.
 -->
 
 <html lang="">
@@ -62,123 +57,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <span id="browser-sync-binding"></span>
 
-  <template is="dom-bind" id="app">
-
-    <yp-app-globals id="appGlobals" disable-welcome setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
-    <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
-    <material-search id="search" narrow="[[narrow]]"
-                     previous-searches="{{previousSearches}}"
-                     on-search-change="_onSearch" class="fit"></material-search>
-    <paper-drawer-panel id="paperDrawerPanel" narrow="{{narrow}}" right-drawer force-narrow>
-      <!-- Drawer Scroll Header Panel -->
-      <paper-scroll-header-panel drawer fixed>
-
-        <!-- Drawer Toolbar -->
-        <paper-toolbar id="drawerToolbar">
-          <span class="paper-font-title"></span>
-        </paper-toolbar>
-
-        <!-- Drawer Content -->
-        <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
-          <a data-route="home" href="/" on-click="onDataRouteClick">
-            <iron-icon icon="home"></iron-icon>
-            <span>Home</span>
-          </a>
-        </paper-menu>
-        <div class="currentUser">
-          <template is="dom-if" if="[[user]]">
-            <yp-user-info user="{{user}}"></yp-user-info>
-          </template>
-        </div>
-
-      </paper-scroll-header-panel>
-
-      <!-- Main Area -->
-      <paper-header-panel id="mainArea" main mode="waterfall">
-
-        <!-- Main Toolbar -->
-        <paper-toolbar id="mainToolbar">
-          <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
-          <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
-          <div class="app-name">[[headerTitle]]</div>
-          <span class="flex"></span>
-
-          <!-- Toolbar icons -->
-          <paper-icon-button icon="search" on-tap="toggleSearch" hidden$="[[!showSearch]]"></paper-icon-button>
-
-          <template is="dom-if" if="[[user]]">
-            <paper-icon-button on-tap="openEdit" icon="face"></paper-icon-button>
-            <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
-          </template>
-
-          <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-
-          <!-- Application name -->
-
-          <!-- Application sub title -->
-        </paper-toolbar>
-
-        <!-- Main Content -->
-        <div class="content">
-          <iron-pages attr-for-selected="data-route" selected="{{route}}">
-
-            <section data-route="home">
-            </section>
-
-            <section data-route="domain">
-              <template is="dom-if" if="[[params]]" restamp>
-                <yp-domain domain-id="{{params.domainId}}" on-change-header="onChangeHeader"></yp-domain>
-              </template>
-            </section>
-
-            <section data-route="community">
-              <template is="dom-if" if="[[params.communityId]]" restamp>
-                <yp-community community-id="{{params.communityId}}" on-change-header="onChangeHeader"></yp-community>
-              </template>
-            </section>
-
-            <section data-route="group">
-              <template is="dom-if" if="[[params.groupId]]" restamp>
-                <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]" searching-for="[[params.searchingFor]]"
-                          category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
-                          on-change-header="onChangeHeader"></yp-group>
-              </template>
-            </section>
-
-            <section data-route="post">
-              <template is="dom-if" if="[[params.postId]]" restamp>
-                <yp-post post-id="{{params.postId}}" on-change-header="onChangeHeader"></yp-post>
-              </template>
-            </section>
-
-          </iron-pages>
-        </div>
-      </paper-header-panel>
-    </paper-drawer-panel>
-
-    <!-- Uncomment next block to enable Service Worker support (1/2) -->
-    <!--
-    <paper-toast id="caching-complete"
-                 duration="6000"
-                 text="Caching complete! This app will work offline.">
-    </paper-toast>
-
-    <platinum-sw-register auto-register
-                          clients-claim
-                          skip-waiting
-                          on-service-worker-installed="displayInstalledToast">
-      <platinum-sw-cache default-cache-strategy="fastest"
-                         cache-config-file="cache-config.json">
-      </platinum-sw-cache>
-    </platinum-sw-register>
-    -->
-
-  </template>
-
   <!-- build:js scripts/app.js -->
   <script src="scripts/i18next-1.7.4.min.js"></script>
-  <script src="scripts/app.js"></script>
+  <script src="scripts/appBefore.js"></script>
   <!-- endbuild-->
+
+  <yp-app id="app"></yp-app>
+
+  <script src="scripts/appAfter.js"></script>
+
 </body>
 
 </html>
