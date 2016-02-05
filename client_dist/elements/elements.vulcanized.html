@@ -36213,7 +36213,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       neon-animated-pages {
-        max-width: 1600px;
+        width: 100% !important;
+        position: relative;
       }
 
     </style>
@@ -36230,7 +36231,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             <paper-tab>[[t('events')]]</paper-tab>
           </paper-tabs>
 
-          <neon-animated-pages id="pages" class="layout horizontal center-center wrap" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
             <section>
               <div class="layout horizontal center-center wrap">
                 <template is="dom-if" if="[[groups]]">
@@ -36241,9 +36241,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
                 <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
               </div>
             </section>
-            <section><h1 style="padding: 32px;">To be done...</h1></section>
-            <section><h1 style="padding: 32px;">To be done...</h1></section>
-          </neon-animated-pages>
 
         </div>
         <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
