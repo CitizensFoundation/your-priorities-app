@@ -52,6 +52,10 @@
           padding: 0;
           margin: 0;
         }
+
+        paper-tabs {
+          padding-bottom: 12px;
+        }
       }
 
     </style>
@@ -71,8 +75,7 @@
           <paper-tab>[[t('news')]]</paper-tab>
           <paper-tab>[[t('official')]]</paper-tab>
         </paper-tabs>
-
-
+        
           <section>
             <div class="card-container layout center-center wrap">
               <template is="dom-if" if="[[communities]]">
