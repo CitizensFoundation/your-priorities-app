@@ -28,7 +28,7 @@
       :host {
         display: block;
         @apply(--layout-vertical);
-        width: 665px;
+        width: 864px;
       }
 
       .description {
@@ -40,7 +40,7 @@
         @apply(--layout-self-center);
         position: absolute;
         bottom: 0px;
-        left: 16px;
+        right: 16px;
       }
 
       yp-domain-stats {
@@ -62,12 +62,13 @@
       .large-card {
         background-color: var(--third-primary-color, #000);
         color: #fff;
-        height: 460px;
+        height: 243px;
+        width: 864px;
       }
 
       .image {
-        width: 665px;
-        height: 233px;
+        width: 432px;
+        height: 243px;
       }
 
       .description-and-stats {
@@ -117,7 +118,7 @@
     </style>
     <template is="dom-if" if="[[domain]]">
       <paper-material id="card" elevation="5" animated class="large-card">
-        <div class="layout vertical">
+        <div class="layout horizontal">
           <iron-image class="image" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
           <div class="layout vertical description-and-stats">
             <div class="description">

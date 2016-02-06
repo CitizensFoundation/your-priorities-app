@@ -39,14 +39,14 @@
       </paper-input>
 
       <div class="layout vertical additionalSettings">
-        <file-upload id="profileImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
+        <file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.profile.upload')]]</span>
         </file-upload>
       </div>
 
       <div class="layout vertical additionalSettings">
-        <file-upload id="headerImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
+        <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.header.upload')]]</span>
         </file-upload>

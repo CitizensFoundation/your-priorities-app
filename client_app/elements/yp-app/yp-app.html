@@ -150,9 +150,9 @@
                      previous-searches="{{previousSearches}}"
                      on-search-change="_onSearch" class="fit"></material-search>
 
-    <app-drawer-layout drawer-width="288px" responsive-width="1280px">
+    <app-drawer-layout drawer-width="288px" responsive-width="1600px">
 
-      <app-drawer id="drawer" swipe-open>
+      <app-drawer id="drawer" position="right" swipe-open>
         <yp-app-drawer id="drawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
       </app-drawer>
 
@@ -175,7 +175,7 @@
               <paper-icon-button on-tap="openEdit" icon="face"></paper-icon-button>
             </template>
 
-            <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+            <paper-icon-button id="paperToggle" icon="more-vert" on-tap="_toggleDrawer"></paper-icon-button>
           </app-toolbar>
         </app-header>
 
@@ -274,6 +274,11 @@
         headerDescription: {
           type: String
         }
+      },
+
+
+      _toggleDrawer: function () {
+        this.$.drawer.toggle();
       },
 
       openEdit: function ()  {

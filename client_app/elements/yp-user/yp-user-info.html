@@ -13,12 +13,44 @@
       :host {
         display: block;
       }
+
+      .avatar-container {
+        position: relative;
+        border: 2px solid #FF9800;
+        border-radius: 50%;
+        height: 90px;
+        padding: 2px;
+        width: 90px;
+        margin: 20px auto;
+      }
+
+      .contact-info {
+        margin: 0 20px;
+        padding-bottom: 4px;
+        border-bottom: 1px solid #CCC;
+        text-align: center;
+      }
+
+      .contact-info .name {
+        font-weight: bold;
+      }
+
+      .contact-info .email {
+        color: #999;
+      }
     </style>
 
     <template restamp is="dom-if" if="[[user]]">
-      <yp-user-image user="[[user]]"></yp-user-image>
-      <b>[[user.email]]</b><br><br>
-      <paper-button on-tap="onLogout">[[t('user.logout')]]</paper-button>
+      <div class="mainContainer">
+        <div class="avatar-container">
+          <yp-user-image large user="[[user]]"></yp-user-image>
+        </div>
+        <div class="contact-info">
+          <div class="name">[[user.name]]</div>
+          <div class="email">[[user.email]]</div>
+          <paper-button on-tap="onLogout">[[t('user.logout')]]</paper-button>
+        </div>
+      </div>
     </template>
 
     </template>

@@ -111,7 +111,8 @@
     "password": "Password",
     "login": "Login",
     "create": "Create",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "logout": "Logout"
   },
 
   "location": {
