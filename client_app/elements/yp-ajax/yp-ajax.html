@@ -126,8 +126,9 @@
 
       showErrorDialog: function(errorText) {
         this.errorText = errorText;
-        this.setDialog(true,"error");
-        this.$.error.open();
+        this.moveDialogToTopDom("error");
+        this.$$("#formErrorDialog").open();
+       // this.$.error.open();
       },
 
       _resetErrorText: function(event) {

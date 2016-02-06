@@ -24,6 +24,9 @@
 <link rel="import" href="../yp-app-globals/yp-app-globals.html">
 <link rel="import" href="../yp-app-globals/yp-app-user.html">
 
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/fix-dialog.html">
+
 <link rel="import" href="yp-app-drawer.html">
 
 <dom-module id="yp-app">
@@ -80,40 +83,28 @@
         left: 0;
         width: 100%;
         color: #fff;
-        background-color:#FFF;
+        background-color:#F2F2F2;
       }
 
       app-toolbar {
-        height: 120px;
+        height: 64px;
       }
 
       [condensed-title] {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-image: url(http://app-layout-assets.appspot.com/assets/pesto/logo_s.png);
-        background-repeat: no-repeat;
-        background-position: center center;
-        background-size: 76px;
+/*        background-size: 76px; */
         /* The difference in font size is used to calculate the scale of the title in the transition. */
         font-size: 16px;
       }
 
       [title] {
-        position: absolute;
-        top: -120px;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-image: url(http://app-layout-assets.appspot.com/assets/pesto/logo_l.png);
-        background-repeat: no-repeat;
-        background-position: center center;
-        background-size: 240px;
-        transform-origin: center top;
         /* The difference in font size is used to calculate the scale of the title in the transition. */
         font-size: 32px;
+      }
+
+      .backIcon {
+        width: 48px;
+        height: 48px;
+        padding-right: 16px;
       }
 
       .content {
@@ -126,6 +117,12 @@
       .card-container {
         display: inline-block;
         width: 33.33%;
+      }
+
+      .main-header {
+        border-bottom: 1px solid #ddd;
+        background-color: #f2f2f2;
+        color: #333;
       }
 
       @media (max-width: 1458px) {
@@ -163,17 +160,11 @@
 
       <app-header-layout id="mainArea">
 
-        <app-header effects="resize-title" condenses fixed shadow>
-          <app-toolbar class="top-toolbar">
-            <content select="[drawer-toggle]"></content>
-            <div condensed-title>[[headerTitle]]</div>
-          </app-toolbar>
-          <app-toolbar class="bottom-toolbar">
-            <div title>[[headerTitle]]</div>
-          </app-toolbar>
-          <app-toolbar>
+        <app-header effects="waterfall" reveals class="main-header">
+          <app-toolbar primary>
             <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
             <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
+            <div title>[[headerTitle]]</div>
 
             <span class="flex"></span>
 
@@ -182,7 +173,6 @@
 
             <template is="dom-if" if="[[user]]">
               <paper-icon-button on-tap="openEdit" icon="face"></paper-icon-button>
-              <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
             </template>
 
             <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
@@ -225,6 +215,9 @@
       </app-header-layout>
 
     </app-drawer-layout>
+    <template is="dom-if" if="[[user]]">
+      <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
+    </template>
 
   </template>
 
@@ -232,6 +225,11 @@
     Polymer({
 
       is: 'yp-app',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.FixDialog
+      ],
 
       properties: {
 

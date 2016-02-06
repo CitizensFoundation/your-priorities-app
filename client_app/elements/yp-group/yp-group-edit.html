@@ -60,13 +60,13 @@
       </paper-textarea>
 
       <div class="layout vertical additionalSettings">
-        <file-upload id="logoImageUpload"  raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
+        <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.logo.upload')]]</span>
         </file-upload>
       </div>
 
-      <div class="layout vertical additionalSettings" hidden$="[[!headerImageEnabled()]]">
+      <div class="layout vertical additionalSettings">
         <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.header.upload')]]</span>

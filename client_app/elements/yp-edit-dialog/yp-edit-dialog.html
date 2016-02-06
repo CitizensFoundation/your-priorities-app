@@ -221,6 +221,7 @@
       },
 
       open: function() {
+        this.moveDialogToTopDom("editDialog");
         this.$$("#editDialog").open();
       },
 
@@ -288,7 +289,7 @@
 
       _showErrorDialog: function(errorText) {
         this.errorText = errorText;
-        this.setDialog(true,"formErrorDialog");
+        this.moveDialogToTopDom("formErrorDialog");
         this.$$("#formErrorDialog").open();
       },
 
