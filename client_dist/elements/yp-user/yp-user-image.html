@@ -15,6 +15,12 @@
         background-color: var(--primary-color-lighter,#434343);
       }
 
+      .large {
+        height: 90px;
+        width: 90px;
+        background-color: var(--primary-color-lighter,#434343);
+      }
+
       .medium {
         height: 48px;
         width: 48px;
@@ -29,9 +35,9 @@
       }
 
       .rounded-more {
-        -webkit-border-radius: 30px;
-        -moz-border-radius: 30px;
-        border-radius: 30px;
+        -webkit-border-radius: 50px;
+        -moz-border-radius: 50px;
+        border-radius: 50px;
         display: block;
         vertical-align: top;
         align: top;
@@ -81,6 +87,11 @@
           value: false
         },
 
+        large: {
+          type: Boolean,
+          value: false
+        },
+
         user: {
           type: Object,
           observer: "_userChanged"
@@ -106,6 +117,8 @@
       computeClass: function (small) {
         if (this.small)
           return 'small rounded';
+        else if (this.large)
+          return 'large rounded-more';
         else
           return 'medium rounded';
       },

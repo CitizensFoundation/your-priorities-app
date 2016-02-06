@@ -21340,7 +21340,1645 @@ context. You should place this element as a child of `<body>` whenever possible.
 
     Polymer.PaperMenuButton = PaperMenuButton;
   })();
+</script><dom-module id="app-drawer" assetpath="../bower_components/app-layout/app-drawer/"><style>
+
+    #contentContainer {
+      position: fixed;
+      top: -120px;
+      bottom: -120px;
+      left: 0;
+      width: 256px;
+      background-color: #FFF;
+      padding: 120px 0;
+
+      transition: 0.2s ease;
+      transition-property: -webkit-transform;
+      transition-property: transform;
+
+      -webkit-transform: translate3d(-100%, 0, 0);
+      transform: translate3d(-100%, 0, 0);
+
+      @apply(--app-drawer-content-container);
+    }
+
+    :host([position=right]) > #contentContainer {
+      left: auto;
+      right: 0;
+
+      -webkit-transform: translate3d(100%, 0, 0);
+      transform: translate3d(100%, 0, 0);
+    }
+
+    :host([swipe-open]) > #contentContainer::after {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 100%;
+      width: 15px;
+      content: '';
+    }
+
+    :host([swipe-open][position=right]) > #contentContainer::after {
+      left: auto;
+      right: 100%;
+    }
+
+    :host([opened]) > #contentContainer {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform:  translate3d(0, 0, 0);
+    }
+
+    #scrim {
+      position: fixed;
+      top: -120px;
+      left: 0;
+      right: 0;
+      bottom: -120px;
+      background: var(--app-drawer-scrim-background, rgba(0, 0, 0, 0.5));
+      opacity: 0;
+      visibility: hidden;
+
+      transition: 0.2s ease;
+      transition-property: opacity, visibility;
+
+      -webkit-transform: translateZ(0);
+      transform:  translateZ(0);
+    }
+
+    /**
+     * NOTE(keanulee): IE/Edge does not properly update element styles when using
+     * dynamically inserted style tags that match with :not([attribute]) rules,
+     * so we can't do this instead:
+     *
+     *  :host([opened]:not([persistent])) > #scrim {
+     *    opacity: 1;
+     *    visibility: visible;
+     *  }
+     *
+     * Ref https://connect.microsoft.com/IE/feedbackdetail/view/2217046/element-styles-not-updated-when-using-dynamically-inserted-style-tags-that-match-with-not-attribute-rules
+     */
+    :host([opened]) > #scrim {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    :host([opened][persistent]) > #scrim {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+  </style><template><div id="scrim" on-tap="_scrimTapHandler"></div><div id="contentContainer"><content></content></div></template><script>
+
+    Polymer({
+
+      is: 'app-drawer',
+
+      properties: {
+
+        /**
+         * The opened state of the drawer.
+         */
+        opened: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        /**
+         * The drawer does not have a scrim and cannot be swiped close.
+         */
+        persistent: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+
+        /**
+         * The position of the drawer on the screen ('left' or 'right').
+         */
+        position: {
+          type: String,
+          value: 'left',
+          reflectToAttribute: true
+        },
+
+        /**
+         * Create an area at the edge of the screen to swipe open the drawer.
+         */
+        swipeOpen: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        }
+
+      },
+
+      listeners: {
+        track: '_trackHandler'
+      },
+
+      observers: [
+        'resetLayout(position)',
+        '_updateDocScroll(opened, persistent)'
+      ],
+
+      _lastTrackDirection: 0,
+
+      _translateOffset: 0,
+
+      attached: function() {
+        // Set the scroll direction so you can vertically scroll inside the drawer.
+        this.setScrollDirection('y');
+
+        /**
+         * Only transition the drawer shortly after it is attached (e.g. app-drawer-layout
+         * may need to set the initial opened state which should not be transitioned).
+         */
+        this.$.contentContainer.style.transition = 'none';
+        this.async(function() {
+          this.$.contentContainer.style.transition = '';
+        });
+      },
+
+      /**
+       * Opens the drawer.
+       */
+      open: function() {
+        this.opened = true;
+      },
+
+      /**
+       * Closes the drawer.
+       */
+      close: function() {
+        this.opened = false;
+      },
+
+      /**
+       * Toggles the drawer open and close.
+       */
+      toggle: function() {
+        this.opened = !this.opened;
+      },
+
+      /**
+       * Gets the width of the drawer.
+       *
+       * @return {number} The width of the drawer in pixels.
+       */
+      getWidth: function() {
+        return this.$.contentContainer.offsetWidth;
+      },
+
+      resetLayout: function() {
+        this.debounce('_resetLayout', function() {
+          this.fire('app-drawer-reset-layout');
+        }, 1);
+      },
+
+      _scrimTapHandler: function() {
+        if (!this.persistent) {
+          this.opened = false;
+        }
+      },
+
+      _trackHandler: function(event) {
+        if (!this.persistent) {
+          switch (event.detail.state) {
+            case 'start':
+              // Disable transitions since styles will reflect user track events.
+              this.$.contentContainer.style.transitionDuration = '0s';
+              this.$.scrim.style.transitionDuration = '0s';
+              this.$.scrim.style.visibility = 'visible';
+
+              if (this.opened) {
+                this._translateOffset = 0;
+              } else if (this.position == 'left') {
+                this._translateOffset = -this.getWidth();
+              } else if (this.position == 'right') {
+                this._translateOffset = this.getWidth();
+              }
+              break;
+
+            case 'track':
+              var translateDelta = event.detail.dx + this._translateOffset;
+              switch (this.position) {
+                case 'left':
+                  translateDelta = Math.min(0, translateDelta);
+                  this._translateDrawer(translateDelta);
+                  this.$.scrim.style.opacity = 1 + translateDelta / this.getWidth();
+                  break;
+                case 'right':
+                  translateDelta = Math.max(0, translateDelta);
+                  this._translateDrawer(translateDelta);
+                  this.$.scrim.style.opacity = 1 - translateDelta / this.getWidth();
+                  break;
+              }
+
+              // Keep track of the last user track event with non-zero ddx (which we
+              // need to determine whether to keep the drawer open/closed) since the
+              // very last track event may have zero ddx.
+              if (event.detail.ddx !== 0) {
+                this._lastTrackDirection = event.detail.ddx;
+              }
+              break;
+
+            case 'end':
+              this.$.contentContainer.style.transitionDuration = '';
+              this.$.scrim.style.transitionDuration = '';
+              this.$.scrim.style.visibility = '';
+              this.$.scrim.style.opacity = '';
+              this.transform('', this.$.contentContainer);
+
+              // Only toggle the drawer if the user intentionally swipes in one direction.
+              if (Math.abs(event.detail.dx) > 30) {
+                this.opened = (this.position === 'left' && this._lastTrackDirection > 0) ||
+                  (this.position === 'right' && this._lastTrackDirection < 0);
+              }
+              break;
+          }
+        }
+      },
+
+      _translateDrawer: function(x) {
+        this.transform('translate3d(' + x + 'px, 0, 0)', this.$.contentContainer);
+      },
+
+      _updateDocScroll: function() {
+        document.body.style.overflow = (this.persistent || !this.opened) ? '' : 'hidden';
+      }
+
+      /**
+       * Fired when the layout of app-drawer has changed.
+       *
+       * @event app-drawer-reset-layout
+       */
+
+    });
+
+  </script></dom-module><dom-module id="app-drawer-layout" assetpath="../bower_components/app-layout/app-drawer-layout/"><style>
+
+    :host {
+      display: block;
+    }
+
+    :host([fullbleed]) {
+      @apply(--layout-fit);
+    }
+
+    #contentContainer {
+      position: relative;
+      height: 100%;
+      transition: var(--app-drawer-layout-content-transition, none);
+    }
+
+    #contentContainer:not(.narrow) > ::content [drawer-toggle] {
+      display: none;
+    }
+
+  </style><template><div id="contentContainer" class$="[[_computeClass(narrow)]]"><content select=":not(app-drawer)"></content></div><content id="drawerContent" select="app-drawer"></content><iron-media-query query="[[_computeMediaQuery(forceNarrow, responsiveWidth)]]" on-query-matches-changed="_onQueryMatchesChanged"></iron-media-query></template><script>
+
+    Polymer({
+
+      is: 'app-drawer-layout',
+
+      properties: {
+
+        /**
+         * Returns true if the panel is in narrow layout. This is useful if you
+         * need to show/hide elements based on the layout.
+         */
+        narrow: {
+          type: Boolean,
+          readOnly: true,
+          notify: true,
+          reflectToAttribute: true,
+          value: false
+        },
+
+        /**
+         * If true, ignore `responsiveWidth` setting and force the narrow layout.
+         */
+        forceNarrow: {
+          type: Boolean,
+          value: false,
+          observer: '_responsiveChange'
+        },
+
+        /**
+         * If the viewport's width is smaller than this value, the panel will change to narrow layout.
+         * In the mode the drawer will be closed.
+         */
+        responsiveWidth: {
+          type: String,
+          value: '640px'
+        }
+
+      },
+
+      listeners: {
+        'tap': '_tapHandler',
+        'app-drawer-reset-layout': 'resetLayout'
+      },
+
+      attached: function() {
+        this.resetLayout();
+      },
+
+      /**
+       * Gets the drawer element.
+       *
+       * @property drawer
+       */
+      get drawer() {
+        return Polymer.dom(this.$.drawerContent).getDistributedNodes()[0];
+      },
+
+      _tapHandler: function(e) {
+        var target = Polymer.dom(e).localTarget;
+        if (target && target.hasAttribute('drawer-toggle')) {
+          this.drawer.toggle();
+        }
+      },
+
+      _responsiveChange: function(narrow) {
+        this._setNarrow(narrow);
+        this.resetLayout();
+      },
+
+      resetLayout: function() {
+        this.debounce('_resetLayout', function() {
+          if (!this.isAttached) {
+            return;
+          }
+          this.drawer.opened = !this.narrow;
+          this.drawer.persistent = !this.narrow;
+          if (this.narrow) {
+            this.$.contentContainer.style.marginLeft = '';
+            this.$.contentContainer.style.marginRight = '';
+          } else if (this.drawer.position == 'right') {
+            this.$.contentContainer.style.marginLeft = '';
+            this.$.contentContainer.style.marginRight = this.drawer.getWidth() + 'px';
+          } else {
+            this.$.contentContainer.style.marginLeft = this.drawer.getWidth() + 'px';
+            this.$.contentContainer.style.marginRight = '';
+          }
+        });
+      },
+
+      _onQueryMatchesChanged: function(event) {
+        this._responsiveChange(event.detail.value);
+      },
+
+      _computeMediaQuery: function(forceNarrow, responsiveWidth) {
+        return forceNarrow ? '' : '(max-width: ' + responsiveWidth + ')';
+      },
+
+      /**
+       * NOTE(keanulee): IE/Edge does not properly update element styles when using
+       * dynamically inserted style tags that match with :not([attribute]) rules,
+       * so we use a :not(.class) rule instead. Ref
+       * https://connect.microsoft.com/IE/feedbackdetail/view/2217046/element-styles-not-updated-when-using-dynamically-inserted-style-tags-that-match-with-not-attribute-rules
+       */
+      _computeClass: function(narrow) {
+        return narrow ? 'narrow' : '';
+      }
+
+    });
+
+  </script></dom-module><dom-module id="app-header-layout" assetpath="../bower_components/app-layout/app-header-layout/"><style>
+
+    :host {
+      display: block;
+    }
+
+    :host([has-scrolling-region]) {
+      position: relative;
+      height: 100%;
+    }
+
+    :host > ::content > app-header,
+    :host > ::content > [underlay-content] {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+    }
+
+    :host([has-scrolling-region]) > ::content > app-header,
+    :host([has-scrolling-region]) > ::content > [underlay-content] {
+      position: absolute;
+    }
+
+    :host([has-scrolling-region]) > #contentContainer {
+      @apply(--layout-fit);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #contentContainer {
+      position: relative;
+      overflow-y: hidden;
+    }
+
+  </style><template><content id="underlayContent" select="[underlay-content]"></content><div id="contentContainer"><content select=":not(app-header):not([app-header-overlay])"></content></div><content id="header" select="app-header"></content><content select="[app-header-overlay]"></content></template><script>
+
+    Polymer({
+
+      is: 'app-header-layout',
+
+      behaviors: [
+        Polymer.IronResizableBehavior
+      ],
+
+      properties: {
+
+        /**
+         * If true, the current element will have its own scrolling region.
+         * Otherwise, it will use the document scroll to control the header.
+         */
+        hasScrollingRegion: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        }
+
+      },
+
+      listeners: {
+        'iron-resize': '_resizeHandler',
+        'app-header-reset-layout': 'resetLayout'
+      },
+
+      observers: [
+        'resetLayout(isAttached, hasScrollingRegion)'
+      ],
+
+      get header() {
+        return Polymer.dom(this.$.header).getDistributedNodes()[0];
+      },
+
+      /**
+       * Resets the layout. This method is automatically called when the element is attached to the DOM.
+       *
+       * @method resetLayout
+       */
+      resetLayout: function() {
+        this.debounce('_resetLayout', function() {
+          this._updateContentPosition();
+          this._updateScroller();
+        }, 3);
+      },
+
+      _getFixedNodes: function() {
+        return Polymer.dom(this.$.header).getDistributedNodes().
+            concat(Polymer.dom(this.$.underlayContent).getDistributedNodes());
+      },
+
+      _updateContentPosition: function() {
+        var header = this.header;
+        var containerStyle = this.$.contentContainer.style;
+        if (!this.isAttached || !header) {
+          return;
+        }
+        this._headerHeight = header.offsetHeight;
+        if (header.fixed && !header.willCondense() && this.hasScrollingRegion) {
+          containerStyle.marginTop = this._headerHeight + 'px';
+          containerStyle.paddingTop = '';
+        } else {
+          containerStyle.paddingTop = this._headerHeight + 'px';
+          containerStyle.marginTop = '';
+        }
+      },
+
+      _updateFixedNodesPosition: function() {
+        var rect = this.getBoundingClientRect();
+        this._getFixedNodes().forEach(function(node) {
+          node.style.left = this.hasScrollingRegion ? '' : rect.left + 'px';
+          node.style.width = this.hasScrollingRegion ? '' : rect.width + 'px';
+        }.bind(this));
+      },
+
+      _updateScroller: function() {
+        if (!this.isAttached) {
+          return;
+        }
+        var header = this.header;
+        if (header) {
+          header.scroller = this.hasScrollingRegion ? this.$.contentContainer : window;
+          this._updateFixedNodesPosition();
+        }
+      },
+
+      _resizeHandler: function() {
+        this.resetLayout();
+      }
+
+    });
+
+  </script></dom-module><script>
+
+(function() {
+  function interpolate(progress, points, fn, ctx) {
+    fn.apply(ctx, points.map(function(point) {
+      return point[0] + (point[1] - point[0]) * progress;
+    }));
+  }
+
+  Polymer.AppScrollEffects = {};
+
+  /**
+   * While scrolling down, fade in the rear background layer and fade out the front background
+   * layer (opacity interpolated based on scroll position).
+   */
+  Polymer.AppScrollEffects['blend-background'] = {
+    setUp: function setUp() {
+      this.$.backgroundFrontLayer.style.willChange = 'opacity';
+      this.$.backgroundFrontLayer.style.webkitTransform = 'translateZ(0)';
+      this.$.backgroundRearLayer.style.willChange = 'opacity';
+      this.$.backgroundRearLayer.style.webkitTransform = 'translateZ(0)';
+      this.$.backgroundRearLayer.style.opacity = 0;
+    },
+    run: function run(p, y) {
+      this.$.backgroundFrontLayer.style.opacity = 1 - p;
+      this.$.backgroundRearLayer.style.opacity = p;
+    }
+  };
+
+  /**
+   * Upon scrolling past a threshold, fade in the rear background layer and fade out the front
+   * background layer (opacity CSS transitioned over time).
+   */
+  Polymer.AppScrollEffects['fade-background'] = {
+    setUp: function setUp(config) {
+      var duration = config.duration || '0.5s';
+      this.$.backgroundFrontLayer.style.willChange = 'opacity';
+      this.$.backgroundFrontLayer.style.webkitTransform = 'translateZ(0)';
+      this.$.backgroundFrontLayer.style.transitionProperty = 'opacity';
+      this.$.backgroundFrontLayer.style.transitionDuration = duration;
+      this.$.backgroundRearLayer.style.willChange = 'opacity';
+      this.$.backgroundRearLayer.style.webkitTransform = 'translateZ(0)';
+      this.$.backgroundRearLayer.style.transitionProperty = 'opacity';
+      this.$.backgroundRearLayer.style.transitionDuration = duration;
+    },
+    run: function run(p, y) {
+      if (p >= 1) {
+        this.$.backgroundFrontLayer.style.opacity = 0;
+        this.$.backgroundRearLayer.style.opacity = 1;
+      } else {
+        this.$.backgroundFrontLayer.style.opacity = 1;
+        this.$.backgroundRearLayer.style.opacity = 0;
+      }
+    }
+  };
+
+  /**
+   * Vertically translate the background based on a factor of the scroll position.
+   */
+  Polymer.AppScrollEffects['parallax-background'] = {
+    setUp: function setUp(config) {
+      var scalar = parseFloat(config.scalar);
+      this._deltaBg = this.$.backgroundFrontLayer.offsetHeight - this.$.background.offsetHeight;
+      if (this._deltaBg === 0) {
+        if (isNaN(scalar)) {
+          scalar = 0.8;
+        }
+        this._deltaBg = this._deltaHeight * scalar;
+      } else {
+        if (isNaN(scalar)) {
+          scalar = 1;
+        }
+        this._deltaBg = this._deltaBg * scalar;
+      }
+    },
+    tearDown: function() {
+      delete this._deltaBg;
+    },
+    run: function run(p, y) {
+      this.transform('translate3d(0px, ' + (this._deltaBg * Math.min(1, p)) + 'px, 0px)', this.$.backgroundFrontLayer);
+      if (this.$.backgroundRearLayer) {
+        this.transform('translate3d(0px, ' + (this._deltaBg * Math.min(1, p)) + 'px, 0px)', this.$.backgroundRearLayer);
+      }
+    }
+  };
+
+  /**
+   * Transform the font size of a designated title element between two values based on the scroll
+   * position.
+   */
+  Polymer.AppScrollEffects['resize-title'] = {
+    setUp: function setUp() {
+      var title = Polymer.dom(this).querySelector('[title]');
+      var condensedTitle = Polymer.dom(this).querySelector('[condensed-title]');
+
+      if (!condensedTitle) {
+        this._warn(this._logf('effects[resize-title]', 'undefined `condensed-title`'));
+        return false;
+      }
+      if (!title) {
+        this._warn(this._logf('effects[resize-title]', 'undefined `title`'));
+        return false;
+      }
+
+      condensedTitle.style.willChange = 'opacity';
+      title.style.willChange = 'opacity';
+
+      condensedTitle.style.webkitTransform = 'translateZ(0)';
+      title.style.webkitTransform = 'translateZ(0)';
+
+      var titleClientRect = title.getBoundingClientRect();
+      var condensedTitleClientRect = condensedTitle.getBoundingClientRect();
+      var fx = {};
+
+      fx.scale = parseInt(window.getComputedStyle(condensedTitle)['font-size'], 10) /
+          parseInt(window.getComputedStyle(title)['font-size'], 10);
+      fx.titleDX = titleClientRect.left - condensedTitleClientRect.left;
+      fx.titleDY = titleClientRect.top - condensedTitleClientRect.top;
+      fx.condensedTitle = condensedTitle;
+      fx.title = title;
+
+      this._fxResizeTitle = fx;
+    },
+    tearDown: function tearDown() {
+      delete this._fxResizeTitle;
+    },
+    run: function run(p, y) {
+      var fx = this._fxResizeTitle;
+      if (!this.condenses) {
+        y = 0;
+      }
+      if (p >= 1) {
+        fx.title.style.opacity = 0;
+        fx.condensedTitle.style.opacity = 1;
+      } else {
+        fx.title.style.opacity = 1;
+        fx.condensedTitle.style.opacity = 0;
+      }
+      interpolate(Math.min(1, p), [
+        [1,  fx.scale],
+        [0, -fx.titleDX],
+        [y, y-fx.titleDY]
+      ],
+      function(scale, translateX, translateY) {
+        this.transform('translate(' + translateX + 'px, ' + translateY + 'px) ' +
+            'scale3d(' + scale + ', ' + scale + ', 1)',
+            fx.title);
+      }, this);
+    }
+  };
+
+  /**
+   * Upon scrolling past a threshold, CSS transition the font size of a designated title element
+   * between two values.
+   */
+  Polymer.AppScrollEffects['resize-snapped-title'] = {
+    setUp: function setUp(config) {
+      var title = Polymer.dom(this).querySelector('[title]');
+      var condensedTitle = Polymer.dom(this).querySelector('[condensed-title]');
+      var duration = config.duration || '0.2s';
+      var fx = {};
+
+      if (!condensedTitle) {
+        this._warn(this._logf('effects[resize-snapped-title]', 'undefined `condensed-title`'));
+        return false;
+      }
+      if (!title) {
+        this._warn(this._logf('effects[resize-snapped-title]', 'undefined `title`'));
+        return false;
+      }
+
+      title.style.transitionProperty = 'opacity';
+      title.style.transitionDuration = duration;
+      condensedTitle.style.transitionProperty = 'opacity';
+      condensedTitle.style.transitionDuration = duration;
+
+      fx.condensedTitle = condensedTitle;
+      fx.title = title;
+      this._fxResizeSnappedTitle = fx;
+    },
+    tearDown: function tearDown() {
+      var fx = this._fxResizeSnappedTitle;
+      fx.title.style.transition = '';
+      fx.condensedTitle.style.transition = '';
+      delete this._fxResizeSnappedTitle;
+    },
+    run: function run(p, y) {
+      var fx = this._fxResizeSnappedTitle;
+      if (p > 0) {
+        fx.title.style.opacity = 0;
+        fx.condensedTitle.style.opacity = 1;
+      } else {
+        fx.title.style.opacity = 1;
+        fx.condensedTitle.style.opacity = 0;
+      }
+    }
+  };
+
+  /**
+   * Toggles the shadow property in app-header when content is scrolled to create a sense of depth
+   * between the element and the content underneath.
+   */
+  Polymer.AppScrollEffects['waterfall'] = {
+    run: function run(p, y) {
+      this.shadow = this.isOnScreen() && this.isContentBelow();
+    }
+  };
+
+  /**
+   * Shorthand for the waterfall, resize-title, blend-background, and parallax-background effects.
+   */
+  Polymer.AppScrollEffects['material'] = {
+    setUp: function() {
+      this.effects = 'waterfall resize-title blend-background parallax-background';
+      return false;
+    }
+  };
+
+})();
+
 </script><script>
+
+/**
+ * `Polymer.AppCustomScrollerBehavior` allows an element to respond to scroll events from a
+ * designated scroller (either window or another element).
+ *
+ * Elements that consume this behavior can override the `_scrollHandler`
+ * method to add logic on the scroll event.
+ *
+ * @polymerBehavior
+ */
+Polymer.AppCustomScrollerBehavior = (function() {
+
+  return {
+
+    properties: {
+
+      /**
+       * Specifies the element that will handle the scroll event
+       * on the behalf of the current element. This is typically a reference to an `HTMLElement`,
+       * but there are a few more posibilities:
+       *
+       * ### CSS Selectors
+       * This property can also accept a string containing one CSS selector to an element
+       * accessible within the current scope. e.g.
+       *
+       *```html
+       * <div id="scrollingRegion" style="overflow-y: auto;">
+       *  <app-header scroller="#scrollingRegion">
+       *  </app-header>
+       * </div>
+       *```
+       * In this case, `scroller` will point to the outer div element. Alternatively, 
+       * you can set the property programatically:
+       *
+       *```js
+       * appHeader.scroller = document.querySelector("#scrollingRegion");
+       *```
+       *
+       * ### Window (default)
+       * The scroller property can also point to `window` to use . e.g.
+       *```html
+       * <app-header scroller="window"></app-header>
+       *```
+       * Alternatively, you can set the property programatically:
+       *
+       *```js
+       * appHeader.scroller = window;
+       *```
+       */
+      scroller: {
+        type: Object,
+        value: window,
+        observer: '_scrollerChanged'
+      }
+    },
+
+    _scrollHandler: function noop() {},
+
+    _scrollerChanged: function(scroller, old) {
+      this._boundScrollHandler = this._boundScrollHandler || this._scrollHandler.bind(this);
+
+      if (scroller) {
+        // sugar for the DOM
+        if (typeof scroller === 'string') {
+          if (scroller === 'window') {
+            this.scroller = window;
+          } else {
+            var ownerRoot = Polymer.dom(this).getOwnerRoot();
+            this.scroller = (ownerRoot && ownerRoot.$$) ? ownerRoot.$$(scroller) : Polymer.dom(null).querySelector(scroller);
+          }
+        } else {
+          scroller.addEventListener('scroll', this._boundScrollHandler);
+        }
+      }
+      if (old && old.removeEventListener) {
+        old.removeEventListener('scroll', this._boundScrollHandler);
+      }
+    },
+
+   /**
+    * Gets the number of pixels that the content of an element is scrolled upward.
+    *
+    * @type {number}
+    */
+    get _scrollTop() {
+      if (this.scroller) {
+        return this.scroller === window ? window.pageYOffset : this.scroller.scrollTop;
+      }
+      return 0;
+    },
+
+   /**
+    * Gets the number of pixels that the content of an element is scrolled to the left.
+    *
+    * @type {number}
+    */
+    get _scrollLeft() {
+      if (this.scroller) {
+        return this.scroller === window ? window.pageXOffset : this.scroller.scrollLeft;
+      }
+      return 0;
+    },
+
+    /**
+     * Sets the number of pixels that the content of an element is scrolled upward.
+     *
+     * @type {number}
+     */
+    set _scrollTop(top) {
+      if (this.scroller === window) {
+        window.scrollTo(window.pageXOffset, top);
+      } else if (this.scroller) {
+        this.scroller.scrollTop = top;
+      }
+    },
+
+    /**
+     * Sets the number of pixels that the content of an element is scrolled to the left.
+     *
+     * @type {number}
+     */
+    set _scrollLeft(left) {
+      if (this.scroller === window) {
+        window.scrollTo(left, window.pageYOffset);
+      } else if (this.scroller) {
+        this.scroller.scrollLeft = left;
+      }
+    },
+
+    /**
+     * Scrolls the content to a particular place.
+     *
+     * @method scroll
+     * @param {number} top The top position
+     * @param {number} left The left position
+     */
+    scroll: function(top, left) {
+       if (this.scroller === window) {
+        window.scrollTo(top, left);
+      } else if (this.scroller) {
+        this.scroller.scrollTop = top;
+        this.scroller.scrollLeft = left;
+      }
+    }
+
+  };
+
+})();
+</script><script>
+  /**
+   * `Polymer.AppScrollEffectsBehavior` provides an interface that allows to consume scrolls events.
+   * Effects are installed in the `Polymer.AppScrollEffects` namescape.
+   *
+   * A few effects are defined in `app-scroll-effects.html`, but, by default, no effect is imported.
+   * Thus, users need to explicitly import the dependency.
+   *
+   * Elements that consume this behavior are required to override the folllowing methods:
+   *
+   * * `_updateScrollState`
+   * * `isOnScreen`
+   * * `isContentBelow`
+   *
+   * @polymerBehavior
+   */
+  Polymer.AppScrollEffectsBehavior = [
+    Polymer.AppCustomScrollerBehavior,
+   {
+
+    properties: {
+
+      /**
+       * A space-separated list of the effects names that will be triggered when the user scrolls.
+       * e.g. `waterfall parallax-background` installs the `waterfall` and `parallax-background`.
+       */
+      effects: {
+        type: String,
+        value: ''
+      },
+
+      /**
+       * An object that configurates the effects installed via the `effects` property. e.g.
+       * ```js
+       *  element.effectsConfig = {
+       *   "blend-background": {
+       *     "startsAt": 0.5
+       *   }
+       * };
+       * ```
+       * Every effect has at least two config properties: `startsAt` and `endsAt`.
+       * These properties indicate when the event should start and end respectively
+       * and relative to the overall element progress. So for example, if `blend-background`
+       * starts at `0.5`, the effect will only start once the current element reaches 0.5
+       * of its progress. In this context, the progress is a value in the range of `[0, 1]`
+       * that indicates where this element is on the screen relative to the viewport.
+       */
+      effectsConfig: {
+        type: Object,
+        value: function() {
+          return {};
+        }
+      },
+
+      /**
+       * Disables CSS transitions and scroll effects on the element.
+       */
+      disabled: {
+        type: Boolean,
+        reflectToAttribute: true,
+        value: false
+      }
+    },
+
+    observers: [
+      '_effectsChanged(effects, effectsConfig)'
+    ],
+
+    /**
+     * Updates the scroll state. This method should be overridden
+     * by the consumer of this behavior.
+     *
+     * @abstract
+     * @method _updateScrollState
+     */
+    _updateScrollState: function() {},
+
+    /**
+     * Returns true if the current element is on the screen.
+     * That is, visible in the current viewport. This method should be
+     * overridden by the consumer of this behavior.
+     *
+     * @abstract
+     * @method isOnScreen
+     * @return {boolean}
+     */
+    isOnScreen: function() {
+      return false;
+    },
+
+    /**
+     * Returns true if there's content below the current element. This method
+     * should be overridden by the consumer of this behavior.
+     *
+     * @abstract
+     * @method isContentBelow
+     * @return {boolean}
+     */
+    isContentBelow: function() {
+      return false;
+    },
+
+    /**
+     * List of effects handlers that will take place during scroll.
+     *
+     * @type {Array<Function>}
+     */
+    _effectsRunFn: null,
+
+    /**
+     * List of the effects definitions installed via the `effects` property.
+     *
+     * @type {Array<Object>}
+     */
+    _effects: null,
+
+    /**
+     * The clamped value of `_scrollTop`.
+     * @type number
+     */
+    get _clampedScrollTop() {
+      return Math.max(0, this._scrollTop);
+    },
+
+    created: function() {
+      this._effectsRunFn = [];
+      this._effects = [];
+    },
+
+    detached: function() {
+      this._tearDownEffects();
+    },
+
+    /**
+     * Creates an effect object from an effect name and configuration that can be used to run
+     * effects programmatically.
+     *
+     * @method createEffect
+     * @param {string} effectName The name of an effect defined in `Polymer.AppScrollEffects`
+     * @param {Object=} effectConfig The effect config object if the effect accepts config
+     *   values. (Optional)
+     * @return {Object} The effect object. This object has the following interface:
+     *
+     *  * `obj.setUp()`, Sets up the requirements for the effect.
+     *       This function is called automatically before the `effect` function returns.
+     *  * `obj.run(progress, y)`, Runs the effect given a `progress`.
+     *  * `obj.tearDown()`, Cleans up any DOM nodes or element references used by the effect.
+     *
+     * Example:
+     * ```js
+     * var parallax = obj.createEffect('parallax-background');
+     * // runs the effect
+     * parallax.run(0.5, 0);
+     * ```
+     */
+    createEffect: function(effectName, effectConfig) {
+      if (!Polymer.AppScrollEffects) {
+        throw new ReferenceError('undefined Polymer.AppScrollEffects');
+        return;
+      }
+      var effectDef = Polymer.AppScrollEffects[effectName];
+      if (!effectDef) {
+        throw new ReferenceError('undefined effect `' + effectName + '`');
+        return;
+      }
+      var prop = this._boundEffect(effectDef, effectConfig || {});
+      prop.setUp();
+      return prop;
+    },
+
+    /**
+     * Called when `effects` or `effectsConfig` changes.
+     */
+    _effectsChanged: function(effects, effectsConfig) {
+      this._tearDownEffects();
+
+      if (effects === '') {
+        return;
+      }
+      effects.split(' ').forEach(function(effectName) {
+        var effectDef;
+        if (effectName !== '') {
+          if ((effectDef = Polymer.AppScrollEffects[effectName])) {
+            this._effects.push(this._boundEffect(effectDef, effectsConfig[effectName]));
+          } else {
+            this._warn(this._logf('_effectsChanged', 'undefined effect `', effectName, '`'));
+          }
+        }
+      }, this);
+
+      this._setUpEffect();
+    },
+
+    /**
+     * Forces layout
+     */
+    _layoutIfDirty: function() {
+      return this.offsetWidth;
+    },
+
+    /**
+     * Returns an effect object bound to the current context.
+     *
+     * @param {Object}
+     * @param {Object=} The effect config object if the effect accepts config values. (Optional)
+     */
+    _boundEffect: function(effectDef, effectsConfig) {
+      effectsConfig = effectsConfig || {};
+      var startsAt = parseFloat(effectsConfig.startsAt || 0);
+      var endsAt = parseFloat(effectsConfig.endsAt || 1);
+      var deltaS = endsAt - startsAt;
+      var noop = Function();
+      // fast path if possible
+      var runFn = (startsAt === 0 && endsAt === 1) ? effectDef.run :
+        function(progress, y) {
+          effectDef.run.call(this,
+              Math.max(0, (progress - startsAt) / deltaS), y);
+        };
+      return {
+        setUp: effectDef.setUp ? effectDef.setUp.bind(this, effectsConfig) : noop,
+        run: effectDef.run ? runFn.bind(this) : noop,
+        tearDown: effectDef.tearDown ? effectDef.tearDown.bind(this) : noop
+      };
+    },
+
+    /**
+     * Sets up the effects.
+     */
+    _setUpEffect: function() {
+      if (this.isAttached) {
+        this._effectsRunFn = [];
+        this._effects.forEach(function(effectDef) {
+          // install the effect only if no error was reported
+          if (effectDef.setUp() !== false) {
+            this._effectsRunFn.push(effectDef.run);
+          }
+        }, this);
+      }
+    },
+
+    /**
+     * Tears down the effects.
+     */
+    _tearDownEffects: function() {
+      this._effects.forEach(function(effectDef) {
+        effectDef.tearDown();
+      });
+      this._effectsRunFn = [];
+      this._effects = [];
+    },
+
+    /**
+     * Runs the effects.
+     *
+     * @param {number} The progress
+     * @param {number} The top position of the current element relative to the viewport.
+     */
+    _runEffects: function(p, y) {
+      this._effectsRunFn.forEach(function(run) {
+        run(p, y);
+      });
+    },
+
+    /**
+     * Overrides the `_scrollHandler`.
+     */
+    _scrollHandler: function() {
+      if (!this.disabled) {
+        this._updateScrollState(this._clampedScrollTop);
+      }
+    }
+  }];
+
+  /**
+   * Defines the namespace for the effects
+   */
+  Polymer.AppScrollEffects = Polymer.AppScrollEffects || {};
+</script><dom-module id="app-header" assetpath="../bower_components/app-layout/app-header/"><style>
+
+    :host {
+      position: relative;
+      display: block;
+      -webkit-transform: translateZ(0);
+    }
+
+    :host > ::content > app-toolbar:first-of-type {
+      -webkit-transform: translateZ(0);
+    }
+
+    :host::after {
+      content: "";
+      position: absolute;
+      left: 0px;
+      right: 0px;
+      bottom: -5px;
+      width: 100%;
+      height: 5px;
+      pointer-events: none;
+      opacity: 0;
+      box-shadow: inset 0px 5px 6px -3px rgba(0, 0, 0, 0.4);
+      will-change: opacity;
+      -webkit-transition: opacity 0.4s;
+      transition: opacity 0.4s;
+      -webkit-transform: translateZ(0);
+      @apply(--app-header-shadow);
+    }
+
+    :host([shadow])::after {
+      opacity: 1;
+    }
+
+    :host > ::content [condensed-title] {
+      opacity: 0;
+      white-space: nowrap;
+      -webkit-transform-origin: left top;
+      transform-origin: left top;
+    }
+
+    :host > ::content [title] {
+      white-space: nowrap;
+      -webkit-transform-origin: left top;
+      transform-origin: left top;
+    }
+
+    #background {
+      @apply(--layout-fit);
+      overflow: hidden;
+    }
+
+    #backgroundFrontLayer,
+    #backgroundRearLayer {
+      @apply(--layout-fit);
+      pointer-events: none;
+      background-size: cover;
+      height: 100%;
+    }
+
+    #backgroundFrontLayer {
+      @apply(--app-header-background-front-layer);
+    }
+
+    #backgroundRearLayer {
+      @apply(--app-header-background-rear-layer);
+      opacity: 0;
+    }
+
+    #contentContainer {
+      position: relative;
+      height: 100%;
+      width: 100%;
+    }
+
+    :host([disabled]),
+    :host([disabled])::after,
+    :host([disabled]) #backgroundFrontLayer,
+    :host([disabled]) #backgroundRearLayer,
+    :host([disabled]) > ::content > app-toolbar:first-of-type {
+      transition: none !important;
+    }
+
+  </style><template><div id="background"><div id="backgroundRearLayer"></div><div id="backgroundFrontLayer"></div></div><div id="contentContainer"><content id="content"></content></div></template><script>
+
+    Polymer({
+
+      is: 'app-header',
+
+      behaviors: [
+        Polymer.AppScrollEffectsBehavior,
+        Polymer.IronResizableBehavior
+      ],
+
+      properties: {
+
+        /**
+         * If true, the header will automatically collapse when scrolling down.
+         * That is, the first toolbar (as in the DOM) will remain visible when the header is fully condensed
+         * whereas the other toolbars will collapse below the first toolbar. e.g.
+         *
+         *```html
+         * <app-header condenses>
+         *   <app-toolbar>This toolbar remains on top</app-toolbar>
+         *   <app-toolbar></app-toolbar>
+         *   <app-toolbar></app-toolbar>
+         * </app-header>
+         * ```
+         */
+        condenses: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * Mantains the header fixed at the top so it never moves away.
+         */
+        fixed: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * Slides back the header when scrolling back up.
+         */
+        reveals: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * Displays a shadow below the header.
+         */
+        shadow: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        }
+
+      },
+
+      observers: [
+        'resetLayout(isAttached, condenses, fixed)'
+      ],
+
+      listeners: {
+        'iron-resize': '_resizeHandler'
+      },
+
+      /**
+       * A cached offsetHeight of the current element.
+       *
+       * @type {number}
+       */
+      _height: 0,
+
+      /**
+       * The distance in pixels the header will be translated to when scrolling.
+       *
+       * @type {number}
+       */
+      _deltaHeight: 0,
+
+      /**
+       * The top most app-toolbar.
+       *
+       * @type {Element}
+       */
+      _topbar: null,
+
+      /**
+       * The current clampped header top relative to the viewport.
+       *
+       * @type {number}
+       */
+      _top: 0,
+
+      /**
+       * The current scroll progress.
+       *
+       * @type {number}
+       */
+      _progress: 0,
+
+      /**
+       * The previous `scrollTop` to determinate the scroll direction.
+       *
+       * @type {number}
+       */
+      _lastScrollTop: 0,
+
+      /**
+       * The distance the header is allowed to move away.
+       *
+       * @type {number}
+       */
+      get _headerDy() {
+        return this.fixed ? this._deltaHeight : this._height + 5;
+      },
+
+      /**
+       * Resets the layout. This method is automatically called when the element is attached to the DOM.
+       *
+       * @method resetLayout
+       */
+      resetLayout: function() {
+        this.debounce('_resetLayout', function() {
+          // noop if the header isn't visible
+          if (this.offsetWidth === 0 && this.offsetHeight === 0) {
+            return;
+          }
+          var firstSetup = this._height === 0;
+          var scrollTop = this._clampedScrollTop;
+          var savedDisabled = this.disabled;
+          this._height = this.offsetHeight;
+          this._topbar = Polymer.dom(this).querySelector('app-toolbar');
+
+          // prepare for measurement
+          this.disabled = true;
+
+          if (firstSetup || scrollTop === 0) {
+            this._deltaHeight = this._topbar ? this._height - this._topbar.offsetHeight : 0;
+            this._setUpEffect();
+            this._updateScrollState(scrollTop, true);
+          } else {
+            this._updateScrollState(0, true);
+            this._deltaHeight = this._topbar ? this._height - this._topbar.offsetHeight : 0;
+            this._setUpEffect();
+            this._updateScrollState(this._lastScrollTop, true);
+            this._layoutIfDirty();
+          }
+          // restore no transition
+          this.disabled = savedDisabled;
+          this.fire('app-header-reset-layout');
+        }, 1);
+      },
+
+      /**
+       * Updates the scroll state.
+       *
+       * @param {number}
+       * @param {boolean}
+       */
+      _updateScrollState: function(scrollTop, forceUpdate) {
+        if (this._height === 0) {
+          return;
+        }
+        var progress;
+        var mayHeaderMove = !this.fixed || this.condenses;
+        var top = Math.min(this._headerDy, Math.max(0,
+            this.reveals ? this._top + scrollTop - this._lastScrollTop : scrollTop
+        ));
+
+        if (this._shouldCondense(scrollTop)) {
+          top = Math.max(this._deltaHeight, top);
+        }
+        if (this._deltaHeight === 0) {
+          progress = scrollTop > 0 ? 1 : 0;
+        } else {
+          progress = top / this._deltaHeight;
+        }
+        if (forceUpdate || progress !== this._progress || top !== this._top || scrollTop === 0) {
+          this._runEffects(progress, mayHeaderMove ? top : 0);
+          this._transformHeader(mayHeaderMove ? top : 0);
+          this.fire('app-header-transform', { top: top, progress: progress }, { bubbles: false });
+        }
+        if (!forceUpdate) {
+          this._top = top;
+          this._lastScrollTop = scrollTop;
+          this._progress = progress;
+        }
+      },
+
+      /**
+       * Returns true if the current header should condense based
+       * on the current scroll position.
+       *
+       * @param {number} scrollTop
+       * @return {boolean}
+       */
+      _shouldCondense: function(scrollTop) {
+        return this._lastScrollTop >= scrollTop && scrollTop > this._deltaHeight
+            && (!this.reveals || this.condenses);
+      },
+
+      /**
+       * Returns true if the current header will condense based on the size of the header
+       * and the `consenses` property.
+       *
+       * @return {boolean}
+       */
+      willCondense: function() {
+        return this._deltaHeight > 0 && this.condenses;
+      },
+
+      /**
+       * Returns true if the current element is on the screen.
+       * That is, visible in the current viewport.
+       *
+       * @method isOnScreen
+       * @return {boolean}
+       */
+      isOnScreen: function() {
+        return this._height !== 0 && (this._top === 0 || this._top < this._height);
+      },
+
+      /**
+       * Returns true if there's content below the current element.
+       *
+       * @method isContentBelow
+       * @return {boolean}
+       */
+      isContentBelow: function() {
+        if (this._top === 0) {
+          return this._clampedScrollTop > 0;
+        }
+        return this._clampedScrollTop - this._headerDy >= 0;
+      },
+
+      /**
+       * Transforms the header.
+       *
+       * @param {number}
+       */
+      _transformHeader: function(y) {
+        this.transform('translate3d(0,' + (-y) + 'px, 0)');
+        if (this._topbar && this.condenses) {
+          this.transform('translate3d(0,' + Math.min(y, this._deltaHeight) + 'px, 0)',
+              this._topbar);
+        }
+      },
+
+      _resizeHandler: function() {
+        this.resetLayout();
+      }
+
+      /**
+       * Fires when the `app-header` is transformed. That is, when scroll effects are taking place.
+       * This event doesn't bubble.
+       * * `event.detail.top` The top position relative to the viewport.
+       * * `event.detail.progress` The progress value.
+       *
+       * @event app-header-transform
+       */
+
+      /**
+       * Fires when the layout of `app-header` changed.
+       *
+       * @event app-header-reset-layout
+       */
+    });
+
+  </script></dom-module><dom-module id="app-toolbar" assetpath="../bower_components/app-layout/app-toolbar/"><template><style>
+
+      :host {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        height: 64px;
+        padding: 0 16px;
+        position: relative;
+        pointer-events: none;
+        font-size: var(--app-toolbar-font-size, 20px);
+      }
+
+      :host > ::content > * {
+        pointer-events: auto;
+      }
+
+      :host > ::content > paper-icon-button {
+        /* paper-icon-button/issues/33 */
+        font-size: 0;
+      }
+
+      :host > ::content > [title],
+      :host > ::content > [condensed-title] {
+        @apply(--layout-flex);
+        pointer-events: none;
+      }
+
+      :host > ::content > [bottom-item] {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      :host > ::content > [top-item] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+      }
+
+      :host > ::content > [spacer] {
+        margin-left: 64px;
+      }
+
+    </style><content></content></template><script>
+
+    Polymer({
+
+      is: 'app-toolbar'
+
+    });
+
+  </script></dom-module><dom-module id="app-scrollpos-control" assetpath="../bower_components/app-layout/app-scrollpos-control/"><script>
+
+    Polymer({
+
+      is: 'app-scrollpos-control',
+
+      properties: {
+
+        /**
+         * The selected page.
+         */
+        selected: {
+          type: String,
+          observer: '_selectedChanged'
+        },
+
+        /**
+         * Reset the scroll position to 0.
+         */
+        reset: {
+          type: Boolean,
+          value: false
+        }
+
+      },
+
+      created: function() {
+        this._scrollposMap = {};
+      },
+
+      _selectedChanged: function(selected, old) {
+        if (old != null) {
+          this._scrollposMap[old] = {x: window.pageXOffset, y: window.pageYOffset};
+        }
+        var pos = this._scrollposMap[selected];
+        if (pos != null && !this.reset) {
+          this._scrollTo(pos.x, pos.y);
+        } else {
+          this._scrollTo(0, 0);
+        }
+      },
+
+      _scrollTo: function(x, y) {
+        this.async(function() {
+          window.scrollTo(x, y);
+        }, 1);
+      }
+
+    });
+
+  </script></dom-module><script>
 
 /**
 Use `Polymer.PaperDialogBehavior` and `paper-dialog-shared-styles.html` to implement a Material Design
@@ -22149,15 +23787,20 @@ The `aria-labelledby` attribute will be set to the header element, if one exists
 </script>
 <script>
   Polymer.FixDialog = {
-    setDialog: function(open,name) {
+    moveDialogToTopDom: function(name) {
       if (open) {
         var node = document.querySelector('#'+name);
-        var textnode = document.querySelector("body");
-        textnode.appendChild(node);
+        if (node) {
+          var textnode = document.querySelector("body");
+          textnode.appendChild(node);
+        } else {
+          console.error("Can't find node to move to body");
+        }
       }
     }
   };
 </script>
+
 <dom-module id="yp-session" assetpath="yp-session/">
   <template>
   </template>
@@ -22324,8 +23967,9 @@ The `aria-labelledby` attribute will be set to the header element, if one exists
 
       showErrorDialog: function(errorText) {
         this.errorText = errorText;
-        this.setDialog(true,"error");
-        this.$.error.open();
+        this.moveDialogToTopDom("error");
+        this.$$("#formErrorDialog").open();
+       // this.$.error.open();
       },
 
       _resetErrorText: function(event) {
@@ -22549,6 +24193,9 @@ The `aria-labelledby` attribute will be set to the header element, if one exists
         },
 
         ready: function () {
+          window.appStartTime = new Date();
+          i18n.init({ lng: "en" });
+          window.i18n = i18n;
           window.appGlobals = this;
           this.requestInProgress = true;
           this.$.boot.generateRequest();
@@ -29730,6 +31377,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         background-color: var(--primary-color-lighter,#434343);
       }
 
+      .large {
+        height: 90px;
+        width: 90px;
+        background-color: var(--primary-color-lighter,#434343);
+      }
+
       .medium {
         height: 48px;
         width: 48px;
@@ -29744,9 +31397,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .rounded-more {
-        -webkit-border-radius: 30px;
-        -moz-border-radius: 30px;
-        border-radius: 30px;
+        -webkit-border-radius: 50px;
+        -moz-border-radius: 50px;
+        border-radius: 50px;
         display: block;
         vertical-align: top;
         align: top;
@@ -29796,6 +31449,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           value: false
         },
 
+        large: {
+          type: Boolean,
+          value: false
+        },
+
         user: {
           type: Object,
           observer: "_userChanged"
@@ -29821,6 +31479,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       computeClass: function (small) {
         if (this.small)
           return 'small rounded';
+        else if (this.large)
+          return 'large rounded-more';
         else
           return 'medium rounded';
       },
@@ -33148,6 +34808,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       open: function() {
+        this.moveDialogToTopDom("editDialog");
         this.$$("#editDialog").open();
       },
 
@@ -33215,7 +34876,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       _showErrorDialog: function(errorText) {
         this.errorText = errorText;
-        this.setDialog(true,"formErrorDialog");
+        this.moveDialogToTopDom("formErrorDialog");
         this.$$("#formErrorDialog").open();
       },
 
@@ -33232,7 +34893,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
   Polymer.ypEditDialogBehavior = {
 
     behaviors: [
-      Polymer.appHelpers
+      Polymer.appHelpers,
+      Polymer.FixDialog
     ],
 
     properties: {
@@ -33308,7 +34970,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
         if (params)
           this.params = params;
-        this.$.editDialog.open();
+      //  this.moveDialogToTopDom("editDialog");
+        this.$$("#editDialog").open();
       } else {
         window.appUser.loginForEdit(this,newOrUpdate,params);
       }
@@ -34969,7 +36632,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         </file-upload>
       </div>
 
-      <div class="layout vertical additionalSettings" hidden$="[[!headerImageEnabled()]]">
+      <div class="layout vertical additionalSettings">
         <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.header.upload')]]</span>
@@ -35060,7 +36723,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       :host {
         display: block;
         @apply(--layout-vertical);
-        width: 420px;
+        width: 864px;
       }
 
       .groupAccess {
@@ -35078,17 +36741,17 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .groupCard {
-        width: 420px;
         background-color: var(--secondary-primary-color);
         color: #FFF;
-        height: 500px;
+        height: 243px;
+        width: 864px;
       }
 
       .stats {
         @apply(--layout-self-center);
         position: absolute;
         bottom: 0px;
-        left: 16px;
+        right: 16px;
       }
 
       .edit {
@@ -35108,8 +36771,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .logo {
-        width: 420px;
-        height: 100px;
+        width: 432px;
+        height: 243px;
       }
 
       @media (max-width: 360px) {
@@ -35152,12 +36815,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <template is="dom-if" if="[[group]]">
       <paper-card id="card" elevation="[[elevation]]" animated-shadow="" class="groupCard">
-        <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath(group)]]"></iron-image>
-        <div class="card-content">
-          <div class="objectives">
-            <h2 class="group-name">[[groupName(group)]]</h2>
-            <div class="groupAccess">[[_groupAccessText(group.access)]]</div>
-            <div>[[groupObjectives(group)]]</div>
+        <div class="layout horizontal">
+          <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath(group)]]"></iron-image>
+          <div class="card-content">
+            <div class="objectives">
+              <h2 class="group-name">[[groupName(group)]]</h2>
+              <div class="groupAccess">[[_groupAccessText(group.access)]]</div>
+              <div>[[groupObjectives(group)]]</div>
+            </div>
           </div>
         </div>
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
@@ -35277,22 +36942,38 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
 
     <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
+      <div class="layout vertical flex">
+        <div class="layout horizontal center-center">
+          <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
+        </div>
 
-    <div class="layout vertical">
-      <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroup" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}">
-      </yp-posts-filter>
-      <div class="card-container layout center-center">
-        <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
-        <template is="dom-if" if="[[posts]]">
-          <template is="dom-repeat" class="list" items="[[posts]]" as="post">
-            <yp-post-card class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
-          </template>
-        </template>
-        <yp-ajax id="ajax" url="" on-response="_postsResponse"></yp-ajax>
-        <yp-post-card-add hidden$="[[hideAdd]]" class="card" on-tap="newPost" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card-add>
-        <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
+        <div class="layout vertical">
+          <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+            <paper-tab>
+              <span>[[t('ideas')]]</span> &nbsp; (<span>[[posts.length]]</span>)
+            </paper-tab>
+            <paper-tab>[[t('news')]]</paper-tab>
+            <paper-tab>[[t('status')]]</paper-tab>
+          </paper-tabs>
+
+          <div class="card-container layout vertical">
+            <template is="dom-if" if="[[posts]]">
+              <div class="layout vertical">
+                <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroup" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}">
+                </yp-posts-filter>
+                <div class="layout horizontal  center-center wrap">
+                  <template is="dom-repeat" class="list" items="[[posts]]" as="post">
+                    <yp-post-card class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+                  </template>
+                  <yp-post-card-add hidden$="[[hideAdd]]" class="card" on-tap="newPost" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card-add>
+                </div>
+              </div>
+            </template>
+            <yp-ajax id="ajax" url="" on-response="_postsResponse"></yp-ajax>
+            <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
+          </div>
+        </div>
       </div>
-    </div>
   </template>
 
   <script>
@@ -35353,6 +37034,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           type: String,
           value: null,
           observer: "_searchingForChanged"
+        },
+
+        selected: {
+          type: Number,
+          value: 0
         }
       },
 
@@ -35562,14 +37248,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       </paper-input>
 
       <div class="layout vertical additionalSettings">
-        <file-upload id="profileImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
+        <file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.profile.upload')]]</span>
         </file-upload>
       </div>
 
       <div class="layout vertical additionalSettings">
-        <file-upload id="headerImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
+        <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.header.upload')]]</span>
         </file-upload>
@@ -35591,7 +37277,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     behaviors: [
       Polymer.appHelpers,
-      Polymer.ypEditDialogBehavior
+      Polymer.ypEditDialogBehavior,
+      Polymer.FixDialog
     ],
 
     properties: {
@@ -35653,12 +37340,44 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       :host {
         display: block;
       }
+
+      .avatar-container {
+        position: relative;
+        border: 2px solid #FF9800;
+        border-radius: 50%;
+        height: 90px;
+        padding: 2px;
+        width: 90px;
+        margin: 20px auto;
+      }
+
+      .contact-info {
+        margin: 0 20px;
+        padding-bottom: 4px;
+        border-bottom: 1px solid #CCC;
+        text-align: center;
+      }
+
+      .contact-info .name {
+        font-weight: bold;
+      }
+
+      .contact-info .email {
+        color: #999;
+      }
     </style>
 
     <template restamp="" is="dom-if" if="[[user]]">
-      <yp-user-image user="[[user]]"></yp-user-image>
-      <b>[[user.email]]</b><br><br>
-      <paper-button on-tap="onLogout">[[t('user.logout')]]</paper-button>
+      <div class="mainContainer">
+        <div class="avatar-container">
+          <yp-user-image large="" user="[[user]]"></yp-user-image>
+        </div>
+        <div class="contact-info">
+          <div class="name">[[user.name]]</div>
+          <div class="email">[[user.email]]</div>
+          <paper-button on-tap="onLogout">[[t('user.logout')]]</paper-button>
+        </div>
+      </div>
     </template>
 
     </template>
@@ -35785,7 +37504,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         </file-upload>
       </div>
 
-      <div class="layout vertical additionalSettings" hidden$="[[!headerImageEnabled()]]">
+      <div class="layout vertical additionalSettings">
         <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=community-header" method="POST" on-success="_headerImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.header.upload')]]</span>
@@ -36000,7 +37719,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       .stats {
         @apply(--layout-self-center);
         position: absolute;
-        bottom: 0px;
+        bottom: 0;
         right: 16px;
       }
 
@@ -36015,16 +37734,16 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         margin: 0;
       }
 
-
       iron-image {
         width: 432px;
-        height: 235px;
+        height: 243px;
       }
 
       .large-card {
         background-color: var(--default-primary-color, #000);
         color: #fff;
-        height: 235px;
+        height: 243px;
+        width: 864px;
       }
 
       .image {
@@ -36202,6 +37921,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       .card-container {
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
+        width: 97%;
       }
 
       .card {
@@ -36212,9 +37932,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         padding-bottom: 12px;
       }
 
-      neon-animated-pages {
+      paper-tab {
         width: 100% !important;
-        position: relative;
+        position: static;
       }
 
     </style>
@@ -36223,27 +37943,32 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <template is="dom-if" if="[[community]]">
       <div class="card-container">
-        <div class="layout vertical">
-          <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
-          <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
-            <paper-tab><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
-            <paper-tab>[[t('news')]]</paper-tab>
-            <paper-tab>[[t('events')]]</paper-tab>
-          </paper-tabs>
+        <div class="layout vertical flex">
+          <div class="layout horizontal center-center">
+            <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
+          </div>
 
-            <section>
-              <div class="layout horizontal center-center wrap">
-                <template is="dom-if" if="[[groups]]">
-                  <template is="dom-repeat" class="list" items="[[groups]]" as="group">
-                    <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+          <div class="layout vertical">
+            <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+              <paper-tab><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
+              <paper-tab>[[t('news')]]</paper-tab>
+              <paper-tab>[[t('events')]]</paper-tab>
+            </paper-tabs>
+
+              <section>
+                <div class="layout horizontal center-center wrap">
+                  <template is="dom-if" if="[[groups]]">
+                    <template is="dom-repeat" class="list" items="[[groups]]" as="group">
+                      <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+                    </template>
                   </template>
-                </template>
-                <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
-              </div>
-            </section>
+                  <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
+                </div>
+              </section>
 
+          </div>
+          <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
         </div>
-        <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
       </div>
     </template>
     <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
@@ -36738,7 +38463,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       :host {
         display: block;
         @apply(--layout-vertical);
-        width: 665px;
+        width: 864px;
       }
 
       .description {
@@ -36750,7 +38475,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         @apply(--layout-self-center);
         position: absolute;
         bottom: 0px;
-        left: 16px;
+        right: 16px;
       }
 
       yp-domain-stats {
@@ -36772,12 +38497,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       .large-card {
         background-color: var(--third-primary-color, #000);
         color: #fff;
-        height: 460px;
+        height: 243px;
+        width: 864px;
       }
 
       .image {
-        width: 665px;
-        height: 233px;
+        width: 432px;
+        height: 243px;
       }
 
       .description-and-stats {
@@ -36827,7 +38553,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
     <template is="dom-if" if="[[domain]]">
       <paper-material id="card" elevation="5" animated="" class="large-card">
-        <div class="layout vertical">
+        <div class="layout horizontal">
           <iron-image class="image" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
           <div class="layout vertical description-and-stats">
             <div class="description">
@@ -36953,16 +38679,30 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <yp-community-edit id="communityNew" on-iron-form-response="_refresh"></yp-community-edit>
 
-    <div class="layout vertical">
-      <div class="card-container layout center-center">
+    <div class="layout vertical flex">
+      <div class="layout horizontal center-center">
         <yp-domain-large-card id="domainCard" class="card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
-        <template is="dom-if" if="[[communities]]">
-          <template is="dom-repeat" class="list" items="[[communities]]" as="community">
-            <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-          </template>
-        </template>
-        <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
-        <paper-fab hidden="" icon="group-work" z="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
+      </div>
+
+      <div class="layout vertical">
+        <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+          <paper-tab><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
+          <paper-tab>[[t('news')]]</paper-tab>
+          <paper-tab>[[t('official')]]</paper-tab>
+        </paper-tabs>
+
+
+          <section>
+            <div class="card-container layout center-center wrap">
+              <template is="dom-if" if="[[communities]]">
+                <template is="dom-repeat" class="list" items="[[communities]]" as="community">
+                  <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+                </template>
+              </template>
+              <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
+              <paper-fab hidden="" icon="group-work" z="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
+            </div>
+          </section>
       </div>
     </div>
   </template>
@@ -37004,6 +38744,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         hideAdd: {
           type: Boolean,
           value: true
+        },
+
+        selected: {
+          type: Number,
+          value: 0
         }
       },
 
@@ -37039,6 +38784,389 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.fire("change-header", { headerTitle: this.domain.name,
                                      headerDescription: this.domain.description});
         this.hideAdd = false;
+      }
+
+    });
+  </script>
+</dom-module>
+<dom-module id="paper-listbox" assetpath="../bower_components/paper-listbox/"><template><style>
+      :host {
+        display: block;
+        padding: 8px 0;
+
+        background: var(--paper-listbox-background-color, --primary-background-color);
+        color: var(--paper-listbox-color, --primary-text-color);
+
+        @apply(--paper-listbox);
+      }
+    </style><content></content></template><script>
+    (function() {
+      Polymer({
+        is: 'paper-listbox',
+
+        behaviors: [
+          Polymer.IronMenuBehavior
+        ],
+
+        hostAttributes: {
+          role: 'listbox'
+        }
+      });
+    })();
+  </script></dom-module><dom-module id="yp-app-drawer" assetpath="yp-app/">
+
+  <template>
+
+    <style>
+      app-header-layout {
+        background-color: #FFF; /* @apply(--main-background-color, #F2F2F2); */
+      }
+    </style>
+
+    <paper-material elevation="1">
+      <app-header-layout has-scrolling-region="">
+        <app-header fixed="">
+          <div class="currentUser">
+            <template is="dom-if" if="[[user]]">
+              <yp-user-info user="{{user}}"></yp-user-info>
+            </template>
+          </div>
+        </app-header>
+      </app-header-layout>
+    </paper-material>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-app-drawer',
+
+      properties: {
+
+        user: {
+          type: Object
+        },
+
+        opened: {
+          type: Boolean
+        },
+
+        route: {
+          type: String,
+          observer: 'routeChanged'
+        }
+      },
+
+      routeChanged: function(newValue, oldValue) {
+      }
+    });
+  </script>
+</dom-module>
+<dom-module id="yp-app" assetpath="yp-app/">
+
+  <template>
+
+    <style>
+
+      .avatar-container {
+        position: relative;
+        border: 2px solid #00AA8D;
+        border-radius: 50%;
+        height: 90px;
+        padding: 2px;
+        width: 90px;
+        margin: 20px auto;
+      }
+
+      .avatar-container .image {
+        background-image: url("http://app-layout-assets.appspot.com/assets/pesto/avatar.jpg");
+        background-size: contain;
+        border-radius: 50%;
+        height: 100%;
+        width: 100%;
+      }
+
+      .contact-info {
+        margin: 0 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #CCC;
+        text-align: center;
+      }
+
+      .contact-info .name {
+        font-weight: bold;
+      }
+
+      .contact-info .email {
+        color: #999;
+      }
+
+      paper-item {
+        @apply(--layout-center-center);
+        height: 54px;
+      }
+
+      paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      app-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        color: #fff;
+        background-color:#F2F2F2;
+      }
+
+      app-toolbar {
+        height: 64px;
+      }
+
+      [condensed-title] {
+/*        background-size: 76px; */
+        /* The difference in font size is used to calculate the scale of the title in the transition. */
+        font-size: 16px;
+      }
+
+      [title] {
+        /* The difference in font size is used to calculate the scale of the title in the transition. */
+        font-size: 32px;
+      }
+
+      .backIcon {
+        width: 48px;
+        height: 48px;
+        padding-right: 16px;
+      }
+
+      .content {
+        display: block;
+        position: relative;
+        width: 1170px;
+        margin: 5px auto;
+      }
+
+      .card-container {
+        display: inline-block;
+        width: 33.33%;
+      }
+
+      .main-header {
+        border-bottom: 1px solid #ddd;
+        background-color: #f2f2f2;
+        color: #333;
+      }
+
+      @media (max-width: 1458px) {
+        .content {
+          width: 100%;
+        }
+      }
+      @media (max-width: 960px) {
+        .card-container {
+          width: 50%;
+        }
+      }
+      @media (max-width: 719px) {
+        .card-container {
+          width: 100%;
+        }
+      }
+
+    </style>
+
+    <yp-app-globals id="appGlobals" disable-welcome="" setup-defaults="" on-change-header="onChangeHeader"></yp-app-globals>
+    <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
+
+    <material-search id="search" narrow="[[narrow]]" previous-searches="{{previousSearches}}" on-search-change="_onSearch" class="fit"></material-search>
+
+    <app-drawer-layout drawer-width="288px" responsive-width="1600px">
+
+      <app-drawer id="drawer" position="right" swipe-open="">
+        <yp-app-drawer id="drawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
+      </app-drawer>
+
+      <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
+
+      <app-header-layout id="mainArea">
+
+        <app-header effects="waterfall" reveals="" class="main-header">
+          <app-toolbar primary="">
+            <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
+            <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden=""></iron-icon>
+            <div title="">[[headerTitle]]</div>
+
+            <span class="flex"></span>
+
+            
+            <paper-icon-button icon="search" on-tap="toggleSearch" hidden$="[[!showSearch]]"></paper-icon-button>
+
+            <template is="dom-if" if="[[user]]">
+              <paper-icon-button on-tap="openEdit" icon="face"></paper-icon-button>
+            </template>
+
+            <paper-icon-button id="paperToggle" icon="more-vert" on-tap="_toggleDrawer"></paper-icon-button>
+          </app-toolbar>
+        </app-header>
+
+        <iron-pages attr-for-selected="data-route" selected="{{route}}">
+
+          <section data-route="home">
+          </section>
+
+          <section data-route="domain">
+            <template is="dom-if" if="[[params]]" restamp="">
+              <yp-domain domain-id="{{params.domainId}}" on-change-header="onChangeHeader"></yp-domain>
+            </template>
+          </section>
+
+          <section data-route="community">
+            <template is="dom-if" if="[[params.communityId]]" restamp="">
+              <yp-community community-id="{{params.communityId}}" on-change-header="onChangeHeader"></yp-community>
+            </template>
+          </section>
+
+          <section data-route="group">
+            <template is="dom-if" if="[[params.groupId]]" restamp="">
+              <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]" searching-for="[[params.searchingFor]]" category-id="[[params.categoryId]]" category-name="[[params.categoryName]]" on-change-header="onChangeHeader"></yp-group>
+            </template>
+          </section>
+
+          <section data-route="post">
+            <template is="dom-if" if="[[params.postId]]" restamp="">
+              <yp-post post-id="{{params.postId}}" on-change-header="onChangeHeader"></yp-post>
+            </template>
+          </section>
+
+        </iron-pages>
+
+      </app-header-layout>
+
+    </app-drawer-layout>
+    <template is="dom-if" if="[[user]]">
+      <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-app',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.FixDialog
+      ],
+
+      properties: {
+
+        route: {
+          type: String,
+          value: 'home',
+          observer: 'routeChanged'
+        },
+
+        appTitle: {
+          type: String,
+          value: "Your Priorities"
+        },
+
+        user: {
+          type: Object
+        },
+
+        previousSearches: {
+          type: Array,
+          value: []
+        },
+
+        showSearch: {
+          type: Boolean,
+          value: false
+        },
+
+        showBack: {
+          type: Boolean,
+          value: false
+        },
+
+        backPath: {
+          type: String
+        },
+
+        headerTitle: {
+          type: String
+        },
+
+        headerDescription: {
+          type: String
+        }
+      },
+
+
+      _toggleDrawer: function () {
+        this.$.drawer.toggle();
+      },
+
+      openEdit: function ()  {
+        var userEdit = document.querySelector('#userEdit');
+        userEdit.open('edit', { userId: this.user.id });
+      },
+
+      onChangeHeader: function(event, header) {
+        this.headerTitle = document.title = header.headerTitle;
+        this.headerDescription = header.headerDescription;
+
+        //if (header.headerIcon)
+        //app.headerIcon = header.headerIcon;
+        if (header.enableSearch)
+          this.showSearch = true;
+        else
+          this.showSearch = false;
+        if (header.backPath) {
+          this.showBack = true;
+          this.backPath = header.backPath;
+        } else {
+          this.showBack = false;
+          this.backPath = null;
+        }
+      },
+
+      goBack: function (event, detail) {
+        if (this.backPath)
+          page(this.backPath);
+      },
+
+      _onSearch: function(e) {
+        this.toggleSearch();
+        this.unshift('previousSearches', e.detail.value);
+        var postsFilter =  document.querySelector('#postsFilter');
+        if (postsFilter) {
+          postsFilter.searchFor(e.detail.value);
+        }
+      },
+
+      onUserChanged: function(event, detail) {
+        if (detail) {
+          this.user = detail;
+        } else {
+          this.user = null;
+        }
+      },
+
+      toggleSearch: function() {
+        this.$.search.toggle();
+      },
+
+      __equal: function(a, b) {
+        return a === b;
+      },
+
+      routeChanged: function(newValue, oldValue) {
+        if (!this.$.drawer.persistent) this.$.drawer.close();
       }
 
     });

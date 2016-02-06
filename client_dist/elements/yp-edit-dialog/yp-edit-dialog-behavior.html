@@ -1,11 +1,13 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/fix-dialog.html">
 
 <script>
   Polymer.ypEditDialogBehavior = {
 
     behaviors: [
-      Polymer.appHelpers
+      Polymer.appHelpers,
+      Polymer.FixDialog
     ],
 
     properties: {
@@ -81,7 +83,8 @@
         }
         if (params)
           this.params = params;
-        this.$.editDialog.open();
+      //  this.moveDialogToTopDom("editDialog");
+        this.$$("#editDialog").open();
       } else {
         window.appUser.loginForEdit(this,newOrUpdate,params);
       }

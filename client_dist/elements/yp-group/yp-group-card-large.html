@@ -34,7 +34,7 @@
       :host {
         display: block;
         @apply(--layout-vertical);
-        width: 420px;
+        width: 864px;
       }
 
       .groupAccess {
@@ -52,17 +52,17 @@
       }
 
       .groupCard {
-        width: 420px;
         background-color: var(--secondary-primary-color);
         color: #FFF;
-        height: 500px;
+        height: 243px;
+        width: 864px;
       }
 
       .stats {
         @apply(--layout-self-center);
         position: absolute;
         bottom: 0px;
-        left: 16px;
+        right: 16px;
       }
 
       .edit {
@@ -82,8 +82,8 @@
       }
 
       .logo {
-        width: 420px;
-        height: 100px;
+        width: 432px;
+        height: 243px;
       }
 
       @media (max-width: 360px) {
@@ -126,12 +126,14 @@
 
     <template is="dom-if" if="[[group]]">
       <paper-card id="card" elevation="[[elevation]]" animated-shadow class="groupCard">
-        <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
-        <div class="card-content">
-          <div class="objectives">
-            <h2 class="group-name">[[groupName(group)]]</h2>
-            <div class="groupAccess">[[_groupAccessText(group.access)]]</div>
-            <div>[[groupObjectives(group)]]</div>
+        <div class="layout horizontal">
+          <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
+          <div class="card-content">
+            <div class="objectives">
+              <h2 class="group-name">[[groupName(group)]]</h2>
+              <div class="groupAccess">[[_groupAccessText(group.access)]]</div>
+              <div>[[groupObjectives(group)]]</div>
+            </div>
           </div>
         </div>
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>

@@ -36,6 +36,7 @@
       .card-container {
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
+        width: 97%;
       }
 
       .card {
@@ -46,9 +47,9 @@
         padding-bottom: 12px;
       }
 
-      neon-animated-pages {
+      paper-tab {
         width: 100% !important;
-        position: relative;
+        position: static;
       }
 
     </style>
@@ -57,27 +58,32 @@
 
     <template is="dom-if" if="[[community]]">
       <div class="card-container">
-        <div class="layout vertical">
-          <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
-          <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-            <paper-tab><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
-            <paper-tab>[[t('news')]]</paper-tab>
-            <paper-tab>[[t('events')]]</paper-tab>
-          </paper-tabs>
+        <div class="layout vertical flex">
+          <div class="layout horizontal center-center">
+            <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
+          </div>
 
-            <section>
-              <div class="layout horizontal center-center wrap">
-                <template is="dom-if" if="[[groups]]">
-                  <template is="dom-repeat" class="list" items="[[groups]]" as="group">
-                    <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+          <div class="layout vertical">
+            <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+              <paper-tab><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
+              <paper-tab>[[t('news')]]</paper-tab>
+              <paper-tab>[[t('events')]]</paper-tab>
+            </paper-tabs>
+
+              <section>
+                <div class="layout horizontal center-center wrap">
+                  <template is="dom-if" if="[[groups]]">
+                    <template is="dom-repeat" class="list" items="[[groups]]" as="group">
+                      <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+                    </template>
                   </template>
-                </template>
-                <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
-              </div>
-            </section>
+                  <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
+                </div>
+              </section>
 
+          </div>
+          <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
         </div>
-        <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
       </div>
     </template>
     <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
