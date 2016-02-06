@@ -36903,6 +36903,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         @apply(--layout-horizontal);
       }
 
+      paper-tabs {
+        padding-bottom: 12px;
+      }
+
       .createPost {
         background-color: --var(accent-color-darker,#f57c00);
         position: fixed;
@@ -38672,6 +38676,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           padding: 0;
           margin: 0;
         }
+
+        paper-tabs {
+          padding-bottom: 12px;
+        }
       }
 
     </style>
@@ -38691,8 +38699,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           <paper-tab>[[t('news')]]</paper-tab>
           <paper-tab>[[t('official')]]</paper-tab>
         </paper-tabs>
-
-
+        
           <section>
             <div class="card-container layout center-center wrap">
               <template is="dom-if" if="[[communities]]">
