@@ -39,20 +39,21 @@ router.get('/:id', auth.can('view community'), function(req, res) {
         required: false
       },
       {
+        model: models.Image, as: 'CommunityLogoImages'
+      },
+      {
+        model: models.Image, as: 'CommunityHeaderImages'
+      },
+      {
         model: models.Group,
-        order: 'Group.created_at DESC',
-        where: {
-          deleted: false
-        },
-        required: false,
         order: [
-          [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
+          [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'desc' ]
         ],
         include: [
           {
             model: models.Image, as: 'GroupLogoImages',
             order: [
-              [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
+              [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'desc' ]
             ]
           },
           {
@@ -61,12 +62,6 @@ router.get('/:id', auth.can('view community'), function(req, res) {
             required: false
           }
         ]
-      },
-      {
-        model: models.Image, as: 'CommunityLogoImages'
-      },
-      {
-        model: models.Image, as: 'CommunityHeaderImages'
       }
     ]
   }).then(function(community) {

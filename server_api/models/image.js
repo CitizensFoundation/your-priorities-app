@@ -51,8 +51,8 @@ module.exports = function(sequelize, DataTypes) {
         } else if (itemType && itemType === 'domain-logo') {
             versions = [
               {
-                maxHeight: 233,
-                maxWidth: 665,
+                maxWidth: 432,
+                maxHeight: 243,
                 format: 'png',
                 suffix: '-large',
                 quality: 99
@@ -61,8 +61,8 @@ module.exports = function(sequelize, DataTypes) {
         } else if (itemType && itemType === 'community-logo') {
           versions = [
             {
-              maxHeight: 335,
               maxWidth: 432,
+              maxHeight: 243,
               format: 'png',
               suffix: '-large',
               quality: 99
@@ -71,8 +71,8 @@ module.exports = function(sequelize, DataTypes) {
         } else if (itemType && itemType === 'group-logo') {
           versions = [
             {
-              maxHeight: 100,
-              maxWidth: 420,
+              maxWidth: 432,
+              maxHeight: 243,
               format: 'png',
               suffix: '-large',
               quality: 99
