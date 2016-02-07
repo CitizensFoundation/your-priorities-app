@@ -35,6 +35,11 @@
 
     <style>
 
+
+      .main-area {
+        padding-top: 2px !important;
+      }
+
       .avatar-container {
         position: relative;
         border: 2px solid #00AA8D;
@@ -120,9 +125,10 @@
       }
 
       .main-header {
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #f2f2f2;
         background-color: #f2f2f2;
         color: #333;
+        height: 64px;
       }
 
       @media (max-width: 1458px) {
@@ -161,7 +167,7 @@
       <app-header-layout id="mainArea">
 
         <app-header effects="waterfall" reveals class="main-header">
-          <app-toolbar primary>
+          <app-toolbar>
             <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
             <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
             <div title>[[headerTitle]]</div>
