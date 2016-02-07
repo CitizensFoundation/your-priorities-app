@@ -35426,7 +35426,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       .container {
         padding-top: 0;
-        margin-top: 0;
+        margin-top: -70px;
         height: 100%;
       }
 
@@ -35570,12 +35570,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         <div class$="[[_mainContainerClasses(small)]]">
           <div class="layout vertical">
-            <paper-material elevation="1" class$="[[_headerClasses(small)]]">
-              <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
-              <div class="description">
-                <h1 class="post-name">[[postName(post)]]</h1>
-                <div>[[postDescription(post)]]</div>
-              </div>
+            <paper-material elevation="0" class$="[[_headerClasses(small)]]" style="background: #F2f2f2">
+              <yp-post-card post="[[post]]"></yp-post-card>
               <paper-menu-button class="edit" hidden$="[[!hasAccess(post)]]">
                 <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
                 <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
@@ -35584,26 +35580,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
                 </paper-menu>
               </paper-menu-button>
             </paper-material>
-            <paper-material elevation="1" class="layout horizontal wrap statusHeader">
-              <div class="layout horizontal statusColumn">
-                <h1><span>[[t('post.status')]]</span>: Open</h1>
-              </div>
-              <div class="layout vertical">
-                <div class="card-actions">
-                  <yp-post-actions endorse-mode="[[endorseMode]]" force-small="" class="voting" post="[[post]]"></yp-post-actions>
-                </div>
-                <yp-post-users id="postUsers" post="[[post]]"></yp-post-users>
-              </div>
-            </paper-material>
             <div>
-              <paper-material elevation="2" class="tabsMaterial mainPage" animated="">
-                <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
-                  <paper-tab><span>[[t('post.tabs.debate')]]</span> &nbsp; (<span>[[post.Points.length]]</span>)</paper-tab>
-                  <paper-tab>[[t('post.tabs.news')]]</paper-tab>
-                  <paper-tab>[[t('post.tabs.location')]]</paper-tab>
-                  <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
-                </paper-tabs>
+              <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+                <paper-tab><span>[[t('post.tabs.debate')]]</span> &nbsp; (<span>[[post.Points.length]]</span>)</paper-tab>
+                <paper-tab>[[t('post.tabs.news')]]</paper-tab>
+                <paper-tab>[[t('post.tabs.location')]]</paper-tab>
+                <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
+              </paper-tabs>
 
+              <paper-material elevation="2" class="tabsMaterial mainPage" animated="">
                 <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
 
                   <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
