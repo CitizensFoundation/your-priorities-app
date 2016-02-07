@@ -84,19 +84,23 @@
             <paper-tab>[[t('status')]]</paper-tab>
           </paper-tabs>
 
-          <div class="card-container layout vertical">
+          <div class="card-container layout vertical center-center">
             <template is="dom-if" if="[[posts]]">
               <div class="layout vertical">
                 <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroup"
                                  group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
                                  category-id="{{categoryId}}" category-name="{{categoryName}}">
                 </yp-posts-filter>
-                <div class="layout horizontal  center-center wrap">
-                  <template is="dom-repeat" class="list" items="[[posts]]" as="post">
-                    <yp-post-card class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
-                  </template>
-                  <yp-post-card-add hidden$="[[hideAdd]]" class="card" on-tap="newPost" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card-add>
+                <div class="layout horizontal">
+                  <iron-list id="list" items="[[posts]]" as="post" style="width: 980px;">
+                    <template>
+                      <div class="layout vertical center-center">
+                        <yp-post-card class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+                      </div>
+                    </template>
+                  </iron-list>
                 </div>
+                <yp-post-card-add hidden$="[[hideAdd]]" class="card" on-tap="newPost" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card-add>
               </div>
             </template>
             <yp-ajax id="ajax" url="" on-response="_postsResponse"></yp-ajax>
