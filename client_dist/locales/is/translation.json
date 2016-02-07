@@ -5,11 +5,24 @@
     "edit": "Breyta vef"
   },
 
+  "communities": "Svæði",
   "community": {
-    "edit": "Breyta samfélagi",
-    "delete": "Eyða samfélagi",
-    "new": "Nýtt samfélag"
+    "edit": "Breyta svæði",
+    "delete": "Eyða svæði",
+    "new": "Nýtt svæði"
   },
+
+  "news": "Fréttir",
+
+  "groups": "Hópar",
+
+  "events": "Viðburðir",
+
+  "ideas": "Hugmyndir",
+
+  "official": "Opinber ferli",
+
+  "status": "Hugmyndir í ferli",
 
   "post": {
     "new": "Ný hugmynd",
