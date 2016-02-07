@@ -118,8 +118,10 @@
         }
       }
 
-      .card-content {
+      .objectives {
         padding-bottom: 40px;
+        max-width: 432px;
+        padding: 12px;
       }
 
     </style>
@@ -128,12 +130,10 @@
       <paper-card id="card" elevation="[[elevation]]" animated-shadow class="groupCard">
         <div class="layout horizontal">
           <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
-          <div class="card-content">
-            <div class="objectives">
-              <h2 class="group-name">[[groupName(group)]]</h2>
-              <div class="groupAccess">[[_groupAccessText(group.access)]]</div>
-              <div>[[groupObjectives(group)]]</div>
-            </div>
+          <div class="objectives">
+            <h2 class="group-name">[[groupName(group)]]</h2>
+            <div class="groupAccess">[[_groupAccessText(group.access)]]</div>
+            <div>[[groupObjectives(group)]]</div>
           </div>
         </div>
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
