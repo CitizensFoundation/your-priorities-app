@@ -211,7 +211,7 @@
 
       postDescription: function (post) {
         if (post.description) {
-          return this.truncate(this.trim(post.description), 200, '...');
+          return this.truncate(this.trim(post.description), 500, '...');
         } else {
           return "";
         }
