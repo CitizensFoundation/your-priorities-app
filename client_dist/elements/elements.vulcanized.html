@@ -38177,56 +38177,23 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         height: 180px;
       }
 
-      @media (max-width: 360px) {
-        :host {
-          width: 344px;
-        }
-
-        .communityCard {
-          height: 100% !important;
-          margin-left: 8px;
-          margin-right: 8px;
-        }
-
-        iron-image {
-          width: 296px !important;
-          height: 296px !important;
-        }
-      }
-
-      @media (max-width: 320px) {
+      @media (max-width: 420px) {
         :host {
           width: 304px;
-          padding-left: 8px;
         }
 
         .communityCard {
           margin-left: 8px;
           margin-right: 8px;
           height: 100% !important;
-        }
-
-        iron-image {
-          width: 260px !important;
-          height: 260px !important;
-        }
-      }
-
-      @media (min-width: 481px) and (max-width: 1024px) {
-        :host {
-          width: 290px;
-        }
-
-        .communityCard {
-          margin-left: 0px;
-          margin-right: 0px;
-          padding-left: 0px;
-          padding-right: 0px;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
         }
 
         iron-image {
           width: 304px;
-          height: 171px;
+          height: 165px;
         }
       }
 
@@ -38550,42 +38517,36 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         margin-right: 0;
       }
 
-      @media (min-width: 481px) and (max-width: 1024px) {
+      @media (max-width: 900px) {
         :host {
-          width: 612px;
+          width: 432px;
         }
 
-        .image {
-          width: 612px;
-          height: 214px;
+        .large-card {
+          width: 432px;
+          height: 486px;
         }
       }
 
-      @media (max-width: 800px) {
+      @media (max-width: 480px) {
         :host {
-          width: 360px;
+          width: 306px;
+        }
+        
+        .large-card {
+          width: 306px;
+          height: 486px;
         }
 
         iron-image {
-          width: 360px !important;
-          height: 160px !important;
-        }
-      }
-
-      @media (max-width: 320px) {
-        :host {
-          width: 320px;
-        }
-
-        iron-image {
-          width: 320px !important;
-          height: 130px !important;
+          width: 216px;
+          height: 122px;
         }
       }
     </style>
     <template is="dom-if" if="[[domain]]">
       <paper-material id="card" elevation="5" animated="" class="large-card">
-        <div class="layout horizontal">
+        <div class="layout horizontal wrap">
           <iron-image class="image" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
           <div class="layout vertical description-and-stats">
             <div class="description">
@@ -38701,7 +38662,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         height: 100%;
       }
 
-      @media (max-width: 400px) {
+      @media (max-width: 330px) {
         .card {
           padding-left: 0;
           padding-right: 0;
@@ -40417,8 +40378,8 @@ module.exports = Array.isArray || function (arr) {
 
   :root {
     --pallet-one-500: #4285f4;
-    --pallet-two-500: #FF9800;
-    --pallet-two-accent-400: #FF6D00;
+    --pallet-two-500: #FFA726;
+    --pallet-two-accent-400: #FFA726;
 
     --main-background-color: #F2F2F2;
     --primary-background-color: #F2F2F2;
