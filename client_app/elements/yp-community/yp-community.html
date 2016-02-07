@@ -52,6 +52,16 @@
         position: static;
       }
 
+      iron-pages {
+        width: 100%;
+        height: 100%;
+        padding-top: 16px;
+      }
+
+      iron-pages div {
+        width: 100%;
+        height: 100%;
+      }
     </style>
 
     <yp-group-edit new id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
@@ -70,6 +80,7 @@
               <paper-tab>[[t('events')]]</paper-tab>
             </paper-tabs>
 
+            <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
               <section>
                 <div class="layout horizontal center-center wrap">
                   <template is="dom-if" if="[[groups]]">
@@ -80,7 +91,8 @@
                   <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
                 </div>
               </section>
-
+              <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('news')]]</h1></section>
+              <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('events')]]</h1></section>
           </div>
           <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
         </div>
