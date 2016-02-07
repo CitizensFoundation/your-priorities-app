@@ -36796,6 +36796,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       .objectives {
         padding-bottom: 40px;
         max-width: 432px;
+      }
+
+      .description {
         padding: 12px;
       }
 
@@ -36806,9 +36809,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         <div class="layout horizontal">
           <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath(group)]]"></iron-image>
           <div class="objectives">
-            <h2 class="group-name">[[groupName(group)]]</h2>
-            <div class="groupAccess">[[_groupAccessText(group.access)]]</div>
-            <div>[[groupObjectives(group)]]</div>
+            <div class="description">
+              <h2 class="group-name">[[groupName(group)]]</h2>
+              <div class="groupAccess">[[_groupAccessText(group.access)]]</div>
+              <div>[[groupObjectives(group)]]</div>
+            </div>
           </div>
         </div>
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
