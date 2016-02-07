@@ -46,6 +46,7 @@ router.get('/:id', auth.can('view community'), function(req, res) {
       },
       {
         model: models.Group,
+        required: false,
         order: [
           [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'desc' ]
         ],
