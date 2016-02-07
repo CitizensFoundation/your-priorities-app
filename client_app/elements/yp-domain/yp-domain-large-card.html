@@ -86,42 +86,36 @@
         margin-right: 0;
       }
 
-      @media (min-width: 481px) and (max-width: 1024px) {
+      @media (max-width: 900px) {
         :host {
-          width: 612px;
+          width: 432px;
         }
 
-        .image {
-          width: 612px;
-          height: 214px;
+        .large-card {
+          width: 432px;
+          height: 486px;
         }
       }
 
-      @media (max-width: 800px) {
+      @media (max-width: 480px) {
         :host {
-          width: 360px;
+          width: 306px;
+        }
+        
+        .large-card {
+          width: 306px;
+          height: 486px;
         }
 
         iron-image {
-          width: 360px !important;
-          height: 160px !important;
-        }
-      }
-
-      @media (max-width: 320px) {
-        :host {
-          width: 320px;
-        }
-
-        iron-image {
-          width: 320px !important;
-          height: 130px !important;
+          width: 216px;
+          height: 122px;
         }
       }
     </style>
     <template is="dom-if" if="[[domain]]">
       <paper-material id="card" elevation="5" animated class="large-card">
-        <div class="layout horizontal">
+        <div class="layout horizontal wrap">
           <iron-image class="image" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
           <div class="layout vertical description-and-stats">
             <div class="description">
