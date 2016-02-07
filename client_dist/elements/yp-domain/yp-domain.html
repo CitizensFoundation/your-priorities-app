@@ -3,6 +3,8 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
@@ -18,8 +20,7 @@
 
 <dom-module id="yp-domain">
   <template>
-    <style>
-
+    <style is="custom-style">
       :host {
         @apply(--layout-horizontal);
       }
@@ -38,6 +39,17 @@
 
       .card {
         padding: 16px;
+      }
+
+      iron-pages {
+        width: 100%;
+        height: 100%;
+        padding-top: 16px;
+      }
+
+      iron-pages div {
+        width: 100%;
+        height: 100%;
       }
 
       @media (max-width: 400px) {
@@ -76,17 +88,21 @@
           <paper-tab>[[t('official')]]</paper-tab>
         </paper-tabs>
 
-        <section>
-          <div class="card-container layout center-center wrap">
-            <template is="dom-if" if="[[communities]]">
-              <template is="dom-repeat" class="list" items="[[communities]]" as="community">
-                <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+        <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+          <section>
+            <div class="card-container layout center-center wrap">
+              <template is="dom-if" if="[[communities]]">
+                <template is="dom-repeat" class="list" items="[[communities]]" as="community">
+                  <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+                </template>
               </template>
-            </template>
-            <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
-            <paper-fab hidden icon="group-work" z="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
-          </div>
-        </section>
+              <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
+              <paper-fab hidden icon="group-work" z="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
+            </div>
+          </section>
+          <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('news')]]</h1></section>
+          <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('official')]]</h1></section>
+        </iron-pages>
       </div>
     </div>
   </template>
