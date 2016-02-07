@@ -30,7 +30,7 @@
 
       .groupCard {
         cursor: pointer;
-        height: 335px;
+        height: 416px;
         background-color: #fff;
       }
 
@@ -38,6 +38,7 @@
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--objectives-line-height, 1.3);
+        padding: 16px;
       }
 
       .stats {
@@ -56,9 +57,13 @@
       .post-image {
       }
 
+      .card-content {
+        padding: 0;
+      }
+
       iron-image {
         width: 416px;
-        height: 100px;
+        height: 234px;
       }
 
       yp-group-stats {
@@ -103,9 +108,11 @@
     </style>
 
     <template is="dom-if" if="[[group]]">
-      <paper-card elevation="[[elevation]]" class="groupCard" on-tap="_goToGroup">
-        <iron-image class="logo" sizing="contain" preload src="[[groupLogoImagePath(group)]]"></iron-image>
+      <paper-card class="groupCard" elevation="[[elevation]]" class="groupCard" on-tap="_goToGroup">
         <div class="card-content">
+          <div class="layout">
+            <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
+          </div>
           <div class="objectives">
             <h2 class="group-name">[[groupName(group)]]</h2>
             <div>[[groupObjectives(group)]]</div>
