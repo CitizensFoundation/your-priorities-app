@@ -1,1 +1,1 @@
-!function(e){"use strict";var n=e.querySelector("#app");n.addEventListener("dom-change",function(){console.log("Our app is ready to rock!")}),window.addEventListener("WebComponentsReady",function(){}),n.scrollPageToTop=function(){e.getElementById("mainArea")}}(document);
+!function(e){"use strict";var n=e.querySelector("#app");window.addEventListener("WebComponentsReady",function(){}),n.scrollPageToTop=function(){e.getElementById("mainArea")}}(document);
