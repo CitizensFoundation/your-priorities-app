@@ -36947,7 +36947,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
 
     <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
-      <div class="layout vertical flex">
+      <div class="layout vertical flex" style="margin-top: -40px;">
         <div class="layout horizontal center-center">
           <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
         </div>
@@ -37951,7 +37951,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     <yp-group-edit new="" id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
 
     <template is="dom-if" if="[[community]]">
-      <div class="card-container">
+      <div class="card-container" style="margin-top: -40px;">
         <div class="layout vertical flex">
           <div class="layout horizontal center-center">
             <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
@@ -38508,6 +38508,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         color: #fff;
         height: 243px;
         width: 864px;
+        padding: 0 !important;
+        margin-top: 0 !important;
       }
 
       .image {
@@ -38693,7 +38695,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <yp-community-edit id="communityNew" on-iron-form-response="_refresh"></yp-community-edit>
 
-    <div class="layout vertical flex">
+    <div class="layout vertical flex" style="margin-top: -40px;">
       <div class="layout horizontal center-center">
         <yp-domain-large-card id="domainCard" class="card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
       </div>
@@ -38704,18 +38706,18 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           <paper-tab>[[t('news')]]</paper-tab>
           <paper-tab>[[t('official')]]</paper-tab>
         </paper-tabs>
-        
-          <section>
-            <div class="card-container layout center-center wrap">
-              <template is="dom-if" if="[[communities]]">
-                <template is="dom-repeat" class="list" items="[[communities]]" as="community">
-                  <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-                </template>
+
+        <section>
+          <div class="card-container layout center-center wrap">
+            <template is="dom-if" if="[[communities]]">
+              <template is="dom-repeat" class="list" items="[[communities]]" as="community">
+                <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
               </template>
-              <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
-              <paper-fab hidden="" icon="group-work" z="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
-            </div>
-          </section>
+            </template>
+            <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
+            <paper-fab hidden="" icon="group-work" z="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
+          </div>
+        </section>
       </div>
     </div>
   </template>
@@ -38882,6 +38884,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <style>
 
+
+      .main-area {
+        padding-top: 2px !important;
+      }
+
       .avatar-container {
         position: relative;
         border: 2px solid #00AA8D;
@@ -38967,9 +38974,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .main-header {
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #f2f2f2;
         background-color: #f2f2f2;
         color: #333;
+        height: 64px;
       }
 
       @media (max-width: 1458px) {
@@ -39006,7 +39014,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <app-header-layout id="mainArea">
 
         <app-header effects="waterfall" reveals="" class="main-header">
-          <app-toolbar primary="">
+          <app-toolbar>
             <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
             <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden=""></iron-icon>
             <div title="">[[headerTitle]]</div>

@@ -57,7 +57,7 @@
     <yp-group-edit new id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
 
     <template is="dom-if" if="[[community]]">
-      <div class="card-container">
+      <div class="card-container" style="margin-top: -40px;">
         <div class="layout vertical flex">
           <div class="layout horizontal center-center">
             <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
