@@ -95,7 +95,7 @@
                   <iron-list id="list" items="[[posts]]" as="post" style="width: 980px;">
                     <template>
                       <div class="layout vertical center-center">
-                        <yp-post-card class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+                        <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
                       </div>
                     </template>
                   </iron-list>
@@ -225,6 +225,10 @@
       _postsResponse: function (event, detail, sender) {
         var group = detail.response.group;
         this.set("posts", detail.response.Posts);
+        var list = this.$$("#list");
+        if (list) {
+          this.$$("#list").fire('iron-resize');
+        }
         this.set("group", group);
         this._processCategories();
         this.fire("change-header", { headerTitle: group.name,

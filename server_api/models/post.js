@@ -112,7 +112,12 @@ module.exports = function(sequelize, DataTypes) {
           order: "created_at DESC",
           where: [where, []],
           limit: 100,
-          include: [ modelCategory ]
+          include: [
+            {
+              model: modelCategory,
+              required: false
+            }
+          ]
         });
       }
     },

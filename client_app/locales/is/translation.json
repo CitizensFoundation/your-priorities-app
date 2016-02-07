@@ -9,7 +9,10 @@
   "community": {
     "edit": "Breyta svæði",
     "delete": "Eyða svæði",
-    "new": "Nýtt svæði"
+    "new": "Nýtt svæði",
+    "closed": "Lokað svæði",
+    "public": "Opið svæði",
+    "secret": "Leynilegt svæði"
   },
 
   "news": "Fréttir",
@@ -23,6 +26,10 @@
   "official": "Opinber ferli",
 
   "status": "Hugmyndir í ferli",
+
+  "user": {
+    "logout": "útskrá"
+  },
 
   "post": {
     "new": "Ný hugmynd",
@@ -38,6 +45,7 @@
     "report": "Report post",
     "notify": "Notify me about this post",
     "share": "Share this post",
+    "searchingFor": "Leita að hugmynd ",
     "tabs": {
       "debate": "Rökræða",
       "news": "Fréttir",
@@ -94,7 +102,10 @@
     "invite_to_group": "Invite friend to this group",
     "share_group": "Deila hóp",
     "delete": "Eyða hóp",
-    "objectives": "Um þennan hóp"
+    "objectives": "Um þennan hóp",
+    "closed": "Lokaður hópur",
+    "public": "Opin hópur",
+    "secret": "Leynilegur hópur"
   },
 
   "menu": {

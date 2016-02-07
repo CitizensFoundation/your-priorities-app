@@ -96,9 +96,11 @@ router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
     include: [
       {
         model: models.Category,
+        required: false,
         include: [
           {
             model: models.Image,
+            required: false,
             as: 'CategoryIconImages',
             order: [
               [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
@@ -107,7 +109,8 @@ router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
         ]
       },
       {
-        model: models.Image, as: 'GroupLogoImages'
+        model: models.Image, as: 'GroupLogoImages',
+        required: false
       },
       {
         model: models.User, as: 'GroupUsers',
