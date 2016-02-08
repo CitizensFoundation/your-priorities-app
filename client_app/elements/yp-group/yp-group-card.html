@@ -70,38 +70,23 @@
         color: var(--primary-color-more-darker, #424242);
       }
 
-      @media (max-width: 360px) {
-        :host {
-          width: 328px;
-        }
-
-        .groupCard {
-          height: 100% !important;
-          margin-left: 8px;
-          margin-right: 8px;
-        }
-
-        iron-image {
-          width: 312px !important;
-          height: 75px !important;
-        }
-      }
-
-      @media (max-width: 320px) {
+      @media (max-width: 420px) {
         :host {
           width: 304px;
-          padding-left: 8px;
         }
 
         .groupCard {
           margin-left: 8px;
           margin-right: 8px;
           height: 100% !important;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
         }
 
         iron-image {
-          width: 304px !important;
-          height: 73px !important;
+          width: 304px;
+          height: 165px;
         }
       }
 
