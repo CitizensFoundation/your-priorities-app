@@ -36756,40 +36756,35 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         right: 0;
       }
 
-      .logo {
+      iron-image {
         width: 432px;
         height: 243px;
       }
 
-      @media (max-width: 360px) {
+      @media (max-width: 900px) {
         :host {
-          width: 360px;
-          @apply(--layout-horizontal);
+          width: 432px;
         }
 
         .groupCard {
-          height: 100%;
-        }
-
-        iron-image {
-          width: 360px !important;
-          height: 86px !important;
+          width: 432px;
+          height: 486px;
         }
       }
 
-      @media (max-width: 320px) {
+      @media (max-width: 480px) {
         :host {
-          width: 320px;
-          @apply(--layout-horizontal);
+          width: 306px;
         }
 
         .groupCard {
-          height: 100%;
+          width: 306px;
+          height: 486px;
         }
 
         iron-image {
-          width: 320px !important;
-          height: 76px !important;
+          width: 216px;
+          height: 122px;
         }
       }
 
@@ -36806,7 +36801,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <template is="dom-if" if="[[group]]">
       <paper-card id="card" elevation="[[elevation]]" animated-shadow="" class="groupCard">
-        <div class="layout horizontal">
+        <div class="layout horizontal wrap">
           <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath(group)]]"></iron-image>
           <div class="objectives">
             <div class="description">
@@ -36931,6 +36926,30 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         height: 100%;
       }
 
+      iron-list {
+        width: 980px;
+      }
+
+      @media (max-width: 900px) {
+        iron-list {
+          width: 460px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        iron-list {
+          width: 320px;
+        }
+      }
+
+      .objectives {
+        padding-bottom: 40px;
+        max-width: 432px;
+      }
+
+      .description {
+        padding: 12px;
+      }
 
       @media (max-width: 360px) {
         #groupCard {
@@ -36948,8 +36967,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
 
     <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
-      <div class="layout vertical flex" style="margin-top: -40px;">
-        <div class="layout horizontal center-center">
+
+    <div class="layout vertical flex" style="margin-top: -40px;">
+        <div class="layout vertical center-center" style="width:100%;">
           <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
         </div>
 
@@ -36961,14 +36981,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             <paper-tab>[[t('news')]]</paper-tab>
             <paper-tab>[[t('status')]]</paper-tab>
           </paper-tabs>
-
-          <div class="card-container layout vertical center-center">
+          <div class="card-container layout horizontal center-center">
             <template is="dom-if" if="[[posts]]">
               <div class="layout vertical">
                 <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroup" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}">
                 </yp-posts-filter>
                 <div class="layout horizontal">
-                  <iron-list id="list" items="[[posts]]" as="post" style="width: 980px;">
+                  <iron-list id="list" items="[[posts]]" as="post">
                     <template>
                       <div class="layout vertical center-center">
                         <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
@@ -37189,38 +37208,23 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         color: var(--primary-color-more-darker, #424242);
       }
 
-      @media (max-width: 360px) {
-        :host {
-          width: 328px;
-        }
-
-        .groupCard {
-          height: 100% !important;
-          margin-left: 8px;
-          margin-right: 8px;
-        }
-
-        iron-image {
-          width: 312px !important;
-          height: 75px !important;
-        }
-      }
-
-      @media (max-width: 320px) {
+      @media (max-width: 420px) {
         :host {
           width: 304px;
-          padding-left: 8px;
         }
 
         .groupCard {
           margin-left: 8px;
           margin-right: 8px;
           height: 100% !important;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
         }
 
         iron-image {
-          width: 304px !important;
-          height: 73px !important;
+          width: 304px;
+          height: 165px;
         }
       }
 
@@ -37767,12 +37771,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         width: 864px;
       }
 
-      .image {
-        width: 50%;
-      }
-
       .description-and-stats {
-        width: 50%;
+        max-width: 432px;
       }
 
       .edit {
@@ -37792,51 +37792,30 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         padding-bottom: 32px;
       }
 
-      @media (max-width: 360px) {
+      @media (max-width: 900px) {
         :host {
-          width: 328px;
-          @apply(--layout-horizontal);
+          width: 432px;
         }
 
         .large-card {
-          height: 100%;
-        }
-
-        .contentContainer {
-          @apply(--layout-vertical);
-        }
-
-        .description-and-stats {
-          width: 100%;
-        }
-
-        iron-image {
-          width: 328px !important;
-          height: 328px !important;
+          width: 432px;
+          height: 486px;
         }
       }
 
-      @media (max-width: 320px) {
+      @media (max-width: 480px) {
         :host {
-          width: 300px;
-          @apply(--layout-horizontal);
-        }
-
-        .contentContainer {
-          @apply(--layout-vertical);
-        }
-
-        .description-and-stats {
-          width: 100%
+          width: 306px;
         }
 
         .large-card {
-          height: 100%;
+          width: 306px;
+          height: 486px;
         }
 
         iron-image {
-          width: 300px !important;
-          height: 300px !important;
+          width: 216px;
+          height: 122px;
         }
       }
     </style>
@@ -37845,7 +37824,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <template is="dom-if" if="[[community]]">
       <paper-material id="card" elevation="5" animated="" class="large-card">
-        <div class="contentContainer">
+        <div class="contentContainer layout horizontal wrap">
           <template is="dom-if" if="[[phoneSize]]">
             <div>
               <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>

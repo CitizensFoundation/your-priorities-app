@@ -72,12 +72,8 @@
         width: 864px;
       }
 
-      .image {
-        width: 50%;
-      }
-
       .description-and-stats {
-        width: 50%;
+        max-width: 432px;
       }
 
       .edit {
@@ -97,51 +93,30 @@
         padding-bottom: 32px;
       }
 
-      @media (max-width: 360px) {
+      @media (max-width: 900px) {
         :host {
-          width: 328px;
-          @apply(--layout-horizontal);
+          width: 432px;
         }
 
         .large-card {
-          height: 100%;
-        }
-
-        .contentContainer {
-          @apply(--layout-vertical);
-        }
-
-        .description-and-stats {
-          width: 100%;
-        }
-
-        iron-image {
-          width: 328px !important;
-          height: 328px !important;
+          width: 432px;
+          height: 486px;
         }
       }
 
-      @media (max-width: 320px) {
+      @media (max-width: 480px) {
         :host {
-          width: 300px;
-          @apply(--layout-horizontal);
-        }
-
-        .contentContainer {
-          @apply(--layout-vertical);
-        }
-
-        .description-and-stats {
-          width: 100%
+          width: 306px;
         }
 
         .large-card {
-          height: 100%;
+          width: 306px;
+          height: 486px;
         }
 
         iron-image {
-          width: 300px !important;
-          height: 300px !important;
+          width: 216px;
+          height: 122px;
         }
       }
     </style>
@@ -150,7 +125,7 @@
 
     <template is="dom-if" if="[[community]]">
       <paper-material id="card" elevation="5" animated class="large-card">
-        <div class="contentContainer">
+        <div class="contentContainer layout horizontal wrap">
           <template is="dom-if" if="[[phoneSize]]">
             <div>
               <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>

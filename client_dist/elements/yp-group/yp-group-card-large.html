@@ -81,40 +81,35 @@
         right: 0;
       }
 
-      .logo {
+      iron-image {
         width: 432px;
         height: 243px;
       }
 
-      @media (max-width: 360px) {
+      @media (max-width: 900px) {
         :host {
-          width: 360px;
-          @apply(--layout-horizontal);
+          width: 432px;
         }
 
         .groupCard {
-          height: 100%;
-        }
-
-        iron-image {
-          width: 360px !important;
-          height: 86px !important;
+          width: 432px;
+          height: 486px;
         }
       }
 
-      @media (max-width: 320px) {
+      @media (max-width: 480px) {
         :host {
-          width: 320px;
-          @apply(--layout-horizontal);
+          width: 306px;
         }
 
         .groupCard {
-          height: 100%;
+          width: 306px;
+          height: 486px;
         }
 
         iron-image {
-          width: 320px !important;
-          height: 76px !important;
+          width: 216px;
+          height: 122px;
         }
       }
 
@@ -131,7 +126,7 @@
 
     <template is="dom-if" if="[[group]]">
       <paper-card id="card" elevation="[[elevation]]" animated-shadow class="groupCard">
-        <div class="layout horizontal">
+        <div class="layout horizontal wrap">
           <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
           <div class="objectives">
             <div class="description">
