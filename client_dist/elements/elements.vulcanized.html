@@ -35815,19 +35815,20 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         @apply(--layout-horizontal);
       }
 
-      @media (max-width: 360px) {
+      @media (max-width: 960px) {
         :host {
-          width: 320px;
+          width: 600px;
         }
 
         .postCard {
           height: 100%;
-          width: 320px;
+          width: 600px;
+          @apply(--layout-wrap);
         }
 
         yp-post-cover-media {
-          width: 320px;
-          height: 181px;
+          width: 600px;
+          height: 343px;
         }
 
         .voting {
@@ -35840,12 +35841,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
 
         .card-content {
-          width: 300px !important;
+          width: 600px !important;
           padding-bottom: 74px;
         }
       }
 
-      @media (max-width: 320px) {
+      @media (max-width: 360px) {
         :host {
           width: 304px;
         }
@@ -36955,6 +36956,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         #groupCard {
           padding-left: 0;
           padding-right: 0;
+        }
+
+        iron-list {
+          width: 306px;
         }
       }
 
