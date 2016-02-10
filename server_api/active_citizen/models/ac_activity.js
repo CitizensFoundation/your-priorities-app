@@ -52,8 +52,8 @@ var setupDefaultAssociations = function (activity, user, domain, community, grou
 module.exports = function(sequelize, DataTypes) {
   var AcActivity = sequelize.define("AcActivity", {
     access: { type: DataTypes.INTEGER, allowNull: false },
-    type: { type: DataTypes.INTEGER, allowNull: false },
-    type_name: { type: DataTypes.STRING, allowNull: true },
+    type: { type: DataTypes.STRING, allowNull: false },
+    sub_type: { type: DataTypes.STRING, allowNull: true },
     object: DataTypes.JSONB,
     actor: DataTypes.JSONB,
     target: DataTypes.JSONB,
@@ -82,10 +82,6 @@ module.exports = function(sequelize, DataTypes) {
         AcActivity.belongsTo(models.User);
         AcActivity.belongsToMany(models.User, { through: 'OtherUsers' });
       },
-
-      ACTIVITY_PASSWORD_RECOVERY: 0,
-      ACTIVITY_PASSWORD_CHANGED: 1,
-      ACTIVITY_FROM_APP: 2,
 
       createActivity: function(type, subType, actor, object, context, user, domain, community, group, done) {
 
@@ -141,7 +137,7 @@ module.exports = function(sequelize, DataTypes) {
       createPasswordRecovery: function(user, domain, community, token, done) {
 
         sequelize.models.AcActivity.build({
-          type: sequelize.models.AcActivity.ACTIVITY_PASSWORD_RECOVERY,
+          type: "activity.password.recovery",
           actor: { user: user },
           object: {
             domain: domain,

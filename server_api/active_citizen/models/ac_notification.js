@@ -25,8 +25,7 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_GROUP: 2,
       ACCESS_PRIVATE: 3,
 
-      NOTIFICATION_PASSWORD_RECOVERY: 0,
-      NOTIFICATION_PASSWORD_CHANGED: 1,
+      notification.password.changed: 1,
 
       associate: function(models) {
         AcNotification.belongsTo(models.AcActivity);

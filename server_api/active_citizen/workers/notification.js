@@ -43,7 +43,7 @@ NotificationWorker.prototype.process = function (notification, done) {
       } else {
         log.info('Processing Notification Started', { type: notification.type, user: user });
         switch(notification.type) {
-          case models.AcNotification.NOTIFICATION_PASSWORD_RECOVERY:
+          case "notification.password.recovery":
             queue.create('send-one-email', {
               subject: i18n.t('email.password_recovery'),
               template: 'password_recovery',
@@ -52,10 +52,10 @@ NotificationWorker.prototype.process = function (notification, done) {
               community: community,
               token: notification.activity.object.token
             }).priority('critical').removeOnComplete(true).save();
-            log.info('Processing NOTIFICATION_PASSWORD_RECOVERY Completed', { type: notification.type, user: user });
+            log.info('Processing notification.password.recovery Completed', { type: notification.type, user: user });
             done();
             break;
-          case models.AcNotification.NOTIFICATION_PASSWORD_CHANGED:
+          case "notification.password.changed":
             queue.create('send-one-email', {
               subject: i18n.t('email.password_changed'),
               template: 'password_changed',
@@ -64,7 +64,7 @@ NotificationWorker.prototype.process = function (notification, done) {
               community: community,
               token: notification.activity.object.token
             }).priority('critical').removeOnComplete(true).save();
-            log.info('Processing NOTIFICATION_PASSWORD_CHANGED Completed', { type: notification.type, user: user });
+            log.info('Processing notification.password.changed Completed', { type: notification.type, user: user });
             done();
             break;
           default:

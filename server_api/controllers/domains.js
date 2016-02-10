@@ -140,4 +140,29 @@ router.delete('/:id', auth.can('edit domain'), function(req, res) {
   });
 });
 
+router.get(':id/news', auth.can('view domain'), function(req, res) {
+  models.AcActivity.find({
+    where: { domain_id: req.params.id },
+    order: [
+      [ { model: models.Domain } ,'created_at', 'asc' ]
+    ],
+    limit: 200
+  }).then(function(news) {
+    if (news) {
+      log.info('Domain News', { domain: toJson(news), context: 'get', user: toJson(req.user) });
+      res.send(news);
+    } else {
+      log.warn("Domain News Not Found", {
+        context: context, domain: toJson(domain), user: toJson(user), err: "Not found",
+        errorStatus: errorStatus ? errorStatus : 404
+      });
+      res.sendStatus(404);
+    }
+  }).catch(function(error) {
+    log.error("Domain News Error", { context: context, domain: toJson(domain), user: toJson(user), err: error,
+      errorStatus: errorStatus ? errorStatus : 500 });
+    res.sendStatus(500);
+  });
+});
+
 module.exports = router;

@@ -27,7 +27,8 @@ module.exports = function(sequelize, DataTypes) {
     push_notifications_profile: { type: DataTypes.JSON },
     interaction_profile: DataTypes.JSONB,
     counter_login: { type: DataTypes.INTEGER, defaultValue: 0 },
-    last_login_at: DataTypes.DATE
+    last_login_at: DataTypes.DATE,
+    social_points: DataType.INTEGER
   }, {
     underscored: true,
 
