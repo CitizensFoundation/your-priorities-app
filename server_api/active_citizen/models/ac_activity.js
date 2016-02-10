@@ -83,7 +83,7 @@ module.exports = function(sequelize, DataTypes) {
         AcActivity.belongsToMany(models.User, { through: 'OtherUsers' });
       },
 
-      createActivity: function(type, subType, actor, object, context, user, domain, community, group, done) {
+      createActivity: function(type, subType, actor, object, context, userId, domainId, communityId, groupId, done) {
 
         if (!object)
           object = {};
