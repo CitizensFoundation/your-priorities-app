@@ -148,7 +148,9 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
     cover_media_type: req.body.coverMediaType,
     user_id: req.user.id,
     status: 'published',
-    content_type: models.Post.CONTENT_IDEA
+    content_type: models.Post.CONTENT_IDEA,
+    user_agent: req.useragent,
+    ip_address: req.clientIp
   });
   post.save().then(function() {
     log.info('Post Created', { post: toJson(post), context: 'create', user: toJson(req.user) });

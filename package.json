@@ -16,6 +16,7 @@
     "express": "^4.13.3",
     "express-generator": "^4.9.0",
     "express-session": "^1.13.0",
+    "express-useragent": "^0.2.4",
     "flickrapi": "~0.3.28",
     "i18next": "^2.0.22",
     "i18next-sync-fs-backend": "^0.1.0",
@@ -32,6 +33,7 @@
     "passport-twitter": "^1.0.3",
     "pg": "^3.6.3",
     "pg-hstore": "^2.3.2",
+    "request-ip": "^1.2.2",
     "s3-uploader": "^1.0.0",
     "sequelize": "^3.17.3",
     "sequelize-cli": "^1.9.0",
@@ -69,7 +71,9 @@
     "test": "gulp test:local",
     "start": "node server_api/api_app.js"
   },
-  "cacheDirectories": ["node_modules"],
+  "cacheDirectories": [
+    "node_modules"
+  ],
   "engines": {
     "node": "0.12.7"
   }

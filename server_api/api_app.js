@@ -11,6 +11,8 @@ var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var ConnectRoles = require('connect-roles');
 var RedisStore = require('connect-redis')(session);
+var useragent = require('express-useragent');
+var requestIp = require('request-ip');
 
 var passport = require('passport')
     , LocalStrategy = require('passport-local').Strategy
@@ -47,7 +49,8 @@ if (app.get('env') === 'development') {
 }
 
 app.use(morgan('combined'));
-//app.use(cookieParser());
+app.use(useragent.express());
+app.use(requestIp.mw());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

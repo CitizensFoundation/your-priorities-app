@@ -14,7 +14,9 @@ module.exports = function(sequelize, DataTypes) {
     photographer_name: DataTypes.STRING,
     formats: DataTypes.TEXT,
     original_filename: DataTypes.STRING,
-    s3_bucket_name: DataTypes.STRING
+    s3_bucket_name: DataTypes.STRING,
+    ip_address: { type: DataTypes.STRING, allowNull: false },
+    user_agent: { type: DataTypes.TEXT, allowNull: false }
   }, {
 
     underscored: true,

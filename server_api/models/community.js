@@ -16,6 +16,8 @@ module.exports = function(sequelize, DataTypes) {
     google_analytics_code: { type: DataTypes.STRING, allowNull: true },
     description: DataTypes.TEXT,
     website: DataTypes.TEXT,
+    ip_address: { type: DataTypes.STRING, allowNull: false },
+    user_agent: { type: DataTypes.TEXT, allowNull: false },
     admin_email: { type: DataTypes.STRING, allowNull: false },
     admin_name: { type: DataTypes.STRING, allowNull: false },
     counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },

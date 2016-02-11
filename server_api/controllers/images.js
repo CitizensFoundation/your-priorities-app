@@ -44,7 +44,9 @@ router.post('/', isAuthenticated, function(req, res) {
             user_id: req.user.id,
             s3_bucket_name: process.env.S3_BUCKET,
             original_filename: req.file.originalname,
-            formats: JSON.stringify(createFormatsFromVersions(versions))
+            formats: JSON.stringify(createFormatsFromVersions(versions)),
+            user_agent: req.useragent,
+            ip_address: req.clientIp
           });
           image.save().then(function() {
             log.info('Image Created', { image: toJson(image), context: 'create', user: toJson(req.user) });
