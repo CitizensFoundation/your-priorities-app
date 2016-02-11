@@ -12,6 +12,7 @@ module.exports = function(sequelize, DataTypes) {
     type: { type: DataTypes.INTEGER, allowNull: false },
     sent_email: { type: DataTypes.INTEGER, default: false },
     sent_push: { type: DataTypes.INTEGER, default: false },
+    processed_at: DataTypes.DATE,
     user_interaction_profile: DataTypes.JSONB
   }, {
     underscored: true,
@@ -24,8 +25,6 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_COMMUNITY: 1,
       ACCESS_GROUP: 2,
       ACCESS_PRIVATE: 3,
-
-      notification.password.changed: 1,
 
       associate: function(models) {
         AcNotification.belongsTo(models.AcActivity);

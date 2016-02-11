@@ -15,6 +15,7 @@ module.exports = function(sequelize, DataTypes) {
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     default_locale: { type: DataTypes.STRING, allowNull: false, default: 'en' },
     description: DataTypes.TEXT,
+    google_analytics_code: { type: DataTypes.STRING, allowNull: true },
     counter_communities: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },

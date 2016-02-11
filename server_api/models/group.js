@@ -9,6 +9,7 @@ module.exports = function(sequelize, DataTypes) {
     name: { type: DataTypes.STRING, allowNull: false },
     access: { type: DataTypes.INTEGER, allowNull: false },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    google_analytics_code: { type: DataTypes.STRING, allowNull: true },
     top_banner_file_name: DataTypes.STRING,
     logo_file_name: DataTypes.STRING,
     objectives: DataTypes.TEXT,

@@ -13,6 +13,7 @@ module.exports = function(sequelize, DataTypes) {
     access: { type: DataTypes.INTEGER, allowNull: false }, // 0: public, 1: closed, 2: secret
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     default_locale: { type: DataTypes.STRING },
+    google_analytics_code: { type: DataTypes.STRING, allowNull: true },
     description: DataTypes.TEXT,
     website: DataTypes.TEXT,
     admin_email: { type: DataTypes.STRING, allowNull: false },

@@ -2,8 +2,9 @@
 
 module.exports = function(sequelize, DataTypes) {
   var PostRevision = sequelize.define("PostRevision", {
-    name: DataTypes.STRING,
-    description: DataTypes.TEXT
+    name: { type: DataTypes.STRING, allowNull: false },
+    description: { type: DataTypes.TEXT, allowNull: false },
+    data: DataTypes.JSONB
   }, {
     underscored: true,
     tableName: 'post_revisions',
