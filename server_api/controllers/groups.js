@@ -32,7 +32,7 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
     domain_id: req.ypDomain.id,
     user_id: req.user.id,
     community_id: req.params.communityId,
-    user_agent: req.useragent,
+    user_agent: req.useragent.source,
     ip_address: req.clientIp
   });
 

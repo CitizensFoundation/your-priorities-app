@@ -200,7 +200,10 @@ module.exports = function(sequelize, DataTypes) {
           description: post.description,
           group_id: post.group_id,
           user_id: req.user.id,
-          this_id: post.id
+          this_id: post.id,
+          status: post.status,
+          user_agent: req.useragent.source,
+          ip_address: req.clientIp
         });
         thisRevision.save().then(function() {
           var point = sequelize.models.Point.build({
@@ -208,15 +211,22 @@ module.exports = function(sequelize, DataTypes) {
             post_id: post.id,
             content: req.body.pointFor,
             value: 1,
-            user_id: req.user.id
+            user_id: req.user.id,
+            status: post.status,
+            user_agent: req.useragent.source,
+            ip_address: req.clientIp
           });
           point.save().then(function() {
             var pointRevision = sequelize.models.PointRevision.build({
               group_id: point.group_id,
               post_id: post.id,
               content: point.content,
+              value: point.value,
               user_id: req.user.id,
-              point_id: point.id
+              point_id: point.id,
+              status: post.status,
+              user_agent: req.useragent.source,
+              ip_address: req.clientIp
             });
             pointRevision.save().then(function() {
               done();

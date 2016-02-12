@@ -96,7 +96,7 @@ router.post('/:domainId', auth.can('create community'), function(req, res) {
     website: req.body.website,
     admin_email: admin_email,
     admin_name: admin_name,
-    user_agent: req.useragent,
+    user_agent: req.useragent.source,
     ip_address: req.clientIp
   });
   community.save().then(function() {

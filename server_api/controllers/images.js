@@ -45,7 +45,7 @@ router.post('/', isAuthenticated, function(req, res) {
             s3_bucket_name: process.env.S3_BUCKET,
             original_filename: req.file.originalname,
             formats: JSON.stringify(createFormatsFromVersions(versions)),
-            user_agent: req.useragent,
+            user_agent: req.useragent.source,
             ip_address: req.clientIp
           });
           image.save().then(function() {

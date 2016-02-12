@@ -149,7 +149,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
     user_id: req.user.id,
     status: 'published',
     content_type: models.Post.CONTENT_IDEA,
-    user_agent: req.useragent,
+    user_agent: req.useragent.source,
     ip_address: req.clientIp
   });
   post.save().then(function() {

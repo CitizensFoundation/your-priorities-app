@@ -163,7 +163,7 @@ router.post('/createActivityFromApp', function(req, res) {
   models.AcActivity.createActivity('activity.from.app', req.body.type, { appActor: req.body.actor },
                                  { name: req.body.object }, { name: req.body.context, eventTime: req.body.event_time,
                                                               sessionId: req.body.sessionId, userAgent: req.body.user_agent },
-                                 req.user,  req.ypDomain.id, req.ypCommunity.id, req.params.groupId, function(error) {
+                                 req.user.id,  req.ypDomain.id, req.ypCommunity.id, req.params.groupId, function(error) {
       if (error) {
         log.error('Create Activity Error', { user: null, context: 'createActivity', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
         res.sendStatus(500);

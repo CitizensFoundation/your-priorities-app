@@ -68,7 +68,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
     content: req.body.content,
     value: req.body.value,
     user_id: req.user.id,
-    user_agent: req.useragent,
+    user_agent: req.useragent.source,
     ip_address: req.clientIp
   });
   point.save().then(function() {
@@ -79,7 +79,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
       content: point.content,
       user_id: req.user.id,
       point_id: point.id,
-      user_agent: req.useragent,
+      user_agent: req.useragent.source,
       ip_address: req.clientIp
     });
     pointRevision.save().then(function() {
@@ -126,7 +126,7 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
         value: req.body.value,
         user_id: req.user.id,
         status: 'active',
-        user_agent: req.useragent,
+        user_agent: req.useragent.source,
         ip_address: req.clientIp
       })
     }
