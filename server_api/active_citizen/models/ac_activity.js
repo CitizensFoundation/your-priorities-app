@@ -120,7 +120,7 @@ module.exports = function(sequelize, DataTypes) {
         }).save().then(function(activity) {
           if (activity) {
                 queue.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
-                log.info('Activity Created', { activity: toJson(activity), user: toJson(user) });
+                log.info('Activity Created', { activity: toJson(activity), userId: userId});
                 done();
           } else {
             done('Activity Not Found');

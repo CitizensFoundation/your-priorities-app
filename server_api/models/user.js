@@ -27,7 +27,7 @@ module.exports = function(sequelize, DataTypes) {
     interaction_profile: DataTypes.JSONB,
     counter_login: { type: DataTypes.INTEGER, defaultValue: 0 },
     last_login_at: DataTypes.DATE,
-    social_points: DataType.INTEGER
+    social_points: DataTypes.INTEGER
   }, {
     underscored: true,
 
