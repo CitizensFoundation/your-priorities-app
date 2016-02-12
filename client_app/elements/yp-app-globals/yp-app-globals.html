@@ -173,7 +173,7 @@
           }
         },
 
-        activity: function (type, object, context) {
+        activity: function (type, object, context, groupId, postId) {
           var actor;
 
           if (window.appUser && window.appUser.user) {
@@ -206,7 +206,9 @@
             context: context ? context : "",
             event_time: date.toISOString(),
             session_id: this.getSessionFromCookie(),
-            user_agent: navigator.userAgent
+            user_agent: navigator.userAgent,
+            groupId: groupId,
+            postId: postId
           };
           activityAjax.generateRequest();
         },

@@ -80,7 +80,7 @@ module.exports = function(sequelize, DataTypes) {
         AcActivity.belongsTo(models.Point);
         AcActivity.belongsTo(models.Invite);
         AcActivity.belongsTo(models.User);
-        AcActivity.belongsToMany(models.User, { through: 'OtherUsers' });
+        AcActivity.belongsToMany(models.User, { through: 'OtherUser' });
       },
 
       createActivity: function(type, subType, actor, object, context, userId, domainId, communityId, groupId, done) {
@@ -94,17 +94,17 @@ module.exports = function(sequelize, DataTypes) {
         if (!actor)
           actor = {};
 
-        if (user)
-          actor['user'] = user.simple();
+        if (userId)
+          actor['userId'] = userId;
 
-        if (domain)
-          object['domain'] = domain.simple();
+        if (domainId)
+          object['domainId'] = domainId;
 
-        if (community)
-          object['community'] = community.simple();
+        if (communityId)
+          object['communityId'] = communityId;
 
-        if (group)
-          object['group'] = group.simple();
+        if (groupId)
+          object['groupId'] = groupId;
 
         sequelize.models.AcActivity.build({
           type: type,
@@ -112,19 +112,16 @@ module.exports = function(sequelize, DataTypes) {
           actor: actor,
           object: object,
           context: context,
+          user_id: userId,
+          domain_id: domainId,
+          community_id: communityId,
+          group_id: groupId,
           access: sequelize.models.AcActivity.ACCESS_PRIVATE
         }).save().then(function(activity) {
           if (activity) {
-            setupDefaultAssociations(activity, user, domain, community, group, function (error) {
-              if (error) {
-                log.error('Activity Creation Error', error);
-                done('Activity Creation Error');
-              } else {
                 queue.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
                 log.info('Activity Created', { activity: toJson(activity), user: toJson(user) });
                 done();
-              }
-            });
           } else {
             done('Activity Not Found');
           }
