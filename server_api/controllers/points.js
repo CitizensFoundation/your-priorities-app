@@ -68,6 +68,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
     content: req.body.content,
     value: req.body.value,
     user_id: req.user.id,
+    status: 'active',
     user_agent: req.useragent.source,
     ip_address: req.clientIp
   });
@@ -78,6 +79,8 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
       post_id: point.post_id,
       content: point.content,
       user_id: req.user.id,
+      status: point.status,
+      value: point.value,
       point_id: point.id,
       user_agent: req.useragent.source,
       ip_address: req.clientIp

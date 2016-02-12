@@ -20,6 +20,7 @@
     "flickrapi": "~0.3.28",
     "i18next": "^2.0.22",
     "i18next-sync-fs-backend": "^0.1.0",
+    "ip": "^1.1.0",
     "kue": "^0.10.4",
     "morgan": "~1.5.0",
     "multer": "^1.0.3",

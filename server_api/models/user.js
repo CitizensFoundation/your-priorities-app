@@ -27,7 +27,8 @@ module.exports = function(sequelize, DataTypes) {
     interaction_profile: DataTypes.JSONB,
     counter_login: { type: DataTypes.INTEGER, defaultValue: 0 },
     last_login_at: DataTypes.DATE,
-    social_points: DataTypes.INTEGER
+    social_points: DataTypes.INTEGER,
+    legacy_passwords_disabled: { type: DataTypes.BOOLEAN, defaultValue: false }
   }, {
     underscored: true,
 
@@ -54,6 +55,7 @@ module.exports = function(sequelize, DataTypes) {
         User.hasMany(models.Point);
         User.hasMany(models.Endorsement);
         User.hasMany(models.PointQuality);
+        User.hasMany(models.LegacyUserPassword);
         User.belongsToMany(models.Group, { as: 'GroupUsers', through: 'GroupUser' });
         User.belongsToMany(models.Community, { as: 'CommunityUsers', through: 'CommunityUser' });
         User.belongsToMany(models.Domain, { as: 'DomainUsers', through: 'DomainUser' });
@@ -62,7 +64,6 @@ module.exports = function(sequelize, DataTypes) {
         User.belongsToMany(models.Domain, { as: 'DomainAdmin', through: 'DomainAdmin' });
         User.belongsToMany(models.Community, { as: 'CommunityAdmin', through: 'CommunityAdmin' });
         User.belongsToMany(models.Group, { as: 'GroupAdmin', through: 'GroupAdmin' });
-
       }
     },
 

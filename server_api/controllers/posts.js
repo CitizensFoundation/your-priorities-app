@@ -254,7 +254,9 @@ router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(
         post_id: req.params.id,
         value: req.body.value,
         user_id: req.user.id,
-        status: 'active'
+        status: 'active',
+        user_agent: req.useragent.source,
+        ip_address: req.clientIp
       })
     }
     endorsement.save().then(function() {
