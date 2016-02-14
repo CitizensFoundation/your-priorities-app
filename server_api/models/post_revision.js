@@ -11,7 +11,6 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         PostRevision.belongsTo(models.Post);
-        PostRevision.belongsTo(models.Group);
         PostRevision.belongsTo(models.User);
       }
     }

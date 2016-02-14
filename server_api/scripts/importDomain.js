@@ -9,6 +9,7 @@ var json = JSON.parse(require('fs').readFileSync(filename, 'utf8'));
 var users = json['users'];
 var domain = json['domain'];
 var groups = json['groups'];
+var communities = json['communities'];
 var categories = json['categories'];
 var posts = json['posts'];
 var post_revisions = json['post_revisions'];
@@ -28,6 +29,17 @@ var needsGroupUserPermissions = [];
 var needsGroupAdminPermissions = [];
 
 var allGroupsByOldIds = {};
+var allCategoriesByOldIds = {};
+var allPostsByOldIds = {};
+var allPostRevisionsByOldIds = {};
+var allPostStatusChangesByOldIds = {};
+var allEndorsementsByOldIds = {};
+var allPointsByOldIds = {};
+var allPointRevisionsByOldIds = {};
+var allCommentsByOldIds = {};
+var allPromotionsByOldIds = {};
+var allActivitiesByOldIds = {};
+var allPagesByOldIds = {};
 
 async.series([
 
@@ -73,6 +85,35 @@ async.series([
   },
 
   function(seriesCallback){
+    async.each(communities, function(incoming, callback) {
+      console.log('Processing community ' + incoming);
+      incoming['ip_address'] = ip.address();
+      incoming['user_agent'] = 'yrpri script';
+      incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
+
+      var oldId = incoming['id'];
+      incoming['id'] = null;
+
+      models.Community.build(incoming).save().then(function (community) {
+        if (community) {
+          allCommunitiesByOldIds[oldId] = community.id;
+          callback()
+        } else {
+          callback('no communitity created');
+        }
+      }).catch(function (error) {
+        console.error(error);
+      });
+    }, function(err){
+      if (err) {
+        console.error(err);
+      } else {
+        seriesCallback();
+      }
+    });
+  },
+
+  function(seriesCallback){
     async.each(groups, function(incoming, callback) {
       console.log('Processing group ' + incoming);
       incoming['ip_address'] = ip.address();
@@ -81,13 +122,21 @@ async.series([
 
       var oldId = incoming['id'];
       incoming['id'] = null;
-
-      models.Group.build(incoming).save().then(function (group) {
-        if (group) {
-          allGroupsByOldIds[oldId] = group.id;
-          callback()
+      models.Community.build(incoming).save().then(function (community) {
+        if (community) {
+          incoming['community_id'] = community.id;
+          models.Group.build(incoming).save().then(function (group) {
+            if (group) {
+              allGroupsByOldIds[oldId] = group.id;
+              callback()
+            } else {
+              callback('no group created');
+            }
+          }).catch(function (error) {
+            console.error(error);
+          });
         } else {
-          callback('no group created');
+          callback('no communitity nor group created');
         }
       }).catch(function (error) {
         console.error(error);
@@ -114,10 +163,102 @@ async.series([
 
       models.Category.build(incoming).save().then(function (category) {
         if (category) {
-          allGroupsByOldIds[oldId] = category.id;
+          allCategoriesByOldIds[oldId] = category.id;
           callback()
         } else {
           callback('no category created');
+        }
+      }).catch(function (error) {
+        console.error(error);
+      });
+    }, function(err){
+      if (err) {
+        console.error(err);
+      } else {
+        seriesCallback();
+      }
+    });
+  },
+
+  function(seriesCallback){
+    async.each(posts, function(incoming, callback) {
+      console.log('Processing post ' + incoming);
+      incoming['ip_address'] = ip.address();
+      incoming['user_agent'] = 'yrpri script';
+      incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
+      incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
+
+      var oldId = incoming['id'];
+      incoming['id'] = null;
+
+      models.Post.build(incoming).save().then(function (post) {
+        if (post) {
+          allPostsByOldIds[oldId] = post.id;
+          callback()
+        } else {
+          callback('no post created');
+        }
+      }).catch(function (error) {
+        console.error(error);
+      });
+    }, function(err){
+      if (err) {
+        console.error(err);
+      } else {
+        seriesCallback();
+      }
+    });
+  },
+
+  function(seriesCallback){
+    async.each(post_revisions, function(incoming, callback) {
+      console.log('Processing post revision ' + incoming);
+      incoming['ip_address'] = ip.address();
+      incoming['user_agent'] = 'yrpri script';
+      incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
+      incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
+      incoming['post_id'] = allPostsByOldIds[incoming['post_id']];
+
+      var oldId = incoming['id'];
+      incoming['id'] = null;
+
+      models.PostRevision.build(incoming).save().then(function (post_revision) {
+        if (post_revision) {
+          allPostRevisionsByOldIds[oldId] = post_revision.id;
+          callback()
+        } else {
+          callback('no post created');
+        }
+      }).catch(function (error) {
+        console.error(error);
+      });
+    }, function(err){
+      if (err) {
+        console.error(err);
+      } else {
+        seriesCallback();
+      }
+    });
+  },
+
+  function(seriesCallback){
+    async.each(post_status_changes, function(incoming, callback) {
+      console.log('Processing post status change ' + incoming);
+      incoming['ip_address'] = ip.address();
+      incoming['user_agent'] = 'yrpri script';
+      incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
+      incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
+      incoming['post_id'] = allPostsByOldIds[incoming['post_id']];
+
+      var oldId = incoming['id'];
+      incoming['id'] = null;
+
+      models.PostStatusChange.build(incoming).save().then(function (post_status_change) {
+        if (post_status_change) {
+          allPostStatusChangesByOldIds[oldId] = post_status_change.id;
+          callback()
+        } else {
+          callback('no post status change created');
         }
       }).catch(function (error) {
         console.error(error);
