@@ -8,14 +8,16 @@ module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define("User", {
     name: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: true },
+    status: { type: DataTypes.STRING, allowNull: false },
+    ssn: { type: DataTypes.STRING, allowNull: true },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    facebook_id: DataTypes.INTEGER,
+    facebook_id: DataTypes.BIGINT,
     facebook_profile: DataTypes.JSONB,
-    twitter_id: DataTypes.INTEGER,
+    twitter_id: DataTypes.BIGINT,
     twitter_profile: DataTypes.JSONB,
-    google_id: DataTypes.INTEGER,
+    google_id: DataTypes.BIGINT,
     google_profile: DataTypes.JSONB,
-    github_id: DataTypes.INTEGER,
+    github_id: DataTypes.BIGINT,
     github_profile: DataTypes.JSONB,
     buddy_icon_file_name: DataTypes.STRING,
     twitter_profile_image_url:  DataTypes.STRING,
@@ -55,7 +57,7 @@ module.exports = function(sequelize, DataTypes) {
         User.hasMany(models.Point);
         User.hasMany(models.Endorsement);
         User.hasMany(models.PointQuality);
-        User.hasMany(models.LegacyUserPassword);
+        User.hasMany(models.UserLegacyPassword);
         User.belongsToMany(models.Group, { as: 'GroupUsers', through: 'GroupUser' });
         User.belongsToMany(models.Community, { as: 'CommunityUsers', through: 'CommunityUser' });
         User.belongsToMany(models.Domain, { as: 'DomainUsers', through: 'DomainUser' });

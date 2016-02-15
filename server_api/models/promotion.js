@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
     per_viewer_cost: DataTypes.FLOAT,
     spent: DataTypes.FLOAT,
     position: { type: DataTypes.INTEGER, defaultValue: 0 },
-    finished_at: { type: DataTypes.INTEGER, defaultValue: 0 },
+    finished_at: { type: DataTypes.DATE },
     counter_up_endorsements: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_down_endorsements: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_skips: { type: DataTypes.INTEGER, defaultValue: 0 },
