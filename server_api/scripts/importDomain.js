@@ -67,11 +67,14 @@ var changePostCounter = function (req, postId, column, upDown, next) {
     } else if (post && upDown === -1) {
       post.decrement(column);
     }
-    models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
-      console.log("ADD GROUP 1");
+    if (post) {
+      models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
+        next();
+      });
+    } else {
+      console.warn("POST NOT FOUND FOR ENDORSEMENT");
       next();
-      console.log("ADD GROUP 2");
-    });
+    }
   });
 };
 
@@ -246,33 +249,33 @@ async.series([
     console.log('Setting up Your Priorities if needed');
     if (currentDomain.domain_name.indexOf("yrpri.org") > -1) {
       async.series([
-          function(callback){
-            models.Community.build({
-              name: "World Countries",
-              description: "World Countries",
-              domain_id: currentDomain.id,
-              ip_address: ip.address(),
-              user_agent: 'yrpri script',
-              hostname: "world-countries",
-              access: 0
-            }).save().then(function (community) {
-              if (community) {
-                community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
-                  communityWC = community;
-                  callback();
-                });
-              } else {
-                callback('no communitity created');
-              }
-            }).catch(function (error) {
-              console.log(error);
-              callback(error);
-            });
-          }
-        ],
-        function(err, results){
-          seriesCallback(err);
-        });
+        function(callback){
+          models.Community.build({
+            name: "World Countries",
+            description: "World Countries",
+            domain_id: currentDomain.id,
+            ip_address: ip.address(),
+            user_agent: 'yrpri script',
+            hostname: "world-countries",
+            access: 0
+          }).save().then(function (community) {
+            if (community) {
+              community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                communityWC = community;
+                callback();
+              });
+            } else {
+              callback('no communitity created');
+            }
+          }).catch(function (error) {
+            console.log(error);
+            callback(error);
+          });
+        }
+      ],
+      function(err, results){
+        seriesCallback(err);
+      });
     } else {
       seriesCallback();
     }

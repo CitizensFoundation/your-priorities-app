@@ -28,8 +28,7 @@ router.get('/:id', auth.can('view community'), function(req, res) {
   models.Community.find({
     where: { id: req.params.id },
     order: [
-      [ { model: models.Group }, 'user_id', 'asc' ],
-      [ { model: models.Group }, 'created_at', 'asc' ],
+      [ { model: models.Group }, 'counter_users', 'desc' ],
       [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ]
     ],
     include: [

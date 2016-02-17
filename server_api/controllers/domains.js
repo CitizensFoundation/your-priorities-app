@@ -38,8 +38,7 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
   models.Domain.find({
     where: { id: req.params.id },
     order: [
-      [ { model: models.Community } ,'user_id', 'asc' ],
-      [ { model: models.Community } ,'created_at', 'asc' ],
+      [ { model: models.Community } ,'counter_users', 'desc' ],
       [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'asc' ]
     ],
     include: [

@@ -147,7 +147,7 @@ passport.use(new LocalStrategy(
           return done(null, false, { message: 'Incorrect username.' });
         }
       }).catch(function(error) {
-        log.error("User LocalStrategy Error", { context: 'localStrategy', user: toJson(user), err: error, errorStatus: 500 });
+        log.error("User LocalStrategy Error", { context: 'localStrategy', err: error, errorStatus: 500 });
         done(error);
       });
     }

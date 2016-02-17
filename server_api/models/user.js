@@ -140,16 +140,16 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       validatePassword: function(password, done) {
-        var verified = bcrypt.compareSync(password, this.encrypted_password);
+        var verified = this.encrypted_password ? bcrypt.compareSync(password, this.encrypted_password) : null;
         if (verified) {
           done(null, this);
         } else {
-          models.UserLegacyPassword.findAll({
+          sequelize.models.UserLegacyPassword.findAll({
             where: { user_id: this.id }
           }).then(function(passwords) {
             passwords.map( function(legacyPassword) {
-              if (bcrypt.compareSync(legacyPassword, this.encrypted_password)) {
-                return verified;
+              if (bcrypt.compareSync(password, legacyPassword.encrypted_password)) {
+                verified = true;
               }
             });
             if (verified) {
