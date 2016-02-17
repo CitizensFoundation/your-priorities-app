@@ -35,25 +35,25 @@ module.exports = function(sequelize, DataTypes) {
         return { id: this.id, name: this.name };
       },
 
-      updateAllExternalCounters: function(req, direction, done) {
+      updateAllExternalCounters: function(req, direction, column, done) {
         async.parallel([
           function(callback) {
             sequelize.models.Community.find({
               where: {id: this.community_id}
             }).then(function (community) {
               if (direction=='up')
-                community.increment('counter_groups');
+                community.increment(column);
               else if (direction=='down')
-                community.decrement('counter_groups');
+                community.decrement(column);
               callback();
             }.bind(this));
           }.bind(this),
           function(callback) {
             if (req.ypDomain) {
               if (direction=='up')
-                req.ypDomain.increment('counter_groups');
+                req.ypDomain.increment(column);
               else if (direction=='down')
-                req.ypDomain.decrement('counter_groups');
+                req.ypDomain.decrement(column);
               callback();
             } else {
               callback();
@@ -123,6 +123,7 @@ module.exports = function(sequelize, DataTypes) {
               async.parallel([
                 function(callback) {
                   group.addGroupUser(req.user).then(function (result) {
+                    group.increment('counter_users');
                     callback();
                   })
                 },
@@ -135,6 +136,7 @@ module.exports = function(sequelize, DataTypes) {
                         callback();
                       } else {
                         community.addCommunityUser(req.user).then(function (result) {
+                          community.increment('counter_users');
                           callback();
                         });
                       }
@@ -147,12 +149,14 @@ module.exports = function(sequelize, DataTypes) {
                       callback();
                     } else {
                       req.ypDomain.addDomainUser(req.user).then(function(result) {
+                        req.ypDomain.increment('counter_users');
                         callback();
                       });
                     }
                   });
                 }.bind(this)
               ], function(err) {
+                console.log(err);
                 done(err);
               });
             } else {

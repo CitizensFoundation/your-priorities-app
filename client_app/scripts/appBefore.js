@@ -8,7 +8,7 @@ function onSplashClick() {
   'use strict';
 
   window.appStartTime = new Date();
-  i18n.init({ lng: "en" });
+  i18n.init({ lng: "is" });
   window.i18n = i18n;
 
 })(document);

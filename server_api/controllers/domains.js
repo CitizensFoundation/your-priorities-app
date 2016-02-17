@@ -44,11 +44,6 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
     ],
     include: [
       {
-        model: models.User, as: 'DomainUsers',
-        attributes: ['id'],
-        required: false
-      },
-      {
         model: models.Image, as: 'DomainLogoImages'
       },
       {
@@ -74,11 +69,6 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
           },
           {
             model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc'
-          },
-          {
-            model: models.User, as: 'CommunityUsers',
-            attributes: ['id'],
-            required: false
           }
         ],
         required: false

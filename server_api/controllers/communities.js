@@ -34,11 +34,6 @@ router.get('/:id', auth.can('view community'), function(req, res) {
     ],
     include: [
       {
-        model: models.User, as: 'CommunityUsers',
-        attributes: ['id'],
-        required: false
-      },
-      {
         model: models.Image, as: 'CommunityLogoImages'
       },
       {
@@ -56,11 +51,6 @@ router.get('/:id', auth.can('view community'), function(req, res) {
             order: [
               [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'desc' ]
             ]
-          },
-          {
-            model: models.User, as: 'GroupUsers',
-            attributes: ['id'],
-            required: false
           }
         ]
       }
@@ -101,7 +91,7 @@ router.post('/:domainId', auth.can('create community'), function(req, res) {
   });
   community.save().then(function() {
     log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
-    community.updateAllExternalCounters(req, 'up', function () {
+    community.updateAllExternalCounters(req, 'up', 'counter_communities', function () {
       community.setupImages(req.body, function(error) {
         sendCommunityOrError(res, community, 'setupImages', req.user, error);
       });
@@ -141,7 +131,7 @@ router.delete('/:id', auth.can('edit community'), function(req, res) {
       community.deleted = true;
       community.save().then(function () {
         log.info('Community Deleted', { community: toJson(community), user: toJson(req.user) });
-        community.updateAllExternalCounters(req, 'down', function () {
+        community.updateAllExternalCounters(req, 'down', 'counter_communities', function () {
           res.sendStatus(200);
         });
       });

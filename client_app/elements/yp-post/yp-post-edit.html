@@ -99,7 +99,7 @@
           <paper-textarea id="description"
                           name="description"
                           value="{{post.description}}"
-                          label="[[t('description')]]"
+                          label="[[t('post.description')]]"
                           char-counter
                           rows="2"
                           max-rows="5"
@@ -266,7 +266,7 @@
 
     _setupTranslation: function () {
       if (this.new) {
-        this.editHeaderText = this.t('New post');
+        this.editHeaderText = this.t('post.new');
         this.toastText = this.t('post.toast.created');
       } else {
         this.editHeaderText = this.t('post.edit.update');

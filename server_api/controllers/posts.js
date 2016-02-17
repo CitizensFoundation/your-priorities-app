@@ -155,7 +155,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
   post.save().then(function() {
     log.info('Post Created', { post: toJson(post), context: 'create', user: toJson(req.user) });
     post.setupAfterSave(req, res, function () {
-      post.updateAllExternalCounters(req, 'up', function () {
+      post.updateAllExternalCounters(req, 'up', 'counter_posts', function () {
         models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
           post.setupImages(req.body, function (error) {
             sendPostOrError(res, post, 'setupImages', req.user, error);
@@ -199,7 +199,7 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
     post.deleted = true;
     post.save().then(function () {
       log.info('Post Deleted', { post: toJson(post), context: 'delete', user: toJson(req.user) });
-      post.updateAllExternalCounters(req, 'down', function () {
+      post.updateAllExternalCounters(req, 'down', 'counter_posts', function () {
         res.sendStatus(200);
       });
     });

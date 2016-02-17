@@ -39,11 +39,11 @@ module.exports = function(sequelize, DataTypes) {
         return { id: this.id, name: this.name, hostname: this.hostname };
       },
 
-      updateAllExternalCounters: function(req, direction, done) {
+      updateAllExternalCounters: function(req, direction, column, done) {
         if (direction=='up')
-          req.ypDomain.increment('counter_communities');
+          req.ypDomain.increment(column);
         else if (direction=='down')
-          req.ypDomain.decrement('counter_communities');
+          req.ypDomain.decrement(column);
         done();
       },
 

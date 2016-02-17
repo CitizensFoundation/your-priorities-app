@@ -24,8 +24,10 @@ var promotions = json['promotions'];
 var pages = json['pages'];
 var activities = json['activities'];
 
-var allUsersByEmail = {};
+var allUsersIdsByEmail = {};
+var allUsersModelByEmail = {};
 var allUsersByOldIds = {};
+var allUsersModelByNewIds = {};
 
 var needsGroupUserPermissions = [];
 var needsGroupAdminPermissions = [];
@@ -52,6 +54,25 @@ var communityBH3;
 var communityBH4;
 var communityBR;
 
+var fakeReq;
+
+var changePostCounter = function (req, postId, column, upDown, next) {
+  models.Post.find({
+    where: { id: postId }
+  }).then(function(post) {
+    if (post && upDown === 1) {
+      post.increment(column);
+    } else if (post && upDown === -1) {
+      post.decrement(column);
+    }
+    models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
+      console.log("ADD GROUP 1");
+      next();
+      console.log("ADD GROUP 2");
+    });
+  });
+};
+
 async.series([
 
   function(seriesCallback){
@@ -63,6 +84,7 @@ async.series([
     models.Domain.build(domain).save().then(function (domain) {
       if (domain) {
         currentDomain = domain;
+        fakeReq = { ypDomain: domain };
         seriesCallback();
       } else {
         seriesCallback('no domain created');
@@ -79,7 +101,7 @@ async.series([
           function(callback){
             models.Community.build({
               name: "Betri Hverfi 2012",
-              description: "",
+              description: "Betri Hverfi 2012",
               domain_id: currentDomain.id,
               ip_address: ip.address(),
               user_agent: 'yrpri script',
@@ -87,8 +109,10 @@ async.series([
               access: 0
             }).save().then(function (community) {
               if (community) {
-                communityBH1 = community;
-                callback();
+                community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                  communityBH1 = community;
+                  callback();
+                });
               } else {
                 callback('no communitity created');
               }
@@ -100,7 +124,7 @@ async.series([
           function(callback){
             models.Community.build({
               name: "Betri Hverfi 2013",
-              description: "",
+              description: "Betri Hverfi 2013",
               domain_id: currentDomain.id,
               ip_address: ip.address(),
               user_agent: 'yrpri script',
@@ -108,8 +132,10 @@ async.series([
               access: 0
             }).save().then(function (community) {
               if (community) {
-                communityBH2 = community;
-                callback();
+                community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                  communityBH2 = community;
+                  callback();
+                });
               } else {
                 callback('no communitity created');
               }
@@ -121,7 +147,7 @@ async.series([
           function(callback){
             models.Community.build({
               name: "Betri Hverfi 2014",
-              description: "",
+              description: "Betri Hverfi 2014",
               domain_id: currentDomain.id,
               ip_address: ip.address(),
               user_agent: 'yrpri script',
@@ -129,8 +155,10 @@ async.series([
               access: 0
             }).save().then(function (community) {
               if (community) {
-                communityBH3 = community;
-                callback();
+                community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                  communityBH3 = community;
+                  callback();
+                });
               } else {
                 callback('no communitity created');
               }
@@ -142,7 +170,7 @@ async.series([
           function(callback){
             models.Community.build({
               name: "Betri Hverfi 2015",
-              description: "",
+              description: "Betri Hverfi 2015",
               domain_id: currentDomain.id,
               ip_address: ip.address(),
               user_agent: 'yrpri script',
@@ -150,8 +178,10 @@ async.series([
               access: 0
             }).save().then(function (community) {
               if (community) {
-                communityBH4 = community;
-                callback();
+                community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                  communityBH4 = community;
+                  callback();
+                });
               } else {
                 callback('no communitity created');
               }
@@ -163,7 +193,7 @@ async.series([
           function(callback){
             models.Community.build({
               name: "Þín rödd í ráðum borgarinnar",
-              description: "",
+              description: "Þín rödd í ráðum borgarinnar",
               domain_id: currentDomain.id,
               ip_address: ip.address(),
               user_agent: 'yrpri script',
@@ -171,8 +201,10 @@ async.series([
               access: 0
             }).save().then(function (community) {
               if (community) {
-                communityBR = community;
-                callback();
+                community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                  communityBR = community;
+                  callback();
+                });
               } else {
                 callback('no communitity created');
               }
@@ -193,8 +225,21 @@ async.series([
   function(seriesCallback){
     async.eachSeries(users, function(incoming, callback) {
       console.log('Processing user ' + incoming.email);
-      if (allUsersByEmail[incoming.email]) {
-        // TODO: Create legacy password
+      var oldId = incoming['id'];
+      incoming['id'] = null;
+
+      if (allUsersIdsByEmail[incoming.email]) {
+        var masterUser = allUsersModelByEmail[incoming.email];
+        allUsersByOldIds[oldId] = masterUser.id;
+
+        if (incoming.encrypted_password && incoming.encrypted_password!=masterUser.encrypted_password) {
+          // TODO: Create legacy password
+        }
+
+        if (incoming.facebook_uid && incoming.facebook_uid != masterUser.facebook_id && incoming.created_at>masterUser.created_at) {
+          // TODO: Update user
+        }
+
         callback();
       } else {
         incoming['ip_address'] = ip.address();
@@ -213,13 +258,12 @@ async.series([
           incoming['group_id'] = null;
         }
 
-        var oldId = incoming['id'];
-        incoming['id'] = null;
-
         models.User.build(incoming).save().then(function (user) {
           if (user) {
-            allUsersByEmail[incoming.email] = user.id;
+            allUsersIdsByEmail[incoming.email] = user.id;
             allUsersByOldIds[oldId] = user.id;
+            allUsersModelByNewIds[user.id] = user;
+            allUsersModelByEmail[incoming.email] = user;
             callback()
           } else {
             callback('no user created');
@@ -252,11 +296,11 @@ async.series([
       if (currentDomain.domain_name.indexOf("betrireykjavik") > -1) {
         if (incoming['name'].indexOf("2012") > -1) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityBH1.id;
-        } else if (incoming['name'].indexOf("2013") > -1) {
+        } else if (!(incoming['name'].indexOf("Betri") > -1) && incoming['name'].indexOf("2013") > -1) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityBH2.id;
         } else if (incoming['name'].indexOf("2014") > -1) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityBH3.id;
-        } else if (!(incoming['name'].indexOf("Betri Reykjavik") > -1)
+        } else if (!(incoming['name'].indexOf("Betri Reykjavík") > -1)
                     && (incoming['description'] && incoming['description'].indexOf("2015") > -1)) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityBH4.id;
         } else {
@@ -269,12 +313,14 @@ async.series([
         incoming['message_for_new_idea'] = null;
         incoming['message_to_users'] = null;
         incoming['google_analytics_code'] = null;
-        incoming['description'] = null;
         incoming['objectives'] = incoming['description'];
+        incoming['description'] = null;
         models.Group.build(incoming).save().then(function (group) {
           if (group) {
-            allGroupsByOldIds[oldId] = group.id;
-            callback()
+            group.updateAllExternalCounters(fakeReq, 'up', 'counter_groups', function () {
+              allGroupsByOldIds[oldId] = group.id;
+              callback()
+            });
           } else {
             callback('no group created');
           }
@@ -286,25 +332,29 @@ async.series([
 
         models.Community.build(incoming).save().then(function (community) {
           if (community) {
-            incoming['community_id'] = community.id;
-            incoming['domain_id'] = null;
-            incoming['host_name'] = null;
-            incoming['default_locale'] = null;
-            incoming['message_for_new_idea'] = null;
-            incoming['message_to_users'] = null;
-            incoming['google_analytics_code'] = null;
-            incoming['description'] = null;
-            incoming['objectives'] = community.description;
-            allCommunitiesByOldGroupIds[oldId] = community.id;
-            models.Group.build(incoming).save().then(function (group) {
-              if (group) {
-                allGroupsByOldIds[oldId] = group.id;
-                callback()
-              } else {
-                callback('no group created');
-              }
-            }).catch(function (error) {
-              console.error(error);
+            community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+              incoming['community_id'] = community.id;
+              incoming['domain_id'] = null;
+              incoming['host_name'] = null;
+              incoming['default_locale'] = null;
+              incoming['message_for_new_idea'] = null;
+              incoming['message_to_users'] = null;
+              incoming['google_analytics_code'] = null;
+              incoming['description'] = null;
+              incoming['objectives'] = community.description;
+              allCommunitiesByOldGroupIds[oldId] = community.id;
+              models.Group.build(incoming).save().then(function (group) {
+                if (group) {
+                  group.updateAllExternalCounters(fakeReq, 'up', 'counter_groups', function () {
+                    allGroupsByOldIds[oldId] = group.id;
+                    callback()
+                  });
+                } else {
+                  callback('no group created');
+                }
+              }).catch(function (error) {
+                console.error(error);
+              });
             });
           } else {
             callback('no communitity nor group created');
@@ -370,8 +420,10 @@ async.series([
 
       models.Post.build(incoming).save().then(function (post) {
         if (post) {
-          allPostsByOldIds[oldId] = post.id;
-          callback()
+          post.updateAllExternalCounters(fakeReq, 'up', 'counter_posts', function () {
+            allPostsByOldIds[oldId] = post.id;
+            callback()
+          });
         } else {
           callback('no post created');
         }
@@ -477,7 +529,19 @@ async.series([
       models.Endorsement.build(incoming).save().then(function (endorsement) {
         if (endorsement) {
           allEndorsementsByOldIds[oldId] = endorsement.id;
-          callback()
+          req = {
+            user: allUsersModelByNewIds[endorsement.user_id],
+            ypDomain: currentDomain
+          };
+          if (endorsement.value>0) {
+            changePostCounter (req, endorsement.post_id, 'counter_endorsements_up', 1, function () {
+              callback()
+            });
+          } else {
+            changePostCounter (req, endorsement.post_id, 'counter_endorsements_down', 1, function () {
+              callback()
+            });
+          }
         } else {
           callback('no post status change created');
         }

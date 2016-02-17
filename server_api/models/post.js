@@ -131,23 +131,23 @@ module.exports = function(sequelize, DataTypes) {
 
     instanceMethods: {
 
-      updateAllExternalCounters: function(req, direction, done) {
+      updateAllExternalCounters: function(req, direction, column, done) {
         async.parallel([
           function(callback) {
             sequelize.models.Group.find({
               where: {id: this.group_id}
             }).then(function (group) {
               if (direction=='up')
-                group.increment('counter_posts');
+                group.increment(column);
               else if (direction=='down')
-                group.decrement('counter_posts');
+                group.decrement(column);
               sequelize.models.Community.find({
                 where: {id: group.community_id}
               }).then(function (community) {
                 if (direction=='up')
-                  community.increment('counter_posts');
+                  community.increment(column);
                 else if (direction=='down')
-                  community.decrement('counter_posts');
+                  community.decrement(column);
                 callback();
               }.bind(this));
             }.bind(this))
@@ -155,9 +155,9 @@ module.exports = function(sequelize, DataTypes) {
           function(callback) {
             if (req.ypDomain) {
               if (direction=='up')
-                req.ypDomain.increment('counter_posts');
+                req.ypDomain.increment(column);
               else if (direction=='down')
-                req.ypDomain.decrement('counter_posts');
+                req.ypDomain.decrement(column);
               callback();
             } else {
               callback();
