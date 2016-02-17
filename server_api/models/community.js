@@ -18,6 +18,7 @@ module.exports = function(sequelize, DataTypes) {
     website: DataTypes.TEXT,
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },
+    weight: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 }

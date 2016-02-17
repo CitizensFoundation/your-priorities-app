@@ -13,6 +13,7 @@ module.exports = function(sequelize, DataTypes) {
     top_banner_file_name: DataTypes.STRING,
     logo_file_name: DataTypes.STRING,
     objectives: DataTypes.TEXT,
+    weight: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_comments: { type: DataTypes.INTEGER, defaultValue: 0 },
