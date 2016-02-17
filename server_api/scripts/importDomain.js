@@ -54,6 +54,8 @@ var communityBH3;
 var communityBH4;
 var communityBR;
 
+var communityWC;
+
 var fakeReq;
 
 var changePostCounter = function (req, postId, column, upDown, next) {
@@ -91,6 +93,24 @@ async.series([
       }
     }).catch(function (error) {
       console.error(error);
+    });
+  },
+
+  function(seriesCallback){
+    console.log('Setting up old users');
+    models.User.findAll().then(function(users) {
+      async.eachSeries(users, function iteratee(user, callback) {
+        allUsersIdsByEmail[user.email] = user.id;
+        allUsersModelByNewIds[user.id] = user;
+        allUsersModelByEmail[user.email] = user;
+        console.log("Adding user: "+user.email);
+        callback();
+      }, function done() {
+        seriesCallback();
+      });
+    }).catch(function(error) {
+      console.log(error);
+      seriesCallback(error);
     });
   },
 
@@ -223,24 +243,86 @@ async.series([
   },
 
   function(seriesCallback){
+    console.log('Setting up Your Priorities if needed');
+    if (currentDomain.domain_name.indexOf("yrpri.org") > -1) {
+      async.series([
+          function(callback){
+            models.Community.build({
+              name: "World Countries",
+              description: "World Countries",
+              domain_id: currentDomain.id,
+              ip_address: ip.address(),
+              user_agent: 'yrpri script',
+              hostname: "world-countries",
+              access: 0
+            }).save().then(function (community) {
+              if (community) {
+                community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                  communityWC = community;
+                  callback();
+                });
+              } else {
+                callback('no communitity created');
+              }
+            }).catch(function (error) {
+              console.log(error);
+              callback(error);
+            });
+          }
+        ],
+        function(err, results){
+          seriesCallback(err);
+        });
+    } else {
+      seriesCallback();
+    }
+  },
+
+  function(seriesCallback){
     async.eachSeries(users, function(incoming, callback) {
       console.log('Processing user ' + incoming.email);
       var oldId = incoming['id'];
       incoming['id'] = null;
 
       if (allUsersIdsByEmail[incoming.email]) {
+        console.log("Duplicate email: " + incoming.email);
         var masterUser = allUsersModelByEmail[incoming.email];
         allUsersByOldIds[oldId] = masterUser.id;
-
-        if (incoming.encrypted_password && incoming.encrypted_password!=masterUser.encrypted_password) {
-          // TODO: Create legacy password
-        }
-
-        if (incoming.facebook_uid && incoming.facebook_uid != masterUser.facebook_id && incoming.created_at>masterUser.created_at) {
-          // TODO: Update user
-        }
-
-        callback();
+        async.series([
+          function(innerSeriesCallback){
+            if (incoming.encrypted_password &&
+                incoming.encrypted_password != masterUser.encrypted_password) {
+              models.UserLegacyPassword.build({
+                encrypted_password: incoming.encrypted_password,
+                user_id: masterUser.id
+              }).save().then(function () {
+                innerSeriesCallback();
+              }).catch(function (error) {
+                console.log(error);
+                innerSeriesCallback(error);
+              });
+            } else {
+              innerSeriesCallback();
+            }
+          },
+          function(innerSeriesCallback){
+            if (incoming.facebook_uid && incoming.facebook_uid != masterUser.facebook_id && incoming.created_at>masterUser.created_at) {
+              masterUser.facebook_id = incoming.facebook_uid;
+              masterUser.save().then(function (newUser) {
+                allUsersModelByEmail[incoming.email] = newUser;
+                innerSeriesCallback();
+              }).catch(function (error) {
+                console.log(error);
+                innerSeriesCallback(error);
+              });
+            } else {
+              innerSeriesCallback();
+            }
+          }
+        ],
+        function(err){
+          callback(err);
+        });
       } else {
         incoming['ip_address'] = ip.address();
         incoming['user_agent'] = 'yrpri script';
@@ -313,6 +395,31 @@ async.series([
         incoming['message_for_new_idea'] = null;
         incoming['message_to_users'] = null;
         incoming['google_analytics_code'] = null;
+        incoming['objectives'] = incoming['description'];
+        incoming['description'] = null;
+        models.Group.build(incoming).save().then(function (group) {
+          if (group) {
+            group.updateAllExternalCounters(fakeReq, 'up', 'counter_groups', function () {
+              allGroupsByOldIds[oldId] = group.id;
+              callback()
+            });
+          } else {
+            callback('no group created');
+          }
+        }).catch(function (error) {
+          console.error(error);
+        });
+      } else if (currentDomain.domain_name.indexOf("yrpri.org") > -1 &&
+                 incoming['iso_country_id']) {
+        allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityWC.id;
+
+        incoming['domain_id'] = null;
+        incoming['host_name'] = null;
+        incoming['default_locale'] = null;
+        incoming['message_for_new_idea'] = null;
+        incoming['message_to_users'] = null;
+        incoming['google_analytics_code'] = null;
+        incoming['iso_country_id'] = null;
         incoming['objectives'] = incoming['description'];
         incoming['description'] = null;
         models.Group.build(incoming).save().then(function (group) {
