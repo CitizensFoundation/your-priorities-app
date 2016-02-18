@@ -150,47 +150,34 @@ var uploadImage = function(url, itemType, userId, callback) {
   url = masterImageDownloadUrl+url;
   console.log("Uploading: "+url+" - "+itemType);
   var filePath = '/tmp/uploadTest.png';
-  var request = https.get(url, function(res) {
-    console.log("Uploading Got response: ");
-    res.on('data', function(response) {
-      console.log("Uploading Got real response: ");
-      if (response.toString().indexOf('AccessDenied') > -1) {
-        console.log("Uploading AccessDenied");
-        callback();
-      } else {
-        fs.writeFile(filePath, response, function(err) {
-          console.log("Uploading File saved: "+err);
-          if(err) {
-            callback(err);
-            console.log(err);
-          } else {
-            var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
-            s3UploadClient.upload(filePath, {}, function(error, versions, meta) {
-              console.log("Uploading tried: "+error+" "+versions);
-              if (error) {
-                console.log(error);
-                callback(error);
-              } else {
-                console.log('Uploading Image Complete');
-                var image = models.Image.build({
-                  user_id: userId,
-                  s3_bucket_name: process.env.S3_BUCKET,
-                  original_filename: 'image.png',
-                  formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
-                  user_agent: 'Script',
-                  ip_address: '127.0.0.1'
-                });
-                image.save().then(function() {
-                  console.log('Uploading Image Saved');
-                  callback(null, image);
-                }).catch(function(error) {
-                  console.log(error);
-                });
-              }
-            });
-          }
-        });
-      }
+  var file = fs.createWriteStream(filePath);
+  var request = https.get(url, function(response) {
+    response.pipe(file).on('close', function(){
+      console.log("Uploading File saved");
+      var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
+      s3UploadClient.upload(filePath, {}, function(error, versions, meta) {
+        console.log("Uploading tried: "+error+" "+versions);
+        if (error) {
+          console.log(error);
+          callback(error);
+        } else {
+          console.log('Uploading Image Complete');
+          var image = models.Image.build({
+            user_id: userId,
+            s3_bucket_name: process.env.S3_BUCKET,
+            original_filename: 'image.png',
+            formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
+            user_agent: 'Script',
+            ip_address: '127.0.0.1'
+          });
+          image.save().then(function() {
+            console.log('Uploading Image Saved');
+            callback(null, image);
+          }).catch(function(error) {
+            console.log(error);
+          });
+        }
+      });
     });
   });
 };
@@ -663,7 +650,7 @@ async.series([
 
   function(seriesCallback){
     async.eachSeries(categories, function(incoming, callback) {
-      console.log('Processing category ' + incoming);
+      console.log('Uploading Processing category ' + incoming);
       incoming['ip_address'] = ip.address();
       incoming['user_agent'] = 'yrpri script';
       incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
