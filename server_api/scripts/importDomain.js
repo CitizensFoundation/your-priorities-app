@@ -527,6 +527,12 @@ async.series([
       var oldId = incoming['id'];
       incoming['id'] = null;
 
+      var logoUrl = incoming['logo-url'];
+      var headerUrl = incoming['header-url'];
+
+      incoming['logo-url'] = null;
+      incoming['header-url'] = null;
+
       if (currentDomain.domain_name.indexOf("betrireykjavik") > -1) {
         if (incoming['name'].indexOf("2012") > -1) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityBH1.id;
@@ -651,10 +657,19 @@ async.series([
       var oldId = incoming['id'];
       incoming['id'] = null;
 
+      var iconUrl = incoming['icon-url'];
+      incoming['icon-url'] = null;
+
       models.Category.build(incoming).save().then(function (category) {
         if (category) {
           allCategoriesByOldIds[oldId] = category.id;
-          callback()
+          if (iconUrl && iconUrl!='') {
+            uploadImage(iconUrl, 'category-icon', category.user_id, function() {
+              callback()
+            });
+          } else {
+            callback();
+          }
         } else {
           callback('no category created');
         }
