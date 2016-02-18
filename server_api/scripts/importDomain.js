@@ -3,7 +3,7 @@ var async = require('async');
 var ip = require('ip');
 var http = require('http');
 var fs = require('fs');
-
+var https = require('https');
 var temp = require('temp');
 temp.track();
 
@@ -64,6 +64,8 @@ var communityNHS;
 var communityZH;
 
 var fakeReq;
+
+var masterImageDownloadUrl = 'https://s3.amazonaws.com/yrpri-paperclip-production';
 
 var activitiesTransform = {
   ActivityIdeaStatusUpdate: 'activity.post.status.update',
@@ -144,38 +146,51 @@ var changePostCounter = function (req, postId, column, upDown, next) {
 };
 
 var uploadImage = function(url, itemType, userId, callback) {
-  temp.open('versionUpgrade', function(err, info) {
-    var file = info.fd;
-    var request = http.get(url, function(response) {
-      response.pipe(file);
-      file.on('finish', function() {
-        file.close(function() {
-          var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
-          s3UploadClient.upload(file.path, {}, function(error, versions, meta) {
-            if (error) {
-              callback(error);
-            } else {
-              var image = models.Image.build({
-                user_id: userId,
-                s3_bucket_name: process.env.S3_BUCKET,
-                original_filename: 'image.png',
-                formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
-                user_agent: 'Script',
-                ip_address: '127.0.0.1'
-              });
-              image.save().then(function() {
-                console.log('Image Created');
-                callback(image);
-              }).catch(function(error) {
+  url = url.replace('/system/','/');
+  url = masterImageDownloadUrl+url;
+  console.log("Uploading: "+url+" - "+itemType);
+  var filePath = '/tmp/uploadTest.png';
+  var request = https.get(url, function(res) {
+    console.log("Uploading Got response: ");
+    res.on('data', function(response) {
+      console.log("Uploading Got real response: ");
+      if (response.toString().indexOf('AccessDenied') > -1) {
+        console.log("Uploading AccessDenied");
+        callback();
+      } else {
+        fs.writeFile(filePath, response, function(err) {
+          console.log("Uploading File saved: "+err);
+          if(err) {
+            callback(err);
+            console.log(err);
+          } else {
+            var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
+            s3UploadClient.upload(filePath, {}, function(error, versions, meta) {
+              console.log("Uploading tried: "+error+" "+versions);
+              if (error) {
                 console.log(error);
-              });
-            }
-          });
-        });  // close() is async, call cb after close completes.
-      });
-    }).on('error', function(err) { // Handle errors
-      fs.unlink(dest); // Delete the file async. (But we don't check the result)
-      if (cb) cb(err.message);
+                callback(error);
+              } else {
+                console.log('Uploading Image Complete');
+                var image = models.Image.build({
+                  user_id: userId,
+                  s3_bucket_name: process.env.S3_BUCKET,
+                  original_filename: 'image.png',
+                  formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
+                  user_agent: 'Script',
+                  ip_address: '127.0.0.1'
+                });
+                image.save().then(function() {
+                  console.log('Uploading Image Saved');
+                  callback(null, image);
+                }).catch(function(error) {
+                  console.log(error);
+                });
+              }
+            });
+          }
+        });
+      }
     });
   });
 };
@@ -657,15 +672,21 @@ async.series([
       var oldId = incoming['id'];
       incoming['id'] = null;
 
-      var iconUrl = incoming['icon-url'];
-      incoming['icon-url'] = null;
+      var iconUrl = incoming['icon_url'];
+      incoming['icon_url'] = null;
 
       models.Category.build(incoming).save().then(function (category) {
         if (category) {
           allCategoriesByOldIds[oldId] = category.id;
+          console.log("Uploading x:"+iconUrl);
           if (iconUrl && iconUrl!='') {
-            uploadImage(iconUrl, 'category-icon', category.user_id, function() {
-              callback()
+            uploadImage(iconUrl, 'category-icon', category.user_id, function(error) {
+              if (error) {
+                console.log(error);
+                callback();
+              } else {
+                callback()
+              }
             });
           } else {
             callback();
