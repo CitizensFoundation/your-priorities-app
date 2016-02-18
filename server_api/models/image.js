@@ -30,6 +30,19 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     classMethods: {
+
+
+      createFormatsFromVersions: function (versions) {
+        var formats = [];
+        versions.forEach(function(version) {
+          var n = version.url.lastIndexOf(process.env.S3_BUCKET);
+          var path = version.url.substring(n+process.env.S3_BUCKET.length, version.url.length);
+          var newUrl = "https://"+process.env.S3_BUCKET+".s3.amazonaws.com"+path;
+          formats.push(newUrl);
+        });
+        return formats;
+      },
+
       getUploadClient: function (s3BucketName, itemType) {
         var versions;
 
@@ -39,54 +52,96 @@ module.exports = function(sequelize, DataTypes) {
               maxHeight: 200,
               maxWidth: 200,
               format: 'png',
-              suffix: '-large',
+              suffix: '-small',
+              quality: 80
+            },
+            {
+              maxHeight: 1200,
+              maxWidth: 675,
+              format: 'png',
+              suffix: '-small',
               quality: 80
             },
             {
               maxHeight: 50,
               maxWidth: 50,
               format: 'png',
-              suffix: '-small',
+              suffix: '-mini',
               quality: 80
             }
           ]
         } else if (itemType && itemType === 'domain-logo') {
             versions = [
               {
+                maxWidth: 1200,
+                maxHeight: 675,
+                format: 'png',
+                suffix: '-large',
+                quality: 99
+              },
+              {
                 maxWidth: 432,
                 maxHeight: 243,
                 format: 'png',
-                suffix: '-large',
+                suffix: '-medium',
                 quality: 99
               }
             ]
         } else if (itemType && itemType === 'community-logo') {
           versions = [
             {
+              maxWidth: 1200,
+              maxHeight: 675,
+              format: 'png',
+              suffix: '-large',
+              quality: 99
+            },
+            {
               maxWidth: 432,
               maxHeight: 243,
               format: 'png',
-              suffix: '-large',
+              suffix: '-medium',
               quality: 99
             }
           ]
         } else if (itemType && itemType === 'group-logo') {
           versions = [
             {
+              maxWidth: 1200,
+              maxHeight: 675,
+              format: 'png',
+              suffix: '-large',
+              quality: 99
+            },
+            {
               maxWidth: 432,
               maxHeight: 243,
               format: 'png',
-              suffix: '-large',
+              suffix: '-medium',
               quality: 99
             }
           ]
         } else if (itemType && itemType === 'post-header') {
           versions = [
             {
-              maxHeight: 232,
-              maxWidth: 420,
+              maxWidth: 1200,
+              maxHeight: 675,
               format: 'png',
               suffix: '-large',
+              quality: 99
+            },
+            {
+              maxWidth: 432,
+              maxHeight: 243,
+              format: 'png',
+              suffix: '-medium',
+              quality: 99
+            },
+            {
+              maxWidth: 1920,
+              maxHeight: 1080,
+              format: 'png',
+              suffix: '-hd',
               quality: 99
             }
           ]

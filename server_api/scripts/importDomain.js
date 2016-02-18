@@ -1,6 +1,11 @@
 var models = require('../models');
 var async = require('async');
 var ip = require('ip');
+var http = require('http');
+var fs = require('fs');
+
+var temp = require('temp');
+temp.track();
 
 var filename = process.argv[2];
 
@@ -55,65 +60,67 @@ var communityBH4;
 var communityBR;
 
 var communityWC;
+var communityNHS;
+var communityZH;
 
 var fakeReq;
 
 var activitiesTransform = {
-  ActivityIdeaStatusUpdate: 'activity.IdeaStatusUpdate',
-  ActivityPointHelpfulDelete: 'activity.PointHelpfulDelete',
-  ActivityIdeaOfficialStatusSuccessful: 'activity.IdeaOfficialStatusSuccessful',
-  ActivityIdeaRevisionName: 'activity.IdeaRevisionName',
-  ActivityCapitalAdNew: 'activity.CapitalAdNew',
-  ActivityCapitalAdRefunded: 'activity.CapitalAdRefunded',
-  ActivityPointRevisionNeutral: 'activity.PointRevisionNeutral',
-  ActivityIdeaRevisionCategory: 'activity.IdeaRevisionCategory',
-  ActivityFollowingDelete: 'activity.FollowingDelete',
-  ActivityIdea1: 'activity.Idea1',
-  ActivityPointRevisionContent: 'activity.PointRevisionContent',
-  ActivityEndorsementNew: 'activity.EndorsementNew',
-  ActivityCapitalPointHelpfulUndeclareds: 'activity.CapitalPointHelpfulUndeclareds',
-  ActivityCapitalPointHelpfulEveryone: 'activity.CapitalPointHelpfulEveryone',
-  ActivityCapitalPointHelpfulDeleted: 'activity.CapitalPointHelpfulDeleted',
-  ActivityPointUnhelpful: 'activity.PointUnhelpful',
-  ActivityUserRecruited: 'activity.UserRecruited',
-  ActivityFollowingNew: 'activity.FollowingNew',
-  ActivityPointUnhelpfulDelete: 'activity.PointUnhelpfulDelete',
-  ActivityUserNew: 'activity.UserNew',
-  ActivityIdeaRevisionDescription: 'activity.IdeaRevisionDescription',
-  ActivityEndorsementDelete: 'activity.EndorsementDelete',
-  ActivityIdeaDebut: 'activity.IdeaDebut',
-  ActivityPointRevisionWebsite: 'activity.PointRevisionWebsite',
-  ActivityUserRankingDebut: 'activity.UserRankingDebut',
-  ActivityPointHelpful: 'activity.PointHelpful',
-  ActivityPointDeleted: 'activity.PointDeleted',
-  ActivityUserPictureNew: 'activity.UserPictureNew',
-  ActivityBulletinProfileNew: 'activity.BulletinProfileNew',
-  ActivityIdeaOfficialStatusInTheWorks: 'activity.IdeaOfficialStatusInTheWorks',
-  ActivityPointNew: 'activity.PointNew',
-  ActivityContentRemoval: 'activity.ContentRemoval',
-  ActivityCapitalPointHelpfulEndorsers: 'activity.CapitalPointHelpfulEndorsers',
-  ActivityIssueIdeaRising1: 'activity.IssueIdeaRising1',
-  ActivityIdeaNew: 'activity.IdeaNew',
-  ActivityOppositionNew: 'activity.OppositionNew',
-  ActivityCommentParticipant: 'activity.CommentParticipant',
-  ActivityDiscussionFollowingDelete: 'activity.DiscussionFollowingDelete',
-  ActivityCapitalPointHelpfulOpposers: 'activity.CapitalPointHelpfulOpposers',
+  ActivityIdeaStatusUpdate: 'activity.post.status.update',
+  ActivityPointHelpfulDelete: 'activity.point.helpful.delete',
+  ActivityIdeaOfficialStatusSuccessful: 'activity.post.officialStatus.successful',
+  ActivityIdeaRevisionName: 'activity.post.revision.name',
+  ActivityCapitalAdNew: 'activity.socialPoints.adNew',
+  ActivityCapitalAdRefunded: 'activity.socialPoints.adRefunded',
+  ActivityPointRevisionNeutral: 'activity.point.revision.neutral',
+  ActivityIdeaRevisionCategory: 'activity.post.revision.category',
+  ActivityFollowingDelete: 'activity.following.delete',
+  ActivityPointRevisionContent: 'activity.point.revision.content',
+  ActivityEndorsementNew: 'activity.endorsement.new',
+  ActivityBulletinNew: 'activity.comment.bulletinNew',
+  ActivityCapitalPointHelpfulUndeclareds: 'activity.socialPoint.pointHelpful',
+  ActivityCapitalPointHelpfulEveryone: 'activity.socialPoint.pointHelpful',
+  ActivityCapitalPointHelpfulDeleted: 'activity.socialPoint.pointHelpful',
+  ActivityPointUnhelpful: 'activity.point.unhelpful',
+  ActivityUserRecruited: 'activity.user.recruited',
+  ActivityFollowingNew: 'activity.following.new',
+  ActivityPointUnhelpfulDelete: 'activity.point.unHelpful.delete',
+  ActivityUserNew: 'activity.user.new',
+  ActivityIdeaRevisionDescription: 'activity.post.revision.description',
+  ActivityEndorsementDelete: 'activity.endorsement.delete',
+  ActivityIdeaDebut: 'activity.post.debut',
+  ActivityPointRevisionWebsite: 'activity.point.revision.website',
+  ActivityUserRankingDebut: 'activity.user.rankingDebut',
+  ActivityPointHelpful: 'activity.point.helpful',
+  ActivityPointDeleted: 'activity.point.deleted',
+  ActivityUserPictureNew: 'activity.user.pictureNew',
+  ActivityBulletinProfileNew: 'activity.bulletin.profileNew',
+  ActivityIdeaOfficialStatusInTheWorks: 'activity.post.officialStatus.inTheWorks',
+  ActivityPointNew: 'activity.point.new',
+  ActivityContentRemoval: 'activity.content.removal',
+  ActivityCapitalPointHelpfulEndorsers: 'activity.socialPoint.pointHelpfulEndorsers',
+  ActivityIssueIdeaRising1: 'activity.issue.postRising1',
+  ActivityIdeaNew: 'activity.post.new',
+  ActivityOppositionNew: 'activity.opposition.new',
+  ActivityCommentParticipant: 'activity.comment.participant',
+  ActivityDiscussionFollowingDelete: 'activity.discussion.following.delete',
+  ActivityCapitalPointHelpfulOpposers: 'activity.socialPoint.pointHelpfulOpposers',
   ActivityDiscussionFollowingNew: 'activity.DiscussionFollowingNew',
-  ActivityIdeaRenamed: 'activity.IdeaRenamed',
-  ActivityIdeaRising1: 'activity.IdeaRising1',
-  ActivityPointRevisionName: 'activity.PointRevisionName',
-  ActivityPointRevisionOpposition: 'activity.PointRevisionOpposition',
-  ActivityIssueIdeaControversial1: 'activity.IssueIdeaControversial1',
-  ActivityUserProbation: 'activity.UserProbation',
-  ActivityCapitalUserRecruited: 'activity.CapitalUserRecruited',
-  ActivityCapitalFollowers: 'activity.CapitalFollowers',
-  ActivityIssueIdea1: 'activity.IssueIdea1',
-  ActivityIdeaOfficialStatusFailed: 'activity.IdeaOfficialStatusFailed',
-  ActivityOppositionDelete: 'activity.OppositionDelete',
-  ActivityInvitationAccepted: 'activity.InvitationAccepted',
-  ActivityPointRevisionSupportive: 'activity.PointRevisionSupportive',
-  ActivityIdea1Opposed: 'activity.Idea1Opposed',
-  ActivityBulletinProfileAuthor: 'activity.BulletinProfileAuthor'
+  ActivityIdeaRenamed: 'activity.post.renamed',
+  ActivityIdeaRising1: 'activity.post.Rising1',
+  ActivityPointRevisionName: 'activity.point.revision.name',
+  ActivityPointRevisionOpposition: 'activity.point.RevisionOpposition',
+  ActivityIssueIdeaControversial1: 'activity.issue.postControversial1',
+  ActivityUserProbation: 'activity.user.probation',
+  ActivityCapitalUserRecruited: 'activity.capital.userRecruited',
+  ActivityCapitalFollowers: 'activity.capital.followers',
+  ActivityIssueIdea1: 'activity.issueIdea1',
+  ActivityIdeaOfficialStatusFailed: 'activity.post.officialStatus.failed',
+  ActivityOppositionDelete: 'activity.opposition.delete',
+  ActivityInvitationAccepted: 'activity.invitation.accepted',
+  ActivityPointRevisionSupportive: 'activity.point.revision.supportive',
+  ActivityIdea1Opposed: 'activity.post.1Opposed',
+  ActivityBulletinProfileAuthor: 'activity.bulletin.profileAuthor'
 };
 
 var changePostCounter = function (req, postId, column, upDown, next) {
@@ -136,8 +143,44 @@ var changePostCounter = function (req, postId, column, upDown, next) {
   });
 };
 
-async.series([
+var uploadImage = function(url, itemType, userId, callback) {
+  temp.open('versionUpgrade', function(err, info) {
+    var file = info.fd;
+    var request = http.get(url, function(response) {
+      response.pipe(file);
+      file.on('finish', function() {
+        file.close(function() {
+          var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
+          s3UploadClient.upload(file.path, {}, function(error, versions, meta) {
+            if (error) {
+              callback(error);
+            } else {
+              var image = models.Image.build({
+                user_id: userId,
+                s3_bucket_name: process.env.S3_BUCKET,
+                original_filename: 'image.png',
+                formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
+                user_agent: 'Script',
+                ip_address: '127.0.0.1'
+              });
+              image.save().then(function() {
+                console.log('Image Created');
+                callback(image);
+              }).catch(function(error) {
+                console.log(error);
+              });
+            }
+          });
+        });  // close() is async, call cb after close completes.
+      });
+    }).on('error', function(err) { // Handle errors
+      fs.unlink(dest); // Delete the file async. (But we don't check the result)
+      if (cb) cb(err.message);
+    });
+  });
+};
 
+async.series([
   function(seriesCallback){
     console.log('Processing domain '+domain);
     domain['ip_address'] = ip.address();
@@ -329,6 +372,54 @@ async.series([
             console.log(error);
             callback(error);
           });
+        },
+
+        function(callback){
+          models.Community.build({
+            name: "NHS Citizen",
+            description: "NHS Citizen",
+            domain_id: currentDomain.id,
+            ip_address: ip.address(),
+            user_agent: 'yrpri script',
+            hostname: "world-countries",
+            access: 0
+          }).save().then(function (community) {
+            if (community) {
+              community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                communityNHS = community;
+                callback();
+              });
+            } else {
+              callback('no communitity created');
+            }
+          }).catch(function (error) {
+            console.log(error);
+            callback(error);
+          });
+        },
+
+        function(callback){
+          models.Community.build({
+            name: "Zero Heroes",
+            description: "Zero Heroes",
+            domain_id: currentDomain.id,
+            ip_address: ip.address(),
+            user_agent: 'yrpri script',
+            hostname: "world-countries",
+            access: 0
+          }).save().then(function (community) {
+            if (community) {
+              community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                communityZH = community;
+                callback();
+              });
+            } else {
+              callback('no communitity created');
+            }
+          }).catch(function (error) {
+            console.log(error);
+            callback(error);
+          });
         }
       ],
       function(err, results){
@@ -471,8 +562,17 @@ async.series([
           console.error(error);
         });
       } else if (currentDomain.domain_name.indexOf("yrpri.org") > -1 &&
-                 incoming['iso_country_id']) {
-        allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityWC.id;
+                     (incoming['iso_country_id'] ||
+                     (incoming['name'] && incoming['name'].indexOf("NHS") > -1) ||
+                     (incoming['description'] && incoming['description'].indexOf("community do") > -1))) {
+
+        if (incoming['name'] && incoming['name'].indexOf("NHS") > -1) {
+          allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityNHS.id;
+        } else if (incoming['description'] && incoming['description'].indexOf("community do") > -1) {
+          allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityZH.id;
+        } else {
+          allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityWC.id;
+        }
 
         incoming['domain_id'] = null;
         incoming['host_name'] = null;
@@ -493,7 +593,7 @@ async.series([
             callback('no group created');
           }
         }).catch(function (error) {
-          console.error(error);
+          console.log(error);
         });
       } else {
         incoming['domain_id'] = currentDomain.id;
@@ -921,6 +1021,10 @@ async.series([
       incoming['id'] = null;
 
       incoming['access'] = 0;
+
+      if (activitiesTransform[incoming['type']]) {
+        incoming['type'] = activitiesTransform[incoming['type']];
+      }
 
       models.AcActivity.build(incoming).save().then(function (activity) {
         if (activity) {
