@@ -67,7 +67,7 @@ var communityZH;
 
 var fakeReq;
 
-var masterImageDownloadUrl = 'https://s3.amazonaws.com/yrpri-paperclip-production';
+var masterImageDownloadUrl;
 
 var activitiesTransform = {
   ActivityIdeaStatusUpdate: 'activity.post.status.update',
@@ -203,6 +203,13 @@ async.series([
       if (domain) {
         currentDomain = domain;
         fakeReq = { ypDomain: domain };
+        if (currentDomain.domain_name.indexOf("betrireykjavik") > -1) {
+          masterImageDownloadUrl = 'https://s3.amazonaws.com/better-reykjavik-paperclip-production';
+        } else if (currentDomain.domain_name.indexOf("yrpri") > -1) {
+          masterImageDownloadUrl = 'https://s3.amazonaws.com/yrpri-paperclip-production';
+        } else if (currentDomain.domain_name.indexOf("betraisland") > -1) {
+          masterImageDownloadUrl = 'https://s3.amazonaws.com/bettericeland-pro';
+        }
         seriesCallback();
       } else {
         seriesCallback('no domain created');
@@ -583,11 +590,13 @@ async.series([
       } else if (currentDomain.domain_name.indexOf("yrpri.org") > -1 &&
                      (incoming['iso_country_id'] ||
                      (incoming['name'] && incoming['name'].indexOf("NHS") > -1) ||
+                     (incoming['name'] && incoming['name'].indexOf("Barcombe and Hamsey") > -1) ||
                      (incoming['description'] && incoming['description'].indexOf("community do") > -1))) {
 
         if (incoming['name'] && incoming['name'].indexOf("NHS") > -1) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityNHS.id;
-        } else if (incoming['description'] && incoming['description'].indexOf("community do") > -1) {
+        } else if ((incoming['description'] && incoming['description'].indexOf("community do") > -1) ||
+                   (incoming['name'] && incoming['name'].indexOf("Barcombe and Hamsey") > -1)) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityZH.id;
         } else {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityWC.id;
