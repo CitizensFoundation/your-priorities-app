@@ -134,7 +134,7 @@ auth.role('community.admin', function (community, req, done) {
       if (community.user_id === req.user.id) {
         done(null, true);
       } else {
-        community.hasAdminUser(req.user).then(function (result) {
+        community.hasCommunityAdmin(req.user).then(function (result) {
           if (result) {
             done(null, true);
           } else {
@@ -189,7 +189,7 @@ auth.role('group.admin', function (group, req, done) {
       if (group.user_id === req.user.id) {
         done(null, true);
       } else {
-        group.hasAdminUser(req.user).then(function (result) {
+        group.hasGroupAdmin(req.user).then(function (result) {
           if (result) {
             done(null, true);
           } else {
@@ -246,14 +246,12 @@ auth.role('post.admin', function (post, req, done) {
       ]
     }).then(function (post) {
       var group = post.Group;
-      if (group.access === models.Group.ACCESS_PUBLIC) {
-        done(null, true);
-      }  else if (!req.isAuthenticated()) {
+      if (!req.isAuthenticated()) {
         done(null, false);
       } else if (post.user_id === req.user.id) {
         done(null, true);
       } else {
-        group.hasAdminUser(req.user).then(function (result) {
+        group.hasGroupAdmin(req.user).then(function (result) {
           if (result) {
             done(null, true);
           } else {
@@ -310,15 +308,12 @@ auth.role('point.admin', function (point, req, done) {
     models.Point.findOne({
       where: { id: post.id }
     }).then(function (point) {
-      var group = Post.Group;
-      if (group.access === models.Group.ACCESS_PUBLIC) {
-        done(null, true);
-      }  else if (!req.isAuthenticated()) {
+      if (!req.isAuthenticated()) {
         done(null, false);
       } else if (point.user_id === req.user.id) {
         done(null, true);
       } else {
-        group.hasAdminUser(req.user).then(function (result) {
+        group.hasGroupAdmin(req.user).then(function (result) {
           if (result) {
             done(null, true);
           } else {
@@ -376,14 +371,12 @@ auth.role('category.admin', function (category, req, done) {
       where: { id: category.id }
     }).then(function (category) {
       var group = category.Group;
-      if (group.access === models.Group.ACCESS_PUBLIC) {
-        done(null, true);
-      }  else if (!req.isAuthenticated()) {
+      if (!req.isAuthenticated()) {
         done(null, false);
       } else if (category.user_id === req.user.id) {
         done(null, true);
       } else {
-        group.hasAdminUser(req.user).then(function (result) {
+        group.hasGroupAdmin(req.user).then(function (result) {
           if (result) {
             done(null, true);
           } else {
