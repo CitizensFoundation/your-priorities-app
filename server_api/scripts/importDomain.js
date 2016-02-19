@@ -1,3 +1,5 @@
+var reallyUploadImages = true;
+
 var models = require('../models');
 var async = require('async');
 var ip = require('ip');
@@ -146,40 +148,48 @@ var changePostCounter = function (req, postId, column, upDown, next) {
 };
 
 var uploadImage = function(url, itemType, userId, callback) {
-  url = url.replace('/system/','/');
-  url = masterImageDownloadUrl+url;
-  console.log("Uploading: "+url+" - "+itemType);
-  var filePath = '/tmp/uploadTest.png';
-  var file = fs.createWriteStream(filePath);
-  var request = https.get(url, function(response) {
-    response.pipe(file).on('close', function(){
-      console.log("Uploading File saved");
-      var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
-      s3UploadClient.upload(filePath, {}, function(error, versions, meta) {
-        console.log("Uploading tried: "+error+" "+versions);
-        if (error) {
-          console.log(error);
-          callback(error);
-        } else {
-          console.log('Uploading Image Complete');
-          var image = models.Image.build({
-            user_id: userId,
-            s3_bucket_name: process.env.S3_BUCKET,
-            original_filename: 'image.png',
-            formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
-            user_agent: 'Script',
-            ip_address: '127.0.0.1'
-          });
-          image.save().then(function() {
-            console.log('Uploading Image Saved');
-            callback(null, image);
-          }).catch(function(error) {
+  if (reallyUploadImages &&
+    !(url.indexOf('Header_Default') > -1) &&
+    !(url.indexOf('missing.png') > -1))
+  {
+    url = url.replace('/system/','/');
+    url = masterImageDownloadUrl+url;
+    console.log("Uploading: "+url+" - "+itemType);
+    var filePath = '/tmp/uploadTest.png';
+    var file = fs.createWriteStream(filePath);
+    var request = https.get(url, function(response) {
+      response.pipe(file).on('close', function(){
+        console.log("Uploading File saved");
+        var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
+        s3UploadClient.upload(filePath, {}, function(error, versions, meta) {
+          console.log("Uploading tried: "+error+" "+versions);
+          if (error) {
             console.log(error);
-          });
-        }
+            callback(error);
+          } else {
+            console.log('Uploading Image Complete');
+            var image = models.Image.build({
+              user_id: userId,
+              s3_bucket_name: process.env.S3_BUCKET,
+              original_filename: 'image.png',
+              formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
+              user_agent: 'Script',
+              ip_address: '127.0.0.1'
+            });
+            image.save().then(function() {
+              console.log('Uploading Image Saved');
+              callback(null, image);
+            }).catch(function(error) {
+              console.log(error);
+            });
+          }
+        });
       });
     });
-  });
+  } else {
+    console.log('Uploading Not Uploading');
+    callback('Uploading Not really uploading images');
+  }
 };
 
 async.series([
@@ -529,8 +539,9 @@ async.series([
       var oldId = incoming['id'];
       incoming['id'] = null;
 
-      var logoUrl = incoming['logo-url'];
-      var headerUrl = incoming['header-url'];
+      var logoUrl = incoming['logo_url'];
+      var headerUrl = incoming['header_url'];
+      console.log("Uploading Header "+headerUrl);
 
       incoming['logo-url'] = null;
       incoming['header-url'] = null;
@@ -595,7 +606,22 @@ async.series([
           if (group) {
             group.updateAllExternalCounters(fakeReq, 'up', 'counter_groups', function () {
               allGroupsByOldIds[oldId] = group.id;
-              callback()
+              if (headerUrl && headerUrl!='') {
+                uploadImage(headerUrl, 'group-logo', group.user_id, function(error, image) {
+                  console.log("Uploading header has been completed");
+                  if (error) {
+                    console.log(error);
+                    callback();
+                  } else {
+                    group.addGroupLogoImage(image).then(function () {
+                      console.log("Uploading Group header Image has been added");
+                      callback()
+                    });
+                  }
+                });
+              } else {
+                callback();
+              }
             });
           } else {
             callback('no group created');
@@ -623,7 +649,25 @@ async.series([
                 if (group) {
                   group.updateAllExternalCounters(fakeReq, 'up', 'counter_groups', function () {
                     allGroupsByOldIds[oldId] = group.id;
-                    callback()
+                    if (headerUrl && headerUrl!='') {
+                      uploadImage(headerUrl, 'group-logo', group.user_id, function(error, image) {
+                        console.log("Uploading header has been completed");
+                        if (error) {
+                          console.log(error);
+                          callback();
+                        } else {
+                          group.addGroupLogoImage(image).then(function () {
+                            console.log("Uploading Group header Image has been added");
+                            community.addCommunityLogoImage(image).then(function () {
+                              console.log("Uploading Community header Image has been added");
+                              callback()
+                            });
+                          });
+                        }
+                      });
+                    } else {
+                      callback();
+                    }
                   });
                 } else {
                   callback('no group created');
@@ -665,14 +709,18 @@ async.series([
       models.Category.build(incoming).save().then(function (category) {
         if (category) {
           allCategoriesByOldIds[oldId] = category.id;
-          console.log("Uploading x:"+iconUrl);
+          console.log("Uploading "+iconUrl);
           if (iconUrl && iconUrl!='') {
-            uploadImage(iconUrl, 'category-icon', category.user_id, function(error) {
+            uploadImage(iconUrl, 'category-icon', category.user_id, function(error, image) {
+              console.log("Uploading has been completed");
               if (error) {
                 console.log(error);
                 callback();
               } else {
-                callback()
+                category.addCategoryIconImage(image).then(function () {
+                  console.log("Uploading Category Image has been added");
+                  callback()
+                });
               }
             });
           } else {
