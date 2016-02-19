@@ -4,6 +4,7 @@ var models = require('../models');
 var async = require('async');
 var ip = require('ip');
 var http = require('http');
+var url = require('url');
 var fs = require('fs');
 var https = require('https');
 var temp = require('temp');
@@ -147,58 +148,81 @@ var changePostCounter = function (req, postId, column, upDown, next) {
   });
 };
 
-var uploadImage = function(url, itemType, userId, callback) {
+var uploadImage = function(fileUrl, itemType, userId, callback) {
   if (reallyUploadImages &&
-    !(url.indexOf('Header_Default') > -1) &&
-    !(url.indexOf('missing.png') > -1))
+    !(fileUrl.indexOf('Header_Default') > -1) &&
+    !(fileUrl.indexOf('missing.png') > -1))
   {
-    url = url.replace('/system/','/');
-    url = masterImageDownloadUrl+url;
-    console.log("Uploading: "+url+" - "+itemType);
+    fileUrl = fileUrl.replace('/system/','/');
+    fileUrl = masterImageDownloadUrl+fileUrl;
+    console.log("Uploading: "+fileUrl+" - "+itemType);
     var filePath = '/tmp/uploadTest_'+ randomstring.generate(10) + '.png';
 
+    var options = {
+      host: url.parse(fileUrl).host,
+      port: 80,
+      path: url.parse(fileUrl).pathname
+    };
+
     var file = fs.createWriteStream(filePath);
-    var request = http.get(url, function(response) {
-      console.log("Uploading Got Response");
-      response.pipe(file);
-      file.on('finish', function() {
-        file.close(function() {
-          console.log("Uploading File saved");
-          var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
-          s3UploadClient.upload(filePath, {}, function(error, versions, meta) {
-            console.log("Uploading tried: "+error+" "+versions);
-            if (error) {
-              console.log(error);
-              callback(error);
-            } else {
-              console.log('Uploading Image Complete');
-              var image = models.Image.build({
-                user_id: userId,
-                s3_bucket_name: process.env.S3_BUCKET,
-                original_filename: 'image.png',
-                formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
-                user_agent: 'Script',
-                ip_address: '127.0.0.1'
-              });
-              image.save().then(function() {
-                console.log('Uploading Image Saved');
-                callback(null, image);
-              }).catch(function(error) {
-                console.log(error);
-              });
-            }
-          });
-        });  // close() is async, call cb after close completes.
+
+    var timeOut = setTimeout(function() {
+      console.log("Uploading TIMEOUT");
+      clearTimeout(timeOut);
+      callback();
+    }, 90000);
+
+    var req = http.request(options, function(res) {
+      res.on('data', function(data) {
+        console.log("Uploading File Got Data");
+        file.write(data);
+        console.log("Have written File Got Data");
       });
-      file.on('error', function (error) {
+      res.on('end', function() {
+        clearTimeout(timeOut);
+        timeOut = null;
+        console.log("Uploading File before the file.end()");
+        file.end();
+        console.log("Uploading File saved");
+        var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
+        s3UploadClient.upload(filePath, {}, function(error, versions, meta) {
+          console.log("Uploading tried: "+error+" "+versions);
+          if (error) {
+            console.log(error);
+            callback(error);
+          } else {
+            console.log('Uploading Image Complete');
+            var image = models.Image.build({
+              user_id: userId,
+              s3_bucket_name: process.env.S3_BUCKET,
+              original_filename: 'image.png',
+              formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
+              user_agent: 'Script',
+              ip_address: '127.0.0.1'
+            });
+            image.save().then(function() {
+              console.log('Uploading Image Saved');
+              callback(null, image);
+            }).catch(function(error) {
+              console.log(error);
+            });
+          }
+        });
+      });
+      res.on('error', function(error) {
         console.log(error);
+        clearTimeout(timeOut);
+        timeOut = null;
         callback();
       });
     });
-    request.on('error', function (error) {
+    req.on('error', function(error) {
       console.log(error);
+      clearTimeout(timeOut);
+      timeOut = null;
       callback();
     });
+    req.end();
   } else {
     console.log('Uploading Not Uploading');
     callback('Uploading Not really uploading images');

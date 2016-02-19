@@ -35,6 +35,7 @@
     "pg": "^3.6.3",
     "pg-hstore": "^2.3.2",
     "polylint": "^2.9.1",
+    "posix": "^4.0.0",
     "randomstring": "^1.1.4",
     "request-ip": "^1.2.2",
     "s3-uploader": "^1.0.0",
