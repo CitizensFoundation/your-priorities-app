@@ -455,6 +455,10 @@ async.series([
       var oldId = incoming['id'];
       incoming['id'] = null;
 
+      var buddyIconUrl = incoming['buddy_icon'];
+      console.log("Uploading Buddy Icon "+buddyIconUrl);
+      incoming['buddy_icon'] = null;
+
       if (allUsersIdsByEmail[incoming.email]) {
         console.log("Duplicate email: " + incoming.email);
         var masterUser = allUsersModelByEmail[incoming.email];
@@ -489,6 +493,24 @@ async.series([
             } else {
               innerSeriesCallback();
             }
+          },
+          function(innerSeriesCallback){
+            if (buddyIconUrl && buddyIconUrl!='') {
+              uploadImage(buddyIconUrl, 'user-profile', masterUser.id, function(error, image) {
+                console.log("Uploading buddy icon has been completed innerSeries");
+                if (error) {
+                  console.log(error);
+                  innerSeriesCallback();
+                } else {
+                  masterUser.addUserProfileImage(image).then(function () {
+                    console.log("Uploading buddy header Image has been added innerSeries");
+                    innerSeriesCallback()
+                  });
+                }
+              });
+            } else {
+              innerSeriesCallback();
+            }
           }
         ],
         function(err){
@@ -517,7 +539,22 @@ async.series([
             allUsersByOldIds[oldId] = user.id;
             allUsersModelByNewIds[user.id] = user;
             allUsersModelByEmail[incoming.email] = user;
-            callback()
+            if (buddyIconUrl && buddyIconUrl!='') {
+              uploadImage(buddyIconUrl, 'user-profile', user.id, function(error, image) {
+                console.log("Uploading buddy icon has been completed");
+                if (error) {
+                  console.log(error);
+                  callback();
+                } else {
+                  user.addUserProfileImage(image).then(function () {
+                    console.log("Uploading buddy header Image has been added");
+                    callback()
+                  });
+                }
+              });
+            } else {
+              callback();
+            }
           } else {
             callback('no user created');
           }
@@ -550,8 +587,8 @@ async.series([
       var headerUrl = incoming['header_url'];
       console.log("Uploading Header "+headerUrl);
 
-      incoming['logo-url'] = null;
-      incoming['header-url'] = null;
+      incoming['logo_url'] = null;
+      incoming['header_url'] = null;
 
       if (currentDomain.domain_name.indexOf("betrireykjavik") > -1) {
         if (incoming['name'].indexOf("2012") > -1) {
