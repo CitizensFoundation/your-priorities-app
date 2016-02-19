@@ -56,13 +56,6 @@ module.exports = function(sequelize, DataTypes) {
               quality: 80
             },
             {
-              maxHeight: 1200,
-              maxWidth: 675,
-              format: 'png',
-              suffix: '-small',
-              quality: 80
-            },
-            {
               maxHeight: 50,
               maxWidth: 50,
               format: 'png',

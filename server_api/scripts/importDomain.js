@@ -1,5 +1,5 @@
 var reallyUploadImages = true;
-
+var bcrypt = require('bcrypt');
 var models = require('../models');
 var async = require('async');
 var ip = require('ip');
@@ -8,7 +8,7 @@ var fs = require('fs');
 var https = require('https');
 var temp = require('temp');
 temp.track();
-
+var randomstring = require("randomstring");
 var filename = process.argv[2];
 
 console.log(filename);
@@ -155,36 +155,49 @@ var uploadImage = function(url, itemType, userId, callback) {
     url = url.replace('/system/','/');
     url = masterImageDownloadUrl+url;
     console.log("Uploading: "+url+" - "+itemType);
-    var filePath = '/tmp/uploadTest.png';
+    var filePath = '/tmp/uploadTest_'+ randomstring.generate(10) + '.png';
+
     var file = fs.createWriteStream(filePath);
-    var request = https.get(url, function(response) {
-      response.pipe(file).on('close', function(){
-        console.log("Uploading File saved");
-        var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
-        s3UploadClient.upload(filePath, {}, function(error, versions, meta) {
-          console.log("Uploading tried: "+error+" "+versions);
-          if (error) {
-            console.log(error);
-            callback(error);
-          } else {
-            console.log('Uploading Image Complete');
-            var image = models.Image.build({
-              user_id: userId,
-              s3_bucket_name: process.env.S3_BUCKET,
-              original_filename: 'image.png',
-              formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
-              user_agent: 'Script',
-              ip_address: '127.0.0.1'
-            });
-            image.save().then(function() {
-              console.log('Uploading Image Saved');
-              callback(null, image);
-            }).catch(function(error) {
+    var request = http.get(url, function(response) {
+      console.log("Uploading Got Response");
+      response.pipe(file);
+      file.on('finish', function() {
+        file.close(function() {
+          console.log("Uploading File saved");
+          var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
+          s3UploadClient.upload(filePath, {}, function(error, versions, meta) {
+            console.log("Uploading tried: "+error+" "+versions);
+            if (error) {
               console.log(error);
-            });
-          }
-        });
+              callback(error);
+            } else {
+              console.log('Uploading Image Complete');
+              var image = models.Image.build({
+                user_id: userId,
+                s3_bucket_name: process.env.S3_BUCKET,
+                original_filename: 'image.png',
+                formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
+                user_agent: 'Script',
+                ip_address: '127.0.0.1'
+              });
+              image.save().then(function() {
+                console.log('Uploading Image Saved');
+                callback(null, image);
+              }).catch(function(error) {
+                console.log(error);
+              });
+            }
+          });
+        });  // close() is async, call cb after close completes.
       });
+      file.on('error', function (error) {
+        console.log(error);
+        callback();
+      });
+    });
+    request.on('error', function (error) {
+      console.log(error);
+      callback();
     });
   } else {
     console.log('Uploading Not Uploading');
@@ -204,11 +217,11 @@ async.series([
         currentDomain = domain;
         fakeReq = { ypDomain: domain };
         if (currentDomain.domain_name.indexOf("betrireykjavik") > -1) {
-          masterImageDownloadUrl = 'https://s3.amazonaws.com/better-reykjavik-paperclip-production';
+          masterImageDownloadUrl = 'http://s3.amazonaws.com/better-reykjavik-paperclip-production';
         } else if (currentDomain.domain_name.indexOf("yrpri") > -1) {
-          masterImageDownloadUrl = 'https://s3.amazonaws.com/yrpri-paperclip-production';
+          masterImageDownloadUrl = 'http://s3.amazonaws.com/yrpri-paperclip-production';
         } else if (currentDomain.domain_name.indexOf("betraisland") > -1) {
-          masterImageDownloadUrl = 'https://s3.amazonaws.com/bettericeland-pro';
+          masterImageDownloadUrl = 'http://s3.amazonaws.com/bettericeland-pro';
         }
         seriesCallback();
       } else {
@@ -467,15 +480,27 @@ async.series([
           function(innerSeriesCallback){
             if (incoming.encrypted_password &&
                 incoming.encrypted_password != masterUser.encrypted_password) {
-              models.UserLegacyPassword.build({
-                encrypted_password: incoming.encrypted_password,
-                user_id: masterUser.id
-              }).save().then(function () {
-                innerSeriesCallback();
+              models.UserLegacyPassword.find({
+                where: { encrypted_password: incoming.encrypted_password }
+              }).then(function(legacyPassword) {
+                if (legacyPassword) {
+                  innerSeriesCallback();
+                } else {
+                  models.UserLegacyPassword.build({
+                    encrypted_password: incoming.encrypted_password,
+                    user_id: masterUser.id
+                  }).save().then(function () {
+                    innerSeriesCallback();
+                  }).catch(function (error) {
+                    console.log(error);
+                    innerSeriesCallback(error);
+                  });
+                }
               }).catch(function (error) {
                 console.log(error);
                 innerSeriesCallback(error);
               });
+
             } else {
               innerSeriesCallback();
             }
