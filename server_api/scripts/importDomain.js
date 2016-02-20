@@ -9,8 +9,11 @@ var fs = require('fs');
 var https = require('https');
 var temp = require('temp');
 temp.track();
+
 var randomstring = require("randomstring");
 var filename = process.argv[2];
+
+var spawn = require('child_process').spawn;
 
 console.log(filename);
 
@@ -158,32 +161,27 @@ var uploadImage = function(fileUrl, itemType, userId, callback) {
     console.log("Uploading: "+fileUrl+" - "+itemType);
     var filePath = '/tmp/uploadTest_'+ randomstring.generate(10) + '.png';
 
-    var options = {
-      host: url.parse(fileUrl).host,
-      port: 80,
-      path: url.parse(fileUrl).pathname
-    };
-
     var file = fs.createWriteStream(filePath);
+    var curl = spawn('curl', [fileUrl]);
 
-    var timeOut = setTimeout(function() {
-      console.log("Uploading TIMEOUT");
-      clearTimeout(timeOut);
-      callback();
-    }, 90000);
+    curl.stdout.on('data', function(data) {
+      console.log("Uploading File Got Data");
+      file.write(data);
+      console.log("Have written File Got Data");
+    });
 
-    var req = http.request(options, function(res) {
-      res.on('data', function(data) {
-        console.log("Uploading File Got Data");
-        file.write(data);
-        console.log("Have written File Got Data");
-      });
-      res.on('end', function() {
-        clearTimeout(timeOut);
-        timeOut = null;
-        console.log("Uploading File before the file.end()");
+    curl.stdout.on('end', function(data) {
+      console.log("Uploading File before the file.end()");
+      file.end();
+      console.log("Uploading File saved");
+    });
+
+    curl.on('exit', function(code) {
+      if (code != 0) {
         file.end();
-        console.log("Uploading File saved");
+        console.log('Uploading Failed: ' + code + ' '+fileUrl);
+        callback();
+      } else {
         var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
         s3UploadClient.upload(filePath, {}, function(error, versions, meta) {
           console.log("Uploading tried: "+error+" "+versions);
@@ -208,21 +206,8 @@ var uploadImage = function(fileUrl, itemType, userId, callback) {
             });
           }
         });
-      });
-      res.on('error', function(error) {
-        console.log(error);
-        clearTimeout(timeOut);
-        timeOut = null;
-        callback();
-      });
+      }
     });
-    req.on('error', function(error) {
-      console.log(error);
-      clearTimeout(timeOut);
-      timeOut = null;
-      callback();
-    });
-    req.end();
   } else {
     console.log('Uploading Not Uploading');
     callback('Uploading Not really uploading images');
