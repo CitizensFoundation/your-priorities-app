@@ -13,6 +13,7 @@ temp.track();
 var randomstring = require("randomstring");
 var filename = process.argv[2];
 
+var exec = require('child_process').exec;
 var spawn = require('child_process').spawn;
 
 console.log(filename);
@@ -131,6 +132,45 @@ var activitiesTransform = {
   ActivityBulletinProfileAuthor: 'activity.bulletin.profileAuthor'
 };
 
+var errorUrls = {};
+var errorUrlsFilename = "/tmp/errorUrlsFromOldImport";
+
+var cacheUrls = {};
+var cacheUrlsFilename = "/tmp/cacheUrlsFromOldImport";
+
+var saveErrorUrls = function (callback) {
+  fs.writeFile(errorUrlsFilename, JSON.stringify( errorUrls ), "utf8", callback );
+};
+
+var loadErrorUrls = function (callback) {
+  fs.readFile(errorUrlsFilename, 'utf8', function (err, data) {
+    if (err) {
+      errorUrls = {};
+      callback();
+    } else {
+      errorUrls = JSON.parse(data);
+      callback();
+    }
+  });
+};
+
+var saveCacheUrls = function (callback) {
+  fs.writeFile(cacheUrlsFilename, JSON.stringify( cacheUrls ), "utf8", callback );
+};
+
+var loadCacheUrls = function (callback) {
+  fs.readFile(cacheUrlsFilename, 'utf8', function (err, data) {
+    if (err) {
+      cacheUrls = {};
+      callback();
+    } else {
+      cacheUrls = JSON.parse(data);
+      callback();
+    }
+  });
+};
+
+
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
     where: { id: postId }
@@ -151,6 +191,33 @@ var changePostCounter = function (req, postId, column, upDown, next) {
   });
 };
 
+var s3Upload = function(filePath, itemType, userId, callback) {
+  var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
+  s3UploadClient.upload(filePath, {}, function(error, versions, meta) {
+    console.log("Uploading tried: "+error+" "+versions);
+    if (error) {
+      console.log(error);
+      callback(error);
+    } else {
+      console.log('Uploading Image Complete');
+      var image = models.Image.build({
+        user_id: userId,
+        s3_bucket_name: process.env.S3_BUCKET,
+        original_filename: 'image.png',
+        formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
+        user_agent: 'Script',
+        ip_address: '127.0.0.1'
+      });
+      image.save().then(function() {
+        console.log('Uploading Image Saved');
+        callback(null, image);
+      }).catch(function(error) {
+        console.log(error);
+      });
+    }
+  });
+};
+
 var uploadImage = function(fileUrl, itemType, userId, callback) {
   if (reallyUploadImages &&
     !(fileUrl.indexOf('Header_Default') > -1) &&
@@ -158,56 +225,39 @@ var uploadImage = function(fileUrl, itemType, userId, callback) {
   {
     fileUrl = fileUrl.replace('/system/','/');
     fileUrl = masterImageDownloadUrl+fileUrl;
-    console.log("Uploading: "+fileUrl+" - "+itemType);
-    var filePath = '/tmp/uploadTest_'+ randomstring.generate(10) + '.png';
 
-    var file = fs.createWriteStream(filePath);
-    var curl = spawn('curl', [fileUrl]);
+    if (errorUrls[fileUrl]==null) {
+      console.log("Uploading: "+fileUrl+" - "+itemType);
 
-    curl.stdout.on('data', function(data) {
-      console.log("Uploading File Got Data");
-      file.write(data);
-      console.log("Have written File Got Data");
-    });
-
-    curl.stdout.on('end', function(data) {
-      console.log("Uploading File before the file.end()");
-      file.end();
-      console.log("Uploading File saved");
-    });
-
-    curl.on('exit', function(code) {
-      if (code != 0) {
-        file.end();
-        console.log('Uploading Failed: ' + code + ' '+fileUrl);
-        callback();
+      if (cacheUrls[fileUrl]) {
+        console.log('Uploading FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE');
+        s3Upload(cacheUrls[fileUrl], itemType, userId, callback);
       } else {
-        var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
-        s3UploadClient.upload(filePath, {}, function(error, versions, meta) {
-          console.log("Uploading tried: "+error+" "+versions);
-          if (error) {
-            console.log(error);
-            callback(error);
-          } else {
-            console.log('Uploading Image Complete');
-            var image = models.Image.build({
-              user_id: userId,
-              s3_bucket_name: process.env.S3_BUCKET,
-              original_filename: 'image.png',
-              formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
-              user_agent: 'Script',
-              ip_address: '127.0.0.1'
+        var filePath = '/tmp/uploadTest_'+ randomstring.generate(10) + '.png';
+
+        // compose the wget command
+        var wget = 'wget -O ' + filePath + ' ' + '"'+fileUrl+'"';
+        console.log('Uploading Starting '+wget);
+        var child = exec(wget, function(err, stdout, stderr) {
+          if (err) {
+            console.log('Uploading Failed: '+err);
+            errorUrls[fileUrl] = true;
+            saveErrorUrls(function () {
+              callback("Upload failed");
             });
-            image.save().then(function() {
-              console.log('Uploading Image Saved');
-              callback(null, image);
-            }).catch(function(error) {
-              console.log(error);
+          } else {
+            console.log('Uploading File Saved');
+            cacheUrls[fileUrl] = filePath;
+            saveCacheUrls(function () {
+              s3Upload(filePath, itemType, userId, callback);
             });
           }
         });
       }
-    });
+    } else {
+      console.log('Uploading ON ERROR LIST  ON ERROR LIST  ON ERROR LIST  ON ERROR LISTON ERROR LIST  ON ERROR LIST  ON ERROR LIST  ON ERROR LIST');
+      callback('Uploading Not really uploading images');
+    }
   } else {
     console.log('Uploading Not Uploading');
     callback('Uploading Not really uploading images');
@@ -238,6 +288,13 @@ async.series([
       }
     }).catch(function (error) {
       console.error(error);
+    });
+  },
+
+  function(seriesCallback){
+    console.log('Loading error urls');
+    loadErrorUrls(function() {
+      loadCacheUrls(seriesCallback);
     });
   },
 
