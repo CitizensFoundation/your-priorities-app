@@ -68,6 +68,9 @@
       yp-point-actions {
       }
 
+      .userName {
+        color: #777;
+      }
     </style>
 
     <template is="dom-if" if="[[point]]">
@@ -83,6 +86,9 @@
         <div class="point-content">
 
           <div class$="[[computeClass(point)]]">
+            <div class="userName">
+              [[user.name]]
+            </div>
             <span hidden$="[[!point.name]]"><span>[[point.name]]</span>. </span><span>[[point.content]]</span>
             <yp-point-actions point="[[point]]"></yp-point-actions>
           </div>

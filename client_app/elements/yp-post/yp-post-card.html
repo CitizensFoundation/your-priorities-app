@@ -129,6 +129,7 @@
       }
     </style>
 
+    <template is="dom-if" if="[[post]]">
       <paper-material class="postCard" elevation="[[elevation]]">
         <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
         <div class="layout vertical">
@@ -141,6 +142,7 @@
           </div>
         </div>
       </paper-material>
+    </template>
   </template>
 
   <script>
@@ -203,6 +205,9 @@
       },
 
       postName: function (post) {
+        if (!post) {
+          debugger;
+        }
         if (post.name) {
           return this.truncate(this.trim(post.name), 60);
         } else {

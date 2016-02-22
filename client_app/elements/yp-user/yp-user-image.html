@@ -7,6 +7,8 @@
       :host {
         display: block;
         vertical-align: text-top;
+        height: 48px;
+        width: 48px;
       }
 
       .small {
@@ -50,23 +52,20 @@
     </style>
 
     <template restamp is="dom-if" if="[[user]]">
-
       <template is="dom-if" if="[[profileImageUrl]]">
         <iron-image sizing="cover" title="{{user.name}}" preload src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
       </template>
 
       <template is="dom-if" if="[[!profileImageUrl]]">
-        <template is="dom-if" if="[[user.facebook_uid]]">
+        <template is="dom-if" if="[[user.facebook_id]]">
           <iron-image sizing="cover" title="{{user.name}}" preload src$="[[computeFacebookSrc(user)]]" class$="[[computeClass(small)]]"></iron-image>
         </template>
 
-        <template is="dom-if" if="[[computeIf(user)]]">
-          <span>{{user.id}}</span> <span>{{user.buddy_icon_file_name}}</span><br>
+        <template is="dom-if" if="[[usePlaceHolderImage(user)]]">
+          fdsfdfd
+          <iron-image sizing="cover" title="{{user.name}}" preload src="https://s3.amazonaws.com/yrpri-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class$="[[computeClass(small)]]"></iron-image>
         </template>
 
-        <template is="dom-if" if="[[!user.facebook_uid]]">
-          <iron-image sizing="cover" title="{{user.name}}" preload src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class$="[[computeClass(small)]]"></iron-image>
-        </template>
       </template>
 
     </template>
@@ -98,7 +97,8 @@
         },
 
         profileImageUrl: {
-          type: String
+          type: String,
+          value: null
         }
       },
 
@@ -111,7 +111,7 @@
       },
 
       computeIf: function (user) {
-        return false && !user.facebook_uid && user.buddy_icon_file_name;
+        return false && !user.facebook_id && user.buddy_icon_file_name;
       },
 
       computeClass: function (small) {
@@ -124,7 +124,11 @@
       },
 
       computeFacebookSrc: function (user) {
-        return 'http://graph.facebook.com/' + user.facebook_uid + '/picture';
+        return 'http://graph.facebook.com/' + user.facebook_id + '/picture';
+      },
+
+      usePlaceHolderImage: function (user) {
+        (this.profileImageUrl==null && user.facebook_id==null)
       },
 
       ready: function () {
