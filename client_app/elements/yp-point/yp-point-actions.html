@@ -45,7 +45,7 @@
       .all-actions {
         @apply(--layout-horizontal);
         @apply(--layout-flex);
-        @apply(--layout-end-justified);
+        @apply(--layout-start-justified);
         color: var(--primary-love-color-up, rgba(50,50,50,0.45));
       }
 
@@ -56,11 +56,11 @@
     </style>
 
     <div class="all-actions" hidden$="[[hideNotHelpful]]">
-      <div id="actionUp">
+      <div id="actionUp" class="actionUp layout horizontal">
         <div class="action-text action-up">{{point.counter_quality_up}}</div>
         <paper-icon-button icon="thumb-up" class="point-up-vote-icon" on-tap="pointHelpful"></paper-icon-button>
       </div>
-      <div id="actionDown">
+      <div id="actionDown" class="actionDown layout horizontal">
         <div class="action-text">{{point.counter_quality_down}}</div>
         <paper-icon-button size="16x16" icon="thumb-down" class="point-down-vote-icon" on-tap="pointNotHelpful"></paper-icon-button>
       </div>
