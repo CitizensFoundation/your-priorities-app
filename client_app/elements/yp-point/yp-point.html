@@ -36,11 +36,11 @@
       }
 
       .for {
-        color: var(--primary-up-color-bit-lighter, #003300);
+        color: var(--primary-up-color-bit-lighter, #009900);
       }
 
       .against {
-        color: var(--primary-down-color-bit-lighter, #4C0000);
+        color: var(--primary-down-color-bit-lighter, #990000);
       }
 
       .point-container {
@@ -60,6 +60,7 @@
           display: none;
         }
       }
+
       .user-image-right {
         padding-right: 0px;
         padding-left: 16px;
@@ -71,34 +72,30 @@
       .userName {
         color: #777;
       }
+
+      yp-user-image {
+        padding-top: 4px;
+      }
     </style>
 
     <template is="dom-if" if="[[point]]">
 
       <div class="point-container">
 
-        <template is="dom-if" if="[[upVote(point)]]">
-          <div class="user-image">
-            <yp-user-image user="[[user]]"></yp-user-image>
-          </div>
-        </template>
+        <div class="user-image">
+          <yp-user-image user="[[user]]"></yp-user-image>
+        </div>
 
         <div class="point-content">
 
-          <div class$="[[computeClass(point)]]">
-            <div class="userName">
+          <div>
+            <div class$="[[computeClass(point)]]">
               [[user.name]]
             </div>
             <span hidden$="[[!point.name]]"><span>[[point.name]]</span>. </span><span>[[point.content]]</span>
             <yp-point-actions point="[[point]]"></yp-point-actions>
           </div>
         </div>
-
-        <template is="dom-if" if="[[downVote(point)]]">
-          <div class="user-image user-image-right">
-            <yp-user-image user="[[user]]"></yp-user-image>
-          </div>
-        </template>
 
       </div>
 
