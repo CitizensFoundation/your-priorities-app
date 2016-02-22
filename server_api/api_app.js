@@ -97,7 +97,7 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(id, done) {
   models.User.find({
     where: {id: id},
-    attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id", "buddy_icon_file_name"],
+    attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
     include: [{
       model: models.Endorsement,
       attributes: ['id', 'value', 'post_id'],

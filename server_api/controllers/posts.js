@@ -105,12 +105,18 @@ router.get('/:id', auth.can('view post'), function(req, res) {
         required: false,
         order: 'Point.position DESC',
         include: [
-          { model: models.PointRevision ,
+          { model: models.PointRevision,
             required: false,
             include: [
               { model: models.User,
-                attributes: ["id", "name", "facebook_id", "buddy_icon_file_name"],
-                required: false
+                attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
+                required: false,
+                include: [
+                  {
+                    model: models.Image, as: 'UserProfileImages',
+                    required: false
+                  }
+                ]
               }
             ]
           },
@@ -118,7 +124,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
             required: false,
             include: [
               { model: models.User,
-                attributes: ["id", "name", "facebook_id", "buddy_icon_file_name"],
+                attributes: ["id", "name", "email"],
                 required: false
               }
             ]
