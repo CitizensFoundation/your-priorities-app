@@ -52,15 +52,17 @@ module.exports = function(sequelize, DataTypes) {
               maxHeight: 200,
               maxWidth: 200,
               format: 'png',
+              aspect: '1:1!h',
               suffix: '-small',
-              quality: 80
+              quality: 99
             },
             {
               maxHeight: 50,
               maxWidth: 50,
+              aspect: '1:1!',
               format: 'png',
               suffix: '-mini',
-              quality: 80
+              quality: 99
             }
           ]
         } else if (itemType && itemType === 'domain-logo') {

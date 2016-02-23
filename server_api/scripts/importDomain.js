@@ -1,4 +1,4 @@
-var reallyUploadImages = false;
+var reallyUploadImages = true;
 
 var bcrypt = require('bcrypt');
 var models = require('../models');
@@ -137,10 +137,10 @@ var activitiesTransform = {
 };
 
 var errorUrls = {};
-var errorUrlsFilename = "/tmp/errorUrlsFromOldImport";
+var errorUrlsFilename = "/media/Data/yrpriCache/errorUrlsFromOldImport";
 
 var cacheUrls = {};
-var cacheUrlsFilename = "/tmp/cacheUrlsFromOldImport";
+var cacheUrlsFilename = "/media/Data/yrpriCache/cacheUrlsFromOldImport";
 
 var saveErrorUrls = function (callback) {
   fs.writeFile(errorUrlsFilename, JSON.stringify( errorUrls ), "utf8", callback );
@@ -248,6 +248,8 @@ var uploadImage = function(fileUrl, itemType, userId, callback) {
     fileUrl = fileUrl.replace('/system/','/');
     fileUrl = masterImageDownloadUrl+fileUrl;
 
+    var timeout;
+
     if (errorUrls[fileUrl]==null) {
       console.log("Uploading: "+fileUrl+" - "+itemType);
 
@@ -255,24 +257,36 @@ var uploadImage = function(fileUrl, itemType, userId, callback) {
         console.log('Uploading FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE');
         s3Upload(cacheUrls[fileUrl], itemType, userId, callback);
       } else {
-        var filePath = '/tmp/uploadTest_'+ randomstring.generate(10) + '.png';
+        var filePath = '/media/Data/yrpriCache/uploadTest_'+ randomstring.generate(10) + '.png';
 
         // compose the wget command
         var wget = 'wget -O ' + filePath + ' ' + '"'+fileUrl+'"';
         console.log('Uploading Starting '+wget);
+
+        timeout = setTimeout(function() {
+          console.log("Uploading timeout triggered");
+          clearTimeout(timeout);
+          timeout = null;
+          callback();
+        },65000);
+
         var child = exec(wget, function(err, stdout, stderr) {
-          if (err) {
-            console.log('Uploading Failed: '+err);
-            errorUrls[fileUrl] = true;
-            saveErrorUrls(function () {
-              callback("Upload failed");
-            });
-          } else {
-            console.log('Uploading File Saved');
-            cacheUrls[fileUrl] = filePath;
-            saveCacheUrls(function () {
-              s3Upload(filePath, itemType, userId, callback);
-            });
+          if (timeout) {
+            clearTimeout(timeout);
+            timeout = null;
+            if (err) {
+              console.log('Uploading Failed: '+err);
+              errorUrls[fileUrl] = true;
+              saveErrorUrls(function () {
+                callback("Upload failed");
+              });
+            } else {
+              console.log('Uploading File Saved');
+              cacheUrls[fileUrl] = filePath;
+              saveCacheUrls(function () {
+                s3Upload(filePath, itemType, userId, callback);
+              });
+            }
           }
         });
       }
