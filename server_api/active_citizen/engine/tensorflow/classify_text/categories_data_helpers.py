@@ -2,12 +2,37 @@ import numpy as np
 import re
 import itertools
 from collections import Counter
+import unicodedata
+
+def strip_accents(text):
+    """
+    Strip accents from input String.
+
+    :param text: The input string.
+    :type text: String.
+
+    :returns: The processed String.
+    :rtype: String.
+    """
+    try:
+        text = unicode(text, 'utf-8')
+    except NameError: # unicode is a default on python 3
+        pass
+    text = unicodedata.normalize('NFD', text)
+    text = text.encode('ascii', 'ignore')
+    text = text.decode("utf-8")
+    return str(text)
 
 def clean_str(string):
     """
     Tokenization/string cleaning for all datasets except for SST.
     Original taken from https://github.com/yoonkim/CNN_sentence/blob/master/process_data.py
     """
+    string = re.sub("þ", "th", string)
+    string = re.sub("Þ", "Th", string)
+    string = re.sub("ð", "d", string)
+    string = re.sub("Ð", "D", string)
+    string = strip_accents(string)
     string = re.sub(r"[^A-Za-z0-9(),!?\'\`]", " ", string)
     string = re.sub(r"\'s", " \'s", string)
     string = re.sub(r"\'ve", " \'ve", string)
