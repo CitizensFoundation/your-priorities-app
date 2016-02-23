@@ -40,6 +40,11 @@ router.get('/:id', auth.can('view community'), function(req, res) {
       },
       {
         model: models.Group,
+        where: {
+          access: {
+            $ne: models.Group.ACCESS_SECRET
+          }
+        },
         required: false,
         order: [
           [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'desc' ]

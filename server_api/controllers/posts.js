@@ -103,7 +103,9 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       // Point
       { model: models.Point,
         required: false,
-        order: 'Point.position DESC',
+        order: [
+          models.sequelize.literal('(Point.counter_quality_up-Point.counter_quality_down) desc')
+        ],
         include: [
           { model: models.PointRevision,
             required: false,

@@ -1,4 +1,5 @@
-var reallyUploadImages = true;
+var reallyUploadImages = false;
+
 var bcrypt = require('bcrypt');
 var models = require('../models');
 var async = require('async');
@@ -31,6 +32,7 @@ var post_status_changes = json['post_status_changes'];
 var endorsements = json['endorsements'];
 var points = json['points'];
 var point_revisions = json['point_revisions'];
+var point_qualities = json['point_qualities'];
 var comments = json['comments'];
 var promotions = json['promotions'];
 var pages = json['pages'];
@@ -39,12 +41,14 @@ var activities = json['activities'];
 var allUsersIdsByEmail = {};
 var allUsersModelByEmail = {};
 var allUsersByOldIds = {};
+var allUserModelsByOldIds = {};
 var allUsersModelByNewIds = {};
 
 var needsGroupUserPermissions = [];
 var needsGroupAdminPermissions = [];
 
 var allGroupsByOldIds = {};
+var allGroupsModelByOldIds = {};
 var allCommunitiesByOldGroupIds = {};
 var allCategoriesByOldIds = {};
 var allPostsByOldIds = {};
@@ -170,6 +174,24 @@ var loadCacheUrls = function (callback) {
   });
 };
 
+
+var changePointCounter = function (pointId, column, upDown, next) {
+  models.Point.find({
+    where: { id: pointId }
+  }).then(function(point) {
+    if (point && upDown===1) {
+      point.increment(column).then(function(){
+        next();
+      });
+    } else if (point && upDown===-1) {
+      point.decrement(column).then(function(){
+        next();
+      });
+    } else {
+      next();
+    }
+  });
+};
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
@@ -538,10 +560,19 @@ async.series([
       console.log("Uploading Buddy Icon "+buddyIconUrl);
       incoming['buddy_icon'] = null;
 
+      if (incoming['group_id']) {
+        needsGroupUserPermissions.push( {group_id: incoming['group_id'], user_id: oldId } );
+        if (incoming['is_admin']) {
+          needsGroupAdminPermissions.push( {group_id: incoming['group_id'], user_id: oldId } );
+        }
+        incoming['group_id'] = null;
+      }
+
       if (allUsersIdsByEmail[incoming.email]) {
         console.log("Duplicate email: " + incoming.email);
         var masterUser = allUsersModelByEmail[incoming.email];
         allUsersByOldIds[oldId] = masterUser.id;
+        allUserModelsByOldIds[oldId] = masterUser;
         async.series([
           function(innerSeriesCallback){
             if (incoming.encrypted_password &&
@@ -616,18 +647,11 @@ async.series([
           incoming['name']=incoming['email'];
         }
 
-        if (incoming['group_id']) {
-          needsGroupUserPermissions.push( {group_id: incoming['group_id'], user_id: incoming['id'] } );
-          if (incoming['is_admin']) {
-            needsGroupAdminPermissions.push( {group_id: incoming['group_id'], user_id: incoming['id'] } );
-          }
-          incoming['group_id'] = null;
-        }
-
         models.User.build(incoming).save().then(function (user) {
           if (user) {
             allUsersIdsByEmail[incoming.email] = user.id;
             allUsersByOldIds[oldId] = user.id;
+            allUserModelsByOldIds[oldId] = user;
             allUsersModelByNewIds[user.id] = user;
             allUsersModelByEmail[incoming.email] = user;
             if (buddyIconUrl && buddyIconUrl!='') {
@@ -707,6 +731,7 @@ async.series([
           if (group) {
             group.updateAllExternalCounters(fakeReq, 'up', 'counter_groups', function () {
               allGroupsByOldIds[oldId] = group.id;
+              allGroupsModelByOldIds[oldId] = group;
               callback()
             });
           } else {
@@ -743,6 +768,7 @@ async.series([
           if (group) {
             group.updateAllExternalCounters(fakeReq, 'up', 'counter_groups', function () {
               allGroupsByOldIds[oldId] = group.id;
+              allGroupsModelByOldIds[oldId] = group;
               if (headerUrl && headerUrl!='') {
                 uploadImage(headerUrl, 'group-logo', group.user_id, function(error, image) {
                   console.log("Uploading header has been completed");
@@ -769,6 +795,10 @@ async.series([
       } else {
         incoming['domain_id'] = currentDomain.id;
 
+        if (incoming['private_instance'] && incoming['private_instance']==true) {
+          incoming['access'] = 2;
+        }
+
         models.Community.build(incoming).save().then(function (community) {
           if (community) {
             community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
@@ -786,6 +816,7 @@ async.series([
                 if (group) {
                   group.updateAllExternalCounters(fakeReq, 'up', 'counter_groups', function () {
                     allGroupsByOldIds[oldId] = group.id;
+                    allGroupsModelByOldIds[oldId] = group;
                     if (headerUrl && headerUrl!='') {
                       uploadImage(headerUrl, 'group-logo', group.user_id, function(error, image) {
                         console.log("Uploading header has been completed");
@@ -1102,6 +1133,56 @@ async.series([
   },
 
   function(seriesCallback){
+    async.eachSeries(point_qualities, function(incoming, callback) {
+      console.log('Processing point quality ' + incoming);
+      incoming['ip_address'] = ip.address();
+      incoming['user_agent'] = 'yrpri script';
+      incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
+      incoming['point_id'] = allPointsByOldIds[incoming['point_id']];
+
+      var oldId = incoming['id'];
+      incoming['id'] = null;
+
+      if (incoming['status']==null) {
+        incoming['status']="active";
+      }
+
+      if (incoming['value']==true) {
+        incoming['value'] = 1
+      } else {
+        incoming['value'] = -1
+      }
+
+      models.PointQuality.build(incoming).save().then(function (pointQuality) {
+        if (pointQuality) {
+          if (pointQuality.value>0) {
+            changePointCounter(incoming['point_id'], 'counter_quality_up', 1, function () {
+              callback()
+            })
+          } else if (pointQuality.value<0) {
+            changePointCounter(incoming['point_id'], 'counter_quality_down', 1, function () {
+              callback()
+            })
+          } else {
+            console.log('PointQuality Error');
+            callback("PointQuality Error")
+          }
+        } else {
+          callback('no point quality created');
+        }
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }, function(err){
+      if (err) {
+        console.log(err);
+      } else {
+        seriesCallback();
+      }
+    });
+  },
+
+  function(seriesCallback){
     async.eachSeries(comments, function(incoming, callback) {
       console.log('Processing comments ' + incoming);
       incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
@@ -1254,8 +1335,77 @@ async.series([
   },
 
   function(seriesCallback){
-    // TODO: Process GroupUser GroupAdmin
-    seriesCallback();
+    async.eachSeries(needsGroupUserPermissions, function(incoming, callback) {
+      var user = allUserModelsByOldIds[incoming['user_id']];
+      var group = allGroupsModelByOldIds[incoming['group_id']];
+      console.log(incoming['user_id']);
+      console.log(incoming['group_id']);
+      console.log('Processing user in group user ' + user.email+' for group '+group.name);
+      models.Group.addUserToGroupIfNeeded(group.id, { user: user, ypDomain: currentDomain }, function() {
+        callback();
+      });
+    }, function(err){
+      if (err) {
+        console.log(err);
+      } else {
+        seriesCallback();
+      }
+    });
+  },
+
+  function(seriesCallback){
+    async.eachSeries(needsGroupAdminPermissions, function(incoming, callback) {
+      var user = allUserModelsByOldIds[incoming.user_id];
+      var group = allGroupsModelByOldIds[incoming.group_id];
+      console.log('Processing admin user in group user ' + user.email+' for group '+group.name);
+      group.hasGroupAdmin(user).then(function(results) {
+        console.log('Has user results: '+results);
+        if (!results) {
+          console.log('Adding user to group');
+          group.addGroupAdmin(user).then(function () {
+            callback();
+          });
+        } else {
+          console.log('User already in group');
+          callback();
+        }
+      })
+    }, function(err){
+      if (err) {
+        console.log(err);
+      } else {
+        seriesCallback();
+      }
+    });
+  },
+
+  function(seriesCallback){
+    async.eachSeries(needsGroupAdminPermissions, function(incoming, callback) {
+      var user = allUserModelsByOldIds[incoming.user_id];
+      var group = allGroupsModelByOldIds[incoming.group_id];
+      console.log('Processing admin user in community user ' + user.email+' for community '+group.name);
+      models.Community.find({
+        where: {id: group.community_id}
+      }).then(function (community) {
+        community.hasCommunityAdmin(user).then(function(results) {
+          if (!results) {
+            console.log('Adding user to community');
+            community.addCommunityAdmin(user).then(function () {
+              callback();
+            });
+          } else {
+            console.log('User already in community');
+            callback();
+          }
+        })
+      });
+    }, function(err){
+      if (err) {
+        console.log(err);
+      } else {
+        seriesCallback();
+      }
+    });
   }
 ]);
 
