@@ -582,6 +582,13 @@ async.series([
         incoming['group_id'] = null;
       }
 
+      if (incoming['first_name'] && incoming['last_name']) {
+        var newName = incoming['first_name'].trim() + ' ' + incoming['last_name'].trim();
+        if (newName.length>incoming['name'].length) {
+          incoming['name'] = newName;
+        }
+      }
+
       if (allUsersIdsByEmail[incoming.email]) {
         console.log("Duplicate email: " + incoming.email);
         var masterUser = allUsersModelByEmail[incoming.email];
@@ -1096,7 +1103,14 @@ async.series([
       models.Point.build(incoming).save().then(function (point) {
         if (point) {
           allPointsByOldIds[oldId] = point.id;
-          callback()
+          models.Post.find({
+            where: { id: point.post_id }
+          }).then(function(post) {
+            post.updateAllExternalCounters({ ypDomain: currentDomain }, 'up', 'counter_points', function () {
+              post.increment('counter_points');
+              callback()
+            });
+          });
         } else {
           callback('no point created');
         }
@@ -1216,7 +1230,19 @@ async.series([
           incoming['post_id'] = null;
           models.PointRevision.build(incoming).save().then(function (point_revision) {
             if (point_revision) {
-              callback()
+              models.Post.find({
+                where: { id: point.post_id }
+              }).then(function(post) {
+                if (post) {
+                  post.updateAllExternalCounters({ ypDomain: currentDomain }, 'up', 'counter_points', function () {
+                    post.increment('counter_points');
+                    callback()
+                  });
+                } else {
+                  console.log("Error Can't find post for comment: "+point.content);
+                  callback();
+                }
+              });
             } else {
               callback('no point revision created');
             }
@@ -1422,22 +1448,4 @@ async.series([
     });
   }
 ]);
-
-
-
-// Load instance
-// Create domain
-
-// Load all users
-// Create all users and store a reference to the old user id
-
-// Load all subinstances
-// Create communities and groups from sub instances
-
-// Load ideas and create posts
-// Load points and create points
-// Load comments and create points
-// Load activities and create activities
-
-// Load all
 

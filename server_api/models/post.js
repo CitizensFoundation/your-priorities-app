@@ -141,27 +141,8 @@ module.exports = function(sequelize, DataTypes) {
                 group.increment(column);
               else if (direction=='down')
                 group.decrement(column);
-              sequelize.models.Community.find({
-                where: {id: group.community_id}
-              }).then(function (community) {
-                if (direction=='up')
-                  community.increment(column);
-                else if (direction=='down')
-                  community.decrement(column);
-                callback();
-              }.bind(this));
+              group.updateAllExternalCounters(req, direction, column, callback);
             }.bind(this))
-          }.bind(this),
-          function(callback) {
-            if (req.ypDomain) {
-              if (direction=='up')
-                req.ypDomain.increment(column);
-              else if (direction=='down')
-                req.ypDomain.decrement(column);
-              callback();
-            } else {
-              callback();
-            }
           }.bind(this)
         ], function(err) {
           done(err);

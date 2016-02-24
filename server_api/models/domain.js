@@ -23,6 +23,7 @@ module.exports = function(sequelize, DataTypes) {
     counter_communities: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
     facebook_client_id: { type: DataTypes.STRING },
     facebook_client_secret: { type: DataTypes.STRING },

@@ -7,6 +7,8 @@ module.exports = function(sequelize, DataTypes) {
     status: { type: DataTypes.STRING, allowNull: false },
     value: { type: DataTypes.INTEGER, allowNull: false },
     website: DataTypes.STRING,
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    deleted_at: { type: DataTypes.DATE, allowNull: true },
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },
     counter_revisions: { type: DataTypes.INTEGER, defaultValue: 1 },
@@ -14,6 +16,12 @@ module.exports = function(sequelize, DataTypes) {
     counter_quality_up: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_quality_down: { type: DataTypes.INTEGER, defaultValue: 0 }
   }, {
+
+    defaultScope: {
+      where: {
+        deleted: false
+      }
+    },
 
     underscored: true,
 

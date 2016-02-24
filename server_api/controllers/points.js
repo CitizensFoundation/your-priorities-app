@@ -100,14 +100,36 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
         models.Post.find({
           where: { id: point.post_id }
         }).then(function(post) {
-            post.increment('counter_points').then(function(){
-              res.send(point);
-            });
+          post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
+            post.increment('counter_points');
+            res.send(point);
           });
+        });
       });
     });
   }).catch(function(error) {
     sendPointOrError(res, null, 'create', req.user, error);
+  });
+});
+
+router.delete('/:id', auth.can('edit point'), function(req, res) {
+  models.Point.find({
+    where: {id: req.params.id }
+  }).then(function (point) {
+    point.deleted = true;
+    point.save().then(function () {
+      log.info('Point Deleted', { point: toJson(point), context: 'delete', user: toJson(req.user) });
+      models.Post.find({
+        where: { id: point.post_id }
+      }).then(function(post) {
+        post.updateAllExternalCounters(req, 'down', 'counter_points', function () {
+          post.decrement('counter_points');
+          res.sendStatus(200);
+        });
+      });
+    });
+  }).catch(function(error) {
+    sendPointOrError(res, null, 'delete', req.user, error);
   });
 });
 

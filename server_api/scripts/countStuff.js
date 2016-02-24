@@ -12,14 +12,13 @@ var size = function(obj) {
   return size;
 };
 
-models.Domain.find({where: {id: 1}}).then(function(domain) {
+models.Domain.find({where: {id: 3}}).then(function(domain) {
   domain.getDomainUsers().then(function (users) {
     console.log(users.length);
     users.map(function(user) {
       allUsers[user.email] = 1;
     });
     console.log(size(allUsers));
-    console.log(allUsers);
   });
 });
 

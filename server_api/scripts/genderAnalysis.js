@@ -2,16 +2,49 @@ var models = require('../models');
 var async = require('async');
 var ip = require('ip');
 
-var allActivities = {};
+var femalePostCount = 0;
+var malePostCount = 0;
+var unknownPostCount = 0;
 
-models.AcActivity.findAll({attributes: [[models.Sequelize.literal("DISTINCT 'type'"), 'type'],'type']}).then(function(activityTypes) {
-  console.log(activityTypes.length);
-  async.eachSeries(activityTypes, function(activityType, callback) {
-    console.log(activityType.type);
-    allActivities[activityType.type] = activityType.type;
-    callback();
-  }, function done() {
-    console.log(allActivities);
+var femalePointCount = 0;
+var malePointCount = 0;
+var unknownPointCount = 0;
+
+models.Domain.find({where: {id: 1}}).then(function(domain) {
+  domain.getDomainUsers().then(function (users) {
+    async.eachSeries(users, function (user, callback) {
+      models.Post.findAll({ where: {user_id: user.id}}).then(function (posts) {
+        if ((user.name.indexOf('dottir') > -1) || (user.name.indexOf('dóttir') > -1)) {
+          femalePostCount += posts.length;
+        } else if ((user.name.indexOf('sson') > -1) || (user.name.indexOf('son') > -1)) {
+          malePostCount += posts.length;
+        } else {
+          console.log(user.name);
+          unknownPostCount += posts.length
+        }
+        models.Point.findAll({ where: {user_id: user.id}}).then(function (points) {
+          if ((user.name.indexOf('dottir') > -1) || (user.name.indexOf('dóttir') > -1)) {
+            femalePointCount += points.length;
+          } else if ((user.name.indexOf('sson') > -1) || (user.name.indexOf('son') > -1)) {
+            malePointCount += points.length;
+          } else {
+            unknownPointCount += points.length
+          }
+          callback();
+        });
+      });
+    }, function done() {
+      console.log("femalePostCount: " + femalePostCount);
+      console.log("malePostCount: " + malePostCount);
+      console.log("unknownPostCount: " + unknownPostCount);
+
+      console.log("femalePointCount: " + femalePointCount);
+      console.log("malePointCount: " + malePointCount);
+      console.log("unknownPointCount: " + unknownPointCount);
+    });
   });
 });
+
+
+
 
