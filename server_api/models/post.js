@@ -10,7 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     name: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: false },
     status: { type: DataTypes.STRING, allowNull: false },
-    official_status: { type: DataTypes.STRING, allowNull: true },
+    official_status: { type: DataTypes.INTEGER, allowNull: true },
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
@@ -35,6 +35,39 @@ module.exports = function(sequelize, DataTypes) {
     defaultScope: {
       where: {
         deleted: false
+      }
+    },
+
+    scopes: {
+      open: {
+        where: {
+          official_status: 0
+        }
+      },
+      finished: {
+        where: {
+          $contains: [-2,-1,2]
+        }
+      },
+      successful: {
+        where: {
+          official_status: 2
+        }
+      },
+      compromised: {
+        where: {
+          official_status: -991
+        }
+      },
+      failed: {
+        where: {
+          official_status: -2
+        }
+      },
+      in_progress: {
+        where: {
+          $contains: [-1,1]
+        }
       }
     },
 

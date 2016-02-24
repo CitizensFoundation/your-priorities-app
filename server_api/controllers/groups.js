@@ -129,18 +129,19 @@ router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
   });
 });
 
-router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(req, res) {
+router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), function(req, res) {
 
   var where = '"Post"."deleted" = false AND "Post"."group_id" = '+req.params.id;
   //  var postOrder = [models.sequelize.fn('subtraction', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'];
 
   var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
-  if (req.params.filter!="inProgress") {
-    //where+=' AND "Post"."status" = "published"';
-  } else {
-    //where+=' AND "Post"."status" != "published" AND "Post"."status" != "deleted"';
-  }
+/*  if (req.params.status=="open") {
+     where+=' AND "Post"."status" = "published"';
+  } else if (req.params.status=="inProgress") {
+    where+=' AND "Post"."status" = "published"';
+    where+=' AND "Post"."status" != "published" AND "Post"."status" != "deleted"';
+  } */
 
   if (req.params.filter=="newest") {
     postOrder = "created_at DESC";
@@ -180,9 +181,10 @@ router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(r
   }).then(function(group) {
     if (group) {
       log.info('Group Viewed', { group: toJson(group), context: 'view', user: toJson(req.user) });
-      models.Post.findAll({
+      var PostsByStatus = models.Post.scope(req.params.status);
+      PostsByStatus.findAll({
         where: [where, []],
-        attributes: ['id','name','description','status','official_status','counter_endorsements_up',
+        attributes: ['id','name','description','status','official_status','counter_endorsements_up','cover_media_type',
                      'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
 //        limit: 2,
 //        offset: req.query.offset ? req.query.offset : 0,

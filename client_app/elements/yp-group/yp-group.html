@@ -49,13 +49,6 @@
         padding: 16px;
       }
 
-      .postsFilter {
-        padding-left: 16px;
-        margin-bottom: 0;
-        padding-bottom: 0;
-        height: 50px;
-      }
-
       iron-pages {
         width: 100%;
         height: 100%;
@@ -104,15 +97,6 @@
           padding-right: 0;
         }
       }
-
-      iron-list {
-        width: 1000px;
-
-        --iron-list-items-container: {
-          max-width: 1024px;
-          margin: auto;
-        };
-      }
     </style>
 
     <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
@@ -130,32 +114,13 @@
             <paper-tab>[[t('news')]]</paper-tab>
             <paper-tab>[[t('status')]]</paper-tab>
           </paper-tabs>
-          <div class="card-container layout horizontal center-center">
-            <template is="dom-if" if="[[posts]]">
-              <div class="layout vertical">
-                <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
-                                 group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
-                                 category-id="{{categoryId}}" category-name="{{categoryName}}">
-                </yp-posts-filter>
-                <div class="layout horizontal">
-                  <iron-list id="list" items="[[posts]]" as="post" scroll-target="html">
-                    <template>
-                      <div class="layout vertical center-center">
-                        <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
-                      </div>
-                    </template>
-                  </iron-list>
-                </div>
+          <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+            <section>
+              <div class="card-container layout horizontal center-center">
+                <yp-post-list group="[[group]]" status-filter="open" searching-for="[[searchingFor]]" group="{{group}}" group-id="[[groupId]]"></yp-post-list>
               </div>
-            </template>
-            <yp-ajax id="ajax" url="" on-response="_postsResponse"></yp-ajax>
-            <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
-          </div>
-          <iron-scroll-threshold id="scrollTheshold"
-                                 lower-threshold="20"
-                                 on-lower-threshold="_loadMoreData"
-                                 scroll-target="html">
-          </iron-scroll-threshold>
+            </section>
+          </iron-pages>
         </div>
       </div>
   </template>
@@ -171,42 +136,14 @@
 
       properties: {
 
-        categories: {
-          type: Array
-          },
-
-        defaultCategories: {
-          type: Boolean,
-          value: false
-        },
-
-        posts: {
-          type: Array
-        },
-
         groupId: {
           type: Number,
           observer: "_groupIdChanged"
         },
 
         group: {
-          type: Object
-        },
-
-        filter: {
-          type: String,
-          value: "newest",
-          notify: true,
-          observer: "_filterChanged"
-        },
-
-        categoryId: {
-          type: String,
-          observer: "_categoryIdChanged"
-        },
-
-        categoryName: {
-          type: String
+          type: Object,
+          notify: true
         },
 
         hideAdd: {
@@ -216,8 +153,7 @@
 
         searchingFor: {
           type: String,
-          value: null,
-          observer: "_searchingForChanged"
+          value: null
         },
 
         selected: {
@@ -244,83 +180,14 @@
       },
 
       ready: function () {
-        this.set("posts", []);
-        this._loadMoreData();
       },
 
       _groupIdChanged: function (newValue, oldValue) {
-        if (newValue) {
-
-        } else {
-          this.set("posts",[]);
-        }
-      },
-
-      _refreshGroupFromFilter: function () {
-        this.set("posts", []);
-        this._loadMoreData();
-      },
-
-      _loadMoreData: function () {
-        if (!this.filter)
-          this.set('filter','newest');
-        if (this.searchingFor) {
-          this.$.ajax.url = '/api/groups/' + this.groupId + '/search/' + this.searchingFor;
-        } else {
-          this.$.ajax.url = '/api/groups/' + this.groupId + '/posts/' + this.filter;
-          if (this.categoryId) {
-            this.$.ajax.url += '/' + this.categoryId;
-          } else {
-            this.$.ajax.url += '/null';
-          }
-        }
-        this.$.ajax.url += "?offset="+this.posts.length;
-        this.$.ajax.generateRequest();
-
-      },
+       },
 
       newPost: function () {
         window.appGlobals.activity('open', 'newPost');
         this.$.postEdit.open('new', {groupId: this.groupId});
-      },
-
-      _postsResponse: function (event, detail, sender) {
-        var group = detail.response.group;
-        var list = this.$$("#list");
-
-        detail.response.Posts.forEach(function(post) {
-          this.push('posts', post);
-        }.bind(this));
-
-        this.$$('#scrollTheshold').clearTriggers();
-
-        if (list) {
-          this.$$("#list").fire('iron-resize');
-        }
-        this.set("group", group);
-        this._processCategories();
-        this.fire("change-header", { headerTitle: group.name,
-                                     headerDescription: group.objectives,
-                                     headerIcon: "social:group",
-                                     enableSearch: true,
-                                     backPath: "#!/community/" + this.group.community_id });
-        this.$.groupCard.setElevation(5);
-        this.$.groupCard.lowerCardLater();
-        this.hideAdd = false;
-      },
-
-      _processCategories: function () {
-        if (this.categoryId) {
-          for (var i = 0; i < this.group.Categories.length; i++) {
-            if (this.group.Categories[i].id == this.categoryId) {
-              window.selectedCategoryName = this.group.Categories[i].name;
-              //this.$.layout.updateFilter();
-            }
-          }
-        } else {
-          window.selectedCategoryName = 'categories.all';
-          //this.$.layout.updateFilter();
-        }
       }
     });
   </script>
