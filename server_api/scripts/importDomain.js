@@ -268,7 +268,7 @@ var uploadImage = function(fileUrl, itemType, userId, callback) {
           clearTimeout(timeout);
           timeout = null;
           callback();
-        },65000);
+        }, 65000);
 
         var child = exec(wget, function(err, stdout, stderr) {
           if (timeout) {

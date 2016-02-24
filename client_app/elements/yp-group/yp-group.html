@@ -2,11 +2,13 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-post/yp-post.html">
@@ -64,10 +66,6 @@
         height: 100%;
       }
 
-      iron-list {
-        width: 980px;
-      }
-
       @media (max-width: 900px) {
         iron-list {
           width: 460px;
@@ -106,6 +104,15 @@
           padding-right: 0;
         }
       }
+
+      iron-list {
+        width: 1000px;
+
+        --iron-list-items-container: {
+          max-width: 1024px;
+          margin: auto;
+        };
+      }
     </style>
 
     <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
@@ -118,7 +125,7 @@
         <div class="layout vertical">
           <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
             <paper-tab>
-              <span>[[t('ideas')]]</span> &nbsp; (<span>[[posts.length]]</span>)
+              <span>[[t('ideas')]]</span> &nbsp; (<span>[[group.counter_posts]]</span>)
             </paper-tab>
             <paper-tab>[[t('news')]]</paper-tab>
             <paper-tab>[[t('status')]]</paper-tab>
@@ -126,12 +133,12 @@
           <div class="card-container layout horizontal center-center">
             <template is="dom-if" if="[[posts]]">
               <div class="layout vertical">
-                <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroup"
+                <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
                                  group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
                                  category-id="{{categoryId}}" category-name="{{categoryName}}">
                 </yp-posts-filter>
                 <div class="layout horizontal">
-                  <iron-list id="list" items="[[posts]]" as="post">
+                  <iron-list id="list" items="[[posts]]" as="post" scroll-target="html">
                     <template>
                       <div class="layout vertical center-center">
                         <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
@@ -139,12 +146,16 @@
                     </template>
                   </iron-list>
                 </div>
-                <yp-post-card-add hidden$="[[hideAdd]]" class="card" on-tap="newPost" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card-add>
               </div>
             </template>
             <yp-ajax id="ajax" url="" on-response="_postsResponse"></yp-ajax>
             <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
           </div>
+          <iron-scroll-threshold id="scrollTheshold"
+                                 lower-threshold="20"
+                                 on-lower-threshold="_loadMoreData"
+                                 scroll-target="html">
+          </iron-scroll-threshold>
         </div>
       </div>
   </template>
@@ -232,28 +243,40 @@
         this.$.ajax.generateRequest();
       },
 
+      ready: function () {
+        this.set("posts", []);
+        this._loadMoreData();
+      },
+
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue) {
-          this._refreshGroup();
+
         } else {
-          this.set("posts",null);
+          this.set("posts",[]);
         }
       },
 
-      _refreshGroup: function () {
+      _refreshGroupFromFilter: function () {
+        this.set("posts", []);
+        this._loadMoreData();
+      },
+
+      _loadMoreData: function () {
         if (!this.filter)
           this.set('filter','newest');
-        this.set("posts",null);
         if (this.searchingFor) {
           this.$.ajax.url = '/api/groups/' + this.groupId + '/search/' + this.searchingFor;
         } else {
           this.$.ajax.url = '/api/groups/' + this.groupId + '/posts/' + this.filter;
           if (this.categoryId) {
             this.$.ajax.url += '/' + this.categoryId;
+          } else {
+            this.$.ajax.url += '/null';
           }
         }
+        this.$.ajax.url += "?offset="+this.posts.length;
         this.$.ajax.generateRequest();
-        this.hideAdd = true;
+
       },
 
       newPost: function () {
@@ -263,8 +286,14 @@
 
       _postsResponse: function (event, detail, sender) {
         var group = detail.response.group;
-        this.set("posts", detail.response.Posts);
         var list = this.$$("#list");
+
+        detail.response.Posts.forEach(function(post) {
+          this.push('posts', post);
+        }.bind(this));
+
+        this.$$('#scrollTheshold').clearTriggers();
+
         if (list) {
           this.$$("#list").fire('iron-resize');
         }

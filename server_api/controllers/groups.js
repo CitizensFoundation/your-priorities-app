@@ -151,7 +151,7 @@ router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(r
   console.log(req.param["categoryId"]);
   console.log(req.params);
 
-  if (req.params.categoryId!=undefined) {
+  if (req.params.categoryId!='null') {
     where+=' AND "Post"."category_id" = '+ req.params.categoryId;
   }
 
@@ -175,11 +175,6 @@ router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(r
       {
         model: models.Image, as: 'GroupLogoImages',
         required: false
-      },
-      {
-        model: models.User, as: 'GroupUsers',
-        attributes: ['id'],
-        required: false
       }
     ]
   }).then(function(group) {
@@ -187,7 +182,12 @@ router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(r
       log.info('Group Viewed', { group: toJson(group), context: 'view', user: toJson(req.user) });
       models.Post.findAll({
         where: [where, []],
+        attributes: ['id','name','description','status','official_status','counter_endorsements_up',
+                     'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
+//        limit: 2,
+//        offset: req.query.offset ? req.query.offset : 0,
         order: [
+//          [models.sequelize.fn('-', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'],
           models.sequelize.literal(postOrder),
           [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
         ],
@@ -208,10 +208,6 @@ router.get('/:id/posts/:filter/:categoryId?', auth.can('view group'), function(r
           },
           {
             model: models.PostRevision,
-            required: false
-          },
-          {
-            model: models.Point,
             required: false
           },
           { model: models.Image,
