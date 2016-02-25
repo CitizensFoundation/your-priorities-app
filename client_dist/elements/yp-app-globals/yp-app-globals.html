@@ -224,6 +224,8 @@
 
         ready: function () {
           window.appGlobals = this;
+          i18n.init({ lng: "is" });
+          window.i18n = i18n;
           this.requestInProgress = true;
           this.$.boot.generateRequest();
 
