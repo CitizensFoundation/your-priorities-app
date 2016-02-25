@@ -93,6 +93,14 @@
         url += '&client=' + clientId;
       }
 
+      // Log a warning if the user is not using an API Key or Client ID.
+      if (!apiKey && !clientId) {
+        var warning = 'No Google Maps API Key or Client ID specified. ' +
+            'See https://developers.google.com/maps/documentation/javascript/get-api-key ' +
+            'for instructions to get started with a key or client id.';
+        console.warn(warning);
+      }
+
       if (language) {
         url += '&language=' + language;
       }

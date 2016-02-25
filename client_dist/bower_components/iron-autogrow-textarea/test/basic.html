@@ -1,4 +1,4 @@
-<!doctype html><html><head><title>iron-autogrow-textarea tests</title><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes"><script src="../../webcomponentsjs/webcomponents-lite.js"></script><script src="../../web-component-tester/browser.js"></script><script src="../../iron-test-helpers/mock-interactions.js"></script><link rel="import" href="../iron-autogrow-textarea.html"></head><body><test-fixture id="basic"><template><iron-autogrow-textarea></iron-autogrow-textarea></template></test-fixture><test-fixture id="has-bindValue"><template><iron-autogrow-textarea bind-value="foobar"></iron-autogrow-textarea></template></test-fixture><test-fixture id="rows"><template><iron-autogrow-textarea rows="3"></iron-autogrow-textarea></template></test-fixture><script>
+<!doctype html><html><head><title>iron-autogrow-textarea tests</title><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes"><script src="../../webcomponentsjs/webcomponents-lite.js"></script><script src="../../web-component-tester/browser.js"></script><script src="../../iron-test-helpers/mock-interactions.js"></script><link rel="import" href="../iron-autogrow-textarea.html"></head><body><test-fixture id="basic"><template><iron-autogrow-textarea></iron-autogrow-textarea></template></test-fixture><test-fixture id="has-bindValue"><template><iron-autogrow-textarea bind-value="foobar"></iron-autogrow-textarea></template></test-fixture><test-fixture id="has-value"><template><iron-autogrow-textarea value="foobar"></iron-autogrow-textarea></template></test-fixture><test-fixture id="rows"><template><iron-autogrow-textarea rows="3"></iron-autogrow-textarea></template></test-fixture><script>
 
       suite('basic', function() {
 
@@ -13,6 +13,31 @@
         test('can set an initial bindValue', function() {
           var autogrow = fixture('has-bindValue');
           assert.equal(autogrow.textarea.value, 'foobar', 'textarea value equals to initial bindValue');
+          assert.equal(autogrow.value, 'foobar', 'value equals to initial bindValue');
+        });
+
+        test('can set an initial value', function() {
+          var autogrow = fixture('has-value');
+          assert.equal(autogrow.textarea.value, 'foobar', 'textarea value equals to initial bindValue');
+          assert.equal(autogrow.bindValue, 'foobar', 'textarea bindValue equals to initial value');
+        });
+
+        test('can update the value', function() {
+          var autogrow = fixture('has-bindValue');
+          assert.equal(autogrow.textarea.value, 'foobar', 'textarea value equals to initial bindValue');
+          autogrow.value = 'batman';
+          assert.equal(autogrow.textarea.value, 'batman', 'textarea value is updated');
+          assert.equal(autogrow.bindValue, 'batman', 'bindValue is updated');
+          assert.equal(autogrow.value, 'batman', 'value is updated');
+        });
+
+        test('can update the bindValue', function() {
+          var autogrow = fixture('has-bindValue');
+          assert.equal(autogrow.textarea.value, 'foobar', 'textarea value equals to initial bindValue');
+          autogrow.bindValue = 'batman';
+          assert.equal(autogrow.textarea.value, 'batman', 'textarea value is updated');
+          assert.equal(autogrow.bindValue, 'batman', 'bindValue is updated');
+          assert.equal(autogrow.value, 'batman', 'value is updated');
         });
 
         test('can set an initial number of rows', function() {

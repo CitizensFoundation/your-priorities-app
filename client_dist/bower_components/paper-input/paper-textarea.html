@@ -1,4 +1,4 @@
-<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../iron-autogrow-textarea/iron-autogrow-textarea.html"><link rel="import" href="paper-input-behavior.html"><link rel="import" href="paper-input-char-counter.html"><link rel="import" href="paper-input-container.html"><link rel="import" href="paper-input-error.html"><dom-module id="paper-textarea"><template><style>
+<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../iron-autogrow-textarea/iron-autogrow-textarea.html"><link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html"><link rel="import" href="paper-input-behavior.html"><link rel="import" href="paper-input-char-counter.html"><link rel="import" href="paper-input-container.html"><link rel="import" href="paper-input-error.html"><dom-module id="paper-textarea"><template><style>
       :host {
         display: block;
       }
@@ -7,7 +7,8 @@
     is: 'paper-textarea',
 
     behaviors: [
-      Polymer.PaperInputBehavior
+      Polymer.PaperInputBehavior,
+      Polymer.IronFormElementBehavior
     ],
 
     properties: {

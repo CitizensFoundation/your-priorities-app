@@ -1,8 +1,9 @@
-<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../paper-behaviors/paper-checked-element-behavior.html"><link rel="import" href="../paper-ripple/paper-ripple.html"><link rel="import" href="../paper-styles/default-theme.html"><dom-module id="paper-radio-button"><template strip-whitespace=""><style>
+<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../paper-behaviors/paper-checked-element-behavior.html"><link rel="import" href="../paper-styles/default-theme.html"><dom-module id="paper-radio-button"><template strip-whitespace=""><style>
       :host {
         display: inline-block;
         white-space: nowrap;
         cursor: pointer;
+        @apply(--paper-font-common-base);
       }
 
       :host(:focus) {
@@ -34,7 +35,7 @@
       }
 
       #ink[checked] {
-        color: var(--paper-radio-button-checked-ink-color, --default-primary-color);
+        color: var(--paper-radio-button-checked-ink-color, --primary-color);
       }
 
       #offRadio {
@@ -61,7 +62,7 @@
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background-color: var(--paper-radio-button-checked-color, --default-primary-color);
+        background-color: var(--paper-radio-button-checked-color, --primary-color);
         -webkit-transform: scale(0);
         transform: scale(0);
         transition: -webkit-transform ease 0.28s;
@@ -69,7 +70,7 @@
       }
 
       :host([checked]) #offRadio {
-        border-color: var(--paper-radio-button-checked-color, --default-primary-color);
+        border-color: var(--paper-radio-button-checked-color, --primary-color);
       }
 
       :host([checked]) #onRadio {
@@ -83,7 +84,6 @@
         vertical-align: middle;
         margin-left: var(--paper-radio-button-label-spacing, 10px);
         white-space: normal;
-        pointer-events: none;
         color: var(--paper-radio-button-label-color, --primary-text-color);
       }
 
@@ -97,9 +97,6 @@
       }
 
       /* disabled state */
-      :host([disabled]) {
-        pointer-events: none;
-      }
 
       :host([disabled]) #offRadio {
         border-color: var(--paper-radio-button-unchecked-color, --primary-text-color);
@@ -148,10 +145,8 @@
         }
       },
 
-      // create the element ripple inside the `radioContainer`
-      _createRipple: function() {
+      ready: function() {
         this._rippleContainer = this.$.radioContainer;
-        return Polymer.PaperInkyFocusBehaviorImpl._createRipple.call(this);
       }
     })
   </script></dom-module>

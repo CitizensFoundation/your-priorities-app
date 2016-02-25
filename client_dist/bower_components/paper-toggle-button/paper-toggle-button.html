@@ -1,8 +1,9 @@
-<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../iron-flex-layout/iron-flex-layout.html"><link rel="import" href="../paper-styles/color.html"><link rel="import" href="../paper-styles/default-theme.html"><link rel="import" href="../paper-ripple/paper-ripple.html"><link rel="import" href="../paper-behaviors/paper-checked-element-behavior.html"><dom-module id="paper-toggle-button"><template strip-whitespace=""><style>
+<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../iron-flex-layout/iron-flex-layout.html"><link rel="import" href="../paper-styles/color.html"><link rel="import" href="../paper-styles/default-theme.html"><link rel="import" href="../paper-behaviors/paper-checked-element-behavior.html"><dom-module id="paper-toggle-button"><template strip-whitespace=""><style>
       :host {
         display: inline-block;
         @apply(--layout-horizontal);
         @apply(--layout-center);
+        @apply(--paper-font-common-base);
       }
 
       :host([disabled]) {
@@ -22,6 +23,7 @@
         opacity: 0.4;
         transition: background-color linear .08s;
         background-color: var(--paper-toggle-button-unchecked-bar-color, #000000);
+
         @apply(--paper-toggle-button-unchecked-bar);
       }
 
@@ -36,6 +38,7 @@
         transition: transform linear .08s, background-color linear .08s;
         will-change: transform;
         background-color: var(--paper-toggle-button-unchecked-button-color, --paper-grey-50);
+
         @apply(--paper-toggle-button-unchecked-button);
       }
 
@@ -46,7 +49,8 @@
 
       :host([checked]:not([disabled])) .toggle-bar {
         opacity: 0.5;
-        background-color: var(--paper-toggle-button-checked-bar-color, --default-primary-color);
+        background-color: var(--paper-toggle-button-checked-bar-color, --primary-color);
+
         @apply(--paper-toggle-button-checked-bar);
       }
 
@@ -61,7 +65,8 @@
       }
 
       :host([checked]:not([disabled])) .toggle-button {
-        background-color: var(--paper-toggle-button-checked-button-color, --default-primary-color);
+        background-color: var(--paper-toggle-button-checked-button-color, --primary-color);
+
         @apply(--paper-toggle-button-checked-button);
       }
 
@@ -82,7 +87,7 @@
       }
 
       :host([checked]) .toggle-ink {
-        color: var(--paper-toggle-button-checked-ink-color, --default-primary-color);
+        color: var(--paper-toggle-button-checked-ink-color, --primary-color);
       }
 
       .toggle-container {
@@ -100,7 +105,6 @@
         display: inline-block;
         vertical-align: middle;
         padding-left: var(--paper-toggle-button-label-spacing, 8px);
-        white-space: normal;
         pointer-events: none;
         color: var(--paper-toggle-button-label-color, --primary-text-color);
       }

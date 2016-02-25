@@ -1,4 +1,4 @@
-<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../paper-styles/default-theme.html"><link rel="import" href="../paper-styles/color.html"><link rel="import" href="../paper-behaviors/paper-checked-element-behavior.html"><dom-module id="paper-checkbox"><template strip-whitespace=""><style>
+<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../paper-styles/default-theme.html"><link rel="import" href="../paper-behaviors/paper-checked-element-behavior.html"><dom-module id="paper-checkbox"><template strip-whitespace=""><style>
       :host {
         display: inline-block;
         white-space: nowrap;
@@ -118,7 +118,6 @@
         padding-left: var(--paper-checkbox-label-spacing, 8px);
         white-space: normal;
         line-height: normal;
-        pointer-events: none;
         color: var(--paper-checkbox-label-color, --primary-text-color);
       }
 
@@ -132,9 +131,6 @@
       }
 
       /* disabled state */
-      :host([disabled]) {
-        pointer-events: none;
-      }
 
       :host([disabled]) #checkbox {
         opacity: 0.5;
@@ -152,7 +148,7 @@
 
       /* invalid state */
       #checkbox.invalid:not(.checked) {
-        border-color: var(--paper-checkbox-error-color, --google-red-500);
+        border-color: var(--paper-checkbox-error-color, --error-color);
       }
     </style><div id="checkboxContainer"><div id="checkbox" class$="[[_computeCheckboxClass(checked, invalid)]]"><div id="checkmark" class$="[[_computeCheckmarkClass(checked)]]"></div></div></div><div id="checkboxLabel"><content></content></div></template><script>
     Polymer({

@@ -12,9 +12,9 @@ thing! https://github.com/PolymerLabs/tedium/issues
 
 -->
 
-[![Build Status](https://travis-ci.org/PolymerElements/paper-toast.svg?branch=master)](https://travis-ci.org/PolymerElements/paper-toast)
+[![Build status](https://travis-ci.org/PolymerElements/paper-toast.svg?branch=master)](https://travis-ci.org/PolymerElements/paper-toast)
 
-_[Demo and API Docs](https://elements.polymer-project.org/elements/paper-toast)_
+_[Demo and API docs](https://elements.polymer-project.org/elements/paper-toast)_
 
 
 ##&lt;paper-toast&gt;
@@ -65,5 +65,8 @@ The following custom properties and mixins are available for styling:
 | --- | --- | --- |
 | `--paper-toast-background-color` | The paper-toast background-color | `#323232` |
 | `--paper-toast-color` | The paper-toast color | `#f1f1f1` |
+
+This element applies the mixin `--paper-font-common-base` but does not import `paper-styles/typography.html`.
+In order to apply the `Roboto` font to this element, make sure you've imported `paper-styles/typography.html`.
 
 

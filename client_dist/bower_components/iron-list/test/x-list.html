@@ -21,7 +21,7 @@
     iron-list {
       overflow: hidden;
     }
-  </style><template><iron-list style$="[[_computedListHeight(listHeight)]]" items="[[data]]" as="item" id="list"><template><div class="item"><div style$="[[_computedItemHeight(item)]]" tabindex$="[[tabIndex]]">[[_getItemValue(item, item.*, itemProp)]]</div></div></template></iron-list></template></dom-module><script>
+  </style><template><iron-list style$="[[_computedListHeight(listHeight)]]" items="[[data]]" as="item" id="list"><template><div class="item"><div style$="[[_computedItemHeight(item)]]" tabindex$="[[tabIndex]]" hidden$="[[primitive]]">[[item.index]]</div><div style$="[[_computedItemHeight(item)]]" tabindex$="[[tabIndex]]" hidden$="[[!primitive]]">[[item]]</div></div></template></iron-list></template></dom-module><script>
   Polymer({
     is: 'x-list',
 
@@ -44,9 +44,9 @@
         type: Boolean
       },
 
-      itemProp: {
-        value: 'index',
-        type: String
+      primitive: {
+        value: false,
+        type: Boolean
       }
     },
 
@@ -66,10 +66,6 @@
 
     _computedListHeight: function(listHeight) {
       return 'height: ' + (listHeight) + 'px;';
-    },
-
-    _getItemValue: function(item) {
-      return this.itemProp === '' ? item : item[this.itemProp];
     }
   });
 </script>

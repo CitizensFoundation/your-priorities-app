@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset="UTF-8"><title>iron-list test</title><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><script src="../../webcomponentsjs/webcomponents-lite.js"></script><script src="../../web-component-tester/browser.js"></script><link rel="import" href="helpers.html"><link rel="import" href="x-list.html"></head><body><test-fixture id="trivialList"><template><x-list></x-list></template></test-fixture><test-fixture id="trivialListPrimitiveItem"><template><x-list item-prop=""></x-list></template></test-fixture><script>
+<!doctype html><html><head><meta charset="UTF-8"><title>iron-list test</title><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><script src="../../webcomponentsjs/webcomponents-lite.js"></script><script src="../../web-component-tester/browser.js"></script><link rel="import" href="helpers.html"><link rel="import" href="x-list.html"></head><body><test-fixture id="trivialList"><template><x-list></x-list></template></test-fixture><test-fixture id="trivialListPrimitiveItem"><template><x-list primitive=""></x-list></template></test-fixture><script>
 
     suite('mutations to the collection of items', function() {
       var list, container;
@@ -198,6 +198,17 @@
         });
       });
 
+      test('should notify path to the right physical item', function(done) {
+        list.items = buildDataSet(100);
+        flush(function() {
+          var idx = list._physicalCount + 1;
+
+          list.scrollToIndex(idx);
+          list.notifyPath('items.1.index', 'bad');
+          assert.equal(getFirstItemFromList(list).textContent, idx);
+          done();
+        });
+      });
     });
 
     suite('mutations of primitive type items', function() {
@@ -206,7 +217,6 @@
       setup(function() {
         container = fixture('trivialListPrimitiveItem');
         list = container.list;
-
       });
 
       test('push item = polymer', function(done) {
@@ -216,7 +226,7 @@
         flush(function() {
          assert.equal(getFirstItemFromList(list).textContent, 'polymer');
          done();
-        })
+        });
       });
 
       test('push item = 0', function(done) {
@@ -226,7 +236,7 @@
         flush(function() {
           assert.equal(getFirstItemFromList(list).textContent, '0');
           done();
-        })
+        });
       });
 
       test('push item = false', function(done) {
@@ -236,9 +246,8 @@
         flush(function() {
           assert.equal(getFirstItemFromList(list).textContent, 'false');
           done();
-        })
+        });
       });
-
     });
 
   </script></body></html>
