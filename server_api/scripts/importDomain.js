@@ -570,6 +570,8 @@ async.series([
       var oldId = incoming['id'];
       incoming['id'] = null;
 
+      incoming['legacy_user_id'] = oldId;
+
       var buddyIconUrl = incoming['buddy_icon'];
       console.log("Uploading Buddy Icon "+buddyIconUrl);
       incoming['buddy_icon'] = null;
@@ -945,6 +947,8 @@ async.series([
 
       var oldId = incoming['id'];
       incoming['id'] = null;
+
+      incoming['legacy_post_id'] = oldId;
 
       models.Post.build(incoming).save().then(function (post) {
         if (post) {

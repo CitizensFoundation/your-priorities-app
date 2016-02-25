@@ -33,6 +33,7 @@ module.exports = function(sequelize, DataTypes) {
     counter_login: { type: DataTypes.INTEGER, defaultValue: 0 },
     last_login_at: DataTypes.DATE,
     social_points: DataTypes.INTEGER,
+    //legacy_user_id: DataTypes.INTEGER,
     legacy_passwords_disabled: { type: DataTypes.BOOLEAN, defaultValue: false }
   }, {
     underscored: true,
