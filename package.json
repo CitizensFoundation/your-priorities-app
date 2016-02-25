@@ -5,6 +5,7 @@
     "async": "^1.4.2",
     "authorized": "^1.0.0",
     "bcrypt": "^0.8.5",
+    "bluebird": "^3.3.1",
     "body-parser": "^1.9.3",
     "bunyan": "^1.5.1",
     "connect-redis": "^3.0.2",

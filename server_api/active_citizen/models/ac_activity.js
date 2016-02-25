@@ -54,12 +54,133 @@ module.exports = function(sequelize, DataTypes) {
     access: { type: DataTypes.INTEGER, allowNull: false },
     type: { type: DataTypes.STRING, allowNull: false },
     sub_type: { type: DataTypes.STRING, allowNull: true },
+    status: { type: DataTypes.STRING, allowNull: false },
     object: DataTypes.JSONB,
     actor: DataTypes.JSONB,
     target: DataTypes.JSONB,
     context: DataTypes.JSONB,
     user_interaction_profile: DataTypes.JSONB
   }, {
+    indexes: [
+      {
+        name: 'activity_public_and_active_by_type',
+        fields: ['type'],
+        where: {
+          access: 0,
+          status: 'active'
+        }
+      },
+      {
+        name: 'activity_active_by_type',
+        fields: ['type'],
+        where: {
+          status: 'active'
+        }
+      },
+      {
+        name: 'activity_public_and_active_by_domain_id',
+        fields: ['domain_id'],
+        where: {
+          access: 0,
+          status: 'active'
+        }
+      },
+      {
+        name: 'activity_active_by_domain_id',
+        fields: ['domain_id'],
+        where: {
+          status: 'active'
+        }
+      },
+      {
+        name: 'activity_public_and_active_by_community_id',
+        fields: ['community_id'],
+        where: {
+          access: 0,
+          status: 'active'
+        }
+      },
+      {
+        name: 'activity_active_by_community_id',
+        fields: ['community_id'],
+        where: {
+          status: 'active'
+        }
+      },
+      {
+        name: 'activity_public_and_active_by_group_id',
+        fields: ['group_id'],
+        where: {
+          access: 0,
+          status: 'active'
+        }
+      },
+      {
+        name: 'activity_active_by_group_id',
+        fields: ['group_id'],
+        where: {
+          status: 'active'
+        }
+      },
+      {
+        name: 'activity_public_and_active_by_post_id',
+        fields: ['post_id'],
+        where: {
+          access: 0,
+          status: 'active'
+        }
+      },
+      {
+        name: 'activity_active_by_post_id',
+        fields: ['post_id'],
+        where: {
+          status: 'active'
+        }
+      },
+      {
+        name: 'activity_active_by_type_and_user_id',
+        fields: ['type','user_id'],
+        where: {
+          status: 'active'
+        }
+      },
+      {
+        name: 'activity_active_by_user_id',
+        fields: ['user_id'],
+        where: {
+          status: 'active'
+        }
+      },
+      {
+        name: 'activity_all_by_type',
+        fields: ['type']
+      },
+      {
+        fields: ['object'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
+      {
+        fields: ['actor'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
+      {
+        fields: ['target'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
+      {
+        fields: ['context'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
+      {
+        fields: ['user_interaction_profile'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      }
+    ],
 
     underscored: true,
 
@@ -108,6 +229,7 @@ module.exports = function(sequelize, DataTypes) {
 
         sequelize.models.AcActivity.build({
           type: type,
+          status: 'active',
           sub_type: subType,
           actor: actor,
           object: object,
@@ -135,6 +257,7 @@ module.exports = function(sequelize, DataTypes) {
 
         sequelize.models.AcActivity.build({
           type: "activity.password.recovery",
+          status: 'active',
           actor: { user: user },
           object: {
             domain: domain,

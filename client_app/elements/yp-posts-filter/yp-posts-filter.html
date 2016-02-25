@@ -129,7 +129,7 @@
                               <span>[[category.name]]</span>
                             </paper-item>
                           </template>
-                          </paper-menu>
+                        </paper-menu>
                       </div>
                     </template>
                   </div>
@@ -158,6 +158,7 @@
         filter: {
           type: String,
           value: "newest",
+          notify: true,
           observer: "_filterChanged"
         },
 
@@ -167,6 +168,7 @@
 
         categoryId: {
           type: String,
+          notify: true,
           observer: "_categoryIdChanged"
         },
 
@@ -194,6 +196,11 @@
         showFilter: {
           type: Boolean,
           value: true
+        },
+
+        postsCount: {
+          type: Number,
+          notify: true
         }
       },
 
@@ -253,6 +260,7 @@
           } else {
             this.subTitle = translatedFilterName;
           }
+          this.subTitle += ' (' + this.postsCount + ')'
         }
       },
 

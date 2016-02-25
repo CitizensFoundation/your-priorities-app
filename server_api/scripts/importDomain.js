@@ -108,7 +108,7 @@ var activitiesTransform = {
   ActivityPointDeleted: 'activity.point.deleted',
   ActivityUserPictureNew: 'activity.user.pictureNew',
   ActivityBulletinProfileNew: 'activity.bulletin.profileNew',
-  ActivityIdeaOfficialStatusInTheWorks: 'activity.post.officialStatus.inTheWorks',
+  ActivityIdeaOfficialStatusInTheWorks: 'activity.post.officialStatus.inProgress',
   ActivityPointNew: 'activity.point.new',
   ActivityContentRemoval: 'activity.content.removal',
   ActivityCapitalPointHelpfulEndorsers: 'activity.socialPoint.pointHelpfulEndorsers',

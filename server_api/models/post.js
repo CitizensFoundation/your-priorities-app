@@ -10,7 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     name: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: false },
     status: { type: DataTypes.STRING, allowNull: false },
-    official_status: { type: DataTypes.INTEGER, allowNull: true },
+    official_status: { type: DataTypes.INTEGER, allowNull: true, defaultValue: 0 },
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
@@ -38,15 +38,70 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
 
+    indexes: [
+      {
+        name: 'published_by_official_status',
+        fields: ['group_id', 'official_status', 'deleted'],
+        where: {
+          status: 'published'
+        }
+      },
+
+      {
+        name: 'published_by_official_status_w_category',
+        fields: ['group_id', 'official_status', 'deleted', 'category_id'],
+        where: {
+          status: 'published'
+        }
+      },
+
+      {
+        name: 'all_statuses_by_official_status',
+        fields: ['group_id', 'official_status','deleted','status']
+      },
+
+      {
+        name: 'all_statuses_by_official_status_w_category',
+        fields: ['group_id', 'official_status', 'deleted', 'status', 'category_id']
+      },
+
+      {
+        fields: ['data'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
+
+      {
+        fields: ['location'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
+
+      {
+        fields: ['user_interaction_profile'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      }
+    ],
+
     scopes: {
       open: {
         where: {
           official_status: 0
         }
       },
+      not_open: {
+        where: {
+          official_status: {
+            $in: [-2,-1,1,2]
+          }
+        }
+      },
       finished: {
         where: {
-          $contains: [-2,-1,2]
+          official_status: {
+            $in: [-2, -1, 2]
+          }
         }
       },
       successful: {
@@ -61,12 +116,16 @@ module.exports = function(sequelize, DataTypes) {
       },
       failed: {
         where: {
-          official_status: -2
+          official_status: {
+            $in: [-2, -1]
+          }
         }
       },
       in_progress: {
         where: {
-          $contains: [-1,1]
+          official_status: {
+            $in: [-1, 1]
+          }
         }
       }
     },

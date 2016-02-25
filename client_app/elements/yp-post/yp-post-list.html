@@ -24,19 +24,20 @@
     <style>
 
       :host {
-        @apply(--layout-horizontal);
+        position: relative;
+        height: auto;
+        min-height: 100% !important;
       }
 
       .container {
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
-        height: 100%;
       }
 
       .postsFilter {
         padding-left: 16px;
-        margin-bottom: 0;
-        padding-bottom: 0;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
         height: 50px;
       }
 
@@ -59,16 +60,21 @@
       }
 
       iron-list {
-        width: 1020px;
+        overflow: hidden !important;
       }
+
+      yp-post-card {
+        padding-top: 16px;
+      }
+
     </style>
     <template is="dom-if" if="[[posts]]">
-      <div class="layout vertical">
+      <div class="layout vertical" style="width: 1012px;">
         <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
                          group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
-                         category-id="{{categoryId}}" category-name="{{categoryName}}">
+                         category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
         </yp-posts-filter>
-        <div class="layout horizontal">
+        <div class="layout vertical">
           <iron-list id="list" items="[[posts]]" as="post">
             <template>
               <div class="layout vertical center-center">
@@ -80,7 +86,6 @@
       </div>
     </template>
     <yp-ajax id="ajax" on-response="_postsResponse"></yp-ajax>
-    <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
   </template>
 
   <script>
@@ -104,7 +109,8 @@
         },
 
         posts: {
-          type: Array
+          type: Array,
+          value: null
         },
 
         groupId: {
@@ -120,7 +126,6 @@
         filter: {
           type: String,
           value: "newest",
-          notify: true,
           observer: "_filterChanged"
         },
 
@@ -133,6 +138,11 @@
         categoryId: {
           type: String,
           observer: "_categoryIdChanged"
+        },
+
+        postsCount: {
+          type: Number,
+          notify: true
         },
 
         categoryName: {
@@ -157,6 +167,7 @@
       },
 
       _categoryIdChanged: function (newValue, oldValue) {
+        debugger;
       },
 
       ready: function () {
@@ -177,7 +188,6 @@
       },
 
       _loadMoreData: function () {
-        debugger;
         if (!this.filter)
           this.set('filter','newest');
         if (this.searchingFor) {
@@ -196,25 +206,22 @@
       },
 
       _postsResponse: function (event, detail, sender) {
-        var group = detail.response.group;
         var list = this.$$("#list");
 
-        detail.response.Posts.forEach(function(post) {
+        this.set('postsCount', detail.response.length);
+
+        this.$$("#postsFilter")._updateTitle();
+        detail.response.forEach(function(post) {
           this.push('posts', post);
         }.bind(this));
 
-        this.$$('#scrollTheshold').clearTriggers();
+      //  this.$$('#scrollTheshold').clearTriggers();
 
         if (list) {
           this.$$("#list").fire('iron-resize');
         }
-        this.set("group", group);
+
         this._processCategories();
-        this.fire("change-header", { headerTitle: group.name,
-                                     headerDescription: group.objectives,
-                                     headerIcon: "social:group",
-                                     enableSearch: true,
-                                     backPath: "#!/community/" + this.group.community_id });
       },
 
       _processCategories: function () {

@@ -29,10 +29,6 @@
         @apply(--layout-horizontal);
       }
 
-      paper-tabs {
-        padding-bottom: 12px;
-      }
-
       .createPost {
         background-color: --var(accent-color-darker,#f57c00);
         position: fixed;
@@ -49,26 +45,13 @@
         padding: 16px;
       }
 
-      iron-pages {
-        width: 100%;
-        height: 100%;
-      }
-
-      iron-pages div {
-        width: 100%;
-        height: 100%;
-      }
 
       @media (max-width: 900px) {
-        iron-list {
-          width: 460px;
-        }
+
       }
 
       @media (max-width: 480px) {
-        iron-list {
-          width: 320px;
-        }
+
       }
 
       .objectives {
@@ -85,10 +68,6 @@
           padding-left: 0;
           padding-right: 0;
         }
-
-        iron-list {
-          width: 306px;
-        }
       }
 
       @media (max-width: 320px) {
@@ -99,30 +78,58 @@
       }
     </style>
 
+    <yp-ajax id="ajax" on-response="_groupsResponse"></yp-ajax>
+
     <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
 
     <div class="layout vertical flex"  style="margin-top: -40px;">
-        <div class="layout vertical center-center" style="width:100%;">
-          <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
-        </div>
-
-        <div class="layout vertical">
-          <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-            <paper-tab>
-              <span>[[t('ideas')]]</span> &nbsp; (<span>[[group.counter_posts]]</span>)
-            </paper-tab>
-            <paper-tab>[[t('news')]]</paper-tab>
-            <paper-tab>[[t('status')]]</paper-tab>
-          </paper-tabs>
-          <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-            <section>
-              <div class="card-container layout horizontal center-center">
-                <yp-post-list group="[[group]]" status-filter="open" searching-for="[[searchingFor]]" group="{{group}}" group-id="[[groupId]]"></yp-post-list>
-              </div>
-            </section>
-          </iron-pages>
-        </div>
+      <div class="layout vertical center-center" style="width:100%;">
+        <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
       </div>
+      <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+        <paper-tab>[[t('news')]]</paper-tab>
+        <template is="dom-if" if="[[hasNonOpenPosts]]">
+          <paper-tab>
+            <span>[[t('posts.open')]]</span>
+          </paper-tab>
+          <paper-tab>
+            <span>[[t('posts.inProgress')]]</span>
+          </paper-tab>
+          <paper-tab>
+            <span>[[t('posts.successful')]]</span>
+          </paper-tab>
+          <paper-tab>
+            <span>[[t('posts.failed')]]</span>
+          </paper-tab>
+        </template>
+      </paper-tabs>
+      <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <section>
+          <h1>Newfeed :)</h1>
+        </section>
+        <section>
+          <div class="layout horizontal center-center">
+            <yp-post-list status-filter="open" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+          </div>
+        </section>
+          <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list status-filter="in_progress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+            </div>
+          </section>
+          <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list status-filter="successful" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+            </div>
+          </section>
+          <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list status-filter="failed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+            </div>
+          </section>
+      </iron-pages>
+      <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
+    </div>
   </template>
 
   <script>
@@ -143,7 +150,8 @@
 
         group: {
           type: Object,
-          notify: true
+          notify: true,
+          value: null
         },
 
         hideAdd: {
@@ -159,6 +167,27 @@
         selected: {
           type: Number,
           value: 0
+        },
+
+        filter: {
+          type: String,
+          notify: true,
+          observer: "_filterChanged"
+        },
+
+        categoryId: {
+          type: String,
+          notify: true
+        },
+
+        categoryName: {
+          type: String,
+          notify: true
+        },
+
+        hasNonOpenPosts: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -183,7 +212,22 @@
       },
 
       _groupIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.$.ajax.url = '/api/groups/' + this.groupId;
+          this.$.ajax.generateRequest();
+        }
        },
+
+      _groupsResponse: function (event, detail, sender) {
+        this.set('group', detail.response.group);
+        this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
+
+        this.fire("change-header", { headerTitle: this.group.name,
+          headerDescription: this.group.objectives,
+          headerIcon: "social:group",
+          enableSearch: true,
+          backPath: "#!/community/" + this.group.community_id });
+      },
 
       newPost: function () {
         window.appGlobals.activity('open', 'newPost');

@@ -147,20 +147,24 @@ module.exports = function(sequelize, DataTypes) {
         if (verified) {
           done(null, this);
         } else {
-          sequelize.models.UserLegacyPassword.findAll({
-            where: { user_id: this.id }
-          }).then(function(passwords) {
-            passwords.map( function(legacyPassword) {
-              if (bcrypt.compareSync(password, legacyPassword.encrypted_password)) {
-                verified = true;
+          if (this.legacy_passwords_disabled) {
+            done(null, false, { message: 'Incorrect password.' });
+          } else {
+            sequelize.models.UserLegacyPassword.findAll({
+              where: { user_id: this.id }
+            }).then(function(passwords) {
+              passwords.map( function(legacyPassword) {
+                if (bcrypt.compareSync(password, legacyPassword.encrypted_password)) {
+                  verified = true;
+                }
+              });
+              if (verified) {
+                done(null, this);
+              } else {
+                done(null, false, { message: 'Incorrect password.' });
               }
-            });
-            if (verified) {
-              done(null, this);
-            } else {
-              done(null, false, { message: 'Incorrect password.' });
-            }
-          }.bind(this));
+            }.bind(this));
+          }
         }
       }
     }

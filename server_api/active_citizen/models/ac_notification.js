@@ -9,12 +9,54 @@ module.exports = function(sequelize, DataTypes) {
   var AcNotification = sequelize.define("AcNotification", {
     access: { type: DataTypes.INTEGER, allowNull: false },
     priority: { type: DataTypes.INTEGER, allowNull: false },
-    type: { type: DataTypes.INTEGER, allowNull: false },
+    type: { type: DataTypes.STRING, allowNull: false },
+    status: { type: DataTypes.STRING, allowNull: false },
     sent_email: { type: DataTypes.INTEGER, default: false },
     sent_push: { type: DataTypes.INTEGER, default: false },
     processed_at: DataTypes.DATE,
     user_interaction_profile: DataTypes.JSONB
   }, {
+
+    indexes: [
+      {
+        name: 'notification_public_and_active_by_type',
+        fields: ['type'],
+        where: {
+          access: 0,
+          status: 'active'
+        }
+      },
+      {
+        name: 'notification_active_by_type',
+        fields: ['type'],
+        where: {
+          status: 'active'
+        }
+      },
+      {
+        name: 'notification_active_by_type_and_user_id',
+        fields: ['type','user_id'],
+        where: {
+          status: 'active'
+        }
+      },
+      {
+        name: 'notification_active_by_user_id',
+        fields: ['user_id'],
+        where: {
+          status: 'active'
+        }
+      },
+      {
+        name: 'notification_all_by_type',
+        fields: ['type']
+      },
+      {
+        fields: ['user_interaction_profile'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      }
+    ],
     underscored: true,
 
     tableName: 'ac_notifications',
@@ -41,6 +83,7 @@ module.exports = function(sequelize, DataTypes) {
          type: type,
          priority: priority,
          access: access,
+         status: 'active',
          ac_activity_id: activity.id,
          user_id: user.id
        }).save().then(function(notification) {

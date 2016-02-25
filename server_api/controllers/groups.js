@@ -92,7 +92,7 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
   });
 });
 
-router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
+router.get('/:id', auth.can('view group'), function(req, res) {
   models.Group.find({
     where: { id: req.params.id },
     include: [
@@ -118,8 +118,11 @@ router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
   }).then(function(group) {
     if (group) {
       log.info('Group Viewed', { group: toJson(group), context: 'view', user: toJson(req.user) });
-      models.Post.search(req.params.term,req.params.id, models.Category).then(function(posts) {
-        res.send({group: group, Posts: posts});
+      var PostsByNotOpen = models.Post.scope('not_open');
+      PostsByNotOpen.count({ where: { status: { $in: ['published','inactive']}, group_id: req.params.id} }).then(function (count) {
+        res.send({group: group, hasNonOpenPosts: count != 0});
+      }).catch(function (error) {
+        sendGroupOrError(res, null, 'count_posts', req.user, error);
       });
     } else {
       sendGroupOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
@@ -129,19 +132,18 @@ router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
   });
 });
 
+router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
+    log.info('Group Search', { groupId: req.params.id, context: 'view', user: toJson(req.user) });
+    models.Post.search(req.params.term, req.params.id, models.Category).then(function(posts) {
+      res.send(posts);
+    });
+});
+
 router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), function(req, res) {
 
-  var where = '"Post"."deleted" = false AND "Post"."group_id" = '+req.params.id;
-  //  var postOrder = [models.sequelize.fn('subtraction', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'];
+  var where = { status: { $in: ['published','inactive']}, group_id: req.params.id };
 
   var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
-
-/*  if (req.params.status=="open") {
-     where+=' AND "Post"."status" = "published"';
-  } else if (req.params.status=="inProgress") {
-    where+=' AND "Post"."status" = "published"';
-    where+=' AND "Post"."status" != "published" AND "Post"."status" != "deleted"';
-  } */
 
   if (req.params.filter=="newest") {
     postOrder = "created_at DESC";
@@ -153,11 +155,23 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
   console.log(req.params);
 
   if (req.params.categoryId!='null') {
-    where+=' AND "Post"."category_id" = '+ req.params.categoryId;
+    where['category_id'] = req.params.categoryId;
   }
 
-  models.Group.find({
-    where: { id: req.params.id },
+  log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', user: toJson(req.user) });
+
+  var PostsByStatus = models.Post.scope(req.params.status);
+  PostsByStatus.findAll({
+    where: where,
+    attributes: ['id','name','description','status','official_status','counter_endorsements_up','cover_media_type',
+                 'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
+//    limit: 150,
+//        offset: req.query.offset ? req.query.offset : 0,
+    order: [
+//          [models.sequelize.fn('-', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'],
+      models.sequelize.literal(postOrder),
+      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
+    ],
     include: [
       {
         model: models.Category,
@@ -174,56 +188,15 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         ]
       },
       {
-        model: models.Image, as: 'GroupLogoImages',
+        model: models.PostRevision,
         required: false
-      }
+      },
+      { model: models.Image,
+        as: 'PostHeaderImages',
+        required: false }
     ]
-  }).then(function(group) {
-    if (group) {
-      log.info('Group Viewed', { group: toJson(group), context: 'view', user: toJson(req.user) });
-      var PostsByStatus = models.Post.scope(req.params.status);
-      PostsByStatus.findAll({
-        where: [where, []],
-        attributes: ['id','name','description','status','official_status','counter_endorsements_up','cover_media_type',
-                     'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
-//        limit: 2,
-//        offset: req.query.offset ? req.query.offset : 0,
-        order: [
-//          [models.sequelize.fn('-', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'],
-          models.sequelize.literal(postOrder),
-          [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
-        ],
-        include: [
-          {
-            model: models.Category,
-            required: false,
-            include: [
-              {
-                model: models.Image,
-                required: false,
-                as: 'CategoryIconImages',
-                order: [
-                  [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
-                ]
-              }
-            ]
-          },
-          {
-            model: models.PostRevision,
-            required: false
-          },
-          { model: models.Image,
-            as: 'PostHeaderImages',
-            required: false }
-        ]
-      }).then(function(posts) {
-        res.send({group: group, Posts: posts});
-      });
-    } else {
-      sendGroupOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
-    }
-  }).catch(function(error) {
-    sendGroupOrError(res, null, 'view', req.user, error);
+  }).then(function(posts) {
+    res.send(posts);
   });
 });
 

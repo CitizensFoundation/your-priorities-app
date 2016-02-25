@@ -33,6 +33,13 @@
     "logout": "útskrá"
   },
 
+  "posts": {
+    "open": "Hugmyndir",
+    "inProgress": "Í ferli",
+    "successful": "Samþykktar",
+    "failed": "Hafnað"
+  },
+
   "post": {
     "new": "Ný hugmynd",
     "top": "Efstu hugmyndir",
