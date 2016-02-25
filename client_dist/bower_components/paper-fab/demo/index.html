@@ -7,7 +7,11 @@
     .vertical-section-container {
       max-width: 550px;
     }
-  </style></head><body unresolved=""><div class="vertical-section-container centered"><h3>FABs can be enabled or disabled</h3><demo-snippet class="centered-demo"><template><paper-fab icon="favorite" title="heart"></paper-fab><paper-fab disabled="" icon="reply" title="reply"></paper-fab></template></demo-snippet><h3>FABs can be made smaller using the <i>mini</i> attribute</h3><demo-snippet class="centered-demo"><template><paper-fab mini="" icon="favorite" title="heart"></paper-fab><paper-fab mini="" disabled="" icon="reply" title="reply"></paper-fab></template></demo-snippet><h3>FABs can hide the ripple effect using the <i>noink</i> attribute</h3><demo-snippet class="centered-demo"><template><paper-fab noink="" icon="favorite" title="heart"></paper-fab></template></demo-snippet><h3>FABs can be styled using custom properties</h3><demo-snippet class="centered-demo"><template><style is="custom-style">
+  </style></head><body unresolved=""><div class="vertical-section-container centered"><h3>FABs can be enabled or disabled</h3><demo-snippet class="centered-demo"><template><style>
+          paper-fab.label {
+            font-size: 20px;
+          }
+        </style><paper-fab icon="favorite" title="heart"></paper-fab><paper-fab disabled="" icon="reply" title="reply"></paper-fab><paper-fab class="label" label="😻" title="heart eyes cat"></paper-fab></template></demo-snippet><h3>FABs can be made smaller using the <i>mini</i> attribute</h3><demo-snippet class="centered-demo"><template><paper-fab mini="" icon="favorite" title="heart"></paper-fab><paper-fab mini="" disabled="" icon="reply" title="reply"></paper-fab><paper-fab mini="" class="label" label="😻" title="heart eyes cat"></paper-fab></template></demo-snippet><h3>FABs can hide the ripple effect using the <i>noink</i> attribute</h3><demo-snippet class="centered-demo"><template><paper-fab noink="" icon="favorite" title="heart"></paper-fab></template></demo-snippet><h3>FABs can be styled using custom properties</h3><demo-snippet class="centered-demo"><template><style is="custom-style">
           paper-fab.blue {
             --paper-fab-background: var(--paper-light-blue-500);
             --paper-fab-keyboard-focus-background: var(--paper-light-blue-900);

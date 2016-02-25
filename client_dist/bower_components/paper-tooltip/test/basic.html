@@ -17,7 +17,10 @@
     width: 200px;
   }
 
-</style><body><test-fixture id="basic"><template><div><div id="target"></div><paper-tooltip for="target" animation-delay="0">Tooltip text</paper-tooltip></div></template></test-fixture><test-fixture id="fitted"><template><div><div id="target" style="position:absolute"></div><paper-tooltip for="target" class="wide" fit-to-visible-bounds="">Tooltip text</paper-tooltip></div></template></test-fixture><test-fixture id="no-text"><template><div><div id="target"></div><paper-tooltip for="target"></paper-tooltip></div></template></test-fixture><test-fixture id="dynamic"><template><div><div id="target"></div><paper-tooltip>Tooltip text</paper-tooltip></div></template></test-fixture><test-fixture id="custom"><template><test-button></test-button></template></test-fixture><script>
+  [hidden] {
+    display: none;
+  }
+</style><body><test-fixture id="basic"><template><div><div id="target"></div><paper-tooltip for="target" animation-delay="0">Tooltip text</paper-tooltip></div></template></test-fixture><test-fixture id="fitted"><template><div><div id="target" style="position:absolute"></div><paper-tooltip for="target" class="wide" fit-to-visible-bounds="">Tooltip text</paper-tooltip></div></template></test-fixture><test-fixture id="no-text"><template><div><div id="target"></div><paper-tooltip for="target"></paper-tooltip></div></template></test-fixture><test-fixture id="dynamic"><template><div><div id="target"></div><paper-tooltip>Tooltip text</paper-tooltip></div></template></test-fixture><test-fixture id="custom"><template><test-button></test-button></template></test-fixture><test-fixture id="no-offset-parent"><template><div><div id="target"></div><paper-tooltip for="target" animation-delay="0" hidden=""></paper-tooltip></div></template></test-fixture><script>
     function isHidden(element) {
       var rect = element.getBoundingClientRect();
       return (rect.width == 0 && rect.height == 0);
@@ -46,6 +49,20 @@
 
         MockInteractions.focus(target);
         assert.isFalse(isHidden(actualTooltip));
+      });
+
+      test('tooltip doesn\'t throw an exception if it has no offsetParent', function() {
+        var f = fixture('no-offset-parent');
+        var target = f.querySelector('#target');
+        var tooltip = f.querySelector('paper-tooltip');
+
+        var actualTooltip = Polymer.dom(tooltip.root).querySelector('#tooltip');
+        assert.isTrue(isHidden(actualTooltip));
+        tooltip.updatePosition();
+        tooltip.show();
+
+        // Doesn't get shown since there's no position computed.
+        assert.isTrue(isHidden(actualTooltip));
       });
 
       test('tooltip is positioned correctly (bottom)', function() {
@@ -322,10 +339,12 @@
         assert.isTrue(tooltip.getAttribute('role') == 'tooltip');
       });
 
-      a11ySuite('basic');
-      a11ySuite('fitted');
-      a11ySuite('no-text');
-      a11ySuite('dynamic');
-      a11ySuite('custom');
+      var ignoredRules = ['roleTooltipRequiresDescribedby'];
+
+      a11ySuite('basic', ignoredRules);
+      a11ySuite('fitted', ignoredRules);
+      a11ySuite('no-text', ignoredRules);
+      a11ySuite('dynamic', ignoredRules);
+      a11ySuite('custom', ignoredRules);
     });
   </script></body></html>

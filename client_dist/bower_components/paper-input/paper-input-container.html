@@ -1,4 +1,4 @@
-<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../iron-flex-layout/iron-flex-layout.html"><link rel="import" href="../paper-styles/color.html"><link rel="import" href="../paper-styles/default-theme.html"><link rel="import" href="../paper-styles/typography.html"><dom-module id="paper-input-container"><template><style>
+<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../iron-flex-layout/iron-flex-layout.html"><link rel="import" href="../paper-styles/default-theme.html"><link rel="import" href="../paper-styles/typography.html"><dom-module id="paper-input-container"><template><style>
       :host {
         display: block;
         padding: 8px 0;
@@ -28,8 +28,9 @@
       .focused-line {
         @apply(--layout-fit);
 
-        background: var(--paper-input-container-focus-color, --default-primary-color);
+        background: var(--paper-input-container-focus-color, --primary-color);
         height: 2px;
+
         -webkit-transform-origin: center center;
         transform-origin: center center;
         -webkit-transform: scale3d(0,1,1);
@@ -48,7 +49,7 @@
       }
 
       .underline.is-invalid .focused-line {
-        background: var(--paper-input-container-invalid-color, --google-red-500);
+        background: var(--paper-input-container-invalid-color, --error-color);
         -webkit-transform: none;
         transform: none;
         -webkit-transition: -webkit-transform 0.25s;
@@ -60,8 +61,8 @@
       .unfocused-line {
         @apply(--layout-fit);
 
-        height: 1px;
         background: var(--paper-input-container-color, --secondary-text-color);
+        height: 1px;
 
         @apply(--paper-input-container-underline);
       }
@@ -77,6 +78,7 @@
       .label-and-input-container {
         @apply(--layout-flex-auto);
         @apply(--layout-relative);
+
         width: 100%;
         max-width: 100%;
       }
@@ -97,26 +99,26 @@
         width: 100%;
         font: inherit;
         color: var(--paper-input-container-color, --secondary-text-color);
+        -webkit-transition: -webkit-transform 0.25s, width 0.25s;
+        transition: transform 0.25s, width 0.25s;
+        -webkit-transform-origin: left top;
+        transform-origin: left top;
 
         @apply(--paper-font-common-nowrap);
         @apply(--paper-font-subhead);
         @apply(--paper-input-container-label);
+        @apply(--paper-transition-easing);
       }
 
       .input-content.label-is-floating ::content label,
       .input-content.label-is-floating ::content .paper-input-label {
         -webkit-transform: translateY(-75%) scale(0.75);
         transform: translateY(-75%) scale(0.75);
-        -webkit-transition: -webkit-transform 0.25s, width 0.25s;
-        transition: transform 0.25s, width 0.25s;
-        -webkit-transform-origin: left top;
-        transform-origin: left top;
 
         /* Since we scale to 75/100 of the size, we actually have 100/75 of the
         original space now available */
         width: 133%;
 
-        @apply(--paper-transition-easing);
         @apply(--paper-input-container-label-floating);
       }
 
@@ -132,14 +134,14 @@
 
       .input-content.label-is-highlighted ::content label,
       .input-content.label-is-highlighted ::content .paper-input-label {
-        color: var(--paper-input-container-focus-color, --default-primary-color);
+        color: var(--paper-input-container-focus-color, --primary-color);
 
         @apply(--paper-input-container-label-focus);
       }
 
       .input-content.is-invalid ::content label,
       .input-content.is-invalid ::content .paper-input-label {
-        color: var(--paper-input-container-invalid-color, --google-red-500);
+        color: var(--paper-input-container-invalid-color, --error-color);
       }
 
       .input-content.label-is-hidden ::content label,
@@ -169,12 +171,14 @@
 
       ::content [prefix] {
         @apply(--paper-font-subhead);
+
         @apply(--paper-input-prefix);
         @apply(--layout-flex-none);
       }
 
       ::content [suffix] {
         @apply(--paper-font-subhead);
+
         @apply(--paper-input-suffix);
         @apply(--layout-flex-none);
       }
@@ -193,11 +197,11 @@
       }
 
       .add-on-content.is-invalid ::content * {
-        color: var(--paper-input-container-invalid-color, --google-red-500);
+        color: var(--paper-input-container-invalid-color, --error-color);
       }
 
       .add-on-content.is-highlighted ::content * {
-        color: var(--paper-input-container-focus-color, --default-primary-color);
+        color: var(--paper-input-container-focus-color, --primary-color);
       }
     </style><template is="dom-if" if="[[!noLabelFloat]]"><div class="floated-label-placeholder">&nbsp;</div></template><div class$="[[_computeInputContentClass(noLabelFloat,alwaysFloatLabel,focused,invalid,_inputHasContent)]]"><content select="[prefix]" id="prefix"></content><div class="label-and-input-container" id="labelAndInputContainer"><content select=":not([add-on]):not([prefix]):not([suffix])"></content></div><content select="[suffix]"></content></div><div class$="[[_computeUnderlineClass(focused,invalid)]]"><div class="unfocused-line"></div><div class="focused-line"></div></div><div class$="[[_computeAddOnContentClass(focused,invalid)]]"><content id="addOnContent" select="[add-on]"></content></div></template></dom-module><script>
   Polymer({

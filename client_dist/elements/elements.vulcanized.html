@@ -1,4 +1,12 @@
-<html><head><meta charset="UTF-8"><style>
+<html><head><!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><meta charset="UTF-8"><style>
 #splash,#splash::before{position:absolute;top:0;left:0;right:0;bottom:0}body{background:#f2f2f2;font-family:Roboto,'Helvetica Neue',Helvetica,Arial,sans-serif;color:#333}.currentUser{padding-left:20px;padding-top:8px}#splash{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-transition:opacity .4s cubic-bezier(0,0,.2,1);transition:opacity .4s cubic-bezier(0,0,.2,1);opacity:0;will-change:opacity;z-index:4}#splash::before{content:'';z-index:2;background:url("https://i.imgur.com/6MWkhrR.png") 50% 50% no-repeat #fff;background-size:312px}body.loading #splash{opacity:1}body,html{height:100%;margin:0}
 </style>
 
@@ -9423,11 +9431,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
    * size or hidden state of their children) and "resizables" (elements that need to be
    * notified when they are resized or un-hidden by their parents in order to take
    * action on their new measurements).
+   * 
    * Elements that perform measurement should add the `IronResizableBehavior` behavior to
    * their element definition and listen for the `iron-resize` event on themselves.
    * This event will be fired when they become showing after having been hidden,
    * when they are resized explicitly by another resizable, or when the window has been
    * resized.
+   * 
    * Note, the `iron-resize` event is non-bubbling.
    *
    * @polymerBehavior Polymer.IronResizableBehavior
@@ -9909,14 +9919,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
      * @param {boolean} smooth true if the scroll position should be smoothly adjusted.
      */
     condense: function(smooth) {
-      var ctx = Polymer.PaperScrollHeaderPanel;
       if (this.condenses && !this.fixed && !this.noReveal) {
         switch (this.headerState) {
-          case ctx.HEADER_STATE_HIDDEN:
+          case 1:
             this.scroll(this.scroller.scrollTop - (this._headerMaxDelta - this._headerMargin), smooth);
           break;
-          case ctx.HEADER_STATE_EXPANDED:
-          case ctx.HEADER_STATE_INTERPOLATED:
+          case 0:
+          case 3:
             this.scroll(this._headerMargin, smooth);
           break;
         }
@@ -9962,16 +9971,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       s.top = this.fixed ? this.headerHeight + 'px' : '';
 
       if (this.fixed) {
-        this._setHeaderState(this.HEADER_STATE_EXPANDED);
+        this._setHeaderState(0);
         this._transformHeader(null);
       } else {
         switch (this.headerState) {
-          case this.HEADER_STATE_HIDDEN:
+          case 1:
             this._transformHeader(this._headerMaxDelta);
-            break;
-          case this.HEADER_STATE_CONDENSED:
+          break;
+          case 2:
             this._transformHeader(this._headerMargin);
-            break;
+          break;
         }
       }
     },
@@ -10035,7 +10044,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     },
 
     _updateScrollState: function(scrollTop) {
-      var ctx = Polymer.PaperScrollHeaderPanel;
       var deltaScrollTop = scrollTop - this._prevScrollTop;
       var y = Math.max(0, (this.noReveal) ? scrollTop : this._y + deltaScrollTop);
 
@@ -10043,19 +10051,19 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         y = this._headerMaxDelta;
 
         if (this.keepCondensedHeader) {
-          this._setHeaderState(ctx.HEADER_STATE_CONDENSED);
+          this._setHeaderState(2);
         } else {
-          this._setHeaderState(ctx.HEADER_STATE_HIDDEN);
+          this._setHeaderState(1);
         }
       } else if (this.condenses && scrollTop >= this._headerMargin) {
         y = Math.max(y, this._headerMargin);
-        this._setHeaderState(ctx.HEADER_STATE_CONDENSED);
+        this._setHeaderState(2);
 
       } else if (y === 0) {
-        this._setHeaderState(ctx.HEADER_STATE_EXPANDED);
+        this._setHeaderState(0);
 
       } else {
-        this._setHeaderState(ctx.HEADER_STATE_INTERPOLATED);
+        this._setHeaderState(3);
       }
 
       if (!this.fixed && y !== this._y) {
@@ -10544,7 +10552,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     };
 
     --layout-around-justified: {
-      -ms-flex-pack: around;
+      -ms-flex-pack: distribute;
       -webkit-justify-content: space-around;
       justify-content: space-around;
     };
@@ -11332,7 +11340,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     },
 
     observers: [
-      '_updateSelected(attrForSelected, selected)'
+      '_updateAttrForSelected(attrForSelected)',
+      '_updateSelected(selected)'
     ],
 
     created: function() {
@@ -11344,7 +11353,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       this._observer = this._observeItems(this);
       this._updateItems();
       if (!this._shouldUpdateSelection) {
-        this._updateSelected(this.attrForSelected,this.selected)
+        this._updateSelected();
       }
       this._addListener(this.activateEvent);
     },
@@ -11437,6 +11446,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       this._setItems(nodes);
     },
 
+    _updateAttrForSelected: function() {
+      if (this._shouldUpdateSelection) {
+        this.selected = this._indexToValue(this.indexOf(this.selectedItem));        
+      }
+    },
+
     _updateSelected: function() {
       this._selectSelected(this.selected);
     },
@@ -11477,7 +11492,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     },
 
     _valueForItem: function(item) {
-      return item[this.attrForSelected] || item.getAttribute(this.attrForSelected);
+      var propValue = item[this.attrForSelected];
+      return propValue != undefined ? propValue : item.getAttribute(this.attrForSelected);
     },
 
     _applySelection: function(item, isSelected) {
@@ -11505,7 +11521,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
 
         // Let other interested parties know about the change so that
-        // we don't have to recreate mutation observers everywher.
+        // we don't have to recreate mutation observers everywhere.
         this.fire('iron-items-changed', mutations, {
           bubbles: false,
           cancelable: false
@@ -11571,7 +11587,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     },
 
     observers: [
-      '_updateSelected(attrForSelected, selectedValues)'
+      '_updateSelected(selectedValues)'
     ],
 
     /**
@@ -11600,6 +11616,18 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     get _shouldUpdateSelection() {
       return this.selected != null ||
         (this.selectedValues != null && this.selectedValues.length);
+    },
+
+    _updateAttrForSelected: function() {
+      if (!this.multi) {
+        Polymer.IronSelectableBehavior._updateAttrForSelected.apply(this);
+      } else if (this._shouldUpdateSelection) {
+        this.selectedValues = this.selectedItems.map(function(selectedItem) {
+          return this._indexToValue(this.indexOf(selectedItem));        
+        }, this).filter(function(unfilteredValue) {
+          return unfilteredValue != null;
+        }, this);
+      }
     },
 
     _updateSelected: function() {
@@ -16495,6 +16523,7 @@ if (!window.Promise) {
           atTop: {
             type: Boolean,
             value: true,
+            notify: true,
             readOnly: true
           }
         },
@@ -16851,6 +16880,13 @@ if (!window.Promise) {
     _onFocus: function(event) {
       if (Polymer.IronMenuBehaviorImpl._shiftTabPressed) {
         // do not focus the menu itself
+        return;
+      }
+
+      // Do not focus the selected tab if the deepest target is part of the
+      // menu element's local DOM and is focusable.
+      var rootTarget = Polymer.dom(event).rootTarget;
+      if (rootTarget !== this && typeof rootTarget.tabIndex !== "undefined" && !this.isLightDescendant(rootTarget)) {
         return;
       }
 
@@ -17517,7 +17553,7 @@ if (!window.Promise) {
         }
         this.$.sizedImgDiv.style.backgroundImage = src ? 'url("' + src + '")' : '';
 
-        this._setLoading(true);
+        this._setLoading(!!src);
         this._setLoaded(false);
         this._setError(false);
       },
@@ -17619,6 +17655,365 @@ if (!window.Promise) {
       }
     });
   </script></dom-module><script>
+
+  /**
+   * `Polymer.IronScrollTargetBehavior` allows an element to respond to scroll events from a
+   * designated scroll target.
+   *
+   * Elements that consume this behavior can override the `_scrollHandler`
+   * method to add logic on the scroll event.
+   *
+   * @demo demo/scrolling-region.html Scrolling Region
+   * @demo demo/document.html Document Element
+   * @polymerBehavior
+   */
+  Polymer.IronScrollTargetBehavior = {
+
+    properties: {
+
+      /**
+       * Specifies the element that will handle the scroll event
+       * on the behalf of the current element. This is typically a reference to an `Element`,
+       * but there are a few more posibilities:
+       *
+       * ### Elements id
+       *
+       *```html
+       * <div id="scrollable-element" style="overflow-y: auto;">
+       *  <x-element scroll-target="scrollable-element">
+       *    Content
+       *  </x-element>
+       * </div>
+       *```
+       * In this case, `scrollTarget` will point to the outer div element. Alternatively,
+       * you can set the property programatically:
+       *
+       *```js
+       * appHeader.scrollTarget = document.querySelector('#scrollable-element');
+       *```
+       * 
+       * @type {HTMLElement}
+       */
+      scrollTarget: {
+        type: HTMLElement,
+        value: function() {
+          return this._defaultScrollTarget;
+        }
+      }
+    },
+
+    observers: [
+      '_scrollTargetChanged(scrollTarget, isAttached)'
+    ],
+
+    _scrollTargetChanged: function(scrollTarget, isAttached) {
+      // Remove lister to the current scroll target
+      if (this._oldScrollTarget) {
+        if (this._oldScrollTarget === this._doc) {
+          window.removeEventListener('scroll', this._boundScrollHandler);
+        } else if (this._oldScrollTarget.removeEventListener) {
+          this._oldScrollTarget.removeEventListener('scroll', this._boundScrollHandler);
+        }
+        this._oldScrollTarget = null;
+      }
+      if (isAttached) {
+        // Support element id references
+        if (typeof scrollTarget === 'string') {
+
+          var ownerRoot = Polymer.dom(this).getOwnerRoot();
+          this.scrollTarget = (ownerRoot && ownerRoot.$) ?
+              ownerRoot.$[scrollTarget] : Polymer.dom(this.ownerDocument).querySelector('#' + scrollTarget);
+
+        } else if (this._scrollHandler) {
+
+          this._boundScrollHandler = this._boundScrollHandler || this._scrollHandler.bind(this);
+          // Add a new listener
+          if (scrollTarget === this._doc) {
+            window.addEventListener('scroll', this._boundScrollHandler);
+            if (this._scrollTop !== 0 || this._scrollLeft !== 0) {
+              this._scrollHandler();
+            }
+          } else if (scrollTarget && scrollTarget.addEventListener) {
+            scrollTarget.addEventListener('scroll', this._boundScrollHandler);
+          }
+          this._oldScrollTarget = scrollTarget;
+        }
+      }
+    },
+
+    /**
+     * Runs on every scroll event. Consumer of this behavior may want to override this method.
+     *
+     * @protected
+     */
+    _scrollHandler: function scrollHandler() {},
+
+    /**
+     * The default scroll target. Consumers of this behavior may want to customize
+     * the default scroll target.
+     *
+     * @type {Element}
+     */
+    get _defaultScrollTarget() {
+      return this._doc;
+    },
+
+    /**
+     * Shortcut for the document element
+     *
+     * @type {Element}
+     */
+    get _doc() {
+      return this.ownerDocument.documentElement;
+    },
+
+    /**
+     * Gets the number of pixels that the content of an element is scrolled upward.
+     *
+     * @type {number}
+     */
+    get _scrollTop() {
+      if (this._isValidScrollTarget()) {
+        return this.scrollTarget === this._doc ? window.pageYOffset : this.scrollTarget.scrollTop;
+      }
+      return 0;
+    },
+
+    /**
+     * Gets the number of pixels that the content of an element is scrolled to the left.
+     *
+     * @type {number}
+     */
+    get _scrollLeft() {
+      if (this._isValidScrollTarget()) {
+        return this.scrollTarget === this._doc ? window.pageXOffset : this.scrollTarget.scrollLeft;
+      }
+      return 0;
+    },
+
+    /**
+     * Sets the number of pixels that the content of an element is scrolled upward.
+     *
+     * @type {number}
+     */
+    set _scrollTop(top) {
+      if (this.scrollTarget === this._doc) {
+        window.scrollTo(window.pageXOffset, top);
+      } else if (this._isValidScrollTarget()) {
+        this.scrollTarget.scrollTop = top;
+      }
+    },
+
+    /**
+     * Sets the number of pixels that the content of an element is scrolled to the left.
+     *
+     * @type {number}
+     */
+    set _scrollLeft(left) {
+      if (this.scrollTarget === this._doc) {
+        window.scrollTo(left, window.pageYOffset);
+      } else if (this._isValidScrollTarget()) {
+        this.scrollTarget.scrollLeft = left;
+      }
+    },
+
+    /**
+     * Scrolls the content to a particular place.
+     *
+     * @method scroll
+     * @param {number} top The top position
+     * @param {number} left The left position
+     */
+    scroll: function(top, left) {
+       if (this.scrollTarget === this._doc) {
+        window.scrollTo(top, left);
+      } else if (this._isValidScrollTarget()) {
+        this.scrollTarget.scrollTop = top;
+        this.scrollTarget.scrollLeft = left;
+      }
+    },
+
+    /**
+     * Gets the width of the scroll target.
+     *
+     * @type {number}
+     */
+    get _scrollTargetWidth() {
+      if (this._isValidScrollTarget()) {
+        return this.scrollTarget === this._doc ? window.innerWidth : this.scrollTarget.offsetWidth;
+      }
+      return 0;
+    },
+
+    /**
+     * Gets the height of the scroll target.
+     *
+     * @type {number}
+     */
+    get _scrollTargetHeight() {
+      if (this._isValidScrollTarget()) {
+        return this.scrollTarget === this._doc ? window.innerHeight : this.scrollTarget.offsetHeight;
+      }
+      return 0;
+    },
+
+    /**
+     * Returns true if the scroll target is a valid HTMLElement.
+     *
+     * @return {boolean}
+     */
+    _isValidScrollTarget: function() {
+      return this.scrollTarget instanceof HTMLElement;
+    }
+  };
+
+</script><dom-module id="iron-scroll-threshold" assetpath="../bower_components/iron-scroll-threshold/"><template><style>
+      :host {
+        display: block;
+      }
+    </style><content></content></template></dom-module><script>
+
+  Polymer({
+
+    is: 'iron-scroll-threshold',
+
+    properties: {
+
+      /**
+       * Distance from the top (or left, for horizontal) bound of the scroller
+       * where the "upper trigger" will fire.
+       */
+      upperThreshold: {
+        type: Number,
+        value: 100
+      },
+
+      /**
+       * Distance from the bottom (or right, for horizontal) bound of the scroller
+       * where the "lower trigger" will fire.
+       */
+      lowerThreshold: {
+        type: Number,
+        value: 100
+      },
+
+      /**
+       * Read-only value that tracks the triggered state of the upper threshold.
+       */
+      upperTriggered: {
+        type: Boolean,
+        value: false,
+        notify: true,
+        readOnly: true
+      },
+
+      /**
+       * Read-only value that tracks the triggered state of the lower threshold.
+       */
+      lowerTriggered: {
+        type: Boolean,
+        value: false,
+        notify: true,
+        readOnly: true
+      },
+
+      /**
+       * True if the orientation of the scroller is horizontal.
+       */
+      horizontal: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    behaviors: [
+      Polymer.IronScrollTargetBehavior
+    ],
+
+    observers: [
+      '_setOverflow(scrollTarget)',
+      '_initCheck(horizontal, isAttached)'
+    ],
+
+    get _defaultScrollTarget() {
+      return this;
+    },
+
+    _setOverflow: function(scrollTarget) {
+      this.style.overflow = scrollTarget === this ? 'auto' : '';
+    },
+
+    _scrollHandler: function() {
+      // throttle the work on the scroll event
+      var THROTTLE_THRESHOLD = 200;
+      if (!this.isDebouncerActive('_checkTheshold')) {
+        this.debounce('_checkTheshold', function() { 
+          this.checkScrollThesholds();
+        }, THROTTLE_THRESHOLD);
+      }
+    },
+
+    _initCheck: function(horizontal, isAttached) {
+      if (isAttached) {
+        this.debounce('_init', function() {
+          this.clearTriggers();
+          this.checkScrollThesholds();
+        });
+      }
+    },
+
+    /**
+     * Checks the scroll thresholds.
+     * This method is automatically called by iron-scroll-threshold.
+     *
+     * @method checkScrollThesholds
+     */
+    checkScrollThesholds: function() {
+      if (!this.scrollTarget || (this.lowerTriggered && this.upperTriggered)) {
+        return;
+      }
+      var upperScrollValue = this.horizontal ? this._scrollLeft : this._scrollTop;
+      var lowerScrollValue = this.horizontal ? 
+          this.scrollTarget.scrollWidth - this._scrollTargetWidth - this._scrollLeft :
+              this.scrollTarget.scrollHeight - this._scrollTargetHeight - this._scrollTop;
+
+      // Detect upper threshold
+      if (upperScrollValue <= this.upperThreshold && !this.upperTriggered) {
+        this._setUpperTriggered(true);
+        this.fire('upper-threshold');
+      }
+      // Detect lower threshold
+      if (lowerScrollValue <= this.lowerThreshold && !this.lowerTriggered) {
+        this._setLowerTriggered(true);
+        this.fire('lower-threshold');
+      }
+    },
+
+    /**
+     * Clear the upper and lower threshold states.
+     *
+     * @method clearTriggers
+     */
+    clearTriggers: function() {
+      this._setUpperTriggered(false);
+      this._setLowerTriggered(false);
+    }
+
+    /**
+     * Fires when the lower threshold has been reached.
+     *
+     * @event lower-threshold
+     */
+
+    /**
+     * Fires when the upper threshold has been reached.
+     *
+     * @event upper-threshold
+     */
+
+  });
+
+</script><script>
 
   /**
    * `Polymer.IronMenubarBehavior` implements accessible menubar behavior.
@@ -17782,7 +18177,10 @@ if (!window.Promise) {
           -ms-user-select: none;
           -webkit-user-select: none;
         user-select: none;
-        -webkit-tap-highlight-color: rgba(0,0,0,0);
+
+        /* NOTE: Both values are needed, since some phones require the value to be `transparent`. */
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        -webkit-tap-highlight-color: transparent;
 
         @apply(--paper-tabs);
       }
@@ -17933,14 +18331,6 @@ if (!window.Promise) {
         alignBottom: {
           type: Boolean,
           value: false
-        },
-
-        /**
-         * Gets or sets the selected element. The default is to use the index of the item.
-         */
-        selected: {
-          type: String,
-          notify: true
         },
 
         selectable: {
@@ -18144,7 +18534,13 @@ if (!window.Promise) {
         // bar animation: expand
         this.$.selectionBar.classList.add('expand');
 
-        if (oldIndex < index) {
+        var moveRight = oldIndex < index;
+        var isRTL = this._isRTL;
+        if (isRTL) {
+          moveRight = !moveRight;
+        }
+
+        if (moveRight) {
           this._positionBar(this._calcPercent(tabRect.left + tabRect.width - oldRect.left, w) - m,
               this._left);
         } else {
@@ -18821,30 +19217,35 @@ if (!window.Promise) {
     });
   </script></dom-module><dom-module id="paper-fab" assetpath="../bower_components/paper-fab/"><template strip-whitespace=""><style include="paper-material-shared-styles">
       :host {
-        display: inline-block;
-        position: relative;
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+
+        background: var(--paper-fab-background, --accent-color);
+        border-radius: 50%;
+        box-sizing: border-box;
+        color: var(--text-primary-color);
+        cursor: pointer;
+        height: 56px;
+        min-width: 0;
         outline: none;
+        padding: 16px;
+        position: relative;
         -moz-user-select: none;
         -ms-user-select: none;
         -webkit-user-select: none;
-        -webkit-tap-highlight-color: rgba(0,0,0,0);
         user-select: none;
-        cursor: pointer;
-
-        box-sizing: border-box;
-        min-width: 0;
         width: 56px;
-        height: 56px;
-        background: var(--paper-fab-background, --accent-color);
-        color: var(--text-primary-color);
-        border-radius: 50%;
-        padding: 16px;
-
         z-index: 0;
 
-        @apply(--layout-vertical);
-        @apply(--layout-center-center);
+        /* NOTE: Both values are needed, since some phones require the value `transparent`. */
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+        -webkit-tap-highlight-color: transparent;
+
         @apply(--paper-fab);
+      }
+
+      [hidden] {
+        display: none !important;
       }
 
       :host([mini]) {
@@ -18858,6 +19259,7 @@ if (!window.Promise) {
       :host([disabled]) {
         color: var(--paper-fab-disabled-text, --paper-grey-500);
         background: var(--paper-fab-disabled-background, --paper-grey-300);
+
         @apply(--paper-fab-disabled);
       }
 
@@ -18865,60 +19267,73 @@ if (!window.Promise) {
         @apply(--paper-fab-iron-icon);
       }
 
+      span {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+      }
+
       :host(.keyboard-focus) {
         background: var(--paper-fab-keyboard-focus-background, --paper-pink-900);
       }
-    </style><iron-icon id="icon" src="[[src]]" icon="[[icon]]"></iron-icon></template></dom-module><script>
-  Polymer({
-    is: 'paper-fab',
+    </style><iron-icon id="icon" hidden$="{{!_computeIsIconFab(icon, src)}}" src="[[src]]" icon="[[icon]]"></iron-icon><span hidden$="{{_computeIsIconFab(icon, src)}}">{{label}}</span></template><script>
+    Polymer({
+      is: 'paper-fab',
 
-    behaviors: [
-      Polymer.PaperButtonBehavior
-    ],
+      behaviors: [
+        Polymer.PaperButtonBehavior
+      ],
 
-    properties: {
-      /**
-       * The URL of an image for the icon. If the src property is specified,
-       * the icon property should not be.
-       *
-       * @attribute src
-       * @type string
-       * @default ''
-       */
-      src: {
-        type: String,
-        value: ''
+      properties: {
+        /**
+         * The URL of an image for the icon. If the src property is specified,
+         * the icon property should not be.
+         */
+        src: {
+          type: String,
+          value: ''
+        },
+
+        /**
+         * Specifies the icon name or index in the set of icons available in
+         * the icon's icon set. If the icon property is specified,
+         * the src property should not be.
+         */
+        icon: {
+          type: String,
+          value: ''
+        },
+
+        /**
+         * Set this to true to style this is a "mini" FAB.
+         */
+        mini: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+
+        /**
+         * The label displayed in the badge. The label is centered, and ideally
+         * should have very few characters.
+         */
+        label: {
+          type: String,
+          observer: '_labelChanged'
+        }
       },
 
-      /**
-       * Specifies the icon name or index in the set of icons available in
-       * the icon's icon set. If the icon property is specified,
-       * the src property should not be.
-       *
-       * @attribute icon
-       * @type string
-       * @default ''
-       */
-      icon: {
-        type: String,
-        value: ''
+      _labelChanged: function() {
+        this.setAttribute('aria-label', this.label);
       },
 
-      /**
-       * Set this to true to style this is a "mini" FAB.
-       *
-       * @attribute mini
-       * @type boolean
-       * @default false
-       */
-      mini: {
-        type: Boolean,
-        value: false,
-        reflectToAttribute: true
+      _computeIsIconFab: function(icon, src) {
+        return (icon.length > 0) || (src.length > 0);
       }
-    }
-  });
-</script><script>
+    });
+  </script></dom-module><script>
   /** @polymerBehavior Polymer.PaperItemBehavior */
   Polymer.PaperItemBehaviorImpl = {
     hostAttributes: {
@@ -19253,6 +19668,16 @@ CSS properties               | Action
     this._minimumZ = 101;
 
     this._backdrops = [];
+
+    this._backdropElement = null;
+    Object.defineProperty(this, 'backdropElement', {
+      get: function() {
+        if (!this._backdropElement) {
+          this._backdropElement = document.createElement('iron-overlay-backdrop');
+        }
+        return this._backdropElement;
+      }.bind(this)
+    });
   }
 
   Polymer.IronOverlayManagerClass.prototype._applyOverlayZ = function(overlay, aboveZ) {
@@ -19333,15 +19758,6 @@ CSS properties               | Action
       this._backdrops.splice(index, 1);
     }
   };
-
-  Object.defineProperty(Polymer.IronOverlayManagerClass.prototype, "backdropElement", {
-    get: function() {
-      if (!this._backdropElement) {
-        this._backdropElement = document.createElement('iron-overlay-backdrop');
-      }
-      return this._backdropElement;
-    }
-  });
 
   Polymer.IronOverlayManagerClass.prototype.getBackdrops = function() {
     return this._backdrops;
@@ -19464,10 +19880,14 @@ CSS properties               | Action
       this.style.zIndex = this._manager.backdropZ();
       // close only if no element with backdrop is left
       if (this._manager.getBackdrops().length === 0) {
+        // Read style before setting opened.
+        var cs = getComputedStyle(this);
+        var noAnimation = (cs.transitionDuration === '0s' || cs.opacity == 0);
         this._setOpened(false);
-        // complete() will be called after the transition is done.
-        // If animations are disabled via custom-styles, user is expected to call
-        // complete() after close()
+        // In case of no animations, complete
+        if (noAnimation) {
+          this.complete();
+        }
       }
     },
 
@@ -19612,6 +20032,18 @@ context. You should place this element as a child of `<body>` whenever possible.
         value: function() {
           return this._onCaptureKeydown.bind(this);
         }
+      },
+
+      _boundOnCaptureFocus: {
+        type: Function,
+        value: function() {
+          return this._onCaptureFocus.bind(this);
+        }
+      },
+
+      /** @type {?Node} */
+      _focusedChild: {
+        type: Object
       }
 
     },
@@ -19629,10 +20061,13 @@ context. You should place this element as a child of `<body>` whenever possible.
     },
 
     get _focusNode() {
-      return Polymer.dom(this).querySelector('[autofocus]') || this;
+      return this._focusedChild || Polymer.dom(this).querySelector('[autofocus]') || this;
     },
 
     ready: function() {
+      // with-backdrop need tabindex to be set in order to trap the focus.
+      // If it is not set, IronOverlayBehavior will set it, and remove it if with-backdrop = false.
+      this.__shouldRemoveTabIndex = false;
       this._ensureSetup();
     },
 
@@ -19742,6 +20177,14 @@ context. You should place this element as a child of `<body>` whenever possible.
     },
 
     _withBackdropChanged: function() {
+      // If tabindex is already set, no need to override it.
+      if (this.withBackdrop && !this.hasAttribute('tabindex')) {
+        this.setAttribute('tabindex', '-1');
+        this.__shouldRemoveTabIndex = true;
+      } else if (this.__shouldRemoveTabIndex) {
+        this.removeAttribute('tabindex');
+        this.__shouldRemoveTabIndex = false;
+      }
       if (this.opened) {
         this._manager.trackBackdrop(this);
         if (this.withBackdrop) {
@@ -19775,6 +20218,7 @@ context. You should place this element as a child of `<body>` whenever possible.
     _toggleListeners: function () {
       this._toggleListener(this.opened, document, 'tap', this._boundOnCaptureClick, true);
       this._toggleListener(this.opened, document, 'keydown', this._boundOnCaptureKeydown, true);
+      this._toggleListener(this.opened, document, 'focus', this._boundOnCaptureFocus, true);
     },
 
     // tasks which must occur before opening; e.g. making the element visible
@@ -19820,6 +20264,7 @@ context. You should place this element as a child of `<body>` whenever possible.
       this.style.display = 'none';
       this._manager.removeOverlay(this);
 
+      this._focusedChild = null;
       this._applyFocus();
 
       this.notifyResize();
@@ -19853,9 +20298,12 @@ context. You should place this element as a child of `<body>` whenever possible.
 
     _onCaptureClick: function(event) {
       if (this._manager.currentOverlay() === this &&
-          !this.noCancelOnOutsideClick &&
           Polymer.dom(event).path.indexOf(this) === -1) {
-        this.cancel();
+        if (this.noCancelOnOutsideClick) {
+          this._applyFocus();
+        } else {
+          this.cancel();
+        }
       }
     },
 
@@ -19865,6 +20313,19 @@ context. You should place this element as a child of `<body>` whenever possible.
           !this.noCancelOnEscKey &&
           event.keyCode === ESC) {
         this.cancel();
+      }
+    },
+
+    _onCaptureFocus: function (event) {
+      if (this._manager.currentOverlay() === this &&
+          this.withBackdrop) {
+        var path = Polymer.dom(event).path;
+        if (path.indexOf(this) === -1) {
+          event.stopPropagation();
+          this._applyFocus();
+        } else {
+          this._focusedChild = path[0];
+        }
       }
     },
 
@@ -20331,6 +20792,11 @@ context. You should place this element as a child of `<body>` whenever possible.
        * @param {HTMLElement} element The element that should lock scroll.
        */
       pushScrollLock: function(element) {
+        // Prevent pushing the same element twice
+        if (this._lockingElements.indexOf(element) >= 0) {
+          return;
+        }
+
         if (this._lockingElements.length === 0) {
           this._lockScrollInteractions();
         }
@@ -20424,7 +20890,7 @@ context. You should place this element as a child of `<body>` whenever possible.
       _scrollInteractionHandler: function(event) {
         if (Polymer
               .IronDropdownScrollManager
-              .elementIsScrollLocked(event.target)) {
+              .elementIsScrollLocked(Polymer.dom(event).rootTarget)) {
           if (event.type === 'keydown' &&
               !Polymer.IronDropdownScrollManager._isScrollingKeypress(event)) {
             return;
@@ -20451,13 +20917,13 @@ context. You should place this element as a child of `<body>` whenever possible.
         document.body.style.overflowY = 'hidden';
 
         // Modern `wheel` event for mouse wheel scrolling:
-        window.addEventListener('wheel', this._scrollInteractionHandler, true);
+        document.addEventListener('wheel', this._scrollInteractionHandler, true);
         // Older, non-standard `mousewheel` event for some FF:
-        window.addEventListener('mousewheel', this._scrollInteractionHandler, true);
+        document.addEventListener('mousewheel', this._scrollInteractionHandler, true);
         // IE:
-        window.addEventListener('DOMMouseScroll', this._scrollInteractionHandler, true);
+        document.addEventListener('DOMMouseScroll', this._scrollInteractionHandler, true);
         // Mobile devices can scroll on touch move:
-        window.addEventListener('touchmove', this._scrollInteractionHandler, true);
+        document.addEventListener('touchmove', this._scrollInteractionHandler, true);
         // Capture keydown to prevent scrolling keys (pageup, pagedown etc.)
         document.addEventListener('keydown', this._scrollInteractionHandler, true);
       },
@@ -20467,10 +20933,10 @@ context. You should place this element as a child of `<body>` whenever possible.
         document.body.style.overflowX = this._originalBodyStyles.overflowX;
         document.body.style.overflowY = this._originalBodyStyles.overflowY;
 
-        window.removeEventListener('wheel', this._scrollInteractionHandler, true);
-        window.removeEventListener('mousewheel', this._scrollInteractionHandler, true);
-        window.removeEventListener('DOMMouseScroll', this._scrollInteractionHandler, true);
-        window.removeEventListener('touchmove', this._scrollInteractionHandler, true);
+        document.removeEventListener('wheel', this._scrollInteractionHandler, true);
+        document.removeEventListener('mousewheel', this._scrollInteractionHandler, true);
+        document.removeEventListener('DOMMouseScroll', this._scrollInteractionHandler, true);
+        document.removeEventListener('touchmove', this._scrollInteractionHandler, true);
         document.removeEventListener('keydown', this._scrollInteractionHandler, true);
       }
     };
@@ -20648,6 +21114,7 @@ context. You should place this element as a child of `<body>` whenever possible.
 
         /**
          * The element that should be focused when the dropdown opens.
+         * @deprecated
          */
         get _focusTarget() {
           return this.focusTarget || this.containedElement;
@@ -20747,10 +21214,6 @@ context. You should place this element as a child of `<body>` whenever possible.
             this._prepareDropdown();
             Polymer.IronOverlayBehaviorImpl._openedChanged.apply(this, arguments);
           }
-
-          if (this.opened) {
-            this._focusContent();
-          }
         },
 
         /**
@@ -20805,7 +21268,7 @@ context. You should place this element as a child of `<body>` whenever possible.
           var scrollTop;
           var scrollLeft;
 
-          if (containedElement) {
+          if (this.opened && containedElement) {
             scrollTop = containedElement.scrollTop;
             scrollLeft = containedElement.scrollLeft;
           }
@@ -20816,7 +21279,7 @@ context. You should place this element as a child of `<body>` whenever possible.
 
           Polymer.IronOverlayBehaviorImpl._onIronResize.apply(this, arguments);
 
-          if (containedElement) {
+          if (this.opened && containedElement) {
             containedElement.scrollTop = scrollTop;
             containedElement.scrollLeft = scrollLeft;
           }
@@ -20901,16 +21364,15 @@ context. You should place this element as a child of `<body>` whenever possible.
         },
 
         /**
-         * Focuses the configured focus target.
+         * Apply focus to focusTarget or containedElement
          */
-        _focusContent: function() {
-          // NOTE(cdata): This is async so that it can attempt the focus after
-          // `display: none` is removed from the element.
-          this.async(function() {
-            if (this._focusTarget) {
-              this._focusTarget.focus();
-            }
-          });
+        _applyFocus: function () {
+          var focusTarget = this.focusTarget || this.containedElement;
+          if (focusTarget && this.opened && !this.noAutoFocus) {
+            focusTarget.focus();
+          } else {
+            Polymer.IronOverlayBehaviorImpl._applyFocus.apply(this, arguments);
+          }
         }
       });
     })();
@@ -23040,39 +23502,28 @@ The `aria-labelledby` attribute will be set to the header element, if one exists
     properties: {
 
       /**
-       * If `modal` is true, this implies `no-cancel-on-outside-click` and `with-backdrop`.
+       * If `modal` is true, this implies `no-cancel-on-outside-click`, `no-cancel-on-esc-key` and `with-backdrop`.
        */
       modal: {
-        observer: '_modalChanged',
         type: Boolean,
         value: false
-      },
-
-      /** @type {?Node} */
-      _lastFocusedElement: {
-        type: Object
-      },
-
-      _boundOnFocus: {
-        type: Function,
-        value: function() {
-          return this._onFocus.bind(this);
-        }
-      },
-
-      _boundOnBackdropClick: {
-        type: Function,
-        value: function() {
-          return this._onBackdropClick.bind(this);
-        }
       }
 
     },
 
+    observers: [
+      '_modalChanged(modal, _readied)'
+    ],
+
     listeners: {
-      'tap': '_onDialogClick',
-      'iron-overlay-opened': '_onIronOverlayOpened',
-      'iron-overlay-closed': '_onIronOverlayClosed'
+      'tap': '_onDialogClick'
+    },
+
+    ready: function () {
+      // Only now these properties can be read.
+      this.__prevNoCancelOnOutsideClick = this.noCancelOnOutsideClick;
+      this.__prevNoCancelOnEscKey = this.noCancelOnEscKey;
+      this.__prevWithBackdrop = this.withBackdrop;
     },
 
     attached: function() {
@@ -23085,17 +23536,34 @@ The `aria-labelledby` attribute will be set to the header element, if one exists
       Polymer.dom(this).unobserveNodes(this._ariaObserver);
     },
 
-    _modalChanged: function() {
-      if (this.modal) {
+    _modalChanged: function(modal, readied) {
+      if (modal) {
         this.setAttribute('aria-modal', 'true');
       } else {
         this.setAttribute('aria-modal', 'false');
       }
-      // modal implies noCancelOnOutsideClick and withBackdrop if true, don't overwrite
-      // those properties otherwise.
-      if (this.modal) {
+
+      // modal implies noCancelOnOutsideClick, noCancelOnEscKey and withBackdrop.
+      // We need to wait for the element to be ready before we can read the
+      // properties values.
+      if (!readied) {
+        return;
+      }
+
+      if (modal) {
+        this.__prevNoCancelOnOutsideClick = this.noCancelOnOutsideClick;
+        this.__prevNoCancelOnEscKey = this.noCancelOnEscKey;
+        this.__prevWithBackdrop = this.withBackdrop;
         this.noCancelOnOutsideClick = true;
+        this.noCancelOnEscKey = true;
         this.withBackdrop = true;
+      } else {
+        // If the value was changed to false, let it false.
+        this.noCancelOnOutsideClick = this.noCancelOnOutsideClick &&
+          this.__prevNoCancelOnOutsideClick;
+        this.noCancelOnEscKey = this.noCancelOnEscKey &&
+          this.__prevNoCancelOnEscKey;
+        this.withBackdrop = this.withBackdrop && this.__prevWithBackdrop;
       }
     },
 
@@ -23125,57 +23593,21 @@ The `aria-labelledby` attribute will be set to the header element, if one exists
       this.closingReason.confirmed = confirmed;
     },
 
+    /**
+     * Will dismiss the dialog if user clicked on an element with dialog-dismiss
+     * or dialog-confirm attribute.
+     */
     _onDialogClick: function(event) {
-      var target = Polymer.dom(event).rootTarget;
-      while (target && target !== this) {
-        if (target.hasAttribute) {
-          if (target.hasAttribute('dialog-dismiss')) {
-            this._updateClosingReasonConfirmed(false);
-            this.close();
-            event.stopPropagation();
-            break;
-          } else if (target.hasAttribute('dialog-confirm')) {
-            this._updateClosingReasonConfirmed(true);
-            this.close();
-            event.stopPropagation();
-            break;
-          }
-        }
-        target = Polymer.dom(target).parentNode;
-      }
-    },
-
-    _onIronOverlayOpened: function() {
-      if (this.modal) {
-        document.body.addEventListener('focus', this._boundOnFocus, true);
-        document.body.addEventListener('click', this._boundOnBackdropClick, true);
-      }
-    },
-
-    _onIronOverlayClosed: function() {
-      this._lastFocusedElement = null;
-      document.body.removeEventListener('focus', this._boundOnFocus, true);
-      document.body.removeEventListener('click', this._boundOnBackdropClick, true);
-    },
-
-    _onFocus: function(event) {
-      if (this.modal && this._manager.currentOverlay() === this) {
-        if (Polymer.dom(event).path.indexOf(this) !== -1) {
-          this._lastFocusedElement = event.target;
-        } else if (this._lastFocusedElement) {
-          this._lastFocusedElement.focus();
-        } else {
-          this._focusNode.focus();
-        }
-      }
-    },
-
-    _onBackdropClick: function(event) {
-      if (this.modal && this._manager.currentOverlay() === this && Polymer.dom(event).path.indexOf(this) === -1) {
-        if (this._lastFocusedElement) {
-          this._lastFocusedElement.focus();
-        } else {
-          this._focusNode.focus();
+      // Search for the element with dialog-confirm or dialog-dismiss,
+      // from the root target until this (excluded).
+      var path = Polymer.dom(event).path;
+      for (var i = 0; i < path.indexOf(this); i++) {
+        var target = path[i];
+        if (target.hasAttribute && (target.hasAttribute('dialog-dismiss') || target.hasAttribute('dialog-confirm'))) {
+          this._updateClosingReasonConfirmed(target.hasAttribute('dialog-confirm'));
+          this.close();
+          event.stopPropagation();
+          break;
         }
       }
     }
@@ -23252,6 +23684,7 @@ The `aria-labelledby` attribute will be set to the header element, if one exists
     },
 
     _renderOpened: function() {
+      this.cancelAnimation();
       if (this.withBackdrop) {
         this.backdropElement.open();
       }
@@ -23259,6 +23692,7 @@ The `aria-labelledby` attribute will be set to the header element, if one exists
     },
 
     _renderClosed: function() {
+      this.cancelAnimation();
       if (this.withBackdrop) {
         this.backdropElement.close();
       }
@@ -25128,12 +25562,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     listeners: {
       'addon-attached': '_onAddonAttached',
-      'focus': '_onFocus'
     },
-
-    observers: [
-      '_focusedControlStateChanged(focused)'
-    ],
 
     keyBindings: {
       'shift+tab:keydown': '_onShiftTabDown'
@@ -25203,12 +25632,17 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     },
 
     /**
-     * Forward focus to inputElement
+     * Forward focus to inputElement. Overriden from IronControlState.
      */
-    _onFocus: function() {
-      if (!this._shiftTabPressed) {
+    _focusBlurHandler: function(event) {
+      if (this._shiftTabPressed)
+        return;
+
+      Polymer.IronControlState._focusBlurHandler.call(this, event);
+
+      // Forward the focus to the nested input.
+      if (this.focused)
         this._focusableElement.focus();
-      }
     },
 
     /**
@@ -25258,24 +25692,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     _computeAlwaysFloatLabel: function(alwaysFloatLabel, placeholder) {
       return placeholder || alwaysFloatLabel;
-    },
-
-    _focusedControlStateChanged: function(focused) {
-      // IronControlState stops the focus and blur events in order to redispatch them on the host
-      // element, but paper-input-container listens to those events. Since there are more
-      // pending work on focus/blur in IronControlState, I'm putting in this hack to get the
-      // input focus state working for now.
-      if (!this.$.container) {
-        this.$.container = Polymer.dom(this.root).querySelector('paper-input-container');
-        if (!this.$.container) {
-          return;
-        }
-      }
-      if (focused) {
-        this.$.container._onFocus();
-      } else {
-        this.$.container._onBlur();
-      }
     },
 
     _updateAriaLabelledBy: function() {
@@ -25382,13 +25798,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       state.value = state.value || '';
 
-      // Account for the textarea's new lines.
-      var str = state.value.replace(/(\r\n|\n|\r)/g, '--').length;
+      var counter = state.value.length;
 
       if (state.inputElement.hasAttribute('maxlength')) {
-        str += '/' + state.inputElement.getAttribute('maxlength');
+        counter += '/' + state.inputElement.getAttribute('maxlength');
       }
-      this._charCounterStr = str;
+
+      this._charCounterStr = counter;
     }
   });
 </script><dom-module id="paper-input-container" assetpath="../bower_components/paper-input/"><template><style>
@@ -25421,8 +25837,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       .focused-line {
         @apply(--layout-fit);
 
-        background: var(--paper-input-container-focus-color, --default-primary-color);
+        background: var(--paper-input-container-focus-color, --primary-color);
         height: 2px;
+
         -webkit-transform-origin: center center;
         transform-origin: center center;
         -webkit-transform: scale3d(0,1,1);
@@ -25441,7 +25858,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .underline.is-invalid .focused-line {
-        background: var(--paper-input-container-invalid-color, --google-red-500);
+        background: var(--paper-input-container-invalid-color, --error-color);
         -webkit-transform: none;
         transform: none;
         -webkit-transition: -webkit-transform 0.25s;
@@ -25453,8 +25870,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       .unfocused-line {
         @apply(--layout-fit);
 
-        height: 1px;
         background: var(--paper-input-container-color, --secondary-text-color);
+        height: 1px;
 
         @apply(--paper-input-container-underline);
       }
@@ -25470,6 +25887,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       .label-and-input-container {
         @apply(--layout-flex-auto);
         @apply(--layout-relative);
+
         width: 100%;
         max-width: 100%;
       }
@@ -25490,26 +25908,26 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         width: 100%;
         font: inherit;
         color: var(--paper-input-container-color, --secondary-text-color);
+        -webkit-transition: -webkit-transform 0.25s, width 0.25s;
+        transition: transform 0.25s, width 0.25s;
+        -webkit-transform-origin: left top;
+        transform-origin: left top;
 
         @apply(--paper-font-common-nowrap);
         @apply(--paper-font-subhead);
         @apply(--paper-input-container-label);
+        @apply(--paper-transition-easing);
       }
 
       .input-content.label-is-floating ::content label,
       .input-content.label-is-floating ::content .paper-input-label {
         -webkit-transform: translateY(-75%) scale(0.75);
         transform: translateY(-75%) scale(0.75);
-        -webkit-transition: -webkit-transform 0.25s, width 0.25s;
-        transition: transform 0.25s, width 0.25s;
-        -webkit-transform-origin: left top;
-        transform-origin: left top;
 
         /* Since we scale to 75/100 of the size, we actually have 100/75 of the
         original space now available */
         width: 133%;
 
-        @apply(--paper-transition-easing);
         @apply(--paper-input-container-label-floating);
       }
 
@@ -25525,14 +25943,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       .input-content.label-is-highlighted ::content label,
       .input-content.label-is-highlighted ::content .paper-input-label {
-        color: var(--paper-input-container-focus-color, --default-primary-color);
+        color: var(--paper-input-container-focus-color, --primary-color);
 
         @apply(--paper-input-container-label-focus);
       }
 
       .input-content.is-invalid ::content label,
       .input-content.is-invalid ::content .paper-input-label {
-        color: var(--paper-input-container-invalid-color, --google-red-500);
+        color: var(--paper-input-container-invalid-color, --error-color);
       }
 
       .input-content.label-is-hidden ::content label,
@@ -25562,12 +25980,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       ::content [prefix] {
         @apply(--paper-font-subhead);
+
         @apply(--paper-input-prefix);
         @apply(--layout-flex-none);
       }
 
       ::content [suffix] {
         @apply(--paper-font-subhead);
+
         @apply(--paper-input-suffix);
         @apply(--layout-flex-none);
       }
@@ -25586,11 +26006,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .add-on-content.is-invalid ::content * {
-        color: var(--paper-input-container-invalid-color, --google-red-500);
+        color: var(--paper-input-container-invalid-color, --error-color);
       }
 
       .add-on-content.is-highlighted ::content * {
-        color: var(--paper-input-container-focus-color, --default-primary-color);
+        color: var(--paper-input-container-focus-color, --primary-color);
       }
     </style><template is="dom-if" if="[[!noLabelFloat]]"><div class="floated-label-placeholder">&nbsp;</div></template><div class$="[[_computeInputContentClass(noLabelFloat,alwaysFloatLabel,focused,invalid,_inputHasContent)]]"><content select="[prefix]" id="prefix"></content><div class="label-and-input-container" id="labelAndInputContainer"><content select=":not([add-on]):not([prefix]):not([suffix])"></content></div><content select="[suffix]"></content></div><div class$="[[_computeUnderlineClass(focused,invalid)]]"><div class="unfocused-line"></div><div class="focused-line"></div></div><div class$="[[_computeAddOnContentClass(focused,invalid)]]"><content id="addOnContent" select="[add-on]"></content></div></template></dom-module><script>
   Polymer({
@@ -25876,7 +26296,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         display: inline-block;
         visibility: hidden;
 
-        color: var(--paper-input-container-invalid-color, --google-red-500);
+        color: var(--paper-input-container-invalid-color, --error-color);
 
         @apply(--paper-font-caption);
         @apply(--paper-input-error);
@@ -26747,220 +27167,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     });
   </script>
 </dom-module>
-<script>
-
-  /**
-   * `Polymer.IronScrollTargetBehavior` allows an element to respond to scroll events from a
-   * designated scroll target.
-   *
-   * Elements that consume this behavior can override the `_scrollHandler`
-   * method to add logic on the scroll event.
-   *
-   * @demo demo/scrolling-region.html Scrolling Region
-   * @demo demo/document.html Document Element
-   * @polymerBehavior
-   */
-  Polymer.IronScrollTargetBehavior = {
-
-    properties: {
-
-      /**
-       * Specifies the element that will handle the scroll event
-       * on the behalf of the current element. This is typically a reference to an `Element`,
-       * but there are a few more posibilities:
-       *
-       * ### Elements id
-       *
-       *```html
-       * <div id="scrollable-element" style="overflow-y: auto;">
-       *  <x-element scroll-target="scrollable-element">
-       *    Content
-       *  </x-element>
-       * </div>
-       *```
-       * In this case, `scrollTarget` will point to the outer div element. Alternatively,
-       * you can set the property programatically:
-       *
-       *```js
-       * appHeader.scrollTarget = document.querySelector('#scrollable-element');
-       *```
-       * 
-       * @type {HTMLElement}
-       */
-      scrollTarget: {
-        type: HTMLElement,
-        value: function() {
-          return this._defaultScrollTarget;
-        }
-      }
-    },
-
-    observers: [
-      '_scrollTargetChanged(scrollTarget, isAttached)'
-    ],
-
-    _scrollTargetChanged: function(scrollTarget, isAttached) {
-      // Remove lister to the current scroll target
-      if (this._oldScrollTarget) {
-        if (this._oldScrollTarget === this._doc) {
-          window.removeEventListener('scroll', this._boundScrollHandler);
-        } else if (this._oldScrollTarget.removeEventListener) {
-          this._oldScrollTarget.removeEventListener('scroll', this._boundScrollHandler);
-        }
-        this._oldScrollTarget = null;
-      }
-      if (isAttached) {
-        // Support element id references
-        if (typeof scrollTarget === 'string') {
-
-          var ownerRoot = Polymer.dom(this).getOwnerRoot();
-          this.scrollTarget = (ownerRoot && ownerRoot.$) ?
-              ownerRoot.$[scrollTarget] : Polymer.dom(this.ownerDocument).querySelector('#' + scrollTarget);
-
-        } else if (this._scrollHandler) {
-
-          this._boundScrollHandler = this._boundScrollHandler || this._scrollHandler.bind(this);
-          // Add a new listener
-          if (scrollTarget === this._doc) {
-            window.addEventListener('scroll', this._boundScrollHandler);
-            if (this._scrollTop !== 0 || this._scrollLeft !== 0) {
-              this._scrollHandler();
-            }
-          } else if (scrollTarget && scrollTarget.addEventListener) {
-            scrollTarget.addEventListener('scroll', this._boundScrollHandler);
-          }
-          this._oldScrollTarget = scrollTarget;
-        }
-      }
-    },
-
-    /**
-     * Runs on every scroll event. Consumer of this behavior may want to override this method.
-     *
-     * @protected
-     */
-    _scrollHandler: function scrollHandler() {},
-
-    /**
-     * The default scroll target. Consumers of this behavior may want to customize
-     * the default scroll target.
-     *
-     * @type {Element}
-     */
-    get _defaultScrollTarget() {
-      return this._doc;
-    },
-
-    /**
-     * Shortcut for the document element
-     *
-     * @type {Element}
-     */
-    get _doc() {
-      return this.ownerDocument.documentElement;
-    },
-
-    /**
-     * Gets the number of pixels that the content of an element is scrolled upward.
-     *
-     * @type {number}
-     */
-    get _scrollTop() {
-      if (this._isValidScrollTarget()) {
-        return this.scrollTarget === this._doc ? window.pageYOffset : this.scrollTarget.scrollTop;
-      }
-      return 0;
-    },
-
-    /**
-     * Gets the number of pixels that the content of an element is scrolled to the left.
-     *
-     * @type {number}
-     */
-    get _scrollLeft() {
-      if (this._isValidScrollTarget()) {
-        return this.scrollTarget === this._doc ? window.pageXOffset : this.scrollTarget.scrollLeft;
-      }
-      return 0;
-    },
-
-    /**
-     * Sets the number of pixels that the content of an element is scrolled upward.
-     *
-     * @type {number}
-     */
-    set _scrollTop(top) {
-      if (this.scrollTarget === this._doc) {
-        window.scrollTo(window.pageXOffset, top);
-      } else if (this._isValidScrollTarget()) {
-        this.scrollTarget.scrollTop = top;
-      }
-    },
-
-    /**
-     * Sets the number of pixels that the content of an element is scrolled to the left.
-     *
-     * @type {number}
-     */
-    set _scrollLeft(left) {
-      if (this.scrollTarget === this._doc) {
-        window.scrollTo(left, window.pageYOffset);
-      } else if (this._isValidScrollTarget()) {
-        this.scrollTarget.scrollLeft = left;
-      }
-    },
-
-    /**
-     * Scrolls the content to a particular place.
-     *
-     * @method scroll
-     * @param {number} top The top position
-     * @param {number} left The left position
-     */
-    scroll: function(top, left) {
-       if (this.scrollTarget === this._doc) {
-        window.scrollTo(top, left);
-      } else if (this._isValidScrollTarget()) {
-        this.scrollTarget.scrollTop = top;
-        this.scrollTarget.scrollLeft = left;
-      }
-    },
-
-    /**
-     * Gets the width of the scroll target.
-     *
-     * @type {number}
-     */
-    get _scrollTargetWidth() {
-      if (this._isValidScrollTarget()) {
-        return this.scrollTarget === this._doc ? window.innerWidth : this.scrollTarget.offsetWidth;
-      }
-      return 0;
-    },
-
-    /**
-     * Gets the height of the scroll target.
-     *
-     * @type {number}
-     */
-    get _scrollTargetHeight() {
-      if (this._isValidScrollTarget()) {
-        return this.scrollTarget === this._doc ? window.innerHeight : this.scrollTarget.offsetHeight;
-      }
-      return 0;
-    },
-
-    /**
-     * Returns true if the scroll target is a valid HTMLElement.
-     *
-     * @return {boolean}
-     */
-    _isValidScrollTarget: function() {
-      return this.scrollTarget instanceof HTMLElement;
-    }
-  };
-
-</script><dom-module id="iron-list" assetpath="../bower_components/iron-list/"><template><style>
+<dom-module id="iron-list" assetpath="../bower_components/iron-list/"><template><style>
       :host {
         display: block;
         position: relative;
@@ -27106,7 +27313,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     _ratio: 0.5,
 
     /**
-     * The padding-top value of the `scroller` element
+     * The padding-top value for the list.
      */
     _scrollerPaddingTop: 0,
 
@@ -27114,21 +27321,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
      * This value is the same as `scrollTop`.
      */
     _scrollPosition: 0,
-
-    /**
-     * The number of tiles in the DOM.
-     */
-    _physicalCount: 0,
-
-    /**
-     * The k-th tile that is at the top of the scrolling list.
-     */
-    _physicalStart: 0,
-
-    /**
-     * The k-th tile that is at the bottom of the scrolling list.
-     */
-    _physicalEnd: 0,
 
     /**
      * The sum of the heights of all the tiles in the DOM.
@@ -27155,11 +27347,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
      * The number of items in the list.
      */
     _virtualCount: 0,
-
-    /**
-     * The n-th item rendered in the `_physicalStart` tile.
-     */
-    _virtualStartVal: 0,
 
     /**
      * A map between an item key and its physical item index
@@ -27207,7 +27394,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
      */
     _lastVisibleIndexVal: null,
 
-
     /**
      * A Polymer collection for the items.
      * @type {?Polymer.Collection}
@@ -27231,9 +27417,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     _maxPages: 3,
 
     /**
-     * The currently focused item index.
+     * The currently focused physical item.
      */
-    _focusedIndex: 0,
+    _focusedItem: null,
+
+    /**
+     * The index of the `_focusedItem`.
+     */
+    _focusedIndex: -1,
 
     /**
      * The the item that is focused if it is moved offscreen.
@@ -27269,6 +27460,20 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     },
 
     /**
+     * The height of the physical content that isn't on the screen.
+     */
+    get _hiddenContentSize() {
+      return this._physicalSize - this._viewportSize;
+    },
+
+    /**
+     * The maximum scroll top value.
+     */
+    get _maxScrollTop() {
+      return this._estScrollHeight - this._viewportSize + this._scrollerPaddingTop;
+    },
+
+    /**
      * The lowest n-th value for an item such that it can be rendered in `_physicalStart`.
      */
     _minVirtualStart: 0,
@@ -27281,40 +27486,53 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     },
 
     /**
-     * The height of the physical content that isn't on the screen.
+     * The n-th item rendered in the `_physicalStart` tile.
      */
-    get _hiddenContentSize() {
-      return this._physicalSize - this._viewportSize;
-    },
+    _virtualStartVal: 0,
 
-    /**
-     * The maximum scroll top value.
-     */
-    get _maxScrollTop() {
-      return this._estScrollHeight - this._viewportSize;
-    },
-
-    /**
-     * Sets the n-th item rendered in `_physicalStart`
-     */
     set _virtualStart(val) {
-      // clamp the value so that _minVirtualStart <= val <= _maxVirtualStart
       this._virtualStartVal = Math.min(this._maxVirtualStart, Math.max(this._minVirtualStart, val));
-      if (this._physicalCount === 0)  {
-        this._physicalStart = 0;
-        this._physicalEnd = 0;
-      } else {
-        this._physicalStart = this._virtualStartVal % this._physicalCount;
-        this._physicalEnd = (this._physicalStart + this._physicalCount - 1) % this._physicalCount;
-      }
+    },
+
+    get _virtualStart() {
+      return this._virtualStartVal || 0;
     },
 
     /**
-     * Gets the n-th item rendered in `_physicalStart`
+     * The k-th tile that is at the top of the scrolling list.
      */
-    get _virtualStart() {
-      return this._virtualStartVal;
+    _physicalStartVal: 0,
+
+    set _physicalStart(val) {
+      this._physicalStartVal = val % this._physicalCount;
+      if (this._physicalStartVal < 0) {
+        this._physicalStartVal = this._physicalCount + this._physicalStartVal;
+      }
+      this._physicalEnd = (this._physicalStart + this._physicalCount - 1) % this._physicalCount;
     },
+
+    get _physicalStart() {
+      return this._physicalStartVal || 0;
+    },
+
+    /**
+     * The number of tiles in the DOM.
+     */
+    _physicalCountVal: 0,
+
+    set _physicalCount(val) {
+      this._physicalCountVal = val;
+      this._physicalEnd = (this._physicalStart + this._physicalCount - 1) % this._physicalCount;
+    },
+
+    get _physicalCount() {
+      return this._physicalCountVal;
+    },
+
+    /**
+     * The k-th tile that is at the bottom of the scrolling list.
+     */
+    _physicalEnd: 0,
 
     /**
      * An optimal physical size such that we will have enough physical items
@@ -27341,12 +27559,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
      */
     get firstVisibleIndex() {
       if (this._firstVisibleIndexVal === null) {
-        var physicalOffset = this._physicalTop;
+        var physicalOffset = this._physicalTop + this._scrollerPaddingTop;
 
         this._firstVisibleIndexVal = this._iterateItems(
           function(pidx, vidx) {
             physicalOffset += this._physicalSizes[pidx];
-
             if (physicalOffset > this._scrollPosition) {
               return vidx;
             }
@@ -27367,12 +27584,16 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this._iterateItems(function(pidx, vidx) {
           physicalOffset += this._physicalSizes[pidx];
 
-          if(physicalOffset <= this._scrollBottom) {
-              this._lastVisibleIndexVal = vidx;
+          if (physicalOffset <= this._scrollBottom) {
+            this._lastVisibleIndexVal = vidx;
           }
         });
       }
       return this._lastVisibleIndexVal;
+    },
+
+    get _defaultScrollTarget() {
+      return this;
     },
 
     ready: function() {
@@ -27386,10 +27607,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     detached: function() {
       this._itemsRendered = false;
-    },
-
-    get _defaultScrollTarget() {
-      return this;
     },
 
     /**
@@ -27407,8 +27624,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
      * @method updateViewportBoundaries
      */
     updateViewportBoundaries: function() {
-      var scrollerStyle = window.getComputedStyle(this.scrollTarget);
-      this._scrollerPaddingTop = parseInt(scrollerStyle['padding-top'], 10);
+      this._scrollerPaddingTop = this.scrollTarget === this ? 0 :
+          parseInt(window.getComputedStyle(this)['padding-top'], 10);
+
       this._viewportSize = this._scrollTargetHeight;
     },
 
@@ -27418,12 +27636,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
      */
     _scrollHandler: function() {
       // clamp the `scrollTop` value
-      // IE 10|11 scrollTop may go above `_maxScrollTop`
-      // iOS `scrollTop` may go below 0 and above `_maxScrollTop`
       var scrollTop = Math.max(0, Math.min(this._maxScrollTop, this._scrollTop));
+      var delta = scrollTop - this._scrollPosition;
       var tileHeight, tileTop, kth, recycledTileSet, scrollBottom, physicalBottom;
       var ratio = this._ratio;
-      var delta = scrollTop - this._scrollPosition;
       var recycledTiles = 0;
       var hiddenContentSize = this._hiddenContentSize;
       var currentRatio = ratio;
@@ -27432,7 +27648,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       // track the last `scrollTop`
       this._scrollPosition = scrollTop;
 
-      // clear cached visible index
+      // clear cached visible indexes
       this._firstVisibleIndexVal = null;
       this._lastVisibleIndexVal = null;
 
@@ -27519,6 +27735,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
       } else {
         this._virtualStart = this._virtualStart + recycledTiles;
+        this._physicalStart = this._physicalStart + recycledTiles;
         this._update(recycledTileSet, movingUp);
       }
     },
@@ -27530,11 +27747,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
      */
     _update: function(itemSet, movingUp) {
       // manage focus
-      if (this._isIndexRendered(this._focusedIndex)) {
-        this._restoreFocusedItem();
-      } else {
-        this._createFocusBackfillItem();
-      }
+      this._manageFocus();
       // update models
       this._assignModels(itemSet);
       // measure heights
@@ -27601,7 +27814,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
      * Increases the pool size.
      */
     _increasePool: function(missingItems) {
-      // limit the size
       var nextPhysicalCount = Math.min(
           this._physicalCount + missingItems,
           this._virtualCount - this._virtualStart,
@@ -27610,14 +27822,24 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       var prevPhysicalCount = this._physicalCount;
       var delta = nextPhysicalCount - prevPhysicalCount;
 
-      if (delta > 0) {
-        [].push.apply(this._physicalItems, this._createPool(delta));
-        [].push.apply(this._physicalSizes, new Array(delta));
-
-        this._physicalCount = prevPhysicalCount + delta;
-        // tail call
-        return this._update();
+      if (delta <= 0) {
+        return;
       }
+
+      [].push.apply(this._physicalItems, this._createPool(delta));
+      [].push.apply(this._physicalSizes, new Array(delta));
+
+      this._physicalCount = prevPhysicalCount + delta;
+
+      // update the physical start if we need to preserve the model of the focused item.
+      // In this situation, the focused item is currently rendered and its model would 
+      // have changed after increasing the pool if the physical start remained unchanged.
+      if (this._physicalStart > this._physicalEnd && 
+          this._isIndexRendered(this._focusedIndex) && 
+          this._getPhysicalIndex(this._focusedIndex) < this._physicalEnd) {
+        this._physicalStart = this._physicalStart + delta;
+      }
+      this._update();
     },
 
     /**
@@ -27706,20 +27928,20 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     /**
      * Called as a side effect of a host items.<key>.<path> path change,
-     * responsible for notifying item.<path> changes to row for key.
+     * responsible for notifying item.<path> changes.
      */
     _forwardItemPath: function(path, value) {
       if (this._physicalIndexForKey) {
         var dot = path.indexOf('.');
         var key = path.substring(0, dot < 0 ? path.length : dot);
         var idx = this._physicalIndexForKey[key];
-        var row = this._physicalItems[idx];
+        var el = this._physicalItems[idx];
 
         if (idx === this._focusedIndex && this._offscreenFocusedItem) {
-          row = this._offscreenFocusedItem;
+          el = this._offscreenFocusedItem;
         }
-        if (row) {
-          var inst = row._templateInstance;
+        if (el) {
+          var inst = el._templateInstance;
           if (dot >= 0) {
             path = this.as + '.' + path.substring(dot+1);
             inst.notifyPath(path, value, true);
@@ -27736,19 +27958,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
      */
     _itemsChanged: function(change) {
       if (change.path === 'items') {
-
-        this._restoreFocusedItem();
-        // render the new set
-        this._itemsRendered = false;
-        // update the whole set
+        // reset items
         this._virtualStart = 0;
         this._physicalTop = 0;
         this._virtualCount = this.items ? this.items.length : 0;
-        this._focusedIndex = 0;
         this._collection = this.items ? Polymer.Collection.get(this.items) : null;
         this._physicalIndexForKey = {};
 
         this._resetScrollPosition(0);
+        this._removeFocusedItem();
 
         // create the initial physical items
         if (!this._physicalItems) {
@@ -27756,47 +27974,50 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           this._physicalItems = this._createPool(this._physicalCount);
           this._physicalSizes = new Array(this._physicalCount);
         }
-        this._debounceTemplate(this._render);
+
+        this._physicalStart = 0;
 
       } else if (change.path === 'items.splices') {
-        // render the new set
-        this._itemsRendered = false;
         this._adjustVirtualIndex(change.value.indexSplices);
         this._virtualCount = this.items ? this.items.length : 0;
-
-        this._debounceTemplate(this._render);
-
-        if (this._focusedIndex < 0 || this._focusedIndex >= this._virtualCount) {
-          this._focusedIndex = 0;
-        }
-        this._debounceTemplate(this._render);
 
       } else {
         // update a single item
         this._forwardItemPath(change.path.split('.').slice(1).join('.'), change.value);
+        return;
       }
+
+      this._itemsRendered = false;
+      this._debounceTemplate(this._render);
     },
 
     /**
      * @param {!Array<!PolymerSplice>} splices
      */
     _adjustVirtualIndex: function(splices) {
-      var i, splice, idx;
-
-      for (i = 0; i < splices.length; i++) {
-        splice = splices[i];
-
+      splices.forEach(function(splice) {
         // deselect removed items
-        splice.removed.forEach(this.$.selector.deselect, this.$.selector);
-
-        idx = splice.index;
+        splice.removed.forEach(this._removeItem, this);
         // We only need to care about changes happening above the current position
-        if (idx >= this._virtualStart) {
-          break;
-        }
+        if (splice.index < this._virtualStart) {
+          var delta = Math.max(
+              splice.addedCount - splice.removed.length,
+              splice.index - this._virtualStart);
 
-        this._virtualStart = this._virtualStart +
-            Math.max(splice.addedCount - splice.removed.length, idx - this._virtualStart);
+          this._virtualStart = this._virtualStart + delta;
+
+          if (this._focusedIndex >= 0) {
+            this._focusedIndex = this._focusedIndex + delta;
+          }
+        }
+      }, this);
+    },
+
+    _removeItem: function(item) {
+      this.$.selector.deselect(item);
+      // remove the current focused item
+      if (this._focusedItem && this._focusedItem._templateInstance[this.as] === item) {
+        this._removeFocusedItem();
       }
     },
 
@@ -27854,14 +28075,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           inst.__key__ = this._collection.getKey(item);
           inst[this.selectedAs] = /** @type {!ArraySelectorElement} */ (this.$.selector).isSelected(item);
           inst[this.indexAs] = vidx;
-          inst.tabIndex = vidx === this._focusedIndex ? 0 : -1;
-          el.removeAttribute('hidden');
+          inst.tabIndex = this._focusedIndex === vidx ? 0 : -1;
           this._physicalIndexForKey[inst.__key__] = pidx;
+          el.removeAttribute('hidden');
+          el.setAttribute('pidx', pidx);
         } else {
           inst.__key__ = null;
           el.setAttribute('hidden', '');
         }
-
       }, itemSet);
     },
 
@@ -27909,10 +28130,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       var y = this._physicalTop;
 
       this._iterateItems(function(pidx) {
-
         this.translate3d(0, y + 'px', 0, this._physicalItems[pidx]);
         y += this._physicalSizes[pidx];
-
       });
     },
 
@@ -27960,7 +28179,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this._scrollHeight = this._estScrollHeight;
       }
     },
-
     /**
      * Scroll to a specific item in the virtual list regardless
      * of the physical items in the DOM tree.
@@ -27975,12 +28193,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       Polymer.dom.flush();
 
-      var firstVisible = this.firstVisibleIndex;
       idx = Math.min(Math.max(idx, 0), this._virtualCount-1);
-
-      // start at the previous virtual item
-      // so we have a item above the first visible item
-      this._virtualStart = idx - 1;
+      // update the virtual start only when needed
+      if (!this._isIndexRendered(idx) || idx >= this._maxVirtualStart) {
+        this._virtualStart = idx - 1;
+      }
+      // manage focus
+      this._manageFocus();
       // assign new models
       this._assignModels();
       // measure the new sizes
@@ -28187,132 +28406,167 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
     },
 
+    /**
+     * Creates a temporary backfill item in the rendered pool of physical items
+     * to replace the main focused item. The focused item has tabIndex = 0
+     * and might be currently focused by the user.
+     *
+     * This dynamic replacement helps to preserve the focus state.
+     */
+    _manageFocus: function() {
+      var fidx = this._focusedIndex;
+
+      if (fidx >= 0 && fidx < this._virtualCount) {
+        // if it's a valid index, check if that index is rendered
+        // in a physical item.
+        if (this._isIndexRendered(fidx)) {
+          this._restoreFocusedItem();
+        } else {
+          this._createFocusBackfillItem();
+        }
+      } else if (this._virtualCount > 0 && this._physicalCount > 0) {
+        // otherwise, assign the initial focused index.
+        this._focusedIndex = this._virtualStart;
+        this._focusedItem = this._physicalItems[this._physicalStart];
+      }
+    },
+
     _isIndexRendered: function(idx) {
       return idx >= this._virtualStart && idx <= this._virtualEnd;
     },
 
-    _getPhysicalItemForIndex: function(idx, force) {
-      if (!this._collection) {
-        return null;
-      }
-      if (!this._isIndexRendered(idx)) {
-        if (force) {
-          this.scrollToIndex(idx);
-          return this._getPhysicalItemForIndex(idx, false);
-        }
-        return null;
-      }
-      var item = this._getNormalizedItem(idx);
-      var physicalItem = this._physicalItems[this._physicalIndexForKey[this._collection.getKey(item)]];
+    _isIndexVisible: function(idx) {
+      return idx >= this.firstVisibleIndex && idx <= this.lastVisibleIndex;
+    },
 
-      return physicalItem || null;
+    _getPhysicalIndex: function(idx) {
+      return this._physicalIndexForKey[this._collection.getKey(this._getNormalizedItem(idx))];
     },
 
     _focusPhysicalItem: function(idx) {
-      this._restoreFocusedItem();
-
-      var physicalItem = this._getPhysicalItemForIndex(idx, true);
-      if (!physicalItem) {
+      if (idx < 0 || idx >= this._virtualCount) {
         return;
       }
+      this._restoreFocusedItem();
+      // scroll to index to make sure it's rendered
+      if (!this._isIndexRendered(idx)) {
+        this.scrollToIndex(idx);
+      }
+
+      var physicalItem = this._physicalItems[this._getPhysicalIndex(idx)];
       var SECRET = ~(Math.random() * 100);
       var model = physicalItem._templateInstance;
       var focusable;
 
+      // set a secret tab index
       model.tabIndex = SECRET;
-      // the focusable element could be the entire physical item
+      // check if focusable element is the physical item
       if (physicalItem.tabIndex === SECRET) {
        focusable = physicalItem;
       }
-      // the focusable element could be somewhere within the physical item
+      // search for the element which tabindex is bound to the secret tab index
       if (!focusable) {
         focusable = Polymer.dom(physicalItem).querySelector('[tabindex="' + SECRET + '"]');
       }
       // restore the tab index
       model.tabIndex = 0;
+      // focus the focusable element
+      this._focusedIndex = idx;
       focusable && focusable.focus();
     },
 
-    _restoreFocusedItem: function() {
-      if (!this._offscreenFocusedItem) {
-        return;
-      }
-      var item = this._getNormalizedItem(this._focusedIndex);
-      var pidx = this._physicalIndexForKey[this._collection.getKey(item)];
-
-      if (pidx !== undefined) {
-        this.translate3d(0, HIDDEN_Y, 0, this._physicalItems[pidx]);
-        this._physicalItems[pidx] = this._offscreenFocusedItem;
-      }
-      this._offscreenFocusedItem = null;
-    },
-
     _removeFocusedItem: function() {
-      if (!this._offscreenFocusedItem) {
-        return;
+      if (this._offscreenFocusedItem) {
+        Polymer.dom(this).removeChild(this._offscreenFocusedItem);
       }
-      Polymer.dom(this).removeChild(this._offscreenFocusedItem);
       this._offscreenFocusedItem = null;
       this._focusBackfillItem = null;
+      this._focusedItem = null;
+      this._focusedIndex = -1;
     },
 
     _createFocusBackfillItem: function() {
-      if (this._offscreenFocusedItem) {
+      var pidx, fidx = this._focusedIndex;
+
+      if (this._offscreenFocusedItem || fidx < 0) {
         return;
       }
-      var item = this._getNormalizedItem(this._focusedIndex);
-      var pidx = this._physicalIndexForKey[this._collection.getKey(item)];
-
-      this._offscreenFocusedItem = this._physicalItems[pidx];
-      this.translate3d(0, HIDDEN_Y, 0, this._offscreenFocusedItem);
-
       if (!this._focusBackfillItem) {
+        // create a physical item, so that it backfills the focused item.
         var stampedTemplate = this.stamp(null);
         this._focusBackfillItem = stampedTemplate.root.querySelector('*');
         Polymer.dom(this).appendChild(stampedTemplate.root);
       }
+      // get the physical index for the focused index
+      pidx = this._getPhysicalIndex(fidx);
+      // set the offcreen focused physical item
+      this._offscreenFocusedItem = this._physicalItems[pidx];
+      // backfill the focused physical item
       this._physicalItems[pidx] = this._focusBackfillItem;
+      // hide the focused physical
+      this.translate3d(0, HIDDEN_Y, 0, this._offscreenFocusedItem);
+    },
+
+    _restoreFocusedItem: function() {
+      var pidx, fidx = this._focusedIndex;
+
+      if (!this._offscreenFocusedItem || this._focusedIndex < 0) {
+        return;
+      }
+      // assign models to the focused index
+      this._assignModels();
+      // get the new physical index for the focused index
+      pidx = this._getPhysicalIndex(fidx);
+      // flip the focus backfill
+      this._focusBackfillItem = this._physicalItems[pidx];
+      // restore the focused physical item
+      this._physicalItems[pidx] = this._offscreenFocusedItem;
+      // reset the offscreen focused item
+      this._offscreenFocusedItem = null;
+      // hide the physical item that backfills
+      this.translate3d(0, HIDDEN_Y, 0, this._focusBackfillItem);
     },
 
     _didFocus: function(e) {
       var targetModel = this.modelForElement(e.target);
+      var focusedModel = this._focusedItem ? this._focusedItem._templateInstance : null;
+      var hasOffscreenFocusedItem = this._offscreenFocusedItem !== null;
       var fidx = this._focusedIndex;
 
-      if (!targetModel) {
+      if (!targetModel || !focusedModel) {
         return;
       }
-      this._restoreFocusedItem();
-
-      if (this.modelForElement(this._offscreenFocusedItem) === targetModel) {
-        this.scrollToIndex(fidx);
+      if (focusedModel === targetModel) {
+        // if the user focused the same item, then bring it into view if it's not visible
+        if (!this._isIndexVisible(fidx)) {
+          this.scrollToIndex(fidx);
+        }
       } else {
+        this._restoreFocusedItem();
         // restore tabIndex for the currently focused item
-        this._getModelFromItem(this._getNormalizedItem(fidx)).tabIndex = -1;
+        focusedModel.tabIndex = -1;
         // set the tabIndex for the next focused item
         targetModel.tabIndex = 0;
-        fidx = /** @type {{index: number}} */(targetModel).index;
+        fidx = targetModel[this.indexAs];
         this._focusedIndex = fidx;
-        // bring the item into view
-        if (fidx < this.firstVisibleIndex || fidx > this.lastVisibleIndex) {
-          this.scrollToIndex(fidx);
-        } else {
+        this._focusedItem = this._physicalItems[this._getPhysicalIndex(fidx)];
+
+        if (hasOffscreenFocusedItem && !this._offscreenFocusedItem) {
           this._update();
         }
       }
     },
 
     _didMoveUp: function() {
-      this._focusPhysicalItem(Math.max(0, this._focusedIndex - 1));
+      this._focusPhysicalItem(this._focusedIndex - 1);
     },
 
     _didMoveDown: function() {
-      this._focusPhysicalItem(Math.min(this._virtualCount, this._focusedIndex + 1));
+      this._focusPhysicalItem(this._focusedIndex + 1);
     },
 
     _didEnter: function(e) {
-      // focus the currently focused physical item
       this._focusPhysicalItem(this._focusedIndex);
-      // toggle selection
       this._selectionHandler(e.detail.keyboardEvent);
     }
   });
@@ -31368,6 +31622,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       :host {
         display: block;
         vertical-align: text-top;
+        height: 48px;
+        width: 48px;
       }
 
       .small {
@@ -31411,23 +31667,19 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
 
     <template restamp="" is="dom-if" if="[[user]]">
-
       <template is="dom-if" if="[[profileImageUrl]]">
         <iron-image sizing="cover" title="{{user.name}}" preload="" src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
       </template>
 
       <template is="dom-if" if="[[!profileImageUrl]]">
-        <template is="dom-if" if="[[user.facebook_uid]]">
+        <template is="dom-if" if="[[user.facebook_id]]">
           <iron-image sizing="cover" title="{{user.name}}" preload="" src$="[[computeFacebookSrc(user)]]" class$="[[computeClass(small)]]"></iron-image>
         </template>
 
-        <template is="dom-if" if="[[computeIf(user)]]">
-          <span>{{user.id}}</span> <span>{{user.buddy_icon_file_name}}</span><br>
-        </template>
-
-        <template is="dom-if" if="[[!user.facebook_uid]]">
+        <template is="dom-if" if="[[!user.facebook_id]]">
           <iron-image sizing="cover" title="{{user.name}}" preload="" src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class$="[[computeClass(small)]]"></iron-image>
         </template>
+
       </template>
 
     </template>
@@ -31459,7 +31711,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         },
 
         profileImageUrl: {
-          type: String
+          type: String,
+          value: null
         }
       },
 
@@ -31472,7 +31725,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       computeIf: function (user) {
-        return false && !user.facebook_uid && user.buddy_icon_file_name;
+        return false && !user.facebook_id && user.buddy_icon_file_name;
       },
 
       computeClass: function (small) {
@@ -31485,7 +31738,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       computeFacebookSrc: function (user) {
-        return 'http://graph.facebook.com/' + user.facebook_uid + '/picture';
+        return 'http://graph.facebook.com/' + user.facebook_id + '/picture';
+      },
+
+      usePlaceHolderImage: function (user) {
+        (this.profileImageUrl==null && user.facebook_id==null)
       },
 
       ready: function () {
@@ -31694,7 +31951,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       _postChanged: function(newValue, oldValue) {
-        debugger;
+       // debugger;
       },
 
       _zoomLevel: function (post) {
@@ -32289,7 +32546,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       .all-actions {
         @apply(--layout-horizontal);
         @apply(--layout-flex);
-        @apply(--layout-end-justified);
+        @apply(--layout-start-justified);
         color: var(--primary-love-color-up, rgba(50,50,50,0.45));
       }
 
@@ -32300,11 +32557,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
 
     <div class="all-actions" hidden$="[[hideNotHelpful]]">
-      <div id="actionUp">
+      <div id="actionUp" class="actionUp layout horizontal">
         <div class="action-text action-up">{{point.counter_quality_up}}</div>
         <paper-icon-button icon="thumb-up" class="point-up-vote-icon" on-tap="pointHelpful"></paper-icon-button>
       </div>
-      <div id="actionDown">
+      <div id="actionDown" class="actionDown layout horizontal">
         <div class="action-text">{{point.counter_quality_down}}</div>
         <paper-icon-button size="16x16" icon="thumb-down" class="point-down-vote-icon" on-tap="pointNotHelpful"></paper-icon-button>
       </div>
@@ -32424,11 +32681,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .for {
-        color: var(--primary-up-color-bit-lighter, #003300);
+        color: var(--primary-up-color-bit-lighter, #009900);
       }
 
       .against {
-        color: var(--primary-down-color-bit-lighter, #4C0000);
+        color: var(--primary-down-color-bit-lighter, #990000);
       }
 
       .point-container {
@@ -32448,6 +32705,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           display: none;
         }
       }
+
       .user-image-right {
         padding-right: 0px;
         padding-left: 16px;
@@ -32456,31 +32714,33 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       yp-point-actions {
       }
 
+      .userName {
+        color: #777;
+      }
+
+      yp-user-image {
+        padding-top: 4px;
+      }
     </style>
 
     <template is="dom-if" if="[[point]]">
 
       <div class="point-container">
 
-        <template is="dom-if" if="[[upVote(point)]]">
-          <div class="user-image">
-            <yp-user-image user="[[user]]"></yp-user-image>
-          </div>
-        </template>
+        <div class="user-image">
+          <yp-user-image user="[[user]]"></yp-user-image>
+        </div>
 
         <div class="point-content">
 
-          <div class$="[[computeClass(point)]]">
+          <div>
+            <div class$="[[computeClass(point)]]">
+              [[user.name]]
+            </div>
             <span hidden$="[[!point.name]]"><span>[[point.name]]</span>. </span><span>[[point.content]]</span>
             <yp-point-actions point="[[point]]"></yp-point-actions>
           </div>
         </div>
-
-        <template is="dom-if" if="[[downVote(point)]]">
-          <div class="user-image user-image-right">
-            <yp-user-image user="[[user]]"></yp-user-image>
-          </div>
-        </template>
 
       </div>
 
@@ -35254,7 +35514,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           <paper-input id="name" name="name" type="text" label="[[t('name')]]" value="{{post.name}}" maxlength="60" char-counter="">
           </paper-input>
 
-          <paper-textarea id="description" name="description" value="{{post.description}}" label="[[t('description')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
+          <paper-textarea id="description" name="description" value="{{post.description}}" label="[[t('post.description')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
           </paper-textarea>
 
           <template is="dom-if" restamp="" if="[[new]]">
@@ -35410,7 +35670,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     _setupTranslation: function () {
       if (this.new) {
-        this.editHeaderText = this.t('New post');
+        this.editHeaderText = this.t('post.new');
         this.toastText = this.t('post.toast.created');
       } else {
         this.editHeaderText = this.t('post.edit.update');
@@ -35766,6 +36026,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         line-height: var(--description-line-height, 1.3);
         width: 540px;
         padding: 12px;
+        padding-bottom: 16px;
       }
 
       .voting {
@@ -35863,11 +36124,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
     </style>
 
+    <template is="dom-if" if="[[post]]">
       <paper-material class="postCard" elevation="[[elevation]]">
         <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
         <div class="layout vertical">
           <div class="description postCardCursor" on-tap="goToPost">
-            <h2 class="post-name">[[postName(post)]]</h2>
+            <h3 class="post-name">[[postName(post)]]</h3>
             <div>[[postDescription(post)]]</div>
           </div>
           <div class="card-actions">
@@ -35875,6 +36137,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           </div>
         </div>
       </paper-material>
+    </template>
   </template>
 
   <script>
@@ -35937,6 +36200,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       postName: function (post) {
+        if (!post) {
+          debugger;
+        }
         if (post.name) {
           return this.truncate(this.trim(post.name), 60);
         } else {
@@ -35947,8 +36213,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       postDescription: function (post) {
         if (post.description) {
           return this.truncate(this.trim(post.description), 500, '...');
+        } else if (post.Points[0]) {
+          return  this.truncate(this.trim(post.Points[0].content), 500, '...');
         } else {
-          return "";
+          return '';
         }
       },
 
@@ -36151,7 +36419,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
                               <span>[[category.name]]</span>
                             </paper-item>
                           </template>
-                          </paper-menu>
+                        </paper-menu>
                       </div>
                     </template>
                   </div>
@@ -36180,6 +36448,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         filter: {
           type: String,
           value: "newest",
+          notify: true,
           observer: "_filterChanged"
         },
 
@@ -36189,6 +36458,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         categoryId: {
           type: String,
+          notify: true,
           observer: "_categoryIdChanged"
         },
 
@@ -36216,6 +36486,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         showFilter: {
           type: Boolean,
           value: true
+        },
+
+        postsCount: {
+          type: Number,
+          notify: true
         }
       },
 
@@ -36275,6 +36550,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           } else {
             this.subTitle = translatedFilterName;
           }
+          this.subTitle += ' (' + this.postsCount + ')'
         }
       },
 
@@ -36505,7 +36781,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <div class="stats-text">{{formatNumber(group.counter_points)}}</div>
 
       <iron-icon icon="face" class="stats-icon"></iron-icon>
-      <div class="stats-text">{{formatNumber(group.GroupUsers.length)}}</div>
+      <div class="stats-text">{{formatNumber(group.counter_users)}}</div>
     </div>
 
   </template>
@@ -36890,10 +37166,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         @apply(--layout-horizontal);
       }
 
-      paper-tabs {
-        padding-bottom: 12px;
-      }
-
       .createPost {
         background-color: --var(accent-color-darker,#f57c00);
         position: fixed;
@@ -36910,37 +37182,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         padding: 16px;
       }
 
-      .postsFilter {
-        padding-left: 16px;
-        margin-bottom: 0;
-        padding-bottom: 0;
-        height: 50px;
-      }
-
-      iron-pages {
-        width: 100%;
-        height: 100%;
-      }
-
-      iron-pages div {
-        width: 100%;
-        height: 100%;
-      }
-
-      iron-list {
-        width: 980px;
-      }
 
       @media (max-width: 900px) {
-        iron-list {
-          width: 460px;
-        }
+
       }
 
       @media (max-width: 480px) {
-        iron-list {
-          width: 320px;
-        }
+
       }
 
       .objectives {
@@ -36957,10 +37205,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           padding-left: 0;
           padding-right: 0;
         }
-
-        iron-list {
-          width: 306px;
-        }
       }
 
       @media (max-width: 320px) {
@@ -36971,43 +37215,60 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
     </style>
 
+    <yp-ajax id="ajax" on-response="_groupsResponse"></yp-ajax>
+
     <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
 
     <div class="layout vertical flex" style="margin-top: -40px;">
-        <div class="layout vertical center-center" style="width:100%;">
-          <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
-        </div>
-
-        <div class="layout vertical">
-          <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
-            <paper-tab>
-              <span>[[t('ideas')]]</span> &nbsp; (<span>[[posts.length]]</span>)
-            </paper-tab>
-            <paper-tab>[[t('news')]]</paper-tab>
-            <paper-tab>[[t('status')]]</paper-tab>
-          </paper-tabs>
-          <div class="card-container layout horizontal center-center">
-            <template is="dom-if" if="[[posts]]">
-              <div class="layout vertical">
-                <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroup" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}">
-                </yp-posts-filter>
-                <div class="layout horizontal">
-                  <iron-list id="list" items="[[posts]]" as="post">
-                    <template>
-                      <div class="layout vertical center-center">
-                        <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
-                      </div>
-                    </template>
-                  </iron-list>
-                </div>
-                <yp-post-card-add hidden$="[[hideAdd]]" class="card" on-tap="newPost" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card-add>
-              </div>
-            </template>
-            <yp-ajax id="ajax" url="" on-response="_postsResponse"></yp-ajax>
-            <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
-          </div>
-        </div>
+      <div class="layout vertical center-center" style="width:100%;">
+        <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
       </div>
+      <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+        <paper-tab>
+          <span>[[t('posts.open')]]</span>
+        </paper-tab>
+        <template is="dom-if" if="[[hasNonOpenPosts]]">
+          <paper-tab>
+            <span>[[t('posts.inProgress')]]</span>
+          </paper-tab>
+          <paper-tab>
+            <span>[[t('posts.successful')]]</span>
+          </paper-tab>
+          <paper-tab>
+            <span>[[t('posts.failed')]]</span>
+          </paper-tab>
+        </template>
+        <paper-tab>[[t('news')]]</paper-tab>
+      </paper-tabs>
+      <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <section>
+          <div class="layout horizontal center-center">
+            <yp-post-list status-filter="open" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+          </div>
+        </section>
+        <template is="dom-if" if="[[hasNonOpenPosts]]">
+          <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list status-filter="in_progress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+            </div>
+          </section>
+          <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list status-filter="successful" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+            </div>
+          </section>
+          <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list status-filter="failed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+            </div>
+          </section>
+        </template>
+        <section>
+          <h1>Newfeed :)</h1>
+        </section>
+      </iron-pages>
+      <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
+    </div>
   </template>
 
   <script>
@@ -37021,42 +37282,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       properties: {
 
-        categories: {
-          type: Array
-          },
-
-        defaultCategories: {
-          type: Boolean,
-          value: false
-        },
-
-        posts: {
-          type: Array
-        },
-
         groupId: {
           type: Number,
           observer: "_groupIdChanged"
         },
 
         group: {
-          type: Object
-        },
-
-        filter: {
-          type: String,
-          value: "newest",
+          type: Object,
           notify: true,
-          observer: "_filterChanged"
-        },
-
-        categoryId: {
-          type: String,
-          observer: "_categoryIdChanged"
-        },
-
-        categoryName: {
-          type: String
+          value: null
         },
 
         hideAdd: {
@@ -37066,13 +37300,33 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         searchingFor: {
           type: String,
-          value: null,
-          observer: "_searchingForChanged"
+          value: null
         },
 
         selected: {
           type: Number,
           value: 0
+        },
+
+        filter: {
+          type: String,
+          notify: true,
+          observer: "_filterChanged"
+        },
+
+        categoryId: {
+          type: String,
+          notify: true
+        },
+
+        categoryName: {
+          type: String,
+          notify: true
+        },
+
+        hasNonOpenPosts: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -37093,66 +37347,30 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.$.ajax.generateRequest();
       },
 
-      _groupIdChanged: function (newValue, oldValue) {
-        if (newValue) {
-          this._refreshGroup();
-        } else {
-          this.set("posts",null);
-        }
+      ready: function () {
       },
 
-      _refreshGroup: function () {
-        if (!this.filter)
-          this.set('filter','newest');
-        this.set("posts",null);
-        if (this.searchingFor) {
-          this.$.ajax.url = '/api/groups/' + this.groupId + '/search/' + this.searchingFor;
-        } else {
-          this.$.ajax.url = '/api/groups/' + this.groupId + '/posts/' + this.filter;
-          if (this.categoryId) {
-            this.$.ajax.url += '/' + this.categoryId;
-          }
+      _groupIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.$.ajax.url = '/api/groups/' + this.groupId;
+          this.$.ajax.generateRequest();
         }
-        this.$.ajax.generateRequest();
-        this.hideAdd = true;
+       },
+
+      _groupsResponse: function (event, detail, sender) {
+        this.set('group', detail.response.group);
+        this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
+
+        this.fire("change-header", { headerTitle: this.group.name,
+          headerDescription: this.group.objectives,
+          headerIcon: "social:group",
+          enableSearch: true,
+          backPath: "#!/community/" + this.group.community_id });
       },
 
       newPost: function () {
         window.appGlobals.activity('open', 'newPost');
         this.$.postEdit.open('new', {groupId: this.groupId});
-      },
-
-      _postsResponse: function (event, detail, sender) {
-        var group = detail.response.group;
-        this.set("posts", detail.response.Posts);
-        var list = this.$$("#list");
-        if (list) {
-          this.$$("#list").fire('iron-resize');
-        }
-        this.set("group", group);
-        this._processCategories();
-        this.fire("change-header", { headerTitle: group.name,
-                                     headerDescription: group.objectives,
-                                     headerIcon: "social:group",
-                                     enableSearch: true,
-                                     backPath: "#!/community/" + this.group.community_id });
-        this.$.groupCard.setElevation(5);
-        this.$.groupCard.lowerCardLater();
-        this.hideAdd = false;
-      },
-
-      _processCategories: function () {
-        if (this.categoryId) {
-          for (var i = 0; i < this.group.Categories.length; i++) {
-            if (this.group.Categories[i].id == this.categoryId) {
-              window.selectedCategoryName = this.group.Categories[i].name;
-              //this.$.layout.updateFilter();
-            }
-          }
-        } else {
-          window.selectedCategoryName = 'categories.all';
-          //this.$.layout.updateFilter();
-        }
       }
     });
   </script>
@@ -37259,6 +37477,225 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         Polymer.appHelpers,
         Polymer.GroupBehaviors
       ]
+    });
+  </script>
+</dom-module>
+<dom-module id="yp-post-list" assetpath="yp-post/">
+  <template>
+    <style>
+
+      :host {
+        position: relative;
+        height: auto;
+        min-height: 100% !important;
+      }
+
+      .container {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+      }
+
+      .postsFilter {
+        padding-left: 16px;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        height: 50px;
+      }
+
+      .objectives {
+        padding-bottom: 40px;
+        max-width: 432px;
+      }
+
+      .description {
+        padding: 12px;
+      }
+
+      @media (max-width: 360px) {
+        iron-list {
+          width: 306px;
+        }
+      }
+
+      @media (max-width: 320px) {
+      }
+
+      iron-list {
+        overflow: hidden !important;
+      }
+
+      yp-post-card {
+        padding-top: 16px;
+      }
+
+    </style>
+    <template is="dom-if" if="[[posts]]">
+      <div class="layout vertical" style="width: 1012px;">
+        <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroupFromFilter" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+        </yp-posts-filter>
+        <div class="layout vertical">
+          <iron-list id="list" items="[[posts]]" as="post">
+            <template>
+              <div class="layout vertical center-center">
+                <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+              </div>
+            </template>
+          </iron-list>
+        </div>
+      </div>
+    </template>
+    <yp-ajax id="ajax" on-response="_postsResponse"></yp-ajax>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-post-list',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        categories: {
+          type: Array
+          },
+
+        defaultCategories: {
+          type: Boolean,
+          value: false
+        },
+
+        posts: {
+          type: Array,
+          value: null
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        group: {
+          type: Object,
+          notify: true
+        },
+
+        filter: {
+          type: String,
+          value: "top",
+          observer: "_filterChanged"
+        },
+
+        statusFilter: {
+          type: String,
+          value: "open",
+          notify: true
+        },
+
+        categoryId: {
+          type: String,
+          observer: "_categoryIdChanged"
+        },
+
+        postsCount: {
+          type: Number,
+          notify: true
+        },
+
+        categoryName: {
+          type: String
+        },
+
+        searchingFor: {
+          type: String,
+          value: null,
+          observer: "_searchingForChanged"
+        },
+
+        selectedCategoryName: {
+          type: String
+        }
+      },
+
+      _searchingForChanged: function (newValue, oldValue) {
+      },
+
+      _filterChanged: function (newValue, oldValue) {
+      },
+
+      _categoryIdChanged: function (newValue, oldValue) {
+        debugger;
+      },
+
+      ready: function () {
+        this.set("posts", []);
+        this._loadMoreData();
+      },
+
+      _groupIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+        } else {
+          this.set("posts",[]);
+        }
+      },
+
+      _refreshGroupFromFilter: function () {
+        this.set("posts", []);
+        this._loadMoreData();
+      },
+
+      _loadMoreData: function () {
+        if (!this.filter)
+          this.set('filter','top');
+        if (this.searchingFor) {
+          this.$.ajax.url = '/api/groups/' + this.groupId + '/search/' + this.searchingFor;
+        } else {
+          this.$.ajax.url = '/api/groups/' + this.groupId + '/posts/' + this.filter;
+          if (this.categoryId) {
+            this.$.ajax.url += '/' + this.categoryId;
+          } else {
+            this.$.ajax.url += '/null';
+          }
+          this.$.ajax.url += '/'+this.statusFilter;
+        }
+        this.$.ajax.url += "?offset="+this.posts.length;
+        this.$.ajax.generateRequest();
+      },
+
+      _postsResponse: function (event, detail, sender) {
+        var list = this.$$("#list");
+
+        this.set('postsCount', detail.response.length);
+
+        this.$$("#postsFilter")._updateTitle();
+        detail.response.forEach(function(post) {
+          this.push('posts', post);
+        }.bind(this));
+
+      //  this.$$('#scrollTheshold').clearTriggers();
+
+        if (list) {
+          this.$$("#list").fire('iron-resize');
+        }
+
+        this._processCategories();
+      },
+
+      _processCategories: function () {
+        if (this.categoryId) {
+          for (var i = 0; i < this.group.Categories.length; i++) {
+            if (this.group.Categories[i].id == this.categoryId) {
+              this.selectedCategoryName = this.group.Categories[i].name;
+              //this.$.layout.updateFilter();
+            }
+          }
+        } else {
+          this.selectedCategoryName = 'categories.all';
+          //this.$.layout.updateFilter();
+        }
+      }
     });
   </script>
 </dom-module>
@@ -37705,7 +38142,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <div class="stats-text" style="">{{formatNumber(community.counter_groups)}}</div>
 
       <iron-icon icon="face" class="stats-icon"></iron-icon>
-      <div class="stats-text">{{formatNumber(community.CommunityUsers.length)}}</div>
+      <div class="stats-text">{{formatNumber(community.counter_users)}}</div>
     </div>
 
   </template>
@@ -37836,7 +38273,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             </div>
           </template>
           <template is="dom-if" if="[[!phoneSize]]">
-            <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
+            <iron-image class="image" sizing="contain" src$="[[communityLogoImagePath(community)]]"></iron-image>
           </template>
           <div class="layout vertical description-and-stats">
             <div class="description">
@@ -37972,7 +38409,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
               </section>
               <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('news')]]</h1></section>
               <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('events')]]</h1></section>
-          </iron-pages></div>
+            </iron-pages>
+          </div>
           <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
         </div>
       </div>
@@ -38306,6 +38744,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <iron-icon icon="image:wb-sunny" class="stats-icon"></iron-icon>
       <div class="stats-text" style="">{{formatNumber(domain.counter_posts)}}</div>
 
+      <iron-icon icon="communication:message" class="stats-icon"></iron-icon>
+      <div class="stats-text">{{formatNumber(domain.counter_points)}}</div>
+
       <iron-icon icon="group-work" class="stats-icon"></iron-icon>
       <div class="stats-text" style="">{{formatNumber(domain.counter_communities)}}</div>
 
@@ -38313,7 +38754,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <div class="stats-text" style="">{{formatNumber(domain.counter_groups)}}</div>
 
       <iron-icon icon="face" class="stats-icon"></iron-icon>
-      <div class="stats-text">{{formatNumber(domain.DomainUsers.length)}}</div>
+      <div class="stats-text">{{formatNumber(domain.counter_users)}}</div>
 
     </div>
 

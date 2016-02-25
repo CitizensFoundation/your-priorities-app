@@ -22,8 +22,6 @@
       assert.strictEqual(f2.getAttribute('aria-disabled'), 'false');
     });
 
-    test('aria-label is set');
-
     test('user-defined aria-label is preserved', function() {
       assert.strictEqual(f3.getAttribute('aria-label'), 'custom');
       f3.icon = 'arrow-forward';

@@ -1,0 +1,242 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-post/yp-post.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+<link rel="import" href="../yp-post/yp-post-card.html">
+<link rel="import" href="../yp-post/yp-post-edit.html">
+<link rel="import" href="../yp-post/yp-post-card-add.html">
+
+<link rel="import" href="../yp-posts-filter/yp-posts-filter.html">
+
+<dom-module id="yp-post-list">
+  <template>
+    <style>
+
+      :host {
+        position: relative;
+        height: auto;
+        min-height: 100% !important;
+      }
+
+      .container {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+      }
+
+      .postsFilter {
+        padding-left: 16px;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        height: 50px;
+      }
+
+      .objectives {
+        padding-bottom: 40px;
+        max-width: 432px;
+      }
+
+      .description {
+        padding: 12px;
+      }
+
+      @media (max-width: 360px) {
+        iron-list {
+          width: 306px;
+        }
+      }
+
+      @media (max-width: 320px) {
+      }
+
+      iron-list {
+        overflow: hidden !important;
+      }
+
+      yp-post-card {
+        padding-top: 16px;
+      }
+
+    </style>
+    <template is="dom-if" if="[[posts]]">
+      <div class="layout vertical" style="width: 1012px;">
+        <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
+                         group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
+                         category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+        </yp-posts-filter>
+        <div class="layout vertical">
+          <iron-list id="list" items="[[posts]]" as="post">
+            <template>
+              <div class="layout vertical center-center">
+                <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+              </div>
+            </template>
+          </iron-list>
+        </div>
+      </div>
+    </template>
+    <yp-ajax id="ajax" on-response="_postsResponse"></yp-ajax>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-post-list',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        categories: {
+          type: Array
+          },
+
+        defaultCategories: {
+          type: Boolean,
+          value: false
+        },
+
+        posts: {
+          type: Array,
+          value: null
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        group: {
+          type: Object,
+          notify: true
+        },
+
+        filter: {
+          type: String,
+          value: "top",
+          observer: "_filterChanged"
+        },
+
+        statusFilter: {
+          type: String,
+          value: "open",
+          notify: true
+        },
+
+        categoryId: {
+          type: String,
+          observer: "_categoryIdChanged"
+        },
+
+        postsCount: {
+          type: Number,
+          notify: true
+        },
+
+        categoryName: {
+          type: String
+        },
+
+        searchingFor: {
+          type: String,
+          value: null,
+          observer: "_searchingForChanged"
+        },
+
+        selectedCategoryName: {
+          type: String
+        }
+      },
+
+      _searchingForChanged: function (newValue, oldValue) {
+      },
+
+      _filterChanged: function (newValue, oldValue) {
+      },
+
+      _categoryIdChanged: function (newValue, oldValue) {
+        debugger;
+      },
+
+      ready: function () {
+        this.set("posts", []);
+        this._loadMoreData();
+      },
+
+      _groupIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+        } else {
+          this.set("posts",[]);
+        }
+      },
+
+      _refreshGroupFromFilter: function () {
+        this.set("posts", []);
+        this._loadMoreData();
+      },
+
+      _loadMoreData: function () {
+        if (!this.filter)
+          this.set('filter','top');
+        if (this.searchingFor) {
+          this.$.ajax.url = '/api/groups/' + this.groupId + '/search/' + this.searchingFor;
+        } else {
+          this.$.ajax.url = '/api/groups/' + this.groupId + '/posts/' + this.filter;
+          if (this.categoryId) {
+            this.$.ajax.url += '/' + this.categoryId;
+          } else {
+            this.$.ajax.url += '/null';
+          }
+          this.$.ajax.url += '/'+this.statusFilter;
+        }
+        this.$.ajax.url += "?offset="+this.posts.length;
+        this.$.ajax.generateRequest();
+      },
+
+      _postsResponse: function (event, detail, sender) {
+        var list = this.$$("#list");
+
+        this.set('postsCount', detail.response.length);
+
+        this.$$("#postsFilter")._updateTitle();
+        detail.response.forEach(function(post) {
+          this.push('posts', post);
+        }.bind(this));
+
+      //  this.$$('#scrollTheshold').clearTriggers();
+
+        if (list) {
+          this.$$("#list").fire('iron-resize');
+        }
+
+        this._processCategories();
+      },
+
+      _processCategories: function () {
+        if (this.categoryId) {
+          for (var i = 0; i < this.group.Categories.length; i++) {
+            if (this.group.Categories[i].id == this.categoryId) {
+              this.selectedCategoryName = this.group.Categories[i].name;
+              //this.$.layout.updateFilter();
+            }
+          }
+        } else {
+          this.selectedCategoryName = 'categories.all';
+          //this.$.layout.updateFilter();
+        }
+      }
+    });
+  </script>
+</dom-module>

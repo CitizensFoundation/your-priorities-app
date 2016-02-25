@@ -124,10 +124,12 @@
 
           Polymer.dom(s).removeChild(lastChild);
 
-          Polymer.Base.async(function() {
-            expect(s.selectedItems.length).to.be.equal(1);
-            done();
-          });
+          Polymer.dom.flush();
+
+          expect(s.selectedItems.length).to.be.equal(1);
+          expect(s.selectedItems[0]).to.be.equal(firstChild);
+
+          done();
         });
 
       });

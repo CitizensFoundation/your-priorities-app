@@ -5,6 +5,8 @@
     "edit": "Breyta vef"
   },
 
+  "create": "Búa til",
+  "cancel": "Hætta við",
   "communities": "Svæði",
   "community": {
     "edit": "Breyta svæði",
@@ -31,9 +33,17 @@
     "logout": "útskrá"
   },
 
+  "posts": {
+    "open": "Hugmyndir",
+    "inProgress": "Í ferli",
+    "successful": "Samþykktar",
+    "failed": "Hafnað"
+  },
+
   "post": {
     "new": "Ný hugmynd",
     "top": "Efstu hugmyndir",
+    "description": "Lýsing",
     "newest": "Nýjustu hugmyndir",
     "random": "Hugmyndir af handahófi",
     "inProgress": "Hugmyndir í ferli",

@@ -76,7 +76,7 @@
             contribution: 200,
             target: list.items.length*rowHeight,
             onScrollEnd: function() {
-              assert.equal(getFirstItemFromList(list).textContent, 
+              assert.equal(getFirstItemFromList(list).textContent,
                 list.items.length - itemsPerViewport);
               done();
             }
@@ -185,7 +185,19 @@
           });
         });
       });
-      
+
+      test('empty items array', function(done) {
+        list.items = buildDataSet(100);
+
+        flush(function() {
+          list.items = [];
+          flush(function() {
+            assert.notEqual(getFirstItemFromList(list).textContent, '0');
+            done();
+          });
+        });
+      });
+
     });
 
     suite('mutations of primitive type items', function() {
