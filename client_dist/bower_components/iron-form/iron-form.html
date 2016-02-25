@@ -233,9 +233,9 @@ event and do your own custom submission:
       this.request.headers = this.headers;
 
       if (this.method.toUpperCase() === 'GET') {
-        this._request.params = json;
+        this.request.params = json;
       } else {
-        this._request.body = json;
+        this.request.body = json;
       }
 
       // Allow for a presubmit hook
