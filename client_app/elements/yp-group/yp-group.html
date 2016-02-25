@@ -87,11 +87,10 @@
         <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
       </div>
       <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-        <paper-tab>[[t('news')]]</paper-tab>
+        <paper-tab>
+          <span>[[t('posts.open')]]</span>
+        </paper-tab>
         <template is="dom-if" if="[[hasNonOpenPosts]]">
-          <paper-tab>
-            <span>[[t('posts.open')]]</span>
-          </paper-tab>
           <paper-tab>
             <span>[[t('posts.inProgress')]]</span>
           </paper-tab>
@@ -102,16 +101,15 @@
             <span>[[t('posts.failed')]]</span>
           </paper-tab>
         </template>
+        <paper-tab>[[t('news')]]</paper-tab>
       </paper-tabs>
       <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <section>
-          <h1>Newfeed :)</h1>
-        </section>
         <section>
           <div class="layout horizontal center-center">
             <yp-post-list status-filter="open" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
           </div>
         </section>
+        <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section>
             <div class="layout horizontal center-center">
               <yp-post-list status-filter="in_progress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
@@ -127,6 +125,10 @@
               <yp-post-list status-filter="failed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
             </div>
           </section>
+        </template>
+        <section>
+          <h1>Newfeed :)</h1>
+        </section>
       </iron-pages>
       <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
     </div>

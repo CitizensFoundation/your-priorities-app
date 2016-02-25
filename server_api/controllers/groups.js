@@ -52,7 +52,7 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
 
 router.put('/:id', auth.can('edit group'), function(req, res) {
   models.Group.find({
-    where: {id: req.params.id, user_id: req.user.id }
+    where: {id: req.params.id }
   }).then(function (group) {
     if (group) {
       group.name =req.body.name;
@@ -189,6 +189,11 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
       },
       {
         model: models.PostRevision,
+        required: false
+      },
+      {
+        model: models.Point,
+        attributes: ['id','content'],
         required: false
       },
       { model: models.Image,

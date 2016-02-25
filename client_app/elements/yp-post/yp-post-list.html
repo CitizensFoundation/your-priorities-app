@@ -125,7 +125,7 @@
 
         filter: {
           type: String,
-          value: "newest",
+          value: "top",
           observer: "_filterChanged"
         },
 
@@ -189,7 +189,7 @@
 
       _loadMoreData: function () {
         if (!this.filter)
-          this.set('filter','newest');
+          this.set('filter','top');
         if (this.searchingFor) {
           this.$.ajax.url = '/api/groups/' + this.groupId + '/search/' + this.searchingFor;
         } else {

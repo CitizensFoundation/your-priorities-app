@@ -178,7 +178,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
 
 router.put('/:id', auth.can('edit post'), function(req, res) {
   models.Post.find({
-    where: {id: req.params.id, user_id: req.user.id }
+    where: {id: req.params.id }
   }).then(function (post) {
     if (post) {
       post.name = req.body.name;

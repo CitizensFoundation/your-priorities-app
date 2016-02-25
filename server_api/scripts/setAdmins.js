@@ -2,7 +2,7 @@ var models = require('../models');
 var async = require('async');
 var ip = require('ip');
 
-var userEmail = 'gunnar@citizens.is';
+var userEmail = 'robert@citizens.is';
 var user;
 
 console.log("Adding "+userEmail+" to all public communities and groups + domains");
