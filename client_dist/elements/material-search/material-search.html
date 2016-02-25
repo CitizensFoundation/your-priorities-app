@@ -8,57 +8,58 @@
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 
 <dom-module id="material-search">
-  <style>
-    :host {
-      display: none;
-      margin: 0;
-      background: rgba(255, 255, 255, 0.9);
-      color: #757575;
-      z-index: 20;
-    }
-
-    :host([active]) {
-      display: block;
-    }
-
-    paper-menu {
-      margin-left: 0;
-      margin-right: 0;
-      overflow: auto;
-    }
-
-    paper-toolbar {
-      background-color: white;
-    }
-
-    input {
-      border: none;
-      background: transparent;
-      font: inherit;
-      font-size: 16px;
-      outline: none;
-    }
-
-    @media (min-width: 600px) {
-      paper-menu {
-        max-width: 50%;
-        margin: 0 auto;
-        max-height: 50vh;
-      }
-    }
-
-    :host {
-      --paper-icon-button: {
-        color: var(--paper-grey-500);
-      };
-    }
-
-    paper-item iron-icon {
-      margin-right: 24px !important;
-    }
-  </style>
   <template>
-    <paper-header-panel mode="standard" class="fit">
+
+    <style is="custom-style">
+      :host {
+        display: none;
+        margin: 0;
+        background: rgba(255, 255, 255, 0.9);
+        color: #757575;
+        z-index: 20;
+      }
+
+      :host([active]) {
+        display: block;
+      }
+
+      paper-menu {
+        margin-left: 0;
+        margin-right: 0;
+        overflow: auto;
+      }
+
+      paper-toolbar {
+        background-color: white;
+      }
+
+      input {
+        border: none;
+        background: transparent;
+        font: inherit;
+        font-size: 16px;
+        outline: none;
+      }
+
+      @media (min-width: 600px) {
+        paper-menu {
+          max-width: 50%;
+          margin: 0 auto;
+          max-height: 50vh;
+        }
+      }
+
+      :host {
+        --paper-icon-button: {
+          color: var(--paper-grey-500);
+        };
+      }
+
+      paper-item iron-icon {
+        margin-right: 24px !important;
+      }
+    </style>
+    <paper-header-panel mode="standard" class="layout fit">
       <paper-toolbar class$="{{_computeHeaderClass(narrow)}}">
         <paper-icon-button icon="arrow-back" on-tap="toggle"></paper-icon-button>
         <input id="searchbox" placeholder="[[placehHolder]]" class="flex"
@@ -69,7 +70,8 @@
       <paper-menu on-iron-activate="onSelect">
         <template is="dom-repeat" items="{{previousSearches}}">
           <paper-item class="relative" data-value$="{{item}}">
-            <iron-icon icon="history"></iron-icon><span>{{item}}</span>
+            <iron-icon icon="history"></iron-icon>
+            <span>{{item}}</span>
             <paper-ripple></paper-ripple>
           </paper-item>
         </template>
@@ -83,7 +85,9 @@
       properties: {
         previousSearches: {
           type: Array,
-          value: function() { return []; },
+          value: function () {
+            return [];
+          },
           notify: true
         },
 
@@ -111,27 +115,27 @@
         }
       },
 
-      onSelect: function(e, detail) {
-        this.async(function() {
+      onSelect: function (e, detail) {
+        this.async(function () {
           this.searchValue = detail.item.dataset.value;
         }, 250); // Introduce small delay so user sees ripple.
       },
 
-      toggle: function() {
+      toggle: function () {
         this.active = !this.active;
         if (this.active) {
           this.$.searchbox.focus();
         }
       },
 
-      getSpeechInput: function(e) {
+      getSpeechInput: function (e) {
         var recognition = 'SpeechRecognition' in window ? new SpeechRecognition() :
           'webkitSpeechRecognition' in window ? new webkitSpeechRecognition() :
             null;
         if (recognition) {
           recognition.continuous = false;
           recognition.interimResults = false;
-          recognition.onresult = function(e) {
+          recognition.onresult = function (e) {
             var result = e.results[0][0].transcript;
             this.searchValue = result;
           }.bind(this);
@@ -139,7 +143,7 @@
         }
       },
 
-      doSearch: function(e) {
+      doSearch: function (e) {
         if (e.keyCode == 13) {
           this._searchValueChanged();
         }
@@ -152,14 +156,14 @@
        * @param {Object} detail.searchValue The search string.
        */
 
-      _searchValueChanged: function() {
+      _searchValueChanged: function () {
         if (this.searchValue) {
           this.fire('search-change', {value: this.searchValue});
           this.searchValue = '';
         }
       },
 
-      _computeHeaderClass: function(narrow) {
+      _computeHeaderClass: function (narrow) {
         return narrow ? 'core-narrow' : '';
       }
     });

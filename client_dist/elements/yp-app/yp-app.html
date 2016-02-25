@@ -151,30 +151,30 @@
 
     <yp-app-globals id="appGlobals" disable-welcome setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
     <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
-
+<!--
     <material-search id="search" narrow="[[narrow]]"
                      previous-searches="{{previousSearches}}"
-                     on-search-change="_onSearch" class="fit"></material-search>
+                     on-search-change="_onSearch" class="fit"></material-search> -->
 
     <app-drawer-layout drawer-width="288px" responsive-width="1600px">
+      <!--
+            <app-drawer id="drawer" position="right" swipe-open>
+              <yp-app-drawer id="drawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
+            </app-drawer> -->
 
-      <app-drawer id="drawer" position="right" swipe-open>
-        <yp-app-drawer id="drawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
-      </app-drawer>
+            <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
 
-      <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
+            <app-header-layout id="mainArea">
 
-      <app-header-layout id="mainArea">
+              <app-header effects="waterfall" reveals class="main-header">
+                <app-toolbar>
+                  <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
+                  <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
+                  <div title>[[headerTitle]]</div>
 
-        <app-header effects="waterfall" reveals class="main-header">
-          <app-toolbar>
-            <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
-            <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
-            <div title>[[headerTitle]]</div>
+                  <span class="flex"></span>
 
-            <span class="flex"></span>
-
-            <!-- Toolbar icons -->
+                  <!-- Toolbar icons -->
             <paper-icon-button icon="search" on-tap="toggleSearch" hidden$="[[!showSearch]]"></paper-icon-button>
 
             <template is="dom-if" if="[[user]]">
@@ -342,7 +342,7 @@
       },
 
       routeChanged: function(newValue, oldValue) {
-        if (!this.$.drawer.persistent) this.$.drawer.close();
+//        if (!this.$.drawer.persistent) this.$.drawer.close();
       }
 
     });

@@ -27619,57 +27619,58 @@ is separate from validation, and `allowed-pattern` does not affect how the input
   </script>
 </dom-module>
 <dom-module id="material-search" assetpath="material-search/">
-  <style>
-    :host {
-      display: none;
-      margin: 0;
-      background: rgba(255, 255, 255, 0.9);
-      color: #757575;
-      z-index: 20;
-    }
-
-    :host([active]) {
-      display: block;
-    }
-
-    paper-menu {
-      margin-left: 0;
-      margin-right: 0;
-      overflow: auto;
-    }
-
-    paper-toolbar {
-      background-color: white;
-    }
-
-    input {
-      border: none;
-      background: transparent;
-      font: inherit;
-      font-size: 16px;
-      outline: none;
-    }
-
-    @media (min-width: 600px) {
-      paper-menu {
-        max-width: 50%;
-        margin: 0 auto;
-        max-height: 50vh;
-      }
-    }
-
-    :host {
-      --paper-icon-button: {
-        color: var(--paper-grey-500);
-      };
-    }
-
-    paper-item iron-icon {
-      margin-right: 24px !important;
-    }
-  </style>
   <template>
-    <paper-header-panel mode="standard" class="fit">
+
+    <style is="custom-style">
+      :host {
+        display: none;
+        margin: 0;
+        background: rgba(255, 255, 255, 0.9);
+        color: #757575;
+        z-index: 20;
+      }
+
+      :host([active]) {
+        display: block;
+      }
+
+      paper-menu {
+        margin-left: 0;
+        margin-right: 0;
+        overflow: auto;
+      }
+
+      paper-toolbar {
+        background-color: white;
+      }
+
+      input {
+        border: none;
+        background: transparent;
+        font: inherit;
+        font-size: 16px;
+        outline: none;
+      }
+
+      @media (min-width: 600px) {
+        paper-menu {
+          max-width: 50%;
+          margin: 0 auto;
+          max-height: 50vh;
+        }
+      }
+
+      :host {
+        --paper-icon-button: {
+          color: var(--paper-grey-500);
+        };
+      }
+
+      paper-item iron-icon {
+        margin-right: 24px !important;
+      }
+    </style>
+    <paper-header-panel mode="standard" class="layout fit">
       <paper-toolbar class$="{{_computeHeaderClass(narrow)}}">
         <paper-icon-button icon="arrow-back" on-tap="toggle"></paper-icon-button>
         <input id="searchbox" placeholder="[[placehHolder]]" class="flex" value="{{searchValue::change}}" on-keyup="doSearch">
@@ -27678,7 +27679,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <paper-menu on-iron-activate="onSelect">
         <template is="dom-repeat" items="{{previousSearches}}">
           <paper-item class="relative" data-value$="{{item}}">
-            <iron-icon icon="history"></iron-icon><span>{{item}}</span>
+            <iron-icon icon="history"></iron-icon>
+            <span>{{item}}</span>
             <paper-ripple></paper-ripple>
           </paper-item>
         </template>
@@ -27692,7 +27694,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       properties: {
         previousSearches: {
           type: Array,
-          value: function() { return []; },
+          value: function () {
+            return [];
+          },
           notify: true
         },
 
@@ -27720,27 +27724,27 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
       },
 
-      onSelect: function(e, detail) {
-        this.async(function() {
+      onSelect: function (e, detail) {
+        this.async(function () {
           this.searchValue = detail.item.dataset.value;
         }, 250); // Introduce small delay so user sees ripple.
       },
 
-      toggle: function() {
+      toggle: function () {
         this.active = !this.active;
         if (this.active) {
           this.$.searchbox.focus();
         }
       },
 
-      getSpeechInput: function(e) {
+      getSpeechInput: function (e) {
         var recognition = 'SpeechRecognition' in window ? new SpeechRecognition() :
           'webkitSpeechRecognition' in window ? new webkitSpeechRecognition() :
             null;
         if (recognition) {
           recognition.continuous = false;
           recognition.interimResults = false;
-          recognition.onresult = function(e) {
+          recognition.onresult = function (e) {
             var result = e.results[0][0].transcript;
             this.searchValue = result;
           }.bind(this);
@@ -27748,7 +27752,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
       },
 
-      doSearch: function(e) {
+      doSearch: function (e) {
         if (e.keyCode == 13) {
           this._searchValueChanged();
         }
@@ -27761,14 +27765,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
        * @param {Object} detail.searchValue The search string.
        */
 
-      _searchValueChanged: function() {
+      _searchValueChanged: function () {
         if (this.searchValue) {
           this.fire('search-change', {value: this.searchValue});
           this.searchValue = '';
         }
       },
 
-      _computeHeaderClass: function(narrow) {
+      _computeHeaderClass: function (narrow) {
         return narrow ? 'core-narrow' : '';
       }
     });
@@ -40047,27 +40051,23 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     <yp-app-globals id="appGlobals" disable-welcome="" setup-defaults="" on-change-header="onChangeHeader"></yp-app-globals>
     <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
 
-    <material-search id="search" narrow="[[narrow]]" previous-searches="{{previousSearches}}" on-search-change="_onSearch" class="fit"></material-search>
 
     <app-drawer-layout drawer-width="288px" responsive-width="1600px">
+      
 
-      <app-drawer id="drawer" position="right" swipe-open="">
-        <yp-app-drawer id="drawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
-      </app-drawer>
+            <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
 
-      <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
+            <app-header-layout id="mainArea">
 
-      <app-header-layout id="mainArea">
+              <app-header effects="waterfall" reveals="" class="main-header">
+                <app-toolbar>
+                  <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
+                  <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden=""></iron-icon>
+                  <div title="">[[headerTitle]]</div>
 
-        <app-header effects="waterfall" reveals="" class="main-header">
-          <app-toolbar>
-            <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
-            <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden=""></iron-icon>
-            <div title="">[[headerTitle]]</div>
+                  <span class="flex"></span>
 
-            <span class="flex"></span>
-
-            
+                  
             <paper-icon-button icon="search" on-tap="toggleSearch" hidden$="[[!showSearch]]"></paper-icon-button>
 
             <template is="dom-if" if="[[user]]">
@@ -40233,7 +40233,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       routeChanged: function(newValue, oldValue) {
-        if (!this.$.drawer.persistent) this.$.drawer.close();
+//        if (!this.$.drawer.persistent) this.$.drawer.close();
       }
 
     });
