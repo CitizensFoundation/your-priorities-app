@@ -87,42 +87,41 @@
         <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
       </div>
       <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-        <paper-tab>
-          <span>[[t('posts.open')]]</span>
+        <paper-tab id="tab1">
+          <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
         </paper-tab>
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <paper-tab>
-            <span>[[t('posts.inProgress')]]</span>
+            <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
           </paper-tab>
           <paper-tab>
-            <span>[[t('posts.successful')]]</span>
+            <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
           </paper-tab>
           <paper-tab>
-            <span>[[t('posts.failed')]]</span>
+            <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
           </paper-tab>
-        </template>
-        <paper-tab>[[t('news')]]</paper-tab>
+        </template> <paper-tab>[[t('news')]]</paper-tab>
       </paper-tabs>
       <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
           <div class="layout horizontal center-center">
-            <yp-post-list status-filter="open" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+            <yp-post-list status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
           </div>
         </section>
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section>
             <div class="layout horizontal center-center">
-              <yp-post-list status-filter="in_progress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              <yp-post-list status-filter="in_progress" tab-counter-id="tabCountInProgress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
             </div>
           </section>
           <section>
             <div class="layout horizontal center-center">
-              <yp-post-list status-filter="successful" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              <yp-post-list status-filter="successful" tab-counter-id="tabCountSuccessful" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
             </div>
           </section>
           <section>
             <div class="layout horizontal center-center">
-              <yp-post-list status-filter="failed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              <yp-post-list status-filter="failed" tab-counter-id="tabCountFailed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
             </div>
           </section>
         </template>
@@ -142,6 +141,10 @@
       behaviors: [
         Polymer.appHelpers
       ],
+
+      listeners: {
+        'yp-post-count': '_updateTabPostCount'
+      },
 
       properties: {
 
@@ -190,6 +193,14 @@
         hasNonOpenPosts: {
           type: Boolean,
           value: false
+        }
+      },
+
+      _updateTabPostCount: function (event, tabCounterInfo) {
+        debugger;
+        var tabCounter = this.$$('#'+tabCounterInfo.tabCounterId);
+        if (tabCounter) {
+          tabCounter.innerHTML='('+tabCounterInfo.count+')';
         }
       },
 

@@ -157,6 +157,10 @@
 
         selectedCategoryName: {
           type: String
+        },
+
+        tabCounterId: {
+          type: String
         }
       },
 
@@ -209,6 +213,7 @@
         var list = this.$$("#list");
 
         this.set('postsCount', detail.response.length);
+        this.fire('yp-post-count', {tabCounterId: this.tabCounterId, count: detail.response.length});
 
         this.$$("#postsFilter")._updateTitle();
         detail.response.forEach(function(post) {

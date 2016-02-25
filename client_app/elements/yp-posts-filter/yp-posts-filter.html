@@ -257,10 +257,10 @@
           var inWord = this.t('short_word.in');
           if (this._ifCategories()) {
             this.subTitle = translatedFilterName + ' ' + inWord + ' ' + translatedCategoryName;
+            this.subTitle += ' (' + this.postsCount + ')'
           } else {
             this.subTitle = translatedFilterName;
           }
-          this.subTitle += ' (' + this.postsCount + ')'
         }
       },
 
