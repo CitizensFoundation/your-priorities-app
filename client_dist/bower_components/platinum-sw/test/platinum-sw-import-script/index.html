@@ -1,0 +1,17 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"><script src="../../../webcomponentsjs/webcomponents-lite.js"></script><script src="../../../web-component-tester/browser.js"></script><link rel="import" href="../../platinum-sw-register.html"><link rel="import" href="../../platinum-sw-import-script.html"></head><body><platinum-sw-register skip-waiting="" clients-claim="" auto-register=""><platinum-sw-import-script href="post-message-echo.js"></platinum-sw-import-script></platinum-sw-register><script>
+      suite('Importing Service Worker Scripts', function() {
+        // TODO: postMessage/message events are in flux in the Service Worker spec, so this may
+        // need to change in the future.
+        test('message handler is registered via imported script', function(done) {
+          return navigator.serviceWorker.ready.then(function(registration) {
+            var message = 'hello';
+            var messageChannel = new MessageChannel();
+            messageChannel.port1.onmessage = function(event) {
+              assert.equal(event.data, message);
+              done();
+            };
+            registration.active.postMessage(message, [messageChannel.port2]);
+          });
+        });
+      });
+    </script></body></html>
