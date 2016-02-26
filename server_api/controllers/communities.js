@@ -30,7 +30,7 @@ router.get('/:id', auth.can('view community'), function(req, res) {
     order: [
       [ { model: models.Group }, 'counter_users', 'desc' ],
       [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ],
-      [ models.Group, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'desc' ]
+      [ models.Group, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
     ],
     include: [
       {
