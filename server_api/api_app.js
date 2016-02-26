@@ -42,6 +42,16 @@ if (process.env.REDISTOGO_URL) {
 var app = express();
 app.set('port', process.env.PORT || 4242);
 
+if (app.get('env') != 'development') {
+  app.use(function(req, res, next) {
+    if (!/https/.test(req.protocol)){
+      res.redirect("https://" + req.headers.host + req.url);
+    } else {
+      return next();
+    }
+  });
+}
+
 if (app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_app')));
 } else {
@@ -72,16 +82,6 @@ app.use(session(sessionConfig));
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-if (app.get('env') != 'development') {
-  app.use(function(req, res, next) {
-    if (!/https/.test(req.protocol)){
-      res.redirect("https://" + req.headers.host + req.url);
-    } else {
-      return next();
-    }
-  });
-}
 
 // Setup the current domain from the host
 app.use(function (req, res, next) {
