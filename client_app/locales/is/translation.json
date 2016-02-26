@@ -136,15 +136,15 @@
     "set": "Setja staðsettningu"
   },
   "image": {
-    "upload": "Setja inn mynd",
+    "upload": "Settu inn mynd",
     "logo": {
-      "upload": "Merki"
+      "upload": "Settu inn mynd"
     },
     "header": {
       "upload": "Höfuðmynd"
     },
     "profile": {
-      "upload": "Prófilmynd"
+      "upload": "Mynd"
     }
   }
 }
