@@ -294,6 +294,12 @@
         }
       },
 
+      scrollPageToTop: function() {
+        var mainArea = document.getElementById('#mainArea');
+        if (mainArea) {
+          mainArea.scroller.scrollTop = 0;
+        }
+      },
 
       _toggleDrawer: function () {
         this.$.drawer.toggle();

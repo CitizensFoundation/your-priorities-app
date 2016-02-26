@@ -3,12 +3,3 @@ function onSplashClick() {
   loadContainer.parentNode.removeChild(loadContainer);
   document.body.classList.remove('loading');
 }
-
-(function(document) {
-  'use strict';
-
-  window.appStartTime = new Date();
-  i18n.init({ lng: "is" });
-  window.i18n = i18n;
-
-})(document);
