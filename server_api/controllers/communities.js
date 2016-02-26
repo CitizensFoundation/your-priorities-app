@@ -29,7 +29,8 @@ router.get('/:id', auth.can('view community'), function(req, res) {
     where: { id: req.params.id },
     order: [
       [ { model: models.Group }, 'counter_users', 'desc' ],
-      [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ]
+      [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ],
+      [ models.Group, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'desc' ]
     ],
     include: [
       {
@@ -46,15 +47,9 @@ router.get('/:id', auth.can('view community'), function(req, res) {
           }
         },
         required: false,
-        order: [
-          [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'desc' ]
-        ],
         include: [
           {
-            model: models.Image, as: 'GroupLogoImages',
-            order: [
-              [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'desc' ]
-            ]
+            model: models.Image, as: 'GroupLogoImages'
           }
         ]
       }

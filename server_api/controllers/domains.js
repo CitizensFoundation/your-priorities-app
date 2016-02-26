@@ -39,7 +39,8 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
     where: { id: req.params.id },
     order: [
       [ { model: models.Community } ,'counter_users', 'desc' ],
-      [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'asc' ]
+      [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'asc' ],
+      [ models.Community, { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ]
     ],
     include: [
       {
@@ -54,17 +55,9 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
             $ne: models.Community.ACCESS_SECRET
           }
         },
-        order: [
-          [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ],
-          [ { model: models.Image, as: 'CommunityHeaderImages' }, 'created_at', 'asc' ]
-        ],
         include: [
           {
-            model: models.Image, as: 'CommunityLogoImages',
-            order: [
-              [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ],
-              [ { model: models.Image, as: 'CommunityHeaderImages' }, 'created_at', 'asc' ]
-            ]
+            model: models.Image, as: 'CommunityLogoImages'
           },
           {
             model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc'
