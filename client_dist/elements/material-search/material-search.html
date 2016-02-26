@@ -62,8 +62,8 @@
     <paper-header-panel mode="standard" class="layout fit">
       <paper-toolbar class$="{{_computeHeaderClass(narrow)}}">
         <paper-icon-button icon="arrow-back" on-tap="toggle"></paper-icon-button>
-        <input id="searchbox" placeholder="[[placehHolder]]" class="flex"
-               value="{{searchValue::change}}"
+        <input id="searchbox" placeholder="[[placeHolder]]" class="flex"
+               value="{{searchValue}}"
                on-keyup="doSearch">
         <paper-icon-button icon="av:mic" on-tap="getSpeechInput"></paper-icon-button>
       </paper-toolbar>

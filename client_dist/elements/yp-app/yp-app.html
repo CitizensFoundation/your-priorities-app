@@ -88,7 +88,7 @@
         left: 0;
         width: 100%;
         color: #fff;
-        background-color:#F2F2F2;
+        background-color: #F2F2F2;
       }
 
       app-toolbar {
@@ -96,7 +96,7 @@
       }
 
       [condensed-title] {
-/*        background-size: 76px; */
+        /*        background-size: 76px; */
         /* The difference in font size is used to calculate the scale of the title in the transition. */
         font-size: 16px;
       }
@@ -136,11 +136,13 @@
           width: 100%;
         }
       }
+
       @media (max-width: 960px) {
         .card-container {
           width: 50%;
         }
       }
+
       @media (max-width: 719px) {
         .card-container {
           width: 100%;
@@ -151,30 +153,31 @@
 
     <yp-app-globals id="appGlobals" disable-welcome setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
     <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
-<!--
-    <material-search id="search" narrow="[[narrow]]"
+
+<!--    <material-search id="search" narrow="[[narrow]]"
                      previous-searches="{{previousSearches}}"
                      on-search-change="_onSearch" class="fit"></material-search> -->
 
     <app-drawer-layout drawer-width="288px" responsive-width="1600px">
 
-            <app-drawer id="drawer" align="end" position="right" swipe-open>
-              <yp-app-drawer id="drawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
-            </app-drawer>
+      <app-drawer id="drawer" align="end" position="right" swipe-open>
+        <yp-app-drawer id="drawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
+      </app-drawer>
 
-            <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
+      <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
 
-            <app-header-layout id="mainArea">
+      <app-header-layout id="mainArea">
 
-              <app-header effects="waterfall" reveals class="main-header">
-                <app-toolbar>
-                  <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
-                  <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
-                  <div title>[[headerTitle]]</div>
+        <app-header effects="waterfall" reveals class="main-header">
+          <app-toolbar>
+            <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon"
+                               hidden$="[[!showBack]]"></paper-icon-button>
+            <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
+            <div title>[[headerTitle]]</div>
 
-                  <span class="flex"></span>
+            <span class="flex"></span>
 
-                  <!-- Toolbar icons -->
+            <!-- Toolbar icons -->
             <paper-icon-button icon="search" on-tap="toggleSearch" hidden$="[[!showSearch]]"></paper-icon-button>
 
             <template is="dom-if" if="[[user]]">
@@ -204,7 +207,8 @@
 
           <section data-route="group">
             <template is="dom-if" if="[[params.groupId]]" restamp>
-              <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]" searching-for="[[params.searchingFor]]"
+              <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]"
+                        searching-for="[[params.searchingFor]]"
                         category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
                         on-change-header="onChangeHeader"></yp-group>
             </template>
@@ -283,20 +287,30 @@
 
         params: {
           type: Object
+        },
+
+        narrow: {
+          type: Boolean
         }
       },
 
+      scrollPageToTop: function() {
+        var mainArea = document.getElementById('#mainArea');
+        if (mainArea) {
+          mainArea.scroller.scrollTop = 0;
+        }
+      },
 
       _toggleDrawer: function () {
         this.$.drawer.toggle();
       },
 
-      openEdit: function ()  {
+      openEdit: function () {
         var userEdit = document.querySelector('#userEdit');
-        userEdit.open('edit', { userId: this.user.id });
+        userEdit.open('edit', {userId: this.user.id});
       },
 
-      onChangeHeader: function(event, header) {
+      onChangeHeader: function (event, header) {
         this.headerTitle = document.title = header.headerTitle;
         this.headerDescription = header.headerDescription;
 
@@ -320,16 +334,16 @@
           page(this.backPath);
       },
 
-      _onSearch: function(e) {
+      _onSearch: function (e) {
         this.toggleSearch();
         this.unshift('previousSearches', e.detail.value);
-        var postsFilter =  document.querySelector('#postsFilter');
+        var postsFilter = document.querySelector('#postsFilter');
         if (postsFilter) {
           postsFilter.searchFor(e.detail.value);
         }
       },
 
-      onUserChanged: function(event, detail) {
+      onUserChanged: function (event, detail) {
         if (detail) {
           this.user = detail;
         } else {
@@ -337,15 +351,16 @@
         }
       },
 
-      toggleSearch: function() {
+      toggleSearch: function () {
+        debugger;
         this.$.search.toggle();
       },
 
-      __equal: function(a, b) {
+      __equal: function (a, b) {
         return a === b;
       },
 
-      routeChanged: function(newValue, oldValue) {
+      routeChanged: function (newValue, oldValue) {
         if (!this.$.drawer.persistent) this.$.drawer.close();
       }
 
