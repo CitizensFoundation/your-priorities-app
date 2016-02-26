@@ -91,12 +91,12 @@
                 </template>
               </template>
               <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
-              <paper-fab hidden icon="group-work" z="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
             </div>
           </section>
           <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('news')]]</h1></section>
           <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('official')]]</h1></section>
         </iron-pages>
+        <paper-fab icon="group-work" elevation="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
       </div>
     </div>
   </template>
@@ -177,7 +177,11 @@
 
         this.fire("change-header", { headerTitle: this.domain.name,
                                      headerDescription: this.domain.description});
-        this.hideAdd = false;
+        if (this.communities.length>0) {
+          this.hideAdd = true;
+        } else {
+          this.hideAdd = false;
+        }
       }
 
     });

@@ -181,7 +181,11 @@
                                      headerDescription: this.community.description,
                                      headerIcon: "group-work",
                                      backPath: "#!/domain/" + this.community.domain_id });
-        this.hideAdd = false;
+        if (this.groups.length>0) {
+          this.hideAdd = true;
+        } else {
+          this.hideAdd = false;
+        }
       },
 
       defaultGroupFirst: function (items) {
