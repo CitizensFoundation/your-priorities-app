@@ -14,9 +14,9 @@ the service worker specification [issue tracker](https://github.com/slightlyoff/
 In order to use `<platinum-sw-register>`, it's recommended that you create a `sw-import.js` file in
 your site's web root. The file's only contents should be
 
-    importScripts('bower_components/platinum-sw/service-queue.js');
+    importScripts('bower_components/platinum-sw/service-worker.js');
 
-You can adjust the path to `service-queue.js` if your project has its Polymer elements
+You can adjust the path to `service-worker.js` if your project has its Polymer elements
 installed somewhere other than `bower_components/`.
 
 If you have multiple subdirectories worth of pages on your site, it's recommend that you include the

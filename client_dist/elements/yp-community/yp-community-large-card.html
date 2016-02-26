@@ -163,6 +163,12 @@
     Polymer({
       is: 'yp-community-large-card',
 
+      properties: {
+        phoneSize: {
+          type: Boolean
+        }
+      },
+
       behaviors: [
         Polymer.appHelpers,
         Polymer.CommunityBehaviors,

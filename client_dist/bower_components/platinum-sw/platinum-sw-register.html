@@ -26,7 +26,7 @@
     is: 'platinum-sw-register',
 
     // Used as an "emergency" switch if we make breaking changes in the way <platinum-sw-register>
-    // talks to service-queue.js. Otherwise, it shouldn't need to change, and isn't meant to be
+    // talks to service-worker.js. Otherwise, it shouldn't need to change, and isn't meant to be
     // kept in sync with the element's release number.
     _version: '1.0',
 
@@ -119,7 +119,7 @@
        * It's *strongly* recommended that you create a top-level file named `sw-import.js`
        * containing only:
        *
-       * `importScripts('bower_components/platinum-sw/service-queue.js');`
+       * `importScripts('bower_components/platinum-sw/service-worker.js');`
        *
        * (adjust to match the path where your `platinum-sw` element directory can be found).
        *

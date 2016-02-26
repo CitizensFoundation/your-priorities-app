@@ -232,7 +232,7 @@ event and do your own custom submission:
       this.request.withCredentials = this.withCredentials;
       this.request.headers = this.headers;
 
-      if (this.method.toUpperCase() === 'GET') {
+      if (this.request.method.toUpperCase() === 'GET') {
         this.request.params = json;
       } else {
         this.request.body = json;

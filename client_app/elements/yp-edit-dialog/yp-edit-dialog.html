@@ -101,7 +101,7 @@
             <paper-button on-tap="_submit">[[saveText]]</paper-button>
           </paper-toolbar>
           <div id="scroller" class="flex">
-            <form is="iron-form" id="form" name="ypForm" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
+            <form is="iron-form" id="form" name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
               <content></content>
             </form>
           </div>
@@ -266,6 +266,7 @@
         } else if (this.params && this.params.domainId) {
           this.action = this.baseAction + '/'+this.params.domainId;
         }
+        debugger;
         this.$$("#form").submit();
         this.$$("#spinner").active = true;
       },

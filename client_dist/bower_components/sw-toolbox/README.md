@@ -21,13 +21,13 @@ Service Worker Toolbox is available through Bower, npm or direct from github:
 From your registering page, register your service worker in the normal way. For example:
 
 ```javascript
-navigator.serviceWorker.register('my-service-queue.js');
+navigator.serviceWorker.register('my-service-worker.js');
 ```
 
 For even lower friction, if you don't intend to doing anything more fancy than just registering with a default scope, you can instead include the Service Worker Toolbox companion script in your HTML:
 
 ```html
-<script src="/path/to/sw-toolbox/companion.js" data-service-worker="my-service-queue.js"></script>
+<script src="/path/to/sw-toolbox/companion.js" data-service-worker="my-service-worker.js"></script>
 ```
 
 As currently implemented in Chrome 40+, a service worker must exist at the root of the scope that you intend it to control, or higher. So if you want all of the pages under `/myapp/` to be controlled by the worker, the worker script itself must be served from either `/` or `/myapp/`. The default scope is the containing path of the service worker script.
