@@ -73,6 +73,16 @@ app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
 
+if (app.get('env') != 'development') {
+  app.use(function(req, res, next) {
+    if (!/https/.test(req.protocol)){
+      res.redirect("https://" + req.headers.host + req.url);
+    } else {
+      return next();
+    }
+  });
+}
+
 // Setup the current domain from the host
 app.use(function (req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
