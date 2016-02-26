@@ -33,32 +33,34 @@
       }
 
       .additionalSettings {
-        padding-top: 16px;
+        padding-top: 32px;
       }
     </style>
 
     <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
-      <paper-input id="name"
-                   name="name"
-                   type="text"
-                   label="[[t('Name')]]"
-                   value="{{community.name}}"
-                   maxlength="60"
-                   char-counter>
-      </paper-input>
+      <div class="layout vertical">
+        <paper-input id="name"
+                     name="name"
+                     type="text"
+                     label="[[t('Name')]]"
+                     value="{{community.name}}"
+                     maxlength="60"
+                     char-counter>
+        </paper-input>
 
-      <paper-textarea id="description"
-                      name="description"
-                      value="{{community.description}}"
-                      label="[[t('Description')]]"
-                      char-counter
-                      rows="2"
-                      max-rows="5"
-                      maxlength="300">
-      </paper-textarea>
-
+        <paper-textarea id="description"
+                        name="description"
+                        value="{{community.description}}"
+                        label="[[t('Description')]]"
+                        char-counter
+                        rows="2"
+                        max-rows="5"
+                        maxlength="300">
+        </paper-textarea>
+      </div>
+      <p> </p>
       <div class="layout vertical additionalSettings">
         <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=community-logo" method="POST" on-success="_logoImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
@@ -66,7 +68,7 @@
         </file-upload>
       </div>
 
-      <div class="layout vertical additionalSettings">
+      <div hidden class="layout vertical additionalSettings">
         <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=community-header" method="POST" on-success="_headerImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.header.upload')]]</span>

@@ -35,6 +35,10 @@
       .additionalSettings {
         padding-top: 16px;
       }
+
+      file-upload {
+        padding-top: 8px;
+      }
     </style>
 
     <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
@@ -66,7 +70,7 @@
         </file-upload>
       </div>
 
-      <div class="layout vertical additionalSettings">
+      <div hidden class="layout vertical additionalSettings">
         <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.header.upload')]]</span>
