@@ -47,11 +47,20 @@ module.exports = function(sequelize, DataTypes) {
         deleted: false
       }
     },
-
     indexes: [
       {
         unique: true,
         fields: ['email']
+      },
+      {
+        fields: ['interaction_profile'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
+      {
+        fields: ['notifications_settings'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
       }
     ],
 
