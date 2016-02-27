@@ -1,5 +1,8 @@
 # Your Priorities Version 6
 
+## Live demo
+https://beta.yrpri.org/
+
 ## To run
 
 ```
