@@ -164,7 +164,7 @@ router.post('/createActivityFromApp', function(req, res) {
   models.AcActivity.createActivity('activity.from.app', req.body.type, { appActor: req.body.actor },
                                  { name: req.body.object }, { name: req.body.context, eventTime: req.body.event_time,
                                                               sessionId: req.body.sessionId, userAgent: req.body.user_agent },
-                                 req.user ? req.user.id : null,  req.ypDomain.id, req.ypCommunity.id, req.params.groupId, function(error) {
+                                 req.user ? req.user.id : null,  req.ypDomain.id, req.ypCommunity.id, req.params.groupId, null, null, function(error) {
       if (error) {
         log.error('Create Activity Error', { user: null, context: 'createActivity', loggedInUser: req.user ? toJson(req.user) : null, err: error, errorStatus: 500 });
         res.sendStatus(500);
@@ -210,7 +210,8 @@ router.post('/reset/:token', function(req, res) {
     },
     function(done) {
       if (req.user) {
-        models.AcActivity.createActivity("activity.password.changed", "", null, null, null, req.user.id, req.ypDomain.id, req.ypCommunity.id, req.params.groupId, function (error) {
+        models.AcActivity.createActivity("activity.password.changed", "", null, null, null, req.user.id, req.ypDomain.id, req.ypCommunity.id,
+                                         req.params.groupId, null, null, function (error) {
           done(error);
         });
       } else {

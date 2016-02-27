@@ -1,9 +1,11 @@
 // https://gist.github.com/mojodna/1251812
 
 var ActivityWorker = function () {};
+
 var models = require("../../models");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var postNotificationGenerator = require('../engine/post_notification_generator.js');
 
 var loadActivityFromJsonObject = function(activityJson, done) {
   models.AcActivity.find({
@@ -32,6 +34,14 @@ ActivityWorker.prototype.process = function (activity, done) {
       case "activity.password.changed":
         models.AcNotification.createNotificationFromActivity( activity, "notification.password.changed", models.AcNotification.ACCESS_PRIVATE, 100, function (error) {
           log.info('Processing activity.password.changed Completed', { type: activity.type, err: error });
+          done();
+        });
+        break;
+      case "activity.post.new":
+      case "activity.post.opposition.new":
+      case "activity.post.endorsement.new":
+        postNotificationGenerator(activity, function (error) {
+          log.info('Processing activity.post.* Completed', { type: activity.type, err: error });
           done();
         });
         break;

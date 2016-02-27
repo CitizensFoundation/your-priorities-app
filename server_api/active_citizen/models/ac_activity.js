@@ -204,7 +204,7 @@ module.exports = function(sequelize, DataTypes) {
         AcActivity.belongsToMany(models.User, { through: 'OtherUser' });
       },
 
-      createActivity: function(type, subType, actor, object, context, userId, domainId, communityId, groupId, done) {
+      createActivity: function(type, subType, actor, object, context, userId, domainId, communityId, groupId, postId, pointId, callback) {
 
         if (!object)
           object = {};
@@ -227,6 +227,12 @@ module.exports = function(sequelize, DataTypes) {
         if (groupId)
           object['groupId'] = groupId;
 
+        if (postId)
+          object['postId'] = postId;
+
+        if (pointId)
+          object['pointId'] = pointId;
+
         sequelize.models.AcActivity.build({
           type: type,
           status: 'active',
@@ -243,13 +249,13 @@ module.exports = function(sequelize, DataTypes) {
           if (activity) {
                 queue.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
                 log.info('Activity Created', { activity: toJson(activity), userId: userId});
-                done();
+            callback();
           } else {
-            done('Activity Not Found');
+            callback('Activity Not Found');
           }
         }).catch(function(error) {
           log.error('Activity Created Error', { err: error });
-          done(error);
+          callback(error);
         });
       },
 

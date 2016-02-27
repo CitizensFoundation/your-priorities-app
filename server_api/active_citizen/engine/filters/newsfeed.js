@@ -24,6 +24,5 @@ var filterByMainEvents = function(activities, callback) {
 
 exports.filter = function (activities, user, callback) {
   filterByMainEvents(activities, function () {
-
   })
 };

@@ -1,6 +1,8 @@
 // https://gist.github.com/mojodna/1251812
-var log = require('../utils/logger');
+
 var EmailWorker = function () {};
+
+var log = require('../utils/logger');
 var path = require('path');
 var EmailTemplate = require('email-templates').EmailTemplate;
 var nodemailer = require('nodemailer');
