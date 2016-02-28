@@ -4,6 +4,7 @@ var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var async = require('async');
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
@@ -250,6 +251,8 @@ router.get('/:id/endorsements', auth.can('view post'), function(req, res) {
 });
 
 router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(req, res) {
+  var post;
+
   models.Endorsement.find({
     where: {
       post_id: req.params.id,
@@ -261,6 +264,7 @@ router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(
   }).then(function(endorsement) {
     var oldEndorsementValue;
     if (endorsement) {
+      post = endorsement.Post;
       if (endorsement.value>0)
         oldEndorsementValue = 1;
       else if (endorsement.value<0)
@@ -279,21 +283,58 @@ router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(
     }
     endorsement.save().then(function() {
       log.info('Endorsements Created', { endorsement: toJson(endorsement), context: 'create', user: toJson(req.user) });
-      decrementOldCountersIfNeeded(req, oldEndorsementValue, req.params.id, endorsement, function () {
-        if (endorsement.value>0) {
-          changePostCounter(req, req.params.id, 'counter_endorsements_up', 1, function () {
-            res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-          })
-        } else if (endorsement.value<0) {
-          changePostCounter(req, req.params.id, 'counter_endorsements_down', 1, function () {
-            res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-          })
-        } else {
-          log.error("Endorsements Error State", { context: 'create', endorsement: toJson(endorsement), user: toJson(req.user),
-                                                  err: error, errorStatus: 500 });
+      async.series([
+        function (seriesCallback) {
+          if (post) {
+            seriesCallback();
+          } else {
+            models.Post.find({where: { id: endorsement.post_id}}).then(function (results) {
+              if (results) {
+                post = results;
+                seriesCallback();
+              } else {
+                seriesCallback("Can't find post")
+              }
+            });
+          }
+        },
+        function (seriesCallback) {
+          models.AcActivity.createActivity({
+            type: endorsement.value>0 ? 'activity.post.endorsement.new' : 'activity.post.opposition.new',
+            userId: endorsement.user_id,
+            domainId: req.ypDomain.id,
+            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+            groupId : post.group_id,
+            postId : post.id,
+            access: models.AcActivity.ACCESS_PUBLIC
+          }, function (error) {
+            seriesCallback(error);
+          });
+        }
+      ], function (error) {
+        if (error) {
+          log.error("Endorsements Error", { context: 'create', endorsement: toJson(endorsement), user: toJson(req.user),
+            err: error, errorStatus: 500 });
           res.sendStatus(500);
+        } else {
+          decrementOldCountersIfNeeded(req, oldEndorsementValue, req.params.id, endorsement, function () {
+            if (endorsement.value>0) {
+              changePostCounter(req, req.params.id, 'counter_endorsements_up', 1, function () {
+                res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+              })
+            } else if (endorsement.value<0) {
+              changePostCounter(req, req.params.id, 'counter_endorsements_down', 1, function () {
+                res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+              })
+            } else {
+              log.error("Endorsements Error State", { context: 'create', endorsement: toJson(endorsement), user: toJson(req.user),
+                err: error, errorStatus: 500 });
+              res.sendStatus(500);
+            }
+          });
         }
       });
+
     });
   }).catch(function(error) {
     log.error("Endorsements Error", { context: 'create', post: req.params.id, user: toJson(req.user),

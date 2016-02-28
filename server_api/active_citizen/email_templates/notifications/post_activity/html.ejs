@@ -1,7 +1,7 @@
 <% include ../header.html.ejs %>
 
 <% if (activity.type == 'activity.post.new') { %>
-  <p><%= post.id == user.id ? t('notification.email.new_post') : t('notification.email.new_post_self') %></p>
+  <p><%= post.id == user.id ? t('notification.email.post.new') : t('notification.email.new_post_self') %></p>
 <% } if (activity.type == 'activity.post.endorsement.new') { %>
   <p><%= post.id == user.id ? t('notification.email.post.endorsement') : t('notification.email.post.endorsement_self') %></p>
 <% } if (activity.type == 'activity.post.opposition.new') { %>

@@ -114,6 +114,7 @@ NotificationWorker.prototype.process = function (notificationJson, callback) {
             callback();
             break;
           case "notification.post.new":
+          case "notification.post.endorsement":
             postNotificationFilter(notification, user, function () {
               log.info('Processing notification.post.new Completed', { type: notification.type, user: user });
               callback();

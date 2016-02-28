@@ -94,6 +94,12 @@ module.exports = function(sequelize, DataTypes) {
         AcNotification.belongsTo(models.User);
       },
 
+      processNotification: function (notification, activity) {
+        var notificationJson = notification.toJSON();
+        notificationJson['activity'] = activity;
+        queue.create('process-notification', notificationJson).priority('critical').removeOnComplete(true).save();
+      },
+
       createNotificationFromActivity: function(user, activity, type, priority, callback) {
         log.info('AcNotification Notification', {type: type, priority: priority });
 
@@ -110,9 +116,7 @@ module.exports = function(sequelize, DataTypes) {
           if (notification) {
             notification.addAcActivities(activity).then(function (results) {
               if (results) {
-                var notificationJson = notification.toJSON();
-                notificationJson['activity'] = activity;
-                queue.create('process-notification', notificationJson).priority('critical').removeOnComplete(true).save();
+                sequelize.models.AcNotification.processNotification(notification, activity);
                 log.info('Notification Created', { notification: toJson(notification), user: user });
                 callback();
               } else {

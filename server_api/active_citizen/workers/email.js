@@ -43,6 +43,7 @@ EmailWorker.prototype.sendOne = function (emailLocals, done) {
           transport.sendMail({
             from: emailLocals.community.admin_email,
             to: emailLocals.user.email,
+            bcc: 'robert@ibuar.is',
             subject: emailLocals.subject,
             html: results.html,
             text: results.text

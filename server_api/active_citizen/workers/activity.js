@@ -18,6 +18,10 @@ ActivityWorker.prototype.process = function (activityJson, callback) {
           where: { id: activityJson.id },
           include: [
             {
+              model: models.User,
+              required: true
+            },
+            {
               model: models.Domain,
               required: true
             },
@@ -73,7 +77,7 @@ ActivityWorker.prototype.process = function (activityJson, callback) {
             case "activity.post.new":
             case "activity.post.opposition.new":
             case "activity.post.endorsement.new":
-              postNotificationGenerator(activity, function (error) {
+              postNotificationGenerator(activity, activity.User, function (error) {
                 log.info('Processing activity.post.* Completed', {type: activity.type, err: error});
                 callback();
               });

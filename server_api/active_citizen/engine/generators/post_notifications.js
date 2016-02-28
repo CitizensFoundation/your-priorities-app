@@ -39,10 +39,10 @@ var generateNotificationsForNewIdea = function (activity, uniqueUserIds, callbac
   // TODO: Add AcWatching community and group users
 };
 
-var generateNotificationsForEndorsements = function (activity, user, callback) {
+var generateNotificationsForEndorsements = function (activity, callback) {
   // Notifications for endorsement on posts I've created
-  model.Post({
-    where: { id: activity.object.postId },
+  models.Post.find({
+    where: { id: activity.post_id },
     include: [
       {
         model: models.User,
@@ -58,7 +58,7 @@ var generateNotificationsForEndorsements = function (activity, user, callback) {
     if (post) {
       models.AcNotification.find({
         where: {
-          user_id: user.id,
+          user_id: post.User.id,
           type: 'notification.post.endorsement',
           created_at: {
             $lt: new Date(),
@@ -67,15 +67,42 @@ var generateNotificationsForEndorsements = function (activity, user, callback) {
         }
       }).then(function(notification) {
         if (notification) {
-          notification.addAcActivities(activity).then(function (results) {
-            if (results) {
+          models.AcNotification.find({
+            where: {
+              user_id: post.User.id,
+              type: 'notification.post.endorsement',
+              created_at: {
+                $lt: new Date(),
+                $gt: new Date(new Date() - models.AcNotification.ENDORSEMENT_GROUPING_TTL)
+              }
+            },
+            include: [
+              {
+                model: models.AcActivity,
+                as: 'AcActivities',
+                required: true,
+                where: {
+                  user_id: activity.user_id,
+                  type: activity.type
+                }
+              }
+            ]
+          }).then(function(specificNotification) {
+            if (specificNotification) {
               callback();
             } else {
-              callback("Notification Error Can't add activity");
+              notification.addAcActivities(activity).then(function (results) {
+                if (results) {
+                  models.AcNotification.processNotification(notification, activity);
+                  callback();
+                } else {
+                  callback("Notification Error Can't add activity");
+                }
+              });
             }
           });
         } else {
-          models.AcNotification.createNotificationFromActivity(user, activity, notification_type, 50, function (error) {
+          models.AcNotification.createNotificationFromActivity(post.User, activity, 'notification.post.endorsement', 50, function (error) {
             callback(error);
           });
         }
@@ -90,7 +117,7 @@ var generateNotificationsForEndorsements = function (activity, user, callback) {
   // TODO: Add AcWatching users
 };
 
-module.exports = function (activity, callback) {
+module.exports = function (activity, user, callback) {
 
   // Make sure not to create duplicate notifications to the same user
   var uniqueUserIds = {};
@@ -98,6 +125,6 @@ module.exports = function (activity, callback) {
   if (activity.type=='activity.post.new') {
     generateNotificationsForNewIdea(activity, uniqueUserIds, callback);
   } else if (activity.type=='activity.post.endorsement.new' || activity.type=='activity.post.opposition.new') {
-    generateNotificationsForEndorsements(activity, uniqueUserIds, callback)
+    generateNotificationsForEndorsements(activity, callback)
   }
 };
