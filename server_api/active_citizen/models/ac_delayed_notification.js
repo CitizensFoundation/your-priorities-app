@@ -18,22 +18,18 @@ module.exports = function(sequelize, DataTypes) {
     },
     indexes: [
       {
-        name: 'delayed_notification_where_not_delivered_by_method_user_id_frequency',
+        name: 'delayed_not_delivered_by_method_user_id_frequency',
         fields: ['method','user_id','frequency'],
         where: {
-          delivered: 0
+          delivered: true
         }
       },
       {
-        name: 'delayed_notification_where_not_delivered_by_method_user_id_frequency_timestamps',
+        name: 'delayed_n_not_delivered_by_method_user_id_frequency_timestamps',
         fields: ['method','user_id','frequency','updated_at','delivered_at'],
         where: {
-          delivered: 0
+          delivered: true
         }
-      },
-      {
-        name: 'delayed_notification_by_method_user_id_frequency',
-        fields: ['method','user_id','frequency']
       }
     ],
     underscored: true,

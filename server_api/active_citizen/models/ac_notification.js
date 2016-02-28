@@ -29,7 +29,6 @@ module.exports = function(sequelize, DataTypes) {
         name: 'notification_public_and_active_by_type',
         fields: ['type'],
         where: {
-          access: 0,
           status: 'active'
         }
       },
@@ -87,13 +86,15 @@ module.exports = function(sequelize, DataTypes) {
       FREQUENCY_BI_WEEKLY: 4,
       FREQUENCY_MONTHLY: 5,
 
+      ENDORSEMENT_GROUPING_TTL: 6 * 60 * 60 * 1000, // milliseconds
+
       associate: function(models) {
-        AcNotification.belongsToMany(models.AcActivity, { as: 'AcActivites', through: 'notification_activities' });
+        AcNotification.belongsToMany(models.AcActivity, { as: 'AcActivities', through: 'notification_activities' });
         AcNotification.belongsToMany(models.AcActivity, { as: 'AcDelayedNotifications', through: 'delayed_notifications' });
         AcNotification.belongsTo(models.User);
       },
 
-      createNotificationFromActivity: function(user, activity, type, priority, done) {
+      createNotificationFromActivity: function(user, activity, type, priority, callback) {
         log.info('AcNotification Notification', {type: type, priority: priority });
 
         var domain = activity.object.domain;
@@ -107,14 +108,20 @@ module.exports = function(sequelize, DataTypes) {
          user_id: user.id
        }).save().then(function(notification) {
           if (notification) {
-            var notificationJson = notification.toJSON();
-            notificationJson['activity'] = activity;
-            queue.create('process-notification', notificationJson).priority('critical').removeOnComplete(true).save();
-            log.info('Notification Created', { notification: toJson(notification), user: user });
-            done();
+            notification.addAcActivities(activity).then(function (results) {
+              if (results) {
+                var notificationJson = notification.toJSON();
+                notificationJson['activity'] = activity;
+                queue.create('process-notification', notificationJson).priority('critical').removeOnComplete(true).save();
+                log.info('Notification Created', { notification: toJson(notification), user: user });
+                callback();
+              } else {
+                callback("Notification Error Can't add activity");
+              }
+            });
           } else {
             log.error('Notification Creation Error', { err: "No notification", user: user });
-            done();
+            callback();
           }
         }).catch(function (error) {
          log.error('Notification Creation Error', { err: error, user: user });

@@ -1,4 +1,4 @@
-var reallyUploadImages = true;
+var reallyUploadImages = false;
 
 var bcrypt = require('bcrypt');
 var models = require('../models');
@@ -136,6 +136,67 @@ var activitiesTransform = {
   ActivityBulletinProfileAuthor: 'activity.bulletin.profileAuthor'
 };
 
+var defaultNotificationsSettings = function(email) {
+  var settings;
+
+  if (email=='robert@citizens.is' || email=='gunnar@citizens.is') {
+    settings = {
+      my_posts: {
+        method:  models.AcNotification.METHOD_EMAIL,
+        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      },
+      my_posts_endorsements: {
+        method:  models.AcNotification.METHOD_EMAIL,
+        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      },
+      my_points: {
+        method:  models.AcNotification.METHOD_EMAIL,
+        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      },
+      my_points_endorsements: {
+        method:  models.AcNotification.METHOD_EMAIL,
+        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      },
+      all_community: {
+        method:  models.AcNotification.METHOD_EMAIL,
+        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      },
+      all_group: {
+        method:  models.AcNotification.METHOD_EMAIL,
+        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      }
+    }
+  } else {
+    settings = {
+      my_posts: {
+        method:  models.AcNotification.METHOD_MUTED,
+        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      },
+      my_posts_endorsements: {
+        method:  models.AcNotification.METHOD_MUTED,
+        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      },
+      my_points: {
+        method:  models.AcNotification.METHOD_MUTED,
+        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      },
+      my_points_endorsements: {
+        method:  models.AcNotification.METHOD_MUTED,
+        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      },
+      all_community: {
+        method:  models.AcNotification.METHOD_MUTED,
+        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      },
+      all_group: {
+        method:  models.AcNotification.METHOD_MUTED,
+        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      }
+    }
+  }
+  return settings;
+};
+
 var errorUrls = {};
 var errorUrlsFilename = "/media/Data/yrpriCache/errorUrlsFromOldImport";
 
@@ -173,7 +234,6 @@ var loadCacheUrls = function (callback) {
     }
   });
 };
-
 
 var changePointCounter = function (pointId, column, upDown, next) {
   models.Point.find({
@@ -571,6 +631,7 @@ async.series([
       incoming['id'] = null;
 
       incoming['legacy_user_id'] = oldId;
+      incoming['notifications_settings'] = defaultNotificationsSettings(incoming.email);
 
       var buddyIconUrl = incoming['buddy_icon'];
       console.log("Uploading Buddy Icon "+buddyIconUrl);

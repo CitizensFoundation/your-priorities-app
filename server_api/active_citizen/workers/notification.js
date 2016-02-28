@@ -23,11 +23,12 @@ NotificationWorker.prototype.process = function (notificationJson, callback) {
           include: [
             {
               model: models.AcActivity,
+              as: 'AcActivities',
               required: true,
               include: [
                 {
                   model: models.Domain,
-                  required: true
+                  required: false
                 },
                 {
                   model: models.Community,
@@ -51,8 +52,8 @@ NotificationWorker.prototype.process = function (notificationJson, callback) {
         }).then(function(results) {
           if (results) {
             notification = results;
-            domain = notification.AcActivites[0].Domain;
-            community = notification.AcActivites[0].Community;
+            domain = notification.AcActivities[0].Domain;
+            community = notification.AcActivities[0].Community;
             callback();
           } else {
             callback('Notification not found');
@@ -63,7 +64,7 @@ NotificationWorker.prototype.process = function (notificationJson, callback) {
       },
       function(callback){
         models.User.find({
-          where: { id: notification.user.id }
+          where: { id: notification.user_id }
         }).then(function(userResults) {
           if (userResults) {
             user = userResults;

@@ -210,7 +210,7 @@ module.exports = function(sequelize, DataTypes) {
         AcActivity.belongsTo(models.Invite);
         AcActivity.belongsTo(models.User);
         AcActivity.belongsToMany(models.User, { through: 'other_users' });
-        AcActivity.belongsToMany(models.AcNotification, { as: 'AcActivites', through: 'notification_activities' });
+        AcActivity.belongsToMany(models.AcNotification, { as: 'AcActivities', through: 'notification_activities' });
       },
 
       createActivity: function(options, callback) {
@@ -263,11 +263,11 @@ module.exports = function(sequelize, DataTypes) {
           group_id: options.groupId,
           post_id: options.postId,
           point_id: options.pointId,
-          access: sequelize.models.AcActivity.ACCESS_PRIVATE
+          access: options.access ? options.access : sequelize.models.AcActivity.ACCESS_PRIVATE
         }).save().then(function(activity) {
           if (activity) {
-                queue.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
-                log.info('Activity Created', { activity: toJson(activity), userId: options.userId});
+            queue.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
+            log.info('Activity Created', { activity: toJson(activity), userId: options.userId});
             callback();
           } else {
             callback('Activity Not Found');

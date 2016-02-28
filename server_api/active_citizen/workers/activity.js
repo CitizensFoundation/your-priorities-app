@@ -3,13 +3,15 @@
 var models = require("../../models");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
-var postNotificationGenerator = require('../engine/generators/post_notifications.js');
+var async = require('async');
 
-var activity;
+var postNotificationGenerator = require('../engine/generators/post_notifications.js');
 
 var ActivityWorker = function () {};
 
 ActivityWorker.prototype.process = function (activityJson, callback) {
+  var activity;
+
   async.series([
       function (callback) {
         models.AcActivity.find({

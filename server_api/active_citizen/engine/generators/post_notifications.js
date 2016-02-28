@@ -3,27 +3,37 @@ var auth = require('../../authorization');
 var log = require('../../utils/logger');
 var toJson = require('../../utils/to_json');
 var async = require('async');
-var getModelAndUsersByType = require('notification_utils').getModelAndUsersByType;
-var addNotificationsForUsers = require('notification_utils').addNotificationsForUsers;
+var getModelAndUsersByType = require('./notifications_utils').getModelAndUsersByType;
+var addNotificationsForUsers = require('./notifications_utils').addNotificationsForUsers;
 
 var generateNotificationsForNewIdea = function (activity, uniqueUserIds, callback) {
-
-  // Notifications for all new posts in community
-  getModelAndUsersByType(models.Community, activity.Community.id, "all_community", function(error, community) {
-    if (error) {
-      callback(error);
-    } else {
-      addNotificationsForUsers(activity, community.Users, "notification.post.new", uniqueUserIds, callback);
+  async.series([
+    function(seriesCallback){
+      if (activity.Community) {
+        // Notifications for all new posts in community
+        getModelAndUsersByType(models.Community, 'CommunityUsers', activity.Community.id, "all_community", function(error, community) {
+          if (error) {
+            seriesCallback(error);
+          } else {
+            addNotificationsForUsers(activity, community.CommunityUsers, "notification.post.new", uniqueUserIds, seriesCallback);
+          }
+        });
+      } else {
+        seriesCallback();
+      }
+    },
+    function(seriesCallback){
+      // Notifications for all new posts in group
+      getModelAndUsersByType(models.Group, 'GroupUsers', activity.Group.id, "all_group", function(error, group) {
+        if (error) {
+          seriesCallback(error);
+        } else {
+          addNotificationsForUsers(activity, group.GroupUsers, "notification.post.new", uniqueUserIds, seriesCallback);
+        }
+      });
     }
-  });
-
-  // Notifications for all new posts in group
-  getModelAndUsersByType(models.Group, activity.Group.id, "all_group", function(error, community) {
-    if (error) {
-      callback(error);
-    } else {
-      addNotificationsForUsers(activity, community.Users, "notification.post.new", uniqueUserIds, callback);
-    }
+  ], function (error) {
+    callback(error);
   });
 
   // TODO: Add AcWatching community and group users
@@ -38,7 +48,7 @@ var generateNotificationsForEndorsements = function (activity, user, callback) {
         model: models.User,
         required: true,
         where: {
-          "notifications_settings.my_posts.method": {
+          "notifications_settings.my_posts_endorsements.method": {
             $gt: 0
           }
         }
@@ -52,7 +62,7 @@ var generateNotificationsForEndorsements = function (activity, user, callback) {
           type: 'notification.post.endorsement',
           created_at: {
             $lt: new Date(),
-            $gt: new Date(new Date() - 6 * 60 * 60 * 1000)
+            $gt: new Date(new Date() - models.AcNotification.ENDORSEMENT_GROUPING_TTL)
           }
         }
       }).then(function(notification) {
@@ -80,7 +90,7 @@ var generateNotificationsForEndorsements = function (activity, user, callback) {
   // TODO: Add AcWatching users
 };
 
-exports = function (activity, callback) {
+module.exports = function (activity, callback) {
 
   // Make sure not to create duplicate notifications to the same user
   var uniqueUserIds = {};

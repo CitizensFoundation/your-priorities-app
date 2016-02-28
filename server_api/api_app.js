@@ -133,7 +133,7 @@ passport.deserializeUser(function(id, done) {
       done(null, user);
     } else {
       log.error("User Deserialized Not found", { context: 'deserializeUser' });
-      done('User Deserialize Error');
+      done();
     }
   }).catch(function(error) {
     log.error("User Deserialize Error", { context: 'deserializeUser', user: id, err: error, errorStatus: 500 });
