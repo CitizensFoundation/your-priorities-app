@@ -7,15 +7,22 @@ var toJson = require('../utils/to_json');
 
 module.exports = function(sequelize, DataTypes) {
   var AcNotification = sequelize.define("AcNotification", {
-    access: { type: DataTypes.INTEGER, allowNull: false },
     priority: { type: DataTypes.INTEGER, allowNull: false },
     type: { type: DataTypes.STRING, allowNull: false },
     status: { type: DataTypes.STRING, allowNull: false },
     sent_email: { type: DataTypes.INTEGER, default: false },
     sent_push: { type: DataTypes.INTEGER, default: false },
     processed_at: DataTypes.DATE,
-    user_interaction_profile: DataTypes.JSONB
+    user_interaction_profile: DataTypes.JSONB,
+    viewed: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
+
+    defaultScope: {
+      where: {
+        deleted: false
+      }
+    },
 
     indexes: [
       {
@@ -63,26 +70,26 @@ module.exports = function(sequelize, DataTypes) {
 
     classMethods: {
 
-      ACCESS_PUBLIC: 0,
-      ACCESS_COMMUNITY: 1,
-      ACCESS_GROUP: 2,
-      ACCESS_PRIVATE: 3,
+      METHOD_NONE: 0,
+      METHOD_BROWSER: 1,
+      METHOD_EMAIL: 2,
+      METHOD_PUSH: 3,
+      METHOD_SMS: 4,
 
       associate: function(models) {
-        AcNotification.belongsTo(models.AcActivity);
+        AcNotification.belongsToMany(models.AcActivity, { as: 'AcActivites', through: 'notification_activities' });
         AcNotification.belongsTo(models.User);
       },
 
-      createNotificationFromActivity: function(activity, type, access, priority, done) {
-        log.info('AcNotification Notification', {type: type, access: access, priority: priority });
-        var user = activity.actor.user;
+      createNotificationFromActivity: function(user, activity, type, priority, done) {
+        log.info('AcNotification Notification', {type: type, priority: priority });
+
         var domain = activity.object.domain;
         var community = activity.object.community;
 
        sequelize.models.AcNotification.build({
          type: type,
          priority: priority,
-         access: access,
          status: 'active',
          ac_activity_id: activity.id,
          user_id: user.id

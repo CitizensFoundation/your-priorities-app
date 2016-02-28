@@ -1,24 +1,43 @@
 // https://gist.github.com/mojodna/1251812
-
 var async = require("async");
-var NotificationWorker = function () {};
 var models = require("../../models");
 var log = require('../utils/logger');
 var queue = require('./queue');
 var i18n = require('../utils/i18n');
 var toJson = require('../utils/to_json');
+var postNotificationFilter = require('../engine/filters/post_notifications.js');
 
-NotificationWorker.prototype.process = function (notification, done) {
+var NotificationWorker = function () {};
+
+NotificationWorker.prototype.process = function (notificationJson, done) {
 
   try {
     var user;
-    var domain = notification.activity.object.domain;
-    var community = notification.activity.object.community;
+    var notification;
+    var domain;
+    var community;
 
     async.series([
       function(callback){
+        models.AcNotification.find({
+          where: { id: notificationJson.id },
+          include: [ models.AcActivity ]
+        }).then(function(results) {
+          if (results) {
+            notification = results;
+            domain = notification.AcActivites[0].object.domain;
+            community = notification.AcActivites[0].activity.object.community;
+            callback();
+          } else {
+            callback('Notification not found');
+          }
+        }).catch(function(error) {
+          callback(error);
+        });
+      },
+      function(callback){
         models.User.find({
-          where: { id: notification.activity.actor.user.id }
+          where: { id: notification.user.id }
         }).then(function(userResults) {
           if (userResults) {
             user = userResults;
@@ -50,7 +69,7 @@ NotificationWorker.prototype.process = function (notification, done) {
               user: user,
               domain: domain,
               community: community,
-              token: notification.activity.object.token
+              token: notification.AcActivites[0].object.token
             }).priority('critical').removeOnComplete(true).save();
             log.info('Processing notification.password.recovery Completed', { type: notification.type, user: user });
             done();
@@ -66,6 +85,12 @@ NotificationWorker.prototype.process = function (notification, done) {
             }).priority('critical').removeOnComplete(true).save();
             log.info('Processing notification.password.changed Completed', { type: notification.type, user: user });
             done();
+            break;
+          case "notification.post.new":
+            postNotificationFilter(notification, user, function () {
+              log.info('Processing notification.post.new Completed', { type: notification.type, user: user });
+              done();
+            });
             break;
           default:
             done();

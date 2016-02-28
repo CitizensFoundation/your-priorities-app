@@ -59,8 +59,16 @@ module.exports = function(sequelize, DataTypes) {
     actor: DataTypes.JSONB,
     target: DataTypes.JSONB,
     context: DataTypes.JSONB,
-    user_interaction_profile: DataTypes.JSONB
+    user_interaction_profile: DataTypes.JSONB,
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
+
+    defaultScope: {
+      where: {
+        deleted: false
+      }
+    },
+
     indexes: [
       {
         name: 'activity_public_and_active_by_type',
@@ -201,11 +209,11 @@ module.exports = function(sequelize, DataTypes) {
         AcActivity.belongsTo(models.Point);
         AcActivity.belongsTo(models.Invite);
         AcActivity.belongsTo(models.User);
-        AcActivity.belongsToMany(models.User, { through: 'OtherUser' });
+        AcActivity.belongsToMany(models.User, { through: 'other_users' });
+        AcActivity.belongsToMany(models.AcNotification, { as: 'AcActivites', through: 'notification_activities' });
       },
 
       createActivity: function(type, subType, actor, object, context, userId, domainId, communityId, groupId, postId, pointId, callback) {
-
         if (!object)
           object = {};
 
@@ -244,6 +252,8 @@ module.exports = function(sequelize, DataTypes) {
           domain_id: domainId,
           community_id: communityId,
           group_id: groupId,
+          post_id: postId,
+          point_id: pointId,
           access: sequelize.models.AcActivity.ACCESS_PRIVATE
         }).save().then(function(activity) {
           if (activity) {
@@ -260,7 +270,6 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       createPasswordRecovery: function(user, domain, community, token, done) {
-
         sequelize.models.AcActivity.build({
           type: "activity.password.recovery",
           status: 'active',
