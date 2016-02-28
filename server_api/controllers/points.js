@@ -87,22 +87,32 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
     });
     pointRevision.save().then(function() {
       log.info('PointRevision Created', { pointRevision: toJson(pointRevision), context: 'create', user: toJson(req.user) });
-      models.Point.find({
-        where: { id: point.id },
-        include: [
-          { model: models.PointRevision ,
-            include: [
-              { model: models.User, attributes: ["id", "name", "facebook_id", "buddy_icon_file_name"] }
-            ]
-          }
-        ]
-      }).then(function(point) {
-        models.Post.find({
-          where: { id: point.post_id }
-        }).then(function(post) {
-          post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
-            post.increment('counter_points');
-            res.send(point);
+      models.AcActivity.createActivity({
+        type:'activity.point.new',
+        userId: point.user_id,
+        domainId: req.ypDomain.id,
+        communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+        groupId : point.group_id,
+        postId : point.post_id,
+        access: models.AcActivity.ACCESS_PUBLIC
+      }, function (error) {
+        models.Point.find({
+          where: { id: point.id },
+          include: [
+            { model: models.PointRevision ,
+              include: [
+                { model: models.User, attributes: ["id", "name", "facebook_id", "buddy_icon_file_name"] }
+              ]
+            }
+          ]
+        }).then(function(point) {
+          models.Post.find({
+            where: { id: point.post_id }
+          }).then(function(post) {
+            post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
+              post.increment('counter_points');
+              res.send(point);
+            });
           });
         });
       });
@@ -134,11 +144,26 @@ router.delete('/:id', auth.can('edit point'), function(req, res) {
 });
 
 router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), function(req, res) {
+  var point, post;
   models.PointQuality.find({
-    where: { point_id: req.params.id, user_id: req.user.id }
+    where: { point_id: req.params.id, user_id: req.user.id },
+    include: [
+      {
+        model: models.Point,
+        attributes: ['id','point_id','group_id'],
+        include: [
+          {
+            model: models.Post,
+            attributes: ['id','group_id']
+          }
+        ]
+      }
+    ]
   }).then(function(pointQuality) {
     var oldPointQualityValue;
     if (pointQuality) {
+      point = pointQuality.Point;
+      post = point.Post;
       if (pointQuality.value>0)
         oldPointQualityValue = 1;
       else if (pointQuality.value<0)
@@ -157,20 +182,78 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
     }
     pointQuality.save().then(function() {
       log.info('PointQuality Created or Updated', { pointQuality: toJson(pointQuality), context: 'createOrUpdate', user: toJson(req.user) });
-      decrementOldPointQualityCountersIfNeeded(oldPointQualityValue, req.params.id, pointQuality, function () {
-        if (pointQuality.value>0) {
-          changePointCounter(req.params.id, 'counter_quality_up', 1, function () {
-            res.send({ pointQuality: pointQuality, oldPointQualityValue: oldPointQualityValue });
-          })
-        } else if (pointQuality.value<0) {
-          changePointCounter(req.params.id, 'counter_quality_down', 1, function () {
-            res.send({ pointQuality: pointQuality, oldPointQualityValue: oldPointQualityValue });
-          })
-        } else {
-          log.error('PointQuality Error', { pointQuality: toJson(pointQuality), context: 'createOrUpdate', user: toJson(req.user) });
-          res.status(500);
+      async.series([
+        function (seriesCallback) {
+          if (point) {
+            seriesCallback();
+          } else {
+            models.Point.find({
+              where: { id: pointQuality.point_id },
+              attributes: ['id','post_id','group_id']
+            }).then(function (results) {
+              if (results) {
+                point = results;
+                seriesCallback();
+              } else {
+                seriesCallback("Can't find point")
+              }
+            });
+          }
+        },
+        function (seriesCallback) {
+          if (post) {
+            seriesCallback();
+          } else {
+            models.Post.find({
+              where: { id: point.post_id },
+              attributes: ['id','group_id']
+            }).then(function (results) {
+              if (results) {
+                post = results;
+                seriesCallback();
+              } else {
+                seriesCallback("Can't find post")
+              }
+            });
+          }
+        },
+        function (seriesCallback) {
+          models.AcActivity.createActivity({
+            type: pointQuality.value > 0 ? 'activity.point.helpful.new' :  'activity.point.unhelpful.new',
+            userId: pointQuality.user_id,
+            domainId: req.ypDomain.id,
+            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+            groupId : point.group_id,
+            postId : point.post_id,
+            pointId: point.id,
+            access: models.AcActivity.ACCESS_PUBLIC
+          }, function (error) {
+            seriesCallback(error);
+          });
         }
-      })
+      ], function (error) {
+        if (error) {
+          log.error("Point Quality Error", { context: 'create', pointQuality: toJson(pointQuality), user: toJson(req.user),
+            err: error, errorStatus: 500 });
+          res.sendStatus(500);
+        } else {
+          decrementOldPointQualityCountersIfNeeded(oldPointQualityValue, req.params.id, pointQuality, function () {
+            if (pointQuality.value>0) {
+              changePointCounter(req.params.id, 'counter_quality_up', 1, function () {
+                res.send({ pointQuality: pointQuality, oldPointQualityValue: oldPointQualityValue });
+              })
+            } else if (pointQuality.value<0) {
+              changePointCounter(req.params.id, 'counter_quality_down', 1, function () {
+                res.send({ pointQuality: pointQuality, oldPointQualityValue: oldPointQualityValue });
+              })
+            } else {
+              log.error('PointQuality Error', { pointQuality: toJson(pointQuality), context: 'createOrUpdate', user: toJson(req.user) });
+              res.status(500);
+            }
+          })
+        }
+      });
+
     });
   });
 });

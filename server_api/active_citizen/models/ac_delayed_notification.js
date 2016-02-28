@@ -6,6 +6,7 @@ module.exports = function(sequelize, DataTypes) {
   var AcDelayedNotification = sequelize.define("AcDelayedNotification", {
     method: { type: DataTypes.INTEGER, allowNull: false },
     frequency: { type: DataTypes.INTEGER, allowNull: false },
+    type: { type: DataTypes.STRING, allowNull: false },
     delivered: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     delivered_at: { type: DataTypes.DATE, allowNull: true },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }

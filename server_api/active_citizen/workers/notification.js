@@ -6,6 +6,7 @@ var queue = require('./queue');
 var i18n = require('../utils/i18n');
 var toJson = require('../utils/to_json');
 var postNotificationFilter = require('../engine/filters/post_notifications.js');
+var pointNotificationFilter = require('../engine/filters/point_notifications.js');
 
 var NotificationWorker = function () {};
 
@@ -116,7 +117,14 @@ NotificationWorker.prototype.process = function (notificationJson, callback) {
           case "notification.post.new":
           case "notification.post.endorsement":
             postNotificationFilter(notification, user, function () {
-              log.info('Processing notification.post.new Completed', { type: notification.type, user: user });
+              log.info('Processing notification.post.* Completed', { type: notification.type, user: user });
+              callback();
+            });
+            break;
+          case "notification.point.new":
+          case "notification.point.helpfulness":
+            pointNotificationFilter(notification, user, function () {
+              log.info('Processing notification.point.* Completed', { type: notification.type, user: user });
               callback();
             });
             break;

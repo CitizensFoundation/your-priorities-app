@@ -46,8 +46,64 @@ var addNotificationsForUsers = function (activity, users, notification_type, uni
     callback(error);
   });
 };
+// type: 'notification.post.endorsement';
+
+var addOrPossiblyGroupNotification = function (model, type, activity, priority, callback) {
+  models.AcNotification.find({
+    where: {
+      user_id: model.User.id,
+      type: type,
+      created_at: {
+        $lt: new Date(),
+        $gt: new Date(new Date() - models.AcNotification.ENDORSEMENT_GROUPING_TTL)
+      }
+    }
+  }).then(function(notification) {
+    if (notification) {
+      models.AcNotification.find({
+        where: {
+          user_id: post.User.id,
+          type: type,
+          created_at: {
+            $lt: new Date(),
+            $gt: new Date(new Date() - models.AcNotification.ENDORSEMENT_GROUPING_TTL)
+          }
+        },
+        include: [
+          {
+            model: models.AcActivity,
+            as: 'AcActivities',
+            required: true,
+            where: {
+              user_id: activity.user_id,
+              type: activity.type
+            }
+          }
+        ]
+      }).then(function(specificNotification) {
+        if (specificNotification) {
+          callback();
+        } else {
+          notification.addAcActivities(activity).then(function (results) {
+            if (results) {
+              models.AcNotification.processNotification(notification, activity);
+              callback();
+            } else {
+              callback("Notification Error Can't add activity");
+            }
+          });
+        }
+      });
+    } else {
+      models.AcNotification.createNotificationFromActivity(post.User, activity, type, priority, function (error) {
+        callback(error);
+      });
+    }
+  });
+};
 
 module.exports = {
   getModelAndUsersByType: getModelAndUsersByType,
-  addNotificationsForUsers: addNotificationsForUsers
+  addNotificationsForUsers: addNotificationsForUsers,
+  addOrPossiblyGroupNotification: addOrPossiblyGroupNotification
 };

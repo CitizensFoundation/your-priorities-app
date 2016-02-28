@@ -259,7 +259,10 @@ router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(
       user_id: req.user.id
     },
     include: [
-        models.Post
+      {
+        model: models.Post,
+        attributes: ['id','group_id']
+      }
     ]
   }).then(function(endorsement) {
     var oldEndorsementValue;
@@ -288,7 +291,10 @@ router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(
           if (post) {
             seriesCallback();
           } else {
-            models.Post.find({where: { id: endorsement.post_id}}).then(function (results) {
+            models.Post.find( {
+              where: { id: endorsement.post_id },
+              attributes: ['id','group_id']
+            }).then(function (results) {
               if (results) {
                 post = results;
                 seriesCallback();

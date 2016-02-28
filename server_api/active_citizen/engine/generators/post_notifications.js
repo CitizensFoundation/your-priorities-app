@@ -5,8 +5,9 @@ var toJson = require('../../utils/to_json');
 var async = require('async');
 var getModelAndUsersByType = require('./notifications_utils').getModelAndUsersByType;
 var addNotificationsForUsers = require('./notifications_utils').addNotificationsForUsers;
+var addOrPossiblyGroupNotification = require('./notifications_utils').addOrPossiblyGroupNotification;
 
-var generateNotificationsForNewIdea = function (activity, uniqueUserIds, callback) {
+var generateNotificationsForNewPost = function (activity, uniqueUserIds, callback) {
   async.series([
     function(seriesCallback){
       if (activity.Community) {
@@ -56,57 +57,7 @@ var generateNotificationsForEndorsements = function (activity, callback) {
     ]
   }).then( function(post) {
     if (post) {
-      models.AcNotification.find({
-        where: {
-          user_id: post.User.id,
-          type: 'notification.post.endorsement',
-          created_at: {
-            $lt: new Date(),
-            $gt: new Date(new Date() - models.AcNotification.ENDORSEMENT_GROUPING_TTL)
-          }
-        }
-      }).then(function(notification) {
-        if (notification) {
-          models.AcNotification.find({
-            where: {
-              user_id: post.User.id,
-              type: 'notification.post.endorsement',
-              created_at: {
-                $lt: new Date(),
-                $gt: new Date(new Date() - models.AcNotification.ENDORSEMENT_GROUPING_TTL)
-              }
-            },
-            include: [
-              {
-                model: models.AcActivity,
-                as: 'AcActivities',
-                required: true,
-                where: {
-                  user_id: activity.user_id,
-                  type: activity.type
-                }
-              }
-            ]
-          }).then(function(specificNotification) {
-            if (specificNotification) {
-              callback();
-            } else {
-              notification.addAcActivities(activity).then(function (results) {
-                if (results) {
-                  models.AcNotification.processNotification(notification, activity);
-                  callback();
-                } else {
-                  callback("Notification Error Can't add activity");
-                }
-              });
-            }
-          });
-        } else {
-          models.AcNotification.createNotificationFromActivity(post.User, activity, 'notification.post.endorsement', 50, function (error) {
-            callback(error);
-          });
-        }
-      });
+      addOrPossiblyGroupNotification(post, 'notification.post.endorsement', activity, 50, callback);
     } else {
       callback('Not found or muted');
     }
@@ -123,7 +74,7 @@ module.exports = function (activity, user, callback) {
   var uniqueUserIds = {};
 
   if (activity.type=='activity.post.new') {
-    generateNotificationsForNewIdea(activity, uniqueUserIds, callback);
+    generateNotificationsForNewPost(activity, uniqueUserIds, callback);
   } else if (activity.type=='activity.post.endorsement.new' || activity.type=='activity.post.opposition.new') {
     generateNotificationsForEndorsements(activity, callback)
   }

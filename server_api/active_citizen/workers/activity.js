@@ -6,6 +6,7 @@ var toJson = require('../utils/to_json');
 var async = require('async');
 
 var postNotificationGenerator = require('../engine/generators/post_notifications.js');
+var pointNotificationGenerator = require('../engine/generators/point_notifications.js');
 
 var ActivityWorker = function () {};
 
@@ -79,6 +80,14 @@ ActivityWorker.prototype.process = function (activityJson, callback) {
             case "activity.post.endorsement.new":
               postNotificationGenerator(activity, activity.User, function (error) {
                 log.info('Processing activity.post.* Completed', {type: activity.type, err: error});
+                callback();
+              });
+              break;
+            case "activity.point.new":
+            case "activity.point.helpful.new":
+            case "activity.point.unhelpful.new":
+              pointNotificationGenerator(activity, activity.User, function (error) {
+                log.info('Processing activity.point.* Completed', {type: activity.type, err: error});
                 callback();
               });
               break;
