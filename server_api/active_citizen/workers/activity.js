@@ -1,57 +1,91 @@
 // https://gist.github.com/mojodna/1251812
 
-var ActivityWorker = function () {};
-
 var models = require("../../models");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var postNotificationGenerator = require('../engine/generators/post_notifications.js');
 
-var loadActivityFromJsonObject = function(activityJson, done) {
-  models.AcActivity.find({
-    where: { id: activityJson.id }
-  }).then(function(activity) {
-    if (activity) {
-      done(null, activity);
-    } else {
-      done('Activity not found');
-    }
-  }).catch(function(error) {
-    done(error);
-  });
-};
+var activity;
 
-ActivityWorker.prototype.process = function (activity, done) {
-  log.info('Processing Activity Started', { type: activity.type });
-  try {
-    switch(activity.type) {
-      case "activity.password.recovery":
-        models.AcNotification.createNotificationFromActivity(activity.actor.user, activity, "notification.password.recovery", 100, function (error) {
-          log.info('Processing activity.password.recovery Completed', { type: activity.type, err: error });
-          done();
+var ActivityWorker = function () {};
+
+ActivityWorker.prototype.process = function (activityJson, callback) {
+  async.series([
+      function (callback) {
+        models.AcActivity.find({
+          where: { id: activityJson.id },
+          include: [
+            {
+              model: models.Domain,
+              required: true
+            },
+            {
+              model: models.Community,
+              required: false
+            },
+            {
+              model: models.Group,
+              required: false
+            },
+            {
+              model: models.Post,
+              required: false
+            },
+            {
+              model: models.Point,
+              required: false
+            }
+          ]
+        }).then(function (results) {
+          if (results) {
+            activity = results;
+            callback();
+          } else {
+            callback('Activity not found');
+          }
+        }).catch(function (error) {
+          callback(error);
         });
-        break;
-      case "activity.password.changed":
-        models.AcNotification.createNotificationFromActivity(activity.actor.user, activity, "notification.password.changed", 100, function (error) {
-          log.info('Processing activity.password.changed Completed', { type: activity.type, err: error });
-          done();
-        });
-        break;
-      case "activity.post.new":
-      case "activity.post.opposition.new":
-      case "activity.post.endorsement.new":
-        postNotificationGenerator(activity, function (error) {
-          log.info('Processing activity.post.* Completed', { type: activity.type, err: error });
-          done();
-        });
-        break;
-      default:
-        done();
+      }
+    ],
+    function (error) {
+      if (error) {
+        log.error("ActivityWorker Error", {err: error});
+        callback();
+      } else {
+        log.info('Processing Activity Started', {type: activity.type});
+        try {
+          switch (activity.type) {
+            case "activity.password.recovery":
+              models.AcNotification.createNotificationFromActivity(activity.actor.user, activity, "notification.password.recovery", 100, function (error) {
+                log.info('Processing activity.password.recovery Completed', {type: activity.type, err: error});
+                callback();
+              });
+              break;
+            case "activity.password.changed":
+              models.AcNotification.createNotificationFromActivity(activity.actor.user, activity, "notification.password.changed", 100, function (error) {
+                log.info('Processing activity.password.changed Completed', {type: activity.type, err: error});
+                callback();
+              });
+              break;
+            case "activity.post.new":
+            case "activity.post.opposition.new":
+            case "activity.post.endorsement.new":
+              postNotificationGenerator(activity, function (error) {
+                log.info('Processing activity.post.* Completed', {type: activity.type, err: error});
+                callback();
+              });
+              break;
+            default:
+              callback();
+          }
+        } catch (err) {
+          log.error("Processing Activity Error", {err: err});
+          callback();
+        }
+      }
     }
-  } catch (err) {
-    log.error("Processing Activity Error", {err: err});
-    done();
-  }
+  );
 };
 
 module.exports = new ActivityWorker();

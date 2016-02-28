@@ -22,6 +22,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
 
       associate: function(models) {
+        AcWatching.belongsTo(models.Domain);
         AcWatching.belongsTo(models.Community);
         AcWatching.belongsTo(models.Group);
         AcWatching.belongsTo(models.Post);

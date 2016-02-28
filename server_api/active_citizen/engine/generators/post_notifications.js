@@ -29,11 +29,10 @@ var generateNotificationsForNewIdea = function (activity, uniqueUserIds, callbac
   // TODO: Add AcWatching community and group users
 };
 
-var generateNotificationsForEndorsements = function (activity, uniqueUserIds, callback) {
-
+var generateNotificationsForEndorsements = function (activity, user, callback) {
   // Notifications for endorsement on posts I've created
   model.Post({
-    where: { id: activity.object.post_id },
+    where: { id: activity.object.postId },
     include: [
       {
         model: models.User,
@@ -47,7 +46,34 @@ var generateNotificationsForEndorsements = function (activity, uniqueUserIds, ca
     ]
   }).then( function(post) {
     if (post) {
-      addNotificationsForUsers(activity, [ post.User ], "notification.post.endorsement", {}, callback);
+      models.AcNotification.find({
+        where: {
+          user_id: user.id,
+          type: 'notification.post.endorsement',
+          created_at: {
+            $lt: new Date(),
+            $gt: new Date(new Date() - 6 * 60 * 60 * 1000)
+          }
+        }
+      }).then(function(notification) {
+        if (notification) {
+          notification.addAcActivities(activity).then(function (results) {
+            if (results) {
+              callback();
+            } else {
+              log.info('Processing notification.password.recovery Completed', { type: notification.type, user: user });
+            }
+          });
+        } else {
+          models.AcNotification.createNotificationFromActivity(user, activity, notification_type, 50, function (error) {
+            if (error) {
+
+            } else {
+              callback(error);
+            }
+          });
+        }
+      });
     } else {
       callback('Not found or muted');
     }
@@ -59,6 +85,7 @@ var generateNotificationsForEndorsements = function (activity, uniqueUserIds, ca
 };
 
 exports = function (activity, callback) {
+
   // Make sure not to create duplicate notifications to the same user
   var uniqueUserIds = {};
 

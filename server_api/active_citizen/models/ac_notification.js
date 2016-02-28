@@ -48,6 +48,10 @@ module.exports = function(sequelize, DataTypes) {
         }
       },
       {
+        name: 'notification_by_type_and_user_id',
+        fields: ['type','user_id']
+      },
+      {
         name: 'notification_active_by_user_id',
         fields: ['user_id'],
         where: {
@@ -70,14 +74,22 @@ module.exports = function(sequelize, DataTypes) {
 
     classMethods: {
 
-      METHOD_NONE: 0,
+      METHOD_MUTED: 0,
       METHOD_BROWSER: 1,
       METHOD_EMAIL: 2,
       METHOD_PUSH: 3,
       METHOD_SMS: 4,
 
+      FREQUENCY_AS_IT_HAPPENS: 0,
+      FREQUENCY_HOURLY: 1,
+      FREQUENCY_DAILY: 2,
+      FREQUENCY_WEEKLY: 3,
+      FREQUENCY_BI_WEEKLY: 4,
+      FREQUENCY_MONTHLY: 5,
+
       associate: function(models) {
         AcNotification.belongsToMany(models.AcActivity, { as: 'AcActivites', through: 'notification_activities' });
+        AcNotification.belongsToMany(models.AcActivity, { as: 'AcDelayedNotifications', through: 'delayed_notifications' });
         AcNotification.belongsTo(models.User);
       },
 

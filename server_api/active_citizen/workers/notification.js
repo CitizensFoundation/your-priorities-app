@@ -9,8 +9,7 @@ var postNotificationFilter = require('../engine/filters/post_notifications.js');
 
 var NotificationWorker = function () {};
 
-NotificationWorker.prototype.process = function (notificationJson, done) {
-
+NotificationWorker.prototype.process = function (notificationJson, callback) {
   try {
     var user;
     var notification;
@@ -21,12 +20,39 @@ NotificationWorker.prototype.process = function (notificationJson, done) {
       function(callback){
         models.AcNotification.find({
           where: { id: notificationJson.id },
-          include: [ models.AcActivity ]
+          include: [
+            {
+              model: models.AcActivity,
+              required: true,
+              include: [
+                {
+                  model: models.Domain,
+                  required: true
+                },
+                {
+                  model: models.Community,
+                  required: false
+                },
+                {
+                  model: models.Group,
+                  required: false
+                },
+                {
+                  model: models.Post,
+                  required: false
+                },
+                {
+                  model: models.Point,
+                  required: false
+                }
+              ]
+            }
+          ]
         }).then(function(results) {
           if (results) {
             notification = results;
-            domain = notification.AcActivites[0].object.domain;
-            community = notification.AcActivites[0].activity.object.community;
+            domain = notification.AcActivites[0].Domain;
+            community = notification.AcActivites[0].Community;
             callback();
           } else {
             callback('Notification not found');
@@ -58,7 +84,7 @@ NotificationWorker.prototype.process = function (notificationJson, done) {
     function(error) {
       if (error) {
         log.error("NotificationWorker Error", {err: error});
-        done();
+        callback();
       } else {
         log.info('Processing Notification Started', { type: notification.type, user: user });
         switch(notification.type) {
@@ -72,7 +98,7 @@ NotificationWorker.prototype.process = function (notificationJson, done) {
               token: notification.AcActivites[0].object.token
             }).priority('critical').removeOnComplete(true).save();
             log.info('Processing notification.password.recovery Completed', { type: notification.type, user: user });
-            done();
+            callback();
             break;
           case "notification.password.changed":
             queue.create('send-one-email', {
@@ -84,22 +110,22 @@ NotificationWorker.prototype.process = function (notificationJson, done) {
               token: notification.activity.object.token
             }).priority('critical').removeOnComplete(true).save();
             log.info('Processing notification.password.changed Completed', { type: notification.type, user: user });
-            done();
+            callback();
             break;
           case "notification.post.new":
             postNotificationFilter(notification, user, function () {
               log.info('Processing notification.post.new Completed', { type: notification.type, user: user });
-              done();
+              callback();
             });
             break;
           default:
-            done();
+            callback();
         }
       }
     });
   } catch (error) {
     log.error("Processing Activity Error", {err: error});
-    done();
+    callback();
   }
 };
 
