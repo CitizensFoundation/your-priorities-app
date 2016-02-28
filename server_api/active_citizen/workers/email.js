@@ -39,7 +39,7 @@ EmailWorker.prototype.sendOne = function (emailLocals, done) {
         log.errors('EmailWorker', { err: error, user: emailLocals.user });
         done();
       } else {
-        if (process.env.SENDGRID_USERNAME) {
+        if (process.env.SENDGRID_USERNAME && (emailLocals.user.email=='robert@citizens.is' || emailLocals.user.email=='gunnar@citizens.is')) {
           transport.sendMail({
             from: emailLocals.community.admin_email,
             to: emailLocals.user.email,
@@ -50,9 +50,10 @@ EmailWorker.prototype.sendOne = function (emailLocals, done) {
             if (error) {
               log.error('EmailWorker', { err: error, user: emailLocals.user });
               done(error);
+            } else {
+              log.info('EmailWorker Completed', { responseStatusMessage: responseStatus.message, user: emailLocals.user });
+              done();
             }
-            log.info('EmailWorker Completed', { responseStatusMessage: responseStatus.message, user: emailLocals.user });
-            done(error);
           })
         } else {
           log.warn('EmailWorker no SMTP server', { emailLocals: emailLocals, resultsHtml: results.html , resultsText: results.text });

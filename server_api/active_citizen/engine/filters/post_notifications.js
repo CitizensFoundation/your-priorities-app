@@ -1,29 +1,31 @@
 var queue = require('../../workers/queue');
+var models = require("../../../models");
+var i18n = require('../../utils/i18n');
 
 var filterNewPostNotificationForDelivery = function (notification, user, callback) {
-  if (user.notification_settings.my_posts.method != models.AcNotification.METHOD_MUTED) {
-    if (user.notification_settings.my_posts.frequency == models.AcNotification.FREQUENCY_AS_IT_HAPPENS) {
+  if (user.notifications_settings.my_posts.method != models.AcNotification.METHOD_MUTED) {
+    if (user.notifications_settings.my_posts.frequency == models.AcNotification.FREQUENCY_AS_IT_HAPPENS) {
       queue.create('send-one-email', {
         subject: i18n.t('email.new_post'),
         template: 'post_activity',
         user: user,
-        domain: notfication.AcActivites[0].Domain,
-        community: notfication.AcActivites[0].Community,
-        activity:  notfication.AcActivites[0],
-        post: notfication.AcActivites[0].Post
+        domain: notification.AcActivities[0].Domain,
+        community: notification.AcActivities[0].Community,
+        activity:  notification.AcActivities[0],
+        post: notification.AcActivities[0].Post
       }).priority('critical').removeOnComplete(true).save();
       callback();
-    } else if (user.notification_settings.my_posts.method != models.AcNotification.METHOD_MUTED) {
+    } else if (user.notifications_settings.my_posts.method != models.AcNotification.METHOD_MUTED) {
       AcDelayedNotification.findOrCreate({
         where: {
           user_id: user.id,
-          method: user.notification_settings.my_posts.method,
-          frequency: user.notification_settings.my_posts.frequency
+          method: user.notifications_settings.my_posts.method,
+          frequency: user.notifications_settings.my_posts.frequency
         },
         defaults: {
           user_id: user.id,
-          method: user.notification_settings.my_posts.method,
-          frequency: user.notification_settings.my_posts.frequency
+          method: user.notifications_settings.my_posts.method,
+          frequency: user.notifications_settings.my_posts.frequency
         }
       }).spread(function(delayedNotification, created) {
         if (created) {
@@ -50,7 +52,7 @@ var filterNewPostNotificationForDelivery = function (notification, user, callbac
   }
 };
 
-exports = function (notification, user, callback) {
+module.exports = function (notification, user, callback) {
   if (notification.type=='notification.post.new') {
     filterNewPostNotificationForDelivery(notification, user, callback);
   } else {
