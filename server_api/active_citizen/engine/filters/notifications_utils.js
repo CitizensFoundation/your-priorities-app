@@ -2,10 +2,13 @@ var models = require("../../../models");
 var log = require('../../utils/logger');
 var toJson = require('../../utils/to_json');
 var async = require('async');
+var queue = require('../../workers/queue');
 
 var filterNotificationForDelivery = function (notification, user, notification_settings_type, template, subject, callback) {
   var method = user.notifications_settings[notification_settings_type].method;
   var frequency = user.notifications_settings[notification_settings_type].frequency;
+
+  //TODO: Switch from FREQUENCY_AS_IT_HAPPENS if user has had a lot of emails > 25 in the hour or something
 
   if (method != models.AcNotification.METHOD_MUTED) {
     if (frequency == models.AcNotification.FREQUENCY_AS_IT_HAPPENS) {
@@ -17,7 +20,7 @@ var filterNotificationForDelivery = function (notification, user, notification_s
         community: notification.AcActivities[0].Community,
         activity: notification.AcActivities[0],
         post: notification.AcActivities[0].Post,
-        post: notification.AcActivities[0].Point
+        point: notification.AcActivities[0].Point
       }).priority('critical').removeOnComplete(true).save();
       callback();
     } else if (user.notifications_settings.my_posts.method != models.AcNotification.METHOD_MUTED) {

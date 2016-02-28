@@ -5,8 +5,8 @@ var filterNotificationForDelivery = require('./notifications_utils').filterNotif
 
 module.exports = function (notification, user, callback) {
   if (notification.type=='notification.point.new') {
-    filterNotificationForDelivery(notification, user, 'my_points', 'point_activity', i18n.t('email.post.subject.new'), callback);
-  } else if (notification.type=='notification.point.helpfulness') {
-    filterNotificationForDelivery(notification, user, 'my_points_endorsements', 'point_activity', i18n.t('email.post.subject.helpfulness'), callback);
+    filterNotificationForDelivery(notification, user, 'my_points', 'point_activity', i18n.t('email.point.subject.new'), callback);
+  } else if (notification.type=='notification.point.quality') {
+    filterNotificationForDelivery(notification, user, 'my_points_endorsements', 'point_activity', i18n.t('email.point.subject.quality'), callback);
   }
 };

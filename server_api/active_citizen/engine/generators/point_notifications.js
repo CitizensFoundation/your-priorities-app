@@ -38,9 +38,9 @@ var generateNotificationsForNewPoint = function (activity, uniqueUserIds, callba
         if (post) {
           var users = [];
           async.eachSeries(post.Points, function(point, innerSeriesCallback) {
-            if (!uniqueUserIds[user.id]) {
+            if (!uniqueUserIds[point.User.id]) {
               users.push(point.User);
-              uniqueUserIds[user.id] = true;
+              uniqueUserIds[point.User.id] = true;
             }
             innerSeriesCallback();
           }, function (error) {
@@ -83,7 +83,7 @@ var generateNotificationsForNewPoint = function (activity, uniqueUserIds, callba
 };
 
 var generateNotificationsForHelpfulness = function (activity, callback) {
-  // Notifications for helpfulness on posts I've created
+  // Notifications for quality on posts I've created
   models.Point.find({
     where: { id: activity.point_id },
     include: [
@@ -99,7 +99,7 @@ var generateNotificationsForHelpfulness = function (activity, callback) {
     ]
   }).then( function(point) {
     if (point) {
-      addOrPossiblyGroupNotification(point, 'notification.point.helpfulness', activity, 50, callback);
+      addOrPossiblyGroupNotification(point, 'notification.point.quality', activity, point.User, 50, callback);
     } else {
       callback();
     }

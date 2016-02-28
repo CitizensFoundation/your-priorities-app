@@ -122,7 +122,7 @@ NotificationWorker.prototype.process = function (notificationJson, callback) {
             });
             break;
           case "notification.point.new":
-          case "notification.point.helpfulness":
+          case "notification.point.quality":
             pointNotificationFilter(notification, user, function () {
               log.info('Processing notification.point.* Completed', { type: notification.type, user: user });
               callback();

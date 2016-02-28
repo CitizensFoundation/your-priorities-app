@@ -57,7 +57,7 @@ var generateNotificationsForEndorsements = function (activity, callback) {
     ]
   }).then( function(post) {
     if (post) {
-      addOrPossiblyGroupNotification(post, 'notification.post.endorsement', activity, 50, callback);
+      addOrPossiblyGroupNotification(post, 'notification.post.endorsement', activity, post.User, 50, callback);
     } else {
       callback('Not found or muted');
     }

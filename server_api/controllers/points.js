@@ -4,6 +4,7 @@ var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var async = require('async');
 
 var changePointCounter = function (pointId, column, upDown, next) {
   models.Point.find({
@@ -94,6 +95,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
         communityId: req.ypCommunity ?  req.ypCommunity.id : null,
         groupId : point.group_id,
         postId : point.post_id,
+        pointId: point.id,
         access: models.AcActivity.ACCESS_PUBLIC
       }, function (error) {
         models.Point.find({
@@ -150,7 +152,7 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
     include: [
       {
         model: models.Point,
-        attributes: ['id','point_id','group_id'],
+        attributes: ['id','group_id'],
         include: [
           {
             model: models.Post,

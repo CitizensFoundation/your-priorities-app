@@ -34,7 +34,7 @@ var getModelAndUsersByType = function (model, userType, id, notification_type, c
 
 var addNotificationsForUsers = function (activity, users, notification_type, uniqueUserIds, callback) {
   async.eachSeries(users, function (user, seriesCallback) {
-    if (uniqueUserIds[user.id]) {
+    if (false && uniqueUserIds[user.id]) { // TODO: Fix this double protection
       seriesCallback();
     } else {
       models.AcNotification.createNotificationFromActivity(user, activity, notification_type, 50, function (error) {
@@ -48,7 +48,7 @@ var addNotificationsForUsers = function (activity, users, notification_type, uni
 };
 // type: 'notification.post.endorsement';
 
-var addOrPossiblyGroupNotification = function (model, type, activity, priority, callback) {
+var addOrPossiblyGroupNotification = function (model, type, activity, user, priority, callback) {
   models.AcNotification.find({
     where: {
       user_id: model.User.id,
@@ -62,7 +62,7 @@ var addOrPossiblyGroupNotification = function (model, type, activity, priority, 
     if (notification) {
       models.AcNotification.find({
         where: {
-          user_id: post.User.id,
+          user_id: user.id,
           type: type,
           created_at: {
             $lt: new Date(),
@@ -95,7 +95,7 @@ var addOrPossiblyGroupNotification = function (model, type, activity, priority, 
         }
       });
     } else {
-      models.AcNotification.createNotificationFromActivity(post.User, activity, type, priority, function (error) {
+      models.AcNotification.createNotificationFromActivity(user, activity, type, priority, function (error) {
         callback(error);
       });
     }
