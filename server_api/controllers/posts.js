@@ -166,7 +166,16 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
       post.updateAllExternalCounters(req, 'up', 'counter_posts', function () {
         models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
           post.setupImages(req.body, function (error) {
-            sendPostOrError(res, post, 'setupImages', req.user, error);
+            models.AcActivity.createActivity({
+              type: 'activity.post.new',
+              userId: post.user_id,
+              domainId: req.ypDomain.id,
+              groupId: post.group_id,
+              communityId: req.ypCommunity ?  req.ypCommunity : null,
+              postId : post.id
+            }, function () {
+              sendPostOrError(res, post, 'setupImages', req.user, error);
+            });
           })
         })
       })

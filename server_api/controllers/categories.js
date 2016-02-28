@@ -59,10 +59,17 @@ router.post('/:groupId', auth.can('create category'), function(req, res) {
   });
   category.save().then(function() {
     log.info('Category Created', { category: category, context: 'create', user: toJson(req.user) });
-    models.AcActivity.createActivity('activity.category.created', req.body.type, null, { category: category }, null,
-      req.user.id,  req.ypDomain.id, null, req.params.groupId, null, null, null);
-    category.setupImages(req.body, function(error) {
-      sendCategoryOrError(res, category, 'setupImages', req.user, error);
+    models.AcActivity.createActivity({
+      type: 'activity.category.created',
+      userId: req.user.id,
+      domainId: req.ypDomain.id,
+      groupId: req.params.groupId,
+      communityId: req.ypCommunity ?  req.ypCommunity : null,
+      object: { categoryId: category.id }
+    }, function () {
+      category.setupImages(req.body, function(error) {
+        sendCategoryOrError(res, category, 'setupImages', req.user, error);
+      });
     });
   }).catch(function(error) {
     sendCategoryOrError(res, null, 'view', req.user, error);

@@ -9,7 +9,7 @@ var addNotificationsForUsers = require('notification_utils').addNotificationsFor
 var generateNotificationsForNewIdea = function (activity, uniqueUserIds, callback) {
 
   // Notifications for all new posts in community
-  getModelAndUsersByType(models.Community, activity.object.communityId, "all_community", function(error, community) {
+  getModelAndUsersByType(models.Community, activity.Community.id, "all_community", function(error, community) {
     if (error) {
       callback(error);
     } else {
@@ -18,7 +18,7 @@ var generateNotificationsForNewIdea = function (activity, uniqueUserIds, callbac
   });
 
   // Notifications for all new posts in group
-  getModelAndUsersByType(models.Group, activity.object.communityId, "all_group", function(error, community) {
+  getModelAndUsersByType(models.Group, activity.Group.id, "all_group", function(error, community) {
     if (error) {
       callback(error);
     } else {
@@ -61,16 +61,12 @@ var generateNotificationsForEndorsements = function (activity, user, callback) {
             if (results) {
               callback();
             } else {
-              log.info('Processing notification.password.recovery Completed', { type: notification.type, user: user });
+              callback("Notification Error Can't add activity");
             }
           });
         } else {
           models.AcNotification.createNotificationFromActivity(user, activity, notification_type, 50, function (error) {
-            if (error) {
-
-            } else {
-              callback(error);
-            }
+            callback(error);
           });
         }
       });

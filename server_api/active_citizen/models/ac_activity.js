@@ -213,52 +213,61 @@ module.exports = function(sequelize, DataTypes) {
         AcActivity.belongsToMany(models.AcNotification, { as: 'AcActivites', through: 'notification_activities' });
       },
 
-      createActivity: function(type, subType, actor, object, context, userId, domainId, communityId, groupId, postId, pointId, callback) {
-        if (!object)
+      createActivity: function(options, callback) {
+
+        var context, actor, object;
+
+        if (options.object)
+          object = options.object;
+        else
           object = {};
 
-        if (!context)
+        if (options.context)
+          context = options.context;
+        else
           context = {};
 
-        if (!actor)
+        if (options.actor)
+          actor = options.actor;
+        else
           actor = {};
 
-        if (userId)
-          actor['userId'] = userId;
+        if (options.userId)
+          actor['userId'] = options.userId;
 
-        if (domainId)
-          object['domainId'] = domainId;
+        if (options.domainId)
+          object['domainId'] = options.domainId;
 
-        if (communityId)
-          object['communityId'] = communityId;
+        if (options.communityId)
+          object['communityId'] = options.communityId;
 
-        if (groupId)
-          object['groupId'] = groupId;
+        if (options.groupId)
+          object['groupId'] = options.groupId;
 
-        if (postId)
-          object['postId'] = postId;
+        if (options.postId)
+          object['postId'] = options.postId;
 
-        if (pointId)
-          object['pointId'] = pointId;
+        if (options.pointId)
+          object['pointId'] = options.pointId;
 
         sequelize.models.AcActivity.build({
-          type: type,
+          type: options.type,
           status: 'active',
-          sub_type: subType,
+          sub_type: options.subType,
           actor: actor,
           object: object,
           context: context,
-          user_id: userId,
-          domain_id: domainId,
-          community_id: communityId,
-          group_id: groupId,
-          post_id: postId,
-          point_id: pointId,
+          user_id: options.userId,
+          domain_id: options.domainId,
+          community_id: options.communityId,
+          group_id: options.groupId,
+          post_id: options.postId,
+          point_id: options.pointId,
           access: sequelize.models.AcActivity.ACCESS_PRIVATE
         }).save().then(function(activity) {
           if (activity) {
                 queue.create('process-activity', activity).priority('critical').removeOnComplete(true).save();
-                log.info('Activity Created', { activity: toJson(activity), userId: userId});
+                log.info('Activity Created', { activity: toJson(activity), userId: options.userId});
             callback();
           } else {
             callback('Activity Not Found');

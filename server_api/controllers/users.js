@@ -161,16 +161,25 @@ router.get('/reset/:token', function(req, res) {
 });
 
 router.post('/createActivityFromApp', function(req, res) {
-  models.AcActivity.createActivity('activity.from.app', req.body.type, { appActor: req.body.actor },
-                                 { name: req.body.object }, { name: req.body.context, eventTime: req.body.event_time,
-                                                              sessionId: req.body.sessionId, userAgent: req.body.user_agent },
-                                 req.user ? req.user.id : null,  req.ypDomain.id, req.ypCommunity.id, req.params.groupId, null, null, function(error) {
-      if (error) {
-        log.error('Create Activity Error', { user: null, context: 'createActivity', loggedInUser: req.user ? toJson(req.user) : null, err: error, errorStatus: 500 });
-        res.sendStatus(500);
-      } else {
-        res.sendStatus(200);
-      }
+  models.AcActivity.createActivity({
+    type: 'activity.fromApp',
+    sub_type: req.body.type,
+    actor: { appActor: req.body.actor },
+    object: { name: req.body.object },
+    context: { name: req.body.context, eventTime: req.body.event_time,
+               sessionId: req.body.sessionId, userAgent: req.body.user_agent },
+    userId: req.user ? req.user.id : null,
+    domainId: req.ypDomain.id,
+    groupId: req.params.groupId,
+    communityId: req.ypCommunity ?  req.ypCommunity : null,
+    postId : post.id
+  }, function (error) {
+    if (error) {
+      log.error('Create Activity Error', { user: null, context: 'createActivity', loggedInUser: req.user ? toJson(req.user) : null, err: error, errorStatus: 500 });
+      res.sendStatus(500);
+    } else {
+      res.sendStatus(200);
+    }
   });
 });
 
@@ -210,8 +219,13 @@ router.post('/reset/:token', function(req, res) {
     },
     function(done) {
       if (req.user) {
-        models.AcActivity.createActivity("activity.password.changed", "", null, null, null, req.user.id, req.ypDomain.id, req.ypCommunity.id,
-                                         req.params.groupId, null, null, function (error) {
+        models.AcActivity.createActivity({
+          type: 'activity.password.changed',
+          userId: req.user.id,
+          domainId: req.ypDomain.id,
+          groupId: req.params.groupId,
+          communityId: req.ypCommunity ?  req.ypCommunity : null
+        }, function (error) {
           done(error);
         });
       } else {

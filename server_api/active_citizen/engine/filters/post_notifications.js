@@ -2,13 +2,14 @@ var queue = require('../../workers/queue');
 
 var filterNewPostNotificationForDelivery = function (notification, user, callback) {
   if (user.notification_settings.my_posts.method != models.AcNotification.METHOD_MUTED) {
-    if (user.notification_settings.my_posts.frequency==models.AcNotification.FREQENCY_AS_IT_HAPPENS) {
+    if (user.notification_settings.my_posts.frequency == models.AcNotification.FREQUENCY_AS_IT_HAPPENS) {
       queue.create('send-one-email', {
         subject: i18n.t('email.new_post'),
         template: 'post_activity',
         user: user,
         domain: notfication.AcActivites[0].Domain,
         community: notfication.AcActivites[0].Community,
+        activity:  notfication.AcActivites[0],
         post: notfication.AcActivites[0].Post
       }).priority('critical').removeOnComplete(true).save();
       callback();
@@ -41,7 +42,7 @@ var filterNewPostNotificationForDelivery = function (notification, user, callbac
           }
         });
       }).catch(function (error) {
-        callback(error)
+        callback(error);
       });
     }
   } else {
