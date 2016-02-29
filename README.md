@@ -8,7 +8,6 @@ https://beta.yrpri.org/
 ```
 # Git clone with the Active Citizen submodule library
 git clone https://github.com/rbjarnason/your-priorities-app.git
-
 cd your-priorities-app
 git submodule init
 git submodule update
