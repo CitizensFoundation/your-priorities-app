@@ -1,0 +1,3 @@
+[submodule "server_api/active-citizen"]
+	path = server_api/active-citizen
+	url = https://github.com/rbjarnason/active-citizen.git
