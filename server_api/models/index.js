@@ -29,7 +29,7 @@ fs
 // Read from active citizen,
 // TODO Load from npm module if not found locally
 
-var acDirname = __dirname+'/../active_citizen/models';
+var acDirname = __dirname+'/../active-citizen/models';
 fs
   .readdirSync(acDirname)
   .filter(function(file) {
