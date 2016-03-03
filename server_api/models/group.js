@@ -172,6 +172,7 @@ module.exports = function(sequelize, DataTypes) {
         Group.hasMany(models.Endorsement, { foreignKey: "group_id" });
         Group.hasMany(models.Category, { foreignKey: "group_id" });
         Group.belongsToMany(models.User, { as: 'GroupUsers', through: 'GroupUser' });
+        Group.belongsTo(models.Community);
         Group.belongsTo(models.IsoCountry, { foreignKey: "iso_country_id" });
         Group.belongsTo(models.User);
         Group.belongsToMany(models.Image, { through: 'GroupImage' });
