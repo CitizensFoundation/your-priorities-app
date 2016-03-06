@@ -37,6 +37,7 @@ var comments = json['comments'];
 var promotions = json['promotions'];
 var pages = json['pages'];
 var activities = json['activities'];
+var followings = json['followings'];
 
 var allUsersIdsByEmail = {};
 var allUsersModelByEmail = {};
@@ -1373,6 +1374,32 @@ async.series([
           callback()
         } else {
           callback('no page created');
+        }
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }, function(err){
+      if (err) {
+        console.log(err);
+      } else {
+        seriesCallback();
+      }
+    });
+  },
+
+  function(seriesCallback){
+    async.eachSeries(followings, function(incoming, callback) {
+      console.log('Processing following ' + incoming);
+      incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
+      incoming['other_user_id'] = allUsersByOldIds[incoming['other_user_id']];
+      var oldId = incoming['id'];
+      incoming['id'] = null;
+
+      models.AcFollowing.build(incoming).save().then(function (following) {
+        if (following) {
+          callback()
+        } else {
+          callback('no following created');
         }
       }).catch(function (error) {
         console.log(error);

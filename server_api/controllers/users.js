@@ -172,7 +172,7 @@ router.post('/createActivityFromApp', function(req, res) {
     domainId: req.ypDomain.id,
     groupId: req.params.groupId,
     communityId: req.ypCommunity ?  req.ypCommunity : null,
-    postId : post.id
+    postId: req.object.postId
   }, function (error) {
     if (error) {
       log.error('Create Activity Error', { user: null, context: 'createActivity', loggedInUser: req.user ? toJson(req.user) : null, err: error, errorStatus: 500 });

@@ -14,6 +14,7 @@ module.exports = function(sequelize, DataTypes) {
     message_for_new_idea: DataTypes.TEXT,
     message_to_users: DataTypes.TEXT,
     weight: { type: DataTypes.INTEGER, defaultValue: 0 },
+    status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'active' },
     counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 }
