@@ -32,7 +32,7 @@ var decrementOldCountersIfNeeded = function (req, oldEndorsementValue, postId, e
         next();
       })
     } else {
-      console.error("Strange state of endorsements");
+      log.error("Strange state of endorsements");
       next();
     }
   } else {
@@ -372,7 +372,6 @@ router.delete('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), functio
             res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
           })
         } else {
-          console.error("Strange state of endorsements");
           log.error("Endorsement Strange state", { context: 'delete', post: req.params.id, user: toJson(req.user),
                                                    err: "Strange state of endorsements", errorStatus: 500 });
           res.sendStatus(500);
