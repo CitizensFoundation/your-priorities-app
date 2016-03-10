@@ -56,7 +56,7 @@ auth.role('user.admin', function (user, req, done) {
 });
 
 auth.entity('user', function(req, done) {
-  var match = req.originalUrl.match(/^\/api\/users\/(\w+)/);
+  var match = req.originalUrl.match(/users\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /users/:userId'));
   } else {
@@ -114,9 +114,9 @@ auth.role('domain.viewUser', function (domain, req, done) {
 });
 
 auth.entity('domain', function(req, done) {
-  var match = req.originalUrl.match(/^\/api\/domains\/(\w+)/);
+  var match = req.originalUrl.match(/domains\/(\w+)/);
   if (!match) {
-    done(new Error('Expected url like /domains/:domainId'));
+    done(new Error('Expected url like /domsains/:domainId'));
   } else {
     var domain = { id: match[1] };
     done(null, domain)
@@ -169,7 +169,7 @@ auth.role('community.viewUser', function (community, req, done) {
 });
 
 auth.entity('community', function(req, done) {
-  var match = req.originalUrl.match(/^\/api\/communities\/(\w+)/);
+  var match = req.originalUrl.match(/communities\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /communities/:communityId'));
   } else {
@@ -224,7 +224,7 @@ auth.role('group.viewUser', function (group, req, done) {
 });
 
 auth.entity('group', function(req, done) {
-  var match = req.originalUrl.match(/^\/api\/groups\/(\w+)/);
+  var match = req.originalUrl.match(/groups\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /groups/:groupId'));
   } else {
@@ -316,7 +316,7 @@ auth.role('post.vote', function (post, req, done) {
 });
 
 auth.entity('post', function(req, done) {
-  var match = req.originalUrl.match(/^\/api\/posts\/(\w+)/);
+  var match = req.originalUrl.match(/posts\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /posts/:postId'));
   } else {
@@ -414,7 +414,7 @@ auth.role('point.vote', function (point, req, done) {
 });
 
 auth.entity('point', function(req, done) {
-  var match = req.originalUrl.match(/^\/api\/points\/(\w+)/);
+  var match = req.originalUrl.match(/points\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /points/:pointId'));
   } else {
@@ -477,7 +477,7 @@ auth.role('category.viewUser', function (category, req, done) {
 });
 
 auth.entity('category', function(req, done) {
-  var match = req.originalUrl.match(/^\/api\/categories\/(\w+)/);
+  var match = req.originalUrl.match(/categories\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /categories/:categoryId'));
   } else {
@@ -495,7 +495,7 @@ auth.role('createGroupCategory.createCategory', function (group, req, done) {
 });
 
 auth.entity('createGroupCategory', function(req, done) {
-  var match = req.originalUrl.match(/^\/api\/categories\/(\w+)/);
+  var match = req.originalUrl.match(/categories\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /categories/:groupId'));
   } else {
@@ -511,7 +511,7 @@ auth.role('createGroupPost.createPost', function (group, req, done) {
 });
 
 auth.entity('createGroupPost', function(req, done) {
-  var match = req.originalUrl.match(/^\/api\/posts\/(\w+)/);
+  var match = req.originalUrl.match(/posts\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /posts/:groupId'));
   } else {
@@ -527,7 +527,7 @@ auth.role('createGroupPoint.createPoint', function (group, req, done) {
 });
 
 auth.entity('createGroupPoint', function(req, done) {
-  var match = req.originalUrl.match(/^\/api\/points\/(\w+)/);
+  var match = req.originalUrl.match(/points\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /points/:groupId'));
   } else {
@@ -561,7 +561,7 @@ auth.role('createCommunityGroup.createGroup', function (community, req, done) {
 });
 
 auth.entity('createCommunityGroup', function(req, done) {
-  var match = req.originalUrl.match(/^\/api\/groups\/(\w+)/);
+  var match = req.originalUrl.match(/groups\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /groups/:communityId'));
   } else {
@@ -595,9 +595,9 @@ auth.role('createDomainCommunity.createCommunity', function (domain, req, done) 
 });
 
 auth.entity('createDomainCommunity', function(req, done) {
-  var match = req.originalUrl.match(/^\/api\/communities\/(\w+)/);
+  var match = req.originalUrl.match(/communities\/(\w+)/);
   if (!match) {
-    done(new Error('Expected url like /communities/:domainId'));
+    done(new Error('Expected url like /communities/:communityId'));
   } else {
     var community = { id: match[1] };
     done(null, community)

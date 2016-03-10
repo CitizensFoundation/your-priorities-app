@@ -1,0 +1,155 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+
+<link rel="import" href="../../bower_components/lodash-element/lodash.js.html">
+<link rel="import" href="../../bower_components/moment-element/moment-element.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+
+<dom-module id="ac-activities">
+  <template>
+    <style is="custom-style">
+
+      iron-list {
+        padding-top: 64px;
+        padding-bottom: 16px;
+        --iron-list-items-container: {
+          max-width: 800px;
+          margin: auto;
+          margin-top: 60px;
+          margin-bottom: 10px;
+        };
+      }
+
+      .activity {
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+      }
+
+    </style>
+
+    <yp-ajax id="ajax" on-response="_activitiesResponse"></yp-ajax>
+
+    <iron-list id="list" items="[[activities]]" as="activity" scroll-target="html">
+      <template>
+        <div class="layout horizontal activity">
+          <div>[[activity.type]]</div>
+          <moment-element datetime="[[activity.updated_at]]" output-format="MMM DD[,] YYYY hh:mm"></moment-element>
+        </div>
+      </template>
+    </iron-list>
+
+    <iron-scroll-threshold id="scrollTheshold"
+                           lower-threshold="50"
+                           on-lower-threshold="_loadMoreData"
+                           scroll-target="html">
+    </iron-scroll-threshold>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-activities',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        activities: {
+          type: Array,
+          notify: true
+        },
+
+        domainId: {
+          type: Number,
+          observer: "_domainIdChanged"
+        },
+
+        communityId: {
+          type: Number,
+          observer: "_communityIdChanged"
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        postId: {
+          type: Number,
+          observer: "_postIdChanged"
+        },
+
+        // 'activities' and 'news_feed'
+        mode: {
+          type: String,
+          value: "activities"
+        },
+
+        url: {
+          type: String
+        },
+
+        lastLoadedActivityDate: {
+          type: Date
+        }
+      },
+
+      _generateRequest: function (typeId, type) {
+        if (typeId) {
+          this.set('activities', []);
+          this.set('lastLoadedActivityDate', null);
+          this.set('url', '/api/'+this.mode+'/' + type + '/'+typeId+'/');
+          this.$.ajax.url = this.url;
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      _loadMoreData: function () {
+        this.$.ajax.generateRequest();
+      },
+
+      _domainIdChanged: function (newValue) {
+        this._generateRequest(newValue, 'domains');
+      },
+
+      _communityIdChanged: function (newValue) {
+        this._generateRequest(newValue, 'communities');
+      },
+
+      _groupIdChanged: function (newValue) {
+        this._generateRequest(newValue, 'groups');
+      },
+
+      _postIdChanged: function (newValue) {
+        this._generateRequest(newValue, 'posts');
+      },
+
+      _activitiesResponse: function (event, detail) {
+        var activities = detail.response;
+
+        activities.forEach(function(activity) {
+          this.push('activities', activity);
+        });
+
+        this.set('lastLoadedActivityDate', _.last(activities).updated_at);
+
+        // Clear the lower threshold so we can load more data when the user scrolls down again.
+        scope.$.scrollTheshold.clearTriggers();
+      }
+    });
+  </script>
+</dom-module>

@@ -32,7 +32,7 @@
             on-response="_response">
     </iron-ajax>
 
-    <paper-dialog id="error" modal>
+    <paper-dialog id="error">
       <p id="errorText">[[errorText]]</p>
       <div class="buttons">
         <paper-button dialog-confirm autofocus on-tap="_resetErrorText">OK</paper-button>
@@ -126,8 +126,8 @@
 
       showErrorDialog: function(errorText) {
         this.errorText = errorText;
+        this.$$("#error").open();
         this.moveDialogToTopDom("error");
-        this.$$("#formErrorDialog").open();
        // this.$.error.open();
       },
 

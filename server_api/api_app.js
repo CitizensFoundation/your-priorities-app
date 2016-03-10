@@ -22,6 +22,9 @@ var passport = require('passport')
     , GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var index = require('./controllers/index');
+var news_feeds = require('./active-citizen/controllers/news_feeds');
+var activities = require('./active-citizen/controllers/activities');
+
 var posts = require('./controllers/posts');
 var groups = require('./controllers/groups');
 var communities = require('./controllers/communities');
@@ -258,6 +261,8 @@ app.use('/api/points', points);
 app.use('/api/images', images);
 app.use('/api/categories', categories);
 app.use('/api/users', users);
+app.use('/api/news_feeds', news_feeds);
+app.use('/api/activities', activities);
 
 app.use(function(err, req, res, next) {
   if (err instanceof auth.UnauthorizedError) {
