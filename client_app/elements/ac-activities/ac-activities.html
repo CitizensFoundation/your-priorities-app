@@ -9,7 +9,8 @@
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 
-<link rel="import" href="./ac-activities-header.html">
+<link rel="import" href="./ac-activity-header.html">
+<link rel="import" href="./ac-activity-post-new.html">
 
 <dom-module id="ac-activities">
   <template>
@@ -34,15 +35,13 @@
         <iron-list id="list" items="[[activities]]" as="activity">
           <template>
             <paper-material elevation="4" class="layout vertical activity">
-              <ac-activities-header activity="[[activity]]"></ac-activities-header>
+              <h1>[[activity.type]]</h1>
+              <ac-activity-header activity="[[activity]]"></ac-activity-header>
 
-              <template is="dom-if" if="[[_isActivityTypeTypeType(activity,'activity.post.new')">
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')">
                 <ac-activity-post-new activity="[[activity]]"></ac-activity-post-new>
               </template>
 
-              <template is="dom-if" if="[[_isActivityTypeTypeType(activity,'activity.point.new')">
-                <ac-activity-point-new activity="[[activity]]"></ac-activity-point-new>
-              </template>
             </paper-material>
           </template>
         </iron-list>
@@ -105,34 +104,17 @@
         }
       },
 
-      _isActivityTypeTypeType(activity, type) {
+      _isActivityType(activity, type) {
         return activity.type==type
       },
 
       _generateRequest: function (typeId, type) {
         if (typeId) {
           this.set('activities', []);
-          var aabb = [
-            {type:'activity.post.new', created_at: new Date() },
-            {type:'activity.point.new', created_at: new Date() },
-            {type:'activity.post.status.update', created_at: new Date() },
-            {type:'activity.post.new', created_at: new Date() },
-            {type:'activity.point.new', created_at: new Date() },
-            {type:'activity.post.status.update', created_at: new Date() },
-            {type:'activity.post.new', created_at: new Date() },
-            {type:'activity.post.status.update', created_at: new Date() }
-          ];
-
-          aabb.forEach(function(activity) {
-            this.push('activities', activity);
-          }.bind(this));
-          var a = this.activities;
-          debugger;
-
           this.set('lastLoadedActivityDate', null);
           this.set('url', '/api/'+this.mode+'/' + type + '/'+typeId+'/');
           this.$.ajax.url = this.url;
-          //this.$.ajax.generateRequest();
+          this.$.ajax.generateRequest();
         }
       },
 

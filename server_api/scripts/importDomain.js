@@ -10,6 +10,7 @@ var fs = require('fs');
 var https = require('https');
 var temp = require('temp');
 temp.track();
+var _ = require('lodash');
 
 var randomstring = require("randomstring");
 var filename = process.argv[2];
@@ -1510,6 +1511,33 @@ async.series([
       } else {
         seriesCallback();
       }
+    });
+  },
+
+  // Add missing user_id to ac_activities for status updates
+  function(seriesCallback){
+    async.eachSeries(needsGroupAdminPermissions, function(incoming, callback) {
+      var user = allUserModelsByOldIds[incoming.user_id];
+      var group = allGroupsModelByOldIds[incoming.group_id];
+      if (currentDomain.id == 1 && _.includes(_.lowerCase(user.name), 'unnur') ||
+        (!_.includes(_.lowerCase(user.name), 'robert') && !_.includes(_.lowerCase(user.name), 'gunnar'))) {
+        models.AcActivity.findAll({
+          where: {
+            group_id: group.id,
+            user_id: null
+          }
+        }).then(function (activities) {
+          async.eachSeries(activities, function (activity, innerCallback) {
+            activity.user_id = user.id;
+            activity.save().then(function (results) {
+              console.log('Adding admin user to missing status updates for activities ' + user.email + ' for group ' + group.name);
+              innerCallback();
+            });
+          })
+        })
+      }
+    }, function (error) {
+      callback(error);
     });
   },
 
