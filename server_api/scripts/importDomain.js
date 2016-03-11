@@ -1443,6 +1443,8 @@ async.series([
 
       incoming['access'] = 0;
 
+      incoming['created_at'] = incoming['created_at'];
+
       if (activitiesTransform[incoming['type']]) {
         incoming['type'] = activitiesTransform[incoming['type']];
       }

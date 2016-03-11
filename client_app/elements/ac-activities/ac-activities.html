@@ -3,62 +3,59 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
-
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
-
-<link rel="import" href="../../bower_components/lodash-element/lodash.js.html">
-<link rel="import" href="../../bower_components/moment-element/moment-element.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 
+<link rel="import" href="./ac-activities-header.html">
+
 <dom-module id="ac-activities">
   <template>
     <style is="custom-style">
-
       iron-list {
-        padding-top: 64px;
-        padding-bottom: 16px;
-        --iron-list-items-container: {
-          max-width: 800px;
-          margin: auto;
-          margin-top: 60px;
-          margin-bottom: 10px;
-        };
+        height: 2000px;
+        width: 1024px;
       }
 
       .activity {
-        padding: 10px;
-        border-bottom: 1px solid #ccc;
+        padding-top: 24px;
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        background-color: #fff;
       }
-
     </style>
 
     <yp-ajax id="ajax" on-response="_activitiesResponse"></yp-ajax>
 
-    <iron-list id="list" items="[[activities]]" as="activity" scroll-target="html">
-      <template>
-        <div class="layout horizontal activity">
-          <div>[[activity.type]]</div>
-          <moment-element datetime="[[activity.updated_at]]" output-format="MMM DD[,] YYYY hh:mm"></moment-element>
-        </div>
-      </template>
-    </iron-list>
+    <div class="layout horizontal center-center container">
+      <iron-scroll-threshold id="scrollThreshold" lower-threshold="50" on-lower-threshold="_loadMoreData">
+        <iron-list id="list" items="[[activities]]" as="activity">
+          <template>
+            <paper-material elevation="4" class="layout vertical activity">
+              <ac-activities-header activity="[[activity]]"></ac-activities-header>
 
-    <iron-scroll-threshold id="scrollTheshold"
-                           lower-threshold="50"
-                           on-lower-threshold="_loadMoreData"
-                           scroll-target="html">
-    </iron-scroll-threshold>
+              <template is="dom-if" if="[[_isActivityTypeTypeType(activity,'activity.post.new')">
+                <ac-activity-post-new activity="[[activity]]"></ac-activity-post-new>
+              </template>
 
+              <template is="dom-if" if="[[_isActivityTypeTypeType(activity,'activity.point.new')">
+                <ac-activity-point-new activity="[[activity]]"></ac-activity-point-new>
+              </template>
+            </paper-material>
+          </template>
+        </iron-list>
+      </iron-scroll-threshold>
+    </div>
   </template>
 
   <script>
     Polymer({
+
+      defaultKeyActivities: ['activity.post.status.update','activity.post.officialStatus.successful',
+      '','','activity.post.officialStatus.failed',
+      'activity.post.officialStatus.inProgress'],
 
       is: 'ac-activities',
 
@@ -108,13 +105,34 @@
         }
       },
 
+      _isActivityTypeTypeType(activity, type) {
+        return activity.type==type
+      },
+
       _generateRequest: function (typeId, type) {
         if (typeId) {
           this.set('activities', []);
+          var aabb = [
+            {type:'activity.post.new', created_at: new Date() },
+            {type:'activity.point.new', created_at: new Date() },
+            {type:'activity.post.status.update', created_at: new Date() },
+            {type:'activity.post.new', created_at: new Date() },
+            {type:'activity.point.new', created_at: new Date() },
+            {type:'activity.post.status.update', created_at: new Date() },
+            {type:'activity.post.new', created_at: new Date() },
+            {type:'activity.post.status.update', created_at: new Date() }
+          ];
+
+          aabb.forEach(function(activity) {
+            this.push('activities', activity);
+          }.bind(this));
+          var a = this.activities;
+          debugger;
+
           this.set('lastLoadedActivityDate', null);
           this.set('url', '/api/'+this.mode+'/' + type + '/'+typeId+'/');
           this.$.ajax.url = this.url;
-          this.$.ajax.generateRequest();
+          //this.$.ajax.generateRequest();
         }
       },
 
@@ -143,12 +161,12 @@
 
         activities.forEach(function(activity) {
           this.push('activities', activity);
-        });
+        }.bind(this));
 
-        this.set('lastLoadedActivityDate', _.last(activities).updated_at);
+        this.set('lastLoadedActivityDate', _.last(activities).created_at);
 
         // Clear the lower threshold so we can load more data when the user scrolls down again.
-        scope.$.scrollTheshold.clearTriggers();
+        this.$.scrollThreshold.clearTriggers();
       }
     });
   </script>
