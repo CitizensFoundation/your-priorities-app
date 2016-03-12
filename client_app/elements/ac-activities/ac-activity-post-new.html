@@ -1,0 +1,35 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-user/yp-user-image.html">
+
+<dom-module id="ac-activity-post-new">
+  <template>
+    <style is="custom-style">
+    </style>
+
+    <div class="layout horizontal">
+      <yp-post-card class="card" post="[[activity.Post]]"></yp-post-card>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-activity-post-new',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        activity: {
+          type: Object
+        }
+      }
+    });
+  </script>
+</dom-module>
