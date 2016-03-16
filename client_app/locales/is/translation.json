@@ -1,5 +1,12 @@
 {
-
+  "activity": {
+    "post": {
+      "new": "Nýrri hugmynd bætt við"
+    },
+    "point": {
+      "new": "Nýjum rökum bætt við"
+    }
+  },
   "name": "Nafn",
   "domain": {
     "edit": "Breyta vef"

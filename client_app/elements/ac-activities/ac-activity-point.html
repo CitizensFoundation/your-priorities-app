@@ -29,8 +29,12 @@
       properties: {
 
         activity: {
-          type: Object
+          type: Object,
+          observer: '_activityChanged'
         }
+      },
+
+      _activityChanged: function (newValue) {
       }
     });
   </script>

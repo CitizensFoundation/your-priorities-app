@@ -28,20 +28,19 @@
     },
 
     postName: function (post) {
-      if (!post) {
-        debugger;
-      }
-      if (post.name) {
+      if (post && post.name) {
         return this.truncate(this.trim(post.name), 60);
-      } else {
+      } else if (post) {
         return post.short_name;
+      } else {
+        return "";
       }
     },
 
     postDescription: function (post) {
-      if (post.description) {
+      if (post && post.description) {
         return this.truncate(this.trim(post.description), 500, '...');
-      } else if (post.Points && post.Points[0]) {
+      } else if (post && post.Points && post.Points[0]) {
         return  this.truncate(this.trim(post.Points[0].content), 500, '...');
       } else {
         return '';

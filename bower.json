@@ -14,7 +14,7 @@
     "page": "visionmedia/page.js#~1.6.3",
     "vaadin-core-elements": "~0.3.0",
     "moment": "~2.11.2",
-    "app-layout": "PolymerLabs/app-layout#~0.0.7",
+    "app-layout": "PolymerLabs/app-layout",
     "lodash-element": "~1.0.2",
     "moment-element": "~0.3.0"
   },

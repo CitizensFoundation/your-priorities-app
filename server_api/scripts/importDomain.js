@@ -1293,6 +1293,7 @@ async.series([
       models.Point.build(incoming).save().then(function (point) {
         if (point) {
           allCommentsByOldIds[oldId] = point.id;
+          allPointsByOldIds[oldId] = point.id;
           incoming['point_id'] = point.id;
           incoming['post_id'] = null;
           models.PointRevision.build(incoming).save().then(function (point_revision) {
@@ -1419,7 +1420,6 @@ async.series([
       console.log('Processing activity ' + incoming);
 
       incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
-
       incoming['domain_id'] = currentDomain.id;
 
       if (incoming['post_id']) {
@@ -1432,7 +1432,7 @@ async.series([
       }
 
       if (incoming['point_id']) {
-        incoming['point_id'] = allPostsByOldIds[incoming['point_id']];
+        incoming['point_id'] = allPointsByOldIds[incoming['point_id']];
       }
 
       if (incoming['comment_id']) {
