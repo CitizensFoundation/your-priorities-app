@@ -1439,6 +1439,10 @@ async.series([
         incoming['point_id'] = allCommentsByOldIds[incoming['comment_id']];
       }
 
+      if (incoming['post_status_change_id']) {
+        incoming['post_status_change_id'] = allPostStatusChangesByOldIds[incoming['post_status_change_id']];
+      }
+
       var oldId = incoming['id'];
       incoming['id'] = null;
 
@@ -1466,6 +1470,38 @@ async.series([
       } else {
         seriesCallback();
       }
+    });
+  },
+
+  // Add missing user_id to ac_activities for status updates
+  function(seriesCallback){
+    async.eachSeries(needsGroupAdminPermissions, function(incoming, outerCallback) {
+      var user = allUserModelsByOldIds[incoming.user_id];
+      var group = allGroupsModelByOldIds[incoming.group_id];
+      console.log('Adding admin user starting ' + user.email + ' for group ' + group.name);
+      if ((currentDomain.id == 1 && _.includes(_.lowerCase(user.name), 'unnur')) ||
+        (!_.includes(_.lowerCase(user.email), 'deleted') && !_.includes(_.lowerCase(user.name), 'robert') && !_.includes(_.lowerCase(user.name), 'gunnar'))) {
+        models.AcActivity.findAll({
+          where: {
+            group_id: group.id,
+            user_id: null
+          }
+        }).then(function (activities) {
+          async.eachSeries(activities, function (activity, innerCallback) {
+            activity.user_id = user.id;
+            activity.save().then(function (results) {
+              console.log('Adding admin user to missing status updates for activities ' + user.email + ' for group ' + group.name);
+              innerCallback();
+            });
+          }, function (error) {
+            outerCallback();
+          });
+        })
+      } else {
+        outerCallback();
+      }
+    }, function (error) {
+      seriesCallback(error);
     });
   },
 
@@ -1511,33 +1547,6 @@ async.series([
       } else {
         seriesCallback();
       }
-    });
-  },
-
-  // Add missing user_id to ac_activities for status updates
-  function(seriesCallback){
-    async.eachSeries(needsGroupAdminPermissions, function(incoming, callback) {
-      var user = allUserModelsByOldIds[incoming.user_id];
-      var group = allGroupsModelByOldIds[incoming.group_id];
-      if (currentDomain.id == 1 && _.includes(_.lowerCase(user.name), 'unnur') ||
-        (!_.includes(_.lowerCase(user.name), 'robert') && !_.includes(_.lowerCase(user.name), 'gunnar'))) {
-        models.AcActivity.findAll({
-          where: {
-            group_id: group.id,
-            user_id: null
-          }
-        }).then(function (activities) {
-          async.eachSeries(activities, function (activity, innerCallback) {
-            activity.user_id = user.id;
-            activity.save().then(function (results) {
-              console.log('Adding admin user to missing status updates for activities ' + user.email + ' for group ' + group.name);
-              innerCallback();
-            });
-          })
-        })
-      }
-    }, function (error) {
-      callback(error);
     });
   },
 

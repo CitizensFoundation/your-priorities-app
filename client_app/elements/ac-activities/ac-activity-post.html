@@ -1,26 +1,14 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
-<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html">
-<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html">
-<link rel="import" href="../../bower_components/google-map/google-map.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="yp-post-actions.html">
-<link rel="import" href="yp-post-cover-media.html">
-<link rel="import" href="yp-post-behaviors.html">
 
-<dom-module id="yp-post-card">
+<link rel="import" href="../yp-post/yp-post-actions.html">
+<link rel="import" href="../yp-post/yp-post-cover-media.html">
 
+<dom-module id="ac-activity-post">
   <template>
-
     <style is="custom-style">
       :host {
         display: block;
@@ -131,30 +119,39 @@
       }
     </style>
 
-    <template is="dom-if" if="[[post]]">
-      <paper-material class="postCard" elevation="[[elevation]]">
-        <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
-        <div class="layout vertical">
-          <div class="description postCardCursor" on-tap="goToPost">
-            <h3 class="post-name">[[postName(post)]]</h3>
-            <div>[[postDescription(post)]]</div>
-          </div>
-          <div class="card-actions">
-            <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
-          </div>
+    <div class="layout horizontal">
+      <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
+
+      <div class="layout vertical">
+        <div class="description postCardCursor" on-tap="goToPost">
+          <h3 class="post-name">[[postName(activity.Post)]]</h3>
+          <div>[[postDescription(activity.Post)]]</div>
         </div>
-      </paper-material>
-    </template>
+        <div class="card-actions">
+          <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[activity.Post]]"></yp-post-actions>
+        </div>
+      </div>
+    </div>
+
   </template>
 
   <script>
     Polymer({
-      is: 'yp-post-card',
+
+      is: 'ac-activity-post',
 
       behaviors: [
         Polymer.appHelpers,
         Polymer.YpPostBehavior
-      ]
+      ],
+
+      properties: {
+
+        activity: {
+          type: Object
+        }
+      }
+
     });
   </script>
 </dom-module>

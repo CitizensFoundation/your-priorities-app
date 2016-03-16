@@ -10,13 +10,14 @@
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 
 <link rel="import" href="./ac-activity-header.html">
-<link rel="import" href="./ac-activity-post-new.html">
+<link rel="import" href="./ac-activity-post.html">
+<link rel="import" href="./ac-activity-point.html">
+<link rel="import" href="./ac-activity-post-status-update.html">
 
 <dom-module id="ac-activities">
   <template>
     <style is="custom-style">
       iron-list {
-        height: 2000px;
         width: 1024px;
       }
 
@@ -30,18 +31,27 @@
 
     <yp-ajax id="ajax" on-response="_activitiesResponse"></yp-ajax>
 
-    <div class="layout horizontal center-center container">
+    <div class="layout horizontal center-center container flex">
       <iron-scroll-threshold id="scrollThreshold" lower-threshold="50" on-lower-threshold="_loadMoreData">
         <iron-list id="list" items="[[activities]]" as="activity">
           <template>
-            <paper-material elevation="4" class="layout vertical activity">
+            <paper-material elevation="3" class="layout vertical activity">
+
               <h1>[[activity.type]]</h1>
+
               <ac-activity-header activity="[[activity]]"></ac-activity-header>
 
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')">
-                <ac-activity-post-new activity="[[activity]]"></ac-activity-post-new>
+                <ac-activity-post activity="[[activity]]"></ac-activity-post>
               </template>
 
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')">
+                <ac-activity-point activity="[[activity]]"></ac-activity-point>
+              </template>
+
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')">
+                <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
+              </template>
             </paper-material>
           </template>
         </iron-list>
@@ -53,8 +63,7 @@
     Polymer({
 
       defaultKeyActivities: ['activity.post.status.update','activity.post.officialStatus.successful',
-      '','','activity.post.officialStatus.failed',
-      'activity.post.officialStatus.inProgress'],
+      '','','activity.post.officialStatus.failed','activity.post.officialStatus.inProgress'],
 
       is: 'ac-activities',
 
@@ -119,33 +128,43 @@
       },
 
       _loadMoreData: function () {
-        this.$.ajax.generateRequest();
+        debugger;
+        if (this.$.ajax.url!='') {
+          this.$.ajax.generateRequest();
+        }
       },
 
       _domainIdChanged: function (newValue) {
+        debugger;
         this._generateRequest(newValue, 'domains');
       },
 
       _communityIdChanged: function (newValue) {
+        debugger;
         this._generateRequest(newValue, 'communities');
       },
 
       _groupIdChanged: function (newValue) {
+        debugger;
         this._generateRequest(newValue, 'groups');
       },
 
       _postIdChanged: function (newValue) {
+        debugger;
         this._generateRequest(newValue, 'posts');
       },
 
       _activitiesResponse: function (event, detail) {
+        debugger;
         var activities = detail.response;
 
         activities.forEach(function(activity) {
           this.push('activities', activity);
         }.bind(this));
 
-        this.set('lastLoadedActivityDate', _.last(activities).created_at);
+        if (activities.length>0) {
+          this.set('lastLoadedActivityDate', _.last(activities).created_at);
+        }
 
         // Clear the lower threshold so we can load more data when the user scrolls down again.
         this.$.scrollThreshold.clearTriggers();

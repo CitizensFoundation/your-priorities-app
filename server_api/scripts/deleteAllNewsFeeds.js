@@ -7,3 +7,8 @@ models.AcNewsFeedItem.destroy({ truncate: true }).then(function(results) {
   var a = 3;
 });
 
+models.AcNewsFeedProcessedRange.destroy({ truncate: true }).then(function(results) {
+  var a = 3;
+});
+
+

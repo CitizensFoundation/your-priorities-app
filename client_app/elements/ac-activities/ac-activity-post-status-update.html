@@ -1,0 +1,47 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<link rel="import" href="../yp-point/yp-point.html">
+
+<link rel="import" href="./ac-activity-post-header.html">
+
+<dom-module id="ac-activity-post-status-update">
+  <template>
+    <style is="custom-style">
+    </style>
+
+    <div class="layout vertical">
+      <ac-activity-post-header activity="[[activity]]"></ac-activity-post-header>
+      <div>[[formatContent(activity.PostStatusUpdate)]]</div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-activity-post-status-update',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        activity: {
+          type: Object
+        }
+      },
+
+      formatContent: function (statusUpdate) {
+        if (statusUpdate.content) {
+          return this.truncate(this.trim(statusUpdate.content), 500, '...');
+        } else {
+          return '';
+        }
+      }
+    });
+  </script>
+</dom-module>

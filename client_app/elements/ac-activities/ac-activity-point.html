@@ -3,22 +3,24 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-user/yp-user-image.html">
+<link rel="import" href="../yp-point/yp-point.html">
+<link rel="import" href="./ac-activity-post-header.html">
 
-<dom-module id="ac-activity-post-new">
+<dom-module id="ac-activity-point">
   <template>
     <style is="custom-style">
     </style>
 
-    <div class="layout horizontal">
-      <yp-post-card class="card" post="[[activity.Post]]"></yp-post-card>
+    <div class="layout vertical">
+      <ac-activity-post-header activity="[[activity]]"></ac-activity-post-header>
+      <yp-point class="card" point="[[activity.Point]]"></yp-point>
     </div>
   </template>
 
   <script>
     Polymer({
 
-      is: 'ac-activity-post-new',
+      is: 'ac-activity-point',
 
       behaviors: [
         Polymer.appHelpers
