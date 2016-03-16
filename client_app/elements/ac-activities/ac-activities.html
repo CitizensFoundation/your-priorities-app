@@ -41,15 +41,15 @@
 
               <ac-activity-header activity="[[activity]]"></ac-activity-header>
 
-              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')">
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                 <ac-activity-post activity="[[activity]]"></ac-activity-post>
               </template>
 
-              <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')">
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
                 <ac-activity-point activity="[[activity]]"></ac-activity-point>
               </template>
 
-              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')">
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')]]">
                 <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
               </template>
             </paper-material>
@@ -166,6 +166,7 @@
           this.set('lastLoadedActivityDate', _.last(activities).created_at);
         }
 
+        this.$.list.fire('iron-resize');
         // Clear the lower threshold so we can load more data when the user scrolls down again.
         this.$.scrollThreshold.clearTriggers();
       }
