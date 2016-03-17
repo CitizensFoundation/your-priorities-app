@@ -124,7 +124,7 @@
           type: String
         },
 
-        lastLoadedActivityDate: {
+        oldestProcessedActivityAt: {
           type: Date
         }
       },
@@ -136,7 +136,7 @@
       _generateRequest: function (typeId, type) {
         if (typeId) {
           this.set('activities', []);
-          this.set('lastLoadedActivityDate', null);
+          this.set('oldestProcessedActivityAt', null);
           this.set('url', '/api/'+this.mode+'/' + type + '/'+typeId);
           this.$.ajax.url = this.url;
           this.$.ajax.generateRequest();
@@ -144,8 +144,8 @@
       },
 
       _loadMoreData: function () {
-        if (this.$.ajax.url!='') {
-          this.$.ajax.url = this.url + '?beforeDate='+this.lastLoadedActivityDate;
+        if (this.$.ajax.url!='' && this.oldestProcessedActivityAt) {
+          this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
           debugger;
           this.$.ajax.generateRequest();
         }
@@ -173,14 +173,17 @@
 
       _activitiesResponse: function (event, detail) {
         debugger;
-        var activities = detail.response;
+        var activities = detail.response.activities;
+
+        if (detail.response.oldestProcessedActivityAt) {
+          this.set('oldestProcessedActivityAt', detail.response.oldestProcessedActivityAt);
+        }
 
         activities.forEach(function(activity) {
           this.push('activities', activity);
         }.bind(this));
 
         if (activities.length>0) {
-          this.set('lastLoadedActivityDate', _.last(activities).created_at);
         }
 
         this.$.list.fire('iron-resize');
