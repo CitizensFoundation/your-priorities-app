@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
@@ -18,13 +19,13 @@
   <template>
     <style is="custom-style">
       iron-list {
-        width: 1024px;
-        height: 1200px;
+        padding-top: 64px;
+        padding-bottom: 16px;
         --iron-list-items-container: {
           max-width: 800px;
           margin: auto;
-          margin-bottom: 60px;
-          border-bottom: 1px solid #ddd;
+          margin-top: 60px;
+          margin-bottom: 10px;
         };
       }
 
@@ -39,40 +40,48 @@
       }
 
       .container {
-        height: 100%;
+        position: relative;
       }
     </style>
 
-    <yp-ajax id="ajax" on-response="_activitiesResponse"></yp-ajax>
+    <yp-ajax id="ajax" on-response="_activitiesResponse" loading="{{loading}}"></yp-ajax>
 
-    <div class="layout horizontal center-center container flex">
-      <iron-scroll-threshold id="scrollThreshold" lower-threshold="50" on-lower-threshold="_loadMoreData">
-        <iron-list id="list" items="[[activities]]" as="activity" scroll-target="scrollThreshold">
-          <template>
-            <div>
-              <paper-material elevation="2" class="layout vertical activity">
+    <div id="container">
+      <iron-list id="list"  class="layout" items="[[activities]]" as="activity" scroll-target="mainArea">
+        <template>
+          <div>
+            <paper-material elevation="2" class="layout vertical activity">
 
-                <h1>[[t(activity.type)]]</h1>
+              <h1>[[t(activity.type)]]</h1>
 
-                <ac-activity-header activity="[[activity]]"></ac-activity-header>
+              <ac-activity-header activity="[[activity]]"></ac-activity-header>
 
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-                  <ac-activity-post activity="[[activity]]"></ac-activity-post>
-                </template>
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
+                <ac-activity-post activity="[[activity]]"></ac-activity-post>
+              </template>
 
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
-                  <ac-activity-point activity="[[activity]]"></ac-activity-point>
-                </template>
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
+                <ac-activity-point activity="[[activity]]"></ac-activity-point>
+              </template>
 
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')]]">
-                  <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
-                </template>
-              </paper-material>
-            </div>
-          </template>
-        </iron-list>
-      </iron-scroll-threshold>
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')]]">
+                <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
+              </template>
+            </paper-material>
+          </div>
+        </template>
+      </iron-list>
+
+      <div class="loadingIndicator">
+        <paper-spinner active="{{loading}}"></paper-spinner>
+      </div>
     </div>
+
+    <iron-scroll-threshold id="scrollThreshold"
+                           lower-threshold="500"
+                           on-lower-threshold="_loadMoreData"
+                           scroll-target="mainArea">
+    </iron-scroll-threshold>
   </template>
 
   <script>

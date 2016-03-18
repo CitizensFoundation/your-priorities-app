@@ -29,6 +29,7 @@
             handle-as="json"
             content-type="application/json"
             on-error="_error"
+            loading="[[loading]]"
             on-response="_response">
     </iron-ajax>
 
@@ -63,6 +64,10 @@
         method: {
           type: String,
           value: "GET"
+        },
+
+        loading: {
+          type: Boolean
         },
 
         params: {
