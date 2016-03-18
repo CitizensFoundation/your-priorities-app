@@ -61,7 +61,9 @@ var sendPostOrError = function (res, post, context, user, error, errorStatus) {
 
 router.get('/:id', auth.can('view post'), function(req, res) {
   models.Post.find({
-    where: { id: req.params.id },
+    where: {
+      id: req.params.id
+    },
     include: [
       {
         // Category

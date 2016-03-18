@@ -233,7 +233,7 @@
 
       _groupsResponse: function (event, detail, sender) {
         this.set('group', detail.response.group);
-        this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
+//        this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
 
         this.fire("change-header", { headerTitle: this.group.name,
           headerDescription: this.group.objectives,

@@ -40,12 +40,10 @@
       }
     </style>
 
-    <yp-ajax id="ajax" on-response="_activitiesResponse" loading="{{loading}}"></yp-ajax>
-
     <iron-list id="list" items="[[activities]]" as="activity">
       <template>
         <div>
-          <paper-material elevation="2" class="layout vertical activity">
+          <paper-material elevation="2" class="layout vertical activity" tabindex$="[[tabIndex]]">
 
             <h1>[[t(activity.type)]]</h1>
 
@@ -67,9 +65,7 @@
       </template>
     </iron-list>
 
-    <div class="loadingIndicator">
-      <paper-spinner active="{{loading}}"></paper-spinner>
-    </div>
+    <yp-ajax id="ajax" on-response="_activitiesResponse"></yp-ajax>
 
     <iron-scroll-threshold id="scrollThreshold"
                            lower-threshold="500"
@@ -175,7 +171,6 @@
       },
 
       _activitiesResponse: function (event, detail) {
-        debugger;
         var activities = detail.response.activities;
 
         if (detail.response.oldestProcessedActivityAt) {
@@ -191,7 +186,6 @@
 
         this.$.list.fire('iron-resize');
         // Clear the lower threshold so we can load more data when the user scrolls down again.
-        debugger;
         this.$.scrollThreshold.clearTriggers();
       }
     });

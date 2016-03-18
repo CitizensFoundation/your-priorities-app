@@ -85,7 +85,14 @@
         </div>
       </div>
     </template>
+
     <yp-ajax id="ajax" on-response="_postsResponse"></yp-ajax>
+
+    <iron-scroll-threshold id="scrollThreshold"
+                           lower-threshold="500"
+                           on-lower-threshold="_loadMoreData"
+                           scroll-target="document">
+    </iron-scroll-threshold>
   </template>
 
   <script>
@@ -161,6 +168,10 @@
 
         tabCounterId: {
           type: String
+        },
+
+        oldestPostAt: {
+          type: Date
         }
       },
 
@@ -209,21 +220,21 @@
       },
 
       _postsResponse: function (event, detail, sender) {
-        var list = this.$$("#list");
-
-        this.set('postsCount', detail.response.length);
-        this.fire('yp-post-count', {tabCounterId: this.tabCounterId, count: detail.response.length});
+        var posts = detail.response.posts;
+        this.set('postsCount', detail.response.totalPostsCount);
+        this.fire('yp-post-count', {
+          tabCounterId: this.tabCounterId,
+          count: this.postsCount
+        } );
 
         this.$$("#postsFilter")._updateTitle();
-        detail.response.forEach(function(post) {
+        posts.forEach(function(post) {
           this.push('posts', post);
         }.bind(this));
 
-      //  this.$$('#scrollTheshold').clearTriggers();
+        this.$$("#list").fire('iron-resize');
 
-        if (list) {
-          this.$$("#list").fire('iron-resize');
-        }
+        this.$$('#scrollThreshold').clearTriggers();
 
         this._processCategories();
       },

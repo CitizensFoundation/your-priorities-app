@@ -4,6 +4,7 @@ var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var _ = require('lodash');
 
 var sendGroupOrError = function (res, group, context, user, error, errorStatus) {
   if (error || !group) {
@@ -161,12 +162,11 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
   log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', user: toJson(req.user) });
 
   var PostsByStatus = models.Post.scope(req.params.status);
-  PostsByStatus.findAll({
+  PostsByStatus.findAndCountAll({
     where: where,
     attributes: ['id','name','description','status','official_status','counter_endorsements_up','cover_media_type',
                  'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
-//    limit: 150,
-//        offset: req.query.offset ? req.query.offset : 0,
+    offset: req.query.offset ? req.query.offset : 0,
     order: [
 //          [models.sequelize.fn('-', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'],
       models.sequelize.literal(postOrder),
@@ -201,7 +201,10 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         required: false }
     ]
   }).then(function(posts) {
-    res.send(posts);
+    res.send({
+      posts: _.slice(posts.rows, 0, 25),
+      totalPostsCount: posts.count
+    });
   });
 });
 

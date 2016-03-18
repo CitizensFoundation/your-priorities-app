@@ -20,17 +20,17 @@
     <paper-spinner id="spinner" hidden$="[[!useSpinner]]"></paper-spinner>
 
     <iron-ajax
-            id="ajax"
-            url="[[url]]"
-            params="[[params]]"
-            auto="[[auto]]"
-            method="[[method]]"
-            body="[[body]]"
-            handle-as="json"
-            content-type="application/json"
-            on-error="_error"
-            loading="[[loading]]"
-            on-response="_response">
+      id="ajax"
+      url="[[url]]"
+      params="[[params]]"
+      auto="[[auto]]"
+      method="[[method]]"
+      body="[[body]]"
+      handle-as="json"
+      content-type="application/json"
+      on-error="_error"
+      loading="[[loading]]"
+      on-response="_response">
     </iron-ajax>
 
     <paper-dialog id="error">
