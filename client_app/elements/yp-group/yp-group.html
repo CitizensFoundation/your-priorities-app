@@ -105,25 +105,33 @@
       </paper-tabs>
       <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
-          <div class="layout horizontal center-center">
-            <yp-post-list status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-          </div>
+          <template is="dom-if" if="[[_isTab(0, selected)]]" restamp>
+            <div class="layout horizontal center-center">
+              <yp-post-list status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+            </div>
+          </template>
         </section>
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section>
-            <div class="layout vertical fit">
-              <yp-post-list status-filter="in_progress" tab-counter-id="tabCountInProgress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-            </div>
+            <template is="dom-if" if="[[_isTab(1, selected)]]" restamp>
+              <div class="layout horizontal center-center">
+                <yp-post-list status-filter="in_progress" tab-counter-id="tabCountInProgress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              </div>
+            </template>
           </section>
           <section>
-            <div class="layout horizontal center-center">
-              <yp-post-list status-filter="successful" tab-counter-id="tabCountSuccessful" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-            </div>
+            <template is="dom-if" if="[[_isTab(2, selected)]]" restamp>
+              <div class="layout horizontal center-center">
+                <yp-post-list status-filter="successful" tab-counter-id="tabCountSuccessful" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              </div>
+            </template>
           </section>
           <section>
-            <div class="layout horizontal center-center">
-              <yp-post-list status-filter="failed" tab-counter-id="tabCountFailed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-            </div>
+            <template is="dom-if" if="[[_isTab(3, selected)]]" restamp>
+              <div class="layout horizontal center-center">
+                <yp-post-list status-filter="failed" tab-counter-id="tabCountFailed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              </div>
+            </template>
           </section>
         </template>
         <section>
@@ -197,6 +205,11 @@
         }
       },
 
+      _isTab: function (tabNr, selected) {
+        debugger;
+        return (selected==tabNr)
+      },
+
       _updateTabPostCount: function (event, tabCounterInfo) {
         var tabCounter = this.$$('#'+tabCounterInfo.tabCounterId);
         if (tabCounter) {
@@ -233,7 +246,7 @@
 
       _groupsResponse: function (event, detail, sender) {
         this.set('group', detail.response.group);
-//        this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
+        this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
 
         this.fire("change-header", { headerTitle: this.group.name,
           headerDescription: this.group.objectives,
