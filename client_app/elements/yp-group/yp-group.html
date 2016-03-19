@@ -105,7 +105,9 @@
       </paper-tabs>
       <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
-          <yp-post-list status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+          <div class="layout horizontal center-center">
+            <yp-post-list status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+          </div>
         </section>
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section>

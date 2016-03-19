@@ -161,12 +161,16 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
 
   log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', user: toJson(req.user) });
 
+  var offset = 0;
+  if (req.query.offset) {
+    offset = parseInt(req.query.offset);
+  }
+
   var PostsByStatus = models.Post.scope(req.params.status);
   PostsByStatus.findAndCountAll({
     where: where,
     attributes: ['id','name','description','status','official_status','counter_endorsements_up','cover_media_type',
                  'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
-    offset: req.query.offset ? req.query.offset : 0,
     order: [
 //          [models.sequelize.fn('-', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'],
       models.sequelize.literal(postOrder),
@@ -201,8 +205,13 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         required: false }
     ]
   }).then(function(posts) {
+    var rows = [];
+    if (offset<posts.rows.length) {
+      var toValue = offset+5;
+      rows = _.slice(posts.rows, offset, toValue);
+    }
     res.send({
-      posts: _.slice(posts.rows, 0, 25),
+      posts: rows,
       totalPostsCount: posts.count
     });
   });

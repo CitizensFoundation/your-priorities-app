@@ -84,18 +84,23 @@
       </yp-posts-filter>
 
       <div id="scrollableRegion">
-        <iron-list id="list" items="[[posts]]" as="post" scroll-target="document">
-          <template>
-            <div class="layout vertical center-center">
-              <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
-            </div>
-          </template>
-        </iron-list>
+          <iron-list id="list" items="[[posts]]" as="post" scroll-target="document">
+            <template>
+              <div class="layout vertical center-center">
+                <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+              </div>
+            </template>
+          </iron-list>
       </div>
 
     </template>
 
     <yp-ajax id="ajax" on-response="_postsResponse"></yp-ajax>
+    <iron-scroll-threshold id="scrollThreshold"
+                           lower-threshold="50"
+                           on-lower-threshold="_loadMoreData"
+                           scroll-target="document">
+    </iron-scroll-threshold>
 
   </template>
 
@@ -190,7 +195,7 @@
 
       ready: function () {
         this.set("posts", []);
-        this._loadMoreData();
+        //this._loadMoreData();
       },
 
       _groupIdChanged: function (newValue, oldValue) {
@@ -236,10 +241,9 @@
           this.push('posts', post);
         }.bind(this));
 
-        this.$$("#list").fire('iron-resize');
+       // this.$$("#list").fire('iron-resize');
 
         this.$$('#scrollThreshold').clearTriggers();
-
         this._processCategories();
       },
 
