@@ -27,7 +27,7 @@
     <style>
 
       :host {
-        @apply(--layout-horizontal);
+        @apply(--layout-vertical);
       }
 
       .createPost {
@@ -105,13 +105,11 @@
       </paper-tabs>
       <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
-          <div class="layout horizontal center-center">
-            <yp-post-list status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-          </div>
+          <yp-post-list status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
         </section>
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section>
-            <div class="layout horizontal center-center">
+            <div class="layout vertical fit">
               <yp-post-list status-filter="in_progress" tab-counter-id="tabCountInProgress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
             </div>
           </section>
