@@ -84,7 +84,7 @@
       </yp-posts-filter>
 
       <div id="scrollableRegion">
-        <iron-list id="list" items="[[posts]]" as="post" scroll-target="document">
+        <iron-list id="list" items="[[posts]]" as="post">
           <template>
             <div class="layout vertical center-center">
               <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
@@ -98,8 +98,7 @@
     <yp-ajax id="ajax" on-response="_postsResponse"></yp-ajax>
     <iron-scroll-threshold id="scrollThreshold"
                            lower-threshold="100"
-                           on-lower-threshold="_loadMoreData"
-                           scroll-target="document">
+                           on-lower-threshold="_scrollAtBottom" >
     </iron-scroll-threshold>
 
   </template>
@@ -181,7 +180,38 @@
 
         oldestPostAt: {
           type: Date
+        },
+
+        selectedTab: {
+          type: Number,
+          observer: '_selectedTabChanged'
+        },
+
+        mySelectedId: {
+          type: Number,
+          value: 0
+        },
+
+        active: {
+          type: Boolean,
+          value: false
         }
+      },
+
+      _selectedTabChanged: function (newValue) {
+        this.async(function () {
+          debugger;
+          if (newValue == this.mySelectedId) {
+            this.$$("#list").scrollTarget = this.$$("#scrollableRegion");
+            this.$$("#scrollThreshold").scrollTarget = "document";
+            this.$$("#list").fire('iron-resize');
+            this.active = true;
+          } else {
+            this.$$("#list").scrollTarget = null;
+            this.$$("#scrollThreshold").scrollTarget = null;
+            this.active = false;
+          }
+        },50);
       },
 
       _searchingForChanged: function (newValue, oldValue) {
@@ -195,7 +225,7 @@
 
       ready: function () {
         this.set("posts", []);
-        //this._loadMoreData();
+        this._loadMoreData();
       },
 
       _groupIdChanged: function (newValue, oldValue) {
@@ -208,6 +238,12 @@
       _refreshGroupFromFilter: function () {
         this.set("posts", []);
         this._loadMoreData();
+      },
+
+      _scrollAtBottom: function () {
+        if (this.active) {
+          this._loadMoreData();
+        }
       },
 
       _loadMoreData: function () {

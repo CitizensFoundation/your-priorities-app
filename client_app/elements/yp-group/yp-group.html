@@ -105,33 +105,25 @@
       </paper-tabs>
       <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
-          <template is="dom-if" if="[[_isTab(0, selected)]]" restamp>
             <div class="layout horizontal center-center">
-              <yp-post-list status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              <yp-post-list my-selected-id="0" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
             </div>
-          </template>
         </section>
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section>
-            <template is="dom-if" if="[[_isTab(1, selected)]]" restamp>
-              <div class="layout horizontal center-center">
-                <yp-post-list status-filter="in_progress" tab-counter-id="tabCountInProgress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-              </div>
-            </template>
+            <div class="layout horizontal center-center">
+              <yp-post-list my-selected-id="1" selected-tab="[[selected]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+            </div>
           </section>
           <section>
-            <template is="dom-if" if="[[_isTab(2, selected)]]" restamp>
               <div class="layout horizontal center-center">
-                <yp-post-list status-filter="successful" tab-counter-id="tabCountSuccessful" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+                <yp-post-list my-selected-id="2" selected-tab="[[selected]]" status-filter="successful" tab-counter-id="tabCountSuccessful" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
               </div>
-            </template>
           </section>
           <section>
-            <template is="dom-if" if="[[_isTab(3, selected)]]" restamp>
               <div class="layout horizontal center-center">
-                <yp-post-list status-filter="failed" tab-counter-id="tabCountFailed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+                <yp-post-list my-selected-id="3" selected-tab="[[selected]]" status-filter="failed" tab-counter-id="tabCountFailed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
               </div>
-            </template>
           </section>
         </template>
         <section>
