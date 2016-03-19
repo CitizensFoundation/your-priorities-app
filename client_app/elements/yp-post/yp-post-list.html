@@ -89,7 +89,7 @@
             <iron-scroll-threshold id="scrollThreshold"
                                    lower-threshold="100"
                                    on-lower-threshold="_loadMoreData">
-              <iron-list id="list" items="[[posts]]" as="post" >
+              <iron-list id="list" items="[[posts]]" as="post">
                 <template>
                   <div class="layout vertical center-center">
                     <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
