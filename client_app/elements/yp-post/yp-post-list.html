@@ -59,12 +59,22 @@
       @media (max-width: 320px) {
       }
 
-      iron-list {
-        overflow: hidden !important;
-      }
-
       yp-post-card {
         padding-top: 16px;
+      }
+
+      #outRegion {
+        overflow: visible;
+        @apply(--layout-vertical);
+      }
+
+      #scrollableRegion {
+        height: 700px;
+        overflow: visible;
+      }
+
+      iron-list {
+        @apply(--layout-fit);
       }
 
     </style>
@@ -74,25 +84,26 @@
                          group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
                          category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
         </yp-posts-filter>
-        <div class="layout vertical">
-          <iron-list id="list" items="[[posts]]" as="post">
-            <template>
-              <div class="layout vertical center-center">
-                <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
-              </div>
-            </template>
-          </iron-list>
+        <div id="outRegion">
+          <div id="scrollableRegion">
+            <iron-scroll-threshold id="scrollThreshold"
+                                   lower-threshold="100"
+                                   on-lower-threshold="_loadMoreData">
+              <iron-list id="list" items="[[posts]]" as="post" >
+                <template>
+                  <div class="layout vertical center-center">
+                    <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+                  </div>
+                </template>
+              </iron-list>
+            </iron-scroll-threshold>
+          </div>
         </div>
-      </div>
+        </div>
     </template>
 
     <yp-ajax id="ajax" on-response="_postsResponse"></yp-ajax>
 
-    <iron-scroll-threshold id="scrollThreshold"
-                           lower-threshold="500"
-                           on-lower-threshold="_loadMoreData"
-                           scroll-target="document">
-    </iron-scroll-threshold>
   </template>
 
   <script>
