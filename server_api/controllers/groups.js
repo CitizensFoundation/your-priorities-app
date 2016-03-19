@@ -207,7 +207,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
   }).then(function(posts) {
     var rows = [];
     if (offset<posts.rows.length) {
-      var toValue = offset+5;
+      var toValue = offset+12;
       rows = _.slice(posts.rows, offset, toValue);
     }
     res.send({
