@@ -87,7 +87,6 @@
         <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
           <paper-tab><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
           <paper-tab>[[t('news')]]</paper-tab>
-          <paper-tab>[[t('official')]]</paper-tab>
         </paper-tabs>
 
         <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
@@ -102,9 +101,8 @@
             </div>
           </section>
           <section>
-            <ac-activities my-selected-id="1" selected-tab="[[selected]]" mode="news_feeds" domain-id="[[domain.id]]"></ac-activities>
+            <ac-activities my-selected-id="1" selected-tab="[[selected]]" domain-id="[[domain.id]]"></ac-activities>
           </section>
-          <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('official')]]</h1></section>
         </iron-pages>
         <paper-fab icon="group-work" elevation="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
       </div>
@@ -118,7 +116,7 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpScrollCardBehavior
+        Polymer.YpScrollTabBehavior
       ],
 
       properties: {

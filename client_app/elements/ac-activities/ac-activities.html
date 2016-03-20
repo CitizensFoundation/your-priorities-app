@@ -93,7 +93,7 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpScrollCardBehavior
+        Polymer.YpScrollTabBehavior
       ],
 
       properties: {
@@ -146,6 +146,9 @@
         if (typeId) {
           this.set('activities', []);
           this.set('oldestProcessedActivityAt', null);
+          if (window.appUser && window.appUser.user) {
+            this.mode = 'news_feed';
+          }
           this.set('url', '/api/'+this.mode+'/' + type + '/'+typeId);
           this.$.ajax.url = this.url;
           this.$.ajax.generateRequest();
