@@ -1,0 +1,13 @@
+<link rel="import" href="../polymer/polymer.html"><dom-module id="attr-reflector"><template><div>{{someAttr}}</div></template><script>
+    Polymer({
+      is: 'attr-reflector',
+
+      properties: {
+        someAttr: {
+          type: String,
+          value: "",
+          reflectToAttribute: true
+        }
+      }
+    });
+  </script></dom-module>

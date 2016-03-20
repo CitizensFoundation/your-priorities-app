@@ -1,0 +1,77 @@
+<html><head><meta charset="utf-8"><title>SW Toolbox Tests</title><link href="/node_modules/mocha/mocha.css" rel="stylesheet"><style>
+    iframe {
+      width: 0;
+      height: 0;
+    }
+  </style></head><body><div id="mocha"></div><script src="/node_modules/chai/chai.js"></script><script src="/node_modules/mocha/mocha.js"></script><script src="/test/libs/helper-functions.js"></script><script>mocha.setup({
+    ui: 'bdd',
+    timeout: 5000
+  })</script><script src="/test/browser-tests/precache/precache.js"></script><script>
+    (function() {
+      // To automate the tests with selenium, we need a way
+      // to inform selenium when the tests are completed and
+      // pass results back.
+      // This is done by waiting for window.swtoolbox to be defined.
+      // This is done in publishTestResults();
+      var passedTests = [];
+      var failedTests = [];
+
+      // This is a helper method that simplifies the test
+      // results to an object that can be JSON.string-ified.
+      function getFriendlyTestResult(testResult) {
+        return {
+          title: testResult.title,
+          state: testResult.state
+        };
+      };
+
+      // Once this is called, automated tests should be
+      // able to read sw.toolbox and get test results.
+      function publishTestResults() {
+        window.swtoolbox = {
+          testResults: {
+            passed: passedTests,
+            failed: failedTests
+          }
+        };
+      }
+
+      // This make browsers without a service worker pass tests by
+      // bypassing the tests altogether.
+      // This is desirable to allow travis to run tests in all browsers
+      // regardless of support or not and perform tests when the browser
+      // starts to support service workers.
+      if (!('serviceWorker' in navigator)) {
+        publishTestResults();
+        return;
+      }
+
+      // should adds objects to primitives which requires this call to be made
+      // before any tests are run.
+      window.chai.should();
+
+      // We unregister all service workers, clear all caches and remove
+      // All registered iframes
+      beforeEach(function() {
+        return testHelper.cleanState();
+      });
+
+      // Clean up after the final test has finished
+      after(function() {
+        return testHelper.cleanState();
+      });
+
+      var runResults = mocha.run();
+      // pass, fail and end events allow up to capture results and
+      // determine when to publish test results
+      runResults.on('pass', function(test) {
+        passedTests.push(getFriendlyTestResult(test));
+      })
+      .on('fail', function(test) {
+        failedTests.push(getFriendlyTestResult(test));
+      })
+      .on('end', function() {
+        publishTestResults();
+      });
+    })();
+  </script></body></html>
