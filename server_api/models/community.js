@@ -104,7 +104,7 @@ module.exports = function(sequelize, DataTypes) {
         var hostname = sequelize.models.Domain.extractHost(req.headers.host);
         if (!hostname && req.params.communityHostname)
           hostname = req.params.communityHostname;
-        if (hostname && hostname!="www" && hostname!="new") {
+        if (hostname && hostname!="" && hostname!="www" && hostname!="new") {
           Community.find({
             where: {hostname: hostname}
           }).then(function (community) {

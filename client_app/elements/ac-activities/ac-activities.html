@@ -147,7 +147,7 @@
           this.set('activities', []);
           this.set('oldestProcessedActivityAt', null);
           if (window.appUser && window.appUser.user) {
-            this.mode = 'news_feed';
+            this.mode = 'news_feeds';
           }
           this.set('url', '/api/'+this.mode+'/' + type + '/'+typeId);
           this.$.ajax.url = this.url;
