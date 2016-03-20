@@ -44,6 +44,7 @@
         height: 100%;
         overflow: visible;
         padding-top: 48px;
+        @apply(--layout-vertical);
       }
     </style>
 
@@ -72,9 +73,10 @@
           </div>
         </template>
       </iron-list>
+      <div class="layout horizontal center-center">
+        <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
+      </div>
     </div>
-
-    <yp-ajax id="ajax" on-response="_activitiesResponse"></yp-ajax>
 
     <iron-scroll-threshold id="scrollThreshold"
                            lower-threshold="500"

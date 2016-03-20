@@ -77,26 +77,28 @@
         height: 100%;
       }
 
+      yp-ajax {
+        padding-top: 48px;
+      }
     </style>
-    <template is="dom-if" if="[[posts]]">
-      <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
-                       group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
-                       category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
-      </yp-posts-filter>
+    <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
+                     group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
+                     category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+    </yp-posts-filter>
 
-      <div id="scrollableRegion">
-        <iron-list id="list" items="[[posts]]" as="post">
-          <template>
-            <div class="layout vertical center-center">
-              <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
-            </div>
-          </template>
-        </iron-list>
+    <div id="scrollableRegion">
+      <iron-list id="list" items="[[posts]]" as="post">
+        <template>
+          <div class="layout vertical center-center">
+            <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+          </div>
+        </template>
+      </iron-list>
+      <div class="layout horizontal center-center">
+        <yp-ajax id="ajax" large-spinner on-response="_postsResponse"></yp-ajax>
       </div>
+    </div>
 
-    </template>
-
-    <yp-ajax id="ajax" on-response="_postsResponse"></yp-ajax>
 
     <iron-scroll-threshold id="scrollThreshold"
                            lower-threshold="100"
@@ -216,18 +218,18 @@
         if (!this.filter)
           this.set('filter','top');
         if (this.searchingFor) {
-          this.$.ajax.url = '/api/groups/' + this.groupId + '/search/' + this.searchingFor;
+          this.$$('#ajax').url = '/api/groups/' + this.groupId + '/search/' + this.searchingFor;
         } else {
-          this.$.ajax.url = '/api/groups/' + this.groupId + '/posts/' + this.filter;
+          this.$$('#ajax').url = '/api/groups/' + this.groupId + '/posts/' + this.filter;
           if (this.categoryId) {
-            this.$.ajax.url += '/' + this.categoryId;
+            this.$$('#ajax').url += '/' + this.categoryId;
           } else {
-            this.$.ajax.url += '/null';
+            this.$$('#ajax').url += '/null';
           }
-          this.$.ajax.url += '/'+this.statusFilter;
+          this.$$('#ajax').url += '/'+this.statusFilter;
         }
-        this.$.ajax.url += "?offset="+this.posts.length;
-        this.$.ajax.generateRequest();
+        this.$$('#ajax').url += "?offset="+this.posts.length;
+        this.$$('#ajax').generateRequest();
       },
 
       _postsResponse: function (event, detail, sender) {

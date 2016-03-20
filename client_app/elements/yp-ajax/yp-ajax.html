@@ -11,8 +11,12 @@
 <dom-module id="yp-ajax">
   <style>
     :host {
-      height: 0;
-      width: 0;
+    }
+
+    .large {
+      height: 64px !important;
+      width: 64px !important;
+      --paper-spinner-stroke-width: 7px;
     }
   </style>
   <template>
@@ -99,6 +103,11 @@
         useSpinner: {
           type: Boolean,
           value: true
+        },
+
+        largeSpinner: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -107,9 +116,13 @@
         this.fire('response', event.detail);
       },
 
-      domReady: function() {
+      ready: function() {
         if (this.auto) {
           this.$.spinner.active = true;
+        }
+        if (this.largeSpinner) {
+          this.$.spinner.toggleClass('large',true);
+          debugger;
         }
       },
 
