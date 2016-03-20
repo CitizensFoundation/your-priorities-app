@@ -21,6 +21,13 @@
 
   },
 
+  "posts": {
+    "open": "Open",
+    "inProgress": "In progess",
+    "successful": "Successful",
+    "failed": "Failed"
+  },
+
   "post": {
     "status": "Status of this post",
     "new": "New post",
