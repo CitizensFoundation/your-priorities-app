@@ -1,0 +1,48 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /**
+   * @polymerBehavior YpScrollTabBehavior
+   */
+  Polymer.YpScrollTabBehavior = {
+
+    properties: {
+      selectedTab: {
+        type: Number,
+        observer: '_selectedTabChanged'
+      },
+
+      mySelectedId: {
+        type: Number,
+        value: 0
+      },
+
+      active: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    _selectedTabChanged: function (newValue) {
+      this.async(function () {
+        if (newValue == this.mySelectedId) {
+          this.$$("#list").scrollTarget = this.$$("#scrollableRegion");
+          this.$$("#scrollThreshold").scrollTarget = "document";
+          this.$$("#list").fire('iron-resize');
+          this.active = true;
+        } else {
+          this.$$("#list").scrollTarget = null;
+          this.$$("#scrollThreshold").scrollTarget = null;
+          this.active = false;
+        }
+      },50);
+    },
+
+    _scrollAtBottom: function () {
+      if (this.active) {
+        this._loadMoreData();
+      }
+    }
+
+  }
+</script>

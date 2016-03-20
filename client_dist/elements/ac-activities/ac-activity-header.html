@@ -1,0 +1,53 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/moment-element/moment-element.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-user/yp-user-image.html">
+
+<dom-module id="ac-activity-header">
+  <template>
+    <style is="custom-style">
+      yp-user-image {
+        padding-right: 16px;
+      }
+
+      moment-element {
+        color: #aaa;
+      }
+
+      .name {
+        color: #333;
+      }
+    </style>
+
+    <div class="layout horizontal">
+      <yp-user-image user="[[activity.User]]"></yp-user-image>
+      <div class="layout vertical">
+        <div class="name">
+          [[activity.User.name]]
+        </div>
+        <moment-element datetime="[[activity.created_at]]" from output-format="MMM DD[,] YYYY"></moment-element>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-activity-header',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        activity: {
+          type: Object
+        }
+      }
+    });
+  </script>
+</dom-module>
