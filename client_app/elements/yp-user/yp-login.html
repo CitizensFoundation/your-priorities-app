@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/re-captcha/re-captcha.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
@@ -27,6 +28,10 @@
 
     paper-dialog {
       z-index: 9999;
+    }
+
+    re-captcha {
+      padding-top: 20px;
     }
   </style>
 
@@ -67,6 +72,10 @@
                      error-message="[[passwordErrorMessage]]">
         </paper-input>
 
+        <div class="layout horizontal center-center">
+          <re-captcha sitekey="[[reCaptchaSiteKey]]" lang="is"></re-captcha>
+        </div>
+
       </form>
       <div class="buttons">
         <paper-button on-tap="_forgotPassword">[[t('iForgotPassword')]]</paper-button>
@@ -93,6 +102,11 @@
     ],
 
     properties: {
+
+      reCaptchaSiteKey: {
+        type: String,
+        value: '6Ld9UBsTAAAAAPq059P_AGqo-tVE_T9gPj5ifrmY'
+      },
 
       emailValidationPattern: {
         type: String,
@@ -173,7 +187,7 @@
     },
 
     ready: function () {
-      this._setTexts();
+      //this._setTexts();
     },
 
     _setTexts: function () {
@@ -186,6 +200,7 @@
         this.header = this.t('user.header');
         this.set('submitText',this.t('user.login'));
       }
+      debugger;
     },
 
     _computeCredentials: function(name, email, password) {
@@ -231,8 +246,8 @@
     _loginCompleted: function (user) {
       window.appUser.setUser(user);
       if (this.redirectTo)
-        page(this.redirectTo)
-      this.fire("login",user);
+        page(this.redirectTo);
+      this.fire("login", user);
     },
 
     open: function(redirectTo) {

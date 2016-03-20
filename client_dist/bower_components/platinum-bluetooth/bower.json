@@ -1,6 +1,6 @@
 {
   "name": "platinum-bluetooth",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "license": "http://polymer.github.io/LICENSE.txt",
   "authors": [
@@ -31,6 +31,6 @@
     "paper-material": "PolymerElements/paper-material#^1.0.0",
     "paper-progress": "PolymerElements/paper-progress#^1.0.2",
     "paper-styles": "PolymerElements/paper-styles#^1.0.0",
-    "web-component-tester": "*"
+    "web-component-tester": "^4.0.0"
   }
 }

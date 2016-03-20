@@ -1,22 +1,23 @@
 {
   "name": "your-priorities-app",
-  "version": "0.8.2",
+  "version": "0.9.1",
   "dependencies": {
     "file-upload": "rbjarnason/file-upload",
     "google-map": "GoogleWebComponents/google-map",
     "google-streetview-pano": "rbjarnason/google-streetview-pano#timings-fix-maps-api-callback",
     "iron-form": "rbjarnason/iron-form#add-put-support",
-    "polymer": "Polymer/polymer#^1.2.0",
-    "iron-elements": "PolymerElements/iron-elements#master",
-    "paper-elements": "PolymerElements/paper-elements#master",
-    "platinum-elements": "PolymerElements/platinum-elements#^1.1.0",
-    "neon-elements": "PolymerElements/neon-elements#^1.0.0",
+    "polymer": "Polymer/polymer",
+    "iron-elements": "PolymerElements/iron-elements",
+    "paper-elements": "PolymerElements/paper-elements",
+    "platinum-elements": "PolymerElements/platinum-elements",
+    "neon-elements": "PolymerElements/neon-elements",
     "page": "visionmedia/page.js#~1.6.3",
     "vaadin-core-elements": "~0.3.0",
     "moment": "~2.11.2",
     "app-layout": "PolymerLabs/app-layout",
     "lodash-element": "~1.0.2",
-    "moment-element": "~0.3.0"
+    "moment-element": "~0.3.0",
+    "re-captcha": "~1.1.1"
   },
   "devDependencies": {
     "web-component-tester": "*",

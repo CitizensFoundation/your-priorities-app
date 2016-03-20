@@ -114,15 +114,12 @@ export function setMonth (mom, value) {
         return mom;
     }
 
+    // TODO: Move this out of here!
     if (typeof value === 'string') {
-        if (/^\d+$/.test(value)) {
-            value = toInt(value);
-        } else {
-            value = mom.localeData().monthsParse(value);
-            // TODO: Another silent failure?
-            if (typeof value !== 'number') {
-                return mom;
-            }
+        value = mom.localeData().monthsParse(value);
+        // TODO: Another silent failure?
+        if (typeof value !== 'number') {
+            return mom;
         }
     }
 

@@ -83,17 +83,8 @@
             });
         },
         meridiemParse: /མཚན་མོ|ཞོགས་ཀས|ཉིན་གུང|དགོང་དག|མཚན་མོ/,
-        meridiemHour : function (hour, meridiem) {
-            if (hour === 12) {
-                hour = 0;
-            }
-            if ((meridiem === 'མཚན་མོ' && hour >= 4) ||
-                    (meridiem === 'ཉིན་གུང' && hour < 5) ||
-                    meridiem === 'དགོང་དག') {
-                return hour + 12;
-            } else {
-                return hour;
-            }
+        isPM: function (input) {
+            return /^(ཉིན་གུང|དགོང་དག|མཚན་མོ)$/.test(input);
         },
         meridiem : function (hour, minute, isLower) {
             if (hour < 4) {

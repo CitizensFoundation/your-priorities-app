@@ -225,9 +225,10 @@
         ready: function () {
           window.appStartTime = new Date();
           window.appGlobals = this;
-          i18n.init({ lng: "is" });
+          i18n.init({ lng: "en" });
           window.i18n = i18n;
           this.requestInProgress = true;
+          this.fire('app-ready');
           this.$.boot.generateRequest();
 
           if (this.setupDefaults) {

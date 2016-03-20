@@ -37,7 +37,9 @@
   "status": "Hugmyndir í ferli",
 
   "user": {
-    "logout": "útskrá"
+    "logout": "útskrá",
+    "login": "innskrá",
+    "create": "nýskrá"
   },
 
   "posts": {
@@ -142,6 +144,7 @@
   "location": {
     "set": "Setja staðsettningu"
   },
+
   "image": {
     "upload": "Settu inn mynd",
     "logo": {

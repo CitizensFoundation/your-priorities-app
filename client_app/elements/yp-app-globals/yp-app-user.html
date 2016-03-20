@@ -13,23 +13,23 @@
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 
 <dom-module id="yp-app-user">
-    <template>
-      <style>
-        paper-toast {
-          z-index: 9999;
-        }
-      </style>
+  <template>
+    <style>
+      paper-toast {
+        z-index: 9999;
+      }
+    </style>
 
-      <yp-session id="session"></yp-session>
-      <yp-login id="userLogin" register="true" on-login="_handleLogin"></yp-login>
-      <yp-forgot-password id="forgotPassword"></yp-forgot-password>
-      <yp-reset-password id="resetPassword"></yp-reset-password>
+    <yp-session id="session"></yp-session>
+    <yp-login id="userLogin" register="true" on-login="_handleLogin"></yp-login>
+    <yp-forgot-password id="forgotPassword"></yp-forgot-password>
+    <yp-reset-password id="resetPassword"></yp-reset-password>
 
-      <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
-      <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
+    <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
+    <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
 
-      <paper-toast id="loginToast" text="[[toastLoginTextCombined]]"></paper-toast>
-      <paper-toast id="logoutToast" text="[[toastLogoutTextCombined]]"></paper-toast>
+    <paper-toast id="loginToast" text="[[toastLoginTextCombined]]"></paper-toast>
+    <paper-toast id="logoutToast" text="[[toastLogoutTextCombined]]"></paper-toast>
   </template>
 
   <script>

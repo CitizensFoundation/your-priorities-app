@@ -34,8 +34,6 @@
   <template>
 
     <style>
-
-
       .main-area {
         padding-top: 2px !important;
       }
@@ -151,82 +149,88 @@
 
     </style>
 
-    <yp-app-globals id="appGlobals" disable-welcome setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
-    <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
+    <yp-app-globals id="appGlobals" disable-welcome setup-defaults on-change-header="onChangeHeader" on-app-ready="_appReady"></yp-app-globals>
 
-<!--    <material-search id="search" narrow="[[narrow]]"
-                     previous-searches="{{previousSearches}}"
-                     on-search-change="_onSearch" class="fit"></material-search> -->
+    <template is="dom-if" if="[[appReady]]">
 
-    <app-drawer-layout drawer-width="288px" responsive-width="16000px">
+      <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
 
-      <app-drawer id="drawer" align="end" position="right" swipe-open>
-        <yp-app-drawer id="ypDrawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
-      </app-drawer>
+      <!--    <material-search id="search" narrow="[[narrow]]"
+                           previous-searches="{{previousSearches}}"
+                           on-search-change="_onSearch" class="fit"></material-search> -->
 
-      <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
+      <app-drawer-layout drawer-width="288px" responsive-width="16000px">
 
-      <app-header-layout id="mainArea">
+        <app-drawer id="drawer" align="end" position="right" swipe-open>
+          <yp-app-drawer id="ypDrawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
+        </app-drawer>
 
-        <app-header effects="waterfall" reveals class="main-header">
-          <app-toolbar>
-            <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon"
-                               hidden$="[[!showBack]]"></paper-icon-button>
-            <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
-            <div title>[[headerTitle]]</div>
+        <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
 
-            <span class="flex"></span>
+        <app-header-layout id="mainArea">
 
-            <!-- Toolbar icons -->
-            <paper-icon-button icon="search" on-tap="toggleSearch" hidden$="[[!showSearch]]"></paper-icon-button>
+          <app-header effects="waterfall" reveals class="main-header">
+            <app-toolbar>
+              <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon"
+                                 hidden$="[[!showBack]]"></paper-icon-button>
+              <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
+              <div title>[[headerTitle]]</div>
 
-            <template is="dom-if" if="[[user]]">
-              <paper-icon-button on-tap="openEdit" icon="face"></paper-icon-button>
-            </template>
+              <span class="flex"></span>
 
-            <paper-icon-button id="paperToggle" icon="more-vert" on-tap="_toggleDrawer"></paper-icon-button>
-          </app-toolbar>
-        </app-header>
+              <!-- Toolbar icons -->
+              <paper-icon-button icon="search" on-tap="toggleSearch" hidden$="[[!showSearch]]"></paper-icon-button>
 
-        <iron-pages attr-for-selected="data-route" selected="{{route}}">
+              <template is="dom-if" if="[[user]]">
+                <paper-icon-button on-tap="openEdit" icon="face"></paper-icon-button>
+              </template>
 
-          <section data-route="home">
-          </section>
+              <paper-icon-button id="paperToggle" icon="more-vert" on-tap="_toggleDrawer"></paper-icon-button>
+            </app-toolbar>
+          </app-header>
 
-          <section data-route="domain">
-            <template is="dom-if" if="[[params]]" restamp>
-              <yp-domain domain-id="{{params.domainId}}" on-change-header="onChangeHeader"></yp-domain>
-            </template>
-          </section>
+          <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
-          <section data-route="community">
-            <template is="dom-if" if="[[params.communityId]]" restamp>
-              <yp-community community-id="{{params.communityId}}" on-change-header="onChangeHeader"></yp-community>
-            </template>
-          </section>
+            <section data-route="home">
+            </section>
 
-          <section data-route="group">
-            <template is="dom-if" if="[[params.groupId]]" restamp>
-              <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]"
-                        searching-for="[[params.searchingFor]]"
-                        category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
-                        on-change-header="onChangeHeader"></yp-group>
-            </template>
-          </section>
+            <section data-route="domain">
+              <template is="dom-if" if="[[params]]" restamp>
+                <yp-domain domain-id="{{params.domainId}}" on-change-header="onChangeHeader"></yp-domain>
+              </template>
+            </section>
 
-          <section data-route="post">
-            <template is="dom-if" if="[[params.postId]]" restamp>
-              <yp-post post-id="{{params.postId}}" on-change-header="onChangeHeader"></yp-post>
-            </template>
-          </section>
+            <section data-route="community">
+              <template is="dom-if" if="[[params.communityId]]" restamp>
+                <yp-community community-id="{{params.communityId}}" on-change-header="onChangeHeader"></yp-community>
+              </template>
+            </section>
 
-        </iron-pages>
+            <section data-route="group">
+              <template is="dom-if" if="[[params.groupId]]" restamp>
+                <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]"
+                          searching-for="[[params.searchingFor]]"
+                          category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
+                          on-change-header="onChangeHeader"></yp-group>
+              </template>
+            </section>
 
-      </app-header-layout>
+            <section data-route="post">
+              <template is="dom-if" if="[[params.postId]]" restamp>
+                <yp-post post-id="{{params.postId}}" on-change-header="onChangeHeader"></yp-post>
+              </template>
+            </section>
 
-    </app-drawer-layout>
-    <template is="dom-if" if="[[user]]">
-      <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
+          </iron-pages>
+
+        </app-header-layout>
+
+      </app-drawer-layout>
+
+      <template is="dom-if" if="[[user]]">
+        <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
+      </template>
+
     </template>
 
   </template>
@@ -291,7 +295,17 @@
 
         narrow: {
           type: Boolean
+        },
+
+        appReady: {
+          type: Boolean,
+          value: false
         }
+      },
+
+      _appReady: function () {
+        debugger;
+        this.appReady = true;
       },
 
       scrollPageToTop: function() {
@@ -302,7 +316,7 @@
       },
 
       _toggleDrawer: function () {
-        this.$.drawer.toggle();
+        this.$$("#drawer").toggle();
       },
 
       openEdit: function () {
@@ -352,8 +366,7 @@
       },
 
       toggleSearch: function () {
-        debugger;
-        this.$.search.toggle();
+        this.$$("#search").toggle();
       },
 
       __equal: function (a, b) {
@@ -361,7 +374,9 @@
       },
 
       routeChanged: function (newValue, oldValue) {
-        if (!this.$.drawer.persistent) this.$.drawer.close();
+        if (this.$$("#drawer") && (!this.$$("#drawer").persistent)) {
+          this.$$("#drawer").close();
+        }
       }
 
     });
