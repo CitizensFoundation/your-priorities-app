@@ -11,6 +11,9 @@
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
+<link rel="import" href="../ac-activities/ac-activities.html">
+
 <link rel="import" href="../yp-post/yp-post.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-post/yp-post-card.html">
@@ -33,9 +36,7 @@
 
       .postsFilter {
         padding-left: 16px;
-        margin-bottom: 16px;
-        padding-bottom: 16px;
-        height: 50px;
+        height: 36px;
       }
 
       .objectives {
@@ -96,6 +97,7 @@
     </template>
 
     <yp-ajax id="ajax" on-response="_postsResponse"></yp-ajax>
+
     <iron-scroll-threshold id="scrollThreshold"
                            lower-threshold="100"
                            on-lower-threshold="_scrollAtBottom" >
@@ -109,7 +111,8 @@
       is: 'yp-post-list',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.YpScrollCardBehavior
       ],
 
       properties: {
@@ -180,38 +183,7 @@
 
         oldestPostAt: {
           type: Date
-        },
-
-        selectedTab: {
-          type: Number,
-          observer: '_selectedTabChanged'
-        },
-
-        mySelectedId: {
-          type: Number,
-          value: 0
-        },
-
-        active: {
-          type: Boolean,
-          value: false
         }
-      },
-
-      _selectedTabChanged: function (newValue) {
-        this.async(function () {
-          debugger;
-          if (newValue == this.mySelectedId) {
-            this.$$("#list").scrollTarget = this.$$("#scrollableRegion");
-            this.$$("#scrollThreshold").scrollTarget = "document";
-            this.$$("#list").fire('iron-resize');
-            this.active = true;
-          } else {
-            this.$$("#list").scrollTarget = null;
-            this.$$("#scrollThreshold").scrollTarget = null;
-            this.active = false;
-          }
-        },50);
       },
 
       _searchingForChanged: function (newValue, oldValue) {
@@ -238,12 +210,6 @@
       _refreshGroupFromFilter: function () {
         this.set("posts", []);
         this._loadMoreData();
-      },
-
-      _scrollAtBottom: function () {
-        if (this.active) {
-          this._loadMoreData();
-        }
       },
 
       _loadMoreData: function () {

@@ -11,6 +11,9 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
+<link rel="import" href="../ac-activities/ac-activities.html">
+
 <link rel="import" href="../yp-post/yp-post.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-community/yp-community-card.html">
@@ -99,7 +102,7 @@
             </div>
           </section>
           <section>
-            <ac-activities mode="news_feeds" domain-id="[[domain.id]]"></ac-activities>
+            <ac-activities my-selected-id="1" selected-tab="[[selected]]" mode="news_feeds" domain-id="[[domain.id]]"></ac-activities>
           </section>
           <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('official')]]</h1></section>
         </iron-pages>
@@ -114,7 +117,8 @@
       is: 'yp-domain',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.YpScrollCardBehavior
       ],
 
       properties: {
