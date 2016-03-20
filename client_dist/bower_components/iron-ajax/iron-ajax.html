@@ -82,6 +82,8 @@
        * Content type to use when sending data. If the `contentType` property
        * is set and a `Content-Type` header is specified in the `headers`
        * property, the `headers` property value will take precedence.
+       *
+       * Varies the handling of the `body` param.
        */
       contentType: {
         type: String,
@@ -260,6 +262,16 @@
         value: ''
       },
 
+      /**
+       * By default, these events do not bubble largely because the `error` event has special
+       * meaning in the window object. Setting this attribute will cause iron-ajax's request,
+       * response, and error events to bubble to the window object.
+       */
+      bubbles: {
+        type: Boolean,
+        value: false
+      },
+
       _boundHandleResponse: {
         type: Function,
         value: function() {
@@ -401,7 +413,7 @@
       this.fire('request', {
         request: request,
         options: requestOptions
-      }, {bubbles: false});
+      }, {bubbles: this.bubbles});
 
       return request;
     },
@@ -412,7 +424,7 @@
         this._setLastError(null);
         this._setLoading(false);
       }
-      this.fire('response', request, {bubbles: false});
+      this.fire('response', request, {bubbles: this.bubbles});
     },
 
     _handleError: function(request, error) {
@@ -431,7 +443,7 @@
       this.fire('error', {
         request: request,
         error: error
-      }, {bubbles: false});
+      }, {bubbles: this.bubbles});
     },
 
     _discardRequest: function(request) {

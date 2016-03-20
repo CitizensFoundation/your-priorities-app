@@ -11,6 +11,9 @@
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
+<link rel="import" href="../ac-activities/ac-activities.html">
+
 <link rel="import" href="../yp-post/yp-post.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-post/yp-post-card.html">
@@ -27,7 +30,7 @@
     <style>
 
       :host {
-        @apply(--layout-horizontal);
+        @apply(--layout-vertical);
       }
 
       .createPost {
@@ -88,6 +91,7 @@
         <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
       </div>
       <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+        <paper-tab>[[t('news')]]</paper-tab>
         <paper-tab id="tab1">
           <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
         </paper-tab>
@@ -101,34 +105,34 @@
           <paper-tab>
             <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
           </paper-tab>
-        </template> <paper-tab>[[t('news')]]</paper-tab>
+        </template>
       </paper-tabs>
       <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
-          <div class="layout horizontal center-center">
-            <yp-post-list status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-          </div>
+          <ac-activities my-selected-id="0" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
+        </section>
+        <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list my-selected-id="1" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+            </div>
         </section>
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section>
             <div class="layout horizontal center-center">
-              <yp-post-list status-filter="in_progress" tab-counter-id="tabCountInProgress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              <yp-post-list my-selected-id="2" selected-tab="[[selected]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
             </div>
           </section>
           <section>
-            <div class="layout horizontal center-center">
-              <yp-post-list status-filter="successful" tab-counter-id="tabCountSuccessful" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-            </div>
+              <div class="layout horizontal center-center">
+                <yp-post-list my-selected-id="3" selected-tab="[[selected]]" status-filter="successful" tab-counter-id="tabCountSuccessful" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              </div>
           </section>
           <section>
-            <div class="layout horizontal center-center">
-              <yp-post-list status-filter="failed" tab-counter-id="tabCountFailed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-            </div>
+              <div class="layout horizontal center-center">
+                <yp-post-list my-selected-id="4" selected-tab="[[selected]]" status-filter="failed" tab-counter-id="tabCountFailed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              </div>
           </section>
         </template>
-        <section>
-          <h1>Newfeed :)</h1>
-        </section>
       </iron-pages>
       <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
     </div>
@@ -195,6 +199,11 @@
           type: Boolean,
           value: false
         }
+      },
+
+      _isTab: function (tabNr, selected) {
+        debugger;
+        return (selected==tabNr)
       },
 
       _updateTabPostCount: function (event, tabCounterInfo) {

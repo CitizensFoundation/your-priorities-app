@@ -1,5 +1,10 @@
 {
 
+  "activity": {
+    "post": {
+      "new": "New idea"
+    }
+  },
   "name": "Name",
 
   "domain": {

@@ -30,19 +30,20 @@
       }
 
       function triggerScrollEvent() {
-        var scrollTop = scroller === window ? scroller.pageYOffset : scroller.scrollTop;
+        var scrollTop = scroller === document.documentElement ? window.pageYOffset : scroller.scrollTop;
         if (tests[0].y === scrollTop) {
           // Scrolling to the same position won't trigger a scroll event,
           // so just call the scroll event handler.
           scrollEventHandler();
         } else {
-          if (scroller === window) scroller.scrollTo(0, tests[0].y);
+          if (scroller === document.documentElement) window.scrollTo(0, tests[0].y);
           else scroller.scrollTop = tests[0].y;
         }
       }
 
       if (tests.length > 0) {
-        scroller.addEventListener('scroll', scrollEventHandler);
+        var scrollTarget = scroller === document.documentElement ? window : scroller;
+        scrollTarget.addEventListener('scroll', scrollEventHandler);
         triggerScrollEvent();
       }
     }
@@ -55,7 +56,7 @@
 
     function assertHeaderIsCondensed(header) {
       var headerClientRect = header.getBoundingClientRect();
-      assert.equal(headerClientRect.top + headerClientRect.height, headerClientRect.bottom);
+      assert.equal(headerClientRect.top + headerClientRect.height, header._primaryEl.offsetHeight);
     }
 
     function assertHeaderIsHidden(header) {
@@ -76,7 +77,7 @@
           tearDown: sinon.spy(),
           run: sinon.spy()
         };
-        Polymer.AppScrollEffects = {
+        Polymer.AppLayout.scrollEffects = {
           'test-effect': testEffect
         };
       });
@@ -92,7 +93,7 @@
         header.condenses = true;
 
         flush(function() {
-          scrollTestHelper(header.scroller, [
+          scrollTestHelper(header.scrollTarget, [
             {
               y: 0,
               callback: function() {
@@ -128,7 +129,7 @@
         header.fixed = true;
 
         flush(function() {
-          scrollTestHelper(header.scroller, [
+          scrollTestHelper(header.scrollTarget, [
             {
               y: 0,
               callback: function() {
@@ -149,7 +150,7 @@
         header.reveals = true;
 
         flush(function() {
-          scrollTestHelper(header.scroller, [
+          scrollTestHelper(header.scrollTarget, [
             {
               y: 0,
               callback: function() {
@@ -176,7 +177,7 @@
         header.reveals = true;
 
         flush(function() {
-          scrollTestHelper(header.scroller, [
+          scrollTestHelper(header.scrollTarget, [
             {
               y: 0,
               callback: function() {
@@ -213,7 +214,7 @@
         header.fixed = true;
 
         flush(function() {
-          scrollTestHelper(header.scroller, [
+          scrollTestHelper(header.scrollTarget, [
             {
               y: 0,
               callback: function() {
@@ -239,7 +240,7 @@
         header.effects = 'test-effect';
 
         flush(function() {
-          scrollTestHelper(header.scroller, [
+          scrollTestHelper(header.scrollTarget, [
             {
               y: 0,
               callback: function() {
@@ -288,7 +289,7 @@
         };
 
         flush(function() {
-          scrollTestHelper(header.scroller, [
+          scrollTestHelper(header.scrollTarget, [
             {
               y: 0,
               callback: function() {
@@ -330,7 +331,7 @@
         header.effects = 'test-effect';
 
         flush(function() {
-          scrollTestHelper(header.scroller, [
+          scrollTestHelper(header.scrollTarget, [
             {
               y: 0,
               callback: function() {
@@ -351,6 +352,36 @@
               callback: function() {
                 assert.deepEqual(testEffect.run.lastCall.args, [2, 128]);
 
+                done();
+              }
+            }
+          ]);
+        });
+      });
+
+      test('isOnScreen', function(done) {
+        flush(function() {
+          scrollTestHelper(header.scrollTarget, [
+            {
+              y: 0,
+              callback: function() {
+                assert.isTrue(header.isOnScreen());
+              }
+            }, {
+              y: toolbar.offsetHeight,
+              callback: function() {
+                assert.isTrue(header.isOnScreen());
+              }
+            }, {
+              y: toolbar.offsetHeight * 2,
+              callback: function() {
+                assert.isFalse(header.isOnScreen());
+                header.fixed = true;
+              }
+            }, {
+              y: toolbar.offsetHeight * 3,
+              callback: function() {
+                assert.isTrue(header.isOnScreen());
                 done();
               }
             }

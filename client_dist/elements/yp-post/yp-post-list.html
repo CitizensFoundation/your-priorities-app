@@ -11,6 +11,9 @@
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
+<link rel="import" href="../ac-activities/ac-activities.html">
+
 <link rel="import" href="../yp-post/yp-post.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-post/yp-post-card.html">
@@ -24,9 +27,6 @@
     <style>
 
       :host {
-        position: relative;
-        height: auto;
-        min-height: 100% !important;
       }
 
       .container {
@@ -36,9 +36,7 @@
 
       .postsFilter {
         padding-left: 16px;
-        margin-bottom: 16px;
-        padding-bottom: 16px;
-        height: 50px;
+        height: 36px;
       }
 
       .objectives {
@@ -59,33 +57,54 @@
       @media (max-width: 320px) {
       }
 
-      iron-list {
-        overflow: hidden !important;
-      }
-
       yp-post-card {
         padding-top: 16px;
       }
 
+      #outerRegion {
+        position: relative;
+        @apply(--layout-vertical);
+
+      }
+
+      #scrollableRegion {
+        height: 100%;
+        overflow: visible;
+      }
+
+      iron-list {
+        width: 1024px;
+        height: 100%;
+      }
+
+      yp-ajax {
+        padding-top: 48px;
+      }
     </style>
-    <template is="dom-if" if="[[posts]]">
-      <div class="layout vertical" style="width: 1012px;">
-        <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
-                         group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
-                         category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
-        </yp-posts-filter>
-        <div class="layout vertical">
-          <iron-list id="list" items="[[posts]]" as="post">
-            <template>
-              <div class="layout vertical center-center">
-                <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
-              </div>
-            </template>
-          </iron-list>
-        </div>
+    <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
+                     group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
+                     category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+    </yp-posts-filter>
+
+    <div id="scrollableRegion">
+      <iron-list id="list" items="[[posts]]" as="post">
+        <template>
+          <div class="layout vertical center-center">
+            <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+          </div>
+        </template>
+      </iron-list>
+      <div class="layout horizontal center-center">
+        <yp-ajax id="ajax" large-spinner on-response="_postsResponse"></yp-ajax>
       </div>
-    </template>
-    <yp-ajax id="ajax" on-response="_postsResponse"></yp-ajax>
+    </div>
+
+
+    <iron-scroll-threshold id="scrollThreshold"
+                           lower-threshold="100"
+                           on-lower-threshold="_scrollAtBottom" >
+    </iron-scroll-threshold>
+
   </template>
 
   <script>
@@ -94,7 +113,8 @@
       is: 'yp-post-list',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.YpScrollTabBehavior
       ],
 
       properties: {
@@ -161,6 +181,10 @@
 
         tabCounterId: {
           type: String
+        },
+
+        oldestPostAt: {
+          type: Date
         }
       },
 
@@ -194,37 +218,36 @@
         if (!this.filter)
           this.set('filter','top');
         if (this.searchingFor) {
-          this.$.ajax.url = '/api/groups/' + this.groupId + '/search/' + this.searchingFor;
+          this.$$('#ajax').url = '/api/groups/' + this.groupId + '/search/' + this.searchingFor;
         } else {
-          this.$.ajax.url = '/api/groups/' + this.groupId + '/posts/' + this.filter;
+          this.$$('#ajax').url = '/api/groups/' + this.groupId + '/posts/' + this.filter;
           if (this.categoryId) {
-            this.$.ajax.url += '/' + this.categoryId;
+            this.$$('#ajax').url += '/' + this.categoryId;
           } else {
-            this.$.ajax.url += '/null';
+            this.$$('#ajax').url += '/null';
           }
-          this.$.ajax.url += '/'+this.statusFilter;
+          this.$$('#ajax').url += '/'+this.statusFilter;
         }
-        this.$.ajax.url += "?offset="+this.posts.length;
-        this.$.ajax.generateRequest();
+        this.$$('#ajax').url += "?offset="+this.posts.length;
+        this.$$('#ajax').generateRequest();
       },
 
       _postsResponse: function (event, detail, sender) {
-        var list = this.$$("#list");
-
-        this.set('postsCount', detail.response.length);
-        this.fire('yp-post-count', {tabCounterId: this.tabCounterId, count: detail.response.length});
+        var posts = detail.response.posts;
+        this.set('postsCount', detail.response.totalPostsCount);
+        this.fire('yp-post-count', {
+          tabCounterId: this.tabCounterId,
+          count: this.postsCount
+        } );
 
         this.$$("#postsFilter")._updateTitle();
-        detail.response.forEach(function(post) {
+        posts.forEach(function(post) {
           this.push('posts', post);
         }.bind(this));
 
-      //  this.$$('#scrollTheshold').clearTriggers();
+        this.$$("#list").fire('iron-resize');
 
-        if (list) {
-          this.$$("#list").fire('iron-resize');
-        }
-
+        this.$$('#scrollThreshold').clearTriggers();
         this._processCategories();
       },
 

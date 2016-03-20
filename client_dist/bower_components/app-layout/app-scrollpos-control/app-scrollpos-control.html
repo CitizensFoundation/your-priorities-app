@@ -1,4 +1,4 @@
-<link rel="import" href="../../polymer/polymer.html"><dom-module id="app-scrollpos-control"><script>
+<link rel="import" href="../../polymer/polymer.html"><link rel="import" href="../helpers/helpers.html"><dom-module id="app-scrollpos-control"><script>
 
     Polymer({
 
@@ -24,6 +24,10 @@
 
       },
 
+      observers: [
+        '_updateScrollPos(selected, reset)'
+      ],
+
       created: function() {
         this._scrollposMap = {};
       },
@@ -32,18 +36,25 @@
         if (old != null) {
           this._scrollposMap[old] = {x: window.pageXOffset, y: window.pageYOffset};
         }
-        var pos = this._scrollposMap[selected];
-        if (pos != null && !this.reset) {
-          this._scrollTo(pos.x, pos.y);
-        } else {
-          this._scrollTo(0, 0);
-        }
+      },
+
+      _updateScrollPos: function(selected, reset) {
+        this.debounce('_updateScrollPos', function() {
+          var pos = this._scrollposMap[this.selected];
+          if (pos != null && !this.reset) {
+            this._scrollTo(pos.x, pos.y);
+          } else {
+            this._scrollTo(0, 0);
+          }
+        });
       },
 
       _scrollTo: function(x, y) {
-        this.async(function() {
-          window.scrollTo(x, y);
-        }, 1);
+        Polymer.AppLayout.scroll({
+          left: x,
+          top: y,
+          behavior: 'silent'
+        });
       }
 
     });

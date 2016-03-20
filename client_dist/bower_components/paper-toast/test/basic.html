@@ -48,6 +48,16 @@
         });
       });
 
+      test('toast does not get focused', function(done) {
+        toast = fixture('show');
+        var spy = sinon.spy(toast, 'focus');
+        assert.isTrue(toast.noAutoFocus, 'no-auto-focus is true');
+        toast.addEventListener('iron-overlay-opened', function() {
+          assert.isFalse(spy.called, 'toast is not focused');
+          done();
+        });
+      });
+
       test('toast fires closed event', function(done) {
         toast = fixture('basic');
         toast.show({duration: 350});

@@ -70,8 +70,8 @@
        *
        * @type {RegExp}
        */
-      _urlFilterRegExp: {
-        compute: '_makeRegExp(urlFilterExp)'
+      _urlSpaceRegExp: {
+        computed: '_makeRegExp(urlSpaceRegex)'
       },
 
       _lastChangedAtAt: {
@@ -94,7 +94,7 @@
       this.listen(window, 'hashchange', '_hashChanged');
       this.listen(window, 'location-changed', '_urlChanged');
       this.listen(window, 'popstate', '_urlChanged');
-      this.listen(document.body, 'click', '_globalOnClick');
+      this.listen(/** @type {!HTMLBodyElement} */(document.body), 'click', '_globalOnClick');
 
       this._urlChanged();
       this._initialized = true;
@@ -103,7 +103,7 @@
       this.unlisten(window, 'hashchange', '_hashChanged');
       this.unlisten(window, 'location-changed', '_urlChanged');
       this.unlisten(window, 'popstate', '_urlChanged');
-      this.unlisten(document.body, 'click', '_globalOnClick');
+      this.unlisten(/** @type {!HTMLBodyElement} */(document.body), 'click', '_globalOnClick');
       this._initialized = false;
     },
     /**
@@ -222,22 +222,28 @@
 
       // It only makes sense for us to intercept same-origin navigations.
       // pushState/replaceState don't work with cross-origin links.
-      var url = new URL(href, document.baseURI);
+      var url;
+      if (document.baseURI != null) {
+        url = new URL(href, /** @type {string} */(document.baseURI));
+      } else {
+        url = new URL(href);
+      }
+
       if (url.origin !== window.location.origin) {
         return null;
       }
       var normalizedHref = url.pathname + url.search + url.hash;
 
       // If we've been configured not to handle this url... don't handle it!
-      if (this._urlFilterRegExp &&
-          !this._urlFilterRegExp.test(normalizedHref)) {
+      if (this._urlSpaceRegExp &&
+          !this._urlSpaceRegExp.test(normalizedHref)) {
         return null;
       }
 
       return normalizedHref;
     },
-    _makeRegExp: function(urlFilterExp) {
-      return RegExp(urlFilterExp);
+    _makeRegExp: function(urlSpaceRegex) {
+      return RegExp(urlSpaceRegex);
     }
   });
 </script>

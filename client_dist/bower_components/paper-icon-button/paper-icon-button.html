@@ -1,4 +1,4 @@
-<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../iron-icon/iron-icon.html"><link rel="import" href="../iron-flex-layout/iron-flex-layout.html"><link rel="import" href="../paper-styles/default-theme.html"><link rel="import" href="../paper-behaviors/paper-button-behavior.html"><link rel="import" href="../paper-behaviors/paper-inky-focus-behavior.html"><link rel="import" href="../paper-ripple/paper-ripple.html"><dom-module id="paper-icon-button"><template strip-whitespace=""><style>
+<link rel="import" href="../polymer/polymer.html"><link rel="import" href="../iron-icon/iron-icon.html"><link rel="import" href="../paper-behaviors/paper-inky-focus-behavior.html"><link rel="import" href="../paper-styles/default-theme.html"><dom-module id="paper-icon-button"><template strip-whitespace=""><style>
       :host {
         display: inline-block;
         position: relative;
@@ -12,12 +12,13 @@
         cursor: pointer;
         z-index: 0;
         line-height: 1;
-        
+
         width: 40px;
         height: 40px;
 
         /* Because of polymer/2558, this style has lower specificity than * */
         box-sizing: border-box !important;
+
         @apply(--paper-icon-button);
       }
 
@@ -30,10 +31,11 @@
         color: var(--paper-icon-button-disabled-text, --disabled-text-color);
         pointer-events: none;
         cursor: auto;
+
         @apply(--paper-icon-button-disabled);
       }
-      
-      :host(:hover) { 
+
+      :host(:hover) {
         @apply(--paper-icon-button-hover);
       }
 

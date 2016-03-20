@@ -109,9 +109,11 @@
 
       _updateFixedNodesPosition: function() {
         var rect = this.getBoundingClientRect();
+        var rightOffset = document.documentElement.clientWidth - rect.right;
+
         this._getFixedNodes().forEach(function(node) {
           node.style.left = this.hasScrollingRegion ? '' : rect.left + 'px';
-          node.style.width = this.hasScrollingRegion ? '' : rect.width + 'px';
+          node.style.right = this.hasScrollingRegion ? '' : rightOffset + 'px';
         }.bind(this));
       },
 
@@ -121,7 +123,8 @@
         }
         var header = this.header;
         if (header) {
-          header.scroller = this.hasScrollingRegion ? this.$.contentContainer : window;
+          header.scrollTarget = this.hasScrollingRegion ? 
+              this.$.contentContainer : this.ownerDocument.documentElement;
         }
       },
 

@@ -9,6 +9,9 @@
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
+<link rel="import" href="../ac-activities/ac-activities.html">
+
 <link rel="import" href="../yp-post/yp-post.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-group/yp-group-card.html">
@@ -66,7 +69,6 @@
             <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
               <paper-tab><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
               <paper-tab>[[t('news')]]</paper-tab>
-              <paper-tab>[[t('events')]]</paper-tab>
             </paper-tabs>
 
             <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
@@ -80,8 +82,7 @@
                   <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
                 </div>
               </section>
-              <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('news')]]</h1></section>
-              <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('events')]]</h1></section>
+              <ac-activities my-selected-id="1" selected-tab="[[selected]]" community-id="[[community.id]]"></ac-activities>
             </iron-pages>
           </div>
           <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
@@ -97,7 +98,8 @@
       is: 'yp-community',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.YpScrollTabBehavior
       ],
 
       properties: {

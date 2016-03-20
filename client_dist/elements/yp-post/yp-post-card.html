@@ -15,6 +15,7 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="yp-post-actions.html">
 <link rel="import" href="yp-post-cover-media.html">
+<link rel="import" href="yp-post-behaviors.html">
 
 <dom-module id="yp-post-card">
 
@@ -99,8 +100,8 @@
         }
 
         .voting {
-          padding-left: 0px;
-          padding-right: 0px;
+          padding-left: 0;
+          padding-right: 0;
         }
 
         .card-actions {
@@ -151,91 +152,9 @@
       is: 'yp-post-card',
 
       behaviors: [
-        Polymer.appHelpers
-      ],
-
-      properties: {
-        post: {
-          type: Object,
-          notify: true
-        },
-
-        endorseMode: {
-          type: String
-        },
-
-        image: {
-          type: Boolean,
-          value: true
-        },
-
-        elevation: {
-          type: Number,
-          value: 1
-        }
-      },
-
-      postImagePath: function (post) {
-        return this.randomStockImage();
-
-        if (this.post.IsoCountry) {
-          return this.isoCountryImagePath() + post.IsoCountry.code.toLowerCase() + '.png';
-        }
-        else if (post.name.indexOf("NHS") > -1) {
-          return "http://i.imgur.com/BKR5vE6.jpg"
-        }
-        else if (post.name.indexOf("Iceland") > -1) {
-          return "https://i.imgur.com/v2SyyDl.png"
-        }
-        else if (true) {
-          return "https://i.imgur.com/OPpnjwm.jpg"
-        }
-        else if (false) {
-          return "https://placehold.it/384x216"
-        }
-        else if (post.top_banner_file_name) {
-          return 'https://s3.amazonaws.com/' + this.s3bucketName() + '/sub_instances/top_banners/000/000/' + this.padNumber(post.id) + '/icon_full/' + post.top_banner_file_name;
-        } else
-        {
-          return this.defaultGroupImage('');
-        }
-      },
-
-      getIsoCountryImagePath: function (post) {
-        return this.isoCountryImagePath() + post.IsoCountry.code.toLowerCase() + '.png';
-      },
-
-      postName: function (post) {
-        if (!post) {
-          debugger;
-        }
-        if (post.name) {
-          return this.truncate(this.trim(post.name), 60);
-        } else {
-          return post.short_name;
-        }
-      },
-
-      postDescription: function (post) {
-        if (post.description) {
-          return this.truncate(this.trim(post.description), 500, '...');
-        } else if (post.Points[0]) {
-          return  this.truncate(this.trim(post.Points[0].content), 500, '...');
-        } else {
-          return '';
-        }
-      },
-
-      getCategoryImagePath: function (post) {
-        if (post.Category) {
-          return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(post.Category.id) + '/icon_100/' + post.Category.icon_file_name;
-        } else {
-          return "";
-        }
-      },
-
-      ready: function () {
-      }
+        Polymer.appHelpers,
+        Polymer.YpPostBehavior
+      ]
     });
   </script>
 </dom-module>

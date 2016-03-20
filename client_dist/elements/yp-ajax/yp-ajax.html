@@ -11,8 +11,12 @@
 <dom-module id="yp-ajax">
   <style>
     :host {
-      height: 0;
-      width: 0;
+    }
+
+    .large {
+      height: 64px !important;
+      width: 64px !important;
+      --paper-spinner-stroke-width: 7px;
     }
   </style>
   <template>
@@ -20,19 +24,20 @@
     <paper-spinner id="spinner" hidden$="[[!useSpinner]]"></paper-spinner>
 
     <iron-ajax
-            id="ajax"
-            url="[[url]]"
-            params="[[params]]"
-            auto="[[auto]]"
-            method="[[method]]"
-            body="[[body]]"
-            handle-as="json"
-            content-type="application/json"
-            on-error="_error"
-            on-response="_response">
+      id="ajax"
+      url="[[url]]"
+      params="[[params]]"
+      auto="[[auto]]"
+      method="[[method]]"
+      body="[[body]]"
+      handle-as="json"
+      content-type="application/json"
+      on-error="_error"
+      loading="[[loading]]"
+      on-response="_response">
     </iron-ajax>
 
-    <paper-dialog id="error" modal>
+    <paper-dialog id="error">
       <p id="errorText">[[errorText]]</p>
       <div class="buttons">
         <paper-button dialog-confirm autofocus on-tap="_resetErrorText">OK</paper-button>
@@ -65,6 +70,10 @@
           value: "GET"
         },
 
+        loading: {
+          type: Boolean
+        },
+
         params: {
           type: Object,
           value: {}
@@ -94,6 +103,11 @@
         useSpinner: {
           type: Boolean,
           value: true
+        },
+
+        largeSpinner: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -102,9 +116,13 @@
         this.fire('response', event.detail);
       },
 
-      domReady: function() {
+      ready: function() {
         if (this.auto) {
           this.$.spinner.active = true;
+        }
+        if (this.largeSpinner) {
+          this.$.spinner.toggleClass('large',true);
+          debugger;
         }
       },
 
@@ -126,8 +144,8 @@
 
       showErrorDialog: function(errorText) {
         this.errorText = errorText;
+        this.$$("#error").open();
         this.moveDialogToTopDom("error");
-        this.$$("#formErrorDialog").open();
        // this.$.error.open();
       },
 

@@ -55,7 +55,6 @@
 
     <template is="dom-if" if="[[post]]" restamp>
       <div class="mapCanvas">
-
         <template is="dom-if" if="[[_withCoverMediaType(post,'none')]]">
           <iron-image sizing="cover" class="main-image" src="http://i.imgur.com/sdsFAoT.png"></iron-image>
         </template>
@@ -114,10 +113,10 @@
       _withCoverMediaType: function (post, mediaType) {
         if (!post)
           return false;
-        if (mediaType==='none') {
-          return (this.post && (!this.post.cover_media_type || this.post.cover_media_type==='none'));
+        if (mediaType == 'none') {
+          return (this.post && (!this.post.cover_media_type || this.post.cover_media_type == 'none'));
         } else {
-          return (this.post && this.post.cover_media_type===mediaType);
+          return (this.post && this.post.cover_media_type == mediaType);
         }
       },
 

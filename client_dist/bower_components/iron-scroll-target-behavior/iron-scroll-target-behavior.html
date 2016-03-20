@@ -17,20 +17,31 @@
 
       /**
        * Specifies the element that will handle the scroll event
-       * on the behalf of the current element. This is typically a reference to an `Element`,
+       * on the behalf of the current element. This is typically a reference to an element,
        * but there are a few more posibilities:
        *
        * ### Elements id
        *
        *```html
-       * <div id="scrollable-element" style="overflow-y: auto;">
+       * <div id="scrollable-element" style="overflow: auto;">
        *  <x-element scroll-target="scrollable-element">
-       *    Content
+       *    <!-- Content-->
        *  </x-element>
        * </div>
        *```
-       * In this case, `scrollTarget` will point to the outer div element. Alternatively,
-       * you can set the property programatically:
+       * In this case, the `scrollTarget` will point to the outer div element. 
+       *
+       * ### Document scrolling
+       *
+       * For document scrolling, you can use the reserved word `document`:
+       *
+       *```html
+       * <x-element scroll-target="document">
+       *   <!-- Content -->
+       * </x-element>
+       *```
+       *
+       * ### Elements reference
        *
        *```js
        * appHeader.scrollTarget = document.querySelector('#scrollable-element');
@@ -54,19 +65,26 @@
       // Remove lister to the current scroll target
       if (this._oldScrollTarget) {
         if (this._oldScrollTarget === this._doc) {
+        
           window.removeEventListener('scroll', this._boundScrollHandler);
+        
         } else if (this._oldScrollTarget.removeEventListener) {
+        
           this._oldScrollTarget.removeEventListener('scroll', this._boundScrollHandler);
+        
         }
         this._oldScrollTarget = null;
       }
       if (isAttached) {
         // Support element id references
-        if (typeof scrollTarget === 'string') {
+        if (scrollTarget === 'document') {
 
-          var ownerRoot = Polymer.dom(this).getOwnerRoot();
-          this.scrollTarget = (ownerRoot && ownerRoot.$) ?
-              ownerRoot.$[scrollTarget] : Polymer.dom(this.ownerDocument).querySelector('#' + scrollTarget);
+          this.scrollTarget = this._doc;
+
+        } else if (typeof scrollTarget === 'string') {
+
+          this.scrollTarget = this.domHost ? this.domHost.$[scrollTarget] :
+              Polymer.dom(this.ownerDocument).querySelector('#' + scrollTarget);
 
         } else if (this._scrollHandler) {
 
@@ -86,7 +104,7 @@
     },
 
     /**
-     * Runs on every scroll event. Consumer of this behavior may want to override this method.
+     * Runs on every scroll event. Consumer of this behavior may override this method.
      *
      * @protected
      */
@@ -165,15 +183,15 @@
      * Scrolls the content to a particular place.
      *
      * @method scroll
-     * @param {number} top The top position
      * @param {number} left The left position
+     * @param {number} top The top position
      */
-    scroll: function(top, left) {
+    scroll: function(left, top) {
        if (this.scrollTarget === this._doc) {
-        window.scrollTo(top, left);
+        window.scrollTo(left, top);
       } else if (this._isValidScrollTarget()) {
-        this.scrollTarget.scrollTop = top;
         this.scrollTarget.scrollLeft = left;
+        this.scrollTarget.scrollTop = top;
       }
     },
 

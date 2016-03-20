@@ -1,10 +1,10 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"><script src="../../../webcomponentsjs/webcomponents-lite.js"></script><script src="../../../web-component-tester/browser.js"></script><link rel="import" href="../../platinum-sw-register.html"><link rel="import" href="../../platinum-sw-cache.html"></head><body><platinum-sw-register skip-waiting="" clients-claim="" auto-register=""><platinum-sw-cache precache='["file.html", "file.txt"]' cache-config-file="cache-config.json"></platinum-sw-cache></platinum-sw-register><script>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"><script src="../../../webcomponentsjs/webcomponents-lite.js"></script><script src="../../../web-component-tester/browser.js"></script><script src="../controlled-promise.js"></script><link rel="import" href="../../platinum-sw-register.html"><link rel="import" href="../../platinum-sw-cache.html"></head><body><platinum-sw-register skip-waiting="" clients-claim="" auto-register=""><platinum-sw-cache precache='["file.html", "file.txt"]' cache-config-file="cache-config.json"></platinum-sw-cache></platinum-sw-register><script>
       if (window.caches) {
         var swc = document.querySelector('platinum-sw-cache');
 
         suite('Precaching', function() {
           test('precache results in Cache Storage API entries', function() {
-            return navigator.serviceWorker.ready.then(function() {
+            return window._controlledPromise.then(function() {
               return window.fetch(swc.cacheConfigFile).then(function(response) {
                 return response.json();
               }).then(function(config) {

@@ -77,6 +77,16 @@
           noCancelOnOutsideClick: {
             type: Boolean,
             value: true
+          },
+
+          /**
+           * Overridden from `IronOverlayBehavior`.
+           * Set to true to disable auto-focusing the toast or child nodes with
+           * the `autofocus` attribute` when the overlay is opened.
+           */
+          noAutoFocus: {
+            type: Boolean,
+            value: true
           }
         },
 

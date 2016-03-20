@@ -1,19 +1,17 @@
-<script>
+<link rel="import" href="app-scroll-effects-behavior.html"><script>
 
-(function() {
+(function(scrollEffects) {
   function interpolate(progress, points, fn, ctx) {
     fn.apply(ctx, points.map(function(point) {
       return point[0] + (point[1] - point[0]) * progress;
     }));
   }
 
-  Polymer.AppScrollEffects = {};
-
   /**
    * While scrolling down, fade in the rear background layer and fade out the front background
    * layer (opacity interpolated based on scroll position).
    */
-  Polymer.AppScrollEffects['blend-background'] = {
+  scrollEffects['blend-background'] = {
     setUp: function setUp() {
       this.$.backgroundFrontLayer.style.willChange = 'opacity';
       this.$.backgroundFrontLayer.style.webkitTransform = 'translateZ(0)';
@@ -31,7 +29,7 @@
    * Upon scrolling past a threshold, fade in the rear background layer and fade out the front
    * background layer (opacity CSS transitioned over time).
    */
-  Polymer.AppScrollEffects['fade-background'] = {
+  scrollEffects['fade-background'] = {
     setUp: function setUp(config) {
       var duration = config.duration || '0.5s';
       this.$.backgroundFrontLayer.style.willChange = 'opacity';
@@ -57,7 +55,7 @@
   /**
    * Vertically translate the background based on a factor of the scroll position.
    */
-  Polymer.AppScrollEffects['parallax-background'] = {
+  scrollEffects['parallax-background'] = {
     setUp: function setUp(config) {
       var scalar = parseFloat(config.scalar);
       this._deltaBg = this.$.backgroundFrontLayer.offsetHeight - this.$.background.offsetHeight;
@@ -88,7 +86,7 @@
    * Transform the font size of a designated title element between two values based on the scroll
    * position.
    */
-  Polymer.AppScrollEffects['resize-title'] = {
+  scrollEffects['resize-title'] = {
     setUp: function setUp() {
       var title = Polymer.dom(this).querySelector('[title]');
       var condensedTitle = Polymer.dom(this).querySelector('[condensed-title]');
@@ -153,7 +151,7 @@
    * Upon scrolling past a threshold, CSS transition the font size of a designated title element
    * between two values.
    */
-  Polymer.AppScrollEffects['resize-snapped-title'] = {
+  scrollEffects['resize-snapped-title'] = {
     setUp: function setUp(config) {
       var title = Polymer.dom(this).querySelector('[title]');
       var condensedTitle = Polymer.dom(this).querySelector('[condensed-title]');
@@ -200,7 +198,7 @@
    * Toggles the shadow property in app-header when content is scrolled to create a sense of depth
    * between the element and the content underneath.
    */
-  Polymer.AppScrollEffects['waterfall'] = {
+  scrollEffects.waterfall = {
     run: function run(p, y) {
       this.shadow = this.isOnScreen() && this.isContentBelow();
     }
@@ -209,13 +207,13 @@
   /**
    * Shorthand for the waterfall, resize-title, blend-background, and parallax-background effects.
    */
-  Polymer.AppScrollEffects['material'] = {
+  scrollEffects.material = {
     setUp: function() {
       this.effects = 'waterfall resize-title blend-background parallax-background';
       return false;
     }
   };
 
-})();
+})(Polymer.AppLayout.scrollEffects);
 
 </script>

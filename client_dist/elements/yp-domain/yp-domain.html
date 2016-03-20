@@ -11,6 +11,9 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
+<link rel="import" href="../ac-activities/ac-activities.html">
+
 <link rel="import" href="../yp-post/yp-post.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-community/yp-community-card.html">
@@ -30,6 +33,11 @@
         position: fixed;
         bottom: 24px;
         right: 28px;
+      }
+
+      ac-activities {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
       }
 
       .card-container {
@@ -79,7 +87,6 @@
         <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
           <paper-tab><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
           <paper-tab>[[t('news')]]</paper-tab>
-          <paper-tab>[[t('official')]]</paper-tab>
         </paper-tabs>
 
         <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
@@ -93,8 +100,9 @@
               <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
             </div>
           </section>
-          <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('news')]]</h1></section>
-          <section><h1 style="padding-left: 48px;text-align: center;font-size:48px;">[[t('official')]]</h1></section>
+          <section>
+            <ac-activities my-selected-id="1" selected-tab="[[selected]]" domain-id="[[domain.id]]"></ac-activities>
+          </section>
         </iron-pages>
         <paper-fab icon="group-work" elevation="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
       </div>
@@ -107,7 +115,8 @@
       is: 'yp-domain',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.YpScrollTabBehavior
       ],
 
       properties: {
