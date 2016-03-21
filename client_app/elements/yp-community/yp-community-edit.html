@@ -16,7 +16,7 @@
 <dom-module id="yp-community-edit">
   <template>
 
-    <style>
+    <style is="custom-style">
       .access {
         @apply(--layout-horizontal);
         @apply(--layout-center-justified);
@@ -47,7 +47,7 @@
                      label="[[t('Name')]]"
                      value="{{community.name}}"
                      maxlength="60"
-                     char-counter>
+                     char-counter class="mainInput">
         </paper-input>
 
         <paper-textarea id="description"
@@ -57,7 +57,7 @@
                         char-counter
                         rows="2"
                         max-rows="5"
-                        maxlength="300">
+                        maxlength="300" class="mainInput">
         </paper-textarea>
       </div>
       <p> </p>
