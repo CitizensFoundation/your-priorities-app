@@ -53,6 +53,35 @@
         padding-top: 16px;
       }
 
+
+      #paper_tabs {
+        max-width: 1024px;
+      }
+
+      paper-tab {
+        width: 500px;
+      }
+
+      @media (max-width: 1024px) {
+        #paper_tabs {
+          max-width: 600px;
+        }
+
+        paper-tab {
+          width: 300px;
+        }
+      }
+
+      @media (max-width: 500px) {
+        #paper_tabs {
+          max-width: 400px;
+        }
+
+        paper-tab {
+          width: 200px;
+        }
+      }
+
       @media (max-width: 330px) {
 
         .card {
@@ -84,10 +113,12 @@
       </div>
 
       <div class="layout vertical">
-        <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-          <paper-tab><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
-          <paper-tab>[[t('news')]]</paper-tab>
-        </paper-tabs>
+        <div class="layout horizontal center-center">
+          <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+            <paper-tab><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
+            <paper-tab>[[t('news')]]</paper-tab>
+          </paper-tabs>
+        </div>
 
         <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
           <section>
