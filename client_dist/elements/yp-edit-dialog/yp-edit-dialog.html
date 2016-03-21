@@ -39,7 +39,7 @@
       }
 
       #dismissBtn {
-        margin-left: 0px;
+        margin-left: 0;
         margin-right: 32px;
         @apply(--paper-fullscreen-dialog-dismissbtn);
       }
@@ -75,18 +75,29 @@
       }
 
       paper-header-panel {
-        margin-top: 0px;
-        padding-top: 0px !important;
+        margin-top: 0;
+        padding-top: 0 !important;
        }
 
       paper-toolbar {
-        margin-top: 0px;
-        padding-top: 0px;
+        margin-top: 0;
+        padding-top: 0;
       }
 
       .popUpDialog {
-        max-height: 100% !important;
+        width: 420px;
       }
+
+      .popUpDialogDouble {
+        width: 840px;
+      }
+
+      @media (max-width: 1024px) {
+        paper-dialog > * {
+          padding: 0 0;
+        }
+      }
+
     </style>
 
     <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop$="[[!narrowPad]]" modal>
@@ -199,6 +210,11 @@
 
         params: {
           type: String
+        },
+
+        doubleWidth: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -209,6 +225,8 @@
       _computeClass: function (narrow) {
         if (narrow)
           return "fullScreenDialog";
+        else if (this.doubleWidth)
+          return "popUpDialogDouble";
         else
           return "popUpDialog";
       },
@@ -221,8 +239,9 @@
       },
 
       open: function() {
-        this.moveDialogToTopDom("editDialog");
+//        this.moveDialogToTopDom("editDialog");
         this.$$("#editDialog").open();
+        debugger;
       },
 
       close: function() {

@@ -50,14 +50,14 @@
       }
 
       .container {
-        width: 900px;
-        height: 150%;
+        width: 100%;
+        height: 100%;
+        min-height: 500px;
       }
 
       .subContainer {
         width: 46%;
         vertical-align: top;
-        display: inline-block;
       }
 
       @media (max-width: 600px) {
@@ -83,7 +83,7 @@
       }
     </style>
 
-    <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" save-text="[[saveText]]" toast-text="[[toastText]]" params="[[params]]">
+    <yp-edit-dialog double-width id="editDialog" action="[[action]]" method="[[method]]" save-text="[[saveText]]" toast-text="[[toastText]]" params="[[params]]">
       <h2>[[editHeaderText]]</h2>
       <div class="layout horizontal wrap container">
         <div class="layout self-start subContainer leftContainer">
@@ -106,6 +106,19 @@
                           maxlength="500">
           </paper-textarea>
 
+          <template is="dom-if" if="[[_showCategories(group)]]">
+            <paper-dropdown-menu label="[[t('category.select')]]">
+              <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
+                <template is="dom-repeat" items="[[group.Categories]]" as="category">
+                  <paper-item data-category-id$="[[category.id]]">[[category.name]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-dropdown-menu>
+            <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
+          </template>
+        </div>
+
+        <div class="layout self-start subContainer rightContainer">
           <template is="dom-if" restamp if="[[new]]">
             <paper-textarea id="pointFor"
                             name="pointFor"
@@ -118,19 +131,6 @@
             </paper-textarea>
           </template>
 
-        </div>
-
-        <div class="layout self-start subContainer rightContainer">
-          <template is="dom-if" if="[[_showCategories(group)]]">
-            <paper-dropdown-menu label="[[t('category.select')]]">
-              <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
-                <template is="dom-repeat" items="[[group.Categories]]" as="category">
-                  <paper-item data-category-id$="[[category.id]]">[[category.name]]</paper-item>
-                </template>
-              </paper-menu>
-            </paper-dropdown-menu>
-            <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
-          </template>
 
           <div class="layout vertical additionalSettings">
             <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]" class="additionalButton"></yp-post-location>
