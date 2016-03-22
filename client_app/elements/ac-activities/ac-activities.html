@@ -6,6 +6,8 @@
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
+<link rel="import" href="withinviewport-import.html">
+
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 
@@ -75,14 +77,11 @@
       </iron-list>
       <div class="layout horizontal center-center">
         <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
+        <template is="dom-if" if="[[moreToLoad]]" restamp>
+          <paper-button id="loadMoreButton">[[t('more')]]</paper-button>
+        </template>
       </div>
     </div>
-
-    <iron-scroll-threshold id="scrollThreshold"
-                           lower-threshold="500"
-                           on-lower-threshold="_scrollAtBottom"
-                           scroll-target="document">
-    </iron-scroll-threshold>
   </template>
 
   <script>
@@ -94,8 +93,7 @@
       is: 'ac-activities',
 
       behaviors: [
-        Polymer.appHelpers,
-        Polymer.YpScrollTabBehavior
+        Polymer.appHelpers
       ],
 
       properties: {
@@ -137,6 +135,24 @@
 
         oldestProcessedActivityAt: {
           type: Date
+        },
+
+        moreToLoad: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      ready: function () {
+        window.addEventListener('scroll', function(e) {
+          this._isLoadMoreElementInView();
+        }.bind(this));
+      },
+
+      _isLoadMoreElementInView: function () {
+        var loadMoreButton = this.$$("#loadMoreButton");
+        if (loadMoreButton && withinviewport(loadMoreButton)) {
+          this._loadMoreData();
         }
       },
 
@@ -159,6 +175,7 @@
 
       _loadMoreData: function () {
         if (this.$.ajax.url!='' && this.oldestProcessedActivityAt) {
+          this.set('moreToLoad', false);
           this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
           this.$.ajax.generateRequest();
         }
@@ -192,12 +209,15 @@
         }.bind(this));
 
         if (activities.length>0) {
+          this.async(function () {
+            this.set('moreToLoad', true);
+          }, 250);
         }
 
         this.$.list.fire('iron-resize');
 
         // Clear the lower threshold so we can load more data when the user scrolls down again.
-        this.$.scrollThreshold.clearTriggers();
+        // this.$.scrollThreshold.clearTriggers();
       }
     });
   </script>

@@ -17,7 +17,8 @@
     "app-layout": "PolymerLabs/app-layout",
     "lodash-element": "~1.0.2",
     "moment-element": "~0.3.0",
-    "re-captcha": "~1.1.1"
+    "re-captcha": "~1.1.1",
+    "within-viewport": "~1.0.0"
   },
   "devDependencies": {
     "web-component-tester": "*",

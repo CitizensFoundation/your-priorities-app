@@ -15,11 +15,11 @@ var useragent = require('express-useragent');
 var requestIp = require('request-ip');
 
 var passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy
-  , FacebookStrategy = require('passport-facebook').Strategy
-  , GitHubStrategy = require('passport-github').Strategy
-  , TwitterStrategy = require('passport-twitter').Strategy
-  , GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+    , LocalStrategy = require('passport-local').Strategy
+    , FacebookStrategy = require('passport-facebook').Strategy
+    , GitHubStrategy = require('passport-github').Strategy
+    , TwitterStrategy = require('passport-twitter').Strategy
+    , GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var index = require('./controllers/index');
 var news_feeds = require('./active-citizen/controllers/news_feeds');
@@ -68,13 +68,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 var sessionConfig = {
-  store: new RedisStore({url: process.env.REDIS_URL}),
-  name: 'yrpri.sid',
-  secret: process.env.SESSION_SECRET ? process.env.SESSION_SECRET : 'not so secret... use env var.',
-  resave: true,
-  saveUninitialized: true,
-  cookie: {}
-};
+    store: new RedisStore({url: process.env.REDIS_URL}),
+    name: 'yrpri.sid',
+    secret: process.env.SESSION_SECRET ? process.env.SESSION_SECRET : 'not so secret... use env var.',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {}
+  };
 
 if (app.get('env') === 'production') {
   app.set('trust proxy', 1); // trust first proxy
@@ -116,21 +116,21 @@ passport.deserializeUser(function(id, done) {
       attributes: ['id', 'value', 'post_id'],
       required: false
     },
-      {
-        model: models.PointQuality,
-        attributes: ['id', 'value', 'point_id'],
-        required: false
-      },
-      {
-        model: models.Image, as: 'UserProfileImages',
-        required: false
-      },
-      {
-        model: models.Image, as: 'UserHeaderImages',
-        required: false
-      }
-    ]
-  }).then(function(user) {
+    {
+      model: models.PointQuality,
+      attributes: ['id', 'value', 'point_id'],
+      required: false
+    },
+    {
+      model: models.Image, as: 'UserProfileImages',
+      required: false
+    },
+    {
+      model: models.Image, as: 'UserHeaderImages',
+      required: false
+    }
+  ]
+}).then(function(user) {
     if (user) {
       log.info("User Deserialized", { context: 'deserializeUser', user: toJson(user)});
       done(null, user);
@@ -146,24 +146,24 @@ passport.deserializeUser(function(id, done) {
 
 // Username and Password Authentication
 passport.use(new LocalStrategy(
-  {
-    usernameField: "email"
-  },
-  function(email, password, done) {
-    models.User.find({
-      where: { email: email }
-    }).then(function(user) {
-      if (user) {
-        user.validatePassword(password, done);
-      } else {
-        log.warn("User LocalStrategy Incorrect username", { context: 'localStrategy', user: toJson(user), err: 'Incorrect username', errorStatus: 401 });
-        return done(null, false, { message: 'Incorrect username.' });
-      }
-    }).catch(function(error) {
-      log.error("User LocalStrategy Error", { context: 'localStrategy', err: error, errorStatus: 500 });
-      done(error);
-    });
-  }
+    {
+      usernameField: "email"
+    },
+    function(email, password, done) {
+      models.User.find({
+        where: { email: email }
+      }).then(function(user) {
+        if (user) {
+          user.validatePassword(password, done);
+        } else {
+          log.warn("User LocalStrategy Incorrect username", { context: 'localStrategy', user: toJson(user), err: 'Incorrect username', errorStatus: 401 });
+          return done(null, false, { message: 'Incorrect username.' });
+        }
+      }).catch(function(error) {
+        log.error("User LocalStrategy Error", { context: 'localStrategy', err: error, errorStatus: 500 });
+        done(error);
+      });
+    }
 ));
 
 if (process.env.FACEBOOK_APP_ID) {
