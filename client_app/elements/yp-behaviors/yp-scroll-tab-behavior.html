@@ -7,42 +7,41 @@
   Polymer.YpScrollTabBehavior = {
 
     properties: {
-      selectedTab: {
-        type: Number,
-        observer: '_selectedTabChanged'
-      },
-
-      mySelectedId: {
-        type: Number,
-        value: 0
-      },
-
-      active: {
+      moreToLoad: {
         type: Boolean,
         value: false
       }
     },
 
-    _selectedTabChanged: function (newValue) {
-      this.async(function () {
-        if (newValue == this.mySelectedId) {
-          this.$$("#list").scrollTarget = this.$$("#scrollableRegion");
-          this.$$("#scrollThreshold").scrollTarget = "document";
-          this.$$("#list").fire('iron-resize');
-          this.active = true;
-        } else {
-          this.$$("#list").scrollTarget = null;
-          this.$$("#scrollThreshold").scrollTarget = null;
-          this.active = false;
-        }
-      },50);
+    attached: function () {
+      window.addEventListener('scroll', function(e) {
+        this._isLoadMoreElementInView();
+      }.bind(this));
     },
 
-    _scrollAtBottom: function () {
-      if (this.active) {
+    detached: function () {
+      this.unlisten(window, 'scroll');
+    },
+
+    _isLoadMoreElementInView: function () {
+      var loadMoreButton = this.$$("#loadMoreButton");
+      if (this._isVisible() && loadMoreButton && withinviewport(loadMoreButton)) {
+        debugger;
         this._loadMoreData();
       }
-    }
+    },
 
+    _isVisible: function () {
+      return Boolean(this.offsetWidth || this.offsetHeight);
+    },
+
+    setMoreToLoad: function () {
+      this.async(function () {
+        this.set('moreToLoad', true);
+        this.async(function () {
+          this._isLoadMoreElementInView();
+        }, 400);
+      }, 250);
+    }
   }
 </script>

@@ -18,7 +18,8 @@
     "lodash-element": "~1.0.2",
     "moment-element": "~0.3.0",
     "re-captcha": "~1.1.1",
-    "within-viewport": "~1.0.0"
+    "within-viewport": "~1.0.0",
+    "vaadin-icons": "~1.0.0-alpha2"
   },
   "devDependencies": {
     "web-component-tester": "*",
