@@ -211,6 +211,9 @@
         if (activities.length>0) {
           this.async(function () {
             this.set('moreToLoad', true);
+            this.async(function () {
+              this._isLoadMoreElementInView();
+            }, 100);
           }, 250);
         }
 

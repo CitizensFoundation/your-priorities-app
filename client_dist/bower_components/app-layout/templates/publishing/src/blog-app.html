@@ -1,42 +1,4 @@
-<!--
-@license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
-<link rel="import" href="../../../../polymer/polymer.html">
-
-<link rel="import" href="../../../../lab-elements/lab-router.html">
-
-<link rel="import" href="../../../../iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../../../iron-pages/iron-pages.html">
-<link rel="import" href="../../../../iron-selector/iron-selector.html">
-
-<link rel="import" href="../../../../paper-fab/paper-fab.html">
-<link rel="import" href="../../../../paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../../../paper-styles/shadow.html">
-
-<link rel="import" href="../../../app-drawer-layout/app-drawer-layout.html">
-<link rel="import" href="../../../app-drawer/app-drawer.html">
-<link rel="import" href="../../../app-scroll-effects/app-scroll-effects.html">
-<link rel="import" href="../../../app-header/app-header.html">
-<link rel="import" href="../../../app-header-layout/app-header-layout.html">
-<link rel="import" href="../../../app-toolbar/app-toolbar.html">
-<link rel="import" href="../../../app-scrollpos-control/app-scrollpos-control.html">
-
-<link rel="import" href="article-headline.html">
-<link rel="import" href="article-detail.html">
-<link rel="import" href="two-columns-grid.html">
-
-<dom-module id="blog-app">
-
-  <template>
-
-    <style>
+<link rel="import" href="../../../../polymer/polymer.html"><link rel="import" href="../../../../lab-elements/lab-router.html"><link rel="import" href="../../../../iron-flex-layout/iron-flex-layout.html"><link rel="import" href="../../../../iron-pages/iron-pages.html"><link rel="import" href="../../../../iron-selector/iron-selector.html"><link rel="import" href="../../../../paper-fab/paper-fab.html"><link rel="import" href="../../../../paper-icon-button/paper-icon-button.html"><link rel="import" href="../../../../paper-styles/shadow.html"><link rel="import" href="../../../app-drawer-layout/app-drawer-layout.html"><link rel="import" href="../../../app-drawer/app-drawer.html"><link rel="import" href="../../../app-scroll-effects/app-scroll-effects.html"><link rel="import" href="../../../app-header/app-header.html"><link rel="import" href="../../../app-header-layout/app-header-layout.html"><link rel="import" href="../../../app-toolbar/app-toolbar.html"><link rel="import" href="../../../app-scrollpos-control/app-scrollpos-control.html"><link rel="import" href="article-headline.html"><link rel="import" href="article-detail.html"><link rel="import" href="two-columns-grid.html"><dom-module id="blog-app"><template><style>
 
       :host {
         --app-primary-color: #404040;
@@ -143,104 +105,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       }
 
-    </style>
-
-    <!-- setup routes -->
-    <lab-router route="{{route}}"></lab-router>
-    <lab-route route="{{route}}" matches=":category" category="{{category}}" subroute="{{subroute}}"></lab-route>
-    <lab-route route="{{subroute}}" matches=":page" page="{{page}}" subroute="{{title}}"></lab-route>
-
-    <!-- manages page's scroll position -->
-    <app-scrollpos-control selected="{{category}}/{{page}}" reset="{{_equal(page, 'detail')}}"></app-scrollpos-control>
-
-    <app-drawer-layout drawer-width="288px" responsive-width="1280px">
-
-      <!-- nav panel -->
-      <app-drawer id="drawer">
-        <app-header-layout has-scrolling-region>
-
-          <app-header fixed>
-
-            <!-- top toolbar -->
-            <app-toolbar></app-toolbar>
-
-            <!-- bottom toolbar -->
-            <app-toolbar class="title-toolbar nav-title-toolbar">
-              <div class="title">ZUPERK&Uuml;LBLOG</div>
-            </app-toolbar>
-
-          </app-header>
-
-          <!-- nav menu -->
-          <iron-selector class="nav-menu" selected="{{category}}" attr-for-selected="name" on-iron-activate="_showList">
-            <template is="dom-repeat" items="{{articles}}">
-              <a name="{{item.name}}" href="#/{{item.name}}/list">{{item.title}}</a>
-            </template>
-          </iron-selector>
-
-        </app-header-layout>
-      </app-drawer>
-
-      <!-- main panel -->
-      <app-header-layout>
-
-        <app-header fixed effects="waterfall" class="main-header">
-
-          <!-- top toolbar -->
-          <app-toolbar>
-            <!-- menu button -->
-            <paper-icon-button icon="app:menu" drawer-toggle hidden$="{{_equal(page, 'detail')}}"></paper-icon-button>
-            <!-- back button -->
-            <a href="#/{{category}}/list" hidden$="{{_equal(page, 'list')}}">
-              <paper-icon-button icon="app:arrow-back"></paper-icon-button>
-            </a>
-          </app-toolbar>
-
-          <!-- bottom toolbar -->
-          <app-toolbar class="title-toolbar main-title-toolbar">
-            <div class="title">ZUPERK&Uuml;LBLOG</div>
-          </app-toolbar>
-
-        </app-header>
-
-        <!-- list/detail pages -->
-        <iron-pages selected="{{page}}" attr-for-selected="name">
-
-          <!-- list page -->
-          <iron-pages name="list" selected="{{category}}" attr-for-selected="name">
-
-            <template is="dom-repeat" items="{{articles}}" as="category">
-              <!-- category page (lazy-loaded) -->
-              <template is="dom-if" if="{{_equal(category, {{category.name}})}}">
-                <section class="category-page" name="{{category.name}}">
-  
-                  <!-- 2-columns grid -->
-                  <two-columns-grid column-width="396" gutter="4">
-                    <template is="dom-repeat" items="{{category.items}}" as="article">
-                      <a is="article-headline" href="#/{{category.name}}/detail/{{article.title}}" article="{{article}}"></a>
-                    </template>
-                  </two-columns-grid>
-                  
-                </section>
-              </template>
-            </template>
-
-          </iron-pages>
-
-          <!-- detail page (lazy-loaded) -->
-          <template is="dom-if" if="{{_equal(page, 'detail')}}">
-            <article-detail name="detail" article="{{article}}"></article-detail>
-          </template>
-
-        </iron-pages>
-
-      </app-header-layout>
-
-    </app-drawer-layout>
-
-  </template>
-
-  <script>
+    </style><lab-router route="{{route}}"></lab-router><lab-route route="{{route}}" matches=":category" category="{{category}}" subroute="{{subroute}}"></lab-route><lab-route route="{{subroute}}" matches=":page" page="{{page}}" subroute="{{title}}"></lab-route><app-scrollpos-control selected="{{category}}/{{page}}" reset="{{_equal(page, 'detail')}}"></app-scrollpos-control><app-drawer-layout drawer-width="288px" responsive-width="1280px"><app-drawer id="drawer"><app-header-layout has-scrolling-region=""><app-header fixed=""><app-toolbar></app-toolbar><app-toolbar class="title-toolbar nav-title-toolbar"><div class="title">ZUPERK&Uuml;LBLOG</div></app-toolbar></app-header><iron-selector class="nav-menu" selected="{{category}}" attr-for-selected="name" on-iron-activate="_showList"><template is="dom-repeat" items="{{articles}}"><a name="{{item.name}}" href="#/{{item.name}}/list">{{item.title}}</a></template></iron-selector></app-header-layout></app-drawer><app-header-layout><app-header fixed="" effects="waterfall" class="main-header"><app-toolbar><paper-icon-button icon="app:menu" drawer-toggle="" hidden$="{{_equal(page, 'detail')}}"></paper-icon-button><a href="#/{{category}}/list" hidden$="{{_equal(page, 'list')}}"><paper-icon-button icon="app:arrow-back"></paper-icon-button></a></app-toolbar><app-toolbar class="title-toolbar main-title-toolbar"><div class="title">ZUPERK&Uuml;LBLOG</div></app-toolbar></app-header><iron-pages selected="{{page}}" attr-for-selected="name"><iron-pages name="list" selected="{{category}}" attr-for-selected="name"><template is="dom-repeat" items="{{articles}}" as="category"><template is="dom-if" if="{{_equal(category, {{category.name}})}}"><section class="category-page" name="{{category.name}}"><two-columns-grid column-width="396" gutter="4"><template is="dom-repeat" items="{{category.items}}" as="article"><a is="article-headline" href="#/{{category.name}}/detail/{{article.title}}" article="{{article}}"></a></template></two-columns-grid></section></template></template></iron-pages><template is="dom-if" if="{{_equal(page, 'detail')}}"><article-detail name="detail" article="{{article}}"></article-detail></template></iron-pages></app-header-layout></app-drawer-layout></template><script>
 
     Polymer({
 
@@ -306,6 +171,4 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     });
 
-  </script>
-
-</dom-module>
+  </script></dom-module>
