@@ -1,4 +1,25 @@
-<link rel="import" href="../../../../polymer/polymer.html"><link rel="import" href="../../../../iron-flex-layout/iron-flex-layout.html"><link rel="import" href="../../../../paper-icon-button/paper-icon-button.html"><link rel="import" href="../../../../paper-fab/paper-fab.html"><link rel="import" href="../../../../iron-icons/iron-icons.html"><link rel="import" href="shrine-simple-item.html"><dom-module id="shrine-detail"><template><style>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../../../polymer/polymer.html">
+<link rel="import" href="../../../../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../../paper-fab/paper-fab.html">
+<link rel="import" href="../../../../iron-icons/iron-icons.html">
+<link rel="import" href="shrine-simple-item.html">
+
+<dom-module id="shrine-detail">
+
+  <template>
+
+    <style>
 
       :host {
         @apply(--layout-horizontal);
@@ -197,7 +218,51 @@
         }
       }
 
-    </style><div class="items"><div class="itemsGrid"><template is="dom-repeat" items="[[relatedItems]]"><a href$="#[[section]]/[[item.id]]" title$="[[item.title]]" class="item"><shrine-simple-item item="[[item]]"></shrine-simple-item></a></template></div></div><div class="detailSection"><div class="detailGrid"><div class="image"><img id="img"><div class="info"><paper-icon-button icon="info-outline"></paper-icon-button></div></div><div class="content"><h1>[[item.title]]</h1><p>[[item.description]]</p><div class="quantitySelector"><select><option value="1">Quantity 1</option><option value="2">Quantity 2</option><option value="3">Quantity 3</option><option value="4">Quantity 4</option><option value="5">Quantity 5</option></select></div><paper-fab mini="" icon="add-shopping-cart"></paper-fab><div class="store"><h3>[[item.storeName]]</h3><p>[[item.storeDescription]]</p></div></div></div></div></template><script>
+    </style>
+
+    <div class="items">
+      <div class="itemsGrid">
+        <template is="dom-repeat" items="[[relatedItems]]">
+          <a href$="#[[section]]/[[item.id]]" title$="[[item.title]]" class="item">
+            <shrine-simple-item item="[[item]]"></shrine-simple-item>
+          </a>
+        </template>
+      </div>
+    </div>
+
+    <div class="detailSection">
+      <div class="detailGrid">
+        <div class="image">
+          <img id="img">
+          <div class="info">
+            <paper-icon-button icon="info-outline"></paper-icon-button>
+          </div>
+        </div>
+    
+        <div class="content">
+          <h1>[[item.title]]</h1>
+          <p>[[item.description]]</p>
+          <div class="quantitySelector">
+            <select>
+              <option value="1">Quantity 1</option>
+              <option value="2">Quantity 2</option>
+              <option value="3">Quantity 3</option>
+              <option value="4">Quantity 4</option>
+              <option value="5">Quantity 5</option>
+            </select>
+          </div>
+          <paper-fab mini icon="add-shopping-cart"></paper-fab>
+          <div class="store">
+            <h3>[[item.storeName]]</h3>
+            <p>[[item.storeDescription]]</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
 
   Polymer({
 
@@ -227,4 +292,6 @@
 
   });
 
-  </script></dom-module>
+  </script>
+
+</dom-module>
