@@ -1,6 +1,6 @@
 {
   "name": "iron-elements",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A set of visual and non-visual utility elements. Includes elements for working with layout, user input, selection, and scaffolding apps",
   "keywords": [
     "web-components",
