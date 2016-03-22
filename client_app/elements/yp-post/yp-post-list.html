@@ -70,7 +70,6 @@
 
       #scrollableRegion {
         height: 100%;
-        overflow: visible;
       }
 
       iron-list {
@@ -197,6 +196,9 @@
       ready: function () {
         this.set("posts", []);
         this._loadMoreData();
+        window.addEventListener('scroll', function(e) {
+          this._isLoadMoreElementInView();
+        }.bind(this));
       },
 
       _groupIdChanged: function (newValue, oldValue) {
