@@ -12,14 +12,14 @@
         value: false
       }
     },
-    
+
     detached: function () {
-      this.unlisten(window, 'scroll');
+      window.removeEventListener('scroll', this._isLoadMoreElementInView);
+      debugger;
     },
 
     _isLoadMoreElementInView: function () {
       var loadMoreButton = this.$$("#loadMoreButton");
-      debugger;
       if (this._isVisible() && loadMoreButton && withinviewport(loadMoreButton)) {
         this._loadMoreData();
       }
