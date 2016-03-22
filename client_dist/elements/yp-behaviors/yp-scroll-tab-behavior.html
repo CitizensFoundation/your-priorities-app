@@ -12,27 +12,21 @@
         value: false
       }
     },
-
-    attached: function () {
-      window.addEventListener('scroll', function(e) {
-        this._isLoadMoreElementInView();
-      }.bind(this));
-    },
-
+    
     detached: function () {
       this.unlisten(window, 'scroll');
     },
 
     _isLoadMoreElementInView: function () {
       var loadMoreButton = this.$$("#loadMoreButton");
+      debugger;
       if (this._isVisible() && loadMoreButton && withinviewport(loadMoreButton)) {
-        debugger;
         this._loadMoreData();
       }
     },
 
     _isVisible: function () {
-      return Boolean(this.offsetWidth || this.offsetHeight);
+      return this.offsetParent && Boolean(this.offsetParent.offsetWidth || this.offsetParent.offsetHeight);
     },
 
     setMoreToLoad: function () {

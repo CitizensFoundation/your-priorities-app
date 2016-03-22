@@ -82,7 +82,7 @@
                   <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
                 </div>
               </section>
-              <ac-activities my-selected-id="1" selected-tab="[[selected]]" community-id="[[community.id]]"></ac-activities>
+              <ac-activities community-id="[[community.id]]"></ac-activities>
             </iron-pages>
           </div>
           <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>

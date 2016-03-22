@@ -139,6 +139,12 @@
         }
       },
 
+      ready: function () {
+        window.addEventListener('scroll', function(e) {
+          this._isLoadMoreElementInView();
+        }.bind(this));
+      },
+
       _isActivityType(activity, type) {
         return activity.type==type
       },
