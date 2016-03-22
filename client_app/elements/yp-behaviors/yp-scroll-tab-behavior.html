@@ -13,6 +13,10 @@
       }
     },
 
+    attached: function () {
+      window.addEventListener('scroll', this._isLoadMoreElementInView.bind(this));
+    },
+
     detached: function () {
       window.removeEventListener('scroll', this._isLoadMoreElementInView);
       debugger;
