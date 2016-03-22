@@ -2,13 +2,14 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
-<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="../with-in-viewport/with-in-viewport.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
@@ -96,15 +97,11 @@
       </iron-list>
       <div class="layout horizontal center-center">
         <yp-ajax id="ajax" large-spinner on-response="_postsResponse"></yp-ajax>
+        <template is="dom-if" if="[[moreToLoad]]" restamp>
+          <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
+        </template>
       </div>
     </div>
-
-
-    <iron-scroll-threshold id="scrollThreshold"
-                           lower-threshold="100"
-                           on-lower-threshold="_scrollAtBottom" >
-    </iron-scroll-threshold>
-
   </template>
 
   <script>
@@ -215,6 +212,7 @@
       },
 
       _loadMoreData: function () {
+        this.set('moreToLoad', false);
         if (!this.filter)
           this.set('filter','top');
         if (this.searchingFor) {
@@ -247,7 +245,10 @@
 
         this.$$("#list").fire('iron-resize');
 
-        this.$$('#scrollThreshold').clearTriggers();
+        if (posts.length>0) {
+          this.setMoreToLoad();
+        }
+
         this._processCategories();
       },
 
