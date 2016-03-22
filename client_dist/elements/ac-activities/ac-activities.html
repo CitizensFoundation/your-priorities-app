@@ -140,10 +140,6 @@
         }
       },
 
-      ready: function () {
-        window.addEventListener('scroll', this._isLoadMoreElementInView.bind(this));
-      },
-
       _isActivityType(activity, type) {
         return activity.type==type
       },
