@@ -75,6 +75,7 @@
           </div>
         </template>
       </iron-list>
+
       <div class="layout horizontal center-center">
         <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
         <template is="dom-if" if="[[moreToLoad]]" restamp>
@@ -140,9 +141,7 @@
       },
 
       ready: function () {
-        window.addEventListener('scroll', function(e) {
-          this._isLoadMoreElementInView();
-        }.bind(this));
+        window.addEventListener('scroll', this._isLoadMoreElementInView.bind(this));
       },
 
       _isActivityType(activity, type) {
