@@ -30860,6 +30860,14 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
      * Cancel the slow panning animation.
      * @method stop
      */
+    detached: function() {
+      this.stop();
+    },
+
+    /**
+     * Cancel the slow panning animation.
+     * @method stop
+     */
     stop: function() {
       cancelAnimationFrame(this.rAFid);
     },
