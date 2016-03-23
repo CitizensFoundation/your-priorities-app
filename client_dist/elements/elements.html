@@ -44866,7 +44866,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             </section>
 
             <section data-route="group">
-              <template is="dom-if" if="[[params.groupId]]">
+              <template is="dom-if" if="[[params.groupId]]" restamp="">
                 <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]" searching-for="[[params.searchingFor]]" category-id="[[params.categoryId]]" category-name="[[params.categoryName]]" on-change-header="onChangeHeader"></yp-group>
               </template>
             </section>
@@ -44886,7 +44886,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <template is="dom-if" if="[[user]]">
         <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
       </template>
-    
+
   </template>
 
   <script>
