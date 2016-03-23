@@ -27,7 +27,7 @@
 
 <dom-module id="yp-group">
   <template>
-    <style>
+    <style is="custom-style">
 
       :host {
         @apply(--layout-vertical);
@@ -83,59 +83,60 @@
     </style>
 
     <yp-ajax id="ajax" on-response="_groupsResponse"></yp-ajax>
-
     <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
 
-    <div class="layout vertical flex"  style="margin-top: -40px;">
-      <div class="layout vertical center-center" style="width:100%;">
-        <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
-      </div>
-      <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-        <paper-tab>[[t('news')]]</paper-tab>
-        <paper-tab id="tab1">
-          <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
-        </paper-tab>
-        <template is="dom-if" if="[[hasNonOpenPosts]]">
-          <paper-tab>
-            <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
+    <template is="dom-if" if="[[group]]">
+      <div class="layout vertical flex"  style="margin-top: -40px;">
+        <div class="layout vertical center-center" style="width:100%;">
+          <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
+        </div>
+        <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+          <paper-tab>[[t('news')]]</paper-tab>
+          <paper-tab id="tab1">
+            <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
           </paper-tab>
-          <paper-tab>
-            <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
-          </paper-tab>
-          <paper-tab>
-            <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
-          </paper-tab>
-        </template>
-      </paper-tabs>
-      <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <section>
-          <ac-activities my-selected-id="0" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
-        </section>
-        <section>
+          <template is="dom-if" if="[[hasNonOpenPosts]]">
+            <paper-tab>
+              <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
+            </paper-tab>
+            <paper-tab>
+              <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
+            </paper-tab>
+            <paper-tab>
+              <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
+            </paper-tab>
+          </template>
+        </paper-tabs>
+        <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+          <section>
+            <ac-activities my-selected-id="0" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
+          </section>
+          <section>
             <div class="layout horizontal center-center">
               <yp-post-list my-selected-id="1" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
             </div>
-        </section>
-        <template is="dom-if" if="[[hasNonOpenPosts]]">
-          <section>
-            <div class="layout horizontal center-center">
-              <yp-post-list my-selected-id="2" selected-tab="[[selected]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-            </div>
           </section>
-          <section>
+          <template is="dom-if" if="[[hasNonOpenPosts]]">
+            <section>
+              <div class="layout horizontal center-center">
+                <yp-post-list my-selected-id="2" selected-tab="[[selected]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              </div>
+            </section>
+            <section>
               <div class="layout horizontal center-center">
                 <yp-post-list my-selected-id="3" selected-tab="[[selected]]" status-filter="successful" tab-counter-id="tabCountSuccessful" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
               </div>
-          </section>
-          <section>
+            </section>
+            <section>
               <div class="layout horizontal center-center">
                 <yp-post-list my-selected-id="4" selected-tab="[[selected]]" status-filter="failed" tab-counter-id="tabCountFailed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
               </div>
-          </section>
-        </template>
-      </iron-pages>
-      <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
-    </div>
+            </section>
+          </template>
+        </iron-pages>
+        <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
+      </div>
+    </template>
   </template>
 
   <script>
@@ -222,7 +223,7 @@
       },
 
       _openEdit: function () {
-        this.$.groupEdit.open('edit', { groupId: this.group.id });
+        this.$$("#groupEdit").open('edit', { groupId: this.group.id });
       },
 
       _refresh: function () {
