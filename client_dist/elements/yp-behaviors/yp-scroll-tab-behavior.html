@@ -15,11 +15,12 @@
 
     attached: function () {
       window.addEventListener('scroll', this._isLoadMoreElementInView.bind(this));
+      console.log("ATTACHED " + this.localName);
     },
 
     detached: function () {
       window.removeEventListener('scroll', this._isLoadMoreElementInView);
-      debugger;
+      console.log("DEATTACHED " + this.localName);
     },
 
     _isLoadMoreElementInView: function () {
