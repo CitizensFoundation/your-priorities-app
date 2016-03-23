@@ -1,0 +1,309 @@
+<style is="custom-style">
+
+  /*
+   Polymer includes a shim for CSS Custom Properties that we can use for application theming.
+   Below, you'll find the default palette for the Polymer Starter Kit layout. Feel free to play
+   with changing the colors used or generate your own palette of colours at MaterialPalette.com.
+
+   See https://www.polymer-project.org/1.0/docs/devguide/styling.html#xscope-styling-details
+   for further information on custom CSS properties.
+   */
+
+  /* Application theme */
+
+  :root {
+    --pallet-one-500: #4285f4;
+    --pallet-two-500: #FFA726;
+    --pallet-two-accent-400: #FFA726;
+
+    --main-background-color: #F2F2F2;
+    --primary-background-color: #F2F2F2;
+
+    --default-primary-color: var(--pallet-one-500);
+    --secondary-primary-color: #0f9d58;
+    --third-primary-color: #eca403;
+
+    --accent-color: var(--pallet-two-accent-400);
+
+    --paper-dialog-button-color: var(--pallet-two-500);
+    --paper-tabs-selection-bar-color: var(--pallet-two-accent-400);
+
+    --paper-input-container-focus-color: var(--pallet-two-500);
+
+    --light-primary-color: #FFCC80;
+    --text-primary-color: #fff;
+    --dark-primary-color: #F57C00;
+    --primary-text-color: #212121;
+    --secondary-text-color: #727272;
+    --disabled-text-color: #bdbdbd;
+    --divider-color: #FF5722;
+
+    --paper-tabs: {
+      font-size: 18px;
+      text-transform: uppercase;
+     };
+
+    --paper-fab-mini: {
+      background: var(--main-background-color);
+      color: #555 !important;
+    };
+    /* Components */
+
+    /* paper-drawer-panel */
+    --drawer-menu-color: #ffffff;
+    --drawer-border-color: 1px solid #ccc;
+    /* paper-menu */
+    --paper-menu-background-color: var(--main-background-color);
+    --menu-link-color: #111111;
+  }
+
+  /* Header background images */
+
+
+  paper-toolbar.tall {
+    background-color: transparent;
+    height: 315px;
+  }
+
+  paper-scroll-header-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--main-background-color , #fff);
+  /* background for toolbar when it is at its full size */
+  --paper-scroll-header-panel-full-header: {
+   };
+  /* background for toolbar when it is condensed */
+  --paper-scroll-header-panel-condensed-header: {
+     background-color: var(--main-background-color);
+   };
+  }
+
+  /* General styles */
+
+  paper-scroll-header-panel {
+    background-color: var(--main-background-color);
+  }
+
+  #drawerToolbar {
+    color: var(--secondary-text-color);
+    background-color: var(--main-background-color);
+    border-bottom: var(--drawer-toolbar-border-color);
+  }
+
+  paper-material {
+    border-radius: 2px;
+    height: 100%;
+    padding: 16px 0 1px 0;
+    width: calc(98.66% - 16px);
+    margin: 16px auto;
+    background: white;
+  }
+
+  paper-menu iron-icon {
+    margin-right: 33px;
+    opacity: 0.54;
+  }
+
+  .paper-menu > .iron-selected {
+    color: var(--default-primary-color);
+  }
+
+  paper-menu a {
+    text-decoration: none;
+    color: var(--menu-link-color);
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -ms-flex-direction: row;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    font-family: 'Roboto', 'Noto', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    min-height: 48px;
+    padding: 0 16px;
+  }
+
+  paper-toolbar.tall .app-name {
+    font-size: 40px;
+    font-weight: 300;
+    color: black;
+    /* Required for main area's paper-scroll-header-panel custom condensing transformation */
+    -webkit-transform-origin: left center;
+    transform-origin: left center;
+  }
+
+  paper-toolbar.tall .app-description {
+    color: black;
+    text-shadow: 2px 2px #aaa;
+  }
+
+  #mainToolbar .middle-container  {
+    height: 100%;
+  }
+
+  #mainToolbar:not(.tall) .middle {
+    font-size: 26px;
+    padding-bottom: 0;
+    background-color: var(--main-background-color)
+  }
+
+  .headerIcon {
+    padding-right: 12px;
+    width: 38px;
+    height: 38px;
+  }
+  #mainToolbar .bottom {
+    margin-left: 48px;
+    /* Required for main area's paper-scroll-header-panel custom condensing transformation */
+    -webkit-transform-origin: left center;
+    transform-origin: left center;
+  }
+
+  #mainToolbar {
+    background-color: var(--main-background-color);
+    color: #333;
+  }
+
+  /* Height of the scroll area */
+  .content {
+    background-color: var(--main-background-color);
+    height: 1200px;
+  }
+
+  paper-toolbar .app-name {
+    font-size: 24px;
+    font-weight: 400;
+  }
+
+  #paperToggle {
+    margin-right: 0;
+  }
+  /* Breakpoints */
+
+  /* Small */
+  @media (max-width: 600px) {
+
+    iron-pages {
+      padding: 0;
+      margin: 0;
+    }
+
+    paper-icon-button {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    paper-material {
+      --menu-container-display: none;
+      width: calc(97.33% - 32px);
+      padding: 0;
+      margin: 0;
+    }
+
+    .paper-font-display1 {
+      font-size: 18px;
+    }
+
+    paper-toolbar .app-name {
+      font-size: 18px;
+      font-weight: 400;
+      padding-left: 4px;
+    }
+
+    .backIcon {
+      width: 36px;
+      heigh: 36px;
+      padding-left: 0;
+    }
+
+    #mainToolbar {
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    #overlay {
+      min-width: 360px;
+    }
+
+    .bg {
+      background: white;
+    }
+
+  }
+
+  /* Tablet+ */
+  @media (min-width: 601px) {
+
+    paper-material {
+      width: calc(98% - 46px);
+      margin-bottom: 32px;
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+
+    #drawer.paper-drawer-panel > [drawer] {
+      border-right: 1px solid rgba(0, 0, 0, 0.14);
+    }
+
+    iron-pages {
+      padding: 8px 16px;
+    }
+
+  }
+
+  /* Material Design Adaptive Breakpoints */
+  /*
+    Below you'll find CSS media queries based on the breakpoint guidance
+    published by the Material Design team. You can choose to use, customise
+    or remove these breakpoints based on your needs.
+
+    http://www.google.com/design/spec/layout/adaptive-ui.html#adaptive-ui-breakpoints
+   */
+
+  /* mobile-small */
+  @media all and (min-width: 0) and (max-width: 360px) and (orientation: portrait) { }
+  /* mobile-large */
+  @media all and (min-width: 361px) and (orientation: portrait) { }
+  /* mobile-small-landscape */
+  @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) { }
+  /* mobile-large-landscape */
+  @media all and (min-width: 481px) and (orientation: landscape) { }
+
+
+  /* tablet-small-landscape */
+  @media all and (min-width: 600px) and (max-width: 960px) and (orientation: landscape) { }
+  /* tablet-large-landscape */
+  @media all and (min-width: 961px) and (orientation: landscape) { }
+  /* tablet-small */
+  @media all and (min-width: 600px) and (orientation: portrait) { }
+  /* tablet-large */
+  @media all and (min-width: 601px) and (max-width: 840px) and (orientation : portrait) { }
+
+
+  /* desktop-x-small-landscape */
+  @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) { }
+  /* desktop-x-small */
+  @media all and (min-width: 0) and (max-width: 480px) and (max-aspect-ratio: 4/3) { }
+  /* desktop-small-landscape */
+  @media all and (min-width: 481px) and (max-width: 840px) and (orientation: landscape) { }
+  /* desktop-small */
+  @media all and (min-width: 481px) and (max-width: 840px) and (max-aspect-ratio: 4/3) { }
+  /* desktop-medium-landscape */
+  @media all and (min-width: 841px) and (max-width: 1280px) and (orientation: landscape) { }
+  /* desktop-medium */
+  @media all and (min-width: 841px) and (max-width: 1280px) and (max-aspect-ratio: 4/3) { }
+  /* desktop-large */
+  @media all and (min-width: 1281px) and (max-width: 1600px) { }
+  /* desktop-xlarge */
+  @media all and (min-width: 1601px) and (max-width: 1920px) { }
+</style>
