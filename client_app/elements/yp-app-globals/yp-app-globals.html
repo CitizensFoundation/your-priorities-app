@@ -8,6 +8,7 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/fix-dialog.html">
+
 <link rel="import" href="../yp-session/yp-session.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 
@@ -223,10 +224,13 @@
         },
 
         ready: function () {
+          var locale = 'is';
           window.appStartTime = new Date();
           window.appGlobals = this;
-          i18n.init({ lng: "en" });
+          i18n.init({ lng: locale });
           window.i18n = i18n;
+          moment.locale(locale);
+
           this.requestInProgress = true;
           this.fire('app-ready');
           this.$.boot.generateRequest();

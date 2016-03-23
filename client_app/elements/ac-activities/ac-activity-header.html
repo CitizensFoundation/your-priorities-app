@@ -1,7 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/moment-element/moment-element.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-user/yp-user-image.html">
@@ -13,7 +12,7 @@
         padding-right: 16px;
       }
 
-      moment-element {
+      .createdAt {
         color: #aaa;
       }
 
@@ -28,7 +27,9 @@
         <div class="name">
           [[activity.User.name]]
         </div>
-        <moment-element datetime="[[activity.created_at]]" from output-format="MMM DD[,] YYYY"></moment-element>
+        <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
+          [[fromTime(activity.created_at)]]
+        </div>
       </div>
     </div>
   </template>
@@ -45,9 +46,14 @@
       properties: {
 
         activity: {
-          type: Object
+          type: Object,
+          observer: '_activityChanged'
         }
+      },
+
+      _activityChanged: function (newValue) {
       }
+
     });
   </script>
 </dom-module>

@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/lodash-element/lodash.js.html">
-<link rel="import" href="../../bower_components/moment-element/moment-element.html">
+
+<script src='../../bower_components/moment/min/moment-with-locales.min.js'></script>
 
 <script>
 
@@ -23,6 +24,14 @@
       if (translation=='')
         translation = key;
       return translation;
+    },
+
+    fromTime: function (timeValue) {
+      return moment(timeValue).fromNow();
+    },
+
+    fromLongTime: function (timeValue) {
+      return moment(timeValue).format();
     },
 
     goToPost: function (event) {
