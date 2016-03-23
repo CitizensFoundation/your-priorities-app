@@ -85,7 +85,7 @@
     <yp-ajax id="ajax" on-response="_groupsResponse"></yp-ajax>
     <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
 
-    <template is="dom-if" if="[[group]]" restamp>
+    <template is="dom-if" if="[[groupActive]]" restamp>
       <div class="layout vertical flex"  style="margin-top: -40px;">
         <div class="layout vertical center-center" style="width:100%;">
           <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
@@ -199,7 +199,17 @@
         hasNonOpenPosts: {
           type: Boolean,
           value: false
+        },
+
+        groupActive: {
+          type: Boolean,
+          value: false
         }
+      },
+
+      reset: function () {
+        this.set('groupActive', false);
+        this.set('selected', 0);
       },
 
       _isTab: function (tabNr, selected) {
@@ -230,11 +240,9 @@
         this.$.ajax.generateRequest();
       },
 
-      ready: function () {
-      },
-
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue) {
+          this.set('groupActive',true);
           this.$.ajax.url = '/api/groups/' + this.groupId;
           this.$.ajax.generateRequest();
         }
