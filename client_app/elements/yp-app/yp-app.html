@@ -8,10 +8,6 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
-
 <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
@@ -151,10 +147,6 @@
         }
       }
 
-      neon-animated-pages {
-        height: 1200px;
-      }
-
     </style>
 
     <yp-app-globals id="appGlobals" disable-welcome setup-defaults on-change-header="onChangeHeader" on-app-ready="_appReady"></yp-app-globals>
@@ -197,13 +189,13 @@
             </app-toolbar>
           </app-header>
 
-          <neon-animated-pages class="layout vertical flex" id="animatedPages" attr-for-selected="data-route" selected="{{route}}">
+          <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
             <section data-route="home">
             </section>
 
             <section data-route="domain">
-              <template is="dom-if" if="[[params.domainId]]" restamp>
+              <template is="dom-if" if="[[params]]" restamp>
                 <yp-domain domain-id="{{params.domainId}}" on-change-header="onChangeHeader"></yp-domain>
               </template>
             </section>
@@ -215,7 +207,7 @@
             </section>
 
             <section data-route="group">
-              <template is="dom-if" if="[[params.groupId]]" restamp>
+              <template is="dom-if" if="[[params.groupId]]">
                 <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]"
                           searching-for="[[params.searchingFor]]"
                           category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
@@ -229,7 +221,7 @@
               </template>
             </section>
 
-         </neon-animated-pages>
+          </iron-pages>
 
         </app-header-layout>
 
