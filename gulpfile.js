@@ -1,13 +1,17 @@
 /*
+@license
 Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
 The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code client_distributed by Google as part of the polymer project is also
+Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
 'use strict';
+
+// Include promise polyfill for node 0.10 compatibility
+require('es6-promise').polyfill();
 
 // Include Gulp & tools we'll use
 var gulp = require('gulp');
@@ -19,10 +23,13 @@ var reload = browserSync.reload;
 var merge = require('merge-stream');
 var path = require('path');
 var fs = require('fs');
-var glob = require('glob');
+var glob = require('glob-all');
 var historyApiFallback = require('connect-history-api-fallback');
 var packageJson = require('./package.json');
 var crypto = require('crypto');
+var ensureFiles = require('./tasks/ensure-files.js');
+
+// var ghPages = require('gulp-gh-pages');
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 10',
@@ -36,48 +43,48 @@ var AUTOPREFIXER_BROWSERS = [
   'bb >= 10'
 ];
 
-var styleTask = function (stylesPath, srcs) {
+var DIST = 'client_dist';
+
+var dist = function(subpath) {
+  return !subpath ? DIST : path.join(DIST, subpath);
+};
+
+var styleTask = function(stylesPath, srcs) {
   return gulp.src(srcs.map(function(src) {
       return path.join('client_app', stylesPath, src);
     }))
     .pipe($.changed(stylesPath, {extension: '.css'}))
     .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
     .pipe(gulp.dest('.tmp/' + stylesPath))
-    .pipe($.cssmin())
-    .pipe(gulp.dest('client_dist/' + stylesPath))
+    .pipe($.minifyCss())
+    .pipe(gulp.dest(dist(stylesPath)))
     .pipe($.size({title: stylesPath}));
 };
 
-var jshintTask = function (src) {
+var imageOptimizeTask = function(src, dest) {
   return gulp.src(src)
-    .pipe($.jshint.extract()) // Extract JS from .html files
-    .pipe($.jshint())
-    .pipe($.jshint.reporter('jshint-stylish'))
-    .pipe($.if(!browserSync.active, $.jshint.reporter('fail')));
-};
-
-var imageOptimizeTask = function (src, dest) {
-  return gulp.src(src)
-    .pipe($.cache($.imagemin({
+    .pipe($.imagemin({
       progressive: true,
       interlaced: true
-    })))
+    }))
     .pipe(gulp.dest(dest))
     .pipe($.size({title: 'images'}));
 };
 
-var optimizeHtmlTask = function (src, dest) {
-  var assets = $.useref.assets({searchPath: ['.tmp', 'client_app', 'client_dist']});
+var optimizeHtmlTask = function(src, dest) {
+  var assets = $.useref.assets({
+    searchPath: ['.tmp', 'client_app']
+  });
 
   return gulp.src(src)
-    // Replace path for vulcanized assets
-    .pipe($.if('*.html', $.replace('elements/elements.html', 'elements/elements.vulcanized.html')))
     .pipe(assets)
     // Concatenate and minify JavaScript
-    .pipe($.if('*.js', $.uglify({preserveComments: 'some'})))
+    .pipe($.if('*.js', $.uglify({
+      preserveComments: 'some'
+    })))
     // Concatenate and minify styles
     // In case you are still using useref build blocks
-    .pipe($.if('*.css', $.cssmin()))
+    .pipe($.if('*.css', $.minifyCss()))
     .pipe(assets.restore())
     .pipe($.useref())
     // Minify any HTML
@@ -88,102 +95,82 @@ var optimizeHtmlTask = function (src, dest) {
     })))
     // Output files
     .pipe(gulp.dest(dest))
-    .pipe($.size({title: 'html'}));
+    .pipe($.size({
+      title: 'html'
+    }));
 };
 
 // Compile and automatically prefix stylesheets
-gulp.task('styles', function () {
+gulp.task('styles', function() {
   return styleTask('styles', ['**/*.css']);
 });
 
-gulp.task('elements', function () {
-  return styleTask('elements', ['**/*.css']);
-});
+// Ensure that we are not missing required files for the project
+// "dot" files are specifically tricky due to them being hidden on
+// some systems.
+gulp.task('ensureFiles', function(cb) {
+  var requiredFiles = ['.bowerrc'];
 
-// Lint JavaScript
-gulp.task('jshint', function () {
-  return jshintTask([
-      'client_app/scripts/**/*.js',
-      'client_app/elements/**/*.js',
-      'client_app/elements/**/*.html',
-      'gulpfile.js'
-    ])
-    .pipe($.jshint.extract()) // Extract JS from .html files
-    .pipe($.jshint())
-    .pipe($.jshint.reporter('jshint-stylish'))
-    .pipe($.if(!browserSync.active, $.jshint.reporter('fail')));
+  ensureFiles(requiredFiles.map(function(p) {
+    return path.join(__dirname, p);
+  }), cb);
 });
 
 // Optimize images
-gulp.task('images', function () {
-  return imageOptimizeTask('client_app/images/**/*', 'client_dist/images');
+gulp.task('images', function() {
+  return imageOptimizeTask('client_app/images/**/*', dist('images'));
 });
 
 // Copy all files at the root level (client_app)
-gulp.task('copy', function () {
+gulp.task('copy', function() {
   var client_app = gulp.src([
     'client_app/*',
     '!client_app/test',
-    '!client_app/cache-config.json'
+    '!client_app/elements',
+    '!client_app/bower_components',
+    '!client_app/cache-config.json',
+    '!**/.DS_Store'
   ], {
     dot: true
-  }).pipe(gulp.dest('client_dist'));
+  }).pipe(gulp.dest(dist()));
 
+  // Copy over only the bower_components we need
+  // These are things which cannot be vulcanized
   var bower = gulp.src([
-    'client_app/bower_components/**/*'
-  ]).pipe(gulp.dest('client_dist/bower_components'));
+    'client_app/bower_components/{webcomponentsjs,platinum-sw,sw-toolbox,promise-polyfill}/**/*'
+  ]).pipe(gulp.dest(dist('bower_components')));
 
-  var elements = gulp.src(['client_app/elements/**/*.html',
-                           'client_app/elements/**/*.css',
-                           'client_app/elements/**/*.js'])
-    .pipe(gulp.dest('client_dist/elements'));
-
-  var swBootstrap = gulp.src(['bower_components/platinum-sw/bootstrap/*.js'])
-    .pipe(gulp.dest('client_dist/elements/bootstrap'));
-
-  var swToolbox = gulp.src(['bower_components/sw-toolbox/*.js'])
-    .pipe(gulp.dest('client_dist/sw-toolbox'));
-
-  var vulcanized = gulp.src(['client_app/elements/elements.html'])
-    .pipe($.rename('elements.vulcanized.html'))
-    .pipe(gulp.dest('client_dist/elements'));
-
-  return merge(client_app, bower, elements, vulcanized, swBootstrap, swToolbox)
-    .pipe($.size({title: 'copy'}));
+  return merge(client_app, bower)
+    .pipe($.size({
+      title: 'copy'
+    }));
 });
 
-// Copy web fonts to client_dist
-gulp.task('fonts', function () {
+// Copy web fonts to dist
+gulp.task('fonts', function() {
   return gulp.src(['client_app/fonts/**'])
-    .pipe(gulp.dest('client_dist/fonts'))
-    .pipe($.size({title: 'fonts'}));
-});
-
-// Copy locales to client_dist
-gulp.task('locales', function () {
-  return gulp.src(['client_app/locales/**'])
-      .pipe(gulp.dest('client_dist/locales'))
-      .pipe($.size({title: 'locales'}));
+    .pipe(gulp.dest(dist('fonts')))
+    .pipe($.size({
+      title: 'fonts'
+    }));
 });
 
 // Scan your HTML for assets & optimize them
-gulp.task('html', function () {
+gulp.task('html', function() {
   return optimizeHtmlTask(
-    ['client_app/**/*.html', '!client_app/{elements,test}/**/*.html'],
-    'client_dist');
+    ['client_app/**/*.html', '!client_app/{elements,test,bower_components}/**/*.html'],
+    dist());
 });
 
 // Vulcanize granular configuration
-gulp.task('vulcanize', function () {
-  var DEST_DIR = 'client_dist/elements';
-  return gulp.src('client_dist/elements/elements.vulcanized.html')
+gulp.task('vulcanize', function() {
+  return gulp.src('client_app/elements/elements.html')
     .pipe($.vulcanize({
       stripComments: true,
       inlineCss: true,
-      inlineScripts: true,
-      stripExclude: true
+      inlineScripts: true
     }))
-    .pipe(gulp.dest(DEST_DIR))
+    .pipe(gulp.dest(dist('elements')))
     .pipe($.size({title: 'vulcanize'}));
 });
 
@@ -194,18 +181,22 @@ gulp.task('vulcanize', function () {
 // in your project, please enable it within the 'default' task.
 // See https://github.com/PolymerElements/polymer-starter-kit#enable-service-worker-support
 // for more context.
-gulp.task('cache-config', function (callback) {
-  var dir = 'client_dist';
+gulp.task('cache-config', function(callback) {
+  var dir = dist();
   var config = {
     cacheId: packageJson.name || path.basename(__dirname),
     disabled: false
   };
 
-  glob('{elements,scripts,styles}/**/*.*', {cwd: dir}, function(error, files) {
+  glob([
+    'index.html',
+    './',
+    'bower_components/webcomponentsjs/webcomponents-lite.min.js',
+    '{elements,scripts,styles}/**/*.*'],
+    {cwd: dir}, function(error, files) {
     if (error) {
       callback(error);
     } else {
-      files.push('index.html', './', 'bower_components/webcomponentsjs/webcomponents-lite.min.js');
       config.precache = files;
 
       var md5 = crypto.createHash('md5');
@@ -219,12 +210,12 @@ gulp.task('cache-config', function (callback) {
 });
 
 // Clean output directory
-gulp.task('clean', function (cb) {
-  del(['.tmp', 'client_dist'], cb);
+gulp.task('clean', function() {
+  return del(['.tmp', dist()]);
 });
 
 // Watch files for changes & reload
-gulp.task('serve', ['styles', 'elements', 'images'], function () {
+gulp.task('serve', ['styles'], function() {
   browserSync({
     port: 5000,
     notify: false,
@@ -232,7 +223,7 @@ gulp.task('serve', ['styles', 'elements', 'images'], function () {
     snippetOptions: {
       rule: {
         match: '<span id="browser-sync-binding"></span>',
-        fn: function (snippet) {
+        fn: function(snippet) {
           return snippet;
         }
       }
@@ -243,22 +234,18 @@ gulp.task('serve', ['styles', 'elements', 'images'], function () {
     // https: true,
     server: {
       baseDir: ['.tmp', 'client_app'],
-      middleware: [ historyApiFallback() ],
-      routes: {
-        '/bower_components': 'bower_components'
-      }
+      middleware: [historyApiFallback()]
     }
   });
 
-  gulp.watch(['client_app/**/*.html'], reload);
+  gulp.watch(['client_app/**/*.html', '!client_app/bower_components/**/*.html'], reload);
   gulp.watch(['client_app/styles/**/*.css'], ['styles', reload]);
-  gulp.watch(['client_app/elements/**/*.css'], ['elements', reload]);
-  gulp.watch(['client_app/{scripts,elements}/**/{*.js,*.html}'], ['jshint']);
+  gulp.watch(['client_app/scripts/**/*.js'], reload);
   gulp.watch(['client_app/images/**/*'], reload);
 });
 
-// Build and serve the output from the client_dist build
-gulp.task('serve:client_dist', ['default'], function () {
+// Build and serve the output from the dist build
+gulp.task('serve:dist', ['default'], function() {
   browserSync({
     port: 5001,
     notify: false,
@@ -266,7 +253,7 @@ gulp.task('serve:client_dist', ['default'], function () {
     snippetOptions: {
       rule: {
         match: '<span id="browser-sync-binding"></span>',
-        fn: function (snippet) {
+        fn: function(snippet) {
           return snippet;
         }
       }
@@ -275,21 +262,39 @@ gulp.task('serve:client_dist', ['default'], function () {
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
     // https: true,
-    server: 'client_dist',
-    middleware: [ historyApiFallback() ]
+    server: dist(),
+    middleware: [historyApiFallback()]
   });
 });
 
 // Build production files, the default task
-gulp.task('default', ['clean'], function (cb) {
+gulp.task('default', ['clean'], function(cb) {
   // Uncomment 'cache-config' if you are going to use service workers.
   runSequence(
-    ['copy', 'styles'],
-    'elements',
-//    [ 'jshint', 'images', 'fonts', 'html'],
-    [ 'images', 'locales', 'fonts', 'html'],
+    ['ensureFiles', 'copy', 'styles'],
+    ['images', 'fonts', 'html'],
     'vulcanize', // 'cache-config',
     cb);
+});
+
+// Build then deploy to GitHub pages gh-pages branch
+gulp.task('build-deploy-gh-pages', function(cb) {
+  runSequence(
+    'default',
+    'deploy-gh-pages',
+    cb);
+});
+
+// Deploy to GitHub pages gh-pages branch
+gulp.task('deploy-gh-pages', function() {
+  return gulp.src(dist('**/*'))
+    // Check if running task from Travis CI, if so run using GH_TOKEN
+    // otherwise run using ghPages defaults.
+    .pipe($.if(process.env.TRAVIS === 'true', $.ghPages({
+      remoteUrl: 'https://$GH_TOKEN@github.com/polymerelements/polymer-starter-kit.git',
+      silent: true,
+      branch: 'gh-pages'
+    }), $.ghPages()));
 });
 
 // Load tasks for web-component-tester
@@ -297,4 +302,8 @@ gulp.task('default', ['clean'], function (cb) {
 require('web-component-tester').gulp.init(gulp);
 
 // Load custom tasks from the `tasks` directory
-try { require('require-dir')('tasks'); } catch (err) {}
+try {
+  require('require-dir')('tasks');
+} catch (err) {
+  // Do nothing
+}

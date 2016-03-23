@@ -3,16 +3,10 @@
 <link rel="import" href="../yp-behaviors/fix-dialog.html">
 
 <script>
-
   /**
    * @polymerBehavior ypEditDialogBehavior
    */
   Polymer.ypEditDialogBehavior = {
-
-    behaviors: [
-      Polymer.appHelpers,
-      Polymer.FixDialog
-    ],
 
     properties: {
 
@@ -67,17 +61,17 @@
 
     _setupNewUpdateState: function () {
       if (this.new) {
-        this.saveText = this.t('create');
+        this.saveText = window.i18n.t('create');
         this.method = "POST";
       } else {
-        this.saveText = this.t('update');
+        this.saveText = window.i18n.t('update');
         this.method = "PUT";
       }
       this._setupTranslation();
     },
 
     open: function (newOrUpdate, params) {
-      if (window.appUser.loggedIn()===true) {
+      if (window.appUser && window.appUser.loggedIn()===true) {
         if (newOrUpdate) {
           if (newOrUpdate==="new") {
             this.new = true;
@@ -87,10 +81,9 @@
         }
         if (params)
           this.params = params;
-      //  this.moveDialogToTopDom("editDialog");
         this.$$("#editDialog").open();
       } else {
-        window.appUser.loginForEdit(this,newOrUpdate,params);
+        window.appUser.loginForEdit(this, newOrUpdate,params);
       }
     },
 

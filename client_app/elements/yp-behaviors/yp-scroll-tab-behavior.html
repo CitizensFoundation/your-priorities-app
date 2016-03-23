@@ -31,7 +31,7 @@
     },
 
     _isVisible: function () {
-      return this.offsetParent && Boolean(this.offsetParent.offsetWidth || this.offsetParent.offsetHeight);
+      return (this.offsetParent && Boolean(this.offsetParent.offsetWidth || this.offsetParent.offsetHeight));
     },
 
     setMoreToLoad: function () {

@@ -4,16 +4,15 @@
 <script src='../../bower_components/moment/min/moment-with-locales.min.js'></script>
 
 <script>
-
   Array.prototype.chunk = function(chunkSize) {
     var array=this;
     return [].concat.apply([],
-            array.map(function(elem,i) {
-              return i%chunkSize ? [] : [array.slice(i,i+chunkSize)];
-            })
+      array.map(function(elem,i) {
+        return i%chunkSize ? [] : [array.slice(i,i+chunkSize)];
+      })
     );
   };
-
+  
   /**
    * @polymerBehavior appHelpers
    */
@@ -163,7 +162,7 @@
     randomStockImage: function () {
       var images = ["http://i.imgur.com/ZSgsITo.jpg","http://i.imgur.com/BKR5vE6.jpg",
         "http://i.imgur.com/lIk6iLD.jpg",
-        "http://i.imgur.com/OjyTHRv.jpg"]
+        "http://i.imgur.com/OjyTHRv.jpg"];
 
       return this.getRandomFromArray(images);
     },
@@ -221,8 +220,7 @@
         }
       }
 
-      var out = [],
-              i, n;
+      var out = [], i, n;
 
       // if abs(limit) exceeds maximum length, trim it
       if (limit > input.length)
