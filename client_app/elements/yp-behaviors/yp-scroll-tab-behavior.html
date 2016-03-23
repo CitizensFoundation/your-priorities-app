@@ -14,12 +14,12 @@
     },
 
     attached: function () {
-      window.addEventListener('scroll', this._isLoadMoreElementInView.bind(this));
+     // window.addEventListener('scroll', this._isLoadMoreElementInView.bind(this));
       console.log("ATTACHED " + this.localName);
     },
 
     detached: function () {
-      window.removeEventListener('scroll', this._isLoadMoreElementInView);
+    //  window.removeEventListener('scroll', this._isLoadMoreElementInView);
       console.log("DEATTACHED " + this.localName);
     },
 
