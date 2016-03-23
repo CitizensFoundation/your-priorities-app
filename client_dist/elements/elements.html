@@ -42719,56 +42719,58 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     <yp-ajax id="ajax" on-response="_groupsResponse"></yp-ajax>
     <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
 
-    <div class="layout vertical flex" style="margin-top: -40px;">
-      <div class="layout vertical center-center" style="width:100%;">
-        <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
+    <template is="dom-if" if="[[group]]" restamp="">
+      <div class="layout vertical flex" style="margin-top: -40px;">
+        <div class="layout vertical center-center" style="width:100%;">
+          <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
+        </div>
+        <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+          <paper-tab>[[t('news')]]</paper-tab>
+          <paper-tab id="tab1">
+            <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
+          </paper-tab>
+          <template is="dom-if" if="[[hasNonOpenPosts]]">
+            <paper-tab>
+              <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
+            </paper-tab>
+            <paper-tab>
+              <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
+            </paper-tab>
+            <paper-tab>
+              <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
+            </paper-tab>
+          </template>
+        </paper-tabs>
+        <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+          <section>
+            <ac-activities my-selected-id="0" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
+          </section>
+          <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list my-selected-id="1" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+            </div>
+          </section>
+          <template is="dom-if" if="[[hasNonOpenPosts]]">
+            <section>
+              <div class="layout horizontal center-center">
+                <yp-post-list my-selected-id="2" selected-tab="[[selected]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              </div>
+            </section>
+            <section>
+              <div class="layout horizontal center-center">
+                <yp-post-list my-selected-id="3" selected-tab="[[selected]]" status-filter="successful" tab-counter-id="tabCountSuccessful" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              </div>
+            </section>
+            <section>
+              <div class="layout horizontal center-center">
+                <yp-post-list my-selected-id="4" selected-tab="[[selected]]" status-filter="failed" tab-counter-id="tabCountFailed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              </div>
+            </section>
+          </template>
+        </iron-pages>
+        <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
       </div>
-      <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
-        <paper-tab>[[t('news')]]</paper-tab>
-        <paper-tab id="tab1">
-          <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
-        </paper-tab>
-        <template is="dom-if" if="[[hasNonOpenPosts]]">
-          <paper-tab>
-            <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
-          </paper-tab>
-          <paper-tab>
-            <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
-          </paper-tab>
-          <paper-tab>
-            <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
-          </paper-tab>
-        </template>
-      </paper-tabs>
-      <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <section>
-          <ac-activities my-selected-id="0" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
-        </section>
-        <section>
-          <div class="layout horizontal center-center">
-            <yp-post-list my-selected-id="1" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCountOpen" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-          </div>
-        </section>
-        <template is="dom-if" if="[[hasNonOpenPosts]]">
-          <section>
-            <div class="layout horizontal center-center">
-              <yp-post-list my-selected-id="2" selected-tab="[[selected]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-            </div>
-          </section>
-          <section>
-            <div class="layout horizontal center-center">
-              <yp-post-list my-selected-id="3" selected-tab="[[selected]]" status-filter="successful" tab-counter-id="tabCountSuccessful" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-            </div>
-          </section>
-          <section>
-            <div class="layout horizontal center-center">
-              <yp-post-list my-selected-id="4" selected-tab="[[selected]]" status-filter="failed" tab-counter-id="tabCountFailed" filter="{{filter}}" searching-for="[[searchingFor]]" category-id="{{categoryId}}" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-            </div>
-          </section>
-        </template>
-      </iron-pages>
-      <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
-    </div>
+    </template>
   </template>
 
   <script>
@@ -44808,10 +44810,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
       }
 
-      neon-animated-pages {
-        height: 1200px;
-      }
-
     </style>
 
     <yp-app-globals id="appGlobals" disable-welcome="" setup-defaults="" on-change-header="onChangeHeader" on-app-ready="_appReady"></yp-app-globals>
@@ -44851,13 +44849,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             </app-toolbar>
           </app-header>
 
-          <neon-animated-pages class="layout vertical flex" id="animatedPages" attr-for-selected="data-route" selected="{{route}}">
+          <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
             <section data-route="home">
             </section>
 
             <section data-route="domain">
-              <template is="dom-if" if="[[params.domainId]]" restamp="">
+              <template is="dom-if" if="[[params]]" restamp="">
                 <yp-domain domain-id="{{params.domainId}}" on-change-header="onChangeHeader"></yp-domain>
               </template>
             </section>
@@ -44869,7 +44867,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             </section>
 
             <section data-route="group">
-              <template is="dom-if" if="[[params.groupId]]" restamp="">
+              <template is="dom-if" if="[[params.groupId]]">
                 <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]" searching-for="[[params.searchingFor]]" category-id="[[params.categoryId]]" category-name="[[params.categoryName]]" on-change-header="onChangeHeader"></yp-group>
               </template>
             </section>
@@ -44880,7 +44878,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
               </template>
             </section>
 
-         </neon-animated-pages>
+          </iron-pages>
 
         </app-header-layout>
 
