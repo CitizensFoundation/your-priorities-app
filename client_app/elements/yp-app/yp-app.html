@@ -151,7 +151,6 @@
 
     <yp-app-globals id="appGlobals" disable-welcome setup-defaults on-change-header="onChangeHeader" on-app-ready="_appReady"></yp-app-globals>
 
-    <template is="dom-if" if="[[appReady]]">
 
       <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
 
@@ -230,9 +229,7 @@
       <template is="dom-if" if="[[user]]">
         <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
       </template>
-
-    </template>
-
+    
   </template>
 
   <script>
