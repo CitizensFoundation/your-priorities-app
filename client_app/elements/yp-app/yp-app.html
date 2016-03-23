@@ -206,7 +206,7 @@
             </section>
 
             <section data-route="group">
-              <template is="dom-if" if="[[params.groupId]]">
+              <template is="dom-if" if="[[params.groupId]]" restamp>
                 <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]"
                           searching-for="[[params.searchingFor]]"
                           category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
@@ -229,7 +229,7 @@
       <template is="dom-if" if="[[user]]">
         <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
       </template>
-    
+
   </template>
 
   <script>
