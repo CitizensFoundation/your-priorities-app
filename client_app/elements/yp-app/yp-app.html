@@ -195,7 +195,7 @@
             </section>
 
             <section data-route="domain">
-              <template is="dom-if" if="[[params]]" restamp>
+              <template is="dom-if" if="[[params.domainId]]" restamp>
                 <yp-domain domain-id="{{params.domainId}}" on-change-header="onChangeHeader"></yp-domain>
               </template>
             </section>
@@ -207,7 +207,7 @@
             </section>
 
             <section data-route="group">
-              <template is="dom-if" if="[[params.groupId]]">
+              <template is="dom-if" if="[[params.groupId]]" restamp>
                 <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]"
                           searching-for="[[params.searchingFor]]"
                           category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
