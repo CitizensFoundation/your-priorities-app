@@ -134,14 +134,12 @@
     },
 
     _groupChanged: function (newValue, oldValue) {
-      if (newValue) {
-        if (this.group.access===0) {
-          this.groupAccess = "public"
-        } else if (this.group.access===1) {
-          this.groupAccess = "closed"
-        } else if (this.group.access===2) {
-          this.groupAccess = "secret"
-        }
+      if (this.group.access===0) {
+        this.groupAccess = "public"
+      } else if (this.group.access===1) {
+        this.groupAccess = "closed"
+      } else if (this.group.access===2) {
+        this.groupAccess = "secret"
       }
     },
 

@@ -202,13 +202,13 @@
 
             <section data-route="community">
               <template is="dom-if" if="[[params.communityId]]" restamp>
-                <yp-community community-id="{{params.communityId}}" on-reset-group="_resetGroup" on-change-header="onChangeHeader"></yp-community>
+                <yp-community community-id="{{params.communityId}}" on-change-header="onChangeHeader"></yp-community>
               </template>
             </section>
 
             <section data-route="group">
               <template is="dom-if" if="[[params.groupId]]">
-                <yp-group id="groupPage" group-id="{{params.groupId}}" filter="[[params.filterValue]]"
+                <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]"
                           searching-for="[[params.searchingFor]]"
                           category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
                           on-change-header="onChangeHeader"></yp-group>
@@ -305,13 +305,6 @@
 
       _appReady: function () {
         this.appReady = true;
-      },
-
-      _resetGroup: function () {
-        var group = this.$$("#groupPage");
-        if (group) {
-          group.reset();
-        }
       },
 
       scrollPageToTop: function() {
