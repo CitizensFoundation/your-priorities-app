@@ -121,6 +121,13 @@ gulp.task('images', function() {
   return imageOptimizeTask('client_app/images/**/*', dist('images'));
 });
 
+// Copy locales to client_dist
+gulp.task('locales', function () {
+  return gulp.src(['client_app/locales/**'])
+    .pipe(gulp.dest('client_dist/locales'))
+    .pipe($.size({title: 'locales'}));
+});
+
 // Copy all files at the root level (client_app)
 gulp.task('copy', function() {
   var client_app = gulp.src([
@@ -271,7 +278,7 @@ gulp.task('serve:dist', ['default'], function() {
 gulp.task('default', ['clean'], function(cb) {
   // Uncomment 'cache-config' if you are going to use service workers.
   runSequence(
-    ['ensureFiles', 'copy', 'styles'],
+    ['ensureFiles', 'copy', 'locales', 'styles'],
     ['images', 'fonts', 'html'],
     'vulcanize', // 'cache-config',
     cb);
