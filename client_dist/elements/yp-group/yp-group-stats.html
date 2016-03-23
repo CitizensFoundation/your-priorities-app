@@ -8,6 +8,8 @@
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
 
+<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html" >
+
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-group-stats">
@@ -41,10 +43,10 @@
     </style>
 
     <div class="stats">
-      <iron-icon icon="image:wb-sunny" class="stats-icon"></iron-icon>
+      <iron-icon icon="vaadin-icons:lightbulb" class="stats-icon"></iron-icon>
       <div class="stats-text" style="">{{formatNumber(group.counter_posts)}}</div>
 
-      <iron-icon icon="communication:message" class="stats-icon"></iron-icon>
+      <iron-icon icon="vaadin-icons:comments-o" class="stats-icon"></iron-icon>
       <div class="stats-text">{{formatNumber(group.counter_points)}}</div>
 
       <iron-icon icon="face" class="stats-icon"></iron-icon>
