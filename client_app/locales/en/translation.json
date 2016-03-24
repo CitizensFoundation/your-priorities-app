@@ -2,7 +2,13 @@
 
   "activity": {
     "post": {
-      "new": "New idea"
+      "new": "New idea",
+      "status": {
+       "update": "Status update"
+      }
+    },
+    "point": {
+      "new": "New point"
     }
   },
   "name": "Name",

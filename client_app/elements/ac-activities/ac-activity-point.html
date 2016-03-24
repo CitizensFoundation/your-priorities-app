@@ -9,11 +9,42 @@
 <dom-module id="ac-activity-point">
   <template>
     <style is="custom-style">
+      .point {
+        padding: 8px;
+        margin: 8px;
+        @apply(--layout-vertical);
+      }
+
+      .pointText {
+        margin-bottom: 16px;
+        padding: 16px;
+        width: 360px;
+      }
+
+      yp-point {
+        width: 380px;
+        padding-top: 8px;
+      }
+
+      .pointLayout {
+        width: 46%;
+      }
     </style>
 
     <div class="layout vertical">
       <ac-activity-post-header activity="[[activity]]"></ac-activity-post-header>
-      <yp-point class="card" point="[[activity.Point]]"></yp-point>
+      <div class="layout horizontal flex">
+        <div class="pointLayout">
+          <template is="dom-if" if="[[_isUpVote(activity.Point)]]">
+            <yp-point class="card" point="[[activity.Point]]"></yp-point>
+          </template>
+        </div>
+        <div class="pointLayout">
+          <template is="dom-if" if="[[_isDownVote(activity.Point)]]">
+            <yp-point class="card" point="[[activity.Point]]"></yp-point>
+          </template>
+        </div>
+      </div>
     </div>
   </template>
 
@@ -35,6 +66,14 @@
       },
 
       _activityChanged: function (newValue) {
+      },
+
+      _isUpVote: function (point) {
+        return point.value > 0;
+      },
+
+      _isDownVote: function (point) {
+        return point.value < 0;
       }
     });
   </script>

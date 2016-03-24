@@ -58,8 +58,9 @@
 
               <h1>[[t(activity.type)]]</h1>
 
-              <ac-activity-header activity="[[activity]]"></ac-activity-header>
-
+              <template is="dom-if" if="[[_isActivityNotType(activity,'activity.point.new')]]">
+                <ac-activity-header activity="[[activity]]"></ac-activity-header>
+              </template>
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                 <ac-activity-post activity="[[activity]]"></ac-activity-post>
               </template>
@@ -138,6 +139,10 @@
         oldestProcessedActivityAt: {
           type: Date
         }
+      },
+
+      _isActivityNotType(activity, type) {
+        return activity.type!=type
       },
 
       _isActivityType(activity, type) {

@@ -11,11 +11,17 @@
 <dom-module id="ac-activity-post-status-update">
   <template>
     <style is="custom-style">
+      .statusChange {
+        width: 92%;
+        padding-left: 32px;
+        padding-right: 32px;
+      }
+
     </style>
 
     <div class="layout vertical">
       <ac-activity-post-header activity="[[activity]]"></ac-activity-post-header>
-      <div>[[formatContent(activity.PostStatusChange)]]</div>
+      <div class="statusChange">[[formatContent(activity.PostStatusChange)]]</div>
     </div>
   </template>
 
