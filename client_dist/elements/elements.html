@@ -29430,6 +29430,8 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
           window.i18n = i18n;
           moment.locale(locale);
 
+          window.googleMapsApiKey = 'AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM';
+
           this.requestInProgress = true;
           this.fire('app-ready');
           this.$.boot.generateRequest();
@@ -30789,23 +30791,26 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       disableAutoPan: {
         type: Boolean,
         value: false
-      },
+      }
 
     },
 
     pano: null,
     rAFid: null,
+
     _mapApiLoaded: function() {
-      this.pano = new google.maps.StreetViewPanorama(
+      this.async(function () {
+        this.pano = new google.maps.StreetViewPanorama(
           this.$.pano,
           this._getPanoOptions());
-      this.pano.setVisible(true);
+        this.pano.setVisible(true);
 
-      if (this.disableAutoPan) {
-        return;
-      }
-      // Kickoff the rotating animation
-      this.rAFid = requestAnimationFrame(this.update.bind(this));
+        if (this.disableAutoPan) {
+          return;
+        }
+        // Kickoff the rotating animation
+        this.rAFid = requestAnimationFrame(this.update.bind(this));
+      },20);
     },
 
     /**
@@ -32205,12 +32210,12 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         </template>
 
         <template is="dom-if" if="[[_withCoverMediaType(post,'streetView')]]">
-          <google-streetview-pano position="[[_getMapPosition()]]" heading="330" pitch="2" zoom="0.8" disable-default-ui="">
+          <google-streetview-pano position="[[_getMapPosition()]]" api-key="[[_apiKey()]]" heading="330" pitch="2" zoom="0.8" disable-default-ui="">
           </google-streetview-pano>
         </template>
 
         <template is="dom-if" if="[[_withCoverMediaType(post,'map')]]">
-          <google-map class="map" libraries="places" fit-to-markers="" zoom="[[_zoomLevel(post)]]">
+          <google-map class="map" libraries="places" fit-to-markers="" zoom="[[_zoomLevel(post)]]" api-key="[[_apiKey()]]">
             <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
           </google-map>
         </template>
@@ -32233,6 +32238,10 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
           notify: true,
           observer: "_postChanged"
         }
+      },
+
+      _apiKey: function () {
+        return window.googleMapsApiKey;
       },
 
       _postChanged: function(newValue, oldValue) {
@@ -40724,7 +40733,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <paper-dialog id="dialog" class="dialog" with-backdrop$="[[!narrowPad]]">
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
-      <google-map id="map" libraries="places" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers=""></google-map>
+      <google-map id="map" api-key="[[window.googleMapsApiKey]]" libraries="places" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers=""></google-map>
 
       <div class="buttons">
         <paper-button on-tap="_closeDialog">[[t('close')]]</paper-button>
