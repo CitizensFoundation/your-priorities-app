@@ -28724,6 +28724,10 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       return translation;
     },
 
+    _apiKey: function () {
+      return window.googleMapsApiKey;
+    },
+
     fromTime: function (timeValue) {
       return moment(timeValue).fromNow();
     },
@@ -32202,7 +32206,7 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 
         <template is="dom-if" if="[[_withCoverMediaType(post,'map')]]">
           <google-map class="map" libraries="places" fit-to-markers="" zoom="[[_zoomLevel(post)]]" api-key="[[_apiKey()]]">
-            <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
+            <google-map-marker api-key="[[_apiKey()]]" latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
           </google-map>
         </template>
       </div>
@@ -32224,10 +32228,6 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
           notify: true,
           observer: "_postChanged"
         }
-      },
-
-      _apiKey: function () {
-        return window.googleMapsApiKey;
       },
 
       _postChanged: function(newValue, oldValue) {
@@ -40719,7 +40719,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <paper-dialog id="dialog" class="dialog" with-backdrop$="[[!narrowPad]]">
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
-      <google-map id="map" api-key="[[window.googleMapsApiKey]]" libraries="places" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers=""></google-map>
+      <google-map id="map" api-key="[[_apiKey()]]" libraries="places" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers=""></google-map>
 
       <div class="buttons">
         <paper-button on-tap="_closeDialog">[[t('close')]]</paper-button>
@@ -40763,6 +40763,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       _createMarkerIfNeeded: function () {
         if (!this.marker) {
           this.marker = document.createElement('google-map-marker');
+          this.market.apiKey = this._apiKey();
           Polymer.dom(this.$.map).appendChild(this.marker);
         }
       },
