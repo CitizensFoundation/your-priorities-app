@@ -66,6 +66,7 @@
         <template is="dom-if" if="[[_withCoverMediaType(post,'streetView')]]">
           <google-streetview-pano
             position="[[_getMapPosition()]]"
+            api-key="[[_apiKey()]]"
             heading="330"
             pitch="2"
             zoom="0.8"
@@ -74,7 +75,10 @@
         </template>
 
         <template is="dom-if" if="[[_withCoverMediaType(post,'map')]]">
-          <google-map class="map" libraries="places" fit-to-markers zoom="[[_zoomLevel(post)]]">
+          <google-map class="map"
+                      libraries="places"
+                      fit-to-markers zoom="[[_zoomLevel(post)]]"
+                      api-key="[[_apiKey()]]">
             <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
           </google-map>
         </template>
@@ -97,6 +101,10 @@
           notify: true,
           observer: "_postChanged"
         }
+      },
+
+      _apiKey: function () {
+        return window.googleMapsApiKey;
       },
 
       _postChanged: function(newValue, oldValue) {

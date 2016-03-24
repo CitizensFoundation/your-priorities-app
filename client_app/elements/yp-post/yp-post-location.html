@@ -55,7 +55,7 @@
 
     <paper-dialog id="dialog" class="dialog" with-backdrop$="[[!narrowPad]]">
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
-      <google-map id="map" libraries="places" class="map" click-events on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers></google-map>
+      <google-map id="map" api-key="[[window.googleMapsApiKey]]" libraries="places" class="map" click-events on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers></google-map>
 
       <div class="buttons">
         <paper-button on-tap="_closeDialog">[[t('close')]]</paper-button>
