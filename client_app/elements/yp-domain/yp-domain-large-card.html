@@ -112,6 +112,10 @@
           height: 122px;
         }
       }
+
+      h1 {
+        font-size: 48px;
+      }
     </style>
     <template is="dom-if" if="[[domain]]">
       <paper-material id="card" elevation="5" animated class="large-card">
@@ -119,7 +123,7 @@
           <iron-image class="image" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
           <div class="layout vertical description-and-stats">
             <div class="description">
-              <h2 class="domain-name">[[_domainName(domain)]]</h2>
+              <h1 class="domain-name">[[_domainName(domain)]]</h1>
               <div>[[_domainDescription(domain)]]</div>
             </div>
             <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>

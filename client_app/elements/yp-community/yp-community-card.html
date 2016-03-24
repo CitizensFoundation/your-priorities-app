@@ -29,6 +29,7 @@
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--description-line-height, 1.3);
         padding: 8px;
+        margin-top: 16px;
       }
 
       .stats {
@@ -40,9 +41,8 @@
       }
 
       .community-name {
-        padding: 0;
-        padding-bottom: 4px;
-        margin: 0;
+        padding: 16px;
+        background-color: var(--third-primary-color);
       }
 
       .post-image {
@@ -53,6 +53,8 @@
         cursor: pointer;
         height: 420px;
         background-color: #fff;
+        padding: 0;
+        margin: 0;
       }
 
       iron-image {
@@ -84,17 +86,34 @@
         padding: 0;
         padding-bottom: 48px;
       }
+
+      iron-image {
+        padding: 0;
+        margin: 0;
+      }
+
+      iron-image {
+        padding: 0;
+        margin: 0;
+      }
+
+      paper-card {
+        background-color: #f00;
+      }
+
+      .informationText {
+        maring: 8px;
+      }
+
     </style>
 
     <template is="dom-if" if="[[community]]">
       <paper-card class="communityCard" elevation="[[elevation]]" on-tap="_goToCommunity">
         <div class="card-content">
-          <div class="layout">
-            <iron-image sizing="cover" preload src="[[communityLogoImagePath(community)]]" class="post-image"/>
-          </div>
-          <div class="description">
+          <iron-image sizing="cover" preload src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
+          <div class="informationText">
             <h2 class="community-name">[[communityName(community)]]</h2>
-            <div>[[communityDescription(community)]]</div>
+            <div class="description">[[communityDescription(community)]]</div>
           </div>
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>

@@ -11,12 +11,17 @@
 <dom-module id="yp-ajax">
   <style>
     :host {
+      background-color: var(--main-background-color);
     }
 
     .large {
       height: 64px !important;
       width: 64px !important;
       --paper-spinner-stroke-width: 7px;
+    }
+
+    paper-spinner {
+      background: transparent;
     }
   </style>
   <template>

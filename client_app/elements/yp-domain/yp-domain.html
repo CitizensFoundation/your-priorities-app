@@ -101,22 +101,30 @@
         }
       }
 
-    </style>
+      .topArea {
+        background-color: var(--third-primary-color);
+      }
 
-    <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
+      .mainArea {
+        background-color: var(--primary-background-color);
+        height: 100%;
+      }
+    </style>
 
     <yp-community-edit id="communityNew" on-iron-form-response="_refresh"></yp-community-edit>
 
-    <div class="layout vertical flex" style="margin-top: -40px;">
-      <div class="layout horizontal center-center">
+    <div class="layout vertical flex" style="margin-top: -33px;">
+      <div class="layout horizontal center-center topArea">
         <yp-domain-large-card id="domainCard" class="card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
       </div>
 
-      <div class="layout vertical">
+      <div class="layout vertical flex mainArea">
         <div class="layout horizontal center-center">
           <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
             <paper-tab><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
             <paper-tab>[[t('news')]]</paper-tab>
+            <paper-tab>[[t('instagram')]]</paper-tab>
+            <paper-tab>[[t('twitter')]]</paper-tab>
           </paper-tabs>
         </div>
 
@@ -137,6 +145,7 @@
         </iron-pages>
         <paper-fab icon="group-work" elevation="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
       </div>
+      <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
     </div>
   </template>
 
@@ -214,7 +223,7 @@
 
 //        headerPanel.style.background =  "#9E9E9E";
 
-        this.fire("change-header", { headerTitle: this.domain.name,
+        this.fire("change-header", { headerTitle: '',//this.domain.name,
                                      headerDescription: this.domain.description});
         if (this.communities.length>0) {
           this.hideAdd = true;
