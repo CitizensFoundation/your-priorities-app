@@ -22,7 +22,7 @@
   <template>
     <style is="custom-style">
       iron-list {
-        padding-bottom: 16px;
+        padding-bottom: 4px;
         --iron-list-items-container: {
           max-width: 800px;
           margin: auto;
@@ -32,10 +32,9 @@
       }
 
       .activity {
-        padding-left: 16px;
         margin-bottom: 24px;
-        padding-bottom: 24px;
         background-color: #fff;
+        width: 100%;
       }
 
       .container {
@@ -48,6 +47,46 @@
         padding-top: 48px;
         @apply(--layout-vertical);
       }
+
+      .topHeader {
+        background-color: var(--third-primary-color);
+        color: #fff;
+        padding-left: 16px;
+        margin-bottom: 16px;
+      }
+
+      ac-activity-header {
+        padding-left: 16px;
+      }
+
+      .headerUserImage {
+        padding-top: 16px;
+        padding-bottom: 16px;
+        padding-right: 8px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .userInfo {
+        padding-right: 18px;
+        text-align: right;
+      }
+
+      paper-button {
+        color: var(--accent-color);
+      }
+
+      iron-icon {
+        width: 48px;
+        height: 48px;
+        padding-top: 14px;
+      }
+
+      .headerText {
+        padding-left: 8px;
+      }
     </style>
 
     <div id="scrollableRegion">
@@ -56,11 +95,21 @@
           <div>
             <paper-material elevation="2" class="layout vertical activity" tabindex$="[[tabIndex]]">
 
-              <h1>[[t(activity.type)]]</h1>
+              <div class="layout horizontal topHeader">
+                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
+                  <iron-icon icon="vaadin-icons:lightbulb" class="stats-icon bulb"></iron-icon>
+                </template>
+                <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
+                  <iron-icon icon="communication:forum" class="stats-icon"></iron-icon>
+                </template>
+                <h1 class="layout flex headerText">[[_getActivityWithPostTitle(activity)]]</h1>
+                <ac-activity-header class="layout end-justified headerUserImage" no-text activity="[[activity]]"></ac-activity-header>
+              </div>
 
               <template is="dom-if" if="[[_isActivityNotType(activity,'activity.point.new')]]">
-                <ac-activity-header activity="[[activity]]"></ac-activity-header>
+                <ac-activity-header class="layout horizontal end-justified userInfo" no-image activity="[[activity]]"></ac-activity-header>
               </template>
+
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                 <ac-activity-post activity="[[activity]]"></ac-activity-post>
               </template>
@@ -72,6 +121,9 @@
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')]]">
                 <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
               </template>
+              <div class="layout horizontal end-justified">
+                <paper-button>[[t('join')]]</paper-button>
+              </div>
             </paper-material>
           </div>
         </template>
@@ -139,6 +191,11 @@
         oldestProcessedActivityAt: {
           type: Date
         }
+      },
+
+      _getActivityWithPostTitle: function (activity) {
+        debugger;
+        return this.t(activity.type) + ' ' + activity.Post.name;
       },
 
       _isActivityNotType(activity, type) {

@@ -8,8 +8,9 @@
 <dom-module id="ac-activity-header">
   <template>
     <style is="custom-style">
+
       yp-user-image {
-        padding-right: 16px;
+        padding-right: 8px;
       }
 
       .createdAt {
@@ -22,8 +23,8 @@
     </style>
 
     <div class="layout horizontal">
-      <yp-user-image user="[[activity.User]]"></yp-user-image>
-      <div class="layout vertical">
+      <yp-user-image user="[[activity.User]]" hidden$="[[noImage]]"></yp-user-image>
+      <div class="layout vertical" hidden$="[[noText]]">
         <div class="name">
           [[activity.User.name]]
         </div>
@@ -48,6 +49,16 @@
         activity: {
           type: Object,
           observer: '_activityChanged'
+        },
+
+        noImage: {
+          type: Boolean,
+          value: false
+        },
+
+        noText: {
+          type: Boolean,
+          value: false
         }
       },
 
