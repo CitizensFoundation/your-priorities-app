@@ -4,7 +4,7 @@
   "dependencies": {
     "file-upload": "rbjarnason/file-upload",
     "google-map": "GoogleWebComponents/google-map",
-    "google-streetview-pano": "https://github.com/rbjarnason/google-streetview-pano.git",
+    "google-streetview-pano": "https://github.com/rbjarnason/google-streetview-pano.git#timings-fix-maps-api-callback",
     "iron-form": "rbjarnason/iron-form#add-put-support",
     "polymer": "Polymer/polymer",
     "iron-elements": "PolymerElements/iron-elements",
