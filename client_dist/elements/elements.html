@@ -28084,8 +28084,6 @@ to override this attribute with `role="alertdialog"`.
 If `modal` is set, the element will set `aria-modal` and prevent the focus from exiting the element.
 It will also ensure that focus remains in the dialog.
 
-The `aria-labelledby` attribute will be set to the header element, if one exists.
-
 @hero hero.svg
 @demo demo/index.html
 @polymerBehavior Polymer.PaperDialogBehavior
@@ -28125,16 +28123,6 @@ The `aria-labelledby` attribute will be set to the header element, if one exists
       this.__prevWithBackdrop = this.withBackdrop;
     },
 
-    attached: function() {
-      // this._observer is used by iron-overlay-behavior
-      this._ariaObserver = Polymer.dom(this).observeNodes(this._updateAriaLabelledBy);
-      this._updateAriaLabelledBy();
-    },
-
-    detached: function() {
-      Polymer.dom(this).unobserveNodes(this._ariaObserver);
-    },
-
     _modalChanged: function(modal, readied) {
       if (modal) {
         this.setAttribute('aria-modal', 'true');
@@ -28164,27 +28152,6 @@ The `aria-labelledby` attribute will be set to the header element, if one exists
           this.__prevNoCancelOnEscKey;
         this.withBackdrop = this.withBackdrop && this.__prevWithBackdrop;
       }
-    },
-
-    _updateAriaLabelledBy: function() {
-      var header = Polymer.dom(this).querySelector('h2');
-      if (!header) {
-        this.removeAttribute('aria-labelledby');
-        return;
-      }
-      var headerId = header.getAttribute('id');
-      if (headerId && this.getAttribute('aria-labelledby') === headerId) {
-        return;
-      }
-      // set aria-describedBy to the header element
-      var labelledById;
-      if (headerId) {
-        labelledById = headerId;
-      } else {
-        labelledById = 'paper-dialog-header-' + new Date().getUTCMilliseconds();
-        header.setAttribute('id', labelledById);
-      }
-      this.setAttribute('aria-labelledby', labelledById);
     },
 
     _updateClosingReasonConfirmed: function(confirmed) {
@@ -29698,12 +29665,10 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 
     attached: function () {
       window.addEventListener('scroll', this._isLoadMoreElementInView.bind(this));
-      console.log("ATTACHED " + this.localName);
     },
 
     detached: function () {
       window.removeEventListener('scroll', this._isLoadMoreElementInView);
-      console.log("DEATTACHED " + this.localName);
     },
 
     _isLoadMoreElementInView: function () {
@@ -30700,8 +30665,10 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
   "use strict";
 
   Polymer({
+
     is: 'google-streetview-pano',
-      properties: {
+
+    properties: {
       /**
        * A Maps API key. To obtain an API key, see developers.google.com/maps/documentation/javascript/tutorial#api_key.
        */
@@ -30746,11 +30713,21 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       /**
        * Specifies which photosphere to load
        *
-       * **Required**
+       *
        */
       panoId: {
         type: String,
         observer: '_panoIdChanged'
+      },
+
+      /**
+       * Specifies which position to load
+       *
+       *
+       */
+      position: {
+        type: Object,
+        observer: '_positionChanged'
       },
 
       /**
@@ -30798,11 +30775,12 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
     pano: null,
     rAFid: null,
 
+    /**
+     * Called when the Google Maps API has loaded.
+     */
     _mapApiLoaded: function() {
       this.async(function () {
-        this.pano = new google.maps.StreetViewPanorama(
-          this.$.pano,
-          this._getPanoOptions());
+        this.pano = new google.maps.StreetViewPanorama(this.$.pano, this._getPanoOptions());
         this.pano.setVisible(true);
 
         if (this.disableAutoPan) {
@@ -30810,7 +30788,7 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         }
         // Kickoff the rotating animation
         this.rAFid = requestAnimationFrame(this.update.bind(this));
-      },20);
+      });
     },
 
     /**
@@ -30819,6 +30797,7 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
     _getPanoOptions: function() {
       var panoOptions = {
         pano: this.panoId,
+        position: this.position,
         pov: {
           heading: this.heading,
           pitch: this.pitch
@@ -30861,13 +30840,13 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
     },
 
     /**
-     * Cancel the slow panning animation.
-     * @method stop
+     * Stop the animation when the element is detached
+     * @method detached
      */
-    detached: function() {
+    detached: function () {
       this.stop();
     },
-
+    
     /**
      * Cancel the slow panning animation.
      * @method stop
@@ -30887,6 +30866,13 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
     _panoIdChanged: function(newVal, oldVal) {
       if (this.pano) {
         this.pano.setPano(newVal);
+        this.reset();
+      }
+    },
+
+    _positionChanged: function(newVal, oldVal) {
+      if (this.pano) {
+        this.pano.setPosition(newVal);
         this.reset();
       }
     }
