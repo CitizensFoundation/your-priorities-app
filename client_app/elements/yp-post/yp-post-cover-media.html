@@ -79,7 +79,7 @@
                       libraries="places"
                       fit-to-markers zoom="[[_zoomLevel(post)]]"
                       api-key="[[_apiKey()]]">
-            <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
+            <google-map-marker api-key="[[_apiKey()]]" latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
           </google-map>
         </template>
       </div>
@@ -101,10 +101,6 @@
           notify: true,
           observer: "_postChanged"
         }
-      },
-
-      _apiKey: function () {
-        return window.googleMapsApiKey;
       },
 
       _postChanged: function(newValue, oldValue) {
