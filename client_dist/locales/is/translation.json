@@ -1,7 +1,10 @@
 {
   "activity": {
     "post": {
-      "new": "Nýrri hugmynd bætt við"
+      "new": "Nýrri hugmynd bætt við",
+      "status": {
+        "update": "Fréttir um hugmynd"
+      }
     },
     "point": {
       "new": "Nýjum rökum bætt við"

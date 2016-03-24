@@ -29394,7 +29394,7 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         },
 
         ready: function () {
-          var locale = 'en';
+          var locale = 'is';
           window.appStartTime = new Date();
           window.appGlobals = this;
           i18n.init({ lng: locale });
@@ -32329,9 +32329,8 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--description-line-height, 1.3);
-        width: 540px;
         padding: 12px;
-        padding-bottom: 16px;
+        padding-bottom: 36px;
       }
 
       .voting {
@@ -32373,6 +32372,8 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         position: relative;
         width: 420px;
         height: 232px;
+        padding-top: 4px;
+        padding-bottom: 4px;
       }
 
       .postCard {
@@ -32429,17 +32430,19 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       }
     </style>
 
-    <div class="layout horizontal">
+    <div class="layout vertical center-center">
       <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
+    </div>
 
-      <div class="layout vertical">
-        <div class="description postCardCursor" on-tap="goToPost">
+    <div class="layout vertical">
+      <div class="layout vertical description">
+        <div class="postCardCursor" on-tap="goToPost">
           <h3 class="post-name">[[postName(activity.Post)]]</h3>
           <div>[[postDescription(activity.Post)]]</div>
         </div>
-        <div class="card-actions">
-          <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[activity.Post]]"></yp-post-actions>
-        </div>
+      </div>
+      <div class="card-actions">
+        <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[activity.Post]]"></yp-post-actions>
       </div>
     </div>
 
@@ -32973,8 +32976,8 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 
       yp-post-cover-media {
         position: relative;
-        width: 105px;
-        height: 58px;
+        width: 200px;
+        height: 107px;
       }
 
       .postCard {
@@ -32995,8 +32998,8 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         }
 
         yp-post-cover-media {
-          width: 600px;
-          height: 343px;
+          width: 432px;
+          height: 232px;
         }
 
         .voting {
@@ -33067,11 +33070,42 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 <dom-module id="ac-activity-point" assetpath="ac-activities/">
   <template>
     <style is="custom-style">
+      .point {
+        padding: 8px;
+        margin: 8px;
+        @apply(--layout-vertical);
+      }
+
+      .pointText {
+        margin-bottom: 16px;
+        padding: 16px;
+        width: 360px;
+      }
+
+      yp-point {
+        width: 380px;
+        padding-top: 8px;
+      }
+
+      .pointLayout {
+        width: 46%;
+      }
     </style>
 
     <div class="layout vertical">
       <ac-activity-post-header activity="[[activity]]"></ac-activity-post-header>
-      <yp-point class="card" point="[[activity.Point]]"></yp-point>
+      <div class="layout horizontal flex">
+        <div class="pointLayout">
+          <template is="dom-if" if="[[_isUpVote(activity.Point)]]">
+            <yp-point class="card" point="[[activity.Point]]"></yp-point>
+          </template>
+        </div>
+        <div class="pointLayout">
+          <template is="dom-if" if="[[_isDownVote(activity.Point)]]">
+            <yp-point class="card" point="[[activity.Point]]"></yp-point>
+          </template>
+        </div>
+      </div>
     </div>
   </template>
 
@@ -33093,6 +33127,14 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       },
 
       _activityChanged: function (newValue) {
+      },
+
+      _isUpVote: function (point) {
+        return point.value > 0;
+      },
+
+      _isDownVote: function (point) {
+        return point.value < 0;
       }
     });
   </script>
@@ -33100,11 +33142,17 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 <dom-module id="ac-activity-post-status-update" assetpath="ac-activities/">
   <template>
     <style is="custom-style">
+      .statusChange {
+        width: 92%;
+        padding-left: 32px;
+        padding-right: 32px;
+      }
+
     </style>
 
     <div class="layout vertical">
       <ac-activity-post-header activity="[[activity]]"></ac-activity-post-header>
-      <div>[[formatContent(activity.PostStatusChange)]]</div>
+      <div class="statusChange">[[formatContent(activity.PostStatusChange)]]</div>
     </div>
   </template>
 
@@ -33174,8 +33222,9 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 
               <h1>[[t(activity.type)]]</h1>
 
-              <ac-activity-header activity="[[activity]]"></ac-activity-header>
-
+              <template is="dom-if" if="[[_isActivityNotType(activity,'activity.point.new')]]">
+                <ac-activity-header activity="[[activity]]"></ac-activity-header>
+              </template>
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                 <ac-activity-post activity="[[activity]]"></ac-activity-post>
               </template>
@@ -33254,6 +33303,10 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         oldestProcessedActivityAt: {
           type: Date
         }
+      },
+
+      _isActivityNotType(activity, type) {
+        return activity.type!=type
       },
 
       _isActivityType(activity, type) {
