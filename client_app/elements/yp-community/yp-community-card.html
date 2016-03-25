@@ -40,10 +40,6 @@
         right: 16px;
       }
 
-      .community-name {
-        padding: 16px;
-        background-color: var(--third-primary-color);
-      }
 
       .post-image {
         width: 100%;
@@ -99,24 +95,40 @@
 
       paper-card {
         background-color: #f00;
+        vertical-align: text-top;
       }
 
       .informationText {
-        maring: 8px;
+        vertical-align: text-top;
       }
 
+      .community-name {
+        font-size: 26px;
+        margin-top: -4px;
+        height: 56px;
+        padding: 16px;
+        background-color: var(--third-primary-color-400);
+      }
+
+      .heartButton {
+        position: absolute;
+        top: 158px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+        background-color: var(--accent-color-100);
+      }
     </style>
 
     <template is="dom-if" if="[[community]]">
-      <paper-card class="communityCard" elevation="[[elevation]]" on-tap="_goToCommunity">
-        <div class="layout vertical self-start card-content">
-          <iron-image sizing="cover" preload src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
-          <div class="informationText">
-            <h2 class="community-name">[[communityName(community)]]</h2>
-            <div class="description">[[communityDescription(community)]]</div>
-          </div>
+      <paper-card class="communityCard" elevation="[[elevation]]" on-tap="_goToCommunity" class="layout vertical flex">
+        <iron-image sizing="cover" preload src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
+        <div class="informationText">
+          <div class="community-name">[[communityName(community)]]</div>
+          <div class="description">[[communityDescription(community)]]</div>
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+        <paper-fab class="heartButton" icon="favorite"></paper-fab>
       </paper-card>
     </template>
   </template>

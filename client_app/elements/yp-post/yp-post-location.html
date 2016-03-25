@@ -12,14 +12,13 @@
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 <link rel="import" href="../../bower_components/google-map/google-map-marker.html">
 
-
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-user/yp-user-image.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 
 <dom-module id="yp-post-location">
   <template>
-    <style>
+    <style is="custom-style">
       :host {
         display: block;
       }
@@ -35,34 +34,19 @@
         @apply(--layout-flex);
       }
 
-      .dialog {
-        width: 450px;
-        height: 700px;
-      }
 
       .map {
-        height: 180px;
-        padding: 24px;
+        height: 400px;
+        width: 800px;
+        margin-top: 16px;
       }
     </style>
-    <div class="location-button">
 
-      <paper-button raised on-tap="_openLocationDialog">
-        <iron-icon icon="communication:location-on"></iron-icon>
-        <span>[[t('location.set')]]</span>
-      </paper-button>
-    </div>
-
-    <paper-dialog id="dialog" class="dialog" with-backdrop$="[[!narrowPad]]">
-      <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
+    <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
+    <div class="layout horizontal center-center">
       <google-map id="map" api-key="[[_apiKey()]]"  libraries="places" class="map" click-events on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers></google-map>
-
-      <div class="buttons">
-        <paper-button on-tap="_closeDialog">[[t('close')]]</paper-button>
-      </div>
-    </paper-dialog>
-
-  </template>
+    </div>
+ </template>
 
   <script>
     Polymer({
@@ -99,7 +83,7 @@
       _createMarkerIfNeeded: function () {
         if (!this.marker) {
           this.marker = document.createElement('google-map-marker');
-          this.market.apiKey = this._apiKey();
+          this.marker.apiKey = this._apiKey();
           Polymer.dom(this.$.map).appendChild(this.marker);
         }
       },
@@ -113,6 +97,7 @@
 
       _locationChanged: function (newLocationValue, oldValue) {
         if (newLocationValue) {
+          debugger;
           this._createMarkerIfNeeded();
           this.marker.setAttribute('latitude', newLocationValue.latitude);
           this.marker.setAttribute('longitude', newLocationValue.longitude);
@@ -127,19 +112,7 @@
         this.location = { latitude: detail.latLng.lat(), longitude: detail.latLng.lng(), map_zoom: this.$.map.zoom }
       },
 
-      _openLocationDialog: function (event) {
-        this.$.dialog.open();
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-            this._createMarkerIfNeeded();
-            if (!this.location)
-              this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, map_zoom: 10 }
-          }.bind(this));
-        }
-      },
-
-      _closeDialog: function () {
-        this.$.dialog.close();
+      ready: function () {
       },
 
       _postChanged: function  (newValue, oldValue) {

@@ -58,13 +58,14 @@
       .container {
         width: 100%;
         height: 100%;
-        min-height: 500px;
+        min-height: 300px;
       }
 
       .subContainer {
-        width: 600px;
-        padding: 0;
         margin: 0;
+        height: 100%;
+        padding: 16px;
+        padding-rigth: 32px;
       }
 
       @media (max-width: 600px) {
@@ -74,20 +75,14 @@
         }
 
         .subContainer {
-          width: 100%;
         }
-      }
-
-      .leftContainer {
-        padding-right: 48px;
-      }
-
-      .rightContainer {
       }
 
       #point {
         padding-bottom: 16px;
       }
+
+
     </style>
 
     <yp-edit-dialog double-width id="editDialog" icon="icons:lightbulb-outline" action="[[action]]" method="[[method]]" save-text="[[saveText]]" toast-text="[[toastText]]" params="[[params]]">
@@ -101,12 +96,12 @@
         <paper-tab>[[t('post.photo')]]</paper-tab>
       </paper-tabs>
 
-      <div class="layout horizontal wrap center-center container">
+      <div class="layout vertical wrap container">
         <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
 
           <section>
-            <div class="layout vertical start-justified subContainer">
-              <template is="dom-if" if="[[_showCategories(group)]]">
+            <div class="layout vertical subContainer">
+              <template is="dom-if" if="[[_showCategories(group)]]" restamp>
                 <paper-dropdown-menu label="[[t('category.select')]]">
                   <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
                     <template is="dom-repeat" items="[[group.Categories]]" as="category">
@@ -139,7 +134,7 @@
             </div>
           </section>
           <template is="dom-if" restamp if="[[new]]">
-            <section>
+            <section class="subContainer">
               <paper-textarea id="pointFor"
                               name="pointFor"
                               value="{{post.pointFor}}"

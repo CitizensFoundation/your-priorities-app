@@ -66,6 +66,10 @@
         z-index: 9999;
       }
 
+      paper-dialog > * {
+        padding: 24px 24px;
+      }
+
       @media (max-width: 601px) {
         paper-dialog > * {
           padding: 0 0;
@@ -131,42 +135,43 @@
     <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop$="[[!narrowPad]]" modal>
       <iron-media-query query="(max-width: 600px)" query-matches="{{narrow}}"></iron-media-query>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
+      <template is="dom-if" if="opened" restamp>
+        <template is="dom-if" if="[[narrow]]">
+          <paper-header-panel main id="headerPanel" class="no-padding" mode="{{mode}}">
+            <paper-toolbar id="toolbar">
+              <paper-icon-button id="dismissBtn" icon="close" dialog-dismiss></paper-icon-button>
 
-      <template is="dom-if" if="[[narrow]]">
-        <paper-header-panel main id="headerPanel" class="no-padding" mode="{{mode}}">
-          <paper-toolbar id="toolbar">
-            <paper-icon-button id="dismissBtn" icon="close" dialog-dismiss></paper-icon-button>
+              <div class="layout horizontal title flex">
+                <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
+                <content select="h2"></content>
+              </div>
+              <paper-button on-tap="_submit">[[saveText]]</paper-button>
+            </paper-toolbar>
+            <div id="scroller" class="flex">
+              <form is="iron-form" id="form" name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
+                <content></content>
+              </form>
+            </div>
+          </paper-header-panel>
+          <paper-spinner id="spinner"></paper-spinner>
+        </template>
 
-            <div class="layout horizontal title flex">
-              <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
+        <template is="dom-if" if="[[!narrow]]">
+          <div class="layout horizontal bigHeader">
+            <iron-icon class="largeIcon" icon="[[icon]]"></iron-icon>
+            <div class="content-wrapper">
               <content select="h2"></content>
             </div>
-            <paper-button on-tap="_submit">[[saveText]]</paper-button>
-          </paper-toolbar>
-          <div id="scroller" class="flex">
-            <form is="iron-form" id="form" name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
-              <content></content>
-            </form>
           </div>
-        </paper-header-panel>
-        <paper-spinner id="spinner"></paper-spinner>
-      </template>
-
-      <template is="dom-if" if="[[!narrow]]">
-        <div class="layout horizontal bigHeader">
-          <iron-icon class="largeIcon" icon="[[icon]]"></iron-icon>
-           <div class="content-wrapper">
-             <content select="h2"></content>
-           </div>
-        </div>
-        <form is="iron-form" id="form" name="ypForm" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
-          <content></content>
-        </form>
-        <paper-spinner id="spinner"></paper-spinner>
-        <div class="buttons">
-          <paper-button id="dismissBtn" dialog-dismiss>[[t('cancel')]]</paper-button>
-          <paper-button on-tap="_submit">[[saveText]]</paper-button>
-        </div>
+          <form is="iron-form" id="form" name="ypForm" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
+            <content></content>
+          </form>
+          <paper-spinner id="spinner"></paper-spinner>
+          <div class="buttons">
+            <paper-button id="dismissBtn" dialog-dismiss>[[t('cancel')]]</paper-button>
+            <paper-button on-tap="_submit">[[saveText]]</paper-button>
+          </div>
+        </template>
       </template>
     </paper-dialog>
 
@@ -256,6 +261,11 @@
 
         icon: {
           type: String
+        },
+
+        opened: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -281,10 +291,15 @@
 
       open: function() {
 //        this.moveDialogToTopDom("editDialog");
-        this.$$("#editDialog").open();
+        this.set("opened",false);
+        this.async(function () {
+          this.set("opened",true);
+          this.$$("#editDialog").open();
+        });
       },
 
       close: function() {
+        this.set("opened",false);
         this.$$("#editDialog").close();
       },
 
