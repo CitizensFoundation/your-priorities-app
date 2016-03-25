@@ -24,7 +24,7 @@
       }
 
       .point {
-        padding: 8px;
+        padding: 32px;
         margin: 8px;
         @apply(--layout-vertical);
       }
@@ -78,14 +78,22 @@
 
       paper-toast {
          z-index: 9999;
-       }
+      }
+
+      paper-material {
+        background-color: #fff;
+      }
+
+      yp-point {
+        padding-bottom: 24px;
+      }
     </style>
 
     <template is="dom-if" if="[[post]]">
 
       <div class="main-container">
 
-        <div class="point">
+        <paper-material elevation="2" class="point">
 
           <paper-material id="pointUpMaterial" elevation="0" class="pointText" animated>
             <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
@@ -105,9 +113,9 @@
             </template>
           </div>
 
-        </div>
+        </paper-material>
 
-        <div class="point">
+        <paper-material elevation="2" class="point">
 
           <paper-material id="pointDownMaterial" elevation="0" class="pointText" animated>
 
@@ -254,7 +262,7 @@
         },
 
         focusTextArea: function (event) {
-          event.currentTarget.parentElement.elevation=3;
+          event.currentTarget.parentElement.elevation=4;
         },
 
         blurTextArea: function (e) {

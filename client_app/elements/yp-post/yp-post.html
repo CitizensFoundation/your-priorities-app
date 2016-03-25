@@ -184,10 +184,9 @@
       }
 
       .contentArea {
-        background-color: #FFF;
+        background-color: var(--primary-background-color);
         width: 1024px;
       }
-
 
       .tabContainer {
         width: 1024px;
@@ -221,7 +220,7 @@
             <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
           </paper-tabs>
 
-          <paper-material elevation="2" class="layout vertical contentArea tabsMaterial" animated>
+          <div class="layout vertical contentArea tabsMaterial" animated>
             <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
 
               <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
@@ -230,7 +229,7 @@
               <section><h1 style="padding: 32px;">To be done...</h1></section>
               <section><h1 style="padding: 32px;">To be done...</h1></section>
             </neon-animated-pages>
-          </paper-material>
+          </div>
         </div>
 
         <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('post.deleteConfirmation')]]"
