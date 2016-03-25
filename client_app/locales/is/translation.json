@@ -55,7 +55,8 @@
     "alreadyRegisterred": "Þetta netfang er þegar skráð",
     "registrationError": "Villa við nýskráningu",
     "loginError": "Vill við innskráningu",
-    "completeForm": "Kláraðu að fylla út form"
+    "completeForm": "Kláraðu að fylla út form",
+    "loginNotAuthorized": "Netfang eða lykilorð rangt"
   },
 
   "posts": {

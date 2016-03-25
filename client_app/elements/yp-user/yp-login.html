@@ -196,7 +196,11 @@
     },
 
     _loginError: function (event, error) {
-      this.$$("#loginAjax").showErrorDialog(this.t('user.loginError')+': '+error);
+      if (error=='Unauthorized') {
+        this.$$("#loginAjax").showErrorDialog(this.t('user.loginNotAuthorized'));
+      } else {
+        this.$$("#loginAjax").showErrorDialog(this.t('user.loginError')+': '+error);
+      }
     },
 
     _forgotPassword: function () {
