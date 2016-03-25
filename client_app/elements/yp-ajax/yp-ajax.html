@@ -19,6 +19,10 @@
     paper-spinner {
       background: transparent;
     }
+
+    paper-dialog {
+      background-color: #FFF;
+    }
   </style>
   <template>
 
@@ -109,6 +113,11 @@
         largeSpinner: {
           type: Boolean,
           value: false
+        },
+
+        dispatchError: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -128,7 +137,15 @@
 
       _error: function (event) {
         this.$.spinner.active = false;
-        if (this.useDialog) {
+        if (this.dispatchError) {
+          if (event.detail.request.xhr.response && event.detail.request.xhr.response.error) {
+            this.fire("error", event.detail.request.xhr.response.error);
+          } else if (event.detail.request.xhr.statusText) {
+            this.fire("error", event.detail.request.xhr.statusText);
+          } else {
+            this.fire("error", event.detail.error);
+          }
+        } else if (this.useDialog) {
           this.showErrorDialog(event.detail.error);
         }
       },

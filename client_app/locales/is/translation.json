@@ -46,7 +46,16 @@
   "user": {
     "logout": "útskrá",
     "login": "innskrá",
-    "create": "nýskrá"
+    "create": "nýskrá",
+    "newPassword": "nýtt lykilorð",
+    "register": "nýr notandi",
+    "email": "Netfang",
+    "name": "Fullt nafn",
+    "password": "Lykilorð",
+    "alreadyRegisterred": "Þetta netfang er þegar skráð",
+    "registrationError": "Villa við nýskráningu",
+    "loginError": "Vill við innskráningu",
+    "completeForm": "Kláraðu að fylla út form"
   },
 
   "posts": {

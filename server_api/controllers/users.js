@@ -18,9 +18,9 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
                                 errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {
-      res.sendStatus(errorStatus);
+      res.status(errorStatus).send({ message: error.name });
     } else {
-      res.sendStatus(500);
+      res.status(500).send({ message: error.name });
     }
   } else {
     res.send(user);

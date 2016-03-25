@@ -129,13 +129,19 @@
   },
 
   "user": {
-    "name": "Login name",
+    "name": "Full name",
     "email": "Email",
     "password": "Password",
     "login": "Login",
     "create": "Create",
     "cancel": "Cancel",
-    "logout": "Logout"
+    "logout": "Logout",
+    "newPassword": "new password",
+    "register": "nýr notandi",
+    "alreadyRegisterred": "This email is already registered",
+    "registrationError": "Error in registration",
+    "loginError": "Login error",
+    "completeForm": "Fill our the form correctly"
   },
 
   "location": {
