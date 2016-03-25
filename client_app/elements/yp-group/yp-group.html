@@ -94,6 +94,15 @@
       #paper_tabs {
         width: 1024px;
       }
+
+      .topArea {
+        background-image: url("https://s3.amazonaws.com/yrpri-staging-production/studlar.png");
+      }
+
+      yp-group-card-large {
+        margin-top: 16px;
+        margin-bottom: 16px;
+      }
     </style>
 
     <yp-ajax id="ajax" on-response="_groupsResponse"></yp-ajax>
@@ -101,7 +110,7 @@
 
     <template is="dom-if" if="[[group]]" restamp>
       <div class="layout vertical flex"  style="margin-top: -64px;">
-        <div class="layout vertical center-center mainArea" style="width:100%;">
+        <div class="layout vertical center-center mainArea topArea" style="width:100%;">
           <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
         </div>
         <div class="layout horizontal center-center">

@@ -52,8 +52,12 @@
       }
 
       .mainArea {
-        background-color: var(--third-primary-color);
+        background-color: var(--middle-color);
         height: 100%;
+      }
+
+      .topArea {
+        background-image: url("https://s3.amazonaws.com/yrpri-staging-production/studlar.png");
       }
 
       .contentArea {
@@ -80,7 +84,7 @@
       <template is="dom-if" if="[[community]]">
         <div class="card-container" style="margin-top: -40px;">
           <div class="layout vertical flex">
-            <div class="layout horizontal center-center mainArea">
+            <div class="layout horizontal center-center mainArea topArea">
               <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
             </div>
 
