@@ -42,8 +42,9 @@
     },
 
     goToPost: function (postIdIn) {
+      debugger;
       var postId;
-      if (postIdIn) {
+      if (postIdIn && !(postIdIn instanceof Event)) {
         postId = postIdIn;
       } else if (this.post.id) {
         postId = this.post.id
