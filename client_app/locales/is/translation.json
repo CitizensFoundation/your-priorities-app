@@ -14,6 +14,7 @@
   },
   "join": "taktu þátt!",
   "name": "Nafn",
+  "description": "Lýsing",
   "domain": {
     "edit": "Breyta vef"
   },
@@ -71,6 +72,10 @@
     "notify": "Notify me about this post",
     "share": "Share this post",
     "searchingFor": "Leita að hugmynd ",
+    "yourPost": "Þín hugmynd",
+    "yourPoint": "Þín rök",
+    "location": "Staðsettning",
+    "photo": "Mynd",
     "tabs": {
       "debate": "Rökræða",
       "news": "Fréttir",

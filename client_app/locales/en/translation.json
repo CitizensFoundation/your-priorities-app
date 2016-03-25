@@ -50,6 +50,10 @@
     "report": "Report post",
     "notify": "Notify me about this post",
     "share": "Share this post",
+    "yourPost": "Your idea",
+    "yourPoint": "Your point",
+    "location": "Location",
+    "photo": "Photo",
     "tabs": {
       "debate": "Debate",
       "news": "News",

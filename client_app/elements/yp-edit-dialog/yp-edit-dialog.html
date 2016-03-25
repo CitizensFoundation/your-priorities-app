@@ -17,7 +17,7 @@
 <dom-module id="yp-edit-dialog">
 
   <template>
-    <style>
+    <style is="custom-style">
       .fullScreenDialog {
         position: absolute;
         display: block;
@@ -27,6 +27,7 @@
         min-width: 360px;
         max-width: 1024px;
         @apply(--paper-fullscreen-dialog);
+        background-color: var(--accent-color);
       }
 
       [main] {
@@ -34,7 +35,7 @@
       }
 
       #toolbar {
-        background-color: var(--default-primary-color);
+        background-color: var(--accent-color);
         color: var(--text-primary_color);
       }
 
@@ -58,6 +59,7 @@
 
       .title ::content h2 {
         @apply(--paper-font-title);
+        padding-top: 2px;
       }
 
       paper-toast {
@@ -98,6 +100,32 @@
         }
       }
 
+      .bigHeader {
+        background-color: var(--accent-color);
+        height: 100%;
+        color: #FFF;
+        margin: 0;
+        padding: 16px;
+      }
+
+      .largeIcon {
+        width: 48px;
+        height: 48px;
+      }
+
+      .smallIcon {
+        width: 32px;
+        height: 32px;
+        padding-right: 8px;
+      }
+
+      .content-wrapper ::content > h2 {
+        font-size: 32px;
+        padding-left: 12px;
+        padding-top: 10px;
+        padding-bottom: 8px;
+      }
+
     </style>
 
     <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop$="[[!narrowPad]]" modal>
@@ -108,7 +136,11 @@
         <paper-header-panel main id="headerPanel" class="no-padding" mode="{{mode}}">
           <paper-toolbar id="toolbar">
             <paper-icon-button id="dismissBtn" icon="close" dialog-dismiss></paper-icon-button>
-            <div class="title flex"><content select="h2"></content></div>
+
+            <div class="layout horizontal title flex">
+              <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
+              <content select="h2"></content>
+            </div>
             <paper-button on-tap="_submit">[[saveText]]</paper-button>
           </paper-toolbar>
           <div id="scroller" class="flex">
@@ -121,7 +153,12 @@
       </template>
 
       <template is="dom-if" if="[[!narrow]]">
-        <div class="title"><content select="h2"></content></div>
+        <div class="layout horizontal bigHeader">
+          <iron-icon class="largeIcon" icon="[[icon]]"></iron-icon>
+           <div class="content-wrapper">
+             <content select="h2"></content>
+           </div>
+        </div>
         <form is="iron-form" id="form" name="ypForm" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
           <content></content>
         </form>
@@ -215,6 +252,10 @@
         doubleWidth: {
           type: Boolean,
           value: false
+        },
+
+        icon: {
+          type: String
         }
       },
 
@@ -241,7 +282,6 @@
       open: function() {
 //        this.moveDialogToTopDom("editDialog");
         this.$$("#editDialog").open();
-        debugger;
       },
 
       close: function() {

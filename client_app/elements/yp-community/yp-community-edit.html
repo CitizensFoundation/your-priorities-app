@@ -33,18 +33,18 @@
       }
 
       .additionalSettings {
-        padding-top: 32px;
+        padding-top: 16px;
       }
     </style>
 
-    <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" icon="group-work" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
       <div class="layout vertical">
         <paper-input id="name"
                      name="name"
                      type="text"
-                     label="[[t('Name')]]"
+                     label="[[t('name')]]"
                      value="{{community.name}}"
                      maxlength="60"
                      char-counter class="mainInput">
@@ -53,14 +53,14 @@
         <paper-textarea id="description"
                         name="description"
                         value="{{community.description}}"
-                        label="[[t('Description')]]"
+                        label="[[t('description')]]"
                         char-counter
                         rows="2"
                         max-rows="5"
                         maxlength="300" class="mainInput">
         </paper-textarea>
       </div>
-      <p> </p>
+
       <div class="layout vertical additionalSettings">
         <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=community-logo" method="POST" on-success="_logoImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
@@ -159,7 +159,7 @@
 
     _setupTranslation: function () {
       if (this.new) {
-        this.editHeaderText = this.t('New community');
+        this.editHeaderText = this.t('community.new');
         this.toastText = this.t('community.toast.created');
       } else {
         this.editHeaderText = this.t('Update community info');
