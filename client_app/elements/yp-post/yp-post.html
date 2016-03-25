@@ -81,6 +81,7 @@
       }
 
       .mainPage {
+        background-color: #FFF;
       }
 
       .tabsMaterial {
@@ -165,6 +166,32 @@
           font-size: 14px;
         }
       }
+
+      .topArea {
+        background-color: var(--third-primary-color);
+        width: 100%;
+        padding-bottom: 24px;
+        padding-top: 32px;
+      }
+
+      yp-ajax {
+        background-color: var(--main-background-color);
+      }
+
+      .mainArea {
+        background-color: var(--primary-background-color);
+        height: 100%;
+      }
+
+      .contentArea {
+        background-color: #FFF;
+        width: 1024px;
+      }
+
+
+      .tabContainer {
+        width: 1024px;
+      }
     </style>
 
     <div class="container">
@@ -176,38 +203,34 @@
 
       <template is="dom-if" if="[[post]]">
 
-        <div class$="[[_mainContainerClasses(small)]]">
-          <div class="layout vertical">
-            <paper-material elevation="0" class$="[[_headerClasses(small)]]" style="background: #F2f2f2">
-              <yp-post-card post="[[post]]"></yp-post-card>
-              <paper-menu-button class="edit" hidden$="[[!hasAccess(post)]]">
-                <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-                <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-                  <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                  <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
-                </paper-menu>
-              </paper-menu-button>
-            </paper-material>
-            <div>
-              <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-                <paper-tab><span>[[t('post.tabs.debate')]]</span> &nbsp; (<span>[[post.Points.length]]</span>)</paper-tab>
-                <paper-tab>[[t('post.tabs.news')]]</paper-tab>
-                <paper-tab>[[t('post.tabs.location')]]</paper-tab>
-                <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
-              </paper-tabs>
-
-              <paper-material elevation="2" class="tabsMaterial mainPage" animated>
-                <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-
-                  <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
-
-                  <section><h1 style="padding: 32px;">To be done...</h1></section>
-                  <section><h1 style="padding: 32px;">To be done...</h1></section>
-                  <section><h1 style="padding: 32px;">To be done...</h1></section>
-                </neon-animated-pages>
-              </paper-material>
-            </div>
+        <div class="layout vertical center-center mainArea">
+          <div class="layout horizontal center-center topArea">
+            <yp-post-card class="layout horizontal center-center" post="[[post]]"></yp-post-card>
+            <paper-menu-button class="edit" hidden$="[[!hasAccess(post)]]">
+              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+                <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+              </paper-menu>
+            </paper-menu-button>
           </div>
+          <paper-tabs selected="{{selected}}" id="paper_tabs" class="tabContainer" focused>
+            <paper-tab><span>[[t('post.tabs.debate')]]</span> &nbsp; (<span>[[post.Points.length]]</span>)</paper-tab>
+            <paper-tab>[[t('post.tabs.news')]]</paper-tab>
+            <paper-tab>[[t('post.tabs.location')]]</paper-tab>
+            <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
+          </paper-tabs>
+
+          <paper-material elevation="2" class="layout vertical contentArea tabsMaterial" animated>
+            <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+
+              <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
+
+              <section><h1 style="padding: 32px;">To be done...</h1></section>
+              <section><h1 style="padding: 32px;">To be done...</h1></section>
+              <section><h1 style="padding: 32px;">To be done...</h1></section>
+            </neon-animated-pages>
+          </paper-material>
         </div>
 
         <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('post.deleteConfirmation')]]"

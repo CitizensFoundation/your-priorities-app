@@ -1,18 +1,18 @@
 {
   "activity": {
     "post": {
-      "new": "Ný hugmynd",
+      "new": "// Ný hugmynd //",
       "status": {
-        "update": "Frétt um"
+        "update": "Fréttir"
       }
     },
     "point": {
-      "new": "Rök fyrir",
+      "new": "Rökæður",
       "newEndorsed": "Rök með",
       "newOpposed": "Rök á móti"
     }
   },
-  "join": "vertu með",
+  "join": "taktu þátt!",
   "name": "Nafn",
   "domain": {
     "edit": "Breyta vef"

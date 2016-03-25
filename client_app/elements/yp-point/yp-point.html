@@ -82,14 +82,14 @@
 
       <div class="point-container">
 
-        <div class="user-image">
+        <div class="user-image" hidden$="[[hideUser]]">
           <yp-user-image user="[[user]]"></yp-user-image>
         </div>
 
         <div class="point-content">
 
           <div>
-            <div class$="[[computeClass(point)]]">
+            <div class$="[[computeClass(point)]]" hidden$="[[hideUser]]">
               [[user.name]]
             </div>
             <span hidden$="[[!point.name]]"><span>[[point.name]]</span>. </span><span>[[point.content]]</span>
@@ -118,6 +118,11 @@
         user: {
           type: Object,
           value: null
+        },
+
+        hideUser: {
+          type: Boolean,
+          value: false
         }
       },
 

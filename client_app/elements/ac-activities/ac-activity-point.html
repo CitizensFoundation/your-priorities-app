@@ -31,19 +31,8 @@
       }
     </style>
 
-    <div class="layout vertical">
-      <div class="layout horizontal flex">
-        <div class="pointLayout">
-          <template is="dom-if" if="[[_isUpVote(activity.Point)]]">
-            <yp-point class="card" point="[[activity.Point]]"></yp-point>
-          </template>
-        </div>
-        <div class="pointLayout">
-          <template is="dom-if" if="[[_isDownVote(activity.Point)]]">
-            <yp-point class="card" point="[[activity.Point]]"></yp-point>
-          </template>
-        </div>
-      </div>
+    <div class="layout vertical center-center">
+      <yp-point hide-user class="card" point="[[activity.Point]]"></yp-point>
     </div>
   </template>
 

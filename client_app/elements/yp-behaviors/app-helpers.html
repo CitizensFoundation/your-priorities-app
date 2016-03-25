@@ -25,6 +25,10 @@
       return translation;
     },
 
+    getPostLink: function (post) {
+      return "#!/post/"+post.id;
+    },
+
     _apiKey: function () {
       return window.googleMapsApiKey;
     },

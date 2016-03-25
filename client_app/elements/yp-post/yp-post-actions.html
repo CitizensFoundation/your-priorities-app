@@ -151,6 +151,7 @@
 
     <iron-media-query query="(max-width: 360px)" query-matches="{{small}}"></iron-media-query>
 
+    <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <div class$="[[computeActionClass(small)]]">
       <div id="actionUp" class="action-up">
         <paper-icon-button title="[[t('post.vote.up')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon" on-tap="upVote"></paper-icon-button>
@@ -169,7 +170,6 @@
         <div class="action-text down-text">{{formatNumber(post.counter_endorsements_down)}}</div>
       </div>
     </div>
-    <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
   </template>
   <script>
     Polymer({

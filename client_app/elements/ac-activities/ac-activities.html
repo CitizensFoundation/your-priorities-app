@@ -35,6 +35,7 @@
         margin-bottom: 24px;
         background-color: #fff;
         width: 100%;
+        height: 100%;
       }
 
       .container {
@@ -87,6 +88,27 @@
       .headerText {
         padding-left: 8px;
       }
+
+      .typeName {
+        font-size: 30px;
+        padding-top: 8px;
+      }
+
+      .postName {
+        font-size: 18px;
+      }
+
+      .bulb {
+        width: 54px;
+        height: 54px;
+        padding-top: 10px;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      .grayLine {
+        background-color: #f0f0f0;
+      }
     </style>
 
     <div id="scrollableRegion">
@@ -97,19 +119,23 @@
 
               <div class="layout horizontal topHeader">
                 <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-                  <iron-icon icon="vaadin-icons:lightbulb" class="stats-icon bulb"></iron-icon>
+                  <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
                 </template>
                 <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
                   <iron-icon icon="communication:forum" class="stats-icon"></iron-icon>
                 </template>
-                <h1 class="layout flex headerText">[[_getActivityWithPostTitle(activity)]]</h1>
+                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')]]">
+                  <iron-icon icon="icons:language" class="stats-icon"></iron-icon>
+                </template>
+                <div class="layout vertical flex headerText">
+                  <div class="layout horizontal typeName">[[t(activity.type)]]</div>
+                  <div class="layout horizontal postName">
+                    [[t(activity.Post.name)]]
+                  </div>
+                </div>
                 <ac-activity-header class="layout end-justified headerUserImage" no-text activity="[[activity]]"></ac-activity-header>
               </div>
-
-              <template is="dom-if" if="[[_isActivityNotType(activity,'activity.point.new')]]">
-                <ac-activity-header class="layout horizontal end-justified userInfo" no-image activity="[[activity]]"></ac-activity-header>
-              </template>
-
+              <ac-activity-header class="layout horizontal end-justified userInfo" no-image activity="[[activity]]"></ac-activity-header>
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                 <ac-activity-post activity="[[activity]]"></ac-activity-post>
               </template>
