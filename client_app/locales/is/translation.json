@@ -72,8 +72,8 @@
     "notify": "Notify me about this post",
     "share": "Share this post",
     "searchingFor": "Leita að hugmynd ",
-    "yourPost": "Þín hugmynd",
-    "yourPoint": "Þín rök",
+    "yourPost": "Hugmynd",
+    "yourPoint": "Rök",
     "location": "Staðsettning",
     "photo": "Mynd",
     "tabs": {
@@ -98,7 +98,8 @@
     "in": "í"
   },
   "category": {
-    "new": "Nýr flokkur"
+    "new": "Nýr flokkur",
+    "select": "Veldu flokk"
   },
   "categories": {
     "all": "öllum flokkum",

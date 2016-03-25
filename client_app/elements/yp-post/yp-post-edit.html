@@ -9,6 +9,12 @@
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
+
 
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
 
@@ -56,8 +62,9 @@
       }
 
       .subContainer {
-        width: 46%;
-        vertical-align: top;
+        width: 600px;
+        padding: 0;
+        margin: 0;
       }
 
       @media (max-width: 600px) {
@@ -87,81 +94,86 @@
       <h2>[[editHeaderText]]</h2>
       <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
-        <paper-tab>[[t('post.yourPoint')]]</paper-tab>
+        <template is="dom-if" restamp if="[[new]]">
+          <paper-tab>[[t('post.yourPoint')]]</paper-tab>
+        </template>
         <paper-tab>[[t('post.location')]]</paper-tab>
         <paper-tab>[[t('post.photo')]]</paper-tab>
       </paper-tabs>
-      <div class="layout horizontal wrap container">
-        <div class="layout self-start subContainer leftContainer">
-          <paper-input id="name"
-                       name="name"
-                       type="text"
-                       label="[[t('name')]]"
-                       value="{{post.name}}"
-                       maxlength="60"
-                       char-counter>
-          </paper-input>
 
-          <paper-textarea id="description"
-                          name="description"
-                          value="{{post.description}}"
-                          label="[[t('post.description')]]"
-                          char-counter
-                          rows="2"
-                          max-rows="5"
-                          maxlength="500">
-          </paper-textarea>
+      <div class="layout horizontal wrap center-center container">
+        <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
 
-          <template is="dom-if" if="[[_showCategories(group)]]">
-            <paper-dropdown-menu label="[[t('category.select')]]">
-              <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
-                <template is="dom-repeat" items="[[group.Categories]]" as="category">
-                  <paper-item data-category-id$="[[category.id]]">[[category.name]]</paper-item>
-                </template>
-              </paper-menu>
-            </paper-dropdown-menu>
-            <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
-          </template>
-        </div>
+          <section>
+            <div class="layout vertical start-justified subContainer">
+              <template is="dom-if" if="[[_showCategories(group)]]">
+                <paper-dropdown-menu label="[[t('category.select')]]">
+                  <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
+                    <template is="dom-repeat" items="[[group.Categories]]" as="category">
+                      <paper-item data-category-id$="[[category.id]]">[[category.name]]</paper-item>
+                    </template>
+                  </paper-menu>
+                </paper-dropdown-menu>
+                <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
+              </template>
 
-        <div class="layout self-start subContainer rightContainer">
+              <paper-input id="name"
+                           name="name"
+                           type="text"
+                           label="[[t('name')]]"
+                           value="{{post.name}}"
+                           maxlength="60"
+                           char-counter>
+              </paper-input>
+
+
+              <paper-textarea id="description"
+                              name="description"
+                              value="{{post.description}}"
+                              label="[[t('post.description')]]"
+                              char-counter
+                              rows="2"
+                              max-rows="5"
+                              maxlength="500">
+              </paper-textarea>
+            </div>
+          </section>
           <template is="dom-if" restamp if="[[new]]">
-            <paper-textarea id="pointFor"
-                            name="pointFor"
-                            value="{{post.pointFor}}"
-                            label="[[t('point.for')]]"
-                            char-counter
-                            rows="2"
-                            max-rows="5"
-                            maxlength="500">
-            </paper-textarea>
+            <section>
+              <paper-textarea id="pointFor"
+                              name="pointFor"
+                              value="{{post.pointFor}}"
+                              label="[[t('point.for')]]"
+                              char-counter
+                              rows="2"
+                              max-rows="5"
+                              maxlength="500">
+              </paper-textarea>
+            </section>
           </template>
-
-
-          <div class="layout vertical additionalSettings">
+          <section>
             <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]" class="additionalButton"></yp-post-location>
+          </section>
+          <section>
             <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
               <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
               <span>[[t('image.upload')]]</span>
             </file-upload>
-          </div>
-
-          <input type="hidden" name="location" value="[[encodedLocation]]">
-          <input type="hidden" name="coverMediaType" value="[[selectedCoverMediaType]]">
-          <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-
-          <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
-          <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType" selected="{{selectedCoverMediaType}}">
-            <paper-radio-button name="none">[[t('post.cover.none')]]</paper-radio-button>
-            <paper-radio-button name="image">[[t('post.cover.image')]]</paper-radio-button>
-            <template is="dom-if" if="[[location]]">
-              <paper-radio-button name="map">[[t('post.cover.map')]]</paper-radio-button>
-              <paper-radio-button name="streetView">[[t('post.cover.streetview')]]</paper-radio-button>
-            </template>
-          </paper-radio-group>
-        </div>
+            <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
+            <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType" selected="{{selectedCoverMediaType}}">
+              <paper-radio-button name="none">[[t('post.cover.none')]]</paper-radio-button>
+              <paper-radio-button name="image">[[t('post.cover.image')]]</paper-radio-button>
+              <template is="dom-if" if="[[location]]">
+                <paper-radio-button name="map">[[t('post.cover.map')]]</paper-radio-button>
+                <paper-radio-button name="streetView">[[t('post.cover.streetview')]]</paper-radio-button>
+              </template>
+            </paper-radio-group>
+          </section>
+        </neon-animated-pages>
+        <input type="hidden" name="location" value="[[encodedLocation]]">
+        <input type="hidden" name="coverMediaType" value="[[selectedCoverMediaType]]">
+        <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       </div>
-
     </yp-edit-dialog>
   </template>
 
