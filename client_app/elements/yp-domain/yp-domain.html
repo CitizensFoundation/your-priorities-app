@@ -10,6 +10,8 @@
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 
+<link rel="import" href="../../bower_components/polymer-instagram/polymer-instagram.html">
+
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../ac-activities/ac-activities.html">
@@ -133,6 +135,10 @@
         background-color: var(--primary-background-color);
         height: 100%;
       }
+
+      .twitterFeed {
+        margin-top: 24px;
+      }
     </style>
 
     <iron-media-query query="(min-width: 1200px)" query-matches="{{wide}}"></iron-media-query>
@@ -151,8 +157,8 @@
           <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
             <paper-tab><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
             <paper-tab>[[t('news')]]</paper-tab>
-            <paper-tab>[[t('instagram')]]</paper-tab>
             <paper-tab>[[t('twitter')]]</paper-tab>
+            <paper-tab>[[t('instagram')]]</paper-tab>
           </paper-tabs>
         </div>
 
@@ -169,6 +175,12 @@
           </section>
           <section>
             <ac-activities domain-id="[[domain.id]]"></ac-activities>
+          </section>
+          <section class="layout vertical center-center twitterFeed">
+            <a class="twitter-timeline" href="https://twitter.com/hashtag/BetriReykjavik" data-widget-id="713327367431782400">#BetriReykjavik Tweets</a>
+          </section>
+          <section>
+            <polymer-instagram client-id="[[_instagramClientId()]]" access-token="[[_instagramAccessToken()]]"></polymer-instagram>
           </section>
         </iron-pages>
       </div>
@@ -233,6 +245,18 @@
           this.$.ajax.generateRequest();
           this.hideAdd = true;
         }
+      },
+
+      ready: function () {
+        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+      },
+
+      _instagramAccessToken: function () {
+        return window.instagramAccessToken;
+      },
+
+      _instagramClientId: function () {
+        return window.instagramClientID;
       },
 
       _refresh: function () {

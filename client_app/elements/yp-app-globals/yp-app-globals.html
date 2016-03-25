@@ -98,7 +98,7 @@
 
           disableWelcome: {
             type: Boolean,
-            value: false
+            value: true
           },
 
           setupDefaults: {
@@ -231,8 +231,9 @@
           window.i18n = i18n;
           moment.locale(locale);
 
-          //window.googleMapsApiKey = 'AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM';
-          window.googleMapsApiKey = '';
+          window.googleMapsApiKey = 'AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM';
+          window.instagramAccessToken = '6371c2366b354c0896ddd8ab7f1f5e1d';
+          window.instagramClientID = 'd2f248ec764d4b208ab668b7561a89cc';
 
           this.requestInProgress = true;
           this.fire('app-ready');

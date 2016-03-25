@@ -5,6 +5,7 @@
     "file-upload": "rbjarnason/file-upload",
     "google-map": "GoogleWebComponents/google-map",
     "google-streetview-pano": "https://github.com/rbjarnason/google-streetview-pano.git#timings-fix-maps-api-callback",
+    "polymer-instagram": "https://github.com/rbjarnason/polymer-instagram-feed.git#polymer1",
     "iron-form": "rbjarnason/iron-form#add-put-support",
     "polymer": "Polymer/polymer",
     "iron-elements": "PolymerElements/iron-elements",
@@ -19,7 +20,9 @@
     "moment-element": "~0.3.0",
     "re-captcha": "~1.1.1",
     "within-viewport": "~1.0.0",
-    "vaadin-icons": "~1.0.0-alpha2"
+    "vaadin-icons": "~1.0.0-alpha2",
+    "iron-jsonp-library": "PolymerElements/iron-jsonp-library",
+    "instafeed.js": "https://github.com/evejweinberg/instafeed.js.git#master"
   },
   "devDependencies": {
     "web-component-tester": "*",
