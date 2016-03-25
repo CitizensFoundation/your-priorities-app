@@ -10,7 +10,7 @@
 <dom-module id="yp-point-actions">
 
   <template>
-    <style>
+    <style is="custom-style">
       :host {
         @apply(--layout-horizontal);
       }
@@ -29,11 +29,11 @@
       }
 
       .up-selected {
-        color: var(--primary-up-color-more-lighter, rgba(0,153,0,0.72));
+        color: #000;
       }
 
       .down-selected {
-        color: var(--primary-down-color-more-lighter, rgba(153,0,0,0.72));
+        color: #000;
       }
 
       .middle {
@@ -46,23 +46,25 @@
         @apply(--layout-horizontal);
         @apply(--layout-flex);
         @apply(--layout-start-justified);
-        color: var(--primary-love-color-up, rgba(50,50,50,0.45));
+        color: #ccc;
       }
 
-      paper-icon-button::shadow #icon {
-        width: 16px;
-        height: 16px;
+      .myButton {
+        --paper-icon-button {
+          width: 10px;
+          height: 10px;
+        }
       }
     </style>
 
     <div class="all-actions" hidden$="[[hideNotHelpful]]">
       <div id="actionUp" class="actionUp layout horizontal">
+        <paper-icon-button icon="arrow-upward" class="point-up-vote-icon myButton" on-tap="pointHelpful"></paper-icon-button>
         <div class="action-text action-up">{{point.counter_quality_up}}</div>
-        <paper-icon-button icon="arrow-upward" class="point-up-vote-icon" on-tap="pointHelpful"></paper-icon-button>
       </div>
       <div id="actionDown" class="actionDown layout horizontal">
+        <paper-icon-button icon="arrow-downward" class="point-down-vote-icon myButton" on-tap="pointNotHelpful"></paper-icon-button>
         <div class="action-text">{{point.counter_quality_down}}</div>
-        <paper-icon-button size="16x16" icon="arrow-downward" class="point-down-vote-icon" on-tap="pointNotHelpful"></paper-icon-button>
       </div>
     </div>
     <yp-ajax id="pointQualityAjax" method="POST" on-response="_pointQualityResponse"></yp-ajax>
