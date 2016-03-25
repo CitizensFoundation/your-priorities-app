@@ -80,33 +80,53 @@
           padding-right: 0;
         }
       }
+
+      .mainArea {
+        background-color: var(--third-primary-color);
+        height: 100%;
+      }
+
+      .contentArea {
+        background-color: var(--primary-background-color);
+        width: 1024px;
+      }
+
+      #paper_tabs {
+        width: 1124px;
+      }
+
+      yp-ajax {
+        background-color: var(--main-background-color);
+      }
     </style>
 
     <yp-ajax id="ajax" on-response="_groupsResponse"></yp-ajax>
     <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
 
     <template is="dom-if" if="[[group]]" restamp>
-      <div class="layout vertical flex"  style="margin-top: -40px;">
-        <div class="layout vertical center-center" style="width:100%;">
+      <div class="layout vertical flex"  style="margin-top: -64px;">
+        <div class="layout vertical center-center mainArea" style="width:100%;">
           <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
         </div>
-        <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-          <paper-tab>[[t('news')]]</paper-tab>
-          <paper-tab id="tab1">
-            <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
-          </paper-tab>
-          <template is="dom-if" if="[[hasNonOpenPosts]]">
-            <paper-tab>
-              <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
+        <div class="layout horizontal center-center">
+          <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+            <paper-tab>[[t('news')]]</paper-tab>
+            <paper-tab id="tab1">
+              <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
             </paper-tab>
-            <paper-tab>
-              <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
-            </paper-tab>
-            <paper-tab>
-              <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
-            </paper-tab>
-          </template>
-        </paper-tabs>
+            <template is="dom-if" if="[[hasNonOpenPosts]]">
+              <paper-tab>
+                <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
+              </paper-tab>
+              <paper-tab>
+                <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
+              </paper-tab>
+              <paper-tab>
+                <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
+              </paper-tab>
+            </template>
+          </paper-tabs>
+        </div>
         <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
           <section>
             <ac-activities my-selected-id="0" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>

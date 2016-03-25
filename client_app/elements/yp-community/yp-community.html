@@ -23,10 +23,11 @@
 
 <dom-module id="yp-community">
   <template>
-    <style>
+    <style is="custom-style">
 
       :host {
         @apply(--layout-horizontal);
+        width: 100%;
       }
 
       .createGroup {
@@ -39,7 +40,7 @@
       .card-container {
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
-        width: 97%;
+        width: 100%;
       }
 
       .card {
@@ -50,46 +51,67 @@
         padding-bottom: 12px;
       }
 
+      .mainArea {
+        background-color: var(--third-primary-color);
+        height: 100%;
+      }
+
+      .contentArea {
+        background-color: var(--primary-background-color);
+        width: 1024px;
+      }
+
+      yp-ajax {
+        background-color: var(--main-background-color);
+      }
+
+      #paper_tabs {
+        max-width: 1024px;
+      }
+
       paper-tab {
-        width: 100% !important;
-        position: static;
+        width: 500px;
       }
     </style>
 
     <yp-group-edit new id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
 
-    <template is="dom-if" if="[[community]]">
-      <div class="card-container" style="margin-top: -40px;">
-        <div class="layout vertical flex">
-          <div class="layout horizontal center-center">
-            <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
-          </div>
+    <div class="layout vertical">
+      <template is="dom-if" if="[[community]]">
+        <div class="card-container" style="margin-top: -40px;">
+          <div class="layout vertical flex">
+            <div class="layout horizontal center-center mainArea">
+              <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
+            </div>
 
-          <div class="layout vertical">
-            <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-              <paper-tab><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
-              <paper-tab>[[t('news')]]</paper-tab>
-            </paper-tabs>
+            <div class="layout vertical">
+              <div class="layout horizontal center-center">
+                <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+                  <paper-tab><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
+                  <paper-tab>[[t('news')]]</paper-tab>
+                </paper-tabs>
+              </div>
 
-            <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-              <section>
-                <div class="layout horizontal center-center wrap">
-                  <template is="dom-if" if="[[groups]]">
-                    <template is="dom-repeat" class="list" items="[[groups]]" as="group">
-                      <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+              <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+                <section>
+                  <div class="layout horizontal center-center wrap">
+                    <template is="dom-if" if="[[groups]]">
+                      <template is="dom-repeat" class="list" items="[[groups]]" as="group">
+                        <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+                      </template>
                     </template>
-                  </template>
-                  <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
-                </div>
-              </section>
-              <ac-activities community-id="[[community.id]]"></ac-activities>
-            </iron-pages>
+                    <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
+                  </div>
+                </section>
+                <ac-activities community-id="[[community.id]]"></ac-activities>
+              </iron-pages>
+            </div>
+            <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
           </div>
-          <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
         </div>
-      </div>
-    </template>
-    <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
+      </template>
+      <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
+    </div>
   </template>
 
   <script>
