@@ -204,8 +204,8 @@
           this.communityEmpty = true;
         else
           this.communityEmpty = false;
-        this.fire("change-header", { headerTitle: this.community.name,
-                                     headerDescription: this.community.description,
+        this.fire("change-header", { headerTitle: this.community.Domain.name,
+                                     headerDescription: this.community.Domain.description,
                                      headerIcon: "group-work",
                                      backPath: "#!/domain/" + this.community.domain_id });
         if (this.groups.length>0) {

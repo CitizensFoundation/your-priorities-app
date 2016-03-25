@@ -34,6 +34,9 @@ router.get('/:id', auth.can('view community'), function(req, res) {
     ],
     include: [
       {
+        model: models.Domain
+      },
+      {
         model: models.Image, as: 'CommunityLogoImages'
       },
       {

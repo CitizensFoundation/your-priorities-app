@@ -80,7 +80,6 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       // Group
       {
         model: models.Group,
-        required: false,
         include: [{
           model: models.Category,
           required: false

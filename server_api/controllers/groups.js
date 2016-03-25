@@ -114,6 +114,9 @@ router.get('/:id', auth.can('view group'), function(req, res) {
       {
         model: models.Image, as: 'GroupLogoImages',
         required: false
+      },
+      {
+        model: models.Community
       }
     ]
   }).then(function(group) {

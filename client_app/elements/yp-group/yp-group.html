@@ -269,8 +269,8 @@
         this.set('group', detail.response.group);
         this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
 
-        this.fire("change-header", { headerTitle: this.group.name,
-          headerDescription: this.group.objectives,
+        this.fire("change-header", { headerTitle: this.group.Community.name,
+          headerDescription: this.group.Community.description,
           headerIcon: "social:group",
           enableSearch: true,
           backPath: "#!/community/" + this.group.community_id });

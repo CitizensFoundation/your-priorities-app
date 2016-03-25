@@ -362,8 +362,8 @@
             this.post.description = this.post.Points[0].content;
             this.post.Points.shift();
           }
-          this.fire("change-header", { headerTitle: this.truncate(this.post.name,45),
-                                       headerDescription: this.truncate(this.post.description,45),
+          this.fire("change-header", { headerTitle: this.truncate(this.post.Group.name,80),
+                                       headerDescription: '',//this.truncate(this.post.Group.objectives,45),
                                        backPath: "#!/group/" + this.post.group_id });
         },
 
