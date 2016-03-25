@@ -41512,6 +41512,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       .tabContainer {
         width: 1024px;
       }
+
+      .topArea {
+        background-image: url("https://s3.amazonaws.com/yrpri-staging-production/studlar.png");
+      }
     </style>
 
     <div class="container">
@@ -43125,6 +43129,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       #paper_tabs {
         width: 1024px;
       }
+
+      .topArea {
+        background-image: url("https://s3.amazonaws.com/yrpri-staging-production/studlar.png");
+      }
+
+      yp-group-card-large {
+        margin-top: 16px;
+        margin-bottom: 16px;
+      }
     </style>
 
     <yp-ajax id="ajax" on-response="_groupsResponse"></yp-ajax>
@@ -43132,7 +43145,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <template is="dom-if" if="[[group]]" restamp="">
       <div class="layout vertical flex" style="margin-top: -64px;">
-        <div class="layout vertical center-center mainArea" style="width:100%;">
+        <div class="layout vertical center-center mainArea topArea" style="width:100%;">
           <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
         </div>
         <div class="layout horizontal center-center">
@@ -44126,8 +44139,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .mainArea {
-        background-color: var(--third-primary-color);
+        background-color: var(--middle-color);
         height: 100%;
+      }
+
+      .topArea {
+        background-image: url("https://s3.amazonaws.com/yrpri-staging-production/studlar.png");
       }
 
       .contentArea {
@@ -44154,7 +44171,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <template is="dom-if" if="[[community]]">
         <div class="card-container" style="margin-top: -40px;">
           <div class="layout vertical flex">
-            <div class="layout horizontal center-center mainArea">
+            <div class="layout horizontal center-center mainArea topArea">
               <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
             </div>
 
@@ -44912,6 +44929,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         margin-right: 128px;
       }
 
+      .middleArea {
+        background-color: var(--middle-color, var(--main-background-color));
+      }
+
       ac-activities {
         @apply(--layout-vertical);
         @apply(--layout-flex);
@@ -44996,7 +45017,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     <iron-media-query query="(min-width: 1200px)" query-matches="{{wide}}"></iron-media-query>
     <yp-community-edit id="communityNew" on-iron-form-response="_refresh"></yp-community-edit>
 
-    <div class="layout vertical flex" style="margin-top: -33px;">
+    <div class="layout vertical flex middleArea" style="margin-top: -33px;">
       <div class="layout horizontal center-center topArea">
         <yp-domain-large-card id="domainCard" class="card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
       </div>
@@ -46830,8 +46851,8 @@ module.exports = Array.isArray || function (arr) {
     --pallet-two-500: #FFA726;
     --pallet-two-accent-400: #FFA726;
 
-    --main-background-color: #FFF;
-    --primary-background-color: #FFF;
+    --main-background-color: #EEE;
+    --primary-background-color: #EEE;
 
     --default-primary-color: var(--pallet-one-500);
     --secondary-primary-color: #0f9d58;
@@ -46852,6 +46873,8 @@ module.exports = Array.isArray || function (arr) {
 
     --icon-general-color: #fff;
 
+    --middle-color: var(--paper-teal-500);
+
     --paper-dialog-button-color: var(--accent-color);
     --paper-tabs-selection-bar-color: var(--accent-color);
     --paper-input-container-focus-color: var(--accent-color);
@@ -46862,7 +46885,7 @@ module.exports = Array.isArray || function (arr) {
   }
 
   body {
-    background-color: var(--paper-teal-500);
+    background-color: #EEE;
   }
 
 
