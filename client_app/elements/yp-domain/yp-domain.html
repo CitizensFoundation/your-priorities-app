@@ -177,10 +177,12 @@
             <ac-activities domain-id="[[domain.id]]"></ac-activities>
           </section>
           <section class="layout vertical center-center twitterFeed">
-            <a class="twitter-timeline" href="https://twitter.com/hashtag/BetriReykjavik" data-widget-id="713327367431782400">#BetriReykjavik Tweets</a>
+            <template is="dom-if" if="[[selected]]" restamp>
+              <a class="twitter-timeline" href="https://twitter.com/hashtag/BetriReykjavik" data-widget-id="713327367431782400">#BetriReykjavik Tweets</a>
+            </template>
           </section>
           <section class="layout vertical center-center twitterfeed">
-            <polymer-instagram client-id="[[_instagramClientId()]]" access-token="[[_instagramAccessToken()]]"></polymer-instagram>
+             <polymer-instagram client-id="[[_instagramClientId()]]" access-token="[[_instagramAccessToken()]]"></polymer-instagram>
           </section>
         </iron-pages>
       </div>
@@ -229,12 +231,25 @@
 
         selected: {
           type: Number,
-          value: 0
+          value: 0,
+          observer: '_selectedChanged'
         },
 
         wideWidth: {
           type: Boolean,
           value: false
+        }
+      },
+
+      isSelected: function (number) {
+        return (this.selected && this.selected == number);
+      },
+
+      _selectedChanged: function (newValue) {
+        if (newValue==2) {
+          this.async(function () {
+            this._setupTwitter();
+          }.bind(this));
         }
       },
 
@@ -247,7 +262,7 @@
         }
       },
 
-      ready: function () {
+      _setupTwitter: function () {
         !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
       },
 
