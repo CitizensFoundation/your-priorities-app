@@ -91,6 +91,7 @@
 
       app-toolbar {
         height: 64px;
+        color: #FFF;
       }
 
       [condensed-title] {
@@ -123,8 +124,8 @@
       }
 
       .main-header {
-        border-bottom: 1px solid var(--third-primary-color-600);
-        background-color: var(--third-primary-color-600);
+        border-bottom: 1px solid var(--third-primary-color-800);
+        background-color: var(--third-primary-color-800);
         color: #333;
         height: 64px;
       }
@@ -171,6 +172,7 @@
 
           <app-header effects="waterfall" reveals class="main-header">
             <app-toolbar>
+              <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
               <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon"
                                  hidden$="[[!showBack]]"></paper-icon-button>
               <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
@@ -182,10 +184,8 @@
               <paper-icon-button icon="search" on-tap="toggleSearch" hidden$="[[!showSearch]]"></paper-icon-button>
 
               <template is="dom-if" if="[[user]]">
-                <paper-icon-button on-tap="openEdit" icon="face"></paper-icon-button>
+                <paper-icon-button on-tap="_toggleUserDrawer" icon="face"></paper-icon-button>
               </template>
-
-              <paper-icon-button id="paperToggle" icon="more-vert" on-tap="_toggleDrawer"></paper-icon-button>
             </app-toolbar>
           </app-header>
 
@@ -314,7 +314,7 @@
         }
       },
 
-      _toggleDrawer: function () {
+      _toggleUserDrawer: function () {
         this.$$("#drawer").toggle();
       },
 

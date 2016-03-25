@@ -22,13 +22,19 @@
 
   <template>
 
-    <style>
+    <style is="custom-style">
+
+      paper-material{
+        z-index: 1000;
+      }
+
       app-header-layout {
         background-color: #FFF; /* @apply(--main-background-color, #F2F2F2); */
+        z-index: 1000;
       }
     </style>
 
-    <paper-material elevation="1">
+    <paper-material elevation="1" class="material">
       <app-header-layout has-scrolling-region>
         <app-header fixed>
           <div class="currentUser">
