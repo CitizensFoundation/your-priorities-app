@@ -44366,7 +44366,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         margin-top: -4px;
         height: 56px;
         padding: 16px;
-        background-color: var(--third-primary-color-400);
+        background-color: var(--third-primary-color-800);
+        color: #FFF;
       }
 
       .heartButton {
@@ -44375,7 +44376,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         right: 16px;
         width: 40px;
         height: 40px;
-        background-color: var(--accent-color-400);
+        background-color: var(--accent-color-200);
       }
     </style>
 
@@ -44836,10 +44837,24 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .createCommunity {
-        background-color: --var(accent-color-darker,#f57c00);
+        background-color: var(--accent-color);
         position: fixed;
         bottom: 24px;
         right: 28px;
+        z-index: 1;
+      }
+
+      .createCommunity[wide-layout] {
+        background-color: var(--accent-color);
+        position: relative;
+        margin-top: -8px;
+      }
+
+      .createCommunityContainerWide {
+      }
+
+      .createCommunityContainer[wide-layout] .createCommunity {
+        margin-right: 128px;
       }
 
       ac-activities {
@@ -44922,11 +44937,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
     </style>
 
+    <iron-media-query query="(min-width: 1200px)" query-matches="{{wide}}"></iron-media-query>
     <yp-community-edit id="communityNew" on-iron-form-response="_refresh"></yp-community-edit>
 
     <div class="layout vertical flex" style="margin-top: -33px;">
       <div class="layout horizontal center-center topArea">
         <yp-domain-large-card id="domainCard" class="card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
+      </div>
+      <div class="layout horizontal end-justified createCommunityContainer" wide-layout$="{{wide}}">
+        <paper-fab icon="group-work" elevation="1" class="createCommunity" wide-layout$="{{wide}}" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
       </div>
 
       <div class="layout vertical flex mainArea">
@@ -44954,7 +44973,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             <ac-activities domain-id="[[domain.id]]"></ac-activities>
           </section>
         </iron-pages>
-        <paper-fab icon="group-work" elevation="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
       </div>
       <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
     </div>
@@ -45002,6 +45020,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         selected: {
           type: Number,
           value: 0
+        },
+
+        wideWidth: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -45085,13 +45108,19 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
   <template>
 
-    <style>
+    <style is="custom-style">
+
+      paper-material{
+        z-index: 1000;
+      }
+
       app-header-layout {
         background-color: #FFF; /* @apply(--main-background-color, #F2F2F2); */
+        z-index: 1000;
       }
     </style>
 
-    <paper-material elevation="1">
+    <paper-material elevation="1" class="material">
       <app-header-layout has-scrolling-region="">
         <app-header fixed="">
           <div class="currentUser">
@@ -45193,6 +45222,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       app-toolbar {
         height: 64px;
+        color: #FFF;
       }
 
       [condensed-title] {
@@ -45225,8 +45255,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .main-header {
-        border-bottom: 1px solid var(--third-primary-color-600);
-        background-color: var(--third-primary-color-600);
+        border-bottom: 1px solid var(--third-primary-color-800);
+        background-color: var(--third-primary-color-800);
         color: #333;
         height: 64px;
       }
@@ -45271,6 +45301,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
           <app-header effects="waterfall" reveals="" class="main-header">
             <app-toolbar>
+              <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
               <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
               <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden=""></iron-icon>
               <div title="">[[headerTitle]]</div>
@@ -45281,10 +45312,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
               <paper-icon-button icon="search" on-tap="toggleSearch" hidden$="[[!showSearch]]"></paper-icon-button>
 
               <template is="dom-if" if="[[user]]">
-                <paper-icon-button on-tap="openEdit" icon="face"></paper-icon-button>
+                <paper-icon-button on-tap="_toggleUserDrawer" icon="face"></paper-icon-button>
               </template>
-
-              <paper-icon-button id="paperToggle" icon="more-vert" on-tap="_toggleDrawer"></paper-icon-button>
             </app-toolbar>
           </app-header>
 
@@ -45410,7 +45439,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
       },
 
-      _toggleDrawer: function () {
+      _toggleUserDrawer: function () {
         this.$$("#drawer").toggle();
       },
 
