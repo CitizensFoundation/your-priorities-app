@@ -28738,8 +28738,9 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
     },
 
     goToPost: function (postIdIn) {
+      debugger;
       var postId;
-      if (postIdIn) {
+      if (postIdIn && !(postIdIn instanceof Event)) {
         postId = postIdIn;
       } else if (this.post.id) {
         postId = this.post.id
@@ -32314,7 +32315,6 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       },
 
       getCategoryImagePath: function (post) {
-        debugger;
         if (post.Category && post.Category.CategoryIconImages) {
           return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
         } else {
