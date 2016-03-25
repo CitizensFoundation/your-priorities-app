@@ -141,7 +141,8 @@
     "alreadyRegisterred": "This email is already registered",
     "registrationError": "Error in registration",
     "loginError": "Login error",
-    "completeForm": "Fill our the form correctly"
+    "completeForm": "Fill our the form correctly",
+    "loginNotAuthorized": "Email or password wrong"
   },
 
   "location": {
