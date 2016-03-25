@@ -29059,6 +29059,10 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
     paper-spinner {
       background: transparent;
     }
+
+    paper-dialog {
+      background-color: #FFF;
+    }
   </style>
   <template>
 
@@ -29138,6 +29142,11 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         largeSpinner: {
           type: Boolean,
           value: false
+        },
+
+        dispatchError: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -29157,7 +29166,15 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 
       _error: function (event) {
         this.$.spinner.active = false;
-        if (this.useDialog) {
+        if (this.dispatchError) {
+          if (event.detail.request.xhr.response && event.detail.request.xhr.response.error) {
+            this.fire("error", event.detail.request.xhr.response.error);
+          } else if (event.detail.request.xhr.statusText) {
+            this.fire("error", event.detail.request.xhr.statusText);
+          } else {
+            this.fire("error", event.detail.error);
+          }
+        } else if (this.useDialog) {
           this.showErrorDialog(event.detail.error);
         }
       },
@@ -29218,7 +29235,7 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       </paper-button>
     </paper-dialog>
 
-    <paper-dialog id="welcomeDialog" style="max-width: 500px;">
+    <paper-dialog id="welcomeDialog" style="max-width: 500px;background-color: #FFF;" model="" with-backdrop="">
       <h2>[[t('notice.welcome_heading')]]</h2>
       <p>[[t('notice.welcome_a')]]</p>
       <p>[[t('notice.welcome_b')]]</p>
@@ -35851,7 +35868,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     paper-dialog {
       padding-left: 8px;
       padding-right: 8px;
-      width: 380px;
+      width: 400px;
       background-color: #fff;
     }
 
@@ -35860,46 +35877,50 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     }
 
     re-captcha {
-      padding-top: 20px;
+      padding-top: 28px;
+      padding-bottom: 28px;
     }
   </style>
 
   <template>
 
-    <paper-dialog id="dialog">
-      <h3>[[heading]]</h3>
+    <template is="dom-if" if="[[opened]]" restamp="">
+      <paper-dialog id="dialog" with-backdrop="">
+        <h3>[[heading]]</h3>
 
-      <paper-tabs selected="{{registerMode}}" id="paper_tabs" focused="">
-        <paper-tab>[[t('login')]]</paper-tab>
-        <paper-tab>[[t('register')]]</paper-tab>
-      </paper-tabs>
+        <paper-tabs selected="{{registerMode}}" id="paper_tabs" focused="">
+          <paper-tab>[[t('user.login')]]</paper-tab>
+          <paper-tab>[[t('user.register')]]</paper-tab>
+        </paper-tabs>
 
-      <form is="iron-form" id="form">
+        <form is="iron-form" id="form">
 
-        <paper-input id="name" type="text" label="[[t('name')]]" value="{{name}}" hidden$="[[!registerMode]]" maxlength="50" char-counter="">
-        </paper-input>
+          <div class="fb-login-button" data-max-rows="1" data-size="small" data-show-faces="false" data-auto-logout-link="true"></div>
 
-        <paper-input id="email" type="text" label="[[t('email')]]" value="{{email}}" pattern="[[emailValidationPattern]]" error-message="[[emailErrorMessage]]">
-        </paper-input>
+          <paper-input id="name" type="text" label="[[t('user.name')]]" value="{{name}}" hidden$="[[!registerMode]]" maxlength="50" char-counter="">
+          </paper-input>
 
-        <paper-input id="password" type="password" label="[[t('password')]]" value="{{password}}" pattern="[[passwordValidationPattern]]" error-message="[[passwordErrorMessage]]">
-        </paper-input>
+          <paper-input id="email" type="text" label="[[t('user.email')]]" value="{{email}}" pattern="[[emailValidationPattern]]" error-message="[[emailErrorMessage]]">
+          </paper-input>
 
-        <div class="layout horizontal center-center">
-          <re-captcha sitekey="[[reCaptchaSiteKey]]" lang="is"></re-captcha>
+          <paper-input id="password" type="password" label="[[t('user.password')]]" value="{{password}}" pattern="[[passwordValidationPattern]]" error-message="[[passwordErrorMessage]]">
+          </paper-input>
+
+          <div class="layout horizontal center-center">
+            <re-captcha sitekey="[[reCaptchaSiteKey]]" lang="is"></re-captcha>
+          </div>
+
+        </form>
+        <div class="buttons">
+          <paper-button on-tap="_forgotPassword">[[t('user.newPassword')]]</paper-button>
+          <paper-button dialog-dismiss="">[[t('cancel')]]</paper-button>
+          <paper-button autofocus="" on-tap="_validateAndSend">[[submitText]]</paper-button>
         </div>
+      </paper-dialog>
 
-      </form>
-      <div class="buttons">
-        <paper-button on-tap="_forgotPassword">[[t('iForgotPassword')]]</paper-button>
-        <paper-button dialog-dismiss="">[[t('cancel')]]</paper-button>
-        <paper-button autofocus="" on-tap="_validateAndSend">[[submitText]]</paper-button>
-      </div>
-    </paper-dialog>
-
-    <yp-ajax id="loginAjax" method="GET" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
-    <yp-ajax id="registerAjax" method="POST" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
-
+      <yp-ajax id="loginAjax" dispatch-error="" on-error="_loginError" method="GET" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
+      <yp-ajax id="registerAjax" method="POST" dispatch-error="" on-error="_registerError" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
+    </template>
   </template>
 
 </dom-module>
@@ -35988,7 +36009,24 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       heading: {
         type: String
+      },
+
+      opened: {
+        type: Boolean,
+        value: false
       }
+    },
+
+    _registerError: function (event, error) {
+      if (error=='SequelizeUniqueConstraintError') {
+        this.$$("#registerAjax").showErrorDialog(this.t('user.alreadyRegisterred'));
+      } else {
+        this.$$("#registerAjax").showErrorDialog(this.t('user.registrationError')+': '+error);
+      }
+    },
+
+    _loginError: function (event, error) {
+      this.$$("#loginAjax").showErrorDialog(this.t('user.loginError')+': '+error);
     },
 
     _forgotPassword: function () {
@@ -36032,17 +36070,16 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     },
 
     _validateAndSend: function(e) {
-      if (this.$.form.checkValidity() && this.email && this.password){
+      if (this.$$("#form").checkValidity() && this.email && this.password){
         if (this.registerMode) {
-          this.$.registerAjax.body = this.credentials;
-          this.$.registerAjax.generateRequest();
+          this.$$("#registerAjax").body = this.credentials;
+          this.$$("#registerAjax").generateRequest();
         } else {
-          this.$.loginAjax.params = this.credentialsParams;
-          this.$.loginAjax.generateRequest();
+          this.$$("#loginAjax").params = this.credentialsParams;
+          this.$$("#loginAjax").generateRequest();
         }
-        return true;
-
       } else {
+        this.$$("#loginAjax").showErrorDialog(this.t('user.completeForm'));
         return false;
       }
     },
@@ -36064,11 +36101,18 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     open: function(redirectTo) {
       this.redirectTo = redirectTo;
-      this.$.dialog.open();
+      this.set('opened', false);
+      this.async(function () {
+        this.set('opened', true);
+        this.async(function () {
+          this.$$("#dialog").open();
+        });
+      });
     },
 
     close: function() {
-      this.$.dialog.close();
+      this.$$("#dialog").close();
+      this.set('opened', false);
     }
 
   });
@@ -45281,7 +45325,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     </style>
 
-    <yp-app-globals id="appGlobals" disable-welcome="" setup-defaults="" on-change-header="onChangeHeader" on-app-ready="_appReady"></yp-app-globals>
+    <yp-app-globals id="appGlobals" setup-defaults="" on-change-header="onChangeHeader" on-app-ready="_appReady"></yp-app-globals>
 
     <template is="dom-if" if="[[appReady]]">
 
@@ -45357,7 +45401,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       </template>
 
     </template>
-
   </template>
 
   <script>
