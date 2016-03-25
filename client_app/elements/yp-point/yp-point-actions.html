@@ -58,11 +58,11 @@
     <div class="all-actions" hidden$="[[hideNotHelpful]]">
       <div id="actionUp" class="actionUp layout horizontal">
         <div class="action-text action-up">{{point.counter_quality_up}}</div>
-        <paper-icon-button icon="thumb-up" class="point-up-vote-icon" on-tap="pointHelpful"></paper-icon-button>
+        <paper-icon-button icon="arrow-upward" class="point-up-vote-icon" on-tap="pointHelpful"></paper-icon-button>
       </div>
       <div id="actionDown" class="actionDown layout horizontal">
         <div class="action-text">{{point.counter_quality_down}}</div>
-        <paper-icon-button size="16x16" icon="thumb-down" class="point-down-vote-icon" on-tap="pointNotHelpful"></paper-icon-button>
+        <paper-icon-button size="16x16" icon="arrow-downward" class="point-down-vote-icon" on-tap="pointNotHelpful"></paper-icon-button>
       </div>
     </div>
     <yp-ajax id="pointQualityAjax" method="POST" on-response="_pointQualityResponse"></yp-ajax>

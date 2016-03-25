@@ -36,11 +36,11 @@
       }
 
       .for {
-        color: var(--primary-up-color-bit-lighter, #009900);
+        color: #777;
       }
 
       .against {
-        color: var(--primary-down-color-bit-lighter, #990000);
+        color: #777;
       }
 
       .point-container {
@@ -76,6 +76,10 @@
       yp-user-image {
         padding-top: 4px;
       }
+
+      .userName {
+        padding-bottom: 2px;
+      }
     </style>
 
     <template is="dom-if" if="[[point]]">
@@ -89,10 +93,13 @@
         <div class="point-content">
 
           <div>
-            <div class$="[[computeClass(point)]]" hidden$="[[hideUser]]">
+            <div class$="[[computeClass(point)]] userName" hidden$="[[hideUser]]">
               [[user.name]]
             </div>
-            <span hidden$="[[!point.name]]"><span>[[point.name]]</span>. </span><span>[[point.content]]</span>
+            <span hidden$="[[!point.name]]">
+              <span>[[point.name]]</span>.
+            </span>
+            <span>[[point.content]]</span>
             <yp-point-actions point="[[point]]"></yp-point-actions>
           </div>
         </div>

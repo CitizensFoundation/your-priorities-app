@@ -86,8 +86,8 @@
 
       .tabsMaterial {
         margin-top: 16px;
-        min-height: 2048px;
         background-color: #fefefe;
+        min-height: 4090px;
       }
 
       .edit {
@@ -220,8 +220,8 @@
             <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
           </paper-tabs>
 
-          <div class="layout vertical contentArea tabsMaterial" animated>
-            <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+          <div class="layout vertical flex contentArea tabsMaterial" animated>
+            <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
 
               <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
 

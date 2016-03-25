@@ -85,7 +85,20 @@
       }
 
       yp-point {
-        padding-bottom: 24px;
+        padding: 8px;
+        padding-top: 16px;
+      }
+
+      .pointMaterial {
+        margin-bottom: 18px;
+        padding-top: 8px;
+      }
+
+      .thumbIcon {
+        height: 64px;
+        width: 64px;
+        padding-bottom: 16px;
+        color: var(--accent-color);
       }
     </style>
 
@@ -93,9 +106,12 @@
 
       <div class="main-container">
 
-        <paper-material elevation="2" class="point">
+        <div class="point">
 
           <paper-material id="pointUpMaterial" elevation="0" class="pointText" animated>
+            <div class="layout horizontal center-center">
+              <iron-icon icon="thumb-up" class="thumbIcon"></iron-icon>
+            </div>
             <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                             bind-value="{{textValueUp}}" value=[[textValueUp]] label="[[t('point.for')]]" char-counter rows="2"
                             max-rows="5" maxlength="500"></paper-textarea>
@@ -109,15 +125,19 @@
 
           <div id="allUpPoints">
             <template is="dom-repeat" items="[[upPoints]]" as="point">
-              <yp-point point="[[point]]"></yp-point>
+              <paper-material elevation="1" class="pointMaterial">
+                <yp-point point="[[point]]"></yp-point>
+              </paper-material>
             </template>
           </div>
+        </div>
 
-        </paper-material>
-
-        <paper-material elevation="2" class="point">
+        <div class="point">
 
           <paper-material id="pointDownMaterial" elevation="0" class="pointText" animated>
+            <div class="layout horizontal center-center">
+              <iron-icon icon="thumb-down" class="thumbIcon"></iron-icon>
+            </div>
 
             <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                             bind-value="{{textValueDown}}" value=[[textValueDown]] label="[[t('point.against')]]" char-counter rows="2"
@@ -132,7 +152,9 @@
 
           <div id="allDownPoints">
             <template is="dom-repeat" items="[[downPoints]]" as="point">
-              <yp-point point="[[point]]"></yp-point>
+              <paper-material elevation="1" class="pointMaterial">
+                <yp-point point="[[point]]"></yp-point>
+              </paper-material>
             </template>
           </div>
         </div>
