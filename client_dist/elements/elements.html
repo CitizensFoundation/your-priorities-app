@@ -41873,8 +41873,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             this.post.description = this.post.Points[0].content;
             this.post.Points.shift();
           }
-          this.fire("change-header", { headerTitle: this.truncate(this.post.name,45),
-                                       headerDescription: this.truncate(this.post.description,45),
+          this.fire("change-header", { headerTitle: this.truncate(this.post.Group.name,80),
+                                       headerDescription: '',//this.truncate(this.post.Group.objectives,45),
                                        backPath: "#!/group/" + this.post.group_id });
         },
 
@@ -43495,8 +43495,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.set('group', detail.response.group);
         this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
 
-        this.fire("change-header", { headerTitle: this.group.name,
-          headerDescription: this.group.objectives,
+        this.fire("change-header", { headerTitle: this.group.Community.name,
+          headerDescription: this.group.Community.description,
           headerIcon: "social:group",
           enableSearch: true,
           backPath: "#!/community/" + this.group.community_id });
@@ -44482,8 +44482,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           this.communityEmpty = true;
         else
           this.communityEmpty = false;
-        this.fire("change-header", { headerTitle: this.community.name,
-                                     headerDescription: this.community.description,
+        this.fire("change-header", { headerTitle: this.community.Domain.name,
+                                     headerDescription: this.community.Domain.description,
                                      headerIcon: "group-work",
                                      backPath: "#!/domain/" + this.community.domain_id });
         if (this.groups.length>0) {
