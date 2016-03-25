@@ -30,6 +30,7 @@
 
       .createCommunity {
         background-color: var(--accent-color);
+        color: var(--icon-general-color, #FFF);
         position: fixed;
         bottom: 24px;
         right: 28px;
@@ -117,6 +118,7 @@
 
       .topArea {
         background-color: var(--third-primary-color);
+        background-image: url("https://s3.amazonaws.com/yrpri-staging-production/studlar.png");
       }
 
       yp-ajax {
@@ -137,7 +139,7 @@
         <yp-domain-large-card id="domainCard" class="card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
       </div>
       <div class="layout horizontal end-justified createCommunityContainer"  wide-layout$="{{wide}}">
-        <paper-fab icon="group-work" elevation="1" class="createCommunity"  wide-layout$="{{wide}}" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
+        <paper-fab icon="group-work" elevation="1" class="createCommunity" wide-layout$="{{wide}}" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
       </div>
 
       <div class="layout vertical flex mainArea">

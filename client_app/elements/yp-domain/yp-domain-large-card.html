@@ -120,7 +120,7 @@
     <template is="dom-if" if="[[domain]]">
       <paper-material id="card" elevation="5" animated class="large-card">
         <div class="layout horizontal wrap">
-          <iron-image class="image" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
+          <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
           <div class="layout vertical description-and-stats">
             <div class="description">
               <h1 class="domain-name">[[_domainName(domain)]]</h1>
@@ -153,6 +153,11 @@
 
         elevation: {
           type: Number
+        },
+
+        hideImage: {
+          type: Boolean,
+          value: false
         }
       },
 
