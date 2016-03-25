@@ -148,7 +148,7 @@
                 <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
               </template>
               <div class="layout horizontal end-justified">
-                <paper-button>[[t('join')]]</paper-button>
+                <paper-button on-tap="_joinPost">[[t('join')]]</paper-button>
               </div>
             </paper-material>
           </div>
@@ -217,6 +217,10 @@
         oldestProcessedActivityAt: {
           type: Date
         }
+      },
+
+      _joinPost: function (event) {
+        this.goToPost(event.model.activity.Post.id)
       },
 
       _getActivityWithPostTitle: function (activity) {

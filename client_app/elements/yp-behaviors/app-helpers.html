@@ -41,8 +41,17 @@
       return moment(timeValue).format();
     },
 
-    goToPost: function (event) {
-      var postUrl = '/post/' + this.post.id;
+    goToPost: function (postIdIn) {
+      var postId;
+      if (postIdIn) {
+        postId = postIdIn;
+      } else if (this.post.id) {
+        postId = this.post.id
+      } else {
+        console.error("Can't find post id for goToPost");
+        return;
+      }
+      var postUrl = '/post/' + postId;
       window.appGlobals.activity('open', 'post', postUrl);
       page(postUrl);
     },
