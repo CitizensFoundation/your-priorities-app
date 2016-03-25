@@ -50,6 +50,10 @@
     "report": "Report post",
     "notify": "Notify me about this post",
     "share": "Share this post",
+    "yourPost": "Idea",
+    "yourPoint": "Point for",
+    "location": "Location",
+    "photo": "Photo",
     "tabs": {
       "debate": "Debate",
       "news": "News",
@@ -74,7 +78,8 @@
   },
 
   "category": {
-    "new": "New category"
+    "new": "New category",
+    "select": "Select category"
   },
 
   "categories": {

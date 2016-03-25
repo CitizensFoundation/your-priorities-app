@@ -45,7 +45,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 body {
-  background: #f2f2f2;
+  background: #FFEB3B;
   font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #333;
 }
@@ -28724,6 +28724,10 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       return translation;
     },
 
+    getPostLink: function (post) {
+      return "#!/post/"+post.id;
+    },
+
     _apiKey: function () {
       return window.googleMapsApiKey;
     },
@@ -29046,13 +29050,14 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 </dom-module>
 <dom-module id="yp-ajax" assetpath="yp-ajax/">
   <style>
-    :host {
-    }
-
     .large {
       height: 64px !important;
       width: 64px !important;
       --paper-spinner-stroke-width: 7px;
+    }
+
+    paper-spinner {
+      background: transparent;
     }
   </style>
   <template>
@@ -29401,7 +29406,8 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
           window.i18n = i18n;
           moment.locale(locale);
 
-          window.googleMapsApiKey = 'AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM';
+          //window.googleMapsApiKey = 'AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM';
+          window.googleMapsApiKey = '';
 
           this.requestInProgress = true;
           this.fire('app-ready');
@@ -29833,8 +29839,9 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 <dom-module id="ac-activity-header" assetpath="ac-activities/">
   <template>
     <style is="custom-style">
+
       yp-user-image {
-        padding-right: 16px;
+        padding-right: px;
       }
 
       .createdAt {
@@ -29847,8 +29854,8 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
     </style>
 
     <div class="layout horizontal">
-      <yp-user-image user="[[activity.User]]"></yp-user-image>
-      <div class="layout vertical">
+      <yp-user-image user="[[activity.User]]" hidden$="[[noImage]]"></yp-user-image>
+      <div class="layout vertical" hidden$="[[noText]]">
         <div class="name">
           [[activity.User.name]]
         </div>
@@ -29873,6 +29880,16 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         activity: {
           type: Object,
           observer: '_activityChanged'
+        },
+
+        noImage: {
+          type: Boolean,
+          value: false
+        },
+
+        noText: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -30125,6 +30142,7 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 
     <iron-media-query query="(max-width: 360px)" query-matches="{{small}}"></iron-media-query>
 
+    <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <div class$="[[computeActionClass(small)]]">
       <div id="actionUp" class="action-up">
         <paper-icon-button title="[[t('post.vote.up')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon" on-tap="upVote"></paper-icon-button>
@@ -30143,7 +30161,6 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         <div class="action-text down-text">{{formatNumber(post.counter_endorsements_down)}}</div>
       </div>
     </div>
-    <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
   </template>
   <script>
     Polymer({
@@ -32187,12 +32204,24 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         width: 100%;
         height: 100%;
       }
+
+      .category-icon {
+        width: 200px;
+        height: 200px;
+        padding-top: 32px;
+      }
     </style>
 
     <template is="dom-if" if="[[post]]" restamp="">
       <div class="mapCanvas">
         <template is="dom-if" if="[[_withCoverMediaType(post,'none')]]">
           <iron-image sizing="cover" class="main-image" src="https://i.imgur.com/sdsFAoT.png"></iron-image>
+        </template>
+
+        <template is="dom-if" if="[[_withCoverMediaType(post,'category')]]">
+          <div class="layout horizontal center-center">
+            <iron-image class="category-icon" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath(post)]]"></iron-image>
+          </div>
         </template>
 
         <template is="dom-if" if="[[_withCoverMediaType(post,'image')]]">
@@ -32218,7 +32247,7 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       is: 'yp-post-cover-media',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
       ],
 
       properties: {
@@ -32245,7 +32274,9 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         if (!post)
           return false;
         if (mediaType == 'none') {
-          return (this.post && (!this.post.cover_media_type || this.post.cover_media_type == 'none'));
+          return (this.post && (!this.post.Category && (!this.post.cover_media_type || this.post.cover_media_type == 'none')));
+        } else  if ((mediaType=='category' && this.post.Category) && (!this.post.cover_media_type || this.post.cover_media_type == 'none')) {
+          return true;
         } else {
           return (this.post && this.post.cover_media_type == mediaType);
         }
@@ -32257,6 +32288,15 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 
       postImagePath: function () {
         return this.getImageFormatUrl(this.post.PostHeaderImages, 0);
+      },
+
+      getCategoryImagePath: function (post) {
+        debugger;
+        if (post.Category && post.Category.CategoryIconImages) {
+          return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
+        } else {
+          return "";
+        }
       }
     });
   </script>
@@ -32309,8 +32349,8 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
     },
 
     getCategoryImagePath: function (post) {
-      if (post.Category) {
-        return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(post.Category.id) + '/icon_100/' + post.Category.icon_file_name;
+      if (post.Category && post.Category.CategoryIconImages) {
+        return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
       } else {
         return "";
       }
@@ -32343,9 +32383,8 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 
       .card-actions {
         position: absolute;
-        bottom: 8px;
-        right: 42px;
-        width: 420px;
+        bottom: 36px;
+        right: 0;
       }
 
       .post-name {
@@ -32441,7 +32480,7 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
           <div>[[postDescription(activity.Post)]]</div>
         </div>
       </div>
-      <div class="card-actions">
+      <div class="card-actions layout horizontal center-center">
         <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[activity.Post]]"></yp-post-actions>
       </div>
     </div>
@@ -32637,7 +32676,7 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 <dom-module id="yp-point-actions" assetpath="yp-point/">
 
   <template>
-    <style>
+    <style is="custom-style">
       :host {
         @apply(--layout-horizontal);
       }
@@ -32656,11 +32695,11 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       }
 
       .up-selected {
-        color: var(--primary-up-color-more-lighter, rgba(0,153,0,0.72));
+        color: #000;
       }
 
       .down-selected {
-        color: var(--primary-down-color-more-lighter, rgba(153,0,0,0.72));
+        color: #000;
       }
 
       .middle {
@@ -32673,23 +32712,25 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         @apply(--layout-horizontal);
         @apply(--layout-flex);
         @apply(--layout-start-justified);
-        color: var(--primary-love-color-up, rgba(50,50,50,0.45));
+        color: #ccc;
       }
 
-      paper-icon-button::shadow #icon {
-        width: 16px;
-        height: 16px;
+      .myButton {
+        --paper-icon-button {
+          width: 10px;
+          height: 10px;
+        }
       }
     </style>
 
     <div class="all-actions" hidden$="[[hideNotHelpful]]">
       <div id="actionUp" class="actionUp layout horizontal">
+        <paper-icon-button icon="arrow-upward" class="point-up-vote-icon myButton" on-tap="pointHelpful"></paper-icon-button>
         <div class="action-text action-up">{{point.counter_quality_up}}</div>
-        <paper-icon-button icon="thumb-up" class="point-up-vote-icon" on-tap="pointHelpful"></paper-icon-button>
       </div>
       <div id="actionDown" class="actionDown layout horizontal">
+        <paper-icon-button icon="arrow-downward" class="point-down-vote-icon myButton" on-tap="pointNotHelpful"></paper-icon-button>
         <div class="action-text">{{point.counter_quality_down}}</div>
-        <paper-icon-button size="16x16" icon="thumb-down" class="point-down-vote-icon" on-tap="pointNotHelpful"></paper-icon-button>
       </div>
     </div>
     <yp-ajax id="pointQualityAjax" method="POST" on-response="_pointQualityResponse"></yp-ajax>
@@ -32807,11 +32848,11 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       }
 
       .for {
-        color: var(--primary-up-color-bit-lighter, #009900);
+        color: #777;
       }
 
       .against {
-        color: var(--primary-down-color-bit-lighter, #990000);
+        color: #777;
       }
 
       .point-container {
@@ -32820,10 +32861,12 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
 
       .point-content {
         @apply(--layout-vertical);
+        padding-right: 8px;
       }
 
       .user-image {
         padding-right: 16px;
+        padding-left: 16px;
       }
 
       @media (max-width: 600px) {
@@ -32847,23 +32890,30 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       yp-user-image {
         padding-top: 4px;
       }
+
+      .userName {
+        padding-bottom: 4px;
+      }
     </style>
 
     <template is="dom-if" if="[[point]]">
 
       <div class="point-container">
 
-        <div class="user-image">
+        <div class="user-image" hidden$="[[hideUser]]">
           <yp-user-image user="[[user]]"></yp-user-image>
         </div>
 
         <div class="point-content">
 
           <div>
-            <div class$="[[computeClass(point)]]">
+            <div class$="[[computeClass(point)]] userName" hidden$="[[hideUser]]">
               [[user.name]]
             </div>
-            <span hidden$="[[!point.name]]"><span>[[point.name]]</span>. </span><span>[[point.content]]</span>
+            <span hidden$="[[!point.name]]">
+              <span>[[point.name]]</span>.
+            </span>
+            <span>[[point.content]]</span>
             <yp-point-actions point="[[point]]"></yp-point-actions>
           </div>
         </div>
@@ -32889,6 +32939,11 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         user: {
           type: Object,
           value: null
+        },
+
+        hideUser: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -33092,20 +33147,8 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       }
     </style>
 
-    <div class="layout vertical">
-      <ac-activity-post-header activity="[[activity]]"></ac-activity-post-header>
-      <div class="layout horizontal flex">
-        <div class="pointLayout">
-          <template is="dom-if" if="[[_isUpVote(activity.Point)]]">
-            <yp-point class="card" point="[[activity.Point]]"></yp-point>
-          </template>
-        </div>
-        <div class="pointLayout">
-          <template is="dom-if" if="[[_isDownVote(activity.Point)]]">
-            <yp-point class="card" point="[[activity.Point]]"></yp-point>
-          </template>
-        </div>
-      </div>
+    <div class="layout vertical center-center">
+      <yp-point hide-user="" class="card" point="[[activity.Point]]"></yp-point>
     </div>
   </template>
 
@@ -33146,12 +33189,12 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         width: 92%;
         padding-left: 32px;
         padding-right: 32px;
+        padding-top: 8px;
       }
 
     </style>
 
     <div class="layout vertical">
-      <ac-activity-post-header activity="[[activity]]"></ac-activity-post-header>
       <div class="statusChange">[[formatContent(activity.PostStatusChange)]]</div>
     </div>
   </template>
@@ -33186,7 +33229,7 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
   <template>
     <style is="custom-style">
       iron-list {
-        padding-bottom: 16px;
+        padding-bottom: 4px;
         --iron-list-items-container: {
           max-width: 800px;
           margin: auto;
@@ -33196,10 +33239,10 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       }
 
       .activity {
-        padding-left: 16px;
         margin-bottom: 24px;
-        padding-bottom: 24px;
         background-color: #fff;
+        width: 100%;
+        height: 100%;
       }
 
       .container {
@@ -33212,6 +33255,67 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         padding-top: 48px;
         @apply(--layout-vertical);
       }
+
+      .topHeader {
+        background-color: var(--third-primary-color);
+        color: #fff;
+        padding-left: 16px;
+        margin-bottom: 16px;
+      }
+
+      ac-activity-header {
+        padding-left: 16px;
+      }
+
+      .headerUserImage {
+        padding-top: 16px;
+        padding-bottom: 16px;
+        padding-right: 8px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .userInfo {
+        padding-right: 18px;
+        text-align: right;
+      }
+
+      paper-button {
+        color: var(--accent-color);
+      }
+
+      iron-icon {
+        width: 48px;
+        height: 48px;
+        padding-top: 14px;
+      }
+
+      .headerText {
+        padding-left: 8px;
+      }
+
+      .typeName {
+        font-size: 30px;
+        padding-top: 8px;
+      }
+
+      .postName {
+        font-size: 18px;
+      }
+
+      .bulb {
+        width: 54px;
+        height: 54px;
+        padding-top: 10px;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      .grayLine {
+        background-color: #f0f0f0;
+      }
     </style>
 
     <div id="scrollableRegion">
@@ -33220,11 +33324,25 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
           <div>
             <paper-material elevation="2" class="layout vertical activity" tabindex$="[[tabIndex]]">
 
-              <h1>[[t(activity.type)]]</h1>
-
-              <template is="dom-if" if="[[_isActivityNotType(activity,'activity.point.new')]]">
-                <ac-activity-header activity="[[activity]]"></ac-activity-header>
-              </template>
+              <div class="layout horizontal topHeader">
+                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
+                  <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
+                </template>
+                <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
+                  <iron-icon icon="communication:forum" class="stats-icon"></iron-icon>
+                </template>
+                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')]]">
+                  <iron-icon icon="icons:language" class="stats-icon"></iron-icon>
+                </template>
+                <div class="layout vertical flex headerText">
+                  <div class="layout horizontal typeName">[[t(activity.type)]]</div>
+                  <div class="layout horizontal postName">
+                    [[t(activity.Post.name)]]
+                  </div>
+                </div>
+                <ac-activity-header class="layout end-justified headerUserImage" no-text="" activity="[[activity]]"></ac-activity-header>
+              </div>
+              <ac-activity-header class="layout horizontal end-justified userInfo" no-image="" activity="[[activity]]"></ac-activity-header>
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                 <ac-activity-post activity="[[activity]]"></ac-activity-post>
               </template>
@@ -33236,6 +33354,9 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')]]">
                 <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
               </template>
+              <div class="layout horizontal end-justified">
+                <paper-button>[[t('join')]]</paper-button>
+              </div>
             </paper-material>
           </div>
         </template>
@@ -33303,6 +33424,11 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
         oldestProcessedActivityAt: {
           type: Date
         }
+      },
+
+      _getActivityWithPostTitle: function (activity) {
+        debugger;
+        return this.t(activity.type) + ' ' + activity.Post.name;
       },
 
       _isActivityNotType(activity, type) {
@@ -37685,6 +37811,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       _postChanged: function(newValue, oldValue) {
+        debugger;
       },
 
       goToGroup: function (e) {
@@ -37714,6 +37841,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       getCategoryImagePath: function (post) {
+        debugger;
         return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
       },
 
@@ -38126,7 +38254,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .point {
-        padding: 8px;
+        padding: 32px;
         margin: 8px;
         @apply(--layout-vertical);
       }
@@ -38180,7 +38308,27 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       paper-toast {
          z-index: 9999;
-       }
+      }
+
+      paper-material {
+        background-color: #fff;
+      }
+
+      yp-point {
+        padding-top: 16px;
+      }
+
+      .pointMaterial {
+        margin-bottom: 18px;
+        padding-top: 8px;
+      }
+
+      .thumbIcon {
+        height: 64px;
+        width: 64px;
+        padding-bottom: 16px;
+        color: var(--accent-color);
+      }
     </style>
 
     <template is="dom-if" if="[[post]]">
@@ -38190,6 +38338,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         <div class="point">
 
           <paper-material id="pointUpMaterial" elevation="0" class="pointText" animated="">
+            <div class="layout horizontal center-center">
+              <iron-icon icon="thumb-up" class="thumbIcon"></iron-icon>
+            </div>
             <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueUp}}" value="[[textValueUp]]" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="5" maxlength="500"></paper-textarea>
 
             <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
@@ -38201,15 +38352,19 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
           <div id="allUpPoints">
             <template is="dom-repeat" items="[[upPoints]]" as="point">
-              <yp-point point="[[point]]"></yp-point>
+              <paper-material elevation="1" class="pointMaterial">
+                <yp-point point="[[point]]"></yp-point>
+              </paper-material>
             </template>
           </div>
-
         </div>
 
         <div class="point">
 
           <paper-material id="pointDownMaterial" elevation="0" class="pointText" animated="">
+            <div class="layout horizontal center-center">
+              <iron-icon icon="thumb-down" class="thumbIcon"></iron-icon>
+            </div>
 
             <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueDown}}" value="[[textValueDown]]" label="[[t('point.against')]]" char-counter="" rows="2" max-rows="5" maxlength="500"></paper-textarea>
 
@@ -38222,7 +38377,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
           <div id="allDownPoints">
             <template is="dom-repeat" items="[[downPoints]]" as="point">
-              <yp-point point="[[point]]"></yp-point>
+              <paper-material elevation="1" class="pointMaterial">
+                <yp-point point="[[point]]"></yp-point>
+              </paper-material>
             </template>
           </div>
         </div>
@@ -38352,7 +38509,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         },
 
         focusTextArea: function (event) {
-          event.currentTarget.parentElement.elevation=3;
+          event.currentTarget.parentElement.elevation=4;
         },
 
         blurTextArea: function (e) {
@@ -40269,7 +40426,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 <dom-module id="yp-edit-dialog" assetpath="yp-edit-dialog/">
 
   <template>
-    <style>
+    <style is="custom-style">
       .fullScreenDialog {
         position: absolute;
         display: block;
@@ -40279,6 +40436,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         min-width: 360px;
         max-width: 1024px;
         @apply(--paper-fullscreen-dialog);
+        background-color: var(--accent-color);
       }
 
       [main] {
@@ -40286,7 +40444,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       #toolbar {
-        background-color: var(--default-primary-color);
+        background-color: var(--accent-color);
         color: var(--text-primary_color);
       }
 
@@ -40310,10 +40468,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       .title ::content h2 {
         @apply(--paper-font-title);
+        padding-top: 2px;
       }
 
       paper-toast {
         z-index: 9999;
+      }
+
+      paper-dialog > * {
+        padding: 24px 24px;
       }
 
       @media (max-width: 601px) {
@@ -40350,38 +40513,74 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
       }
 
+      .bigHeader {
+        background-color: var(--accent-color);
+        height: 100%;
+        color: #FFF;
+        margin: 0;
+        padding: 16px;
+      }
+
+      .largeIcon {
+        width: 48px;
+        height: 48px;
+      }
+
+      .smallIcon {
+        width: 32px;
+        height: 32px;
+        padding-right: 8px;
+      }
+
+      .content-wrapper ::content > h2 {
+        font-size: 32px;
+        padding-left: 12px;
+        padding-top: 10px;
+        padding-bottom: 8px;
+      }
+
     </style>
 
     <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop$="[[!narrowPad]]" modal="">
       <iron-media-query query="(max-width: 600px)" query-matches="{{narrow}}"></iron-media-query>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
+      <template is="dom-if" if="opened" restamp="">
+        <template is="dom-if" if="[[narrow]]">
+          <paper-header-panel main="" id="headerPanel" class="no-padding" mode="{{mode}}">
+            <paper-toolbar id="toolbar">
+              <paper-icon-button id="dismissBtn" icon="close" dialog-dismiss=""></paper-icon-button>
 
-      <template is="dom-if" if="[[narrow]]">
-        <paper-header-panel main="" id="headerPanel" class="no-padding" mode="{{mode}}">
-          <paper-toolbar id="toolbar">
-            <paper-icon-button id="dismissBtn" icon="close" dialog-dismiss=""></paper-icon-button>
-            <div class="title flex"><content select="h2"></content></div>
-            <paper-button on-tap="_submit">[[saveText]]</paper-button>
-          </paper-toolbar>
-          <div id="scroller" class="flex">
-            <form is="iron-form" id="form" name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" params="[[params]]">
-              <content></content>
-            </form>
+              <div class="layout horizontal title flex">
+                <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
+                <content select="h2"></content>
+              </div>
+              <paper-button on-tap="_submit">[[saveText]]</paper-button>
+            </paper-toolbar>
+            <div id="scroller" class="flex">
+              <form is="iron-form" id="form" name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" params="[[params]]">
+                <content></content>
+              </form>
+            </div>
+          </paper-header-panel>
+          <paper-spinner id="spinner"></paper-spinner>
+        </template>
+
+        <template is="dom-if" if="[[!narrow]]">
+          <div class="layout horizontal bigHeader">
+            <iron-icon class="largeIcon" icon="[[icon]]"></iron-icon>
+            <div class="content-wrapper">
+              <content select="h2"></content>
+            </div>
           </div>
-        </paper-header-panel>
-        <paper-spinner id="spinner"></paper-spinner>
-      </template>
-
-      <template is="dom-if" if="[[!narrow]]">
-        <div class="title"><content select="h2"></content></div>
-        <form is="iron-form" id="form" name="ypForm" iron-method="[[method]]" action="[[action]]" params="[[params]]">
-          <content></content>
-        </form>
-        <paper-spinner id="spinner"></paper-spinner>
-        <div class="buttons">
-          <paper-button id="dismissBtn" dialog-dismiss="">[[t('cancel')]]</paper-button>
-          <paper-button on-tap="_submit">[[saveText]]</paper-button>
-        </div>
+          <form is="iron-form" id="form" name="ypForm" iron-method="[[method]]" action="[[action]]" params="[[params]]">
+            <content></content>
+          </form>
+          <paper-spinner id="spinner"></paper-spinner>
+          <div class="buttons">
+            <paper-button id="dismissBtn" dialog-dismiss="">[[t('cancel')]]</paper-button>
+            <paper-button on-tap="_submit">[[saveText]]</paper-button>
+          </div>
+        </template>
       </template>
     </paper-dialog>
 
@@ -40467,6 +40666,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         doubleWidth: {
           type: Boolean,
           value: false
+        },
+
+        icon: {
+          type: String
+        },
+
+        opened: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -40492,11 +40700,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       open: function() {
 //        this.moveDialogToTopDom("editDialog");
-        this.$$("#editDialog").open();
-        debugger;
+        this.set("opened",false);
+        this.async(function () {
+          this.set("opened",true);
+          this.$$("#editDialog").open();
+        });
       },
 
       close: function() {
+        this.set("opened",false);
         this.$$("#editDialog").close();
       },
 
@@ -40736,7 +40948,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 </dom-module>
 <dom-module id="yp-post-location" assetpath="yp-post/">
   <template>
-    <style>
+    <style is="custom-style">
       :host {
         display: block;
       }
@@ -40752,34 +40964,19 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         @apply(--layout-flex);
       }
 
-      .dialog {
-        width: 450px;
-        height: 700px;
-      }
 
       .map {
-        height: 180px;
-        padding: 24px;
+        height: 400px;
+        width: 800px;
+        margin-top: 16px;
       }
     </style>
-    <div class="location-button">
 
-      <paper-button raised="" on-tap="_openLocationDialog">
-        <iron-icon icon="communication:location-on"></iron-icon>
-        <span>[[t('location.set')]]</span>
-      </paper-button>
-    </div>
-
-    <paper-dialog id="dialog" class="dialog" with-backdrop$="[[!narrowPad]]">
-      <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
+    <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
+    <div class="layout horizontal center-center">
       <google-map id="map" api-key="[[_apiKey()]]" libraries="places" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers=""></google-map>
-
-      <div class="buttons">
-        <paper-button on-tap="_closeDialog">[[t('close')]]</paper-button>
-      </div>
-    </paper-dialog>
-
-  </template>
+    </div>
+ </template>
 
   <script>
     Polymer({
@@ -40816,7 +41013,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       _createMarkerIfNeeded: function () {
         if (!this.marker) {
           this.marker = document.createElement('google-map-marker');
-          this.market.apiKey = this._apiKey();
+          this.marker.apiKey = this._apiKey();
           Polymer.dom(this.$.map).appendChild(this.marker);
         }
       },
@@ -40830,6 +41027,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       _locationChanged: function (newLocationValue, oldValue) {
         if (newLocationValue) {
+          debugger;
           this._createMarkerIfNeeded();
           this.marker.setAttribute('latitude', newLocationValue.latitude);
           this.marker.setAttribute('longitude', newLocationValue.longitude);
@@ -40844,19 +41042,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.location = { latitude: detail.latLng.lat(), longitude: detail.latLng.lng(), map_zoom: this.$.map.zoom }
       },
 
-      _openLocationDialog: function (event) {
-        this.$.dialog.open();
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-            this._createMarkerIfNeeded();
-            if (!this.location)
-              this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, map_zoom: 10 }
-          }.bind(this));
-        }
-      },
-
-      _closeDialog: function () {
-        this.$.dialog.close();
+      ready: function () {
       },
 
       _postChanged: function  (newValue, oldValue) {
@@ -40898,12 +41084,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       .container {
         width: 100%;
         height: 100%;
-        min-height: 500px;
+        min-height: 300px;
       }
 
       .subContainer {
-        width: 46%;
-        vertical-align: top;
+        margin: 0;
+        height: 100%;
+        padding: 16px;
+        padding-rigth: 32px;
       }
 
       @media (max-width: 600px) {
@@ -40913,75 +41101,80 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
 
         .subContainer {
-          width: 100%;
         }
-      }
-
-      .leftContainer {
-        padding-right: 48px;
-      }
-
-      .rightContainer {
       }
 
       #point {
         padding-bottom: 16px;
       }
+
+
     </style>
 
-    <yp-edit-dialog double-width="" id="editDialog" action="[[action]]" method="[[method]]" save-text="[[saveText]]" toast-text="[[toastText]]" params="[[params]]">
+    <yp-edit-dialog double-width="" id="editDialog" icon="icons:lightbulb-outline" action="[[action]]" method="[[method]]" save-text="[[saveText]]" toast-text="[[toastText]]" params="[[params]]">
       <h2>[[editHeaderText]]</h2>
-      <div class="layout horizontal wrap container">
-        <div class="layout self-start subContainer leftContainer">
-          <paper-input id="name" name="name" type="text" label="[[t('name')]]" value="{{post.name}}" maxlength="60" char-counter="">
-          </paper-input>
+      <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+        <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
+        <template is="dom-if" restamp="" if="[[new]]">
+          <paper-tab>[[t('post.yourPoint')]]</paper-tab>
+        </template>
+        <paper-tab>[[t('post.location')]]</paper-tab>
+        <paper-tab>[[t('post.photo')]]</paper-tab>
+      </paper-tabs>
 
-          <paper-textarea id="description" name="description" value="{{post.description}}" label="[[t('post.description')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
-          </paper-textarea>
+      <div class="layout vertical wrap container">
+        <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
 
-          <template is="dom-if" if="[[_showCategories(group)]]">
-            <paper-dropdown-menu label="[[t('category.select')]]">
-              <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
-                <template is="dom-repeat" items="[[group.Categories]]" as="category">
-                  <paper-item data-category-id$="[[category.id]]">[[category.name]]</paper-item>
-                </template>
-              </paper-menu>
-            </paper-dropdown-menu>
-            <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
-          </template>
-        </div>
+          <section>
+            <div class="layout vertical subContainer">
+              <template is="dom-if" if="[[_showCategories(group)]]" restamp="">
+                <paper-dropdown-menu label="[[t('category.select')]]">
+                  <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
+                    <template is="dom-repeat" items="[[group.Categories]]" as="category">
+                      <paper-item data-category-id$="[[category.id]]">[[category.name]]</paper-item>
+                    </template>
+                  </paper-menu>
+                </paper-dropdown-menu>
+                <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
+              </template>
 
-        <div class="layout self-start subContainer rightContainer">
+              <paper-input id="name" name="name" type="text" label="[[t('name')]]" value="{{post.name}}" maxlength="60" char-counter="">
+              </paper-input>
+
+
+              <paper-textarea id="description" name="description" value="{{post.description}}" label="[[t('post.description')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
+              </paper-textarea>
+            </div>
+          </section>
           <template is="dom-if" restamp="" if="[[new]]">
-            <paper-textarea id="pointFor" name="pointFor" value="{{post.pointFor}}" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
-            </paper-textarea>
+            <section class="subContainer">
+              <paper-textarea id="pointFor" name="pointFor" value="{{post.pointFor}}" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
+              </paper-textarea>
+            </section>
           </template>
-
-
-          <div class="layout vertical additionalSettings">
+          <section>
             <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]" class="additionalButton"></yp-post-location>
+          </section>
+          <section>
             <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
               <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
               <span>[[t('image.upload')]]</span>
             </file-upload>
-          </div>
-
-          <input type="hidden" name="location" value="[[encodedLocation]]">
-          <input type="hidden" name="coverMediaType" value="[[selectedCoverMediaType]]">
-          <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-
-          <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
-          <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType" selected="{{selectedCoverMediaType}}">
-            <paper-radio-button name="none">[[t('post.cover.none')]]</paper-radio-button>
-            <paper-radio-button name="image">[[t('post.cover.image')]]</paper-radio-button>
-            <template is="dom-if" if="[[location]]">
-              <paper-radio-button name="map">[[t('post.cover.map')]]</paper-radio-button>
-              <paper-radio-button name="streetView">[[t('post.cover.streetview')]]</paper-radio-button>
-            </template>
-          </paper-radio-group>
-        </div>
+            <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
+            <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType" selected="{{selectedCoverMediaType}}">
+              <paper-radio-button name="none">[[t('post.cover.none')]]</paper-radio-button>
+              <paper-radio-button name="image">[[t('post.cover.image')]]</paper-radio-button>
+              <template is="dom-if" if="[[location]]">
+                <paper-radio-button name="map">[[t('post.cover.map')]]</paper-radio-button>
+                <paper-radio-button name="streetView">[[t('post.cover.streetview')]]</paper-radio-button>
+              </template>
+            </paper-radio-group>
+          </section>
+        </neon-animated-pages>
+        <input type="hidden" name="location" value="[[encodedLocation]]">
+        <input type="hidden" name="coverMediaType" value="[[selectedCoverMediaType]]">
+        <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       </div>
-
     </yp-edit-dialog>
   </template>
 
@@ -41038,6 +41231,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       uploadedHeaderImageId: {
         type: String
+      },
+
+      selected: {
+        type: Number,
+        value: 0
       }
     },
 
@@ -41156,12 +41354,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .mainPage {
+        background-color: #FFF;
       }
 
       .tabsMaterial {
         margin-top: 16px;
-        min-height: 2048px;
         background-color: #fefefe;
+        min-height: 4090px;
       }
 
       .edit {
@@ -41240,6 +41439,31 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           font-size: 14px;
         }
       }
+
+      .topArea {
+        background-color: var(--third-primary-color);
+        width: 100%;
+        padding-bottom: 24px;
+        padding-top: 32px;
+      }
+
+      yp-ajax {
+        background-color: var(--main-background-color);
+      }
+
+      .mainArea {
+        background-color: var(--primary-background-color);
+        height: 100%;
+      }
+
+      .contentArea {
+        background-color: var(--primary-background-color);
+        width: 1024px;
+      }
+
+      .tabContainer {
+        width: 1024px;
+      }
     </style>
 
     <div class="container">
@@ -41251,37 +41475,33 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       <template is="dom-if" if="[[post]]">
 
-        <div class$="[[_mainContainerClasses(small)]]">
-          <div class="layout vertical">
-            <paper-material elevation="0" class$="[[_headerClasses(small)]]" style="background: #F2f2f2">
-              <yp-post-card post="[[post]]"></yp-post-card>
-              <paper-menu-button class="edit" hidden$="[[!hasAccess(post)]]">
-                <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-                <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-                  <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                  <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
-                </paper-menu>
-              </paper-menu-button>
-            </paper-material>
-            <div>
-              <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
-                <paper-tab><span>[[t('post.tabs.debate')]]</span> &nbsp; (<span>[[post.Points.length]]</span>)</paper-tab>
-                <paper-tab>[[t('post.tabs.news')]]</paper-tab>
-                <paper-tab>[[t('post.tabs.location')]]</paper-tab>
-                <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
-              </paper-tabs>
+        <div class="layout vertical center-center mainArea">
+          <div class="layout horizontal center-center topArea">
+            <yp-post-card class="layout horizontal center-center" post="[[post]]"></yp-post-card>
+            <paper-menu-button class="edit" hidden$="[[!hasAccess(post)]]">
+              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+                <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+              </paper-menu>
+            </paper-menu-button>
+          </div>
+          <paper-tabs selected="{{selected}}" id="paper_tabs" class="tabContainer" focused="">
+            <paper-tab><span>[[t('post.tabs.debate')]]</span> &nbsp; (<span>[[post.Points.length]]</span>)</paper-tab>
+            <paper-tab>[[t('post.tabs.news')]]</paper-tab>
+            <paper-tab>[[t('post.tabs.location')]]</paper-tab>
+            <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
+          </paper-tabs>
 
-              <paper-material elevation="2" class="tabsMaterial mainPage" animated="">
-                <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+          <div class="layout vertical flex contentArea tabsMaterial" animated="">
+            <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
 
-                  <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
+              <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
 
-                  <section><h1 style="padding: 32px;">To be done...</h1></section>
-                  <section><h1 style="padding: 32px;">To be done...</h1></section>
-                  <section><h1 style="padding: 32px;">To be done...</h1></section>
-                </neon-animated-pages>
-              </paper-material>
-            </div>
+              <section><h1 style="padding: 32px;">To be done...</h1></section>
+              <section><h1 style="padding: 32px;">To be done...</h1></section>
+              <section><h1 style="padding: 32px;">To be done...</h1></section>
+            </neon-animated-pages>
           </div>
         </div>
 
@@ -41450,12 +41670,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         width: 96%;
       }
 
-      .description {
+      .infoContainer {
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--description-line-height, 1.3);
         width: 540px;
-        padding: 12px;
+        padding: 0px;
         padding-bottom: 16px;
       }
 
@@ -41469,7 +41689,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       .card-actions {
         position: absolute;
-        bottom: 8px;
+        bottom: 4px;
         right: 42px;
         width: 420px;
       }
@@ -41478,11 +41698,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         padding: 0;
         padding-bottom: 4px;
         margin: 0;
+        font-size: 26px;
+        background-color: #eee;
+        padding: 8px;
+        margin-bottom: 8px;
       }
 
       .category-icon {
-        width: 64px;
-        height: 64px;
+        width: 100px;
+        height: 100px;
       }
 
       .category-image-container {
@@ -41552,15 +41776,19 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           height: 168px !important;
         }
       }
+
+      .description {
+        padding-bottom: 42px;
+      }
     </style>
 
     <template is="dom-if" if="[[post]]">
       <paper-material class="postCard" elevation="[[elevation]]">
         <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
         <div class="layout vertical">
-          <div class="description postCardCursor" on-tap="goToPost">
-            <h3 class="post-name">[[postName(post)]]</h3>
-            <div>[[postDescription(post)]]</div>
+          <div class="infoContainer postCardCursor" on-tap="goToPost">
+            <h1 class="post-name">[[postName(post)]]</h1>
+            <div class="description">[[postDescription(post)]]</div>
           </div>
           <div class="card-actions">
             <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
@@ -42380,7 +42608,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
 
     <div class="stats">
-      <iron-icon icon="vaadin-icons:lightbulb" class="stats-icon"></iron-icon>
+      <iron-icon icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
       <div class="stats-text" style="">{{formatNumber(group.counter_posts)}}</div>
 
       <iron-icon icon="communication:forum" class="stats-icon"></iron-icon>
@@ -42492,7 +42720,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
     </style>
 
-    <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" icon="social:people" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
       <paper-input id="name" name="name" type="text" label="[[t('name')]]" value="{{group.name}}" maxlength="50" char-counter="">
@@ -42607,6 +42835,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       :host {
         display: block;
         @apply(--layout-vertical);
+        background-color: var(--third-primary-color);
         width: 864px;
       }
 
@@ -42625,7 +42854,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .groupCard {
-        background-color: var(--secondary-primary-color);
+        background-color: var(--third-primary-color);
         color: #FFF;
         height: 243px;
         width: 864px;
@@ -42834,33 +43063,49 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           padding-right: 0;
         }
       }
+
+      .mainArea {
+        background-color: var(--third-primary-color);
+        height: 100%;
+      }
+
+      .contentArea {
+        background-color: var(--primary-background-color);
+        width: 1024px;
+      }
+
+      #paper_tabs {
+        width: 1024px;
+      }
     </style>
 
     <yp-ajax id="ajax" on-response="_groupsResponse"></yp-ajax>
     <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
 
     <template is="dom-if" if="[[group]]" restamp="">
-      <div class="layout vertical flex" style="margin-top: -40px;">
-        <div class="layout vertical center-center" style="width:100%;">
+      <div class="layout vertical flex" style="margin-top: -64px;">
+        <div class="layout vertical center-center mainArea" style="width:100%;">
           <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
         </div>
-        <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
-          <paper-tab>[[t('news')]]</paper-tab>
-          <paper-tab id="tab1">
-            <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
-          </paper-tab>
-          <template is="dom-if" if="[[hasNonOpenPosts]]">
-            <paper-tab>
-              <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
+        <div class="layout horizontal center-center">
+          <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+            <paper-tab>[[t('news')]]</paper-tab>
+            <paper-tab id="tab1">
+              <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
             </paper-tab>
-            <paper-tab>
-              <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
-            </paper-tab>
-            <paper-tab>
-              <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
-            </paper-tab>
-          </template>
-        </paper-tabs>
+            <template is="dom-if" if="[[hasNonOpenPosts]]">
+              <paper-tab>
+                <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
+              </paper-tab>
+              <paper-tab>
+                <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
+              </paper-tab>
+              <paper-tab>
+                <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
+              </paper-tab>
+            </template>
+          </paper-tabs>
+        </div>
         <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
           <section>
             <ac-activities my-selected-id="0" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
@@ -43383,21 +43628,21 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .additionalSettings {
-        padding-top: 32px;
+        padding-top: 16px;
       }
     </style>
 
-    <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" icon="group-work" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
       <div class="layout vertical">
-        <paper-input id="name" name="name" type="text" label="[[t('Name')]]" value="{{community.name}}" maxlength="60" char-counter="" class="mainInput">
+        <paper-input id="name" name="name" type="text" label="[[t('name')]]" value="{{community.name}}" maxlength="60" char-counter="" class="mainInput">
         </paper-input>
 
-        <paper-textarea id="description" name="description" value="{{community.description}}" label="[[t('Description')]]" char-counter="" rows="2" max-rows="5" maxlength="300" class="mainInput">
+        <paper-textarea id="description" name="description" value="{{community.description}}" label="[[t('description')]]" char-counter="" rows="2" max-rows="5" maxlength="300" class="mainInput">
         </paper-textarea>
       </div>
-      <p> </p>
+
       <div class="layout vertical additionalSettings">
         <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=community-logo" method="POST" on-success="_logoImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
@@ -43496,7 +43741,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     _setupTranslation: function () {
       if (this.new) {
-        this.editHeaderText = this.t('New community');
+        this.editHeaderText = this.t('community.new');
         this.toastText = this.t('community.toast.created');
       } else {
         this.editHeaderText = this.t('Update community info');
@@ -43584,7 +43829,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
 
     <div class="stats">
-      <iron-icon icon="vaadin-icons:lightbulb" class="stats-icon bulb"></iron-icon>
+      <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
       <div class="stats-text" style="">{{formatNumber(community.counter_posts)}}</div>
 
       <iron-icon icon="social:people" class="stats-icon"></iron-icon>
@@ -43656,10 +43901,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .large-card {
-        background-color: var(--default-primary-color, #000);
+        background-color: var(--third-primary-color, #000);
         color: #fff;
         height: 243px;
         width: 864px;
+        margin-top: 16px;
+        margin-bottom: 16px;
       }
 
       .description-and-stats {
@@ -43802,10 +44049,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 </dom-module>
 <dom-module id="yp-community" assetpath="yp-community/">
   <template>
-    <style>
+    <style is="custom-style">
 
       :host {
         @apply(--layout-horizontal);
+        width: 100%;
       }
 
       .createGroup {
@@ -43818,7 +44066,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       .card-container {
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
-        width: 97%;
+        width: 100%;
       }
 
       .card {
@@ -43829,46 +44077,67 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         padding-bottom: 12px;
       }
 
+      .mainArea {
+        background-color: var(--third-primary-color);
+        height: 100%;
+      }
+
+      .contentArea {
+        background-color: var(--primary-background-color);
+        width: 1024px;
+      }
+
+      yp-ajax {
+        background-color: var(--main-background-color);
+      }
+
+      #paper_tabs {
+        max-width: 1024px;
+      }
+
       paper-tab {
-        width: 100% !important;
-        position: static;
+        width: 500px;
       }
     </style>
 
     <yp-group-edit new="" id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
 
-    <template is="dom-if" if="[[community]]">
-      <div class="card-container" style="margin-top: -40px;">
-        <div class="layout vertical flex">
-          <div class="layout horizontal center-center">
-            <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
-          </div>
+    <div class="layout vertical">
+      <template is="dom-if" if="[[community]]">
+        <div class="card-container" style="margin-top: -40px;">
+          <div class="layout vertical flex">
+            <div class="layout horizontal center-center mainArea">
+              <yp-community-large-card id="communityCard" class="card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
+            </div>
 
-          <div class="layout vertical">
-            <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
-              <paper-tab><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
-              <paper-tab>[[t('news')]]</paper-tab>
-            </paper-tabs>
+            <div class="layout vertical">
+              <div class="layout horizontal center-center">
+                <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+                  <paper-tab><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
+                  <paper-tab>[[t('news')]]</paper-tab>
+                </paper-tabs>
+              </div>
 
-            <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-              <section>
-                <div class="layout horizontal center-center wrap">
-                  <template is="dom-if" if="[[groups]]">
-                    <template is="dom-repeat" class="list" items="[[groups]]" as="group">
-                      <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+              <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+                <section>
+                  <div class="layout horizontal center-center wrap">
+                    <template is="dom-if" if="[[groups]]">
+                      <template is="dom-repeat" class="list" items="[[groups]]" as="group">
+                        <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+                      </template>
                     </template>
-                  </template>
-                  <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
-                </div>
-              </section>
-              <ac-activities community-id="[[community.id]]"></ac-activities>
-            </iron-pages>
+                    <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
+                  </div>
+                </section>
+                <ac-activities community-id="[[community.id]]"></ac-activities>
+              </iron-pages>
+            </div>
+            <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
           </div>
-          <paper-fab icon="social:group" elevation="1" class="createGroup" title="[[t('group.add')]]" on-tap="_newGroup"></paper-fab>
         </div>
-      </div>
-    </template>
-    <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
+      </template>
+      <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
+    </div>
   </template>
 
   <script>
@@ -44019,6 +44288,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--description-line-height, 1.3);
         padding: 8px;
+        margin-top: 16px;
       }
 
       .stats {
@@ -44029,11 +44299,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         right: 16px;
       }
 
-      .community-name {
-        padding: 0;
-        padding-bottom: 4px;
-        margin: 0;
-      }
 
       .post-image {
         width: 100%;
@@ -44043,6 +44308,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         cursor: pointer;
         height: 420px;
         background-color: #fff;
+        padding: 0;
+        margin: 0;
       }
 
       iron-image {
@@ -44074,20 +44341,53 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         padding: 0;
         padding-bottom: 48px;
       }
+
+      iron-image {
+        padding: 0;
+        margin: 0;
+      }
+
+      iron-image {
+        padding: 0;
+        margin: 0;
+      }
+
+      paper-card {
+        background-color: #f00;
+        vertical-align: text-top;
+      }
+
+      .informationText {
+        vertical-align: text-top;
+      }
+
+      .community-name {
+        font-size: 26px;
+        margin-top: -4px;
+        height: 56px;
+        padding: 16px;
+        background-color: var(--third-primary-color-400);
+      }
+
+      .heartButton {
+        position: absolute;
+        top: 158px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+        background-color: var(--accent-color-100);
+      }
     </style>
 
     <template is="dom-if" if="[[community]]">
       <paper-card class="communityCard" elevation="[[elevation]]" on-tap="_goToCommunity">
-        <div class="card-content">
-          <div class="layout">
-            <iron-image sizing="cover" preload="" src="[[communityLogoImagePath(community)]]" class="post-image">
-          </iron-image></div>
-          <div class="description">
-            <h2 class="community-name">[[communityName(community)]]</h2>
-            <div>[[communityDescription(community)]]</div>
-          </div>
+        <iron-image sizing="cover" preload="" src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
+        <div class="informationText">
+          <div class="community-name">[[communityName(community)]]</div>
+          <div class="description">[[communityDescription(community)]]</div>
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+        <paper-fab class="heartButton" icon="favorite"></paper-fab>
       </paper-card>
     </template>
   </template>
@@ -44188,6 +44488,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         @apply(--layout-flex);
         padding-top: 8px;
         padding-bottom: 8px;
+        color: #F0F0F0;
       }
 
       .stats-text {
@@ -44195,6 +44496,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         text-align:right;
         vertical-align: bottom;
         padding-right:8px;
+        color: #E1E1E1;
       }
 
       .stats-icon {
@@ -44204,7 +44506,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
 
     <div class="stats">
-      <iron-icon icon="vaadin-icons:lightbulb" class="stats-icon"></iron-icon>
+      <iron-icon icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
       <div class="stats-text" style="">{{formatNumber(domain.counter_posts)}}</div>
 
       <iron-icon icon="communication:forum" class="stats-icon"></iron-icon>
@@ -44437,6 +44739,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           height: 122px;
         }
       }
+
+      h1 {
+        font-size: 48px;
+      }
     </style>
     <template is="dom-if" if="[[domain]]">
       <paper-material id="card" elevation="5" animated="" class="large-card">
@@ -44444,7 +44750,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           <iron-image class="image" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
           <div class="layout vertical description-and-stats">
             <div class="description">
-              <h2 class="domain-name">[[_domainName(domain)]]</h2>
+              <h1 class="domain-name">[[_domainName(domain)]]</h1>
               <div>[[_domainDescription(domain)]]</div>
             </div>
             <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
@@ -44602,22 +44908,34 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
       }
 
-    </style>
+      .topArea {
+        background-color: var(--third-primary-color);
+      }
 
-    <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
+      yp-ajax {
+        background-color: var(--main-background-color);
+      }
+
+      .mainArea {
+        background-color: var(--primary-background-color);
+        height: 100%;
+      }
+    </style>
 
     <yp-community-edit id="communityNew" on-iron-form-response="_refresh"></yp-community-edit>
 
-    <div class="layout vertical flex" style="margin-top: -40px;">
-      <div class="layout horizontal center-center">
+    <div class="layout vertical flex" style="margin-top: -33px;">
+      <div class="layout horizontal center-center topArea">
         <yp-domain-large-card id="domainCard" class="card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
       </div>
 
-      <div class="layout vertical">
+      <div class="layout vertical flex mainArea">
         <div class="layout horizontal center-center">
           <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
             <paper-tab><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
             <paper-tab>[[t('news')]]</paper-tab>
+            <paper-tab>[[t('instagram')]]</paper-tab>
+            <paper-tab>[[t('twitter')]]</paper-tab>
           </paper-tabs>
         </div>
 
@@ -44638,6 +44956,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         </iron-pages>
         <paper-fab icon="group-work" elevation="1" class="createCommunity" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
       </div>
+      <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
     </div>
   </template>
 
@@ -44715,7 +45034,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
 //        headerPanel.style.background =  "#9E9E9E";
 
-        this.fire("change-header", { headerTitle: this.domain.name,
+        this.fire("change-header", { headerTitle: '',//this.domain.name,
                                      headerDescription: this.domain.description});
         if (this.communities.length>0) {
           this.hideAdd = true;
@@ -44906,8 +45225,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .main-header {
-        border-bottom: 1px solid #f2f2f2;
-        background-color: #f2f2f2;
+        border-bottom: 1px solid var(--third-primary-color-600);
+        background-color: var(--third-primary-color-600);
         color: #333;
         height: 64px;
       }
@@ -46351,19 +46670,31 @@ module.exports = Array.isArray || function (arr) {
     --pallet-two-500: #FFA726;
     --pallet-two-accent-400: #FFA726;
 
-    --main-background-color: #F2F2F2;
-    --primary-background-color: #F2F2F2;
+    --main-background-color: #FFEB3B;
+    --primary-background-color: #FFEB3B;
 
     --default-primary-color: var(--pallet-one-500);
     --secondary-primary-color: #0f9d58;
-    --third-primary-color: #eca403;
 
-    --accent-color: var(--pallet-two-accent-400);
+    --third-primary-color: #03A9F4;
+    --third-primary-color-200: #81D4FA;
+    --third-primary-color-300: #4FC3F7;
+    --third-primary-color-400: #29B6F6;
+    --third-primary-color-600: #039BE5;
+    --third-primary-color-700: #0288D1;
+    --third-primary-color-800: #0277BD;
 
-    --paper-dialog-button-color: var(--pallet-two-500);
-    --paper-tabs-selection-bar-color: var(--pallet-two-accent-400);
+    --accent-color: #F50057;
+    --accent-color-100: #F8BBD0;
+    --accent-color-200: #F48FB1;
+    
+    --paper-dialog-button-color: var(--accent-color);
+    --paper-tabs-selection-bar-color: var(--accent-color);
+    --paper-input-container-focus-color: var(--accent-color);
 
-    --paper-input-container-focus-color: var(--pallet-two-500);
+    --paper-dropdown-menu: {
+      background-color: #FFF;
+    };
 
     --light-primary-color: #FFCC80;
     --text-primary-color: #fff;

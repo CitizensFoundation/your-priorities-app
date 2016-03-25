@@ -1,16 +1,20 @@
 {
   "activity": {
     "post": {
-      "new": "Nýrri hugmynd bætt við",
+      "new": "// Ný hugmynd //",
       "status": {
-        "update": "Fréttir um hugmynd"
+        "update": "Fréttir"
       }
     },
     "point": {
-      "new": "Nýjum rökum bætt við"
+      "new": "Rökæður",
+      "newEndorsed": "Rök með",
+      "newOpposed": "Rök á móti"
     }
   },
+  "join": "taktu þátt!",
   "name": "Nafn",
+  "description": "Lýsing",
   "domain": {
     "edit": "Breyta vef"
   },
@@ -68,6 +72,10 @@
     "notify": "Notify me about this post",
     "share": "Share this post",
     "searchingFor": "Leita að hugmynd ",
+    "yourPost": "Hugmynd",
+    "yourPoint": "Rök",
+    "location": "Staðsettning",
+    "photo": "Mynd",
     "tabs": {
       "debate": "Rökræða",
       "news": "Fréttir",
@@ -90,7 +98,8 @@
     "in": "í"
   },
   "category": {
-    "new": "Nýr flokkur"
+    "new": "Nýr flokkur",
+    "select": "Veldu flokk"
   },
   "categories": {
     "all": "öllum flokkum",
