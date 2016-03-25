@@ -48,8 +48,8 @@
     },
 
     getCategoryImagePath: function (post) {
-      if (post.Category) {
-        return 'https://s3.amazonaws.com/' + this.s3bucketName('') + '/categories/icons/000/000/' + this.padNumber(post.Category.id) + '/icon_100/' + post.Category.icon_file_name;
+      if (post.Category && post.Category.CategoryIconImages) {
+        return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
       } else {
         return "";
       }
