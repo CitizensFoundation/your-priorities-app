@@ -70,18 +70,9 @@
         color: #333;
         height: 64px;
       }
-
-      #mainArea::shadow #contentContainer {
-        padding-top: 0;
-      }
     </style>
 
-    <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader" on-app-ready="_appReady"></yp-app-globals>
-
     <template is="dom-if" if="[[appReady]]">
-
-      <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
-
       <!--    <material-search id="search" narrow="[[narrow]]"
                            previous-searches="{{previousSearches}}"
                            on-search-change="_onSearch" class="fit"></material-search> -->
@@ -157,7 +148,10 @@
         <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
       </template>
 
+      <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
     </template>
+
+    <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader" on-app-ready="_appReady"></yp-app-globals>
   </template>
 
   <script>
