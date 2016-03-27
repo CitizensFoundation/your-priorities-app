@@ -56,22 +56,25 @@
       <yp-group-card-large id="groupCard" class="largeCard card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
 
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused>
-        <paper-tab>[[t('news')]]</paper-tab>
-        <paper-tab id="tab1">
-          <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
-        </paper-tab>
-        <template is="dom-if" if="[[hasNonOpenPosts]]">
-          <paper-tab>
-            <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
+        <template is="dom-if" if="[[group]]">
+          <paper-tab>[[t('news')]]</paper-tab>
+          <paper-tab id="tab1">
+            <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
           </paper-tab>
-          <paper-tab>
-            <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
-          </paper-tab>
-          <paper-tab>
-            <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
-          </paper-tab>
+          <template is="dom-if" if="[[hasNonOpenPosts]]">
+            <paper-tab>
+              <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
+            </paper-tab>
+            <paper-tab>
+              <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
+            </paper-tab>
+            <paper-tab>
+              <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
+            </paper-tab>
+          </template>
         </template>
       </paper-tabs>
+
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
