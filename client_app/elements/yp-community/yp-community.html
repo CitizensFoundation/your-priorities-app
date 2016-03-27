@@ -25,12 +25,6 @@
 <dom-module id="yp-community">
   <template>
     <style>
-
-      :host {
-        @apply(--layout-horizontal);
-        width: 100%;
-      }
-
       .card-container {
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
@@ -46,8 +40,6 @@
       }
     </style>
 
-    <yp-group-edit new id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
-
     <yp-page create-fab-icon="social:group" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
 
       <yp-community-large-card id="communityCard" class="largeCard card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
@@ -57,7 +49,7 @@
         <paper-tab class="tab">[[t('news')]]</paper-tab>
       </paper-tabs>
 
-      <iron-pages class="pages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+      <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
           <div class="layout horizontal center-center wrap">
             <template is="dom-if" if="[[groups]]">
@@ -71,7 +63,9 @@
         <ac-activities community-id="[[community.id]]"></ac-activities>
       </iron-pages>
     </yp-page>
+
     <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
+    <yp-group-edit new id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
   </template>
 
   <script>

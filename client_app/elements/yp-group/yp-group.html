@@ -28,18 +28,6 @@
 <dom-module id="yp-group">
   <template>
     <style>
-
-      :host {
-        @apply(--layout-vertical);
-      }
-
-      .createPost {
-        background-color: --var(accent-color-darker,#f57c00);
-        position: fixed;
-        bottom:24px;
-        right: 28px;
-      }
-
       .card-container {
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
@@ -47,15 +35,6 @@
 
       .card {
         padding: 16px;
-      }
-
-
-      @media (max-width: 900px) {
-
-      }
-
-      @media (max-width: 480px) {
-
       }
 
       .objectives {
@@ -67,71 +46,34 @@
         padding: 12px;
       }
 
-      @media (max-width: 360px) {
-        #groupCard {
-          padding-left: 0;
-          padding-right: 0;
-        }
-      }
-
-      @media (max-width: 320px) {
-        #groupCard {
-          padding-left: 0;
-          padding-right: 0;
-        }
-      }
-
-      .mainArea {
-        background-color: var(--third-primary-color);
-        height: 100%;
-      }
-
-      .contentArea {
-        background-color: var(--primary-background-color);
-        width: 1024px;
-      }
-
-      #paper_tabs {
-        width: 1024px;
-      }
-
-      .topArea {
-        background-image: url("https://s3.amazonaws.com/yrpri-staging-production/studlar.png");
-      }
-
-      yp-group-card-large {
-        margin-top: 16px;
-        margin-bottom: 16px;
+      yp-ajax {
+        background-color: var(--main-background-color);
       }
     </style>
 
-    <yp-ajax id="ajax" on-response="_groupsResponse"></yp-ajax>
-    <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
+    <yp-page create-fab-icon="add" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
 
-    <div class="layout vertical flex"  style="margin-top: -96px;">
-      <div class="layout vertical center-center mainArea topArea" style="width:100%;">
-        <yp-group-card-large id="groupCard" class="card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
-      </div>
-      <div class="layout horizontal center-center">
-        <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-          <paper-tab>[[t('news')]]</paper-tab>
-          <paper-tab id="tab1">
-            <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
+      <yp-group-card-large id="groupCard" class="largeCard card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
+
+      <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused>
+        <paper-tab>[[t('news')]]</paper-tab>
+        <paper-tab id="tab1">
+          <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
+        </paper-tab>
+        <template is="dom-if" if="[[hasNonOpenPosts]]">
+          <paper-tab>
+            <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
           </paper-tab>
-          <template is="dom-if" if="[[hasNonOpenPosts]]">
-            <paper-tab>
-              <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
-            </paper-tab>
-            <paper-tab>
-              <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
-            </paper-tab>
-            <paper-tab>
-              <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
-            </paper-tab>
-          </template>
-        </paper-tabs>
-      </div>
-      <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+          <paper-tab>
+            <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
+          </paper-tab>
+          <paper-tab>
+            <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
+          </paper-tab>
+        </template>
+      </paper-tabs>
+
+      <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
           <ac-activities my-selected-id="0" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
         </section>
@@ -158,8 +100,14 @@
           </section>
         </template>
       </iron-pages>
-      <paper-fab icon="add" elevation="1" class="createPost" title="[[t('post.add_new')]]" on-tap="newPost"></paper-fab>
+    </yp-page>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax large-spinner id="ajax" on-response="_groupsResponse"></yp-ajax>
     </div>
+
+    <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
+
   </template>
 
   <script>
@@ -274,7 +222,7 @@
           backPath: "#!/community/" + this.group.community_id });
       },
 
-      newPost: function () {
+      _newPost: function () {
         window.appGlobals.activity('open', 'newPost');
         this.$.postEdit.open('new', {groupId: this.groupId});
       }
