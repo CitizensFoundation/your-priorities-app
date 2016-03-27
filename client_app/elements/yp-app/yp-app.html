@@ -5,7 +5,6 @@
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 
 <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -34,52 +33,6 @@
   <template>
 
     <style>
-      .main-area {
-        padding-top: 2px !important;
-      }
-
-      .avatar-container {
-        position: relative;
-        border: 2px solid #00AA8D;
-        border-radius: 50%;
-        height: 90px;
-        padding: 2px;
-        width: 90px;
-        margin: 20px auto;
-      }
-
-      .avatar-container .image {
-        background-image: url('http://app-layout-assets.appspot.com/assets/pesto/avatar.jpg');
-        background-size: contain;
-        border-radius: 50%;
-        height: 100%;
-        width: 100%;
-      }
-
-      .contact-info {
-        margin: 0 20px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid #CCC;
-        text-align: center;
-      }
-
-      .contact-info .name {
-        font-weight: bold;
-      }
-
-      .contact-info .email {
-        color: #999;
-      }
-
-      paper-item {
-        @apply(--layout-center-center);
-        height: 54px;
-      }
-
-      paper-icon-button {
-        --paper-icon-button-ink-color: white;
-      }
-
       app-header {
         position: fixed;
         top: 0;
@@ -111,18 +64,6 @@
         padding-right: 16px;
       }
 
-      .content {
-        display: block;
-        position: relative;
-        width: 1170px;
-        margin: 5px auto;
-      }
-
-      .card-container {
-        display: inline-block;
-        width: 33.33%;
-      }
-
       .main-header {
         border-bottom: 1px solid var(--third-primary-color-800);
         background-color: var(--third-primary-color-800);
@@ -130,24 +71,9 @@
         height: 64px;
       }
 
-      @media (max-width: 1458px) {
-        .content {
-          width: 100%;
-        }
+      #mainArea::shadow #contentContainer {
+        padding-top: 0;
       }
-
-      @media (max-width: 960px) {
-        .card-container {
-          width: 50%;
-        }
-      }
-
-      @media (max-width: 719px) {
-        .card-container {
-          width: 100%;
-        }
-      }
-
     </style>
 
     <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader" on-app-ready="_appReady"></yp-app-globals>
@@ -160,7 +86,7 @@
                            previous-searches="{{previousSearches}}"
                            on-search-change="_onSearch" class="fit"></material-search> -->
 
-      <app-drawer-layout drawer-width="288px" responsive-width="16000px">
+      <app-drawer-layout drawer-width="360px" responsive-width="16000px">
 
         <app-drawer id="drawer" align="end" position="right" swipe-open>
           <yp-app-drawer id="ypDrawer" user="[[user]]" route="[[route]]"></yp-app-drawer>

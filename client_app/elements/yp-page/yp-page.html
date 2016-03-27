@@ -1,0 +1,138 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-page">
+  <template>
+    <style>
+      :host {
+        @apply(--layout-vertical);
+        height: 100%;
+      }
+
+      .mainArea {
+        background-color: var(--primary-background-color);
+        height: 100%;
+      }
+
+      .topArea {
+        background-color: var(--middle-color, var(--main-background-color));
+        background-image: url("https://s3.amazonaws.com/yrpri-staging-production/studlar.png");
+      }
+
+      .middleArea {
+        background-color: var(--third-primary-color-600);
+      }
+
+      .createFab {
+        background-color: var(--accent-color);
+        color: var(--icon-general-color, #FFF);
+        position: fixed;
+        bottom: 24px;
+        right: 28px;
+        z-index: 1;
+      }
+
+      .createFab[wide-layout] {
+        background-color: var(--accent-color);
+        position: relative;
+        margin-top: -8px;
+      }
+
+      .createFabContainer[wide-layout] .createFab {
+        margin-right: 128px;
+      }
+
+      .tab-wrapper ::content > .tabs {
+        max-width: 1200px;
+        padding-top: 8px;
+      }
+
+      .tab-wrapper ::content > .tabs .tab {
+        width: 250px;
+      }
+
+      @media (max-width: 1024px) {
+        .tab-wrapper ::content > .tabs {
+          max-width: 920px;
+        }
+
+        .tab-wrapper ::content > .tabs .tab {
+          width: 200px;
+        }
+      }
+
+      @media (max-width: 500px) {
+        .tab-wrapper ::content > .tabs {
+          max-width: 450px;
+        }
+
+        .tab-wrapper ::content > .tabs .tab {
+          width: 120px;
+        }
+      }
+
+      @media (max-width: 330px) {
+        .tab-wrapper ::content > .tabs {
+          max-width: 330px;
+        }
+
+        .tab-wrapper ::content > paper-tab {
+          width: 100px;
+        }
+      }
+    </style>
+
+    <iron-media-query query="(min-width: 1200px)" query-matches="{{wideWidth}}"></iron-media-query>
+
+    <div class="layout vertical flex mainArea">
+      <div class="large-card-wrapper layout horizontal center-center topArea">
+        <content select=".largeCard"></content>
+      </div>
+      <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea" wide-layout$="{{wideWidth}}">
+        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="1" class="createCommunity" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
+      </div>
+      <div class="tab-wrapper layout horizontal center-center">
+        <content select=".tabs"></content>
+      </div>
+      <div class="pages-wrapper layout vertical">
+        <content select=".pages"></content>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-page',
+
+      properties: {
+        wideWidth: {
+          type: Boolean,
+          value: false
+        },
+
+        createFabIcon: {
+          type: String
+        },
+
+        createFabTitle: {
+          type: String
+        }
+      },
+
+      _fabTabChanged: function (newValue) {
+        debugger;
+      },
+
+      _createTap: function () {
+        this.fire('yp-create-fab-tap');
+      }
+    });
+  </script>
+</dom-module>

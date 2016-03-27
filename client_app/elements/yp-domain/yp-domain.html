@@ -20,41 +20,13 @@
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-community/yp-community-card.html">
 <link rel="import" href="../yp-community/yp-community-card-add.html">
+<link rel="import" href="../yp-page/yp-page.html">
 
 <link rel="import" href="yp-domain-large-card.html">
 
 <dom-module id="yp-domain">
   <template>
-    <style is="custom-style">
-      :host {
-        @apply(--layout-horizontal);
-      }
-
-      .createCommunity {
-        background-color: var(--accent-color);
-        color: var(--icon-general-color, #FFF);
-        position: fixed;
-        bottom: 24px;
-        right: 28px;
-        z-index: 1;
-      }
-
-      .createCommunity[wide-layout] {
-        background-color: var(--accent-color);
-        position: relative;
-        margin-top: -8px;
-      }
-
-      .createCommunityContainerWide {
-      }
-
-      .createCommunityContainer[wide-layout] .createCommunity {
-        margin-right: 128px;
-      }
-
-      .middleArea {
-        background-color: var(--middle-color, var(--main-background-color));
-      }
+    <style>
 
       ac-activities {
         @apply(--layout-vertical);
@@ -70,41 +42,7 @@
         padding: 16px;
       }
 
-      iron-pages {
-        padding-top: 16px;
-      }
-
-
-      #paper_tabs {
-        max-width: 1024px;
-      }
-
-      paper-tab {
-        width: 500px;
-      }
-
-      @media (max-width: 1024px) {
-        #paper_tabs {
-          max-width: 600px;
-        }
-
-        paper-tab {
-          width: 300px;
-        }
-      }
-
-      @media (max-width: 500px) {
-        #paper_tabs {
-          max-width: 400px;
-        }
-
-        paper-tab {
-          width: 200px;
-        }
-      }
-
       @media (max-width: 330px) {
-
         .card {
           padding-left: 0;
           padding-right: 0;
@@ -116,24 +54,10 @@
           padding: 0;
           margin: 0;
         }
-
-        paper-tabs {
-          padding-bottom: 12px;
-        }
-      }
-
-      .topArea {
-        background-color: var(--third-primary-color);
-        background-image: url("https://s3.amazonaws.com/yrpri-staging-production/studlar.png");
       }
 
       yp-ajax {
         background-color: var(--main-background-color);
-      }
-
-      .mainArea {
-        background-color: var(--primary-background-color);
-        height: 100%;
       }
 
       .twitterFeed {
@@ -141,53 +65,43 @@
       }
     </style>
 
-    <iron-media-query query="(min-width: 1200px)" query-matches="{{wide}}"></iron-media-query>
     <yp-community-edit id="communityNew" on-iron-form-response="_refresh"></yp-community-edit>
 
-    <div class="layout vertical flex middleArea" style="margin-top: -64px;">
-      <div class="layout horizontal center-center topArea">
-        <yp-domain-large-card id="domainCard" class="card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
-      </div>
-      <div class="layout horizontal end-justified createCommunityContainer"  wide-layout$="{{wide}}">
-        <paper-fab icon="group-work" elevation="1" class="createCommunity" wide-layout$="{{wide}}" title="[[t('community.add')]]" on-tap="_newCommunity"></paper-fab>
-      </div>
+    <yp-page create-fab-icon="group-work" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
 
-      <div class="layout vertical flex mainArea">
-        <div class="layout horizontal center-center">
-          <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-            <paper-tab><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
-            <paper-tab>[[t('news')]]</paper-tab>
-            <paper-tab>[[t('twitter')]]</paper-tab>
-            <paper-tab>[[t('instagram')]]</paper-tab>
-          </paper-tabs>
-        </div>
+      <yp-domain-large-card id="domainCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
 
-        <iron-pages selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-          <section>
-            <div class="card-container layout center-center wrap">
-              <template is="dom-if" if="[[communities]]">
-                <template is="dom-repeat" class="list" items="[[communities]]" as="community">
-                  <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-                </template>
-              </template>
-              <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
-            </div>
-          </section>
-          <section>
-            <ac-activities domain-id="[[domain.id]]"></ac-activities>
-          </section>
-          <section class="layout vertical center-center twitterFeed">
-            <template is="dom-if" if="[[selected]]" restamp>
-              <a class="twitter-timeline" href="https://twitter.com/hashtag/BetriReykjavik" data-widget-id="713327367431782400">#BetriReykjavik Tweets</a>
+      <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused>
+        <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
+        <paper-tab class="tab">[[t('news')]]</paper-tab>
+        <paper-tab class="tab">[[t('twitter')]]</paper-tab>
+        <paper-tab class="tab">[[t('instagram')]]</paper-tab>
+      </paper-tabs>
+
+      <iron-pages class="pages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <section>
+          <div class="card-container layout center-center wrap">
+            <template is="dom-repeat" class="list" items="[[communities]]" as="community">
+              <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
             </template>
-          </section>
-          <section class="layout vertical center-center twitterfeed">
-             <polymer-instagram client-id="[[_instagramClientId()]]" access-token="[[_instagramAccessToken()]]"></polymer-instagram>
-          </section>
-        </iron-pages>
-      </div>
-      <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
-    </div>
+            <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
+          </div>
+        </section>
+        <section>
+          <ac-activities domain-id="[[domain.id]]"></ac-activities>
+        </section>
+        <section class="layout vertical center-center twitterFeed">
+          <template is="dom-if" if="[[selected]]" restamp>
+            <a class="twitter-timeline" href="https://twitter.com/hashtag/BetriReykjavik" data-widget-id="713327367431782400">#BetriReykjavik Tweets</a>
+          </template>
+        </section>
+        <section class="layout vertical center-center twitterfeed">
+          <polymer-instagram client-id="[[_instagramClientId()]]" access-token="[[_instagramAccessToken()]]"></polymer-instagram>
+        </section>
+      </iron-pages>
+    </yp-page>
+
+    <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
   </template>
 
   <script>
@@ -202,7 +116,7 @@
       properties: {
         communities: {
           type: Array,
-          value: []
+          value: function () { return [] }
         },
 
         domainId: {
@@ -233,11 +147,6 @@
           type: Number,
           value: 0,
           observer: '_selectedChanged'
-        },
-
-        wideWidth: {
-          type: Boolean,
-          value: false
         }
       },
 
@@ -292,10 +201,9 @@
         this.$.domainCard.setElevation(5);
         this.$.domainCard.lowerCardLater();
 
-//        headerPanel.style.background =  "#9E9E9E";
-
-        this.fire("change-header", { headerTitle: '',//this.domain.name,
+        this.fire("change-header", { headerTitle: '',
                                      headerDescription: this.domain.description});
+
         if (this.communities.length>0) {
           this.hideAdd = true;
         } else {
