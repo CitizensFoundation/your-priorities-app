@@ -29549,7 +29549,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       }
 
       .tab-wrapper ::content > .tabs {
-        max-width: 1400px;
+        width: 1100px;
         padding-top: 8px;
         padding-bottom: 8px;
       }
@@ -43427,22 +43427,25 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <yp-group-card-large id="groupCard" class="largeCard card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
 
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
-        <paper-tab>[[t('news')]]</paper-tab>
-        <paper-tab id="tab1">
-          <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
-        </paper-tab>
-        <template is="dom-if" if="[[hasNonOpenPosts]]">
-          <paper-tab>
-            <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
+        <template is="dom-if" if="[[group]]">
+          <paper-tab>[[t('news')]]</paper-tab>
+          <paper-tab id="tab1">
+            <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
           </paper-tab>
-          <paper-tab>
-            <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
-          </paper-tab>
-          <paper-tab>
-            <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
-          </paper-tab>
+          <template is="dom-if" if="[[hasNonOpenPosts]]">
+            <paper-tab>
+              <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
+            </paper-tab>
+            <paper-tab>
+              <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
+            </paper-tab>
+            <paper-tab>
+              <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
+            </paper-tab>
+          </template>
         </template>
       </paper-tabs>
+
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
