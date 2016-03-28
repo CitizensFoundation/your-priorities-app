@@ -132,14 +132,19 @@
           }
         },
 
-        _removeSplash: function () {
-          var splash = document.getElementById('splash');
+        _removeSplashNode: function (splash) {
           if (splash) {
             splash.addEventListener('transitionend',function(event) {
               splash.parentNode.removeChild(splash);
             });
             document.body.classList.remove('loading');
           }
+        },
+
+        _removeSplash: function () {
+          this._removeSplashNode(document.getElementById('splashYrPri'));
+          this._removeSplashNode(document.getElementById('splashBR'));
+          this._removeSplashNode(document.getElementById('splashBI'));
         },
 
         _removeSplashWithDelay: function () {
@@ -169,9 +174,7 @@
                 headerDescription: this.currentDomain.description});
             }
           }
-          if (document.getElementById('splash')) {
-            this._removeSplashWithDelay();
-          }
+          this._removeSplashWithDelay();
         },
 
         activity: function (type, object, context) {
