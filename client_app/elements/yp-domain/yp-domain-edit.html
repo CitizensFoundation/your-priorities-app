@@ -12,6 +12,7 @@
 
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
+<link rel="import" href="../yp-theme/yp-theme-selector.html">
 
 <dom-module id="yp-domain-edit">
   <template>
@@ -19,10 +20,16 @@
     <style>
       .additionalSettings {
         padding-top: 16px;
+        margin-top: 8px;
       }
 
       .mainInput {
         max-width: 400px;
+      }
+
+      yp-theme-selector {
+        padding-top: 8px;
+        margin-bottom: 32px;
       }
     </style>
 
@@ -48,6 +55,8 @@
                       maxlength="300" class="mainInput">
       </paper-textarea>
 
+      <yp-theme-selector selected-theme="{{themeId}}"></yp-theme-selector>
+
       <div class="layout vertical additionalSettings">
         <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
@@ -62,6 +71,7 @@
         </file-upload>
       </div>
 
+      <input type="hidden" name="themeId" value="[[themeId]]">
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
@@ -106,7 +116,17 @@
 
       uploadedHeaderImageId: {
         type: String
+      },
+
+      themeId: {
+        type: String,
+        value: null,
+        observer: '_themeIdChanged'
       }
+    },
+
+    _themeIdChanged: function (newValue) {
+      debugger;
     },
 
     _customRedirect: function (domainId) {

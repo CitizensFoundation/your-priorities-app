@@ -199,7 +199,8 @@
         if (this.domain.Communities) {
           this.set("communities",this.domain.Communities);
         }
-        this.setTheme(0);
+        var randomTheme = Math.floor(Math.random() * 6) + 1;
+        this.setTheme(randomTheme-1);
         var headerPanel = app.$.mainScrollHeaderPanel;
         this.$.domainCard.setElevation(5);
         this.$.domainCard.lowerCardLater();

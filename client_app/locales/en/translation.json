@@ -159,5 +159,8 @@
     "profile": {
       "upload": "Upload profile image"
     }
+  },
+  "theme": {
+    "choose": "Choose a theme"
   }
 }

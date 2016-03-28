@@ -1,0 +1,48 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="yp-theme-behavior.html">
+
+<dom-module id="yp-theme-selector">
+  <template>
+    <style>
+
+    </style>
+
+    <paper-dropdown-menu label="[[t('theme.choose')]]">
+      <paper-menu class="dropdown-content" selected="{{selectedTheme}}">
+        <template is="dom-repeat" items="[[themes]]" as="theme">
+          <paper-item name="[[index]]">[[theme.name]]</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-theme-selector',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.ypThemeBehavior
+      ],
+
+      properties: {
+
+        selectedTheme: {
+          type: Number,
+          value: null,
+          notify: true
+        }
+
+      }
+    });
+  </script>
+</dom-module>
