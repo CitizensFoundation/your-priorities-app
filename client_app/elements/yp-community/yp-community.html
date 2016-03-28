@@ -11,6 +11,7 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../ac-activities/ac-activities.html">
+<link rel="import" href="../yp-theme/yp-theme-behavior.html">
 
 <link rel="import" href="../yp-post/yp-post.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
@@ -74,7 +75,8 @@
       is: 'yp-community',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.ypThemeBehavior
       ],
 
       properties: {
@@ -138,6 +140,9 @@
       },
 
       _response: function (event, detail, sender) {
+        var randomTheme = Math.floor(Math.random() * 3) + 1;
+        //this.setTheme(randomTheme-1);
+
         this.set('community', detail.response);
         var headerPanel = app.$.mainScrollHeaderPanel;
         var url = this._communityHeaderUrl(this.community);
