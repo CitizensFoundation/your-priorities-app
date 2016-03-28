@@ -178,5 +178,8 @@
     "profile": {
       "upload": "Mynd"
     }
+  },
+  "theme": {
+    "choose": "Veldu útlits þema"
   }
 }
