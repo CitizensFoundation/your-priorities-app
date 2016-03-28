@@ -14,6 +14,8 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
+<link rel="import" href="../yp-theme/yp-theme-behavior.html">
+
 <link rel="import" href="../ac-activities/ac-activities.html">
 
 <link rel="import" href="../yp-post/yp-post.html">
@@ -57,7 +59,7 @@
       }
 
       yp-ajax {
-        background-color: var(--main-background-color);
+        background-color: var(--primary-background-color);
       }
 
       .twitterFeed {
@@ -109,7 +111,8 @@
       is: 'yp-domain',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.ypThemeBehavior
       ],
 
       properties: {
@@ -196,6 +199,7 @@
         if (this.domain.Communities) {
           this.set("communities",this.domain.Communities);
         }
+        this.setTheme(0);
         var headerPanel = app.$.mainScrollHeaderPanel;
         this.$.domainCard.setElevation(5);
         this.$.domainCard.lowerCardLater();
