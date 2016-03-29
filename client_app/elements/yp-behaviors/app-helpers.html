@@ -29,7 +29,11 @@
       return "#!/post/"+post.id;
     },
 
-    _apiKey: function () {
+    getLocale: function () {
+      return window.locale;
+    },
+
+    _googleMapsApiKey: function () {
       return window.googleMapsApiKey;
     },
 

@@ -227,12 +227,12 @@
         },
 
         ready: function () {
-          var locale = 'en';
+          window.locale = 'is';
           window.appStartTime = new Date();
           window.appGlobals = this;
-          i18n.init({ lng: locale });
+          i18n.init({ lng: window.locale });
           window.i18n = i18n;
-          moment.locale(locale);
+          moment.locale(window.locale);
 
           window.googleMapsApiKey = 'AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM';
           window.instagramAccessToken = '3066250812.cf0499d.4d1d4db0bb8b43b59c057346511161c8';

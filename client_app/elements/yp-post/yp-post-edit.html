@@ -15,17 +15,11 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
-
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
-
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
-
 <link rel="import" href="../yp-image-uploader/yp-image-uploader.html">
-
-
 <link rel="import" href="yp-post-location.html">
 
 <dom-module id="yp-post-edit">
@@ -47,25 +41,10 @@
         display: block;
       }
 
-      .additionalSettings {
-        padding-top: 24px;
-      }
-
-      .additionalButton {
-        padding-bottom: 16px;
-      }
-
       .container {
         width: 100%;
         height: 100%;
         min-height: 300px;
-      }
-
-      .subContainer {
-        margin: 0;
-        height: 100%;
-        padding: 16px;
-        padding-rigth: 32px;
       }
 
       @media (max-width: 600px) {
@@ -78,14 +57,17 @@
         }
       }
 
-      #point {
-        padding-bottom: 16px;
+      yp-post-location {
       }
 
-
+      section {
+        margin-top: 32px;
+      }
     </style>
 
-    <yp-edit-dialog double-width id="editDialog" icon="icons:lightbulb-outline" action="[[action]]" method="[[method]]" save-text="[[saveText]]" toast-text="[[toastText]]" params="[[params]]">
+    <yp-edit-dialog double-width id="editDialog" icon="icons:lightbulb-outline" action="[[action]]"
+                    use-next-tab-action on-next-tab-action="_nextTab" method="[[method]]"
+                    save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
       <h2>[[editHeaderText]]</h2>
       <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
@@ -98,9 +80,8 @@
 
       <div class="layout vertical wrap container">
         <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-
           <section>
-            <div class="layout vertical subContainer">
+            <div class="layout vertical">
               <template is="dom-if" if="[[_showCategories(group)]]" restamp>
                 <paper-dropdown-menu label="[[t('category.select')]]">
                   <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
@@ -133,6 +114,7 @@
               </paper-textarea>
             </div>
           </section>
+
           <template is="dom-if" restamp if="[[new]]">
             <section class="subContainer">
               <paper-textarea id="pointFor"
@@ -146,23 +128,29 @@
               </paper-textarea>
             </section>
           </template>
+
           <section>
-            <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]" class="additionalButton"></yp-post-location>
+            <template is="dom-if" if="[[mapActive]]">
+              <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]"></yp-post-location>
+            </template>
           </section>
+
           <section>
-            <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
-              <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-              <span>[[t('image.upload')]]</span>
-            </file-upload>
-            <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
-            <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType" selected="{{selectedCoverMediaType}}">
-              <paper-radio-button name="none">[[t('post.cover.none')]]</paper-radio-button>
-              <paper-radio-button name="image">[[t('post.cover.image')]]</paper-radio-button>
-              <template is="dom-if" if="[[location]]">
-                <paper-radio-button name="map">[[t('post.cover.map')]]</paper-radio-button>
-                <paper-radio-button name="streetView">[[t('post.cover.streetview')]]</paper-radio-button>
-              </template>
-            </paper-radio-group>
+            <div class="layout vertical center-center">
+              <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
+                <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                <span>[[t('image.upload')]]</span>
+              </file-upload>
+              <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
+              <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal" selected="{{selectedCoverMediaType}}">
+                <paper-radio-button name="none">[[t('post.cover.none')]]</paper-radio-button>
+                <paper-radio-button name="image">[[t('post.cover.image')]]</paper-radio-button>
+                <template is="dom-if" if="[[location]]">
+                  <paper-radio-button name="map">[[t('post.cover.map')]]</paper-radio-button>
+                  <paper-radio-button name="streetView">[[t('post.cover.streetview')]]</paper-radio-button>
+                </template>
+              </paper-radio-group>
+            </div>
           </section>
         </neon-animated-pages>
         <input type="hidden" name="location" value="[[encodedLocation]]">
@@ -229,7 +217,39 @@
 
       selected: {
         type: Number,
-        value: 0
+        value: 0,
+        observer: '_selectedChanged'
+      },
+
+      mapActive: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    _nextOnEnter: function (event) {
+      if (event.keyCode === 13) {
+        this._searchMap();
+      }
+    },
+
+    _nextTab: function () {
+      if (this.selected<3) {
+        this.set('selected', this.selected+1)
+      }
+    },
+
+    _selectedChanged: function (newValue) {
+      if (newValue==2) {
+        this.set('mapActive', true);
+      } else {
+        this.set('mapActive', false);
+      }
+
+      if (newValue==3) {
+        this.$.editDialog.useNextTabAction = false;
+      } else {
+        this.$.editDialog.useNextTabAction = true;
       }
     },
 
@@ -249,7 +269,7 @@
     _postChanged: function(newPost, oldPost) {
       if (newPost){
         if (newPost.location) {
-          this.location = newPost.location;
+          this.set('location', newPost.location);
         }
         if (newPost.cover_media_type)
           this.selectedCoverMediaType = newPost.cover_media_type;

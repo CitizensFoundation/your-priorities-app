@@ -145,7 +145,12 @@
                 <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
                 <content select="h2"></content>
               </div>
-              <paper-button on-tap="_submit">[[saveText]]</paper-button>
+              <template is="dom-if" if="[[!useNextTabAction]]">
+                <paper-button on-tap="_submit">[[saveText]]</paper-button>
+              </template>
+              <template is="dom-if" if="[[useNextTabAction]]">
+                <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
+              </template>
             </paper-toolbar>
             <div id="scroller" class="flex">
               <form is="iron-form" id="form" name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
@@ -169,7 +174,12 @@
           <paper-spinner id="spinner"></paper-spinner>
           <div class="buttons">
             <paper-button id="dismissBtn" dialog-dismiss>[[t('cancel')]]</paper-button>
-            <paper-button on-tap="_submit">[[saveText]]</paper-button>
+            <template is="dom-if" if="[[!useNextTabAction]]">
+              <paper-button on-tap="_submit">[[saveText]]</paper-button>
+            </template>
+            <template is="dom-if" if="[[useNextTabAction]]">
+              <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
+            </template>
           </div>
         </template>
       </template>
@@ -266,7 +276,21 @@
         opened: {
           type: Boolean,
           value: false
+        },
+
+        useNextTabAction: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+
+        nextActionText: {
+          type: String
         }
+      },
+
+      _nextTab: function () {
+        this.fire('next-tab-action')
       },
 
       _narrowChanged: function() {
