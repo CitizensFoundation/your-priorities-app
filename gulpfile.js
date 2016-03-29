@@ -28,6 +28,7 @@ var historyApiFallback = require('connect-history-api-fallback');
 var packageJson = require('./package.json');
 var crypto = require('crypto');
 var ensureFiles = require('./tasks/ensure-files.js');
+var versionAppend = require('gulp-version-append');
 
 // var ghPages = require('gulp-gh-pages');
 
@@ -77,6 +78,7 @@ var optimizeHtmlTask = function(src, dest) {
   });
 
   return gulp.src(src)
+    .pipe($.versionAppend(['html', 'js', 'css']))
     .pipe(assets)
     // Concatenate and minify JavaScript
     .pipe($.if('*.js', $.uglify({
