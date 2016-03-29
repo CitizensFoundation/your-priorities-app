@@ -25,7 +25,6 @@
 
       .point {
         padding: 32px;
-        margin: 8px;
         @apply(--layout-vertical);
       }
 
@@ -108,7 +107,7 @@
         <div class="point">
 
           <paper-material id="pointUpMaterial" elevation="0" class="pointText" animated>
-            <div class="layout horizontal center-center">
+            <div class="layout horizontal start-justified">
               <iron-icon icon="thumb-up" class="thumbIcon"></iron-icon>
             </div>
             <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
@@ -134,7 +133,7 @@
         <div class="point">
 
           <paper-material id="pointDownMaterial" elevation="0" class="pointText" animated>
-            <div class="layout horizontal center-center">
+            <div class="layout horizontal start">
               <iron-icon icon="thumb-down" class="thumbIcon"></iron-icon>
             </div>
 
