@@ -38710,7 +38710,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       .point {
         padding: 32px;
-        margin: 8px;
         @apply(--layout-vertical);
       }
 
@@ -38793,7 +38792,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         <div class="point">
 
           <paper-material id="pointUpMaterial" elevation="0" class="pointText" animated="">
-            <div class="layout horizontal center-center">
+            <div class="layout horizontal start-justified">
               <iron-icon icon="thumb-up" class="thumbIcon"></iron-icon>
             </div>
             <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueUp}}" value="[[textValueUp]]" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="5" maxlength="500"></paper-textarea>
@@ -38817,7 +38816,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         <div class="point">
 
           <paper-material id="pointDownMaterial" elevation="0" class="pointText" animated="">
-            <div class="layout horizontal center-center">
+            <div class="layout horizontal start">
               <iron-icon icon="thumb-down" class="thumbIcon"></iron-icon>
             </div>
 
@@ -41934,8 +41933,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       <template is="dom-if" if="[[post]]">
 
-        <div class="layout vertical center-center mainArea" style="margin-top: -26px;">
+        <div class="layout vertical center-center mainArea" style="margin-top: 28px;">
           <div class="layout horizontal center-center topArea">
+
             <yp-post-card class="layout horizontal center-center" post="[[post]]"></yp-post-card>
             <paper-menu-button class="edit" hidden$="[[!hasAccess(post)]]">
               <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
@@ -41945,6 +41945,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
               </paper-menu>
             </paper-menu-button>
           </div>
+
+
           <paper-tabs selected="{{selected}}" id="paper_tabs" class="tabContainer" focused="">
             <paper-tab><span>[[t('post.tabs.debate')]]</span> &nbsp; (<span>[[post.Points.length]]</span>)</paper-tab>
             <paper-tab>[[t('post.tabs.news')]]</paper-tab>
