@@ -58,6 +58,10 @@ body {
   color: #333;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 .currentUser {
   padding-left: 20px;
   padding-top: 8px;
@@ -29594,6 +29598,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       .topArea {
         background-color: var(--middle-color, var(--primary-background-color));
         background-image: url("https://s3.amazonaws.com/yrpri-staging-production/studlar.png");
+        height: 300px;
       }
 
       .middleArea {
@@ -38781,7 +38786,20 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         height: 64px;
         width: 64px;
         padding-bottom: 16px;
-        color: var(--accent-color);
+        color: var(--primary-color);
+      }
+
+      paper-fab::shadow #icon {
+        background-color: var(--accent-color);
+        color: var(--icon-general-color, #FFF);
+      }
+
+      paper-fab {
+        background-color: var(--accent-color);
+      }
+
+      .addPointFab {
+        width: 100%;
       }
     </style>
 
@@ -38798,8 +38816,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueUp}}" value="[[textValueUp]]" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="5" maxlength="500"></paper-textarea>
 
             <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
-              <div style="width:100%;text-align: center;padding-top: 10px;">
-                <paper-fab icon="add" mini="" z="3" on-tap="addPointUp" class="upPointAction" title="[[t('point.add_up')]]"></paper-fab>
+              <div class="addPointFab layout horizontal center-center">
+                <paper-fab icon="add" mini="" elevation="3" on-tap="addPointUp" title="[[t('point.add_up')]]"></paper-fab>
               </div>
             </template>
           </paper-material>
@@ -38823,8 +38841,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueDown}}" value="[[textValueDown]]" label="[[t('point.against')]]" char-counter="" rows="2" max-rows="5" maxlength="500"></paper-textarea>
 
             <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
-              <div id="downPointAction" style="width:100%;text-align: center;padding-top: 10px;">
-                <paper-fab icon="add" mini="" z="3" on-tap="addPointDown" class="downPointAction" title="[[t('point.add_down')]]"></paper-fab>
+              <div class="addPointFab layout horizontal center-center">
+                <paper-fab icon="add" mini="" z="3" on-tap="addPointDown" title="[[t('point.add_down')]]"></paper-fab>
               </div>
             </template>
           </paper-material>
@@ -43478,7 +43496,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .card {
-        padding: 16px;
       }
 
       .objectives {
