@@ -13,6 +13,10 @@ body {
   color: #333;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 .currentUser {
   padding-left: 20px;
   padding-top: 8px;

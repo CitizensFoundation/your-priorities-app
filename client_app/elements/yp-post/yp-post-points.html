@@ -96,7 +96,20 @@
         height: 64px;
         width: 64px;
         padding-bottom: 16px;
-        color: var(--accent-color);
+        color: var(--primary-color);
+      }
+
+      paper-fab::shadow #icon {
+        background-color: var(--accent-color);
+        color: var(--icon-general-color, #FFF);
+      }
+
+      paper-fab {
+        background-color: var(--accent-color);
+      }
+
+      .addPointFab {
+        width: 100%;
       }
     </style>
 
@@ -115,8 +128,8 @@
                             max-rows="5" maxlength="500"></paper-textarea>
 
             <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
-              <div style="width:100%;text-align: center;padding-top: 10px;">
-                <paper-fab icon="add" mini="" z="3" on-tap="addPointUp" class="upPointAction" title="[[t('point.add_up')]]"></paper-fab>
+              <div class="addPointFab layout horizontal center-center">
+                <paper-fab icon="add" mini="" elevation="3" on-tap="addPointUp" title="[[t('point.add_up')]]"></paper-fab>
               </div>
             </template>
           </paper-material>
@@ -142,8 +155,8 @@
                             max-rows="5" maxlength="500"></paper-textarea>
 
             <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
-              <div id="downPointAction" style="width:100%;text-align: center;padding-top: 10px;">
-                <paper-fab icon="add" mini="" z="3" on-tap="addPointDown" class="downPointAction" title="[[t('point.add_down')]]"></paper-fab>
+              <div class="addPointFab layout horizontal center-center">
+                <paper-fab icon="add" mini="" z="3" on-tap="addPointDown" title="[[t('point.add_down')]]"></paper-fab>
               </div>
             </template>
           </paper-material>
