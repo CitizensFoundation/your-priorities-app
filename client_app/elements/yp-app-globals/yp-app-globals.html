@@ -227,7 +227,7 @@
         },
 
         ready: function () {
-          var locale = 'is';
+          var locale = 'en';
           window.appStartTime = new Date();
           window.appGlobals = this;
           i18n.init({ lng: locale });
@@ -237,6 +237,7 @@
           window.googleMapsApiKey = 'AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM';
           window.instagramAccessToken = '3066250812.cf0499d.4d1d4db0bb8b43b59c057346511161c8';
           window.instagramClientID = 'd2f248ec764d4b208ab668b7561a89cc';
+
           this.requestInProgress = true;
           this.fire('app-ready');
           this.$.boot.generateRequest();

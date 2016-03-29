@@ -10,8 +10,6 @@
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 
-<link rel="import" href="../../bower_components/polymer-instagram/polymer-instagram.html">
-
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
@@ -23,6 +21,7 @@
 <link rel="import" href="../yp-community/yp-community-card.html">
 <link rel="import" href="../yp-community/yp-community-card-add.html">
 <link rel="import" href="../yp-page/yp-page.html">
+<link rel="import" href="../yp-other-social-media/yp-other-social-media.html">
 
 <link rel="import" href="yp-domain-large-card.html">
 
@@ -74,8 +73,7 @@
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused>
         <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
         <paper-tab class="tab">[[t('news')]]</paper-tab>
-        <paper-tab class="tab">[[t('twitter')]]</paper-tab>
-        <paper-tab class="tab">[[t('instagram')]]</paper-tab>
+        <paper-tab class="tab">[[t('socialMedia.other')]]</paper-tab>
       </paper-tabs>
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
@@ -90,13 +88,8 @@
         <section>
           <ac-activities domain-id="[[domain.id]]"></ac-activities>
         </section>
-        <section class="layout vertical center-center twitterFeed">
-          <template is="dom-if" if="[[selected]]" restamp>
-            <a class="twitter-timeline" href="https://twitter.com/hashtag/BetriReykjavik" data-widget-id="713327367431782400">#BetriReykjavik Tweets</a>
-          </template>
-        </section>
-        <section class="layout vertical center-center twitterfeed">
-          <polymer-instagram client-id="[[_instagramClientId()]]" access-token="[[_instagramAccessToken()]]"></polymer-instagram>
+        <section class="layout vertical">
+          <yp-other-social-media active="[[otherSocialMediaActive]]"></yp-other-social-media>
         </section>
       </iron-pages>
     </yp-page>
@@ -149,18 +142,19 @@
           type: Number,
           value: 0,
           observer: '_selectedChanged'
-        }
-      },
+        },
 
-      isSelected: function (number) {
-        return (this.selected && this.selected == number);
+        otherSocialMediaActive: {
+          type: Boolean,
+          value: false
+        }
       },
 
       _selectedChanged: function (newValue) {
         if (newValue==2) {
-          this.async(function () {
-            this._setupTwitter();
-          }.bind(this));
+          this.set('otherSocialMediaActive', true);
+        } else {
+          this.set('otherSocialMediaActive', false);
         }
       },
 
@@ -171,18 +165,6 @@
           this.$.ajax.generateRequest();
           this.hideAdd = true;
         }
-      },
-
-      _setupTwitter: function () {
-        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-      },
-
-      _instagramAccessToken: function () {
-        return window.instagramAccessToken;
-      },
-
-      _instagramClientId: function () {
-        return window.instagramClientID;
       },
 
       _refresh: function () {
