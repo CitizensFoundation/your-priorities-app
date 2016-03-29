@@ -113,13 +113,13 @@
 
             <section data-route="domain">
               <template is="dom-if" if="[[params.domainId]]" restamp>
-                <yp-domain domain-id="{{params.domainId}}" on-change-header="onChangeHeader"></yp-domain>
+                <yp-domain domain-id="{{params.domainId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-domain>
               </template>
             </section>
 
             <section data-route="community">
               <template is="dom-if" if="[[params.communityId]]" restamp>
-                <yp-community community-id="{{params.communityId}}" on-change-header="onChangeHeader"></yp-community>
+                <yp-community community-id="{{params.communityId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-community>
               </template>
             </section>
 

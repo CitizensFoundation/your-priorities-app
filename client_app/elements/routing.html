@@ -31,7 +31,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.params = data.params;
     });
 
+    page('/domain/:domainId/:tabName', scrollToTop, function (data) {
+      app.route = 'domain';
+      app.params = data.params;
+    });
+
     page('/community/:communityId', scrollToTop, function (data) {
+      app.route = 'community';
+      app.params = data.params;
+    });
+
+    page('/community/:communityId/:tabName', scrollToTop, function (data) {
       app.route = 'community';
       app.params = data.params;
     });
@@ -41,17 +51,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.params = data.params;
     });
 
-    page('/group/:groupId/:groupName/posts/:filterValue', scrollToTop, function (data) {
+    page('/group/:groupId/:tabName', scrollToTop, function (data) {
       app.route = 'group';
       app.params = data.params;
     });
 
-    page('/group/:groupId/:groupName/posts/:filterValue/:categoryId/:categoryName', scrollToTop, function (data) {
+    page('/group/:groupId/:tabName/:groupName/posts/:filterValue', scrollToTop, function (data) {
       app.route = 'group';
       app.params = data.params;
     });
 
-    page('/group/:groupId/:groupName/search/:searchingFor', scrollToTop, function (data) {
+    page('/group/:groupId/:tabName/:groupName/posts/:filterValue/:categoryId/:categoryName', scrollToTop, function (data) {
+      app.route = 'group';
+      app.params = data.params;
+    });
+
+    page('/group/:groupId/:tabName/:groupName/search/:searchingFor', scrollToTop, function (data) {
       app.route = 'group';
       app.params = data.params;
     });

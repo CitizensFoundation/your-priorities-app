@@ -106,7 +106,34 @@
 
         selected: {
           type: Number,
-          value: 0
+          value: 0,
+          observer: '_selectedChanged'
+        },
+
+        tabName: {
+          type: String,
+          value: null,
+          observer: '_tabNameChanged'
+        }
+      },
+
+      _tabNameChanged: function (newValue) {
+        if (newValue) {
+          if (newValue=='groups') {
+            this.set('selected', 0);
+          } else if (newValue=='news') {
+            this.set('selected', 1);
+          }
+        }
+      },
+
+      _selectedChanged: function (newValue) {
+        if (this.community) {
+          if (newValue == 0) {
+            page("#!/community/" + this.community.id + '/groups');
+          } else if (newValue == 1) {
+            page("#!/community/" + this.community.id + '/news');
+          }
         }
       },
 
