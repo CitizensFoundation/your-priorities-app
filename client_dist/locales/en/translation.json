@@ -144,7 +144,9 @@
     "completeForm": "Fill our the form correctly",
     "loginNotAuthorized": "Email or password wrong"
   },
-
+  "socialMedia": {
+    "other": "Other social media"
+  },
   "location": {
     "set": "Set location"
   },

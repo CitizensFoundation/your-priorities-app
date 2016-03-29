@@ -156,7 +156,9 @@
     "settings": "Stillingar"
 
   },
-
+  "socialMedia": {
+    "other": "Aðrir samfélagsmiðlar"
+  },
   "login": {
     "name": "Nafn",
     "email": "Tölvupóstur",

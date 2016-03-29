@@ -29514,7 +29514,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
         },
 
         ready: function () {
-          var locale = 'is';
+          var locale = 'en';
           window.appStartTime = new Date();
           window.appGlobals = this;
           i18n.init({ lng: locale });
@@ -29524,6 +29524,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
           window.googleMapsApiKey = 'AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM';
           window.instagramAccessToken = '3066250812.cf0499d.4d1d4db0bb8b43b59c057346511161c8';
           window.instagramClientID = 'd2f248ec764d4b208ab668b7561a89cc';
+
           this.requestInProgress = true;
           this.fire('app-ready');
           this.$.boot.generateRequest();
@@ -44759,6 +44760,208 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     });
   </script>
 </dom-module>
+<dom-module id="yp-community-card" assetpath="yp-community/">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+        width: 320px;
+      }
+
+      .description {
+        @apply(--layout-vertical);
+        color: var(--primary-color-more-darker, #424242);
+        line-height: var(--description-line-height, 1.3);
+        padding: 8px;
+        margin-top: 4px;
+      }
+
+      .stats {
+        @apply(--layout-self-center);
+        color: var(--primary-color-more-darker, #424242);
+        position: absolute;
+        bottom: 0;
+        right: 16px;
+      }
+
+
+      .post-image {
+        width: 100%;
+      }
+
+      .communityCard {
+        cursor: pointer;
+        height: 420px;
+        background-color: #fff;
+        padding: 0;
+        margin: 0;
+      }
+
+      iron-image {
+        width: 320px;
+        height: 180px;
+      }
+
+      @media (max-width: 420px) {
+        :host {
+          width: 304px;
+        }
+
+        .communityCard {
+          margin-left: 8px;
+          margin-right: 8px;
+          height: 100% !important;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
+        }
+
+        iron-image {
+          width: 304px;
+          height: 165px;
+        }
+      }
+
+      .card-content {
+        padding: 0;
+        padding-bottom: 48px;
+      }
+
+      iron-image {
+        padding: 0;
+        margin: 0;
+      }
+
+      iron-image {
+        padding: 0;
+        margin: 0;
+      }
+
+      paper-card {
+        background-color: #f00;
+        vertical-align: text-top;
+      }
+
+      .informationText {
+        vertical-align: text-top;
+      }
+
+      .community-name {
+        font-size: 26px;
+        margin-top: -4px;
+        height: 56px;
+        padding: 16px;
+        background-color: var(--primary-color-800);
+        color: #FFF;
+      }
+
+      .heartButton {
+        position: absolute;
+        top: 158px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+        background-color: var(--accent-color-400);
+        color: var(--icon-general-color, #FFF);
+      }
+    </style>
+
+    <template is="dom-if" if="[[community]]">
+      <paper-card class="communityCard" elevation="[[elevation]]" on-tap="_goToCommunity">
+        <iron-image sizing="cover" preload="" src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
+        <div class="informationText">
+          <div class="community-name">[[communityName(community)]]</div>
+          <div class="description">[[communityDescription(community)]]</div>
+        </div>
+        <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+        <paper-fab class="heartButton" icon="favorite"></paper-fab>
+      </paper-card>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-community-card',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.CommunityBehaviors
+      ]
+
+    });
+  </script>
+</dom-module>
+<dom-module id="yp-community-card-add" assetpath="yp-community/">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+        height: 460px;
+        width: 316px;
+      }
+
+      @media (max-width: 600px) {
+        :host {
+          width: 285px !important;
+        }
+      }
+
+      .communityCard {
+        height: 460px;
+        background-color: #fff;
+      }
+
+      paper-icon-button {
+        height: 250px !important;
+        width: 250px !important;
+        color: var(--accent-color)
+      }
+
+      .header {
+        padding: 0;
+        margin: 0;
+        padding-top: 16px;
+      }
+
+      .icon {
+        --iron-icon-height: 220px;
+        --iron-icon-width: 220px;
+      }
+
+      @media (min-width: 481px) and (max-width: 1024px) {
+        :host {
+          width: 290px;
+        }
+      }
+
+    </style>
+
+    <paper-card elevation="[[elevation]]" class="layout vertical center communityCard">
+      <h2 class="header">[[t('community.new')]]</h2>
+      <paper-icon-button class="icon" icon="add"></paper-icon-button>
+    </paper-card>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-community-card-add',
+
+      properties: {
+        elevation: {
+          type: Number
+        }
+      },
+
+      behaviors: [
+        Polymer.appHelpers
+    ]
+    });
+  </script>
+</dom-module>
 
 <dom-module id="iron-flex" assetpath="../bower_components/iron-flex-layout/">
   <template>
@@ -45164,20 +45367,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
   <template>
     <style is="custom-style">
       :host {
-        width: 100%;
-        height: 100%;
-        @apply(--layout-vertical);
-        @apply(--layout-center-center);
       }
-
-      .instafeed img {
-      }
-
-      #instafeed {
-        padding-top: 24px;
-        max-width: 800px;
-      }
-
     </style>
 
     <div class="layout">
@@ -45227,205 +45417,93 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     });
   </script>
 </dom-module>
-<dom-module id="yp-community-card" assetpath="yp-community/">
-
+<dom-module id="yp-other-social-media" assetpath="yp-other-social-media/">
   <template>
     <style>
-      :host {
-        display: block;
-        @apply(--layout-vertical);
-        width: 320px;
+      .feed {
+        margin-top: 24px;
       }
 
-      .description {
-        @apply(--layout-vertical);
-        color: var(--primary-color-more-darker, #424242);
-        line-height: var(--description-line-height, 1.3);
-        padding: 8px;
-        margin-top: 4px;
+      .socialMediaArea {
+        max-width: 500px;
       }
 
-      .stats {
-        @apply(--layout-self-center);
-        color: var(--primary-color-more-darker, #424242);
-        position: absolute;
-        bottom: 0;
-        right: 16px;
-      }
-
-
-      .post-image {
-        width: 100%;
-      }
-
-      .communityCard {
-        cursor: pointer;
-        height: 420px;
-        background-color: #fff;
-        padding: 0;
-        margin: 0;
-      }
-
-      iron-image {
-        width: 320px;
-        height: 180px;
-      }
-
-      @media (max-width: 420px) {
-        :host {
-          width: 304px;
-        }
-
-        .communityCard {
-          margin-left: 8px;
-          margin-right: 8px;
-          height: 100% !important;
-          padding-left: 0;
-          padding-right: 0;
-          width: 304px;
-        }
-
-        iron-image {
-          width: 304px;
-          height: 165px;
-        }
-      }
-
-      .card-content {
-        padding: 0;
-        padding-bottom: 48px;
-      }
-
-      iron-image {
-        padding: 0;
-        margin: 0;
-      }
-
-      iron-image {
-        padding: 0;
-        margin: 0;
-      }
-
-      paper-card {
-        background-color: #f00;
-        vertical-align: text-top;
-      }
-
-      .informationText {
-        vertical-align: text-top;
-      }
-
-      .community-name {
-        font-size: 26px;
-        margin-top: -4px;
-        height: 56px;
-        padding: 16px;
-        background-color: var(--primary-color-800);
-        color: #FFF;
-      }
-
-      .heartButton {
-        position: absolute;
-        top: 158px;
-        right: 16px;
-        width: 40px;
-        height: 40px;
-        background-color: var(--accent-color-400);
-        color: var(--icon-general-color, #FFF);
+      paper-menu {
+        padding-right: 24px;
+        padding-top: 32px;
       }
     </style>
 
-    <template is="dom-if" if="[[community]]">
-      <paper-card class="communityCard" elevation="[[elevation]]" on-tap="_goToCommunity">
-        <iron-image sizing="cover" preload="" src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
-        <div class="informationText">
-          <div class="community-name">[[communityName(community)]]</div>
-          <div class="description">[[communityDescription(community)]]</div>
+    <template is="dom-if" if="[[active]]">
+      <div class="layout horizontal center-center" style="width: 100%;">
+        <div class="layout vertical self-start paperMenu">
+          <div class="layout horizontal start-justified">
+            <paper-menu selected="{{selected}}">
+              <paper-item>Twitter</paper-item>
+              <paper-item>Instagram</paper-item>
+            </paper-menu>
+          </div>
         </div>
-        <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
-        <paper-fab class="heartButton" icon="favorite"></paper-fab>
-      </paper-card>
+        <div class="layout vertical socialMediaArea">
+          <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+            <section class="feed">
+              <a class="twitter-timeline" href="https://twitter.com/hashtag/BetriReykjavik" data-widget-id="713327367431782400">#BetriReykjavik Tweets</a>
+            </section>
+            <section class="feed">
+              <polymer-instagram class="layout horizontal start-aligned" client-id="[[_instagramClientId()]]" access-token="[[_instagramAccessToken()]]"></polymer-instagram>
+            </section>
+          </iron-pages>
+        </div>
+      </div>
     </template>
+
   </template>
 
   <script>
     Polymer({
-      is: 'yp-community-card',
 
-      behaviors: [
-        Polymer.appHelpers,
-        Polymer.CommunityBehaviors
-      ]
-
-    });
-  </script>
-</dom-module>
-<dom-module id="yp-community-card-add" assetpath="yp-community/">
-
-  <template>
-    <style>
-      :host {
-        display: block;
-        @apply(--layout-vertical);
-        height: 460px;
-        width: 316px;
-      }
-
-      @media (max-width: 600px) {
-        :host {
-          width: 285px !important;
-        }
-      }
-
-      .communityCard {
-        height: 460px;
-        background-color: #fff;
-      }
-
-      paper-icon-button {
-        height: 250px !important;
-        width: 250px !important;
-        color: var(--accent-color)
-      }
-
-      .header {
-        padding: 0;
-        margin: 0;
-        padding-top: 16px;
-      }
-
-      .icon {
-        --iron-icon-height: 220px;
-        --iron-icon-width: 220px;
-      }
-
-      @media (min-width: 481px) and (max-width: 1024px) {
-        :host {
-          width: 290px;
-        }
-      }
-
-    </style>
-
-    <paper-card elevation="[[elevation]]" class="layout vertical center communityCard">
-      <h2 class="header">[[t('community.new')]]</h2>
-      <paper-icon-button class="icon" icon="add"></paper-icon-button>
-    </paper-card>
-  </template>
-
-  <script>
-    Polymer({
-      is: 'yp-community-card-add',
-
-      properties: {
-        elevation: {
-          type: Number
-        }
-      },
+      is: 'yp-other-social-media',
 
       behaviors: [
         Polymer.appHelpers
-    ]
+      ],
+
+      properties: {
+        domain: {
+          type: Object
+        },
+
+        selected: {
+          type: Number,
+          value: 0
+        },
+
+        active: {
+          type: Boolean,
+          value: false,
+          observer: '_activeChanged'
+        }
+      },
+
+      _activeChanged: function (newValue) {
+        if (newValue) {
+          this.async(function () {
+            this._setupTwitter();
+          }.bind(this));
+        }
+      },
+
+      _setupTwitter: function () {
+        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+      },
+
+      _instagramAccessToken: function () {
+        return window.instagramAccessToken;
+      },
+
+      _instagramClientId: function () {
+        return window.instagramClientID;
+      }
     });
   </script>
 </dom-module>
@@ -45889,8 +45967,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
         <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
         <paper-tab class="tab">[[t('news')]]</paper-tab>
-        <paper-tab class="tab">[[t('twitter')]]</paper-tab>
-        <paper-tab class="tab">[[t('instagram')]]</paper-tab>
+        <paper-tab class="tab">[[t('socialMedia.other')]]</paper-tab>
       </paper-tabs>
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
@@ -45905,13 +45982,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         <section>
           <ac-activities domain-id="[[domain.id]]"></ac-activities>
         </section>
-        <section class="layout vertical center-center twitterFeed">
-          <template is="dom-if" if="[[selected]]" restamp="">
-            <a class="twitter-timeline" href="https://twitter.com/hashtag/BetriReykjavik" data-widget-id="713327367431782400">#BetriReykjavik Tweets</a>
-          </template>
-        </section>
-        <section class="layout vertical center-center twitterfeed">
-          <polymer-instagram client-id="[[_instagramClientId()]]" access-token="[[_instagramAccessToken()]]"></polymer-instagram>
+        <section class="layout vertical">
+          <yp-other-social-media active="[[otherSocialMediaActive]]"></yp-other-social-media>
         </section>
       </iron-pages>
     </yp-page>
@@ -45964,18 +46036,19 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           type: Number,
           value: 0,
           observer: '_selectedChanged'
-        }
-      },
+        },
 
-      isSelected: function (number) {
-        return (this.selected && this.selected == number);
+        otherSocialMediaActive: {
+          type: Boolean,
+          value: false
+        }
       },
 
       _selectedChanged: function (newValue) {
         if (newValue==2) {
-          this.async(function () {
-            this._setupTwitter();
-          }.bind(this));
+          this.set('otherSocialMediaActive', true);
+        } else {
+          this.set('otherSocialMediaActive', false);
         }
       },
 
@@ -45986,18 +46059,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           this.$.ajax.generateRequest();
           this.hideAdd = true;
         }
-      },
-
-      _setupTwitter: function () {
-        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-      },
-
-      _instagramAccessToken: function () {
-        return window.instagramAccessToken;
-      },
-
-      _instagramClientId: function () {
-        return window.instagramClientID;
       },
 
       _refresh: function () {
