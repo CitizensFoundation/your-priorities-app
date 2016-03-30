@@ -34,7 +34,11 @@
     },
 
     _googleMapsApiKey: function () {
-      return window.googleMapsApiKey;
+      if (window.location.hostname.indexOf('localhost') > -1) {
+        return null;
+      } else {
+        return window.googleMapsApiKey;
+      }
     },
 
     fromTime: function (timeValue) {

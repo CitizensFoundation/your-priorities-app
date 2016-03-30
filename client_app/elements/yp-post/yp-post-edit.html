@@ -130,7 +130,7 @@
           </template>
 
           <section>
-            <template is="dom-if" if="[[mapActive]]">
+            <template is="dom-if" if="[[mapActive]]" restamp>
               <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]"></yp-post-location>
             </template>
           </section>
@@ -178,6 +178,11 @@
       action: {
         type: String,
         value: "/api/posts"
+      },
+
+      new: {
+        type: Boolean,
+        value: false
       },
 
       post: {
@@ -240,16 +245,16 @@
     },
 
     _selectedChanged: function (newValue) {
-      if (newValue==2) {
+      if (newValue==this.new ? 2 : 1) {
         this.set('mapActive', true);
       } else {
         this.set('mapActive', false);
       }
 
       if (newValue==3) {
-        this.$.editDialog.useNextTabAction = false;
+        this.$$("#editDialog").useNextTabAction = false;
       } else {
-        this.$.editDialog.useNextTabAction = true;
+        this.$$("#editDialog").useNextTabAction = true;
       }
     },
 
@@ -298,7 +303,7 @@
         this.set('selectedCategoryArrayId',null);
         this.set('selectedCategoryId',null);
         this.set('uploadedHeaderImageId',null);
-        this.$.imageFileUpload.clear();
+        this.$$("#imageFileUpload").clear();
       }
     },
 

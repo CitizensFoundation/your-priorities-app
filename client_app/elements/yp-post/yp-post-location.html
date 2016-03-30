@@ -64,7 +64,7 @@
 
     <google-map-search id="mapSearch" map="[[map]]" on-google-map-search-results="_mapSearchResults"></google-map-search>
 
-    <google-map id="map" map="{{map}}" libraries="places" class="map" click-events on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers>
+    <google-map id="map" api-key="[[_googleMapsApiKey()]]"  map="{{map}}" libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers>
       <google-map-marker latitude="64.13897027178841" longitude="-21.876912117004395" id="marker"></google-map-marker>
     </google-map>
 
@@ -164,8 +164,16 @@
       _zoomChanged: function (event, detail) {
         if (detail && detail.value) {
           this.set('location.zoom', detail.value);
-          this.encodedLocation = JSON.stringify(this.location);
         }
+        this.set('encodedLocation', JSON.stringify(this.location));
+      },
+
+      _mapTypeChanged: function (event, detail) {
+        debugger;
+        if (detail && detail.value) {
+          this.set('location.mapType', detail.value);
+        }
+        this.set('encodedLocation', JSON.stringify(this.location));
       },
 
       _locationChanged: function (newLocationValue, oldValue) {
@@ -174,13 +182,15 @@
           this.$.marker.setAttribute('longitude', newLocationValue.longitude);
           if (newLocationValue.map_zoom)
             this.$.map.zoom = newLocationValue.map_zoom;
+          if (newLocationValue.mapType)
+            this.$.map.mapType = newLocationValue.mapType;
           this.$.map.resize();
-          this.encodedLocation = JSON.stringify(newLocationValue);
+          this.set('encodedLocation', JSON.stringify(newLocationValue));
         }
       },
 
       _setLocation: function (event, detail) {
-        this.set('location', { latitude: detail.latLng.lat(), longitude: detail.latLng.lng(), map_zoom: this.$.map.zoom });
+        this.set('location', { latitude: detail.latLng.lat(), longitude: detail.latLng.lng(), mapType: this.$.map.mapType, map_zoom: this.$.map.zoom });
       },
 
       _postChanged: function  (newValue, oldValue) {

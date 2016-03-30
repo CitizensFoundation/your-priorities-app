@@ -89,9 +89,11 @@
         <template is="dom-if" if="[[_withCoverMediaType(post,'map')]]">
           <google-map class="map"
                       libraries="places"
-                      fit-to-markers zoom="[[_zoomLevel(post)]]"
+                      fit-to-markers
+                      zoom="[[_zoomLevel(post)]]"
+                      map-type="[[_mapType(post)]]"
                       api-key="[[_googleMapsApiKey()]]">
-            <google-map-marker api-key="[[_googleMapsApiKey()]]" latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
+            <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
           </google-map>
         </template>
       </div>
@@ -124,6 +126,14 @@
           return post.location.map_zoom;
         else
           return "10";
+      },
+
+      _mapType: function (post) {
+        debugger;
+        if (post)
+          return post.location.mapType;
+        else
+          return null;
       },
 
       _withCoverMediaType: function (post, mediaType) {
