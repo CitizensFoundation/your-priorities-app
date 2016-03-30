@@ -13,6 +13,7 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../ac-activities/ac-activities.html">
+<link rel="import" href="../yp-page/yp-page.html">
 
 <link rel="import" href="../yp-post/yp-post.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
@@ -28,14 +29,6 @@
 <dom-module id="yp-group">
   <template>
     <style>
-      .card-container {
-        @apply(--layout-horizontal);
-        @apply(--layout-wrap);
-      }
-
-      .card {
-      }
-
       .objectives {
         padding-bottom: 40px;
         max-width: 432px;
@@ -52,7 +45,7 @@
 
     <yp-page create-fab-icon="add" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
 
-      <yp-group-card-large id="groupCard" class="largeCard card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
+      <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
 
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused>
         <template is="dom-if" if="[[group]]">

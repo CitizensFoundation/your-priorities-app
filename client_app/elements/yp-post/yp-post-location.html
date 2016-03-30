@@ -144,7 +144,6 @@
 
       _mapSearchResults: function (event, detail) {
         this.$.spinner.active = false;
-        debugger;
         if (detail && detail.length>0) {
           this.set('location', { latitude: detail[0].latitude, longitude: detail[0].longitude, map_zoom: 15 });
           this.mapSearchResultAddress = detail[0].formatted_address;

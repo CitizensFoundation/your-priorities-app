@@ -16,6 +16,7 @@
 <link rel="import" href="yp-post-actions.html">
 <link rel="import" href="yp-post-cover-media.html">
 <link rel="import" href="yp-post-behaviors.html">
+<link rel="import" href="yp-post-edit.html">
 
 <dom-module id="yp-post-card">
 
@@ -49,6 +50,15 @@
         bottom: 4px;
         right: 42px;
         width: 420px;
+      }
+
+      .edit {
+        color: #555;
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding-right: 0;
+        margin-right: 0;
       }
 
       .post-name {
@@ -139,21 +149,45 @@
         padding-left: 8px;
         padding-right: 8px;
       }
+
+      paper-icon-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: #000;
+      }
     </style>
 
     <template is="dom-if" if="[[post]]">
-      <paper-material class="postCard" elevation="[[elevation]]">
-        <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
-        <div class="layout vertical">
-          <div class="infoContainer postCardCursor" on-tap="goToPost">
-            <h1 class="post-name">[[postName(post)]]</h1>
-            <div class="description">[[postDescription(post)]]</div>
+      <div class="layout horizontal center-center">
+        <paper-material class="postCard" elevation="[[elevation]]">
+          <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
+          <div class="layout vertical">
+            <div class="infoContainer postCardCursor" on-tap="goToPost">
+              <h1 class="post-name">[[postName(post)]]</h1>
+              <div class="description">[[postDescription(post)]]</div>
+            </div>
+            <div class="card-actions">
+              <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+            </div>
           </div>
-          <div class="card-actions">
-            <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
-          </div>
-        </div>
-      </paper-material>
+          <template is="dom-if" if="[[headerMode]]">
+            <paper-menu-button class="edit" hidden$="[[!hasAccess(post)]]">
+              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+                <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+              </paper-menu>
+            </paper-menu-button>
+          </template>
+        </paper-material>
+      </div>
+      <template is="dom-if" if="[[headerMode]]">
+        <yp-post-edit new="false" id="postEdit" method="[[method]]" post="{{post}}" group="[[post.Group]]" on-iron-form-response="_refresh"></yp-post-edit>
+        <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('post.deleteConfirmation')]]"
+                          action="/api/posts/" action-id="[[post.id]]">
+        </yp-delete-dialog>
+      </template>
     </template>
   </template>
 
@@ -164,7 +198,34 @@
       behaviors: [
         Polymer.appHelpers,
         Polymer.YpPostBehavior
-      ]
+      ],
+
+      properties: {
+        selectedMenuItem: {
+          type: String
+        },
+
+        headerMode: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _menuSelection: function (event, detail) {
+        if (detail.item.id=="editMenuItem")
+          this._openEdit();
+        else if (detail.item.id=="deleteMenuItem")
+          this.$$("#deleteDialog").open();
+        this.selectedMenuItem = null;
+      },
+
+      _openEdit: function () {
+        this.$$("#postEdit").open('edit', { postId: this.post.id });
+      },
+
+      _onDeleted: function () {
+        page("#!/group/"+this.post.group_id);
+      }
     });
   </script>
 </dom-module>

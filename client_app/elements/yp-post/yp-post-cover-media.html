@@ -147,7 +147,7 @@
       },
 
       getCategoryImagePath: function (post) {
-        if (post.Category && post.Category.CategoryIconImages) {
+        if (post && post.Category && post.Category.CategoryIconImages) {
           return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
         } else {
           return "";

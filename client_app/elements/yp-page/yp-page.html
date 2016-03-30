@@ -37,7 +37,6 @@
         position: fixed;
         bottom: 24px;
         right: 28px;
-        z-index: 1;
       }
 
       .createFab[wide-layout] {
@@ -98,7 +97,7 @@
         <content select=".largeCard"></content>
       </div>
       <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea" wide-layout$="{{wideWidth}}">
-        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="1" class="createCommunity" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
+        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" class="createCommunity" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
       </div>
       <div class="tab-wrapper layout horizontal center-center">
         <content select=".tabs"></content>
@@ -130,7 +129,6 @@
       },
 
       _fabTabChanged: function (newValue) {
-        debugger;
       },
 
       _createTap: function () {
