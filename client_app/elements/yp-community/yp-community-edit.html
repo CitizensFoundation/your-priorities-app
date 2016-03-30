@@ -136,7 +136,9 @@
     },
 
     _customRedirect: function (communityId) {
-      page("#!/community/"+communityId);
+      if (this.community) {
+        page("#!/community/"+this.community.id);
+      }
     },
 
     _communityChanged: function (newValue, oldValue) {

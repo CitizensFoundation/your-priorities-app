@@ -130,7 +130,9 @@
     },
 
     _customRedirect: function (groupId) {
-      page("#!/group/"+groupId);
+      if (this.group) {
+        page("#!/group/"+this.group.id);
+      }
     },
 
     _groupChanged: function (newValue, oldValue) {

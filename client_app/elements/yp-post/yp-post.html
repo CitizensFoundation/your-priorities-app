@@ -16,6 +16,10 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
 <link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
+<link rel="import" href="../../bower_components/google-map/google-map-search.html">
+
+<link rel="import" href="../../bower_components/google-map/google-map.html">
 <link rel="import" href="../yp-page/yp-page.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
@@ -158,6 +162,15 @@
       yp-ajax {
         background-color: var(--primary-background-color);
       }
+
+      .map {
+        width: 960px;
+        height: 500px;
+      }
+
+      .mapContainer {
+        margin-top: 24px;
+      }
     </style>
 
     <yp-page create-fab-icon="communication:forum" create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
@@ -180,7 +193,16 @@
         </section>
         <section>
           <div class="layout horizontal center-center">
-            <h1 style="padding: 32px;">To be done...</h1>
+            <template is="dom-if" if="[[post.location]]">
+              <paper-material class="mapContainer" elevation="3">
+                <google-map id="map" libraries="places" class="map" zoom="[[post.location.map_zoom]]" fit-to-markers>
+                  <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" id="marker"></google-map-marker>
+                </google-map>
+              </paper-material>
+            </template>
+            <template is="dom-if" if="[[!post.location]]">
+              <h1>[[t('post.noLocation')]]</h1>
+            </template>
           </div>
         </section>
         <section>

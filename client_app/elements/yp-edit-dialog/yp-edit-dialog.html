@@ -338,7 +338,12 @@
         this.$$("#spinner").active = false;
         this.response = response;
         this.close();
-        this.toastTextCombined = this.toastText + " " + detail.name;
+        debugger;
+        if (detail.response && detail.response.name) {
+          this.toastTextCombined = this.toastText + " " + detail.response.name;
+        } else {
+          this.toastTextCombined = this.toastText;
+        }
         this.$$("#toast").show();
       },
 
