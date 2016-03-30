@@ -28815,7 +28815,11 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
     },
 
     _googleMapsApiKey: function () {
-      return window.googleMapsApiKey;
+      if (window.location.hostname.indexOf('localhost') > -1) {
+        return null;
+      } else {
+        return window.googleMapsApiKey;
+      }
     },
 
     fromTime: function (timeValue) {
@@ -32485,8 +32489,8 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
         </template>
 
         <template is="dom-if" if="[[_withCoverMediaType(post,'map')]]">
-          <google-map class="map" libraries="places" fit-to-markers="" zoom="[[_zoomLevel(post)]]" api-key="[[_googleMapsApiKey()]]">
-            <google-map-marker api-key="[[_googleMapsApiKey()]]" latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
+          <google-map class="map" libraries="places" fit-to-markers="" zoom="[[_zoomLevel(post)]]" map-type="[[_mapType(post)]]" api-key="[[_googleMapsApiKey()]]">
+            <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
           </google-map>
         </template>
       </div>
@@ -32519,6 +32523,14 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
           return post.location.map_zoom;
         else
           return "10";
+      },
+
+      _mapType: function (post) {
+        debugger;
+        if (post)
+          return post.location.mapType;
+        else
+          return null;
       },
 
       _withCoverMediaType: function (post, mediaType) {
@@ -39350,7 +39362,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           <div class="layout horizontal center-center">
             <template is="dom-if" if="[[post.location]]">
               <paper-material class="mapContainer" elevation="3">
-                <google-map id="map" libraries="places" class="map" zoom="[[post.location.map_zoom]]" fit-to-markers="">
+                <google-map api-key="[[_googleMapsApiKey()]]" id="map" libraries="places" class="map" zoom="[[post.location.map_zoom]]" fit-to-markers="">
                   <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" id="marker"></google-map-marker>
                 </google-map>
               </paper-material>
@@ -41997,7 +42009,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <google-map-search id="mapSearch" map="[[map]]" on-google-map-search-results="_mapSearchResults"></google-map-search>
 
-    <google-map id="map" map="{{map}}" libraries="places" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers="">
+    <google-map id="map" api-key="[[_googleMapsApiKey()]]" map="{{map}}" libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers="">
       <google-map-marker latitude="64.13897027178841" longitude="-21.876912117004395" id="marker"></google-map-marker>
     </google-map>
 
@@ -42097,8 +42109,16 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       _zoomChanged: function (event, detail) {
         if (detail && detail.value) {
           this.set('location.zoom', detail.value);
-          this.encodedLocation = JSON.stringify(this.location);
         }
+        this.set('encodedLocation', JSON.stringify(this.location));
+      },
+
+      _mapTypeChanged: function (event, detail) {
+        debugger;
+        if (detail && detail.value) {
+          this.set('location.mapType', detail.value);
+        }
+        this.set('encodedLocation', JSON.stringify(this.location));
       },
 
       _locationChanged: function (newLocationValue, oldValue) {
@@ -42107,13 +42127,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           this.$.marker.setAttribute('longitude', newLocationValue.longitude);
           if (newLocationValue.map_zoom)
             this.$.map.zoom = newLocationValue.map_zoom;
+          if (newLocationValue.mapType)
+            this.$.map.mapType = newLocationValue.mapType;
           this.$.map.resize();
-          this.encodedLocation = JSON.stringify(newLocationValue);
+          this.set('encodedLocation', JSON.stringify(newLocationValue));
         }
       },
 
       _setLocation: function (event, detail) {
-        this.set('location', { latitude: detail.latLng.lat(), longitude: detail.latLng.lng(), map_zoom: this.$.map.zoom });
+        this.set('location', { latitude: detail.latLng.lat(), longitude: detail.latLng.lng(), mapType: this.$.map.mapType, map_zoom: this.$.map.zoom });
       },
 
       _postChanged: function  (newValue, oldValue) {
@@ -42210,7 +42232,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           </template>
 
           <section>
-            <template is="dom-if" if="[[mapActive]]">
+            <template is="dom-if" if="[[mapActive]]" restamp="">
               <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]"></yp-post-location>
             </template>
           </section>
@@ -42258,6 +42280,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       action: {
         type: String,
         value: "/api/posts"
+      },
+
+      new: {
+        type: Boolean,
+        value: false
       },
 
       post: {
@@ -42320,16 +42347,16 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     },
 
     _selectedChanged: function (newValue) {
-      if (newValue==2) {
+      if (newValue==this.new ? 2 : 1) {
         this.set('mapActive', true);
       } else {
         this.set('mapActive', false);
       }
 
       if (newValue==3) {
-        this.$.editDialog.useNextTabAction = false;
+        this.$$("#editDialog").useNextTabAction = false;
       } else {
-        this.$.editDialog.useNextTabAction = true;
+        this.$$("#editDialog").useNextTabAction = true;
       }
     },
 
@@ -42378,7 +42405,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.set('selectedCategoryArrayId',null);
         this.set('selectedCategoryId',null);
         this.set('uploadedHeaderImageId',null);
-        this.$.imageFileUpload.clear();
+        this.$$("#imageFileUpload").clear();
       }
     },
 
@@ -43044,7 +43071,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       yp-post-card {
-        padding-top: 16px;
+        padding-top: 32px;
       }
 
       #outerRegion {
