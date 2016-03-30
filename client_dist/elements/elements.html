@@ -29616,7 +29616,6 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
         position: fixed;
         bottom: 24px;
         right: 28px;
-        z-index: 1;
       }
 
       .createFab[wide-layout] {
@@ -29677,7 +29676,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
         <content select=".largeCard"></content>
       </div>
       <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea" wide-layout$="{{wideWidth}}">
-        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="1" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
+        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
       </div>
       <div class="tab-wrapper layout horizontal center-center">
         <content select=".tabs"></content>
@@ -29709,7 +29708,6 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       },
 
       _fabTabChanged: function (newValue) {
-        debugger;
       },
 
       _createTap: function () {
@@ -32544,7 +32542,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       },
 
       getCategoryImagePath: function (post) {
-        if (post.Category && post.Category.CategoryIconImages) {
+        if (post && post.Category && post.Category.CategoryIconImages) {
           return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
         } else {
           return "";
@@ -33683,7 +33681,6 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       },
 
       _getActivityWithPostTitle: function (activity) {
-        debugger;
         return this.t(activity.type) + ' ' + activity.Post.name;
       },
 
@@ -36425,7 +36422,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       if (newValue) {
         this.async(function () {
           this.$$("#a11y").target = this.$$("#form");
-          debugger;
         }.bind(this), 50);
       }
     },
@@ -38072,6 +38068,198 @@ is separate from validation, and `allowed-pattern` does not affect how the input
   ];
 
 </script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'google-map-search',
+
+    properties: {
+
+      /**
+       * The Google map object.
+       * @type google.maps.Map
+       */
+      map: {
+        type: Object,
+        value: null
+      },
+
+      /**
+       * The search query.
+       */
+      query: {
+        type: String,
+        value: null
+      },
+
+      /**
+       * Latitude of the center of the search area.
+       * Ignored if `globalSearch` is true.
+       */
+      latitude: {
+        type: Number,
+        value: null
+      },
+
+      /**
+       * Longitude of the center of the search area.
+       * Ignored if `globalSearch` is true.
+       */
+      longitude: {
+        type: Number,
+        value: null
+      },
+
+      /**
+       * Search radius, in meters.
+       * If `latitude` and `longitude` are not specified,
+       * the center of the currently visible map area is used.
+       *
+       * If not set, search will be restricted to the currently visible
+       * map area, unless `globalSearch` is set to true.
+       */
+      radius: {
+        type: Number,
+        value: null
+      },
+
+      /**
+       * By default, search is restricted to the currently visible map area.
+       * Set this to true to search everywhere.
+       *
+       * Ignored if `radius` is set.
+       */
+      globalSearch: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Space-separated list of result types.
+       * The search will only return results of the listed types.
+       * See https://developers.google.com/places/documentation/supported_types
+       * for a list of supported types.
+       * Leave empty or null to search for all result types.
+       */
+      types: {
+        type: String,
+        value: null
+      },
+
+      /**
+       * The search results.
+       */
+      results: {
+        type: Array,
+        value: function() { return []; },
+        notify: true
+      },
+
+      /**
+       * The lat/lng location.
+       */
+      location: {
+        type: Object,
+        value: null,
+        readOnly: true
+      }
+    },
+
+    observers: [
+      'search(query,map,location,radius,types,globalSearch)',
+      '_updateLocation(latitude,longitude)'
+    ],
+
+    /**
+     * Fired when the details of a place are returned.
+     *
+     * @event google-map-search-place-detail
+     * @param {google.maps.MarkerPlace} detail The place details.
+     */
+
+    /**
+     * Fired when the search element returns a result.
+     *
+     * @event google-map-search-results
+     * @param {Array<{latitude: number, longitude: number}>} detail An array of search results
+     */
+
+    /**
+     * Perform a search using for `query` for the search term.
+     */
+    search: function() {
+      if (this.query && this.map) {
+        var places = new google.maps.places.PlacesService(this.map);
+
+        if (this.types && typeof this.types == 'string') {
+          var types = this.types.split(' ');
+        }
+
+        if (!this.globalSearch) {
+          var bounds = this.map.getBounds();
+        } else if (this.radius) {
+          var radius = this.radius;
+          var location = this.location ? this.location : this.map.getCenter();
+        }
+
+        places.textSearch({
+          query: this.query,
+          types: types,
+          bounds: bounds,
+          radius: radius,
+          location: location
+        }, this._gotResults.bind(this));
+      }
+    },
+
+    /**
+     * Fetches details for a given place.
+     * @param {String} placeId The place id.
+     * @return {Promise} place The place information.
+     */
+    getDetails: function(placeId) {
+      var places = new google.maps.places.PlacesService(this.map);
+
+      return new Promise(function(resolve, reject) {
+        places.getDetails({placeId: placeId}, function(place, status) {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            resolve(place);
+            this.fire('google-map-search-place-detail', place);
+          } else {
+            reject(status);
+          }
+        }.bind(this));
+      }.bind(this));
+    },
+
+    _gotResults: function(results, status) {
+      this.results = results.map(function(result) {
+        // obtain lat/long from geometry
+        result.latitude  = result.geometry.location.lat();
+        result.longitude = result.geometry.location.lng();
+        return result;
+      });
+      debugger;
+      this.fire('google-map-search-results', this.results);
+    },
+
+    _updateLocation: function() {
+      if (!this.map) {
+        return;
+      } else if (typeof this.latitude !== 'number' || isNaN(this.latitude)) {
+        throw new TypeError('latitude must be a number');
+      } else if (typeof this.longitude !== 'number' || isNaN(this.longitude)) {
+        throw new TypeError('longitude must be a number');
+      }
+
+      // Update location. This will trigger a new search.
+      this._setLocation({lat: this.latitude, lng: this.longitude});
+    }
+  });
+</script>
 <dom-module id="yp-delete-dialog" assetpath="yp-delete-dialog/">
   <style>
     :host {
@@ -38276,7 +38464,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       _postChanged: function(newValue, oldValue) {
-        debugger;
       },
 
       goToGroup: function (e) {
@@ -38997,6 +39184,320 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           return textValue.length > 20;
         }
 
+      });
+    }());
+  </script>
+</dom-module>
+<dom-module id="yp-post" assetpath="yp-post/">
+  <template>
+    <style>
+      :host {
+      }
+
+      .container {
+        padding-top: 0;
+        margin-top: -70px;
+        height: 100%;
+      }
+
+      .flex {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
+      .centerContainer {
+        @apply(--layout-center-center);
+      }
+
+      .postHeader {
+        padding: 16px;
+        background-color: #fefefe;
+        width: 940px;
+      }
+
+      yp-post-cover-media {
+        width: 420px !important;
+        height: 232px !important;
+      }
+
+      .statusHeader {
+        padding: 16px;
+        background-color: #fefefe;
+        width: 940px;
+        margin-top: 16px;
+        height: 48px;
+      }
+
+      .description {
+        width: 510px;
+        padding-left: 24px;
+      }
+
+      yp-post-actions {
+        width: 270px;
+      }
+
+      .statusColumn {
+        width: 670px;
+        padding-bottom: 16px;
+      }
+
+      .mainPage {
+        background-color: #FFF;
+      }
+
+      @media (max-width: 961px) {
+        .postHeader {
+          width: 600px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .postHeader {
+          width: 400px;
+        }
+      }
+
+      @media (max-width: 360px) {
+
+        .centerContainer {
+          @apply(--layout-vertical);
+        }
+
+        .postHeader {
+          height: 100%;
+          width: 360px;
+          padding: 0;
+        }
+
+        .tabsMaterial {
+          width: 360px;
+        }
+
+        yp-post-cover-media {
+          width: 320px !important;
+          height: 181px !important;
+          padding-top: 16px;
+          padding-left: 20px;
+        }
+
+        .statusHeader {
+          width: 360px;
+          height: 120px;
+          padding: 0px;
+          padding-left: 20px;
+        }
+
+        .statusColumn {
+          height: 60px;
+          padding: 0px;
+        }
+
+        .description {
+          width: 320px;
+          padding: 8px;
+          padding-left: 20px;
+          padding-bottom: 16px;
+        }
+
+        yp-post-actions {
+          width: 320px;
+          padding-left: 20px;
+        }
+
+        .statusColumn {
+          width: 320px;
+        }
+
+        paper-tab {
+          font-size: 14px;
+        }
+      }
+
+      yp-ajax {
+        background-color: var(--primary-background-color);
+      }
+
+      .map {
+        width: 960px;
+        height: 500px;
+      }
+
+      .mapContainer {
+        margin-top: 24px;
+      }
+    </style>
+
+    <yp-page create-fab-icon="communication:forum" create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
+
+      <yp-post-card class="largeCard" post="[[post]]" header-mode=""></yp-post-card>
+
+      <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
+        <paper-tab><span>[[t('post.tabs.debate')]]</span> &nbsp; (<span>[[post.Points.length]]</span>)</paper-tab>
+        <paper-tab>[[t('post.tabs.news')]]</paper-tab>
+        <paper-tab>[[t('post.tabs.location')]]</paper-tab>
+        <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
+      </paper-tabs>
+
+      <iron-pages id="pages" class="tabPages" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <div class="layout horizontal center-center">
+          <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
+        </div>
+        <section>
+          <ac-activities selected-tab="[[selected]]" post-id="[[post.id]]"></ac-activities>
+        </section>
+        <section>
+          <div class="layout horizontal center-center">
+            <template is="dom-if" if="[[post.location]]">
+              <paper-material class="mapContainer" elevation="3">
+                <google-map id="map" libraries="places" class="map" zoom="[[post.location.map_zoom]]" fit-to-markers="">
+                  <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" id="marker"></google-map-marker>
+                </google-map>
+              </paper-material>
+            </template>
+            <template is="dom-if" if="[[!post.location]]">
+              <h1>[[t('post.noLocation')]]</h1>
+            </template>
+          </div>
+        </section>
+        <section>
+          <div class="layout horizontal center-center">
+            <h1 style="padding: 32px;">To be done...</h1></div></section>
+          
+      </iron-pages>
+
+    </yp-page>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+    </div>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post',
+
+        behaviors: [
+          Polymer.appHelpers
+        ],
+
+        properties: {
+
+          postId: {
+            type: Number,
+            value: null,
+            observer: "_postIdChanged"
+          },
+
+          post: {
+            type: Object,
+            notify: true,
+            observer: "_postChanged"
+          },
+
+          selected: {
+            type: Number,
+            value: 0,
+            observer: 'selectedChanged'
+          },
+
+          small: {
+            type: Boolean
+          },
+
+          method: {
+            type: String
+          }
+        },
+
+        listeners: {
+          'new-user-endorsement': 'addEndorsement'
+        },
+
+        _mainContainerClasses: function(small) {
+          if (small) {
+            return "layout horizontal wrap";
+          } else {
+            return "layout horizontal center-center";
+          }
+        },
+
+        _headerClasses: function(small) {
+          if (small) {
+            return "layout vertical postHeader wrap";
+          } else {
+            return "layout horizontal postHeader";
+          }
+        },
+
+        postName: function (post) {
+          if (post && post.name) {
+            return this.truncate(this.trim(post.name), 200);
+          } else if (post) {
+            return post.short_name;
+          }
+        },
+
+        postDescription: function (post) {
+          if (post && post.description) {
+            return this.truncate(this.trim(post.description), 10000, '...');
+          } else {
+            return "";
+          }
+        },
+
+        _refresh: function () {
+          this.$.ajax.generateRequest();
+        },
+
+        addEndorsement: function (event, detail) {
+          this.$$("#postHeader").addEndorsement(detail);
+        },
+
+        _postChanged: function (newValue, oldValue) {
+        },
+
+        _postIdChanged: function (newValue, oldValue) {
+          if (newValue) {
+            this.set("post.Points",null);
+            this.set("post",null);
+            this.$.ajax.url = '/api/posts/' + this.postId;
+            this.$.ajax.generateRequest();
+          } else {
+            this.set("post",null);
+          }
+        },
+
+        _response: function (event, detail, sender) {
+          this.set("post", detail.response);
+          if (this.post.description === null) {
+            this.post.description = this.post.Points[0].content;
+            this.post.Points.shift();
+          }
+          this.fire("change-header", { headerTitle: this.truncate(this.post.Group.name,80),
+                                       headerDescription: '',//this.truncate(this.post.Group.objectives,45),
+                                       backPath: "#!/group/" + this.post.group_id });
+        },
+
+        selectedChanged: function (selected, previous) {
+          if (selected == 0)
+            window.appGlobals.activity('open', 'pointsTab');
+          else if (selected == 1)
+            window.appGlobals.activity('open', 'newsfeedTab');
+          else if (selected == 2)
+            window.appGlobals.activity('open', 'photosTab');
+          else if (selected == 3)
+            window.appGlobals.activity('open', 'solutionsTab');
+        },
+
+        ready: function () {
+        },
+
+        computeUrl: function (post_id) {
+          return '/api/posts/' + post_id;
+        }
       });
     }());
   </script>
@@ -41224,7 +41725,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.$$("#spinner").active = false;
         this.response = response;
         this.close();
-        this.toastTextCombined = this.toastText + " " + detail.name;
+        debugger;
+        if (detail.response && detail.response.name) {
+          this.toastTextCombined = this.toastText + " " + detail.response.name;
+        } else {
+          this.toastTextCombined = this.toastText;
+        }
         this.$$("#toast").show();
       },
 
@@ -41447,198 +41953,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     });
   </script>
 </dom-module>
-
-
-<script>
-
-  Polymer({
-
-    is: 'google-map-search',
-
-    properties: {
-
-      /**
-       * The Google map object.
-       * @type google.maps.Map
-       */
-      map: {
-        type: Object,
-        value: null
-      },
-
-      /**
-       * The search query.
-       */
-      query: {
-        type: String,
-        value: null
-      },
-
-      /**
-       * Latitude of the center of the search area.
-       * Ignored if `globalSearch` is true.
-       */
-      latitude: {
-        type: Number,
-        value: null
-      },
-
-      /**
-       * Longitude of the center of the search area.
-       * Ignored if `globalSearch` is true.
-       */
-      longitude: {
-        type: Number,
-        value: null
-      },
-
-      /**
-       * Search radius, in meters.
-       * If `latitude` and `longitude` are not specified,
-       * the center of the currently visible map area is used.
-       *
-       * If not set, search will be restricted to the currently visible
-       * map area, unless `globalSearch` is set to true.
-       */
-      radius: {
-        type: Number,
-        value: null
-      },
-
-      /**
-       * By default, search is restricted to the currently visible map area.
-       * Set this to true to search everywhere.
-       *
-       * Ignored if `radius` is set.
-       */
-      globalSearch: {
-        type: Boolean,
-        value: false
-      },
-
-      /**
-       * Space-separated list of result types.
-       * The search will only return results of the listed types.
-       * See https://developers.google.com/places/documentation/supported_types
-       * for a list of supported types.
-       * Leave empty or null to search for all result types.
-       */
-      types: {
-        type: String,
-        value: null
-      },
-
-      /**
-       * The search results.
-       */
-      results: {
-        type: Array,
-        value: function() { return []; },
-        notify: true
-      },
-
-      /**
-       * The lat/lng location.
-       */
-      location: {
-        type: Object,
-        value: null,
-        readOnly: true
-      }
-    },
-
-    observers: [
-      'search(query,map,location,radius,types,globalSearch)',
-      '_updateLocation(latitude,longitude)'
-    ],
-
-    /**
-     * Fired when the details of a place are returned.
-     *
-     * @event google-map-search-place-detail
-     * @param {google.maps.MarkerPlace} detail The place details.
-     */
-
-    /**
-     * Fired when the search element returns a result.
-     *
-     * @event google-map-search-results
-     * @param {Array<{latitude: number, longitude: number}>} detail An array of search results
-     */
-
-    /**
-     * Perform a search using for `query` for the search term.
-     */
-    search: function() {
-      if (this.query && this.map) {
-        var places = new google.maps.places.PlacesService(this.map);
-
-        if (this.types && typeof this.types == 'string') {
-          var types = this.types.split(' ');
-        }
-
-        if (!this.globalSearch) {
-          var bounds = this.map.getBounds();
-        } else if (this.radius) {
-          var radius = this.radius;
-          var location = this.location ? this.location : this.map.getCenter();
-        }
-
-        places.textSearch({
-          query: this.query,
-          types: types,
-          bounds: bounds,
-          radius: radius,
-          location: location
-        }, this._gotResults.bind(this));
-      }
-    },
-
-    /**
-     * Fetches details for a given place.
-     * @param {String} placeId The place id.
-     * @return {Promise} place The place information.
-     */
-    getDetails: function(placeId) {
-      var places = new google.maps.places.PlacesService(this.map);
-
-      return new Promise(function(resolve, reject) {
-        places.getDetails({placeId: placeId}, function(place, status) {
-          if (status === google.maps.places.PlacesServiceStatus.OK) {
-            resolve(place);
-            this.fire('google-map-search-place-detail', place);
-          } else {
-            reject(status);
-          }
-        }.bind(this));
-      }.bind(this));
-    },
-
-    _gotResults: function(results, status) {
-      this.results = results.map(function(result) {
-        // obtain lat/long from geometry
-        result.latitude  = result.geometry.location.lat();
-        result.longitude = result.geometry.location.lng();
-        return result;
-      });
-      debugger;
-      this.fire('google-map-search-results', this.results);
-    },
-
-    _updateLocation: function() {
-      if (!this.map) {
-        return;
-      } else if (typeof this.latitude !== 'number' || isNaN(this.latitude)) {
-        throw new TypeError('latitude must be a number');
-      } else if (typeof this.longitude !== 'number' || isNaN(this.longitude)) {
-        throw new TypeError('longitude must be a number');
-      }
-
-      // Update location. This will trigger a new search.
-      this._setLocation({lat: this.latitude, lng: this.longitude});
-    }
-  });
-</script>
 <dom-module id="yp-post-location" assetpath="yp-post/">
   <template>
     <style>
@@ -41763,7 +42077,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       _mapSearchResults: function (event, detail) {
         this.$.spinner.active = false;
-        debugger;
         if (detail && detail.length>0) {
           this.set('location', { latitude: detail[0].latitude, longitude: detail[0].longitude, map_zoom: 15 });
           this.mapSearchResultAddress = detail[0].formatted_address;
@@ -42080,374 +42393,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     }
   });
 </script>
-<dom-module id="yp-post" assetpath="yp-post/">
-  <template>
-    <style>
-      :host {
-      }
-
-      .container {
-        padding-top: 0;
-        margin-top: -70px;
-        height: 100%;
-      }
-
-      .flex {
-        @apply(--layout-vertical);
-        @apply(--layout-flex);
-      }
-
-      .centerContainer {
-        @apply(--layout-center-center);
-      }
-
-      .postHeader {
-        padding: 16px;
-        background-color: #fefefe;
-        width: 940px;
-      }
-
-      yp-post-cover-media {
-        width: 420px !important;
-        height: 232px !important;
-      }
-
-      .statusHeader {
-        padding: 16px;
-        background-color: #fefefe;
-        width: 940px;
-        margin-top: 16px;
-        height: 48px;
-      }
-
-      .description {
-        width: 510px;
-        padding-left: 24px;
-      }
-
-      yp-post-actions {
-        width: 270px;
-      }
-
-      .statusColumn {
-        width: 670px;
-        padding-bottom: 16px;
-      }
-
-      .mainPage {
-        background-color: #FFF;
-      }
-
-      .tabsMaterial {
-        margin-top: 16px;
-        background-color: #fefefe;
-        min-height: 4090px;
-      }
-
-      .edit {
-        color: #555;
-        position: absolute;
-        top: 0;
-        right: 0;
-        padding-right: 0;
-        margin-right: 0;
-      }
-
-      @media (max-width: 961px) {
-        .postHeader {
-          width: 600px;
-        }
-      }
-
-      @media (max-width: 600px) {
-        .postHeader {
-          width: 400px;
-        }
-      }
-
-      @media (max-width: 360px) {
-
-        .centerContainer {
-          @apply(--layout-vertical);
-        }
-
-        .postHeader {
-          height: 100%;
-          width: 360px;
-          padding: 0;
-        }
-
-        .tabsMaterial {
-          width: 360px;
-        }
-
-        yp-post-cover-media {
-          width: 320px !important;
-          height: 181px !important;
-          padding-top: 16px;
-          padding-left: 20px;
-        }
-
-        .statusHeader {
-          width: 360px;
-          height: 120px;
-          padding: 0px;
-          padding-left: 20px;
-        }
-
-        .statusColumn {
-          height: 60px;
-          padding: 0px;
-        }
-
-        .description {
-          width: 320px;
-          padding: 8px;
-          padding-left: 20px;
-          padding-bottom: 16px;
-        }
-
-        yp-post-actions {
-          width: 320px;
-          padding-left: 20px;
-        }
-
-        .statusColumn {
-          width: 320px;
-        }
-
-        paper-tab {
-          font-size: 14px;
-        }
-      }
-
-      .topArea {
-        background-color: var(--primary-color);
-        width: 100%;
-        padding-bottom: 24px;
-        padding-top: 32px;
-      }
-
-      yp-ajax {
-        background-color: var(--primary-background-color);
-      }
-
-      .mainArea {
-        background-color: var(--primary-background-color);
-        height: 100%;
-      }
-
-      .contentArea {
-        background-color: var(--primary-background-color);
-        width: 1024px;
-      }
-
-      .tabContainer {
-        width: 1024px;
-      }
-
-      .topArea {
-        background-image: url("https://s3.amazonaws.com/yrpri-staging-production/studlar.png");
-      }
-    </style>
-
-    <div class="container">
-
-      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
-      <iron-media-query query="(max-width: 360px)" query-matches="{{small}}"></iron-media-query>
-
-      <yp-post-edit new="false" id="postEdit" method="[[method]]" post="{{post}}" group="[[post.Group]]" on-iron-form-response="_refresh"></yp-post-edit>
-
-      <template is="dom-if" if="[[post]]">
-
-        <div class="layout vertical center-center mainArea" style="margin-top: 28px;">
-          <div class="layout horizontal center-center topArea">
-
-            <yp-post-card class="layout horizontal center-center" post="[[post]]"></yp-post-card>
-            <paper-menu-button class="edit" hidden$="[[!hasAccess(post)]]">
-              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-                <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
-              </paper-menu>
-            </paper-menu-button>
-          </div>
-
-
-          <paper-tabs selected="{{selected}}" id="paper_tabs" class="tabContainer" focused="">
-            <paper-tab><span>[[t('post.tabs.debate')]]</span> &nbsp; (<span>[[post.Points.length]]</span>)</paper-tab>
-            <paper-tab>[[t('post.tabs.news')]]</paper-tab>
-            <paper-tab>[[t('post.tabs.location')]]</paper-tab>
-            <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
-          </paper-tabs>
-
-          <div class="layout vertical flex contentArea tabsMaterial" animated="">
-            <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-
-              <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
-
-              <section><h1 style="padding: 32px;">To be done...</h1></section>
-              <section><h1 style="padding: 32px;">To be done...</h1></section>
-              <section><h1 style="padding: 32px;">To be done...</h1></section>
-            </neon-animated-pages>
-          </div>
-        </div>
-
-        <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('post.deleteConfirmation')]]" action="/api/posts/" action-id="[[post.id]]">
-        </yp-delete-dialog>
-      </template>
-    </div>
-  </template>
-
-  <script>
-    (function () {
-      Polymer({
-
-        is: 'yp-post',
-
-        behaviors: [
-          Polymer.appHelpers
-        ],
-
-        properties: {
-
-          postId: {
-            type: Number,
-            value: null,
-            observer: "_postIdChanged"
-          },
-
-          post: {
-            type: Object,
-            notify: true,
-            observer: "_postChanged"
-          },
-
-          selected: {
-            type: Number,
-            value: 0,
-            observer: 'selectedChanged'
-          },
-
-          small: {
-            type: Boolean
-          },
-
-          method: {
-            type: String
-          }
-        },
-
-        listeners: {
-          'new-user-endorsement': 'addEndorsement'
-        },
-
-        _mainContainerClasses: function(small) {
-          if (small) {
-            return "layout horizontal wrap";
-          } else {
-            return "layout horizontal center-center";
-          }
-        },
-
-        _headerClasses: function(small) {
-          if (small) {
-            return "layout vertical postHeader wrap";
-          } else {
-            return "layout horizontal postHeader";
-          }
-        },
-
-        postName: function (post) {
-          if (post && post.name) {
-            return this.truncate(this.trim(post.name), 200);
-          } else if (post) {
-            return post.short_name;
-          }
-        },
-
-        postDescription: function (post) {
-          if (post && post.description) {
-            return this.truncate(this.trim(post.description), 10000, '...');
-          } else {
-            return "";
-          }
-        },
-
-        _refresh: function () {
-          this.$.ajax.generateRequest();
-        },
-
-        _menuSelection: function (event, detail) {
-          if (detail.item.id=="editMenuItem")
-            this._openEdit();
-          else if (detail.item.id=="deleteMenuItem")
-            this.$$("#deleteDialog").open();
-          this.selectedMenuItem = null;
-        },
-
-        _openEdit: function () {
-          this.$.postEdit.open('edit', { postId: this.post.id });
-        },
-
-        _onDeleted: function () {
-          page("#!/group/"+this.post.group_id);
-        },
-
-        addEndorsement: function (event, detail) {
-          this.$$("#postHeader").addEndorsement(detail);
-        },
-
-        _postChanged: function (newValue, oldValue) {
-        },
-
-        _postIdChanged: function (newValue, oldValue) {
-          if (newValue) {
-            this.set("post.Points",null);
-            this.set("post",null);
-            this.$.ajax.url = '/api/posts/' + this.postId;
-            this.$.ajax.generateRequest();
-          } else {
-            this.set("post",null);
-          }
-        },
-
-        _response: function (event, detail, sender) {
-          this.set("post", detail.response);
-          if (this.post.description === null) {
-            this.post.description = this.post.Points[0].content;
-            this.post.Points.shift();
-          }
-          this.fire("change-header", { headerTitle: this.truncate(this.post.Group.name,80),
-                                       headerDescription: '',//this.truncate(this.post.Group.objectives,45),
-                                       backPath: "#!/group/" + this.post.group_id });
-        },
-
-        selectedChanged: function (selected, previous) {
-          if (selected == 0)
-            window.appGlobals.activity('open', 'pointsTab');
-          else if (selected == 1)
-            window.appGlobals.activity('open', 'newsfeedTab');
-          else if (selected == 2)
-            window.appGlobals.activity('open', 'photosTab');
-          else if (selected == 3)
-            window.appGlobals.activity('open', 'solutionsTab');
-        },
-
-        ready: function () {
-        },
-
-        computeUrl: function (post_id) {
-          return '/api/posts/' + post_id;
-        },
-
-        computeExpression8: function () {
-          return this.t('post.tabs.not_implemented');
-        }
-      });
-    }());
-  </script>
-</dom-module>
 <dom-module id="yp-post-card" assetpath="yp-post/">
 
   <template>
@@ -42480,6 +42425,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         bottom: 4px;
         right: 42px;
         width: 420px;
+      }
+
+      .edit {
+        color: #555;
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding-right: 0;
+        margin-right: 0;
       }
 
       .post-name {
@@ -42570,21 +42524,44 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         padding-left: 8px;
         padding-right: 8px;
       }
+
+      paper-icon-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: #000;
+      }
     </style>
 
     <template is="dom-if" if="[[post]]">
-      <paper-material class="postCard" elevation="[[elevation]]">
-        <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
-        <div class="layout vertical">
-          <div class="infoContainer postCardCursor" on-tap="goToPost">
-            <h1 class="post-name">[[postName(post)]]</h1>
-            <div class="description">[[postDescription(post)]]</div>
+      <div class="layout horizontal center-center">
+        <paper-material class="postCard" elevation="[[elevation]]">
+          <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
+          <div class="layout vertical">
+            <div class="infoContainer postCardCursor" on-tap="goToPost">
+              <h1 class="post-name">[[postName(post)]]</h1>
+              <div class="description">[[postDescription(post)]]</div>
+            </div>
+            <div class="card-actions">
+              <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+            </div>
           </div>
-          <div class="card-actions">
-            <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
-          </div>
-        </div>
-      </paper-material>
+          <template is="dom-if" if="[[headerMode]]">
+            <paper-menu-button class="edit" hidden$="[[!hasAccess(post)]]">
+              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+                <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+              </paper-menu>
+            </paper-menu-button>
+          </template>
+        </paper-material>
+      </div>
+      <template is="dom-if" if="[[headerMode]]">
+        <yp-post-edit new="false" id="postEdit" method="[[method]]" post="{{post}}" group="[[post.Group]]" on-iron-form-response="_refresh"></yp-post-edit>
+        <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('post.deleteConfirmation')]]" action="/api/posts/" action-id="[[post.id]]">
+        </yp-delete-dialog>
+      </template>
     </template>
   </template>
 
@@ -42595,7 +42572,39 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       behaviors: [
         Polymer.appHelpers,
         Polymer.YpPostBehavior
-      ]
+      ],
+
+      properties: {
+        selectedMenuItem: {
+          type: String
+        },
+
+        headerMode: {
+          type: Boolean,
+          value: false
+        },
+
+        elevation: {
+          type: Number,
+          value: 2
+        }
+      },
+
+      _menuSelection: function (event, detail) {
+        if (detail.item.id=="editMenuItem")
+          this._openEdit();
+        else if (detail.item.id=="deleteMenuItem")
+          this.$$("#deleteDialog").open();
+        this.selectedMenuItem = null;
+      },
+
+      _openEdit: function () {
+        this.$$("#postEdit").open('edit', { postId: this.post.id });
+      },
+
+      _onDeleted: function () {
+        page("#!/group/"+this.post.group_id);
+      }
     });
   </script>
 </dom-module>
@@ -42960,7 +42969,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         if (this.categoryId) {
           newLocation += '/' + this.categoryId + '/' + this.categoryName;
         }
-        debugger;
         return newLocation;
       },
 
@@ -43605,7 +43613,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     },
 
     _customRedirect: function (groupId) {
-      page("#!/group/"+groupId);
+      if (this.group) {
+        page("#!/group/"+this.group.id);
+      }
     },
 
     _groupChanged: function (newValue, oldValue) {
@@ -43820,14 +43830,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 <dom-module id="yp-group" assetpath="yp-group/">
   <template>
     <style>
-      .card-container {
-        @apply(--layout-horizontal);
-        @apply(--layout-wrap);
-      }
-
-      .card {
-      }
-
       .objectives {
         padding-bottom: 40px;
         max-width: 432px;
@@ -43844,7 +43846,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <yp-page create-fab-icon="add" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
 
-      <yp-group-card-large id="groupCard" class="largeCard card" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
+      <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
 
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
         <template is="dom-if" if="[[group]]">
@@ -44612,7 +44614,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     },
 
     _customRedirect: function (communityId) {
-      page("#!/community/"+communityId);
+      if (this.community) {
+        page("#!/community/"+this.community.id);
+      }
     },
 
     _communityChanged: function (newValue, oldValue) {
@@ -46490,7 +46494,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       _response: function (event, detail, sender) {
-        debugger;
         this.set('domain', detail.response);
         if (this.domain.Communities) {
           this.set("communities",this.domain.Communities);
