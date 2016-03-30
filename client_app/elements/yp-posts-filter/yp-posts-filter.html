@@ -201,6 +201,10 @@
         postsCount: {
           type: Number,
           notify: true
+        },
+
+        tabName: {
+          type: String
         }
       },
 
@@ -237,7 +241,7 @@
 
       searchFor: function (value) {
         this.set('searchingFor', value);
-        var newLocation = '#!/group/' + this.group.id + '/' + this.group.name + '/search/' + this.searchingFor;
+        var newLocation = '#!/group/' + this.group.id + '/open/' + this.group.name + '/search/' + this.searchingFor;
         window.appGlobals.activity('change', 'filter', newLocation);
         page(newLocation);
         this.fire("refresh-group");
@@ -257,7 +261,9 @@
           var inWord = this.t('short_word.in');
           if (this._ifCategories()) {
             this.subTitle = translatedFilterName + ' ' + inWord + ' ' + translatedCategoryName;
-            this.subTitle += ' (' + this.postsCount + ')'
+            if (this.postsCount) {
+              this.subTitle += ' (' + this.postsCount + ')';
+            }
           } else {
             this.subTitle = translatedFilterName;
           }
@@ -284,13 +290,22 @@
         this._updateAfterFiltering();
       },
 
-      _updateAfterFiltering: function () {
-        if (!this.filter)
-          this.set('filter','newest');
-        var newLocation = '#!/group/' + this.group.id + '/' + this.group.name + '/posts/' + this.filter;
+      buildPostsUrlPath: function () {
+        var newLocation = '#!/group/' + this.group.id + '/' + this.tabName;
+        if (this.filter) {
+          newLocation += '/' + this.group.name + '/posts/' + this.filter;
+        }
         if (this.categoryId) {
           newLocation += '/' + this.categoryId + '/' + this.categoryName;
         }
+        debugger;
+        return newLocation;
+      },
+
+      _updateAfterFiltering: function () {
+        if (!this.filter)
+          this.set('filter','newest');
+        var newLocation = this.buildPostsUrlPath();
         window.appGlobals.activity('change', 'filter', newLocation);
         page(newLocation);
         this.fire("refresh-group");

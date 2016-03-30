@@ -81,7 +81,7 @@
         padding-top: 48px;
       }
     </style>
-    <yp-posts-filter id="postsFilter" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
+    <yp-posts-filter id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
                      group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
                      category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
     </yp-posts-filter>
@@ -182,6 +182,10 @@
         oldestPostAt: {
           type: Date
         }
+      },
+
+      buildPostsUrlPath: function () {
+        return this.$.postsFilter.buildPostsUrlPath();
       },
 
       _searchingForChanged: function (newValue, oldValue) {

@@ -126,7 +126,7 @@
             <section data-route="group">
               <template is="dom-if" if="[[params.groupId]]" restamp>
                 <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]"
-                          searching-for="[[params.searchingFor]]"
+                          searching-for="[[params.searchingFor]]" tab-name="[[params.tabName]]"
                           category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
                           on-change-header="onChangeHeader"></yp-group>
               </template>
