@@ -32517,7 +32517,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       },
 
       _postChanged: function(newValue, oldValue) {
-        debugger;
+        //debugger;
       },
 
       _zoomLevel: function (post) {
@@ -33685,6 +33685,10 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
 
         oldestProcessedActivityAt: {
           type: Date
+        },
+
+        latestProcessedActivityAt: {
+          type: Date
         }
       },
 
@@ -33725,6 +33729,14 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
         }
       },
 
+      loadNewData: function () {
+        debugger;
+        if (this.url!='' && this.latestProcessedActivityAt) {
+          this.$.ajax.url = this.url + '?afterDate='+this.latestProcessedActivityAt;
+          this.$.ajax.generateRequest();
+        }
+      },
+
       _domainIdChanged: function (newValue) {
         this._generateRequest(newValue, 'domains');
       },
@@ -33742,6 +33754,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       },
 
       _activitiesResponse: function (event, detail) {
+        debugger;
         var activities = detail.response.activities;
 
         if (detail.response.oldestProcessedActivityAt) {
@@ -33749,10 +33762,16 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
         }
 
         activities.forEach(function(activity) {
-          this.push('activities', activity);
+          debugger;
+          if (this.$.ajax.url.indexOf('afterDate') > -1) {
+            this.unshift('activities', activity);
+          } else {
+            this.push('activities', activity);
+          }
         }.bind(this));
 
         if (activities.length>0) {
+          this.set('latestProcessedActivityAt', activities[0].created_at);
           this.setMoreToLoad();
         }
 
@@ -43971,7 +43990,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
-          <ac-activities selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
+          <ac-activities id="groupActivities" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
         </section>
         <section>
           <div class="layout horizontal center-center">
@@ -44127,7 +44146,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       _refresh: function () {
+        debugger;
         this.$.ajax.generateRequest();
+        this.$$("#groupActivities").loadNewData();
       },
 
       ready: function () {
