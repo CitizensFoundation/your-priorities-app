@@ -32483,15 +32483,17 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
           <iron-image sizing="cover" class="main-image" src="[[postImagePath()]]"></iron-image>
         </template>
 
-        <template is="dom-if" if="[[_withCoverMediaType(post,'streetView')]]">
-          <google-streetview-pano position="[[_getMapPosition()]]" api-key="[[_googleMapsApiKey()]]" heading="330" pitch="2" zoom="0.8" disable-default-ui="">
-          </google-streetview-pano>
-        </template>
+        <template is="dom-if" if="[[post.location]]" restamp="">
+          <template is="dom-if" if="[[_withCoverMediaType(post,'streetView')]]" restamp="">
+            <google-streetview-pano position="[[_getMapPosition()]]" api-key="[[_googleMapsApiKey()]]" heading="330" pitch="2" zoom="0.8" disable-default-ui="">
+            </google-streetview-pano>
+          </template>
 
-        <template is="dom-if" if="[[_withCoverMediaType(post,'map')]]">
-          <google-map class="map" libraries="places" fit-to-markers="" zoom="[[_zoomLevel(post)]]" map-type="[[_mapType(post)]]" api-key="[[_googleMapsApiKey()]]">
-            <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
-          </google-map>
+          <template is="dom-if" if="[[_withCoverMediaType(post,'map')]]" restamp="">
+            <google-map class="map" libraries="places" fit-to-markers="" zoom="[[_zoomLevel(post)]]" map-type="[[_mapType(post)]]" api-key="[[_googleMapsApiKey()]]">
+              <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
+            </google-map>
+          </template>
         </template>
       </div>
     </template>
@@ -32502,7 +32504,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       is: 'yp-post-cover-media',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.appHelpers
       ],
 
       properties: {
@@ -32515,7 +32517,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       },
 
       _postChanged: function(newValue, oldValue) {
-       // debugger;
+        debugger;
       },
 
       _zoomLevel: function (post) {
@@ -32526,8 +32528,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       },
 
       _mapType: function (post) {
-        debugger;
-        if (post)
+        if (post && post.location)
           return post.location.mapType;
         else
           return null;
@@ -32670,7 +32671,6 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       }
 
       yp-post-cover-media {
-        position: relative;
         width: 420px;
         height: 232px;
         padding-top: 4px;
@@ -39342,7 +39342,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <yp-page create-fab-icon="communication:forum" create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
 
-      <yp-post-card class="largeCard" post="[[post]]" header-mode=""></yp-post-card>
+      <yp-post-card class="largeCard" post="[[post]]" on-refresh="_refresh" header-mode=""></yp-post-card>
 
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
         <paper-tab><span>[[t('post.tabs.debate')]]</span> &nbsp; (<span>[[post.Points.length]]</span>)</paper-tab>
@@ -39360,12 +39360,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         </section>
         <section>
           <div class="layout horizontal center-center">
-            <template is="dom-if" if="[[post.location]]">
-              <paper-material class="mapContainer" elevation="3">
-                <google-map api-key="[[_googleMapsApiKey()]]" id="map" libraries="places" class="map" zoom="[[post.location.map_zoom]]" fit-to-markers="">
-                  <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" id="marker"></google-map-marker>
-                </google-map>
-              </paper-material>
+            <template is="dom-if" if="[[post.location]]" restamp="">
+              <template is="dom-if" if="[[mapActive]]" restamp="">
+                <paper-material class="mapContainer" elevation="3">
+                  <google-map api-key="[[_googleMapsApiKey()]]" id="map" libraries="places" class="map" map-type="[[post.location.mapType]]" zoom="[[post.location.map_zoom]]" fit-to-markers="">
+                    <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" id="marker"></google-map-marker>
+                  </google-map>
+                </paper-material>
+              </template>
             </template>
             <template is="dom-if" if="[[!post.location]]">
               <h1>[[t('post.noLocation')]]</h1>
@@ -39421,6 +39423,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
           method: {
             type: String
+          },
+
+          mapActive: {
+            type: Boolean,
+            value: false
           }
         },
 
@@ -39502,6 +39509,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             window.appGlobals.activity('open', 'photosTab');
           else if (selected == 3)
             window.appGlobals.activity('open', 'solutionsTab');
+
+          if (selected == 2) {
+            this.set('mapActive', true);
+          } else {
+            this.set('mapActive', false);
+          }
         },
 
         ready: function () {
@@ -41737,7 +41750,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.$$("#spinner").active = false;
         this.response = response;
         this.close();
-        debugger;
         if (detail.response && detail.response.name) {
           this.toastTextCombined = this.toastText + " " + detail.response.name;
         } else {
@@ -42009,7 +42021,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <google-map-search id="mapSearch" map="[[map]]" on-google-map-search-results="_mapSearchResults"></google-map-search>
 
-    <google-map id="map" api-key="[[_googleMapsApiKey()]]" map="{{map}}" libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers="">
+    <google-map id="map" zoom="[[location.map_zoom]]" api-key="[[_googleMapsApiKey()]]" map="{{map}}" libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers="">
       <google-map-marker latitude="64.13897027178841" longitude="-21.876912117004395" id="marker"></google-map-marker>
     </google-map>
 
@@ -42098,23 +42110,25 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       ready: function () {
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-            if (!this.location)
-              this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, map_zoom: 13 }
-          }.bind(this));
+        debugger;
+        if (!this.location) {
+          if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              if (!this.location)
+                this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, map_zoom: 13 }
+            }.bind(this));
+          }
         }
       },
 
       _zoomChanged: function (event, detail) {
         if (detail && detail.value) {
-          this.set('location.zoom', detail.value);
+          this.set('location.map_zoom', detail.value);
         }
         this.set('encodedLocation', JSON.stringify(this.location));
       },
 
       _mapTypeChanged: function (event, detail) {
-        debugger;
         if (detail && detail.value) {
           this.set('location.mapType', detail.value);
         }
@@ -42189,7 +42203,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
     </style>
 
-    <yp-edit-dialog double-width="" id="editDialog" icon="icons:lightbulb-outline" action="[[action]]" use-next-tab-action="" on-next-tab-action="_nextTab" method="[[method]]" save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
+    <yp-edit-dialog double-width="" id="editDialog" icon="icons:lightbulb-outline" action="[[action]]" use-next-tab-action="[[new]]" on-next-tab-action="_nextTab" method="[[method]]" save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
       <h2>[[editHeaderText]]</h2>
       <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
@@ -42201,7 +42215,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       </paper-tabs>
 
       <div class="layout vertical wrap container">
-        <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
           <section>
             <div class="layout vertical">
               <template is="dom-if" if="[[_showCategories(group)]]" restamp="">
@@ -42297,11 +42311,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       location: {
-        type: Object
+        type: Object,
+        observer: '_locationChanged'
       },
 
       encodedLocation: {
-        type: String
+        type: String,
+        observer: "_encodedLocationChanged"
       },
 
       selectedCategoryArrayId: {
@@ -42315,11 +42331,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       selectedCoverMediaType: {
         type: String,
+        value: 'none',
         observer: "_coverMediaTypeValueChanged"
       },
 
       uploadedHeaderImageId: {
-        type: String
+        type: String,
+        observer: '_uploadedHeaderImageIdChanged'
       },
 
       selected: {
@@ -42334,6 +42352,21 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
     },
 
+    _encodedLocationChanged: function (newValue) {
+    },
+
+    _locationChanged: function (newValue) {
+      if (newValue && (!this.selectedCoverMediaType || this.selectedCoverMediaType=='' || this.selectedCoverMediaType=='none')) {
+        this.set('selectedCoverMediaType','map');
+      }
+    },
+
+    _uploadedHeaderImageIdChanged: function (newValue) {
+      if (newValue) {
+        this.set('selectedCoverMediaType','image');
+      }
+    },
+
     _nextOnEnter: function (event) {
       if (event.keyCode === 13) {
         this._searchMap();
@@ -42341,19 +42374,19 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     },
 
     _nextTab: function () {
-      if (this.selected<3) {
+      if (this.selected< this.new ? 3 : 2) {
         this.set('selected', this.selected+1)
       }
     },
 
     _selectedChanged: function (newValue) {
-      if (newValue==this.new ? 2 : 1) {
+      if (newValue==(this.new ? 2 : 1)) {
         this.set('mapActive', true);
       } else {
         this.set('mapActive', false);
       }
 
-      if (newValue==3) {
+      if ((this.new && newValue==3) || !this.new) {
         this.$$("#editDialog").useNextTabAction = false;
       } else {
         this.$$("#editDialog").useNextTabAction = true;
@@ -42377,6 +42410,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       if (newPost){
         if (newPost.location) {
           this.set('location', newPost.location);
+          this.set('encodedLocation', JSON.stringify(this.location));
         }
         if (newPost.cover_media_type)
           this.selectedCoverMediaType = newPost.cover_media_type;
@@ -42404,6 +42438,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.set('location', null);
         this.set('selectedCategoryArrayId',null);
         this.set('selectedCategoryId',null);
+        this.set('selected', 0);
         this.set('uploadedHeaderImageId',null);
         this.$$("#imageFileUpload").clear();
       }
@@ -42560,7 +42595,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
     </style>
 
-    <template is="dom-if" if="[[post]]">
+    <template is="dom-if" if="[[post]]" restamp="">
       <div class="layout horizontal center-center">
         <paper-material class="postCard" elevation="[[elevation]]">
           <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
@@ -42615,6 +42650,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           type: Number,
           value: 2
         }
+      },
+
+      _refresh: function () {
+        this.$$('#postEdit').selected = 0;
+        this.fire('refresh');
       },
 
       _menuSelection: function (event, detail) {
