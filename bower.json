@@ -2,7 +2,7 @@
   "name": "your-priorities-app",
   "version": "0.9.1",
   "dependencies": {
-    "file-upload": "rbjarnason/file-upload",
+    "file-upload": "rbjarnason/file-upload#master",
     "google-map": "GoogleWebComponents/google-map",
     "google-streetview-pano": "https://github.com/rbjarnason/google-streetview-pano.git#timings-fix-maps-api-callback",
     "polymer-instagram": "https://github.com/rbjarnason/polymer-instagram-feed.git#polymer1",

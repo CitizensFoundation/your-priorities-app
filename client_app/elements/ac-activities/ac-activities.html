@@ -285,7 +285,6 @@
       },
 
       _activitiesResponse: function (event, detail) {
-        debugger;
         var activities = detail.response.activities;
 
         if (detail.response.oldestProcessedActivityAt) {
@@ -293,7 +292,6 @@
         }
 
         activities.forEach(function(activity) {
-          debugger;
           if (this.$.ajax.url.indexOf('afterDate') > -1) {
             this.unshift('activities', activity);
           } else {

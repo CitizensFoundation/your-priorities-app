@@ -96,6 +96,10 @@
     "not_helpful": "Vote point down as not helpful"
   },
 
+  "uploading": {
+    "inProgress": "Uploading..."
+  },
+
   "notice": {
     "ok": "Ok",
     "feature_not_implemented_a": "This feature has not yet been implemented in this read-only preview of Your Priorities 6.0.",

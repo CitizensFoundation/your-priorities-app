@@ -169,16 +169,21 @@
             </div>
           </div>
           <form is="iron-form" id="form" name="ypForm" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
-            <content></content>
+            <content id="mainEditContent"></content>
           </form>
           <paper-spinner id="spinner"></paper-spinner>
           <div class="buttons">
             <paper-button id="dismissBtn" dialog-dismiss>[[t('cancel')]]</paper-button>
-            <template is="dom-if" if="[[!useNextTabAction]]">
-              <paper-button on-tap="_submit">[[saveText]]</paper-button>
+            <template is="dom-if" if="[[!uploadingState]]">
+              <template is="dom-if" if="[[!useNextTabAction]]">
+                <paper-button on-tap="_submit">[[saveText]]</paper-button>
+              </template>
+              <template is="dom-if" if="[[useNextTabAction]]">
+                <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
+              </template>
             </template>
-            <template is="dom-if" if="[[useNextTabAction]]">
-              <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
+            <template is="dom-if" if="[[uploadingState]]">
+              <paper-button disabled on-tap="_nextTab">[[t('uploading.inProgress')]]</paper-button>
             </template>
           </div>
         </template>
@@ -286,7 +291,20 @@
 
         nextActionText: {
           type: String
+        },
+
+        uploadingState: {
+          type: Boolean,
+          value: false
         }
+      },
+
+      _fileUploadStarting: function (event) {
+        this.set('uploadingState', true);
+      },
+
+      _fileUploadComplete: function (event) {
+        this.set('uploadingState', false);
       },
 
       _nextTab: function () {
@@ -310,7 +328,9 @@
         'iron-form-submit': '_formSubmitted',
         'iron-form-response': '_formResponse',
         'iron-form-error': '_formError',
-        'iron-form-invalid': '_formInvalid'
+        'iron-form-invalid': '_formInvalid',
+        'file-upload-starting': '_fileUploadStarting',
+        'file-upload-complete': '_fileUploadComplete'
       },
 
       open: function() {
