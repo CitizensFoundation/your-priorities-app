@@ -69,7 +69,7 @@
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
-          <ac-activities selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
+          <ac-activities id="groupActivities" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
         </section>
         <section>
           <div class="layout horizontal center-center">
@@ -225,7 +225,9 @@
       },
 
       _refresh: function () {
+        debugger;
         this.$.ajax.generateRequest();
+        this.$$("#groupActivities").loadNewData();
       },
 
       ready: function () {

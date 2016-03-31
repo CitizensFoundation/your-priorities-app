@@ -216,6 +216,10 @@
 
         oldestProcessedActivityAt: {
           type: Date
+        },
+
+        latestProcessedActivityAt: {
+          type: Date
         }
       },
 
@@ -256,6 +260,14 @@
         }
       },
 
+      loadNewData: function () {
+        debugger;
+        if (this.url!='' && this.latestProcessedActivityAt) {
+          this.$.ajax.url = this.url + '?afterDate='+this.latestProcessedActivityAt;
+          this.$.ajax.generateRequest();
+        }
+      },
+
       _domainIdChanged: function (newValue) {
         this._generateRequest(newValue, 'domains');
       },
@@ -273,6 +285,7 @@
       },
 
       _activitiesResponse: function (event, detail) {
+        debugger;
         var activities = detail.response.activities;
 
         if (detail.response.oldestProcessedActivityAt) {
@@ -280,10 +293,16 @@
         }
 
         activities.forEach(function(activity) {
-          this.push('activities', activity);
+          debugger;
+          if (this.$.ajax.url.indexOf('afterDate') > -1) {
+            this.unshift('activities', activity);
+          } else {
+            this.push('activities', activity);
+          }
         }.bind(this));
 
         if (activities.length>0) {
+          this.set('latestProcessedActivityAt', activities[0].created_at);
           this.setMoreToLoad();
         }
 
