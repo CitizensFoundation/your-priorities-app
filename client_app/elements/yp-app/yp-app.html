@@ -134,7 +134,7 @@
 
             <section data-route="post">
               <template is="dom-if" if="[[params.postId]]" restamp>
-                <yp-post post-id="{{params.postId}}" on-change-header="onChangeHeader"></yp-post>
+                <yp-post post-id="{{params.postId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-post>
               </template>
             </section>
 
