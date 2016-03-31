@@ -158,7 +158,7 @@
       }
     </style>
 
-    <template is="dom-if" if="[[post]]">
+    <template is="dom-if" if="[[post]]" restamp>
       <div class="layout horizontal center-center">
         <paper-material class="postCard" elevation="[[elevation]]">
           <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
@@ -214,6 +214,11 @@
           type: Number,
           value: 2
         }
+      },
+
+      _refresh: function () {
+        this.$$('#postEdit').selected = 0;
+        this.fire('refresh');
       },
 
       _menuSelection: function (event, detail) {

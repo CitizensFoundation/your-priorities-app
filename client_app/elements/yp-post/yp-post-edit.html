@@ -237,11 +237,9 @@
     },
 
     _encodedLocationChanged: function (newValue) {
-      debugger;
     },
 
     _locationChanged: function (newValue) {
-      debugger;
       if (newValue && (!this.selectedCoverMediaType || this.selectedCoverMediaType=='' || this.selectedCoverMediaType=='none')) {
         this.set('selectedCoverMediaType','map');
       }
@@ -324,6 +322,7 @@
         this.set('location', null);
         this.set('selectedCategoryArrayId',null);
         this.set('selectedCategoryId',null);
+        this.set('selected', 0);
         this.set('uploadedHeaderImageId',null);
         this.$$("#imageFileUpload").clear();
       }

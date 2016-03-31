@@ -75,26 +75,28 @@
           <iron-image sizing="cover" class="main-image" src="[[postImagePath()]]"></iron-image>
         </template>
 
-        <template is="dom-if" if="[[_withCoverMediaType(post,'streetView')]]">
-          <google-streetview-pano
-            position="[[_getMapPosition()]]"
-            api-key="[[_googleMapsApiKey()]]"
-            heading="330"
-            pitch="2"
-            zoom="0.8"
-            disable-default-ui>
-          </google-streetview-pano>
-        </template>
+        <template is="dom-if" if="[[post.location]]" restamp>
+          <template is="dom-if" if="[[_withCoverMediaType(post,'streetView')]]" restamp>
+            <google-streetview-pano
+              position="[[_getMapPosition()]]"
+              api-key="[[_googleMapsApiKey()]]"
+              heading="330"
+              pitch="2"
+              zoom="0.8"
+              disable-default-ui>
+            </google-streetview-pano>
+          </template>
 
-        <template is="dom-if" if="[[_withCoverMediaType(post,'map')]]">
-          <google-map class="map"
-                      libraries="places"
-                      fit-to-markers
-                      zoom="[[_zoomLevel(post)]]"
-                      map-type="[[_mapType(post)]]"
-                      api-key="[[_googleMapsApiKey()]]">
-            <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
-          </google-map>
+          <template is="dom-if" if="[[_withCoverMediaType(post,'map')]]" restamp>
+            <google-map class="map"
+                        libraries="places"
+                        fit-to-markers
+                        zoom="[[_zoomLevel(post)]]"
+                        map-type="[[_mapType(post)]]"
+                        api-key="[[_googleMapsApiKey()]]">
+              <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
+            </google-map>
+          </template>
         </template>
       </div>
     </template>
@@ -105,7 +107,7 @@
       is: 'yp-post-cover-media',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.appHelpers
       ],
 
       properties: {
@@ -118,7 +120,7 @@
       },
 
       _postChanged: function(newValue, oldValue) {
-       // debugger;
+        debugger;
       },
 
       _zoomLevel: function (post) {
