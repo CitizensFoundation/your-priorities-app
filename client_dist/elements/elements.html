@@ -33759,7 +33759,6 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       },
 
       loadNewData: function () {
-        debugger;
         if (this.url!='' && this.latestProcessedActivityAt) {
           this.$.ajax.url = this.url + '?afterDate='+this.latestProcessedActivityAt;
           this.$.ajax.generateRequest();
@@ -41627,6 +41626,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         padding-bottom: 8px;
       }
 
+      #formErrorDialog {
+        width: 280px;
+        height: 200px;
+      }
     </style>
 
     <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop$="[[!narrowPad]]" modal="">
@@ -41637,7 +41640,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           <paper-header-panel main="" id="headerPanel" class="no-padding" mode="{{mode}}">
             <paper-toolbar id="toolbar">
               <paper-icon-button id="dismissBtn" icon="close" dialog-dismiss=""></paper-icon-button>
-
               <div class="layout horizontal title flex">
                 <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
                 <content select="h2"></content>
@@ -41688,7 +41690,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </paper-dialog>
 
     <paper-dialog id="formErrorDialog" modal="">
-      <p id="errorText">[[errorText]]</p>
+      <div id="errorText">[[errorText]]</div>
       <div class="buttons">
         <paper-button dialog-confirm="" autofocus="" on-tap="_clearErrorText">[[t('ok')]]</paper-button>
       </div>
@@ -41885,8 +41887,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         } else if (this.params && this.params.domainId) {
           this.action = this.baseAction + '/'+this.params.domainId;
         }
-        this.$$("#form").submit();
-        this.$$("#spinner").active = true;
+        if (this.$$("#form").validate()) {
+          this.$$("#form").submit();
+          this.$$("#spinner").active = true;
+        } else {
+          this.fire('iron-form-invalid');
+          var error = this.t('form.invalid');
+          this._showErrorDialog(error);
+        }
       },
 
       submitForce: function() {
@@ -41907,14 +41915,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       _showErrorDialog: function(errorText) {
-        this.errorText = errorText;
-        this.moveDialogToTopDom("formErrorDialog");
+        this.set('errorText', errorText);
+//        this.moveDialogToTopDom("formErrorDialog");
         this.$$("#formErrorDialog").open();
       },
 
       _clearErrorText: function(event) {
         this.$$("#formErrorDialog").close();
-        this.$$("#errorText").innerHTML="";
+        this.set('errorText', null);
       }
     })
   })();
@@ -42215,7 +42223,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       ready: function () {
-        debugger;
         if (!this.location) {
           if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -42334,18 +42341,18 @@ is separate from validation, and `allowed-pattern` does not affect how the input
                 <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
               </template>
 
-              <paper-input id="name" name="name" type="text" label="[[t('name')]]" value="{{post.name}}" maxlength="60" char-counter="">
+              <paper-input id="name" required="" minlength="15" name="name" type="text" label="[[t('name')]]" value="{{post.name}}" maxlength="60" char-counter="">
               </paper-input>
 
 
-              <paper-textarea id="description" name="description" value="{{post.description}}" label="[[t('post.description')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
+              <paper-textarea id="description" required="" minlength="15" name="description" value="{{post.description}}" label="[[t('post.description')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
               </paper-textarea>
             </div>
           </section>
 
           <template is="dom-if" restamp="" if="[[new]]">
             <section class="subContainer">
-              <paper-textarea id="pointFor" name="pointFor" value="{{post.pointFor}}" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
+              <paper-textarea id="pointFor" required="" minlength="15" name="pointFor" value="{{post.pointFor}}" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
               </paper-textarea>
             </section>
           </template>
@@ -42454,6 +42461,19 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       mapActive: {
         type: Boolean,
         value: false
+      }
+    },
+
+    listeners: {
+      'iron-form-invalid': '_formInvalid',
+    },
+
+    _formInvalid: function () {
+      this.set('selected', 0);
+      this.$$('#name').autoValidate = true;
+      this.$$('#description').autoValidate = true;
+      if (this.new) {
+        this.$$('#pointFor').autoValidate = true;
       }
     },
 

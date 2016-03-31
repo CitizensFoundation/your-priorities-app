@@ -66,6 +66,10 @@
     "failed": "Hafnað"
   },
 
+  "form": {
+    "invalid": "Kláraðu að fylla út form"
+  },
+
   "post": {
     "new": "Ný hugmynd",
     "top": "Efstu hugmyndir",
