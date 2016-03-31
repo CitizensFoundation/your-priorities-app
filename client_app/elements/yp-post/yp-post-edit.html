@@ -94,6 +94,8 @@
               </template>
 
               <paper-input id="name"
+                           required
+                           minlength="15"
                            name="name"
                            type="text"
                            label="[[t('name')]]"
@@ -104,6 +106,8 @@
 
 
               <paper-textarea id="description"
+                              required
+                              minlength="15"
                               name="description"
                               value="{{post.description}}"
                               label="[[t('post.description')]]"
@@ -118,6 +122,8 @@
           <template is="dom-if" restamp if="[[new]]">
             <section class="subContainer">
               <paper-textarea id="pointFor"
+                              required
+                              minlength="15"
                               name="pointFor"
                               value="{{post.pointFor}}"
                               label="[[t('point.for')]]"
@@ -233,6 +239,19 @@
       mapActive: {
         type: Boolean,
         value: false
+      }
+    },
+
+    listeners: {
+      'iron-form-invalid': '_formInvalid',
+    },
+
+    _formInvalid: function () {
+      this.set('selected', 0);
+      this.$$('#name').autoValidate = true;
+      this.$$('#description').autoValidate = true;
+      if (this.new) {
+        this.$$('#pointFor').autoValidate = true;
       }
     },
 

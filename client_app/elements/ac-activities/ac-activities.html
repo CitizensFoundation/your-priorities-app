@@ -261,7 +261,6 @@
       },
 
       loadNewData: function () {
-        debugger;
         if (this.url!='' && this.latestProcessedActivityAt) {
           this.$.ajax.url = this.url + '?afterDate='+this.latestProcessedActivityAt;
           this.$.ajax.generateRequest();

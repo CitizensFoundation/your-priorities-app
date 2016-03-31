@@ -34,7 +34,12 @@
     "failed": "Failed"
   },
 
+  "form": {
+    "invalid": "Complete filling out the form"
+  },
+
   "post": {
+    "formInvalid": "Complete filling out the form",
     "status": "Status of this post",
     "new": "New post",
     "searchingFor": "Searching for ",

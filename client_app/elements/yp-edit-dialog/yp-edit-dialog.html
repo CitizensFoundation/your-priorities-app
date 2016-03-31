@@ -134,6 +134,10 @@
         padding-bottom: 8px;
       }
 
+      #formErrorDialog {
+        width: 280px;
+        height: 200px;
+      }
     </style>
 
     <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop$="[[!narrowPad]]" modal>
@@ -144,7 +148,6 @@
           <paper-header-panel main id="headerPanel" class="no-padding" mode="{{mode}}">
             <paper-toolbar id="toolbar">
               <paper-icon-button id="dismissBtn" icon="close" dialog-dismiss></paper-icon-button>
-
               <div class="layout horizontal title flex">
                 <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
                 <content select="h2"></content>
@@ -195,7 +198,7 @@
     </paper-dialog>
 
     <paper-dialog id="formErrorDialog" modal>
-      <p id="errorText">[[errorText]]</p>
+      <div id="errorText">[[errorText]]</div>
       <div class="buttons">
         <paper-button dialog-confirm autofocus on-tap="_clearErrorText">[[t('ok')]]</paper-button>
       </div>
@@ -392,8 +395,14 @@
         } else if (this.params && this.params.domainId) {
           this.action = this.baseAction + '/'+this.params.domainId;
         }
-        this.$$("#form").submit();
-        this.$$("#spinner").active = true;
+        if (this.$$("#form").validate()) {
+          this.$$("#form").submit();
+          this.$$("#spinner").active = true;
+        } else {
+          this.fire('iron-form-invalid');
+          var error = this.t('form.invalid');
+          this._showErrorDialog(error);
+        }
       },
 
       submitForce: function() {
@@ -414,14 +423,14 @@
       },
 
       _showErrorDialog: function(errorText) {
-        this.errorText = errorText;
-        this.moveDialogToTopDom("formErrorDialog");
+        this.set('errorText', errorText);
+//        this.moveDialogToTopDom("formErrorDialog");
         this.$$("#formErrorDialog").open();
       },
 
       _clearErrorText: function(event) {
         this.$$("#formErrorDialog").close();
-        this.$$("#errorText").innerHTML="";
+        this.set('errorText', null);
       }
     })
   })();
