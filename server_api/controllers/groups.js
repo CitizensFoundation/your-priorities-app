@@ -205,7 +205,8 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
       },
       { model: models.Image,
         as: 'PostHeaderImages',
-        required: false }
+        required: false
+      }
     ]
   }).then(function(posts) {
     var rows = [];

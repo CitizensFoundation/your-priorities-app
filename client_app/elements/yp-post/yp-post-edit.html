@@ -66,7 +66,7 @@
     </style>
 
     <yp-edit-dialog double-width id="editDialog" icon="icons:lightbulb-outline" action="[[action]]"
-                    use-next-tab-action on-next-tab-action="_nextTab" method="[[method]]"
+                    use-next-tab-action="[[new]]" on-next-tab-action="_nextTab" method="[[method]]"
                     save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
       <h2>[[editHeaderText]]</h2>
       <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
@@ -79,7 +79,7 @@
       </paper-tabs>
 
       <div class="layout vertical wrap container">
-        <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
           <section>
             <div class="layout vertical">
               <template is="dom-if" if="[[_showCategories(group)]]" restamp>
@@ -195,11 +195,13 @@
       },
 
       location: {
-        type: Object
+        type: Object,
+        observer: '_locationChanged'
       },
 
       encodedLocation: {
-        type: String
+        type: String,
+        observer: "_encodedLocationChanged"
       },
 
       selectedCategoryArrayId: {
@@ -213,11 +215,13 @@
 
       selectedCoverMediaType: {
         type: String,
+        value: 'none',
         observer: "_coverMediaTypeValueChanged"
       },
 
       uploadedHeaderImageId: {
-        type: String
+        type: String,
+        observer: '_uploadedHeaderImageIdChanged'
       },
 
       selected: {
@@ -232,6 +236,23 @@
       }
     },
 
+    _encodedLocationChanged: function (newValue) {
+      debugger;
+    },
+
+    _locationChanged: function (newValue) {
+      debugger;
+      if (newValue && (!this.selectedCoverMediaType || this.selectedCoverMediaType=='' || this.selectedCoverMediaType=='none')) {
+        this.set('selectedCoverMediaType','map');
+      }
+    },
+
+    _uploadedHeaderImageIdChanged: function (newValue) {
+      if (newValue) {
+        this.set('selectedCoverMediaType','image');
+      }
+    },
+
     _nextOnEnter: function (event) {
       if (event.keyCode === 13) {
         this._searchMap();
@@ -239,19 +260,19 @@
     },
 
     _nextTab: function () {
-      if (this.selected<3) {
+      if (this.selected< this.new ? 3 : 2) {
         this.set('selected', this.selected+1)
       }
     },
 
     _selectedChanged: function (newValue) {
-      if (newValue==this.new ? 2 : 1) {
+      if (newValue==(this.new ? 2 : 1)) {
         this.set('mapActive', true);
       } else {
         this.set('mapActive', false);
       }
 
-      if (newValue==3) {
+      if ((this.new && newValue==3) || !this.new) {
         this.$$("#editDialog").useNextTabAction = false;
       } else {
         this.$$("#editDialog").useNextTabAction = true;
@@ -275,6 +296,7 @@
       if (newPost){
         if (newPost.location) {
           this.set('location', newPost.location);
+          this.set('encodedLocation', JSON.stringify(this.location));
         }
         if (newPost.cover_media_type)
           this.selectedCoverMediaType = newPost.cover_media_type;

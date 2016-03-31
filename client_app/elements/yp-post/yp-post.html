@@ -193,12 +193,14 @@
         </section>
         <section>
           <div class="layout horizontal center-center">
-            <template is="dom-if" if="[[post.location]]">
-              <paper-material class="mapContainer" elevation="3">
-                <google-map api-key="[[_googleMapsApiKey()]]" id="map" libraries="places" class="map" zoom="[[post.location.map_zoom]]" fit-to-markers>
-                  <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" id="marker"></google-map-marker>
-                </google-map>
-              </paper-material>
+            <template is="dom-if" if="[[post.location]]" restamp>
+              <template is="dom-if" if="[[mapActive]]" restamp>
+                <paper-material class="mapContainer" elevation="3">
+                  <google-map api-key="[[_googleMapsApiKey()]]" id="map" libraries="places" class="map" map-type="[[post.location.mapType]]" zoom="[[post.location.map_zoom]]" fit-to-markers>
+                    <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" id="marker"></google-map-marker>
+                  </google-map>
+                </paper-material>
+              </template>
             </template>
             <template is="dom-if" if="[[!post.location]]">
               <h1>[[t('post.noLocation')]]</h1>
@@ -254,6 +256,11 @@
 
           method: {
             type: String
+          },
+
+          mapActive: {
+            type: Boolean,
+            value: false
           }
         },
 
@@ -317,6 +324,7 @@
 
         _response: function (event, detail, sender) {
           this.set("post", detail.response);
+          debugger;
           if (this.post.description === null) {
             this.post.description = this.post.Points[0].content;
             this.post.Points.shift();
@@ -335,6 +343,12 @@
             window.appGlobals.activity('open', 'photosTab');
           else if (selected == 3)
             window.appGlobals.activity('open', 'solutionsTab');
+
+          if (selected == 2) {
+            this.set('mapActive', true);
+          } else {
+            this.set('mapActive', false);
+          }
         },
 
         ready: function () {

@@ -129,8 +129,7 @@
       },
 
       _mapType: function (post) {
-        debugger;
-        if (post)
+        if (post && post.location)
           return post.location.mapType;
         else
           return null;

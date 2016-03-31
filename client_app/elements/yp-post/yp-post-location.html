@@ -64,7 +64,7 @@
 
     <google-map-search id="mapSearch" map="[[map]]" on-google-map-search-results="_mapSearchResults"></google-map-search>
 
-    <google-map id="map" api-key="[[_googleMapsApiKey()]]"  map="{{map}}" libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers>
+    <google-map id="map" zoom="[[location.map_zoom]]" api-key="[[_googleMapsApiKey()]]"  map="{{map}}" libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers>
       <google-map-marker latitude="64.13897027178841" longitude="-21.876912117004395" id="marker"></google-map-marker>
     </google-map>
 
@@ -153,17 +153,20 @@
       },
 
       ready: function () {
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-            if (!this.location)
-              this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, map_zoom: 13 }
-          }.bind(this));
+        debugger;
+        if (!this.location) {
+          if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              if (!this.location)
+                this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, map_zoom: 13 }
+            }.bind(this));
+          }
         }
       },
 
       _zoomChanged: function (event, detail) {
         if (detail && detail.value) {
-          this.set('location.zoom', detail.value);
+          this.set('location.map_zoom', detail.value);
         }
         this.set('encodedLocation', JSON.stringify(this.location));
       },
