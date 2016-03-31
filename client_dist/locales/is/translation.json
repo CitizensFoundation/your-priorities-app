@@ -19,7 +19,7 @@
     "edit": "Breyta vef"
   },
 
-  "create": "Búa til",
+  "create": "Senda inn",
   "cancel": "Hætta við",
   "communities": "Svæði",
   "community": {
@@ -125,6 +125,9 @@
     "not_helpful": "Ekki hjálplegt"
   },
 
+  "uploading": {
+    "inProgress": "Sendi mynd..."
+  },
 
   "notice": {
     "ok": "Ok",
