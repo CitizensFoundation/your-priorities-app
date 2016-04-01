@@ -44085,7 +44085,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           </section>
         </template>
         <section>
-          <template is="dom-if" if="mapActive" restamp="">
+          <template is="dom-if" if="[[mapActive]]" restamp="">
             <yp-post-map group-id="[[group.id]]"></yp-post-map>
           </template>
         </section>
@@ -45321,7 +45321,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           <ac-activities community-id="[[community.id]]"></ac-activities>
         </section>
         <section>
-          <template is="dom-if" if="mapActive" restamp="">
+          <template is="dom-if" if="[[mapActive]]" restamp="">
             <yp-post-map community-id="[[community.id]]"></yp-post-map>
           </template>
         </section>
@@ -45395,12 +45395,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             this.set('selected', 2);
           }
         }
-
-        if (newValue==2) {
-          this.set('mapActive', true);
-        } else {
-          this.set('mapActive', false);
-        }
       },
 
       _selectedChanged: function (newValue) {
@@ -45412,6 +45406,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           } else if (newValue == 2) {
             page("#!/community/" + this.community.id + '/map');
           }
+        }
+
+        if (newValue == 2) {
+          this.set('mapActive', true);
+        } else {
+          this.set('mapActive', false);
         }
       },
 
