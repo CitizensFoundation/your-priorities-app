@@ -41,6 +41,10 @@
       yp-ajax {
         background-color: var(--primary-background-color);
       }
+
+      .counterInfo {
+        font-size: 11px;
+      }
     </style>
 
     <yp-page create-fab-icon="lightbulb-outline" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
@@ -51,17 +55,25 @@
         <template is="dom-if" if="[[group]]">
           <paper-tab>[[t('news')]]</paper-tab>
           <paper-tab id="tab1">
-            <span>[[t('posts.open')]]</span>&nbsp;<span id="tabCountOpen"></span>
+            <div class="layout vertical center-center tabCounterContainer">
+              <span>[[t('posts.open')]]</span><div class="counterInfo" id="tabCountOpen"></div>
+            </div>
           </paper-tab>
           <template is="dom-if" if="[[hasNonOpenPosts]]">
             <paper-tab>
-              <span>[[t('posts.inProgress')]]</span>&nbsp;<span id="tabCountInProgress"></span>
+              <div class="layout vertical center-center tabCounterContainer">
+                <span>[[t('posts.inProgress')]]</span><div class="counterInfo" id="tabCountInProgress"></div>
+              </div>
             </paper-tab>
             <paper-tab>
-              <span>[[t('posts.successful')]]</span>&nbsp;<span id="tabCountSuccessful"></span>
+              <div class="layout vertical center-center tabCounterContainer">
+                <span>[[t('posts.successful')]]</span><div class="counterInfo" id="tabCountSuccessful"></div>
+              </div>
             </paper-tab>
             <paper-tab>
-              <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
+              <div class="layout vertical center-center tabCounterContainer">
+                <span>[[t('posts.failed')]]</span><div class="counterInfo" id="tabCountFailed"></div>
+              </div>
             </paper-tab>
           </template>
           <paper-tab>[[t('posts.map')]]</paper-tab>
@@ -236,7 +248,7 @@
       _updateTabPostCount: function (event, tabCounterInfo) {
         var tabCounter = this.$$('#'+tabCounterInfo.tabCounterId);
         if (tabCounter) {
-          tabCounter.innerHTML='('+tabCounterInfo.count+')';
+          tabCounter.innerHTML = this.formatNumber(tabCounterInfo.count);
         }
       },
 
