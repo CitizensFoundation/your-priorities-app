@@ -1,0 +1,126 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+
+<dom-module id="yp-post-map">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .mapContainer {
+        margin: 24px;
+        width: 960px;
+        height: 500px;
+
+      }
+
+      #map {
+      }
+
+      a {
+        color: var(--accent-color-400);
+      }
+
+      h1 {
+        padding: 24px;
+      }
+    </style>
+
+    <div class="layout vertical center-center">
+      <template is="dom-if" if="[[posts]]">
+        <paper-material elevation="3" class="mapContainer">
+          <google-map id="map" api-key="[[_googleMapsApiKey()]]" libraries="places" class="map layout horizontal flex" fit-to-markers>
+            <template is="dom-repeat" items="[[posts]]" as="post">
+              <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" class="marker">
+                <a href="#!/post/[[post.id]]" target="_blank">[[post.name]]</a>
+              </google-map-marker>
+            </template>
+          </google-map>
+        </paper-material>
+      </template>
+
+      <template is="dom-if" if="[[noPosts]]">
+        <h1>[[t('posts.noMapPosts')]]</h1>
+      </template>
+    </div>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-post-map',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        posts: {
+          type: Array,
+          value: null
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        communityId: {
+          type: Number,
+          observer: "_communityIdChanged"
+        },
+
+        noPosts: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _groupIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("posts", null);
+          this.$.ajax.url = '/api/groups/'+newValue+'/post_locations';
+          this.$.ajax.generateRequest();
+        } else {
+          this.set("posts", null);
+        }
+      },
+
+      _communityIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("posts", null);
+          this.$.ajax.url = '/api/communities/'+newValue+'/post_locations';
+          this.$.ajax.generateRequest();
+        } else {
+          this.set("posts", null);
+        }
+      },
+
+      _response: function (event, detail) {
+        debugger;
+        if (detail.response && detail.response.length>0) {
+          this.set('noPosts', false);
+          this.set('posts', detail.response);
+        } else {
+          this.set('noPosts', true);
+        }
+      }
+
+    });
+  </script>
+</dom-module>

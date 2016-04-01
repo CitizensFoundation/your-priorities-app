@@ -237,4 +237,30 @@ router.get('/:id/categories', auth.can('view group'), function(req, res) {
   });
 });
 
+
+router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
+  models.Post.findAll({
+    where: {
+      location: {
+        $ne: null
+      },
+      group_id: req.params.id
+    },
+    select: ['id', 'name', 'location']
+  }).then(function (posts) {
+    if (posts) {
+      log.info('Group Post Locations Viewed', {
+        communityId: req.params.id,
+        context: 'view',
+        user: toJson(req.user)
+      });
+      res.send(posts);
+    } else {
+      sendCommunityOrError(res, null, 'view post locations', req.user, 'Not found', 404);
+    }
+  }).catch(function (error) {
+    sendCommunityOrError(res, null, 'view post locations', req.user, error);
+  });
+});
+
 module.exports = router;

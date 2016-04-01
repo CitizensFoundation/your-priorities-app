@@ -4,6 +4,7 @@ var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var _ = require('lodash');
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
@@ -142,6 +143,42 @@ router.delete('/:id', auth.can('edit community'), function(req, res) {
     }
   }).catch(function(error) {
     sendCommunityOrError(res, null, 'delete', req.user, error);
+  });
+});
+
+router.get('/:id/post_locations', auth.can('view community'), function(req, res) {
+  models.Post.findAll({
+    where: {
+      location: {
+        $ne: null
+      }
+    },
+    select: ['id','name','location'],
+    include: [
+      {
+        model: models.Group,
+        where: {
+          access: models.Group.ACCESS_PUBLIC
+        },
+        required: true,
+        include: [
+          {
+            model: models.Community,
+            where: { id: req.params.id },
+            required: true
+          }
+        ]
+      }
+    ]
+  }).then(function(posts) {
+    if (posts) {
+      log.info('Community Post Locations Viewed', { communityId: req.params.id, context: 'view', user: toJson(req.user) });
+      res.send(posts);
+    } else {
+      sendCommunityOrError(res, null, 'view post locations', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendCommunityOrError(res, null, 'view post locations', req.user, error);
   });
 });
 

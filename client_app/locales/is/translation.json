@@ -63,7 +63,8 @@
     "open": "Hugmyndir",
     "inProgress": "Í ferli",
     "successful": "Samþykktar",
-    "failed": "Hafnað"
+    "failed": "Hafnað",
+    "map": "Kort"
   },
 
   "form": {
