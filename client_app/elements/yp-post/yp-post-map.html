@@ -38,17 +38,15 @@
     </style>
 
     <div class="layout vertical center-center">
-      <template is="dom-if" if="[[posts]]">
-        <paper-material elevation="3" class="mapContainer">
-          <google-map version="3" id="map" api-key="[[_googleMapsApiKey()]]" libraries="places" class="map layout horizontal flex" fit-to-markers>
-            <template is="dom-repeat" items="[[posts]]" as="post">
-              <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" class="marker">
-                <a href="#!/post/[[post.id]]" target="_blank">[[post.name]]</a>
-              </google-map-marker>
-            </template>
-          </google-map>
-        </paper-material>
-      </template>
+      <paper-material elevation="3" class="mapContainer">
+        <google-map version="3" id="map" api-key="[[_googleMapsApiKey()]]" libraries="places" class="map layout horizontal flex" fit-to-markers>
+          <template is="dom-repeat" items="[[posts]]" as="post">
+            <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" class="marker">
+              <a href="#!/post/[[post.id]]" target="_blank">[[post.name]]</a>
+            </google-map-marker>
+          </template>
+        </google-map>
+      </paper-material>
 
       <template is="dom-if" if="[[noPosts]]">
         <h1>[[t('posts.noMapPosts')]]</h1>
@@ -72,7 +70,7 @@
       properties: {
         posts: {
           type: Array,
-          value: null
+          value: function () { return [] }
         },
 
         groupId: {
@@ -93,29 +91,29 @@
 
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue) {
-          this.set("posts", null);
+          this.set("posts", []);
           this.$.ajax.url = '/api/groups/'+newValue+'/post_locations';
           this.$.ajax.generateRequest();
         } else {
-          this.set("posts", null);
+          this.set("posts", []);
         }
       },
 
       _communityIdChanged: function (newValue, oldValue) {
         if (newValue) {
-          this.set("posts", null);
+          this.set("posts", []);
           this.$.ajax.url = '/api/communities/'+newValue+'/post_locations';
           this.$.ajax.generateRequest();
         } else {
-          this.set("posts", null);
+          this.set("posts", []);
         }
       },
 
       _response: function (event, detail) {
-        debugger;
         if (detail.response && detail.response.length>0) {
           this.set('noPosts', false);
           this.set('posts', detail.response);
+          this.$.map.resize();
         } else {
           this.set('noPosts', true);
         }
