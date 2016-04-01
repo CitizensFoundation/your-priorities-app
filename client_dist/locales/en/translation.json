@@ -153,7 +153,7 @@
     "cancel": "Cancel",
     "logout": "Logout",
     "newPassword": "new password",
-    "register": "nýr notandi",
+    "register": "New user",
     "alreadyRegisterred": "This email is already registered",
     "registrationError": "Error in registration",
     "loginError": "Login error",
