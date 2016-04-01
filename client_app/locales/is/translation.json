@@ -64,7 +64,8 @@
     "inProgress": "Í ferli",
     "successful": "Samþykktar",
     "failed": "Hafnað",
-    "map": "Kort"
+    "map": "Kort",
+    "noMapPosts": "Engar hugmyndir með staðsetningu"
   },
 
   "form": {

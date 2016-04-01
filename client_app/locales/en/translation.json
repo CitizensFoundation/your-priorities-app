@@ -32,7 +32,8 @@
     "inProgress": "In progess",
     "successful": "Successful",
     "failed": "Failed",
-    "map": "Map"
+    "map": "Map",
+    "noMapPosts": "No posts with location"
   },
 
   "form": {

@@ -22,7 +22,12 @@
         margin: 24px;
         width: 960px;
         height: 500px;
+      }
 
+      .noMapContainer {
+        padding: 8px;
+        margin: 48px;
+        background-color: #FFF;
       }
 
       #map {
@@ -38,23 +43,23 @@
     </style>
 
     <div class="layout vertical center-center">
-      <paper-material elevation="3" class="mapContainer">
-        <template is="dom-if" if="[[mapActive]]">
+      <template is="dom-if" if="[[posts]]">
+        <paper-material elevation="3" class="mapContainer">
           <google-map id="map" api-key="[[_googleMapsApiKey()]]" fit-to-markers>
-            <google-map-marker latitude="64.13897027178841" longitude="-21.876912117004395" id="marker"></google-map-marker>
             <template is="dom-repeat" items="[[posts]]" as="post">
               <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" class="marker">
                 <a href="#!/post/[[post.id]]" target="_blank">[[post.name]]</a>
               </google-map-marker>
             </template>
           </google-map>
-        </template>
-      </paper-material>
+        </paper-material>
+      </template>
 
       <template is="dom-if" if="[[noPosts]]">
-        <h1>[[t('posts.noMapPosts')]]</h1>
+        <paper-material elevation="3" class="noMapContainer">
+          <h1>[[t('posts.noMapPosts')]]</h1>
+        </paper-material>
       </template>
-    </div>
 
     <div class="layout horizontal center-center">
       <yp-ajax id="ajax" on-response="_response"></yp-ajax>
@@ -89,38 +94,26 @@
         noPosts: {
           type: Boolean,
           value: false
-        },
-
-        mapActive: {
-          type: Boolean,
-          value: false
         }
-      },
-
-      ready: function() {
-        console.log("yp-post-map ready");
-        this.async(function () {
-          this.set('mapActive', true);
-        }, 10);
       },
 
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue) {
-          this.set("posts", []);
+          this.set("posts", null);
           this.$.ajax.url = '/api/groups/'+newValue+'/post_locations';
           this.$.ajax.generateRequest();
         } else {
-          this.set("posts", []);
+          this.set("posts", null);
         }
       },
 
       _communityIdChanged: function (newValue, oldValue) {
         if (newValue) {
-          this.set("posts", []);
+          this.set("posts", null);
           this.$.ajax.url = '/api/communities/'+newValue+'/post_locations';
           this.$.ajax.generateRequest();
         } else {
-          this.set("posts", []);
+          this.set("posts", null);
         }
       },
 
@@ -128,7 +121,6 @@
         if (detail.response && detail.response.length>0) {
           this.set('noPosts', false);
           this.set('posts', detail.response);
-          this.$$("#map").resize();
         } else {
           this.set('noPosts', true);
         }
