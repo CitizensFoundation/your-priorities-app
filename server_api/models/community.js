@@ -23,7 +23,8 @@ module.exports = function(sequelize, DataTypes) {
     counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
-    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 }
+    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
+//    only_admins_can_create_groups: { type: DataTypes.BOOLEAN, defaultValue: false }
   }, {
 
     defaultScope: {

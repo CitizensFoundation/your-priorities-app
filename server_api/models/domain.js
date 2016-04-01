@@ -32,7 +32,8 @@ module.exports = function(sequelize, DataTypes) {
     google_consumer_key: { type: DataTypes.STRING },
     google_consumer_secret: { type: DataTypes.STRING },
     github_client_id: { type: DataTypes.STRING },
-    github_client_secret: { type: DataTypes.STRING }
+    github_client_secret: { type: DataTypes.STRING },
+//    only_admins_can_create_communities: { type: DataTypes.BOOLEAN, defaultValue: false }
   }, {
     underscored: true,
 

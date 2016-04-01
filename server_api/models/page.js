@@ -5,6 +5,7 @@ module.exports = function(sequelize, DataTypes) {
     title: { type: DataTypes.STRING, allowNull: false },
     content: { type: DataTypes.TEXT, allowNull: false },
     weight: { type: DataTypes.INTEGER, defaultValue: 0 }
+//    locale: { type: DataTypes.STRING, defaultValue: 'en' }
   }, {
     underscored: true,
     tableName: 'pages',
