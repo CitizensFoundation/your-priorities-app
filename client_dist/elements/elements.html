@@ -44416,14 +44416,16 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <div class="layout vertical center-center">
       <paper-material elevation="3" class="mapContainer">
-        <google-map id="map" api-key="[[_googleMapsApiKey()]]" fit-to-markers="">
-          <google-map-marker latitude="64.13897027178841" longitude="-21.876912117004395" id="marker"></google-map-marker>
-          <template is="dom-repeat" items="[[posts]]" as="post">
-            <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" class="marker">
-              <a href="#!/post/[[post.id]]" target="_blank">[[post.name]]</a>
-            </google-map-marker>
-          </template>
-        </google-map>
+        <template is="dom-if" if="[[mapActive]]">
+          <google-map id="map" api-key="[[_googleMapsApiKey()]]" fit-to-markers="">
+            <google-map-marker latitude="64.13897027178841" longitude="-21.876912117004395" id="marker"></google-map-marker>
+            <template is="dom-repeat" items="[[posts]]" as="post">
+              <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" class="marker">
+                <a href="#!/post/[[post.id]]" target="_blank">[[post.name]]</a>
+              </google-map-marker>
+            </template>
+          </google-map>
+        </template>
       </paper-material>
 
       <template is="dom-if" if="[[noPosts]]">
@@ -44464,7 +44466,19 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         noPosts: {
           type: Boolean,
           value: false
+        },
+
+        mapActive: {
+          type: Boolean,
+          value: false
         }
+      },
+
+      ready: function() {
+        debugger;
+        this.async(function () {
+          this.set('mapActive', true);
+        }, 10);
       },
 
       _groupIdChanged: function (newValue, oldValue) {
@@ -44491,8 +44505,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         if (detail.response && detail.response.length>0) {
           this.set('noPosts', false);
           this.set('posts', detail.response);
-          this.$.map.fitToMarkers = true;
-          this.$.map.resize();
+          this.$$("#map").resize();
         } else {
           this.set('noPosts', true);
         }
