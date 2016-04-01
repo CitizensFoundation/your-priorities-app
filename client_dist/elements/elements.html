@@ -32700,8 +32700,8 @@ return a[this.day()]},sameElse:"L"},relativeTime:{future:"за %s",past:"пре 
       }
 
       yp-post-cover-media {
-        width: 420px;
-        height: 232px;
+        width: 760px;
+        height: 442px;
         padding-top: 4px;
         padding-bottom: 4px;
       }
@@ -39375,13 +39375,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         background-color: var(--primary-background-color);
       }
 
-      .map {
+      .mapContainer {
+        margin: 24px;
         width: 960px;
         height: 500px;
-      }
-
-      .mapContainer {
-        margin-top: 24px;
       }
     </style>
 
@@ -39423,10 +39420,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         </section>
         <section>
           <div class="layout horizontal center-center">
-            <h1 style="padding: 32px;">To be done...</h1></div></section>
-          
+            <h1 style="padding: 32px;">To be done...</h1>
+          </div>
+        </section>
       </iron-pages>
-
     </yp-page>
 
     <div class="layout horizontal center-center">
@@ -44057,6 +44054,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
               <span>[[t('posts.failed')]]</span>&nbsp;<span id="tabCountFailed"></span>
             </paper-tab>
           </template>
+          <paper-tab>[[t('posts.map')]]</paper-tab>
         </template>
       </paper-tabs>
 
@@ -44086,6 +44084,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             </div>
           </section>
         </template>
+        <section>
+          <template is="dom-if" if="mapActive" restamp="">
+            <yp-post-map group-id="[[group.id]]"></yp-post-map>
+          </template>
+        </section>
       </iron-pages>
     </yp-page>
 
@@ -44148,6 +44151,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           type: String,
           value: null,
           observer: '_tabNameChanged'
+        },
+
+        mapActive: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -44170,6 +44178,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
               this.set('selected', 3);
             } else if (newValue=='failed') {
               this.set('selected', 4);
+            } else if (newValue=='map') {
+              this.set('selected', 5);
+            }
+          } else {
+            if (newValue=='map') {
+              this.set('selected', 2);
             }
           }
         }
@@ -44188,8 +44202,20 @@ is separate from validation, and `allowed-pattern` does not affect how the input
               page(this.$$("#successfulPostList").buildPostsUrlPath());
             } else if (newValue == 4) {
               page(this.$$("#failedPostList").buildPostsUrlPath());
+            } else if (newValue == 5) {
+              page("#!/group/" + this.group.id + '/map');
+            }
+          } else {
+            if (newValue==2) {
+              page("#!/group/" + this.group.id + '/map');
             }
           }
+        }
+
+        if (newValue == this.hasNonOpenPosts ? 5 : 2) {
+          this.set('mapActive', true);
+        } else {
+          this.set('mapActive', false);
         }
       },
 
@@ -44356,6 +44382,121 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         Polymer.appHelpers,
         Polymer.GroupBehaviors
       ]
+    });
+  </script>
+</dom-module>
+<dom-module id="yp-post-map" assetpath="yp-post/">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .mapContainer {
+        margin: 24px;
+        width: 960px;
+        height: 500px;
+
+      }
+
+      #map {
+      }
+
+      a {
+        color: var(--accent-color-400);
+      }
+
+      h1 {
+        padding: 24px;
+      }
+    </style>
+
+    <div class="layout vertical center-center">
+      <template is="dom-if" if="[[posts]]">
+        <paper-material elevation="3" class="mapContainer">
+          <google-map id="map" api-key="[[_googleMapsApiKey()]]" libraries="places" class="map layout horizontal flex" fit-to-markers="">
+            <template is="dom-repeat" items="[[posts]]" as="post">
+              <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" class="marker">
+                <a href="#!/post/[[post.id]]" target="_blank">[[post.name]]</a>
+              </google-map-marker>
+            </template>
+          </google-map>
+        </paper-material>
+      </template>
+
+      <template is="dom-if" if="[[noPosts]]">
+        <h1>[[t('posts.noMapPosts')]]</h1>
+      </template>
+    </div>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-post-map',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        posts: {
+          type: Array,
+          value: null
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        communityId: {
+          type: Number,
+          observer: "_communityIdChanged"
+        },
+
+        noPosts: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _groupIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("posts", null);
+          this.$.ajax.url = '/api/groups/'+newValue+'/post_locations';
+          this.$.ajax.generateRequest();
+        } else {
+          this.set("posts", null);
+        }
+      },
+
+      _communityIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("posts", null);
+          this.$.ajax.url = '/api/communities/'+newValue+'/post_locations';
+          this.$.ajax.generateRequest();
+        } else {
+          this.set("posts", null);
+        }
+      },
+
+      _response: function (event, detail) {
+        debugger;
+        if (detail.response && detail.response.length>0) {
+          this.set('noPosts', false);
+          this.set('posts', detail.response);
+        } else {
+          this.set('noPosts', true);
+        }
+      }
+
     });
   </script>
 </dom-module>
@@ -45164,6 +45305,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
         <paper-tab class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
         <paper-tab class="tab">[[t('news')]]</paper-tab>
+        <paper-tab class="tab">[[t('posts.map')]]</paper-tab>
       </paper-tabs>
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
@@ -45177,7 +45319,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
           </div>
         </section>
-        <ac-activities community-id="[[community.id]]"></ac-activities>
+        <section>
+          <ac-activities community-id="[[community.id]]"></ac-activities>
+        </section>
+        <section>
+          <template is="dom-if" if="mapActive" restamp="">
+            <yp-post-map community-id="[[community.id]]"></yp-post-map>
+          </template>
+        </section>
       </iron-pages>
     </yp-page>
 
@@ -45230,6 +45379,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           type: String,
           value: null,
           observer: '_tabNameChanged'
+        },
+
+        mapActive: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -45239,7 +45393,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             this.set('selected', 0);
           } else if (newValue=='news') {
             this.set('selected', 1);
+          } else if (newValue=='map') {
+            this.set('selected', 2);
           }
+        }
+
+        if (newValue==2) {
+          this.set('mapActive', true);
+        } else {
+          this.set('mapActive', false);
         }
       },
 
@@ -45249,6 +45411,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             page("#!/community/" + this.community.id + '/groups');
           } else if (newValue == 1) {
             page("#!/community/" + this.community.id + '/news');
+          } else if (newValue == 2) {
+            page("#!/community/" + this.community.id + '/map');
           }
         }
       },

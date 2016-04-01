@@ -31,7 +31,8 @@
     "open": "Open",
     "inProgress": "In progess",
     "successful": "Successful",
-    "failed": "Failed"
+    "failed": "Failed",
+    "map": "Map"
   },
 
   "form": {
