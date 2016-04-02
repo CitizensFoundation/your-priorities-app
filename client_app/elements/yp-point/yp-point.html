@@ -113,7 +113,9 @@
               <span>[[point.name]]</span>.
             </span>
             <span>[[point.content]]</span>
-            <yp-point-actions point="[[point]]"></yp-point-actions>
+            <div class="layout horizontal">
+              <yp-point-actions point="[[point]]"></yp-point-actions>
+            </div>
           </div>
         </div>
 
@@ -159,11 +161,19 @@
       },
 
       upVote: function(point) {
-        return point.value>0;
+        if (point.value == 0) {
+          return true;
+        } else {
+          return point.value>0;
+        }
       },
 
       downVote: function(point) {
-        return point.value<0;
+        if (point.value == 0) {
+          return true;
+        } else {
+          return point.value<0;
+        }
       },
 
       computeClass: function (point) {

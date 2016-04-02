@@ -109,6 +109,13 @@
       .grayLine {
         background-color: #f0f0f0;
       }
+
+      .thumbIconNewsFeed {
+        height: 28px;
+        width: 28px;
+        padding-top: 2px;
+        padding-left: 12px;
+      }
     </style>
 
     <div id="scrollableRegion">
@@ -128,7 +135,13 @@
                   <iron-icon icon="icons:language" class="stats-icon"></iron-icon>
                 </template>
                 <div class="layout vertical flex headerText">
-                  <div class="layout horizontal typeName">[[t(activity.type)]]</div>
+                  <div class="layout horizontal typeName">
+                    [[t(activity.type)]]
+                    <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
+                      <iron-icon icon="thumb-down" class="thumbIconNewsFeed" hidden$="[[_upVote(activity.Point)]]"></iron-icon>
+                      <iron-icon icon="thumb-up" class="thumbIconNewsFeed" hidden$="[[_downVote(activity.Point)]]"></iron-icon>
+                    </template>
+                  </div>
                   <div class="layout horizontal postName">
                     [[t(activity.Post.name)]]
                   </div>
@@ -220,6 +233,22 @@
 
         latestProcessedActivityAt: {
           type: Date
+        }
+      },
+
+      _upVote: function(point) {
+        if (point.value == 0) {
+          return true;
+        } else {
+          return point.value>0;
+        }
+      },
+
+      _downVote: function(point) {
+        if (point.value == 0) {
+          return true;
+        } else {
+          return point.value<0;
         }
       },
 
