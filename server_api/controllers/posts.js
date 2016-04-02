@@ -101,39 +101,6 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       {
         model: models.PostRevision,
         required: false
-      },
-      // Point
-      { model: models.Point,
-        required: false,
-        order: [
-          models.sequelize.literal('(Point.counter_quality_up-Point.counter_quality_down) desc')
-        ],
-        include: [
-          { model: models.PointRevision,
-            required: false,
-            include: [
-              { model: models.User,
-                attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
-                required: false,
-                include: [
-                  {
-                    model: models.Image, as: 'UserProfileImages',
-                    required: false
-                  }
-                ]
-              }
-            ]
-          },
-          { model: models.PointQuality,
-            required: false,
-            include: [
-              { model: models.User,
-                attributes: ["id", "name", "email"],
-                required: false
-              }
-            ]
-          }
-        ]
       }
     ]
   }).then(function(post) {
@@ -142,6 +109,57 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       res.send(post);
     } else {
       sendPostOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendPostOrError(res, null, 'view', req.user, error);
+  });
+});
+
+router.get('/:id/points', auth.can('view post'), function(req, res) {
+  models.Point.findAll({
+    where: {
+      post_id: req.params.id
+    },
+    order: [
+      models.sequelize.literal('(counter_quality_up-counter_quality_down) desc')
+    ],
+    include: [
+      {
+        model: models.PointRevision,
+        required: false,
+        include: [
+          { model: models.User,
+            attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
+            required: false,
+            include: [
+              {
+                model: models.Image, as: 'UserProfileImages',
+                required: false
+              }
+            ]
+          }
+        ]
+      },
+      { model: models.PointQuality,
+        required: false,
+        include: [
+          { model: models.User,
+            attributes: ["id", "name", "email"],
+            required: false
+          }
+        ]
+      },
+      {
+        model: models.Post,
+        required: false
+      }
+    ]
+  }).then(function(points) {
+    if (points) {
+      log.info('Points Viewed', { postId: req.params.id, context: 'view', user: toJson(req.user) });
+      res.send(points);
+    } else {
+      sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
     }
   }).catch(function(error) {
     sendPostOrError(res, null, 'view', req.user, error);

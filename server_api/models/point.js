@@ -23,6 +23,15 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
 
+    indexes: [
+      {
+        fields: ['post_id'],
+        where: {
+          deleted: false
+        }
+      }
+    ],
+
     underscored: true,
 
     tableName: 'points',

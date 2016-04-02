@@ -239,6 +239,7 @@
 
           post: {
             type: Object,
+            value: null,
             notify: true,
             observer: "_postChanged"
           },
@@ -332,7 +333,6 @@
 
         _postIdChanged: function (newValue, oldValue) {
           if (newValue) {
-            this.set("post.Points",null);
             this.set("post",null);
             this.$.ajax.url = '/api/posts/' + this.postId;
             this.$.ajax.generateRequest();

@@ -113,65 +113,80 @@
       }
     </style>
 
-    <template is="dom-if" if="[[post]]">
+    <iron-media-query query="(min-width: 1024px)" query-matches="{{largeMode}}"></iron-media-query>
 
-      <div class="main-container">
+    <template is="dom-if" if="[[points]]">
+      <template is="dom-if" if="[[largeMode]]">
+        <div class="main-container">
 
-        <div class="point">
+          <div class="point">
 
-          <paper-material id="pointUpMaterial" elevation="0" class="pointText" animated>
-            <div class="layout horizontal start-justified">
-              <iron-icon icon="thumb-up" class="thumbIcon"></iron-icon>
-            </div>
-            <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                            bind-value="{{textValueUp}}" value=[[textValueUp]] label="[[t('point.for')]]" char-counter rows="2"
-                            max-rows="5" maxlength="500"></paper-textarea>
-
-            <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
-              <div class="addPointFab layout horizontal center-center">
-                <paper-fab icon="add" mini="" elevation="3" on-tap="addPointUp" title="[[t('point.add_up')]]"></paper-fab>
+            <paper-material id="pointUpMaterial" elevation="0" class="pointText" animated>
+              <div class="layout horizontal start-justified">
+                <iron-icon icon="thumb-up" class="thumbIcon"></iron-icon>
               </div>
-            </template>
-          </paper-material>
+              <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
+                              bind-value="{{textValueUp}}" value=[[textValueUp]] label="[[t('point.for')]]" char-counter rows="2"
+                              max-rows="5" maxlength="500"></paper-textarea>
 
-          <div id="allUpPoints">
-            <template is="dom-repeat" items="[[upPoints]]" as="point">
-              <paper-material elevation="1" class="pointMaterial">
-                <yp-point point="[[point]]"></yp-point>
-              </paper-material>
-            </template>
+              <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
+                <div class="addPointFab layout horizontal center-center">
+                  <paper-fab icon="add" mini="" elevation="3" on-tap="addPointUp" title="[[t('point.add_up')]]"></paper-fab>
+                </div>
+              </template>
+            </paper-material>
+
+            <div id="allUpPoints">
+              <template is="dom-repeat" items="[[upPoints]]" as="point">
+                <paper-material elevation="1" class="pointMaterial">
+                  <yp-point point="[[point]]"></yp-point>
+                </paper-material>
+              </template>
+            </div>
+          </div>
+
+          <div class="point">
+
+            <paper-material id="pointDownMaterial" elevation="0" class="pointText" animated>
+              <div class="layout horizontal start">
+                <iron-icon icon="thumb-down" class="thumbIcon"></iron-icon>
+              </div>
+
+              <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
+                              bind-value="{{textValueDown}}" value=[[textValueDown]] label="[[t('point.against')]]" char-counter rows="2"
+                              max-rows="5" maxlength="500"></paper-textarea>
+
+              <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
+                <div class="addPointFab layout horizontal center-center">
+                  <paper-fab icon="add" mini="" z="3" on-tap="addPointDown" title="[[t('point.add_down')]]"></paper-fab>
+                </div>
+              </template>
+            </paper-material>
+
+            <div id="allDownPoints">
+              <template is="dom-repeat" items="[[downPoints]]" as="point">
+                <paper-material elevation="1" class="pointMaterial">
+                  <yp-point point="[[point]]"></yp-point>
+                </paper-material>
+              </template>
+            </div>
           </div>
         </div>
-
-        <div class="point">
-
-          <paper-material id="pointDownMaterial" elevation="0" class="pointText" animated>
-            <div class="layout horizontal start">
-              <iron-icon icon="thumb-down" class="thumbIcon"></iron-icon>
-            </div>
-
-            <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                            bind-value="{{textValueDown}}" value=[[textValueDown]] label="[[t('point.against')]]" char-counter rows="2"
-                            max-rows="5" maxlength="500"></paper-textarea>
-
-            <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
-              <div class="addPointFab layout horizontal center-center">
-                <paper-fab icon="add" mini="" z="3" on-tap="addPointDown" title="[[t('point.add_down')]]"></paper-fab>
-              </div>
-            </template>
+      </template>
+      <template is="dom-if" if="[[!largeMode]]">
+        <template is="dom-repeat" items="[[points]]" as="point">
+          <paper-material elevation="1" class="pointMaterial">
+            <yp-point point="[[point]]"></yp-point>
           </paper-material>
-
-          <div id="allDownPoints">
-            <template is="dom-repeat" items="[[downPoints]]" as="point">
-              <paper-material elevation="1" class="pointMaterial">
-                <yp-point point="[[point]]"></yp-point>
-              </paper-material>
-            </template>
-          </div>
-        </div>
-      </div>
+        </template>
+      </template>
     </template>
-    <yp-ajax id="newPointAjax" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+      <yp-ajax id="newPointAjax" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
+    </div>
+
     <paper-toast id="newPointToast" text="[[newPointTextCombined]]"></paper-toast>
   </template>
 
@@ -216,35 +231,61 @@
           post: {
             type: Object,
             observer: "_postChanged"
+          },
+
+          points: {
+            type: Array,
+            value: null
+          },
+
+          largeMode: {
+            type: Boolean,
+            value: false
           }
         },
 
-        _postChanged: function (newValue, oldValue) {
+        _postChanged: function (newPost) {
           // Remove any manually inserted points when the list is updated
+          if (newPost) {
+            this.$.ajax.url = '/api/posts/' + newPost.id + '/points';
+            this.$.ajax.generateRequest();
+          }
+        },
+
+        _response: function (event, detail) {
+          this.set('points', detail.response);
+
           this.removeElementsByClass(this, 'inserted-outside-list');
 
-          if (newValue) {
-            this.upPoints = newValue.Points.filter(function (x) {
+          if (this.points.length>0) {
+            this.set('upPoints', this.points.filter(function (x) {
               return x.value > 0;
-            });
-            this.downPoints = newValue.Points.filter(function (x) {
+            }));
+            this.set('downPoints', this.points.filter(function (x) {
               return x.value < 0;
-            });
+            }));
           } else {
-            this.upPoints = [];
-            this.downPoints = [];
+            this.set('upPoints', []);
+            this.set('downPoints', []);
+          }
+
+          if (!this.largeMode) {
+            this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
           }
         },
 
         _insertNewPoint: function (point) {
+          var materialElement = document.createElement('paper-material');
+          materialElement.elevation = '1';
           var pointElement = document.createElement('yp-point');
           pointElement.point = point;
           pointElement.className += "inserted-outside-list";
+          materialElement.addChild(pointElement);
           if (point.value>0) {
-            this.$$('#allUpPoints').insertBefore(pointElement, this.$$('#allUpPoints').firstChild);
+            this.$$('#allUpPoints').insertBefore(materialElement, this.$$('#allUpPoints').firstChild);
           }
           else if (point.value<0) {
-            this.$$('#allDownPoints').insertBefore(pointElement, this.$$('#allDownPoints').firstChild);
+            this.$$('#allDownPoints').insertBefore(materialElement, this.$$('#allDownPoints').firstChild);
           }
         },
 
