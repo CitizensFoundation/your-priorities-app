@@ -60,6 +60,16 @@ body {
 
 html {
   overflow-y: scroll;
+  -ms-word-break: break-all;
+  word-break: break-all;
+
+  /* Non standard for webkit */
+  word-break: break-word;
+
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
 }
 
 .currentUser {
@@ -42900,19 +42910,23 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
       .dropdown-trigger iron-icon {
-        width: 40px;
-        height: 40px;
+        width: 42px;
+        height: 42px;
       }
 
       .clear-search-trigger {
-        width: 40px;
-        height: 40px;
+        width: 42px;
+        height: 42px;
         margin-top: 12px;
       }
 
       .clear-search-trigger iron-icon {
-        width: 40px;
-        height: 40px;
+        width: 42px;
+        height: 42px;
+      }
+
+      paper-item {
+        min-height: 32px;
       }
 
       .subTitle {
@@ -42923,7 +42937,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         padding-left: 0;
         margin-left: 0;
       }
-
+      
       @media (max-width: 600px) {
         .subTitle {
           font-size: 18px;
@@ -42963,10 +42977,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
                   <paper-item data-filter="random">
                     <iron-icon icon="cached" class="filterIcon"></iron-icon>
                     <span>[[t('post.random')]]</span>
-                  </paper-item>
-                  <paper-item data-filter="inProgress">
-                    <iron-icon icon="av:hearing" class="filterIcon"></iron-icon>
-                    <span>[[t('post.inProgress')]]</span>
                   </paper-item>
                 </paper-menu>
               </div>
