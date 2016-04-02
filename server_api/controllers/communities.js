@@ -30,7 +30,8 @@ router.get('/:id', auth.can('view community'), function(req, res) {
     where: { id: req.params.id },
     order: [
       [ { model: models.Group }, 'counter_users', 'desc' ],
-      [ { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ],
+      [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
+      [ { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
       [ models.Group, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
     ],
     include: [

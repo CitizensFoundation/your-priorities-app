@@ -150,6 +150,15 @@ module.exports = function(sequelize, DataTypes) {
               quality: 99
             }
           ]
+        } else if (itemType && itemType.indexOf('-header') > -1) {
+          versions = [
+            {
+              maxHeight: 300,
+              format: 'png',
+              suffix: '-large',
+              quality: 99
+            }
+          ]
         } else {
           versions = [
             {

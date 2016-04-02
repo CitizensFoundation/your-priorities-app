@@ -96,6 +96,10 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
 router.get('/:id', auth.can('view group'), function(req, res) {
   models.Group.find({
     where: { id: req.params.id },
+    order: [
+      [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
+      [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ]
+    ],
     include: [
       {
         model: models.Category,
@@ -113,6 +117,10 @@ router.get('/:id', auth.can('view group'), function(req, res) {
       },
       {
         model: models.Image, as: 'GroupLogoImages',
+        required: false
+      },
+      {
+        model: models.Image, as: 'GroupHeaderImages',
         required: false
       },
       {

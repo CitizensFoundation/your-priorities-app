@@ -42,7 +42,7 @@
       }
     </style>
 
-    <yp-page create-fab-icon="social:group" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
+    <yp-page id="page" create-fab-icon="social:group" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
 
       <yp-community-large-card id="communityCard" class="largeCard card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
 
@@ -191,10 +191,14 @@
       },
 
       _response: function (event, detail, sender) {
+        this.set('community', detail.response);
+        if (this.community.CommunityHeaderImages && this.community.CommunityHeaderImages.length>0) {
+          this.$.page.setupTopHeaderImage(this.community.CommunityHeaderImages);
+        }
+
         var randomTheme = Math.floor(Math.random() * 3) + 1;
         //this.setTheme(randomTheme-1);
 
-        this.set('community', detail.response);
         var headerPanel = app.$.mainScrollHeaderPanel;
         var url = this._communityHeaderUrl(this.community);
         //headerPanel.style.background = "#f5f5f5 url('"+url+"') no-repeat center top";

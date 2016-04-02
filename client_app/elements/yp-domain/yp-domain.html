@@ -66,7 +66,7 @@
       }
     </style>
 
-    <yp-page create-fab-icon="group-work" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
+    <yp-page id="page" create-fab-icon="group-work" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
 
       <yp-domain-large-card id="domainCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
 
@@ -206,6 +206,9 @@
 
       _response: function (event, detail, sender) {
         this.set('domain', detail.response);
+        if (this.domain.DomainHeaderImages && this.domain.DomainHeaderImages.length>0) {
+          this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);
+        }
         if (this.domain.Communities) {
           this.set("communities",this.domain.Communities);
         }

@@ -40,6 +40,7 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
     order: [
       [ { model: models.Community } ,'counter_users', 'desc' ],
       [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'asc' ],
+      [ { model: models.Image, as: 'DomainHeaderImages' } , 'created_at', 'asc' ],
       [ models.Community, { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ]
     ],
     include: [

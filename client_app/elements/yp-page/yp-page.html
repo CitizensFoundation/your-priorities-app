@@ -23,7 +23,7 @@
 
       .topArea {
         background-color: var(--middle-color, var(--primary-background-color));
-        background-image: url("https://s3.amazonaws.com/yrpri-staging-production/studlar.png");
+        background-image: var(--top-area-background-image, none);
         height: 300px;
       }
 
@@ -126,6 +126,24 @@
         createFabTitle: {
           type: String
         }
+      },
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      listeners: {
+        'yp-setup-header-image': '_setupTopHeaderImageEvent'
+      },
+
+      _setupTopHeaderImageEvent: function (event, image) {
+        this.setupTopHeaderImage(image);
+      },
+
+      setupTopHeaderImage: function (image) {
+        var url = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+        this.customStyle['--top-area-background-image'] = url;
+        this.updateStyles();
       },
 
       _fabTabChanged: function (newValue) {
