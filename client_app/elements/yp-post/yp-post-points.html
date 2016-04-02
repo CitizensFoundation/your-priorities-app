@@ -269,9 +269,15 @@
             this.set('downPoints', []);
           }
 
+          this.fire('yp-debate-info', {
+            count: this.upPoints.length+this.downPoints.length,
+            firstPoint: this.upPoints[0]});
+
           if (!this.largeMode) {
             this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
           }
+
+
         },
 
         _insertNewPoint: function (point) {

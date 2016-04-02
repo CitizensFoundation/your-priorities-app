@@ -165,7 +165,7 @@
           <div class="layout vertical">
             <div class="infoContainer postCardCursor" on-tap="goToPost">
               <h1 class="post-name">[[postName(post)]]</h1>
-              <div class="description">[[postDescription(post)]]</div>
+              <div class="description">[[trimmedDescription]]</div>
             </div>
             <div class="card-actions">
               <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
@@ -213,6 +213,31 @@
         elevation: {
           type: Number,
           value: 2
+        },
+
+        post: {
+          type: Object,
+          notify: true
+        },
+
+        trimmedDescription: {
+          type: String,
+          computed: '_trimmedDescription(post, post.description)'
+        }
+      },
+
+      _trimmedDescription: function (post, description) {
+        if (post) {
+          return this.postDescription(post);
+        } else {
+          return "";
+        }
+      },
+
+      updateDescriptionIfEmpty: function (description) {
+        debugger;
+        if (!this.post.description || this.post.description=='') {
+          this.set('post.description', description);
         }
       },
 

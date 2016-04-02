@@ -168,14 +168,22 @@
         width: 960px;
         height: 500px;
       }
+
+      .counterInfo {
+        font-size: 11px;
+      }
     </style>
 
     <yp-page create-fab-icon="communication:forum" create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
 
-      <yp-post-card class="largeCard" post="[[post]]" on-refresh="_refresh" header-mode></yp-post-card>
+      <yp-post-card id="postCard" class="largeCard" post="[[post]]" on-refresh="_refresh" header-mode></yp-post-card>
 
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused>
-        <paper-tab><span>[[t('post.tabs.debate')]]</span> &nbsp; (<span>[[post.Points.length]]</span>)</paper-tab>
+        <paper-tab>
+          <div class="layout vertical center-center tabCounterContainer">
+            <span>[[t('post.tabs.debate')]]</span><div class="counterInfo" id="tabCountDebate"></div>
+          </div>
+        </paper-tab>
         <paper-tab>[[t('post.tabs.news')]]</paper-tab>
         <paper-tab>[[t('post.tabs.location')]]</paper-tab>
         <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
@@ -285,7 +293,17 @@
         },
 
         listeners: {
-          'new-user-endorsement': 'addEndorsement'
+          'new-user-endorsement': 'addEndorsement',
+          'yp-debate-info': '_updateDebateInfo'
+        },
+
+        _updateDebateInfo: function (event, detail) {
+          debugger;
+          var tabCounter = this.$$('#tabCountDebate');
+          if (tabCounter) {
+            tabCounter.innerHTML = this.formatNumber(detail.count);
+          }
+          this.$.postCard.updateDescriptionIfEmpty(detail.firstPoint.content);
         },
 
         _mainContainerClasses: function(small) {
