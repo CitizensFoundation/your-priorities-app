@@ -82,18 +82,29 @@
       .userName {
         padding-bottom: 4px;
       }
+
+
+      .thumbIcon {
+        height: 20px;
+        width: 20px;
+        padding-top: 16px;
+        color: var(--primary-color-300);
+      }
     </style>
 
     <template is="dom-if" if="[[point]]">
 
       <div class="point-container">
 
-        <div class="user-image" hidden$="[[hideUser]]">
+        <div class="user-image layout vertical" hidden$="[[hideUser]]">
           <yp-user-image user="[[user]]"></yp-user-image>
+          <div class="layout horizontal center-center">
+            <iron-icon icon="thumb-down" class="thumbIcon" hidden$="[[upVote(point)]]"></iron-icon>
+            <iron-icon icon="thumb-up" class="thumbIcon" hidden$="[[downVote(point)]]"></iron-icon>
+          </div>
         </div>
 
         <div class="point-content">
-
           <div>
             <div class$="[[computeClass(point)]] userName" hidden$="[[hideUser]]">
               [[user.name]]
