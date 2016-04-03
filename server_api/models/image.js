@@ -17,6 +17,8 @@ module.exports = function(sequelize, DataTypes) {
     s3_bucket_name: DataTypes.STRING,
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false }
+    //location: DataType.JSONB,
+//    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
   }, {
 
     underscored: true,
@@ -24,6 +26,9 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'images',
 
     defaultScope: {
+   //   where: {
+   //     deleted: false
+   //   },
       order: [
         ['created_at', 'asc' ]
       ]
@@ -159,6 +164,30 @@ module.exports = function(sequelize, DataTypes) {
               quality: 99
             }
           ]
+        } else if (itemType && itemType.indexOf('user-post-image') > -1) {
+          versions = [
+            {
+              maxHeight: 2048,
+              maxWidth: 1536,
+              format: 'png',
+              suffix: '-desktop-retina',
+              quality: 99
+            },
+            {
+              maxHeight: 720,
+              maxWidth: 540,
+              format: 'png',
+              suffix: '-mobile-retina',
+              quality: 99
+            },
+            {
+              maxHeight: 120,
+              maxWidth: 90,
+              format: 'png',
+              suffix: '-thumb',
+              quality: 99
+            }
+          ]
         } else {
           versions = [
             {
@@ -193,10 +222,6 @@ module.exports = function(sequelize, DataTypes) {
           cleanup: {
             versions: false,
             original: false
-          },
-
-          original: {
-            awsImageAcl: 'private'
           },
 
           versions: versions

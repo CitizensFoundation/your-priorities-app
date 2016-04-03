@@ -65,7 +65,8 @@
     "successful": "Samþykktar",
     "failed": "Hafnað",
     "map": "Kort",
-    "noMapPosts": "Engar hugmyndir með staðsetningu"
+    "noMapPosts": "Engar hugmyndir með staðsetningu",
+    "newUserImage": "Bættu við mynd"
   },
 
   "form": {

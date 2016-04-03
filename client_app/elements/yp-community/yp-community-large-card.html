@@ -155,8 +155,7 @@
       </paper-material>
 
       <yp-community-edit new="false" id="communityEdit" community="{{community}}" on-iron-form-response="_refresh"></yp-community-edit>
-      <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('community.deleteConfirmation')]]"
-                        action="/api/communities/" action-id="[[community.id]]">
+      _onDeleted
       </yp-delete-dialog>
     </template>
   </template>

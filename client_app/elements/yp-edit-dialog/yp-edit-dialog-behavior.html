@@ -72,12 +72,10 @@
 
     open: function (newOrUpdate, params) {
       if (window.appUser && window.appUser.loggedIn()===true) {
-        if (newOrUpdate) {
-          if (newOrUpdate==="new") {
-            this.new = true;
-          } else {
-            this.new = false;
-          }
+        if (newOrUpdate && newOrUpdate==="new") {
+          this.new = true;
+        } else {
+          this.new = false;
         }
         if (params)
           this.params = params;

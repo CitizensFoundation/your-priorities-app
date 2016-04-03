@@ -28,10 +28,10 @@
 
 <link rel="import" href="yp-post-header.html">
 <link rel="import" href="yp-post-points.html">
-
 <link rel="import" href="yp-post-actions.html">
 <link rel="import" href="yp-post-users.html">
 <link rel="import" href="yp-post-cover-media.html">
+<link rel="import" href="yp-post-user-images.html">
 
 <dom-module id="yp-post">
   <template>
@@ -216,7 +216,7 @@
         </section>
         <section>
           <div class="layout horizontal center-center">
-            <h1 style="padding: 32px;">To be done...</h1>
+            <yp-post-user-images post="[[post]]"></yp-post-user-images>
           </div>
         </section>
       </iron-pages>
@@ -298,7 +298,6 @@
         },
 
         _updateDebateInfo: function (event, detail) {
-          debugger;
           var tabCounter = this.$$('#tabCountDebate');
           if (tabCounter) {
             tabCounter.innerHTML = this.formatNumber(detail.count);

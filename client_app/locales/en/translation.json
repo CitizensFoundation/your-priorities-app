@@ -33,7 +33,8 @@
     "successful": "Successful",
     "failed": "Failed",
     "map": "Map",
-    "noMapPosts": "No posts with location"
+    "noMapPosts": "No posts with location",
+    "newUserImage": "Add Photo"
   },
 
   "form": {

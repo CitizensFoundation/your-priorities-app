@@ -622,6 +622,8 @@ auth.action('view point', ['point.viewUser']);
 auth.action('vote on post', ['post.vote']);
 auth.action('vote on point', ['point.vote']);
 
+auth.action('add post user images', ['post.vote']);
+
 auth.action('create community', ['createDomainCommunity.createCommunity']);
 auth.action('create group', ['createCommunityGroup.createGroup']);
 auth.action('create post', ['createGroupPost.createPost']);

@@ -227,11 +227,8 @@
         },
 
         ready: function () {
-          window.locale = 'en';
           window.appStartTime = new Date();
           window.appGlobals = this;
-          i18n.init({ lng: window.locale });
-          window.i18n = i18n;
           moment.locale(window.locale);
 
           window.googleMapsApiKey = null; //'AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM';

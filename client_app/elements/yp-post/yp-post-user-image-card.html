@@ -1,0 +1,96 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-point/yp-point.html">
+
+<dom-module id="yp-post-user-image-card">
+  <template>
+    <style>
+      .description {
+        padding-left: 64px;
+        padding-right: 64px;
+        padding-top: 64px;
+        color: #444;
+      }
+
+      .photographer {
+        padding-left: 64px;
+        padding-right: 64px;
+        padding-top: 16px;
+        color: #aaa;
+      }
+    </style>
+
+    <paper-material elevation="1">
+      <iron-image src$="[[_imageUrl(image)]]"></iron-image>
+      <div class="description">
+        [[image.description]]
+      </div>
+      <div class="photographer">
+        [[image.photographer_name]]
+      </div>
+      <paper-menu-button class="edit" hidden$="[[!hasAccess(post.Group)]]">
+        <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+        <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+          <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+          <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+        </paper-menu>
+      </paper-menu-button>
+
+      <yp-post-user-image-edit id="userImageEdit" image="[[image]]" on-iron-form-response="_refresh"></yp-post-user-image-edit>
+
+      <yp-delete-dialog id="deleteDialog" on-deleted="_refresh" confirmation-text="[[t('community.deleteConfirmation')]]"
+                        action="/api/posts/user_images/" action-id="[[image.id]]">
+      </yp-delete-dialog>
+    </paper-material>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-user-image-card"',
+
+        behaviors: [
+          Polymer.appHelpers
+        ],
+
+        properties: {
+
+          image: {
+            type: Object
+          },
+
+          post: {
+            type: Object
+          }
+        },
+
+        _openEdit: function () {
+          this.$$("#userImageEdit").open('edit', { postId: this.post.id });
+        },
+
+        _refresh: function () {
+          this.fire('refresh');
+        },
+
+        _menuSelection: function (event, detail) {
+          if (detail.item.id=="editMenuItem")
+            this._openEdit();
+          else if (detail.item.id=="deleteMenuItem")
+            this.$$("#deleteDialog").open();
+          this.selectedMenuItem = null;
+        },
+
+        _imageUrl: function (image) {
+          this.getImageFormatUrl(image, 0);
+        }
+      });
+    }());
+  </script>
+</dom-module>
