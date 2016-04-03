@@ -388,8 +388,10 @@
           this.action = this.baseAction + '/'+this.params.communityId;
         } else if (this.params && this.params.groupId) {
           this.action = this.baseAction + '/'+this.params.groupId;
+        } else if (this.params && this.params.userImages && this.params.postId) {
+          this.action = this.baseAction + '/'+this.params.postId+'/user_images';
         } else if (this.params && this.params.postId && this.params.imageId) {
-          this.action = this.baseAction + '/'+this.params.postId+'/'+this.params.imageId;
+          this.action = this.baseAction + '/'+this.params.postId+'/'+this.params.imageId+'/user_images';
         } else if (this.params && this.params.postId) {
           this.action = this.baseAction + '/'+this.params.postId;
         } else if (this.params && this.params.userId) {

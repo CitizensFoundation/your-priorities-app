@@ -493,7 +493,7 @@ router.get('/:id/user_images', auth.can('view post'), function(req, res) {
   });
 });
 
-router.post(':id/user_images', auth.can('add post user images'), function(req, res) {
+router.post('/:id/user_images', auth.can('add post user images'), function(req, res) {
   addUserImageToPost(req.params.id, req.body.uploadedPostUserImageId, function (error, post, image) {
     if (post && image) {
       image.photographer_name = req.body.photographerName;
@@ -516,7 +516,7 @@ router.post(':id/user_images', auth.can('add post user images'), function(req, r
   });
 });
 
-router.put(':id//user_images', auth.can('add post user images'), function(req, res) {
+router.put('/:id/user_images', auth.can('add post user images'), function(req, res) {
   if (req.body.uploadedPostUserImageId && req.body.uploadedPostUserImageId != req.body.oldUploadedPostUserImageId) {
     addUserImageToPost(req.params.id, req.body.uploadedPostUserImageId, function (error, post, image) {
       if (post && image) {
@@ -576,7 +576,7 @@ router.put(':id//user_images', auth.can('add post user images'), function(req, r
   }
 });
 
-router.delete(':id/user_images', auth.can('edit post'), function(req, res) {
+router.delete('/user_images/:id', auth.can('edit post'), function(req, res) {
   deleteImage(req.params.id, function (error) {
     if (error) {
       sendPostOrError(res, null, 'delete post user image', req.user, error);

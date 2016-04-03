@@ -54,94 +54,94 @@
     </yp-edit-dialog>
   </template>
 
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-user-image-edit',
+
+        behaviors: [
+          Polymer.appHelpers,
+          Polymer.ypEditDialogBehavior
+        ],
+
+        properties: {
+          new: {
+            type: Boolean,
+            value: false
+          },
+
+          image: {
+            type: Object,
+            observer: '_imageChanged'
+          },
+
+          post: {
+            type: Object
+          },
+
+          action: {
+            type: String,
+            value: "/api/posts"
+          },
+
+          uploadedPostUserImageId: {
+            type: String
+          },
+
+          oldUploadedPostUserImageId: {
+            type: String
+          },
+
+          editHeaderText: {
+            type: String
+          },
+
+          saveText: {
+            type: String
+          },
+
+          method: {
+            type: String
+          }
+        },
+
+        listeners: {
+          'iron-form-invalid': '_formInvalid'
+        },
+
+        _imageChanged: function (newValue) {
+          if (newValue) {
+            this.set('oldUploadedPostUserImageId', newValue.id)
+          }
+        },
+
+        _formInvalid: function () {
+          this.set('selected', 0);
+          this.$$('#photographerName').autoValidate = true;
+          this.$$('#description').autoValidate = true;
+        },
+
+        _imageUploaded: function (event, detail) {
+          var image = JSON.parse(detail.xhr.response);
+          this.set('uploadedPostUserImageId', image.id);
+        },
+
+        _clear: function () {
+          this.set('uploadedPostUserImageId', null);
+          this.$$("#imageFileUpload").clear();
+        },
+
+        _setupTranslation: function () {
+          if (this.new) {
+            this.editHeaderText = this.t('post.photo.new');
+            this.toastText = this.t('post.photo.toast.added');
+          } else {
+            this.editHeaderText = this.t('post.photo.update');
+            this.toastText = this.t('post.photo.toast.updated');
+          }
+        }
+      });
+    }());
+  </script>
 </dom-module>
-
-<script>
-
-  Polymer({
-
-    is: 'yp-post-user-image-edit',
-
-    behaviors: [
-      Polymer.appHelpers,
-      Polymer.ypEditDialogBehavior
-    ],
-
-    properties: {
-      new: {
-        type: Boolean,
-        value: false
-      },
-
-      image: {
-        type: Object,
-        observer: '_imageChanged'
-      },
-
-      post: {
-        type: Object
-      },
-
-      action: {
-        type: String,
-        value: "/api/posts/user_images"
-      },
-
-      uploadedPostUserImageId: {
-        type: String
-      },
-
-      oldUploadedPostUserImageId: {
-        type: String
-      },
-
-      editHeaderText: {
-        type: String
-      },
-
-      saveText: {
-        type: String
-      },
-
-      method: {
-        type: String
-      }
-    },
-
-    listeners: {
-      'iron-form-invalid': '_formInvalid'
-    },
-
-    _imageChanged: function (newValue) {
-      if (newValue) {
-        this.set('oldUploadedPostUserImageId', newValue.id)
-      }
-    },
-
-    _formInvalid: function () {
-      this.set('selected', 0);
-      this.$$('#photographerName').autoValidate = true;
-      this.$$('#description').autoValidate = true;
-    },
-
-    _imageUploaded: function (event, detail) {
-      var image = JSON.parse(detail.xhr.response);
-      this.set('uploadedPostUserImageId', image.id);
-    },
-
-    _clear: function () {
-      this.set('uploadedPostUserImageId',null);
-      this.$$("#imageFileUpload").clear();
-    },
-
-    _setupTranslation: function () {
-      if (this.new) {
-        this.editHeaderText = this.t('post.photo.new');
-        this.toastText = this.t('post.photo.toast.added');
-      } else {
-        this.editHeaderText = this.t('post.photo.update');
-        this.toastText = this.t('post.photo.toast.updated');
-      }
-    }
-  });
-</script>
