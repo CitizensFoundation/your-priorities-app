@@ -473,6 +473,9 @@ router.get('/:id/user_images', auth.can('view post'), function(req, res) {
     where: {
       id: req.params.id
     },
+    order: [
+      [ { model: models.Image, as: 'PostUserImages' } , 'created_at', 'desc' ]
+    ],
     attributes: ['id'],
     include: [
       {

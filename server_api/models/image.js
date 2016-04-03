@@ -164,7 +164,7 @@ module.exports = function(sequelize, DataTypes) {
               quality: 99
             }
           ]
-        } else if (itemType && itemType.indexOf('user-post-image') > -1) {
+        } else if (itemType && itemType.indexOf('post-user-image') > -1) {
           versions = [
             {
               maxHeight: 2048,

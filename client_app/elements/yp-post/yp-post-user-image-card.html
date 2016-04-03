@@ -2,6 +2,7 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
@@ -14,33 +15,53 @@
       .description {
         padding-left: 64px;
         padding-right: 64px;
-        padding-top: 64px;
+        padding-top: 8px;
         color: #444;
       }
 
       .photographer {
         padding-left: 64px;
         padding-right: 64px;
-        padding-top: 16px;
+        padding-top: 8px;
         color: #aaa;
+      }
+
+      paper-material {
+        width: 800px;
+        height: 700px;
+        background-color: #FFF;
+        padding: 0;
+      }
+
+      iron-image {
+        width: 800px;
+        height: 600px;
+      }
+
+      paper-menu-button {
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
       }
     </style>
 
-    <paper-material elevation="1">
-      <iron-image src$="[[_imageUrl(image)]]"></iron-image>
+    <paper-material elevation="2" class="layout vertical">
+      <iron-image title="[[image.description]]" sizing="cover" src$="[[_imageUrl(image)]]"></iron-image>
       <div class="description">
         [[image.description]]
       </div>
       <div class="photographer">
         [[image.photographer_name]]
       </div>
-      <paper-menu-button class="edit" hidden$="[[!hasAccess(post.Group)]]">
-        <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-        <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-          <paper-item id="editMenuItem">[[t('post.editUserImage')]]</paper-item>
-          <paper-item id="deleteMenuItem">[[t('post.editUserImage')]]</paper-item>
-        </paper-menu>
-      </paper-menu-button>
+      <div class="editMenu">
+        <paper-menu-button class="edit" hidden$="[[!hasAccess(post.Group)]]">
+          <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+          <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+            <paper-item id="editMenuItem">[[t('post.editUserImage')]]</paper-item>
+            <paper-item id="deleteMenuItem">[[t('post.editUserImage')]]</paper-item>
+          </paper-menu>
+        </paper-menu-button>
+      </div>
 
       <yp-post-user-image-edit id="userImageEdit" image="[[image]]" on-iron-form-response="_refresh"></yp-post-user-image-edit>
 
@@ -63,8 +84,7 @@
         properties: {
 
           image: {
-            type: Object
-          },
+            type: Object          },
 
           post: {
             type: Object
@@ -88,7 +108,7 @@
         },
 
         _imageUrl: function (image) {
-          this.getImageFormatUrl(image, 0);
+          return this.getImageFormatUrl([image], 0);
         }
       });
     }());

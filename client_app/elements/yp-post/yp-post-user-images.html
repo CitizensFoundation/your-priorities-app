@@ -19,13 +19,18 @@
         background-color: var(--accent-color-300);
         color: #FFF;
       }
+
+      yp-post-user-image-card {
+        margin-top:32px;
+        margin-bottom: 32px;
+      }
     </style>
 
     <div class="layout vertical">
       <template is="dom-if" if="[[post]]">
         <paper-button raised on-tap="_newImage">[[t('posts.newUserImage')]]</paper-button>
         <template is="dom-if" if="[[images]]">
-          <template is="dom-repeat" items="[[images]]" item="image">
+          <template is="dom-repeat" items="[[images]]" as="image">
             <yp-post-user-image-card post="[[post]]" image="[[image]]" on-refresh="_refresh"></yp-post-user-image-card>
           </template>
         </template>
