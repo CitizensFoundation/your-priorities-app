@@ -65,7 +65,8 @@
     "successful": "Samþykktar",
     "failed": "Hafnað",
     "map": "Kort",
-    "noMapPosts": "Engar hugmyndir með staðsetningu"
+    "noMapPosts": "Engar hugmyndir með staðsetningu",
+    "newUserImage": "Bættu við mynd"
   },
 
   "form": {
@@ -92,11 +93,13 @@
     "yourPoint": "Rök",
     "location": "Staðsetning",
     "photo": "Mynd",
+    "newPhoto": "Ný mynd",
+    "photographerName": "Ljósmyndari",
     "tabs": {
       "debate": "Rökræða",
       "news": "Fréttir",
       "location": "Staðsetning",
-      "photos": "Myndir",
+      "photos": "Myndefni",
       "solutions": "Lausnir",
       "not_implemented": "Ekki tilbúið"
     },
