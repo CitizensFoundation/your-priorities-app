@@ -92,12 +92,12 @@
     "yourPost": "Hugmynd",
     "yourPoint": "Rök",
     "location": "Staðsetning",
-    "photo": "Myndefni",
+    "photo": "Mynd",
     "tabs": {
       "debate": "Rökræða",
       "news": "Fréttir",
       "location": "Staðsetning",
-      "photos": "Myndir",
+      "photos": "Myndefni",
       "solutions": "Lausnir",
       "not_implemented": "Ekki tilbúið"
     },

@@ -15,9 +15,11 @@
   <template>
     <style>
       paper-button {
-        margin: 32px;
+        margin-top: 32px;
+        margin-bottom: 8px;
         background-color: var(--accent-color-300);
         color: #FFF;
+        width: 242px;
       }
 
       yp-post-user-image-card {
@@ -26,7 +28,7 @@
       }
     </style>
 
-    <div class="layout vertical">
+    <div class="layout vertical center-center">
       <template is="dom-if" if="[[post]]">
         <paper-button raised on-tap="_newImage">[[t('posts.newUserImage')]]</paper-button>
         <template is="dom-if" if="[[images]]">
