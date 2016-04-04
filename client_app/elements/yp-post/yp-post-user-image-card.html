@@ -39,9 +39,6 @@
       }
 
       paper-menu-button {
-        position: absolute;
-        right: 8px;
-        bottom: 8px;
       }
     </style>
 
@@ -53,6 +50,12 @@
       <div class="photographer">
         [[image.photographer_name]]
       </div>
+
+      <yp-post-user-image-edit id="userImageEdit" image="[[image]]" on-iron-form-response="_refresh"></yp-post-user-image-edit>
+
+      <yp-delete-dialog id="deleteDialog" on-deleted="_refresh" confirmation-text="[[t('community.deleteConfirmation')]]"
+                        action="/api/posts/user_images/" action-id="[[image.id]]">
+      </yp-delete-dialog>
       <div class="editMenu">
         <paper-menu-button class="edit" hidden$="[[!hasAccess(post.Group)]]">
           <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
@@ -62,12 +65,6 @@
           </paper-menu>
         </paper-menu-button>
       </div>
-
-      <yp-post-user-image-edit id="userImageEdit" image="[[image]]" on-iron-form-response="_refresh"></yp-post-user-image-edit>
-
-      <yp-delete-dialog id="deleteDialog" on-deleted="_refresh" confirmation-text="[[t('community.deleteConfirmation')]]"
-                        action="/api/posts/user_images/" action-id="[[image.id]]">
-      </yp-delete-dialog>
     </paper-material>
   </template>
 

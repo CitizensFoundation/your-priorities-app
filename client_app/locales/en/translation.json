@@ -62,6 +62,8 @@
     "yourPoint": "Point for",
     "location": "Location",
     "photo": "Photo",
+    "photographerName": "Photographer",
+    "newPhoto": "New photo",
     "tabs": {
       "debate": "Debate",
       "news": "News",

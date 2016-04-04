@@ -20,6 +20,13 @@
                     method="[[method]]" save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
       <h2>[[t('post.newPhoto')]]</h2>
 
+      <div class="layout vertical center-center">
+        <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-user-image" method="POST" on-success="_imageUploaded">
+          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+          <span>[[t('image.upload')]]</span>
+        </file-upload>
+      </div>
+
       <paper-input id="photographerName"
                    name="photographerName"
                    type="text"
@@ -40,13 +47,6 @@
                       max-rows="5"
                       maxlength="200">
       </paper-textarea>
-
-      <div class="layout vertical center-center">
-        <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-user-image" method="POST" on-success="_imageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.upload')]]</span>
-        </file-upload>
-      </div>
 
       <input type="hidden" name="uploadedPostUserImageId" value="[[uploadedPostUserImageId]]">
       <input type="hidden" name="oldUploadedPostUserImageId" value="[[oldUploadedPostUserImageId]]">
