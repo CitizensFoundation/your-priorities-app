@@ -38416,6 +38416,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       display: block;
       height: 0;
     }
+
+    paper-dialog {
+      background-color: #FFF;
+    }
   </style>
 
   <template>
@@ -39416,8 +39420,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         height: 600px;
       }
 
-      paper-menu-button {
-      }
+
     </style>
 
     <paper-material elevation="2" class="layout vertical">
@@ -39425,23 +39428,20 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <div class="description">
         [[image.description]]
       </div>
-      <div class="photographer">
-        [[image.photographer_name]]
+      <div class="layout horizontal" style="width: 100%;">
+        <div class="photographer">
+          [[image.photographer_name]]
+        </div>
+        <div class="editMenu layout horizontal flex end-justified" hidden$="[[!hasAccess(image)]]">
+          <paper-icon-button icon="create" on-tap="_openEdit"></paper-icon-button>
+          <paper-icon-button icon="clear" on-tap="_openDelete"></paper-icon-button>
+        </div>
       </div>
 
       <yp-post-user-image-edit id="userImageEdit" image="[[image]]" on-iron-form-response="_refresh"></yp-post-user-image-edit>
 
-      <yp-delete-dialog id="deleteDialog" on-deleted="_refresh" confirmation-text="[[t('community.deleteConfirmation')]]" action="/api/posts/user_images/" action-id="[[image.id]]">
+      <yp-delete-dialog id="deleteDialog" on-deleted="_refresh" confirmation-text="[[t('post.photoDeleteConfirmation')]]" action="/api/images/" action-id="[[image.id]]/user_images">
       </yp-delete-dialog>
-      <div class="editMenu">
-        <paper-menu-button class="edit" hidden$="[[!hasAccess(post.Group)]]">
-          <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-          <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-            <paper-item id="editMenuItem">[[t('post.editUserImage')]]</paper-item>
-            <paper-item id="deleteMenuItem">[[t('post.editUserImage')]]</paper-item>
-          </paper-menu>
-        </paper-menu-button>
-      </div>
     </paper-material>
   </template>
 
@@ -39458,7 +39458,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         properties: {
 
           image: {
-            type: Object          },
+            type: Object
+          },
 
           post: {
             type: Object
@@ -39466,19 +39467,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         },
 
         _openEdit: function () {
-          this.$$("#userImageEdit").open('edit', { postId: this.post.id });
+          this.$$("#userImageEdit").open('edit', { postId: this.post.id, userImages: true });
         },
 
         _refresh: function () {
           this.fire('refresh');
         },
 
-        _menuSelection: function (event, detail) {
-          if (detail.item.id=="editMenuItem")
-            this._openEdit();
-          else if (detail.item.id=="deleteMenuItem")
-            this.$$("#deleteDialog").open();
-          this.selectedMenuItem = null;
+        _openDelete: function () {
+          this.$$("#deleteDialog").open();
         },
 
         _imageUrl: function (image) {
@@ -41554,7 +41551,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
 
     <yp-edit-dialog double-width="" id="editDialog" icon="image:photo-camera" action="[[action]]" method="[[method]]" save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
-      <h2>[[t('post.newPhoto')]]</h2>
+      <h2>[[editHeaderText]]</h2>
 
       <div class="layout vertical center-center">
         <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-user-image" method="POST" on-success="_imageUploaded">
@@ -41603,7 +41600,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
           action: {
             type: String,
-            value: "/api/posts"
+            value: "/api/images"
           },
 
           uploadedPostUserImageId: {
@@ -41623,6 +41620,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           },
 
           method: {
+            type: String
+          },
+
+          editHeaderText: {
             type: String
           }
         },
@@ -41655,10 +41656,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         _setupTranslation: function () {
           if (this.new) {
-            this.editHeaderText = this.t('post.photo.new');
+            this.editHeaderText = this.t('post.photoNew');
             this.toastText = this.t('post.photo.toast.added');
           } else {
-            this.editHeaderText = this.t('post.photo.update');
+            this.editHeaderText = this.t('post.photoUpdate');
             this.toastText = this.t('post.photo.toast.updated');
           }
         }
@@ -41728,7 +41729,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         _postChanged: function (newPost) {
           if (newPost) {
-            this.$.ajax.url = '/api/posts/' + newPost.id + '/user_images';
+            this.$.ajax.url = '/api/images/' + newPost.id + '/user_images';
             this.$.ajax.generateRequest();
           }
         },
@@ -44591,7 +44592,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <yp-ajax large-spinner="" id="ajax" on-response="_groupsResponse"></yp-ajax>
     </div>
 
-    <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
+    <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_goToNewPost"></yp-post-edit>
 
   </template>
 
@@ -44738,6 +44739,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.$$("#groupEdit").open('edit', { groupId: this.group.id });
       },
 
+      _goToNewPost: function (event, detail) {
+        this.goToPost(detail.response.id);
+      },
+
       _refresh: function () {
         this.$.ajax.generateRequest();
         this.$$("#groupActivities").loadNewData();
@@ -44774,7 +44779,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       _newPost: function () {
         window.appGlobals.activity('open', 'newPost');
-        this.$.postEdit.open('new', {groupId: this.groupId});
+        this.$.postEdit.open('new', { groupId: this.groupId });
       }
     });
   </script>
