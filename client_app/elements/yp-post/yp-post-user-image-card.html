@@ -4,6 +4,8 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
@@ -38,8 +40,7 @@
         height: 600px;
       }
 
-      paper-menu-button {
-      }
+
     </style>
 
     <paper-material elevation="2" class="layout vertical">
@@ -47,24 +48,21 @@
       <div class="description">
         [[image.description]]
       </div>
-      <div class="photographer">
-        [[image.photographer_name]]
+      <div class="layout horizontal" style="width: 100%;">
+        <div class="photographer">
+          [[image.photographer_name]]
+        </div>
+        <div class="editMenu layout horizontal flex end-justified" hidden$="[[!hasAccess(image)]]">
+          <paper-icon-button icon="create" on-tap="_openEdit"></paper-icon-button>
+          <paper-icon-button icon="clear" on-tap="_openDelete"></paper-icon-button>
+        </div>
       </div>
 
       <yp-post-user-image-edit id="userImageEdit" image="[[image]]" on-iron-form-response="_refresh"></yp-post-user-image-edit>
 
-      <yp-delete-dialog id="deleteDialog" on-deleted="_refresh" confirmation-text="[[t('community.deleteConfirmation')]]"
-                        action="/api/posts/user_images/" action-id="[[image.id]]">
+      <yp-delete-dialog id="deleteDialog" on-deleted="_refresh" confirmation-text="[[t('post.photoDeleteConfirmation')]]"
+                        action="/api/images/" action-id="[[image.id]]/user_images">
       </yp-delete-dialog>
-      <div class="editMenu">
-        <paper-menu-button class="edit" hidden$="[[!hasAccess(post.Group)]]">
-          <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-          <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-            <paper-item id="editMenuItem">[[t('post.editUserImage')]]</paper-item>
-            <paper-item id="deleteMenuItem">[[t('post.editUserImage')]]</paper-item>
-          </paper-menu>
-        </paper-menu-button>
-      </div>
     </paper-material>
   </template>
 
@@ -81,7 +79,8 @@
         properties: {
 
           image: {
-            type: Object          },
+            type: Object
+          },
 
           post: {
             type: Object
@@ -89,19 +88,15 @@
         },
 
         _openEdit: function () {
-          this.$$("#userImageEdit").open('edit', { postId: this.post.id });
+          this.$$("#userImageEdit").open('edit', { postId: this.post.id, userImages: true });
         },
 
         _refresh: function () {
           this.fire('refresh');
         },
 
-        _menuSelection: function (event, detail) {
-          if (detail.item.id=="editMenuItem")
-            this._openEdit();
-          else if (detail.item.id=="deleteMenuItem")
-            this.$$("#deleteDialog").open();
-          this.selectedMenuItem = null;
+        _openDelete: function () {
+          this.$$("#deleteDialog").open();
         },
 
         _imageUrl: function (image) {

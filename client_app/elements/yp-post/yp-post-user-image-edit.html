@@ -18,7 +18,7 @@
 
     <yp-edit-dialog double-width id="editDialog" icon="image:photo-camera" action="[[action]]"
                     method="[[method]]" save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
-      <h2>[[t('post.newPhoto')]]</h2>
+      <h2>[[editHeaderText]]</h2>
 
       <div class="layout vertical center-center">
         <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-user-image" method="POST" on-success="_imageUploaded">
@@ -82,7 +82,7 @@
 
           action: {
             type: String,
-            value: "/api/posts"
+            value: "/api/images"
           },
 
           uploadedPostUserImageId: {
@@ -102,6 +102,10 @@
           },
 
           method: {
+            type: String
+          },
+
+          editHeaderText: {
             type: String
           }
         },
@@ -134,10 +138,10 @@
 
         _setupTranslation: function () {
           if (this.new) {
-            this.editHeaderText = this.t('post.photo.new');
+            this.editHeaderText = this.t('post.photoNew');
             this.toastText = this.t('post.photo.toast.added');
           } else {
-            this.editHeaderText = this.t('post.photo.update');
+            this.editHeaderText = this.t('post.photoUpdate');
             this.toastText = this.t('post.photo.toast.updated');
           }
         }

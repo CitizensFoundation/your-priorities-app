@@ -118,7 +118,7 @@
       <yp-ajax large-spinner id="ajax" on-response="_groupsResponse"></yp-ajax>
     </div>
 
-    <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_refresh"></yp-post-edit>
+    <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_goToNewPost"></yp-post-edit>
 
   </template>
 
@@ -265,6 +265,10 @@
         this.$$("#groupEdit").open('edit', { groupId: this.group.id });
       },
 
+      _goToNewPost: function (event, detail) {
+        this.goToPost(detail.response.id);
+      },
+
       _refresh: function () {
         this.$.ajax.generateRequest();
         this.$$("#groupActivities").loadNewData();
@@ -301,7 +305,7 @@
 
       _newPost: function () {
         window.appGlobals.activity('open', 'newPost');
-        this.$.postEdit.open('new', {groupId: this.groupId});
+        this.$.postEdit.open('new', { groupId: this.groupId });
       }
     });
   </script>

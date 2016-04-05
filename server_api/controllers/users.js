@@ -77,7 +77,38 @@ router.get('/isloggedin', function (req, res) {
   } else {
     log.info('User Not Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
   }
-  res.send(req.isAuthenticated() ? req.user : '0');
+  if (req.isAuthenticated() && req.user) {
+    models.User.find({
+      where: {id: req.user.id},
+      attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
+      include: [{
+        model: models.Endorsement,
+        attributes: ['id', 'value', 'post_id'],
+        required: false
+      },
+        {
+          model: models.PointQuality,
+          attributes: ['id', 'value', 'point_id'],
+          required: false
+        },
+        {
+          model: models.Image, as: 'UserProfileImages',
+          required: false
+        },
+        {
+          model: models.Image, as: 'UserHeaderImages',
+          required: false
+        }
+      ]
+    }).then(function(user) {
+      res.send(user);
+    }).catch(function(error) {
+      log.error("User IsLoggedIn Error", { context: 'isloggedin', user: id, err: error, errorStatus: 500 });
+      res.sendStatus(500);
+    });
+  } else {
+    res.send('0');
+  }
 });
 
 router.post('/logout', function (req, res) {

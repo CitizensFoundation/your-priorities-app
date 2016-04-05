@@ -89,7 +89,7 @@ app.use(passport.session());
 // Setup the current domain from the host
 app.use(function (req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
-    log.info("Setup Domain Completed", { context: 'setYpDomain', domain: toJson(req.ypDomain) });
+    log.info("Setup Domain Completed", { context: 'setYpDomain', domain: toJson(req.ypDomain.simple()) });
     next();
   });
 });
@@ -111,16 +111,7 @@ passport.deserializeUser(function(id, done) {
   models.User.find({
     where: {id: id},
     attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
-    include: [{
-      model: models.Endorsement,
-      attributes: ['id', 'value', 'post_id'],
-      required: false
-    },
-      {
-        model: models.PointQuality,
-        attributes: ['id', 'value', 'point_id'],
-        required: false
-      },
+    include: [
       {
         model: models.Image, as: 'UserProfileImages',
         required: false

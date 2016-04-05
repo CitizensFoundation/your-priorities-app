@@ -106,9 +106,9 @@ module.exports = function(sequelize, DataTypes) {
                                                   ip_address: req.clientIp}})
             .spread(function(domain, created) {
               if (created) {
-                log.info('Domain Created', { domain: toJson(domain), context: 'create' });
+                log.info('Domain Created', { domain: toJson(domain.simple()), context: 'create' });
               } else {
-                log.info('Domain Loaded', { domain: toJson(domain), context: 'create' });
+                log.info('Domain Loaded', { domain: toJson(domain.simple()), context: 'create' });
               }
               req.ypDomain = domain;
               next();

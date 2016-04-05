@@ -64,6 +64,8 @@
     "photo": "Photo",
     "photographerName": "Photographer",
     "newPhoto": "New photo",
+    "photoUpdate": "Update photo",
+    "photoDeleteConfirmation": "Are you sure you want to delete this photo?",
     "tabs": {
       "debate": "Debate",
       "news": "News",

@@ -73,7 +73,7 @@
 
         _postChanged: function (newPost) {
           if (newPost) {
-            this.$.ajax.url = '/api/posts/' + newPost.id + '/user_images';
+            this.$.ajax.url = '/api/images/' + newPost.id + '/user_images';
             this.$.ajax.generateRequest();
           }
         },
