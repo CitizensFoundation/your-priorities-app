@@ -3,6 +3,7 @@
 module.exports = function(sequelize, DataTypes) {
   var Point = sequelize.define("Point", {
     name: { type: DataTypes.STRING, allowNull: true },
+    content_type: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     content: { type: DataTypes.TEXT, allowNull: false },
     status: { type: DataTypes.STRING, allowNull: false },
     value: { type: DataTypes.INTEGER, allowNull: false },
@@ -14,7 +15,8 @@ module.exports = function(sequelize, DataTypes) {
     counter_revisions: { type: DataTypes.INTEGER, defaultValue: 1 },
     counter_flags: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_quality_up: { type: DataTypes.INTEGER, defaultValue: 0 },
-    counter_quality_down: { type: DataTypes.INTEGER, defaultValue: 0 }
+    counter_quality_down: { type: DataTypes.INTEGER, defaultValue: 0 },
+    embed_data: DataTypes.JSONB
   }, {
 
     defaultScope: {
@@ -35,10 +37,17 @@ module.exports = function(sequelize, DataTypes) {
     underscored: true,
 
     tableName: 'points',
+
     classMethods: {
+
+      CONTENT_DEBATE: 0,
+      CONTENT_NEWS_STORY: 1,
+      CONTENT_COMMENT: 2,
+
       associate: function(models) {
         Point.belongsTo(models.Post);
         Point.belongsTo(models.User);
+        Point.belongsTo(models.Point, { as: 'ParentPoint' });
         Point.belongsTo(models.Group);
         Point.hasMany(models.PointRevision);
         Point.hasMany(models.PointQuality);

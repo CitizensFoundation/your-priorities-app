@@ -16,9 +16,9 @@ module.exports = function(sequelize, DataTypes) {
     original_filename: DataTypes.STRING,
     s3_bucket_name: DataTypes.STRING,
     ip_address: { type: DataTypes.STRING, allowNull: false },
-    user_agent: { type: DataTypes.TEXT, allowNull: false }
-    //location: DataType.JSONB,
-//    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    user_agent: { type: DataTypes.TEXT, allowNull: false },
+    location: DataTypes.JSONB,
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
 
     underscored: true,
@@ -26,9 +26,9 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'images',
 
     defaultScope: {
-   //   where: {
-   //     deleted: false
-   //   },
+      where: {
+        deleted: false
+      },
       order: [
         ['created_at', 'asc' ]
       ]
