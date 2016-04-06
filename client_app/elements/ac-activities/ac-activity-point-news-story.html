@@ -1,0 +1,59 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-point/yp-point.html">
+<link rel="import" href="./ac-activity-post-header.html">
+
+<dom-module id="ac-activity-point-news-story">
+  <template>
+    <style>
+      .point {
+        padding: 8px;
+        margin: 8px;
+        @apply(--layout-vertical);
+      }
+
+      .pointText {
+        margin-bottom: 16px;
+        padding: 16px;
+        width: 360px;
+      }
+
+      yp-point-news-story {
+        padding-top: 8px;
+      }
+
+      .pointLayout {
+        width: 46%;
+      }
+    </style>
+    <div class="layout vertical center-center">
+      <yp-point-news-story hide-user class="card" point="[[activity.Point]]"></yp-point-news-story>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-activity-point-news-story',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        activity: {
+          type: Object,
+          observer: '_activityChanged'
+        }
+      },
+
+      _activityChanged: function (newValue) {
+      },
+
+    });
+  </script>
+</dom-module>

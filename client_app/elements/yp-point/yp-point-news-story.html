@@ -9,6 +9,7 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-user/yp-user-image.html">
+<link rel="import" href="../yp-point/yp-point-news-story.html">
 
 <dom-module id="yp-point-news-story">
 
@@ -27,11 +28,25 @@
       .userName {
         padding-bottom: 4px;
       }
+
+      .story {
+        margin-left: 32px;
+        margin-right: 32px;
+        padding-bottom: 8px;
+        margin-bottom: 20px;
+        border-bottom: solid #ddd;
+        border-bottom-width: 1px;
+      }
+
+      yp-point-actions {
+        padding-top: 8px;
+      }
     </style>
 
     <div class="layout vertical">
       <div class="story">
         [[point.content]]
+        <yp-point-actions point="[[point]]"></yp-point-actions>
       </div>
       <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
     </div>

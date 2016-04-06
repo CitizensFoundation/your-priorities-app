@@ -9,7 +9,10 @@
     "point": {
       "new": "Rökræða",
       "newEndorsed": "Rök með",
-      "newOpposed": "Rök á móti"
+      "newOpposed": "Rök á móti",
+      "newsStory": {
+        "new": "Ný frétt frá notanda"
+      }
     }
   },
   "join": "taktu þátt!",

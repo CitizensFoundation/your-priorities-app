@@ -18,6 +18,7 @@
 <link rel="import" href="./ac-activity-header.html">
 <link rel="import" href="./ac-activity-post.html">
 <link rel="import" href="./ac-activity-point.html">
+<link rel="import" href="./ac-activity-point-news-story.html">
 <link rel="import" href="./ac-activity-post-status-update.html">
 
 <dom-module id="ac-activities">
@@ -143,6 +144,9 @@
                 <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
                   <iron-icon icon="communication:forum" class="stats-icon"></iron-icon>
                 </template>
+                <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
+                  <iron-icon icon="face" class="stats-icon"></iron-icon>
+                </template>
                 <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')]]">
                   <iron-icon icon="icons:language" class="stats-icon"></iron-icon>
                 </template>
@@ -170,7 +174,7 @@
               </template>
 
               <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
-                <ac-activity-point activity="[[activity]]"></ac-activity-point>
+                <ac-activity-point-news-story activity="[[activity]]"></ac-activity-point-news-story>
               </template>
 
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')]]">
