@@ -348,7 +348,8 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
         include: [
           {
             model: models.Post,
-            attributes: ['id','group_id']
+            attributes: ['id','group_id'],
+            required: false
           }
         ]
       }
@@ -357,7 +358,6 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
     var oldPointQualityValue;
     if (pointQuality) {
       point = pointQuality.Point;
-      post = point.Post;
       if (pointQuality.value>0)
         oldPointQualityValue = 1;
       else if (pointQuality.value<0)
