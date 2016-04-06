@@ -77,14 +77,22 @@ var deleteImage = function (imageId, callback) {
   });
 };
 
-
+// TODO: Pagination
 router.get('/:imageId/comments', auth.can('view image'), function(req, res) {
   models.Point.findAll({
     where: {
       image_id: req.params.imageId
-    }
-  })
-
+    },
+    order: [
+      ["created_at", "asc"]
+    ]
+  }).then(function (comments) {
+    log.info('Point Comment for Image', {context: 'comment', user: toJson(req.user.simple()) });
+    res.sendStatus(comments);
+  }).catch(function (error) {
+    log.error('Could not get comments for image', { err: error, context: 'comment', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
 });
 
 router.post('/:imageId/comment', auth.isLoggedIn, auth.can('view image'), function(req, res) {
@@ -93,7 +101,7 @@ router.post('/:imageId/comment', auth.isLoggedIn, auth.can('view image'), functi
       log.error('Could not save comment point on image', { err: error, context: 'comment', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      log.info('Point Comment Created on Image', {context: 'news_story', user: toJson(req.user.simple()) });
+      log.info('Point Comment Created on Image', {context: 'comment', user: toJson(req.user.simple()) });
       res.sendStatus(200);
     }
   });

@@ -222,14 +222,24 @@ var createNewsStory = function (req, options, callback) {
   });
 };
 
-
-router.get('/:parentPointId/pointComments', auth.can('view point'), function(req, res) {
-
+router.get('/:parentPointId/comments', auth.can('view point'), function(req, res) {
+  models.Point.findAll({
+    where: {
+      parent_point_id: req.params.parentPointId
+    },
+    order: [
+      ["created_at", "asc"]
+    ]
+  }).then(function (comments) {
+    log.info('Point Comment for Parent Point', {context: 'comment', user: toJson(req.user.simple()) });
+    res.sendStatus(comments);
+  }).catch(function (error) {
+    log.error('Could not get comments for parent point', { err: error, context: 'comment', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
 });
 
-
-
-router.post('/:parentPointId/point/comment', auth.isLoggedIn, auth.can('view point'), function(req, res) {
+router.post('/:parentPointId/comment', auth.isLoggedIn, auth.can('view point'), function(req, res) {
   createComment(req, { parent_point_id: req.params.parentPointId }, function (error) {
     if (error) {
       log.error('Could not save comment point on parent point', { err: error, context: 'comment', user: toJson(req.user.simple()) });

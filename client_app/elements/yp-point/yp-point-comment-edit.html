@@ -122,10 +122,10 @@
         if (this.point.content && this.point.content.length>15) {
           if (this.point) {
             body = { point_id: this.point.id };
-            this.$.postCommentAjax.url = '/api/points/'+this.point.id+'/point/comment';
+            this.$.postCommentAjax.url = '/api/points/'+this.point.id+'/comment';
           } else if (this.image) {
             body = { image_id: this.image.id };
-            this.$.postCommentAjax.url = '/api/points/'+this.image.id+'/image/comment';
+            this.$.postCommentAjax.url = '/api/images/'+this.image.id+'/comment';
           } else {
             console.error("Can't find send ids");
           }

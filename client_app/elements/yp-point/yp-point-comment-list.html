@@ -61,14 +61,14 @@
 
       _pointChanged: function(newPoint) {
         if (newPoint) {
-          this.$.commentListAjax.url = '/api/points/'+newPoint.id+'/pointComments';
+          this.$.commentListAjax.url = '/api/points/'+newPoint.id+'/comments';
           this.$.commentListAjax.generateRequest();
         }
       },
 
       _imageChanged: function(newImage) {
         if (newImage) {
-          this.$.commentListAjax.url = '/api/points/'+newImage.id+'/pointImages';
+          this.$.commentListAjax.url = '/api/images/'+newImage.id+'/comments';
           this.$.commentListAjax.generateRequest();
         }
       },
