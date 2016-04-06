@@ -7,12 +7,15 @@
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-user/yp-user-image.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 
@@ -31,7 +34,7 @@
       }
 
       paper-textarea {
-        width: 700px;
+        width: 650px;
         padding-right: 8px;
         padding-top: 16px;
       }
@@ -45,12 +48,18 @@
       .embedData {
         padding-top: 24px;
       }
+
+      .userImage {
+        padding-top: 30px;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
     </style>
 
     <paper-material elevation="2">
       <div class="layout vertical">
         <div class="layout horizontal start">
-          <yp-user-image user="[[window.appUser.user]]"></yp-user-image>
+          <yp-user-image class="userImage" user="[[loggedInUser]]"></yp-user-image>
           <div class="layout vertical">
             <paper-textarea id="pointNewsStory"
                             required
@@ -78,13 +87,13 @@
         </template>
 
         <div class="layout horizontal center-center">
-          <yp-ajax large-spinner id="urlPreviewAjax" url="/api/points/url_preview" on-response="_urlPreviewResponse"></yp-ajax>
-          <yp-ajax large-spinner id="postNewsStoryAjax" method="POST" url="/api/points/news_story" on-response="_newsStoryResponse"></yp-ajax>
+          <yp-ajax large-spinner id="urlPreviewAjax" url="/api/points/url_preview" hidden$="[[point.embed_detail]]" on-response="_urlPreviewResponse"></yp-ajax>
+          <yp-ajax large-spinner id="postNewsStoryAjax" method="POST" on-response="_newsStoryResponse"></yp-ajax>
         </div>
 
       </div>
     </paper-material>
-
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
   </template>
 
   <script>
@@ -103,6 +112,10 @@
           type: Number
         },
 
+        postGroupId: {
+          type: Number
+        },
+
         groupId: {
           type: Number
         },
@@ -117,7 +130,8 @@
       },
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.ypLoggedInUserBehavior
       ],
 
       ready: function () {
@@ -134,16 +148,22 @@
       },
 
       _sendStory: function () {
+        var body = { point: this.point };
         if (this.point.content && this.point.content.length>15) {
-          var body = { point: this.point };
-          if (this.postId) {
+          if (this.postId && this.postGroupId) {
             _.merge(body, { post_id: this.postId })
+            this.$.postNewsStoryAjax.url = '/api/points/'+this.postGroupId+'/post/news_story';
           } else if (this.groupId) {
             _.merge(body, { group_id: this.groupId })
+            this.$.postNewsStoryAjax.url = '/api/points/'+this.groupId+'/group/news_story';
           } else if (this.communityId) {
             _.merge(body, { community_id: this.communityId })
+            this.$.postNewsStoryAjax.url = '/api/points/'+this.communityId+'/community/news_story';
           } else if (this.domainId) {
+            this.$.postNewsStoryAjax.url = '/api/points/'+this.domainId+'/domain/news_story';
             _.merge(body, { domain_id: this.domainId })
+          } else {
+            console.error("Can't find send ids");
           }
           this.$.postNewsStoryAjax.body = body;
           this.$.postNewsStoryAjax.generateRequest();

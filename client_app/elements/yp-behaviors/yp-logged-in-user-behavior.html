@@ -1,0 +1,40 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /**
+   * @polymerBehavior ypLoggedInUserBehavior
+   */
+  Polymer.ypLoggedInUserBehavior = {
+
+    properties: {
+      loggedInUser: {
+        type: Object,
+        notify: true
+      }
+    },
+
+    listeners: {
+      'yp-user-is-logged-in': '_userLoggedIn'
+    },
+
+    ready: function () {
+      if (window.appUser && window.appUser.user) {
+        this.set('loggedInUser', window.appUser.user);
+      }
+    },
+
+    _userLoggedIn: function (event, detail) {
+      debugger;
+      this.set('loggedInUser', detail);
+    },
+
+    setMoreToLoad: function () {
+      this.async(function () {
+        this.set('moreToLoad', true);
+        this.async(function () {
+          this._isLoadMoreElementInView();
+        }, 400);
+      }, 250);
+    }
+  }
+</script>

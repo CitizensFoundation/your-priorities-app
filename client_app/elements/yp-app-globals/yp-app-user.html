@@ -251,7 +251,7 @@
             this.removeUserSession();
           } else if (detail.response.email) {
             this.setUser(detail.response);
-            this.fire("is-logged-in")
+            this.fire('iron-signal', {name: 'logged-in', data:  detail.response});
           }
         }
       });

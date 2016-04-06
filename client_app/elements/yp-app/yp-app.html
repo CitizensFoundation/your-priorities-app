@@ -144,10 +144,6 @@
 
       </app-drawer-layout>
 
-      <template is="dom-if" if="[[user]]">
-        <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
-      </template>
-
       <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
     </template>
 

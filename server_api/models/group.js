@@ -31,6 +31,15 @@ module.exports = function(sequelize, DataTypes) {
 
     tableName: 'groups',
 
+    indexes: [
+      {
+        fields: ['name'],
+        where: {
+          deleted: false
+        }
+      }
+    ],
+
     instanceMethods: {
 
       simple: function() {

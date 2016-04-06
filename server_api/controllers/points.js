@@ -69,6 +69,191 @@ var validateEmbedUrl = function(urlIn) {
   return (urls!=null && urls.length>0)
 };
 
+var createNewsStory = function (req, options, callback) {
+  options.content = options.point.content;
+  options.embed_data = options.point.embed_data;
+  delete options.point;
+
+  async.series([
+    function (seriesCallback) {
+      if (options.postId) {
+        models.Post.find({
+          where: {
+            id: options.postId
+          },
+          include: [
+            {
+              model: models.Group,
+              attributes: ['id'],
+              required: true,
+              include: [
+                {
+                  model: models.Community,
+                  attributes: ['id'],
+                  required: true,
+                  include: [
+                    {
+                      model: models.Domain,
+                      attributes: ['id'],
+                      required: true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }).then(function (post) {
+          options.group_id = post.Group.id;
+          options.community_id = post.Group.Community.id;
+          options.domain_id = post.Group.Community.Domain.id;
+          seriesCallback();
+        }).catch(function (error) {
+          seriesCallback(error);
+        })
+      } else {
+        seriesCallback();
+      }
+    },
+
+    function (seriesCallback) {
+      if (options.groupId) {
+        models.Group.find({
+          where: {
+            id: options.groupId
+          },
+          include: [
+            {
+              model: models.Community,
+              attributes: ['id'],
+              required: true,
+              include: [
+                {
+                  model: models.Domain,
+                  attributes: ['id'],
+                  required: true
+                }
+              ]
+            }
+          ]
+        }).then(function (group) {
+          options.community_id = group.Community.id;
+          options.domain_id = group.Community.Domain.id;
+          seriesCallback();
+        }).catch(function (error) {
+          seriesCallback(error);
+        })
+      } else {
+        seriesCallback();
+      }
+    },
+
+    function (seriesCallback) {
+      if (options.communityId) {
+        models.Community.find({
+          where: {
+            id: options.communityId
+          },
+          attributes: ['id','access'],
+          include: [
+            {
+              model: models.Domain,
+              attributes: ['id'],
+              required: true
+            }
+          ]
+        }).then(function (community) {
+          options.domain_id = community.Domain.id;
+          options.communityAccess = community.access;
+          seriesCallback();
+        }).catch(function (error) {
+          seriesCallback(error);
+        })
+      } else {
+        seriesCallback();
+      }
+    },
+
+    // Attach an empty public group to domain and community levels to enable join on activities with group access control
+    function (seriesCallback) {
+      if (!options.groupId &&
+         (options.domainId || (options.communityId && options.communityAccess == models.Community.ACCESS_PUBLIC))) {
+        Group.findOrCreate({where: { name: 'hidden_public_group_for_domain_level_points' },
+            defaults: { }})
+          .spread(function(group, created) {
+            if (group) {
+              options.group_id = group.id;
+              seriesCallback();
+            } else {
+              seriesCallback("Can't create hidden public group for domain level points");
+            }
+          });
+      } else {
+        seriesCallback();
+      }
+    }
+  ], function (error) {
+    options.user_id = req.user.id;
+    options.content_type = models.Point.CONTENT_NEWS_STORY;
+    options.value = 0;
+    options.status = 'active';
+    options.user_agent = req.useragent.source;
+    options.ip_address = req.clientIp;
+
+    models.Point.build(options).save().then(function (point) {
+      options.point_id = point.id;
+      var pointRevision = models.PointRevision.build(options);
+      pointRevision.save().then(function () {
+        models.AcActivity.createActivity({
+          type: 'activity.point.newsStory.new',
+          userId: options.user_id,
+          domainId: options.domain_id,
+          groupId: options.group_id ? options.group_id : 1,
+          pointId: options.point_id,
+          communityId: options.domain_id,
+          postId: options.postId,
+          access: models.AcActivity.ACCESS_PUBLIC
+        }, function (error) {
+          callback(error);
+        });
+      })
+    }).catch(function (error) {
+      callback(error);
+    });
+  });
+};
+
+router.post('/:groupId/post/news_story', auth.isLoggedIn, auth.can('view group'), function(req, res) {
+  createNewsStory(req, req.body, function (error) {
+    if (error) {
+      log.error('Could not save news story point on post', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Point News Story Created', {context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.post('/:groupId/group/news_story', auth.isLoggedIn, auth.can('view group'), function(req, res) {
+  var a = 1;
+});
+
+router.post('/:communityId/community/news_story', auth.isLoggedIn, auth.can('view community'), function(req, res) {
+  var a = 1;
+});
+
+router.post('/:domainId/domain/news_story', auth.isLoggedIn, function(req, res) {
+  createNewsStory(req, req.body, function (error) {
+    if (error) {
+      log.error('Could not save news story point on domain', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Point News Story Created', {context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
 router.post('/:groupId', auth.can('create point'), function(req, res) {
   var point = models.Point.build({
     group_id: req.params.groupId,
@@ -262,7 +447,6 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
           })
         }
       });
-
     });
   });
 });

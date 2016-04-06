@@ -10,6 +10,7 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-point/yp-point-news-story-edit.html">
@@ -119,11 +120,12 @@
       }
     </style>
 
-    <template is="dom-if" if="[[getUser()]]">
+    <template is="dom-if" if="[[loggedInUser]]">
       <div class="layout vertical center-center">
         <yp-point-news-story-edit domain-id="[[domainId]]"
                                   community-id="[[communityId]]"
                                   group-id="[[groupId]]"
+                                  post-group-id="[[postGroupId]]"
                                   post-id=[[postId]]">
         </yp-point-news-story-edit>
       </div>
@@ -167,6 +169,10 @@
                 <ac-activity-point activity="[[activity]]"></ac-activity-point>
               </template>
 
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
+                <ac-activity-point activity="[[activity]]"></ac-activity-point>
+              </template>
+
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')]]">
                 <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
               </template>
@@ -185,6 +191,7 @@
         </template>
       </div>
     </div>
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
   </template>
 
   <script>
@@ -197,7 +204,8 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpScrollTabBehavior
+        Polymer.YpScrollTabBehavior,
+        Polymer.ypLoggedInUserBehavior
       ],
 
       properties: {
@@ -225,6 +233,10 @@
         postId: {
           type: Number,
           observer: "_postIdChanged"
+        },
+
+        postGroupId: {
+          type: Number
         },
 
         // 'activities' and 'news_feed'

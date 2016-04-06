@@ -39,9 +39,9 @@
         <app-header fixed>
           <div class="currentUser">
             <template is="dom-if" if="[[user]]">
-              <yp-user-info user="{{user}}"></yp-user-info>
+              <yp-user-info on-open-user-edit="_openEdit" user="{{user}}"></yp-user-info>
+              <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
             </template>
-          </div>
         </app-header>
       </app-header-layout>
     </paper-material>
@@ -67,6 +67,10 @@
           type: String,
           observer: 'routeChanged'
         }
+      },
+
+      _openEdit: function () {
+        this.$$("#userEdit").open('edit', { userId: this.user.id });
       },
 
       routeChanged: function(newValue, oldValue) {

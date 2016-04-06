@@ -49,10 +49,9 @@
           <div class="name">[[user.name]]</div>
           <div class="email">[[user.email]]</div>
           <paper-button on-tap="onLogout">[[t('user.logout')]]</paper-button>
+          <paper-button hidden on-tap="_openEdit">[[t('user.edit')]]</paper-button>
         </div>
       </div>
-    </template>
-
     </template>
   </template>
 
@@ -73,7 +72,7 @@
       },
 
       _openEdit: function () {
-        this.$$("#userEdit").open('edit', { userId: this.user.id });
+        this.fire('open-user-edit');
       },
 
       onLogout: function() {

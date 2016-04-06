@@ -34,7 +34,8 @@ module.exports = function(sequelize, DataTypes) {
     github_client_id: { type: DataTypes.STRING },
     github_client_secret: { type: DataTypes.STRING },
     only_admins_can_create_communities: { type: DataTypes.BOOLEAN, defaultValue: false },
-    theme_id: { type: DataTypes.INTEGER, defaultValue: 0 }
+    theme_id: { type: DataTypes.INTEGER, defaultValue: 0 },
+//    other_social_media_info: DataTypes.JSONB
   }, {
     underscored: true,
 

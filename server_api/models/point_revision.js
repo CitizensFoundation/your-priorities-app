@@ -8,7 +8,8 @@ module.exports = function(sequelize, DataTypes) {
     value: { type: DataTypes.INTEGER, allowNull: false },
     website: DataTypes.STRING,
     ip_address: { type: DataTypes.STRING, allowNull: false },
-    user_agent: { type: DataTypes.TEXT, allowNull: false }
+    user_agent: { type: DataTypes.TEXT, allowNull: false },
+    embed_data: DataTypes.JSONB
   }, {
     underscored: true,
     tableName: 'point_revisions',

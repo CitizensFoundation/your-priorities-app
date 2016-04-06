@@ -292,6 +292,7 @@
       if (this.redirectTo)
         page(this.redirectTo);
       this.fire("login", user);
+      this.fire('iron-signal', {name: 'logged-in', data: user});
     },
 
     open: function(redirectTo) {

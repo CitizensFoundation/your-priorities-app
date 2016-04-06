@@ -27,7 +27,7 @@ var sendPostUserImageActivity = function(req, type, post, image, callback) {
     groupId: post.group_id,
     communityId: req.ypCommunity ?  req.ypCommunity.id : null,
     postId : post.id,
-//            imageId: image.id,
+    imageId: image.id,
     access: models.AcActivity.ACCESS_PUBLIC
   }, function (error) {
     callback(error);
