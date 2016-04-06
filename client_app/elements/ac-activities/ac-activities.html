@@ -48,7 +48,7 @@
       #scrollableRegion {
         height: 100%;
         overflow: visible;
-        padding-top: 48px;
+        padding-top: 24px;
         @apply(--layout-vertical);
       }
 
@@ -127,7 +127,8 @@
                                   community-id="[[communityId]]"
                                   group-id="[[groupId]]"
                                   post-group-id="[[postGroupId]]"
-                                  post-id=[[postId]]">
+                                  post-id=[[postId]]"
+                                  on-refresh="loadNewData">
         </yp-point-news-story-edit>
       </div>
     </template>
