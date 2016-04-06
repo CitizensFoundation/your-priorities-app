@@ -1,10 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-point/yp-point.html">
 <link rel="import" href="./ac-activity-post-header.html">
+<link rel="import" href="../yp-point/yp-point-comment-list.html">
 
 <dom-module id="ac-activity-point-news-story">
   <template>
@@ -31,6 +30,7 @@
     </style>
     <div class="layout vertical center-center">
       <yp-point-news-story hide-user class="card" point="[[activity.Point]]"></yp-point-news-story>
+      <yp-point-comment-list point="[[activity.Point]]"></yp-point-comment-list>
     </div>
   </template>
 

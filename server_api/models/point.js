@@ -50,6 +50,7 @@ module.exports = function(sequelize, DataTypes) {
         Point.belongsTo(models.Community);
         Point.belongsTo(models.Domain);
         Point.belongsTo(models.User);
+        Point.belongsTo(models.Image);
         Point.belongsTo(models.Point, { as: 'ParentPoint' });
         Point.belongsTo(models.Group);
         Point.hasMany(models.PointRevision);

@@ -138,7 +138,9 @@
     "helpful": "Hjálplegt",
     "not_helpful": "Ekki hjálplegt",
     "addNewsStory": "Bættu við frétt",
-    "postNewsStory": "Pósta"
+    "postNewsStory": "Pósta",
+    "addComment": "Þín athugasemd",
+    "postComment": "Senda"
   },
 
   "uploading": {

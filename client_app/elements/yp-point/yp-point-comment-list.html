@@ -1,0 +1,77 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-user/yp-user-image.html">
+<link rel="import" href="../yp-point/yp-point-news-story.html">
+
+<dom-module id="yp-point-comment-list">
+
+  <template>
+
+    <style></style>
+
+    <div class="layout vertical">
+      <iron-list id="list" items="[[comments]]" as="point">
+        <template>
+          <yp-point-comment point="[[point]]" tabindex$="[[tabIndex]]"></yp-point-comment>
+        </template>
+      </iron-list>
+      <yp-point-comment-edit point="[[point]]" image="[[image]]"></yp-point-comment-edit>
+      <div class="layout horizontal center-center">
+        <yp-ajax large-spinner id="commentListAjax" method="GET" on-response="_commentsResponse"></yp-ajax>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-point-comment-list',
+
+      properties: {
+
+        comments: {
+          type: Array
+        },
+
+        point: {
+          type: Object,
+          notify: true,
+          observer: "_pointChanged"
+        },
+
+        image: {
+          type: Object,
+          notify: true,
+          observer: "_imageChanged"
+        }
+      },
+
+      _pointChanged: function(newPoint) {
+        if (newPoint) {
+          this.$.commentListAjax.url = '/api/points/'+newPoint.id+'/pointComments';
+          this.$.commentListAjax.generateRequest();
+        }
+      },
+
+      _imageChanged: function(newImage) {
+        if (newImage) {
+          this.$.commentListAjax.url = '/api/points/'+newImage.id+'/pointImages';
+          this.$.commentListAjax.generateRequest();
+        }
+      },
+
+      _commentsResponse: function (event, detail) {
+        this.set('comments', detail.response);
+        this.$.list.fire('iron-resize');
+      }
+    });
+  </script>
+</dom-module>

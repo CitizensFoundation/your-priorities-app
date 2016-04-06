@@ -111,7 +111,9 @@
     "helpful": "Vote point up as helpful",
     "not_helpful": "Vote point down as not helpful",
     "addNewsStory": "Add a news story",
-    "postNewsStory": "Post"
+    "postNewsStory": "Post",
+    "addComment": "Your comment...",
+    "postComment": "Post comment"
   },
 
   "uploading": {
