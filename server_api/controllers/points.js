@@ -76,10 +76,10 @@ var createNewsStory = function (req, options, callback) {
 
   async.series([
     function (seriesCallback) {
-      if (options.postId) {
+      if (options.post_id) {
         models.Post.find({
           where: {
-            id: options.postId
+            id: options.post_id
           },
           include: [
             {
@@ -116,10 +116,10 @@ var createNewsStory = function (req, options, callback) {
     },
 
     function (seriesCallback) {
-      if (options.groupId) {
+      if (options.group_id) {
         models.Group.find({
           where: {
-            id: options.groupId
+            id: options.group_id
           },
           include: [
             {
@@ -148,10 +148,10 @@ var createNewsStory = function (req, options, callback) {
     },
 
     function (seriesCallback) {
-      if (options.communityId) {
+      if (options.community_id) {
         models.Community.find({
           where: {
-            id: options.communityId
+            id: options.community_id
           },
           attributes: ['id','access'],
           include: [
@@ -175,10 +175,10 @@ var createNewsStory = function (req, options, callback) {
 
     // Attach an empty public group to domain and community levels to enable join on activities with group access control
     function (seriesCallback) {
-      if (!options.groupId &&
-         (options.domainId || (options.communityId && options.communityAccess == models.Community.ACCESS_PUBLIC))) {
-        Group.findOrCreate({where: { name: 'hidden_public_group_for_domain_level_points' },
-            defaults: { }})
+      if (!options.group_id &&
+         (options.domain_id || (options.community_id && options.communityAccess == models.Community.ACCESS_PUBLIC))) {
+        models.Group.findOrCreate({where: { name: 'hidden_public_group_for_domain_level_points' },
+            defaults: { access: models.Group.ACCESS_PUBLIC }})
           .spread(function(group, created) {
             if (group) {
               options.group_id = group.id;
@@ -209,8 +209,8 @@ var createNewsStory = function (req, options, callback) {
           domainId: options.domain_id,
           groupId: options.group_id ? options.group_id : 1,
           pointId: options.point_id,
-          communityId: options.domain_id,
-          postId: options.postId,
+          communityId: options.community_id,
+          postId: options.post_id,
           access: models.AcActivity.ACCESS_PUBLIC
         }, function (error) {
           callback(error);
@@ -390,23 +390,6 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
                 seriesCallback();
               } else {
                 seriesCallback("Can't find point")
-              }
-            });
-          }
-        },
-        function (seriesCallback) {
-          if (post) {
-            seriesCallback();
-          } else {
-            models.Post.find({
-              where: { id: point.post_id },
-              attributes: ['id','group_id']
-            }).then(function (results) {
-              if (results) {
-                post = results;
-                seriesCallback();
-              } else {
-                seriesCallback("Can't find post")
               }
             });
           }
