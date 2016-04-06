@@ -77,6 +77,28 @@ var deleteImage = function (imageId, callback) {
   });
 };
 
+
+router.get('/:imageId/comments', auth.can('view image'), function(req, res) {
+  models.Point.findAll({
+    where: {
+      image_id: req.params.imageId
+    }
+  })
+
+});
+
+router.post('/:imageId/comment', auth.isLoggedIn, auth.can('view image'), function(req, res) {
+  models.Point.createComment(req, { image_id: req.params.imageId }, function (error) {
+    if (error) {
+      log.error('Could not save comment point on image', { err: error, context: 'comment', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Point Comment Created on Image', {context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
 router.post('/', isAuthenticated, function(req, res) {
   multerMultipartResolver(req, res, function (error) {
     if (error) {

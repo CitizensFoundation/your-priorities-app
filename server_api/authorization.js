@@ -385,6 +385,37 @@ auth.role('point.viewUser', function (point, req, done) {
   });
 });
 
+auth.role('image.viewUser', function (image, req, done) {
+  models.Image.findOne({
+    where: { id: image.id },
+    include: [
+      {
+        model: models.Post,
+        include: [
+          models.Group
+        ]
+      }
+    ]
+  }).then(function (image) {
+    var group = image.Post.Group;
+    if (group.access === models.Group.ACCESS_PUBLIC) {
+      done(null, true);
+    }  else if (!req.isAuthenticated()) {
+      done(null, false);
+    } else if (point.user_id === req.user.id) {
+      done(null, true);
+    } else {
+      group.hasUser(req.user).then(function (result) {
+        if (result) {
+          done(null, true);
+        } else {
+          done(null, false);
+        }
+      });
+    }
+  });
+});
+
 auth.role('point.vote', function (point, req, done) {
   models.Point.findOne({
     where: { id: point.id },
@@ -442,6 +473,16 @@ auth.entity('point', function(req, done) {
   } else {
     var point = { id: match[1] };
     done(null, point)
+  }
+});
+
+auth.entity('image', function(req, done) {
+  var match = req.originalUrl.match(/images\/(\w+)/);
+  if (!match) {
+    done(new Error('Expected url like /images/:imageId'));
+  } else {
+    var image = { id: match[1] };
+    done(null, image)
   }
 });
 
@@ -640,6 +681,8 @@ auth.action('view group', ['group.viewUser']);
 auth.action('view post', ['post.viewUser']);
 auth.action('view category', ['category.viewUser']);
 auth.action('view point', ['point.viewUser']);
+
+auth.action('view image', ['image.viewUser']);
 
 auth.action('vote on post', ['post.vote']);
 auth.action('vote on point', ['point.vote']);

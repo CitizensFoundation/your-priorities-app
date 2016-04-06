@@ -31,6 +31,18 @@ module.exports = function(sequelize, DataTypes) {
         where: {
           deleted: false
         }
+      },
+      {
+        fields: ['image_id'],
+        where: {
+          deleted: false
+        }
+      },
+      {
+        fields: ['parent_point_id'],
+        where: {
+          deleted: false
+        }
       }
     ],
 
@@ -55,6 +67,38 @@ module.exports = function(sequelize, DataTypes) {
         Point.belongsTo(models.Group);
         Point.hasMany(models.PointRevision);
         Point.hasMany(models.PointQuality);
+      },
+
+      createComment: function (req, options, callback) {
+        var parentPointId, imageId;
+
+        options.content = options.comment.content;
+        delete options.comment;
+
+        options.user_id = req.user.id;
+        options.content_type = models.Point.CONTENT_COMMENT;
+        options.value = 0;
+        options.status = 'active';
+        options.user_agent = req.useragent.source;
+        options.ip_address = req.clientIp;
+
+        models.Point.build(options).save().then(function (point) {
+          options.point_id = point.id;
+          var pointRevision = models.PointRevision.build(options);
+          pointRevision.save().then(function () {
+            models.AcActivity.createActivity({
+              type: 'activity.point.comment.new',
+              userId: options.user_id,
+              pointId: options.point_id,
+              imageId: options.image_id,
+              access: models.AcActivity.ACCESS_PUBLIC
+            }, function (error) {
+              callback(error);
+            });
+          })
+        }).catch(function (error) {
+          callback(error);
+        });
       }
     }
   });

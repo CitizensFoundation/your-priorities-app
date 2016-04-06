@@ -222,6 +222,25 @@ var createNewsStory = function (req, options, callback) {
   });
 };
 
+
+router.get('/:parentPointId/pointComments', auth.can('view point'), function(req, res) {
+
+});
+
+
+
+router.post('/:parentPointId/point/comment', auth.isLoggedIn, auth.can('view point'), function(req, res) {
+  createComment(req, { parent_point_id: req.params.parentPointId }, function (error) {
+    if (error) {
+      log.error('Could not save comment point on parent point', { err: error, context: 'comment', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Point Comment Created on Parent Point', {context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
 router.post('/:groupId/post/news_story', auth.isLoggedIn, auth.can('view group'), function(req, res) {
   createNewsStory(req, req.body, function (error) {
     if (error) {
@@ -235,11 +254,27 @@ router.post('/:groupId/post/news_story', auth.isLoggedIn, auth.can('view group')
 });
 
 router.post('/:groupId/group/news_story', auth.isLoggedIn, auth.can('view group'), function(req, res) {
-  var a = 1;
+  createNewsStory(req, req.body, function (error) {
+    if (error) {
+      log.error('Could not save news story point on group', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Point News Story Created', {context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
 });
 
 router.post('/:communityId/community/news_story', auth.isLoggedIn, auth.can('view community'), function(req, res) {
-  var a = 1;
+  createNewsStory(req, req.body, function (error) {
+    if (error) {
+      log.error('Could not save news story point on community', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Point News Story Created', {context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
 });
 
 router.post('/:domainId/domain/news_story', auth.isLoggedIn, function(req, res) {
@@ -490,5 +525,7 @@ router.get('/url_preview', auth.isLoggedIn, function(req, res) {
     res.sendStatus(404);
   }
 });
+
+
 
 module.exports = router;
