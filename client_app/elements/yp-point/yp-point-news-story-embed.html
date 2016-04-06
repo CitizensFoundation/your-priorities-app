@@ -1,0 +1,79 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-point-news-story-embed">
+
+  <template>
+
+    <style>
+      iron-image {
+        width: 470px;
+        height: 246px;
+      }
+
+      #embedHtml {
+        width: 470px;
+        height: 246px;
+        margin-bottom: 8px;
+      }
+
+      a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+
+      .title {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .description {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    </style>
+
+    <div class="layout vertical">
+      <a href$="[[embedData.url]]" target="_blank">
+        <div class="layout vertical center-center">
+          <iron-image sizing="cover" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
+          <div id="embedHtml" hidden$="[[!embedData.html]]"></div>
+        </div>
+        <div class="title">
+          <h2>[[embedData.title]]</h2>
+        </div>
+        <div class="description">
+          [[embedData.description]]
+        </div>
+      </a>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-point-news-story-embed',
+
+      properties: {
+
+        embedData: {
+          type: Object,
+          notify: true,
+          observer: '_embedDataChanged'
+        }
+      },
+
+      _embedDataChanged: function (newValue) {
+        if (newValue && newValue.html && newValue.html != '') {
+          this.$$("#embedHtml").innerHTML = newValue.html;
+        }
+      }
+    })
+  </script>
+</dom-module>

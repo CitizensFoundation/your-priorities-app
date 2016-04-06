@@ -12,6 +12,7 @@
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
+<link rel="import" href="../yp-point/yp-point-news-story-edit.html">
 
 <link rel="import" href="./ac-activity-header.html">
 <link rel="import" href="./ac-activity-post.html">
@@ -118,6 +119,15 @@
       }
     </style>
 
+    <template is="dom-if" if="[[getUser()]]">
+      <div class="layout vertical center-center">
+        <yp-point-news-story-edit domain-id="[[domainId]]"
+                                  community-id="[[communityId]]"
+                                  group-id="[[groupId]]"
+                                  post-id=[[postId]]">
+        </yp-point-news-story-edit>
+      </div>
+    </template>
     <div id="scrollableRegion">
       <iron-list id="list" items="[[activities]]" as="activity">
         <template>

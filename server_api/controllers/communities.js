@@ -39,10 +39,12 @@ router.get('/:id', auth.can('view community'), function(req, res) {
         model: models.Domain
       },
       {
-        model: models.Image, as: 'CommunityLogoImages'
+        model: models.Image, as: 'CommunityLogoImages',
+        required: false
       },
       {
-        model: models.Image, as: 'CommunityHeaderImages'
+        model: models.Image, as: 'CommunityHeaderImages',
+        required: false
       },
       {
         model: models.Group,
@@ -54,7 +56,8 @@ router.get('/:id', auth.can('view community'), function(req, res) {
         required: false,
         include: [
           {
-            model: models.Image, as: 'GroupLogoImages'
+            model: models.Image, as: 'GroupLogoImages',
+            required: false
           }
         ]
       }

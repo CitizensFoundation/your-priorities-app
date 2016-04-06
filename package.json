@@ -16,6 +16,7 @@
     "diacritics": "^1.2.3",
     "ejs": "^2.3.4",
     "email-templates": "^2.0.1",
+    "embedly": "^1.0.4",
     "express": "^4.13.3",
     "express-generator": "^4.9.0",
     "express-session": "^1.13.0",

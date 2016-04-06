@@ -105,7 +105,9 @@
     "add_up": "Add point for",
     "add_down": "Add point against",
     "helpful": "Vote point up as helpful",
-    "not_helpful": "Vote point down as not helpful"
+    "not_helpful": "Vote point down as not helpful",
+    "addNewsStory": "Add a news story",
+    "postNewsStory": "Post"
   },
 
   "uploading": {

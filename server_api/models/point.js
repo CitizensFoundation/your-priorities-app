@@ -46,6 +46,9 @@ module.exports = function(sequelize, DataTypes) {
 
       associate: function(models) {
         Point.belongsTo(models.Post);
+        Point.belongsTo(models.Group);
+        Point.belongsTo(models.Community);
+        Point.belongsTo(models.Domain);
         Point.belongsTo(models.User);
         Point.belongsTo(models.Point, { as: 'ParentPoint' });
         Point.belongsTo(models.Group);

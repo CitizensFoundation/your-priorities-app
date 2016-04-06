@@ -45,10 +45,12 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
     ],
     include: [
       {
-        model: models.Image, as: 'DomainLogoImages'
+        model: models.Image, as: 'DomainLogoImages',
+        required: false
       },
       {
-        model: models.Image, as: 'DomainHeaderImages'
+        model: models.Image, as: 'DomainHeaderImages',
+        required: false
       },
       { model: models.Community,
         where: {
@@ -58,10 +60,12 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
         },
         include: [
           {
-            model: models.Image, as: 'CommunityLogoImages'
+            model: models.Image, as: 'CommunityLogoImages',
+            required: false
           },
           {
-            model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc'
+            model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+            required: false
           }
         ],
         required: false

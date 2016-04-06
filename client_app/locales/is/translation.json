@@ -133,7 +133,9 @@
     "add_up": "Bæta við rökum með",
     "add_down": "Bæta við rökum á móti",
     "helpful": "Hjálplegt",
-    "not_helpful": "Ekki hjálplegt"
+    "not_helpful": "Ekki hjálplegt",
+    "addNewsStory": "Bættu við frétt",
+    "postNewsStory": "Pósta"
   },
 
   "uploading": {

@@ -291,6 +291,14 @@
       return false;
     },
 
+    getUser: function () {
+      if (window.appUser && window.appUser.user) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
     hasAccess: function(object) {
       if (object) {
         if (window.appUser && window.appUser.user) {
