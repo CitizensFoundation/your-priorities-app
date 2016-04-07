@@ -22,7 +22,8 @@
       }
 
       yp-user-image {
-        padding-top: 4px;
+        padding-top: 16px;
+        padding-right: 8px;
       }
 
       .userName {
@@ -47,10 +48,15 @@
       }
     </style>
 
-    <div class="layout vertical">
-      <div class="comment">
-        [[point.content]]
-        <yp-point-actions point="[[point]]"></yp-point-actions>
+    <div class="layout horizontal">
+      <div class="layout horizontal start">
+        <yp-user-image user="[[user]]"></yp-user-image>
+      </div>
+      <div class="layout vertical">
+        <div class="comment">
+          [[point.content]]
+          <yp-point-actions point="[[point]]"></yp-point-actions>
+        </div>
       </div>
     </div>
   </template>

@@ -88,10 +88,37 @@ router.get('/:parentPointId/comments', auth.can('view point'), function(req, res
       ["created_at", "asc"]
     ]
   }).then(function (comments) {
-    log.info('Point Comment for Parent Point', {context: 'comment', user: toJson(req.user.simple()) });
+    log.info('Point Comment for Parent Point', {context: 'comment', user: req.user ? toJson(req.user.simple()) : null  });
     res.send(comments);
   }).catch(function (error) {
-    log.error('Could not get comments for parent point', { err: error, context: 'comment', user: toJson(req.user.simple()) });
+    log.error('Could not get comments for parent point', { err: error, context: 'comment', user: req.user ? toJson(req.user.simple()) : null  });
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:parentPointId/commentsCount', auth.can('view point'), function(req, res) {
+  models.Point.count({
+    where: {
+      parent_point_id: req.params.parentPointId
+    },
+    include: [
+      {
+        model: models.PointRevision,
+        include: [
+          {
+            model: models.User
+          }
+        ]
+      }
+    ],
+    order: [
+      ["created_at", "asc"]
+    ]
+  }).then(function (commentsCount) {
+    log.info('Point Comment Count for Parent Point', {context: 'comment', user: req.user ? toJson(req.user.simple()) : null  });
+    res.send({count: commentsCount});
+  }).catch(function (error) {
+    log.error('Could not get comments count for parent point', { err: error, context: 'comment', user: req.user ? toJson(req.user.simple()) : null });
     res.sendStatus(500);
   });
 });

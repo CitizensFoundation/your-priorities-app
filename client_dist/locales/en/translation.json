@@ -8,7 +8,10 @@
       }
     },
     "point": {
-      "new": "New point"
+      "new": "New point",
+      "newsStory": {
+        "new": "New user story"
+      }
     }
   },
   "name": "Name",
@@ -98,6 +101,7 @@
     "all": "all categories",
     "the_all": "All categories"
   },
+
   "point": {
     "point": "Point",
     "for": "Point for...",
@@ -105,7 +109,11 @@
     "add_up": "Add point for",
     "add_down": "Add point against",
     "helpful": "Vote point up as helpful",
-    "not_helpful": "Vote point down as not helpful"
+    "not_helpful": "Vote point down as not helpful",
+    "addNewsStory": "Add a news story",
+    "postNewsStory": "Post",
+    "addComment": "Your comment...",
+    "postComment": "Post comment"
   },
 
   "uploading": {

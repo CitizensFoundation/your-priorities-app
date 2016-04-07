@@ -87,10 +87,24 @@ router.get('/:imageId/comments', auth.can('view image'), function(req, res) {
       ["created_at", "asc"]
     ]
   }).then(function (comments) {
-    log.info('Point Comment for Image', {context: 'comment', user: toJson(req.user.simple()) });
+    log.info('Point Comment for Image', {context: 'comment', user: req.user ? toJson(req.user.simple()) : null });
     res.send(comments);
   }).catch(function (error) {
-    log.error('Could not get comments for image', { err: error, context: 'comment', user: toJson(req.user.simple()) });
+    log.error('Could not get comments for image', { err: error, context: 'comment', user: req.user ? toJson(req.user.simple()) : null });
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:imageId/commentsCount', auth.can('view image'), function(req, res) {
+  models.Point.count({
+    where: {
+      image_id: req.params.imageId
+    }
+  }).then(function (commentsCount) {
+    log.info('Point Comment Count for Image', {context: 'comment', user: req.user ? toJson(req.user.simple()) : null });
+    res.send({count: commentsCount});
+  }).catch(function (error) {
+    log.error('Could not get comments count for image', { err: error, context: 'comment', user: req.user ? toJson(req.user.simple()) : null  });
     res.sendStatus(500);
   });
 });

@@ -9,7 +9,10 @@
     "point": {
       "new": "Rökræða",
       "newEndorsed": "Rök með",
-      "newOpposed": "Rök á móti"
+      "newOpposed": "Rök á móti",
+      "newsStory": {
+        "new": "Ný frétt frá notanda"
+      }
     }
   },
   "join": "taktu þátt!",
@@ -133,7 +136,11 @@
     "add_up": "Bæta við rökum með",
     "add_down": "Bæta við rökum á móti",
     "helpful": "Hjálplegt",
-    "not_helpful": "Ekki hjálplegt"
+    "not_helpful": "Ekki hjálplegt",
+    "addNewsStory": "Bættu við frétt",
+    "postNewsStory": "Pósta",
+    "addComment": "Þín athugasemd",
+    "postComment": "Senda"
   },
 
   "uploading": {
