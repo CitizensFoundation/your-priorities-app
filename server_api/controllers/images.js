@@ -60,10 +60,10 @@ var addUserImageToPost = function(postId, imageId, callback) {
 var deleteImage = function (imageId, callback) {
   models.Image.find({
     where: { id: imageId },
-//    attributes: ['id','deleted']
+    attributes: ['id','deleted']
   }).then(function (image) {
     if (image) {
-//    image.deleted = true;
+    image.deleted = true;
       image.save().then(function () {
         log.info('Post User Image Deleted', { imageId: imageId, context: 'delete', user: toJson(req.user) });
       });
@@ -88,7 +88,7 @@ router.get('/:imageId/comments', auth.can('view image'), function(req, res) {
     ]
   }).then(function (comments) {
     log.info('Point Comment for Image', {context: 'comment', user: toJson(req.user.simple()) });
-    res.sendStatus(comments);
+    res.send(comments);
   }).catch(function (error) {
     log.error('Could not get comments for image', { err: error, context: 'comment', user: toJson(req.user.simple()) });
     res.sendStatus(500);
@@ -96,7 +96,7 @@ router.get('/:imageId/comments', auth.can('view image'), function(req, res) {
 });
 
 router.post('/:imageId/comment', auth.isLoggedIn, auth.can('view image'), function(req, res) {
-  models.Point.createComment(req, { image_id: req.params.imageId }, function (error) {
+  models.Point.createComment(req, { image_id: req.params.imageId, comment: req.body.comment }, function (error) {
     if (error) {
       log.error('Could not save comment point on image', { err: error, context: 'comment', user: toJson(req.user.simple()) });
       res.sendStatus(500);

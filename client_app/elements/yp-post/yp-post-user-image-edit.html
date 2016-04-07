@@ -21,7 +21,7 @@
       <h2>[[editHeaderText]]</h2>
 
       <div class="layout vertical center-center">
-        <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-user-image" method="POST" on-success="_imageUploaded">
+        <file-upload id="imageFileUpload" raised="true" multi="false" method="POST" on-success="_imageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.upload')]]</span>
         </file-upload>
@@ -77,12 +77,18 @@
           },
 
           post: {
-            type: Object
+            type: Object,
+            observer: '_postChange'
           },
 
           action: {
             type: String,
             value: "/api/images"
+          },
+
+          imageUploadTarget: {
+            type: String,
+            notify: true
           },
 
           uploadedPostUserImageId: {
@@ -103,10 +109,12 @@
 
           method: {
             type: String
-          },
+          }
+        },
 
-          editHeaderText: {
-            type: String
+        _postChange: function (newPost) {
+          if (newPost) {
+            this.$.imageFileUpload.target = '/api/images?itemType=post-user-image&postId='+newPost.id;
           }
         },
 

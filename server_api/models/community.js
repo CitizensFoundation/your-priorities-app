@@ -26,7 +26,7 @@ module.exports = function(sequelize, DataTypes) {
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
     only_admins_can_create_groups: { type: DataTypes.BOOLEAN, defaultValue: false },
     theme_id: { type: DataTypes.INTEGER, defaultValue: 0 },
-//    other_social_media_info: DataTypes.JSONB
+    other_social_media_info: DataTypes.JSONB
   }, {
 
     defaultScope: {

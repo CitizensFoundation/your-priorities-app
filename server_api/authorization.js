@@ -426,33 +426,47 @@ auth.role('point.viewUser', function (point, req, done) {
   });
 });
 
+//TODO: Use this pattern of activities everywhere here for optimization
 auth.role('image.viewUser', function (image, req, done) {
   models.Image.findOne({
     where: { id: image.id },
+    attributes: ['id', 'user_id' ],
     include: [
       {
         model: models.Post,
+        as: 'PostUserImages',
+        attributes: ['id'],
         include: [
-          models.Group
+          {
+            model: models.Group,
+            attributes: ['id', 'access']
+          }
         ]
       }
     ]
   }).then(function (image) {
-    var group = image.Post.Group;
-    if (group.access === models.Group.ACCESS_PUBLIC) {
-      done(null, true);
-    }  else if (!req.isAuthenticated()) {
-      done(null, false);
-    } else if (point.user_id === req.user.id) {
-      done(null, true);
+    var group;
+    if (image.PostUserImages && image.PostUserImages.length>0) {
+      group = image.PostUserImages[0].Group;
+    }
+    if (group) {
+      if (group.access === models.Group.ACCESS_PUBLIC) {
+        done(null, true);
+      }  else if (!req.isAuthenticated()) {
+        done(null, false);
+      } else if (point.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        group.hasUser(req.user).then(function (result) {
+          if (result) {
+            done(null, true);
+          } else {
+            done(null, false);
+          }
+        });
+      }
     } else {
-      group.hasUser(req.user).then(function (result) {
-        if (result) {
-          done(null, true);
-        } else {
-          done(null, false);
-        }
-      });
+      done(null, false);
     }
   });
 });

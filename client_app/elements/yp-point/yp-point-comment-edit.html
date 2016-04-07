@@ -50,7 +50,7 @@
       }
     </style>
 
-    <div class="layout vertical">
+    <div class="layout vertical" hidden$="[[!loggedInUser]]">
       <div class="layout horizontal start">
         <yp-user-image class="userImage" user="[[loggedInUser]]"></yp-user-image>
         <div class="layout vertical">
@@ -119,7 +119,7 @@
 
       _sendComment: function () {
         var body;
-        if (this.point.content && this.point.content.length>15) {
+        if (this.comment.content && this.comment.content.length>15) {
           if (this.point) {
             body = { point_id: this.point.id };
             this.$.postCommentAjax.url = '/api/points/'+this.point.id+'/comment';

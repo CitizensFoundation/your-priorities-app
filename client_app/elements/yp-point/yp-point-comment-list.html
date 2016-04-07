@@ -95,6 +95,7 @@
       },
 
       _commentsResponse: function (event, detail) {
+        debugger;
         var comment = detail.response;
         this.set('comments', comment);
         this.$.list.fire('iron-resize');
