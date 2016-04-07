@@ -20,15 +20,32 @@
 
       }
 
+      iron-list {
+       max-height: 500px;
+       width: 650px;
+        --iron-list-items-container: {
+          margin: auto;
+          margin-top: 32px;
+        };
+      }
+
+      .listContainer {
+        padding-top: 24px;
+        padding-left: 32px;
+        padding-right: 32px;
+      }
+
+      yp-point-comment {
+      }
     </style>
 
-    <div class="layout vertical">
+    <div class="layout vertical center-center listContainer">
       <iron-list id="list" items="[[comments]]" as="point">
         <template>
           <yp-point-comment point="[[point]]" tabindex$="[[tabIndex]]"></yp-point-comment>
         </template>
       </iron-list>
-      <yp-point-comment-edit point="[[point]]" image="[[image]]"></yp-point-comment-edit>
+      <yp-point-comment-edit on-refresh="_refresh" point="[[point]]" image="[[image]]"></yp-point-comment-edit>
       <div class="layout horizontal center-center">
         <yp-ajax large-spinner id="commentListAjax" method="GET" on-response="_commentsResponse"></yp-ajax>
       </div>
@@ -66,6 +83,10 @@
         }
       },
 
+      _refresh: function () {
+        this.$.commentListAjax.generateRequest();
+      },
+
       _imageChanged: function(newImage) {
         if (newImage) {
           this.$.commentListAjax.url = '/api/images/'+newImage.id+'/comments';
@@ -74,8 +95,12 @@
       },
 
       _commentsResponse: function (event, detail) {
-        this.set('comments', detail.response);
+        var comment = detail.response;
+        this.set('comments', comment);
         this.$.list.fire('iron-resize');
+        if (comment && comment.length>0) {
+          this.$.list.scrollToIndex(comment.length-1);
+        }
       }
     });
   </script>

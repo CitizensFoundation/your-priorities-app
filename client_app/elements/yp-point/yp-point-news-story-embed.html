@@ -28,18 +28,22 @@
       }
 
       .title {
-        padding-left: 48px;
-        padding-right: 48px;
       }
 
       .description {
-        padding-left: 48px;
-        padding-right: 48px;
+        padding-bottom: 24px;
+      }
+
+      .container {
+        border-bottom: solid #ddd;
+        border-bottom-width: 1px;
+        margin-left: 48px;
+        margin-right: 48px;
       }
     </style>
 
     <div class="layout vertical" hidden$="[[!embedData]]">
-      <a href$="[[embedData.url]]" target="_blank">
+      <a href$="[[embedData.url]]" class="container" target="_blank">
         <div class="layout vertical center-center">
           <iron-image sizing="cover" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
           <div id="embedHtml" hidden$="[[!embedData.html]]"></div>
