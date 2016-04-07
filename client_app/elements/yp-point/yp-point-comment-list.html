@@ -19,6 +19,10 @@
   <template>
 
     <style>
+      :host {
+        width: 100%;
+      }
+
       yp-point-comment-edit {
 
       }
@@ -41,20 +45,33 @@
 
       .container {
         max-width: 800px;
+        padding-left: 24px;
       }
-      yp-point-comment {
+
+      #commentCount {
+        font-size: 11px;
+        padding-top: 2px;
+      }
+
+      paper-icon-button::shadow #icon {
+        width: 36px;
+        height: 36px;
+      }
+
+      .commentText {
+        padding-top: 4px;
       }
     </style>
 
-    <div class="container">
-      <div class="layout horizontal">
-        <div class="commentText">
+    <div class="container layout vertical">
+      <div class="layout horizontal start-justified">
+        <div class="commentText layout vertical center-center">
           [[t('point.comments')]]
+          <div id="commentCount">[[commentsCount]]</div>
         </div>
-        <div id="commentCount">[[commentsCount]]</div>
-        <div class="layout horizontal flex end-justified">
-          <paper-icon-button icon="hardware:keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
-          <paper-icon-button icon="hardware:keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
+        <div class="layout horizontal">
+          <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
+          <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
         </div>
       </div>
       <template is="dom-if" if="[[open]]">

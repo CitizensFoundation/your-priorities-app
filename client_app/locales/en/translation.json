@@ -113,7 +113,8 @@
     "addNewsStory": "Add a news story",
     "postNewsStory": "Post",
     "addComment": "Your comment...",
-    "postComment": "Post comment"
+    "postComment": "Post comment",
+    "comments": "Comments"
   },
 
   "uploading": {

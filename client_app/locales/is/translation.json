@@ -140,7 +140,8 @@
     "addNewsStory": "Bættu við frétt",
     "postNewsStory": "Pósta",
     "addComment": "Þín athugasemd",
-    "postComment": "Senda"
+    "postComment": "Senda",
+    "comments": "Athugasemdir"
   },
 
   "uploading": {
