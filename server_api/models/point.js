@@ -76,22 +76,22 @@ module.exports = function(sequelize, DataTypes) {
         delete options.comment;
 
         options.user_id = req.user.id;
-        options.content_type = models.Point.CONTENT_COMMENT;
+        options.content_type = sequelize.models.Point.CONTENT_COMMENT;
         options.value = 0;
         options.status = 'active';
         options.user_agent = req.useragent.source;
         options.ip_address = req.clientIp;
 
-        models.Point.build(options).save().then(function (point) {
+        sequelize.models.Point.build(options).save().then(function (point) {
           options.point_id = point.id;
-          var pointRevision = models.PointRevision.build(options);
+          var pointRevision =  sequelize.models.PointRevision.build(options);
           pointRevision.save().then(function () {
-            models.AcActivity.createActivity({
+            sequelize.models.AcActivity.createActivity({
               type: 'activity.point.comment.new',
               userId: options.user_id,
               pointId: options.point_id,
               imageId: options.image_id,
-              access: models.AcActivity.ACCESS_PUBLIC
+              access: sequelize.models.AcActivity.ACCESS_PUBLIC
             }, function (error) {
               callback(error);
             });

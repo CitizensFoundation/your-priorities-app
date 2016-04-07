@@ -333,13 +333,35 @@ auth.entity('post', function(req, done) {
 auth.role('point.admin', function (point, req, done) {
   if (!req.isAuthenticated()) {
     done();
-  } else {
-    models.Point.findOne({
-      where: { id: post.id }
-    }).then(function (point) {
-      if (!req.isAuthenticated()) {
-        done(null, false);
-      } else if (point.user_id === req.user.id) {
+  } models.Point.findOne({
+    where: { id: point.id },
+    include: [
+      {
+        model: models.Post,
+        include: [
+          {
+            model: models.Group,
+            required: false
+          }
+        ],
+        required: false
+      },
+      {
+        model: models.Group,
+        required: false
+      }
+    ]
+  }).then(function (point) {
+    var group;
+
+    if (point.Post) {
+      group = point.Post.Group;
+    } else {
+      group = point.Group;
+    }
+
+    if (group) {
+      if (point.user_id === req.user.id) {
         done(null, true);
       } else {
         group.hasGroupAdmin(req.user).then(function (result) {
@@ -350,8 +372,8 @@ auth.role('point.admin', function (point, req, done) {
           }
         });
       }
-    });
-  }
+    }
+  })
 });
 
 auth.role('point.viewUser', function (point, req, done) {
@@ -361,26 +383,45 @@ auth.role('point.viewUser', function (point, req, done) {
       {
         model: models.Post,
         include: [
-          models.Group
-        ]
+          {
+            model: models.Group,
+            required: false
+          }
+        ],
+        required: false
+      },
+      {
+        model: models.Group,
+        required: false
       }
     ]
   }).then(function (point) {
-    var group = point.Post.Group;
-    if (group.access === models.Group.ACCESS_PUBLIC) {
-      done(null, true);
-    }  else if (!req.isAuthenticated()) {
-      done(null, false);
-    } else if (point.user_id === req.user.id) {
-      done(null, true);
+    var group;
+
+    if (point.Post) {
+      group = point.Post.Group;
     } else {
-      group.hasUser(req.user).then(function (result) {
-        if (result) {
-          done(null, true);
-        } else {
-          done(null, false);
-        }
-      });
+      group = point.Group;
+    }
+
+    if (group) {
+      if (group.access === models.Group.ACCESS_PUBLIC) {
+        done(null, true);
+      } else if (!req.isAuthenticated()) {
+        done(null, false);
+      } else if (point.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        group.hasUser(req.user).then(function (result) {
+          if (result) {
+            done(null, true);
+          } else {
+            done(null, false);
+          }
+        });
+      }
+    } else {
+      done(null, false);
     }
   });
 });
