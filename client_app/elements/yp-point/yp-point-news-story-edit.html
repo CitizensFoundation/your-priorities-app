@@ -26,6 +26,7 @@
     <style>
       :host {
         width: 800px;
+        height: 100%;
         margin-top: 32px;
       }
 
@@ -53,6 +54,17 @@
         padding-top: 30px;
         padding-left: 16px;
         padding-right: 16px;
+      }
+
+      paper-icon-button {
+        margin-top: 16px;
+        padding-bottom: 0;
+      }
+
+      paper-icon-button::shadow #icon {
+        width: 36px;
+        height: 36px;
+        color: #777;
       }
     </style>
 
@@ -87,8 +99,8 @@
         </template>
 
         <div class="layout horizontal center-center">
-          <yp-ajax large-spinner id="urlPreviewAjax" url="/api/points/url_preview" hidden$="[[point.embed_detail]]" on-response="_urlPreviewResponse"></yp-ajax>
-          <yp-ajax large-spinner id="postNewsStoryAjax" method="POST" on-response="_newsStoryResponse"></yp-ajax>
+          <yp-ajax id="urlPreviewAjax" url="/api/points/url_preview" hidden$="[[point.embed_detail]]" on-response="_urlPreviewResponse"></yp-ajax>
+          <yp-ajax id="postNewsStoryAjax" method="POST" on-response="_newsStoryResponse"></yp-ajax>
         </div>
 
       </div>
@@ -102,6 +114,16 @@
       is: 'yp-point-news-story-edit',
 
       properties: {
+
+        loadingUrlPreview: {
+          type: Boolean,
+          notify: true
+        },
+
+        loadingPostStory: {
+          type: Boolean,
+          notify: true
+        },
 
         point: {
           type: Object,

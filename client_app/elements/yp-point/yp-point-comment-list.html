@@ -85,8 +85,8 @@
         </div>
       </template>
       <div class="layout horizontal center-center">
-        <yp-ajax id="commentsListAjax" hidden$="[[!loadingList]]" loading="{{loadingList}}" method="GET" on-response="_commentsResponse"></yp-ajax>
-        <yp-ajax id="commentsCountListAjax" hidden$="[[!loadingCount]]" loading="{{loadingCount}}" method="GET" on-response="_countResponse"></yp-ajax>
+        <yp-ajax id="commentsListAjax" method="GET" on-response="_commentsResponse"></yp-ajax>
+        <yp-ajax id="commentsCountListAjax" method="GET" on-response="_countResponse"></yp-ajax>
       </div>
     </div>
   </template>
