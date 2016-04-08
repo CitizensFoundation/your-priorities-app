@@ -31,8 +31,6 @@
        max-height: 500px;
        width: 650px;
         --iron-list-items-container: {
-          margin: auto;
-          margin-top: 32px;
         };
       }
 
@@ -53,9 +51,9 @@
         padding-top: 2px;
       }
 
-      paper-icon-button::shadow #icon {
-        width: 36px;
-        height: 36px;
+      paper-icon-button.openCloseButton {
+        width: 56px;
+        height: 56px;
       }
 
       .commentText {
@@ -165,6 +163,7 @@
 
       _refresh: function () {
         this.$.commentsListAjax.generateRequest();
+        this.$.commentsCountListAjax.generateRequest();
       },
 
       _imageChanged: function(newImage) {

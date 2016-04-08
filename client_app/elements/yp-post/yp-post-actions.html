@@ -43,11 +43,10 @@
 
       .action-text {
         font-size: 18px;
-        text-align: right;
+        text-align: left;
         vertical-align: bottom;
         padding-top: 8px;
         margin-top: 4px;
-        padding-right: 4px;
       }
 
       .action-icon {
@@ -90,27 +89,27 @@
 
       .debate-text {
         padding-top: 10px;
-        padding-left: 12px;
+        padding-left: 0px;
         color: #9e9e9e;
       }
 
       .down-text {
-        padding-right: 4px;
+        padding-right: 0px;
         padding-top: 10px;
       }
 
       .up-text {
         padding-top: 10px;
-        padding-left: 12px;
+        padding-left: 0px;
       }
 
       .down-vote-icon {
-        margin-right: 12px;
+        margin-right: 0px;
       }
 
-      paper-icon-button::shadow #icon {
-        width: 36px;
-        height: 36px;
+      paper-icon-button.largeButton {
+        width: 52px;
+        height: 52px;
       }
 
       .debate-icon::shadow #icon {
@@ -121,6 +120,10 @@
         width: 30px !important;
         height: 30px !important;
         color: #9e9e9e;
+      }
+
+      .up-vote-icon {
+        margin-left: 8px;
       }
 
       @media (max-width: 360px) {
@@ -154,19 +157,19 @@
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <div class$="[[computeActionClass(small)]]">
       <div id="actionUp" class="action-up">
-        <paper-icon-button title="[[t('post.vote.up')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon" on-tap="upVote"></paper-icon-button>
+        <paper-icon-button title="[[t('post.vote.up')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">{{formatNumber(post.counter_endorsements_up)}}</div>
       </div>
 
       <div class="action-debate layout vertical" hidden$="[[_hideDebate(small,forceSmall)]]">
-        <paper-icon-button title="[[t('post.debate')]]" icon="communication:forum" class="action-icon debate-icon" on-tap="goToPost"></paper-icon-button>
+        <paper-icon-button title="[[t('post.debate')]]" icon="communication:forum" class="action-icon debate-icon largeButton" on-tap="goToPost"></paper-icon-button>
         <div class="action-text debate-text">{{formatNumber(post.counter_points)}}</div>
       </div>
 
       <div class="flex" hidden$="[[!_hideDebate(small,forceSmall)]]"></div>
 
       <div id="actionDown" class="action-down">
-        <paper-icon-button title="[[t('post.vote.down')]]" icon$="[[endorseModeIcon(endorseMode,'down')]]" class="action-icon down-vote-icon" on-tap="downVote"></paper-icon-button>
+        <paper-icon-button title="[[t('post.vote.down')]]" icon$="[[endorseModeIcon(endorseMode,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
         <div class="action-text down-text">{{formatNumber(post.counter_endorsements_down)}}</div>
       </div>
     </div>
