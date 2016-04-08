@@ -17,6 +17,10 @@
 
     <style>
 
+      :host {
+        width: 100%;
+      }
+
       .userName {
         color: #777;
       }
@@ -30,6 +34,7 @@
       }
 
       .story {
+        width: 100%;
         margin-left: 32px;
         margin-right: 32px;
         padding-bottom: 4px;
@@ -41,9 +46,13 @@
       yp-point-actions {
         padding-top: 8px;
       }
+
+      .container {
+        width: 100%;
+      }
     </style>
 
-    <div class="layout vertical">
+    <div class="layout vertical container">
       <div class="story">
         [[point.content]]
         <yp-point-actions point="[[point]]"></yp-point-actions>

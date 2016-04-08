@@ -180,9 +180,12 @@
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')]]">
                 <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
               </template>
-              <div class="layout horizontal end-justified">
-                <paper-button on-tap="_joinPost">[[t('join')]]</paper-button>
-              </div>
+
+              <template is="dom-if" if="[[_isNotActivityType(activity,'activity.point.newsStory.new')]]">
+                <div class="layout horizontal end-justified">
+                  <paper-button on-tap="_joinPost">[[t('join')]]</paper-button>
+                </div>
+              </template>
             </paper-material>
           </div>
         </template>
@@ -286,7 +289,7 @@
         return this.t(activity.type) + ' ' + activity.Post.name;
       },
 
-      _isActivityNotType(activity, type) {
+      _isNotActivityType(activity, type) {
         return activity.type!=type
       },
 
