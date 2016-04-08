@@ -73,6 +73,8 @@
     </style>
 
     <template is="dom-if" if="[[appReady]]">
+      <yp-dialog-container id="dialogContainer"></yp-dialog-container>
+
       <!--    <material-search id="search" narrow="[[narrow]]"
                            previous-searches="{{previousSearches}}"
                            on-search-change="_onSearch" class="fit"></material-search> -->
@@ -214,12 +216,17 @@
 
         appReady: {
           type: Boolean,
+          notify: true,
           value: false
         }
       },
 
       _appReady: function () {
-        this.appReady = true;
+        this.set('appReady', true);
+      },
+
+      getDialog(idName) {
+        return this.$$("#dialogContainer").getDialog(idName);
       },
 
       scrollPageToTop: function() {
@@ -234,8 +241,9 @@
       },
 
       openEdit: function () {
-        var userEdit = document.querySelector('#userEdit');
-        userEdit.open('edit', {userId: this.user.id});
+        var dialog = Polymer.dom(document).querySelector('yp-dialog-container #userEdit');
+        dialog.setup(this.user, false, null);
+        dialog.open('edit', { userId: this.user.id});
       },
 
       onChangeHeader: function (event, header) {

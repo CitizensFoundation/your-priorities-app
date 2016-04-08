@@ -92,7 +92,6 @@
     ],
 
     properties: {
-
       action: {
         type: String,
         value: "/api/domains"
@@ -134,6 +133,12 @@
       this.uploadedHeaderImageId = null;
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
+    },
+
+    setup: function (domain, newNotEdit, refreshFunction) {
+      this.set('domain', domain);
+      this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
     },
 
     _setupTranslation: function () {

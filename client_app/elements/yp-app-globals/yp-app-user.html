@@ -21,7 +21,6 @@
     </style>
 
     <yp-session id="session"></yp-session>
-    <yp-login id="userLogin" register="true" on-login="_handleLogin"></yp-login>
     <yp-forgot-password id="forgotPassword"></yp-forgot-password>
     <yp-reset-password id="resetPassword"></yp-reset-password>
 
@@ -88,26 +87,37 @@
 
         loginForEdit: function(editDialog,newOrUpdate,params) {
           this.loginForEditParams = { editDialog: editDialog, newOrUpdate: newOrUpdate, params: params };
-          this.$.userLogin.open();
+          this._openUserlogin();
         },
 
         loginForNewPoint: function(postPointsElement, params) {
           this.loginForNewPointParams = { postPointsElement: postPointsElement, params: params };
-          this.$.userLogin.open();
+          this._openUserlogin();
         },
 
         loginForEndorse: function(postActionElement, params) {
           this.loginForEndorseParams = { postActionElement: postActionElement, params: params };
-          this.$.userLogin.open();
+          this._openUserlogin();
         },
 
         loginForPointQuality: function(pointActionElement, params) {
           this.loginForPointQualityParams = { pointActionElement: pointActionElement, params: params };
-          this.$.userLogin.open();
+          this._openUserlogin();
         },
 
-        _handleLogin: function (event, user) {
-          this.$.userLogin.close();
+        _openUserlogin: function () {
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
+          dialog.setup(this._handleLogin.bind(this));
+          dialog.open();
+        },
+
+        _closeUserLogin: function () {
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
+          dialog.close();
+        },
+
+        _handleLogin: function (user) {
+          this._closeUserLogin();
           this.setUser(user);
           this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.email;
           this.$.loginToast.show();

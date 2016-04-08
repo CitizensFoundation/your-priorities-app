@@ -162,7 +162,8 @@
       showErrorDialog: function(errorText) {
         this.errorText = errorText;
         this.$$("#error").open();
-        this.moveDialogToTopDom("error");
+        var errorDialog = this.$$("#error");
+        this.moveDialogToTopDom(errorDialog);
        // this.$.error.open();
       },
 

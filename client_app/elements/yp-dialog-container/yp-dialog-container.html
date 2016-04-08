@@ -1,0 +1,24 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../yp-domain/yp-domain-edit.html">
+<link rel="import" href="../yp-user/yp-user-edit.html">
+<link rel="import" href="../yp-user/yp-login.html">
+
+<dom-module id="yp-dialog-container">
+  <template>
+    <yp-login id="userLogin"></yp-login>
+    <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
+    <yp-domain-edit id="domainEdit"></yp-domain-edit>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-dialog-container',
+
+      getDialog(idName) {
+        return this.$$("#"+idName);
+      },
+
+    });
+  </script>
+</dom-module>

@@ -18,6 +18,10 @@
 
   <template>
     <style>
+      :host {
+        background-color: #FFF;
+      }
+
       .fullScreenDialog {
         position: absolute;
         display: block;
@@ -303,6 +307,10 @@
         uploadingState: {
           type: Boolean,
           value: false
+        },
+
+        bodyDialog: {
+          type: Object
         }
       },
 
@@ -341,7 +349,7 @@
       },
 
       open: function() {
-        this.moveDialogToTopDom("editDialog");
+        this.moveDialogToTopDom(this);
         this.set("opened",false);
         this.async(function () {
           this.set("opened",true);

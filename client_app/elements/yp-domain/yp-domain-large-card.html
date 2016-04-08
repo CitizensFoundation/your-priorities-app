@@ -159,7 +159,6 @@
           </paper-menu>
         </paper-menu-button>
       </paper-material>
-      <yp-domain-edit new="false" id="domainEdit" domain="{{domain}}" on-iron-form-response="_refresh"></yp-domain-edit>
     </template>
   </template>
 
@@ -196,7 +195,9 @@
       },
 
       _openEdit: function () {
-        this.$$("#domainEdit").open('edit', { domainId: this.domain.id });
+        var dialog = Polymer.dom(document).querySelector('yp-dialog-container #domainEdit');
+        dialog.setup(this.domain, false, this._refresh);
+        dialog.open('edit', { domainId: this.domain.id });
       },
 
       _refresh: function () {

@@ -115,11 +115,18 @@
     },
 
     _clear: function () {
-      this.user = { name: '', email: '', access: 2 }
+      this.set('user', { name: '', email: '', access: 2 } );
       this.uploadedProfileImageId = null;
       this.uploadedHeaderImageId = null;
       this.$.headerImageUpload.clear();
       this.$.profileImageUpload.clear();
+    },
+
+    setup: function (user, newNotEdit, refreshFunction) {
+      this.set('user', user);
+      this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
     },
 
     _setupTranslation: function () {

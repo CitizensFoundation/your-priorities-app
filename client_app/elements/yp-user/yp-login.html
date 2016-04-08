@@ -103,7 +103,8 @@
     is: 'yp-login',
 
     behaviors: [
-      Polymer.appHelpers
+      Polymer.appHelpers,
+      Polymer.FixDialog
     ],
 
     properties: {
@@ -194,6 +195,11 @@
           return this.$$("#form");
         }
       },
+
+      onLoginFunction: {
+        type: Function,
+        value: null
+      }
     },
 
     _openedChanged: function (newValue) {
@@ -234,6 +240,11 @@
 
     ready: function () {
       //this._setTexts();
+    },
+
+    setup: function (onLoginFunction) {
+      this.set('onLoginFunction', onLoginFunction);
+      this._setTexts();
     },
 
     _setTexts: function () {
@@ -292,6 +303,9 @@
       if (this.redirectTo)
         page(this.redirectTo);
       this.fire("login", user);
+      if (this.onLoginFunction) {
+        this.onLoginFunction(user);
+      }
       this.fire('iron-signal', {name: 'logged-in', data: user});
     },
 

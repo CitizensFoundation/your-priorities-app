@@ -37,7 +37,8 @@
       is: 'yp-delete-dialog',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.FixDialog
       ],
 
       properties: {
@@ -57,6 +58,8 @@
 
       open: function () {
         this.$$("#deleteConfirmationDialog").open();
+        var deleteDialog = this.$$("#deleteConfirmationDialog");
+        this.moveDialogToTopDom(deleteDialog);
       },
 
       _delete: function () {

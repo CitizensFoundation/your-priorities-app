@@ -40,7 +40,6 @@
           <div class="currentUser">
             <template is="dom-if" if="[[user]]">
               <yp-user-info on-open-user-edit="_openEdit" user="{{user}}"></yp-user-info>
-              <yp-user-edit new="false" id="userEdit" method="PUT" user="{{user}}"></yp-user-edit>
             </template>
         </app-header>
       </app-header-layout>

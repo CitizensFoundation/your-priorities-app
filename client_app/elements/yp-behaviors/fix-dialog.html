@@ -5,11 +5,10 @@
    * @polymerBehavior FixDialog
    */
   Polymer.FixDialog = {
-    moveDialogToTopDom: function(name) {
-      var node = document.querySelector('#'+name);
+    moveDialogToTopDom: function(node) {
+      debugger;
       if (node) {
-        var textnode = document.querySelector("body");
-        textnode.appendChild(node);
+        document.body.appendChild(node);
       } else {
         console.error("Can't find node to move to body");
       }
