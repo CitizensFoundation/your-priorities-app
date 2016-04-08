@@ -83,6 +83,16 @@ router.get('/:imageId/comments', auth.can('view image'), function(req, res) {
     where: {
       image_id: req.params.imageId
     },
+    include: [
+      {
+        model: models.PointRevision,
+        include: [
+          {
+            model: models.User
+          }
+        ]
+      }
+    ],
     order: [
       ["created_at", "asc"]
     ]

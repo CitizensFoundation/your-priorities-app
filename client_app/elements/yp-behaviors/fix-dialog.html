@@ -6,14 +6,12 @@
    */
   Polymer.FixDialog = {
     moveDialogToTopDom: function(name) {
-      if (open) {
-        var node = document.querySelector('#'+name);
-        if (node) {
-          var textnode = document.querySelector("body");
-          textnode.appendChild(node);
-        } else {
-          console.error("Can't find node to move to body");
-        }
+      var node = document.querySelector('#'+name);
+      if (node) {
+        var textnode = document.querySelector("body");
+        textnode.appendChild(node);
+      } else {
+        console.error("Can't find node to move to body");
       }
     }
   };
