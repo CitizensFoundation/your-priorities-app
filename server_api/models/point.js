@@ -41,6 +41,12 @@ module.exports = function(sequelize, DataTypes) {
         }
       },
       {
+        fields: ['post_status_change_id'],
+        where: {
+          deleted: false
+        }
+      },
+      {
         fields: ['parent_point_id'],
         where: {
           deleted: false
@@ -59,6 +65,7 @@ module.exports = function(sequelize, DataTypes) {
       CONTENT_COMMENT: 2,
 
       associate: function(models) {
+        Point.belongsTo(sequelize.models.PostStatusChange);
         Point.belongsTo(sequelize.models.Post);
         Point.belongsTo(sequelize.models.Group);
         Point.belongsTo(sequelize.models.Community);
