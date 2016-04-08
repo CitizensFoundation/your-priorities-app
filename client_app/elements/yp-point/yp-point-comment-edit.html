@@ -119,7 +119,7 @@
 
       _sendComment: function () {
         var body;
-        if (this.comment.content && this.comment.content.length>15) {
+        if (this.comment.content && this.comment.content.length>0) {
           if (this.point) {
             body = { point_id: this.point.id };
             this.$.postCommentAjax.url = '/api/points/'+this.point.id+'/comment';
@@ -132,7 +132,7 @@
           this.$.postCommentAjax.body = _.merge(body, { comment: this.comment } );
           this.$.postCommentAjax.generateRequest();
         } else {
-          // TODO
+          this.$.postCommentAjax.showErrorDialog(this.t('point.comment.toShort'));
         }
       },
 

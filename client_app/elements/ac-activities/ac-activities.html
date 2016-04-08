@@ -301,7 +301,9 @@
         if (typeId) {
           this.set('activities', []);
           this.set('oldestProcessedActivityAt', null);
-          if (window.appUser && window.appUser.user) {
+
+          //TODO: Test personalized news feeds better
+          if (false && window.appUser && window.appUser.user) {
             this.mode = 'news_feeds';
           }
           this.set('url', '/api/'+this.mode+'/' + type + '/'+typeId);

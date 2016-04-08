@@ -171,7 +171,7 @@
 
       _sendStory: function () {
         var body = { point: this.point };
-        if (this.point.content && this.point.content.length>15) {
+        if (this.point.content && this.point.content.length>2) {
           if (this.postId && this.postGroupId) {
             _.merge(body, { post_id: this.postId })
             this.$.postNewsStoryAjax.url = '/api/points/'+this.postGroupId+'/post/news_story';
@@ -190,7 +190,7 @@
           this.$.postNewsStoryAjax.body = body;
           this.$.postNewsStoryAjax.generateRequest();
         } else {
-          // TODO
+          this.$.postNewsStoryAjax.showErrorDialog(this.t('point.comment.toShort'));
         }
       },
 
