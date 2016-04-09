@@ -76,8 +76,6 @@
     <iron-signals on-iron-signal-yp-i18n-ready="_i18nReady"></iron-signals>
 
     <template is="dom-if" if="[[appAndI18nReady]]" restamp>
-      <yp-dialog-container id="dialogContainer"></yp-dialog-container>
-
       <!--    <material-search id="search" narrow="[[narrow]]"
                            previous-searches="{{previousSearches}}"
                            on-search-change="_onSearch" class="fit"></material-search> -->
@@ -149,6 +147,7 @@
 
       </app-drawer-layout>
 
+      <yp-dialog-container id="dialogContainer"></yp-dialog-container>
       <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
     </template>
 

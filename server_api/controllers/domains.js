@@ -73,7 +73,7 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
     ]
   }).then(function(domain) {
     if (domain) {
-      log.info('Domain Viewed', { domain: toJson(domain), context: 'view', user: toJson(req.user) });
+      log.info('Domain Viewed', { domain: toJson(domain.simple()), context: 'view', user: toJson(req.user) });
       res.send(domain);
     } else {
       sendDomainOrError(res, req.params.id, 'view', req.user, 'Not found', 404);

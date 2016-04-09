@@ -1,15 +1,22 @@
 # License
 
-Your Priorities - Citizens participation application
+Your Priorities 6.0 - Citizens participation application
 
 Everything in this repo is BSD style license unless otherwise specified.
 
 Copyright (c) 2008-2015 Citizens Foundation Iceland. All rights reserved.
 
-Written in 2008-2015 by
+Written in 2008-2016 by
 Robert Bjarnason, robert@citizens.is
 Gunnar Grimsson, gunnar@citizens.is
+Nathalie Stembert
+Gudny Maren Valsdottir 
 
+and many others...
+
+Special thanks go out to everybody that are a part of the Web Components revolution which 
+work we build on.
+ 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
 following conditions are met:
 

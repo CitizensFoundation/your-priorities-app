@@ -132,7 +132,8 @@ router.post('/forgot_password', function(req, res) {
     },
     function(token, done) {
       models.User.find({
-        where: { email: req.body.email }
+        where: { email: req.body.email },
+        attributes: ['id','email','reset_password_token','reset_password_expires','legacy_passwords_disabled']
       }).then(function (user) {
         if (user) {
           user.reset_password_token = token;
@@ -170,6 +171,7 @@ router.post('/forgot_password', function(req, res) {
 
 router.get('/reset/:token', function(req, res) {
   models.User.find({
+    attributes: ['id','email','reset_password_token','reset_password_expires','legacy_passwords_disabled'],
     where:
     {
       reset_password_token: req.params.token,
@@ -218,6 +220,7 @@ router.post('/reset/:token', function(req, res) {
   async.waterfall([
     function(done) {
       models.User.find({
+        attributes: ['id','email','reset_password_token','reset_password_expires','legacy_passwords_disabled'],
         where:
         {
           reset_password_token: req.params.token,
@@ -255,7 +258,7 @@ router.post('/reset/:token', function(req, res) {
           userId: req.user.id,
           domainId: req.ypDomain.id,
           groupId: req.params.groupId,
-          communityId: req.ypCommunity ?  req.ypCommunity : null
+          communityId: req.ypCommunity ?  req.ypCommunity.id : null
         }, function (error) {
           done(error);
         });

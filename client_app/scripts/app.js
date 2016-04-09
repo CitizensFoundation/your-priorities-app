@@ -1,7 +1,12 @@
 var splashDiv;
 
 var setupLocale = function (locale) {
-  window.locale = locale;
+  var storedLocale = localStorage.getItem('yp-user-locale');
+  if (storedLocale) {
+    window.locale = storedLocale;
+  } else {
+    window.locale = locale;
+  }
   i18n.init({ lng: window.locale }, function(loaded) {
     var app = document.querySelector("#app");
     if (app) {

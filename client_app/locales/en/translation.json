@@ -1,5 +1,9 @@
 {
 
+  "notification": {
+    "passwordResetAndLoggedIn": "Your password has been changed and you are now logged in."
+  },
+
   "activity": {
     "post": {
       "new": "New idea",
@@ -163,6 +167,11 @@
     "name": "Full name",
     "email": "Email",
     "password": "Password",
+    "forgotPassword": "Create New password",
+    "forgotPasswordInstructions": "Enter you email address and we will send you an email with a link you can use to create a new password.",
+    "forgotPasswordEmailHasBeenSent": "Email with password reset instructions has been sent.",
+    "resetPassword": "Reset your password",
+    "resetPasswordInstructions": "Create a new password that is not easy to guess",
     "login": "Login",
     "create": "Create",
     "cancel": "Cancel",
@@ -175,6 +184,7 @@
     "completeForm": "Fill our the form correctly",
     "loginNotAuthorized": "Email or password wrong"
   },
+
   "socialMedia": {
     "other": "Other social media"
   },

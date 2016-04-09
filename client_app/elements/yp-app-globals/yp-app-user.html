@@ -21,8 +21,6 @@
     </style>
 
     <yp-session id="session"></yp-session>
-    <yp-forgot-password id="forgotPassword"></yp-forgot-password>
-    <yp-reset-password id="resetPassword"></yp-reset-password>
 
     <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
     <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
@@ -146,11 +144,13 @@
         },
 
         _forgotPassword: function () {
-          this.$.forgotPassword.open();
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("forgotPassword");
+          dialog.open();
         },
 
         _resetPassword: function (event, detail) {
-          this.$.resetPassword.open(detail);
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("resetPassword");
+          dialog.open(detail);
         },
 
         getUser: function () {

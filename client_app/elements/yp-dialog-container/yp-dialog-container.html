@@ -10,15 +10,21 @@
 <link rel="import" href="../yp-domain/yp-domain-edit.html">
 <link rel="import" href="../yp-user/yp-user-edit.html">
 <link rel="import" href="../yp-user/yp-login.html">
+<link rel="import" href="../yp-user/yp-forgot-password.html">
+<link rel="import" href="../yp-user/yp-reset-password.html">
 
 <dom-module id="yp-dialog-container">
   <template>
 
     <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
 
-    <yp-login id="userLogin"></yp-login>
+    <yp-login id="userLogin" on-yp-forgot-password="_forgotPassword"></yp-login>
 
     <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
+
+    <yp-forgot-password id="forgotPassword"></yp-forgot-password>
+
+    <yp-reset-password id="resetPassword"></yp-reset-password>
 
     <yp-domain-edit id="domainEdit"></yp-domain-edit>
 
@@ -42,6 +48,10 @@
 
       getDialog(idName) {
         return this.$$("#"+idName);
+      },
+
+      _forgotPassword: function () {
+        this.$.forgotPassword.open();
       }
 
     });

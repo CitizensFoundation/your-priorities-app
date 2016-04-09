@@ -23,6 +23,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     // More info: https://visionmedia.github.io/page.js/
     page('/', scrollToTop, function () {
       app.route = 'home';
+      // TODO: Do we want to do this each time?
       document.querySelector('#appGlobals').reBoot();
     });
 
@@ -84,7 +85,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     page('/user/reset_password/:resetPasswordToken', scrollToTop, function (data) {
       app.route = 'home';
       app.params = data.params;
-      window.appUser.fire("yp-reset-password", data.params.resetPasswordToken);
+      Polymer.Base.async(function() {
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("resetPassword");
+          dialog.open(data.params.resetPasswordToken);
+      }, 500);
     });
 
     // add #! before urls
