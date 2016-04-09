@@ -1,12 +1,14 @@
 var splashDiv;
 
 var setupLocale = function (locale) {
+
   var storedLocale = localStorage.getItem('yp-user-locale');
   if (storedLocale) {
     window.locale = storedLocale;
   } else {
     window.locale = locale;
   }
+
   i18n.init({ lng: window.locale }, function(loaded) {
     var app = document.querySelector("#app");
     if (app) {
@@ -19,12 +21,6 @@ var setupLocale = function (locale) {
     document.dispatchEvent(event);
   });
 };
-
-var event = new CustomEvent("name-of-event", { "detail": "Example of an event" });
-
-// Dispatch/Trigger/Fire the event
-document.dispatchEvent(event);
-
 
 var setupBetterReykjavikSplash = function () {
   splashDiv = document.createElement("div");

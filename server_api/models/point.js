@@ -79,8 +79,6 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       createComment: function (req, options, callback) {
-        var parentPointId, imageId;
-
         options.content = options.comment.content;
         delete options.comment;
 
@@ -91,21 +89,46 @@ module.exports = function(sequelize, DataTypes) {
         options.user_agent = req.useragent.source;
         options.ip_address = req.clientIp;
 
-        sequelize.models.Point.build(options).save().then(function (point) {
-          options.point_id = point.id;
-          var pointRevision =  sequelize.models.PointRevision.build(options);
-          pointRevision.save().then(function () {
-            sequelize.models.AcActivity.createActivity({
-              type: 'activity.point.comment.new',
-              userId: options.user_id,
-              pointId: options.point_id,
-              imageId: options.image_id,
-              access: sequelize.models.AcActivity.ACCESS_PUBLIC
-            }, function (error) {
-              callback(error);
+        async.series([
+          function (seriesCallback) {
+            if (options.parent_point_id) {
+              sequelize.models.Point.find({
+                where: {
+                  id: options.parent_point_id
+                },
+                attributes: ['id', 'group_id', 'post_id']
+              }).then(function (parentPoint) {
+                if (parentPoint) {
+                  options.group_id = parentPoint.group_id;
+                  options.post_id = options.post_id ? options.post_id : parentPoint.post_id;
+                }
+                seriesCallback();
+              }).catch(function (error) {
+                seriesCallback(error);
+              })
+            }
+          },
+
+          function (seriesCallback) {
+            sequelize.models.Point.build(options).save().then(function (point) {
+              options.point_id = point.id;
+              var pointRevision = sequelize.models.PointRevision.build(options);
+              pointRevision.save().then(function () {
+                sequelize.models.AcActivity.createActivity({
+                  type: 'activity.point.comment.new',
+                  userId: options.user_id,
+                  pointId: options.point_id,
+                  imageId: options.image_id,
+                  access: sequelize.models.AcActivity.ACCESS_PUBLIC
+                }, function (error) {
+                  seriesCallback(error);
+                });
+              })
+            }).catch(function (error) {
+              seriesCallback(error);
             });
-          })
-        }).catch(function (error) {
+          }
+        ], function (error) {
           callback(error);
         });
       },

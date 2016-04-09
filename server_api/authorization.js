@@ -1,6 +1,7 @@
 var auth = require('authorized');
 var models = require("./models");
 var log = require('./utils/logger');
+var toJson = require('./utils/to_json');
 
 // COMMON
 
@@ -28,10 +29,10 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
 
 auth.isLoggedIn = function (req, res, next) {
   if (req.isAuthenticated()) {
-    log.info('User is Logged in', { context: 'isLoggedInAuth', user: req.user });
+    log.info('User is Logged in', { context: 'isLoggedInAuth', user: toJson(req.user) });
     return next();
   } else {
-    log.info('User is Not Logged in', { context: 'isLoggedInAuth', user: req.user, errorStatus: 401});
+    log.info('User is Not Logged in', { context: 'isLoggedInAuth', user: toJson(req.user), errorStatus: 401});
     res.send(401, 'Unauthorized');
   }
 };

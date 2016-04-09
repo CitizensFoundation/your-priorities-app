@@ -70,7 +70,7 @@
             value: false
           },
 
-          currentDomain: {
+          domain: {
             type: Object
           },
 
@@ -125,17 +125,24 @@
           }
         },
 
+        setupGoogleAnalytics(domain) {
+          if (domain.public_api_keys && domain.public_api_keys && domain.public_api_keys.google && domain.public_api_keys.google.analytics_tracking_id) {
+            ga('create', domain.public_api_keys.google.analytics_tracking_id, 'auto');
+          }
+        },
+
         _bootResponse: function (event, detail) {
-          this.requestInProgress = false;
-          this.currentDomain = detail.response.domain;
+          this.set('requestInProgress', false);
+          this.set('domain', detail.response.domain);
+          this.setupGoogleAnalytics(this.domain);
           var hash = window.location.hash;
           if (hash===null || hash==="") {
             if (detail.response.community_id) {
               page("#!/community/"+detail.response.community_id);
             } else {
-              page("#!/domain/" + this.currentDomain.id);
-              this.fire("change-header", { headerTitle: this.currentDomain.domain_name,
-                headerDescription: this.currentDomain.description});
+              page("#!/domain/" + this.domain.id);
+              this.fire("change-header", { headerTitle: this.domain.domain_name,
+                headerDescription: this.domain.description});
             }
           }
           this._removeSplashWithDelay();

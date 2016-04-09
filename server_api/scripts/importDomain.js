@@ -367,7 +367,10 @@ async.series([
     console.log('Processing domain '+domain);
     domain['ip_address'] = ip.address();
     domain['user_agent'] = 'yrpri script';
-    domain['default_locale'] = 'is';
+    if (!domain.default_locate) {
+      domain['default_locale'] = 'en';
+    }
+    domain.public_api_keys = { google: { analytics_tracking_id: domain['google_analytics_code'] } };
 
     models.Domain.build(domain).save().then(function (domain) {
       if (domain) {
