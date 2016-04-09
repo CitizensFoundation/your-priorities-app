@@ -58,18 +58,19 @@
     },
 
     _formResponse: function (event, detail) {
+      debugger;
       if (typeof this._customRedirect == 'function') {
-        this._customRedirect(detail.id);
+        this._customRedirect(detail.response.id);
       }
       this._clear();
     },
 
     _setupNewUpdateState: function () {
       if (this.new) {
-        this.saveText = window.i18n.t('create');
+        this.saveText = window.i18nTranslation.t('create');
         this.method = "POST";
       } else {
-        this.saveText = window.i18n.t('update');
+        this.saveText = window.i18nTranslation.t('update');
         this.method = "PUT";
       }
       this._setupTranslation();

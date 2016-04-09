@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
@@ -72,7 +73,9 @@
       }
     </style>
 
-    <template is="dom-if" if="[[appReady]]">
+    <iron-signals on-iron-signal-yp-i18n-ready="_i18nReady"></iron-signals>
+
+    <template is="dom-if" if="[[appAndI18nReady]]" restamp>
       <yp-dialog-container id="dialogContainer"></yp-dialog-container>
 
       <!--    <material-search id="search" narrow="[[narrow]]"
@@ -218,7 +221,33 @@
           type: Boolean,
           notify: true,
           value: false
+        },
+
+        i18nReady: {
+          type: Boolean,
+          notify: true,
+          value: false
+        },
+
+        appAndI18nReady: {
+          type: Boolean,
+          notify: true,
+          value: false
         }
+      },
+
+      observers: [
+        '_isAppAndI18nReady(appReady, i18nReady)'
+      ],
+
+      _isAppAndI18nReady: function (appReady, i18nReady) {
+        if ((appReady && i18nReady) || (appReady && window.i18nTranslation)) {
+          this.set('appAndI18nReady', true);
+        }
+      },
+
+      _i18nReady: function () {
+        this.set('i18nReady', true);
       },
 
       _appReady: function () {

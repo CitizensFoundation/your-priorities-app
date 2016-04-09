@@ -195,7 +195,7 @@
       },
 
       _openEdit: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-dialog-container #domainEdit');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("domainEdit");
         dialog.setup(this.domain, false, this._refresh);
         dialog.open('edit', { domainId: this.domain.id });
       },

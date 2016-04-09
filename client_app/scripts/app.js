@@ -2,9 +2,24 @@ var splashDiv;
 
 var setupLocale = function (locale) {
   window.locale = locale;
-  i18n.init({ lng: window.locale });
-  window.i18n = i18n;
+  i18n.init({ lng: window.locale }, function(loaded) {
+    var app = document.querySelector("#app");
+    if (app) {
+      app._i18nReady();
+    } else {
+      console.error("App not ready when i18n is ready");
+    }
+    window.i18nTranslation = i18n;
+    var event = new CustomEvent("iron-signal", { detail: { name: 'yp-18n-ready', data: null } } );
+    document.dispatchEvent(event);
+  });
 };
+
+var event = new CustomEvent("name-of-event", { "detail": "Example of an event" });
+
+// Dispatch/Trigger/Fire the event
+document.dispatchEvent(event);
+
 
 var setupBetterReykjavikSplash = function () {
   splashDiv = document.createElement("div");

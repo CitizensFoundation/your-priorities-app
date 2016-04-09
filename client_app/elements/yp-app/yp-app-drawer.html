@@ -69,7 +69,9 @@
       },
 
       _openEdit: function () {
-        this.$$("#userEdit").open('edit', { userId: this.user.id });
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userEdit");
+        dialog.setup(this.user, false, null);
+        dialog.open('edit', { userId: this.user.id });
       },
 
       routeChanged: function(newValue, oldValue) {

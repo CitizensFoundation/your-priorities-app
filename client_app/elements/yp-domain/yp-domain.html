@@ -95,7 +95,6 @@
     </yp-page>
 
     <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
-    <yp-community-edit id="communityNew" on-iron-form-response="_refresh"></yp-community-edit>
   </template>
 
   <script>
@@ -196,12 +195,15 @@
       },
 
       _refresh: function () {
+        debugger;
         this.$.ajax.generateRequest();
       },
 
       _newCommunity: function () {
         window.appGlobals.activity('open', 'newCommunity');
-        this.$.communityNew.open('new', { domainId: this.domainId });
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("communityEdit");
+        dialog.setup(null, true, this._refresh.bind(this));
+        dialog.open('new', { domainId: this.domainId });
       },
 
       _response: function (event, detail, sender) {

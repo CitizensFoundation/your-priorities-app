@@ -132,13 +132,11 @@
 
       uploadedHeaderImageId: {
         type: String
-      },
+      }
     },
 
     _customRedirect: function (communityId) {
-      if (this.community) {
-        page("#!/community/"+this.community.id);
-      }
+      page("#!/community/"+communityId);
     },
 
     _communityChanged: function (newValue, oldValue) {
@@ -152,20 +150,30 @@
     },
 
     _clear: function () {
-      this.community = { name: '', description: '', access: 2 };
+      this.set('community', { name: '', description: '', access: 9 });
       this.uploadedLogoImageId = null;
       this.uploadedHeaderImageId = null;
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
     },
 
+    setup: function (community, newNotEdit, refreshFunction) {
+      if (!community) {
+        this.set('community', { name: '', description: '', access: 0 });
+      }
+      this.set('new', newNotEdit);
+      this._setupTranslation();
+    },
+
     _setupTranslation: function () {
       if (this.new) {
-        this.editHeaderText = this.t('community.new');
-        this.toastText = this.t('community.toast.created');
+        this.set('editHeaderText', this.t('community.new'));
+        this.set('toastText', this.t('community.toast.created'));
+        this.set('saveText', this.t('create'));
       } else {
-        this.editHeaderText = this.t('Update community info');
-        this.toastText = this.t('community.toast.updated');
+        this.set('editHeaderText', this.t('Update community info'));
+        this.set('toastText', this.t('community.toast.updated'));
+        this.set('saveText', this.t('update'));
       }
     }
   });
