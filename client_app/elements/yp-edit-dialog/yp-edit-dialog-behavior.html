@@ -60,7 +60,10 @@
     _formResponse: function (event, detail) {
       debugger;
       if (typeof this._customRedirect == 'function') {
-        this._customRedirect(detail.response.id);
+        this._customRedirect(detail.response);
+      }
+      if (typeof this.refreshFunction == 'function') {
+        this.refreshFunction(detail.response);
       }
       this._clear();
     },

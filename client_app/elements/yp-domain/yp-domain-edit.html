@@ -123,8 +123,10 @@
       }
     },
 
-    _customRedirect: function (domainId) {
-      page("#!/domain/"+domainId);
+    _customRedirect: function (domain) {
+      if (this.new) {
+        page("#!/domain/"+domain.id);
+      }
     },
 
     _clear: function () {

@@ -135,8 +135,8 @@
       }
     },
 
-    _customRedirect: function (communityId) {
-      page("#!/community/"+communityId);
+    _customRedirect: function (community) {
+      page("#!/community/"+community.id);
     },
 
     _communityChanged: function (newValue, oldValue) {
@@ -162,6 +162,7 @@
         this.set('community', { name: '', description: '', access: 0 });
       }
       this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
     },
 
