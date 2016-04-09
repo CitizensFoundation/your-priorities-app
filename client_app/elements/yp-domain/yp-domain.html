@@ -207,6 +207,7 @@
 
       _response: function (event, detail, sender) {
         this.set('domain', detail.response);
+        window.appGlobals.setupGoogleAnalytics(this.domain);
         if (this.domain.DomainHeaderImages && this.domain.DomainHeaderImages.length>0) {
           this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);
         }
