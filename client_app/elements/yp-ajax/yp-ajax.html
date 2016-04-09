@@ -19,10 +19,6 @@
     paper-spinner {
       background: transparent;
     }
-
-    paper-dialog {
-      background-color: #FFF;
-    }
   </style>
   <template>
 
@@ -41,13 +37,6 @@
       on-response="_response"
       loading="{{loading}}">
     </iron-ajax>
-
-    <paper-dialog id="error">
-      <p id="errorText">[[errorText]]</p>
-      <div class="buttons">
-        <paper-button dialog-confirm autofocus on-tap="_resetErrorText">OK</paper-button>
-      </div>
-    </paper-dialog>
 
   </template>
 
@@ -160,16 +149,13 @@
       },
 
       showErrorDialog: function(errorText) {
-        this.errorText = errorText;
-        this.$$("#error").open();
-        var errorDialog = this.$$("#error");
-        this.moveDialogToTopDom(errorDialog);
-       // this.$.error.open();
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("errorDialog");
+        dialog.showErrorDialog(errorText);
       },
 
       _resetErrorText: function(event) {
-        this.$.error.close();
-        this.$.errorText="";
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("errorDialog");
+        dialog.resetErrorText();
       }
     })
   })();

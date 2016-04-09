@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../yp-ajax/yp-ajax-error-dialog.html">
 <link rel="import" href="../yp-delete-dialog/yp-delete-dialog.html">
 <link rel="import" href="../yp-category/yp-category-edit.html">
 <link rel="import" href="../yp-group/yp-group-edit.html">
@@ -10,6 +11,8 @@
 
 <dom-module id="yp-dialog-container">
   <template>
+
+    <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
 
     <yp-login id="userLogin"></yp-login>
 
