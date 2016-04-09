@@ -166,6 +166,7 @@
   "user": {
     "name": "Full name",
     "email": "Email",
+    "edit": "Edit user",
     "password": "Password",
     "forgotPassword": "Create New password",
     "forgotPasswordInstructions": "Enter you email address and we will send you an email with a link you can use to create a new password.",

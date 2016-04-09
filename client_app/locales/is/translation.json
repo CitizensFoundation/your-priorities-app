@@ -55,6 +55,7 @@
     "logout": "útskrá",
     "login": "innskrá",
     "create": "nýskrá",
+    "edit": "Uppfæra notanda",
     "newPassword": "nýtt lykilorð",
     "forgotPassword": "Búa til nýtt lykilorð",
     "forgotPasswordInstructions": "Sláðu inn netfang og við sendum þér póst með hlekk sem þú getur fylgt til að búa til nýtt lykilorð",

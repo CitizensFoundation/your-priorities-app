@@ -80,7 +80,11 @@ router.get('/isloggedin', function (req, res) {
   if (req.isAuthenticated() && req.user) {
     models.User.find({
       where: {id: req.user.id},
-      attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
+      attributes: models.User.defaultAttributesWithSocialMedia,
+      order: [
+        [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
+        [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
+        ],
       include: [{
         model: models.Endorsement,
         attributes: ['id', 'value', 'post_id'],

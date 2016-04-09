@@ -83,18 +83,28 @@ router.get('/:imageId/comments', auth.can('view image'), function(req, res) {
     where: {
       image_id: req.params.imageId
     },
+    order: [
+      ["created_at", "asc"]
+    ],
     include: [
       {
         model: models.PointRevision,
         include: [
           {
-            model: models.User
+            model: models.User,
+            attributes: models.User.defaultAttributesWithSocialMedia,
+            order: [
+              [ { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ]
+            ],
+            include: [
+              {
+                model: models.Image, as: 'UserProfileImages',
+                required: false
+              }
+            ]
           }
         ]
       }
-    ],
-    order: [
-      ["created_at", "asc"]
     ]
   }).then(function (comments) {
     log.info('Point Comment for Image', {context: 'comment', user: req.user ? toJson(req.user.simple()) : null });
