@@ -183,10 +183,7 @@
         </paper-material>
       </div>
       <template is="dom-if" if="[[headerMode]]">
-        <yp-post-edit new="false" id="postEdit" method="[[method]]" post="{{post}}" group="[[post.Group]]" on-iron-form-response="_refresh"></yp-post-edit>
-        <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('post.deleteConfirmation')]]"
-                          action="/api/posts/" action-id="[[post.id]]">
-        </yp-delete-dialog>
+
       </template>
     </template>
   </template>
@@ -241,7 +238,8 @@
       },
 
       _refresh: function () {
-        this.$$('#postEdit').selected = 0;
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
+        dialog.selected = 0;
         this.fire('refresh');
       },
 
@@ -249,12 +247,24 @@
         if (detail.item.id=="editMenuItem")
           this._openEdit();
         else if (detail.item.id=="deleteMenuItem")
-          this.$$("#deleteDialog").open();
+          this._openDelete();
         this.selectedMenuItem = null;
       },
 
       _openEdit: function () {
-        this.$$("#postEdit").open('edit', { postId: this.post.id });
+        window.appGlobals.activity('open', 'post.new');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
+        dialog.setup(this.post, this.group, false, this._refresh.bind(this));
+        dialog.open('edit', { postId: this.post.id });
+      },
+
+      _openDelete: function () {
+        window.appGlobals.activity('open', 'post.delete');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
+        dialog.setup('/api/posts/', this.post.id,
+          this.t('post.deleteConfirmation'),
+          this._onDeleted.bind(this));
+        dialog.open();
       },
 
       _onDeleted: function () {

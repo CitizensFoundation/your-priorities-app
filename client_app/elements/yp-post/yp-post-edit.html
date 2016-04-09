@@ -335,6 +335,14 @@
     _coverMediaTypeChanged: function(event, detail) {
     },
 
+    _customRedirect: function (post) {
+      if (post) {
+        page("#!/post/"+post.id);
+      } else {
+        console.warn('No post found on custom redirect');
+      }
+    },
+
     _clear: function () {
       if (this.new) {
         this.set('post', { name: '', description: '', pointFor: '', categoryId: null });
@@ -345,6 +353,18 @@
         this.set('uploadedHeaderImageId',null);
         this.$$("#imageFileUpload").clear();
       }
+    },
+
+    setup: function (post, group, newNotEdit, refreshFunction) {
+      if (group) {
+        this.set('group', group);
+      }
+      if (post) {
+        this.set('post', post);
+      }
+      this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
     },
 
     _setupTranslation: function () {
