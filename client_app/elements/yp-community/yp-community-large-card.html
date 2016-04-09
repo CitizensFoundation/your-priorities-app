@@ -153,9 +153,6 @@
           </paper-menu-button>
         </div>
       </paper-material>
-
-      <yp-community-edit new="false" id="communityEdit" community="{{community}}" on-iron-form-response="_refresh"></yp-community-edit>
-      </yp-delete-dialog>
     </template>
   </template>
 
@@ -166,6 +163,10 @@
       properties: {
         phoneSize: {
           type: Boolean
+        },
+
+        community: {
+          type: Object
         }
       },
 
@@ -193,19 +194,32 @@
         if (detail.item.id=="editMenuItem")
           this._openEdit();
         else if (detail.item.id=="deleteMenuItem")
-          this.$$("#deleteDialog").open();
+          this._openDelete();
         this.selectedMenuItem = null;
       },
 
+      _openDelete: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
+        dialog.setup('/api/communities/', this.community.id,
+                     this.t('community.deleteConfirmation'),
+                     this._onDeleted.bind(this));
+        dialog.open();
+      },
+
       _openEdit: function () {
-        this.$$("#communityEdit").open('edit', {communityId: this.community.id });
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("communityEdit");
+        dialog.setup(this.community, false, this._refresh.bind(this));
+        dialog.open('edit', { communityId: this.community.id });
       },
 
       _onDeleted: function () {
         page("#!/domain/"+this.community.domain_id);
       },
 
-      _refresh: function () {
+      _refresh: function (community) {
+        if (community) {
+          this.set('community', community);
+        }
         this.fire("update-community");
       }
     });

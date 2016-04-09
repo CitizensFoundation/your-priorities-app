@@ -136,7 +136,11 @@
     },
 
     _customRedirect: function (community) {
-      page("#!/community/"+community.id);
+      if (community) {
+        page("#!/community/"+community.id);
+      } else {
+        console.warn('No community found on custom redirect');
+      }
     },
 
     _communityChanged: function (newValue, oldValue) {
@@ -160,6 +164,8 @@
     setup: function (community, newNotEdit, refreshFunction) {
       if (!community) {
         this.set('community', { name: '', description: '', access: 0 });
+      } else {
+        this.set('community', community);
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);

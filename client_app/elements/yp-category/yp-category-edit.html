@@ -19,7 +19,7 @@
     <style>
     </style>
 
-    <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" icon="add"  action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
       <paper-input id="name"
@@ -120,8 +120,13 @@
       this.set('uploadedHeaderImageId', image.id);
     },
 
-    _customRedirect: function (categoryId) {
-      //page("#!/category/"+categoryId);
+    setup: function (group, newNotEdit, refreshFunction) {
+      this.set('new', newNotEdit);
+      if (newNotEdit) {
+        this.set('method','POST');
+      }
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
     },
 
     _clear: function () {

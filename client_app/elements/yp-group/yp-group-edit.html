@@ -129,9 +129,11 @@
       },
     },
 
-    _customRedirect: function (groupId) {
-      if (this.group) {
-        page("#!/group/"+this.group.id);
+    _customRedirect: function (group) {
+      if (group) {
+        page("#!/group/"+group.id);
+      } else {
+        console.warn('No group found on custom redirect');
       }
     },
 
@@ -151,6 +153,17 @@
       this.uploadedHeaderImageId = null;
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
+    },
+
+    setup: function (group, newNotEdit, refreshFunction) {
+      if (!group) {
+        this.set('group', { name: '', objectives: '', access: 0 });
+      } else {
+        this.set('group', group);
+      }
+      this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
     },
 
     _setupTranslation: function () {

@@ -53,13 +53,23 @@
 
         actionId: {
           type: String
+        },
+
+        onDeletedFunction: {
+          type: Function,
+          value: null
         }
+      },
+
+      setup: function (action, actionId, confirmationText, onDeletedFunction) {
+        this.set('action', action);
+        this.set('actionId', actionId);
+        this.set('confirmationText', confirmationText);
+        this.set('onDeletedFunction', onDeletedFunction);
       },
 
       open: function () {
         this.$$("#deleteConfirmationDialog").open();
-        var deleteDialog = this.$$("#deleteConfirmationDialog");
-        this.moveDialogToTopDom(deleteDialog);
       },
 
       _delete: function () {
@@ -70,6 +80,9 @@
 
       _deleteResponse: function () {
         this.fire("deleted");
+        if (this.onDeletedFunction) {
+          this.onDeletedFunction();
+        }
       }
     });
   </script>

@@ -147,11 +147,6 @@
           </paper-menu>
         </paper-menu-button>
       </paper-card>
-      <yp-group-edit new="false" id="groupEdit" group="{{group}}" on-iron-form-response="_refresh"></yp-group-edit>
-      <yp-category-edit new id="newCategory" group="[[group]]" on-iron-form-response="_refresh"></yp-category-edit>
-      <yp-delete-dialog id="deleteDialog" on-deleted="_onDeleted" confirmation-text="[[t('group.deleteConfirmation')]]"
-                        action="/api/groups/" action-id="[[group.id]]">
-      </yp-delete-dialog>
     </template>
   </template>
 
@@ -183,14 +178,38 @@
         if (detail.item.id=="editMenuItem")
           this._openEdit();
         else if (detail.item.id=="newCategoryMenuItem")
-          this._newCategory();
+          this._openCategoryEdit();
         else if (detail.item.id=="deleteMenuItem")
-          this.$$("#deleteDialog").open();
+          this._openDelete();
         this.selectedMenuItem = null;
       },
 
       _openEdit: function () {
-        this.$$("#groupEdit").open('edit', { groupId: this.group.id });
+        window.appGlobals.activity('open', 'group.new');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupEdit");
+        dialog.setup(this.group, false, this._refresh.bind(this));
+        dialog.open('edit', { groupId: this.group.id });
+      },
+
+      _openDelete: function () {
+        window.appGlobals.activity('open', 'group.delete');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
+        dialog.setup('/api/groups/', this.group.id,
+          this.t('group.deleteConfirmation'),
+          this._onDeleted.bind(this));
+        dialog.open();
+      },
+
+      _openCategoryEdit: function () {
+        window.appGlobals.activity('open', 'category.new');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("categoryEdit");
+        dialog.setup(this.community, true,
+          this._refreshCategory.bind(this));
+        dialog.open();
+      },
+
+      _refreshCategory: function (category) {
+        this.fire("update-group");
       },
 
       _onDeleted: function () {
@@ -198,11 +217,14 @@
       },
 
       _newCategory: function () {
-        window.appGlobals.activity('open', 'category.new');
+
         this.$$("#newCategory").open('new', { groupId: this.group.id });
       },
 
-      _refresh: function () {
+      _refresh: function (group) {
+        if (group) {
+          this.set('group', group);
+        }
         this.fire("update-group");
       }
     });

@@ -1,5 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../yp-delete-dialog/yp-delete-dialog.html">
+<link rel="import" href="../yp-category/yp-category-edit.html">
+<link rel="import" href="../yp-group/yp-group-edit.html">
 <link rel="import" href="../yp-community/yp-community-edit.html">
 <link rel="import" href="../yp-domain/yp-domain-edit.html">
 <link rel="import" href="../yp-user/yp-user-edit.html">
@@ -7,10 +10,21 @@
 
 <dom-module id="yp-dialog-container">
   <template>
+
     <yp-login id="userLogin"></yp-login>
+
     <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
+
     <yp-domain-edit id="domainEdit"></yp-domain-edit>
+
     <yp-community-edit id="communityEdit"></yp-community-edit>
+
+    <yp-group-edit new id="groupEdit"></yp-group-edit>
+
+    <yp-category-edit new id="categoryEdit"></yp-category-edit>
+
+    <yp-delete-dialog id="deleteDialog"></yp-delete-dialog>
+
   </template>
 
   <script>
@@ -19,7 +33,7 @@
 
       getDialog(idName) {
         return this.$$("#"+idName);
-      },
+      }
 
     });
   </script>

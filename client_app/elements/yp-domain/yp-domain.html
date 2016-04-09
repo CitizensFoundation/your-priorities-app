@@ -195,14 +195,13 @@
       },
 
       _refresh: function () {
-        debugger;
         this.$.ajax.generateRequest();
       },
 
       _newCommunity: function () {
         window.appGlobals.activity('open', 'newCommunity');
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("communityEdit");
-        dialog.setup(null, true, this._refresh.bind(this));
+        dialog.setup(null, true, null);
         dialog.open('new', { domainId: this.domainId });
       },
 

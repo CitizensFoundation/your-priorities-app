@@ -75,7 +75,7 @@
     </yp-page>
 
     <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
-    <yp-group-edit new id="groupEdit" on-iron-form-response="_refresh"></yp-group-edit>
+
   </template>
 
   <script>
@@ -187,7 +187,9 @@
 
       _newGroup: function () {
         window.appGlobals.activity('open', 'newGroup');
-        this.$$('#groupEdit').open('new', {communityId: this.communityId});
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupEdit");
+        dialog.setup(null, true, null);
+        dialog.open('new', { communityId: this.communityId });
       },
 
       _response: function (event, detail, sender) {
