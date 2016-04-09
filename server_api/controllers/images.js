@@ -175,7 +175,10 @@ router.get('/:postId/user_images', auth.can('view post'), function(req, res) {
       {
         model: models.Image,
         as: 'PostUserImages',
-        required: true
+        required: true,
+        where: {
+          deleted: false
+        }
       }
     ]
   }).then(function(post) {
@@ -282,7 +285,7 @@ router.put('/:postId/user_images', auth.can('add post user images'), function(re
   }
 });
 
-router.delete('/:imageId/user_images', auth.can('edit post'), function(req, res) {
+router.delete('/:postId/:imageId/user_images', auth.can('edit post'), function(req, res) {
   deleteImage(req.params.imageId, function (error) {
     if (error) {
       sendPostOrError(res, null, 'delete post user image', req.user, error);

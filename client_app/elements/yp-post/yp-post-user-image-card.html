@@ -58,11 +58,6 @@
         </div>
       </div>
       <yp-point-comment-list image="[[image]]"></yp-point-comment-list>
-      <yp-post-user-image-edit id="userImageEdit" image="[[image]]" on-iron-form-response="_refresh"></yp-post-user-image-edit>
-
-      <yp-delete-dialog id="deleteDialog" on-deleted="_refresh" confirmation-text="[[t('post.photoDeleteConfirmation')]]"
-                        action="/api/images/" action-id="[[image.id]]/user_images">
-      </yp-delete-dialog>
     </paper-material>
   </template>
 
@@ -88,15 +83,23 @@
         },
 
         _openEdit: function () {
-          this.$$("#userImageEdit").open('edit', { postId: this.post.id, userImages: true });
+          window.appGlobals.activity('open', 'userImage.edit');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userImageEdit");
+          dialog.setup(this.post, this.image, false, this._refresh.bind(this));
+          dialog.open('edit', { postId: this.post.id, userImages: true });
+        },
+
+        _openDelete: function () {
+          window.appGlobals.activity('open', 'userImage.delete');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
+          dialog.setup('/api/images/', this.post.id+'/'+this.image.id+'/user_images',
+            this.t('userImage.deleteConfirmation'),
+            this._refresh.bind(this));
+          dialog.open();
         },
 
         _refresh: function () {
           this.fire('refresh');
-        },
-
-        _openDelete: function () {
-          this.$$("#deleteDialog").open();
         },
 
         _imageUrl: function (image) {

@@ -45,6 +45,7 @@
   },
 
   "post": {
+    "description": "Description",
     "formInvalid": "Complete filling out the form",
     "status": "Status of this post",
     "new": "New post",

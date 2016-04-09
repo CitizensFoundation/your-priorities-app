@@ -144,6 +144,22 @@
           this.$$("#imageFileUpload").clear();
         },
 
+        setup: function (post, image, newNotEdit, refreshFunction) {
+          if (image) {
+            this.set('image', image);
+          } else {
+            this.set('image', { description: '' , photographerName: '' })
+          }
+          if (post) {
+            this.set('post', post);
+          } else {
+            this.set('post', null);
+          }
+          this.set('new', newNotEdit);
+          this.set('refreshFunction', refreshFunction);
+          this._setupTranslation();
+        },
+
         _setupTranslation: function () {
           if (this.new) {
             this.editHeaderText = this.t('post.photoNew');
