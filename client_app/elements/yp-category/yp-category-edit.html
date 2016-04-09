@@ -121,12 +121,11 @@
     },
 
     setup: function (group, newNotEdit, refreshFunction) {
+      this.set('group', group);
       this.set('new', newNotEdit);
-      if (newNotEdit) {
-        this.set('method','POST');
-      }
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
+      this._setupNewUpdateState();
     },
 
     _clear: function () {
