@@ -129,7 +129,6 @@
 
         setupGoogleAnalytics(domain) {
           if (domain.public_api_keys && domain.public_api_keys && domain.public_api_keys.google && domain.public_api_keys.google.analytics_tracking_id) {
-            debugger;
             ga('create', domain.public_api_keys.google.analytics_tracking_id, 'auto');
           }
         },
@@ -139,7 +138,6 @@
             ga('set', '&uid', user.id);
           }, 250); // Wait a bit to make sure google anlytics tracking id has been set up dynamatically
         },
-
 
         _bootResponse: function (event, detail) {
           this.set('requestInProgress', false);
@@ -238,7 +236,7 @@
         },
 
         sendToGoogleAnalytics: function (a, b, c, d) {
-          debugger;
+          //console.log("Google analytics "+a+" "+b+" "+c+" "+d);
           if (typeof ga == 'function') {
             if (c && d) {
               ga(a,b,c,d);
