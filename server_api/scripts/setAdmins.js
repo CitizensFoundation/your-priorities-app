@@ -2,7 +2,7 @@ var models = require('../models');
 var async = require('async');
 var ip = require('ip');
 
-var userEmail = 'robert@citizens.is';
+var userEmail = process.argv[2];
 var user;
 
 console.log("Adding "+userEmail+" to all public communities and groups + domains");
@@ -85,7 +85,13 @@ async.series([
             seriesCallback();
           }
         });
+      },
+      function() {
+        callback();
       });
     });
   }
-]);
+], function (error) {
+  console.log("Finished");
+  process.exit();
+});
