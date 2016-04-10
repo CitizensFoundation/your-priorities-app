@@ -108,9 +108,8 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       associate: function(models) {
-        Organization.hasMany(models.Group, { foreignKey: "organization_id" });
-        Organization.belongsTo(models.Domain, {foreignKey: "domain_id"});
-        Organization.belongsTo(models.Community, {foreignKey: "community_id"});
+        Organization.belongsTo(models.Domain);
+        Organization.belongsTo(models.Community);
         Organization.belongsTo(models.User);
         Organization.belongsToMany(models.Image, { as: 'OrganizationLogoImages', through: 'OrganizationLogoImage' });
         Organization.belongsToMany(models.Image, { as: 'OrganizationHeaderImages', through: 'OrganizationHeaderImage' });
