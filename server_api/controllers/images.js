@@ -84,7 +84,8 @@ router.get('/:imageId/comments', auth.can('view image'), function(req, res) {
       image_id: req.params.imageId
     },
     order: [
-      ["created_at", "asc"]
+      ["created_at", "asc"],
+      [ models.PointRevision, models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ]
     ],
     include: [
       {
@@ -93,9 +94,6 @@ router.get('/:imageId/comments', auth.can('view image'), function(req, res) {
           {
             model: models.User,
             attributes: models.User.defaultAttributesWithSocialMedia,
-            order: [
-              [ { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ]
-            ],
             include: [
               {
                 model: models.Image, as: 'UserProfileImages',

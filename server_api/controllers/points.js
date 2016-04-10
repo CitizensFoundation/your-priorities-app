@@ -75,7 +75,8 @@ router.get('/:parentPointId/comments', auth.can('view point'), function(req, res
       parent_point_id: req.params.parentPointId
     },
     order: [
-      ["created_at", "asc"]
+      ["created_at", "asc"],
+      [ models.PointRevision, models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ]
     ],
     include: [
       {
@@ -84,9 +85,6 @@ router.get('/:parentPointId/comments', auth.can('view point'), function(req, res
           {
             model: models.User,
             attributes: models.User.defaultAttributesWithSocialMedia,
-            order: [
-              [ { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ]
-            ],
             include: [
               {
                 model: models.Image, as: 'UserProfileImages',

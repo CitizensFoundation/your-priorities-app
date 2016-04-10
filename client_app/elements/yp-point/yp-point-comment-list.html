@@ -72,7 +72,7 @@
           <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
         </div>
       </div>
-      <template is="dom-if" if="[[open]]">
+      <template is="dom-if" if="[[open]]" restamp>
         <div class="layout vertical center-center listContainer">
           <iron-list id="list" items="[[comments]]" as="point">
             <template>

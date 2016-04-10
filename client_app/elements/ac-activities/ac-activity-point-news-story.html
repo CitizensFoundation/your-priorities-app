@@ -30,7 +30,7 @@
     </style>
     <div class="layout vertical center-center">
       <yp-point-news-story hide-user class="card" point="[[activity.Point]]"></yp-point-news-story>
-      <yp-point-comment-list point="[[activity.Point]]"></yp-point-comment-list>
+      <yp-point-comment-list id="pointCommentList" point="[[activity.Point]]"></yp-point-comment-list>
     </div>
   </template>
 
@@ -52,8 +52,10 @@
       },
 
       _activityChanged: function (newValue) {
-      },
-
+        if (newValue) {
+          this.$.pointCommentList.open = false;
+        }
+      }
     });
   </script>
 </dom-module>

@@ -266,18 +266,22 @@
       },
 
       _upVote: function(point) {
-        if (point.value == 0) {
+        if (point && point.value == 0) {
           return true;
+        } else if (!point) {
+          return false;
         } else {
           return point.value>0;
         }
       },
 
-      _downVote: function(point) {
-        if (point.value == 0) {
+      _downVote: function (point) {
+        if (point && point.value == 0) {
           return true;
+        } else if (!point) {
+          return false;
         } else {
-          return point.value<0;
+          return point.value < 0;
         }
       },
 
