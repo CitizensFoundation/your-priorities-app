@@ -43111,7 +43111,7 @@ value. `setMax` should move the slider to the maximum value.
 
               <template is="dom-if" if="[[_isNotActivityType(activity,'activity.point.newsStory.new')]]">
                 <div class="layout horizontal end-justified">
-                  <paper-button on-tap="_joinPost">[[t('participate')]]</paper-button>
+                  <paper-button data-args$="[[activity]]" on-tap="_joinPost">[[t('participate')]]</paper-button>
                 </div>
               </template>
             </paper-material>
@@ -43214,6 +43214,8 @@ value. `setMax` should move the slider to the maximum value.
       },
 
       _joinPost: function (event) {
+        var activity = event.target.getAttribute('data-args');
+        debugger;
         this.goToPost(event.model.activity.Post.id)
       },
 
