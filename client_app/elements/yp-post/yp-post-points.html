@@ -289,7 +289,7 @@
           var pointElement = document.createElement('yp-point');
           pointElement.point = point;
           pointElement.className += "inserted-outside-list";
-          materialElement.addChild(pointElement);
+          materialElement.appendChild(pointElement);
           if (point.value>0) {
             this.$$('#allUpPoints').insertBefore(materialElement, this.$$('#allUpPoints').firstChild);
           }
