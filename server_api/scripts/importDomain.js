@@ -1532,11 +1532,11 @@ async.series([
       var user = allUserModelsByOldIds[incoming.user_id];
       var group = allGroupsModelByOldIds[incoming.group_id];
       console.log('Processing admin user in group user ' + user.email+' for group '+group.name);
-      group.hasGroupAdmin(user).then(function(results) {
+      group.hasGroupAdmins(user).then(function(results) {
         console.log('Has user results: '+results);
         if (!results) {
           console.log('Adding user to group');
-          group.addGroupAdmin(user).then(function () {
+          group.addGroupAdmins(user).then(function () {
             callback();
           });
         } else {
@@ -1561,10 +1561,10 @@ async.series([
       models.Community.find({
         where: {id: group.community_id}
       }).then(function (community) {
-        community.hasCommunityAdmin(user).then(function(results) {
+        community.hasCommunityAdmins(user).then(function(results) {
           if (!results) {
             console.log('Adding user to community');
-            community.addCommunityAdmin(user).then(function () {
+            community.addCommunityAdmins(user).then(function () {
               callback();
             });
           } else {

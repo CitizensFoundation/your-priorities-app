@@ -82,6 +82,7 @@ module.exports = function(sequelize, DataTypes) {
         User.belongsToMany(models.Domain, { as: 'DomainAdmin', through: 'DomainAdmin' });
         User.belongsToMany(models.Community, { as: 'CommunityAdmin', through: 'CommunityAdmin' });
         User.belongsToMany(models.Group, { as: 'GroupAdmin', through: 'GroupAdmin' });
+        User.belongsToMany(models.Organization, { as: 'OrganizationAdmin', through: 'GroupAdmin' });
       }
     },
 

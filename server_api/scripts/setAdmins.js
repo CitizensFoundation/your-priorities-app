@@ -22,10 +22,10 @@ async.series([
   function(callback) {
     models.Domain.findAll({}).then(function (models) {
         async.eachSeries(models, function (model, seriesCallback) {
-          model.hasDomainAdmin(user).then(function (results) {
+          model.hasDomainAdmins(user).then(function (results) {
             if (!results) {
               console.log("Adding admin user for: "+model.name);
-              model.addDomainAdmin(user).then(seriesCallback);
+              model.addDomainAdmins(user).then(seriesCallback);
             } else {
               console.log("Already admin for for: "+model.name);
               seriesCallback();
@@ -46,10 +46,10 @@ async.series([
       }
     }).then(function (models) {
       async.eachSeries(models, function (model, seriesCallback) {
-        model.hasCommunityAdmin(user).then(function (results) {
+        model.hasCommunityAdmins(user).then(function (results) {
           if (!results) {
             console.log("Adding admin user for community: "+model.name);
-            model.addCommunityAdmin(user).then(function () {
+            model.addCommunityAdmins(user).then(function () {
               console.log("Im back");
               seriesCallback();
             });
@@ -73,10 +73,10 @@ async.series([
       }
     }).then(function (models) {
       async.eachSeries(models, function (model, seriesCallback) {
-        model.hasGroupAdmin(user).then(function (results) {
+        model.hasGroupAdmins(user).then(function (results) {
           if (!results) {
             console.log("Adding admin user for group: "+model.name);
-            model.addGroupAdmin(user).then(function () {
+            model.addGroupAdmins(user).then(function () {
               console.log("Im back");
               seriesCallback();
             });

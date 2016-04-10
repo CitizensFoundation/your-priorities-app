@@ -7,26 +7,18 @@ var toJson = require('../utils/to_json');
 // https://www.npmjs.org/package/enum for state of posts
 
 module.exports = function(sequelize, DataTypes) {
-  var Community = sequelize.define("Community", {
+  var Organization = sequelize.define("Organization", {
     name: { type: DataTypes.STRING, allowNull: false },
-    hostname: { type: DataTypes.STRING, allowNull: false },
-    access: { type: DataTypes.INTEGER, allowNull: false }, // 0: public, 1: closed, 2: secret
-    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    default_locale: { type: DataTypes.STRING },
-    google_analytics_code: { type: DataTypes.STRING, allowNull: true },
     description: DataTypes.TEXT,
+    access: { type: DataTypes.INTEGER, allowNull: false }, // 0: public, 1: closed, 2: secret
+    status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'active' },
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     website: DataTypes.TEXT,
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },
     weight: { type: DataTypes.INTEGER, defaultValue: 0 },
-    status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'active' },
-    counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
-    counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
-    counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
-    only_admins_can_create_groups: { type: DataTypes.BOOLEAN, defaultValue: false },
-    theme_id: { type: DataTypes.INTEGER, defaultValue: 0 },
-    other_social_media_info: DataTypes.JSONB
+    theme_id: { type: DataTypes.INTEGER, defaultValue: 0 }
   }, {
 
     defaultScope: {
@@ -37,7 +29,7 @@ module.exports = function(sequelize, DataTypes) {
 
     underscored: true,
 
-    tableName: 'communities',
+    tableName: 'organizations',
 
     instanceMethods: {
 
@@ -59,7 +51,7 @@ module.exports = function(sequelize, DataTypes) {
             where: {id: body.uploadedLogoImageId}
           }).then(function (image) {
             if (image)
-              this.addCommunityLogoImage(image);
+              this.addOrganizationLogoImage(image);
             done();
           }.bind(this));
         } else done();
@@ -71,7 +63,7 @@ module.exports = function(sequelize, DataTypes) {
             where: {id: body.uploadedHeaderImageId}
           }).then(function (image) {
             if (image)
-              this.addCommunityHeaderImage(image);
+              this.addOrganizationHeaderImage(image);
             done();
           }.bind(this));
         } else done();
@@ -103,29 +95,6 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_CLOSED: 1,
       ACCESS_SECRET: 2,
 
-      setYpCommunity: function (req,res,next) {
-        var hostname = sequelize.models.Domain.extractHost(req.headers.host);
-        if (!hostname && req.params.communityHostname)
-          hostname = req.params.communityHostname;
-        if (hostname && hostname!="" && hostname!="www" && hostname!="new") {
-          Community.find({
-            where: {hostname: hostname}
-          }).then(function (community) {
-            if (community) {
-              req.ypCommunity = community;
-              next();
-            } else {
-              log.warn('Cant find community', { user: toJson(req.user), context: 'setYpCommunity', err: 'Community not found', errorStatus: 404 });
-              req.ypCommunity = { id: null };
-              next();
-            }
-          }.bind(this));
-        } else {
-          req.ypCommunity = { id: null };
-          next();
-        }
-      },
-
       convertAccessFromRadioButtons: function(body) {
         var access = 0;
         if (body.public) {
@@ -139,16 +108,17 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       associate: function(models) {
-        Community.hasMany(models.Group, { foreignKey: "community_id" });
-        Community.belongsTo(models.Domain, {foreignKey: "domain_id"});
-        Community.belongsTo(models.User);
-        Community.belongsToMany(models.Image, { as: 'CommunityLogoImages', through: 'CommunityLogoImage' });
-        Community.belongsToMany(models.Image, { as: 'CommunityHeaderImages', through: 'CommunityHeaderImage' });
-        Community.belongsToMany(models.User, { as: 'CommunityUsers', through: 'CommunityUser' });
-        Community.belongsToMany(models.User, { as: 'CommunityAdmins', through: 'CommunityAdmin' });
+        Organization.hasMany(models.Group, { foreignKey: "organization_id" });
+        Organization.belongsTo(models.Domain, {foreignKey: "domain_id"});
+        Organization.belongsTo(models.Community, {foreignKey: "community_id"});
+        Organization.belongsTo(models.User);
+        Organization.belongsToMany(models.Image, { as: 'OrganizationLogoImages', through: 'OrganizationLogoImage' });
+        Organization.belongsToMany(models.Image, { as: 'OrganizationHeaderImages', through: 'OrganizationHeaderImage' });
+        Organization.belongsToMany(models.User, { as: 'OrganizationUsers', through: 'OrganizationUser' });
+        Organization.belongsToMany(models.User, { as: 'OrganizationAdmins', through: 'OrganizationAdmin' });
       }
     }
   });
 
-  return Community;
+  return Organization;
 };
