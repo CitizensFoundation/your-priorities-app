@@ -1,4 +1,4 @@
-var reallyUploadImages = false;
+var reallyUploadImages = true;
 
 var bcrypt = require('bcrypt');
 var models = require('../models');
