@@ -42291,6 +42291,7 @@ value. `setMax` should move the slider to the maximum value.
         width: 20px;
         padding-top: 16px;
         color: var(--primary-color-300);
+        padding-bottom: 24px;
       }
     </style>
 
@@ -44172,7 +44173,7 @@ value. `setMax` should move the slider to the maximum value.
           var pointElement = document.createElement('yp-point');
           pointElement.point = point;
           pointElement.className += "inserted-outside-list";
-          materialElement.addChild(pointElement);
+          materialElement.appendChild(pointElement);
           if (point.value>0) {
             this.$$('#allUpPoints').insertBefore(materialElement, this.$$('#allUpPoints').firstChild);
           }
