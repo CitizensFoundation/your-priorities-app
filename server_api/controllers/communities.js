@@ -25,6 +25,18 @@ var sendCommunityOrError = function (res, community, context, user, error, error
   }
 };
 
+router.post('/:communityId/news_story', auth.can('view community'), function(req, res) {
+  models.Point.createNewsStory(req, req.body, function (error) {
+    if (error) {
+      log.error('Could not save news story point on community', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Point News Story Created', {context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
 router.get('/:id', auth.can('view community'), function(req, res) {
   models.Community.find({
     where: { id: req.params.id },

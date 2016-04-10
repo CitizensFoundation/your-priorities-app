@@ -143,54 +143,6 @@ router.post('/:parentPointId/comment', auth.isLoggedIn, auth.can('view point'), 
   });
 });
 
-router.post('/:groupId/post/news_story', auth.isLoggedIn, auth.can('view group'), function(req, res) {
-  models.Point.createNewsStory(req, req.body, function (error) {
-    if (error) {
-      log.error('Could not save news story point on post', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
-      res.sendStatus(500);
-    } else {
-      log.info('Point News Story Created', {context: 'news_story', user: toJson(req.user.simple()) });
-      res.sendStatus(200);
-    }
-  });
-});
-
-router.post('/:groupId/group/news_story', auth.isLoggedIn, auth.can('view group'), function(req, res) {
-  models.Point.createNewsStory(req, req.body, function (error) {
-    if (error) {
-      log.error('Could not save news story point on group', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
-      res.sendStatus(500);
-    } else {
-      log.info('Point News Story Created', {context: 'news_story', user: toJson(req.user.simple()) });
-      res.sendStatus(200);
-    }
-  });
-});
-
-router.post('/:communityId/community/news_story', auth.isLoggedIn, auth.can('view community'), function(req, res) {
-  models.Point.createNewsStory(req, req.body, function (error) {
-    if (error) {
-      log.error('Could not save news story point on community', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
-      res.sendStatus(500);
-    } else {
-      log.info('Point News Story Created', {context: 'news_story', user: toJson(req.user.simple()) });
-      res.sendStatus(200);
-    }
-  });
-});
-
-router.post('/:domainId/domain/news_story', auth.isLoggedIn, function(req, res) {
-  models.Point.createNewsStory(req, req.body, function (error) {
-    if (error) {
-      log.error('Could not save news story point on domain', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
-      res.sendStatus(500);
-    } else {
-      log.info('Point News Story Created', {context: 'news_story', user: toJson(req.user.simple()) });
-      res.sendStatus(200);
-    }
-  });
-});
-
 router.post('/:groupId', auth.can('create point'), function(req, res) {
   var point = models.Point.build({
     group_id: req.params.groupId,

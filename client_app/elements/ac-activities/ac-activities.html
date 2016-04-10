@@ -127,7 +127,7 @@
                                   community-id="[[communityId]]"
                                   group-id="[[groupId]]"
                                   post-group-id="[[postGroupId]]"
-                                  post-id=[[postId]]"
+                                  post-id="[[postId]]"
                                   on-refresh="loadNewData">
         </yp-point-news-story-edit>
       </div>
@@ -368,6 +368,9 @@
         }
 
         this.$.list.fire('iron-resize');
+        this.async(function () {
+          this.$.list.fire('iron-resize');
+        }, 750);
       }
     });
   </script>

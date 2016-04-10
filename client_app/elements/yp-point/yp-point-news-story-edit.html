@@ -174,15 +174,15 @@
         if (this.point.content && this.point.content.length>2) {
           if (this.postId && this.postGroupId) {
             _.merge(body, { post_id: this.postId })
-            this.$.postNewsStoryAjax.url = '/api/points/'+this.postGroupId+'/post/news_story';
+            this.$.postNewsStoryAjax.url = '/api/groups/'+this.postGroupId+'/post/news_story';
           } else if (this.groupId) {
             _.merge(body, { group_id: this.groupId })
-            this.$.postNewsStoryAjax.url = '/api/points/'+this.groupId+'/group/news_story';
+            this.$.postNewsStoryAjax.url = '/api/groups/'+this.groupId+'/news_story';
           } else if (this.communityId) {
             _.merge(body, { community_id: this.communityId })
-            this.$.postNewsStoryAjax.url = '/api/points/'+this.communityId+'/community/news_story';
+            this.$.postNewsStoryAjax.url = '/api/communities/'+this.communityId+'/news_story';
           } else if (this.domainId) {
-            this.$.postNewsStoryAjax.url = '/api/points/'+this.domainId+'/domain/news_story';
+            this.$.postNewsStoryAjax.url = '/api/domains/'+this.domainId+'/news_story';
             _.merge(body, { domain_id: this.domainId })
           } else {
             console.error("Can't find send ids");

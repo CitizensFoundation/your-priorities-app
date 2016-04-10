@@ -25,6 +25,30 @@ var sendGroupOrError = function (res, group, context, user, error, errorStatus) 
   }
 };
 
+router.post('/:groupId/post/news_story', auth.can('view group'), function(req, res) {
+  models.Point.createNewsStory(req, req.body, function (error) {
+    if (error) {
+      log.error('Could not save news story point on post', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Point News Story Created', {context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.post('/:groupId/news_story', auth.can('view group'), function(req, res) {
+  models.Point.createNewsStory(req, req.body, function (error) {
+    if (error) {
+      log.error('Could not save news story point on group', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Point News Story Created', {context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
 router.post('/:communityId', auth.can('create group'), function(req, res) {
   var group = models.Group.build({
     name: req.body.name,
