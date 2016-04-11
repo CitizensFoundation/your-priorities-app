@@ -37672,18 +37672,18 @@ event and do your own custom submission:
                 <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
               </template>
 
-              <paper-input id="name" required="" minlength="15" name="name" type="text" label="[[t('name')]]" value="{{post.name}}" maxlength="60" char-counter="">
+              <paper-input id="name" required="" minlength="5" name="name" type="text" label="[[t('name')]]" value="{{post.name}}" maxlength="60" char-counter="">
               </paper-input>
 
 
-              <paper-textarea id="description" required="" minlength="15" name="description" value="{{post.description}}" label="[[t('post.description')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
+              <paper-textarea id="description" required="" minlength="10" name="description" value="{{post.description}}" label="[[t('post.description')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
               </paper-textarea>
             </div>
           </section>
 
           <template is="dom-if" restamp="" if="[[new]]">
             <section class="subContainer">
-              <paper-textarea id="pointFor" required="" minlength="15" name="pointFor" value="{{post.pointFor}}" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
+              <paper-textarea id="pointFor" required="" minlength="5" name="pointFor" value="{{post.pointFor}}" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
               </paper-textarea>
             </section>
           </template>
@@ -37911,9 +37911,13 @@ event and do your own custom submission:
     setup: function (post, group, newNotEdit, refreshFunction) {
       if (group) {
         this.set('group', group);
+      } else {
+        this.set('group', null);
       }
       if (post) {
         this.set('post', post);
+      } else {
+        this.set('post', null);
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
@@ -43215,7 +43219,6 @@ value. `setMax` should move the slider to the maximum value.
 
       _joinPost: function (event) {
         var activity = event.target.getAttribute('data-args');
-        debugger;
         this.goToPost(event.model.activity.Post.id)
       },
 
@@ -45035,7 +45038,7 @@ value. `setMax` should move the slider to the maximum value.
       _openEdit: function () {
         window.appGlobals.activity('open', 'post.new');
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
-        dialog.setup(this.post, this.group, false, this._refresh.bind(this));
+        dialog.setup(this.post, this.post.Group, false, this._refresh.bind(this));
         dialog.open('edit', { postId: this.post.id });
       },
 
