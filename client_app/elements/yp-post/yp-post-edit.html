@@ -95,7 +95,7 @@
 
               <paper-input id="name"
                            required
-                           minlength="15"
+                           minlength="5"
                            name="name"
                            type="text"
                            label="[[t('name')]]"
@@ -107,7 +107,7 @@
 
               <paper-textarea id="description"
                               required
-                              minlength="15"
+                              minlength="10"
                               name="description"
                               value="{{post.description}}"
                               label="[[t('post.description')]]"
@@ -123,7 +123,7 @@
             <section class="subContainer">
               <paper-textarea id="pointFor"
                               required
-                              minlength="15"
+                              minlength="5"
                               name="pointFor"
                               value="{{post.pointFor}}"
                               label="[[t('point.for')]]"
@@ -358,9 +358,13 @@
     setup: function (post, group, newNotEdit, refreshFunction) {
       if (group) {
         this.set('group', group);
+      } else {
+        this.set('group', null);
       }
       if (post) {
         this.set('post', post);
+      } else {
+        this.set('post', null);
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
