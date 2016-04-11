@@ -106,6 +106,36 @@ module.exports = function(sequelize, DataTypes) {
               }).catch(function (error) {
                 seriesCallback(error);
               })
+            } else {
+              seriesCallback();
+            }
+          },
+
+          function (seriesCallback) {
+            if (options.image_id) {
+              sequelize.models.Image.find({
+                where: {
+                  id: options.image_id
+                },
+                attributes: ['id', 'user_id' ],
+                include: [
+                  {
+                    model: sequelize.models.Post,
+                    as: 'PostUserImages',
+                    attributes: ['id','group_id']
+                  }
+                ]
+              }).then(function (image) {
+                if (image && image.PostUserImages && image.PostUserImages.length>0) {
+                  options.group_id = image.PostUserImages[0].group_id;
+                  options.post_id = image.PostUserImages[0].id;
+                }
+                seriesCallback();
+              }).catch(function (error) {
+                seriesCallback(error);
+              })
+            } else {
+              seriesCallback();
             }
           },
 
