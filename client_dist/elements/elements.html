@@ -37465,7 +37465,7 @@ event and do your own custom submission:
 
     <google-map-search id="mapSearch" map="[[map]]" on-google-map-search-results="_mapSearchResults"></google-map-search>
 
-    <google-map id="map" zoom="[[location.map_zoom]]" api-key="[[_googleMapsApiKey()]]" map="{{map}}" libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers="">
+    <google-map id="map" zoom="[[location.map_zoom]]" api-key="AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM" map="{{map}}" libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers="">
       <google-map-marker latitude="64.13897027178841" longitude="-21.876912117004395" id="marker"></google-map-marker>
     </google-map>
 
@@ -40508,15 +40508,6 @@ value. `setMax` should move the slider to the maximum value.
 
     _userLoggedIn: function (event, detail) {
       this.set('loggedInUser', detail);
-    },
-
-    setMoreToLoad: function () {
-      this.async(function () {
-        this.set('moreToLoad', true);
-        this.async(function () {
-          this._isLoadMoreElementInView();
-        }, 400);
-      }, 250);
     }
   }
 </script>
@@ -41609,7 +41600,7 @@ value. `setMax` should move the slider to the maximum value.
           </template>
 
           <template is="dom-if" if="[[_withCoverMediaType(post,'map')]]" restamp="">
-            <google-map class="map" libraries="places" fit-to-markers="" zoom="[[_zoomLevel(post)]]" map-type="[[_mapType(post)]]" api-key="[[_googleMapsApiKey()]]">
+            <google-map class="map" libraries="places" fit-to-markers="" zoom="[[_zoomLevel(post)]]" map-type="[[_mapType(post)]]" api-key="AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM">
               <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
             </google-map>
           </template>
@@ -44595,7 +44586,7 @@ value. `setMax` should move the slider to the maximum value.
             <template is="dom-if" if="[[post.location]]" restamp="">
               <template is="dom-if" if="[[mapActive]]" restamp="">
                 <paper-material class="mapContainer" elevation="3">
-                  <google-map api-key="[[_googleMapsApiKey()]]" id="map" libraries="places" class="map" map-type="[[post.location.mapType]]" zoom="[[post.location.map_zoom]]" fit-to-markers="">
+                  <google-map api-key="AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM" id="map" libraries="places" class="map" map-type="[[post.location.mapType]]" zoom="[[post.location.map_zoom]]" fit-to-markers="">
                     <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" id="marker"></google-map-marker>
                   </google-map>
                 </paper-material>
@@ -46470,7 +46461,7 @@ value. `setMax` should move the slider to the maximum value.
     <div class="layout vertical center-center">
       <template is="dom-if" if="[[posts]]">
         <paper-material elevation="3" class="mapContainer">
-          <google-map id="map" api-key="[[_googleMapsApiKey()]]" fit-to-markers="">
+          <google-map id="map" api-key="AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM" fit-to-markers="">
             <template is="dom-repeat" items="[[posts]]" as="post">
               <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" class="marker">
                 <a href="#!/post/[[post.id]]" target="_blank">[[post.name]]</a>
