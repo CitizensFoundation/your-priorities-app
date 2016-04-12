@@ -31,6 +31,7 @@ var setupBetterReykjavikSplash = function () {
   splashDiv.id = "splashBR";
   splashDiv.onclick = onSplashClick;
   document.body.appendChild(splashDiv);
+  document.title = "Betri Reykjavík";
 };
 
 var setupBetterIcelandSplash = function () {
@@ -38,6 +39,7 @@ var setupBetterIcelandSplash = function () {
   splashDiv.id = "splashBI";
   splashDiv.onclick = onSplashClick;
   document.body.appendChild(splashDiv);
+  document.title = "Betra Ísland";
 };
 
 var setupYourPrioritiesSplash = function () {
@@ -45,6 +47,7 @@ var setupYourPrioritiesSplash = function () {
   splashDiv.id = "splashYrPri";
   splashDiv.onclick = onSplashClick;
   document.body.appendChild(splashDiv);
+  document.title = "Your Priorities";
 };
 
 if (window.location.hostname.indexOf('betrireykjavik') > -1) {
