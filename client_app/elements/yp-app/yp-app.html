@@ -239,6 +239,13 @@
         '_isAppAndI18nReady(appReady, i18nReady)'
       ],
 
+      ready: function () {
+        console.log("yp-app is ready");
+        if (window.i18nTranslation) {
+          this._i18nReady();
+        }
+      },
+
       _isAppAndI18nReady: function (appReady, i18nReady) {
         if ((appReady && i18nReady) || (appReady && window.i18nTranslation)) {
           this.set('appAndI18nReady', true);

@@ -12,9 +12,13 @@ var setupLocale = function (locale) {
   i18n.init({ lng: window.locale }, function(loaded) {
     var app = document.querySelector("#app");
     if (app) {
-      app._i18nReady();
+      if (typeof app._i18nReady == 'function') {
+         app._i18nReady();
+       } else {
+        console.warn("App has not been upgraded to Polymer object when translation is ready");
+      }
     } else {
-      console.error("App not ready when i18n is ready");
+      console.warn("App not ready when i18n is ready");
     }
     window.i18nTranslation = i18n;
     var event = new CustomEvent("iron-signal", { detail: { name: 'yp-18n-ready', data: null } } );
@@ -69,3 +73,7 @@ function onSplashClick() {
   }
   document.body.classList.remove('loading');
 }
+
+window.addEventListener('WebComponentsReady', function(e) {
+  console.log("WebComponentsReady");
+});
