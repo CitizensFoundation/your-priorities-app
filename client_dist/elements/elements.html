@@ -48773,7 +48773,7 @@ value. `setMax` should move the slider to the maximum value.
         this.$.domainCard.setElevation(5);
         this.$.domainCard.lowerCardLater();
 
-        this.fire("change-header", { headerTitle: '',
+        this.fire("change-header", { headerTitle: null, documentTitle: this.domain.name,
                                      headerDescription: this.domain.description});
 
         if (this.communities.length>0) {
@@ -49130,6 +49130,10 @@ value. `setMax` should move the slider to the maximum value.
 
       onChangeHeader: function (event, header) {
         this.headerTitle = document.title = header.headerTitle;
+
+        if (header.documentTitle) {
+          document.title = header.documentTitle;
+        }
         this.headerDescription = header.headerDescription;
 
         //if (header.headerIcon)
