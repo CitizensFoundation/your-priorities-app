@@ -45,7 +45,7 @@
     <div class="layout vertical center-center">
       <template is="dom-if" if="[[posts]]">
         <paper-material elevation="3" class="mapContainer">
-          <google-map id="map" api-key="[[_googleMapsApiKey()]]" fit-to-markers>
+          <google-map id="map" api-key="AIzaSyASBKv5rJ3Tew7HRYEK6OS3R9hzr3pLEPM" fit-to-markers>
             <template is="dom-repeat" items="[[posts]]" as="post">
               <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" class="marker">
                 <a href="#!/post/[[post.id]]" target="_blank">[[post.name]]</a>
