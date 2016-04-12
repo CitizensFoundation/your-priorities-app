@@ -26,15 +26,6 @@
 
     _userLoggedIn: function (event, detail) {
       this.set('loggedInUser', detail);
-    },
-
-    setMoreToLoad: function () {
-      this.async(function () {
-        this.set('moreToLoad', true);
-        this.async(function () {
-          this._isLoadMoreElementInView();
-        }, 400);
-      }, 250);
     }
   }
 </script>
