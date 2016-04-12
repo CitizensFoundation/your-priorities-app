@@ -219,7 +219,7 @@
         this.$.domainCard.setElevation(5);
         this.$.domainCard.lowerCardLater();
 
-        this.fire("change-header", { headerTitle: '',
+        this.fire("change-header", { headerTitle: null, documentTitle: this.domain.name,
                                      headerDescription: this.domain.description});
 
         if (this.communities.length>0) {

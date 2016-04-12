@@ -283,6 +283,10 @@
 
       onChangeHeader: function (event, header) {
         this.headerTitle = document.title = header.headerTitle;
+
+        if (header.documentTitle) {
+          document.title = header.documentTitle;
+        }
         this.headerDescription = header.headerDescription;
 
         //if (header.headerIcon)
