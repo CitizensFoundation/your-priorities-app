@@ -64,7 +64,11 @@ router.get('/:groupId/admin_users', auth.can('edit group'), function (req, res) 
     ]
   }).then(function (group) {
     log.info('Got admin users', { context: 'admin_users', user: toJson(req.user.simple()) });
-    res.send(group.GroupAdmins);
+    if (group) {
+      res.send(group.GroupAdmins);
+    } else {
+      res.send([]);
+    }
   }).catch(function (error) {
     log.error('Could not get admin users', { err: error, context: 'admin_users', user: toJson(req.user.simple()) });
     res.sendStatus(500);
@@ -86,7 +90,11 @@ router.get('/:groupId/users', auth.can('edit group'), function (req, res) {
     ]
   }).then(function (group) {
     log.info('Got users', { context: 'users', user: toJson(req.user.simple()) });
-    res.send(group.GroupUsers);
+    if (group) {
+      res.send(group.GroupUsers);
+    } else {
+      res.send([]);
+    }
   }).catch(function (error) {
     log.error('Could not get admin users', { err: error, context: 'users', user: toJson(req.user.simple()) });
     res.sendStatus(500);

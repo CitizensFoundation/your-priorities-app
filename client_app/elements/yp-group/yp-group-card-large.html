@@ -138,7 +138,7 @@
           </div>
         </div>
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-        <paper-menu-button class="edit" hidden$="[[!hasAccess(group)]]">
+        <paper-menu-button class="edit" hidden$="[[!hasGroupAccess(group)]]">
           <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
           <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
             <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>

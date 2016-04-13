@@ -303,22 +303,69 @@
       }
     },
 
-    hasAccess: function(object) {
+    _hasAdminRights: function(objectId, adminRights) {
+      return _.find(adminRights, function(o) { return o.id == objectId; });
+    },
+
+    _hasAccess: function (object, objectId, adminRights) {
       if (object) {
         if (window.appUser && window.appUser.user) {
-          return (object.user_id === window.appUser.user.id) || (window.appUser.user.email==="robert@citizens.is" || window.appUser.user.email==="gunnar@citizens.is");
+          if (window.appUser.user.id == object.user_id) {
+            return true
+          } else {
+            if (window.appUser.adminRights) {
+              return this._hasAdminRights(objectId, adminRights)
+            } else {
+              return false;
+            }
+          }
         } else {
           return false;
         }
+      } else if (!window.appUser) {
+        return false;
       } else {
         console.error("No object in hasAccess");
+        return false;
+      }
+    },
+
+    hasImageAccess: function (image, post) {
+      return this._hasAccess(image, post.group_id, window.appUser.adminRights.GroupAdmins);
+    },
+
+    hasPostAccess: function (post) {
+      if (post) {
+        return this._hasAccess(post, post.group_id, window.appUser.adminRights.GroupAdmins);
+      } else {
+        console.error("No post in hasAccess");
+        return false;
+      }
+    },
+
+    hasGroupAccess: function (group) {
+      if (group) {
+        return this._hasAccess(group, group.id, window.appUser.adminRights.GroupAdmins);
+      } else {
+        console.error("No group in hasAccess");
+        return false;
+      }
+    },
+
+    hasCommunityAccess: function (community) {
+      if (community) {
+        return this._hasAccess(community, community.id, window.appUser.adminRights.CommunityAdmins);
+      } else {
+        console.error("No community in hasAccess");
+        return false;
       }
     },
 
     hasDomainAccess: function(domain) {
-      if (window.appUser && window.appUser.user) {
-        return window.appUser.user.email==="robert@citizens.is" || window.appUser.user.email==="gunnar@citizens.is";
+      if (domain) {
+        return this._hasAccess(domain, domain.id, window.appUser.adminRights.DomainAdmins);
       } else {
+        console.error("No domain in hasAccess");
         return false;
       }
     }

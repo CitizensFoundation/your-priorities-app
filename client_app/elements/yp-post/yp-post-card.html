@@ -172,7 +172,7 @@
             </div>
           </div>
           <template is="dom-if" if="[[headerMode]]">
-            <paper-menu-button class="edit" hidden$="[[!hasAccess(post)]]">
+            <paper-menu-button class="edit" hidden$="[[!hasPostAccess(post)]]">
               <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
               <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                 <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>

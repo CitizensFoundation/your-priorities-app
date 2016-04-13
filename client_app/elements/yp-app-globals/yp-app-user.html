@@ -23,6 +23,7 @@
     <yp-session id="session"></yp-session>
 
     <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
+    <yp-ajax id="adminRightsAjax" method="GET" url="/api/users/adminRights" on-response="_adminRightsResponse"></yp-ajax>
     <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
 
     <paper-toast id="loginToast" text="[[toastLoginTextCombined]]"></paper-toast>
@@ -80,6 +81,10 @@
 
           pointQualitiesIndex: {
             type: Object
+          },
+
+          adminRights: {
+            type: Object
           }
         },
 
@@ -117,6 +122,7 @@
         _handleLogin: function (user) {
           this._closeUserLogin();
           this.setUser(user);
+          debugger;
           this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.email;
           this.$.loginToast.show();
           if (this.loginForEditParams) {
@@ -179,6 +185,7 @@
         ready: function () {
           window.appUser = this;
           this.$.isLoggedInAjax.generateRequest();
+          this.$.adminRightsAjax.generateRequest();
         },
 
         updateEndorsementForPost: function (postId, newEndorsement) {
@@ -263,6 +270,10 @@
             this.setUser(detail.response);
             this.fire('iron-signal', {name: 'logged-in', data:  detail.response});
           }
+        },
+
+        _adminRightsResponse: function (event, detail) {
+          this.set('adminRights', detail.response);
         }
       });
     }());

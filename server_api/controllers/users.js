@@ -60,7 +60,7 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
       user.name = req.body.name;
       user.email = req.body.email;
       user.save().then(function () {
-        log.info('User Updated', { user: toJson(user), context: 'update', loggedInUser: toJson(req.user) });
+        log.info('User Updated', { user: toJson(user.simple()), context: 'update', loggedInUser: toJson(req.user.simple()) });
         user.setupImages(req.body, function (error) {
           sendUserOrError(res, user, 'setupImages', error);
         });
@@ -69,6 +69,85 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
       sendUserOrError(res, req.params.id, 'update', 'Not found', 404);
     }
   });
+});
+
+router.get('/adminRights', function (req, res) {
+  if (req.isAuthenticated()) {
+  } else {
+    log.info('User Not Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
+  }
+  if (req.isAuthenticated() && req.user) {
+    var adminAccess = {};
+    async.parallel([
+      function (seriesCallback) {
+        models.User.find({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Domain,
+              as: 'DomainAdmins',
+              attributes: ['id','name'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          adminAccess.DomainAdmins = user.DomainAdmins;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.find({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Community,
+              as: 'CommunityAdmins',
+              attributes: ['id','name'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          adminAccess.CommunityAdmins = user.CommunityAdmins;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.find({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Group,
+              as: 'GroupAdmins',
+              attributes: ['id','name'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          adminAccess.GroupAdmins = user.GroupAdmins;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      }
+    ], function (error) {
+      if (!error) {
+        log.info('User Sent Admin Rights', { user: toJson(req.user.simple()), context: 'adminRights'});
+        res.send(adminAccess);
+      } else {
+        log.error("User AdminRights Error", { context: 'adminRights', err: error, errorStatus: 500 });
+        res.sendStatus(500);
+      }
+    });
+  } else {
+    res.send('0');
+  }
 });
 
 router.get('/isloggedin', function (req, res) {
@@ -85,11 +164,12 @@ router.get('/isloggedin', function (req, res) {
         [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
         [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
         ],
-      include: [{
-        model: models.Endorsement,
-        attributes: ['id', 'value', 'post_id'],
-        required: false
-      },
+      include: [
+        {
+          model: models.Endorsement,
+          attributes: ['id', 'value', 'post_id'],
+          required: false
+        },
         {
           model: models.PointQuality,
           attributes: ['id', 'value', 'point_id'],
@@ -101,6 +181,12 @@ router.get('/isloggedin', function (req, res) {
         },
         {
           model: models.Image, as: 'UserHeaderImages',
+          required: false
+        },
+        {
+          model: models.Domain,
+          as: 'DomainAdmins',
+          attributes: ['id','name'],
           required: false
         }
       ]

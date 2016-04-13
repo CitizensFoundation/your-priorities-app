@@ -52,7 +52,7 @@
         <div class="photographer">
           [[image.photographer_name]]
         </div>
-        <div class="editMenu layout horizontal flex end-justified" hidden$="[[!hasAccess(image)]]">
+        <div class="editMenu layout horizontal flex end-justified" hidden$="[[!hasImageAccess(image, post)]]">
           <paper-icon-button icon="create" on-tap="_openEdit"></paper-icon-button>
           <paper-icon-button icon="clear" on-tap="_openDelete"></paper-icon-button>
         </div>
