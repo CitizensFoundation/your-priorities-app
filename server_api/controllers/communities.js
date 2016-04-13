@@ -112,7 +112,9 @@ router.post('/:domainId', auth.can('create community'), function(req, res) {
     log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
     community.updateAllExternalCounters(req, 'up', 'counter_communities', function () {
       community.setupImages(req.body, function(error) {
-        sendCommunityOrError(res, community, 'setupImages', req.user, error);
+        community.addCommunityAdmins(req.user).then(function (results) {
+          sendCommunityOrError(res, community, 'setupImages', req.user, error);
+        });
       });
     });
   }).catch(function(error) {

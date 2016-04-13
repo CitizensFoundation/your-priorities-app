@@ -329,6 +329,9 @@
         if (this.url!='' && this.latestProcessedActivityAt) {
           this.$.ajax.url = this.url + '?afterDate='+this.latestProcessedActivityAt;
           this.$.ajax.generateRequest();
+        } else if (!this.latestProcessedActivityAt) {
+          this.$.ajax.url = this.url;
+          this.$.ajax.generateRequest();
         }
       },
 
@@ -364,7 +367,9 @@
         }.bind(this));
 
         if (activities.length>0) {
-          this.set('latestProcessedActivityAt', activities[0].created_at);
+          if (!this.latestProcessedActivityAt || this.latestProcessedActivityAt < activities[0].created_at) {
+            this.set('latestProcessedActivityAt', activities[0].created_at);
+          }
           this.setMoreToLoad();
         }
 

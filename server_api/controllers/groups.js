@@ -117,8 +117,10 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
     log.info('Group Created', { group: toJson(group), context: 'create', user: toJson(req.user) });
     group.updateAllExternalCounters(req, 'up', 'counter_groups', function () {
       models.Group.addUserToGroupIfNeeded(group.id, req, function () {
-        group.setupImages(req.body, function(error) {
-          sendGroupOrError(res, group, 'setupImages', req.user, error);
+        group.addGroupAdmins(req.user).then(function (results) {
+          group.setupImages(req.body, function(error) {
+            sendGroupOrError(res, group, 'setupImages', req.user, error);
+          });
         });
       });
     })
