@@ -38,7 +38,7 @@
       }
 
       yp-point {
-        width: 440px;
+        width: 430px;
       }
 
       @media (max-width: 1024px) {
@@ -279,22 +279,17 @@
           if (!this.largeMode) {
             this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
           }
-
-
         },
 
         _insertNewPoint: function (point) {
-          var materialElement = document.createElement('paper-material');
-          materialElement.elevation = '1';
-          var pointElement = document.createElement('yp-point');
-          pointElement.point = point;
-          pointElement.className += "inserted-outside-list";
-          materialElement.appendChild(pointElement);
-          if (point.value>0) {
-            this.$$('#allUpPoints').insertBefore(materialElement, this.$$('#allUpPoints').firstChild);
-          }
-          else if (point.value<0) {
-            this.$$('#allDownPoints').insertBefore(materialElement, this.$$('#allDownPoints').firstChild);
+          if (this.largeMode) {
+            if (point.value>0) {
+              this.unshift('upPoints', point);
+            } else if (point.value<0) {
+              this.unshift('downPoints', point);
+            }
+          } else {
+            this.unshift('points', point);
           }
         },
 
