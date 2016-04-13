@@ -18,13 +18,35 @@
         background-color: #FFF;
       }
 
-      vaadin-grid {
+      iron-list {
         color: #000;
+        height: 500px;
+        width: 100%;
+      }
+
+      .userItem {
+        padding-right: 16px;
       }
     </style>
 
     <paper-dialog id="dialog">
       <h2>[[headerText]]</h2>
+      <iron-list items="[[users]]" as="user">
+        <template>
+          <div class="layout horizontal">
+            <div class="userItem">
+              [[user.id]]
+            </div>
+            <div class="userItem">
+              [[user.name]]
+            </div>
+            <div class="userItem">
+              [[user.email]]
+            </div>
+          </div>
+        </template>
+      </iron-list>
+
       <div class="buttons">
         <paper-button dialog-dismiss>OK</paper-button>
       </div>
@@ -111,18 +133,22 @@
       },
 
       _usersResponse: function (event, detail) {
-      //  this.set('users', detail.response);
+        this.set('users', detail.response);
       //  debugger;
       },
 
       setup: function (groupId, communityId, adminUsers) {
+        this.set('groupId', null);
+        this.set('communityId', null);
+        this.set('users', null);
+        this.set('adminUsers', adminUsers);
+
         if (groupId)
           this.set('groupId', groupId);
 
         if (communityId)
           this.set('communityId', communityId);
 
-        this.set('adminUsers', adminUsers);
         this._setupHeaderText();
       },
 
