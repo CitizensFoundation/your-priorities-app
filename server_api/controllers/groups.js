@@ -49,6 +49,50 @@ router.post('/:groupId/news_story', auth.can('view group'), function(req, res) {
   });
 });
 
+router.get('/:groupId/admin_users', auth.can('edit group'), function (req, res) {
+  models.Group.find({
+    where: {
+      id: req.params.groupId
+    },
+    include: [
+      {
+        model: models.User,
+        attributes: _.concat(models.User.defaultAttributesWithSocialMedia, ['created_at', 'last_login_at']),
+        as: 'GroupAdmins',
+        required: true
+      }
+    ]
+  }).then(function (group) {
+    log.info('Got admin users', { context: 'admin_users', user: toJson(req.user.simple()) });
+    res.send(group.GroupAdmins);
+  }).catch(function (error) {
+    log.error('Could not get admin users', { err: error, context: 'admin_users', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:groupId/users', auth.can('edit group'), function (req, res) {
+  models.Group.find({
+    where: {
+      id: req.params.groupId
+    },
+    include: [
+      {
+        model: models.User,
+        attributes: _.concat(models.User.defaultAttributesWithSocialMedia, ['created_at', 'last_login_at']),
+        as: 'GroupUsers',
+        required: true
+      }
+    ]
+  }).then(function (group) {
+    log.info('Got users', { context: 'users', user: toJson(req.user.simple()) });
+    res.send(group.GroupUsers);
+  }).catch(function (error) {
+    log.error('Could not get admin users', { err: error, context: 'users', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
 router.post('/:communityId', auth.can('create group'), function(req, res) {
   var group = models.Group.build({
     name: req.body.name,

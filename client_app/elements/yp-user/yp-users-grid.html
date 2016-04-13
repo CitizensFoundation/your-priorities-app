@@ -1,0 +1,201 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html" >
+<link rel="import" href="../../bower_components/paper-button/paper-button.html" >
+
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
+
+<link rel="import" href="yp-user-edit.html" >
+<link rel="import" href="yp-user-image.html" >
+
+<dom-module id="yp-users-grid">
+  <template>
+    <style>
+      paper-dialog {
+        width: 90%;
+        height: 90%;
+        background-color: #FFF;
+      }
+
+      vaadin-grid {
+        color: #000;
+      }
+    </style>
+
+    <paper-dialog id="dialog">
+      <h2>[[headerText]]</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>OK</paper-button>
+      </div>
+    </paper-dialog>
+
+    <yp-ajax id="ajax" on-response="_usersResponse"></yp-ajax>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-users-grid',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        users: {
+          type: Array,
+          notify: true
+        },
+
+        headerText: {
+          type: String
+        },
+
+        groupId: {
+          type: Number,
+          observer: '_groupIdChanged'
+        },
+
+        communityId: {
+          type: Number,
+          observer: '_communityIdChanged'
+        },
+
+        adminUsers: {
+          type: Boolean,
+          value: false
+        },
+
+        selected: {
+          type: Object
+        },
+
+        modelType: {
+          type: String
+        },
+
+        opened: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      ready: function () {
+      //  this.set('users', [{id: 1, name: 'robert', email:'robert@citizens.is' }]);
+        this.async(function () {
+       //   this.set('opened', true);
+       //   debugger;
+        },100);
+      },
+
+      _groupIdChanged: function (newGroupId) {
+        if (newGroupId) {
+          this.set('modelType', 'groups');
+          this._generateRequest(newGroupId);
+        }
+      },
+
+      _communityIdChanged: function (newCommunityId) {
+        if (newCommunityId) {
+          this.set('modelType', 'communities');
+          this._generateRequest(newCommunityId);
+        }
+      },
+
+      _generateRequest: function (id) {
+        var adminsOrUsers = this.adminUsers ? "admin_users" : "users";
+        this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/"+adminsOrUsers;
+        this.$.ajax.generateRequest();
+      },
+
+      _usersResponse: function (event, detail) {
+      //  this.set('users', detail.response);
+      //  debugger;
+      },
+
+      setup: function (groupId, communityId, adminUsers) {
+        if (groupId)
+          this.set('groupId', groupId);
+
+        if (communityId)
+          this.set('communityId', communityId);
+
+        this.set('adminUsers', adminUsers);
+        this._setupHeaderText();
+      },
+
+      open: function () {
+        this.set('opened', true);
+        this.$.dialog.open();
+      },
+
+      _setupHeaderText: function () {
+        if (this.groupId) {
+          if (this.adminUsers) {
+            this.set('headerText', this.t('group.admins'));
+          } else {
+            this.set('headerText', this.t('group.users'));
+          }
+        } else if (this.communityId) {
+          if (this.adminUsers) {
+            this.set('headerText', this.t('community.admins'));
+          } else {
+            this.set('headerText', this.t('community.users'));
+          }
+        }
+      },
+
+      ready2: function () {
+        /*
+        this.$.grid.columns[5].renderer = this._adminActionRenderer;
+
+        var filterElement = document.createElement('input');
+        filterElement.setAttribute('type', 'search');
+        filterElement.setAttribute('placeholder', 'Filter...');
+        filterElement.style.width = '100%';
+
+        var timer = 0;
+
+        function filter() {
+          clearTimeout(timer);
+          timer = setTimeout(grid.refreshItems.bind(grid), 500);
+        }
+
+        filterElement.addEventListener('keyup', filter);
+        filterElement.addEventListener('click', filter);
+
+        this.$.grid.items = function(params, callback) {
+          var filterValue = filterElement.value.toLowerCase();
+          var data = this.users.filter(function(val) {
+            return (val.toString().toLowerCase()).indexOf(filterValue) != -1;
+          });
+          var slice = data.slice(params.index, params.index + params.count);
+          callback(slice, data.length);
+        };
+
+        this.$.grid.then(function() {
+          this.$.grid.header.getCell(1, 0).content = filterElement;
+        }.bind(this));
+        */
+      },
+
+      _adminActionRenderer: function(cell) {
+        cell.element.innerHTML = '';
+        var child = document.createElement('progress');
+        child.setAttribute('value', cell.data);
+        cell.element.appendChild(child);
+      },
+
+      _onSelect: function() {
+        debugger;
+        if (this.$.grid.selection.selected().length === 0) {
+          this.selected = null;
+        } else {
+          this.selected = this.users[this.$.grid.selection.selected()];
+        }
+      }
+    });
+  </script>
+</dom-module>

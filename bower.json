@@ -13,17 +13,17 @@
     "platinum-elements": "PolymerElements/platinum-elements",
     "neon-elements": "PolymerElements/neon-elements",
     "page": "visionmedia/page.js#~1.6.3",
-    "vaadin-core-elements": "~0.3.0",
     "moment": "~2.11.2",
     "app-layout": "PolymerLabs/app-layout",
     "lodash-element": "~1.0.2",
     "moment-element": "~0.3.0",
     "re-captcha": "~1.1.1",
     "within-viewport": "~1.0.0",
-    "vaadin-icons": "~1.0.0-alpha2",
+    "vaadin-icons": "~1.0.0",
     "iron-jsonp-library": "PolymerElements/iron-jsonp-library",
     "instafeed.js": "https://github.com/evejweinberg/instafeed.js.git#master",
-    "i18next": "~2.4.1"
+    "i18next": "~2.4.1",
+    "vaadin-grid": "~1.0.0"
   },
   "devDependencies": {
     "web-component-tester": "*",
