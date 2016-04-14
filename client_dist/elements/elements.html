@@ -27164,11 +27164,13 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
     },
 
     hasImageAccess: function (image, post) {
-      return this._hasAccess(image, post.group_id, window.appUser.adminRights.GroupAdmins);
+      if (image && post && window.appUser && window.appUser.adminRights) {
+        return this._hasAccess(image, post.group_id, window.appUser.adminRights.GroupAdmins);
+      }
     },
 
     hasPostAccess: function (post) {
-      if (post) {
+      if (post && window.appUser && window.appUser.adminRights) {
         return this._hasAccess(post, post.group_id, window.appUser.adminRights.GroupAdmins);
       } else {
         console.error("No post in hasAccess");
@@ -27177,7 +27179,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
     },
 
     hasGroupAccess: function (group) {
-      if (group) {
+      if (group && window.appUser && window.appUser.adminRights) {
         return this._hasAccess(group, group.id, window.appUser.adminRights.GroupAdmins);
       } else {
         console.error("No group in hasAccess");
@@ -27186,7 +27188,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
     },
 
     hasCommunityAccess: function (community) {
-      if (community) {
+      if (community && window.appUser && window.appUser.adminRights) {
         return this._hasAccess(community, community.id, window.appUser.adminRights.CommunityAdmins);
       } else {
         console.error("No community in hasAccess");
@@ -27195,7 +27197,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
     },
 
     hasDomainAccess: function(domain) {
-      if (domain) {
+      if (domain && window.appUser && window.appUser.adminRights) {
         return this._hasAccess(domain, domain.id, window.appUser.adminRights.DomainAdmins);
       } else {
         console.error("No domain in hasAccess");
