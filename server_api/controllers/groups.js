@@ -5,6 +5,7 @@ var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
+var async = require('async');
 
 var sendGroupOrError = function (res, group, context, user, error, errorStatus) {
   if (error || !group) {
@@ -24,6 +25,101 @@ var sendGroupOrError = function (res, group, context, user, error, errorStatus) 
     res.send(group);
   }
 };
+
+var getGroupAndUser = function (groupId, userId, userEmail, callback) {
+  var user, group;
+
+  async.series([
+    function (seriesCallback) {
+      models.Group.find({
+        where: {
+          id: groupId
+        }
+      }).then(function (groupIn) {
+        if (groupIn) {
+          group = groupIn;
+        }
+        seriesCallback();
+      }).catch(function (error) {
+        seriesCallback(error);
+      });
+    },
+    function (seriesCallback) {
+      if (userId) {
+        models.User.find({
+          where: {
+            id: userId
+          }
+        }).then(function (userIn) {
+          if (userIn) {
+            user = userIn;
+          }
+          seriesCallback();
+        }).catch(function (error) {
+          seriesCallback(error);
+        });
+      } else {
+        seriesCallback();
+      }
+    },
+    function (seriesCallback) {
+      if (userEmail) {
+        models.User.find({
+          where: {
+            email: userEmail
+          }
+        }).then(function (userIn) {
+          if (userIn) {
+            user = userIn;
+          }
+          seriesCallback();
+        }).catch(function (error) {
+          seriesCallback(error);
+        });
+      } else {
+        seriesCallback();
+      }
+    }
+  ], function (error) {
+    if (error) {
+      callback(error)
+    } else {
+      callback(null, group, user);
+    }
+  });
+};
+
+router.delete('/:groupId/:userId/remove_admin', auth.can('edit group'), function(req, res) {
+  getGroupAndUser(req.params.groupId, req.params.userId, null, function (error, group, user) {
+    if (error) {
+      log.error('Could not remove admin', { err: error, groupId: req.params.groupId, userRemovedId: req.params.userId, context: 'remove_admin', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else if (user && group) {
+      group.removeGroupAdmins(user).then(function (results) {
+        log.info('Admin removed', {context: 'remove_admin', groupId: req.params.groupId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
+router.post('/:groupId/:email/add_admin', auth.can('edit group'), function(req, res) {
+  getGroupAndUser(req.params.groupId, null, req.params.email, function (error, group, user) {
+    if (error) {
+      log.error('Could not add admin', { err: error, groupId: req.params.groupId, userAddEmail: req.params.email, context: 'remove_admin', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else if (user && group) {
+      group.addGroupAdmins(user).then(function (results) {
+        log.info('Admin Added', {context: 'add_admin', groupId: req.params.groupId, userAddEmail: req.params.email, user: toJson(req.user.simple()) });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
 
 router.post('/:groupId/post/news_story', auth.can('view group'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {

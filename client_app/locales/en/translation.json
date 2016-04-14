@@ -143,6 +143,8 @@
   },
 
   "group": {
+    "admins": "Group admins",
+    "users": "Group users",
     "new": "Add new group",
     "edit": "Edit group",
     "invite": "Invite a friend",
@@ -161,6 +163,14 @@
     "help": "Help",
     "settings": "Settings"
 
+  },
+
+  "users": {
+    "removeAdmin": "Remove admin",
+    "addAdmin": "Add admin",
+    "removeUser": "Remove user",
+    "inviteUser": "Invite user",
+    "email": "email"
   },
 
   "user": {

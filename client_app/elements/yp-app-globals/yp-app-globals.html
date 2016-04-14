@@ -16,12 +16,7 @@
 
   <template>
     <style>
-      paper-toast {
-        z-index: 9999;
-      }
     </style>
-
-    <paper-toast id="masterToast"></paper-toast>
 
     <yp-session id="session"></yp-session>
 
@@ -88,8 +83,9 @@
         },
 
         notifyUserViaToast: function (text) {
-          this.$.masterToast.text = text;
-          this.$.masterToast.show();
+          var toast = Polymer.dom(document).querySelector('yp-app').getDialog("masterToast");
+          toast.text = text;
+          toast.show();
         },
 
         reBoot: function() {

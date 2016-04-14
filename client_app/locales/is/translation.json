@@ -53,6 +53,14 @@
 
   "status": "Hugmyndir í ferli",
 
+  "users": {
+    "removeAdmin": "Eyða vefstjóra",
+    "addAdmin": "Bæta við vefstjóra",
+    "removeUser": "Taka notanda út",
+    "inviteUser": "Bjóða notanda",
+    "email": "netfang"
+  },
+
   "user": {
     "logout": "útskrá",
     "login": "innskrá",
@@ -180,6 +188,8 @@
   "next": "áfram",
 
   "group": {
+    "admins": "Hópur vefstjórar",
+    "users": "Hópur notendur",
     "new": "Nýr hópur",
     "edit": "Breyta hóp",
     "invite": "Bjóða",
