@@ -27605,6 +27605,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       'keypress': '_onKeypress'
     },
 
+    /** @suppress {checkTypes} */
     registered: function() {
       // Feature detect whether we need to patch dispatchEvent (i.e. on FF and IE).
       if (!this._canDispatchEventOnDisabled()) {
@@ -40522,13 +40523,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .createFab[wide-layout] {
-        background-color: var(--accent-color);
-        position: relative;
-        margin-top: -8px;
+        width: 70px;
+        height: 70px;
       }
 
       .createFabContainer[wide-layout] .createFab {
-        margin-right: 128px;
+      }
+
+      paper-fab[wide-layout]::shadow #icon {
+        width: 42px;
+        height: 42px;
       }
 
       .tab-wrapper ::content > .tabs {
@@ -40570,16 +40574,15 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           width: 100px;
         }
       }
+
+
     </style>
 
-    <iron-media-query query="(min-width: 1200px)" query-matches="{{wideWidth}}"></iron-media-query>
+    <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
 
     <div class="layout vertical flex mainArea">
       <div class="large-card-wrapper layout horizontal center-center topArea">
         <content select=".largeCard"></content>
-      </div>
-      <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea" wide-layout$="{{wideWidth}}">
-        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
       </div>
       <div class="tab-wrapper layout horizontal center-center">
         <content select=".tabs"></content>
@@ -40587,6 +40590,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <div class="tab-pages-wrapper layout vertical">
         <content select=".tabPages"></content>
       </div>
+    </div>
+    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
+      <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="1" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
     </div>
   </template>
 
@@ -45456,14 +45462,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
   <template>
     <style>
       :host {
-        display: block;
-        @apply(--layout-vertical);
-        width: 416px;
       }
 
       .postCard {
-        width: 420px;
-        height: 500px;
+        width: 400px;
+        height: 90px;
+        margin-top: 24px;
+        margin-right: 400px;
         padding: 16px;
         background-color: #fff;
       }
@@ -45508,11 +45513,21 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           padding: 16px;
         }
       }
+
+      .half {
+        width: 50%;
+      }
     </style>
 
-    <paper-card elevation="[[elevation]]" class="layout vertical center postCard">
-      <h2 class="header">[[t('post.new')]]</h2>
-      <paper-icon-button class="icon" icon="add"></paper-icon-button>
+    <paper-card elevation="[[elevation]]" class="postCard">
+      <div class="layout horizontal">
+        <div class="layout flex">[[t('post.addNewIntroBoxText')]]</div>
+        <div class="layout flex">
+          <div class="layout horizontal center-center">
+            <paper-fab on-tap="_newPost" icon="lightbulb-outline"></paper-fab>
+          </div>
+        </div>
+      </div>
     </paper-card>
   </template>
 
@@ -45524,6 +45539,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         elevation: {
           type: Number
         }
+      },
+
+      _newPost: function () {
+        this.fire('new-post');
       },
 
       behaviors: [
@@ -46514,6 +46533,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
+          <div class="layout horizontal center-center">
+            <yp-post-card-add on-new-post="_newPost" elevation="1"></yp-post-card-add>
+          </div>
           <ac-activities id="groupActivities" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
         </section>
         <section>

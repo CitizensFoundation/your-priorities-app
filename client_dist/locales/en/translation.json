@@ -90,7 +90,8 @@
       "none": "None"
     },
     "edit": "Edit post",
-    "delete": "Delete post"
+    "delete": "Delete post",
+    "addNewIntroBoxText": "Use the lightbulb action button to add new ideas"
   },
 
   "short_word": {
