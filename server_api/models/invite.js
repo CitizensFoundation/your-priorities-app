@@ -4,6 +4,7 @@ module.exports = function(sequelize, DataTypes) {
   var Invite = sequelize.define("Invite", {
     type: { type: DataTypes.INTEGER, allowNull: false },
     expires_at: DataTypes.DATE,
+//    token: DataTypes.STRING,
     joined_at: DataTypes.DATE
   }, {
     underscored: true,
