@@ -40,13 +40,16 @@
       }
 
       .createFab[wide-layout] {
-        background-color: var(--accent-color);
-        position: relative;
-        margin-top: -8px;
+        width: 70px;
+        height: 70px;
       }
 
       .createFabContainer[wide-layout] .createFab {
-        margin-right: 128px;
+      }
+
+      paper-fab[wide-layout]::shadow #icon {
+        width: 42px;
+        height: 42px;
       }
 
       .tab-wrapper ::content > .tabs {
@@ -88,16 +91,15 @@
           width: 100px;
         }
       }
+
+
     </style>
 
-    <iron-media-query query="(min-width: 1200px)" query-matches="{{wideWidth}}"></iron-media-query>
+    <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
 
     <div class="layout vertical flex mainArea">
       <div class="large-card-wrapper layout horizontal center-center topArea">
         <content select=".largeCard"></content>
-      </div>
-      <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea" wide-layout$="{{wideWidth}}">
-        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" class="createCommunity" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
       </div>
       <div class="tab-wrapper layout horizontal center-center">
         <content select=".tabs"></content>
@@ -105,6 +107,9 @@
       <div class="tab-pages-wrapper layout vertical">
         <content select=".tabPages"></content>
       </div>
+    </div>
+    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
+      <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="1" class="createCommunity" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
     </div>
   </template>
 

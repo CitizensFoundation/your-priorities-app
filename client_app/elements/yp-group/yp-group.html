@@ -82,6 +82,9 @@
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
+          <div class="layout horizontal center-center">
+            <yp-post-card-add on-new-post="_newPost" elevation="1"></yp-post-card-add>
+          </div>
           <ac-activities id="groupActivities" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
         </section>
         <section>

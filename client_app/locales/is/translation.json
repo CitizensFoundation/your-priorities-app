@@ -137,7 +137,8 @@
       "none": "Ekkert"
     },
     "edit": "Breyta hugmynd",
-    "delete": "Eyða hugmynd"
+    "delete": "Eyða hugmynd",
+    "addNewIntroBoxText": "Smelltu á ljósaperu til að bæta við nýrri hugmynd"
   },
   "short_word": {
     "in": "í"
