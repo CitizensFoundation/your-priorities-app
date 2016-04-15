@@ -161,8 +161,9 @@
         } else if (this.community.access===2) {
           this.communityAccess = "secret"
         }
-        debugger;
-        this.set('status', this.community.status);
+        if (this.community.status) {
+          this.set('status', this.community.status);
+        }
       }
     },
 
