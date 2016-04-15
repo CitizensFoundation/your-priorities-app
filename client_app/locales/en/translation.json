@@ -4,6 +4,8 @@
     "passwordResetAndLoggedIn": "Your password has been changed and you are now logged in."
   },
 
+  "archived": "Archived",
+
   "activity": {
     "post": {
       "new": "New idea",

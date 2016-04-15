@@ -11,6 +11,8 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/collection-helpers.html">
+
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 
@@ -64,6 +66,10 @@
       .twitterFeed {
         margin-top: 24px;
       }
+
+      .archivedText {
+        font-size: 42px;
+      }
     </style>
 
     <yp-page id="page" create-fab-icon="group-work" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
@@ -71,7 +77,7 @@
       <yp-domain-large-card id="domainCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
 
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused>
-        <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
+        <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
         <paper-tab class="tab">[[t('news')]]</paper-tab>
         <paper-tab class="tab">[[t('socialMedia.other')]]</paper-tab>
       </paper-tabs>
@@ -79,9 +85,26 @@
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
           <div class="card-container layout center-center wrap">
-            <template is="dom-repeat" class="list" items="[[communities]]" as="community">
-              <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-            </template>
+            <div class="layout vertical wrap">
+              <div class="layout horizontal center-center wrap">
+                <template is="dom-repeat" class="list" items="[[featuredCommunities]]" as="community">
+                  <yp-community-card class="card" featured community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+                </template>
+                <template is="dom-repeat" class="list" items="[[activeCommunities]]" as="community">
+                  <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+                </template>
+              </div>
+              <div class="layout horizontal center-center">
+                <h1 class="archivedText" hidden$="[[!archivedCommunities]]">
+                  [[t('archived')]]
+                </h1>
+              </div>
+              <div class="layout horizontal center-center wrap">
+                <template is="dom-repeat" class="list" items="[[archivedCommunities]]" as="community">
+                  <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+                </template>
+              </div>
+            </div>
             <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
           </div>
         </section>
@@ -104,18 +127,26 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.ypThemeBehavior
+        Polymer.ypThemeBehavior,
+        Polymer.CollectionHelpers
       ],
 
       properties: {
-        communities: {
+        activeCommunities: {
           type: Array,
-          value: function () { return [] }
+          notify: true
+        },
+
+        featuredCommunities: {
+          type: Array
         },
 
         archivedCommunities: {
-          type: Array,
-          value: function () { return [] }
+          type: Array
+        },
+
+        communitiesLength: {
+          type: Number
         },
 
         domainId: {
@@ -192,7 +223,9 @@
 
       _domainIdChanged: function (newValue, oldValue) {
         if (newValue) {
-          this.set("communities",null);
+          this.set("featuredCommunities",null);
+          this.set("activeCommunities",null);
+          this.set("archivedCommunities",null);
           this.$.ajax.url = '/api/domains/' + this.domainId;
           this.$.ajax.generateRequest();
           this.hideAdd = true;
@@ -217,9 +250,14 @@
           this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);
         }
         if (this.domain.Communities) {
-          this.set("communities",this.domain.Communities);
+          this.set('communitiesLength', this.domain.Communities.length);
+          var splitCommunities = this.splitByStatus(this.domain.Communities);
+          if (splitCommunities.archived.length>0) {
+            this.set('archivedCommunities', splitCommunities.archived);
+          }
+          this.set('featuredCommunities', splitCommunities.featured);
+          this.set('activeCommunities', splitCommunities.active);
         }
-
         var headerPanel = app.$.mainScrollHeaderPanel;
         this.$.domainCard.setElevation(5);
         this.$.domainCard.lowerCardLater();
@@ -227,7 +265,7 @@
         this.fire("change-header", { headerTitle: null, documentTitle: this.domain.name,
                                      headerDescription: this.domain.description});
 
-        if (this.communities.length>0) {
+        if (this.activeCommunities.length>0) {
           this.hideAdd = true;
         } else {
           this.hideAdd = false;

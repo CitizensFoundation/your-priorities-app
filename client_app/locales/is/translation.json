@@ -4,6 +4,8 @@
     "passwordResetAndLoggedIn": "Lykilorði hefur verið breytt og þú er innskráð(ur)"
   },
 
+  "archived": "Gamalt",
+
   "activity": {
     "post": {
       "new": "// Ný hugmynd //",
