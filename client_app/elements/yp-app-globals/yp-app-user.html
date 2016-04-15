@@ -90,25 +90,25 @@
 
         loginForEdit: function(editDialog,newOrUpdate,params) {
           this.loginForEditParams = { editDialog: editDialog, newOrUpdate: newOrUpdate, params: params };
-          this._openUserlogin();
+          this.openUserlogin();
         },
 
         loginForNewPoint: function(postPointsElement, params) {
           this.loginForNewPointParams = { postPointsElement: postPointsElement, params: params };
-          this._openUserlogin();
+          this.openUserlogin();
         },
 
         loginForEndorse: function(postActionElement, params) {
           this.loginForEndorseParams = { postActionElement: postActionElement, params: params };
-          this._openUserlogin();
+          this.openUserlogin();
         },
 
         loginForPointQuality: function(pointActionElement, params) {
           this.loginForPointQualityParams = { pointActionElement: pointActionElement, params: params };
-          this._openUserlogin();
+          this.openUserlogin();
         },
 
-        _openUserlogin: function () {
+        openUserlogin: function () {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
           dialog.setup(this._handleLogin.bind(this));
           dialog.open();
@@ -122,7 +122,7 @@
         _handleLogin: function (user) {
           this._closeUserLogin();
           this.setUser(user);
-          debugger;
+          this.$.adminRightsAjax.generateRequest();
           this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.email;
           this.$.loginToast.show();
           if (this.loginForEditParams) {

@@ -108,7 +108,7 @@
               </template>
 
               <template is="dom-if" if="[[!user]]">
-                <paper-icon-button on-tap="_toggleUserDrawer" icon="login"></paper-icon-button>
+                <paper-button on-tap="_login">[[t('user.login')]]</paper-button>
               </template>
             </app-toolbar>
           </app-header>
@@ -286,6 +286,12 @@
         dialog.open('edit', { userId: this.user.id});
       },
 
+      _login: function () {
+        if (window.appUser) {
+          window.appUser.openUserlogin();
+        }
+      },
+
       onChangeHeader: function (event, header) {
         this.headerTitle = document.title = header.headerTitle;
 
@@ -324,10 +330,11 @@
       },
 
       onUserChanged: function (event, detail) {
-        if (detail) {
-          this.user = detail;
+        debugger;
+        if (detail && detail.id) {
+          this.set('user', detail);
         } else {
-          this.user = null;
+          this.set('user', null);
         }
       },
 
