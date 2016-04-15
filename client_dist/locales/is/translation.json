@@ -4,6 +4,15 @@
     "passwordResetAndLoggedIn": "Lykilorði hefur verið breytt og þú er innskráð(ur)"
   },
 
+  "archived": "Gamalt",
+
+  "status": {
+    "select": "Veldu stöðu",
+    "active": "Virkt",
+    "featured": "Mikilvægt",
+    "archived": "Gamalt"
+  },
+
   "activity": {
     "post": {
       "new": "// Ný hugmynd //",

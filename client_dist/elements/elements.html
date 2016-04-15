@@ -181,9 +181,7 @@ html, body {
 
 </style>
 
-<link href="../bower_components/vaadin-grid/vaadin-grid.html
-
-<link rel=" import"="">
+<link href="../bower_components/vaadin-grid/vaadin-grid.html">
 
 
 
@@ -7810,6 +7808,30 @@ this._insertChildren();
 this.fire('dom-change');
 }
 });</script>
+
+<dom-module id="platinum-https-redirect" assetpath="../bower_components/platinum-https-redirect/">
+  <script>
+    Polymer({
+      is: 'platinum-https-redirect',
+
+      _isLocalhost: function(hostname) {
+        // !! coerces the logical expression to evaluate to the values true or false.
+        return !!(hostname === 'localhost' ||
+                  // [::1] is the IPv6 localhost address.
+                  hostname === '[::1]' ||
+                  // 127.0.0.1/8 is considered localhost for IPv4.
+                  hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/));
+      },
+
+      attached: function() {
+        if (window.location.protocol === 'http:' && !this._isLocalhost(window.location.hostname)) {
+          // Redirect to https: if we're currently using http: and we're not on localhost.
+          window.location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+        }
+      }
+    });
+  </script>
+</dom-module>
 <script>
   /**
    * `IronResizableBehavior` is a behavior that can be used in Polymer elements to
@@ -27024,185 +27046,12 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       return window.s3bucketName;
     },
 
-    instanceName: function () {
-      return window.instanceName;
-    },
-
-    instanceLogoFilename: function () {
-      return window.instanceLogoFilename;
-    },
-
-    defaultGroupImage: function () {
-      return window.defaultGroupImage;
-    },
-
-    isoCountryImagePath: function () {
-      return window.isoCountryImagePath;
-    },
-
-    randomStockImage: function () {
-      var images = ["http://i.imgur.com/ZSgsITo.jpg","http://i.imgur.com/BKR5vE6.jpg",
-        "http://i.imgur.com/lIk6iLD.jpg",
-        "http://i.imgur.com/OjyTHRv.jpg"];
-
-      return this.getRandomFromArray(images);
-    },
-
-    limitFrom: function (input, offset, limit) {
-      if (!(input instanceof Array) && !(input instanceof String)) return input;
-
-      limit = parseInt(limit, 10);
-
-      if (input instanceof String) {
-        if (limit) {
-          return limit >= 0 ? input.slice(offset, limit) : input.slice(limit, input.length);
-        } else {
-          return "";
-        }
-      }
-
-      var out = [],
-              i, n;
-
-      if (limit > input.length)
-        limit = input.length;
-      else if (limit < -input.length)
-        limit = -input.length;
-
-      if (limit > 0) {
-        i = offset;
-        n = limit;
-      } else {
-        i = input.length + limit;
-        n = input.length;
-      }
-
-      for (; i < n; i++) {
-        out.push(input[i]);
-      }
-
-      return out;
-    },
-
-    isString: function(a) {
-      return "string" == typeof a;
-    },
-
-    limitTo: function(input, limit) {
-
-      if (!Array.isArray(input) && !this.isString(input)) return input;
-
-      if (this.isString(input)) {
-        //NaN check on limit
-        if (limit) {
-          return limit >= 0 ? input.slice(0, limit) : input.slice(limit, input.length);
-        } else {
-          return "";
-        }
-      }
-
-      var out = [], i, n;
-
-      // if abs(limit) exceeds maximum length, trim it
-      if (limit > input.length)
-        limit = input.length;
-      else if (limit < -input.length)
-        limit = -input.length;
-
-      if (limit > 0) {
-        i = 0;
-        n = limit;
-      } else {
-        i = input.length + limit;
-        n = input.length;
-      }
-
-      for (; i<n; i++) {
-        out.push(input[i]);
-      }
-
-      return out;
-    },
-
-    headerImageEnabled: function () {
-      return false;
-    },
-
-    getUser: function () {
-      if (window.appUser && window.appUser.user) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-
-    _hasAdminRights: function(objectId, adminRights) {
-      return _.find(adminRights, function(o) { return o.id == objectId; });
-    },
-
-    _hasAccess: function (object, objectId, adminRights) {
-      if (object) {
-        if (window.appUser && window.appUser.user) {
-          if (window.appUser.user.id == object.user_id) {
-            return true
-          } else {
-            if (window.appUser.adminRights) {
-              return this._hasAdminRights(objectId, adminRights)
-            } else {
-              return false;
-            }
-          }
-        } else {
-          return false;
-        }
-      } else if (!window.appUser) {
-        return false;
-      } else {
-        console.error("No object in hasAccess");
-        return false;
-      }
-    },
-
-    hasImageAccess: function (image, post) {
-      if (image && post && window.appUser && window.appUser.adminRights) {
-        return this._hasAccess(image, post.group_id, window.appUser.adminRights.GroupAdmins);
-      }
-    },
-
-    hasPostAccess: function (post) {
-      if (post && window.appUser && window.appUser.adminRights) {
-        return this._hasAccess(post, post.group_id, window.appUser.adminRights.GroupAdmins);
-      } else {
-        console.error("No post in hasAccess");
-        return false;
-      }
-    },
-
-    hasGroupAccess: function (group) {
-      if (group && window.appUser && window.appUser.adminRights) {
-        return this._hasAccess(group, group.id, window.appUser.adminRights.GroupAdmins);
-      } else {
-        console.error("No group in hasAccess");
-        return false;
-      }
-    },
-
-    hasCommunityAccess: function (community) {
-      if (community && window.appUser && window.appUser.adminRights) {
-        return this._hasAccess(community, community.id, window.appUser.adminRights.CommunityAdmins);
-      } else {
-        console.error("No community in hasAccess");
-        return false;
-      }
-    },
-
-    hasDomainAccess: function(domain) {
-      if (domain && window.appUser && window.appUser.adminRights) {
-        return this._hasAccess(domain, domain.id, window.appUser.adminRights.DomainAdmins);
-      } else {
-        console.error("No domain in hasAccess");
-        return false;
-      }
+    collectionStatusOptions: function() {
+      return [
+        {name: 'active', translatedName: this.t('status.active')},
+        {name: 'featured', translatedName: this.t('status.featured')},
+        {name: 'archived', translatedName: this.t('status.archived')}
+      ]
     }
   };
 </script>
@@ -31886,7 +31735,7 @@ event and do your own custom submission:
         </file-upload>
       </div>
 
-      <div class="layout vertical additionalSettings" hidden$="[[!headerImageEnabled()]]">
+      <div class="layout vertical additionalSettings" hidden="">
         <file-upload id="headerImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=category-header" method="POST" on-success="_headerImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
           <span>[[t('image.header.upload')]]</span>
@@ -36424,6 +36273,15 @@ event and do your own custom submission:
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
+      <paper-dropdown-menu label="[[t('status.select')]]">
+        <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
+          <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
+            <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
+          </template>
+        </paper-menu>
+      </paper-dropdown-menu>
+      <input type="hidden" name="status" value="[[status]]">
+
       <h3 class="accessHeader">[[t('Access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
         <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
@@ -36490,12 +36348,17 @@ event and do your own custom submission:
     },
 
     _communityChanged: function (newValue, oldValue) {
-      if (this.community.access===0) {
-        this.communityAccess = "public"
-      } else if (this.community.access===1) {
-        this.communityAccess = "closed"
-      } else if (this.community.access===2) {
-        this.communityAccess = "secret"
+      if (newValue) {
+        if (this.community.access===0) {
+          this.communityAccess = "public"
+        } else if (this.community.access===1) {
+          this.communityAccess = "closed"
+        } else if (this.community.access===2) {
+          this.communityAccess = "secret"
+        }
+        if (this.community.status) {
+          this.set('status', this.community.status);
+        }
       }
     },
 
@@ -36755,6 +36618,10 @@ event and do your own custom submission:
       themeId: {
         type: String,
         value: null
+      },
+
+      status: {
+        type: String
       }
     },
 
@@ -40133,7 +40000,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       },
 
       _onSelect: function() {
-        debugger;
         if (this.$.grid.selection.selected().length === 0) {
           this.selected = null;
         } else {
@@ -40191,6 +40057,103 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     });
   </script>
 </dom-module>
+<script>
+  /**
+   * @polymerBehavior AccessHelpers
+   */
+  Polymer.AccessHelpers = {
+
+    _hasAdminRights: function(objectId, adminRights) {
+      return _.find(adminRights, function(o) { return o.id == objectId; });
+    },
+
+    _hasAccess: function (object, objectId, adminRights) {
+      if (object) {
+        if (window.appUser && window.appUser.user) {
+          if (window.appUser.user.id == object.user_id) {
+            return true
+          } else {
+            if (window.appUser.adminRights) {
+              return this._hasAdminRights(objectId, adminRights)
+            } else {
+              return false;
+            }
+          }
+        } else {
+          return false;
+        }
+      } else if (!window.appUser) {
+        return false;
+      } else {
+        console.error("No object in hasAccess");
+        return false;
+      }
+    },
+
+    hasImageAccess: function (image, post) {
+      if (image && post && window.appUser && window.appUser.adminRights) {
+        return this._hasAccess(image, post.group_id, window.appUser.adminRights.GroupAdmins);
+      }
+    },
+
+    hasPostAccess: function (post) {
+      if (post && window.appUser && window.appUser.adminRights) {
+        return this._hasAccess(post, post.group_id, window.appUser.adminRights.GroupAdmins);
+      } else {
+        console.error("No post in hasAccess");
+        return false;
+      }
+    },
+
+    hasGroupAccess: function (group) {
+      if (group && window.appUser && window.appUser.adminRights) {
+        return this._hasAccess(group, group.id, window.appUser.adminRights.GroupAdmins);
+      } else {
+        console.error("No group in hasAccess");
+        return false;
+      }
+    },
+
+    hasCommunityAccess: function (community) {
+      if (community && window.appUser && window.appUser.adminRights) {
+        return this._hasAccess(community, community.id, window.appUser.adminRights.CommunityAdmins);
+      } else {
+        console.error("No community in hasAccess");
+        return false;
+      }
+    },
+
+    hasDomainAccess: function(domain) {
+      if (domain && window.appUser && window.appUser.adminRights) {
+        return this._hasAccess(domain, domain.id, window.appUser.adminRights.DomainAdmins);
+      } else {
+        console.error("No domain in hasAccess");
+        return false;
+      }
+    }
+  };
+</script>
+<script>
+  /**
+   * @polymerBehavior CollectionHelpers
+   */
+  Polymer.CollectionHelpers = {
+
+    splitByStatus: function (items) {
+      return {
+        active: _.filter(items, function (o) {
+          return o.status == 'active';
+        }),
+        archived: _.filter(items, function (o) {
+          return o.status == 'archived';
+        }),
+        featured: _.filter(items, function (o) {
+          return o.status == 'featured';
+        })
+      }
+    }
+  };
+</script>
 
 <dom-module id="yp-session" assetpath="yp-session/">
   <template>
@@ -41884,6 +41847,42 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           type: Object,
           observer: "_postChanged"
         }
+      },
+
+      limitFrom: function (input, offset, limit) {
+        if (!(input instanceof Array) && !(input instanceof String)) return input;
+
+        limit = parseInt(limit, 10);
+
+        if (input instanceof String) {
+          if (limit) {
+            return limit >= 0 ? input.slice(offset, limit) : input.slice(limit, input.length);
+          } else {
+            return "";
+          }
+        }
+
+        var out = [],
+          i, n;
+
+        if (limit > input.length)
+          limit = input.length;
+        else if (limit < -input.length)
+          limit = -input.length;
+
+        if (limit > 0) {
+          i = offset;
+          n = limit;
+        } else {
+          i = input.length + limit;
+          n = input.length;
+        }
+
+        for (; i < n; i++) {
+          out.push(input[i]);
+        }
+
+        return out;
       },
 
       addEndorsement: function (endorsement) {
@@ -43782,25 +43781,25 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         loginForEdit: function(editDialog,newOrUpdate,params) {
           this.loginForEditParams = { editDialog: editDialog, newOrUpdate: newOrUpdate, params: params };
-          this._openUserlogin();
+          this.openUserlogin();
         },
 
         loginForNewPoint: function(postPointsElement, params) {
           this.loginForNewPointParams = { postPointsElement: postPointsElement, params: params };
-          this._openUserlogin();
+          this.openUserlogin();
         },
 
         loginForEndorse: function(postActionElement, params) {
           this.loginForEndorseParams = { postActionElement: postActionElement, params: params };
-          this._openUserlogin();
+          this.openUserlogin();
         },
 
         loginForPointQuality: function(pointActionElement, params) {
           this.loginForPointQualityParams = { pointActionElement: pointActionElement, params: params };
-          this._openUserlogin();
+          this.openUserlogin();
         },
 
-        _openUserlogin: function () {
+        openUserlogin: function () {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
           dialog.setup(this._handleLogin.bind(this));
           dialog.open();
@@ -43814,7 +43813,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         _handleLogin: function (user) {
           this._closeUserLogin();
           this.setUser(user);
-          debugger;
+          this.$.adminRightsAjax.generateRequest();
           this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.email;
           this.$.loginToast.show();
           if (this.loginForEditParams) {
@@ -44284,10 +44283,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         window.location = postUrl;
       },
 
-      getIsoCountryImagePath: function (post) {
-        return this.isoCountryImagePath() + post.IsoCountry.code.toLowerCase() + '.png';
-      },
-
       postName: function (post) {
         if (post && post.name) {
           return this.truncate(this.trim(post.name), 200);
@@ -44708,7 +44703,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         is: 'yp-post-user-image-card',
 
         behaviors: [
-          Polymer.appHelpers
+          Polymer.appHelpers,
+          Polymer.AccessHelpers
         ],
 
         properties: {
@@ -45380,7 +45376,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpPostBehavior
+        Polymer.YpPostBehavior,
+        Polymer.AccessHelpers
       ],
 
       properties: {
@@ -46388,7 +46385,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       behaviors: [
         Polymer.appHelpers,
         Polymer.GroupBehaviors,
-        Polymer.LargeCardBehaviors
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers
       ],
 
       _groupAccessText: function(access) {
@@ -47669,7 +47667,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       behaviors: [
         Polymer.appHelpers,
         Polymer.CommunityBehaviors,
-        Polymer.LargeCardBehaviors
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers
       ],
 
       _communityAccessText: function(access) {
@@ -48938,7 +48937,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.LargeCardBehaviors
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers
       ],
 
       _menuSelection: function (event, detail) {
@@ -49025,6 +49025,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .twitterFeed {
         margin-top: 24px;
       }
+
+      .archivedText {
+        font-size: 42px;
+      }
     </style>
 
     <yp-page id="page" create-fab-icon="group-work" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
@@ -49032,7 +49036,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <yp-domain-large-card id="domainCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
 
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
-        <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communities.length]]</span>)</paper-tab>
+        <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
         <paper-tab class="tab">[[t('news')]]</paper-tab>
         <paper-tab class="tab">[[t('socialMedia.other')]]</paper-tab>
       </paper-tabs>
@@ -49040,9 +49044,26 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
           <div class="card-container layout center-center wrap">
-            <template is="dom-repeat" class="list" items="[[communities]]" as="community">
-              <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-            </template>
+            <div class="layout vertical wrap">
+              <div class="layout horizontal center-center wrap">
+                <template is="dom-repeat" class="list" items="[[featuredCommunities]]" as="community">
+                  <yp-community-card class="card" featured="" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+                </template>
+                <template is="dom-repeat" class="list" items="[[activeCommunities]]" as="community">
+                  <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+                </template>
+              </div>
+              <div class="layout horizontal center-center">
+                <h1 class="archivedText" hidden$="[[!archivedCommunities]]">
+                  [[t('archived')]]
+                </h1>
+              </div>
+              <div class="layout horizontal center-center wrap">
+                <template is="dom-repeat" class="list" items="[[archivedCommunities]]" as="community">
+                  <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+                </template>
+              </div>
+            </div>
             <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
           </div>
         </section>
@@ -49065,13 +49086,26 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.ypThemeBehavior
+        Polymer.ypThemeBehavior,
+        Polymer.CollectionHelpers
       ],
 
       properties: {
-        communities: {
+        activeCommunities: {
           type: Array,
-          value: function () { return [] }
+          notify: true
+        },
+
+        featuredCommunities: {
+          type: Array
+        },
+
+        archivedCommunities: {
+          type: Array
+        },
+
+        communitiesLength: {
+          type: Number
         },
 
         domainId: {
@@ -49148,7 +49182,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _domainIdChanged: function (newValue, oldValue) {
         if (newValue) {
-          this.set("communities",null);
+          this.set("featuredCommunities",null);
+          this.set("activeCommunities",null);
+          this.set("archivedCommunities",null);
           this.$.ajax.url = '/api/domains/' + this.domainId;
           this.$.ajax.generateRequest();
           this.hideAdd = true;
@@ -49173,9 +49209,14 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);
         }
         if (this.domain.Communities) {
-          this.set("communities",this.domain.Communities);
+          this.set('communitiesLength', this.domain.Communities.length);
+          var splitCommunities = this.splitByStatus(this.domain.Communities);
+          if (splitCommunities.archived.length>0) {
+            this.set('archivedCommunities', splitCommunities.archived);
+          }
+          this.set('featuredCommunities', splitCommunities.featured);
+          this.set('activeCommunities', splitCommunities.active);
         }
-
         var headerPanel = app.$.mainScrollHeaderPanel;
         this.$.domainCard.setElevation(5);
         this.$.domainCard.lowerCardLater();
@@ -49183,7 +49224,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         this.fire("change-header", { headerTitle: null, documentTitle: this.domain.name,
                                      headerDescription: this.domain.description});
 
-        if (this.communities.length>0) {
+        if (this.activeCommunities.length>0) {
           this.hideAdd = true;
         } else {
           this.hideAdd = false;
@@ -49363,6 +49404,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
               <template is="dom-if" if="[[user]]">
                 <paper-icon-button on-tap="_toggleUserDrawer" icon="face"></paper-icon-button>
               </template>
+
+              <template is="dom-if" if="[[!user]]">
+                <paper-button on-tap="_login">[[t('user.login')]]</paper-button>
+              </template>
             </app-toolbar>
           </app-header>
 
@@ -49432,7 +49477,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         },
 
         user: {
-          type: Object
+          type: Object,
+          value: null
         },
 
         previousSearches: {
@@ -49535,6 +49581,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         dialog.open('edit', { userId: this.user.id});
       },
 
+      _login: function () {
+        if (window.appUser) {
+          window.appUser.openUserlogin();
+        }
+      },
+
       onChangeHeader: function (event, header) {
         this.headerTitle = document.title = header.headerTitle;
 
@@ -49573,10 +49625,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       },
 
       onUserChanged: function (event, detail) {
-        if (detail) {
-          this.user = detail;
+        if (detail && detail.id) {
+          this.set('user', detail);
         } else {
-          this.user = null;
+          this.set('user', null);
         }
       },
 

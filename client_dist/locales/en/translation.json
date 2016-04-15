@@ -4,6 +4,15 @@
     "passwordResetAndLoggedIn": "Your password has been changed and you are now logged in."
   },
 
+  "archived": "Archived",
+
+  "status": {
+    "select": "Select status",
+    "active": "Active",
+    "featured": "Featured",
+    "archived": "Archived"
+  },
+
   "activity": {
     "post": {
       "new": "New idea",
