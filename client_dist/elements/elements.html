@@ -36124,6 +36124,15 @@ event and do your own custom submission:
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
+      <paper-dropdown-menu label="[[t('status.select')]]">
+        <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
+          <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
+            <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
+          </template>
+        </paper-menu>
+      </paper-dropdown-menu>
+      <input type="hidden" name="status" value="[[status]]">
+
       <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
         <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
@@ -36171,6 +36180,8 @@ event and do your own custom submission:
       uploadedHeaderImageId: {
         type: String
       },
+
+      status: String
     },
 
     _customRedirect: function (group) {
@@ -36188,6 +36199,9 @@ event and do your own custom submission:
         this.groupAccess = "closed"
       } else if (this.group.access===2) {
         this.groupAccess = "secret"
+      }
+      if (this.group && this.group.status) {
+        this.set('status', this.group.status);
       }
     },
 
@@ -36336,7 +36350,9 @@ event and do your own custom submission:
 
       uploadedHeaderImageId: {
         type: String
-      }
+      },
+
+      status: String
     },
 
     _customRedirect: function (community) {
@@ -47736,6 +47752,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       yp-ajax {
         background-color: var(--primary-background-color);
       }
+
+      .archivedText {
+        font-size: 26px;
+        color: #333;
+      }
     </style>
 
     <yp-page id="page" create-fab-icon="social:group" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
@@ -47743,7 +47764,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <yp-community-large-card id="communityCard" class="largeCard card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
 
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
-        <paper-tab class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
+        <paper-tab class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
         <paper-tab class="tab">[[t('news')]]</paper-tab>
         <paper-tab class="tab">[[t('posts.map')]]</paper-tab>
       </paper-tabs>
@@ -47751,11 +47772,26 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
           <div class="layout horizontal center-center wrap">
-            <template is="dom-if" if="[[groups]]">
-              <template is="dom-repeat" class="list" items="[[groups]]" as="group">
-                <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
-              </template>
-            </template>
+            <div class="layout vertical wrap">
+              <div class="layout horizontal center-center wrap">
+                <template is="dom-repeat" class="list" items="[[featuredGroups]]" as="group">
+                  <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+                </template>
+                <template is="dom-repeat" class="list" items="[[activeGroups]]" as="group">
+                  <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+                </template>
+              </div>
+              <div class="layout horizontal center-center">
+                <h1 class="archivedText" hidden$="[[!archivedGroups]]">
+                  [[t('archived')]]
+                </h1>
+              </div>
+              <div class="layout horizontal center-center wrap">
+                <template is="dom-repeat" class="list" items="[[archivedGroups]]" as="group">
+                  <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+                </template>
+              </div>
+            </div>
             <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
           </div>
         </section>
@@ -47781,12 +47817,26 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.ypThemeBehavior
+        Polymer.ypThemeBehavior,
+        Polymer.CollectionHelpers
       ],
 
       properties: {
-        groups: {
+        activeGroups: {
+          type: Array,
+          notify: true
+        },
+
+        featuredGroups: {
           type: Array
+        },
+
+        archivedGroups: {
+          type: Array
+        },
+
+        groupsLength: {
+          type: Number
         },
 
         communityId: {
@@ -47874,7 +47924,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       _communityIdChanged: function (newValue, oldValue) {
         if (newValue) {
           this.set("community", null);
-          this.set("groups", null);
+          this.set("featuredGroups",null);
+          this.set("activeGroups",null);
+          this.set("archivedGroups",null);
           this.$$('#ajax').url = '/api/communities/' + this.communityId;
           this.$$('#ajax').generateRequest();
           this.hideAdd = true;
@@ -47900,7 +47952,15 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         var headerPanel = app.$.mainScrollHeaderPanel;
         var url = this._communityHeaderUrl(this.community);
         //headerPanel.style.background = "#f5f5f5 url('"+url+"') no-repeat center top";
-        this.set("groups", this.community.Groups);
+
+        this.set('groupsLength', this.community.Groups.length);
+        var splitGroups = this.splitByStatus(this.community.Groups);
+        if (splitGroups.archived.length>0) {
+          this.set('archivedGroups', splitGroups.archived);
+        }
+        this.set('featuredGroups', splitGroups.featured);
+        this.set('activeGroups', splitGroups.active);
+
         Polymer.Base.async(function() {
           var communityCard = this.$$('#communityCard');
           if (communityCard) {
@@ -47908,6 +47968,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             communityCard.lowerCardLater();
           }
         },20);
+
         if (detail.response.Groups.length===0)
           this.communityEmpty = true;
         else
@@ -47916,7 +47977,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                                      headerDescription: this.community.Domain.description,
                                      headerIcon: "group-work",
                                      backPath: "#!/domain/" + this.community.domain_id });
-        if (this.groups.length>0) {
+        if (this.activeGroups.length>0) {
           this.hideAdd = true;
         } else {
           this.hideAdd = false;
@@ -49027,7 +49088,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .archivedText {
-        font-size: 42px;
+        font-size: 26px;
+        color: #333;
       }
     </style>
 
