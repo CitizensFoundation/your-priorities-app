@@ -233,6 +233,9 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       group.name =req.body.name;
       group.objectives = req.body.objectives;
       group.access = models.Community.convertAccessFromRadioButtons(req.body);
+      if (req.body.status && req.body.status!="") {
+        group.status = req.body.status;
+      }
       group.save().then(function () {
         log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
         group.setupImages(req.body, function(error) {
