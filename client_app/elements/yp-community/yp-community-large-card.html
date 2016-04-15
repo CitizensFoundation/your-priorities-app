@@ -16,9 +16,10 @@
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
+
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
 <link rel="import" href="../yp-delete-dialog/yp-delete-dialog.html">
-
 
 <link rel="import" href="yp-community-behaviors.html">
 <link rel="import" href="yp-community-stats.html">
@@ -173,7 +174,8 @@
       behaviors: [
         Polymer.appHelpers,
         Polymer.CommunityBehaviors,
-        Polymer.LargeCardBehaviors
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers
       ],
 
       _communityAccessText: function(access) {

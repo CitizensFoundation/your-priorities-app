@@ -106,6 +106,10 @@
               <template is="dom-if" if="[[user]]">
                 <paper-icon-button on-tap="_toggleUserDrawer" icon="face"></paper-icon-button>
               </template>
+
+              <template is="dom-if" if="[[!user]]">
+                <paper-icon-button on-tap="_toggleUserDrawer" icon="login"></paper-icon-button>
+              </template>
             </app-toolbar>
           </app-header>
 
@@ -178,7 +182,8 @@
         },
 
         user: {
-          type: Object
+          type: Object,
+          value: null
         },
 
         previousSearches: {

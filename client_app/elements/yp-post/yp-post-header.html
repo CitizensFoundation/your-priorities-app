@@ -171,10 +171,6 @@
         window.location = postUrl;
       },
 
-      getIsoCountryImagePath: function (post) {
-        return this.isoCountryImagePath() + post.IsoCountry.code.toLowerCase() + '.png';
-      },
-
       postName: function (post) {
         if (post && post.name) {
           return this.truncate(this.trim(post.name), 200);

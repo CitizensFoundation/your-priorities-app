@@ -18,6 +18,8 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
+
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
 <link rel="import" href="../yp-category/yp-category-edit.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
@@ -159,7 +161,8 @@
       behaviors: [
         Polymer.appHelpers,
         Polymer.GroupBehaviors,
-        Polymer.LargeCardBehaviors
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers
       ],
 
       _groupAccessText: function(access) {

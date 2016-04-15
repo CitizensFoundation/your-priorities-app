@@ -9,6 +9,8 @@
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
+
 <link rel="import" href="../yp-point/yp-point.html">
 
 <dom-module id="yp-post-user-image-card">
@@ -68,7 +70,8 @@
         is: 'yp-post-user-image-card',
 
         behaviors: [
-          Polymer.appHelpers
+          Polymer.appHelpers,
+          Polymer.AccessHelpers
         ],
 
         properties: {
