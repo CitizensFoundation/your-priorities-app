@@ -129,6 +129,9 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
     if (community) {
       community.name = req.body.name;
       community.description = req.body.description;
+      if (req.body.status && req.body.status!="") {
+        community.status = req.body.status;
+      }
       community.access = models.Community.convertAccessFromRadioButtons(req.body);
       community.save().then(function () {
         log.info('Community Updated', { community: toJson(community), context: 'update', user: toJson(req.user) });

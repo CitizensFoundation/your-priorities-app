@@ -71,15 +71,6 @@
         </file-upload>
       </div>
 
-      <paper-dropdown-menu label="[[t('status.select')]]">
-        <paper-menu class="dropdown-content" selected="{{status}}">
-          <template is="dom-repeat" items="[[collectionStatusOptions]]" as="category">
-            <paper-item data-category-id$="[[collectionStatusOptions.name]]">[[collectionStatusOptions.name]]</paper-item>
-          </template>
-        </paper-menu>
-      </paper-dropdown-menu>
-      <input type="hidden" name="status" value="[[status]]">
-
       <input type="hidden" name="themeId" value="[[themeId]]">
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">

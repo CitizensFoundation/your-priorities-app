@@ -6,6 +6,13 @@
 
   "archived": "Gamalt",
 
+  "status": {
+    "select": "Veldu stöðu",
+    "active": "Virkt",
+    "featured": "Mikilvægt",
+    "archived": "Gamalt"
+  },
+
   "activity": {
     "post": {
       "new": "// Ný hugmynd //",

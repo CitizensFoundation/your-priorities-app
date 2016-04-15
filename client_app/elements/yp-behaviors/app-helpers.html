@@ -192,7 +192,11 @@
     },
 
     collectionStatusOptions: function() {
-      return ['active','featured','archived']
+      return [
+        {name: 'active', translatedName: this.t('status.active')},
+        {name: 'featured', translatedName: this.t('status.featured')},
+        {name: 'archived', translatedName: this.t('status.archived')}
+      ]
     }
   };
 </script>

@@ -78,6 +78,15 @@
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
+      <paper-dropdown-menu label="[[t('status.select')]]">
+        <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
+          <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
+            <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
+          </template>
+        </paper-menu>
+      </paper-dropdown-menu>
+      <input type="hidden" name="status" value="[[status]]">
+
       <h3 class="accessHeader">[[t('Access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
         <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
@@ -144,12 +153,16 @@
     },
 
     _communityChanged: function (newValue, oldValue) {
-      if (this.community.access===0) {
-        this.communityAccess = "public"
-      } else if (this.community.access===1) {
-        this.communityAccess = "closed"
-      } else if (this.community.access===2) {
-        this.communityAccess = "secret"
+      if (newValue) {
+        if (this.community.access===0) {
+          this.communityAccess = "public"
+        } else if (this.community.access===1) {
+          this.communityAccess = "closed"
+        } else if (this.community.access===2) {
+          this.communityAccess = "secret"
+        }
+        debugger;
+        this.set('status', this.community.status);
       }
     },
 
