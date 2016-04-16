@@ -1,7 +1,22 @@
 {
 
   "notification": {
-    "passwordResetAndLoggedIn": "Lykilorði hefur verið breytt og þú er innskráð(ur)"
+    "passwordResetAndLoggedIn": "Lykilorði hefur verið breytt og þú er innskráð(ur)",
+    "method": "Aðferð",
+    "frequency": "Tíðni",
+    "myPosts": "Mínar hugmyndir",
+    "muted": "Slökkt",
+    "browser": "Vafri",
+    "email": "Tölvupóstur",
+    "asItHappens": "Þegar það gerist",
+    "daily": "Daglega",
+    "weekly": "Vikulega",
+    "monthly": "Mánaðarlega",
+    "myPostsEndorsements": "Hugmyndir sem ég styð",
+    "myPoints": "Mín rök",
+    "myPointEndorsements": "Rök sem mér finnst hjálpleg",
+    "allCommunity": "Allt sem gerist á mínum svæðum",
+    "allGroup": "Allt sem gerist í mínum hópum"
   },
 
   "archived": "Eldra",
@@ -69,6 +84,8 @@
   },
 
   "user": {
+    "info":"Upplýsingar",
+    "notifications": "Tilkynningar",
     "logout": "útskrá",
     "login": "innskrá",
     "create": "nýskrá",
