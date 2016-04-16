@@ -1,0 +1,73 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="ac-notification-selection.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="ac-notification-settings">
+  <template>
+    <style>
+    </style>
+
+    <ac-notification-selection
+      name="[[t('notification.myPosts')]]"
+      method="{{notificationsSettings.my_posts.method}}"
+      frequency="{{notificationsSettings.my_posts.frequency}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection
+      name="[[t('notification.myPostsEndorsements')]]"
+      method="{{notificationsSettings.my_posts_endorsements.method}}"
+      frequency="{{notificationsSettings.my_posts_endorsements.frequency}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection
+      name="[[t('notification.myPoints')]]"
+      method="{{notificationsSettings.my_points.method}}"
+      frequency="{{notificationsSettings.my_points.frequency}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection
+      name="[[t('notification.myPointEndorsements')]]"
+      method="{{notificationsSettings.my_points_endorsements.method}}"
+      frequency="{{notificationsSettings.my_points_endorsements.frequency}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection
+      name="[[t('notification.allCommunity')]]"
+      method="{{notificationsSettings.all_community.method}}"
+      frequency="{{notificationsSettings.all_community.frequency}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection
+      name="[[t('notification.allGroup')]]"
+      method="{{notificationsSettings.all_group.method}}"
+      frequency="{{notificationsSettings.all_group.frequency}}">
+    </ac-notification-selection>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-notification-settings',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        notificationsSettings: {
+          type: Object,
+          notify: true,
+          observer: '_notificationSettingsChanged'
+        }
+      },
+
+      _notificationSettingsChanged: function (newValue) {
+        debugger;
+      }
+    });
+  </script>
+</dom-module>

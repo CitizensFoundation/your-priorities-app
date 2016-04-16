@@ -7,6 +7,7 @@ var passport = require('passport');
 var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var _ = require('lodash');
 
 var sendUserOrError = function (res, user, context, error, errorStatus) {
   if (error || !user) {
@@ -38,6 +39,7 @@ router.post('/register', function (req, res) {
   var user = models.User.build({
     email: req.body.email,
     name: req.body.name,
+    notification_settings: models.AcNotification.defaultNotificationSettings,
     status: 'active'
   });
   user.createPasswordHash(req.body.password);
@@ -159,7 +161,7 @@ router.get('/isloggedin', function (req, res) {
   if (req.isAuthenticated() && req.user) {
     models.User.find({
       where: {id: req.user.id},
-      attributes: models.User.defaultAttributesWithSocialMedia,
+      attributes: _.concat(models.User.defaultAttributesWithSocialMedia, ['notifications_settings']),
       order: [
         [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
         [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]

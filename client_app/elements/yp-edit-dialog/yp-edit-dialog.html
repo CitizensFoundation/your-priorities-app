@@ -41,6 +41,7 @@
       #toolbar {
         background-color: var(--accent-color);
         color: var(--text-primary_color);
+        max-height: 70px;
       }
 
       #dismissBtn {
@@ -100,10 +101,16 @@
 
       .popUpDialog {
         width: 420px;
+        height: 100%;
       }
 
       .popUpDialogDouble {
         width: 840px;
+        height: 100%;
+      }
+
+      .scrollerDialog {
+        height: 100%;
       }
 
       @media (max-width: 600px) {
@@ -114,7 +121,7 @@
 
       .bigHeader {
         background-color: var(--accent-color);
-        height: 100%;
+        max-height: 120px;
         color: #FFF;
         margin: 0;
         padding: 16px;
@@ -163,7 +170,7 @@
                 <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
               </template>
             </paper-toolbar>
-            <div id="scroller" class="flex">
+            <div id="scroller">
               <form is="iron-form" id="form" name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
                 <content></content>
               </form>
@@ -338,6 +345,16 @@
         else
           return "popUpDialog";
       },
+
+      _computeScrollerClass: function (narrow) {
+        if (narrow)
+          return "";
+        else if (this.doubleWidth)
+          return "scrollerDialog";
+        else
+          return "scrollerDialog";
+      },
+
 
       listeners: {
         'iron-form-submit': '_formSubmitted',

@@ -141,60 +141,39 @@ var activitiesTransform = {
 var defaultNotificationsSettings = function(email) {
   var settings;
 
-  if (email=='robert@citizens.is' || email=='gunnar@citizens.is') {
+  if (email == 'robert@citizens.is' || email == 'gunnar@citizens.is') {
     settings = {
       my_posts: {
-        method:  models.AcNotification.METHOD_EMAIL,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
       },
       my_posts_endorsements: {
-        method:  models.AcNotification.METHOD_EMAIL,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
       },
       my_points: {
-        method:  models.AcNotification.METHOD_EMAIL,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
       },
       my_points_endorsements: {
-        method:  models.AcNotification.METHOD_EMAIL,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
       },
       all_community: {
-        method:  models.AcNotification.METHOD_EMAIL,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
       },
       all_group: {
-        method:  models.AcNotification.METHOD_EMAIL,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      },
+      newsletter: {
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
       }
     }
   } else {
-    settings = {
-      my_posts: {
-        method:  models.AcNotification.METHOD_MUTED,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
-      },
-      my_posts_endorsements: {
-        method:  models.AcNotification.METHOD_MUTED,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
-      },
-      my_points: {
-        method:  models.AcNotification.METHOD_MUTED,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
-      },
-      my_points_endorsements: {
-        method:  models.AcNotification.METHOD_MUTED,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
-      },
-      all_community: {
-        method:  models.AcNotification.METHOD_MUTED,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
-      },
-      all_group: {
-        method:  models.AcNotification.METHOD_MUTED,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
-      }
-    }
+    settings = models.AcNotification.defaultNotificationSettings;
   }
   return settings;
 };
@@ -549,81 +528,81 @@ async.series([
     console.log('Setting up Your Priorities if needed');
     if (currentDomain.domain_name.indexOf("yrpri.org") > -1) {
       async.series([
-        function(callback){
-          models.Community.build({
-            name: "World Countries",
-            description: "World Countries",
-            domain_id: currentDomain.id,
-            ip_address: ip.address(),
-            user_agent: 'yrpri script',
-            hostname: "world-countries",
-            access: 0
-          }).save().then(function (community) {
-            if (community) {
-              community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
-                communityWC = community;
-                callback();
-              });
-            } else {
-              callback('no communitity created');
-            }
-          }).catch(function (error) {
-            console.log(error);
-            callback(error);
-          });
-        },
+          function(callback){
+            models.Community.build({
+              name: "World Countries",
+              description: "World Countries",
+              domain_id: currentDomain.id,
+              ip_address: ip.address(),
+              user_agent: 'yrpri script',
+              hostname: "world-countries",
+              access: 0
+            }).save().then(function (community) {
+              if (community) {
+                community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                  communityWC = community;
+                  callback();
+                });
+              } else {
+                callback('no communitity created');
+              }
+            }).catch(function (error) {
+              console.log(error);
+              callback(error);
+            });
+          },
 
-        function(callback){
-          models.Community.build({
-            name: "NHS Citizen",
-            description: "NHS Citizen",
-            domain_id: currentDomain.id,
-            ip_address: ip.address(),
-            user_agent: 'yrpri script',
-            hostname: "world-countries",
-            access: 0
-          }).save().then(function (community) {
-            if (community) {
-              community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
-                communityNHS = community;
-                callback();
-              });
-            } else {
-              callback('no communitity created');
-            }
-          }).catch(function (error) {
-            console.log(error);
-            callback(error);
-          });
-        },
+          function(callback){
+            models.Community.build({
+              name: "NHS Citizen",
+              description: "NHS Citizen",
+              domain_id: currentDomain.id,
+              ip_address: ip.address(),
+              user_agent: 'yrpri script',
+              hostname: "world-countries",
+              access: 0
+            }).save().then(function (community) {
+              if (community) {
+                community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                  communityNHS = community;
+                  callback();
+                });
+              } else {
+                callback('no communitity created');
+              }
+            }).catch(function (error) {
+              console.log(error);
+              callback(error);
+            });
+          },
 
-        function(callback){
-          models.Community.build({
-            name: "Zero Heroes",
-            description: "Zero Heroes",
-            domain_id: currentDomain.id,
-            ip_address: ip.address(),
-            user_agent: 'yrpri script',
-            hostname: "world-countries",
-            access: 0
-          }).save().then(function (community) {
-            if (community) {
-              community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
-                communityZH = community;
-                callback();
-              });
-            } else {
-              callback('no communitity created');
-            }
-          }).catch(function (error) {
-            console.log(error);
-            callback(error);
-          });
-        }
-      ],
-      function(err, results){
-        seriesCallback(err);
-      });
+          function(callback){
+            models.Community.build({
+              name: "Zero Heroes",
+              description: "Zero Heroes",
+              domain_id: currentDomain.id,
+              ip_address: ip.address(),
+              user_agent: 'yrpri script',
+              hostname: "world-countries",
+              access: 0
+            }).save().then(function (community) {
+              if (community) {
+                community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                  communityZH = community;
+                  callback();
+                });
+              } else {
+                callback('no communitity created');
+              }
+            }).catch(function (error) {
+              console.log(error);
+              callback(error);
+            });
+          }
+        ],
+        function(err, results){
+          seriesCallback(err);
+        });
     } else {
       seriesCallback();
     }
@@ -663,70 +642,70 @@ async.series([
         allUsersByOldIds[oldId] = masterUser.id;
         allUserModelsByOldIds[oldId] = masterUser;
         async.series([
-          function(innerSeriesCallback){
-            if (incoming.encrypted_password &&
+            function(innerSeriesCallback){
+              if (incoming.encrypted_password &&
                 incoming.encrypted_password != masterUser.encrypted_password) {
-              models.UserLegacyPassword.find({
-                where: { encrypted_password: incoming.encrypted_password }
-              }).then(function(legacyPassword) {
-                if (legacyPassword) {
-                  innerSeriesCallback();
-                } else {
-                  models.UserLegacyPassword.build({
-                    encrypted_password: incoming.encrypted_password,
-                    user_id: masterUser.id
-                  }).save().then(function () {
+                models.UserLegacyPassword.find({
+                  where: { encrypted_password: incoming.encrypted_password }
+                }).then(function(legacyPassword) {
+                  if (legacyPassword) {
                     innerSeriesCallback();
-                  }).catch(function (error) {
-                    console.log(error);
-                    innerSeriesCallback(error);
-                  });
-                }
-              }).catch(function (error) {
-                console.log(error);
-                innerSeriesCallback(error);
-              });
-
-            } else {
-              innerSeriesCallback();
-            }
-          },
-          function(innerSeriesCallback){
-            if (incoming.facebook_uid && incoming.facebook_uid != masterUser.facebook_id && incoming.created_at>masterUser.created_at) {
-              masterUser.facebook_id = incoming.facebook_uid;
-              masterUser.save().then(function (newUser) {
-                allUsersModelByEmail[incoming.email] = newUser;
-                innerSeriesCallback();
-              }).catch(function (error) {
-                console.log(error);
-                innerSeriesCallback(error);
-              });
-            } else {
-              innerSeriesCallback();
-            }
-          },
-          function(innerSeriesCallback){
-            if (buddyIconUrl && buddyIconUrl!='') {
-              uploadImage(buddyIconUrl, 'user-profile', masterUser.id, function(error, image) {
-                console.log("Uploading buddy icon has been completed innerSeries");
-                if (error) {
+                  } else {
+                    models.UserLegacyPassword.build({
+                      encrypted_password: incoming.encrypted_password,
+                      user_id: masterUser.id
+                    }).save().then(function () {
+                      innerSeriesCallback();
+                    }).catch(function (error) {
+                      console.log(error);
+                      innerSeriesCallback(error);
+                    });
+                  }
+                }).catch(function (error) {
                   console.log(error);
+                  innerSeriesCallback(error);
+                });
+
+              } else {
+                innerSeriesCallback();
+              }
+            },
+            function(innerSeriesCallback){
+              if (incoming.facebook_uid && incoming.facebook_uid != masterUser.facebook_id && incoming.created_at>masterUser.created_at) {
+                masterUser.facebook_id = incoming.facebook_uid;
+                masterUser.save().then(function (newUser) {
+                  allUsersModelByEmail[incoming.email] = newUser;
                   innerSeriesCallback();
-                } else {
-                  masterUser.addUserProfileImage(image).then(function () {
-                    console.log("Uploading buddy header Image has been added innerSeries");
-                    innerSeriesCallback()
-                  });
-                }
-              });
-            } else {
-              innerSeriesCallback();
+                }).catch(function (error) {
+                  console.log(error);
+                  innerSeriesCallback(error);
+                });
+              } else {
+                innerSeriesCallback();
+              }
+            },
+            function(innerSeriesCallback){
+              if (buddyIconUrl && buddyIconUrl!='') {
+                uploadImage(buddyIconUrl, 'user-profile', masterUser.id, function(error, image) {
+                  console.log("Uploading buddy icon has been completed innerSeries");
+                  if (error) {
+                    console.log(error);
+                    innerSeriesCallback();
+                  } else {
+                    masterUser.addUserProfileImage(image).then(function () {
+                      console.log("Uploading buddy header Image has been added innerSeries");
+                      innerSeriesCallback()
+                    });
+                  }
+                });
+              } else {
+                innerSeriesCallback();
+              }
             }
-          }
-        ],
-        function(err){
-          callback(err);
-        });
+          ],
+          function(err){
+            callback(err);
+          });
       } else {
         incoming['ip_address'] = ip.address();
         incoming['user_agent'] = 'yrpri script';
@@ -802,7 +781,7 @@ async.series([
         } else if (incoming['name'].indexOf("2014") > -1) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityBH3.id;
         } else if (!(incoming['name'].indexOf("Betri Reykjavík") > -1)
-                    && (incoming['description'] && incoming['description'].indexOf("2015") > -1)) {
+          && (incoming['description'] && incoming['description'].indexOf("2015") > -1)) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityBH4.id;
         } else {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityBR.id;
@@ -830,15 +809,15 @@ async.series([
           console.error(error);
         });
       } else if (currentDomain.domain_name.indexOf("yrpri.org") > -1 &&
-                     (incoming['iso_country_id'] ||
-                     (incoming['name'] && incoming['name'].indexOf("NHS") > -1) ||
-                     (incoming['name'] && incoming['name'].indexOf("Barcombe and Hamsey") > -1) ||
-                     (incoming['description'] && incoming['description'].indexOf("community do") > -1))) {
+        (incoming['iso_country_id'] ||
+        (incoming['name'] && incoming['name'].indexOf("NHS") > -1) ||
+        (incoming['name'] && incoming['name'].indexOf("Barcombe and Hamsey") > -1) ||
+        (incoming['description'] && incoming['description'].indexOf("community do") > -1))) {
 
         if (incoming['name'] && incoming['name'].indexOf("NHS") > -1) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityNHS.id;
         } else if ((incoming['description'] && incoming['description'].indexOf("community do") > -1) ||
-                   (incoming['name'] && incoming['name'].indexOf("Barcombe and Hamsey") > -1)) {
+          (incoming['name'] && incoming['name'].indexOf("Barcombe and Hamsey") > -1)) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityZH.id;
         } else {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityWC.id;

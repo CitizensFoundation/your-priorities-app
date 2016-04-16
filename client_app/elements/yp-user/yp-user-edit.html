@@ -5,6 +5,11 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
 
@@ -13,48 +18,66 @@
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 
+<link rel="import" href="../ac-notifications/ac-notification-settings.html">
+
 <dom-module id="yp-user-edit">
   <template>
 
     <style>
+
     </style>
 
-    <yp-edit-dialog id="editDialog" icon="face" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" double-width icon="face" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
-      <paper-input id="name"
-                   name="name"
-                   type="text"
-                   label="[[t('Name')]]"
-                   value="{{user.name}}"
-                   maxlength="50"
-                   char-counter>
-      </paper-input>
+      <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+        <paper-tab><span>[[t('user.info')]]</span></paper-tab>
+        <paper-tab>[[t('user.notifications')]]</paper-tab>
+      </paper-tabs>
 
-      <paper-input id="email"
-                   name="email"
-                   type="text"
-                   label="[[t('Email')]]"
-                   value="{{user.email}}">
-      </paper-input>
+      <div class="layout vertical wrap container">
+        <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
+          <section>
+            <paper-input id="name"
+                         name="name"
+                         type="text"
+                         label="[[t('Name')]]"
+                         value="{{user.name}}"
+                         maxlength="50"
+                         char-counter>
+            </paper-input>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.profile.upload')]]</span>
-        </file-upload>
+            <paper-input id="email"
+                         name="email"
+                         type="text"
+                         label="[[t('Email')]]"
+                         value="{{user.email}}">
+            </paper-input>
+
+            <div class="layout vertical additionalSettings">
+              <file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
+                <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                <span>[[t('image.profile.upload')]]</span>
+              </file-upload>
+            </div>
+
+            <div class="layout vertical additionalSettings">
+              <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
+                <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                <span>[[t('image.header.upload')]]</span>
+              </file-upload>
+            </div>
+
+            <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
+            <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+          </section>
+
+          <section>
+            <ac-notification-settings notifications-settings="{{user.notifications_settings}}"></ac-notification-settings>
+            <input type="hidden" name="notification_settings" value="[[encodedUserNotificationSettings]]">
+          </section>
+        </neon-animated-pages>
       </div>
-
-      <div class="layout vertical additionalSettings">
-        <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.header.upload')]]</span>
-        </file-upload>
-      </div>
-
-      <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
-      <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-
     </yp-edit-dialog>
   </template>
 
@@ -80,7 +103,8 @@
       },
 
       user: {
-        type: Object
+        type: Object,
+        observer: '_userChanged'
       },
 
       params: {
@@ -91,13 +115,35 @@
         type: String
       },
 
+      selected: {
+        type: Number,
+        value: 0
+      },
+
+      encodedUserNotificationSettings: {
+        type: String,
+        computed: '_encodeNotificationsSettings(user.notifications_settings)'
+      },
+
       uploadedProfileImageId: {
         type: String
       },
 
       uploadedHeaderImageId: {
         type: String
+      },
+
+      notificationSettings: {
+        type: Object
       }
+    },
+
+    _encodeNotificationsSettings: function (settings) {
+      return JSON.stringify(settings);
+    },
+
+    _userChanged: function (newValue) {
+      debugger;
     },
 
     _profileImageUploaded: function (event, detail) {

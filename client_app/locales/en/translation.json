@@ -1,7 +1,22 @@
 {
 
   "notification": {
-    "passwordResetAndLoggedIn": "Your password has been changed and you are now logged in."
+    "passwordResetAndLoggedIn": "Your password has been changed and you are now logged in.",
+    "method": "Method",
+    "frequency": "Frequency",
+    "myPosts": "My posts",
+    "muted": "Muted",
+    "browser": "Browser",
+    "email": "Email",
+    "asItHappens": "As it happens",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "myPostsEndorsements": "Posts I like",
+    "myPoints": "My points",
+    "myPointEndorsements": "Points I like",
+    "allCommunity": "All notifications from my communities",
+    "allGroup": "All notifications from my groups"
   },
 
   "archived": "Archived",
@@ -184,6 +199,8 @@
   },
 
   "user": {
+    "info":"Info",
+    "notifications": "Notifications",
     "name": "Full name",
     "email": "Email",
     "edit": "Edit user",
