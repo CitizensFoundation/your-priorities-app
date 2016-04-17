@@ -31209,6 +31209,7 @@ event and do your own custom submission:
       #toolbar {
         background-color: var(--accent-color);
         color: var(--text-primary_color);
+        max-height: 70px;
       }
 
       #dismissBtn {
@@ -31226,11 +31227,6 @@ event and do your own custom submission:
 
       paper-button[disabled]{
         background-color: #FFF;
-      }
-
-      #scroller {
-        @apply(--paper-fullscreen-dialog-content);
-        padding: 16px;
       }
 
       .title ::content h2 {
@@ -31259,7 +31255,7 @@ event and do your own custom submission:
       paper-header-panel {
         margin-top: 0;
         padding-top: 0 !important;
-       }
+      }
 
       paper-toolbar {
         margin-top: 0;
@@ -31267,11 +31263,33 @@ event and do your own custom submission:
       }
 
       .popUpDialog {
-        width: 420px;
+        width: 550px;
+        height: 75%;
       }
 
       .popUpDialogDouble {
         width: 840px;
+        height: 75%;
+      }
+
+      #scroller {
+        @apply(--paper-fullscreen-dialog-content);
+        padding: 16px;
+      }
+
+      .buttons {
+        height: 20%;
+      }
+
+      .scrollerDialog {
+        height: 65%;
+        overflow: auto;
+        padding-right: 16px;
+        padding-left: 16px;
+      }
+
+      .scrollerContainer {
+        height: 100%;
       }
 
       @media (max-width: 600px) {
@@ -31282,7 +31300,7 @@ event and do your own custom submission:
 
       .bigHeader {
         background-color: var(--accent-color);
-        height: 100%;
+        max-height: 120px;
         color: #FFF;
         margin: 0;
         padding: 16px;
@@ -31331,7 +31349,7 @@ event and do your own custom submission:
                 <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
               </template>
             </paper-toolbar>
-            <div id="scroller" class="flex">
+            <div id="scroller">
               <form is="iron-form" id="form" name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" params="[[params]]">
                 <content></content>
               </form>
@@ -31340,30 +31358,34 @@ event and do your own custom submission:
           <paper-spinner id="spinner"></paper-spinner>
         </template>
 
-        <template is="dom-if" if="[[!narrow]]">
+        <template is="dom-if" if="[[!narrow]]" restamp="">
           <div class="layout horizontal bigHeader">
             <iron-icon class="largeIcon" icon="[[icon]]"></iron-icon>
             <div class="content-wrapper">
               <content select="h2"></content>
             </div>
           </div>
-          <form is="iron-form" id="form" name="ypForm" iron-method="[[method]]" action="[[action]]" params="[[params]]">
-            <content id="mainEditContent"></content>
-          </form>
-          <paper-spinner id="spinner"></paper-spinner>
-          <div class="buttons">
-            <paper-button id="dismissBtn" dialog-dismiss="">[[t('cancel')]]</paper-button>
-            <template is="dom-if" if="[[!uploadingState]]">
-              <template is="dom-if" if="[[!useNextTabAction]]">
-                <paper-button on-tap="_submit">[[saveText]]</paper-button>
+          <div class="layout vertical scrollerContainer">
+            <div class="scrollerDialog">
+              <form is="iron-form" id="form" name="ypForm" iron-method="[[method]]" action="[[action]]" params="[[params]]">
+                <content id="mainEditContent"></content>
+              </form>
+              <paper-spinner id="spinner"></paper-spinner>
+            </div>
+            <div class="buttons">
+              <paper-button id="dismissBtn" dialog-dismiss="">[[t('cancel')]]</paper-button>
+              <template is="dom-if" if="[[!uploadingState]]">
+                <template is="dom-if" if="[[!useNextTabAction]]">
+                  <paper-button on-tap="_submit">[[saveText]]</paper-button>
+                </template>
+                <template is="dom-if" if="[[useNextTabAction]]">
+                  <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
+                </template>
               </template>
-              <template is="dom-if" if="[[useNextTabAction]]">
-                <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
+              <template is="dom-if" if="[[uploadingState]]">
+                <paper-button disabled="" on-tap="_nextTab">[[t('uploading.inProgress')]]</paper-button>
               </template>
-            </template>
-            <template is="dom-if" if="[[uploadingState]]">
-              <paper-button disabled="" on-tap="_nextTab">[[t('uploading.inProgress')]]</paper-button>
-            </template>
+            </div>
           </div>
         </template>
       </template>
@@ -31505,6 +31527,15 @@ event and do your own custom submission:
           return "popUpDialogDouble";
         else
           return "popUpDialog";
+      },
+
+      _computeScrollerClass: function (narrow) {
+        if (narrow)
+          return "";
+        else if (this.doubleWidth)
+          return "scrollerDialog";
+        else
+          return "scrollerDialog";
       },
 
       listeners: {
@@ -36096,6 +36127,10 @@ event and do your own custom submission:
       file-upload {
         padding-top: 8px;
       }
+
+      .half {
+        width: 50%;
+      }
     </style>
 
     <yp-edit-dialog id="editDialog" icon="social:people" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
@@ -36107,31 +36142,35 @@ event and do your own custom submission:
       <paper-textarea id="objectives" name="objectives" value="{{group.objectives}}" label="[[t('group.objectives')]]" char-counter="" rows="2" max-rows="5" maxlength="300">
       </paper-textarea>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.logo.upload')]]</span>
-        </file-upload>
+      <div class="layout horizontal">
+        <div class="layout vertical additionalSettings half">
+          <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('image.logo.upload')]]</span>
+          </file-upload>
+        </div>
+
+        <div class="layout vertical additionalSettings half">
+          <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('image.header.upload')]]</span>
+          </file-upload>
+        </div>
+
+        <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
+        <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       </div>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.header.upload')]]</span>
-        </file-upload>
+      <div class="layout horizontal center-center">
+        <paper-dropdown-menu label="[[t('status.select')]]">
+          <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
+            <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
+              <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
+            </template>
+          </paper-menu>
+        </paper-dropdown-menu>
+        <input type="hidden" name="status" value="[[status]]">
       </div>
-
-      <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
-      <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-
-      <paper-dropdown-menu label="[[t('status.select')]]">
-        <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
-          <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
-            <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
-          </template>
-        </paper-menu>
-      </paper-dropdown-menu>
-      <input type="hidden" name="status" value="[[status]]">
 
       <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
@@ -36206,7 +36245,7 @@ event and do your own custom submission:
     },
 
     _clear: function () {
-      this.group = { name: '', objectives: '', access: 2 };
+      this.group = { name: '', objectives: '', access: 0, status: 'active' };
       this.uploadedLogoImageId = null;
       this.uploadedHeaderImageId = null;
       this.$.headerImageUpload.clear();
@@ -36215,7 +36254,7 @@ event and do your own custom submission:
 
     setup: function (group, newNotEdit, refreshFunction) {
       if (!group) {
-        this.set('group', { name: '', objectives: '', access: 0 });
+        this.set('group', { name: '', objectives: '', access: 0, status: 'active' });
       } else {
         this.set('group', group);
       }
@@ -36257,6 +36296,10 @@ event and do your own custom submission:
       .additionalSettings {
         padding-top: 16px;
       }
+
+      .half {
+        width: 50%;
+      }
     </style>
 
     <yp-edit-dialog id="editDialog" icon="group-work" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
@@ -36270,31 +36313,35 @@ event and do your own custom submission:
         </paper-textarea>
       </div>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=community-logo" method="POST" on-success="_logoImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.logo.upload')]]</span>
-        </file-upload>
-      </div>
+      <div class="layout horizontal">
+        <div class="layout vertical additionalSettings half">
+          <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=community-logo" method="POST" on-success="_logoImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('image.logo.upload')]]</span>
+          </file-upload>
+        </div>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=community-header" method="POST" on-success="_headerImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.header.upload')]]</span>
-        </file-upload>
+        <div class="layout vertical additionalSettings half">
+          <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=community-header" method="POST" on-success="_headerImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('image.header.upload')]]</span>
+          </file-upload>
+        </div>
       </div>
 
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
-      <paper-dropdown-menu label="[[t('status.select')]]">
-        <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
-          <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
-            <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
-          </template>
-        </paper-menu>
-      </paper-dropdown-menu>
-      <input type="hidden" name="status" value="[[status]]">
+      <div class="layout horizontal center-center">
+        <paper-dropdown-menu label="[[t('status.select')]]">
+          <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
+            <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
+              <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
+            </template>
+          </paper-menu>
+        </paper-dropdown-menu>
+        <input type="hidden" name="status" value="[[status]]">
+      </div>
 
       <h3 class="accessHeader">[[t('Access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
@@ -36388,7 +36435,7 @@ event and do your own custom submission:
 
     setup: function (community, newNotEdit, refreshFunction) {
       if (!community) {
-        this.set('community', { name: '', description: '', access: 0 });
+        this.set('community', { name: '', description: '', access: 0, status: 'active' });
       } else {
         this.set('community', community);
       }
@@ -36673,38 +36720,281 @@ event and do your own custom submission:
     }
   });
 </script>
+<dom-module id="ac-notification-selection" assetpath="ac-notifications/">
+  <template>
+    <style>
+      .half {
+        width: 50%;
+      }
+
+      .notificationName {
+        padding-top: 16px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        padding-bottom: 4px;
+        color: #333;
+        border-bottom: solid 1px #ddd;
+      }
+
+      .notificationSub {
+        color: #888;
+      }
+
+      paper-radio-button {
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+    </style>
+
+    <div class="layout vertical">
+      <div class="notificationName">[[name]]</div>
+      <div class="layout horizontal wrap">
+        <div class="layout vertical half">
+          <div class="notificationSub">[[t('notification.method')]]</div>
+          <div class="layout horizontal">
+            <paper-radio-group id="notificationMethodGroup" name="method" class="method" attr-for-selected="enum-value" selected="{{method}}">
+              <template is="dom-repeat" items="[[availableMethods]]">
+                <paper-radio-button enum-value$="[[item.enumValue]]">[[item.name]]</paper-radio-button>
+              </template>
+            </paper-radio-group>
+          </div>
+        </div>
+        <div class="layout vertical half">
+          <div class="notificationSub">[[t('notification.frequency')]]</div>
+          <div class="layout horizontal">
+            <paper-radio-group id="notificationFrequencyGroup" name="frequency" attr-for-selected="enum-value" class="frequency" selected="{{frequency}}">
+              <template is="dom-repeat" items="[[_getAvailableFrequencies(method)]]">
+                <paper-radio-button enum-value$="[[item.enumValue]]">[[item.name]]</paper-radio-button>
+              </template>
+            </paper-radio-group>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-notification-selection',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        name: String,
+
+        setting: {
+          type: Object,
+          notify: true,
+          observer: '_settingChanged'
+        },
+
+        frequency:  {
+          type: Number,
+          notify: true,
+          observer: "_frequencyChanged"
+        },
+
+        method: {
+          type: Number,
+          notify: true,
+          observer: "_methodChanged"
+        },
+
+        availableFrequencies: {
+          type: Array,
+          computed: '_getAvailableFrequencies(method)'
+        },
+
+        availableMethods: {
+          type: Object,
+          value: function () {
+            return [
+              {
+                name: this.t('notification.muted'),
+                enumValue: 0
+              },
+              {
+                name: this.t('notification.browser'),
+                enumValue: 1
+              },
+              {
+                name: this.t('notification.email'),
+                enumValue: 2
+              }
+            ]
+          }
+        }
+      },
+
+      _methodChanged: function (value) {
+        value = parseInt(value);
+        if (this.setting.method!=value) {
+          this.set('setting.method', value);
+        }
+      },
+
+      _frequencyChanged: function (value) {
+        value = parseInt(value);
+        if (this.setting.frequency!=value) {
+          this.set('setting.frequency', value);
+        }
+      },
+
+      _settingChanged: function (value) {
+        if (value) {
+          this.set('method', value.method);
+          this.set('frequency', value.frequency);
+        }
+      },
+
+      _getAvailableFrequencies: function (method) {
+        var frequencyArray = [];
+
+        if (!method || method==0) {
+        } else if (method==1) {
+          this.set('frequency', 0);
+          frequencyArray = [
+            {
+              name: this.t('notification.asItHappens'),
+              enumValue: 0
+            }
+          ]
+        } else if (method==2) {
+          frequencyArray = [
+            {
+              name: this.t('notification.asItHappens'),
+              enumValue: 0
+            },
+            {
+              name: this.t('notification.daily'),
+              enumValue: 2
+            },
+            {
+              name: this.t('notification.weekly'),
+              enumValue: 3
+            },
+            {
+              name: this.t('notification.monthly'),
+              enumValue: 5
+            }
+          ]
+        }
+        return frequencyArray;
+      }
+    });
+  </script>
+</dom-module>
+<dom-module id="ac-notification-settings" assetpath="ac-notifications/">
+  <template>
+    <style>
+    </style>
+
+    <ac-notification-selection name="[[t('notification.myPosts')]]" setting="{{notificationsSettings.my_posts}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection name="[[t('notification.myPostsEndorsements')]]" setting="{{notificationsSettings.my_posts_endorsements}}">
+    </ac-notification-selection>
+
+
+    <ac-notification-selection name="[[t('notification.myPoints')]]" setting="{{notificationsSettings.my_points}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection name="[[t('notification.myPointEndorsements')]]" setting="{{notificationsSettings.my_points_endorsements}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection name="[[t('notification.allCommunity')]]" setting="{{notificationsSettings.all_community}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection name="[[t('notification.allGroup')]]" setting="{{notificationsSettings.all_group}}">
+    </ac-notification-selection>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-notification-settings',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        notificationsSettings: {
+          type: Object,
+          notify: true,
+          observer: '_notificationsSettingsChanged'
+        }
+      },
+
+      observers: [
+        'settingsStarChanged(notificationsSettings.*)'
+      ],
+
+      _notificationsSettingsChanged: function (value) {
+      },
+
+      settingsStarChanged: function (object) {
+        this.fire('yp-notifications-changed', this.notificationsSettings);
+      }
+    });
+  </script>
+</dom-module>
 <dom-module id="yp-user-edit" assetpath="yp-user/">
   <template>
 
     <style>
+      .container {
+        height: 100%;
+      }
     </style>
 
-    <yp-edit-dialog id="editDialog" icon="face" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
-      <h2>[[editHeaderText]]</h2>
+    <yp-edit-dialog id="editDialog" double-width="" icon="face" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <div class="container">
+        <h2>[[editHeaderText]]</h2>
 
-      <paper-input id="name" name="name" type="text" label="[[t('Name')]]" value="{{user.name}}" maxlength="50" char-counter="">
-      </paper-input>
+        <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+          <paper-tab><span>[[t('user.info')]]</span></paper-tab>
+          <paper-tab>[[t('user.notifications')]]</paper-tab>
+        </paper-tabs>
 
-      <paper-input id="email" name="email" type="text" label="[[t('Email')]]" value="{{user.email}}">
-      </paper-input>
+        <div class="layout vertical wrap container">
+          <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
+            <section>
+              <paper-input id="name" name="name" type="text" label="[[t('Name')]]" value="{{user.name}}" maxlength="50" char-counter="">
+              </paper-input>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.profile.upload')]]</span>
-        </file-upload>
+              <paper-input id="email" name="email" type="text" label="[[t('Email')]]" value="{{user.email}}">
+              </paper-input>
+
+              <div class="layout vertical additionalSettings">
+                <file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
+                  <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                  <span>[[t('image.profile.upload')]]</span>
+                </file-upload>
+              </div>
+
+              <div class="layout vertical additionalSettings">
+                <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
+                  <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                  <span>[[t('image.header.upload')]]</span>
+                </file-upload>
+              </div>
+
+              <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
+              <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+            </section>
+
+            <section>
+              <ac-notification-settings notifications-settings="{{notificationSettings}}"></ac-notification-settings>
+              <input type="hidden" name="notifications_settings" value="[[encodedUserNotificationSettings]]">
+            </section>
+          </neon-animated-pages>
+        </div>
       </div>
-
-      <div class="layout vertical additionalSettings">
-        <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.header.upload')]]</span>
-        </file-upload>
-      </div>
-
-      <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
-      <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-
     </yp-edit-dialog>
   </template>
 
@@ -36730,7 +37020,8 @@ event and do your own custom submission:
       },
 
       user: {
-        type: Object
+        type: Object,
+        observer: '_userChanged'
       },
 
       params: {
@@ -36741,13 +37032,53 @@ event and do your own custom submission:
         type: String
       },
 
+      selected: {
+        type: Number,
+        value: 0
+      },
+
+      encodedUserNotificationSettings: {
+        type: String,
+        observer: '_encodedUserNotificationSettingsChanged'
+      },
+
       uploadedProfileImageId: {
         type: String
       },
 
       uploadedHeaderImageId: {
         type: String
+      },
+
+      notificationSettings: {
+        type: Object,
+        notify: true,
+        observer: '_notificationSettingsChanged'
       }
+    },
+
+    listeners: {
+      'yp-notifications-changed': '_setNotificationSettings'
+    },
+
+    _setNotificationSettings: function (event, detail) {
+      this.set('notificationSettings', detail);
+      this.set('encodedUserNotificationSettings', this._encodeNotificationsSettings(this.notificationSettings));
+    },
+
+    _notificationSettingsChanged: function (value) {
+      this.set('encodedUserNotificationSettings', this._encodeNotificationsSettings(this.notificationSettings));
+    },
+
+    _encodedUserNotificationSettingsChanged: function (value) {
+    },
+
+    _encodeNotificationsSettings: function (settings) {
+      return JSON.stringify(settings);
+    },
+
+    _userChanged: function (newValue) {
+      this.set('notificationSettings', newValue.notifications_settings);
     },
 
     _profileImageUploaded: function (event, detail) {
@@ -40027,6 +40358,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 </dom-module>
 <dom-module id="yp-dialog-container" assetpath="yp-dialog-container/">
   <template>
+    <style>
+
+    </style>
 
     <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
 
