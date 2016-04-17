@@ -48380,7 +48380,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         right: 16px;
       }
 
-
       .post-image {
         width: 100%;
       }
@@ -48451,6 +48450,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         color: #FFF;
       }
 
+      .community-name[featured] {
+        background-color: var(--accent-color);
+      }
+
       .heartButton {
         position: absolute;
         top: 158px;
@@ -48466,7 +48469,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <paper-card class="communityCard" elevation="[[elevation]]" on-tap="_goToCommunity">
         <iron-image sizing="cover" preload="" src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
         <div class="informationText">
-          <div class="community-name">[[communityName(community)]]</div>
+          <div class="community-name" featured$="[[featured]]">[[communityName(community)]]</div>
           <div class="description">[[communityDescription(community)]]</div>
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
