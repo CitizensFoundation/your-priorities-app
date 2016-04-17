@@ -163,7 +163,7 @@
 
     <template is="dom-if" if="[[post]]" restamp>
       <div class="layout horizontal center-center">
-        <paper-material class="postCard" elevation="[[elevation]]">
+        <paper-material class="postCard" elevation="[[elevation]]" animated>
           <div class="layout vertical">
             <h1 class="post-name">[[postName(post)]]</h1>
             <div class="layout horizontal">
@@ -173,7 +173,7 @@
                   <div class="description">[[trimmedDescription]]</div>
                 </div>
                 <div class="card-actions">
-                  <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+                  <yp-post-actions elevation="[[elevation]]" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
                 </div>
               </div>
               <template is="dom-if" if="[[headerMode]]">
