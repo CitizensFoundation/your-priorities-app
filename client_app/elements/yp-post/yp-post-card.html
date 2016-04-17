@@ -37,6 +37,7 @@
         width: 540px;
         padding: 0px;
         padding-bottom: 16px;
+        padding-top: 16px;
       }
 
       .voting {
@@ -64,13 +65,12 @@
       }
 
       .post-name {
-        padding: 0;
-        padding-bottom: 4px;
         margin: 0;
-        font-size: 26px;
-        background-color: #eee;
-        padding: 8px;
-        margin-bottom: 8px;
+        font-size: 28px;
+        background-color: var(--primary-color-600);
+        color: #FFF;
+        padding: 16px;
+        cursor: pointer;
       }
 
       .category-icon {
@@ -147,9 +147,10 @@
       }
 
       .description {
-        padding-bottom: 42px;
+        padding-bottom: 8px;
         padding-left: 8px;
         padding-right: 8px;
+        cursor: pointer;
       }
 
       paper-icon-button {
@@ -163,25 +164,29 @@
     <template is="dom-if" if="[[post]]" restamp>
       <div class="layout horizontal center-center">
         <paper-material class="postCard" elevation="[[elevation]]">
-          <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
           <div class="layout vertical">
-            <div class="infoContainer postCardCursor" on-tap="goToPost">
-              <h1 class="post-name">[[postName(post)]]</h1>
-              <div class="description">[[trimmedDescription]]</div>
-            </div>
-            <div class="card-actions">
-              <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+            <h1 class="post-name">[[postName(post)]]</h1>
+            <div class="layout horizontal">
+              <yp-post-cover-media post="[[post]]"  on-tap="goToPost"></yp-post-cover-media>
+              <div class="layout vertical">
+                <div class="infoContainer postCardCursor" on-tap="goToPost">
+                  <div class="description">[[trimmedDescription]]</div>
+                </div>
+                <div class="card-actions">
+                  <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+                </div>
+              </div>
+              <template is="dom-if" if="[[headerMode]]">
+                <paper-menu-button class="edit" hidden$="[[!hasPostAccess(post)]]">
+                  <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                  <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                    <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+                    <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+                  </paper-menu>
+                </paper-menu-button>
+              </template>
             </div>
           </div>
-          <template is="dom-if" if="[[headerMode]]">
-            <paper-menu-button class="edit" hidden$="[[!hasPostAccess(post)]]">
-              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-                <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
-              </paper-menu>
-            </paper-menu-button>
-          </template>
         </paper-material>
       </div>
       <template is="dom-if" if="[[headerMode]]">
