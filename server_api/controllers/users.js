@@ -61,7 +61,7 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
     if (user) {
       user.name = req.body.name;
       user.email = req.body.email;
-      user.notification_settings = JSON.parse(req.body.notifications_settings);
+      user.notifications_settings = JSON.parse(req.body.notifications_settings);
       user.save().then(function () {
         log.info('User Updated', { user: toJson(user.simple()), context: 'update', loggedInUser: toJson(req.user.simple()) });
         user.setupImages(req.body, function (error) {

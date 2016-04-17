@@ -48,7 +48,7 @@
         <div class="layout vertical half">
           <div class="notificationSub">[[t('notification.frequency')]]</div>
           <div class="layout horizontal">
-            <paper-radio-group id="notificationFrequencyGroup" name="frequency" attr-for-selected="enum-value"  class="frequency" selected="{{frequency}}">
+            <paper-radio-group id="notificationFrequencyGroup" name="frequency" attr-for-selected="enum-value" class="frequency" selected="{{frequency}}">
               <template is="dom-repeat" items="[[_getAvailableFrequencies(method)]]">
                 <paper-radio-button enum-value$="[[item.enumValue]]">[[item.name]]</paper-radio-button>
               </template>
@@ -70,8 +70,24 @@
 
       properties: {
         name: String,
-        frequency: Number,
-        method: Number,
+
+        setting: {
+          type: Object,
+          notify: true,
+          observer: '_settingChanged'
+        },
+
+        frequency:  {
+          type: Number,
+          notify: true,
+          observer: "_frequencyChanged"
+        },
+
+        method: {
+          type: Number,
+          notify: true,
+          observer: "_methodChanged"
+        },
 
         availableFrequencies: {
           type: Array,
@@ -96,6 +112,27 @@
               }
             ]
           }
+        }
+      },
+
+      _methodChanged: function (value) {
+        value = parseInt(value);
+        if (this.setting.method!=value) {
+          this.set('setting.method', value);
+        }
+      },
+
+      _frequencyChanged: function (value) {
+        value = parseInt(value);
+        if (this.setting.frequency!=value) {
+          this.set('setting.frequency', value);
+        }
+      },
+
+      _settingChanged: function (value) {
+        if (value) {
+          this.set('method', value.method);
+          this.set('frequency', value.frequency);
         }
       },
 

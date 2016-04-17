@@ -12,40 +12,34 @@
 
     <ac-notification-selection
       name="[[t('notification.myPosts')]]"
-      method="{{notificationsSettings.my_posts.method}}"
-      frequency="{{notificationsSettings.my_posts.frequency}}">
+      setting="{{notificationsSettings.my_posts}}">
     </ac-notification-selection>
 
     <ac-notification-selection
       name="[[t('notification.myPostsEndorsements')]]"
-      method="{{notificationsSettings.my_posts_endorsements.method}}"
-      frequency="{{notificationsSettings.my_posts_endorsements.frequency}}">
+      setting="{{notificationsSettings.my_posts_endorsements}}">
     </ac-notification-selection>
+
 
     <ac-notification-selection
       name="[[t('notification.myPoints')]]"
-      method="{{notificationsSettings.my_points.method}}"
-      frequency="{{notificationsSettings.my_points.frequency}}">
+      setting="{{notificationsSettings.my_points}}">
     </ac-notification-selection>
 
     <ac-notification-selection
       name="[[t('notification.myPointEndorsements')]]"
-      method="{{notificationsSettings.my_points_endorsements.method}}"
-      frequency="{{notificationsSettings.my_points_endorsements.frequency}}">
+      setting="{{notificationsSettings.my_points_endorsements}}">
     </ac-notification-selection>
 
     <ac-notification-selection
       name="[[t('notification.allCommunity')]]"
-      method="{{notificationsSettings.all_community.method}}"
-      frequency="{{notificationsSettings.all_community.frequency}}">
+      setting="{{notificationsSettings.all_community}}">
     </ac-notification-selection>
 
     <ac-notification-selection
       name="[[t('notification.allGroup')]]"
-      method="{{notificationsSettings.all_group.method}}"
-      frequency="{{notificationsSettings.all_group.frequency}}">
+      setting="{{notificationsSettings.all_group}}">
     </ac-notification-selection>
-
   </template>
 
   <script>
@@ -61,12 +55,19 @@
         notificationsSettings: {
           type: Object,
           notify: true,
-          observer: '_notificationSettingsChanged'
+          observer: '_notificationsSettingsChanged'
         }
       },
 
-      _notificationSettingsChanged: function (newValue) {
-        debugger;
+      observers: [
+        'settingsStarChanged(notificationsSettings.*)'
+      ],
+
+      _notificationsSettingsChanged: function (value) {
+      },
+
+      settingsStarChanged: function (object) {
+        this.fire('yp-notifications-changed', this.notificationsSettings);
       }
     });
   </script>

@@ -73,7 +73,7 @@
           </section>
 
           <section>
-            <ac-notification-settings notifications-settings="{{user.notifications_settings}}"></ac-notification-settings>
+            <ac-notification-settings notifications-settings="{{notificationSettings}}"></ac-notification-settings>
             <input type="hidden" name="notifications_settings" value="[[encodedUserNotificationSettings]]">
           </section>
         </neon-animated-pages>
@@ -122,7 +122,7 @@
 
       encodedUserNotificationSettings: {
         type: String,
-        computed: '_encodeNotificationsSettings(user.notifications_settings)'
+        observer: '_encodedUserNotificationSettingsChanged'
       },
 
       uploadedProfileImageId: {
@@ -134,8 +134,27 @@
       },
 
       notificationSettings: {
-        type: Object
+        type: Object,
+        notify: true,
+        observer: '_notificationSettingsChanged'
       }
+    },
+
+    listeners: {
+      'yp-notifications-changed': '_setNotificationSettings'
+    },
+
+    _setNotificationSettings: function (event, detail) {
+      this.set('notificationSettings', detail);
+      this.set('encodedUserNotificationSettings', this._encodeNotificationsSettings(this.notificationSettings));
+    },
+
+    _notificationSettingsChanged: function (value) {
+      this.set('encodedUserNotificationSettings', this._encodeNotificationsSettings(this.notificationSettings));
+    },
+
+    _encodedUserNotificationSettingsChanged: function (value) {
+      debugger;
     },
 
     _encodeNotificationsSettings: function (settings) {
@@ -144,6 +163,7 @@
 
     _userChanged: function (newValue) {
       debugger;
+      this.set('notificationSettings', newValue.notifications_settings);
     },
 
     _profileImageUploaded: function (event, detail) {
