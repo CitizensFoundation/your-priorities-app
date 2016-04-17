@@ -170,7 +170,7 @@
     },
 
     _clear: function () {
-      this.group = { name: '', objectives: '', access: 2 };
+      this.group = { name: '', objectives: '', access: 0, status: 'active' };
       this.uploadedLogoImageId = null;
       this.uploadedHeaderImageId = null;
       this.$.headerImageUpload.clear();
@@ -179,7 +179,7 @@
 
     setup: function (group, newNotEdit, refreshFunction) {
       if (!group) {
-        this.set('group', { name: '', objectives: '', access: 0 });
+        this.set('group', { name: '', objectives: '', access: 0, status: 'active' });
       } else {
         this.set('group', group);
       }

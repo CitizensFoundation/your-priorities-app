@@ -187,7 +187,7 @@
 
     setup: function (community, newNotEdit, refreshFunction) {
       if (!community) {
-        this.set('community', { name: '', description: '', access: 0 });
+        this.set('community', { name: '', description: '', access: 0, status: 'active' });
       } else {
         this.set('community', community);
       }

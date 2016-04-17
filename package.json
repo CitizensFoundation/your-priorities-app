@@ -82,7 +82,8 @@
   },
   "scripts": {
     "test": "gulp test:local",
-    "start": "node server_api/api_app.js"
+    "start": "node server_api/api_app.js",
+    "worker": "node server_api/active-citizen/workers/main.js"
   },
   "cacheDirectories": [
     "node_modules"
