@@ -39,6 +39,10 @@
       file-upload {
         padding-top: 8px;
       }
+
+      .half {
+        width: 50%;
+      }
     </style>
 
     <yp-edit-dialog id="editDialog" icon="social:people" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
@@ -63,31 +67,35 @@
                       maxlength="300">
       </paper-textarea>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.logo.upload')]]</span>
-        </file-upload>
+      <div class="layout horizontal">
+        <div class="layout vertical additionalSettings half">
+          <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('image.logo.upload')]]</span>
+          </file-upload>
+        </div>
+
+        <div class="layout vertical additionalSettings half">
+          <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('image.header.upload')]]</span>
+          </file-upload>
+        </div>
+
+        <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
+        <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       </div>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.header.upload')]]</span>
-        </file-upload>
+      <div class="layout horizontal center-center">
+        <paper-dropdown-menu label="[[t('status.select')]]">
+          <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
+            <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
+              <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
+            </template>
+          </paper-menu>
+        </paper-dropdown-menu>
+        <input type="hidden" name="status" value="[[status]]">
       </div>
-
-      <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
-      <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-
-      <paper-dropdown-menu label="[[t('status.select')]]">
-        <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
-          <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
-            <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
-          </template>
-        </paper-menu>
-      </paper-dropdown-menu>
-      <input type="hidden" name="status" value="[[status]]">
 
       <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">

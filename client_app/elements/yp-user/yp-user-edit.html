@@ -24,59 +24,63 @@
   <template>
 
     <style>
-
+      .container {
+        height: 100%;
+      }
     </style>
 
     <yp-edit-dialog id="editDialog" double-width icon="face" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
-      <h2>[[editHeaderText]]</h2>
+      <div class="container">
+        <h2>[[editHeaderText]]</h2>
 
-      <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-        <paper-tab><span>[[t('user.info')]]</span></paper-tab>
-        <paper-tab>[[t('user.notifications')]]</paper-tab>
-      </paper-tabs>
+        <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+          <paper-tab><span>[[t('user.info')]]</span></paper-tab>
+          <paper-tab>[[t('user.notifications')]]</paper-tab>
+        </paper-tabs>
 
-      <div class="layout vertical wrap container">
-        <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
-          <section>
-            <paper-input id="name"
-                         name="name"
-                         type="text"
-                         label="[[t('Name')]]"
-                         value="{{user.name}}"
-                         maxlength="50"
-                         char-counter>
-            </paper-input>
+        <div class="layout vertical wrap container">
+          <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
+            <section>
+              <paper-input id="name"
+                           name="name"
+                           type="text"
+                           label="[[t('Name')]]"
+                           value="{{user.name}}"
+                           maxlength="50"
+                           char-counter>
+              </paper-input>
 
-            <paper-input id="email"
-                         name="email"
-                         type="text"
-                         label="[[t('Email')]]"
-                         value="{{user.email}}">
-            </paper-input>
+              <paper-input id="email"
+                           name="email"
+                           type="text"
+                           label="[[t('Email')]]"
+                           value="{{user.email}}">
+              </paper-input>
 
-            <div class="layout vertical additionalSettings">
-              <file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
-                <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-                <span>[[t('image.profile.upload')]]</span>
-              </file-upload>
-            </div>
+              <div class="layout vertical additionalSettings">
+                <file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
+                  <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                  <span>[[t('image.profile.upload')]]</span>
+                </file-upload>
+              </div>
 
-            <div class="layout vertical additionalSettings">
-              <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
-                <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-                <span>[[t('image.header.upload')]]</span>
-              </file-upload>
-            </div>
+              <div class="layout vertical additionalSettings">
+                <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
+                  <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                  <span>[[t('image.header.upload')]]</span>
+                </file-upload>
+              </div>
 
-            <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
-            <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-          </section>
+              <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
+              <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+            </section>
 
-          <section>
-            <ac-notification-settings notifications-settings="{{notificationSettings}}"></ac-notification-settings>
-            <input type="hidden" name="notifications_settings" value="[[encodedUserNotificationSettings]]">
-          </section>
-        </neon-animated-pages>
+            <section>
+              <ac-notification-settings notifications-settings="{{notificationSettings}}"></ac-notification-settings>
+              <input type="hidden" name="notifications_settings" value="[[encodedUserNotificationSettings]]">
+            </section>
+          </neon-animated-pages>
+        </div>
       </div>
     </yp-edit-dialog>
   </template>
