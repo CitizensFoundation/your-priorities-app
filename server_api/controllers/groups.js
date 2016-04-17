@@ -121,7 +121,7 @@ router.post('/:groupId/:email/add_admin', auth.can('edit group'), function(req, 
   });
 });
 
-router.post('/:groupId/post/news_story', auth.can('view group'), function(req, res) {
+router.post('/:groupId/post/news_story', auth.isLoggedIn, auth.can('view group'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {
       log.error('Could not save news story point on post', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
@@ -133,7 +133,7 @@ router.post('/:groupId/post/news_story', auth.can('view group'), function(req, r
   });
 });
 
-router.post('/:groupId/news_story', auth.can('view group'), function(req, res) {
+router.post('/:groupId/news_story', auth.isLoggedIn, auth.can('view group'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {
       log.error('Could not save news story point on group', { err: error, context: 'news_story', user: toJson(req.user.simple()) });

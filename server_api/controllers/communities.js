@@ -25,7 +25,7 @@ var sendCommunityOrError = function (res, community, context, user, error, error
   }
 };
 
-router.post('/:communityId/news_story', auth.can('view community'), function(req, res) {
+router.post('/:communityId/news_story', auth.isLoggedIn, auth.can('view community'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {
       log.error('Could not save news story point on community', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
