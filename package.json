@@ -1,6 +1,6 @@
 {
   "name": "your-priorities-app",
-  "version": "0.9.82",
+  "version": "0.9.83",
   "dependencies": {
     "async": "^1.4.2",
     "authorized": "^1.0.0",
@@ -89,6 +89,6 @@
     "node_modules"
   ],
   "engines": {
-    "node": "0.12.7"
+    "node": "4.4.3"
   }
 }
