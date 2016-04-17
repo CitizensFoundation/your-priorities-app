@@ -41614,7 +41614,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         @apply(--layout-horizontal);
         position: absolute;
         bottom: -36px;
-        right: 0px;
+        right: 0;
         padding-right: 20px;
         background-color: #FFF;
         margin-bottom: 16px;
@@ -41744,7 +41744,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     <iron-media-query query="(max-width: 360px)" query-matches="{{small}}"></iron-media-query>
 
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
-    <paper-material elevation="2" class$="[[computeActionClass(small)]]">
+    <paper-material elevation="[[elevationPlusOne]]" animated="" class$="[[computeActionClass(small)]]">
       <div id="actionUp" class="action-up">
         <paper-icon-button title="[[t('post.vote.up')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">{{formatNumber(post.counter_endorsements_up)}}</div>
@@ -41795,6 +41795,25 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         endorseValue: {
           type: Number,
           value: 0
+        },
+
+        elevation: {
+          type: Number,
+          value: 3
+        },
+
+        elevationPlusOne: {
+          type: Number,
+          computed: '_elevationPlusOne(elevation)'
+        }
+      },
+
+      _elevationPlusOne: function (elevation) {
+        debugger;
+        if (elevation<5) {
+          return elevation + 1;
+        } else {
+          return elevation;
         }
       },
 
@@ -45711,7 +45730,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
     <template is="dom-if" if="[[post]]" restamp="">
       <div class="layout horizontal center-center">
-        <paper-material class="postCard" elevation="[[elevation]]">
+        <paper-material class="postCard" elevation="[[elevation]]" animated="">
           <div class="layout vertical">
             <h1 class="post-name">[[postName(post)]]</h1>
             <div class="layout horizontal">
@@ -45721,7 +45740,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                   <div class="description">[[trimmedDescription]]</div>
                 </div>
                 <div class="card-actions">
-                  <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+                  <yp-post-actions elevation="[[elevation]]" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
                 </div>
               </div>
               <template is="dom-if" if="[[headerMode]]">
@@ -46400,6 +46419,15 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           type: Date
         }
       },
+
+      cardMouseOver: function (event) {
+        event.currentTarget.elevation = 4;
+      },
+
+      cardMouseOut: function (event) {
+        event.currentTarget.elevation = 1;
+      },
+
 
       buildPostsUrlPath: function () {
         return this.$.postsFilter.buildPostsUrlPath();
@@ -47218,7 +47246,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     </style>
 
     <template is="dom-if" if="[[group]]">
-      <paper-card class="groupCard" elevation="[[elevation]]" on-tap="_goToGroup">
+      <paper-card class="groupCard" animated="" elevation="[[elevation]]" on-tap="_goToGroup">
         <div class="card-content">
           <div class="layout">
             <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath(group)]]"></iron-image>
@@ -48490,7 +48518,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     </style>
 
     <template is="dom-if" if="[[community]]">
-      <paper-card class="communityCard" elevation="[[elevation]]" on-tap="_goToCommunity">
+      <paper-card class="communityCard" animated="" elevation="[[elevation]]" on-tap="_goToCommunity">
         <iron-image sizing="cover" preload="" src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
         <div class="informationText">
           <div class="community-name" featured$="[[featured]]">[[communityName(community)]]</div>
