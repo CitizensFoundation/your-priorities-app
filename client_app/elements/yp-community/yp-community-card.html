@@ -40,7 +40,6 @@
         right: 16px;
       }
 
-
       .post-image {
         width: 100%;
       }
@@ -111,6 +110,10 @@
         color: #FFF;
       }
 
+      .community-name[featured] {
+        background-color: var(--accent-color);
+      }
+
       .heartButton {
         position: absolute;
         top: 158px;
@@ -126,7 +129,7 @@
       <paper-card class="communityCard" elevation="[[elevation]]" on-tap="_goToCommunity" class="layout vertical flex">
         <iron-image sizing="cover" preload src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
         <div class="informationText">
-          <div class="community-name">[[communityName(community)]]</div>
+          <div class="community-name" featured$="[[featured]]">[[communityName(community)]]</div>
           <div class="description">[[communityDescription(community)]]</div>
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
