@@ -45739,9 +45739,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <div class="layout horizontal center-center">
         <paper-material class="postCard" elevation="[[elevation]]" animated="">
           <div class="layout vertical">
-            <h1 class="post-name">[[postName(post)]]</h1>
+            <h1 class="post-name" on-tap="goToPost">[[postName(post)]]</h1>
             <div class="layout horizontal">
-              <yp-post-cover-media post="[[post]]" on-tap="goToPost"></yp-post-cover-media>
+              <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
               <div class="layout vertical">
                 <div class="infoContainer postCardCursor" on-tap="goToPost">
                   <div class="description">[[trimmedDescription]]</div>
