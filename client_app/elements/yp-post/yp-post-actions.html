@@ -41,6 +41,14 @@
         margin-bottom: 16px;
       }
 
+      .action-bar[floating] {
+        @apply(--layout-horizontal);
+        position: relative;
+        background-color: #FFF;
+        padding-right: 0px;
+        padding-top: 130px;
+      }
+
       .action-bar-small {
         @apply(--layout-horizontal);
         @apply(--layout-flex);
@@ -165,7 +173,7 @@
     <iron-media-query query="(max-width: 360px)" query-matches="{{small}}"></iron-media-query>
 
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
-    <paper-material elevation="[[elevationPlusOne]]" animated class$="[[computeActionClass(small)]]">
+    <paper-material elevation="[[elevationPlusOne]]" floating$="[[floating]]"animated class="action-bar">
       <div id="actionUp" class="action-up">
         <paper-icon-button title="[[t('post.vote.up')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">{{formatNumber(post.counter_endorsements_up)}}</div>

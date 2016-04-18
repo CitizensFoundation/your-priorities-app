@@ -61,7 +61,6 @@
       yp-post-cover-media {
         width: 420px;
         height: 232px;
-        padding-top: 4px;
         padding-bottom: 4px;
       }
 
@@ -119,8 +118,9 @@
       }
     </style>
 
-    <div class="layout vertical center-center">
+    <div class="layout horizontal wrap">
       <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
+      <yp-post-actions elevation="-1" floating endorse-mode="[[endorseMode]]" class="voting layout vertical end" post="[[activity.Post]]"></yp-post-actions>
     </div>
 
     <div class="layout vertical">
@@ -131,7 +131,7 @@
         </div>
       </div>
       <div class="card-actions layout horizontal center-center">
-        <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[activity.Post]]"></yp-post-actions>
+
       </div>
     </div>
 

@@ -10,20 +10,22 @@
     <style>
 
       yp-user-image {
-        padding-right: px;
+        padding-right: 16px;
+        padding-left: 16px;
       }
 
       .createdAt {
-        color: #aaa;
+        color: #ddd;
       }
 
       .name {
-        color: #333;
+        padding-top: 4px;
+        color: #fff;
+        font-weight: bold;
       }
     </style>
 
     <div class="layout horizontal">
-      <yp-user-image user="[[activity.User]]" hidden$="[[noImage]]"></yp-user-image>
       <div class="layout vertical" hidden$="[[noText]]">
         <div class="name">
           [[activity.User.name]]
@@ -32,6 +34,7 @@
           [[fromTime(activity.created_at)]]
         </div>
       </div>
+      <yp-user-image user="[[activity.User]]" hidden$="[[noImage]]"></yp-user-image>
     </div>
   </template>
 

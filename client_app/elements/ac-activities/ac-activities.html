@@ -56,7 +56,6 @@
         background-color: var(--primary-color);
         color: #fff;
         padding-left: 16px;
-        margin-bottom: 16px;
       }
 
       ac-activity-header {
@@ -94,7 +93,8 @@
 
       .typeName {
         font-size: 30px;
-        padding-top: 8px;
+        padding-top: 20px;
+        padding-left: 4px;
       }
 
       .postName {
@@ -158,13 +158,9 @@
                       <iron-icon icon="thumb-up" class="thumbIconNewsFeed" hidden$="[[_downVote(activity.Point)]]"></iron-icon>
                     </template>
                   </div>
-                  <div class="layout horizontal postName">
-                    [[t(activity.Post.name)]]
-                  </div>
                 </div>
-                <ac-activity-header class="layout end-justified headerUserImage" no-text activity="[[activity]]"></ac-activity-header>
+                <ac-activity-header class="layout end-justified headerUserImage" activity="[[activity]]"></ac-activity-header>
               </div>
-              <ac-activity-header class="layout horizontal end-justified userInfo" no-image activity="[[activity]]"></ac-activity-header>
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                 <ac-activity-post activity="[[activity]]"></ac-activity-post>
               </template>
