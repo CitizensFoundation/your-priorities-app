@@ -41429,20 +41429,22 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     <style>
 
       yp-user-image {
-        padding-right: px;
+        padding-right: 16px;
+        padding-left: 16px;
       }
 
       .createdAt {
-        color: #aaa;
+        color: #ddd;
       }
 
       .name {
-        color: #333;
+        padding-top: 4px;
+        color: #fff;
+        font-weight: bold;
       }
     </style>
 
     <div class="layout horizontal">
-      <yp-user-image user="[[activity.User]]" hidden$="[[noImage]]"></yp-user-image>
       <div class="layout vertical" hidden$="[[noText]]">
         <div class="name">
           [[activity.User.name]]
@@ -41451,6 +41453,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           [[fromTime(activity.created_at)]]
         </div>
       </div>
+      <yp-user-image user="[[activity.User]]" hidden$="[[noImage]]"></yp-user-image>
     </div>
   </template>
 
@@ -41620,6 +41623,14 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         margin-bottom: 16px;
       }
 
+      .action-bar[floating] {
+        @apply(--layout-horizontal);
+        position: relative;
+        background-color: #FFF;
+        padding-right: 0px;
+        padding-top: 130px;
+      }
+
       .action-bar-small {
         @apply(--layout-horizontal);
         @apply(--layout-flex);
@@ -41744,7 +41755,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     <iron-media-query query="(max-width: 360px)" query-matches="{{small}}"></iron-media-query>
 
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
-    <paper-material elevation="[[elevationPlusOne]]" animated="" class$="[[computeActionClass(small)]]">
+    <paper-material elevation="[[elevationPlusOne]]" floating$="[[floating]]" animated="" class="action-bar">
       <div id="actionUp" class="action-up">
         <paper-icon-button title="[[t('post.vote.up')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">{{formatNumber(post.counter_endorsements_up)}}</div>
@@ -42561,7 +42572,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       yp-post-cover-media {
         width: 420px;
         height: 232px;
-        padding-top: 4px;
         padding-bottom: 4px;
       }
 
@@ -42619,8 +42629,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     </style>
 
-    <div class="layout vertical center-center">
+    <div class="layout horizontal wrap">
       <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
+      <yp-post-actions elevation="-1" floating="" endorse-mode="[[endorseMode]]" class="voting layout vertical end" post="[[activity.Post]]"></yp-post-actions>
     </div>
 
     <div class="layout vertical">
@@ -42631,7 +42642,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         </div>
       </div>
       <div class="card-actions layout horizontal center-center">
-        <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[activity.Post]]"></yp-post-actions>
+
       </div>
     </div>
 
@@ -43762,7 +43773,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         background-color: var(--primary-color);
         color: #fff;
         padding-left: 16px;
-        margin-bottom: 16px;
       }
 
       ac-activity-header {
@@ -43800,7 +43810,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       .typeName {
         font-size: 30px;
-        padding-top: 8px;
+        padding-top: 20px;
+        padding-left: 4px;
       }
 
       .postName {
@@ -43859,13 +43870,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                       <iron-icon icon="thumb-up" class="thumbIconNewsFeed" hidden$="[[_downVote(activity.Point)]]"></iron-icon>
                     </template>
                   </div>
-                  <div class="layout horizontal postName">
-                    [[t(activity.Post.name)]]
-                  </div>
                 </div>
-                <ac-activity-header class="layout end-justified headerUserImage" no-text="" activity="[[activity]]"></ac-activity-header>
+                <ac-activity-header class="layout end-justified headerUserImage" activity="[[activity]]"></ac-activity-header>
               </div>
-              <ac-activity-header class="layout horizontal end-justified userInfo" no-image="" activity="[[activity]]"></ac-activity-header>
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                 <ac-activity-post activity="[[activity]]"></ac-activity-post>
               </template>
@@ -45856,12 +45863,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .postCard {
-        width: 400px;
+        width: 800px;
         height: 90px;
         margin-top: 24px;
-        margin-right: 400px;
         padding: 16px;
         background-color: #fff;
+        font-size: 22px;
       }
 
       paper-icon-button {
@@ -45908,15 +45915,28 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .half {
         width: 50%;
       }
+
+      paper-fab {
+        padding-right: 16px;
+      }
+
+      iron-icon {
+        width: 64px;
+        height: 64px;
+        padding-right: 64px;
+      }
+
+      .introText {
+        padding-top: 18px;
+      }
     </style>
 
     <paper-card elevation="[[elevation]]" class="postCard">
       <div class="layout horizontal">
-        <div class="layout flex">[[t('post.addNewIntroBoxText')]]</div>
-        <div class="layout flex">
-          <div class="layout horizontal center-center">
-            <paper-fab on-tap="_newPost" icon="lightbulb-outline"></paper-fab>
-          </div>
+        <div class="layout flex introText">[[t('post.addNewIntroBoxText')]]</div>
+        <iron-icon icon="trending-flat"></iron-icon>
+        <div class="layout horizontal center-center">
+          <paper-fab on-tap="_newPost" icon="lightbulb-outline"></paper-fab>
         </div>
       </div>
     </paper-card>
