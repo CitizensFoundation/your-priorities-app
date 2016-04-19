@@ -197,7 +197,8 @@
     "inviteUser": "Invite user",
     "email": "email",
     "removeFromOrganization": "Remove",
-    "addToOrganization": "Organization"
+    "addToOrganization": "Organization",
+    "selectOrganization": "Select organization"
   },
 
   "user": {
