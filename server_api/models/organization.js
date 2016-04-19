@@ -10,6 +10,8 @@ module.exports = function(sequelize, DataTypes) {
   var Organization = sequelize.define("Organization", {
     name: { type: DataTypes.STRING, allowNull: false },
     description: DataTypes.TEXT,
+    address: DataTypes.TEXT,
+    phone_number: DataTypes.STRING,
     access: { type: DataTypes.INTEGER, allowNull: false }, // 0: public, 1: closed, 2: secret
     status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'active' },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },

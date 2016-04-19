@@ -197,14 +197,14 @@
       _openUsersDialog: function () {
         window.appGlobals.activity('open', 'group.users');
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
-        dialog.setup(this.group.id, null, false);
+        dialog.setup(this.group.id, null, null, false);
         dialog.open();
       },
 
       _openAdminsDialog: function () {
         window.appGlobals.activity('open', 'group.admins');
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
-        dialog.setup(this.group.id, null, true);
+        dialog.setup(this.group.id, null, null, true);
         dialog.open();
       },
 

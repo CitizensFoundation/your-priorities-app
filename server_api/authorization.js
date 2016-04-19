@@ -117,10 +117,65 @@ auth.role('domain.viewUser', function (domain, req, done) {
 auth.entity('domain', function(req, done) {
   var match = req.originalUrl.match(/domains\/(\w+)/);
   if (!match) {
-    done(new Error('Expected url like /domsains/:domainId'));
+    done(new Error('Expected url like /domains/:domainId'));
   } else {
     var domain = { id: match[1] };
     done(null, domain)
+  }
+});
+
+// Organization admin and view
+auth.role('organization.admin', function (organization, req, done) {
+  if (!req.isAuthenticated()) {
+    done();
+  } else {
+    models.Organization.findOne({
+      where: { id: organization.id }
+    }).then(function (organization) {
+      if (organization.user_id === req.user.id) {
+        done(null, true);
+      }  else {
+        organization.hasOrganizationAdmins(req.user).then(function (result) {
+          if (result) {
+            done(null, true);
+          } else {
+            done(null, false);
+          }
+        });
+      }
+    });
+  }
+});
+
+auth.role('organization.viewUser', function (organization, req, done) {
+  models.Organization.findOne({
+    where: { id: organization.id }
+  }).then(function (organization) {
+    if (organization.access === models.Organization.ACCESS_PUBLIC) {
+      done(null, true);
+    }  else if (!req.isAuthenticated()) {
+      done(null, false);
+    } else if (organization.user_id === req.user.id) {
+      done(null, true);
+    } else {
+      organization.hasUser(req.user).then(function (result) {
+        if (result) {
+          done(null, true);
+        } else {
+          done(null, false);
+        }
+      });
+    }
+  });
+});
+
+auth.entity('organization', function(req, done) {
+  var match = req.originalUrl.match(/organizations\/(\w+)/);
+  if (!match) {
+    done(new Error('Expected url like /organizations/:organizationId'));
+  } else {
+    var organization = { id: match[1] };
+    done(null, organization)
   }
 });
 
@@ -723,7 +778,74 @@ auth.entity('createDomainCommunity', function(req, done) {
   }
 });
 
+// Create organization
+
+auth.role('createDomainOrganization.createDomainOrganization', function (domain, req, done) {
+  models.Domain.findOne({
+    where: { id: domain.id }
+  }).then(function (domain) {
+    if (!req.isAuthenticated()) {
+      done(null, false);
+    } else if (domain.access === models.Domain.ACCESS_PUBLIC) {
+      done(null, true);
+    } else if (domain.user_id === req.user.id) {
+      done(null, true);
+    } else {
+      domain.hasUser(req.user).then(function (result) {
+        if (result) {
+          done(null, true);
+        } else {
+          done(null, false);
+        }
+      });
+    }
+  });
+});
+
+auth.role('createCommunityOrganization.createCommunityOrganization', function (domain, req, done) {
+  models.Community.findOne({
+    where: { id: community.id }
+  }).then(function (community) {
+    if (!req.isAuthenticated()) {
+      done(null, false);
+    } else if (community.access === models.Domain.ACCESS_PUBLIC) {
+      done(null, true);
+    } else if (community.user_id === req.user.id) {
+      done(null, true);
+    } else {
+      community.hasUser(req.user).then(function (result) {
+        if (result) {
+          done(null, true);
+        } else {
+          done(null, false);
+        }
+      });
+    }
+  });
+});
+
+auth.entity('createDomainOrganization', function(req, done) {
+  var match = req.originalUrl.match(/organizations\/(\w+)/);
+  if (!match) {
+    done(new Error('Expected url like /organizations/:domainId'));
+  } else {
+    var domain = { id: match[1] };
+    done(null, domain)
+  }
+});
+
+auth.entity('createCommunityOrganization', function(req, done) {
+  var match = req.originalUrl.match(/organizations\/(\w+)/);
+  if (!match) {
+    done(new Error('Expected url like /organizations/:communityId'));
+  } else {
+    var community = { id: match[1] };
+    done(null, community)
+  }
+});
+
 auth.action('edit domain', ['domain.admin']);
+auth.action('edit organization', ['organization.admin']);
 auth.action('edit community', ['community.admin']);
 auth.action('edit group', ['group.admin']);
 auth.action('edit post', ['post.admin']);
@@ -731,6 +853,7 @@ auth.action('edit user', ['user.admin']);
 auth.action('edit category', ['category.admin']);
 auth.action('edit point', ['point.admin']);
 
+auth.action('view organization', ['organization.viewUser']);
 auth.action('view domain', ['domain.viewUser']);
 auth.action('view community', ['community.viewUser']);
 auth.action('view group', ['group.viewUser']);
@@ -745,6 +868,8 @@ auth.action('vote on point', ['point.vote']);
 
 auth.action('add post user images', ['post.vote']);
 
+auth.action('create domainOrganization', ['createDomainOrganization.createDomainOrganization']);
+auth.action('create communityOrganization', ['createCommunityOrganization.createCommunityOrganization']);
 auth.action('create community', ['createDomainCommunity.createCommunity']);
 auth.action('create group', ['createCommunityGroup.createGroup']);
 auth.action('create post', ['createGroupPost.createPost']);

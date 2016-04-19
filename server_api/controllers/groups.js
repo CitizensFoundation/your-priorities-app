@@ -155,7 +155,15 @@ router.get('/:groupId/admin_users', auth.can('edit group'), function (req, res) 
         model: models.User,
         attributes: _.concat(models.User.defaultAttributesWithSocialMedia, ['created_at', 'last_login_at']),
         as: 'GroupAdmins',
-        required: true
+        required: true,
+        include: [
+          {
+            model: models.Organization,
+            attributes: ['id', 'name'],
+            as: 'OrganizationUsers',
+            required: false
+          }
+        ]
       }
     ]
   }).then(function (group) {
@@ -181,7 +189,15 @@ router.get('/:groupId/users', auth.can('edit group'), function (req, res) {
         model: models.User,
         attributes: _.concat(models.User.defaultAttributesWithSocialMedia, ['created_at', 'last_login_at']),
         as: 'GroupUsers',
-        required: true
+        required: true,
+        include: [
+          {
+            model: models.Organization,
+            attributes: ['id', 'name'],
+            as: 'OrganizationUsers',
+            required: false
+          }
+        ]
       }
     ]
   }).then(function (group) {

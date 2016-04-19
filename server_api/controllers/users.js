@@ -138,6 +138,25 @@ router.get('/adminRights', function (req, res) {
         }).catch(function(error) {
           seriesCallback(error);
         });
+      },
+      function (seriesCallback) {
+        models.User.find({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Organization,
+              as: 'OrganizationAdmins',
+              attributes: ['id','name'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          adminAccess.OrganizationAdmins = user.OrganizationAdmins;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
       }
     ], function (error) {
       if (!error) {
@@ -184,12 +203,6 @@ router.get('/isloggedin', function (req, res) {
         },
         {
           model: models.Image, as: 'UserHeaderImages',
-          required: false
-        },
-        {
-          model: models.Domain,
-          as: 'DomainAdmins',
-          attributes: ['id','name'],
           required: false
         }
       ]

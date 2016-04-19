@@ -59,7 +59,7 @@ router.get('/:id', auth.can('view organization'), function(req, res) {
   });
 });
 
-router.post('/:domainId', auth.can('create organization'), function(req, res) {
+router.post('/:domainId', auth.can('create domainOrganization'), function(req, res) {
   var hostname;
   if (req.hostname=='localhost') {
     hostname = 'localhost';
@@ -80,7 +80,7 @@ router.post('/:domainId', auth.can('create organization'), function(req, res) {
   });
   organization.save().then(function() {
     log.info('Organization Created', { organization: toJson(organization), context: 'create', user: toJson(req.user) });
-    organization.updateAllExternalCounters(req, 'up', 'counter_communities', function () {
+    organization.updateAllExternalCounters(req, 'up', 'counter_organizations', function () {
       organization.setupImages(req.body, function(error) {
         sendOrganizationOrError(res, organization, 'setupImages', req.user, error);
       });
@@ -120,7 +120,7 @@ router.delete('/:id', auth.can('edit organization'), function(req, res) {
       organization.deleted = true;
       organization.save().then(function () {
         log.info('Organization Deleted', { organization: toJson(organization), user: toJson(req.user) });
-        organization.updateAllExternalCounters(req, 'down', 'counter_communities', function () {
+        organization.updateAllExternalCounters(req, 'down', 'counter_organizations', function () {
           res.sendStatus(200);
         });
       });

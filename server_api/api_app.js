@@ -29,6 +29,7 @@ var posts = require('./controllers/posts');
 var groups = require('./controllers/groups');
 var communities = require('./controllers/communities');
 var domains = require('./controllers/domains');
+var organizations = require('./controllers/organizations');
 var points = require('./controllers/points');
 var users = require('./controllers/users');
 var categories = require('./controllers/categories');
@@ -245,6 +246,7 @@ if (process.env.GITHUB_CLIENT_ID) {
 
 app.use('/', index);
 app.use('/api/domains', domains);
+app.use('/api/organizations', organizations);
 app.use('/api/communities', communities);
 app.use('/api/groups', groups);
 app.use('/api/posts', posts);

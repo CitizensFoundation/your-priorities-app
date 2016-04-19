@@ -25,6 +25,7 @@ module.exports = function(sequelize, DataTypes) {
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_organizations: { type: DataTypes.INTEGER, defaultValue: 0 },
     only_admins_can_create_communities: { type: DataTypes.BOOLEAN, defaultValue: false },
     theme_id: { type: DataTypes.INTEGER, defaultValue: 0 },
     other_social_media_info: DataTypes.JSONB,

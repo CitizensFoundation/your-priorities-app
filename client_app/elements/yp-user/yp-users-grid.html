@@ -13,7 +13,7 @@
 <dom-module id="yp-users-grid">
   <template>
     <style>
-      paper-dialog {
+      #dialog {
         width: 90%;
         height: 90%;
         background-color: #FFF;
@@ -28,21 +28,62 @@
       .userItem {
         padding-right: 16px;
       }
+
+      .id {
+        width: 40px;
+      }
+
+      .name {
+        width: 200px;
+      }
+
+      .email {
+        width: 220px;
+      }
+
+      #selectOrganizationDialog {
+        background-color: #FFF;
+
+      }
     </style>
+
+    <paper-dialog id="selectOrganizationDialog" modal>
+      <h2>[[t('users.selectOrganization')]]</h2>
+      <paper-menu>
+        <template is="dom-repeat" items="[[availableOrganizations]]">
+          <paper-item id="[[item.id]]">[[item.name]]</paper-item>
+        </template>
+      </paper-menu>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>OK</paper-button>
+      </div>
+    </paper-dialog>
 
     <paper-dialog id="dialog">
       <h2>[[headerText]]</h2>
       <iron-list items="[[users]]" as="user">
         <template>
           <div class="layout horizontal">
-            <div class="userItem">
+            <div class="userItem id">
               [[user.id]]
             </div>
-            <div class="userItem">
+            <div class="userItem name">
               [[user.name]]
             </div>
-            <div class="userItem">
+            <div class="userItem email">
               [[user.email]]
+            </div>
+            <template is="dom-if" if="[[!_userOrganizationName(user)]]">
+              <div class="organization">
+                <paper-button data-args$="[[user.id]]" on-tap="_addToOrganization">[[t('users.addToOrganization')]]</paper-button>
+              </div>
+            </template>
+            <div class="organization" hidden$="[[_userOrganizationName(user)]]">
+              <div class="organizationName">
+                [[_userOrganizationName(user)]]
+              </div>
+              <paper-button data-args$="[[user.id]]" on-tap="_removeFromOrganization">[[t('users.removeFromOrganization')]]</paper-button>
             </div>
             <div hidden$="[[!adminUsers]]">
               <paper-button data-args$="[[user.id]]" on-tap="_removeAdmin">[[t('users.removeAdmin')]]</paper-button>
@@ -71,8 +112,10 @@
       <yp-ajax id="ajax" on-response="_usersResponse"></yp-ajax>
       <yp-ajax method="DELETE" id="removeAdminAjax" on-response="_removeAdminResponse"></yp-ajax>
       <yp-ajax method="DELETE" id="removeUserAjax" on-response="_removeUserResponse"></yp-ajax>
+      <yp-ajax method="DELETE" id="removeOrganizationAjax" on-response="_removeOrganizationResponse"></yp-ajax>
       <yp-ajax method="POST" id="inviteUserAjax" on-response="_inviteUserResponse"></yp-ajax>
       <yp-ajax method="POST" id="addAdminAjax" on-response="_addAdminResponse"></yp-ajax>
+      <yp-ajax method="POST" id="addOrganizationAjax" on-response="_addOrganizationResponse"></yp-ajax>
     </div>
 
   </template>
@@ -110,6 +153,11 @@
           observer: '_groupIdChanged'
         },
 
+        domainId: {
+          type: Number,
+          observer: '_domainIdChanged'
+        },
+
         communityId: {
           type: Number,
           observer: '_communityIdChanged'
@@ -131,7 +179,45 @@
         opened: {
           type: Boolean,
           value: false
+        },
+
+        availableOrganizations: {
+          type: Array
+        },
+
+        userIdForSelectingOrganization: Number
+      },
+
+      listeners: {
+        'iron-select': '_selectOrganization'
+      },
+
+      _userOrganizationName: function (user) {
+        if (user && user.OrganizationUsers && user.OrganizationUsers.length>0) {
+          return user.OrganizationUsers[0].name;
+        } else {
+          return null;
         }
+      },
+
+      _availableOrganizations: function () {
+        if (window.appUser.adminRights && window.appUser.adminRights.OrganizationAdmins) {
+          return  window.appUser.adminRights.OrganizationAdmins;
+        } else {
+          return [];
+        }
+      },
+
+      _addToOrganization: function (event) {
+        this.set('userIdForSelectingOrganization', event.target.getAttribute('data-args'));
+        this.set('availableOrganizations', this._availableOrganizations());
+        this.$.selectOrganizationDialog.open();
+      },
+
+      _selectOrganization: function (event, detail) {
+        debugger;
+        this.$.addOrganizationAjax.url = "/api/organizations/" + detail.item.id.id + "/" + this.userIdForSelectingOrganization + "/add_user";
+        this.$.addOrganizationAjax.generateRequest();
       },
 
       _removeAdmin: function (event) {
@@ -210,6 +296,13 @@
         this.$.ajax.generateRequest();
       },
 
+      _domainIdChanged: function (newGroupId) {
+        if (newGroupId) {
+          this.set('modelType', 'domains');
+          this._generateRequest(newGroupId);
+        }
+      },
+
       _groupIdChanged: function (newGroupId) {
         if (newGroupId) {
           this.set('modelType', 'groups');
@@ -235,9 +328,10 @@
       //  debugger;
       },
 
-      setup: function (groupId, communityId, adminUsers) {
+      setup: function (groupId, communityId, domainId, adminUsers) {
         this.set('groupId', null);
         this.set('communityId', null);
+        this.set('domainId', null);
         this.set('users', null);
         this.set('adminUsers', adminUsers);
 
@@ -246,6 +340,9 @@
 
         if (communityId)
           this.set('communityId', communityId);
+
+        if (domainId)
+          this.set('domainId', domainId);
 
         this._setupHeaderText();
       },
@@ -267,6 +364,12 @@
             this.set('headerText', this.t('community.admins'));
           } else {
             this.set('headerText', this.t('community.users'));
+          }
+        } else if (this.domainId) {
+          if (this.adminUsers) {
+            this.set('headerText', this.t('domain.admins'));
+          } else {
+            this.set('headerText', this.t('domain.users'));
           }
         }
       },

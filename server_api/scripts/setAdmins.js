@@ -38,6 +38,24 @@ async.series([
     });
   },
   function(callback) {
+    models.Organization.findAll({}).then(function (models) {
+      async.eachSeries(models, function (model, seriesCallback) {
+          model.hasOrganizationAdmins(user).then(function (results) {
+            if (!results) {
+              console.log("Adding admin user for: "+model.name);
+              model.addOrganizationAdmins(user).then(seriesCallback);
+            } else {
+              console.log("Already admin for for: "+model.name);
+              seriesCallback();
+            }
+          });
+        },
+        function() {
+          callback();
+        });
+    });
+  },
+  function(callback) {
     models.Community.findAll({
       where: {
         access: {

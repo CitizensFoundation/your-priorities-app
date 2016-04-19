@@ -156,6 +156,7 @@
           <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
           <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
             <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
+            <paper-item id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
           </paper-menu>
         </paper-menu-button>
       </paper-material>
@@ -192,6 +193,8 @@
       _menuSelection: function (event, detail) {
         if (detail.item.id=="editMenuItem")
           this._openEdit();
+        else if (detail.item.id=="createOrganizationMenuItem")
+          this._newOrganization();
         this.selectedMenuItem = null;
       },
 
@@ -199,6 +202,12 @@
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("domainEdit");
         dialog.setup(this.domain, false, this._refresh.bind(this));
         dialog.open('edit', { domainId: this.domain.id });
+      },
+
+      _newOrganization: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("organizationEdit");
+        dialog.setup(null, true, this._refresh.bind(this));
+        dialog.open('new', { domainId: this.domain.id });
       },
 
       _refresh: function (domain) {

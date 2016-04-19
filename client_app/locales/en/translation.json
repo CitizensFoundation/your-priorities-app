@@ -195,7 +195,9 @@
     "addAdmin": "Add admin",
     "removeUser": "Remove user",
     "inviteUser": "Invite user",
-    "email": "email"
+    "email": "email",
+    "removeFromOrganization": "Remove",
+    "addToOrganization": "Organization"
   },
 
   "user": {

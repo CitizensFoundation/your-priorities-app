@@ -2,6 +2,8 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
+<link rel="import" href="../../bower_components/iron-icons/places-icons.html">
+
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
@@ -13,7 +15,7 @@
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 
-<dom-module id="yp-community-edit">
+<dom-module id="yp-organization-edit">
   <template>
 
     <style>
@@ -25,7 +27,7 @@
       .accessHeader {
         color: var(--primary-color,#777);
         font-weight: normal;
-        margin-bottom: 0px;
+        margin-bottom: 0;
       }
 
       paper-radio-button {
@@ -35,9 +37,13 @@
       .additionalSettings {
         padding-top: 16px;
       }
+
+      .half {
+        width: 50%;
+      }
     </style>
 
-    <yp-edit-dialog id="editDialog" icon="group-work" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" icon="places:business-center" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
       <div class="layout vertical">
@@ -45,41 +51,53 @@
                      name="name"
                      type="text"
                      label="[[t('name')]]"
-                     value="{{community.name}}"
+                     value="{{organization.name}}"
                      maxlength="60"
                      char-counter class="mainInput">
         </paper-input>
 
         <paper-textarea id="description"
                         name="description"
-                        value="{{community.description}}"
+                        value="{{organization.description}}"
                         label="[[t('description')]]"
                         char-counter
                         rows="2"
                         max-rows="5"
                         maxlength="300" class="mainInput">
         </paper-textarea>
+
+        <paper-input id="website"
+                     name="website"
+                     type="text"
+                     label="[[t('website')]]"
+                     value="{{organization.website}}"
+                     maxlength="256"
+                     char-counter
+                     class="mainInput">
+        </paper-input>
       </div>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=community-logo" method="POST" on-success="_logoImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.logo.upload')]]</span>
-        </file-upload>
-      </div>
+      <div class="layout horizontal">
+        <div class="layout vertical additionalSettings half">
+          <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=organization-logo" method="POST" on-success="_logoImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('image.logo.upload')]]</span>
+          </file-upload>
+        </div>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=community-header" method="POST" on-success="_headerImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.header.upload')]]</span>
-        </file-upload>
+        <div class="layout vertical additionalSettings half">
+          <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=organization-header" method="POST" on-success="_headerImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('image.header.upload')]]</span>
+          </file-upload>
+        </div>
       </div>
 
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
       <h3 class="accessHeader">[[t('Access')]]</h3>
-      <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
+      <paper-radio-group id="access" name="access" class="access" selected="{{organizationAccess}}">
         <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
         <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>
         <paper-radio-button name="secret">[[t('secret')]]</paper-radio-button>
@@ -94,7 +112,7 @@
 
   Polymer({
 
-    is: 'yp-community-edit',
+    is: 'yp-organization-edit',
 
     behaviors: [
       Polymer.appHelpers,
@@ -105,15 +123,15 @@
 
       action: {
         type: String,
-        value: "/api/communities"
+        value: "/api/organizations"
       },
 
-      community: {
+      organization: {
         type: Object,
-        observer: "_communityChanged"
+        observer: "_organizationChanged"
       },
 
-      communityAccess: {
+      organizationAccess: {
         type: String,
         value: "public"
       },
@@ -135,37 +153,37 @@
       }
     },
 
-    _customRedirect: function (community) {
-      if (community) {
-        page("#!/community/"+community.id);
+    _customRedirect: function (organization) {
+      if (organization) {
+        page("#!/organization/"+organization.id);
       } else {
-        console.warn('No community found on custom redirect');
+        console.warn('No organization found on custom redirect');
       }
     },
 
-    _communityChanged: function (newValue, oldValue) {
-      if (this.community.access===0) {
-        this.communityAccess = "public"
-      } else if (this.community.access===1) {
-        this.communityAccess = "closed"
-      } else if (this.community.access===2) {
-        this.communityAccess = "secret"
+    _organizationChanged: function (newValue, oldValue) {
+      if (this.organization.access===0) {
+        this.organizationAccess = "public"
+      } else if (this.organization.access===1) {
+        this.organizationAccess = "closed"
+      } else if (this.organization.access===2) {
+        this.organizationAccess = "secret"
       }
     },
 
     _clear: function () {
-      this.set('community', { name: '', description: '', access: 9 });
+      this.set('organization', { name: '', description: '', access: 0 });
       this.uploadedLogoImageId = null;
       this.uploadedHeaderImageId = null;
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
     },
 
-    setup: function (community, newNotEdit, refreshFunction) {
-      if (!community) {
-        this.set('community', { name: '', description: '', access: 0 });
+    setup: function (organization, newNotEdit, refreshFunction) {
+      if (!organization) {
+        this.set('organization', { name: '', description: '', access: 0 });
       } else {
-        this.set('community', community);
+        this.set('organization', organization);
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
@@ -174,12 +192,12 @@
 
     _setupTranslation: function () {
       if (this.new) {
-        this.set('editHeaderText', this.t('community.new'));
-        this.set('toastText', this.t('community.toast.created'));
+        this.set('editHeaderText', this.t('organization.new'));
+        this.set('toastText', this.t('organization.toast.created'));
         this.set('saveText', this.t('create'));
       } else {
-        this.set('editHeaderText', this.t('Update community info'));
-        this.set('toastText', this.t('community.toast.updated'));
+        this.set('editHeaderText', this.t('Update organization info'));
+        this.set('toastText', this.t('organization.toast.updated'));
         this.set('saveText', this.t('update'));
       }
     }
