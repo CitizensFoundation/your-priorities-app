@@ -119,6 +119,13 @@ module.exports = function(sequelize, DataTypes) {
               format: 'png',
               suffix: '-medium',
               quality: 99
+            },
+            {
+              maxWidth: 89,
+              maxHeight: 50,
+              format: 'png',
+              suffix: '-small',
+              quality: 99
             }
           ]
         } else if (itemType && itemType === 'group-logo') {

@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-user/yp-user-image.html">
@@ -35,6 +36,9 @@
         </div>
       </div>
       <yp-user-image user="[[activity.User]]" hidden$="[[noImage]]"></yp-user-image>
+      <template is="dom-if" if="[[_organizationImageUrl(activity.User)]]">
+        <img sizing="cover" src$="[[_organizationImageUrl(activity.User)]]">
+      </template>
     </div>
   </template>
 
@@ -62,6 +66,18 @@
         noText: {
           type: Boolean,
           value: false
+        }
+      },
+
+      _organizationImageUrl: function (user) {
+        if (user.OrganizationUsers && user.OrganizationUsers.length > 0 &&
+            user.OrganizationUsers[0].OrganizationLogoImages &&
+            user.OrganizationUsers[0].OrganizationLogoImages.length > 0) {
+          var url = this.getImageFormatUrl(user.OrganizationUsers[0].OrganizationLogoImages, 2);
+          debugger;
+          return url;
+        } else {
+          return null;
         }
       },
 

@@ -128,7 +128,7 @@
 
     <template is="dom-if" if="[[community]]">
       <paper-card class="communityCard" animated elevation="[[elevation]]" on-tap="_goToCommunity" class="layout vertical flex">
-        <iron-image sizing="cover" preload src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
+        <iron-image sizing="contain" preload src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
         <div class="informationText">
           <div class="community-name" featured$="[[featured]]">[[communityName(community)]]</div>
           <div class="description">[[communityDescription(community)]]</div>
