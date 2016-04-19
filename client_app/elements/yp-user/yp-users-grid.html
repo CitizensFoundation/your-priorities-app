@@ -30,7 +30,7 @@
       }
 
       .id {
-        width: 40px;
+        width: 60px;
       }
 
       .name {
@@ -38,7 +38,7 @@
       }
 
       .email {
-        width: 220px;
+        width: 240px;
       }
 
       #selectOrganizationDialog {
@@ -51,7 +51,7 @@
       <h2>[[t('users.selectOrganization')]]</h2>
       <paper-menu>
         <template is="dom-repeat" items="[[availableOrganizations]]">
-          <paper-item id="[[item.id]]">[[item.name]]</paper-item>
+          <paper-item on-tap="_selectOrganization" id="[[item.id]]">[[item.name]]</paper-item>
         </template>
       </paper-menu>
 
@@ -79,11 +79,11 @@
                 <paper-button data-args$="[[user.id]]" on-tap="_addToOrganization">[[t('users.addToOrganization')]]</paper-button>
               </div>
             </template>
-            <div class="organization" hidden$="[[_userOrganizationName(user)]]">
+            <div class="organization" hidden$="[[!_userOrganizationName(user)]]">
               <div class="organizationName">
                 [[_userOrganizationName(user)]]
               </div>
-              <paper-button data-args$="[[user.id]]" on-tap="_removeFromOrganization">[[t('users.removeFromOrganization')]]</paper-button>
+              <paper-button data-args$="[[user.id]]" data-args-org$="[[_userOrganizationId(user)]]" on-tap="_removeFromOrganization">[[t('users.removeFromOrganization')]]</paper-button>
             </div>
             <div hidden$="[[!adminUsers]]">
               <paper-button data-args$="[[user.id]]" on-tap="_removeAdmin">[[t('users.removeAdmin')]]</paper-button>
@@ -188,8 +188,12 @@
         userIdForSelectingOrganization: Number
       },
 
-      listeners: {
-        'iron-select': '_selectOrganization'
+      _userOrganizationId: function (user) {
+        if (user && user.OrganizationUsers && user.OrganizationUsers.length>0) {
+          return user.OrganizationUsers[0].id;
+        } else {
+          return null;
+        }
       },
 
       _userOrganizationName: function (user) {
@@ -214,10 +218,19 @@
         this.$.selectOrganizationDialog.open();
       },
 
+      _removeFromOrganization: function (event) {
+        var userId = event.target.getAttribute('data-args');
+        var organizationId = event.target.getAttribute('data-args-org');
+        this.$.removeOrganizationAjax.body = {};
+        this.$.removeOrganizationAjax.url = "/api/organizations/" + organizationId + "/" + userId + "/remove_user";
+        this.$.removeOrganizationAjax.generateRequest();
+      },
+
       _selectOrganization: function (event, detail) {
-        debugger;
-        this.$.addOrganizationAjax.url = "/api/organizations/" + detail.item.id.id + "/" + this.userIdForSelectingOrganization + "/add_user";
+        this.$.addOrganizationAjax.body = {};
+        this.$.addOrganizationAjax.url = "/api/organizations/" + event.target.id + "/" + this.userIdForSelectingOrganization + "/add_user";
         this.$.addOrganizationAjax.generateRequest();
+        this.$.selectOrganizationDialog.close();
       },
 
       _removeAdmin: function (event) {
@@ -287,6 +300,16 @@
       _addAdminResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('users.adminAdded')+' '+this.addAdminEmail);
         this.set('addAdminEmail', null);
+        this.$.ajax.generateRequest();
+      },
+
+      _addOrganizationResponse: function (event, detail) {
+        window.appGlobals.notifyUserViaToast(this.t('users.organizationUserAdded')+' '+ detail.response.email);
+        this.$.ajax.generateRequest();
+      },
+
+      _removeOrganizationResponse: function (event, detail) {
+        window.appGlobals.notifyUserViaToast(this.t('users.organizationUserRemoved')+' '+ detail.response.email);
         this.$.ajax.generateRequest();
       },
 
