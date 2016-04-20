@@ -114,7 +114,7 @@
             <div hidden$="[[!page.published]]">
               <paper-button data-args$="[[page.id]]" on-tap="_unPublishPage">[[t('pages.unPublish')]]</paper-button>
             </div>
-            <paper-button data-args$="[[page.id]]" on-tap="_removePage">[[t('pages.removePage')]]</paper-button>
+            <paper-button data-args$="[[page.id]]" on-tap="_deletePage">[[t('pages.deletePage')]]</paper-button>
           </div>
         </template>
       </iron-list>
@@ -130,7 +130,7 @@
     <div class="layout horizontal center-center">
       <yp-ajax id="ajax" on-response="_pagesResponse"></yp-ajax>
       <yp-ajax method="POST" id="newPageAjax" on-response="_newPageResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="removePageAjax" on-response="_removePageResponse"></yp-ajax>
+      <yp-ajax method="DELETE" id="deletePageAjax" on-response="_deletePageResponse"></yp-ajax>
       <yp-ajax method="PUT" id="updatePageAjax" on-response="_updatePageResponse"></yp-ajax>
       <yp-ajax method="PUT" id="publishPageAjax" on-response="_publishPageResponse"></yp-ajax>
       <yp-ajax method="PUT" id="unPublishPageAjax" on-response="_unPublishPageResponse"></yp-ajax>
@@ -352,6 +352,17 @@
         this.$.ajax.generateRequest();
       },
 
+      _deletePage: function () {
+        this.$.deletePageAjax.body = {};
+        var pageId = event.target.getAttribute('data-args');
+        this._dispatchAjax(this.$.deletePageAjax, pageId, "delete_page")
+      },
+
+      _deletePageResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('pages.pageDeleted'));
+        this.$.ajax.generateRequest();
+      },
+
       _addLocale: function (event) {
         if (this.newLocaleValue && this.newLocaleValue.length>1) {
           var pageId = event.target.getAttribute('data-args');
@@ -377,99 +388,8 @@
         this.$.addPageButton.disabled = false;
       },
 
-      _removeFromOrganization: function (event) {
-        var userId = event.target.getAttribute('data-args');
-        var organizationId = event.target.getAttribute('data-args-org');
-        this.$.removeOrganizationAjax.body = {};
-        this.$.removeOrganizationAjax.url = "/api/organizations/" + organizationId + "/" + userId + "/remove_user";
-        this.$.removeOrganizationAjax.generateRequest();
-      },
-
-      _selectOrganization: function (event, detail) {
-        this.$.addOrganizationAjax.body = {};
-        this.$.addOrganizationAjax.url = "/api/organizations/" + event.target.id + "/" + this.userIdForSelectingOrganization + "/add_user";
-        this.$.addOrganizationAjax.generateRequest();
-        this.$.selectOrganizationDialog.close();
-      },
-
-      _removeAdmin: function (event) {
-        var userId = event.target.getAttribute('data-args');
-        this.$.removeAdminAjax.body = {};
-        if (this.modelType=="groups" && this.groupId) {
-          this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/remove_admin";
-          this.$.removeAdminAjax.generateRequest();
-        } else if (this.modelType=="communities" && this.communityId) {
-          this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/remove_admin";
-          this.$.removeAdminAjax.generateRequest();
-        } else {
-          console.warn("Can't find model type or ids");
-        }
-      },
-
-      _removeUser: function (event) {
-        var userId = event.target.getAttribute('data-args');
-        this.$.removeUserAjax.body = {};
-        if (this.modelType=="groups" && this.groupId) {
-          this.$.removeUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/remove_user";
-          this.$.removeUserAjax.generateRequest();
-        } else if (this.modelType=="communities" && this.communityId) {
-          this.$.removeUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/remove_user";
-          this.$.removeUserAjax.generateRequest();
-        } else {
-          console.warn("Can't find model type or ids");
-        }
-      },
-
-      _addAdmin: function (event) {
-        this.$.addAdminAjax.body = {};
-        if (this.modelType=="groups" && this.groupId) {
-          this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.addAdminEmail + "/add_admin";
-          this.$.addAdminAjax.generateRequest();
-        } else if (this.modelType=="communities" && this.communityId) {
-          this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.addAdminEmail + "/add_admin";
-          this.$.addAdminAjax.generateRequest();
-        } else {
-          console.warn("Can't find model type or ids");
-        }
-      },
-
-      _inviteUser: function (event) {
-        this.$.inviteUserAjax.body = {};
-        if (this.modelType=="groups" && this.groupId) {
-          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.inviteUserEmail + "/invite_user";
-          this.$.inviteUserAjax.generateRequest();
-        } else if (this.modelType=="communities" && this.communityId) {
-          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.inviteUserEmail + "/invite_user";
-          this.$.inviteUserAjax.generateRequest();
-        } else {
-          console.warn("Can't find model type or ids");
-        }
-      },
-
       _updatePageResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('posts.updated'));
-        this.$.ajax.generateRequest();
-      },
-
-      _addAdminResponse: function () {
-        window.appGlobals.notifyUserViaToast(this.t('users.adminAdded')+' '+this.addAdminEmail);
-        this.set('addAdminEmail', null);
-        this.$.ajax.generateRequest();
-      },
-
-      _addOrganizationResponse: function (event, detail) {
-        window.appGlobals.notifyUserViaToast(this.t('users.organizationUserAdded')+' '+ detail.response.email);
-        this.$.ajax.generateRequest();
-      },
-
-      _removeOrganizationResponse: function (event, detail) {
-        window.appGlobals.notifyUserViaToast(this.t('users.organizationUserRemoved')+' '+ detail.response.email);
-        this.$.ajax.generateRequest();
-      },
-
-      _inviteUserResponse: function () {
-        window.appGlobals.notifyUserViaToast(this.t('users.userInvited')+' '+this.inviteUserEmail);
-        this.set('inviteUserEmail', null);
         this.$.ajax.generateRequest();
       },
 
@@ -501,7 +421,6 @@
 
       _pagesResponse: function (event, detail) {
         this.set('pages', detail.response);
-      //  debugger;
       },
 
       setup: function (groupId, communityId, domainId, adminUsers) {
@@ -533,55 +452,6 @@
           this.set('headerText', this.t('community.pages'));
         } else if (this.domainId) {
           this.set('headerText', this.t('domain.pages'));
-        }
-      },
-
-      ready2: function () {
-        /*
-        this.$.grid.columns[5].renderer = this._adminActionRenderer;
-
-        var filterElement = document.createElement('input');
-        filterElement.setAttribute('type', 'search');
-        filterElement.setAttribute('placeholder', 'Filter...');
-        filterElement.style.width = '100%';
-
-        var timer = 0;
-
-        function filter() {
-          clearTimeout(timer);
-          timer = setTimeout(grid.refreshItems.bind(grid), 500);
-        }
-
-        filterElement.addEventListener('keyup', filter);
-        filterElement.addEventListener('click', filter);
-
-        this.$.grid.items = function(params, callback) {
-          var filterValue = filterElement.value.toLowerCase();
-          var data = this.users.filter(function(val) {
-            return (val.toString().toLowerCase()).indexOf(filterValue) != -1;
-          });
-          var slice = data.slice(params.index, params.index + params.count);
-          callback(slice, data.length);
-        };
-
-        this.$.grid.then(function() {
-          this.$.grid.header.getCell(1, 0).content = filterElement;
-        }.bind(this));
-        */
-      },
-
-      _adminActionRenderer: function(cell) {
-        cell.element.innerHTML = '';
-        var child = document.createElement('progress');
-        child.setAttribute('value', cell.data);
-        cell.element.appendChild(child);
-      },
-
-      _onSelect: function() {
-        if (this.$.grid.selection.selected().length === 0) {
-          this.selected = null;
-        } else {
-          this.selected = this.users[this.$.grid.selection.selected()];
         }
       }
     });
