@@ -1352,6 +1352,7 @@ async.series([
         incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
       } else {
         incoming['community_id'] = allCommunitiesByOldGroupIds[incoming['group_id']];
+        incoming['group_id'] = null;
       }
       //incoming['domain_id'] = currentDomain.id;
       incoming['content'] = YAML.parse(incoming['content']);

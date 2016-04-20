@@ -51,6 +51,14 @@
       paper-textarea {
         height: 60%;
       }
+
+      .localeInput {
+        width: 26px;
+      }
+
+      .pageItem {
+        padding-top: 8px;
+      }
     </style>
 
     <paper-dialog id="editPageLocale" modal class="layout vertical">
@@ -93,10 +101,12 @@
             <div class="pageItem title">
               [[page.title.en]]
             </div>
-            <template is="dom-repeat" items="[[_toLocaleArray(page.title)]]">
-              <a class="locale" data-args-page$="[[page]]" data-args-locale$="[[item.locale]]" on-tap="_editPageLocale">[[item.locale]]</a>
+            <template is="dom-repeat" items="[[_toLocaleArray(page.title)]]" class="pageItem">
+              <div class="layout vertical center-center">
+                <a class="locale" data-args-page$="[[page]]" data-args-locale$="[[item.locale]]" on-tap="_editPageLocale">[[item.locale]]</a>
+              </div>
             </template>
-            <paper-input length="2" maxlength="2" value="{{newLocaleValue}}"></paper-input>
+            <paper-input no-label-float class="localeInput" length="2" maxlength="2" value="{{newLocaleValue}}"></paper-input>
             <paper-button data-args$="[[page.id]]" on-tap="_addLocale">[[t('pages.addLocale')]]</paper-button>
             <div hidden$="[[page.published]]">
               <paper-button data-args$="[[page.id]]" on-tap="_publishPage">[[t('pages.publish')]]</paper-button>
@@ -109,7 +119,7 @@
         </template>
       </iron-list>
       <div class="layout horizontal">
-        <paper-button on-tap="_addPage">[[t('pages.addPage')]]</paper-button>
+        <paper-button id="addPageButton" on-tap="_addPage">[[t('pages.addPage')]]</paper-button>
       </div>
 
       <div class="buttons">
@@ -289,26 +299,59 @@
         this.set('currentlyEditingTitle', null);
       },
 
+      _dispatchAjax(ajax, pageId, path) {
+        var pageIdPath;
+        if (pageId) {
+          pageIdPath = "/" + pageId + "/" + path;
+        } else {
+          pageIdPath = "/" + path;
+        }
+        if (this.modelType=="groups" && this.groupId) {
+          ajax.url = "/api/" + this.modelType + "/" + this.groupId + pageIdPath;
+          ajax.generateRequest();
+        } else if (this.modelType=="communities" && this.communityId) {
+          ajax.url = "/api/" + this.modelType + "/" + this.communityId +  pageIdPath;
+          ajax.generateRequest();
+        } else if (this.modelType=="domains" && this.domainId) {
+          ajax.url = "/api/" + this.modelType + "/" + this.domainId + pageIdPath;
+          ajax.generateRequest();
+        } else {
+          console.warn("Can't find model type or ids");
+        }
+      },
+
       _updatePageLocale: function () {
         this.$.updatePageAjax.body = {
           locale: this.currentlyEditingLocale,
           content: this.currentlyEditingContent,
           title: this.currentlyEditingTitle
         };
-
-        if (this.modelType=="groups" && this.groupId) {
-          this.$.updatePageAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.currentlyEditingPage.id + "/update_page_locale";
-          this.$.updatePageAjax.generateRequest();
-        } else if (this.modelType=="communities" && this.communityId) {
-          this.$.updatePageAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" +  this.currentlyEditingPage.id + "/update_page_locale";
-          this.$.updatePageAjax.generateRequest();
-        } else if (this.modelType=="domains" && this.domainId) {
-          this.$.updatePageAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" +  this.currentlyEditingPage.id + "/update_page_locale";
-          this.$.updatePageAjax.generateRequest();
-        } else {
-          console.warn("Can't find model type or ids");
-        }
+        this._dispatchAjax(this.$.updatePageAjax, this.currentlyEditingPage.id, "/update_page_locale")
         this._closePageLocale();
+      },
+
+      _addLocale: function (event) {
+        if (this.newLocaleValue && this.newLocaleValue.length>1) {
+          var pageId = event.target.getAttribute('data-args');
+          this.$.updatePageAjax.body = {
+            locale: this.newLocaleValue,
+            content: '',
+            title: ''
+          };
+          this._dispatchAjax(this.$.updatePageAjax, pageId, "/update_page_locale")
+          this.set('newLocaleValue', null);
+        }
+      },
+
+      _addPage: function (event) {
+        this.$.newPageAjax.body = {};
+        this.$.addPageButton.disabled = true;
+        this._dispatchAjax(this.$.newPageAjax, null, "/add_page")
+      },
+
+      _newPageResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('pages.newPageCreated'));
+        this.$.ajax.generateRequest();
       },
 
       _removeFromOrganization: function (event) {
@@ -382,11 +425,6 @@
 
       _updatePageResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('posts.updated'));
-        this.$.ajax.generateRequest();
-      },
-
-      _removeUserResponse: function () {
-        window.appGlobals.notifyUserViaToast(this.t('users.userRemoved'));
         this.$.ajax.generateRequest();
       },
 
