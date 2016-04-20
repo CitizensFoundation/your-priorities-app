@@ -11,7 +11,7 @@
     <style>
       #dialog {
         width: 90%;
-        height: 90%;
+        max-height: 90%;
         background-color: #FFF;
       }
 
@@ -39,7 +39,7 @@
 
       #editPageLocale {
         width: 80%;
-        height: 80%;
+        max-height: 80%;
         background-color: #FFF;
       }
 
@@ -77,7 +77,7 @@
 
 
       <div class="buttons">
-        <paper-button dialog-dismiss>[[t('close')]]</paper-button>
+        <paper-button on-tap="_closePageLocale" dialog-dismiss>[[t('close')]]</paper-button>
         <paper-button on-tap="_updatePageLocale" dialog-dismiss>[[t('save')]]</paper-button>
       </div>
     </paper-dialog>
@@ -282,6 +282,35 @@
         this.$.editPageLocale.open();
       },
 
+      _closePageLocale: function () {
+        this.set('currentlyEditingPage', null);
+        this.set('currentlyEditingLocale', null);
+        this.set('currentlyEditingContent', null);
+        this.set('currentlyEditingTitle', null);
+      },
+
+      _updatePageLocale: function () {
+        this.$.updatePageAjax.body = {
+          locale: this.currentlyEditingLocale,
+          content: this.currentlyEditingContent,
+          title: this.currentlyEditingTitle
+        };
+
+        if (this.modelType=="groups" && this.groupId) {
+          this.$.updatePageAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.currentlyEditingPage.id + "/update_page_locale";
+          this.$.updatePageAjax.generateRequest();
+        } else if (this.modelType=="communities" && this.communityId) {
+          this.$.updatePageAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" +  this.currentlyEditingPage.id + "/update_page_locale";
+          this.$.updatePageAjax.generateRequest();
+        } else if (this.modelType=="domains" && this.domainId) {
+          this.$.updatePageAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" +  this.currentlyEditingPage.id + "/update_page_locale";
+          this.$.updatePageAjax.generateRequest();
+        } else {
+          console.warn("Can't find model type or ids");
+        }
+        this._closePageLocale();
+      },
+
       _removeFromOrganization: function (event) {
         var userId = event.target.getAttribute('data-args');
         var organizationId = event.target.getAttribute('data-args-org');
@@ -351,8 +380,8 @@
         }
       },
 
-      _removeAdminResponse: function () {
-        window.appGlobals.notifyUserViaToast(this.t('users.adminRemoved'));
+      _updatePageResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('posts.updated'));
         this.$.ajax.generateRequest();
       },
 

@@ -25,14 +25,86 @@ var sendCommunityOrError = function (res, community, context, user, error, error
   }
 };
 
+router.get('/:communityId/pages', auth.can('edit community'), function(req, res) {
+  models.Page.getPages(req, { community_id: req.params.communityId }, function (error, pages) {
+    if (error) {
+      log.error('Could not get pages for community', { err: error, context: 'pages', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Got Pages', {context: 'pages', user: toJson(req.user.simple()) });
+      res.send(pages);
+    }
+  });
+});
+
 router.get('/:communityId/pages_for_admin', auth.can('edit community'), function(req, res) {
   models.Page.getPagesForAdmin(req, { community_id: req.params.communityId }, function (error, pages) {
     if (error) {
       log.error('Could not get page for admin for community', { err: error, context: 'pages_for_admin', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      log.info('Point News Story Created', {context: 'pages_for_admin', user: toJson(req.user.simple()) });
+      log.info('Got Pages For Admin', {context: 'pages_for_admin', user: toJson(req.user.simple()) });
       res.send(pages);
+    }
+  });
+});
+
+router.post('/:communityId/new_page', auth.can('edit community'), function(req, res) {
+  models.Page.newPage(req, { community_id: req.params.communityId }, function (error, pages) {
+    if (error) {
+      log.error('Could not create page for admin for community', { err: error, context: 'new_page', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('New Community Page', {context: 'new_page', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.put('/:communityId/:pageId/update_page_locale', auth.can('edit community'), function(req, res) {
+  models.Page.updatePageLocale(req, { community_id: req.params.communityId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not update locale for admin for community', { err: error, context: 'update_page_locale', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Locale Updated', {context: 'update_page_locale', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.put('/:communityId/:pageId/publish_page', auth.can('edit community'), function(req, res) {
+  models.Page.publishPage(req, { community_id: req.params.communityId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not publish page for admin for community', { err: error, context: 'publish_page', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Published', {context: 'publish_page', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.put('/:communityId/:pageId/un_publish_page', auth.can('edit community'), function(req, res) {
+  models.Page.unPublishPage(req, { community_id: req.params.communityId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not un-publish page for admin for community', { err: error, context: 'un_publish_page', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Un-Published', {context: 'un_publish_page', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.delete('/:communityId/:pageId/delete_page', auth.can('edit community'), function(req, res) {
+  models.Page.deletePage(req, { community_id: req.params.communityId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not delete page for admin for community', { err: error, context: 'delete_page', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Commuity Page Published', {context: 'delete_page', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
     }
   });
 });
