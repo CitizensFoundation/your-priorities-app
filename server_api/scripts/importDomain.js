@@ -11,6 +11,8 @@ var https = require('https');
 var temp = require('temp');
 temp.track();
 var _ = require('lodash');
+YAML = require('yamljs');
+var wordwrap = require('wordwrap')(100);
 
 var randomstring = require("randomstring");
 var filename = process.argv[2];
@@ -1346,8 +1348,15 @@ async.series([
     async.eachSeries(pages, function(incoming, callback) {
       console.log('Processing page ' + incoming);
       incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
-      incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
-      incoming['domain_id'] = currentDomain.id;
+      if (incoming['group_id']=='45' && parseInt(currentDomain.id) ==1) {
+        incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
+      } else {
+        incoming['community_id'] = allCommunitiesByOldGroupIds[incoming['group_id']];
+      }
+      //incoming['domain_id'] = currentDomain.id;
+      incoming['content'] = YAML.parse(incoming['content']);
+      incoming['title'] = YAML.parse(incoming['title']);
+      incoming['published'] = true;
 
       var oldId = incoming['id'];
       incoming['id'] = null;

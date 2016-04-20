@@ -1,0 +1,499 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html" >
+<link rel="import" href="../../bower_components/paper-button/paper-button.html" >
+<link rel="import" href="../../bower_components/paper-input/paper-input.html" >
+
+
+<dom-module id="yp-pages-grid">
+  <template>
+    <style>
+      #dialog {
+        width: 90%;
+        height: 90%;
+        background-color: #FFF;
+      }
+
+      iron-list {
+        color: #000;
+        height: 500px;
+        width: 100%;
+      }
+
+      .pageItem {
+        padding-right: 16px;
+      }
+
+      .id {
+        width: 60px;
+      }
+
+      .title {
+        width: 200px;
+      }
+
+      .email {
+        width: 240px;
+      }
+
+      #editPageLocale {
+        width: 80%;
+        height: 80%;
+        background-color: #FFF;
+      }
+
+      .locale {
+        width: 30px;
+        cursor: pointer;
+      }
+
+      paper-textarea {
+        height: 60%;
+      }
+    </style>
+
+    <paper-dialog id="editPageLocale" modal class="layout vertical">
+      <h2>[[t('page.editPageLocale')]]</h2>
+
+      <paper-dialog-scrollable>
+        <paper-input id="title"
+                     name="title"
+                     type="text"
+                     label="[[t('pages.title')]]"
+                     value="{{currentlyEditingTitle}}"
+                     maxlength="60"
+                     char-counter class="mainInput">
+        </paper-input>
+
+        <paper-textarea id="content"
+                        name="content"
+                        value="{{currentlyEditingContent}}"
+                        label="[[t('pages.content')]]"
+                        rows="7"
+                        max-rows="10">
+        </paper-textarea>
+      </paper-dialog-scrollable>
+
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[t('close')]]</paper-button>
+        <paper-button on-tap="_updatePageLocale" dialog-dismiss>[[t('save')]]</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="dialog">
+      <h2>[[headerText]]</h2>
+      <iron-list items="[[pages]]" as="page">
+        <template>
+          <div class="layout horizontal">
+            <div class="pageItem id">
+              [[page.id]]
+            </div>
+            <div class="pageItem title">
+              [[page.title.en]]
+            </div>
+            <template is="dom-repeat" items="[[_toLocaleArray(page.title)]]">
+              <a class="locale" data-args-page$="[[page]]" data-args-locale$="[[item.locale]]" on-tap="_editPageLocale">[[item.locale]]</a>
+            </template>
+            <paper-input length="2" maxlength="2" value="{{newLocaleValue}}"></paper-input>
+            <paper-button data-args$="[[page.id]]" on-tap="_addLocale">[[t('pages.addLocale')]]</paper-button>
+            <div hidden$="[[page.published]]">
+              <paper-button data-args$="[[page.id]]" on-tap="_publishPage">[[t('pages.publish')]]</paper-button>
+            </div>
+            <div hidden$="[[!page.published]]">
+              <paper-button data-args$="[[page.id]]" on-tap="_unPublishPage">[[t('pages.unPublish')]]</paper-button>
+            </div>
+            <paper-button data-args$="[[page.id]]" on-tap="_removePage">[[t('pages.removePage')]]</paper-button>
+          </div>
+        </template>
+      </iron-list>
+      <div class="layout horizontal">
+        <paper-button on-tap="_addPage">[[t('pages.addPage')]]</paper-button>
+      </div>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[t('close')]]</paper-button>
+      </div>
+    </paper-dialog>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax id="ajax" on-response="_pagesResponse"></yp-ajax>
+      <yp-ajax method="POST" id="newPageAjax" on-response="_newPageResponse"></yp-ajax>
+      <yp-ajax method="DELETE" id="removePageAjax" on-response="_removePageResponse"></yp-ajax>
+      <yp-ajax method="PUT" id="updatePageAjax" on-response="_updatePageResponse"></yp-ajax>
+      <yp-ajax method="PUT" id="publishPageAjax" on-response="_publishPageResponse"></yp-ajax>
+      <yp-ajax method="PUT" id="unPublishPageAjax" on-response="_unPublishPageResponse"></yp-ajax>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-pages-grid',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        pages: {
+          type: Array,
+          notify: true
+        },
+
+        headerText: {
+          type: String
+        },
+
+        groupId: {
+          type: Number,
+          observer: '_groupIdChanged'
+        },
+
+        domainId: {
+          type: Number,
+          observer: '_domainIdChanged'
+        },
+
+        communityId: {
+          type: Number,
+          observer: '_communityIdChanged'
+        },
+
+        selected: {
+          type: Object
+        },
+
+        modelType: {
+          type: String
+        },
+
+        newLocaleValue: {
+          type: String
+        },
+
+        currentlyEditingLocale: {
+          type: String
+        },
+
+        currentlyEditingPage: {
+          type: Object
+        },
+
+        currentlyEditingTitle: {
+          type: String
+        },
+
+        currentlyEditingContent: {
+          type: String
+        }
+      },
+
+      wordwrap: function (start, stop, params) {
+        if (typeof start === 'object') {
+          params = start;
+          start = params.start;
+          stop = params.stop;
+        }
+
+        if (typeof stop === 'object') {
+          params = stop;
+          start = start || params.start;
+          stop = undefined;
+        }
+
+        if (!stop) {
+          stop = start;
+          start = 0;
+        }
+
+        if (!params) params = {};
+        var mode = params.mode || 'soft';
+        var re = mode === 'hard' ? /\b/ : /(\S+\s+)/;
+
+        return function (text) {
+          var chunks = text.toString()
+            .split(re)
+            .reduce(function (acc, x) {
+              if (mode === 'hard') {
+                for (var i = 0; i < x.length; i += stop - start) {
+                  acc.push(x.slice(i, i + stop - start));
+                }
+              }
+              else acc.push(x)
+              return acc;
+            }, [])
+            ;
+
+          return chunks.reduce(function (lines, rawChunk) {
+            if (rawChunk === '') return lines;
+
+            var chunk = rawChunk.replace(/\t/g, '    ');
+
+            var i = lines.length - 1;
+            if (lines[i].length + chunk.length > stop) {
+              lines[i] = lines[i].replace(/\s+$/, '');
+
+              chunk.split(/\n/).forEach(function (c) {
+                lines.push(
+                  new Array(start + 1).join(' ')
+                  + c.replace(/^\s+/, '')
+                );
+              });
+            }
+            else if (chunk.match(/\n/)) {
+              var xs = chunk.split(/\n/);
+              lines[i] += xs.shift();
+              xs.forEach(function (c) {
+                lines.push(
+                  new Array(start + 1).join(' ')
+                  + c.replace(/^\s+/, '')
+                );
+              });
+            }
+            else {
+              lines[i] += chunk;
+            }
+
+            return lines;
+          }, [ new Array(start + 1).join(' ') ]).join('\n');
+        };
+      },
+
+
+      _toLocaleArray: function(obj) {
+        var array = Object.keys(obj).map(function(key) {
+          return {
+            locale: key,
+            value: obj[key]
+          };
+        });
+
+        return _.sortBy(array, function(o) { return o.item; });
+      },
+
+      _editPageLocale: function (event) {
+        this.set('currentlyEditingPage', JSON.parse(event.target.getAttribute('data-args-page')));
+        this.set('currentlyEditingLocale', event.target.getAttribute('data-args-locale'));
+        this.set('currentlyEditingContent',this.wordwrap(120)(this.currentlyEditingPage["content"][this.currentlyEditingLocale]));
+        this.set('currentlyEditingTitle',this.currentlyEditingPage["title"][this.currentlyEditingLocale]);
+        this.$.editPageLocale.open();
+      },
+
+      _removeFromOrganization: function (event) {
+        var userId = event.target.getAttribute('data-args');
+        var organizationId = event.target.getAttribute('data-args-org');
+        this.$.removeOrganizationAjax.body = {};
+        this.$.removeOrganizationAjax.url = "/api/organizations/" + organizationId + "/" + userId + "/remove_user";
+        this.$.removeOrganizationAjax.generateRequest();
+      },
+
+      _selectOrganization: function (event, detail) {
+        this.$.addOrganizationAjax.body = {};
+        this.$.addOrganizationAjax.url = "/api/organizations/" + event.target.id + "/" + this.userIdForSelectingOrganization + "/add_user";
+        this.$.addOrganizationAjax.generateRequest();
+        this.$.selectOrganizationDialog.close();
+      },
+
+      _removeAdmin: function (event) {
+        var userId = event.target.getAttribute('data-args');
+        this.$.removeAdminAjax.body = {};
+        if (this.modelType=="groups" && this.groupId) {
+          this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/remove_admin";
+          this.$.removeAdminAjax.generateRequest();
+        } else if (this.modelType=="communities" && this.communityId) {
+          this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/remove_admin";
+          this.$.removeAdminAjax.generateRequest();
+        } else {
+          console.warn("Can't find model type or ids");
+        }
+      },
+
+      _removeUser: function (event) {
+        var userId = event.target.getAttribute('data-args');
+        this.$.removeUserAjax.body = {};
+        if (this.modelType=="groups" && this.groupId) {
+          this.$.removeUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/remove_user";
+          this.$.removeUserAjax.generateRequest();
+        } else if (this.modelType=="communities" && this.communityId) {
+          this.$.removeUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/remove_user";
+          this.$.removeUserAjax.generateRequest();
+        } else {
+          console.warn("Can't find model type or ids");
+        }
+      },
+
+      _addAdmin: function (event) {
+        this.$.addAdminAjax.body = {};
+        if (this.modelType=="groups" && this.groupId) {
+          this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.addAdminEmail + "/add_admin";
+          this.$.addAdminAjax.generateRequest();
+        } else if (this.modelType=="communities" && this.communityId) {
+          this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.addAdminEmail + "/add_admin";
+          this.$.addAdminAjax.generateRequest();
+        } else {
+          console.warn("Can't find model type or ids");
+        }
+      },
+
+      _inviteUser: function (event) {
+        this.$.inviteUserAjax.body = {};
+        if (this.modelType=="groups" && this.groupId) {
+          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.inviteUserEmail + "/invite_user";
+          this.$.inviteUserAjax.generateRequest();
+        } else if (this.modelType=="communities" && this.communityId) {
+          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.inviteUserEmail + "/invite_user";
+          this.$.inviteUserAjax.generateRequest();
+        } else {
+          console.warn("Can't find model type or ids");
+        }
+      },
+
+      _removeAdminResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('users.adminRemoved'));
+        this.$.ajax.generateRequest();
+      },
+
+      _removeUserResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('users.userRemoved'));
+        this.$.ajax.generateRequest();
+      },
+
+      _addAdminResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('users.adminAdded')+' '+this.addAdminEmail);
+        this.set('addAdminEmail', null);
+        this.$.ajax.generateRequest();
+      },
+
+      _addOrganizationResponse: function (event, detail) {
+        window.appGlobals.notifyUserViaToast(this.t('users.organizationUserAdded')+' '+ detail.response.email);
+        this.$.ajax.generateRequest();
+      },
+
+      _removeOrganizationResponse: function (event, detail) {
+        window.appGlobals.notifyUserViaToast(this.t('users.organizationUserRemoved')+' '+ detail.response.email);
+        this.$.ajax.generateRequest();
+      },
+
+      _inviteUserResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('users.userInvited')+' '+this.inviteUserEmail);
+        this.set('inviteUserEmail', null);
+        this.$.ajax.generateRequest();
+      },
+
+      _domainIdChanged: function (newGroupId) {
+        if (newGroupId) {
+          this.set('modelType', 'domains');
+          this._generateRequest(newGroupId);
+        }
+      },
+
+      _groupIdChanged: function (newGroupId) {
+        if (newGroupId) {
+          this.set('modelType', 'groups');
+          this._generateRequest(newGroupId);
+        }
+      },
+
+      _communityIdChanged: function (newCommunityId) {
+        if (newCommunityId) {
+          this.set('modelType', 'communities');
+          this._generateRequest(newCommunityId);
+        }
+      },
+
+      _generateRequest: function (id) {
+        this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/pages_for_admin";
+        this.$.ajax.generateRequest();
+      },
+
+      _pagesResponse: function (event, detail) {
+        this.set('pages', detail.response);
+      //  debugger;
+      },
+
+      setup: function (groupId, communityId, domainId, adminUsers) {
+        this.set('groupId', null);
+        this.set('communityId', null);
+        this.set('domainId', null);
+        this.set('pages', null);
+
+        if (groupId)
+          this.set('groupId', groupId);
+
+        if (communityId)
+          this.set('communityId', communityId);
+
+        if (domainId)
+          this.set('domainId', domainId);
+
+        this._setupHeaderText();
+      },
+
+      open: function () {
+        this.$.dialog.open();
+      },
+
+      _setupHeaderText: function () {
+        if (this.groupId) {
+          this.set('headerText', this.t('group.pages'));
+        } else if (this.communityId) {
+          this.set('headerText', this.t('community.pages'));
+        } else if (this.domainId) {
+          this.set('headerText', this.t('domain.pages'));
+        }
+      },
+
+      ready2: function () {
+        /*
+        this.$.grid.columns[5].renderer = this._adminActionRenderer;
+
+        var filterElement = document.createElement('input');
+        filterElement.setAttribute('type', 'search');
+        filterElement.setAttribute('placeholder', 'Filter...');
+        filterElement.style.width = '100%';
+
+        var timer = 0;
+
+        function filter() {
+          clearTimeout(timer);
+          timer = setTimeout(grid.refreshItems.bind(grid), 500);
+        }
+
+        filterElement.addEventListener('keyup', filter);
+        filterElement.addEventListener('click', filter);
+
+        this.$.grid.items = function(params, callback) {
+          var filterValue = filterElement.value.toLowerCase();
+          var data = this.users.filter(function(val) {
+            return (val.toString().toLowerCase()).indexOf(filterValue) != -1;
+          });
+          var slice = data.slice(params.index, params.index + params.count);
+          callback(slice, data.length);
+        };
+
+        this.$.grid.then(function() {
+          this.$.grid.header.getCell(1, 0).content = filterElement;
+        }.bind(this));
+        */
+      },
+
+      _adminActionRenderer: function(cell) {
+        cell.element.innerHTML = '';
+        var child = document.createElement('progress');
+        child.setAttribute('value', cell.data);
+        cell.element.appendChild(child);
+      },
+
+      _onSelect: function() {
+        if (this.$.grid.selection.selected().length === 0) {
+          this.selected = null;
+        } else {
+          this.selected = this.users[this.$.grid.selection.selected()];
+        }
+      }
+    });
+  </script>
+</dom-module>

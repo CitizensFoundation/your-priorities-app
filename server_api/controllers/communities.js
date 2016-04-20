@@ -25,6 +25,18 @@ var sendCommunityOrError = function (res, community, context, user, error, error
   }
 };
 
+router.get('/:communityId/pages_for_admin', auth.can('edit community'), function(req, res) {
+  models.Page.getPagesForAdmin(req, { community_id: req.params.communityId }, function (error, pages) {
+    if (error) {
+      log.error('Could not get page for admin for community', { err: error, context: 'pages_for_admin', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Point News Story Created', {context: 'pages_for_admin', user: toJson(req.user.simple()) });
+      res.send(pages);
+    }
+  });
+});
+
 router.post('/:communityId/news_story', auth.isLoggedIn, auth.can('view community'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {

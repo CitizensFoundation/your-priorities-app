@@ -1,5 +1,4 @@
 {
-
   "notification": {
     "passwordResetAndLoggedIn": "Your password has been changed and you are now logged in.",
     "method": "Method",
@@ -17,6 +16,13 @@
     "myPointEndorsements": "Points I like",
     "allCommunity": "All notifications from my communities",
     "allGroup": "All notifications from my groups"
+  },
+
+  "pages": {
+    "addLocale": "Add locale",
+    "unPublish": "UnPublish",
+    "removePage": "Remove",
+    "addPage": "Add new page"
   },
 
   "archived": "Archived",
@@ -54,8 +60,8 @@
     "new": "Create community",
     "public": "Public community",
     "closed": "Closed community",
-    "secret": "Secret community"
-
+    "secret": "Secret community",
+    "pages":"Community Pages"
   },
 
   "posts": {
