@@ -71,7 +71,8 @@ module.exports = function(sequelize, DataTypes) {
 
       getPagesForAdmin: function (req, options, callback)  {
         sequelize.models.Page.findAll( {
-          where: options
+          where: options,
+          order: "created_at ASC"
         }).then( function (pages) {
           callback(null, pages);
         }).catch( function (error) {

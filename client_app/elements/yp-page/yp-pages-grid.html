@@ -326,8 +326,30 @@
           content: this.currentlyEditingContent,
           title: this.currentlyEditingTitle
         };
-        this._dispatchAjax(this.$.updatePageAjax, this.currentlyEditingPage.id, "/update_page_locale")
+        this._dispatchAjax(this.$.updatePageAjax, this.currentlyEditingPage.id, "update_page_locale")
         this._closePageLocale();
+      },
+
+      _publishPage: function () {
+        this.$.updatePageAjax.body = {};
+        var pageId = event.target.getAttribute('data-args');
+        this._dispatchAjax(this.$.updatePageAjax, pageId, "publish_page")
+      },
+
+      _publishPageResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('pages.pagePublished'));
+        this.$.ajax.generateRequest();
+      },
+
+      _unPublishPage: function () {
+        this.$.updatePageAjax.body = {};
+        var pageId = event.target.getAttribute('data-args');
+        this._dispatchAjax(this.$.updatePageAjax, pageId, "un_publish_page")
+      },
+
+      _unPublishPageResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('pages.pageUnPublished'));
+        this.$.ajax.generateRequest();
       },
 
       _addLocale: function (event) {
@@ -338,7 +360,7 @@
             content: '',
             title: ''
           };
-          this._dispatchAjax(this.$.updatePageAjax, pageId, "/update_page_locale")
+          this._dispatchAjax(this.$.updatePageAjax, pageId, "update_page_locale")
           this.set('newLocaleValue', null);
         }
       },
@@ -346,12 +368,13 @@
       _addPage: function (event) {
         this.$.newPageAjax.body = {};
         this.$.addPageButton.disabled = true;
-        this._dispatchAjax(this.$.newPageAjax, null, "/add_page")
+        this._dispatchAjax(this.$.newPageAjax, null, "add_page")
       },
 
       _newPageResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('pages.newPageCreated'));
         this.$.ajax.generateRequest();
+        this.$.addPageButton.disabled = false;
       },
 
       _removeFromOrganization: function (event) {

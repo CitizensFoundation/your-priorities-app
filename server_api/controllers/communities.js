@@ -49,8 +49,8 @@ router.get('/:communityId/pages_for_admin', auth.can('edit community'), function
   });
 });
 
-router.post('/:communityId/new_page', auth.can('edit community'), function(req, res) {
-  models.Page.newPage(req, { community_id: req.params.communityId }, function (error, pages) {
+router.post('/:communityId/add_page', auth.can('edit community'), function(req, res) {
+  models.Page.newPage(req, { community_id: req.params.communityId, content: {}, title: {} }, function (error, pages) {
     if (error) {
       log.error('Could not create page for admin for community', { err: error, context: 'new_page', user: toJson(req.user.simple()) });
       res.sendStatus(500);
