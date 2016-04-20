@@ -41,18 +41,21 @@ module.exports = function(sequelize, DataTypes) {
         }
       },
       {
+        name: "community_id_only_deleted",
         fields: ['community_id'],
         where: {
           deleted: false
         }
       },
       {
+        name: "group_id_only_deleted",
         fields: ['group_id'],
         where: {
           deleted: false
         }
       },
       {
+        name: "domain_id_only_deleted",
         fields: ['domain_id'],
         where: {
           deleted: false
