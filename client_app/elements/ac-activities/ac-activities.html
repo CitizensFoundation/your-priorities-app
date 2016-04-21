@@ -193,6 +193,11 @@
                     <paper-button data-args$="[[activity]]" on-tap="_joinPost">[[t('participate')]]</paper-button>
                   </div>
                 </template>
+                <template is="dom-if" if="[[activity.PostStatusChange]]">
+                  <div class="layout horizontal flex end-justified participateButton">
+                    <paper-button data-args$="[[activity]]" on-tap="_joinPost">[[t('participate')]]</paper-button>
+                  </div>
+                </template>
               </div>
             </paper-material>
           </div>
@@ -202,7 +207,7 @@
       <div class="layout horizontal center-center">
         <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
         <template is="dom-if" if="[[moreToLoad]]" restamp>
-          <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
+          <paper-button data-args$="[[activity]]" on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
         </template>
       </div>
     </div>
@@ -212,8 +217,8 @@
   <script>
     Polymer({
 
-      defaultKeyActivities: ['activity.post.status.update','activity.post.officialStatus.successful',
-        'activity.post.officialStatus.failed','activity.post.officialStatus.inProgress'],
+      defaultKeyActivities: ['activity.post.status.update', 'activity.post.officialStatus.successful',
+        'activity.post.officialStatus.failed', 'activity.post.officialStatus.inProgress'],
 
       is: 'ac-activities',
 
@@ -273,13 +278,13 @@
         }
       },
 
-      _upVote: function(point) {
+      _upVote: function (point) {
         if (point && point.value == 0) {
           return true;
         } else if (!point) {
           return false;
         } else {
-          return point.value>0;
+          return point.value > 0;
         }
       },
 
@@ -294,8 +299,12 @@
       },
 
       _joinPost: function (event) {
-        var activity = event.target.getAttribute('data-args');
-        this.goToPost(event.model.activity.Post.id)
+        if (event.model.activity.Post) {
+          this.goToPost(event.model.activity.Post.id);
+        } else if (event.model.activity.PostStatusChange) {
+          debugger;
+          this.goToPost(event.model.activity.PostStatusChange.post_id);
+        }
       },
 
       _getActivityWithPostTitle: function (activity) {

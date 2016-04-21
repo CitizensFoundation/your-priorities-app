@@ -217,7 +217,27 @@ router.delete('/:id', auth.can('edit point'), function(req, res) {
       }).then(function(post) {
         post.updateAllExternalCounters(req, 'down', 'counter_points', function () {
           post.decrement('counter_points');
-          res.sendStatus(200);
+          models.AcActivity.findAll({
+            attributes: ['id','deleted'],
+            include: [
+              {
+                model: models.Point,
+                required: true,
+                where: {
+                  id: point.id
+                }
+              }
+            ]
+          }).then(function (activities) {
+            async.eachSeries(activities, function (activity, innerCallback) {
+              activity.deleted = true;
+              activity.save().then(function () {
+                innerCallback();
+              });
+            }, function done() {
+              res.sendStatus(200);
+            });
+          });
         });
       });
     });

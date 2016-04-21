@@ -1627,6 +1627,9 @@ async.series([
   // Delete activities from deleted objects
   function(seriesCallback) {
     models.AcActivity.findAll({
+      where: {
+        type: 'activity.post.new'
+      },
       include: [
         {
           model: models.Post,
@@ -1638,6 +1641,11 @@ async.series([
       ]
     }).then(function (activities) {
       async.eachSeries(activities, function (activity, innerCallback) {
+        if (activity.Post.deleted!=true) {
+          console.log("POST DELETED NOT TRUE");
+        } else {
+          console.log("DELETING: "+activity.Post.name);
+        }
         activity.deleted = true;
         activity.save().then(function () {
           innerCallback();
@@ -1650,9 +1658,12 @@ async.series([
 
   function(seriesCallback) {
     models.AcActivity.findAll({
+      where: {
+        type: 'activity.post.status.update'
+      },
       include: [
         {
-          model: models.PostStatusUpdate,
+          model: models.PostStatusChange,
           required: true,
           where: {
             deleted: true
@@ -1662,6 +1673,7 @@ async.series([
     }).then(function (activities) {
       async.eachSeries(activities, function (activity, innerCallback) {
         activity.deleted = true;
+        console.log("DELETING: "+activity.PostStatusChange.content);
         activity.save().then(function () {
           innerCallback();
         });
@@ -1673,6 +1685,9 @@ async.series([
 
   function(seriesCallback) {
     models.AcActivity.findAll({
+      where: {
+        type: 'activity.point.new'
+      },
       include: [
         {
           model: models.Point,
@@ -1685,6 +1700,7 @@ async.series([
     }).then(function (activities) {
       async.eachSeries(activities, function (activity, innerCallback) {
         activity.deleted = true;
+        console.log("DELETING: "+activity.Point.name);
         activity.save().then(function () {
           innerCallback();
         });

@@ -238,7 +238,27 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
     post.save().then(function () {
       log.info('Post Deleted', { post: toJson(post), context: 'delete', user: toJson(req.user) });
       post.updateAllExternalCounters(req, 'down', 'counter_posts', function () {
-        res.sendStatus(200);
+        models.AcActivity.findAll({
+          attributes: ['id','deleted'],
+          include: [
+            {
+              model: models.Post,
+              required: true,
+              where: {
+                id: post.id
+              }
+            }
+          ]
+        }).then(function (activities) {
+          async.eachSeries(activities, function (activity, innerCallback) {
+            activity.deleted = true;
+            activity.save().then(function () {
+              innerCallback();
+            });
+          }, function done() {
+            res.sendStatus(200);
+          });
+        });
       });
     });
   }).catch(function(error) {
