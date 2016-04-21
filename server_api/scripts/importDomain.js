@@ -1622,6 +1622,76 @@ async.series([
         seriesCallback();
       }
     });
+  },
+
+  // Delete activities from deleted objects
+  function(seriesCallback) {
+    models.AcActivity.findAll({
+      include: [
+        {
+          model: models.Post,
+          required: true,
+          where: {
+            deleted: true
+          }
+        }
+      ]
+    }).then(function (activities) {
+      async.eachSeries(activities, function (activity, innerCallback) {
+        activity.deleted = true;
+        activity.save().then(function () {
+          innerCallback();
+        });
+      }, function done() {
+        seriesCallback();
+      });
+    })
+  },
+
+  function(seriesCallback) {
+    models.AcActivity.findAll({
+      include: [
+        {
+          model: models.PostStatusUpdate,
+          required: true,
+          where: {
+            deleted: true
+          }
+        }
+      ]
+    }).then(function (activities) {
+      async.eachSeries(activities, function (activity, innerCallback) {
+        activity.deleted = true;
+        activity.save().then(function () {
+          innerCallback();
+        });
+      }, function done() {
+        seriesCallback();
+      });
+    })
+  },
+
+  function(seriesCallback) {
+    models.AcActivity.findAll({
+      include: [
+        {
+          model: models.Point,
+          required: true,
+          where: {
+            deleted: true
+          }
+        }
+      ]
+    }).then(function (activities) {
+      async.eachSeries(activities, function (activity, innerCallback) {
+        activity.deleted = true;
+        activity.save().then(function () {
+          innerCallback();
+        });
+      }, function done() {
+        seriesCallback();
+      });
+    })
   }
 ]);
 

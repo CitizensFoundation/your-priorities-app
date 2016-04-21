@@ -20,6 +20,7 @@
 <link rel="import" href="./ac-activity-point.html">
 <link rel="import" href="./ac-activity-point-news-story.html">
 <link rel="import" href="./ac-activity-post-status-update.html">
+<link rel="import" href="./ac-activity-group.html">
 
 <dom-module id="ac-activities">
   <template>
@@ -119,6 +120,11 @@
         padding-top: 2px;
         padding-left: 12px;
       }
+
+      .participateButton {
+        padding-top: 46px;
+        padding-right: 4px;
+      }
     </style>
 
     <template is="dom-if" if="[[loggedInUser]]">
@@ -177,11 +183,17 @@
                 <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
               </template>
 
-              <template is="dom-if" if="[[_isNotActivityType(activity,'activity.point.newsStory.new')]]">
-                <div class="layout horizontal end-justified">
-                  <paper-button data-args$="[[activity]]" on-tap="_joinPost">[[t('participate')]]</paper-button>
-                </div>
-              </template>
+              <div class="layout horizontal">
+                <template is="dom-if" if="[[activity.Group]]">
+                  <ac-activity-group group="[[activity.Group]]"></ac-activity-group>
+                </template>
+
+                <template is="dom-if" if="[[activity.Post]]">
+                  <div class="layout horizontal flex end-justified participateButton">
+                    <paper-button data-args$="[[activity]]" on-tap="_joinPost">[[t('participate')]]</paper-button>
+                  </div>
+                </template>
+              </div>
             </paper-material>
           </div>
         </template>

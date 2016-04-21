@@ -1,0 +1,54 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-point/yp-point.html">
+<link rel="import" href="./ac-activity-post-header.html">
+<link rel="import" href="../yp-group/yp-group-behaviors.html">
+
+<dom-module id="ac-activity-group">
+  <template>
+    <style>
+      :host {
+        margin-top: 16px;
+      }
+
+      iron-image {
+        width: 100px;
+        height: 56px;
+        margin-left: 32px;
+        margin-right: 16px;
+
+      }
+
+      .group-name {
+        padding-top: 10px;
+      }
+
+      .cursor {
+        cursor: pointer;
+      }
+    </style>
+    <div class="layout horizontal cursor" on-tap="_goToGroup">
+      <div>
+        <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
+      </div>
+      <div class="layout flex">
+        <h2 class="group-name">[[groupName(group)]]</h2>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-activity-group',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.GroupBehaviors
+      ]
+    });
+  </script>
+</dom-module>
