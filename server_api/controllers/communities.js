@@ -97,7 +97,7 @@ router.delete('/:communityId/user_membership', auth.isLoggedIn, auth.can('view c
     } else if (user && community) {
       community.removeCommunityUsers(user).then(function (results) {
         log.info('User removed', {context: 'user_membership', communityId: req.params.communityId, userRemovedId: req.user.id, user: toJson(req.user.simple()) });
-        res.send({ membershipValue: false });
+        res.send({ membershipValue: false, name: community.name });
       });
     } else {
       res.sendStatus(404);
@@ -113,7 +113,7 @@ router.post('/:communityId/user_membership', auth.isLoggedIn, auth.can('view com
     } else if (user && community) {
       community.addCommunityUsers(user).then(function (results) {
         log.info('User Added', {context: 'user_membership', communityId: req.params.communityId, userRemovedId: req.user.id, user: toJson(req.user.simple()) });
-        res.send({ membershipValue: true });
+        res.send({ membershipValue: true, name: community.name });
       });
     } else {
       res.sendStatus(404);

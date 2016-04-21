@@ -24,6 +24,14 @@
         width: 416px;
       }
 
+      .description {
+        @apply(--layout-vertical);
+        color: var(--primary-color-more-darker, #424242);
+        line-height: var(--description-line-height, 1.3);
+        padding: 8px;
+        margin-top: 4px;
+      }
+
       .card-content {
         padding-bottom: 40px;
       }
@@ -90,11 +98,42 @@
         }
       }
 
+      paper-card {
+        background-color: #f00;
+        vertical-align: text-top;
+      }
+
+      .informationText {
+        vertical-align: text-top;
+      }
+
+      .group-name {
+        font-size: 26px;
+        margin-top: -4px;
+        height: 56px;
+        padding: 16px;
+        background-color: var(--primary-color-800);
+        color: #FFF;
+      }
+
+      .group-name[featured] {
+        background-color: var(--accent-color);
+        font-size: 28px;
+      }
+
+      yp-membership-button {
+        position: absolute;
+        top: 158px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+        color: var(--icon-general-color, #FFF);
+      }
     </style>
 
     <template is="dom-if" if="[[group]]">
-      <paper-card class="groupCard" animated elevation="[[elevation]]" class="groupCard" on-tap="_goToGroup">
-        <div class="card-content">
+      <paper-card class="groupCard" animated elevation="[[elevation]]" class="groupCard">
+        <div class="card-content" on-tap="_goToGroup">
           <div class="layout">
             <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
           </div>
@@ -103,7 +142,8 @@
             <div>[[groupObjectives(group)]]</div>
           </div>
         </div>
-        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
+        <yp-group-stats on-tap="_goToGroup" class="stats" group="[[group]]"></yp-group-stats>
+        <yp-membership-button group="[[group]]"></yp-membership-button>
       </paper-card>
     </template>
   </template>

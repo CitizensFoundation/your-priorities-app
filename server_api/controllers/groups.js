@@ -98,7 +98,7 @@ router.delete('/:groupId/user_membership', auth.isLoggedIn, auth.can('view group
     } else if (user && group) {
       group.removeGroupUsers(user).then(function (results) {
         log.info('User removed', {context: 'remove_admin', groupId: req.params.groupId, userRemovedId: req.user.id, user: toJson(req.user.simple()) });
-        res.sendStatus(200);
+        res.send({ membershipValue: false, name: group.name });
       });
     } else {
       res.sendStatus(404);
@@ -114,7 +114,7 @@ router.post('/:groupId/user_membership', auth.isLoggedIn, auth.can('view group')
     } else if (user && group) {
       group.addGroupUsers(user).then(function (results) {
         log.info('User Added', {context: 'user_membership', groupId: req.params.groupId, userRemovedId: req.user.id, user: toJson(req.user.simple()) });
-        res.sendStatus(200);
+        res.send({ membershipValue: true, name: group.name });
       });
     } else {
       res.sendStatus(404);

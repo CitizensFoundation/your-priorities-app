@@ -305,13 +305,13 @@
             var i;
             this.membershipsIndex = { groups: {}, communities: {}, domains: {} };
             for(i=0; i<memberships.GroupUsers.length; i++){
-              this.membershipsIndex.groups[ memberships.GroupUsers[i].group_id ] = true;
+              this.membershipsIndex.groups[ memberships.GroupUsers[i].id ] = true;
             }
             for(i=0; i<memberships.CommunityUsers.length; i++){
               this.membershipsIndex.communities[memberships.CommunityUsers[i].id] = true;
             }
             for(i=0; i<memberships.DomainUsers.length; i++){
-              this.membershipsIndex.domains[ memberships.DomainUsers[i].domain_id ] = true;
+              this.membershipsIndex.domains[ memberships.DomainUsers[i].id ] = true;
             }
           } else {
             this.membershipsIndex = { groups: {}, communities: {}, domains: {} };
