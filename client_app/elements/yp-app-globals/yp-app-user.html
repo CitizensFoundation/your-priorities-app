@@ -24,6 +24,7 @@
 
     <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
     <yp-ajax id="adminRightsAjax" method="GET" url="/api/users/adminRights" on-response="_adminRightsResponse"></yp-ajax>
+    <yp-ajax id="membershipsAjax" method="GET" url="/api/users/memberships" on-response="_membershipsResponse"></yp-ajax>
     <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
 
     <paper-toast id="loginToast" text="[[toastLoginTextCombined]]"></paper-toast>
@@ -62,6 +63,10 @@
             type: Object
           },
 
+          loginForMembershipParams: {
+            type: Object
+          },
+
           toastLoginTextCombined: {
             type: String
           },
@@ -79,11 +84,19 @@
             type: Object
           },
 
+          membershipsIndex: {
+            type: Object
+          },
+
           pointQualitiesIndex: {
             type: Object
           },
 
           adminRights: {
+            type: Object
+          },
+
+          memberships: {
             type: Object
           }
         },
@@ -108,6 +121,11 @@
           this.openUserlogin();
         },
 
+        loginForMembership: function(membershipActionElement, params) {
+          this.loginForMembershipParams = { membershipActionElement: membershipActionElement, params: params };
+          this.openUserlogin();
+        },
+
         openUserlogin: function () {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
           dialog.setup(this._handleLogin.bind(this));
@@ -123,6 +141,7 @@
           this._closeUserLogin();
           this.setLoggedInUser(user);
           this.$.adminRightsAjax.generateRequest();
+          this.$.membershipsAjax.generateRequest();
           this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.email;
           this.$.loginToast.show();
           if (this.loginForEditParams) {
@@ -141,6 +160,10 @@
             var pointQualityParams = this.loginForPointQualityParams;
             pointQualityParams.pointActionElement.generatePointQualityFromLogin(pointQualityParams.params.value);
             this.loginForPointQualityParams = null;
+          } else if (this.loginForMembershipParams) {
+            var membershipParams = this.loginForMembershipParams;
+            membershipParams.membershipActionElement.generateMembershipFromLogin(membershipParams.params.value);
+            this.loginForMembershipParams = null;
           }
           this.fire("login");
         },
@@ -183,6 +206,8 @@
           window.appUser = this;
           this.$.isLoggedInAjax.generateRequest();
           this.$.adminRightsAjax.generateRequest();
+          this.$.membershipsAjax.generateRequest();
+
         },
 
         updateEndorsementForPost: function (postId, newEndorsement) {
@@ -273,6 +298,30 @@
 
         _adminRightsResponse: function (event, detail) {
           this.set('adminRights', detail.response);
+        },
+
+        _updateMembershipsIndex: function (memberships) {
+          if (memberships) {
+            var i;
+            this.membershipsIndex = { groups: {}, communities: {}, domains: {} };
+            for(i=0; i<memberships.GroupUsers.length; i++){
+              this.membershipsIndex.groups[ memberships.GroupUsers[i].group_id ] = true;
+            }
+            for(i=0; i<memberships.CommunityUsers.length; i++){
+              this.membershipsIndex.communities[memberships.CommunityUsers[i].id] = true;
+            }
+            for(i=0; i<memberships.DomainUsers.length; i++){
+              this.membershipsIndex.domains[ memberships.DomainUsers[i].domain_id ] = true;
+            }
+          } else {
+            this.membershipsIndex = { groups: {}, communities: {}, domains: {} };
+          }
+        },
+
+        _membershipsResponse: function (event, detail) {
+          this.set('memberships', detail.response);
+          this._updateMembershipsIndex(this.memberships);
+          this.fire('iron-signal', {name: 'got-memberships'});
         }
       });
     }());

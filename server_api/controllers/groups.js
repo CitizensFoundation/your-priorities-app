@@ -89,6 +89,39 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
   });
 };
 
+
+router.delete('/:groupId/user_membership', auth.isLoggedIn, auth.can('view group'), function(req, res) {
+  getGroupAndUser(req.params.groupId, req.user.id, null, function (error, group, user) {
+    if (error) {
+      log.error('Could not remove user', { err: error, groupId: req.params.groupId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else if (user && group) {
+      group.removeGroupUsers(user).then(function (results) {
+        log.info('User removed', {context: 'remove_admin', groupId: req.params.groupId, userRemovedId: req.user.id, user: toJson(req.user.simple()) });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
+router.post('/:groupId/user_membership', auth.isLoggedIn, auth.can('view group'), function(req, res) {
+  getGroupAndUser(req.params.groupId, req.user.id, null, function (error, group, user) {
+    if (error) {
+      log.error('Could not add user', { err: error, groupId: req.params.groupId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else if (user && group) {
+      group.addGroupUsers(user).then(function (results) {
+        log.info('User Added', {context: 'user_membership', groupId: req.params.groupId, userRemovedId: req.user.id, user: toJson(req.user.simple()) });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
 router.delete('/:groupId/:userId/remove_admin', auth.can('edit group'), function(req, res) {
   getGroupAndUser(req.params.groupId, req.params.userId, null, function (error, group, user) {
     if (error) {

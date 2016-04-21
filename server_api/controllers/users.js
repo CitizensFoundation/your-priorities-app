@@ -119,10 +119,6 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
 });
 
 router.get('/adminRights', function (req, res) {
-  if (req.isAuthenticated()) {
-  } else {
-    log.info('User Not Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
-  }
   if (req.isAuthenticated() && req.user) {
     var adminAccess = {};
     async.parallel([
@@ -212,6 +208,102 @@ router.get('/adminRights', function (req, res) {
       }
     });
   } else {
+    log.info('User Not Logged in', { context: 'adminRights'});
+    res.send('0');
+  }
+});
+
+router.get('/memberships', function (req, res) {
+  if (req.isAuthenticated() && req.user) {
+    var memberships = {};
+    async.parallel([
+      function (seriesCallback) {
+        models.User.find({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Domain,
+              as: 'DomainUsers',
+              attributes: ['id','name'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          memberships.DomainUsers = user.DomainUsers;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.find({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Community,
+              as: 'CommunityUsers',
+              attributes: ['id','name'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          memberships.CommunityUsers = user.CommunityUsers;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.find({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Group,
+              as: 'GroupUsers',
+              attributes: ['id','name'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          memberships.GroupUsers = user.GroupUsers;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.find({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Organization,
+              as: 'OrganizationUsers',
+              attributes: ['id','name'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          memberships.OrganizationUsers = user.OrganizationUsers;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      }
+    ], function (error) {
+      if (!error) {
+        log.info('User Sent Memberships', { user: toJson(req.user.simple()), context: 'memberships'});
+        res.send(memberships);
+      } else {
+        log.error("User Memberships Error", { context: 'memberships', err: error, errorStatus: 500 });
+        res.sendStatus(500);
+      }
+    });
+  } else {
+    log.info('User Not Logged in', { user: toJson(req.user), context: 'memberships'});
     res.send('0');
   }
 });

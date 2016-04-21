@@ -13,6 +13,7 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="yp-community-stats.html">
 <link rel="import" href="yp-community-behaviors.html">
+<link rel="import" href="../yp-membership-button/yp-membership-button.html">
 
 <dom-module id="yp-community-card">
 
@@ -115,26 +116,25 @@
         font-size: 28px;
       }
 
-      .heartButton {
+      yp-membership-button {
         position: absolute;
         top: 158px;
         right: 16px;
         width: 40px;
         height: 40px;
-        background-color: #999;
         color: var(--icon-general-color, #FFF);
       }
     </style>
 
     <template is="dom-if" if="[[community]]">
-      <paper-card class="communityCard" animated elevation="[[elevation]]" on-tap="_goToCommunity" class="layout vertical flex">
-        <iron-image sizing="contain" preload src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
-        <div class="informationText">
+      <paper-card class="communityCard" animated elevation="[[elevation]]" class="layout vertical flex">
+        <iron-image sizing="contain" preload src="[[communityLogoImagePath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
+        <div class="informationText" on-tap="_goToCommunity">
           <div class="community-name" featured$="[[featured]]">[[communityName(community)]]</div>
           <div class="description">[[communityDescription(community)]]</div>
         </div>
-        <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
-        <paper-fab class="heartButton" icon="favorite"></paper-fab>
+        <yp-community-stats on-tap="_goToCommunity" class="stats" community="[[community]]"></yp-community-stats>
+        <yp-membership-button community="[[community]]"></yp-membership-button>
       </paper-card>
     </template>
   </template>

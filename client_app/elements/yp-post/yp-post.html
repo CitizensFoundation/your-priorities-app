@@ -301,7 +301,6 @@
         },
 
         listeners: {
-          'new-user-endorsement': 'addEndorsement',
           'yp-debate-info': '_updateDebateInfo'
         },
 
@@ -347,10 +346,6 @@
 
         _refresh: function () {
           this.$.ajax.generateRequest();
-        },
-
-        addEndorsement: function (event, detail) {
-          this.$$("#postHeader").addEndorsement(detail);
         },
 
         _postChanged: function (newValue, oldValue) {

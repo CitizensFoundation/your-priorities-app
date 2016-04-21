@@ -5,6 +5,7 @@ var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
+var async = require('async');
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
@@ -24,6 +25,133 @@ var sendCommunityOrError = function (res, community, context, user, error, error
     res.send(community);
   }
 };
+
+var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
+  var user, community;
+
+  async.series([
+    function (seriesCallback) {
+      models.Community.find({
+        where: {
+          id: communityId
+        }
+      }).then(function (communityIn) {
+        if (communityIn) {
+          community = communityIn;
+        }
+        seriesCallback();
+      }).catch(function (error) {
+        seriesCallback(error);
+      });
+    },
+    function (seriesCallback) {
+      if (userId) {
+        models.User.find({
+          where: {
+            id: userId
+          }
+        }).then(function (userIn) {
+          if (userIn) {
+            user = userIn;
+          }
+          seriesCallback();
+        }).catch(function (error) {
+          seriesCallback(error);
+        });
+      } else {
+        seriesCallback();
+      }
+    },
+    function (seriesCallback) {
+      if (userEmail) {
+        models.User.find({
+          where: {
+            email: userEmail
+          }
+        }).then(function (userIn) {
+          if (userIn) {
+            user = userIn;
+          }
+          seriesCallback();
+        }).catch(function (error) {
+          seriesCallback(error);
+        });
+      } else {
+        seriesCallback();
+      }
+    }
+  ], function (error) {
+    if (error) {
+      callback(error)
+    } else {
+      callback(null, community, user);
+    }
+  });
+};
+
+router.delete('/:communityId/user_membership', auth.isLoggedIn, auth.can('view community'), function(req, res) {
+  getCommunityAndUser(req.params.communityId, req.user.id, null, function (error, community, user) {
+    if (error) {
+      log.error('Could not remove user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else if (user && community) {
+      community.removeCommunityUsers(user).then(function (results) {
+        log.info('User removed', {context: 'user_membership', communityId: req.params.communityId, userRemovedId: req.user.id, user: toJson(req.user.simple()) });
+        res.send({ membershipValue: false });
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
+router.post('/:communityId/user_membership', auth.isLoggedIn, auth.can('view community'), function(req, res) {
+  getCommunityAndUser(req.params.communityId, req.user.id, null, function (error, community, user) {
+    if (error) {
+      log.error('Could not add user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else if (user && community) {
+      community.addCommunityUsers(user).then(function (results) {
+        log.info('User Added', {context: 'user_membership', communityId: req.params.communityId, userRemovedId: req.user.id, user: toJson(req.user.simple()) });
+        res.send({ membershipValue: true });
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
+router.delete('/:communityId/:userId/remove_admin', auth.can('edit community'), function(req, res) {
+  getCommunityAndUser(req.params.communityId, req.params.userId, null, function (error, community, user) {
+    if (error) {
+      log.error('Could not remove admin', { err: error, communityId: req.params.communityId, userRemovedId: req.params.userId, context: 'remove_admin', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else if (user && community) {
+      community.removeCommunityAdmins(user).then(function (results) {
+        log.info('Admin removed', {context: 'remove_admin', communityId: req.params.communityId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
+router.post('/:communityId/:email/add_admin', auth.can('edit community'), function(req, res) {
+  getCommunityAndUser(req.params.communityId, null, req.params.email, function (error, community, user) {
+    if (error) {
+      log.error('Could not add admin', { err: error, communityId: req.params.communityId, userAddEmail: req.params.email, context: 'remove_admin', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else if (user && community) {
+      community.addCommunityAdmins(user).then(function (results) {
+        log.info('Admin Added', {context: 'add_admin', communityId: req.params.communityId, userAddEmail: req.params.email, user: toJson(req.user.simple()) });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
 
 router.get('/:communityId/pages', auth.can('view community'), function(req, res) {
   models.Community.find({
