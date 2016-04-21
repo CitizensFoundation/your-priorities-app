@@ -28,7 +28,6 @@
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--description-line-height, 1.3);
-        padding: 8px;
         margin-top: 4px;
       }
 
@@ -38,7 +37,7 @@
 
       .groupCard {
         cursor: pointer;
-        height: 442px;
+        height: 455px;
         background-color: #fff;
       }
 
@@ -123,11 +122,15 @@
 
       yp-membership-button {
         position: absolute;
-        top: 158px;
+        top: 216px;
         right: 16px;
         width: 40px;
         height: 40px;
         color: var(--icon-general-color, #FFF);
+      }
+
+      .objectives {
+        padding: 8px;
       }
     </style>
 
@@ -137,9 +140,9 @@
           <div class="layout">
             <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
           </div>
-          <div class="objectives">
+          <div class="description">
             <h2 class="group-name">[[groupName(group)]]</h2>
-            <div>[[groupObjectives(group)]]</div>
+            <div class="objectives">[[groupObjectives(group)]]</div>
           </div>
         </div>
         <yp-group-stats on-tap="_goToGroup" class="stats" group="[[group]]"></yp-group-stats>
