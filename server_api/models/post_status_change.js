@@ -7,9 +7,15 @@ module.exports = function(sequelize, DataTypes) {
     status: { type: DataTypes.STRING, allowNull: false },
     published_at: DataTypes.DATE,
     ip_address: { type: DataTypes.STRING, allowNull: false },
-    user_agent: { type: DataTypes.TEXT, allowNull: false }
+    user_agent: { type: DataTypes.TEXT, allowNull: false },
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
-
+    defaultScope: {
+      where: {
+        deleted: false
+      }
+    },
+    
     underscored: true,
 
     tableName: 'post_status_changes',

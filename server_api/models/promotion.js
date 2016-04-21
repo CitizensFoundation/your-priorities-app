@@ -12,8 +12,15 @@ module.exports = function(sequelize, DataTypes) {
     counter_up_endorsements: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_down_endorsements: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_skips: { type: DataTypes.INTEGER, defaultValue: 0 },
-    counter_views: { type: DataTypes.INTEGER, defaultValue: 0 }
+    counter_views: { type: DataTypes.INTEGER, defaultValue: 0 },
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
+    defaultScope: {
+      where: {
+        deleted: false
+      }
+    },
+
     underscored: true,
     tableName: 'promotions',
     classMethods: {

@@ -162,28 +162,43 @@
       },
 
       upVote: function(point) {
-        if (point.value == 0) {
-          return true;
+        if (point) {
+          if (point.value == 0) {
+            return true;
+          } else {
+            return point.value>0;
+          }
         } else {
-          return point.value>0;
+          console.warn("Can't find point for upVote");
+          return false;
         }
       },
 
       downVote: function(point) {
-        if (point.value == 0) {
-          return true;
+        if (point) {
+          if (point.value == 0) {
+            return true;
+          } else {
+            return point.value<0;
+          }
         } else {
-          return point.value<0;
+          console.warn("Can't find point for upVote");
+          return false;
         }
       },
 
       computeClass: function (point) {
         var ret = 'description ';
-        if (point.value>0)
-          ret += 'for';
-        else
-          ret += 'against';
-        return ret;
+        if (point) {
+          if (point.value>0)
+            ret += 'for';
+          else
+            ret += 'against';
+          return ret;
+        } else {
+          console.warn("Can't find point for upVote");
+          return ret;
+        }
       }
     });
   </script>

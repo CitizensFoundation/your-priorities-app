@@ -999,6 +999,10 @@ async.series([
 
       incoming['legacy_post_id'] = oldId;
 
+      if (incoming['status']!='published' && incoming['status']!='active' ) {
+        incoming['deleted'] = true;
+      }
+
       models.Post.build(incoming).save().then(function (post) {
         if (post) {
           post.updateAllExternalCounters(fakeReq, 'up', 'counter_posts', function () {
@@ -1040,6 +1044,10 @@ async.series([
       var oldId = incoming['id'];
       incoming['id'] = null;
 
+      if (incoming['status']!='published' && incoming['status']!='active' ) {
+        incoming['deleted'] = true;
+      }
+
       models.PostRevision.build(incoming).save().then(function (post_revision) {
         if (post_revision) {
           allPostRevisionsByOldIds[oldId] = post_revision.id;
@@ -1074,7 +1082,13 @@ async.series([
         incoming['content']="";
       }
 
-      incoming['status']="active";
+      if (incoming['status']==null) {
+        incoming['status']="active";
+      }
+
+      if (incoming['status']!='published' && incoming['status']!='active' ) {
+        incoming['deleted'] = true;
+      }
 
       models.PostStatusChange.build(incoming).save().then(function (post_status_change) {
         if (post_status_change) {
@@ -1106,6 +1120,10 @@ async.series([
       incoming['id'] = null;
 
       incoming['user_agent'] = "Script import";
+
+      if (incoming['status']!='published' && incoming['status']!='active' ) {
+        incoming['deleted'] = true;
+      }
 
       models.Endorsement.build(incoming).save().then(function (endorsement) {
         if (endorsement) {
@@ -1153,16 +1171,27 @@ async.series([
         incoming['status']="active";
       }
 
+      if (incoming['status']!='published' && incoming['status']!='active' ) {
+        incoming['deleted'] = true;
+      }
+
       models.Point.build(incoming).save().then(function (point) {
         if (point) {
           allPointsByOldIds[oldId] = point.id;
           models.Post.find({
             where: { id: point.post_id }
           }).then(function(post) {
-            post.updateAllExternalCounters({ ypDomain: currentDomain }, 'up', 'counter_points', function () {
-              post.increment('counter_points');
-              callback()
-            });
+            if (post) {
+              post.updateAllExternalCounters({ ypDomain: currentDomain }, 'up', 'counter_points', function () {
+                post.increment('counter_points');
+                callback()
+              });
+            } else {
+              point.deleted = true;
+              point.save().then(function (point) {
+                callback();
+              });
+            }
           });
         } else {
           callback('no point created');
@@ -1192,6 +1221,10 @@ async.series([
 
       if (incoming['status']==null) {
         incoming['status']="active";
+      }
+
+      if (incoming['status']!='published' && incoming['status']!='active' ) {
+        incoming['deleted'] = true;
       }
 
       models.PointRevision.build(incoming).save().then(function (point_revision) {
@@ -1226,6 +1259,10 @@ async.series([
 
       if (incoming['status']==null) {
         incoming['status']="active";
+      }
+
+      if (incoming['status']!='published' && incoming['status']!='active' ) {
+        incoming['deleted'] = true;
       }
 
       if (incoming['value']==true) {
@@ -1271,7 +1308,10 @@ async.series([
       incoming['ip_address'] = ip.address();
       incoming['user_agent'] = 'yrpri script';
       incoming['value'] = 0;
-      incoming['status'] = 'active';
+
+      if (incoming['status']!='published' && incoming['status']!='active' ) {
+        incoming['deleted'] = true;
+      }
 
       var oldId = incoming['id'];
       incoming['id'] = null;
@@ -1326,6 +1366,10 @@ async.series([
 
       var oldId = incoming['id'];
       incoming['id'] = null;
+
+      if (incoming['status']!='published' && incoming['status']!='active' ) {
+        incoming['deleted'] = true;
+      }
 
       models.Promotion.build(incoming).save().then(function (promotion) {
         if (promotion) {
@@ -1449,6 +1493,10 @@ async.series([
 
       if (activitiesTransform[incoming['type']]) {
         incoming['type'] = activitiesTransform[incoming['type']];
+      }
+
+      if (incoming['status']!='published' && incoming['status']!='active' ) {
+        incoming['deleted'] = true;
       }
 
       models.AcActivity.build(incoming).save().then(function (activity) {

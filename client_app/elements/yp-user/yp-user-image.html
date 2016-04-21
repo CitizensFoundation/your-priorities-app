@@ -123,7 +123,12 @@
       },
 
       computeFacebookSrc: function (user) {
-        return 'https://graph.facebook.com/' + user.facebook_id + '/picture';
+        if (user) {
+          return 'https://graph.facebook.com/' + user.facebook_id + '/picture';
+        } else {
+          console.warn("Can't find user for computeFacebookSrc");
+          return "";
+        }
       },
 
       usePlaceHolderImage: function (user) {
