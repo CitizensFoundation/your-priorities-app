@@ -139,7 +139,7 @@
             this.loginForEndorseParams = null;
           } else if (this.loginForPointQualityParams) {
             var pointQualityParams = this.loginForPointQualityParams;
-            pointQualityParams.pointActionElement.generatePointQuality(pointQualityParams.params.value);
+            pointQualityParams.pointActionElement.generatePointQualityFromLogin(pointQualityParams.params.value);
             this.loginForPointQualityParams = null;
           }
           this.fire("login");

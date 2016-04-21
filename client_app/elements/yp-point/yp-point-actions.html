@@ -59,15 +59,17 @@
 
     <div class="all-actions" hidden$="[[hideNotHelpful]]">
       <div id="actionUp" class="actionUp layout horizontal">
-        <paper-icon-button icon="arrow-upward" class="point-up-vote-icon myButton" on-tap="pointHelpful"></paper-icon-button>
+        <paper-icon-button disabled="[[allDisabled]]" icon="arrow-upward" class="point-up-vote-icon myButton" on-tap="pointHelpful"></paper-icon-button>
         <div class="action-text action-up">{{point.counter_quality_up}}</div>
       </div>
       <div id="actionDown" class="actionDown layout horizontal">
-        <paper-icon-button icon="arrow-downward" class="point-down-vote-icon myButton" on-tap="pointNotHelpful"></paper-icon-button>
+        <paper-icon-button disabled="[[allDisabled]]" icon="arrow-downward" class="point-down-vote-icon myButton" on-tap="pointNotHelpful"></paper-icon-button>
         <div class="action-text">{{point.counter_quality_down}}</div>
       </div>
     </div>
     <yp-ajax id="pointQualityAjax" method="POST" on-response="_pointQualityResponse"></yp-ajax>
+    <iron-signals on-iron-signal-got-endorsements-and-qualities="_updateQualitiesFromSignal"></iron-signals>
+
   </template>
   <script>
     Polymer({
@@ -91,6 +93,11 @@
         pointQualityValue: {
           type: Number,
           value: 0
+        },
+
+        allDisabled: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -99,8 +106,18 @@
       ],
 
       _onPointChanged: function (newValue, oldValue) {
-        if (newValue && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.PointQualities) {
-          var thisPointQuality = window.appUser.pointQualitiesIndex[newValue.id];
+        if (newValue) {
+          this._updateQualities();
+        }
+      },
+
+      _updateQualitiesFromSignal: function () {
+        this._updateQualities();
+      },
+
+      _updateQualities: function () {
+        if (window.appUser.loggedIn() && window.appUser.user && window.appUser.user.PointQualities) {
+          var thisPointQuality = window.appUser.pointQualitiesIndex[this.point.id];
           if (thisPointQuality)
             this._setPointQuality(thisPointQuality.value);
         }
@@ -130,6 +147,7 @@
       },
 
       _pointQualityResponse: function (event, detail) {
+        this.set('allDisabled', false);
         var pointQuality = detail.response.pointQuality;
         var oldPointQualityValue = detail.response.oldPointQualityValue;
         this._setPointQuality(pointQuality.value);
@@ -146,6 +164,12 @@
           this.set('point.counter_quality_down', this.point.counter_quality_down+1)
       },
 
+      generatePointQualityFromLogin: function (value) {
+        if (!window.appUser.pointQualitiesIndex[this.point.id]) {
+          this.generatePointQuality(value);
+        }
+      },
+
       generatePointQuality: function (value) {
         if (window.appUser.loggedIn()===true) {
           this.$.pointQualityAjax.url = "/api/points/" + this.point.id + "/pointQuality";
@@ -157,16 +181,19 @@
           }
           this.$.pointQualityAjax.generateRequest();
         } else {
+          this.set('allDisabled', false);
           window.appUser.loginForPointQuality(this, { value: value } );
         }
       },
 
       pointHelpful: function () {
+        this.set('allDisabled', true);
         window.appGlobals.activity('clicked', 'pointHelpful', this.point.id);
         this.generatePointQuality(1);
       },
 
       pointNotHelpful: function () {
+        this.set('allDisabled', true);
         window.appGlobals.activity('clicked', 'pointNotHelpful', this.point.id);
         this.generatePointQuality(-1);
       }
