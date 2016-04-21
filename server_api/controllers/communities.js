@@ -369,7 +369,7 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
 
 router.delete('/:id', auth.can('edit community'), function(req, res) {
   models.Community.find({
-    where: {id: req.params.id, user_id: req.user.id }
+    where: {id: req.params.id }
   }).then(function (community) {
     if (community) {
       community.deleted = true;

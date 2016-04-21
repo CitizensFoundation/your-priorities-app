@@ -89,7 +89,6 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
   });
 };
 
-
 router.delete('/:groupId/user_membership', auth.isLoggedIn, auth.can('view group'), function(req, res) {
   getGroupAndUser(req.params.groupId, req.user.id, null, function (error, group, user) {
     if (error) {
@@ -405,7 +404,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
 
 router.delete('/:id', auth.can('edit group'), function(req, res) {
   models.Group.find({
-    where: {id: req.params.id, user_id: req.user.id }
+    where: {id: req.params.id }
   }).then(function (group) {
     if (group) {
       group.deleted = true;

@@ -871,6 +871,8 @@ async.series([
 
         models.Community.build(incoming).save().then(function (community) {
           if (community) {
+            allCommunitiesByOldGroupIds[oldId] = community.id;
+            console.log("ACTV DEBUG: oldId: "+oldId+" newCommunityId: "+ community.id);
             community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
               incoming['community_id'] = community.id;
               incoming['domain_id'] = null;
@@ -881,11 +883,11 @@ async.series([
               incoming['google_analytics_code'] = null;
               incoming['description'] = null;
               incoming['objectives'] = community.description;
-              allCommunitiesByOldGroupIds[oldId] = community.id;
               models.Group.build(incoming).save().then(function (group) {
                 if (group) {
                   group.updateAllExternalCounters(fakeReq, 'up', 'counter_groups', function () {
                     allGroupsByOldIds[oldId] = group.id;
+                    console.log("ACTV DEBUG: oldId: "+oldId+" newCommunityId: "+ community.id+ " newGroupId: " + group.id);
                     allGroupsModelByOldIds[oldId] = group;
                     if (headerUrl && headerUrl!='') {
                       uploadImage(headerUrl, 'group-logo', group.user_id, function(error, image) {
@@ -1419,8 +1421,11 @@ async.series([
       }
 
       if (incoming['group_id']) {
-        incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
         incoming['community_id'] = allCommunitiesByOldGroupIds[incoming['group_id']];
+        incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
+        console.log("ACTV DEBUG: newCommunityId: "+incoming['community_id']+" newGroupId: "+ incoming['group_id']);
+      } else {
+        console.log("ACTV DEBUG: NO GROUP ID");
       }
 
       if (incoming['point_id']) {
