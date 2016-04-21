@@ -121,15 +121,35 @@ router.post('/:groupId/:email/add_admin', auth.can('edit group'), function(req, 
   });
 });
 
-router.get('/:groupId/pages', auth.can('edit group'), function(req, res) {
-  models.Page.getPages(req, { group_id: req.params.groupId }, function (error, pages) {
-    if (error) {
-      log.error('Could not get pages for group', { err: error, context: 'pages', user: toJson(req.user.simple()) });
-      res.sendStatus(500);
-    } else {
-      log.info('Got Pages', {context: 'pages', user: toJson(req.user.simple()) });
-      res.send(pages);
-    }
+router.get('/:groupId/pages', auth.can('view group'), function(req, res) {
+  models.Group.find({
+    where: { id: req.params.groupId},
+    attributes: ['id'],
+    include: [
+      {
+        model: models.Community,
+        attributes: ['id'],
+        include: [
+          {
+            model: models.Domain,
+            attributes: ['id']
+          }
+        ]
+      }
+    ]
+  }).then(function (group) {
+    models.Page.getPages(req, { group_id: req.params.groupId , community_id: group.Community.id, domain_id: group.Community.Domain.id }, function (error, pages) {
+      if (error) {
+        log.error('Could not get pages for group', { err: error, context: 'pages', user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+      } else {
+        log.info('Got Pages', {context: 'pages', user: toJson(req.user.simple()) });
+        res.send(pages);
+      }
+    });
+  }).catch(function (error) {
+    log.error('Could not get pages for group', { err: error, context: 'pages', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
   });
 });
 

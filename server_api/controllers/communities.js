@@ -25,15 +25,23 @@ var sendCommunityOrError = function (res, community, context, user, error, error
   }
 };
 
-router.get('/:communityId/pages', auth.can('edit community'), function(req, res) {
-  models.Page.getPages(req, { community_id: req.params.communityId }, function (error, pages) {
-    if (error) {
-      log.error('Could not get pages for community', { err: error, context: 'pages', user: toJson(req.user.simple()) });
-      res.sendStatus(500);
-    } else {
-      log.info('Got Pages', {context: 'pages', user: toJson(req.user.simple()) });
-      res.send(pages);
-    }
+router.get('/:communityId/pages', auth.can('view community'), function(req, res) {
+  models.Community.find({
+      where: { id: req.params.communityId},
+      attributes: ['id', 'domain_id']
+    }).then(function (community) {
+    models.Page.getPages(req, { community_id: req.params.communityId, domain_id: community.domain_id }, function (error, pages) {
+      if (error) {
+        log.error('Could not get pages for community', { err: error, context: 'pages', user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+      } else {
+        log.info('Got Pages', {context: 'pages', user: toJson(req.user.simple()) });
+        res.send(pages);
+      }
+    });
+  }).catch(function (error) {
+    log.error('Could not get pages for community', { err: error, context: 'pages', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
   });
 });
 

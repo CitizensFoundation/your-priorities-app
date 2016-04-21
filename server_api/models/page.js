@@ -159,7 +159,10 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       getPages: function (req, options, callback)  {
-        var allPages = [];
+        var groupPages = [];
+        var communityPages = [];
+        var domainPages = [];
+
         async.parallel([
           function (seriesCallback) {
             if (options.group_id) {
@@ -170,7 +173,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
               }).then( function (pages) {
                 if (pages) {
-                  allPages = _.concat(allPages, pages);
+                  groupPages = groupPages.concat(pages);
                 }
                 seriesCallback();
               }).catch( function (error) {
@@ -190,7 +193,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
               }).then( function (pages) {
                 if (pages) {
-                  allPages = _.concat(allPages, pages);
+                  communityPages = communityPages.concat(pages);
                 }
                 seriesCallback();
               }).catch( function (error) {
@@ -210,7 +213,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
               }).then( function (pages) {
                 if (pages) {
-                  allPages = _.concat(allPages, pages);
+                  domainPages = domainPages.concat(pages);
                 }
                 seriesCallback();
               }).catch( function (error) {
@@ -222,7 +225,7 @@ module.exports = function(sequelize, DataTypes) {
             }
           }
         ], function (error) {
-          callback(error, allPages);
+          callback(error, groupPages.concat(communityPages,domainPages));
         })
       },
 

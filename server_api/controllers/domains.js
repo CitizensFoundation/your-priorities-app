@@ -24,7 +24,7 @@ var sendDomainOrError = function (res, domain, context, user, error, errorStatus
   }
 };
 
-router.get('/:domainId/pages', auth.can('edit domain'), function(req, res) {
+router.get('/:domainId/pages', auth.can('view domain'), function(req, res) {
   models.Page.getPages(req, { domain_id: req.params.domainId }, function (error, pages) {
     if (error) {
       log.error('Could not get pages for domain', { err: error, context: 'pages', user: toJson(req.user.simple()) });

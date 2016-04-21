@@ -119,9 +119,8 @@
 
     <div class="layout horizontal center-center">
       <yp-ajax large-spinner id="ajax" on-response="_groupsResponse"></yp-ajax>
+      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
     </div>
-
-    <yp-post-edit id="postEdit" group="[[group]]" on-iron-form-response="_goToNewPost"></yp-post-edit>
 
   </template>
 
@@ -287,9 +286,15 @@
         }
        },
 
+      _pagesResponse: function (event, detail) {
+        this.fire('yp-set-pages', detail.response);
+      },
+
       _groupsResponse: function (event, detail, sender) {
         this.set('group', detail.response.group);
         this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
+        this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
+        this.$.pagesAjax.generateRequest();
 
         if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
           this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages);

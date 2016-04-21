@@ -111,7 +111,7 @@
                 <paper-icon-button icon="help-outline" class="dropdown-trigger"></paper-icon-button>
                 <paper-menu class="dropdown-content">
                   <template is="dom-repeat" items="[[pages]]" as="page">
-                    <paper-item data-args$="[[page.id]]" on-tap="_openPage">[[_getLocalizePageTitle(page)]]</paper-item>
+                    <paper-item data-args$="[[index]]" on-tap="_openPage">[[_getLocalizePageTitle(page)]]</paper-item>
                   </template>
                 </paper-menu>
               </paper-menu-button>
@@ -270,8 +270,11 @@
       },
 
       _openPage: function (event) {
-
-
+        var index = JSON.parse(event.target.getAttribute('data-args'));
+        var page = this.pages[index];
+        window.appGlobals.activity('open', page.id, 'pages');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pageDialog");
+        dialog.open(page.title[window.locale], page.content[window.locale]);
       },
 
       _getLocalizePageTitle: function (page) {

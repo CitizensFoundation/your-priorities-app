@@ -120,7 +120,7 @@
 
     <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
     <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
-    pagesAjax
+
   </template>
 
   <script>
@@ -247,7 +247,6 @@
       },
 
       _pagesResponse: function (event, detail) {
-        debugger;
         this.fire('yp-set-pages', detail.response);
       },
 
