@@ -299,7 +299,7 @@
     },
 
     _loginCompleted: function (user) {
-      window.appUser.setUser(user);
+      window.appUser.setLoggedInUser(user);
       if (this.redirectTo)
         page(this.redirectTo);
       this.fire("login", user);

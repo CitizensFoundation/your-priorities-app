@@ -28,10 +28,54 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
   }
 };
 
+var getUserWithAll = function (userId, callback) {
+  models.User.find({
+    where: {id: userId},
+    attributes: _.concat(models.User.defaultAttributesWithSocialMedia, ['notifications_settings']),
+    order: [
+      [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
+      [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
+    ],
+    include: [
+      {
+        model: models.Endorsement,
+        attributes: ['id', 'value', 'post_id'],
+        required: false
+      },
+      {
+        model: models.PointQuality,
+        attributes: ['id', 'value', 'point_id'],
+        required: false
+      },
+      {
+        model: models.Image, as: 'UserProfileImages',
+        attributes: ['id', 'created_at', 'formats'],
+        required: false
+      },
+      {
+        model: models.Image, as: 'UserHeaderImages',
+        attributes: ['id', 'created_at', 'formats'],
+        required: false
+      }
+    ]
+  }).then(function(user) {
+    callback(null, user);
+  }).catch(function(error) {
+    callback(error);
+  });
+};
+
 // Login
 router.get('/login', passport.authenticate('local'), function (req, res) {
-  log.info('User Login', { context: 'view', user: toJson(req.user) });
-  res.send(req.user);
+  log.info('User Login', {context: 'view', user: toJson(req.user)});
+  getUserWithAll(req.user.id, function (error, user) {
+    if (error || !user) {
+      log.error("User Login Error", {context: 'login', user: user.id, err: error, errorStatus: 500});
+      res.sendStatus(500);
+    } else {
+      res.send(user)
+    }
+  });
 });
 
 // Register
@@ -179,39 +223,14 @@ router.get('/isloggedin', function (req, res) {
     log.info('User Not Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
   }
   if (req.isAuthenticated() && req.user) {
-    models.User.find({
-      where: {id: req.user.id},
-      attributes: _.concat(models.User.defaultAttributesWithSocialMedia, ['notifications_settings']),
-      order: [
-        [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
-        [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
-        ],
-      include: [
-        {
-          model: models.Endorsement,
-          attributes: ['id', 'value', 'post_id'],
-          required: false
-        },
-        {
-          model: models.PointQuality,
-          attributes: ['id', 'value', 'point_id'],
-          required: false
-        },
-        {
-          model: models.Image, as: 'UserProfileImages',
-          required: false
-        },
-        {
-          model: models.Image, as: 'UserHeaderImages',
-          required: false
-        }
-      ]
-    }).then(function(user) {
-      res.send(user);
-    }).catch(function(error) {
-      log.error("User IsLoggedIn Error", { context: 'isloggedin', user: id, err: error, errorStatus: 500 });
-      res.sendStatus(500);
-    });
+    getUserWithAll(req.user.id, function (error, user) {
+      if (error || !user) {
+        log.error("User IsLoggedIn Error", { context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500 });
+        res.sendStatus(500);
+      } else {
+        res.send(user);
+      }
+    })
   } else {
     res.send('0');
   }
@@ -288,7 +307,14 @@ router.get('/reset/:token', function(req, res) {
   }).then(function (user) {
     if (user) {
       log.info('Get User For Reset Password Token', { user: toJson(user), context: 'getUserToken', loggedInUser: toJson(req.user), errorStatus: 401 });
-      res.sendStatus(user);
+      getUserWithAll(user.id, function (error, user) {
+        if (error || !user) {
+          log.error("User Error", { context: 'reset_password_expires', user: req.user.id, err: error, errorStatus: 500 });
+          res.sendStatus(500);
+        } else {
+          res.send(user);
+        }
+      });
     } else {
       log.error('Get User For Reset Password Token Not found', { user: null, context: 'getUserToken', err: 'Token not found', loggedInUser: toJson(req.user), errorStatus: 401 });
       res.sendStatus(404);
@@ -382,7 +408,14 @@ router.post('/reset/:token', function(req, res) {
       }
     } else {
       log.info('User Reset Password Completed', { user: req.user, context: 'useResetToken', loggedInUser: toJson(req.user) });
-      res.send(req.user);
+      getUserWithAll(req.user.id, function (error, user) {
+        if (error || !user) {
+          log.error("User Error", { context: 'useResetToken', user: req.user.id, err: error, errorStatus: 500 });
+          res.sendStatus(500);
+        } else {
+          res.send(user);
+        }
+      });
     }
   });
 });

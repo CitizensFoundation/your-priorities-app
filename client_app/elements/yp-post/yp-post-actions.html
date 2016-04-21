@@ -191,6 +191,8 @@
         <div class="action-text down-text">{{formatNumber(post.counter_endorsements_down)}}</div>
       </div>
     </paper-material>
+
+    <iron-signals on-iron-signal-got-endorsements-and-qualities="_updateEndorsements"></iron-signals>
   </template>
   <script>
     Polymer({
@@ -250,8 +252,14 @@
       },
 
       _onPostChanged: function (newValue, oldValue) {
-        if (newValue && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
-          var thisPostsEndorsement = window.appUser.endorsementPostsIndex[newValue.id];
+        if (newValue) {
+          this._updateEndorsements();
+        }
+      },
+
+      _updateEndorsements: function () {
+        if (window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
+          var thisPostsEndorsement = window.appUser.endorsementPostsIndex[this.post.id];
           if (thisPostsEndorsement)
             this._setEndorsement(thisPostsEndorsement.value);
         }

@@ -121,32 +121,28 @@
 
         _handleLogin: function (user) {
           this._closeUserLogin();
-          this.setUser(user);
+          this.setLoggedInUser(user);
           this.$.adminRightsAjax.generateRequest();
           this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.email;
           this.$.loginToast.show();
           if (this.loginForEditParams) {
-
             var loginParams = this.loginForEditParams;
             loginParams.editDialog.open(loginParams.newOrUpdate,loginParams.params);
             this.loginForEditParams = null;
           } else if (this.loginForNewPointParams) {
-
             var newPointParams = this.loginForNewPointParams;
             newPointParams.postPointsElement.addPoint(newPointParams.params.content, newPointParams.params.value);
             this.loginForNewPointParams = null;
           } else if (this.loginForEndorseParams) {
-
             var endorseParams = this.loginForEndorseParams;
             endorseParams.postActionElement.generateEndorsement(endorseParams.params.value);
             this.loginForEndorseParams = null;
           } else if (this.loginForPointQualityParams) {
-
             var pointQualityParams = this.loginForPointQualityParams;
             pointQualityParams.pointActionElement.generatePointQuality(pointQualityParams.params.value);
             this.loginForPointQualityParams = null;
           }
-          this.fire("login")
+          this.fire("login");
         },
 
         _forgotPassword: function () {
@@ -163,9 +159,10 @@
           return this.$.session.get('user');
         },
 
-        setUser: function (user) {
+        setLoggedInUser: function (user) {
           this.$.session.set('user', user);
           this.user = user;
+          this.fire('iron-signal', {name: 'logged-in', data:  user });
         },
 
         removeUserSession: function () {
@@ -249,6 +246,7 @@
         },
 
         _onUserChanged: function (newValue, oldValue) {
+          debugger;
           this.fire("user-changed", newValue);
           this._updateEndorsementPostsIndex(newValue);
           this._updatePointQualitiesIndex(newValue);
@@ -267,8 +265,7 @@
           if (detail.response===0) {
             this.removeUserSession();
           } else if (detail.response.email) {
-            this.setUser(detail.response);
-            this.fire('iron-signal', {name: 'logged-in', data:  detail.response});
+            this.setLoggedInUser(detail.response);
           }
         },
 

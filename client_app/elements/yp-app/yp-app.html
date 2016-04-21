@@ -272,7 +272,7 @@
       _openPage: function (event) {
         var index = JSON.parse(event.target.getAttribute('data-args'));
         var page = this.pages[index];
-        window.appGlobals.activity('open', page.id, 'pages');
+        window.appGlobals.activity('open', 'pages', page.id);
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pageDialog");
         dialog.open(page.title[window.locale], page.content[window.locale]);
       },
