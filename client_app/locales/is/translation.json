@@ -65,6 +65,15 @@
 
   "news": "Fréttir",
 
+
+  "pages": {
+    "addLocale": "Nýtt locale",
+    "unPublish": "Afturkalla",
+    "deletePage": "Eyða",
+    "addPage": "Ný síða",
+    "managePages": "Sýsla með síður"
+  },
+
   "participate": "Taktu þátt",
 
   "groups": "Hópar",

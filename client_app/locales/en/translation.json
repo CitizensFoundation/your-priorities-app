@@ -21,8 +21,9 @@
   "pages": {
     "addLocale": "Add locale",
     "unPublish": "UnPublish",
-    "removePage": "Remove",
-    "addPage": "Add new page"
+    "deletePage": "Delete",
+    "addPage": "Add new page",
+    "managePages": "Manage pages"
   },
 
   "archived": "Archived",
