@@ -135,7 +135,7 @@
             this.loginForNewPointParams = null;
           } else if (this.loginForEndorseParams) {
             var endorseParams = this.loginForEndorseParams;
-            endorseParams.postActionElement.generateEndorsement(endorseParams.params.value);
+            endorseParams.postActionElement.generateEndorsementFromLogin(endorseParams.params.value);
             this.loginForEndorseParams = null;
           } else if (this.loginForPointQualityParams) {
             var pointQualityParams = this.loginForPointQualityParams;
@@ -246,10 +246,12 @@
         },
 
         _onUserChanged: function (newValue, oldValue) {
-          debugger;
           this.fire("user-changed", newValue);
-          this._updateEndorsementPostsIndex(newValue);
-          this._updatePointQualitiesIndex(newValue);
+          if (newValue) {
+            this._updateEndorsementPostsIndex(newValue);
+            this._updatePointQualitiesIndex(newValue);
+            this.fire('iron-signal', {name: 'got-endorsements-and-qualities'});
+          }
         },
 
         _logoutResponse: function (event, detail) {

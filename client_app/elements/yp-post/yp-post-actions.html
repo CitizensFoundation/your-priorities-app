@@ -175,24 +175,24 @@
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <paper-material elevation="[[elevationPlusOne]]" floating$="[[floating]]"animated class="action-bar">
       <div id="actionUp" class="action-up">
-        <paper-icon-button title="[[t('post.vote.up')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
+        <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.vote.up')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">{{formatNumber(post.counter_endorsements_up)}}</div>
       </div>
 
       <div class="action-debate layout vertical" hidden$="[[_hideDebate(small,forceSmall)]]">
-        <paper-icon-button title="[[t('post.debate')]]" icon="communication:forum" class="action-icon debate-icon largeButton" on-tap="goToPost"></paper-icon-button>
+        <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.debate')]]" icon="communication:forum" class="action-icon debate-icon largeButton" on-tap="goToPost"></paper-icon-button>
         <div class="action-text debate-text">{{formatNumber(post.counter_points)}}</div>
       </div>
 
       <div class="flex" hidden$="[[!_hideDebate(small,forceSmall)]]"></div>
 
       <div id="actionDown" class="action-down">
-        <paper-icon-button title="[[t('post.vote.down')]]" icon$="[[endorseModeIcon(endorseMode,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
+        <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.vote.down')]]" icon$="[[endorseModeIcon(endorseMode,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
         <div class="action-text down-text">{{formatNumber(post.counter_endorsements_down)}}</div>
       </div>
     </paper-material>
 
-    <iron-signals on-iron-signal-got-endorsements-and-qualities="_updateEndorsements"></iron-signals>
+    <iron-signals on-iron-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></iron-signals>
   </template>
   <script>
     Polymer({
@@ -236,6 +236,11 @@
         elevationPlusOne: {
           type: Number,
           computed: '_elevationPlusOne(elevation)'
+        },
+
+        allDisabled: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -255,6 +260,11 @@
         if (newValue) {
           this._updateEndorsements();
         }
+      },
+
+      _updateEndorsementsFromSignal: function () {
+        debugger;
+        this._updateEndorsements();
       },
 
       _updateEndorsements: function () {
@@ -300,6 +310,7 @@
       },
 
       _endorseResponse: function (event, detail) {
+        this.set('allDisabled', false);
         var endorsement = detail.response.endorsement;
         var oldEndorsementValue = detail.response.oldEndorsementValue;
         this._setEndorsement(endorsement.value);
@@ -317,6 +328,12 @@
         this.fire('new-user-endorsement', endorsement);
       },
 
+      generateEndorsementFromLogin: function (value) {
+        if (!window.appUser.endorsementPostsIndex[this.post.id]) {
+          this.generateEndorsement(value);
+        }
+      },
+
       generateEndorsement: function (value) {
         if (window.appUser.loggedIn()===true) {
           this.$.endorseAjax.url = '/api/posts/' + this.post.id + '/endorse';
@@ -328,16 +345,19 @@
           }
           this.$.endorseAjax.generateRequest();
         } else {
+          this.set('allDisabled', false);
           window.appUser.loginForEndorse(this, { value: value } );
         }
       },
 
       upVote: function (event) {
+        this.set('allDisabled', true);
         this.generateEndorsement(1);
         window.appGlobals.activity('clicked', 'endorse_up', this.post.id);
       },
 
       downVote: function (event) {
+        this.set('allDisabled', true);
         this.generateEndorsement(-1);
         window.appGlobals.activity('clicked', 'endorse_down', this.post.id);
       },
