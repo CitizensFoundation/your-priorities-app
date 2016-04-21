@@ -24,6 +24,90 @@ var sendDomainOrError = function (res, domain, context, user, error, errorStatus
   }
 };
 
+router.get('/:domainId/pages', auth.can('edit domain'), function(req, res) {
+  models.Page.getPages(req, { domain_id: req.params.domainId }, function (error, pages) {
+    if (error) {
+      log.error('Could not get pages for domain', { err: error, context: 'pages', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Got Pages', {context: 'pages', user: toJson(req.user.simple()) });
+      res.send(pages);
+    }
+  });
+});
+
+router.get('/:domainId/pages_for_admin', auth.can('edit domain'), function(req, res) {
+  models.Page.getPagesForAdmin(req, { domain_id: req.params.domainId }, function (error, pages) {
+    if (error) {
+      log.error('Could not get page for admin for domain', { err: error, context: 'pages_for_admin', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Got Pages For Admin', {context: 'pages_for_admin', user: toJson(req.user.simple()) });
+      res.send(pages);
+    }
+  });
+});
+
+router.post('/:domainId/add_page', auth.can('edit domain'), function(req, res) {
+  models.Page.newPage(req, { domain_id: req.params.domainId, content: {}, title: {} }, function (error, pages) {
+    if (error) {
+      log.error('Could not create page for admin for domain', { err: error, context: 'new_page', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('New Community Page', {context: 'new_page', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.put('/:domainId/:pageId/update_page_locale', auth.can('edit domain'), function(req, res) {
+  models.Page.updatePageLocale(req, { domain_id: req.params.domainId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not update locale for admin for domain', { err: error, context: 'update_page_locale', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Locale Updated', {context: 'update_page_locale', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.put('/:domainId/:pageId/publish_page', auth.can('edit domain'), function(req, res) {
+  models.Page.publishPage(req, { domain_id: req.params.domainId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not publish page for admin for domain', { err: error, context: 'publish_page', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Published', {context: 'publish_page', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.put('/:domainId/:pageId/un_publish_page', auth.can('edit domain'), function(req, res) {
+  models.Page.unPublishPage(req, { domain_id: req.params.domainId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not un-publish page for admin for domain', { err: error, context: 'un_publish_page', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Un-Published', {context: 'un_publish_page', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.delete('/:domainId/:pageId/delete_page', auth.can('edit domain'), function(req, res) {
+  models.Page.deletePage(req, { domain_id: req.params.domainId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not delete page for admin for domain', { err: error, context: 'delete_page', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Commuity Page Published', {context: 'delete_page', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
 router.post('/:domainId/news_story', auth.isLoggedIn, auth.can('view domain'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {
@@ -38,8 +122,8 @@ router.post('/:domainId/news_story', auth.isLoggedIn, auth.can('view domain'), f
 
 router.get('/', function(req, res) {
   if (req.ypCommunity) {
-    log.info('Domain Lookup Found Community', { community: toJson(req.ypCommunity), context: 'index', user: toJson(req.user) });
-    res.send({community: req.ypCommunity, domain: req.ypDomain});
+    log.info('Domain Lookup Found Community', { domain: toJson(req.ypCommunity), context: 'index', user: toJson(req.user) });
+    res.send({domain: req.ypCommunity, domain: req.ypDomain});
   } else {
     log.info('Domain Lookup Found Domain', { domain: toJson(req.ypDomain), context: 'index', user: toJson(req.user) });
     res.send({domain: req.ypDomain})

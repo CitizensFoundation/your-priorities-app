@@ -148,6 +148,7 @@
             <paper-item id="usersMenuItem">[[t('group.users')]]</paper-item>
             <paper-item id="adminsMenuItem">[[t('group.admins')]]</paper-item>
             <paper-item id="deleteMenuItem">[[t('group.delete')]]</paper-item>
+            <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
           </paper-menu>
         </paper-menu-button>
       </paper-card>
@@ -190,8 +191,16 @@
           this._openUsersDialog();
         else if (detail.item.id=="adminsMenuItem")
           this._openAdminsDialog();
-
+        else if (detail.item.id=="pagesMenuItem")
+          this._openPagesDialog();
         this.selectedMenuItem = null;
+      },
+
+      _openPagesDialog: function () {
+        window.appGlobals.activity('open', 'group.pagesAdmin');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pagesGrid");
+        dialog.setup(this.group.id, null, null, false);
+        dialog.open();
       },
 
       _openUsersDialog: function () {

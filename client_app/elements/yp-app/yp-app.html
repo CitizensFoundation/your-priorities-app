@@ -71,6 +71,10 @@
         color: #333;
         height: 64px;
       }
+
+      .dropdown-content {
+        width: 200px;
+      }
     </style>
 
     <iron-signals on-iron-signal-yp-i18n-ready="_i18nReady"></iron-signals>
@@ -102,6 +106,15 @@
 
               <!-- Toolbar icons -->
               <paper-icon-button icon="search" on-tap="toggleSearch" hidden$="[[!showSearch]]"></paper-icon-button>
+
+              <paper-menu-button horizontal-align="right">
+                <paper-icon-button icon="help-outline" class="dropdown-trigger"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+                  <template is="dom-repeat" items="[[pages]]" as="page">
+                    <paper-item data-args$="[[page.id]]" on-tap="_openPage">[[_getLocalizePageTitle(page)]]</paper-item>
+                  </template>
+                </paper-menu>
+              </paper-menu-button>
 
               <template is="dom-if" if="[[user]]">
                 <paper-icon-button on-tap="_toggleUserDrawer" icon="face"></paper-icon-button>
@@ -237,12 +250,33 @@
           type: Boolean,
           notify: true,
           value: false
+        },
+
+        pages: {
+          type: Array
         }
       },
 
       observers: [
         '_isAppAndI18nReady(appReady, i18nReady)'
       ],
+
+      listeners: {
+        'yp-set-pages': '_setPages'
+      },
+
+      _setPages: function (event, pages) {
+        this.set('pages', pages);
+      },
+
+      _openPage: function (event) {
+
+
+      },
+
+      _getLocalizePageTitle: function (page) {
+        return page.title[window.locale];
+      },
 
       ready: function () {
         console.log("yp-app is ready");

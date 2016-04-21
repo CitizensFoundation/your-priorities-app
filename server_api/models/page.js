@@ -170,7 +170,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
               }).then( function (pages) {
                 if (pages) {
-                  _.concat(allPages, pages);
+                  allPages = _.concat(allPages, pages);
                 }
                 seriesCallback();
               }).catch( function (error) {
@@ -190,7 +190,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
               }).then( function (pages) {
                 if (pages) {
-                  _.concat(allPages, pages);
+                  allPages = _.concat(allPages, pages);
                 }
                 seriesCallback();
               }).catch( function (error) {
@@ -210,7 +210,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
               }).then( function (pages) {
                 if (pages) {
-                  _.concat(allPages, pages);
+                  allPages = _.concat(allPages, pages);
                 }
                 seriesCallback();
               }).catch( function (error) {

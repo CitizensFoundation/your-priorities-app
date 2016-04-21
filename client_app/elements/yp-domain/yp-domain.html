@@ -119,6 +119,8 @@
     </yp-page>
 
     <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
+    <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+    pagesAjax
   </template>
 
   <script>
@@ -244,8 +246,16 @@
         dialog.open('new', { domainId: this.domainId });
       },
 
+      _pagesResponse: function (event, detail) {
+        debugger;
+        this.fire('yp-set-pages', detail.response);
+      },
+
       _response: function (event, detail, sender) {
         this.set('domain', detail.response);
+        this.$.pagesAjax.url = "/api/domains/"+this.domain.id+"/pages";
+        this.$.pagesAjax.generateRequest();
+
         window.appGlobals.setupGoogleAnalytics(this.domain);
         if (this.domain.DomainHeaderImages && this.domain.DomainHeaderImages.length>0) {
           this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);

@@ -121,6 +121,90 @@ router.post('/:groupId/:email/add_admin', auth.can('edit group'), function(req, 
   });
 });
 
+router.get('/:groupId/pages', auth.can('edit group'), function(req, res) {
+  models.Page.getPages(req, { group_id: req.params.groupId }, function (error, pages) {
+    if (error) {
+      log.error('Could not get pages for group', { err: error, context: 'pages', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Got Pages', {context: 'pages', user: toJson(req.user.simple()) });
+      res.send(pages);
+    }
+  });
+});
+
+router.get('/:groupId/pages_for_admin', auth.can('edit group'), function(req, res) {
+  models.Page.getPagesForAdmin(req, { group_id: req.params.groupId }, function (error, pages) {
+    if (error) {
+      log.error('Could not get page for admin for group', { err: error, context: 'pages_for_admin', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Got Pages For Admin', {context: 'pages_for_admin', user: toJson(req.user.simple()) });
+      res.send(pages);
+    }
+  });
+});
+
+router.post('/:groupId/add_page', auth.can('edit group'), function(req, res) {
+  models.Page.newPage(req, { group_id: req.params.groupId, content: {}, title: {} }, function (error, pages) {
+    if (error) {
+      log.error('Could not create page for admin for group', { err: error, context: 'new_page', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('New Community Page', {context: 'new_page', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.put('/:groupId/:pageId/update_page_locale', auth.can('edit group'), function(req, res) {
+  models.Page.updatePageLocale(req, { group_id: req.params.groupId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not update locale for admin for group', { err: error, context: 'update_page_locale', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Locale Updated', {context: 'update_page_locale', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.put('/:groupId/:pageId/publish_page', auth.can('edit group'), function(req, res) {
+  models.Page.publishPage(req, { group_id: req.params.groupId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not publish page for admin for group', { err: error, context: 'publish_page', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Published', {context: 'publish_page', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.put('/:groupId/:pageId/un_publish_page', auth.can('edit group'), function(req, res) {
+  models.Page.unPublishPage(req, { group_id: req.params.groupId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not un-publish page for admin for group', { err: error, context: 'un_publish_page', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Un-Published', {context: 'un_publish_page', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.delete('/:groupId/:pageId/delete_page', auth.can('edit group'), function(req, res) {
+  models.Page.deletePage(req, { group_id: req.params.groupId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not delete page for admin for group', { err: error, context: 'delete_page', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Commuity Page Published', {context: 'delete_page', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
 router.post('/:groupId/post/news_story', auth.isLoggedIn, auth.can('view group'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {
