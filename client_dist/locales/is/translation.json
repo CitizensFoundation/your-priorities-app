@@ -239,6 +239,11 @@
     "secret": "Leynilegur hópur"
   },
 
+  "membership": {
+    "joined": "Þú er nú meðlimur í",
+    "left": "Þú er ekki lengur meðlimur í"
+  },
+
   "menu": {
     "my_pages": "Mín síða",
     "about": "Um",

@@ -195,6 +195,11 @@
     "secret": "Secret group"
   },
 
+  "membership": {
+    "joined": "You have joined",
+    "left": "You have left"
+  },
+
   "menu": {
     "my_pages": "My profile",
     "about": "About",
