@@ -55,7 +55,7 @@
 
       formatContent: function (statusUpdate) {
         if (statusUpdate && statusUpdate.content) {
-          return this.truncate(this.trim(statusUpdate.content), 500, '...');
+          return this.truncate(this.trim(statusUpdate.content), 500000, '...');
         } else {
           return '';
         }
