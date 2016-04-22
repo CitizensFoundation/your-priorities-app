@@ -83,7 +83,7 @@ var fakeReq;
 var masterImageDownloadUrl;
 
 var activitiesTransform = {
-  ActivityIdeaStatusUpdate: 'activity.post.status.update',
+  ActivityIdeaStatusUpdate: 'activity.post.status.change',
   ActivityPointHelpfulDelete: 'activity.point.helpful.delete',
   ActivityIdeaOfficialStatusSuccessful: 'activity.post.officialStatus.successful',
   ActivityIdeaRevisionName: 'activity.post.revision.name',
@@ -1643,7 +1643,7 @@ async.series([
   function(seriesCallback) {
     models.AcActivity.findAll({
       where: {
-        type: 'activity.post.status.update'
+        type: 'activity.post.status.change'
       },
       include: [
         {

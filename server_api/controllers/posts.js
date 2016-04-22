@@ -98,7 +98,7 @@ router.post('/:id/status_change', auth.can('send status change'), function(req, 
       }).save().then(function (post_status_change) {
         if (post_status_change) {
           models.AcActivity.createActivity({
-            type: 'activity.post.status.update',
+            type: 'activity.post.status.change',
             userId: req.user.id,
             postId: post.id,
             postStatusChangeId: post_status_change.id,

@@ -157,7 +157,7 @@
                 <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
                   <iron-icon icon="face" class="stats-icon"></iron-icon>
                 </template>
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')]]">
+                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
                   <iron-icon icon="icons:language" class="stats-icon"></iron-icon>
                 </template>
                 <div class="layout vertical flex headerText">
@@ -183,7 +183,7 @@
                 <ac-activity-point-news-story activity="[[activity]]"></ac-activity-point-news-story>
               </template>
 
-              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.update')]]">
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
                 <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
               </template>
 
@@ -218,7 +218,7 @@
   <script>
     Polymer({
 
-      defaultKeyActivities: ['activity.post.status.update', 'activity.post.officialStatus.successful',
+      defaultKeyActivities: ['activity.post.status.change', 'activity.post.officialStatus.successful',
         'activity.post.officialStatus.failed', 'activity.post.officialStatus.inProgress'],
 
       is: 'ac-activities',

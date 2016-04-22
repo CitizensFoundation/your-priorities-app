@@ -39,7 +39,7 @@
     "post": {
       "new": "New idea",
       "status": {
-       "update": "Status update"
+       "change": "Status update"
       }
     },
     "point": {

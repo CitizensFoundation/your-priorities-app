@@ -32,7 +32,7 @@
     "post": {
       "new": "// Ný hugmynd //",
       "status": {
-        "update": "Fréttir"
+        "change": "Fréttir"
       }
     },
     "point": {
