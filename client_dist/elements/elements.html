@@ -43917,12 +43917,14 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <div class="share">
         <paper-icon-button title="[[t('shareInfo')]]" icon="social:share" on-tap="_toggleShare" class="shareIcon" id="shareButton"></paper-icon-button>
       </div>
-      <div class="layout horizontal awesomeButtonContainer" hidden$="[[!showShareButtons]]">
-        <awesome-button href$="[[_postUrl(post)]]" class="awesomeButton" type="facebook" sharer=""></awesome-button>
-        <awesome-button href$="[[_postUrl(post)]]" class="awesomeButton" type="twitter" sharer=""></awesome-button>
-        <awesome-button href$="[[_postUrl(post)]]" class="awesomeButton" type="plus" sharer=""></awesome-button>
-        <awesome-button href$="[[_postUrl(post)]]" class="awesomeButton" type="pinterest" sharer=""></awesome-button>
-      </div>
+      <template>
+        <div class="layout horizontal awesomeButtonContainer" hidden$="[[!showShareButtons]]">
+          <awesome-button href$="[[_postUrl(post)]]" class="awesomeButton" type="facebook" sharer=""></awesome-button>
+          <awesome-button href$="[[_postUrl(post)]]" class="awesomeButton" type="twitter" sharer=""></awesome-button>
+          <awesome-button href$="[[_postUrl(post)]]" class="awesomeButton" type="plus" sharer=""></awesome-button>
+          <awesome-button href$="[[_postUrl(post)]]" class="awesomeButton" type="pinterest" sharer=""></awesome-button>
+        </div>
+      </template>
     </paper-material>
 
     <iron-signals on-iron-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></iron-signals>
