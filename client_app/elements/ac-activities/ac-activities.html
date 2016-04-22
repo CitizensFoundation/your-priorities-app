@@ -94,7 +94,7 @@
 
       .typeName {
         font-size: 30px;
-        padding-top: 20px;
+        padding-top: 12px;
         padding-left: 4px;
       }
 
@@ -129,6 +129,11 @@
       .postPadding {
         padding-top: 28px;
       }
+
+      .createdAt {
+        color: #eee;
+        font-size: 14px;
+      }
     </style>
 
     <template is="dom-if" if="[[loggedInUser]]">
@@ -162,7 +167,12 @@
                 </template>
                 <div class="layout vertical flex headerText">
                   <div class="layout horizontal typeName">
-                    [[t(activity.type)]]
+                    <div class="layout vertical">
+                      <div>[[t(activity.type)]]</div>
+                      <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
+                        [[fromTime(activity.created_at)]]
+                      </div>
+                    </div>
                     <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
                       <iron-icon icon="thumb-down" class="thumbIconNewsFeed" hidden$="[[_upVote(activity.Point)]]"></iron-icon>
                       <iron-icon icon="thumb-up" class="thumbIconNewsFeed" hidden$="[[_downVote(activity.Point)]]"></iron-icon>
@@ -303,7 +313,6 @@
         if (event.model.activity.Post) {
           this.goToPost(event.model.activity.Post.id);
         } else if (event.model.activity.PostStatusChange) {
-          debugger;
           this.goToPost(event.model.activity.PostStatusChange.post_id);
         }
       },

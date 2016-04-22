@@ -40,7 +40,7 @@
         @apply(--layout-self-center);
         position: absolute;
         bottom: 0px;
-        right: 16px;
+        left: 16px;
       }
 
       yp-domain-stats {
@@ -52,11 +52,6 @@
         padding-bottom: 4px;
         padding-right: 1px;
         margin: 0;
-      }
-
-      iron-image {
-        width: 665px;
-        height: 270px;
       }
 
       .large-card {
@@ -74,14 +69,14 @@
       }
 
       .description-and-stats {
-        max-width: 432px;
+        width: 432px;
       }
 
       .edit {
         color: #FFF;
         position: absolute;
         top: 0;
-        right: 0;
+        left: 390px;
         padding-right: 0;
         margin-right: 0;
       }
@@ -143,7 +138,6 @@
     <template is="dom-if" if="[[domain]]">
       <paper-material id="card" elevation="5" animated class="large-card">
         <div class="layout horizontal wrap">
-          <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
           <div class="layout vertical description-and-stats">
             <div class="description">
               <h1 class="domain-name">[[_domainName(domain)]]</h1>
@@ -151,6 +145,7 @@
             </div>
             <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
           </div>
+          <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
         </div>
         <paper-menu-button class="edit" hidden$="[[!hasDomainAccess(domain)]]">
           <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>

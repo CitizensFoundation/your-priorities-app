@@ -33,9 +33,19 @@
       .pointLayout {
         width: 46%;
       }
+
+      .postName {
+        padding-left: 32px;
+        font-weight: bold;
+        font-size: 24px;
+        padding-bottom: 12px;
+      }
     </style>
 
     <div class="layout vertical center-center">
+      <div class="postName">
+        [[activity.Post.name]]
+      </div>
       <yp-point hide-user class="card" point="[[activity.Point]]"></yp-point>
     </div>
   </template>

@@ -141,8 +141,8 @@
 
   "point": {
     "point": "Point",
-    "for": "Point for...",
-    "against": "Point against...",
+    "for": "Write point for...",
+    "against": "Write point against...",
     "add_up": "Add point for",
     "add_down": "Add point against",
     "helpful": "Vote point up as helpful",
@@ -151,7 +151,8 @@
     "postNewsStory": "Post",
     "addComment": "Your comment...",
     "postComment": "Post comment",
-    "comments": "Comments"
+    "comments": "Comments",
+    "howToWrite": "Let's brainstorm the best points for and against and think in solutions :)"
   },
 
   "uploading": {

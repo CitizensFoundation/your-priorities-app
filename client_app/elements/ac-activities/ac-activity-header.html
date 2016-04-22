@@ -15,14 +15,27 @@
         padding-left: 16px;
       }
 
-      .createdAt {
-        color: #ddd;
-      }
-
       .name {
         padding-top: 4px;
         color: #fff;
         font-weight: bold;
+        text-align: right;
+      }
+
+      .imageStatus {
+        padding-left: 16px;
+      }
+
+      .rousnded {
+        -webkit-border-radius: 25px;
+        -moz-border-radius: 25px;
+        border-radius: 25px;
+        display: block;
+      }
+
+      .organizationName {
+        color: #eee;
+        text-align: right;
       }
     </style>
 
@@ -31,14 +44,14 @@
         <div class="name">
           [[activity.User.name]]
         </div>
-        <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
-          [[fromTime(activity.created_at)]]
+        <div class="organizationName" hidden$="[[!_organizationName(activity.User)]]">
+          [[_organizationName(activity.User)]]
         </div>
       </div>
-      <yp-user-image user="[[activity.User]]" hidden$="[[noImage]]"></yp-user-image>
       <template is="dom-if" if="[[_organizationImageUrl(activity.User)]]">
-        <img sizing="cover" src$="[[_organizationImageUrl(activity.User)]]">
+        <img sizing="cover" class="imageStatus rounded" src$="[[_organizationImageUrl(activity.User)]]">
       </template>
+      <yp-user-image user="[[activity.User]]" hidden$="[[noImage]]"></yp-user-image>
     </div>
   </template>
 
@@ -69,12 +82,19 @@
         }
       },
 
+      _organizationName: function (user) {
+        if (user.OrganizationUsers && user.OrganizationUsers.length > 0 && user.OrganizationUsers[0].name) {
+          return user.OrganizationUsers[0].name;
+        } else {
+          return null;
+        }
+      },
+
       _organizationImageUrl: function (user) {
         if (user.OrganizationUsers && user.OrganizationUsers.length > 0 &&
             user.OrganizationUsers[0].OrganizationLogoImages &&
             user.OrganizationUsers[0].OrganizationLogoImages.length > 0) {
           var url = this.getImageFormatUrl(user.OrganizationUsers[0].OrganizationLogoImages, 2);
-          debugger;
           return url;
         } else {
           return null;

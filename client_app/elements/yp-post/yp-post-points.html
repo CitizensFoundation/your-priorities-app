@@ -79,7 +79,7 @@
       }
 
       paper-toast {
-         z-index: 9999;
+        z-index: 9999;
       }
 
       paper-material {
@@ -93,12 +93,20 @@
       .pointMaterial {
         margin-bottom: 18px;
         padding-top: 8px;
+        background-color: #fdfdfd;
       }
 
       .thumbIcon {
         height: 64px;
         width: 64px;
         padding-bottom: 16px;
+        color: var(--primary-color);
+      }
+
+      .editIcon {
+        height: 64px;
+        width: 64px;
+        padding-top: 24px;
         color: var(--primary-color);
       }
 
@@ -114,64 +122,84 @@
       .addPointFab {
         width: 100%;
       }
+
+      paper-textarea {
+        --paper-input-container-label: {
+          font-size: 30px;
+          height: 50px;
+        }
+      }
+
+      .howToWriteInfoText {
+        padding-top: 8px;
+        color: var(--primary-color);
+      }
     </style>
 
     <iron-media-query query="(min-width: 985px)" query-matches="{{largeMode}}"></iron-media-query>
 
     <template is="dom-if" if="[[points]]">
+      <div class="layout vertical center-center">
+        <iron-icon icon="editor:mode-edit" class="editIcon"></iron-icon>
+        <div class="howToWriteInfoText">[[t('point.howToWrite')]]</div>
+      </div>
       <template is="dom-if" if="[[largeMode]]">
-        <div class="main-container">
-
-          <div class="point">
-
-            <paper-material id="pointUpMaterial" elevation="0" class="pointText" animated>
-              <div class="layout horizontal start-justified">
-                <iron-icon icon="thumb-up" class="thumbIcon"></iron-icon>
-              </div>
-              <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                              bind-value="{{textValueUp}}" value=[[textValueUp]] label="[[t('point.for')]]" char-counter rows="2"
-                              max-rows="5" maxlength="500"></paper-textarea>
-
-              <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
-                <div class="addPointFab layout horizontal center-center">
-                  <paper-fab icon="add" mini="" elevation="3" on-tap="addPointUp" title="[[t('point.add_up')]]"></paper-fab>
+        <div class="layout vertical">
+          <div class="main-container">
+            <div class="point">
+              <div id="pointUpMaterial" elevation="0" class="pointText" animated>
+                <div hidden class="layout horizontal start-justified">
+                  <iron-icon icon="thumb-up" class="thumbIcon"></iron-icon>
                 </div>
-              </template>
-            </paper-material>
+                <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
+                                bind-value="{{textValueUp}}" value=[[textValueUp]] label="[[t('point.for')]]"
+                                char-counter rows="2"
+                                max-rows="5" maxlength="500"></paper-textarea>
 
-            <div id="allUpPoints">
-              <template is="dom-repeat" items="[[upPoints]]" as="point">
-                <paper-material elevation="1" class="pointMaterial">
-                  <yp-point point="[[point]]"></yp-point>
-                </paper-material>
-              </template>
+                <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
+                  <div class="addPointFab layout horizontal center-center">
+                    <paper-fab icon="add" mini="" elevation="3" on-tap="addPointUp"
+                               title="[[t('point.add_up')]]"></paper-fab>
+                  </div>
+                </template>
+              </div>
+
+              <div id="allUpPoints">
+                <template is="dom-repeat" items="[[upPoints]]" as="point">
+                  <paper-material elevation="1" class="pointMaterial">
+                    <yp-point point="[[point]]"></yp-point>
+                  </paper-material>
+                </template>
+              </div>
             </div>
-          </div>
 
-          <div class="point">
+            <div class="point">
 
-            <paper-material id="pointDownMaterial" elevation="0" class="pointText" animated>
-              <div class="layout horizontal start">
-                <iron-icon icon="thumb-down" class="thumbIcon"></iron-icon>
+              <div id="pointDownMaterial" elevation="0" class="pointText" animated>
+                <div hidden class="layout horizontal start">
+                  <iron-icon icon="thumb-down" class="thumbIcon"></iron-icon>
+                </div>
+
+                <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
+                                bind-value="{{textValueDown}}" value=[[textValueDown]] label="[[t('point.against')]]"
+                                char-counter rows="2"
+                                max-rows="5" maxlength="500"></paper-textarea>
+
+                <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
+                  <div class="addPointFab layout horizontal center-center">
+                    <paper-fab icon="add" mini="" z="3" on-tap="addPointDown"
+                               title="[[t('point.add_down')]]"></paper-fab>
+                  </div>
+                </template>
               </div>
 
-              <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                              bind-value="{{textValueDown}}" value=[[textValueDown]] label="[[t('point.against')]]" char-counter rows="2"
-                              max-rows="5" maxlength="500"></paper-textarea>
-
-              <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
-                <div class="addPointFab layout horizontal center-center">
-                  <paper-fab icon="add" mini="" z="3" on-tap="addPointDown" title="[[t('point.add_down')]]"></paper-fab>
-                </div>
-              </template>
-            </paper-material>
-
-            <div id="allDownPoints">
-              <template is="dom-repeat" items="[[downPoints]]" as="point">
-                <paper-material elevation="1" class="pointMaterial">
-                  <yp-point point="[[point]]"></yp-point>
-                </paper-material>
-              </template>
+              <div id="allDownPoints">
+                <template is="dom-repeat" items="[[downPoints]]" as="point">
+                  <paper-material elevation="1" class="pointMaterial">
+                    <yp-point point="[[point]]"></yp-point>
+                  </paper-material>
+                </template>
+              </div>
             </div>
           </div>
         </div>
@@ -185,13 +213,14 @@
       </template>
     </template>
 
-    <div class="layout horizontal center-center">
+    <div hidden class="layout horizontal center-center">
       <yp-ajax id="ajax" on-response="_response"></yp-ajax>
       <yp-ajax id="newPointAjax" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
     </div>
 
     <paper-toast id="newPointToast" text="[[newPointTextCombined]]"></paper-toast>
   </template>
+
 
   <script>
     (function () {
@@ -260,7 +289,7 @@
 
           this.removeElementsByClass(this, 'inserted-outside-list');
 
-          if (this.points.length>0) {
+          if (this.points.length > 0) {
             this.set('upPoints', this.points.filter(function (x) {
               return x.value > 0;
             }));
@@ -273,8 +302,9 @@
           }
 
           this.fire('yp-debate-info', {
-            count: this.upPoints.length+this.downPoints.length,
-            firstPoint: this.upPoints[0]});
+            count: this.upPoints.length + this.downPoints.length,
+            firstPoint: this.upPoints[0]
+          });
 
           if (!this.largeMode) {
             this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
@@ -283,9 +313,9 @@
 
         _insertNewPoint: function (point) {
           if (this.largeMode) {
-            if (point.value>0) {
+            if (point.value > 0) {
               this.unshift('upPoints', point);
-            } else if (point.value<0) {
+            } else if (point.value < 0) {
               this.unshift('downPoints', point);
             }
           } else {
@@ -295,15 +325,15 @@
 
         _newPointResponse: function (event, detail) {
           var point = detail.response;
-          if (point.value>0) {
-            this.newPointTextCombined = this.t("new.point.for.added")+ " " + this.truncate(point.content,21);
-            this.set("textValueUp","");
+          if (point.value > 0) {
+            this.newPointTextCombined = this.t("new.point.for.added") + " " + this.truncate(point.content, 21);
+            this.set("textValueUp", "");
           } else {
-            this.newPointTextCombined = this.t("new.point.against.added")+ " " +  this.truncate(point.content,21);
-            this.set("textValueDown","");
+            this.newPointTextCombined = this.t("new.point.against.added") + " " + this.truncate(point.content, 21);
+            this.set("textValueDown", "");
           }
           this._insertNewPoint(point);
-          this.set('post.counter_points',this.post.counter_points+1);
+          this.set('post.counter_points', this.post.counter_points + 1);
           this.$.newPointToast.show();
         },
 
@@ -318,8 +348,8 @@
         },
 
         addPoint: function (content, value) {
-          if (window.appUser.loggedIn()===true) {
-            this.$.newPointAjax.url = "/api/points/"+this.post.group_id;
+          if (window.appUser.loggedIn() === true) {
+            this.$.newPointAjax.url = "/api/points/" + this.post.group_id;
             this.$.newPointAjax.body = {
               postId: this.post.id,
               content: content,
@@ -327,7 +357,7 @@
             };
             this.$.newPointAjax.generateRequest();
           } else {
-            window.appUser.loginForNewPoint(this, { content: content, value: value });
+            window.appUser.loginForNewPoint(this, {content: content, value: value});
           }
         },
 
@@ -340,11 +370,11 @@
         },
 
         focusTextArea: function (event) {
-          event.currentTarget.parentElement.elevation=4;
+          event.currentTarget.parentElement.elevation = 4;
         },
 
         blurTextArea: function (e) {
-          event.currentTarget.parentElement.elevation=0;
+          event.currentTarget.parentElement.elevation = 0;
         },
 
         ifLengthIsRight: function (textValue) {
