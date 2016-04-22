@@ -322,6 +322,16 @@ router.get('/:groupId/users', auth.can('edit group'), function (req, res) {
     },
     include: [
       {
+        model: models.Community,
+        attributes: ['id','theme_id'],
+        include: [
+          {
+            model: models.Domain,
+            attributes: ['id','theme_id']
+          }
+        ]
+      },
+      {
         model: models.User,
         attributes: _.concat(models.User.defaultAttributesWithSocialMedia, ['created_at', 'last_login_at']),
         as: 'GroupUsers',
@@ -384,6 +394,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
     if (group) {
       group.name =req.body.name;
       group.objectives = req.body.objectives;
+      group.theme_id = parseInt(req.body.themeId);
       group.access = models.Community.convertAccessFromRadioButtons(req.body);
       if (req.body.status && req.body.status!="") {
         group.status = req.body.status;

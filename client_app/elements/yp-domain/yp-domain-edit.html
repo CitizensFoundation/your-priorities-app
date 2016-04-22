@@ -55,7 +55,7 @@
                       maxlength="300" class="mainInput">
       </paper-textarea>
 
-      <yp-theme-selector selected-theme="{{themeId}}"></yp-theme-selector>
+      <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
 
       <div class="layout vertical additionalSettings">
         <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">

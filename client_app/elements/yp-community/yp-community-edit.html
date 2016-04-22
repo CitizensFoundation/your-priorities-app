@@ -81,6 +81,9 @@
         </div>
       </div>
 
+      <yp-theme-selector object="[[community]]"  selected-theme="{{themeId}}"></yp-theme-selector>
+      <input type="hidden" name="themeId" value="[[themeId]]">
+
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
@@ -151,7 +154,12 @@
         type: String
       },
 
-      status: String
+      status: String,
+
+      themeId: {
+        type: String,
+        value: null
+      },
     },
 
     _customRedirect: function (community) {

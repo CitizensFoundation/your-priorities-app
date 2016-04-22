@@ -39,10 +39,30 @@
         selectedTheme: {
           type: Number,
           value: null,
-          notify: true
+          notify: true,
+          observer: '_selectedThemeChanged'
+        },
+
+        object: {
+          type: Object,
+          observer: '_objectChanged'
         }
 
+      },
+
+      _objectChanged: function (newObject) {
+
+        if (newObject && newObject.theme_id) {
+          this.set('selectedTheme', newObject.theme_id);
+        }
+      },
+
+      _selectedThemeChanged: function (newTheme) {
+        if (newTheme) {
+          this.setTheme(newTheme);
+        }
       }
+
     });
   </script>
 </dom-module>

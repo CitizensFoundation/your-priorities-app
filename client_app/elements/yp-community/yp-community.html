@@ -235,13 +235,16 @@
 
       _response: function (event, detail, sender) {
         this.set('community', detail.response);
+        if (this.community.theme_id!=null) {
+          this.setTheme(this.community.theme_id);
+        } else if (this.community.Domain.theme_id!=null) {
+          this.setTheme(this.community.Domain.theme_id);
+        }
         this.$.pagesAjax.url = "/api/communities/"+this.community.id+"/pages";
         this.$.pagesAjax.generateRequest();
         if (this.community.CommunityHeaderImages && this.community.CommunityHeaderImages.length>0) {
           this.$.page.setupTopHeaderImage(this.community.CommunityHeaderImages);
         }
-
-        this.setTheme(5);
 
         var headerPanel = app.$.mainScrollHeaderPanel;
         var url = this._communityHeaderUrl(this.community);

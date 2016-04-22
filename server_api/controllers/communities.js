@@ -349,6 +349,7 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
     if (community) {
       community.name = req.body.name;
       community.description = req.body.description;
+      community.theme_id = parseInt(req.body.themeId);
       if (req.body.status && req.body.status!="") {
         community.status = req.body.status;
       }

@@ -86,6 +86,9 @@
         <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       </div>
 
+      <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
+      <input type="hidden" name="themeId" value="[[themeId]]">
+
       <div class="layout horizontal center-center">
         <paper-dropdown-menu label="[[t('status.select')]]">
           <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
@@ -145,7 +148,12 @@
         type: String
       },
 
-      status: String
+      status: String,
+
+      themeId: {
+        type: String,
+        value: null
+      },
     },
 
     _customRedirect: function (group) {

@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
     counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
-    theme_id: { type: DataTypes.INTEGER, defaultValue: 0 }
+    theme_id: { type: DataTypes.INTEGER, defaultValue: null }
   }, {
 
     defaultScope: {

@@ -130,7 +130,8 @@
       is: 'yp-group',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.ypThemeBehavior
       ],
 
       listeners: {
@@ -292,6 +293,13 @@
 
       _groupsResponse: function (event, detail, sender) {
         this.set('group', detail.response.group);
+        if (this.group.theme_id!=null) {
+          this.setTheme(this.group.theme_id);
+        } else if (this.group.Community.theme_id!=null) {
+          this.setTheme(this.group.Community.theme_id);
+        } else if (this.group.Community.Domain.theme_id!=null) {
+          this.setTheme(this.group.Community.Domain.theme_id);
+        }
         this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
         this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
         this.$.pagesAjax.generateRequest();
