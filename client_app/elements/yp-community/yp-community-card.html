@@ -58,7 +58,12 @@
       }
 
       iron-image {
-        width: 336px;
+        width: 320px;
+        height: 180px;
+      }
+
+      iron-image[featured] {
+        width: 320px;
         height: 180px;
       }
 
@@ -132,8 +137,8 @@
     <template is="dom-if" if="[[community]]">
       <paper-card featured$="[[featured]]" class="communityCard" animated elevation="[[elevation]]" class="layout vertical flex">
         <div class="layout horizontal">
-          <iron-image sizing="cover" preload src="[[communityLogoImagePath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
-          <iron-image sizing="cover" preload src="[[communityLogoImageNextPath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
+          <iron-image sizing="cover" featured$="[[featured]]" preload src="[[communityLogoImagePath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
+          <iron-image sizing="cover" hidden$="[[!featured]]" featured$="[[featured]]" preload src="[[communityLogoImageNextPath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
         </div>
         <div class="informationText" on-tap="_goToCommunity">
           <div class="community-name" featured$="[[featured]]">[[communityName(community)]]</div>
