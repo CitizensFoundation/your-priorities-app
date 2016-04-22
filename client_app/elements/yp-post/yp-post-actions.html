@@ -36,7 +36,7 @@
         position: absolute;
         bottom: -36px;
         right: 0;
-        padding-right: 20px;
+        padding-right: 28px;
         background-color: #FFF;
         margin-bottom: 16px;
       }
@@ -140,6 +140,15 @@
         color: #9e9e9e;
       }
 
+      .shareIcon::shadow #icon {
+        width: 32px !important;
+        height: 32px !important;
+        margin-left: 16px;
+        margin-top: 2px;
+        margin-right: 16px;
+        color: var(--accent-color-100);
+      }
+
       .up-vote-icon {
         margin-left: 8px;
       }
@@ -168,12 +177,22 @@
           width: 250px;
         }
       }
+
+      .awesomeButtonContainer {
+        position: absolute;
+        bottom: 55px;
+        right: -32px;
+      }
+
+      .awesomeButton {
+        padding: 2px;
+      }
     </style>
 
     <iron-media-query query="(max-width: 360px)" query-matches="{{small}}"></iron-media-query>
 
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
-    <paper-material elevation="[[elevationPlusOne]]" floating$="[[floating]]"animated class="action-bar">
+    <paper-material elevation="[[elevationPlusOne]]" floating$="[[floating]]" animated class="action-bar">
       <div id="actionUp" class="action-up">
         <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.vote.up')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">{{formatNumber(post.counter_endorsements_up)}}</div>
@@ -189,6 +208,15 @@
       <div id="actionDown" class="action-down">
         <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.vote.down')]]" icon$="[[endorseModeIcon(endorseMode,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
         <div class="action-text down-text">{{formatNumber(post.counter_endorsements_down)}}</div>
+      </div>
+      <div class="share" >
+        <paper-icon-button title="[[t('shareInfo')]]" icon="social:share" on-tap="_toggleShare" class="shareIcon" id="shareButton"></paper-icon-button>
+      </div>
+      <div class="layout horizontal awesomeButtonContainer" hidden$="[[!showShareButtons]]">
+        <awesome-button href="/#!/post/[[post.id]]" class="awesomeButton" type="facebook" sharer></awesome-button>
+        <awesome-button href="/#!/post/[[post.id]]" class="awesomeButton" type="twitter" sharer></awesome-button>
+        <awesome-button href="/#!/post/[[post.id]]" class="awesomeButton" type="plus" sharer></awesome-button>
+        <awesome-button href="/#!/post/[[post.id]]" class="awesomeButton"  type="pinterest" sharer></awesome-button>
       </div>
     </paper-material>
 
@@ -241,7 +269,26 @@
         allDisabled: {
           type: Boolean,
           value: false
+        },
+
+        showShareButtons: {
+          type: Boolean,
+          value: false
         }
+      },
+
+      _toggleShare: function () {
+        this.set('showShareButtons', !this.showShareButtons);
+      },
+
+      _shareMouseOver: function () {
+        this.set('showShareButtons', true);
+      },
+
+      _shareMouseOut: function () {
+        this.async(function () {
+          this.set('showShareButtons', false);
+        },1200);
       },
 
       _elevationPlusOne: function (elevation) {
