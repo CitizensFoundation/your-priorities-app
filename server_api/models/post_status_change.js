@@ -5,7 +5,7 @@ module.exports = function(sequelize, DataTypes) {
     subject: { type: DataTypes.STRING, allowNull: true },
     content: { type: DataTypes.TEXT, allowNull: false },
     status: { type: DataTypes.STRING, allowNull: false },
-    statusChangedTo: { type: DataTypes.STRING },
+    status_changed_to: { type: DataTypes.STRING },
     published_at: DataTypes.DATE,
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },

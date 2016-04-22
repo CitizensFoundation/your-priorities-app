@@ -333,6 +333,10 @@
 
         bodyDialog: {
           type: Object
+        },
+
+        confirmationText: {
+          type: String
         }
       },
 
@@ -421,7 +425,16 @@
         this.$$("#spinner").active = false;
       },
 
-      _submit: function() {
+      _submit: function () {
+        if (this.confirmationText) {
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+          dialog.open(this.confirmationText, this._reallySubmit.bind(this));
+        } else {
+          this._reallySubmit();
+        }
+      },
+
+      _reallySubmit: function() {
         if (this.params && this.params.communityId) {
           this.action = this.baseAction + '/'+this.params.communityId;
         } else if (this.params && this.params.groupId) {

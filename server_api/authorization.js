@@ -319,6 +319,32 @@ auth.role('post.admin', function (post, req, done) {
   }
 });
 
+auth.role('post.statusChange', function (post, req, done) {
+  if (!req.isAuthenticated()) {
+    done();
+  } else {
+    models.Post.findOne({
+      where: { id: post.id },
+      include: [
+        models.Group
+      ]
+    }).then(function (post) {
+      var group = post.Group;
+      if (!req.isAuthenticated()) {
+        done(null, false);
+      } else {
+        group.hasGroupAdmins(req.user).then(function (result) {
+          if (result) {
+            done(null, true);
+          } else {
+            done(null, false);
+          }
+        });
+      }
+    });
+  }
+});
+
 auth.role('post.viewUser', function (post, req, done) {
   models.Post.findOne({
     where: { id: post.id },
@@ -849,6 +875,7 @@ auth.action('edit organization', ['organization.admin']);
 auth.action('edit community', ['community.admin']);
 auth.action('edit group', ['group.admin']);
 auth.action('edit post', ['post.admin']);
+auth.action('send status change', ['post.statusChange']);
 auth.action('edit user', ['user.admin']);
 auth.action('edit category', ['category.admin']);
 auth.action('edit point', ['point.admin']);

@@ -59,6 +59,84 @@ var sendPostOrError = function (res, post, context, user, error, errorStatus) {
   }
 };
 
+router.post('/:id/status_change', auth.can('send status change'), function(req, res) {
+  models.Post.find({
+    where: {
+      id: req.params.id
+    },
+    include: [
+      {
+        model: models.Group,
+        required: true,
+        attributes: ['id'],
+        include: [
+          {
+            model: models.Community,
+            required: true,
+            attributes: ['id'],
+            include: [
+              {
+                model: models.Domain,
+                required: true,
+                attributes: ['id']
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }).then(function (post) {
+    if (post) {
+      models.PostStatusChange.build({
+        post_id: post.id,
+        status_changed_to: post.official_status != parseInt(req.body.official_status) ? req.body.official_status : null,
+        content: req.body.content,
+        user_id: req.user.id,
+        status: 'active',
+        user_agent: req.useragent.source,
+        ip_address: req.clientIp
+      }).save().then(function (post_status_change) {
+        if (post_status_change) {
+          models.AcActivity.createActivity({
+            type: 'activity.post.status.update',
+            userId: req.user.id,
+            postId: post.id,
+            postStatusChangeId: post_status_change.id,
+            groupId: post.Group.id,
+            communityId: post.Group.Community.id,
+            domainId: post.Group.Community.Domain.id
+          }, function (error) {
+            if (error) {
+              log.error("Post Status Change Error", { context: 'status_change', post: toJson(post), user: toJson(req.user), err: error });
+              res.sendStatus(500);
+            } else {
+              if (post.official_status != parseInt(req.body.official_status)) {
+                post.official_status = req.body.official_status;
+                post.save().then(function (results) {
+                  log.info('Post Status Change Created And New Status', { post: toJson(post), context: 'status_change', user: toJson(req.user) });
+                  res.sendStatus(200);
+                });
+              } else {
+                log.info('Post Status Change Created', { post: toJson(post), context: 'status_change', user: toJson(req.user) });
+                res.sendStatus(200);
+              }
+            }
+          });
+        } else {
+          log.error("Post Status Change Error", { context: 'status_change', post: toJson(post), user: toJson(req.user), err: "Could not created status change" });
+          res.sendStatus(500);
+        }
+      }).catch(function (error) {
+        log.error("Post Status Change Error", { context: 'status_change', post: toJson(post), user: toJson(req.user), err: error });
+        res.sendStatus(500);
+      });
+    } else {
+      log.error("Post Status Change Post Not Found", { context: 'status_change', postId: req.params.id, user: toJson(req.user), err: "Could not created status change" });
+      res.sendStatus(404);
+    }
+  });
+});
+
 router.get('/:id', auth.can('view post'), function(req, res) {
   models.Post.find({
     where: {
