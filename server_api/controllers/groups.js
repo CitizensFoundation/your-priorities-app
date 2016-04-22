@@ -384,7 +384,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
     if (group) {
       group.name =req.body.name;
       group.objectives = req.body.objectives;
-      group.theme_id = parseInt(req.body.themeId);
+      group.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
       group.access = models.Community.convertAccessFromRadioButtons(req.body);
       if (req.body.status && req.body.status!="") {
         group.status = req.body.status;

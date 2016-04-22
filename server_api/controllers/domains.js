@@ -186,7 +186,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
     if (domain) {
       domain.name = req.body.name;
       domain.description = req.body.description;
-      domain.theme_id = parseInt(req.body.themeId);
+      domain.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
       domain.save().then(function () {
         log.info('Domain Updated', { domain: toJson(domain), user: toJson(req.user) });
         domain.setupImages(req.body, function(err) {
