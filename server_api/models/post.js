@@ -122,7 +122,7 @@ module.exports = function(sequelize, DataTypes) {
       failed: {
         where: {
           official_status: {
-            $in: [-2, -1]
+            $in: [-2]
           },
           deleted: false
         }

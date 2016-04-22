@@ -181,6 +181,7 @@
                   <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
                   <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                     <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+                    <paper-item id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
                     <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
                   </paper-menu>
                 </paper-menu-button>
@@ -256,7 +257,15 @@
           this._openEdit();
         else if (detail.item.id=="deleteMenuItem")
           this._openDelete();
+        else if (detail.item.id=="statusChangeMenuItem")
+          this._openPostStatusChange();
         this.selectedMenuItem = null;
+      },
+
+      _openPostStatusChange: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postStatusChangeEdit");
+        dialog.setup(this.post, null, this._refresh.bind(this));
+        dialog.open('new', { postId: this.post.id, statusChange: true });
       },
 
       _openEdit: function () {
