@@ -39,7 +39,7 @@
       }
 
       yp-ajax {
-        background-color: var(--primary-background-color);
+        background-color: var(--primary-background-color) !important;
       }
 
       .archivedText {
@@ -241,8 +241,7 @@
           this.$.page.setupTopHeaderImage(this.community.CommunityHeaderImages);
         }
 
-        var randomTheme = Math.floor(Math.random() * 3) + 1;
-        //this.setTheme(randomTheme-1);
+        this.setTheme(4);
 
         var headerPanel = app.$.mainScrollHeaderPanel;
         var url = this._communityHeaderUrl(this.community);
