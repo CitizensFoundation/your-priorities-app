@@ -27,13 +27,23 @@
         color: var(--icon-general-color, #FFF);
       }
 
+      paper-fab[large] {
+        width: 64px;
+        height: 64px;
+      }
+
+      paper-fab[large]::shadow #icon {
+        width: 36px;
+        height: 36px;
+      }
+
       .ajax {
         margin-top:8px;
         padding-left: 6px;
       }
     </style>
 
-    <paper-fab id="button" on-tap="_toggleMembership"  disabled="[[disabled]]" class="heartButton" icon="favorite"></paper-fab>
+    <paper-fab large$="[[large]]" id="button" on-tap="_toggleMembership"  disabled="[[disabled]]" class="heartButton" icon="favorite"></paper-fab>
     <yp-ajax class="ajax" id="membershipAjax" hidden$="[[!disabled]]" method="POST" on-response="_membershipResponse"></yp-ajax>
 
     <iron-signals on-iron-signal-got-memberships="_updateMembershipFromSignal"></iron-signals>
@@ -63,6 +73,11 @@
         },
 
         disabled: {
+          type: Boolean,
+          value: false
+        },
+
+        large: {
           type: Boolean,
           value: false
         }

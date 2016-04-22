@@ -132,6 +132,12 @@
         height: 40px;
         color: var(--icon-general-color, #FFF);
       }
+
+      yp-membership-button[featured] {
+        position: absolute;
+        top: 146px;
+        right: 55px;
+      }
     </style>
 
     <template is="dom-if" if="[[community]]">
@@ -150,7 +156,7 @@
           </template>
         </div>
         <yp-community-stats on-tap="_goToCommunity" class="stats" community="[[community]]"></yp-community-stats>
-        <yp-membership-button community="[[community]]"></yp-membership-button>
+        <yp-membership-button featured$="[[featured]]" large$="[[featured]]" community="[[community]]"></yp-membership-button>
       </paper-card>
     </template>
   </template>
