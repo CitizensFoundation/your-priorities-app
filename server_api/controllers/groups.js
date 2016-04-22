@@ -322,16 +322,6 @@ router.get('/:groupId/users', auth.can('edit group'), function (req, res) {
     },
     include: [
       {
-        model: models.Community,
-        attributes: ['id','theme_id'],
-        include: [
-          {
-            model: models.Domain,
-            attributes: ['id','theme_id']
-          }
-        ]
-      },
-      {
         model: models.User,
         attributes: _.concat(models.User.defaultAttributesWithSocialMedia, ['created_at', 'last_login_at']),
         as: 'GroupUsers',
@@ -442,6 +432,16 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     ],
     include: [
       {
+        model: models.Community,
+        attributes: ['id','theme_id'],
+        include: [
+          {
+            model: models.Domain,
+            attributes: ['id','theme_id']
+          }
+        ]
+      },
+      {
         model: models.Category,
         required: false,
         include: [
@@ -462,9 +462,6 @@ router.get('/:id', auth.can('view group'), function(req, res) {
       {
         model: models.Image, as: 'GroupHeaderImages',
         required: false
-      },
-      {
-        model: models.Community
       }
     ]
   }).then(function(group) {

@@ -129,7 +129,7 @@ router.post('/:domainId', auth.can('create domainOrganization'), function(req, r
     log.info('Organization Created', { organization: toJson(organization), context: 'create', user: toJson(req.user) });
     organization.updateAllExternalCounters(req, 'up', 'counter_organizations', function () {
       organization.setupImages(req.body, function(error) {
-        organization.addOrganizationAdminUsers(req.user).then(function (results) {
+        organization.addOrganizationAdmins(req.user).then(function (results) {
           sendOrganizationOrError(res, organization, 'setupImages', req.user, error);
         });
       });

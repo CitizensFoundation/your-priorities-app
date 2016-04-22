@@ -107,21 +107,21 @@ module.exports = function(sequelize, DataTypes) {
         } else if (itemType && itemType === 'organization-logo') {
           versions = [
             {
-              maxWidth: 1200,
-              maxHeight: 675,
+              maxWidth: 1000,
+              maxHeight: 1000,
               format: 'png',
               suffix: '-large',
               quality: 99
             },
             {
-              maxWidth: 432,
-              maxHeight: 243,
+              maxWidth: 200,
+              maxHeight: 200,
               format: 'png',
               suffix: '-medium',
               quality: 99
             },
             {
-              maxWidth: 89,
+              maxWidth: 50,
               maxHeight: 50,
               format: 'png',
               suffix: '-small',
