@@ -27161,6 +27161,16 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       }
     },
 
+    getImageFormatNextUrl: function(images, formatId) {
+      if (images && images.length>1) {
+        var formats = JSON.parse(images[images.length-2].formats);
+        if (formats && formats.length>0)
+          return formats[formatId];
+      } else {
+        return "";
+      }
+    },
+
     removeClass: function(element, classToRemove) {
       var newClassName = "";
       var classes = element.className.split(" ");
@@ -48991,6 +49001,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         background-color: #fff;
       }
 
+      .groupCard[featured] {
+        cursor: pointer;
+        height: 455px;
+        width: 864px;
+        background-color: #fff;
+      }
+
       .objectives {
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
@@ -49066,8 +49083,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .group-name[featured] {
-        background-color: var(--accent-color);
-        font-size: 28px;
+        font-size: 42px;
       }
 
       yp-membership-button {
@@ -49838,6 +49854,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       return this.getImageFormatUrl(community.CommunityLogoImages, 0);
     },
 
+    communityLogoImageNextPath: function (community) {
+      return this.getImageFormatNextUrl(community.CommunityLogoImages, 0);
+    },
+
     communityHeaderImagePath: function (community) {
       return this.getImageFormatUrl(community.CommunityHeaderImages, 0);
     },
@@ -50435,7 +50455,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       :host {
         display: block;
         @apply(--layout-vertical);
-        width: 320px;
       }
 
       .description {
@@ -50461,13 +50480,18 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .communityCard {
         cursor: pointer;
         height: 430px;
+        width: 320px;
         background-color: #fff;
         padding: 0;
         margin: 0;
       }
 
+      .communityCard[featured] {
+        width: 672px;
+      }
+
       iron-image {
-        width: 320px;
+        width: 336px;
         height: 180px;
       }
 
@@ -50525,8 +50549,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .community-name[featured] {
-        background-color: var(--accent-color);
-        font-size: 28px;
+        font-size: 46px;
       }
 
       yp-membership-button {
@@ -50540,11 +50563,19 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     </style>
 
     <template is="dom-if" if="[[community]]">
-      <paper-card class="communityCard" animated="" elevation="[[elevation]]">
-        <iron-image sizing="contain" preload="" src="[[communityLogoImagePath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
+      <paper-card featured$="[[featured]]" class="communityCard" animated="" elevation="[[elevation]]">
+        <div class="layout horizontal">
+          <iron-image sizing="cover" preload="" src="[[communityLogoImagePath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
+          <iron-image sizing="cover" preload="" src="[[communityLogoImageNextPath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
+        </div>
         <div class="informationText" on-tap="_goToCommunity">
           <div class="community-name" featured$="[[featured]]">[[communityName(community)]]</div>
-          <div class="description">[[communityDescription(community)]]</div>
+          <template is="dom-if" if="[[featured]]">
+            <div class="description">[[communityDescription(community,700)]]</div>
+          </template>
+          <template is="dom-if" if="[[!featured]]">
+            <div class="description">[[communityDescription(community)]]</div>
+          </template>
         </div>
         <yp-community-stats on-tap="_goToCommunity" class="stats" community="[[community]]"></yp-community-stats>
         <yp-membership-button community="[[community]]"></yp-membership-button>
@@ -50559,7 +50590,14 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       behaviors: [
         Polymer.appHelpers,
         Polymer.CommunityBehaviors
-      ]
+      ],
+
+      properties: {
+        featured: {
+          type: Boolean,
+          value: false
+        }
+      }
 
     });
   </script>
@@ -51829,6 +51867,153 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     });
   </script>
 </dom-module>
+<dom-module id="yp-app-nav-drawer" assetpath="yp-app/">
+
+  <template>
+
+    <style>
+
+      paper-material{
+        z-index: 1000;
+        background-color: #F00;
+      }
+
+      app-header-layout {
+        color: #333;
+        z-index: 1000;
+      }
+
+      .header {
+        padding-top: 16px;
+        font-weight: bold;
+        padding-bottom: 8px;
+        font-size: 18px;
+        padding-left: 8px;
+      }
+
+      .thumbNail {
+        width: 42px;
+        height: 24px;
+        padding-top: 24px;
+        margin-left: 12px;
+      }
+
+      .material {
+        background-color: var(--primary-color-800);
+      }
+    </style>
+
+    <paper-material elevation="1" class="material">
+      <app-header-layout has-scrolling-region="">0
+        <app-header fixed="">
+          <div class="layout vertical">
+            
+
+            <div class="header">[[t('domains')]]</div>
+            <template is="dom-repeat" items="[[myDomains]]" as="domain">
+              <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[domain.name]]</paper-item>
+            </template>
+
+            <div class="header">[[t('communities')]]</div>
+            <template is="dom-repeat" items="[[myCommunities]]" as="community">
+              <div class="layout horizontal">
+                <iron-image sizing="contain" class="thumbNail" src="https://yrpri6-test.s3.amazonaws.com/Fy/df/m8-large.png"></iron-image>
+                <paper-item data-args$="[[community.id]]" on-tap="_goToCommunity">[[community.name]]</paper-item>
+              </div>
+            </template>
+
+            <div class="header">[[t('groups')]]</div>
+            <template is="dom-repeat" items="[[myGroups]]" as="group">
+              <paper-item data-args$="[[group.id]]" on-tap="_goToGroup">[[group.name]]</paper-item>
+            </template>
+          </div>
+        </app-header>
+      </app-header-layout>
+    </paper-material>
+    <iron-signals on-iron-signal-got-memberships="_userMembershipsReady"></iron-signals>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-app-nav-drawer',
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        user: {
+          type: Object,
+          observer: '_userChanged'
+        },
+
+        opened: {
+          type: Boolean
+        },
+
+        route: {
+          type: String,
+          observer: 'routeChanged'
+        },
+
+        myGroups: {
+          type: Array
+        },
+
+        myCommunities: {
+          type: Array
+        },
+
+        myDomains: {
+          type: Array
+        }
+      },
+
+      _goToGroup: function (event) {
+        page("/group/"+ event.target.getAttribute('data-args'));
+        this.fire('yp-toggle-nav-drawer');
+      },
+
+      _goToCommunity: function (event) {
+        page("/community/"+ event.target.getAttribute('data-args'));
+        this.fire('yp-toggle-nav-drawer');
+      },
+
+      _goToDomain: function (event) {
+        page("/domain/"+ event.target.getAttribute('data-args'));
+        this.fire('yp-toggle-nav-drawer');
+      },
+
+      _userMembershipsReady: function () {
+        this._reset();
+      },
+
+      _userChanged: function (user) {
+        if (user) {
+          this._reset();
+        }
+      },
+
+      _reset: function () {
+        if (window.appUser && window.appUser.memberships) {
+          this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 2));
+          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 2));
+          this.set('myDomains', _.take(window.appUser.memberships.DomainUsers, 2));
+        }
+      },
+
+      _openEdit: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userEdit");
+        dialog.setup(this.user, false, null);
+        dialog.open('edit', { userId: this.user.id });
+      },
+
+      routeChanged: function(newValue, oldValue) {
+      }
+    });
+  </script>
+</dom-module>
 <dom-module id="yp-app" assetpath="yp-app/">
 
   <template>
@@ -51894,6 +52079,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         <app-drawer id="drawer" align="end" position="right" swipe-open="">
           <yp-app-drawer id="ypDrawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
+        </app-drawer>
+
+        <app-drawer id="navDrawer" align="start" position="left" swipe-open="">
+          <yp-app-nav-drawer id="ypNavDrawer" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
         </app-drawer>
 
         <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
@@ -52065,6 +52254,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       listeners: {
         'yp-set-pages': '_setPages'
+      },
+
+      _toggleNavDrawer: function () {
+        this.$$("#navDrawer").toggle();
       },
 
       _setPages: function (event, pages) {
