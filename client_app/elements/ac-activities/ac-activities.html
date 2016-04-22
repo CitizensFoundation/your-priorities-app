@@ -125,6 +125,10 @@
         padding-top: 46px;
         padding-right: 4px;
       }
+
+      .postPadding {
+        padding-top: 32px;
+      }
     </style>
 
     <template is="dom-if" if="[[loggedInUser]]">
@@ -183,7 +187,9 @@
                 <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
               </template>
 
-              <div class="layout horizontal">
+              <div class="postPadding" hidden$="[[!postId]]">
+              </div>
+              <div class="layout horizontal" hidden$="[[postId]]">
                 <template is="dom-if" if="[[activity.Group]]">
                   <ac-activity-group group="[[activity.Group]]"></ac-activity-group>
                 </template>
