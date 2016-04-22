@@ -204,10 +204,11 @@
               <div class="postPadding" hidden$="[[!postId]]">
               </div>
               <div class="layout horizontal" hidden$="[[postId]]">
-                <template is="dom-if" if="[[activity.Group]]">
-                  <ac-activity-group group="[[activity.Group]]"></ac-activity-group>
-                </template>
-
+                <div  hidden$="[[groupId]]">
+                  <template is="dom-if" if="[[activity.Group]]">
+                    <ac-activity-group group="[[activity.Group]]"></ac-activity-group>
+                  </template>
+                </div>
                 <template is="dom-if" if="[[activity.Post]]">
                   <div class="layout horizontal flex end-justified participateButton">
                     <paper-button data-args$="[[activity]]" on-tap="_joinPost">[[t('participate')]]</paper-button>

@@ -180,6 +180,7 @@
   },
 
   "group": {
+    "group": "Group",
     "admins": "Group admins",
     "users": "Group users",
     "new": "Add new group",
