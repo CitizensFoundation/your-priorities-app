@@ -25,7 +25,7 @@
       .main-container {
         @apply(--layout-horizontal);
         @apply(--layout-flex);
-        background-color: #F00 !important;
+        background-color: var(--primary-background-color);
       }
 
       .point {
@@ -109,9 +109,9 @@
       }
 
       .editIcon {
-        height: 64px;
-        width: 64px;
-        padding-top: 24px;
+        height: 28px;
+        width: 28px;
+        padding-bottom: 16px;
         color: var(--primary-color);
       }
 
@@ -143,14 +143,18 @@
       .point .main-container .topContainer {
         background-color: var(--primary-background-color) !important;
       }
+
+      .penContainer {
+        margin-top: 42px;
+      }
     </style>
 
     <iron-media-query query="(min-width: 985px)" query-matches="{{largeMode}}"></iron-media-query>
 
     <template is="dom-if" if="[[points]]">
-      <div class="layout vertical center-center">
-        <iron-icon icon="editor:mode-edit" class="editIcon"></iron-icon>
+      <div class="layout horizontal center-center penContainer">
         <div class="howToWriteInfoText">[[t('point.howToWrite')]]</div>
+        <iron-icon icon="editor:mode-edit" class="editIcon"></iron-icon>
       </div>
       <template is="dom-if" if="[[largeMode]]">
         <div class="layout vertical topContainer">
