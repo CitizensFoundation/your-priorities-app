@@ -10,6 +10,10 @@ var femalePointCount = 0;
 var malePointCount = 0;
 var unknownPointCount = 0;
 
+var femaleEndorsementCount = 0;
+var maleEndorsementCount = 0;
+var unknownEndorsementCount = 0;
+
 models.Domain.find({where: {id: 1}}).then(function(domain) {
   domain.getDomainUsers().then(function (users) {
     async.eachSeries(users, function (user, callback) {
@@ -30,7 +34,16 @@ models.Domain.find({where: {id: 1}}).then(function(domain) {
           } else {
             unknownPointCount += points.length
           }
-          callback();
+          models.Endorsement.findAll({ where: {user_id: user.id}}).then(function (endorsements) {
+            if ((user.name.indexOf('dottir') > -1) || (user.name.indexOf('dóttir') > -1)) {
+              femaleEndorsementCount += endorsements.length;
+            } else if ((user.name.indexOf('sson') > -1) || (user.name.indexOf('son') > -1)) {
+              maleEndorsementCount += endorsements.length;
+            } else {
+              unknownEndorsementCount += endorsements.length
+            }
+            callback();
+          });
         });
       });
     }, function done() {
@@ -41,6 +54,10 @@ models.Domain.find({where: {id: 1}}).then(function(domain) {
       console.log("femalePointCount: " + femalePointCount);
       console.log("malePointCount: " + malePointCount);
       console.log("unknownPointCount: " + unknownPointCount);
+
+      console.log("femaleEndorsementCount: " + femaleEndorsementCount);
+      console.log("maleEndorsementCount: " + maleEndorsementCount);
+      console.log("unknownEndorsementCount: " + unknownEndorsementCount);
     });
   });
 });

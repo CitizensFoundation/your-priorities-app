@@ -4,13 +4,14 @@ var fs        = require("fs");
 var path      = require("path");
 var Sequelize = require("sequelize");
 var env       = process.env.NODE_ENV || "development";
+var _ = require('lodash');
 
 var sequelize;
 if (process.env.NODE_ENV === 'production') {
   sequelize = new Sequelize(process.env.DATABASE_URL, {});
 } else {
   var config = require(__dirname + '/../config/config.json')[env];
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+  sequelize = new Sequelize(config.database, config.username, config.password, _.merge(config, { logging: true }));
 }
 
 var db        = {};
