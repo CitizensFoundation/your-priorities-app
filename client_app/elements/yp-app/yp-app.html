@@ -34,18 +34,26 @@
   <template>
 
     <style>
+      :host {
+        background-color: var(--primary-background-color);
+      }
+
       app-header {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         color: #fff;
-        background-color: #F2F2F2;
+        background-color: var(--primary-background-color);
       }
 
       app-toolbar {
         height: 64px;
         color: #FFF;
+      }
+
+      iron-pages {
+        background-color: var(--primary-background-color);
       }
 
       [condensed-title] {

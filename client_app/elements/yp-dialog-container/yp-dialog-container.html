@@ -22,49 +22,57 @@
 <dom-module id="yp-dialog-container">
   <template>
     <style>
+      :host {
+        background-color: var(--primary-background-color);
+      }
 
+      #dialogs {
+        background-color: var(--primary-background-color) !important;
+      }
     </style>
 
-    <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
+    <div id="dialogs">
+      <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
 
-    <yp-login id="userLogin" on-yp-forgot-password="_forgotPassword"></yp-login>
+      <yp-login id="userLogin" on-yp-forgot-password="_forgotPassword"></yp-login>
 
-    <yp-forgot-password id="forgotPassword"></yp-forgot-password>
+      <yp-forgot-password id="forgotPassword"></yp-forgot-password>
 
-    <yp-reset-password id="resetPassword"></yp-reset-password>
+      <yp-reset-password id="resetPassword"></yp-reset-password>
 
-    <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
+      <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
 
-    <yp-post-edit id="postEdit"></yp-post-edit>
+      <yp-post-edit id="postEdit"></yp-post-edit>
 
-    <yp-delete-dialog id="deleteDialog"></yp-delete-dialog>
+      <yp-delete-dialog id="deleteDialog"></yp-delete-dialog>
 
-    <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
+      <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
 
-    <paper-toast id="masterToast"></paper-toast>
+      <paper-toast id="masterToast"></paper-toast>
 
-    <yp-page-dialog id="pageDialog"></yp-page-dialog>
+      <yp-page-dialog id="pageDialog"></yp-page-dialog>
 
-    <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
+      <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
 
-    <!-- ADMIN TODO: only render when admin -->
+      <!-- ADMIN TODO: only render when admin -->
 
-    <yp-domain-edit id="domainEdit"></yp-domain-edit>
+      <yp-domain-edit id="domainEdit"></yp-domain-edit>
 
-    <yp-organization-edit id="organizationEdit"></yp-organization-edit>
+      <yp-organization-edit id="organizationEdit"></yp-organization-edit>
 
-    <yp-community-edit id="communityEdit"></yp-community-edit>
+      <yp-community-edit id="communityEdit"></yp-community-edit>
 
-    <yp-group-edit new id="groupEdit"></yp-group-edit>
+      <yp-group-edit new id="groupEdit"></yp-group-edit>
 
-    <yp-category-edit new id="categoryEdit"></yp-category-edit>
+      <yp-category-edit new id="categoryEdit"></yp-category-edit>
 
-    <yp-users-grid id="usersGrid"></yp-users-grid>
+      <yp-users-grid id="usersGrid"></yp-users-grid>
 
-    <yp-pages-grid id="pagesGrid"></yp-pages-grid>
+      <yp-pages-grid id="pagesGrid"></yp-pages-grid>
 
-    <yp-post-status-change-edit id="postStatusChangeEdit"></yp-post-status-change-edit>
+      <yp-post-status-change-edit id="postStatusChangeEdit"></yp-post-status-change-edit>
 
+    </div>
   </template>
 
   <script>
