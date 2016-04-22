@@ -23,7 +23,8 @@
     "iron-jsonp-library": "PolymerElements/iron-jsonp-library",
     "instafeed.js": "https://github.com/evejweinberg/instafeed.js.git#master",
     "i18next": "~2.4.1",
-    "vaadin-grid": "~1.0.0"
+    "vaadin-grid": "~1.0.0",
+    "awesome-button": "*"
   },
   "devDependencies": {
     "web-component-tester": "*",

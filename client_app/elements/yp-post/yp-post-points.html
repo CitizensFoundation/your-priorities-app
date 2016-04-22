@@ -152,7 +152,7 @@
     <iron-media-query query="(min-width: 985px)" query-matches="{{largeMode}}"></iron-media-query>
 
     <template is="dom-if" if="[[points]]">
-      <div class="layout horizontal center-center penContainer">
+      <div class="layout horizontal center-center penContainer" hidden>
         <div class="howToWriteInfoText">[[t('point.howToWrite')]]</div>
         <iron-icon icon="editor:mode-edit" class="editIcon"></iron-icon>
       </div>
