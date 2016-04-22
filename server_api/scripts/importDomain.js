@@ -202,6 +202,10 @@ var loadErrorUrls = function (callback) {
   });
 };
 
+var getDeletedStatus = function (status) {
+  return (status!='published' && status!='active' && status!='inactive')
+};
+
 var saveCacheUrls = function (callback) {
   fs.writeFile(cacheUrlsFilename, JSON.stringify( cacheUrls ), "utf8", callback );
 };
@@ -999,9 +1003,7 @@ async.series([
 
       incoming['legacy_post_id'] = oldId;
 
-      if (incoming['status']!='published' && incoming['status']!='active' ) {
-        incoming['deleted'] = true;
-      }
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       models.Post.build(incoming).save().then(function (post) {
         if (post) {
@@ -1044,9 +1046,7 @@ async.series([
       var oldId = incoming['id'];
       incoming['id'] = null;
 
-      if (incoming['status']!='published' && incoming['status']!='active' ) {
-        incoming['deleted'] = true;
-      }
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       models.PostRevision.build(incoming).save().then(function (post_revision) {
         if (post_revision) {
@@ -1086,9 +1086,7 @@ async.series([
         incoming['status']="active";
       }
 
-      if (incoming['status']!='published' && incoming['status']!='active' ) {
-        incoming['deleted'] = true;
-      }
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       models.PostStatusChange.build(incoming).save().then(function (post_status_change) {
         if (post_status_change) {
@@ -1121,9 +1119,7 @@ async.series([
 
       incoming['user_agent'] = "Script import";
 
-      if (incoming['status']!='published' && incoming['status']!='active' ) {
-        incoming['deleted'] = true;
-      }
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       models.Endorsement.build(incoming).save().then(function (endorsement) {
         if (endorsement) {
@@ -1171,9 +1167,7 @@ async.series([
         incoming['status']="active";
       }
 
-      if (incoming['status']!='published' && incoming['status']!='active' ) {
-        incoming['deleted'] = true;
-      }
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       models.Point.build(incoming).save().then(function (point) {
         if (point) {
@@ -1223,9 +1217,7 @@ async.series([
         incoming['status']="active";
       }
 
-      if (incoming['status']!='published' && incoming['status']!='active' ) {
-        incoming['deleted'] = true;
-      }
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       models.PointRevision.build(incoming).save().then(function (point_revision) {
         if (point_revisions) {
@@ -1261,9 +1253,7 @@ async.series([
         incoming['status']="active";
       }
 
-      if (incoming['status']!='published' && incoming['status']!='active' ) {
-        incoming['deleted'] = true;
-      }
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       if (incoming['value']==true) {
         incoming['value'] = 1
@@ -1309,9 +1299,7 @@ async.series([
       incoming['user_agent'] = 'yrpri script';
       incoming['value'] = 0;
 
-      if (incoming['status']!='published' && incoming['status']!='active' ) {
-        incoming['deleted'] = true;
-      }
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       var oldId = incoming['id'];
       incoming['id'] = null;
@@ -1367,9 +1355,7 @@ async.series([
       var oldId = incoming['id'];
       incoming['id'] = null;
 
-      if (incoming['status']!='published' && incoming['status']!='active' ) {
-        incoming['deleted'] = true;
-      }
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       models.Promotion.build(incoming).save().then(function (promotion) {
         if (promotion) {
@@ -1495,9 +1481,7 @@ async.series([
         incoming['type'] = activitiesTransform[incoming['type']];
       }
 
-      if (incoming['status']!='published' && incoming['status']!='active' ) {
-        incoming['deleted'] = true;
-      }
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       models.AcActivity.build(incoming).save().then(function (activity) {
         if (activity) {
