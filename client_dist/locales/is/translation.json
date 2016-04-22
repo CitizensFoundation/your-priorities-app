@@ -32,7 +32,7 @@
     "post": {
       "new": "// Ný hugmynd //",
       "status": {
-        "update": "Fréttir"
+        "change": "Fréttir"
       }
     },
     "point": {
@@ -64,6 +64,15 @@
   },
 
   "news": "Fréttir",
+
+
+  "pages": {
+    "addLocale": "Nýtt locale",
+    "unPublish": "Afturkalla",
+    "deletePage": "Eyða",
+    "addPage": "Ný síða",
+    "managePages": "Sýsla með síður"
+  },
 
   "participate": "Taktu þátt",
 
@@ -187,7 +196,8 @@
     "postNewsStory": "Pósta",
     "addComment": "Þín athugasemd",
     "postComment": "Senda",
-    "comments": "Athugasemdir"
+    "comments": "Athugasemdir",
+    "howToWrite": "Finnum saman bestu rökin með og á móti. Hugsum í lausnum :)"
   },
 
   "uploading": {

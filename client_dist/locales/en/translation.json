@@ -1,5 +1,4 @@
 {
-
   "notification": {
     "passwordResetAndLoggedIn": "Your password has been changed and you are now logged in.",
     "method": "Method",
@@ -19,6 +18,14 @@
     "allGroup": "All notifications from my groups"
   },
 
+  "pages": {
+    "addLocale": "Add locale",
+    "unPublish": "UnPublish",
+    "deletePage": "Delete",
+    "addPage": "Add new page",
+    "managePages": "Manage pages"
+  },
+
   "archived": "Archived",
 
   "status": {
@@ -32,7 +39,7 @@
     "post": {
       "new": "New idea",
       "status": {
-       "update": "Status update"
+       "change": "Status update"
       }
     },
     "point": {
@@ -54,8 +61,8 @@
     "new": "Create community",
     "public": "Public community",
     "closed": "Closed community",
-    "secret": "Secret community"
-
+    "secret": "Secret community",
+    "pages":"Community Pages"
   },
 
   "posts": {
@@ -134,8 +141,8 @@
 
   "point": {
     "point": "Point",
-    "for": "Point for...",
-    "against": "Point against...",
+    "for": "Write point for...",
+    "against": "Write point against...",
     "add_up": "Add point for",
     "add_down": "Add point against",
     "helpful": "Vote point up as helpful",
@@ -144,7 +151,8 @@
     "postNewsStory": "Post",
     "addComment": "Your comment...",
     "postComment": "Post comment",
-    "comments": "Comments"
+    "comments": "Comments",
+    "howToWrite": "Let's brainstorm the best points for and against and think in solutions :)"
   },
 
   "uploading": {
@@ -195,7 +203,10 @@
     "addAdmin": "Add admin",
     "removeUser": "Remove user",
     "inviteUser": "Invite user",
-    "email": "email"
+    "email": "email",
+    "removeFromOrganization": "Remove",
+    "addToOrganization": "Organization",
+    "selectOrganization": "Select organization"
   },
 
   "user": {
