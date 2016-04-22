@@ -110,6 +110,11 @@
       _membershipResponse: function (event, detail) {
         this.set('disabled', false);
         this.set('membershipValue', detail.response.membershipValue);
+        if (this.membershipValue) {
+          window.appGlobals.notifyUserViaToast(this.t('membership.joined')+ " " + detail.response.name);
+        } else {
+          window.appGlobals.notifyUserViaToast(this.t('membership.left')+ " " + detail.response.name);
+        }
         this._resetClasses();
         if (detail.response.membershipValue===true) {
           if (this.community) {
