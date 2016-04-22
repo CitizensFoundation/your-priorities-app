@@ -49593,7 +49593,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       },
 
       _updateMembership: function () {
-        if (window.appUser.loggedIn() && window.appUser) {
+        if (window.appUser.loggedIn() && window.appUser && window.appUser.membershipsIndex) {
           if (this.community) {
             this.set('membershipValue',  window.appUser.membershipsIndex.communities[this.community.id]);
           } else if (this.group) {
