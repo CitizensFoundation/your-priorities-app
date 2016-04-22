@@ -45386,7 +45386,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
   <template>
     <style>
       :host {
-        margin-top: 16px;
       }
 
       iron-image {
@@ -45394,7 +45393,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         height: 56px;
         margin-top: 2px;
         margin-left: 16px;
-        margin-right: 16px;
+        margin-right: 8px;
         opacity: 0.5;
       }
 
@@ -45421,12 +45420,19 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         text-transform: uppercase;
       }
 
+      #groupInfo {
+        padding-top: 16px;
+      }
+
+      .groupInfoContainer {
+        padding-top: 16px;
+      }
     </style>
-    <div class="layout horizontal cursor" on-tap="_goToGroup">
+    <div id="groupInfo" class="layout horizontal cursor" on-tap="_goToGroup">
       <div>
         <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath(group)]]"></iron-image>
       </div>
-      <div class="layout vertical flex">
+      <div class="layout vertical groupInfoContainer">
         <div class="groupText">[[t('group.group')]]</div>
         <h2 class="group-name">[[groupName(group)]]</h2>
         <div class="groupDescription"></div>
@@ -52020,9 +52026,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _reset: function () {
         if (window.appUser && window.appUser.memberships) {
-          this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 2));
-          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 2));
-          this.set('myDomains', _.take(window.appUser.memberships.DomainUsers, 2));
+          this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 4));
+          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 4));
+          this.set('myDomains', _.take(window.appUser.memberships.DomainUsers, 3));
         }
       },
 

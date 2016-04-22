@@ -1,6 +1,6 @@
 {
   "name": "your-priorities-app",
-  "version": "6.0.102",
+  "version": "6.0.103",
   "dependencies": {
     "async": "^1.4.2",
     "authorized": "^1.0.0",
