@@ -252,7 +252,7 @@
 
       _response: function (event, detail, sender) {
         this.set('domain', detail.response);
-        this.setTheme(4);
+        this.setTheme(6);
         this.$.pagesAjax.url = "/api/domains/"+this.domain.id+"/pages";
         this.$.pagesAjax.generateRequest();
 

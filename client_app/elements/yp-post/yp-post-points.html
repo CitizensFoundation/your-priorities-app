@@ -18,9 +18,14 @@
   <template>
     <style>
 
+      :host {
+        height: 100%;
+      }
+
       .main-container {
         @apply(--layout-horizontal);
         @apply(--layout-flex);
+        background-color: #F00 !important;
       }
 
       .point {
@@ -93,7 +98,7 @@
       .pointMaterial {
         margin-bottom: 18px;
         padding-top: 8px;
-        background-color: #fdfdfd;
+        background-color: #FFF;
       }
 
       .thumbIcon {
@@ -134,6 +139,10 @@
         padding-top: 8px;
         color: var(--primary-color);
       }
+
+      .point .main-container .topContainer {
+        background-color: var(--primary-background-color) !important;
+      }
     </style>
 
     <iron-media-query query="(min-width: 985px)" query-matches="{{largeMode}}"></iron-media-query>
@@ -144,7 +153,7 @@
         <div class="howToWriteInfoText">[[t('point.howToWrite')]]</div>
       </div>
       <template is="dom-if" if="[[largeMode]]">
-        <div class="layout vertical">
+        <div class="layout vertical topContainer">
           <div class="main-container">
             <div class="point">
               <div id="pointUpMaterial" elevation="0" class="pointText" animated>

@@ -22,6 +22,27 @@
     ready: function () {
       //
       this.push('themes', {
+        name: 'Reykjavík',
+        '--primary-background-color': 'var(--paper-blue-grey-100)',
+        '--primary-color': 'var(--yrpri-reykjavik-blue-500)',
+        '--primary-color-200': 'var(--yrpri-reykjavik-blue-200)',
+        '--primary-color-300': 'var(--yrpri-reykjavik-blue-300)',
+        '--primary-color-400': 'var(--yrpri-reykjavik-blue-300)',
+        '--primary-color-600': 'var(--yrpri-reykjavik-blue-300)',
+        '--primary-color-700': 'var(--yrpri-reykjavik-blue-400)',
+        '--primary-color-800': 'var(--yrpri-reykjavik-blue-500)',
+        '--primary-color-900': 'var(--yrpri-reykjavik-blue-600)',
+        '--accent-color': 'var(--paper-orange-a700)',
+        '--accent-color-100': 'var(--paper-orange-a100)',
+        '--accent-color-200': 'var(--paper-orange-a200)',
+        '--accent-color-300': 'var(--paper-orange-a400)',
+        '--accent-color-400': 'var(--paper-orange-a700)',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff',
+        'body': 'var(--primary-background-color)'
+      });
+
+      this.push('themes', {
         name: 'Basalt Gray',
         '--primary-background-color': 'var(--paper-blue-grey-100)',
         '--primary-color': 'var(--paper-blue-grey-500)',
@@ -85,27 +106,6 @@
       });
 
       this.push('themes', {
-        name: 'Reykjavík',
-        '--primary-background-color': 'var(--paper-blue-grey-100)',
-        '--primary-color': 'var(--yrpri-reykjavik-blue-500)',
-        '--primary-color-200': 'var(--yrpri-reykjavik-blue-200)',
-        '--primary-color-300': 'var(--yrpri-reykjavik-blue-300)',
-        '--primary-color-400': 'var(--yrpri-reykjavik-blue-300)',
-        '--primary-color-600': 'var(--yrpri-reykjavik-blue-300)',
-        '--primary-color-700': 'var(--yrpri-reykjavik-blue-400)',
-        '--primary-color-800': 'var(--yrpri-reykjavik-blue-500)',
-        '--primary-color-900': 'var(--yrpri-reykjavik-blue-600)',
-        '--accent-color': 'var(--paper-orange-a700)',
-        '--accent-color-100': 'var(--paper-orange-a100)',
-        '--accent-color-200': 'var(--paper-orange-a200)',
-        '--accent-color-300': 'var(--paper-orange-a400)',
-        '--accent-color-400': 'var(--paper-orange-a700)',
-        '--middle-color': 'var(--primary-color-400)',
-        '--icon-general-color': '#fff',
-        'body': 'var(--primary-background-color)'
-      });
-
-      this.push('themes', {
         name: 'Red Rhubarb',
         '--primary-background-color': 'var(--paper-light-green-50)',
         '--primary-color':  'var(--paper-red-500)',
@@ -125,7 +125,48 @@
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
       });
+
+      this.push('themes', {
+        name: 'Mountain Roses',
+        '--primary-background-color': 'var(--paper-light-green-50)',
+        '--primary-color':  'var(--paper-green-500)',
+        '--primary-color-200': 'var(--paper-green-200)',
+        '--primary-color-300': 'var(--paper-green-300)',
+        '--primary-color-400': 'var(--paper-green-400)',
+        '--primary-color-600': 'var(--paper-green-600)',
+        '--primary-color-700': 'var(--paper-green-700)',
+        '--primary-color-800': 'var(--paper-green-800)',
+        '--primary-color-900': 'var(--paper-green-900)',
+        '--accent-color': 'var(--paper-red-a700)',
+        '--accent-color-100': 'var(--paper-red-a100)',
+        '--accent-color-200': 'var(--paper-red-a200)',
+        '--accent-color-300': 'var(--paper-red-a400)',
+        '--accent-color-400': 'var(--paper-red-a700)',
+        '--middle-color': 'var(--primary-background-color)',
+        '--icon-general-color': '#fff'
+      });
+
+      this.push('themes', {
+        name: 'Purple Wizards',
+        '--primary-background-color': 'var(--paper-deep-purple-50)',
+        '--primary-color':  'var(--paper-deep-purple-500)',
+        '--primary-color-200': 'var(--paper-deep-purple-200)',
+        '--primary-color-300': 'var(--paper-deep-purple-300)',
+        '--primary-color-400': 'var(--paper-deep-purple-400)',
+        '--primary-color-600': 'var(--paper-deep-purple-600)',
+        '--primary-color-700': 'var(--paper-deep-purple-700)',
+        '--primary-color-800': 'var(--paper-deep-purple-800)',
+        '--primary-color-900': 'var(--paper-deep-purple-900)',
+        '--accent-color': 'var(--paper-red-a700)',
+        '--accent-color-100': 'var(--paper-red-a100)',
+        '--accent-color-200': 'var(--paper-red-a200)',
+        '--accent-color-300': 'var(--paper-red-a400)',
+        '--accent-color-400': 'var(--paper-red-a700)',
+        '--middle-color': 'var(--primary-background-color)',
+        '--icon-general-color': '#fff'
+      });
     },
+
 
     setTheme: function (number) {
       if (this.themes[number]) {
