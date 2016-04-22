@@ -6,6 +6,7 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var async = require('async');
+var crypto = require("crypto");
 
 var sendGroupOrError = function (res, group, context, user, error, errorStatus) {
   if (error || !group) {
@@ -157,7 +158,6 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
         } else {
           callback('Invite not found')
         }
-        callback();
       }).catch(function (error) {
         callback(error);
       });
@@ -166,17 +166,19 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
       models.AcActivity.inviteCreated({
         email: req.params.userEmail,
         user_id: user ? user.id : null,
+        sender_user_id: req.user.id,
         group_id: req.params.groupId,
+        invite_id: invite.id,
         token: token}, function (error) {
         callback(error);
       });
     }
   ], function(error) {
     if (error) {
-      log.error('Send Invite Error', { user: toJson(user), context: 'invite_user', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
+      log.error('Send Invite Error', { user: user ? toJson(user) : null, context: 'invite_user', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
       res.sendStatus(500);
     } else {
-      log.info('Send Invite Activity Created', { user: toJson(user), context: 'invite_user', loggedInUser: toJson(req.user) });
+      log.info('Send Invite Activity Created', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user', loggedInUser: toJson(req.user) });
       res.sendStatus(200);
     }
   });
