@@ -8512,6 +8512,625 @@ this.fire('dom-change');
 })();
 
 </script>
+<template>
+	<style>
+		.awesome-button:focus {
+			outline-color: 0;
+			outline-style: none;
+			outline-width: 0;
+		}
+		.awesome-button.progress em:before,
+		.awesome-button.progress em:after,
+		.awesome-button span:before,
+		.awesome-button span:after,
+		.awesome-button em {
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			display: block;
+		}
+		.awesome-button {
+			-moz-box-sizing: border-box;
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+			padding: 0;
+			margin: 0;
+			display: inline-block;
+			min-width: 50px;
+			height: 34px;
+			line-height: 34px;
+			font-size: 12px;
+			text-transform: uppercase;
+			font-family: Montserrat;
+			position: relative;
+			z-index: 5;
+			background-color: transparent;
+			cursor: pointer;
+			text-align: center;
+			opacity: 0;
+			transition: opacity .1s ease-out;
+			border: none;
+		}
+		.awesome-button.v_{
+			opacity: 1;
+		}
+		.awesome-button.left em {
+			-moz-transform: skewY(-1deg);
+			-ms-transform: skewY(-1deg);
+			-webkit-transform: skewY(-1deg);
+			transform: skewY(-1deg);
+		}
+		.awesome-button.left:before {
+			-moz-transform: skewY(1deg) translateY(-1px);
+			-ms-transform: skewY(1deg) translateY(-1px);
+			-webkit-transform: skewY(1deg) translateY(-1px);
+			transform: skewY(1deg) translateY(-1px);
+		}
+		.awesome-button.right em {
+			-moz-transform: skewY(1deg);
+			-ms-transform: skewY(1deg);
+			-webkit-transform: skewY(1deg);
+			transform: skewY(1deg);
+		}
+		.awesome-button.right:before {
+			-moz-transform: skewY(-1deg) translateY(-1px);
+			-ms-transform: skewY(-1deg) translateY(-1px);
+			-webkit-transform: skewY(-1deg) translateY(-1px);
+			transform: skewY(-1deg) translateY(-1px);
+		}
+		.awesome-button.middle em {
+			-moz-transform: translateY(1px);
+			-ms-transform: translateY(1px);
+			-webkit-transform: translateY(1px);
+			transform: translateY(1px);
+		}
+		.awesome-button.middle:before {
+			-moz-transform: translateY(-1px);
+			-ms-transform: translateY(-1px);
+			-webkit-transform: translateY(-1px);
+			transform: translateY(-1px);
+		}
+		.awesome-button.progress em:before {
+			content: "Wait";
+			color: rgba(255, 255, 255, 0.75);
+			opacity: 0;
+			-moz-transform: translateY(100%);
+			-ms-transform: translateY(100%);
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+			-moz-transition: -moz-transform 0.2s ease-out, opacity 0.1s ease-out;
+			-o-transition: -o-transform 0.2s ease-out, opacity 0.1s ease-out;
+			-webkit-transition: -webkit-transform 0.2s ease-out, opacity 0.1s ease-out;
+			transition: transform 0.2s ease-out, opacity 0.1s ease-out;
+		}
+		.awesome-button.progress em:after {
+			content: attr(data-status);
+			color: rgba(255, 255, 255, 0.75);
+			opacity: 0;
+			-moz-transform: translateY(-100%);
+			-ms-transform: translateY(-100%);
+			-webkit-transform: translateY(-100%);
+			transform: translateY(-100%);
+			-moz-transition: -moz-transform 0.2s ease-out, opacity 0.1s ease-out;
+			-o-transition: -o-transform 0.2s ease-out, opacity 0.1s ease-out;
+			-webkit-transition: -webkit-transform 0.2s ease-out, opacity 0.1s ease-out;
+			transition: transform 0.2s ease-out, opacity 0.1s ease-out;
+		}
+		.awesome-button.active em {
+			-moz-transition: -moz-transform 0.175s ease-out, background 0.2s ease-out, color 0.14s ease-out;
+			-o-transition: -o-transform 0.175s ease-out, background 0.2s ease-out, color 0.14s ease-out;
+			-webkit-transition: -webkit-transform 0.175s ease-out, background 0.2s ease-out, color 0.14s ease-out;
+			transition: transform 0.175s ease-out, background 0.2s ease-out, color 0.14s ease-out;
+			-moz-transform: translateY(3px);
+			-ms-transform: translateY(3px);
+			-webkit-transform: translateY(3px);
+			transform: translateY(3px);
+			background-color: rgba(0, 0, 0, 0.1) !important;
+			color: rgba(255, 255, 255, 0.85);
+		}
+		.awesome-button.active .i-svg{
+			opacity: 0.85;
+		}
+		.awesome-button.active em:before {
+			opacity: 1;
+			-moz-transform: translateY(0);
+			-ms-transform: translateY(0);
+			-webkit-transform: translateY(0);
+			transform: translateY(0);
+		}
+		.awesome-button.active:before {
+			-moz-transform: translateY(-3px);
+			-ms-transform: translateY(-3px);
+			-webkit-transform: translateY(-3px);
+			transform: translateY(-3px);
+		}
+		.awesome-button.start span:after {
+			-moz-transition: width 5.5s ease-out;
+			-o-transition: width 5.5s ease-out;
+			-webkit-transition: width 5.5s ease-out;
+			transition: width 5.5s ease-out;
+			width: 90%;
+		}
+		.awesome-button.end span:after {
+			-moz-transition: width 0.4s ease-out;
+			-o-transition: width 0.4s ease-out;
+			-webkit-transition: width 0.4s ease-out;
+			transition: width 0.4s ease-out;
+			width: 100%;
+		}
+		.awesome-button.end em:after {
+			opacity: 1;
+			-moz-transform: translateY(0);
+			-ms-transform: translateY(0);
+			-webkit-transform: translateY(0);
+			transform: translateY(0);
+		}
+		.awesome-button.end em:before {
+			-moz-transform: translateY(100%);
+			-ms-transform: translateY(100%);
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+		}
+		.awesome-button.off span:before {
+			background-color: #323232;
+		}
+		.awesome-button.off em {
+			background-color: #353535;
+			color: #424242;
+			-moz-transform: translateY(3px);
+			-ms-transform: translateY(3px);
+			-webkit-transform: translateY(3px);
+			transform: translateY(3px);
+		}
+		.awesome-button.off:hover span:before {
+			background-color: #2d2d2d;
+		}
+		.awesome-button.off:hover em {
+			background-color: #313131;
+			color: #3b3b3b;
+		}
+		.awesome-button.off:before {
+			-moz-transform: translateY(-3px);
+			-ms-transform: translateY(-3px);
+			-webkit-transform: translateY(-3px);
+			transform: translateY(-3px);
+			background-color: rgba(0, 0, 0, 0.05);
+		}
+		.awesome-button:hover em {
+			background-color: #b90202;
+		}
+		.awesome-button b{
+			margin-left: 2px;
+		}
+		.awesome-button span {
+			position: relative;
+			font-family: inherit;
+			display: block;
+			width: 100%;
+			height: 100%;
+		}
+		.awesome-button span:before {
+			content: " ";
+			background-color: #8d0202;
+			border-radius: 3px;
+			top: auto;
+			bottom: -3px;
+			z-index: 1;
+			-moz-transition: -moz-transform 0.2s ease-out, background 0.2s ease-out;
+			-o-transition: -o-transform 0.2s ease-out, background 0.2s ease-out;
+			-webkit-transition: -webkit-transform 0.2s ease-out, background 0.2s ease-out;
+			transition: transform 0.2s ease-out, background 0.2s ease-out;
+		}
+		.awesome-button span:after {
+			content: " ";
+			background-color: rgba(0, 0, 0, 0.2);
+			border-radius: 3px;
+			z-index: 2;
+			top: 3px;
+			width: 0;
+		}
+		.awesome-button span .i-svg {
+			width: 20px;
+			height: 20px;
+			display: inline-block;
+			vertical-align: text-top;
+			margin-top: -3px;
+		}
+		.awesome-button em {
+			display: table;
+			background-color: #c60202;
+			color: #efefef;
+			border-radius: 3px;
+			text-indent: 0;
+			z-index: 2;
+			text-transform: uppercase;
+			font-style: normal;
+			line-height: 35px;
+			vertical-align: middle;
+			overflow: hidden;
+			-moz-transition: -moz-transform 0.2s ease-out, background 0.2s ease-out, color 0.2s ease-out;
+			-o-transition: -o-transform 0.2s ease-out, background 0.2s ease-out, color 0.2s ease-out;
+			-webkit-transition: -webkit-transform 0.2s ease-out, background 0.2s ease-out, color 0.2s ease-out;
+			transition: transform 0.2s ease-out, background 0.2s ease-out, color 0.2s ease-out;
+		}
+		.awesome-button:before {
+			content: " ";
+			background-color: rgba(0, 0, 0, 0.3);
+			width: calc(100% - 4px);
+			height: calc(100% - 6px);
+			bottom: -6px;
+			left: 2px;
+			position: absolute;
+			border-radius: 3px;
+			z-index: 1;
+			-moz-transition: -moz-transform 0.2s ease-out, background 0.2s ease-out;
+			-o-transition: -o-transform 0.2s ease-out, background 0.2s ease-out;
+			-webkit-transition: -webkit-transform 0.2s ease-out, background 0.2s ease-out;
+			transition: transform 0.2s ease-out, background 0.2s ease-out;
+		}
+		.awesome-button.tiny {
+			width: 95px;
+		}
+		.awesome-button.small {
+			width: 115px;
+		}
+		.awesome-button.medium {
+			width: 176px;
+		}
+		.awesome-button.large {
+			width: 260px;
+		}
+		.awesome-button.primary span:before {
+			background-color: #1f4781;
+		}
+		.awesome-button.primary em {
+			background-color: #325c99;
+		}
+		.awesome-button.facebook .i-svg {
+			margin-left: -2px;
+		}
+		.awesome-button.facebook span:before {
+			background-color: #1f4781;
+		}
+		.awesome-button.facebook em {
+			background-color: #325c99;
+		}
+		.awesome-button.twitter span:before {
+			background-color: #1774b9;
+		}
+		.awesome-button.twitter em {
+			background-color: #59adec;
+		}
+		.awesome-button.github span:before {
+			background-color: #353535;
+		}
+		.awesome-button.github em {
+			background-color: #4f4f4f;
+		}
+		.awesome-button.link span:before {
+			background-color: #353535;
+		}
+		.awesome-button.link em {
+			background-color: #4f4f4f;
+		}
+		.awesome-button.linkedin span:before {
+			background-color: #065786;
+		}
+		.awesome-button.linkedin em {
+			background-color: #1178b3;
+		}
+		.awesome-button.pink span:before {
+			background-color: #C2185B;
+		}
+		.awesome-button.pink em {
+			background-color: #E91E63;
+		}
+		.awesome-button.purple span:before {
+			background-color: #9C27B0;
+		}
+		.awesome-button.purple em {
+			background-color: #7B1FA2;
+		}
+		.awesome-button.teal span:before {
+			background-color: #00796B;
+		}
+		.awesome-button.teal em {
+			background-color: #009688;
+		}
+		.awesome-button.green span:before {
+			background-color: #388E3C;
+		}
+		.awesome-button.green em {
+			background-color: #4CAF50;
+		}
+		.awesome-button.grey span:before {
+			background-color: #455A64;
+		}
+		.awesome-button.grey em {
+			background-color: #607D8B;
+		}
+		.awesome-button.disabled span:before {
+			background-color: #666666;
+		}
+		.awesome-button.disabled em {
+			background-color: #888888;
+			color: #BFBFBF;
+		}
+		.awesome-button.disabled path{
+			fill: #BFBFBF !important;
+		}
+
+		@-moz-document url-prefix() {
+			.awesome-button span:before{
+				bottom: -5px;
+			}
+			.awesome-button:before{
+				left: 3px;
+				width: calc(100% - 6px);
+			}
+		}
+	</style>
+	<button class="awesome-button">
+		<span>
+			<em>
+				<content></content>
+			</em>
+		</span>
+	</button>
+</template>
+<script>
+	(function (window, document, undefined) {
+		var Icons = (function () {
+			var icons = {
+				facebook: "M27.845,47.469V27.81h8.426l1.404-8.425h-9.83v-4.213c0-2.81,1.406-4.213,4.213-4.213h4.213V2.531 c-1.405,0-4.55,0-7.021,0c-7.021,0-9.83,4.213-9.83,11.234v5.618h-8.425v8.424h8.425v19.661H27.845L27.845,47.469z",
+				twitter: "M49.33,11.051c-1.754,0.778-3.638,1.305-5.617,1.538c2.019-1.209,3.569-3.124,4.3-5.407 c-1.89,1.119-3.98,1.935-6.209,2.372c-1.783-1.899-4.325-3.086-7.14-3.086c-5.4,0-9.775,4.376-9.775,9.776 c0,0.767,0.085,1.514,0.251,2.229c-8.126-0.407-15.331-4.3-20.154-10.215c-0.84,1.444-1.323,3.123-1.323,4.916 c0,3.394,1.727,6.385,4.348,8.14c-1.601-0.052-3.109-0.49-4.427-1.222c-0.001,0.04-0.001,0.083-0.001,0.122 c0,4.738,3.369,8.69,7.843,9.589c-0.819,0.223-1.683,0.342-2.576,0.342c-0.631,0-1.242-0.061-1.838-0.174 c1.243,3.883,4.855,6.709,9.132,6.791c-3.343,2.621-7.56,4.186-12.141,4.186c-0.79,0-1.568-0.045-2.333-0.137 c4.326,2.771,9.466,4.391,14.989,4.391c17.982,0,27.818-14.898,27.818-27.819c0-0.423-0.012-0.847-0.028-1.268 C46.36,14.735,48.016,13.014,49.33,11.051z",
+				"github": "M24.999,2.48c-12.75,0-23.087,10.338-23.087,23.09c0,10.199,6.613,18.854,15.791,21.907 c1.154,0.211,1.518-0.474,1.518-1.084c0-0.547,0.011-2.082,0-4.01c-6.422,1.398-7.753-3.038-7.753-3.038 c-1.048-2.671-2.562-3.377-2.562-3.377c-2.095-1.433,0.158-1.407,0.158-1.407c2.317,0.163,3.538,2.383,3.538,2.383 c2.059,3.522,5.403,2.505,6.717,1.916c0.21-1.491,0.808-2.51,1.468-3.087C15.66,35.188,10.27,33.211,10.27,24.361 c0-2.521,0.9-4.581,2.376-6.194c-0.239-0.584-1.031-2.932,0.226-6.112c0,0,1.939-0.62,6.349,2.369 c1.841-0.513,3.817-0.768,5.78-0.777c1.962,0.009,3.938,0.264,5.781,0.777c4.409-2.988,6.346-2.369,6.346-2.369 c1.258,3.18,0.466,5.528,0.229,6.112c1.478,1.613,2.373,3.673,2.373,6.194c0,8.872-5.397,10.823-10.543,11.392 c0.828,0.717,1.582,2.101,1.582,4.255c0,2.887,0,5.632,0,6.392c0,0.617,0.372,1.302,1.544,1.076 c9.167-3.059,15.776-11.708,15.776-21.905C48.089,12.818,37.75,2.48,24.999,2.48z",
+				"linkedin": "M13.83,41.668H5.401V13.571h8.429V41.668z M44.737,41.668h-8.429V26.66c0-3.912-1.394-5.857-4.154-5.857 c-2.189,0-3.577,1.086-4.274,3.273c0,3.545,0,17.592,0,17.592h-8.431c0,0,0.115-25.288,0-28.097h6.656l0.514,5.619h0.175 c1.729-2.81,4.489-4.713,8.275-4.713c2.881,0,5.207,0.801,6.985,2.815c1.794,2.014,2.684,4.713,2.684,8.514V41.668z M9.615,2.333 c2.404,0,4.357,1.888,4.357,4.214c0,2.33-1.953,4.214-4.357,4.214c-2.403,0-4.351-1.885-4.351-4.214 C5.264,4.22,7.212,2.333,9.615,2.333z",
+				"plus": "M30.312,3.749c0,0-9.758,0-13.099,0c-5.992,0-11.634,4.205-11.634,9.462 c0,5.372,4.085,9.549,10.18,9.549c0.426,0,0.838-0.096,1.241-0.125c-0.399,0.755-0.675,1.566-0.675,2.452 c0,1.496,0.801,2.687,1.814,3.675c-0.761,0-1.506,0.008-2.316,0.008c-7.421,0.006-13.136,4.729-13.136,9.629 c0,4.83,6.265,7.854,13.686,7.854c8.462,0,13.139-4.807,13.139-9.635c0-3.871-1.144-6.189-4.675-8.691 c-1.207-0.854-3.517-2.934-3.517-4.158c0-1.432,0.408-2.138,2.566-3.825c2.207-1.725,3.774-3.785,3.774-6.611 c0-3.358-1.443-7.458-4.258-7.458h4.783L30.312,3.749z M25.916,35.781c0.101,0.449,0.164,0.908,0.164,1.377 c0,3.9-2.519,6.951-9.732,6.951c-5.131,0-8.836-3.246-8.836-7.148c0-3.822,4.597-7.008,9.73-6.949 c1.194,0.014,2.312,0.205,3.324,0.525C23.352,32.48,25.349,33.574,25.916,35.781z M17.697,21.228c-3.445-0.1-6.72-3.853-7.312-8.372 c-0.593-4.527,1.717-7.988,5.159-7.885c3.443,0.106,6.719,3.734,7.312,8.256C23.451,17.748,21.142,21.328,17.697,21.228z M40.938,20.733v-6.375h-4.25v6.375h-6.375v4.25h6.375v6.374h4.25v-6.374h6.375v-4.25H40.938z",
+				"pinterest": "M7.56,18.714c0,3.316,1.084,6.57,3.317,8.545c0.51,0.447,1.724,1.34,2.551,1.34 c0.703,0,0.829-0.826,0.958-1.401c0.957-3.316,0.127-1.912-1.084-4.657c-1.276-2.807-0.447-7.336,1.084-9.567 c2.87-4.402,6.187-5.997,11.609-5.997c3.061,0,5.422,1.148,7.146,2.615c6.122,5.166,1.911,21.751-5.553,20.923 c-7.461-0.83-1.402-9.952-1.402-13.97c0-6.188-8.548-5.23-8.548,2.679c0,2.743,1.085,3.509,0.896,4.21 c-1.149,3.824-1.915,8.166-2.936,12.182c-1.084,4.083-0.958,7.528-0.637,11.676c0,0.062,0.063,0.191,0.191,0.191 c0.126,0.061,0.19,0,0.254-0.065c2.934-2.934,4.784-7.653,5.487-10.526c0.382-1.467,0.892-3.253,1.212-4.784 c0.062-0.254,0.701,0.575,1.083,0.959c3.062,2.806,8.419,2.169,11.803,0.128c6.63-4.021,9.438-15.375,5.929-22.199 c-1.02-1.913-1.976-2.807-3.378-4.337c-5.743-5.805-18.244-5.422-24.368,0.382C9.856,10.102,7.56,13.674,7.56,18.714L7.56,18.714z",
+				"mail": "M4.916,14.045L25,30.477l20.084-16.432v-3.652H4.916V14.045z M4.916,36.411l9.864-10.958l-9.864-8.89V36.411z M45.084,36.679L34.942,25.492l10.142-8.797V36.679z M25,33.658l-8.216-6.833L4.916,39.606h40.168L33.198,26.825L25,33.658z",
+				"external": "M36.999,36.998H13V13.089L19,13V7h-12v35.998h35.998V27.999h-6V36.998z M25,7l6,6l-9,9l6,6l8.999-9l6,6V7H25z",
+				"source": "M33.18,33.18v5.453L46.812,25L33.18,11.367v5.454l8.18,8.18L33.18,33.18z M16.82,33.18 v5.453L3.187,25L16.82,11.367v5.454L8.64,25L16.82,33.18z M16.82,30.453h5.453L33.18,19.547h-5.453L16.82,30.453z"
+			}
+			function get(icon) {
+				if(icons[icon]){
+					return '<svg class="i-svg" height="50" version="1.1" width="50" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 50 50" space="preserve" data-icon="facebook," class="i-svg"><desc>Created with Snap</desc><defs></defs><path d="' + icons[icon] + '" fill="#ffffff"></path></svg>';
+				}
+				return false;
+			}
+			return {
+				get: get
+			}
+		})();
+		var Sharer = (function () {
+			function dimensions() {
+				var width = screen.width < 500 ? screen.width : 500;
+				var height = 300;
+				return {
+					height: height,
+					width: width
+				}
+			}
+			function getTitle(tag) {
+				if (tag.title) {
+					return tag.title;
+				} else {
+					var title = document.querySelector("title");
+					if (title) {
+						return title.innerHTML;
+					}
+				}
+				return "";
+			}
+			function getImage(tag) {
+				if (tag.src) {
+					return tag.src;
+				} else {
+					var img = document.querySelector("meta[property='og:image']");
+					if (img) {
+						return img.getAttribute("content") || "";
+					}
+				}
+				return "";
+			}
+			function run(tag) {
+				var params = {}
+				var url = encodeURIComponent(tag.getAttribute("href") || window.location.href);
+				var size = dimensions();
+				switch (tag.getAttribute("type")) {
+					case "facebook":
+						params.url = "https://www.facebook.com/sharer.php?s=100&p[url]=" + url;
+						params.title = "Facebook Sharer"
+						break;
+					case "twitter":
+						params.url = "https://twitter.com/share?text=" + getTitle(tag) + "&url=" + url;
+						params.title = "Twitter Sharer"
+						break;
+					case "pinterest":
+						params.url = "https://pinterest.com/pin/create/button/?url=" + url + "&media=" + getImage(tag);
+						params.title = "Pinterest Sharer"
+						break;
+					case "plus":
+						params.url = "https://plus.google.com/share?url=" + url;
+						params.title = "Google+ Sharer"
+						break;
+					case "linkedin":
+						params.url = "https://www.linkedin.com/shareArticle?mini=true&url=" + url + "&title=";
+						params.title = "Linkedin Sharer"
+						break;
+					case "mail":
+					case "email":
+						params.url = "mailto:" + url;
+						params.title = "_self";
+				}
+				params.other = "width=" + size.width + "px,height=" + size.height + "px";
+				return params;
+			}
+			return {
+				run: run
+			}
+		})();
+		function checkType(el) {
+			var type = el.getAttribute("type");
+			if (type &&
+				type.match(/^(facebook|twitter|plus|pinterest|github|linkedin|mail|external|source)$/i)) {
+				var icon = Icons.get(type);
+				el.class = "awesome-button " + type;
+				el.button.className = el.class;
+				if(icon){
+					console.log(el.text);
+					el.text = el.text ? (icon + " <b>" + el.text + "</b>").trim() : icon;
+					el.em.innerHTML = el.text;
+				}
+			}
+		}
+		function checkColor(el){
+			var color = el.getAttribute("color");
+			if(color && color.match(/^(green|teal|purple|pink|grey)$/i)){
+				el.class = (el.class + " " + color).trim();
+				el.button.className = el.class;
+			}
+		}
+		function checkDisabled(el){
+			var disabled = el.getAttribute("disabled");
+			if(disabled !== null && disabled !== undefined){
+				el.disabled(true);
+			}
+		}
+		function action(el){
+			if (el.getAttribute("href")) {
+				window.open(el.getAttribute("href"), el.getAttribute("target") || "");
+			} else {
+				if (typeof el.getAttribute("sharer") === "string") {
+					var sharer = Sharer.run(el);
+					window.open(sharer.url, sharer.title, sharer.other);
+				}
+			}
+		}
+		function resize(el){
+			var width = el.button.clientWidth,
+				em = el.em,
+				w = el.getAttribute("width");
+			if (w && w > 0) {
+				el.button.style.width = w + "px";
+				return;
+			} else {
+				if (em.clientHeight > 50) {
+					while (em.clientHeight > 50) {
+						width = width + 4;
+						el.button.style.width = width + "px";
+					}
+					el.button.style.width = width + 30 + "px";
+				}
+				if(em.clientWidth > el.button.clientWidth){
+					while (em.clientWidth > el.button.clientWidth) {
+						width = width + 4;
+						el.button.style.width = width + "px";
+					}
+					el.button.style.width = width + 30 + "px";
+				}
+			}
+		}
+		function events(el) {
+			el.button.addEventListener("mouseleave", function (event) {
+				if(el.isDisabled == true) return;
+				this.className = el.class;
+			});
+			el.button.addEventListener("mousemove", function (event) {
+				if(el.isDisabled == true) return;
+				var left = this.getBoundingClientRect().left,
+					width = this.offsetWidth,
+					direction = "";
+				event.pageX < (left + (width * .3)) ?
+					direction = "left" :
+				event.pageX > (left + (width * .65)) ?
+					direction = "right" :
+				direction = "middle"
+				this.className = (this.className.replace(/middle|right|left/i,"").trim() + " " + direction).trim();
+			});
+			el.button.addEventListener("mousedown", function (event) {
+				if(el.isDisabled == true) return;
+				var self = this;
+				self.className = ((self.className || "") + " active").trim();
+				if (el.time) clearTimeout(element.time);
+				el.time = setTimeout(function (e) {
+					var eventTrigger = new Event('action');
+					console.log("DA")
+					el.dispatchEvent(eventTrigger);
+					self.className = el.class + " middle";
+				}, 300);
+			});
+			el.button.addEventListener("click", function(event){
+				if(el.isDisabled == true) return;
+				action(el);
+			});
+		}
+		function getContent(nodes){
+			var text = []
+			for(var i in nodes){
+				if(nodes[i].nodeType == 1){
+					text.push(nodes[i].outerHTML);
+					continue;
+				}
+				if(nodes[i].nodeType == 3){
+					text.push(nodes[i].textContent);
+					continue;
+				}
+			}
+			return text.join(" ");
+		}
+		function init(el) {
+			var clone = mainDoc.importNode(template, true);
+			el.shadow = el.createShadowRoot();
+			el.shadow.appendChild(clone);
+			el.time = null;
+			el.em = el.shadow.querySelector('em');
+			el.button = el.shadow.querySelector('button');
+			el.content = el.shadow.querySelector("content");
+			el.text = getContent(el.content.getDistributedNodes());
+			el.class = "awesome-button";
+		}
+		var mainDoc = document,
+			thisDoc = (mainDoc._currentScript || mainDoc.currentScript).ownerDocument,
+			template = thisDoc.querySelector('template').content,
+			element = Object.create(HTMLElement.prototype);
+		element.createdCallback = function () {
+			init(this);
+			events(this);
+			checkType(this);
+			checkColor(this);
+			checkDisabled(this);
+			var self = this;
+			setTimeout(function(){
+				resize(self);
+				self.class = self.class + " v_";
+				self.button.className = self.class;
+			}, 1);
+		};
+		element.disabled = function(status){
+			if(status && !this.isDisabled){
+				// VAI DESABILTAR logo seria um DISABLED = true
+				this.isDisabled = true;
+				this.class = this.class + " disabled middle";
+				this.button.className = this.class;
+				return;
+			}
+			if(!status && this.isDisabled){
+				this.isDisabled = false;
+				this.class = this.class.replace(/(disabled|middle)/ig,"").trim();
+				this.button.className = this.class;
+				return;
+			}
+		}
+		element.attributeChangedCallback = function (attr, oldVal, newVal) {
+		};
+		mainDoc.registerElement('awesome-button', {
+			prototype: element
+		});
+	})(window, document);
+</script>
 
 
 <script>
@@ -37016,8 +37635,8 @@ event and do your own custom submission:
         '--primary-color-800': 'var(--paper-red-800)',
         '--primary-color-900': 'var(--paper-red-900)',
         '--accent-color': 'var(--paper-yellow-a700)',
-        '--accent-color-100': 'var(--paper-yellow-a100)',
-        '--accent-color-200': 'var(--paper-yellow-a200)',
+        '--accent-color-100': 'var(--paper-yellow-a400)',
+        '--accent-color-200': 'var(--paper-yellow-a400)',
         '--accent-color-300': 'var(--paper-yellow-a400)',
         '--accent-color-400': 'var(--paper-yellow-a700)',
         '--middle-color': 'var(--primary-color-200)',
@@ -43122,7 +43741,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         position: absolute;
         bottom: -36px;
         right: 0;
-        padding-right: 20px;
+        padding-right: 28px;
         background-color: #FFF;
         margin-bottom: 16px;
       }
@@ -43226,6 +43845,15 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         color: #9e9e9e;
       }
 
+      .shareIcon::shadow #icon {
+        width: 32px !important;
+        height: 32px !important;
+        margin-left: 16px;
+        margin-top: 2px;
+        margin-right: 16px;
+        color: var(--accent-color-100);
+      }
+
       .up-vote-icon {
         margin-left: 8px;
       }
@@ -43254,6 +43882,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           width: 250px;
         }
       }
+
+      .awesomeButtonContainer {
+        position: absolute;
+        bottom: 55px;
+        right: -32px;
+      }
+
+      .awesomeButton {
+        padding: 2px;
+      }
     </style>
 
     <iron-media-query query="(max-width: 360px)" query-matches="{{small}}"></iron-media-query>
@@ -43275,6 +43913,15 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <div id="actionDown" class="action-down">
         <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.vote.down')]]" icon$="[[endorseModeIcon(endorseMode,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
         <div class="action-text down-text">{{formatNumber(post.counter_endorsements_down)}}</div>
+      </div>
+      <div class="share">
+        <paper-icon-button title="[[t('shareInfo')]]" icon="social:share" on-tap="_toggleShare" class="shareIcon" id="shareButton"></paper-icon-button>
+      </div>
+      <div class="layout horizontal awesomeButtonContainer" hidden$="[[!showShareButtons]]">
+        <awesome-button href="/#!/post/[[post.id]]" class="awesomeButton" type="facebook" sharer=""></awesome-button>
+        <awesome-button href="/#!/post/[[post.id]]" class="awesomeButton" type="twitter" sharer=""></awesome-button>
+        <awesome-button href="/#!/post/[[post.id]]" class="awesomeButton" type="plus" sharer=""></awesome-button>
+        <awesome-button href="/#!/post/[[post.id]]" class="awesomeButton" type="pinterest" sharer=""></awesome-button>
       </div>
     </paper-material>
 
@@ -43327,7 +43974,26 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         allDisabled: {
           type: Boolean,
           value: false
+        },
+
+        showShareButtons: {
+          type: Boolean,
+          value: false
         }
+      },
+
+      _toggleShare: function () {
+        this.set('showShareButtons', !this.showShareButtons);
+      },
+
+      _shareMouseOver: function () {
+        this.set('showShareButtons', true);
+      },
+
+      _shareMouseOut: function () {
+        this.async(function () {
+          this.set('showShareButtons', false);
+        },1200);
       },
 
       _elevationPlusOne: function (elevation) {
@@ -46630,7 +47296,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     <iron-media-query query="(min-width: 985px)" query-matches="{{largeMode}}"></iron-media-query>
 
     <template is="dom-if" if="[[points]]">
-      <div class="layout horizontal center-center penContainer">
+      <div class="layout horizontal center-center penContainer" hidden="">
         <div class="howToWriteInfoText">[[t('point.howToWrite')]]</div>
         <iron-icon icon="editor:mode-edit" class="editIcon"></iron-icon>
       </div>
