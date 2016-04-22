@@ -30,7 +30,7 @@
 
   "activity": {
     "post": {
-      "new": "// Ný hugmynd //",
+      "new": "Ný hugmynd",
       "status": {
         "change": "Fréttir"
       }
@@ -68,7 +68,6 @@
   },
 
   "news": "Fréttir",
-
 
   "pages": {
     "addLocale": "Nýtt locale",
