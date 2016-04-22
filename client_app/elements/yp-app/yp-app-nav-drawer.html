@@ -147,9 +147,9 @@
 
       _reset: function () {
         if (window.appUser && window.appUser.memberships) {
-          this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 2));
-          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 2));
-          this.set('myDomains', _.take(window.appUser.memberships.DomainUsers, 2));
+          this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 4));
+          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 4));
+          this.set('myDomains', _.take(window.appUser.memberships.DomainUsers, 3));
         }
       },
 
