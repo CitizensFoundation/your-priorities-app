@@ -28,6 +28,7 @@
 <link rel="import" href="../yp-behaviors/fix-dialog.html">
 
 <link rel="import" href="yp-app-drawer.html">
+<link rel="import" href="yp-app-nav-drawer.html">
 
 <dom-module id="yp-app">
 
@@ -96,6 +97,10 @@
 
         <app-drawer id="drawer" align="end" position="right" swipe-open>
           <yp-app-drawer id="ypDrawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
+        </app-drawer>
+
+        <app-drawer id="navDrawer" align="start" position="left" swipe-open>
+          <yp-app-nav-drawer id="ypNavDrawer" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
         </app-drawer>
 
         <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
@@ -271,6 +276,10 @@
 
       listeners: {
         'yp-set-pages': '_setPages'
+      },
+
+      _toggleNavDrawer: function () {
+        this.$$("#navDrawer").toggle();
       },
 
       _setPages: function (event, pages) {

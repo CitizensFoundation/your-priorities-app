@@ -22,7 +22,6 @@
       :host {
         display: block;
         @apply(--layout-vertical);
-        width: 320px;
       }
 
       .description {
@@ -48,13 +47,18 @@
       .communityCard {
         cursor: pointer;
         height: 430px;
+        width: 320px;
         background-color: #fff;
         padding: 0;
         margin: 0;
       }
 
+      .communityCard[featured] {
+        width: 672px;
+      }
+
       iron-image {
-        width: 320px;
+        width: 336px;
         height: 180px;
       }
 
@@ -112,8 +116,7 @@
       }
 
       .community-name[featured] {
-        background-color: var(--accent-color);
-        font-size: 28px;
+        font-size: 46px;
       }
 
       yp-membership-button {
@@ -127,11 +130,19 @@
     </style>
 
     <template is="dom-if" if="[[community]]">
-      <paper-card class="communityCard" animated elevation="[[elevation]]" class="layout vertical flex">
-        <iron-image sizing="contain" preload src="[[communityLogoImagePath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
+      <paper-card featured$="[[featured]]" class="communityCard" animated elevation="[[elevation]]" class="layout vertical flex">
+        <div class="layout horizontal">
+          <iron-image sizing="cover" preload src="[[communityLogoImagePath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
+          <iron-image sizing="cover" preload src="[[communityLogoImageNextPath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
+        </div>
         <div class="informationText" on-tap="_goToCommunity">
           <div class="community-name" featured$="[[featured]]">[[communityName(community)]]</div>
-          <div class="description">[[communityDescription(community)]]</div>
+          <template is="dom-if" if="[[featured]]">
+            <div class="description">[[communityDescription(community,700)]]</div>
+          </template>
+          <template is="dom-if" if="[[!featured]]">
+            <div class="description">[[communityDescription(community)]]</div>
+          </template>
         </div>
         <yp-community-stats on-tap="_goToCommunity" class="stats" community="[[community]]"></yp-community-stats>
         <yp-membership-button community="[[community]]"></yp-membership-button>
@@ -146,7 +157,14 @@
       behaviors: [
         Polymer.appHelpers,
         Polymer.CommunityBehaviors
-      ]
+      ],
+
+      properties: {
+        featured: {
+          type: Boolean,
+          value: false
+        }
+      }
 
     });
   </script>

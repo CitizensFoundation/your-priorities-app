@@ -114,6 +114,16 @@
       }
     },
 
+    getImageFormatNextUrl: function(images, formatId) {
+      if (images && images.length>1) {
+        var formats = JSON.parse(images[images.length-2].formats);
+        if (formats && formats.length>0)
+          return formats[formatId];
+      } else {
+        return "";
+      }
+    },
+
     removeClass: function(element, classToRemove) {
       var newClassName = "";
       var classes = element.className.split(" ");

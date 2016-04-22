@@ -121,6 +121,68 @@ router.post('/:groupId/user_membership', auth.isLoggedIn, auth.can('view group')
   });
 });
 
+router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function(req, res) {
+  var invite, user, token;
+  async.series([
+    function(callback) {
+      crypto.randomBytes(20, function(error, buf) {
+        token = buf.toString('hex');
+        callback(error);
+      });
+    },
+    function(callback) {
+      models.User.find({
+        where: { email: req.params.userEmail },
+        attributes: ['id','email']
+      }).then(function (userIn) {
+        if (userIn) {
+          user = userIn;
+        }
+        callback();
+      }).catch(function (error) {
+        callback(error);
+      });
+    },
+    function(callback) {
+      models.Invite.create({
+        token: token,
+        expires_at: Date.now() + (3600000*24*30*365*1000),
+        type: models.Invite.INVITE_TO_GROUP,
+        group_id: req.params.groupId,
+        user_id: user ? user.id : null
+      }).then(function (inviteIn) {
+        if (inviteIn) {
+          invite = inviteIn;
+          callback();
+        } else {
+          callback('Invite not found')
+        }
+        callback();
+      }).catch(function (error) {
+        callback(error);
+      });
+    },
+    function(callback) {
+      models.AcActivity.inviteCreated({
+        email: req.params.userEmail,
+        user_id: user ? user.id : null,
+        group_id: req.params.groupId,
+        token: token}, function (error) {
+        callback(error);
+      });
+    }
+  ], function(error) {
+    if (error) {
+      log.error('Send Invite Error', { user: toJson(user), context: 'invite_user', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
+      res.sendStatus(500);
+    } else {
+      log.info('Send Invite Activity Created', { user: toJson(user), context: 'invite_user', loggedInUser: toJson(req.user) });
+      res.sendStatus(200);
+    }
+  });
+
+});
+
 router.delete('/:groupId/:userId/remove_admin', auth.can('edit group'), function(req, res) {
   getGroupAndUser(req.params.groupId, req.params.userId, null, function (error, group, user) {
     if (error) {

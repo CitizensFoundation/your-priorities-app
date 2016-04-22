@@ -51,9 +51,13 @@
     "edit": "Breyta vef"
   },
 
+  "domains": "Vefur",
+  "communities": "Svæði",
+  "groups": "Hópar",
+
   "create": "Senda inn",
   "cancel": "Hætta við",
-  "communities": "Svæði",
+
   "community": {
     "edit": "Breyta svæði",
     "delete": "Eyða svæði",
@@ -63,7 +67,7 @@
     "secret": "Leynilegt svæði"
   },
 
-  "news": "Fréttir",
+  "news": "Fréttir",s
 
 
   "pages": {
@@ -75,8 +79,6 @@
   },
 
   "participate": "Taktu þátt",
-
-  "groups": "Hópar",
 
   "events": "Viðburðir",
 

@@ -1,0 +1,174 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
+
+<link rel="import" href="../yp-user/yp-user-info.html">
+
+<dom-module id="yp-app-nav-drawer">
+
+  <template>
+
+    <style>
+
+      paper-material{
+        z-index: 1000;
+        background-color: #F00;
+      }
+
+      app-header-layout {
+        color: #333;
+        z-index: 1000;
+      }
+
+      .header {
+        padding-top: 16px;
+        font-weight: bold;
+        padding-bottom: 8px;
+        font-size: 18px;
+        padding-left: 8px;
+      }
+
+      .thumbNail {
+        width: 42px;
+        height: 24px;
+        padding-top: 24px;
+        margin-left: 12px;
+      }
+
+      .material {
+        background-color: var(--primary-color-800);
+      }
+    </style>
+
+    <paper-material elevation="1" class="material">
+      <app-header-layout has-scrolling-region>0
+        <app-header fixed>
+          <div class="layout vertical">
+            <!--
+            <div class="header">[[t('Betri Reykjavik')]]</div>
+            <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[t('Home')]]</paper-item>
+            <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[t('Communities')]]</paper-item>
+            <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[t('News')]]</paper-item>
+            <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[t('Other Social Media')]]</paper-item>
+            -->
+
+            <div class="header">[[t('domains')]]</div>
+            <template is="dom-repeat" items="[[myDomains]]" as="domain">
+              <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[domain.name]]</paper-item>
+            </template>
+
+            <div class="header">[[t('communities')]]</div>
+            <template is="dom-repeat" items="[[myCommunities]]" as="community">
+              <div class="layout horizontal">
+                <iron-image sizing="contain" class="thumbNail" src="https://yrpri6-test.s3.amazonaws.com/Fy/df/m8-large.png"></iron-image>
+                <paper-item data-args$="[[community.id]]" on-tap="_goToCommunity">[[community.name]]</paper-item>
+              </div>
+            </template>
+
+            <div class="header">[[t('groups')]]</div>
+            <template is="dom-repeat" items="[[myGroups]]" as="group">
+              <paper-item data-args$="[[group.id]]" on-tap="_goToGroup">[[group.name]]</paper-item>
+            </template>
+          </div>
+        </app-header>
+      </app-header-layout>
+    </paper-material>
+    <iron-signals on-iron-signal-got-memberships="_userMembershipsReady"></iron-signals>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-app-nav-drawer',
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        user: {
+          type: Object,
+          observer: '_userChanged'
+        },
+
+        opened: {
+          type: Boolean
+        },
+
+        route: {
+          type: String,
+          observer: 'routeChanged'
+        },
+
+        myGroups: {
+          type: Array
+        },
+
+        myCommunities: {
+          type: Array
+        },
+
+        myDomains: {
+          type: Array
+        }
+      },
+
+      _goToGroup: function (event) {
+        page("/group/"+ event.target.getAttribute('data-args'));
+        this.fire('yp-toggle-nav-drawer');
+      },
+
+      _goToCommunity: function (event) {
+        page("/community/"+ event.target.getAttribute('data-args'));
+        this.fire('yp-toggle-nav-drawer');
+      },
+
+      _goToDomain: function (event) {
+        page("/domain/"+ event.target.getAttribute('data-args'));
+        this.fire('yp-toggle-nav-drawer');
+      },
+
+      _userMembershipsReady: function () {
+        this._reset();
+      },
+
+      _userChanged: function (user) {
+        if (user) {
+          this._reset();
+        }
+      },
+
+      _reset: function () {
+        if (window.appUser && window.appUser.memberships) {
+          this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 2));
+          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 2));
+          this.set('myDomains', _.take(window.appUser.memberships.DomainUsers, 2));
+        }
+      },
+
+      _openEdit: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userEdit");
+        dialog.setup(this.user, false, null);
+        dialog.open('edit', { userId: this.user.id });
+      },
+
+      routeChanged: function(newValue, oldValue) {
+      }
+    });
+  </script>
+</dom-module>

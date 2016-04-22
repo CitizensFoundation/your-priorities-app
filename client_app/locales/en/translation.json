@@ -55,6 +55,10 @@
     "edit": "Edit domain"
   },
 
+  "domains": "My Domains",
+  "communities": "My Communities",
+  "groups": "My Groups",
+
   "community": {
     "edit": "Edit community",
     "delete": "Delete community",

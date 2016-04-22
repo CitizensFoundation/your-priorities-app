@@ -221,11 +221,14 @@ router.get('/memberships', function (req, res) {
         models.User.find({
           where: {id: req.user.id},
           attributes: ['id'],
+          order: [
+            [ { model: models.Domain, as: 'DomainUsers' } , 'counter_users', 'desc' ]
+          ],
           include: [
             {
               model: models.Domain,
               as: 'DomainUsers',
-              attributes: ['id','name'],
+              attributes: ['id','name','counter_users'],
               required: false
             }
           ]
@@ -240,11 +243,14 @@ router.get('/memberships', function (req, res) {
         models.User.find({
           where: {id: req.user.id},
           attributes: ['id'],
+          order: [
+            [ { model: models.Community, as: 'CommunityUsers' } , 'counter_users', 'desc' ]
+          ],
           include: [
             {
               model: models.Community,
               as: 'CommunityUsers',
-              attributes: ['id','name'],
+              attributes: ['id','name','counter_users'],
               required: false
             }
           ]
@@ -259,11 +265,14 @@ router.get('/memberships', function (req, res) {
         models.User.find({
           where: {id: req.user.id},
           attributes: ['id'],
+          order: [
+            [ { model: models.Group, as: 'GroupUsers' } , 'counter_users', 'desc' ]
+          ],
           include: [
             {
               model: models.Group,
               as: 'GroupUsers',
-              attributes: ['id','name'],
+              attributes: ['id','name','counter_users'],
               required: false
             }
           ]
