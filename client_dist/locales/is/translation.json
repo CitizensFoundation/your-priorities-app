@@ -225,6 +225,7 @@
   "next": "áfram",
 
   "group": {
+    "group": "Hópur",
     "admins": "Hópur vefstjórar",
     "users": "Hópur notendur",
     "new": "Nýr hópur",

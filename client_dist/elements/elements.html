@@ -45392,25 +45392,44 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       iron-image {
         width: 100px;
         height: 56px;
-        margin-left: 32px;
+        margin-top: 2px;
+        margin-left: 16px;
         margin-right: 16px;
 
       }
 
       .group-name {
-        padding-top: 10px;
+        padding-top: 0;
+        margin: 0 0;
+        color: #555555;
       }
 
       .cursor {
         cursor: pointer;
       }
+
+      .groupDescription {
+        max-width: 500px;
+        font-size: 11px;
+        color: #aaa;
+        padding-left: 2px;
+        padding-top: 4px;
+      }
+
+      .groupText {
+        color: #999;
+        text-transform: uppercase;
+      }
+
     </style>
     <div class="layout horizontal cursor" on-tap="_goToGroup">
       <div>
         <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath(group)]]"></iron-image>
       </div>
-      <div class="layout flex">
+      <div class="layout vertical flex">
+        <div class="groupText">[[t('group.group')]]</div>
         <h2 class="group-name">[[groupName(group)]]</h2>
+        <div class="groupDescription"></div>
       </div>
     </div>
   </template>
@@ -45604,10 +45623,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
               <div class="postPadding" hidden$="[[!postId]]">
               </div>
               <div class="layout horizontal" hidden$="[[postId]]">
-                <template is="dom-if" if="[[activity.Group]]">
-                  <ac-activity-group group="[[activity.Group]]"></ac-activity-group>
-                </template>
-
+                <div hidden$="[[groupId]]">
+                  <template is="dom-if" if="[[activity.Group]]">
+                    <ac-activity-group group="[[activity.Group]]"></ac-activity-group>
+                  </template>
+                </div>
                 <template is="dom-if" if="[[activity.Post]]">
                   <div class="layout horizontal flex end-justified participateButton">
                     <paper-button data-args$="[[activity]]" on-tap="_joinPost">[[t('participate')]]</paper-button>
