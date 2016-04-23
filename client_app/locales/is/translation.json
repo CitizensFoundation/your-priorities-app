@@ -51,9 +51,13 @@
     "edit": "Breyta vef"
   },
 
-  "domains": "Vefur",
+  "domains": "Vefir",
   "communities": "Svæði",
   "groups": "Hópar",
+
+  "myDomains":  "Mínir vefir",
+  "myCommunities": "Mín svæði",
+  "myGroups": "Mínir hópar",
 
   "create": "Senda inn",
   "cancel": "Hætta við",

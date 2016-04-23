@@ -34384,7 +34384,7 @@ event and do your own custom submission:
 <dom-module id="yp-user-image" assetpath="yp-user/">
   <template>
     <style>
-      :host {
+      iron-image {
         display: block;
         vertical-align: text-top;
         height: 48px;
@@ -34392,8 +34392,8 @@ event and do your own custom submission:
       }
 
       .small {
-        height: 24px;
-        width: 24px;
+        height: 30px;
+        width: 30px;
         background-color: var(--primary-color-lighter,#434343);
       }
 
@@ -34441,8 +34441,10 @@ event and do your own custom submission:
           <iron-image sizing="cover" title="{{user.name}}" preload="" src$="[[computeFacebookSrc(user)]]" class$="[[computeClass(small)]]"></iron-image>
         </template>
 
-        <template is="dom-if" if="[[!user.facebook_id]]">
-          <iron-image sizing="cover" title="{{user.name}}" preload="" src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class$="[[computeClass(small)]]"></iron-image>
+        <template is="dom-if" if="[[!noDefault]]">
+          <template is="dom-if" if="[[!user.facebook_id]]">
+            <iron-image sizing="cover" title="{{user.name}}" preload="" src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class$="[[computeClass(small)]]"></iron-image>
+          </template>
         </template>
 
       </template>
@@ -34478,6 +34480,11 @@ event and do your own custom submission:
         profileImageUrl: {
           type: String,
           value: null
+        },
+
+        noDefault: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -44481,17 +44488,18 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       .users {
         @apply(--layout-horizontal);
+
       }
 
       yp-user-image {
-        padding: 4px;
+        padding: 2px;
       }
     </style>
 
     <template is="dom-if" restamp="true" if="[[endorsements]]">
       <div class="users">
-        <template is="dom-repeat" items="[[endorsements]]" as="endorsement" index-as="endorsementIndex">
-          <yp-user-image small="" user="[[endorsement.User]]"></yp-user-image>
+        <template is="dom-repeat" items="[[limitFrom(endorsements, 0, userImagesLimit)]]" as="endorsement" index-as="endorsementIndex">
+          <yp-user-image small="" no-default="" user="[[endorsement.User]]"></yp-user-image>
         </template>
 
         <div id="moreImages" style="display:none;">
@@ -44505,7 +44513,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
               <yp-user-image user="[[endorsement.User]]" small=""></yp-user-image>
             </template>
           </span>
-
         </div>
       </div>
 
@@ -44536,7 +44543,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         userImagesLimit: {
           type: Number,
-          value: 42
+          value: 10
         },
 
         post: {
@@ -44600,14 +44607,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       _response: function (event, detail, sender) {
         this.set('endorsements', detail.response);
         if (this.endorsements.length > this.userImagesLimit) {
-          this.$$("#moreImages").style.display = 'inline';
+          this.async(function () {
+            this.$$("#moreImages").style.display = 'inline';
+          }, 100);
         }
       },
 
       _moreUserImages: function () {
         this.$$("#moreImagesButton").style.display = 'none';
         this.$$("#numberOfMoreUserImages").style.display = 'none';
-        this.$.restOfUserImages.style.display = 'inline';
+        this.$$("#restOfUserImages").style.display = 'inline';
       },
 
       _computeUrl: function (post) {
@@ -46081,7 +46090,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <div class="postName">
         [[activity.Post.name]]
       </div>
-      <div class="statusChange">[[formatContent(activity.PostStatusChange)]]</div>
+      <div id="statusChange" class="statusChange"></div>
     </div>
   </template>
 
@@ -46097,13 +46106,22 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       properties: {
 
         activity: {
-          type: Object
+          type: Object,
+          observer: '_activityChanged'
+        }
+      },
+
+      _activityChanged: function (newValue) {
+        if (newValue) {
+          var content = this.formatContent(newValue.PostStatusChange);
+          this.$.statusChange.innerHTML = content;
         }
       },
 
       formatContent: function (statusUpdate) {
         if (statusUpdate && statusUpdate.content) {
-          return this.truncate(this.trim(statusUpdate.content), 500000, '...');
+          var truncated = this.truncate(this.trim(statusUpdate.content), 500000, '...');
+          return truncated.replace(/(\r\n|\n|\r)/g,"<br />");
         } else {
           return '';
         }
@@ -48311,7 +48329,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       .card-actions {
         position: absolute;
-        bottom: 4px;
+        bottom: 0;
         right: 42px;
         width: 420px;
       }
@@ -48408,7 +48426,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .description {
-        padding-bottom: 8px;
+        padding-bottom: 2px;
         padding-left: 8px;
         padding-right: 8px;
         cursor: pointer;
@@ -48452,7 +48470,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         </paper-material>
       </div>
       <template is="dom-if" if="[[headerMode]]">
-
       </template>
     </template>
   </template>
@@ -49014,7 +49031,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       yp-post-card {
-        padding-bottom: 42px;
+        padding-bottom: 52px;
       }
 
       #outerRegion {
@@ -52822,19 +52839,19 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         <app-header fixed="">
           <div class="layout vertical">
 
-            <div class="header">[[t('domains')]]</div>
+            <div class="header">[[t('myDomains')]]</div>
             <template is="dom-repeat" items="[[myDomains]]" as="domain">
               <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[domain.name]]</paper-item>
             </template>
 
-            <div class="header">[[t('communities')]]</div>
+            <div class="header">[[t('myCommunities')]]</div>
             <template is="dom-repeat" items="[[myCommunities]]" as="community">
               <div class="layout horizontal">
                 <paper-item data-args$="[[community.id]]" on-tap="_goToCommunity">[[community.name]]</paper-item>
               </div>
             </template>
 
-            <div class="header">[[t('groups')]]</div>
+            <div class="header">[[t('myGroups')]]</div>
             <template is="dom-repeat" items="[[myGroups]]" as="group">
               <paper-item data-args$="[[group.id]]" on-tap="_goToGroup">[[group.name]]</paper-item>
             </template>

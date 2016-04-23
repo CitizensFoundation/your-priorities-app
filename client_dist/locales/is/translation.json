@@ -51,9 +51,13 @@
     "edit": "Breyta vef"
   },
 
-  "domains": "Vefur",
+  "domains": "Vefir",
   "communities": "Svæði",
   "groups": "Hópar",
+
+  "myDomains":  "Mínir vefir",
+  "myCommunities": "Mín svæði",
+  "myGroups": "Mínir hópar",
 
   "create": "Senda inn",
   "cancel": "Hætta við",
@@ -187,8 +191,8 @@
   },
   "point": {
     "point": "Rök",
-    "for": "Rök með...",
-    "against": "Rök á móti...",
+    "for": "Með...",
+    "against": "Á móti...",
     "add_up": "Bæta við rökum með",
     "add_down": "Bæta við rökum á móti",
     "helpful": "Hjálplegt",

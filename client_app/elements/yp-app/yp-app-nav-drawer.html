@@ -60,19 +60,19 @@
         <app-header fixed>
           <div class="layout vertical">
 
-            <div class="header">[[t('domains')]]</div>
+            <div class="header">[[t('myDomains')]]</div>
             <template is="dom-repeat" items="[[myDomains]]" as="domain">
               <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[domain.name]]</paper-item>
             </template>
 
-            <div class="header">[[t('communities')]]</div>
+            <div class="header">[[t('myCommunities')]]</div>
             <template is="dom-repeat" items="[[myCommunities]]" as="community">
               <div class="layout horizontal">
                 <paper-item data-args$="[[community.id]]" on-tap="_goToCommunity">[[community.name]]</paper-item>
               </div>
             </template>
 
-            <div class="header">[[t('groups')]]</div>
+            <div class="header">[[t('myGroups')]]</div>
             <template is="dom-repeat" items="[[myGroups]]" as="group">
               <paper-item data-args$="[[group.id]]" on-tap="_goToGroup">[[group.name]]</paper-item>
             </template>
