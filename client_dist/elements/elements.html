@@ -32111,7 +32111,6 @@ event and do your own custom submission:
       }
 
       .buttons {
-        height: 20%;
       }
 
       .scrollerDialog {
@@ -46433,7 +46432,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
               </div>
               <div class="layout horizontal" hidden$="[[postId]]">
                 <div hidden$="[[groupId]]">
-                  <template is="dom-if" if="[[activity.Group]]">
+                  <template is="dom-if" if="[[_showGroup(activity.Group)]]">
                     <ac-activity-group group="[[activity.Group]]"></ac-activity-group>
                   </template>
                 </div>
@@ -46447,7 +46446,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           </div>
         </template>
       </iron-list>
-
       <div class="layout horizontal center-center">
         <yp-ajax id="ajax" large-spinner="" on-response="_activitiesResponse"></yp-ajax>
         <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner="" on-response="_activityDeletedResponse"></yp-ajax>
@@ -46525,6 +46523,18 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         activityIdToDelete: {
           type: Number
+        }
+      },
+
+      _showGroup: function (group) {
+        if (group) {
+          if (group.name == 'hidden_public_group_for_domain_level_points') {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return false;
         }
       },
 
@@ -50191,11 +50201,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           <iron-image sizing="cover" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
           <div id="embedHtml" hidden$="[[!embedData.html]]"></div>
         </div>
-        <div class="title">
-          <h2>[[embedData.title]]</h2>
-        </div>
-        <div class="description">
-          [[embedData.description]]
+        <div class="layout vertical center-center">
+          <div class="title">
+            <h2>[[embedData.title]]</h2>
+          </div>
+          <div class="description">
+            [[embedData.description]]
+          </div>
         </div>
       </a>
     </div>
@@ -52926,8 +52938,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _reset: function () {
         if (window.appUser && window.appUser.memberships) {
-          this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 4));
-          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 4));
+          this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 7));
+          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 7));
           this.set('myDomains', _.take(window.appUser.memberships.DomainUsers, 3));
         }
       },
