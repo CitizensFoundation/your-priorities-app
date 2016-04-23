@@ -213,7 +213,7 @@ auth.role('community.viewUser', function (community, req, done) {
     } else if (community.user_id === req.user.id) {
       done(null, true);
     } else {
-      community.hasUser(req.user).then(function (result) {
+      community.hasCommunityUser(req.user).then(function (result) {
         if (result) {
           done(null, true);
         } else {
@@ -268,7 +268,7 @@ auth.role('group.viewUser', function (group, req, done) {
     } else if (group.user_id === req.user.id) {
       done(null, true);
     } else {
-      group.hasUser(req.user).then(function (result) {
+      group.hasGroupUsers(req.user).then(function (result) {
         if (result) {
           done(null, true);
         } else {
@@ -360,7 +360,7 @@ auth.role('post.viewUser', function (post, req, done) {
     } else if (post.user_id === req.user.id) {
       done(null, true);
     } else {
-      group.hasUser(req.user).then(function (result) {
+      group.hasGroupUsers(req.user).then(function (result) {
         if (result) {
           done(null, true);
         } else {
@@ -386,7 +386,7 @@ auth.role('post.vote', function (post, req, done) {
     } else if (post.user_id === req.user.id) {
       done(null, true);
     } else {
-      group.hasUser(req.user).then(function (result) {
+      group.hasGroupUsers(req.user).then(function (result) {
         if (result) {
           done(null, true);
         } else {
@@ -494,7 +494,7 @@ auth.role('point.viewUser', function (point, req, done) {
       } else if (point.user_id === req.user.id) {
         done(null, true);
       } else {
-        group.hasUser(req.user).then(function (result) {
+        group.hasGroupUsers(req.user).then(function (result) {
           if (result) {
             done(null, true);
           } else {
@@ -539,7 +539,7 @@ auth.role('image.viewUser', function (image, req, done) {
       } else if (point.user_id === req.user.id) {
         done(null, true);
       } else {
-        group.hasUser(req.user).then(function (result) {
+        group.hasGroupUsers(req.user).then(function (result) {
           if (result) {
             done(null, true);
           } else {
@@ -589,7 +589,7 @@ auth.role('point.vote', function (point, req, done) {
       } else if (point.user_id === req.user.id) {
         done(null, true);
       } else {
-        group.hasUser(req.user).then(function (result) {
+        group.hasGroupUsers(req.user).then(function (result) {
           if (result) {
             done(null, true);
           } else {
@@ -665,7 +665,7 @@ auth.role('category.viewUser', function (category, req, done) {
     } else if (category.user_id === req.user.id) {
       done(null, true);
     } else {
-      group.hasUser(req.user).then(function (result) {
+      group.hasGroupUsers(req.user).then(function (result) {
         if (result) {
           done(null, true);
         } else {
@@ -749,7 +749,7 @@ auth.role('createCommunityGroup.createGroup', function (community, req, done) {
     } else if (community.user_id === req.user.id) {
       done(null, true);
     } else {
-      community.hasUser(req.user).then(function (result) {
+      community.hasCommunityUsers(req.user).then(function (result) {
         if (result) {
           done(null, true);
         } else {
@@ -783,7 +783,7 @@ auth.role('createDomainCommunity.createCommunity', function (domain, req, done) 
     } else if (domain.user_id === req.user.id) {
       done(null, true);
     } else {
-      domain.hasUser(req.user).then(function (result) {
+      domain.hasDomainUsers(req.user).then(function (result) {
         if (result) {
           done(null, true);
         } else {
@@ -817,7 +817,7 @@ auth.role('createDomainOrganization.createDomainOrganization', function (domain,
     } else if (domain.user_id === req.user.id) {
       done(null, true);
     } else {
-      domain.hasUser(req.user).then(function (result) {
+      domain.hasDomainUsers(req.user).then(function (result) {
         if (result) {
           done(null, true);
         } else {
@@ -839,7 +839,7 @@ auth.role('createCommunityOrganization.createCommunityOrganization', function (d
     } else if (community.user_id === req.user.id) {
       done(null, true);
     } else {
-      community.hasUser(req.user).then(function (result) {
+      community.hasCommunityUsers(req.user).then(function (result) {
         if (result) {
           done(null, true);
         } else {
