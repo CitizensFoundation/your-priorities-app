@@ -46076,18 +46076,29 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         padding-left: 32px;
         padding-right: 32px;
         padding-top: 8px;
+        font-size: 19px;
       }
 
       .postName {
         padding-left: 32px;
         font-weight: bold;
-        font-size: 24px;
+        font-size: 19px;
+      }
+
+      .groupName {
+        padding-left: 32px;
+        padding-top: 2px;
+        font-size: 14px;
+        padding-bottom: 8px;
       }
     </style>
 
     <div class="layout vertical">
       <div class="postName">
         [[activity.Post.name]]
+      </div>
+      <div class="groupName">
+        [[activity.Group.name]]
       </div>
       <div id="statusChange" class="statusChange"></div>
     </div>
@@ -46382,7 +46393,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         <template>
           <div>
             <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
-              <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
+              <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
               <div class="layout horizontal topHeader">
                 <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                   <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
