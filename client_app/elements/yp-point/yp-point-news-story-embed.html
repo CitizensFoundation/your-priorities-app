@@ -49,11 +49,13 @@
           <iron-image sizing="cover" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
           <div id="embedHtml" hidden$="[[!embedData.html]]"></div>
         </div>
-        <div class="title">
-          <h2>[[embedData.title]]</h2>
-        </div>
-        <div class="description">
-          [[embedData.description]]
+        <div class="layout vertical center-center">
+          <div class="title">
+            <h2>[[embedData.title]]</h2>
+          </div>
+          <div class="description">
+            [[embedData.description]]
+          </div>
         </div>
       </a>
     </div>
