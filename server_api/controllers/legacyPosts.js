@@ -1,0 +1,49 @@
+var express = require('express');
+var router = express.Router();
+var models = require("../models");
+var auth = require('../authorization');
+var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
+
+router.get('/:id', function(req, res) {
+  var cleanLegacyId = req.params.id.split("-")[0];
+  models.Post.find({
+    where: { legacy_post_id: cleanLegacyId },
+    include: [
+      {
+        model: models.Group,
+        required: true,
+        attributes: ['id'],
+        include: [
+          {
+            model: models.Community,
+            required: true,
+            attributes: ['id'],
+            include: [
+              {
+                model: models.Domain,
+                attributes: ['id'],
+                where: {
+                  id: 3 // req.ypDomain.id
+                },
+                required: true
+              }
+            ]
+
+          }
+        ]
+      }
+    ]
+  }).then(function(post) {
+    if (post) {
+      res.redirect(301, 'https://betri.betrireykjavik.is/#!/post/' + post.id);
+    } else {
+      res.sendStatus(404);
+    }
+  }).catch(function(error) {
+    log.error({err: error, context: 'legacy_post_id'});
+    res.sendStatus(500);
+  });
+});
+
+module.exports = router;

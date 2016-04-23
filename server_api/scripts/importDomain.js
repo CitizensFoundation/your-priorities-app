@@ -621,6 +621,8 @@ async.series([
       incoming['id'] = null;
 
       incoming['legacy_user_id'] = oldId;
+      incoming['legacy_new_domain_id'] = currentDomain.id;
+
       incoming['notifications_settings'] = defaultNotificationsSettings(incoming.email);
 
       var buddyIconUrl = incoming['buddy_icon'];

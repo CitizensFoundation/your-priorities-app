@@ -23,9 +23,9 @@
         width: 800px;
         height: 90px;
         margin-top: 24px;
-        padding: 16px;
-        background-color: var(--primary-color-300);
-        color: #FFF;
+        padding: 13px;
+        background-color: var(--primary-background-color);
+        color: var(--primary-color-600);
         font-size: 22px;
       }
 
@@ -75,7 +75,7 @@
       }
 
       paper-fab {
-        padding-right: 16px;
+        margin-right: 12px;
       }
 
       iron-icon {
@@ -91,11 +91,10 @@
 
     <paper-card elevation="[[elevation]]" class="postCard">
       <div class="layout horizontal">
-        <div class="layout flex introText">[[t('post.addNewIntroBoxText')]]</div>
-        <iron-icon icon="trending-flat"></iron-icon>
         <div class="layout horizontal center-center">
           <paper-fab on-tap="_newPost" icon="lightbulb-outline"></paper-fab>
         </div>
+        <div class="layout flex introText">[[t('post.addNewIntroBoxText')]]</div>
       </div>
     </paper-card>
   </template>

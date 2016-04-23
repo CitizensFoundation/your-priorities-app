@@ -34,6 +34,10 @@ var points = require('./controllers/points');
 var users = require('./controllers/users');
 var categories = require('./controllers/categories');
 var images = require('./controllers/images');
+
+var legacyPosts = require('./controllers/legacyPosts');
+var legacyUsers = require('./controllers/legacyUsers');
+
 var models = require('./models');
 var auth = require('./authorization');
 var log = require('./utils/logger');
@@ -260,6 +264,9 @@ app.use('/api/categories', categories);
 app.use('/api/users', users);
 app.use('/api/news_feeds', news_feeds);
 app.use('/api/activities', activities);
+
+app.use('/ideas', legacyPosts);
+app.use('/users', legacyUsers);
 
 app.use(function(err, req, res, next) {
   if (err instanceof auth.UnauthorizedError) {
