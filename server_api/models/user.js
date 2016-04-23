@@ -34,7 +34,8 @@ module.exports = function(sequelize, DataTypes) {
     last_login_at: DataTypes.DATE,
     social_points: DataTypes.INTEGER,
     legacy_user_id: DataTypes.INTEGER,
-    // legacy_new_domain_id: DataTypes.INTEGER,
+    legacy_new_domain_id: DataTypes.INTEGER,
+    theme_id: { type: DataTypes.INTEGER, defaultValue: null },
     legacy_passwords_disabled: { type: DataTypes.BOOLEAN, defaultValue: false }
   }, {
     underscored: true,
