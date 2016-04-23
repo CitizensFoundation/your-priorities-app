@@ -46243,7 +46243,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .activity {
-        margin-bottom: 24px;
+        margin-bottom: 32px;
         background-color: #FFF;
         width: 100%;
         height: 100%;
@@ -46364,7 +46364,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <iron-list id="list" items="[[activities]]" as="activity">
         <template>
           <div>
-            <paper-material elevation="2" class="layout vertical activity" tabindex$="[[tabIndex]]">
+            <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
               <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
               <div class="layout horizontal topHeader">
                 <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
@@ -46507,6 +46507,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         activityIdToDelete: {
           type: Number
+        }
+      },
+
+      _elevationForType: function (type) {
+        if (type=='activity.post.new') {
+          return 5;
+        } else if (type=='activity.post.status.change') {
+          return 3;
+        } else {
+          return 2;
         }
       },
 
