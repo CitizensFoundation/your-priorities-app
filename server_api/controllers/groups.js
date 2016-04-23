@@ -519,11 +519,11 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     include: [
       {
         model: models.Community,
-        attributes: ['id','theme_id'],
+        attributes: ['id','theme_id','name'],
         include: [
           {
             model: models.Domain,
-            attributes: ['id','theme_id']
+            attributes: ['id','theme_id','name']
           }
         ]
       },
