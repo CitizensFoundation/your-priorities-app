@@ -51,7 +51,7 @@ router.get('/:domainId/pages', auth.can('view domain'), function(req, res) {
       log.error('Could not get pages for domain', { err: error, context: 'pages', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      log.info('Got Pages', {context: 'pages', user: toJson(req.user.simple()) });
+      log.info('Got Pages', {context: 'pages', user: user ? toJson(req.user.simple()) : null });
       res.send(pages);
     }
   });
