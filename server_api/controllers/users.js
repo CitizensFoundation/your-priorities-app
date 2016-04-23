@@ -266,7 +266,7 @@ router.get('/memberships', function (req, res) {
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
-            [ { model: models.Group, as: 'GroupUsers' } , 'counter_users', 'asc' ]
+            [ { model: models.Group, as: 'GroupUsers' } , 'counter_users', 'desc' ]
           ],
           include: [
             {
@@ -583,7 +583,7 @@ router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
     ]
   }).then(function (invite) {
     if (invite) {
-      //invite.joined_at = Date.now();
+      invite.joined_at = Date.now();
       invite.save().then(function (results) {
         if (invite.Group) {
           invite.Group.addGroupUsers(req.user).then(function (error) {
