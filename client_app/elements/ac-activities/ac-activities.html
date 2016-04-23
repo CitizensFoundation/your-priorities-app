@@ -163,7 +163,7 @@
         <template>
           <div>
             <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
-              <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
+              <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
               <div class="layout horizontal topHeader">
                 <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                   <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
