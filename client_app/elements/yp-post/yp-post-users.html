@@ -28,7 +28,7 @@
     <template is="dom-if" restamp="true" if="[[endorsements]]">
       <div class="users">
         <template is="dom-repeat" items="[[endorsements]]" as="endorsement" index-as="endorsementIndex">
-          <yp-user-image small user="[[endorsement.User]]"></yp-user-image>
+          <yp-user-image small no-default user="[[endorsement.User]]"></yp-user-image>
         </template>
 
         <div id="moreImages" style="display:none;">
@@ -42,7 +42,6 @@
               <yp-user-image user="[[endorsement.User]]" small=""></yp-user-image>
             </template>
           </span>
-
         </div>
       </div>
 
