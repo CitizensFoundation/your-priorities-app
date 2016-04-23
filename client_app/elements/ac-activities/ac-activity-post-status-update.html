@@ -33,7 +33,7 @@
       <div class="postName">
         [[activity.Post.name]]
       </div>
-      <div class="statusChange">[[formatContent(activity.PostStatusChange)]]</div>
+      <div id="statusChange" class="statusChange"></div>
     </div>
   </template>
 
@@ -49,13 +49,22 @@
       properties: {
 
         activity: {
-          type: Object
+          type: Object,
+          observer: '_activityChanged'
+        }
+      },
+
+      _activityChanged: function (newValue) {
+        if (newValue) {
+          var content = this.formatContent(newValue.PostStatusChange);
+          this.$.statusChange.innerHTML = content;
         }
       },
 
       formatContent: function (statusUpdate) {
         if (statusUpdate && statusUpdate.content) {
-          return this.truncate(this.trim(statusUpdate.content), 500000, '...');
+          var truncated = this.truncate(this.trim(statusUpdate.content), 500000, '...');
+          return truncated.replace(/(\r\n|\n|\r)/g,"<br />");
         } else {
           return '';
         }
