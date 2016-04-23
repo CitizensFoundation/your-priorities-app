@@ -14,10 +14,12 @@
     <style>
       :host {
         display: block;
+        max-height: 32px;
       }
 
       .users {
         @apply(--layout-horizontal);
+
       }
 
       yp-user-image {
@@ -27,7 +29,7 @@
 
     <template is="dom-if" restamp="true" if="[[endorsements]]">
       <div class="users">
-        <template is="dom-repeat" items="[[endorsements]]" as="endorsement" index-as="endorsementIndex">
+        <template is="dom-repeat" items="[[limitFrom(endorsements, 0, userImagesLimit)]]" as="endorsement" index-as="endorsementIndex">
           <yp-user-image small no-default user="[[endorsement.User]]"></yp-user-image>
         </template>
 
@@ -72,7 +74,7 @@
 
         userImagesLimit: {
           type: Number,
-          value: 42
+          value: 10
         },
 
         post: {

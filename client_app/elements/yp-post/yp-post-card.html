@@ -50,7 +50,7 @@
 
       .card-actions {
         position: absolute;
-        bottom: -4px;
+        bottom: 0;
         right: 42px;
         width: 420px;
       }
@@ -171,6 +171,7 @@
               <div class="layout vertical">
                 <div class="infoContainer postCardCursor" on-tap="goToPost">
                   <div class="description">[[trimmedDescription]]</div>
+                  <yp-post-users post="[[post]]"></yp-post-users>
                 </div>
                 <div class="card-actions">
                   <yp-post-actions elevation="[[elevation]]" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
@@ -191,7 +192,6 @@
         </paper-material>
       </div>
       <template is="dom-if" if="[[headerMode]]">
-
       </template>
     </template>
   </template>
