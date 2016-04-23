@@ -38,6 +38,8 @@ var images = require('./controllers/images');
 var legacyPosts = require('./controllers/legacyPosts');
 var legacyUsers = require('./controllers/legacyUsers');
 
+var nonSPArouter = require('./controllers/nonSpa');
+
 var models = require('./models');
 var auth = require('./authorization');
 var log = require('./utils/logger');
@@ -64,11 +66,23 @@ if (app.get('env') != 'development') {
   });
 }
 
+app.use(function(req,res,next) {
+  var ua = req.headers['user-agent'];
+  if (/^(facebookexternalhit)|(Twitterbot)|(Pinterest)/gi.test(ua)) {
+    console.log(ua,' is a bot');
+    nonSPArouter(req,res,next);
+  } else {
+    next();
+  }
+});
+
 if (app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_app')));
 } else {
   app.use(express.static(path.join(__dirname, '../client_dist')));
 }
+
+app.set('view engine', 'jade');
 
 app.use(morgan('combined'));
 app.use(useragent.express());

@@ -1,6 +1,6 @@
 {
   "name": "your-priorities-app",
-  "version": "6.0.128",
+  "version": "6.0.129",
   "dependencies": {
     "airbrake": "^1.0.1",
     "async": "^1.4.2",
@@ -27,6 +27,7 @@
     "i18next": "^2.0.22",
     "i18next-sync-fs-backend": "^0.1.0",
     "ip": "^1.1.0",
+    "jade": "^1.11.0",
     "kue": "^0.10.4",
     "lodash": "^4.6.1",
     "morgan": "~1.5.0",
