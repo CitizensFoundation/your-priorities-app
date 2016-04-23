@@ -1,4 +1,11 @@
 {
+  "stats": {
+    "posts": "Number of posts",
+    "discussions": "Number of discussions",
+    "communities": "Number of communities",
+    "groups": "Number of groups",
+    "users": "Number of users"
+  },
   "notification": {
     "passwordResetAndLoggedIn": "Your password has been changed and you are now logged in.",
     "method": "Method",
