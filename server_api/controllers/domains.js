@@ -24,6 +24,27 @@ var sendDomainOrError = function (res, domain, context, user, error, errorStatus
   }
 };
 
+router.delete('/:domainId/:activityId/delete_activity', auth.can('edit domain'), function(req, res) {
+  models.AcActivity.find({
+    where: {
+      domain_id: req.params.domainId,
+      id: req.params.activityId
+    }
+  }).then(function (activity) {
+    activity.deleted = true;
+    activity.save().then(function () {
+      res.send( { activityId: activity.id });
+    })
+  }).catch(function (error) {
+    log.error('Could not delete activity for domain', {
+      err: error,
+      context: 'delete_activity',
+      user: toJson(req.user.simple())
+    });
+    res.sendStatus(500);
+  });
+});
+
 router.get('/:domainId/pages', auth.can('view domain'), function(req, res) {
   models.Page.getPages(req, { domain_id: req.params.domainId }, function (error, pages) {
     if (error) {

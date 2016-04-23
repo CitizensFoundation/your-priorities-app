@@ -90,6 +90,27 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
   });
 };
 
+router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), function(req, res) {
+  models.AcActivity.find({
+    where: {
+      group_id: req.params.groupId,
+      id: req.params.activityId
+    }
+  }).then(function (activity) {
+    activity.deleted = true;
+    activity.save().then(function () {
+      res.send( { activityId: activity.id });
+    })
+  }).catch(function (error) {
+    log.error('Could not delete activity for group', {
+      err: error,
+      context: 'delete_activity',
+      user: toJson(req.user.simple())
+    });
+    res.sendStatus(500);
+  });
+});
+
 router.delete('/:groupId/user_membership', auth.isLoggedIn, auth.can('view group'), function(req, res) {
   getGroupAndUser(req.params.groupId, req.user.id, null, function (error, group, user) {
     if (error) {

@@ -89,6 +89,27 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
   });
 };
 
+router.delete('/:communityId/:activityId/delete_activity', auth.can('edit community'), function(req, res) {
+  models.AcActivity.find({
+    where: {
+      community_id: req.params.communityId,
+      id: req.params.activityId
+    }
+  }).then(function (activity) {
+    activity.deleted = true;
+    activity.save().then(function () {
+      res.send( { activityId: activity.id });
+    })
+  }).catch(function (error) {
+    log.error('Could not delete activity for community', {
+      err: error,
+      context: 'delete_activity',
+      user: toJson(req.user.simple())
+    });
+    res.sendStatus(500);
+  });
+});
+
 router.delete('/:communityId/user_membership', auth.isLoggedIn, auth.can('view community'), function(req, res) {
   getCommunityAndUser(req.params.communityId, req.user.id, null, function (error, community, user) {
     if (error) {

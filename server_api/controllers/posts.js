@@ -59,6 +59,27 @@ var sendPostOrError = function (res, post, context, user, error, errorStatus) {
   }
 };
 
+router.delete('/:postId/:activityId/delete_activity', auth.can('edit post'), function(req, res) {
+  models.AcActivity.find({
+    where: {
+      post_id: req.params.postId,
+      id: req.params.activityId
+    }
+  }).then(function (activity) {
+    activity.deleted = true;
+    activity.save().then(function () {
+      res.send( { activityId: activity.id });
+    })
+  }).catch(function (error) {
+    log.error('Could not delete activity for post', {
+      err: error,
+      context: 'delete_activity',
+      user: toJson(req.user.simple())
+    });
+    res.sendStatus(500);
+  });
+});
+
 router.post('/:id/status_change', auth.can('send status change'), function(req, res) {
   models.Post.find({
     where: {
