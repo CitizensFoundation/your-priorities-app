@@ -150,7 +150,8 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
         expires_at: Date.now() + (3600000*24*30*365*1000),
         type: models.Invite.INVITE_TO_GROUP,
         group_id: req.params.groupId,
-        user_id: user ? user.id : null
+        user_id: user ? user.id : null,
+        from_user_id: req.user.id
       }).then(function (inviteIn) {
         if (inviteIn) {
           invite = inviteIn;

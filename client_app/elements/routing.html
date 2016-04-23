@@ -99,6 +99,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }, 500);
     });
 
+    page('/user/acceptInvite/:inviteToken', scrollToTop, function (data) {
+      app.route = 'home';
+      app.params = data.params;
+      Polymer.Base.async(function() {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("acceptInvite");
+        dialog.open(data.params.inviteToken);
+      }, 500);
+    });
+
     // add #! before urls
     page({
       hashbang: true

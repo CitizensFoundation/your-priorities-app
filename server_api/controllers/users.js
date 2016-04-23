@@ -266,7 +266,7 @@ router.get('/memberships', function (req, res) {
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
-            [ { model: models.Group, as: 'GroupUsers' } , 'counter_users', 'desc' ]
+            [ { model: models.Group, as: 'GroupUsers' } , 'counter_users', 'asc' ]
           ],
           include: [
             {
@@ -517,6 +517,87 @@ router.post('/reset/:token', function(req, res) {
           res.send(user);
         }
       });
+    }
+  });
+});
+
+router.get('/get_invite_info/:token', function(req, res) {
+  models.Invite.find({
+    where: {
+      token: req.params.token,
+      joined_at: null
+    },
+    include: [
+      {
+        model: models.User,
+        as: 'FromUser',
+        attributes: ['id', 'name', 'email'],
+        required: true
+      },
+      {
+        model: models.Group,
+        required: false
+      },
+      {
+        model: models.Community,
+        required: false
+      }
+    ]
+  }).then(function (invite) {
+    if (invite) {
+      var targetName;
+      if (invite.Group) {
+        targetName = invite.Group.name;
+      } else if (invite.Community) {
+        targetName = invite.Community.name;
+      }
+      res.send({ targetName: targetName, inviteName: invite.FromUser.name });
+    } else {
+      log.info('User Invite Token Not found', {user: toJson(user), context: 'get_invite_info'});
+      res.sendStatus(404);
+    }
+  });
+});
+
+router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
+  models.Invite.find({
+    where: {
+      token: req.params.token,
+      joined_at: null
+    },
+    include: [
+      {
+        model: models.User,
+        as: 'FromUser',
+        attributes: ['id', 'name', 'email'],
+        required: true
+      },
+      {
+        model: models.Group,
+        required: false
+      },
+      {
+        model: models.Community,
+        required: false
+      }
+    ]
+  }).then(function (invite) {
+    if (invite) {
+      //invite.joined_at = Date.now();
+      invite.save().then(function (results) {
+        if (invite.Group) {
+          invite.Group.addGroupUsers(req.user).then(function (error) {
+            res.send({name: invite.Group.name, redirectTo: "/group/"+ invite.Group.id});
+          });
+        } else if (invite.Community) {
+          invite.Community.addCommunityUsers(req.user).then(function (error) {
+            res.send({name: invite.Community.name, redirectTo: "/community/"+ invite.Community.id});
+          });
+        }
+      })
+    } else {
+      log.info('User Invite Token Not found', {user: toJson(user), context: 'get_invite_info'});
+      res.sendStatus(404);
     }
   });
 });

@@ -47,6 +47,9 @@
         },
 
         properties: {
+
+          loginForAcceptInviteParams: Object,
+
           loginForEditParams: {
             type: Object
           },
@@ -99,6 +102,11 @@
           memberships: {
             type: Object
           }
+        },
+
+        loginForAcceptInvite: function(editDialog,token) {
+          this.loginForAcceptInviteParams = { editDialog: editDialog, token: token };
+          this.openUserlogin();
         },
 
         loginForEdit: function(editDialog,newOrUpdate,params) {
@@ -164,6 +172,10 @@
             var membershipParams = this.loginForMembershipParams;
             membershipParams.membershipActionElement.generateMembershipFromLogin(membershipParams.params.value);
             this.loginForMembershipParams = null;
+          } else if (this.loginForAcceptInviteParams) {
+            var acceptInviteParams = this.loginForAcceptInviteParams;
+            acceptInviteParams.editDialog.open(acceptInviteParams.token);
+            this.loginForAcceptInviteParams = null;
           }
           this.fire("login");
         },
