@@ -42419,6 +42419,109 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     });
   </script>
 </dom-module>
+<dom-module id="yp-accept-invite" assetpath="yp-user/">
+
+  <style>
+    paper-dialog {
+      padding-left: 8px;
+      padding-right: 8px;
+      width: 380px;
+      background-color: #fff;
+      z-index: 9999;
+    }
+  </style>
+
+  <template>
+
+    <paper-dialog id="dialog">
+      <h3>[[t('user.acceptInvite')]]</h3>
+
+      [[inviteName]] [[t('user.hasSentYouAndInvitation')]] to [[targetName]]
+      <p>[[t('user.acceptInviteInstructions')]]</p>
+
+      <div class="buttons">
+        <paper-button on-tap="_cancel" dialog-dismiss="">[[t('cancel')]]</paper-button>
+        <paper-button autofocus="" on-tap="_acceptInvite">[[t('user.acceptInvite')]]</paper-button>
+      </div>
+    </paper-dialog>
+
+    <yp-ajax id="acceptInviteAjax" method="POST" on-response="_acceptInviteResponse"></yp-ajax>
+    <yp-ajax id="getInviteSenderAjax" method="GET" on-response="_getInviteSenderResponse"></yp-ajax>
+
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-accept-invite',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.FixDialog
+    ],
+
+    properties: {
+      token: {
+        type: String
+      },
+
+      errorMessage: {
+        type: String
+      },
+
+      inviteName: {
+        type: String
+      },
+
+      targetName: String
+    },
+
+    _checkInviteSender: function(e) {
+      this.$.getInviteSenderAjax.url = '/api/users/get_invite_info/'+this.token;
+      this.$.getInviteSenderAjax.generateRequest();
+    },
+
+    _acceptInvite: function(e) {
+      this.$.acceptInviteAjax.url = '/api/users/accept_invite/'+this.token;
+      this.$.acceptInviteAjax.body = {};
+      this.$.acceptInviteAjax.generateRequest();
+    },
+
+    _getInviteSenderResponse: function (event, detail) {
+      this.set('inviteName', detail.response.inviteName);
+      this.set('targetName', detail.response.targetName);
+    },
+
+    _acceptInviteResponse: function(event, detail) {
+      this.close();
+      window.appGlobals.notifyUserViaToast(this.t('notification.invite_accepted_for')+ detail.response.name);
+      page(detail.response.redirectTo);
+    },
+
+    _cancel: function () {
+      page('/');
+    },
+
+    open: function(token) {
+      if (token)
+        this.set('token', token);
+      if (window.appUser && window.appUser.loggedIn()===true) {
+        this._checkInviteSender();
+        this.$.dialog.open();
+      } else {
+        window.appUser.loginForAcceptInvite(this, token);
+      }
+    },
+
+    close: function() {
+      this.$.dialog.close();
+    }
+
+  });
+</script>
 <dom-module id="yp-dialog-container" assetpath="yp-dialog-container/">
   <template>
     <style>
@@ -42453,6 +42556,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <yp-page-dialog id="pageDialog"></yp-page-dialog>
 
       <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
+
+      <yp-accept-invite id="acceptInvite"></yp-accept-invite>
 
       
 
@@ -46545,6 +46650,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         },
 
         properties: {
+
+          loginForAcceptInviteParams: Object,
+
           loginForEditParams: {
             type: Object
           },
@@ -46597,6 +46705,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           memberships: {
             type: Object
           }
+        },
+
+        loginForAcceptInvite: function(editDialog,token) {
+          this.loginForAcceptInviteParams = { editDialog: editDialog, token: token };
+          this.openUserlogin();
         },
 
         loginForEdit: function(editDialog,newOrUpdate,params) {
@@ -46662,6 +46775,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             var membershipParams = this.loginForMembershipParams;
             membershipParams.membershipActionElement.generateMembershipFromLogin(membershipParams.params.value);
             this.loginForMembershipParams = null;
+          } else if (this.loginForAcceptInviteParams) {
+            var acceptInviteParams = this.loginForAcceptInviteParams;
+            acceptInviteParams.editDialog.open(acceptInviteParams.token);
+            this.loginForAcceptInviteParams = null;
           }
           this.fire("login");
         },
@@ -54314,6 +54431,15 @@ module.exports = Array.isArray || function (arr) {
       Polymer.Base.async(function() {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("resetPassword");
           dialog.open(data.params.resetPasswordToken);
+      }, 500);
+    });
+
+    page('/user/acceptInvite/:inviteToken', scrollToTop, function (data) {
+      app.route = 'home';
+      app.params = data.params;
+      Polymer.Base.async(function() {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("acceptInvite");
+        dialog.open(data.params.inviteToken);
       }, 500);
     });
 
