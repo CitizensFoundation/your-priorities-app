@@ -48,10 +48,10 @@ router.delete('/:domainId/:activityId/delete_activity', auth.can('edit domain'),
 router.get('/:domainId/pages', auth.can('view domain'), function(req, res) {
   models.Page.getPages(req, { domain_id: req.params.domainId }, function (error, pages) {
     if (error) {
-      log.error('Could not get pages for domain', { err: error, context: 'pages', user: user ? toJson(req.user.simple()) : null });
+      log.error('Could not get pages for domain', { err: error, context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
       res.sendStatus(500);
     } else {
-      log.info('Got Pages', {context: 'pages', user: user ? toJson(req.user.simple()) : null });
+      log.info('Got Pages', {context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
       res.send(pages);
     }
   });

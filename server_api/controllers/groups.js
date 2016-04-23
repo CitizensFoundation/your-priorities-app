@@ -258,15 +258,15 @@ router.get('/:groupId/pages', auth.can('view group'), function(req, res) {
   }).then(function (group) {
     models.Page.getPages(req, { group_id: req.params.groupId , community_id: group.Community.id, domain_id: group.Community.Domain.id }, function (error, pages) {
       if (error) {
-        log.error('Could not get pages for group', { err: error, context: 'pages', user: user ? toJson(req.user.simple()) : null });
+        log.error('Could not get pages for group', { err: error, context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
         res.sendStatus(500);
       } else {
-        log.info('Got Pages', {context: 'pages', user: user ? toJson(req.user.simple()) : null });
+        log.info('Got Pages', {context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
         res.send(pages);
       }
     });
   }).catch(function (error) {
-    log.error('Could not get pages for group', { err: error, context: 'pages', user: user ? toJson(req.user.simple()) : null});
+    log.error('Could not get pages for group', { err: error, context: 'pages', user: req.user ? toJson(req.user.simple()) : null});
     res.sendStatus(500);
   });
 });
