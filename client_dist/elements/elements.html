@@ -46345,6 +46345,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       yp-ajax {
         background-color: var(--primary-background-color);
       }
+
+      .deleteIcon {
+        position: absolute;
+        left: 0px;
+        bottom: 100px;
+        color: #ddd;
+      }
     </style>
 
     <template is="dom-if" if="[[loggedInUser]]">
@@ -46358,6 +46365,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         <template>
           <div>
             <paper-material elevation="2" class="layout vertical activity" tabindex$="[[tabIndex]]">
+              <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
               <div class="layout horizontal topHeader">
                 <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                   <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
@@ -46424,6 +46432,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       <div class="layout horizontal center-center">
         <yp-ajax id="ajax" large-spinner="" on-response="_activitiesResponse"></yp-ajax>
+        <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner="" on-response="_activityDeletedResponse"></yp-ajax>
         <template is="dom-if" if="[[moreToLoad]]" restamp="">
           <paper-button data-args$="[[activity]]" on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
         </template>
@@ -46443,7 +46452,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       behaviors: [
         Polymer.appHelpers,
         Polymer.YpScrollTabBehavior,
-        Polymer.ypLoggedInUserBehavior
+        Polymer.ypLoggedInUserBehavior,
+        Polymer.AccessHelpers
       ],
 
       properties: {
@@ -46493,7 +46503,51 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         latestProcessedActivityAt: {
           type: Date
+        },
+
+        activityIdToDelete: {
+          type: Number
         }
+      },
+
+      _hasActivityAccess: function (activity) {
+        if (this.domainId) {
+          return this.hasDomainAccess(activity.Domain)
+        } else if (this.communityId) {
+          return this.hasCommunityAccess(activity.Community)
+        } else if (this.groupId) {
+          return this.hasGroupAccess(activity.Group)
+        } else if (this.postId) {
+          return this.hasPostAccess(activity.Post)
+        } else {
+          return false;
+        }
+      },
+
+      _activityDeletedResponse: function (event, detail) {
+        var activityId = detail.response.activityId;
+        this.set('activities', _.filter(this.activities, function(o) { return (o.id!=activityId) }));
+      },
+
+      _deleteActivity: function (event) {
+        this.set('activityIdToDelete', event.model.activity.id);
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+        dialog.open(this.t('activity.confirmDelete'), this._reallyDelete.bind(this));
+      },
+
+      _reallyDelete: function () {
+        if (this.domainId) {
+          this.$.deleteActivityAjax.url = "/api/domains/"+this.domainId+"/"+this.activityIdToDelete+"/delete_activity";
+        } else if (this.communityId) {
+          this.$.deleteActivityAjax.url = "/api/communities/"+this.communityId+"/"+this.activityIdToDelete+"/delete_activity";
+        } else if (this.groupId) {
+          this.$.deleteActivityAjax.url = "/api/groups/"+this.groupId+"/"+this.activityIdToDelete+"/delete_activity";
+        } else if (this.postId) {
+          this.$.deleteActivityAjax.url = "/api/posts/"+this.postId+"/"+this.activityIdToDelete+"/delete_activity";
+        }
+        this.$.deleteActivityAjax.body = {};
+        this.$.deleteActivityAjax.generateRequest();
+        this.set('activityIdToDelete', null);
       },
 
       _upVote: function (point) {
