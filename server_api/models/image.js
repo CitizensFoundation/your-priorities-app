@@ -73,10 +73,10 @@ module.exports = function(sequelize, DataTypes) {
         } else if (itemType && itemType === 'domain-logo') {
             versions = [
               {
-                maxWidth: 1200,
-                maxHeight: 675,
+                maxWidth: 864,
+                maxHeight: 486,
                 format: 'png',
-                suffix: '-large',
+                suffix: '-retina',
                 quality: 99
               },
               {
@@ -90,10 +90,10 @@ module.exports = function(sequelize, DataTypes) {
         } else if (itemType && itemType === 'community-logo') {
           versions = [
             {
-              maxWidth: 1200,
-              maxHeight: 675,
+              maxWidth: 864,
+              maxHeight: 486,
               format: 'png',
-              suffix: '-large',
+              suffix: '-retina',
               quality: 99
             },
             {
@@ -131,10 +131,10 @@ module.exports = function(sequelize, DataTypes) {
         } else if (itemType && itemType === 'group-logo') {
           versions = [
             {
-              maxWidth: 1200,
-              maxHeight: 675,
+              maxWidth: 864,
+              maxHeight: 486,
               format: 'png',
-              suffix: '-large',
+              suffix: '-retina',
               quality: 99
             },
             {
@@ -148,10 +148,10 @@ module.exports = function(sequelize, DataTypes) {
         } else if (itemType && itemType === 'post-header') {
           versions = [
             {
-              maxWidth: 1200,
-              maxHeight: 675,
+              maxWidth: 864,
+              maxHeight: 486,
               format: 'png',
-              suffix: '-large',
+              suffix: '-retina',
               quality: 99
             },
             {
@@ -159,13 +159,6 @@ module.exports = function(sequelize, DataTypes) {
               maxHeight: 243,
               format: 'png',
               suffix: '-medium',
-              quality: 99
-            },
-            {
-              maxWidth: 1920,
-              maxHeight: 1080,
-              format: 'png',
-              suffix: '-hd',
               quality: 99
             }
           ]
