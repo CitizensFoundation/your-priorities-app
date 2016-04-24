@@ -230,6 +230,10 @@ module.exports = function(sequelize, DataTypes) {
 
     instanceMethods: {
 
+      simple: function() {
+        return { id: this.id, name: this.name };
+      },
+
       updateAllExternalCounters: function(req, direction, column, done) {
         async.parallel([
           function(callback) {

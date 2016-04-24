@@ -76,9 +76,6 @@ auth.role('domain.admin', function (domain, req, done) {
     }).then(function (domain) {
       if (domain.user_id === req.user.id) {
         done(null, true);
-        // TODO: Remove hardcoded hack!
-      } else if (req.user.email==='robert@citizens.is' || req.user.email==='gunnar@citizens.is') {
-        done(null, true);
       } else {
         domain.hasDomainAdmins(req.user).then(function (result) {
           if (result) {

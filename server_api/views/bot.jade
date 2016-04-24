@@ -6,9 +6,13 @@ html
         meta(property="og:title" name="twitter:title" content= title)
         meta(property="og:description" name="twitter:description" content= descriptionText)
         meta(property="og:image" content= imageUrl)
-        meta(property="og:type" content="article")
+        meta(property="og:type" content= contentType)
         meta(name="twitter:card" content="summary")
     body
         h1= title
-        img(src= img alt= title)
+        img(src= imageUrl alt= title)
         p= descriptionText
+        P= contentType
+        a(href != url)
+          != url
+

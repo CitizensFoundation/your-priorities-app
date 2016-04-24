@@ -4,18 +4,249 @@ var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var url = require('url');
 
-var botOptions = {
-  img       : 'placeholder.png',
-  url       : 'https://bot-social-share.herokuapp.com/',
-  title     : 'Bot Test',
-  descriptionText
-    : 'This is designed to appeal to bots',
-  imageUrl  : 'https://bot-social-share.herokuapp.com/placeholder.png'
+var fullUrl = function (req) {
+  var replacedUrl =  req.originalUrl.replace(/[?]_escaped_fragment_=/g,'#!');
+  var formattedUrl = url.format({
+    protocol: req.protocol,
+    host: req.get('host'),
+    pathname: replacedUrl
+  });
+
+  var finalUrl = formattedUrl.replace('%23','#');
+  return finalUrl;
 };
 
-router.get('/', function(req, res) {
-  res.render('bot', botOptions);
+var sendDomain = function (id, req, res) {
+  models.Domain.find({
+    where: { id: id },
+    attributes: ['id', 'name', 'description'],
+    order: [
+      [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'asc' ]
+    ],
+    include: [
+      {
+        attributes: ['id','formats'],
+        model: models.Image, as: 'DomainLogoImages',
+        required: false
+      }
+    ]
+  }).then(function(domain) {
+    if (domain) {
+      log.info('Domain Viewed From Bot', { domain: toJson(domain.simple()), context: 'view', bot: true });
+      var imageUrl = '';
+      if (domain.DomainLogoImages && domain.DomainLogoImages.length>0) {
+        var formats = JSON.parse(domain.DomainLogoImages[0].formats);
+        imageUrl = formats[0];
+      }
+      var botOptions = {
+        url       : fullUrl(req),
+        title     :  domain.name,
+        descriptionText : domain.description,
+        imageUrl  : imageUrl
+      };
+      res.render('bot', botOptions);
+    } else {
+      log.warn('Domain Not Found for Bot', { err: 'Not found', context: 'view', bot: true });
+      res.sendStatus(404);
+    }
+  }).catch(function(error) {
+    log.error('Domain Not Found for Bot', { err: error, context: 'view', bot: true });
+    res.sendStatus(500);
+  });
+};
+
+var sendCommunity = function (id, req, res) {
+  models.Community.find({
+    where: { id: id, access: models.Community.ACCESS_PUBLIC },
+    attributes: ['id', 'name', 'description'],
+    order: [
+      [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ]
+    ],
+    include: [
+      {
+        attributes: ['id','formats'],
+        model: models.Image, as: 'CommunityLogoImages',
+        required: false
+      }
+    ]
+  }).then(function(community) {
+    if (community) {
+      log.info('Community Viewed From Bot', { community: toJson(community.simple()), context: 'view', bot: true });
+      var imageUrl = '';
+      if (community.CommunityLogoImages && community.CommunityLogoImages.length>0) {
+        var formats = JSON.parse(community.CommunityLogoImages[0].formats);
+        imageUrl = formats[0];
+      }
+      var botOptions = {
+        url       : fullUrl(req),
+        title     :  community.name,
+        descriptionText : community.description,
+        imageUrl  : imageUrl,
+        contentType: 'citizen participation community'
+      };
+      res.render('bot', botOptions);
+    } else {
+      log.warn('Community Not Found for Bot', { err: 'Not found', context: 'view', bot: true });
+      res.sendStatus(404);
+    }
+  }).catch(function(error) {
+    log.error('Community Not Found for Bot', { err: error, context: 'view', bot: true });
+    res.sendStatus(500);
+  });
+};
+
+var sendGroup = function (id, req, res) {
+  models.Group.find({
+    where: { id: id, access: models.Group.ACCESS_PUBLIC },
+    attributes: ['id', 'name', 'objectives'],
+    order: [
+      [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ]
+    ],
+    include: [
+      {
+        attributes: ['id','formats'],
+        model: models.Image, as: 'GroupLogoImages',
+        required: false
+      }
+    ]
+  }).then(function(group) {
+    if (group) {
+      log.info('Group Viewed From Bot', { group: toJson(group.simple()), context: 'view', bot: true });
+      var imageUrl = '';
+      if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
+        var formats = JSON.parse(group.GroupLogoImages[0].formats);
+        imageUrl = formats[0];
+      }
+      var botOptions = {
+        url       : fullUrl(req),
+        title     :  group.name,
+        descriptionText : group.objectives,
+        imageUrl  : imageUrl,
+        contentType: 'citizen participation group'
+      };
+      res.render('bot', botOptions);
+    } else {
+      log.warn('Group Not Found for Bot', { err: 'Not found', context: 'view', bot: true });
+      res.sendStatus(404);
+    }
+  }).catch(function(error) {
+    log.error('Group Not Found for Bot', { err: error, context: 'view', bot: true });
+    res.sendStatus(500);
+  });
+};
+
+var sendPost = function (id, req, res) {
+  models.Post.find({
+    where: { id: id },
+    attributes: ['id', 'name', 'description'],
+    order: [
+      [ { model: models.Image, as: 'PostHeaderImages' } , 'created_at', 'asc' ]
+    ],
+    include: [
+      {
+        attributes: ['id','formats'],
+        model: models.Image, as: 'PostHeaderImages',
+        required: false
+      },
+      {
+        model: models.Group,
+        where: {
+          access: models.Group.ACCESS_PUBLIC
+        },
+        required: true
+      }
+    ]
+  }).then(function(post) {
+    if (post) {
+      log.info('Post Viewed From Bot', { post: toJson(post.simple()), context: 'view', bot: true });
+      var imageUrl = '';
+      if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
+        var formats = JSON.parse(post.PostHeaderImages[0].formats);
+        imageUrl = formats[0];
+      }
+      var botOptions = {
+        url       : fullUrl(req),
+        title     :  post.name,
+        descriptionText : post.description,
+        imageUrl  : imageUrl,
+        contentType: 'citizen participation post'
+      };
+      res.render('bot', botOptions);
+    } else {
+      log.warn('Post Not Found for Bot', { err: 'Not found', context: 'view', bot: true });
+      res.sendStatus(404);
+    }
+  }).catch(function(error) {
+    log.error('Post Not Found for Bot', { err: error, context: 'view', bot: true });
+    res.sendStatus(500);
+  });
+};
+
+var sendUser = function (id, req, res) {
+  models.User.find({
+    where: { id: id },
+    attributes: ['id', 'name', 'description'],
+    order: [
+      [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ]
+    ],
+    include: [
+      {
+        attributes: ['id','formats'],
+        model: models.Image, as: 'UserProfileImages',
+        required: false
+      }
+    ]
+  }).then(function(user) {
+    if (user) {
+      log.info('User Viewed From Bot', { userId: id, context: 'view', bot: true });
+      var imageUrl = '';
+      if (user.UserProfileImages && user.UserProfileImages.length>0) {
+        var formats = JSON.parse(user.UserProfileImages[0].formats);
+        imageUrl = formats[0];
+      }
+      var botOptions = {
+        url       : fullUrl(req),
+        title     :  user.name,
+        descriptionText : user.description,
+        imageUrl  : imageUrl,
+        contentType: 'citizen participation user'
+      };
+      res.render('bot', botOptions);
+    } else {
+      log.warn('User Not Found for Bot', { err: 'Not found', context: 'view', bot: true });
+      res.sendStatus(404);
+    }
+  }).catch(function(error) {
+    log.error('User Not Found for Bot', { err: error, context: 'view', bot: true });
+    res.sendStatus(500);
+  });
+};
+
+router.get('/', function(req, res, next) {
+  if (req.url.startsWith('/?_escaped_fragment_=')) {
+    var splitUrl = req.url.split('/');
+    if (splitUrl[2]=='domain') {
+      sendDomain(splitUrl[3], req, res)
+    } else if (splitUrl[2]=='community') {
+      sendCommunity(splitUrl[3], req, res)
+    } else if (splitUrl[2]=='group') {
+      sendGroup(splitUrl[3], req, res)
+    } else if (splitUrl[2]=='post') {
+      sendPost(splitUrl[3], req, res)
+    } else if (splitUrl[2]=='user') {
+      sendUser(splitUrl[3], req, res)
+    } else {
+      next();
+    }
+  } else if (req.ypCommunity && req.ypCommunity.id != null) {
+    sendCommunity(req.ypCommunity.id, req, res);
+  } else if (req.ypDomain && req.ypDomain.id != null) {
+    sendDomain(req.ypDomain.id, req, res);
+  } else {
+    next();
+  }
 });
 
 module.exports = router;

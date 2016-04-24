@@ -13,6 +13,8 @@ module.exports = function(sequelize, DataTypes) {
     age_group: DataTypes.STRING,
     post_code: DataTypes.STRING,
     my_gender: DataTypes.STRING,
+    description: DataTypes.TEXT,
+    profile_data: DataTypes.JSONB,
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     facebook_id: DataTypes.BIGINT,
     facebook_profile: DataTypes.JSONB,

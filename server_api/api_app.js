@@ -67,22 +67,6 @@ if (app.get('env') != 'development') {
   });
 }
 
-app.use(function(req,res,next) {
-  var ua = req.headers['user-agent'];
-  if (/^(facebookexternalhit)|(Twitterbot)|(Pinterest)/gi.test(ua)) {
-    console.log(ua,' is a bot');
-    nonSPArouter(req,res,next);
-  } else {
-    next();
-  }
-});
-
-if (app.get('env') === 'development') {
-  app.use(express.static(path.join(__dirname, '../client_app')));
-} else {
-  app.use(express.static(path.join(__dirname, '../client_dist')));
-}
-
 app.set('view engine', 'jade');
 
 app.use(morgan('combined'));
@@ -125,6 +109,22 @@ app.use(function (req, res, next) {
     next();
   });
 });
+
+app.use(function(req,res,next) {
+  var ua = req.headers['user-agent'];
+  if (/^(facebookexternalhit)|(Twitterbot)|(Pinterest)/gi.test(ua)) {
+    console.log(ua,' is a bot');
+    nonSPArouter(req,res,next);
+  } else {
+    next();
+  }
+});
+
+if (app.get('env') === 'development') {
+  app.use(express.static(path.join(__dirname, '../client_app')));
+} else {
+  app.use(express.static(path.join(__dirname, '../client_dist')));
+}
 
 passport.serializeUser(function(user, done) {
   log.info("User Serialized", { context: 'deserializeUser', userEmail: user.email, userId: user.id });
