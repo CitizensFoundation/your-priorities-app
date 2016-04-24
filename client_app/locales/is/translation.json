@@ -37,8 +37,9 @@
     },
     "point": {
       "new": "Rökræða",
-      "newEndorsed": "Rök með",
-      "newOpposed": "Rök á móti",
+      "newFor": "Ný rök með",
+      "newAgainst": "Ný rök á móti",
+      "newComment": "Ný athugasemd",
       "newsStory": {
         "new": "Ný frétt frá notanda"
       }

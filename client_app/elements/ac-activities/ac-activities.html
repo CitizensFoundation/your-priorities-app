@@ -180,15 +180,11 @@
                 <div class="layout vertical flex headerText">
                   <div class="layout horizontal typeName">
                     <div class="layout vertical">
-                      <div>[[t(activity.type)]]</div>
+                      <div>[[_getActivityTypeName(activity)]]</div>
                       <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
                         [[fromTime(activity.created_at)]]
                       </div>
                     </div>
-                    <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
-                      <iron-icon icon="thumb-down" class="thumbIconNewsFeed" hidden$="[[_upVote(activity.Point)]]"></iron-icon>
-                      <iron-icon icon="thumb-up" class="thumbIconNewsFeed" hidden$="[[_downVote(activity.Point)]]"></iron-icon>
-                    </template>
                   </div>
                 </div>
                 <ac-activity-header class="layout end-justified headerUserImage" activity="[[activity]]"></ac-activity-header>
@@ -303,6 +299,20 @@
 
         activityIdToDelete: {
           type: Number
+        }
+      },
+
+      _getActivityTypeName: function (activity) {
+        if (activity.type=='activity.point.new') {
+          if (activity.Point.value>0) {
+            return this.t('activity.point.newFor');
+          } else if (activity.Point.value<0) {
+            return this.t('activity.point.newAgainst');
+          } else {
+            return this.t('activity.point.newComment')
+          }
+        } else {
+          return this.t(activity.type);
         }
       },
 

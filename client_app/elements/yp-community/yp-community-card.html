@@ -32,6 +32,10 @@
         margin-top: 4px;
       }
 
+      .description[featured] {
+        font-size: 18px;
+      }
+
       .stats {
         @apply(--layout-self-center);
         color: var(--primary-color-more-darker, #424242);
@@ -149,7 +153,7 @@
         <div class="informationText" on-tap="_goToCommunity">
           <div class="community-name" featured$="[[featured]]">[[communityName(community)]]</div>
           <template is="dom-if" if="[[featured]]">
-            <div class="description">[[communityDescription(community,700)]]</div>
+            <div class="description" featured$="[[featured]]">[[communityDescription(community,700)]]</div>
           </template>
           <template is="dom-if" if="[[!featured]]">
             <div class="description">[[communityDescription(community)]]</div>

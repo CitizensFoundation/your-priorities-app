@@ -51,6 +51,9 @@
     },
     "point": {
       "new": "New point",
+      "newFor": "New point for",
+      "newAgainst": "New point against",
+      "newComment": "New comment",
       "newsStory": {
         "new": "New user story"
       }
