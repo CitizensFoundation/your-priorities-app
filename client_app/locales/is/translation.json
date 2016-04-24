@@ -71,7 +71,7 @@
     "secret": "Leynilegt svæði"
   },
 
-  "news": "Fréttir",
+  "news": "Flæði",
 
   "pages": {
     "addLocale": "Nýtt locale",
@@ -161,7 +161,7 @@
     "photographerName": "Ljósmyndari",
     "tabs": {
       "debate": "Rökræða",
-      "news": "Fréttir",
+      "news": "Flæði",
       "location": "Staðsetning",
       "photos": "Myndefni",
       "solutions": "Lausnir",

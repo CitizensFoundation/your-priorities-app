@@ -122,7 +122,7 @@
       }
 
       .participateButton {
-        padding-top: 46px;
+        padding-top: 24px;
         padding-right: 4px;
       }
 
@@ -143,7 +143,7 @@
         position: absolute;
         left: 0px;
         bottom: 4px;
-        color: #ddd;
+        color: #eee;
       }
     </style>
 
@@ -209,8 +209,7 @@
                 <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
               </template>
 
-              <div class="postPadding" hidden$="[[!postId]]">
-              </div>
+              <div class="postPadding" hidden$="[[_hidePostListPadding()]]"> </div>
               <div class="layout horizontal" hidden$="[[postId]]">
                 <div hidden$="[[groupId]]">
                   <template is="dom-if" if="[[_showGroup(activity)]]">
@@ -304,6 +303,14 @@
 
         activityIdToDelete: {
           type: Number
+        }
+      },
+
+      _hidePostListPadding: function () {
+        if (!this.postId) {
+          return true;
+        } else {
+          return false;
         }
       },
 
