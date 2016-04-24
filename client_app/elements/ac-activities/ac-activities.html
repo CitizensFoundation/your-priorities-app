@@ -127,7 +127,7 @@
       }
 
       .postPadding {
-        padding-top: 28px;
+        padding-top: 38px;
       }
 
       .createdAt {
@@ -142,7 +142,7 @@
       .deleteIcon {
         position: absolute;
         left: 0px;
-        bottom: 100px;
+        bottom: 4px;
         color: #ddd;
       }
     </style>
@@ -213,7 +213,7 @@
               </div>
               <div class="layout horizontal" hidden$="[[postId]]">
                 <div hidden$="[[groupId]]">
-                  <template is="dom-if" if="[[_showGroup(activity.Group)]]">
+                  <template is="dom-if" if="[[_showGroup(activity)]]">
                     <ac-activity-group group="[[activity.Group]]"></ac-activity-group>
                   </template>
                 </div>
@@ -307,9 +307,11 @@
         }
       },
 
-      _showGroup: function (group) {
-        if (group) {
-          if (group.name == 'hidden_public_group_for_domain_level_points') {
+      _showGroup: function (activity) {
+        if (activity.PostStatusChange) {
+          return false;
+        } else if (activity.Group) {
+          if (activity.Group.name == 'hidden_public_group_for_domain_level_points') {
             return false;
           } else {
             return true;
