@@ -4,6 +4,14 @@ var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var url = require('url');
+
+var hostPartOfUrl = function (req) {
+  return url.format({
+    protocol: req.protocol,
+    host: req.get('host')
+  });
+};
 
 router.get('/:id', function(req, res) {
   var cleanLegacyId = req.params.id.split("-")[0];
@@ -24,7 +32,7 @@ router.get('/:id', function(req, res) {
                 model: models.Domain,
                 attributes: ['id'],
                 where: {
-                  id: 3 // req.ypDomain.id
+                  id: req.ypDomain.id
                 },
                 required: true
               }
@@ -36,7 +44,8 @@ router.get('/:id', function(req, res) {
     ]
   }).then(function(post) {
     if (post) {
-      res.redirect(301, 'https://betri.betrireykjavik.is/#!/post/' + post.id);
+      var returnUrl = hostPartOfUrl(req)+"/#!/post/" + post.id;
+      res.redirect(301, returnUrl);
     } else {
       res.sendStatus(404);
     }

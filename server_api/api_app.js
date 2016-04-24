@@ -37,6 +37,7 @@ var images = require('./controllers/images');
 
 var legacyPosts = require('./controllers/legacyPosts');
 var legacyUsers = require('./controllers/legacyUsers');
+var legacyPages = require('./controllers/legacyPages');
 
 var nonSPArouter = require('./controllers/nonSpa');
 
@@ -281,6 +282,7 @@ app.use('/api/activities', activities);
 
 app.use('/ideas', legacyPosts);
 app.use('/users', legacyUsers);
+app.use('/pages', legacyPages);
 
 app.use(function(err, req, res, next) {
   if (err instanceof auth.UnauthorizedError) {

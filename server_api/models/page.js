@@ -9,7 +9,9 @@ module.exports = function(sequelize, DataTypes) {
     content: { type: DataTypes.JSONB, allowNull: false },
     weight: { type: DataTypes.INTEGER, defaultValue: 0 },
     published: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    legacy_page_id: DataTypes.INTEGER,
+    legacy_new_domain_id: DataTypes.INTEGER
   }, {
 
     defaultScope: {

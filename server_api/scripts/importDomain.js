@@ -1396,6 +1396,9 @@ async.series([
       var oldId = incoming['id'];
       incoming['id'] = null;
 
+      incoming['legacy_page_id'] = oldId;
+      incoming['legacy_new_domain_id'] = currentDomain.id;
+
       models.Page.build(incoming).save().then(function (page) {
         if (page) {
           allPagesByOldIds[oldId] = page.id;

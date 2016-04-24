@@ -26,9 +26,6 @@
   <template>
     <style>
       :host {
-        display: block;
-        @apply(--layout-vertical);
-        width: 864px;
       }
 
       .description {
@@ -36,7 +33,6 @@
       }
 
       .stats {
-        @apply(--layout-self-center);
         position: absolute;
         bottom: 0px;
         left: 16px;
@@ -134,7 +130,7 @@
       }
     </style>
     <template is="dom-if" if="[[domain]]">
-      <div class="layout horizontal center-center">
+      <div class="layout horizontal center-center wrap">
         <paper-material id="card" elevation="5" animated class="large-card textBox">
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
