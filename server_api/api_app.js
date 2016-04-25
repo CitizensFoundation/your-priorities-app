@@ -113,7 +113,7 @@ app.use(function (req, res, next) {
 
 app.use(function(req,res,next) {
   var ua = req.headers['user-agent'];
-  if (/^(facebookexternalhit)|(Twitterbot)|(Pinterest)/gi.test(ua)) {
+  if (/^(facebookexternalhit)|(Twitterbot)|(Slackbot)|(Pinterest)/gi.test(ua)) {
     console.log(ua,' is a bot');
     nonSPArouter(req,res,next);
   } else {
