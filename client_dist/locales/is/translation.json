@@ -245,8 +245,8 @@
   },
 
   "membership": {
-    "joined": "Þú er nú meðlimur í",
-    "left": "Þú er ekki lengur meðlimur í"
+    "joined": "Þú ert nú meðlimur í",
+    "left": "Þú ert ekki lengur meðlimur í"
   },
 
   "menu": {
