@@ -45427,6 +45427,14 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         color: var(--primary-color-300);
         padding-bottom: 24px;
       }
+
+      .thumbUp {
+        color: var(--master-point-up-color);
+      }
+
+      .thumbDown {
+        color: var(--master-point-down-color);
+      }
     </style>
 
     <template is="dom-if" if="[[point]]">
@@ -45436,8 +45444,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         <div class="user-image layout vertical" hidden$="[[hideUser]]">
           <yp-user-image user="[[user]]"></yp-user-image>
           <div class="layout horizontal center-center">
-            <iron-icon icon="thumb-down" class="thumbIcon" hidden$="[[upVote(point)]]"></iron-icon>
-            <iron-icon icon="thumb-up" class="thumbIcon" hidden$="[[downVote(point)]]"></iron-icon>
+            <iron-icon icon="thumb-down" class="thumbIcon thumbDown" hidden$="[[upVote(point)]]"></iron-icon>
+            <iron-icon icon="thumb-up" class="thumbIcon thumbUp" hidden$="[[downVote(point)]]"></iron-icon>
           </div>
         </div>
 
@@ -49328,14 +49336,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     <style>
       :host {
         display: block;
-        @apply(--layout-horizontal);
       }
 
       .stats {
-        @apply(--layout-horizontal);
-        @apply(--layout-flex);
         padding-top: 8px;
         padding-bottom: 8px;
+        color: var(--main-stats-color-on-white);
       }
 
       .stats-text {
@@ -49343,6 +49349,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         text-align:right;
         vertical-align: bottom;
         padding-right:8px;
+        color: var(--main-stats-color-on-white);
       }
 
       .stats-icon {
@@ -49351,15 +49358,15 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     </style>
 
-    <div class="stats">
-      <iron-icon icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
-      <div class="stats-text" style="">{{formatNumber(group.counter_posts)}}</div>
+    <div class="stats layout horizontal end-justified">
+      <iron-icon title="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
+      <div title="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(group.counter_posts)}}</div>
 
-      <iron-icon icon="communication:forum" class="stats-icon"></iron-icon>
-      <div class="stats-text">{{formatNumber(group.counter_points)}}</div>
+      <iron-icon title="[[t('stats.discussions')]]" icon="communication:forum" class="stats-icon"></iron-icon>
+      <div title="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(group.counter_points)}}</div>
 
-      <iron-icon icon="face" class="stats-icon"></iron-icon>
-      <div class="stats-text">{{formatNumber(group.counter_users)}}</div>
+      <iron-icon title="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
+      <div title="[[t('stats.users')]]" class="stats-text">{{formatNumber(group.counter_users)}}</div>
     </div>
 
   </template>
@@ -49393,10 +49400,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
   <template>
     <style>
       :host {
-        display: block;
-        @apply(--layout-vertical);
-        background-color: var(--primary-color);
-        width: 864px;
       }
 
       .groupAccess {
@@ -49409,29 +49412,29 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .objectives {
-        @apply(--layout-vertical);
         line-height: var(--objectives-line-height, 1.3);
       }
 
       .groupCard {
-        background-color: var(--primary-color);
-        color: #FFF;
+        background-color: #fefefe;
+        color: #333;
         height: 243px;
-        width: 864px;
+        width: 432px;
+        padding: 0 !important;
+        margin-top: 0 !important;
       }
 
       .stats {
-        @apply(--layout-self-center);
         position: absolute;
         bottom: 0px;
-        right: 16px;
+        right: 8px;
       }
 
       .edit {
         color: #FFF;
         position: absolute;
-        top: 0;
-        right: 0;
+        top: 0px;
+        left: 390px;
         padding-right: 0;
         margin-right: 0;
       }
@@ -49475,42 +49478,57 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
       }
 
-      .objectives {
-        padding-bottom: 40px;
-        max-width: 432px;
-      }
-
       .description {
-        padding: 12px;
+        padding: 0;
+        margin: 0;
       }
 
+      .groupDescription {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 16px;
+      }
+
+      .group-name {
+        background-color: var(--primary-color-800, #000);
+        color: #fafafa;
+        padding-left: 16px;
+        padding-top: 16px;
+        padding-bottom: 16px;
+      }
+
+      .textBox {
+        margin-right: 32px;
+      }
     </style>
 
     <template is="dom-if" if="[[group]]">
-      <paper-card id="card" elevation="[[elevation]]" animated-shadow="" class="groupCard">
-        <div class="layout horizontal wrap">
-          <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath(group)]]"></iron-image>
-          <div class="objectives">
+      <div class="layout horizontal center-center wrap">
+        <paper-material id="card" elevation="[[elevation]]" animated-shadow="" class="groupCard textBox">
+          <div class="layout vertical">
             <div class="description">
               <h2 class="group-name">[[groupName(group)]]</h2>
-              <div class="groupAccess">[[_groupAccessText(group.access)]]</div>
-              <div>[[group.objectives]]</div>
+              <div hidden="" class="groupAccess">[[_groupAccessText(group.access)]]</div>
+              <div class="groupDescription">[[group.objectives]]</div>
+              <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
             </div>
           </div>
-        </div>
-        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-        <paper-menu-button class="edit" hidden$="[[!hasGroupAccess(group)]]">
-          <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-          <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-            <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
-            <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
-            <paper-item id="usersMenuItem">[[t('group.users')]]</paper-item>
-            <paper-item id="adminsMenuItem">[[t('group.admins')]]</paper-item>
-            <paper-item id="deleteMenuItem">[[t('group.delete')]]</paper-item>
-            <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-          </paper-menu>
-        </paper-menu-button>
-      </paper-card>
+          <paper-menu-button class="edit" hidden$="[[!hasGroupAccess(group)]]">
+            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+            <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+              <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
+              <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
+              <paper-item id="usersMenuItem">[[t('group.users')]]</paper-item>
+              <paper-item id="adminsMenuItem">[[t('group.admins')]]</paper-item>
+              <paper-item id="deleteMenuItem">[[t('group.delete')]]</paper-item>
+              <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+            </paper-menu>
+          </paper-menu-button>
+        </paper-material>
+        <paper-material id="cardImage" elevation="2" animated="" class="groupCard">
+          <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath(group)]]"></iron-image>
+        </paper-material>
+      </div>
     </template>
   </template>
 
@@ -49967,7 +49985,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         @apply(--layout-self-center);
         position: absolute;
         bottom: 0px;
-        right: 16px;
+        right: 8px;
       }
 
       .group-name {
@@ -50856,14 +50874,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     <style>
       :host {
         display: block;
-        @apply(--layout-horizontal);
+        width: 100%;
       }
 
       .stats {
-        @apply(--layout-horizontal);
-        @apply(--layout-flex);
         padding-top: 8px;
         padding-bottom: 8px;
+        color: var(--main-stats-color-on-white);
       }
 
       .stats-text {
@@ -50871,11 +50888,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         text-align:right;
         vertical-align: bottom;
         padding-right:8px;
-      }
-
-      .stats-icon {
-        padding-left:8px;
-        margin-right:4px;
+        color: var(--main-stats-color-on-white);
       }
 
       .bulb {
@@ -50883,15 +50896,15 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     </style>
 
-    <div class="stats">
-      <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
-      <div class="stats-text" style="">{{formatNumber(community.counter_posts)}}</div>
+    <div class="stats layout horizontal end-justified">
+      <iron-icon title="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
+      <div title="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(community.counter_posts)}}</div>
 
-      <iron-icon icon="social:people" class="stats-icon"></iron-icon>
-      <div class="stats-text" style="">{{formatNumber(community.counter_groups)}}</div>
+      <iron-icon title="[[t('stats.groups')]]" icon="social:people" class="stats-icon"></iron-icon>
+      <div title="[[t('stats.groups')]]" class="stats-text" style="">{{formatNumber(community.counter_groups)}}</div>
 
-      <iron-icon icon="face" class="stats-icon"></iron-icon>
-      <div class="stats-text">{{formatNumber(community.counter_users)}}</div>
+      <iron-icon title="[[t('stats.communities')]]" icon="face" class="stats-icon"></iron-icon>
+      <div title="[[t('stats.communities')]]" class="stats-text">{{formatNumber(community.counter_users)}}</div>
     </div>
 
   </template>
@@ -50931,11 +50944,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .stats {
         position: absolute;
         bottom: 0;
-        left: 16px;
-      }
-
-      yp-community-stats {
-        color :#fff;
+        right: 8px;
       }
 
       .community-name {
@@ -50966,7 +50975,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .edit {
         color: #FFF;
         position: absolute;
-        top: 0;
+        top: 0px;
         left: 390px;
         padding-right: 0;
         margin-right: 0;
@@ -51023,6 +51032,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         color: #fafafa;
         padding-left: 16px;
         padding-top: 16px;
+        padding-bottom: 16px;
       }
 
       .textBox {
@@ -51463,7 +51473,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         color: var(--primary-color-more-darker, #424242);
         position: absolute;
         bottom: 0;
-        right: 16px;
+        right: 8px;
       }
 
       .post-image {
@@ -52225,15 +52235,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     <style>
       :host {
         display: block;
-        @apply(--layout-horizontal);
       }
 
       .stats {
-        @apply(--layout-horizontal);
-        @apply(--layout-flex);
         padding-top: 8px;
         padding-bottom: 8px;
-        color: #999;
+        color: var(--main-stats-color-on-white);
       }
 
       .stats-text {
@@ -52241,7 +52248,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         text-align:right;
         vertical-align: bottom;
         padding-right:8px;
-        color: #999;
+        color: var(--main-stats-color-on-white);
       }
 
       .stats-icon {
@@ -52250,7 +52257,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     </style>
 
-    <div class="stats">
+    <div class="stats layout horizontal end-justified">
       <iron-icon title="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
       <div title="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(domain.counter_posts)}}</div>
 
@@ -52300,8 +52307,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       .stats {
         position: absolute;
-        bottom: 0px;
-        left: 16px;
+        bottom: 0;
+        right: 8px;
       }
 
       yp-domain-stats {
@@ -54619,124 +54626,7 @@ module.exports = Array.isArray || function (arr) {
 
   /* Application theme */
 
-  /* Theme Number Uno
-  .rootDisabled {
-    --pallet-one-500: #4285f4;
-    --pallet-two-500: #FFA726;
-    --pallet-two-accent-400: #FFA726;
-
-    --primary-background-color: #FFEB3B;
-    --primary-background-color: #FFEB3B;
-
-    --default-primary-color: var(--pallet-one-500);
-    --secondary-primary-color: #0f9d58;
-
-    --primary-color: #03A9F4;
-    --primary-color-200: #81D4FA;
-    --primary-color-300: #4FC3F7;
-    --primary-color-400: #29B6F6;
-    --primary-color-600: #039BE5;
-    --primary-color-700: #0288D1;
-    --primary-color-800: #0277BD;
-
-    --accent-color: #F50057;
-    --accent-color-100: #F8BBD0;
-    --accent-color-200: #F48FB1;
-    --accent-color-300: #F06292;
-    --accent-color-400: #EC407A;
-
-    --paper-dialog-button-color: var(--accent-color);
-    --paper-tabs-selection-bar-color: var(--accent-color);
-    --paper-input-container-focus-color: var(--accent-color);
-
-    --paper-dropdown-menu: {
-      background-color: #FFF;
-    };
-  }
-    */
-  /* Theme Number Uno Ligher */
-  .rootDisabled {
-    --pallet-one-500: #4285f4;
-    --pallet-two-500: #FFA726;
-    --pallet-two-accent-400: #FFA726;
-
-    --primary-background-color: var(--paper-yellow-300);
-
-    --default-primary-color: var(--pallet-one-500);
-    --secondary-primary-color: #0f9d58;
-
-    --primary-color: #03A9F4;
-    --primary-color-200: #81D4FA;
-    --primary-color-300: #4FC3F7;
-    --primary-color-400: #29B6F6;
-    --primary-color-600: #039BE5;
-    --primary-color-700: #0288D1;
-    --primary-color-800: #0277BD;
-
-    --accent-color: #F50057;
-    --accent-color-100: #F8BBD0;
-    --accent-color-200: #F48FB1;
-    --accent-color-300: #F06292;
-    --accent-color-400: #EC407A;
-
-    --paper-dialog-button-color: var(--accent-color);
-    --paper-tabs-selection-bar-color: var(--accent-color);
-    --paper-input-container-focus-color: var(--accent-color);
-
-    --paper-dropdown-menu: {
-      background-color: #FFF;
-    };
-  }
-
-  .disabledBody {
-    background-color:  var(--paper-yellow-300);
-  }
-
-
-  /* Theme Number Uno Ligher */
-  .rootDisabled {
-    --pallet-one-500: #4285f4;
-    --pallet-two-500: #FFA726;
-    --pallet-two-accent-400: #FFA726;
-
-    --primary-background-color: #EEE;
-
-    --default-primary-color: var(--pallet-one-500);
-    --secondary-primary-color: #0f9d58;
-
-    --primary-color: var(--paper-cyan-500);
-    --primary-color-200: var(--paper-cyan-500);
-    --primary-color-300: var(--paper-cyan-500);
-    --primary-color-400: var(--paper-cyan-500);
-    --primary-color-600: var(--paper-cyan-500);
-    --primary-color-700: var(--paper-cyan-500);
-    --primary-color-800: var(--paper-cyan-500);
-
-    --accent-color: var(--paper-purple-a200);
-    --accent-color-100: var(--paper-purple-a200);
-    --accent-color-200: var(--paper-purple-a200);
-    --accent-color-300: var(--paper-purple-a200);
-    --accent-color-400: var(--paper-purple-a200);
-
-    --icon-general-color: #fff;
-
-    --middle-color: var(--paper-teal-500);
-
-    --paper-dialog-button-color: var(--accent-color);
-    --paper-tabs-selection-bar-color: var(--accent-color);
-    --paper-input-container-focus-color: var(--accent-color);
-
-    --paper-dropdown-menu: {
-      background-color: #FFF;
-    };
-  }
-
-  .disabledBody {
-    background-color: #EEE;
-  }
-
   /* Theme Sigvalda Frænda */
-
   :root {
     --yrpri-reykjavik-blue-50: var(--paper-blue-grey-50);
     --yrpri-reykjavik-blue-100: #3C6286;
@@ -54754,6 +54644,7 @@ module.exports = Array.isArray || function (arr) {
     --yrpri-reykjavik-accent-a300: #883710;
     --yrpri-reykjavik-accent-a400: #601F00;
 
+    --main-stats-color-on-white: #878787;
 
     --paper-dialog-button-color: var(--accent-color);
     --paper-tabs-selection-bar-color: var(--accent-color);
@@ -54779,7 +54670,9 @@ module.exports = Array.isArray || function (arr) {
     --accent-color-300: var(--paper-orange-a400);
     --accent-color-400: var(--paper-orange-a700);
     --middle-color: var(--primary-color-400);
-    --icon-general-color: '#fff'
+    --icon-general-color: '#fff';
+    --master-point-up-color: rgba(0,127,0,0.42);
+    --master-point-down-color: rgba(127,0,0,0.42);
     }
 
   body {
