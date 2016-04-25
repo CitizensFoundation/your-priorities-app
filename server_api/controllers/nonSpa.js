@@ -102,7 +102,8 @@ var sendGroup = function (id, req, res) {
     where: { id: id, access: models.Group.ACCESS_PUBLIC },
     attributes: ['id', 'name', 'objectives'],
     order: [
-      [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ]
+      [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
+      [ { model: models.Community }, { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ]
     ],
     include: [
       {
@@ -160,7 +161,9 @@ var sendPost = function (id, req, res) {
     where: { id: id },
     attributes: ['id', 'name', 'description'],
     order: [
-      [ { model: models.Image, as: 'PostHeaderImages' } , 'created_at', 'asc' ]
+      [ { model: models.Image, as: 'PostHeaderImages' } , 'created_at', 'asc' ],
+      [ { model: models.Group }, { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
+      [ { model: models.Group }, { model: models.Community }, { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ]
     ],
     include: [
       {
