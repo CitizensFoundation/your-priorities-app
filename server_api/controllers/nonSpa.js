@@ -84,7 +84,7 @@ var sendCommunity = function (id, req, res) {
         title     :  community.name,
         descriptionText : community.description,
         imageUrl  : imageUrl,
-        contentType: 'citizen participation community'
+        contentType: 'article'
       };
       res.render('bot', botOptions);
     } else {
@@ -142,7 +142,7 @@ var sendGroup = function (id, req, res) {
         title     :  group.name,
         descriptionText : group.objectives,
         imageUrl  : imageUrl,
-        contentType: 'citizen participation group'
+        contentType: 'article'
       };
       res.render('bot', botOptions);
     } else {
@@ -217,7 +217,7 @@ var sendPost = function (id, req, res) {
         title     :  post.name,
         descriptionText : post.description,
         imageUrl  : imageUrl,
-        contentType: 'citizen participation post'
+        contentType: 'article'
       };
       res.render('bot', botOptions);
     } else {
@@ -257,7 +257,7 @@ var sendUser = function (id, req, res) {
         title     :  user.name,
         descriptionText : user.description,
         imageUrl  : imageUrl,
-        contentType: 'citizen participation user'
+        contentType: 'article'
       };
       res.render('bot', botOptions);
     } else {
