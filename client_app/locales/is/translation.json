@@ -1,5 +1,11 @@
 {
-
+  "stats": {
+    "posts": "Fjöldi hugmynda",
+    "discussions": "Fjöldi umræðna",
+    "communities": "Fjöldi svæða",
+    "groups": "Fjöldi hópa",
+    "users": "Fjöldi notenda"
+  },
   "notification": {
     "passwordResetAndLoggedIn": "Lykilorði hefur verið breytt og þú er innskráð(ur)",
     "method": "Aðferð",
