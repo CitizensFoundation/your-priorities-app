@@ -109,15 +109,33 @@ var sendGroup = function (id, req, res) {
         attributes: ['id','formats'],
         model: models.Image, as: 'GroupLogoImages',
         required: false
+      },
+      {
+        model: models.Community,
+        where: {
+          access: models.Community.ACCESS_PUBLIC
+        },
+        required: true,
+        include: [
+          {
+            attributes: ['id','formats'],
+            model: models.Image, as: 'CommunityLogoImages',
+            required: false
+          }
+        ]
       }
     ]
   }).then(function(group) {
+    var formats;
     if (group) {
       log.info('Group Viewed From Bot', { group: toJson(group.simple()), context: 'view', bot: true });
       var imageUrl = '';
       if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
-        var formats = JSON.parse(group.GroupLogoImages[0].formats);
+        formats = JSON.parse(group.GroupLogoImages[0].formats);
         imageUrl = formats[0];
+      } else if (group.Community.CommunityLogoImages && group.Community.CommunityLogoImages.length>0) {
+          formats = JSON.parse(group.Community.CommunityLogoImages[0].formats);
+          imageUrl = formats[0];
       }
       var botOptions = {
         url       : fullUrl(req),
@@ -155,15 +173,43 @@ var sendPost = function (id, req, res) {
         where: {
           access: models.Group.ACCESS_PUBLIC
         },
-        required: true
+        required: true,
+        include: [
+          {
+            attributes: ['id','formats'],
+            model: models.Image, as: 'GroupLogoImages',
+            required: false
+          },
+          {
+            model: models.Community,
+            where: {
+              access: models.Community.ACCESS_PUBLIC
+            },
+            required: true,
+            include: [
+              {
+                attributes: ['id','formats'],
+                model: models.Image, as: 'CommunityLogoImages',
+                required: false
+              }
+            ]
+          }
+        ]
       }
     ]
   }).then(function(post) {
+    var formats;
     if (post) {
       log.info('Post Viewed From Bot', { post: toJson(post.simple()), context: 'view', bot: true });
       var imageUrl = '';
       if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
-        var formats = JSON.parse(post.PostHeaderImages[0].formats);
+        formats = JSON.parse(post.PostHeaderImages[0].formats);
+        imageUrl = formats[0];
+      } else if (post.Group.GroupLogoImages && post.Group.GroupLogoImages.length>0) {
+        formats = JSON.parse(post.Group.GroupLogoImages[0].formats);
+        imageUrl = formats[0];
+      } else if (post.Group.Community.CommunityLogoImages && post.Group.Community.CommunityLogoImages.length>0) {
+        formats = JSON.parse(post.Group.Community.CommunityLogoImages[0].formats);
         imageUrl = formats[0];
       }
       var botOptions = {
