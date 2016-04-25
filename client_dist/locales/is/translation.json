@@ -37,8 +37,9 @@
     },
     "point": {
       "new": "Rökræða",
-      "newEndorsed": "Rök með",
-      "newOpposed": "Rök á móti",
+      "newFor": "Ný rök með",
+      "newAgainst": "Ný rök á móti",
+      "newComment": "Ný athugasemd",
       "newsStory": {
         "new": "Ný frétt frá notanda"
       }
@@ -71,7 +72,7 @@
     "secret": "Leynilegt svæði"
   },
 
-  "news": "Fréttir",
+  "news": "Flæði",
 
   "pages": {
     "addLocale": "Nýtt locale",
@@ -161,7 +162,7 @@
     "photographerName": "Ljósmyndari",
     "tabs": {
       "debate": "Rökræða",
-      "news": "Fréttir",
+      "news": "Flæði",
       "location": "Staðsetning",
       "photos": "Myndefni",
       "solutions": "Lausnir",

@@ -1,4 +1,11 @@
 {
+  "stats": {
+    "posts": "Number of posts",
+    "discussions": "Number of discussions",
+    "communities": "Number of communities",
+    "groups": "Number of groups",
+    "users": "Number of users"
+  },
   "notification": {
     "passwordResetAndLoggedIn": "Your password has been changed and you are now logged in.",
     "method": "Method",
@@ -44,6 +51,9 @@
     },
     "point": {
       "new": "New point",
+      "newFor": "New point for",
+      "newAgainst": "New point against",
+      "newComment": "New comment",
       "newsStory": {
         "new": "New user story"
       }
@@ -115,7 +125,7 @@
     "photoDeleteConfirmation": "Are you sure you want to delete this photo?",
     "tabs": {
       "debate": "Debate",
-      "news": "News",
+      "news": "Feed",
       "location": "Location",
       "photos": "Photos",
       "solutions": "Solutions",
@@ -162,6 +172,8 @@
     "comments": "Comments",
     "howToWrite": "Let's brainstorm the best points for and against and think in solutions..."
   },
+
+  "news": "Feed",
 
   "uploading": {
     "inProgress": "Uploading..."

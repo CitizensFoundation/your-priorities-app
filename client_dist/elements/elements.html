@@ -37550,6 +37550,7 @@ event and do your own custom submission:
         name: 'Reykjavík',
         '--primary-background-color': 'var(--paper-blue-grey-100)',
         '--primary-color': 'var(--yrpri-reykjavik-blue-500)',
+        '--primary-color-100': 'var(--yrpri-reykjavik-blue-100)',
         '--primary-color-200': 'var(--yrpri-reykjavik-blue-200)',
         '--primary-color-300': 'var(--yrpri-reykjavik-blue-300)',
         '--primary-color-400': 'var(--yrpri-reykjavik-blue-300)',
@@ -37570,6 +37571,7 @@ event and do your own custom submission:
         name: 'Basalt Gray',
         '--primary-background-color': 'var(--paper-blue-grey-100)',
         '--primary-color': 'var(--paper-blue-grey-500)',
+        '--primary-color-100': 'var(--paper-blue-grey-100)',
         '--primary-color-200': 'var(--paper-blue-grey-200)',
         '--primary-color-300': 'var(--paper-blue-grey-300)',
         '--primary-color-400': 'var(--paper-blue-grey-400)',
@@ -37591,6 +37593,7 @@ event and do your own custom submission:
         name: 'Green Moss',
         '--primary-background-color': 'var(--paper-light-green-100)',
         '--primary-color': 'var(--paper-light-green-900)',
+        '--primary-color-100': 'var(--paper-light-green-100)',
         '--primary-color-200': 'var(--paper-light-green-200)',
         '--primary-color-300': 'var(--paper-light-green-300)',
         '--primary-color-400': 'var(--paper-light-green-400)',
@@ -37774,6 +37777,10 @@ event and do your own custom submission:
         padding-top: 8px;
         margin-bottom: 32px;
       }
+
+      .imageSizeInfo {
+        font-size: 13px;
+      }
     </style>
 
     <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
@@ -37790,14 +37797,16 @@ event and do your own custom submission:
       <div class="layout vertical additionalSettings">
         <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.logo.upload')]]</span>
+          <span>[[t('image.logo.upload')]]</span><br>
+          <span class="imageSizeInfo">864 x 486</span>
         </file-upload>
       </div>
 
       <div class="layout vertical additionalSettings">
         <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-header" method="POST" on-success="_headerImageUploaded">
           <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.header.upload')]]</span>
+          <span>[[t('image.header.upload')]]</span><br>
+          <span class="imageSizeInfo">1920 x 600</span>
         </file-upload>
       </div>
 
@@ -43019,8 +43028,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .topArea {
-        background-color: var(--middle-color, var(--primary-background-color));
+        background-color: var(--primary-background-color);
         background-image: var(--top-area-background-image, none);
+
         height: 300px;
       }
 
@@ -45186,7 +45196,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         @apply(--layout-horizontal);
         @apply(--layout-flex);
         @apply(--layout-start-justified);
-        color: #ccc;
+        color: #aaa;
       }
 
       .myButton {
@@ -46357,12 +46367,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .participateButton {
-        padding-top: 46px;
+        padding-top: 24px;
         padding-right: 4px;
       }
 
       .postPadding {
-        padding-top: 28px;
+        padding-top: 38px;
       }
 
       .createdAt {
@@ -46377,8 +46387,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .deleteIcon {
         position: absolute;
         left: 0px;
-        bottom: 100px;
-        color: #ddd;
+        bottom: 4px;
+        color: #eee;
       }
     </style>
 
@@ -46410,15 +46420,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                 <div class="layout vertical flex headerText">
                   <div class="layout horizontal typeName">
                     <div class="layout vertical">
-                      <div>[[t(activity.type)]]</div>
+                      <div>[[_getActivityTypeName(activity)]]</div>
                       <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
                         [[fromTime(activity.created_at)]]
                       </div>
                     </div>
-                    <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
-                      <iron-icon icon="thumb-down" class="thumbIconNewsFeed" hidden$="[[_upVote(activity.Point)]]"></iron-icon>
-                      <iron-icon icon="thumb-up" class="thumbIconNewsFeed" hidden$="[[_downVote(activity.Point)]]"></iron-icon>
-                    </template>
                   </div>
                 </div>
                 <ac-activity-header class="layout end-justified headerUserImage" activity="[[activity]]"></ac-activity-header>
@@ -46439,11 +46445,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                 <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
               </template>
 
-              <div class="postPadding" hidden$="[[!postId]]">
-              </div>
+              <div class="postPadding" hidden$="[[_hidePostListPadding()]]"> </div>
               <div class="layout horizontal" hidden$="[[postId]]">
                 <div hidden$="[[groupId]]">
-                  <template is="dom-if" if="[[_showGroup(activity.Group)]]">
+                  <template is="dom-if" if="[[_showGroup(activity)]]">
                     <ac-activity-group group="[[activity.Group]]"></ac-activity-group>
                   </template>
                 </div>
@@ -46537,9 +46542,33 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
       },
 
-      _showGroup: function (group) {
-        if (group) {
-          if (group.name == 'hidden_public_group_for_domain_level_points') {
+      _getActivityTypeName: function (activity) {
+        if (activity.type=='activity.point.new') {
+          if (activity.Point.value>0) {
+            return this.t('activity.point.newFor');
+          } else if (activity.Point.value<0) {
+            return this.t('activity.point.newAgainst');
+          } else {
+            return this.t('activity.point.newComment')
+          }
+        } else {
+          return this.t(activity.type);
+        }
+      },
+
+      _hidePostListPadding: function () {
+        if (!this.postId) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      _showGroup: function (activity) {
+        if (activity.PostStatusChange) {
+          return false;
+        } else if (activity.Group) {
+          if (activity.Group.name == 'hidden_public_group_for_domain_level_points') {
             return false;
           } else {
             return true;
@@ -47487,15 +47516,17 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       paper-fab::shadow #icon {
         background-color: var(--accent-color);
-        color: var(--icon-general-color, #FFF);
+        color: #FFF;
       }
 
       paper-fab {
         background-color: var(--accent-color);
+        color: #FFF;
       }
 
       .addPointFab {
         width: 100%;
+        color: #FFF;
       }
 
       paper-textarea {
@@ -48080,7 +48111,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .largeCard {
-        margin-top: 0;
+        margin-top: 56px;
       }
 
       .tabs {
@@ -48326,8 +48357,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
     <style>
       :host {
-        display: block;
-        width: 96%;
       }
 
       .infoContainer {
@@ -48356,7 +48385,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .edit {
-        color: #555;
+        color: #eee;
         position: absolute;
         top: 0;
         right: 0;
@@ -48457,7 +48486,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         position: absolute;
         top: 0;
         right: 0;
-        color: #000;
       }
     </style>
 
@@ -48600,9 +48628,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         width: 800px;
         height: 90px;
         margin-top: 24px;
-        padding: 16px;
-        background-color: var(--primary-color-300);
-        color: #FFF;
+        padding: 13px;
+        background-color: var(--primary-background-color);
+        color: var(--primary-color-600);
         font-size: 22px;
       }
 
@@ -48652,7 +48680,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       paper-fab {
-        padding-right: 16px;
+        margin-right: 12px;
       }
 
       iron-icon {
@@ -48668,11 +48696,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
     <paper-card elevation="[[elevation]]" class="postCard">
       <div class="layout horizontal">
-        <div class="layout flex introText">[[t('post.addNewIntroBoxText')]]</div>
-        <iron-icon icon="trending-flat"></iron-icon>
         <div class="layout horizontal center-center">
           <paper-fab on-tap="_newPost" icon="lightbulb-outline"></paper-fab>
         </div>
+        <div class="layout flex introText">[[t('post.addNewIntroBoxText')]]</div>
       </div>
     </paper-card>
   </template>
@@ -49651,7 +49678,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
           <div class="layout horizontal center-center">
-            <yp-post-card-add on-new-post="_newPost" elevation="1"></yp-post-card-add>
+            <yp-post-card-add on-new-post="_newPost" elevation="0"></yp-post-card-add>
           </div>
           <ac-activities id="groupActivities" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
         </section>
@@ -50891,9 +50918,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
   <template>
     <style>
       :host {
-        display: block;
-        @apply(--layout-vertical);
-        width: 864px;
       }
 
       .communityAccess {
@@ -50901,15 +50925,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .description {
-        padding: 16px !important;
         line-height: var(--description-line-height, 1.3);
       }
 
       .stats {
-        @apply(--layout-self-center);
         position: absolute;
         bottom: 0;
-        right: 16px;
+        left: 16px;
       }
 
       yp-community-stats {
@@ -50929,12 +50951,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .large-card {
-        background-color: var(--primary-color-700, #000);
+        background-color: #fefefe;
         color: #fff;
         height: 243px;
-        width: 864px;
-        margin-top: 16px;
-        margin-bottom: 16px;
+        width: 432px;
+        padding: 0 !important;
+        margin-top: 0 !important;
       }
 
       .description-and-stats {
@@ -50945,7 +50967,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         color: #FFF;
         position: absolute;
         top: 0;
-        right: 0;
+        left: 390px;
         padding-right: 0;
         margin-right: 0;
       }
@@ -50984,13 +51006,49 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           height: 122px;
         }
       }
+
+      .description {
+        padding: 0;
+        margin: 0;
+      }
+
+      .communityDescription {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 16px;
+      }
+
+      .community-name {
+        background-color: var(--primary-color-800, #000);
+        color: #fafafa;
+        padding-left: 16px;
+        padding-top: 16px;
+      }
     </style>
 
     <iron-media-query query="(max-width: 480px)" query-matches="{{phoneSize}}"></iron-media-query>
 
     <template is="dom-if" if="[[community]]">
-      <paper-material id="card" elevation="5" animated="" class="large-card">
-        <div class="contentContainer layout horizontal wrap">
+      <div class="layout horizontal center-center wrap">
+        <paper-material id="card" elevation="5" animated="" class="large-card">
+            <div class="layout vertical description-and-stats">
+              <div class="description">
+                <h2 class="community-name">[[communityName(community,1)]]</h2>
+                <div class="communityAccess">[[_communityAccessText(community.access)]]</div>
+                <div class="communityDescription">[[communityDescription(community,1)]]</div>
+                <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+              </div>
+            </div>
+            <paper-menu-button class="edit" hidden$="[[!hasCommunityAccess(community)]]">
+              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
+                <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
+                <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              </paper-menu>
+            </paper-menu-button>
+        </paper-material>
+        <paper-material id="cardImage" elevation="2" animated="" class="large-card">
           <template is="dom-if" if="[[phoneSize]]">
             <div>
               <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
@@ -50999,24 +51057,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           <template is="dom-if" if="[[!phoneSize]]">
             <iron-image class="image" sizing="contain" src$="[[communityLogoImagePath(community)]]"></iron-image>
           </template>
-          <div class="layout vertical description-and-stats">
-            <div class="description">
-              <h2 class="community-name">[[communityName(community,1)]]</h2>
-              <div class="communityAccess">[[_communityAccessText(community.access)]]</div>
-              <div>[[communityDescription(community,1)]]</div>
-            </div>
-          </div>
-          <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
-          <paper-menu-button class="edit" hidden$="[[!hasCommunityAccess(community)]]">
-            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-            <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-              <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
-              <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
-              <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-            </paper-menu>
-          </paper-menu-button>
-        </div>
-      </paper-material>
+        </paper-material>
+      </div>
     </template>
   </template>
 
@@ -51408,6 +51450,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         margin-top: 4px;
       }
 
+      .description[featured] {
+        font-size: 18px;
+      }
+
       .stats {
         @apply(--layout-self-center);
         color: var(--primary-color-more-darker, #424242);
@@ -51525,7 +51571,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         <div class="informationText" on-tap="_goToCommunity">
           <div class="community-name" featured$="[[featured]]">[[communityName(community)]]</div>
           <template is="dom-if" if="[[featured]]">
-            <div class="description">[[communityDescription(community,700)]]</div>
+            <div class="description" featured$="[[featured]]">[[communityDescription(community,700)]]</div>
           </template>
           <template is="dom-if" if="[[!featured]]">
             <div class="description">[[communityDescription(community)]]</div>
@@ -52183,7 +52229,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         @apply(--layout-flex);
         padding-top: 8px;
         padding-bottom: 8px;
-        color: #F0F0F0;
+        color: #999;
       }
 
       .stats-text {
@@ -52191,7 +52237,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         text-align:right;
         vertical-align: bottom;
         padding-right:8px;
-        color: #E1E1E1;
+        color: #999;
       }
 
       .stats-icon {
@@ -52201,20 +52247,20 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     </style>
 
     <div class="stats">
-      <iron-icon icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
-      <div class="stats-text" style="">{{formatNumber(domain.counter_posts)}}</div>
+      <iron-icon title="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
+      <div title="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(domain.counter_posts)}}</div>
 
-      <iron-icon icon="communication:forum" class="stats-icon"></iron-icon>
-      <div class="stats-text">{{formatNumber(domain.counter_points)}}</div>
+      <iron-icon title="[[t('stats.discussions')]]" icon="communication:forum" class="stats-icon"></iron-icon>
+      <div title="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(domain.counter_points)}}</div>
 
-      <iron-icon icon="group-work" class="stats-icon"></iron-icon>
-      <div class="stats-text" style="">{{formatNumber(domain.counter_communities)}}</div>
+      <iron-icon title="[[t('stats.communities')]]" icon="group-work" class="stats-icon"></iron-icon>
+      <div title="[[t('stats.communities')]]" class="stats-text" style="">{{formatNumber(domain.counter_communities)}}</div>
 
-      <iron-icon icon="social:people" class="stats-icon"></iron-icon>
-      <div class="stats-text" style="">{{formatNumber(domain.counter_groups)}}</div>
+      <iron-icon title="[[t('stats.groups')]]" icon="social:people" class="stats-icon"></iron-icon>
+      <div title="[[t('stats.groups')]]" class="stats-text" style="">{{formatNumber(domain.counter_groups)}}</div>
 
-      <iron-icon icon="face" class="stats-icon"></iron-icon>
-      <div class="stats-text">{{formatNumber(domain.counter_users)}}</div>
+      <iron-icon title="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
+      <div title="[[t('stats.users')]]" class="stats-text">{{formatNumber(domain.counter_users)}}</div>
 
     </div>
 
@@ -52242,18 +52288,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
   <template>
     <style>
       :host {
-        display: block;
-        @apply(--layout-vertical);
-        width: 864px;
       }
 
       .description {
-        padding: 16px !important;
         line-height: var(--description-line-height, 1.3);
       }
 
       .stats {
-        @apply(--layout-self-center);
         position: absolute;
         bottom: 0px;
         left: 16px;
@@ -52271,10 +52312,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .large-card {
-        background-color: var(--primary-color-800, #000);
-        color: #fff;
+        background-color: #fefefe;
+        color: #333;
         height: 243px;
-        width: 864px;
+        width: 432px;
         padding: 0 !important;
         margin-top: 0 !important;
       }
@@ -52328,50 +52369,57 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         font-size: 48px;
       }
 
-      .whiteShadow {
-        --shadow-elevation-2dp: {
-          box-shadow: 0 2px 2px 0 rgba(255, 255, 255, 0.14),
-          0 1px 5px 0 rgba(255, 255, 255, 0.12),
-          0 3px 1px -2px rgba(255, 255, 255, 0.2);
-        };
-        --shadow-elevation-3dp: {
-          box-shadow: 0 3px 4px 0 rgba(255, 255, 255, 0.14),
-          0 1px 8px 0 rgba(255, 255, 255, 0.12),
-          0 3px 3px -2px rgba(255, 255, 255, 0.4);
-        };
-        --shadow-elevation-4dp: {
-          box-shadow: 0 4px 5px 0 rgba(255, 255, 255, 0.14),
-          0 1px 10px 0 rgba(255, 255, 255, 0.12),
-          0 2px 4px -1px rgba(255, 255, 255, 0.4);
-        };
-        --shadow-elevation-6dp: {
-          box-shadow: 0 6px 10px 0 rgba(255, 255, 255, 0.14),
-          0 1px 18px 0 rgba(255, 255, 255, 0.12),
-          0 3px 5px -1px rgba(255, 255, 255, 0.4);
-        };
+      .textBox {
+        margin-right: 32px;
+      }
+
+      .description {
+        padding: 0;
+        margin: 0;
+      }
+
+      .domainDescription {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 16px;
+      }
+
+      .domain-name {
+        background-color: var(--primary-color-800, #000);
+        color: #fafafa;
+        padding-left: 16px;
+        padding-top: 16px;
       }
     </style>
     <template is="dom-if" if="[[domain]]">
-      <paper-material id="card" elevation="5" animated="" class="large-card">
-        <div class="layout horizontal wrap">
-          <div class="layout vertical description-and-stats">
-            <div class="description">
-              <h1 class="domain-name">[[_domainName(domain)]]</h1>
-              <div>[[_domainDescription(domain)]]</div>
+      <div class="layout horizontal center-center wrap">
+        <paper-material id="card" elevation="5" animated="" class="large-card textBox">
+          <div class="layout horizontal wrap">
+            <div class="layout vertical description-and-stats">
+              <div class="description">
+                <h1 class="domain-name">[[_domainName(domain)]]</h1>
+                <div class="domainDescription">
+                  [[_domainDescription(domain)]]
+                </div>
+                <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
+              </div>
             </div>
-            <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
           </div>
-          <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
-        </div>
-        <paper-menu-button class="edit" hidden$="[[!hasDomainAccess(domain)]]">
-          <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-          <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-            <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
-            <paper-item id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
-            <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-          </paper-menu>
-        </paper-menu-button>
-      </paper-material>
+          <paper-menu-button class="edit" hidden$="[[!hasDomainAccess(domain)]]">
+            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+            <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+              <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
+              <paper-item id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
+              <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+            </paper-menu>
+          </paper-menu-button>
+        </paper-material>
+        <paper-material id="cardImage" elevation="3" animated="" class="large-card">
+          <div class="layout horizontal wrap">
+            <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
+          </div>
+        </paper-material>
+      </div>
     </template>
   </template>
 
