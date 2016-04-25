@@ -67,6 +67,7 @@ if (app.get('env') != 'development') {
   });
 }
 
+app.set('views', __dirname+'/views');
 app.set('view engine', 'jade');
 
 app.use(morgan('combined'));
