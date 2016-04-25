@@ -34,10 +34,6 @@
   <template>
     <style>
       :host {
-        display: block;
-        @apply(--layout-vertical);
-        background-color: var(--primary-color);
-        width: 864px;
       }
 
       .groupAccess {
@@ -50,29 +46,29 @@
       }
 
       .objectives {
-        @apply(--layout-vertical);
         line-height: var(--objectives-line-height, 1.3);
       }
 
       .groupCard {
-        background-color: var(--primary-color);
-        color: #FFF;
+        background-color: #fefefe;
+        color: #333;
         height: 243px;
-        width: 864px;
+        width: 432px;
+        padding: 0 !important;
+        margin-top: 0 !important;
       }
 
       .stats {
-        @apply(--layout-self-center);
         position: absolute;
         bottom: 0px;
-        right: 16px;
+        right: 8px;
       }
 
       .edit {
         color: #FFF;
         position: absolute;
-        top: 0;
-        right: 0;
+        top: 0px;
+        left: 390px;
         padding-right: 0;
         margin-right: 0;
       }
@@ -116,42 +112,57 @@
         }
       }
 
-      .objectives {
-        padding-bottom: 40px;
-        max-width: 432px;
-      }
-
       .description {
-        padding: 12px;
+        padding: 0;
+        margin: 0;
       }
 
+      .groupDescription {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 16px;
+      }
+
+      .group-name {
+        background-color: var(--primary-color-800, #000);
+        color: #fafafa;
+        padding-left: 16px;
+        padding-top: 16px;
+        padding-bottom: 16px;
+      }
+
+      .textBox {
+        margin-right: 32px;
+      }
     </style>
 
     <template is="dom-if" if="[[group]]">
-      <paper-card id="card" elevation="[[elevation]]" animated-shadow class="groupCard">
-        <div class="layout horizontal wrap">
-          <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
-          <div class="objectives">
+      <div class="layout horizontal center-center wrap">
+        <paper-material id="card" elevation="[[elevation]]" animated-shadow class="groupCard textBox">
+          <div class="layout vertical">
             <div class="description">
               <h2 class="group-name">[[groupName(group)]]</h2>
-              <div class="groupAccess">[[_groupAccessText(group.access)]]</div>
-              <div>[[group.objectives]]</div>
+              <div hidden class="groupAccess">[[_groupAccessText(group.access)]]</div>
+              <div class="groupDescription">[[group.objectives]]</div>
+              <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
             </div>
           </div>
-        </div>
-        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-        <paper-menu-button class="edit" hidden$="[[!hasGroupAccess(group)]]">
-          <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-          <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-            <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
-            <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
-            <paper-item id="usersMenuItem">[[t('group.users')]]</paper-item>
-            <paper-item id="adminsMenuItem">[[t('group.admins')]]</paper-item>
-            <paper-item id="deleteMenuItem">[[t('group.delete')]]</paper-item>
-            <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-          </paper-menu>
-        </paper-menu-button>
-      </paper-card>
+          <paper-menu-button class="edit" hidden$="[[!hasGroupAccess(group)]]">
+            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+            <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+              <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
+              <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
+              <paper-item id="usersMenuItem">[[t('group.users')]]</paper-item>
+              <paper-item id="adminsMenuItem">[[t('group.admins')]]</paper-item>
+              <paper-item id="deleteMenuItem">[[t('group.delete')]]</paper-item>
+              <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+            </paper-menu>
+          </paper-menu-button>
+        </paper-material>
+        <paper-material id="cardImage" elevation="2" animated class="groupCard">
+          <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
+        </paper-material>
+      </div>
     </template>
   </template>
 

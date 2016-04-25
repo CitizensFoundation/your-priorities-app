@@ -19,15 +19,12 @@
     <style>
       :host {
         display: block;
-        @apply(--layout-horizontal);
       }
 
       .stats {
-        @apply(--layout-horizontal);
-        @apply(--layout-flex);
         padding-top: 8px;
         padding-bottom: 8px;
-        color: #999;
+        color: var(--main-stats-color-on-white);
       }
 
       .stats-text {
@@ -35,7 +32,7 @@
         text-align:right;
         vertical-align: bottom;
         padding-right:8px;
-        color: #999;
+        color: var(--main-stats-color-on-white);
       }
 
       .stats-icon {
@@ -44,7 +41,7 @@
       }
     </style>
 
-    <div class="stats">
+    <div class="stats layout horizontal end-justified">
       <iron-icon title="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
       <div title="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(domain.counter_posts)}}</div>
 

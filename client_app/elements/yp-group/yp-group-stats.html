@@ -19,14 +19,12 @@
     <style>
       :host {
         display: block;
-        @apply(--layout-horizontal);
       }
 
       .stats {
-        @apply(--layout-horizontal);
-        @apply(--layout-flex);
         padding-top: 8px;
         padding-bottom: 8px;
+        color: var(--main-stats-color-on-white);
       }
 
       .stats-text {
@@ -34,6 +32,7 @@
         text-align:right;
         vertical-align: bottom;
         padding-right:8px;
+        color: var(--main-stats-color-on-white);
       }
 
       .stats-icon {
@@ -42,15 +41,15 @@
       }
     </style>
 
-    <div class="stats">
-      <iron-icon icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
-      <div class="stats-text" style="">{{formatNumber(group.counter_posts)}}</div>
+    <div class="stats layout horizontal end-justified">
+      <iron-icon title="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
+      <div title="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(group.counter_posts)}}</div>
 
-      <iron-icon icon="communication:forum" class="stats-icon"></iron-icon>
-      <div class="stats-text">{{formatNumber(group.counter_points)}}</div>
+      <iron-icon title="[[t('stats.discussions')]]" icon="communication:forum" class="stats-icon"></iron-icon>
+      <div title="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(group.counter_points)}}</div>
 
-      <iron-icon icon="face" class="stats-icon"></iron-icon>
-      <div class="stats-text">{{formatNumber(group.counter_users)}}</div>
+      <iron-icon title="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
+      <div title="[[t('stats.users')]]" class="stats-text">{{formatNumber(group.counter_users)}}</div>
     </div>
 
   </template>

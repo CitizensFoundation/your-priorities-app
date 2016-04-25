@@ -91,6 +91,14 @@
         color: var(--primary-color-300);
         padding-bottom: 24px;
       }
+
+      .thumbUp {
+        color: var(--master-point-up-color);
+      }
+
+      .thumbDown {
+        color: var(--master-point-down-color);
+      }
     </style>
 
     <template is="dom-if" if="[[point]]">
@@ -100,8 +108,8 @@
         <div class="user-image layout vertical" hidden$="[[hideUser]]">
           <yp-user-image user="[[user]]"></yp-user-image>
           <div class="layout horizontal center-center">
-            <iron-icon icon="thumb-down" class="thumbIcon" hidden$="[[upVote(point)]]"></iron-icon>
-            <iron-icon icon="thumb-up" class="thumbIcon" hidden$="[[downVote(point)]]"></iron-icon>
+            <iron-icon icon="thumb-down" class="thumbIcon thumbDown" hidden$="[[upVote(point)]]"></iron-icon>
+            <iron-icon icon="thumb-up" class="thumbIcon thumbUp" hidden$="[[downVote(point)]]"></iron-icon>
           </div>
         </div>
 
