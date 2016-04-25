@@ -93,6 +93,68 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_CLOSED: 1,
       ACCESS_SECRET: 2,
 
+      getLoginProviders: function (req, callback) {
+        var providers = [];
+
+        sequelize.models.Domain.findAll().then(function(domains) {
+          async.eachSeries(domains, function (domain, seriesCallback) {
+
+            if (domain.secret_api_keys && domain.secret_api_keys.google) {
+              providers.push({
+                name            : 'google-strategy-'+domain.id,
+                provider        : 'google',
+                protocol        : 'oauth2',
+                strategyObject  : 'Strategy',
+                strategyPackage : 'passport-google-oauth',
+                clientID        : domain.secret_api_keys.google.client_id,
+                clientSecret    : domain.secret_api_keys.google.client_secret,
+                scope           : ['email', 'profile'],
+                fields          : null,
+                urlCallback     : 'https://'+domain.domain_name+'/users/auth/google-strategy/callback'
+              });
+            }
+
+            if (domain.secret_api_keys && domain.secret_api_keys.facebook) {
+              providers.push({
+                name            : 'facebook-strategy-'+domain.id,
+                provider        : 'facebook',
+                protocol        : 'oauth2',
+                strategyObject  : 'Strategy',
+                strategyPackage : 'passport-facebook',
+                clientID        : domain.secret_api_keys.facebook.client_id,
+                clientSecret    : domain.secret_api_keys.facebook.client_secret,
+                scope           : ['email', 'profile'],
+                fields          : null,
+                urlCallback     : 'https://'+domain.domain_name+'/users/auth/facebook-strategy/callback'
+              });
+            }
+
+            seriesCallback();
+          }, function (error) {
+            callback(error, providers);
+          })
+        }).catch(function (error) {
+          callback(error);
+        });
+      },
+
+      getLoginHosts: function (req, callback) {
+        var hosts = [];
+        hosts.push('127.0.0.1');
+        hosts.push('localhost');
+
+        sequelize.models.Domain.findAll().then(function(domains) {
+          async.eachSeries(domains, function (domain, seriesCallback) {
+            hosts.push(domain.domain_name);
+            seriesCallback();
+          }, function (error) {
+            callback(error, hosts);
+          })
+        }).catch(function (error) {
+          callback(error);
+        });
+      },
+
       setYpDomain: function (req,res,next) {
         var domainName = Domain.extractDomain(req.headers.host);
         log.info("DOMAIN: "+req.useragent.source);
