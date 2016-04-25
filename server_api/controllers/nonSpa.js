@@ -14,7 +14,7 @@ var fullUrl = function (req) {
     pathname: replacedUrl
   });
 
-  var finalUrl = formattedUrl.replace('%23','#');
+  var finalUrl = formattedUrl.replace(/%2F/g,"/").replace('%23','#');
   return finalUrl;
 };
 
@@ -226,7 +226,8 @@ var sendUser = function (id, req, res) {
 
 router.get('/', function(req, res, next) {
   if (req.url.startsWith('/?_escaped_fragment_=')) {
-    var splitUrl = req.url.split('/');
+    var url = req.url.replace(/%2F/g,"/");
+    var splitUrl = url.split('/');
     if (splitUrl[2]=='domain') {
       sendDomain(splitUrl[3], req, res)
     } else if (splitUrl[2]=='community') {
