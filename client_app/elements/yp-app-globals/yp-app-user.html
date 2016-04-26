@@ -22,10 +22,12 @@
 
     <yp-session id="session"></yp-session>
 
-    <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
-    <yp-ajax id="adminRightsAjax" method="GET" url="/api/users/adminRights" on-response="_adminRightsResponse"></yp-ajax>
-    <yp-ajax id="membershipsAjax" method="GET" url="/api/users/memberships" on-response="_membershipsResponse"></yp-ajax>
-    <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
+    <div class="layout horizontal center-center">
+      <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
+      <yp-ajax id="adminRightsAjax" method="GET" url="/api/users/adminRights" on-response="_adminRightsResponse"></yp-ajax>
+      <yp-ajax id="membershipsAjax" method="GET" url="/api/users/memberships" on-response="_membershipsResponse"></yp-ajax>
+      <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
+    </div>
 
     <paper-toast id="loginToast" text="[[toastLoginTextCombined]]"></paper-toast>
     <paper-toast id="logoutToast" text="[[toastLogoutTextCombined]]"></paper-toast>
@@ -216,10 +218,19 @@
 
         ready: function () {
           window.appUser = this;
+          this.checkLogin()
+        },
+
+        loginFromFacebook: function () {
+          window.appGlobals.notifyUserViaToast(this.t('user.loggedInWithFacebook'));
+          this._closeUserLogin();
+          this.checkLogin();
+        },
+
+        checkLogin: function () {
           this.$.isLoggedInAjax.generateRequest();
           this.$.adminRightsAjax.generateRequest();
           this.$.membershipsAjax.generateRequest();
-
         },
 
         updateEndorsementForPost: function (postId, newEndorsement) {

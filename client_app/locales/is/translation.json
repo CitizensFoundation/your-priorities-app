@@ -105,6 +105,8 @@
   },
 
   "user": {
+    "loggedInWithFacebook": "Innskráning með Facebook",
+    "facebookLogin": "Facebook",
     "info":"Upplýsingar",
     "notifications": "Tilkynningar",
     "logout": "útskrá",

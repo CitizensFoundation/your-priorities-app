@@ -66,15 +66,18 @@ var getUserWithAll = function (userId, callback) {
 };
 
 // Login
-router.get('/login', passport.authenticate('local'), function (req, res) {
-  log.info('User Login', {context: 'view', user: toJson(req.user)});
-  getUserWithAll(req.user.id, function (error, user) {
-    if (error || !user) {
-      log.error("User Login Error", {context: 'login', user: user.id, err: error, errorStatus: 500});
-      res.sendStatus(500);
-    } else {
-      res.send(user)
-    }
+router.post('/login', function (req, res) {
+  req.sso.authenticate('local-strategy', {}, req, res, function(err, user) {
+    console.log(user);
+    log.info('User Login', {context: 'view', user: toJson(req.user)});
+    getUserWithAll(req.user.id, function (error, user) {
+      if (error || !user) {
+        log.error("User Login Error", {context: 'login', user: user.id, err: error, errorStatus: 500});
+        res.sendStatus(500);
+      } else {
+        res.send(user)
+      }
+    });
   });
 });
 
@@ -603,29 +606,25 @@ router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
 });
 
 // Facebook Authentication
-router.get('/auth/facebook/', function(req, res, next) {
-  passport.authenticate(
-    'facebook',
-    { clientID: req.ypDomain.facebook_client_id,
-      clientSecret: req.ypDomain.facebook_client_secret }
-  ) (req, res, next);
+router.get('/auth/facebook', function(req, res, next) {
+  req.sso.authenticate('facebook-strategy-'+req.ypDomain.id, {}, req, res, function(err, user) {
+    console.log(user);
+  });
 });
 
-router.get('/auth/facebook/callback', function(req, res, next) {
-  passport.authenticate(
-    'facebook',
-    { clientID: req.ypDomain.facebook_client_id,
-      clientSecret: req.ypDomain.facebook_client_secret }
-  ) (req, res, next) },
-    function(req, res) {
-      log.info('User Logged in from Facebook', { user: toJson(req.user), context: 'facebookCallback' });
-      res.sendStatus(200);
+router.get('/auth/facebook/callback', function(req, res) {
+  req.sso.authenticate('facebook-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from Facebook login", { err: error });
+      res.sendStatus(500);
+    } else {
+      res.render('facebookLoginComplete', {});
     }
-);
+  })
+});
 
 // Twitter Authentication
-router.get('/auth/twitter',
-  passport.authenticate('twitter'));
+//router.get('/auth/twitter', passport.authenticate('twitter'));
 
 router.get('/auth/twitter/callback',
   passport.authenticate('twitter', { failureRedirect: '/' }),

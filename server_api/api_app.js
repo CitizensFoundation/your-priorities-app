@@ -45,6 +45,7 @@ var models = require('./models');
 var auth = require('./authorization');
 var log = require('./utils/logger');
 var toJson = require('./utils/to_json');
+var sso = require('./passport-sso');
 
 if (process.env.REDISTOGO_URL) {
   process.env.REDIS_URL = process.env.REDISTOGO_URL;
@@ -121,6 +122,20 @@ app.use(function(req,res,next) {
   }
 });
 
+var bearerCallback = function (req, token) {
+  return console.log('The user has tried to authenticate with a bearer token');
+};
+
+app.use(function (req, res, next) {
+  sso.init(req.ypDomain.loginHosts, req.ypDomain.loginProviders, {
+    authorize: bearerCallback,
+    login    : models.User.localCallback
+  });
+  req.sso = sso;
+  next();
+});
+
+
 if (app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_app')));
 } else {
@@ -128,8 +143,20 @@ if (app.get('env') === 'development') {
 }
 
 passport.serializeUser(function(user, done) {
-  log.info("User Serialized", { context: 'deserializeUser', userEmail: user.email, userId: user.id });
-  done(null, user.id);
+  if (user.provider && user.provider=='facebook') {
+    models.User.findOrCreate({ where: { facebook_id: user.identifier },
+        defaults: { email: user.email, name: user.displayName }})
+      .spread(function(user, created) {
+        log.info(created ? "User Created from Facebook" : "User Connected to Facebook", { context: 'loginFromFacebook', user: toJson(user)});
+        done(null, user.id);
+      }).catch(function (error) {
+      log.error("", {err: error });
+      done(error);
+    });
+  } else {
+    log.info("User Serialized", { context: 'deserializeUser', userEmail: user.email, userId: user.id });
+    done(null, user.id);
+  }
 });
 
 passport.deserializeUser(function(id, done) {
@@ -160,6 +187,8 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
+
+/*
 // Username and Password Authentication
 passport.use(new LocalStrategy(
   {
@@ -267,6 +296,7 @@ if (process.env.GITHUB_CLIENT_ID) {
     }
   ));
 }
+*/
 
 app.use('/', index);
 app.use('/api/domains', domains);

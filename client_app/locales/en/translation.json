@@ -236,6 +236,8 @@
   },
 
   "user": {
+    "loggedInWithFacebook": "Logged in with Facebook",
+    "facebookLogin": "Facebook login",
     "info":"Info",
     "notifications": "Notifications",
     "name": "Full name",

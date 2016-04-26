@@ -93,11 +93,33 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_CLOSED: 1,
       ACCESS_SECRET: 2,
 
-      getLoginProviders: function (req, callback) {
+      getLoginProviders: function (callback) {
         var providers = [];
+
+        providers.push(
+          {
+            name            : 'local-strategy',
+            provider        : 'local',
+            protocol        : 'local',
+            strategyObject  : 'Strategy',
+            strategyPackage : 'passport-local',
+            clientID        : 'false',
+            clientSecret    : 'false',
+            scope           : [],
+            fields          : null,
+            urlCallback     : 'http://localhost/callback/users/auth/local-strategy-1/callback'
+          }
+        );
 
         sequelize.models.Domain.findAll().then(function(domains) {
           async.eachSeries(domains, function (domain, seriesCallback) {
+
+            domain.secret_api_keys = {
+              facebook: {
+                client_id: process.env.FACEBOOK_CLIENT_ID,
+                client_secret: process.env.FACEBOOK_CLIENT_SECRET
+              }
+            };
 
             if (domain.secret_api_keys && domain.secret_api_keys.google) {
               providers.push({
@@ -110,7 +132,7 @@ module.exports = function(sequelize, DataTypes) {
                 clientSecret    : domain.secret_api_keys.google.client_secret,
                 scope           : ['email', 'profile'],
                 fields          : null,
-                urlCallback     : 'https://'+domain.domain_name+'/users/auth/google-strategy/callback'
+                urlCallback     : 'http://fbtest.betrireykjavik.is/api/users/auth/google/callback'
               });
             }
 
@@ -123,9 +145,9 @@ module.exports = function(sequelize, DataTypes) {
                 strategyPackage : 'passport-facebook',
                 clientID        : domain.secret_api_keys.facebook.client_id,
                 clientSecret    : domain.secret_api_keys.facebook.client_secret,
-                scope           : ['email', 'profile'],
-                fields          : null,
-                urlCallback     : 'https://'+domain.domain_name+'/users/auth/facebook-strategy/callback'
+                scope           : ['email'],
+                fields          : ['id', 'displayName', 'email'],
+                urlCallback     : 'http://fbtest.betrireykjavik.is:4242/api/users/auth/facebook/callback'
               });
             }
 
@@ -138,7 +160,7 @@ module.exports = function(sequelize, DataTypes) {
         });
       },
 
-      getLoginHosts: function (req, callback) {
+      getLoginHosts: function (callback) {
         var hosts = [];
         hosts.push('127.0.0.1');
         hosts.push('localhost');
@@ -164,15 +186,21 @@ module.exports = function(sequelize, DataTypes) {
                                                   name: 'New Your Priorities Domain',
                                                   user_agent: req.useragent.source,
                                                   ip_address: req.clientIp}})
-            .spread(function(domain, created) {
-              if (created) {
-                log.info('Domain Created', { domain: toJson(domain.simple()), context: 'create' });
-              } else {
-                log.info('Domain Loaded', { domain: toJson(domain.simple()), context: 'create' });
-              }
-              req.ypDomain = domain;
+        .spread(function(domain, created) {
+          if (created) {
+            log.info('Domain Created', { domain: toJson(domain.simple()), context: 'create' });
+          } else {
+            log.info('Domain Loaded', { domain: toJson(domain.simple()), context: 'create' });
+          }
+          req.ypDomain = domain;
+          sequelize.models.Domain.getLoginProviders(function (error, providers) {
+            req.ypDomain.loginProviders = providers;
+            sequelize.models.Domain.getLoginHosts(function (error, hosts) {
+              req.ypDomain.loginHosts = hosts;
               next();
             });
+          });
+        });
       },
 
       extractDomain: function(url) {

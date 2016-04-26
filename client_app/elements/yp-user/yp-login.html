@@ -17,6 +17,124 @@
 <dom-module id="yp-login">
 
   <style>
+    .btn-auth,
+    .btn-auth:visited {
+      position: relative;
+      display: inline-block;
+      height: 22px;
+      padding: 0 1em;
+      border: 1px solid #999;
+      border-radius: 2px;
+      margin: 0;
+      text-align: center;
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 22px;
+      white-space: nowrap;
+      cursor: pointer;
+      color: #222;
+      background: #fff;
+      -webkit-box-sizing: content-box;
+      -moz-box-sizing: content-box;
+      box-sizing: content-box;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      /* iOS */
+      -webkit-appearance: none; /* 1 */
+      /* IE6/7 hacks */
+      *overflow: visible;  /* 2 */
+      *display: inline; /* 3 */
+      *zoom: 1; /* 3 */
+    }
+
+    .btn-auth:hover,
+    .btn-auth:focus,
+    .btn-auth:active {
+      color: #222;
+      text-decoration: none;
+    }
+
+    .btn-auth:before {
+      content: "";
+      float: left;
+      width: 22px;
+      height: 22px;
+      background: url(auth-icons.png) no-repeat 99px 99px;
+    }
+
+    /**
+     * 36px
+     */
+
+    .btn-auth.large {
+      height: 32px;
+      line-height: 36px;
+      font-size: 20px;
+    }
+
+    .btn-auth.large:before {
+      width: 36px;
+      height: 36px;
+    }
+
+    /*
+     * Remove excess padding and border in FF3+
+     */
+
+    .btn-auth::-moz-focus-inner {
+      border: 0;
+      padding: 0;
+    }
+
+
+    /* Facebook (extends .btn-auth)
+       ========================================================================== */
+
+    .btn-facebook,
+    .btn-facebook:visited {
+      border-color: #29447e;
+      border-bottom-color: #1a356e;
+      color: #fff;
+      background-color: #5872a7;
+      background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#637bad), to(#5872a7));
+      background-image: -webkit-linear-gradient(#637bad, #5872a7);
+      background-image: -moz-linear-gradient(#637bad, #5872a7);
+      background-image: -ms-linear-gradient(#637bad, #5872a7);
+      background-image: -o-linear-gradient(#637bad, #5872a7);
+      background-image: linear-gradient(#637bad, #5872a7);
+      -webkit-box-shadow: inset 0 1px 0 #879ac0;
+      box-shadow: inset 0 1px 0 #879ac0;
+    }
+
+    .btn-facebook:hover,
+    .btn-facebook:focus {
+      color: #fff;
+      background-color: #3b5998;
+    }
+
+    .btn-facebook:active {
+      color: #fff;
+      background: #4f6aa3;
+      -webkit-box-shadow: inset 0 1px 0 #45619d;
+      box-shadow: inset 0 1px 0 #45619d;
+    }
+
+    /*
+     * Icon
+     */
+
+    .btn-facebook:before {
+      border-right: 1px solid #465f94;
+      margin: 0 1em 0 -1em;
+      background-position: 0 0;
+    }
+
+    .btn-facebook.large:before {
+      background-position: 0 -22px;
+    }
+
     :host {
     }
 
@@ -34,6 +152,11 @@
     re-captcha {
       padding-top: 28px;
       padding-bottom: 28px;
+    }
+
+    .socialMediaLogin {
+      padding-top: 16px;
+      cursor: pointer;
     }
   </style>
 
@@ -74,6 +197,12 @@
                          error-message="[[passwordErrorMessage]]">
             </paper-input>
 
+            <div class="layout horizontal center-center socialMediaLogin">
+              <div class="btn-auth btn-facebook" on-tap="_facebookLogin">
+                [[t('user.facebookLogin')]]
+              </div>
+            </div>
+
             <div class="layout horizontal center-center">
               <re-captcha sitekey="[[reCaptchaSiteKey]]" lang="[[getLocale()]]"></re-captcha>
             </div>
@@ -86,7 +215,7 @@
           </div>
         </paper-dialog>
 
-        <yp-ajax id="loginAjax" dispatch-error on-error="_loginError" method="GET" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
+        <yp-ajax id="loginAjax" dispatch-error on-error="_loginError" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
         <yp-ajax id="registerAjax" method="POST" dispatch-error on-error="_registerError" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
         <iron-a11y-keys id="a11y" keys="enter"
                         on-keys-pressed="onEnter"></iron-a11y-keys>
@@ -153,12 +282,6 @@
         computed: '_computeCredentials(name, email, password)'
       },
 
-      credentialsParams: {
-        type: String,
-        notify: true,
-        computed: '_computeCredentialsParams(name, email, password)'
-      },
-
       registerMode: {
         type: Number,
         value: 0,
@@ -200,6 +323,15 @@
         type: Function,
         value: null
       }
+    },
+
+    _facebookLogin: function () {
+      var url = '/api/users/auth/facebook',
+      width = 1000,
+      height = 650,
+      top = (window.outerHeight - height) / 2,
+      left = (window.outerWidth - width) / 2;
+      window.open(url, 'facebook_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
     },
 
     _openedChanged: function (newValue) {
@@ -263,16 +395,10 @@
      return  JSON.stringify({
         name: name,
         email: email,
+        identifier: email,
+        username: email,
         password: password
       });
-    },
-
-    _computeCredentialsParams: function(name, email, password) {
-      return {
-        name: name,
-        email: email,
-        password: password
-      };
     },
 
     _validateAndSend: function(e) {
@@ -281,7 +407,7 @@
           this.$$("#registerAjax").body = this.credentials;
           this.$$("#registerAjax").generateRequest();
         } else {
-          this.$$("#loginAjax").params = this.credentialsParams;
+          this.$$("#loginAjax").body = this.credentials;
           this.$$("#loginAjax").generateRequest();
         }
       } else {

@@ -1,4 +1,6 @@
 var async = require("async");
+var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
 
 "use strict";
 
@@ -69,6 +71,22 @@ module.exports = function(sequelize, DataTypes) {
     ],
 
     classMethods: {
+
+      localCallback: function (req, email, password, done) {
+        sequelize.models.User.find({
+          where: { email: email }
+        }).then(function(user) {
+          if (user) {
+            user.validatePassword(password, done);
+          } else {
+            log.warn("User LocalStrategy Incorrect username", { context: 'localStrategy', user: toJson(user), err: 'Incorrect username', errorStatus: 401 });
+            return done(null, false, { message: 'Incorrect username.' });
+          }
+        }).catch(function(error) {
+          log.error("User LocalStrategy Error", { context: 'localStrategy', err: error, errorStatus: 500 });
+          done(error);
+        });
+      },
 
       defaultAttributesWithSocialMedia: ['id', 'email', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id'],
       
