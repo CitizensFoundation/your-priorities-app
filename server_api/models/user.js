@@ -72,6 +72,79 @@ module.exports = function(sequelize, DataTypes) {
 
     classMethods: {
 
+      serializeFacebookUser: function (profile, callback) {
+        var user;
+        async.series([
+          function (seriesCallback) {
+            sequelize.models.User.find({
+              where: {
+                facebook_id: profile.identifier
+              }
+            }).then (function (userIn) {
+              if (userIn) {
+                user = userIn;
+                seriesCallback();
+              } else {
+                seriesCallback();
+              }
+            }).catch (function (error) {
+              seriesCallback(error);
+            })
+          },
+          function (seriesCallback) {
+            if (!user) {
+              sequelize.models.User.find({
+                where: {
+                  email: profile.email
+                }
+              }).then (function (userIn) {
+                if (userIn) {
+                  userIn.facebook_id = profile.identifier;
+                  userIn.save().then(function (results) {
+                    user = userIn;
+                    seriesCallback();
+                  });
+                } else {
+                  seriesCallback();
+                }
+              }).catch (function (error) {
+                seriesCallback(error);
+              })
+            } else {
+              seriesCallback();
+            }
+          },
+          function (seriesCallback) {
+            if (!user) {
+              sequelize.models.User.create(
+                {
+                  email: profile.email,
+                  facebook_id: profile.identifier,
+                  name: profile.nameDisplay,
+                  status: 'active'
+              }).then (function (userIn) {
+                if (userIn) {
+                  user = userIn;
+                  seriesCallback();
+                } else {
+                  seriesCallback("Could not create user");
+                }
+              }).catch (function (error) {
+                seriesCallback(error);
+              })
+            } else {
+              seriesCallback();
+            }
+          }
+        ], function (error) {
+          if (error) {
+            callback(error);
+          } else {
+            callback(null, user);
+          }
+        });
+      },
+
       localCallback: function (req, email, password, done) {
         sequelize.models.User.find({
           where: { email: email }

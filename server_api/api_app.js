@@ -142,18 +142,17 @@ if (app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_dist')));
 }
 
-passport.serializeUser(function(user, done) {
-  if (user.provider && user.provider=='facebook') {
-    models.User.findOrCreate({ where: { facebook_id: user.identifier },
-        defaults: { email: user.email, name: user.displayName }})
-      .spread(function(user, created) {
-        log.info(created ? "User Created from Facebook" : "User Connected to Facebook", { context: 'loginFromFacebook', user: toJson(user)});
+passport.serializeUser(function(profile, done) {
+  if (profile.provider && profile.provider=='facebook') {
+    models.User.serializeFacebookUser(profile, function (error, user) {
+      if (error) {
+        log.error("Error in User from Facebook", {err: error });
+        done(error);
+      } else
+        log.info("User Connected to Facebook", { context: 'loginFromFacebook', user: toJson(user)});
         done(null, user.id);
-      }).catch(function (error) {
-      log.error("", {err: error });
-      done(error);
-    });
-  } else {
+      });
+    } else {
     log.info("User Serialized", { context: 'deserializeUser', userEmail: user.email, userId: user.id });
     done(null, user.id);
   }
