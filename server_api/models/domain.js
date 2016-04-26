@@ -141,7 +141,7 @@ module.exports = function(sequelize, DataTypes) {
                 clientSecret    : domain.secret_api_keys.google.client_secret,
                 scope           : ['email', 'profile'],
                 fields          : null,
-                urlCallback     : 'http://fbtest.betrireykjavik.is/api/users/auth/google/callback'
+                urlCallback     : 'https://'+domain.domain_name+'/api/users/auth/google/callback'
               });
             }
 
@@ -156,7 +156,7 @@ module.exports = function(sequelize, DataTypes) {
                 clientSecret    : domain.secret_api_keys.facebook.client_secret,
                 scope           : ['email'],
                 fields          : ['id', 'displayName', 'email'],
-                urlCallback     : 'http://fbtest.betrireykjavik.is:4242/api/users/auth/facebook/callback'
+                urlCallback     : 'https://'+domain.domain_name+'/api/users/auth/facebook/callback'
               });
             }
 
