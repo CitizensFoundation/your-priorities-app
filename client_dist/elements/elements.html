@@ -37786,36 +37786,63 @@ event and do your own custom submission:
     <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
-      <paper-input id="name" name="name" type="text" label="[[t('Name')]]" value="{{domain.name}}" maxlength="60" char-counter="" class="mainInput">
-      </paper-input>
+      <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+        <paper-tab><span>[[t('domain.info')]]</span></paper-tab>
+        <paper-tab>[[t('domain.apis')]]</paper-tab>
+      </paper-tabs>
 
-      <paper-textarea id="description" name="description" value="{{domain.description}}" label="[[t('Description')]]" char-counter="" rows="2" max-rows="5" maxlength="300" class="mainInput">
-      </paper-textarea>
+      <div class="layout vertical wrap container">
+        <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
 
-      <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
+          <section>
+            <paper-input id="name" name="name" type="text" label="[[t('Name')]]" value="{{domain.name}}" maxlength="60" char-counter="" class="mainInput">
+            </paper-input>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.logo.upload')]]</span><br>
-          <span class="imageSizeInfo">864 x 486</span>
-        </file-upload>
-      </div>
+            <paper-textarea id="description" name="description" value="{{domain.description}}" label="[[t('Description')]]" char-counter="" rows="2" max-rows="5" maxlength="300" class="mainInput">
+            </paper-textarea>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-header" method="POST" on-success="_headerImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.header.upload')]]</span><br>
-          <span class="imageSizeInfo">1920 x 600</span>
-        </file-upload>
-      </div>
+            <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
 
-      <input type="hidden" name="themeId" value="[[themeId]]">
-      <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
-      <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+            <div class="layout vertical additionalSettings">
+              <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
+                <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                <span>[[t('image.logo.upload')]]</span><br>
+                <span class="imageSizeInfo">864 x 486</span>
+              </file-upload>
+            </div>
 
-    </yp-edit-dialog>
-  </template>
+            <div class="layout vertical additionalSettings">
+              <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-header" method="POST" on-success="_headerImageUploaded">
+                <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                <span>[[t('image.header.upload')]]</span><br>
+                <span class="imageSizeInfo">1920 x 600</span>
+              </file-upload>
+            </div>
+
+            <input type="hidden" name="themeId" value="[[themeId]]">
+            <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
+            <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+
+          </section>
+
+          <section>
+            <paper-input id="facebookClientId" name="facebookClientId" type="text" label="Facebook Client Id" value="{{domain.secret_api_keys.facebook.client_id}}" maxlength="60" char-counter="" class="mainInput">
+            </paper-input>
+
+            <paper-input id="facebookClientSecret" name="facebookClientSecret" type="text" label="Facebook Client Secret" value="{{domain.secret_api_keys.facebook.client_secret}}" maxlength="60" char-counter="" class="mainInput">
+            </paper-input>
+
+            <paper-input id="googleClientId" name="googleClientId" type="text" label="Google Client Id" value="{{domain.secret_api_keys.google.client_id}}" maxlength="60" char-counter="" class="mainInput">
+            </paper-input>
+
+            <paper-input id="googleClientSecret" name="googleClientSecret" type="text" label="Google Client Secret" value="{{domain.secret_api_keys.google.client_secret}}" maxlength="60" char-counter="" class="mainInput">
+            </paper-input>
+          </section>
+
+        </neon-animated-pages>
+
+    
+  </div></yp-edit-dialog></template>
 
 </dom-module>
 
@@ -37837,11 +37864,17 @@ event and do your own custom submission:
       },
 
       domain: {
-        type: Object
+        type: Object,
+        observer: '_domainChanged'
       },
 
       params: {
         type: String
+      },
+
+      selected: {
+        type: Number,
+        value: 0
       },
 
       method: {
@@ -37863,6 +37896,12 @@ event and do your own custom submission:
 
       status: {
         type: String
+      }
+    },
+
+    _domainChanged: function (domain) {
+      if (domain) {
+
       }
     },
 
@@ -38778,6 +38817,124 @@ value. `setMax` should move the slider to the maximum value.
 <dom-module id="yp-login" assetpath="yp-user/">
 
   <style>
+    .btn-auth,
+    .btn-auth:visited {
+      position: relative;
+      display: inline-block;
+      height: 22px;
+      padding: 0 1em;
+      border: 1px solid #999;
+      border-radius: 2px;
+      margin: 0;
+      text-align: center;
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 22px;
+      white-space: nowrap;
+      cursor: pointer;
+      color: #222;
+      background: #fff;
+      -webkit-box-sizing: content-box;
+      -moz-box-sizing: content-box;
+      box-sizing: content-box;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      /* iOS */
+      -webkit-appearance: none; /* 1 */
+      /* IE6/7 hacks */
+      *overflow: visible;  /* 2 */
+      *display: inline; /* 3 */
+      *zoom: 1; /* 3 */
+    }
+
+    .btn-auth:hover,
+    .btn-auth:focus,
+    .btn-auth:active {
+      color: #222;
+      text-decoration: none;
+    }
+
+    .btn-auth:before {
+      content: "";
+      float: left;
+      width: 22px;
+      height: 22px;
+      background: url("yp-user/auth-icons.png") no-repeat 99px 99px;
+    }
+
+    /**
+     * 36px
+     */
+
+    .btn-auth.large {
+      height: 32px;
+      line-height: 36px;
+      font-size: 20px;
+    }
+
+    .btn-auth.large:before {
+      width: 36px;
+      height: 36px;
+    }
+
+    /*
+     * Remove excess padding and border in FF3+
+     */
+
+    .btn-auth::-moz-focus-inner {
+      border: 0;
+      padding: 0;
+    }
+
+
+    /* Facebook (extends .btn-auth)
+       ========================================================================== */
+
+    .btn-facebook,
+    .btn-facebook:visited {
+      border-color: #29447e;
+      border-bottom-color: #1a356e;
+      color: #fff;
+      background-color: #5872a7;
+      background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#637bad), to(#5872a7));
+      background-image: -webkit-linear-gradient(#637bad, #5872a7);
+      background-image: -moz-linear-gradient(#637bad, #5872a7);
+      background-image: -ms-linear-gradient(#637bad, #5872a7);
+      background-image: -o-linear-gradient(#637bad, #5872a7);
+      background-image: linear-gradient(#637bad, #5872a7);
+      -webkit-box-shadow: inset 0 1px 0 #879ac0;
+      box-shadow: inset 0 1px 0 #879ac0;
+    }
+
+    .btn-facebook:hover,
+    .btn-facebook:focus {
+      color: #fff;
+      background-color: #3b5998;
+    }
+
+    .btn-facebook:active {
+      color: #fff;
+      background: #4f6aa3;
+      -webkit-box-shadow: inset 0 1px 0 #45619d;
+      box-shadow: inset 0 1px 0 #45619d;
+    }
+
+    /*
+     * Icon
+     */
+
+    .btn-facebook:before {
+      border-right: 1px solid #465f94;
+      margin: 0 1em 0 -1em;
+      background-position: 0 0;
+    }
+
+    .btn-facebook.large:before {
+      background-position: 0 -22px;
+    }
+
     :host {
     }
 
@@ -38795,6 +38952,11 @@ value. `setMax` should move the slider to the maximum value.
     re-captcha {
       padding-top: 28px;
       padding-bottom: 28px;
+    }
+
+    .socialMediaLogin {
+      padding-top: 16px;
+      cursor: pointer;
     }
   </style>
 
@@ -38819,6 +38981,12 @@ value. `setMax` should move the slider to the maximum value.
             <paper-input id="password" type="password" label="[[t('user.password')]]" value="{{password}}" pattern="[[passwordValidationPattern]]" error-message="[[passwordErrorMessage]]">
             </paper-input>
 
+            <div class="layout horizontal center-center socialMediaLogin">
+              <div class="btn-auth btn-facebook" on-tap="_facebookLogin">
+                [[t('user.facebookLogin')]]
+              </div>
+            </div>
+
             <div class="layout horizontal center-center">
               <re-captcha sitekey="[[reCaptchaSiteKey]]" lang="[[getLocale()]]"></re-captcha>
             </div>
@@ -38831,7 +38999,7 @@ value. `setMax` should move the slider to the maximum value.
           </div>
         </paper-dialog>
 
-        <yp-ajax id="loginAjax" dispatch-error="" on-error="_loginError" method="GET" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
+        <yp-ajax id="loginAjax" dispatch-error="" on-error="_loginError" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
         <yp-ajax id="registerAjax" method="POST" dispatch-error="" on-error="_registerError" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
         <iron-a11y-keys id="a11y" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
       </template>
@@ -38897,12 +39065,6 @@ value. `setMax` should move the slider to the maximum value.
         computed: '_computeCredentials(name, email, password)'
       },
 
-      credentialsParams: {
-        type: String,
-        notify: true,
-        computed: '_computeCredentialsParams(name, email, password)'
-      },
-
       registerMode: {
         type: Number,
         value: 0,
@@ -38944,6 +39106,15 @@ value. `setMax` should move the slider to the maximum value.
         type: Function,
         value: null
       }
+    },
+
+    _facebookLogin: function () {
+      var url = '/api/users/auth/facebook',
+      width = 1000,
+      height = 650,
+      top = (window.outerHeight - height) / 2,
+      left = (window.outerWidth - width) / 2;
+      window.open(url, 'facebook_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
     },
 
     _openedChanged: function (newValue) {
@@ -39007,16 +39178,10 @@ value. `setMax` should move the slider to the maximum value.
      return  JSON.stringify({
         name: name,
         email: email,
+        identifier: email,
+        username: email,
         password: password
       });
-    },
-
-    _computeCredentialsParams: function(name, email, password) {
-      return {
-        name: name,
-        email: email,
-        password: password
-      };
     },
 
     _validateAndSend: function(e) {
@@ -39025,7 +39190,7 @@ value. `setMax` should move the slider to the maximum value.
           this.$$("#registerAjax").body = this.credentials;
           this.$$("#registerAjax").generateRequest();
         } else {
-          this.$$("#loginAjax").params = this.credentialsParams;
+          this.$$("#loginAjax").body = this.credentials;
           this.$$("#loginAjax").generateRequest();
         }
       } else {
@@ -46765,10 +46930,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
     <yp-session id="session"></yp-session>
 
-    <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
-    <yp-ajax id="adminRightsAjax" method="GET" url="/api/users/adminRights" on-response="_adminRightsResponse"></yp-ajax>
-    <yp-ajax id="membershipsAjax" method="GET" url="/api/users/memberships" on-response="_membershipsResponse"></yp-ajax>
-    <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
+    <div class="layout horizontal center-center">
+      <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
+      <yp-ajax id="adminRightsAjax" method="GET" url="/api/users/adminRights" on-response="_adminRightsResponse"></yp-ajax>
+      <yp-ajax id="membershipsAjax" method="GET" url="/api/users/memberships" on-response="_membershipsResponse"></yp-ajax>
+      <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
+    </div>
 
     <paper-toast id="loginToast" text="[[toastLoginTextCombined]]"></paper-toast>
     <paper-toast id="logoutToast" text="[[toastLogoutTextCombined]]"></paper-toast>
@@ -46959,10 +47126,19 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         ready: function () {
           window.appUser = this;
+          this.checkLogin()
+        },
+
+        loginFromFacebook: function () {
+          window.appGlobals.notifyUserViaToast(this.t('user.loggedInWithFacebook'));
+          this._closeUserLogin();
+          this.checkLogin();
+        },
+
+        checkLogin: function () {
           this.$.isLoggedInAjax.generateRequest();
           this.$.adminRightsAjax.generateRequest();
           this.$.membershipsAjax.generateRequest();
-
         },
 
         updateEndorsementForPost: function (postId, newEndorsement) {
