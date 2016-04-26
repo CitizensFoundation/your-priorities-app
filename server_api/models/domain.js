@@ -156,7 +156,7 @@ module.exports = function(sequelize, DataTypes) {
                 clientSecret    : domain.secret_api_keys.facebook.client_secret,
                 scope           : ['email'],
                 fields          : ['id', 'displayName', 'email'],
-                urlCallback     : 'https://'+domain.domain_name+'/api/users/auth/facebook/callback'
+                urlCallback     : 'https://betri.'+domain.domain_name+'/api/users/auth/facebook/callback'
               });
             }
 
