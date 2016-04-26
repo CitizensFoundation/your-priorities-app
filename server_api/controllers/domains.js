@@ -205,6 +205,15 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
     where: { id: req.params.id }
   }).then(function(domain) {
     if (domain) {
+      domain.ensureApiKeySetup();
+      domain.set('secret_api_keys.facebook.client_id', req.body.facebookClientId);
+      domain.set('secret_api_keys.facebook.client_secret', req.body.facebookClientSecret);
+      domain.set('secret_api_keys.google.client_id', req.body.googleClientId);
+      domain.set('secret_api_keys.google.client_secret', req.body.googleClientSecret);
+      domain.set('secret_api_keys.twitter.client_id', req.body.twitterClientId);
+      domain.set('secret_api_keys.twitter.client_secret', req.body.twitterClientSecret);
+      domain.set('secret_api_keys.github.client_id', req.body.githubClientId);
+      domain.set('secret_api_keys.github.client_secret', req.body.githubClientSecret);
       domain.name = req.body.name;
       domain.description = req.body.description;
       domain.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;

@@ -8,6 +8,12 @@
 
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
 
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
+
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
@@ -40,46 +46,97 @@
     <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
-      <paper-input id="name"
-                   name="name"
-                   type="text"
-                   label="[[t('Name')]]"
-                   value="{{domain.name}}"
-                   maxlength="60"
-                   char-counter class="mainInput">
-      </paper-input>
+      <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+        <paper-tab><span>[[t('domain.info')]]</span></paper-tab>
+        <paper-tab>[[t('domain.apis')]]</paper-tab>
+      </paper-tabs>
 
-      <paper-textarea id="description"
-                      name="description"
-                      value="{{domain.description}}"
-                      label="[[t('Description')]]"
-                      char-counter
-                      rows="2"
-                      max-rows="5"
-                      maxlength="300" class="mainInput">
-      </paper-textarea>
+      <div class="layout vertical wrap container">
+        <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
 
-      <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
+          <section>
+            <paper-input id="name"
+                         name="name"
+                         type="text"
+                         label="[[t('Name')]]"
+                         value="{{domain.name}}"
+                         maxlength="60"
+                         char-counter class="mainInput">
+            </paper-input>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.logo.upload')]]</span><br>
-          <span class="imageSizeInfo">864 x 486</span>
-        </file-upload>
-      </div>
+            <paper-textarea id="description"
+                            name="description"
+                            value="{{domain.description}}"
+                            label="[[t('Description')]]"
+                            char-counter
+                            rows="2"
+                            max-rows="5"
+                            maxlength="300" class="mainInput">
+            </paper-textarea>
 
-      <div class="layout vertical additionalSettings">
-        <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-header" method="POST" on-success="_headerImageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-          <span>[[t('image.header.upload')]]</span><br>
-          <span class="imageSizeInfo">1920 x 600</span>
-        </file-upload>
-      </div>
+            <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
 
-      <input type="hidden" name="themeId" value="[[themeId]]">
-      <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
-      <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+            <div class="layout vertical additionalSettings">
+              <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
+                <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                <span>[[t('image.logo.upload')]]</span><br>
+                <span class="imageSizeInfo">864 x 486</span>
+              </file-upload>
+            </div>
+
+            <div class="layout vertical additionalSettings">
+              <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-header" method="POST" on-success="_headerImageUploaded">
+                <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                <span>[[t('image.header.upload')]]</span><br>
+                <span class="imageSizeInfo">1920 x 600</span>
+              </file-upload>
+            </div>
+
+            <input type="hidden" name="themeId" value="[[themeId]]">
+            <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
+            <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+
+          </section>
+
+          <section>
+            <paper-input id="facebookClientId"
+                         name="facebookClientId"
+                         type="text"
+                         label="Facebook Client Id"
+                         value="{{domain.secret_api_keys.facebook.client_id}}"
+                         maxlength="60"
+                         char-counter class="mainInput">
+            </paper-input>
+
+            <paper-input id="facebookClientSecret"
+                         name="facebookClientSecret"
+                         type="text"
+                         label="Facebook Client Secret"
+                         value="{{domain.secret_api_keys.facebook.client_secret}}"
+                         maxlength="60"
+                         char-counter class="mainInput">
+            </paper-input>
+
+            <paper-input id="googleClientId"
+                         name="googleClientId"
+                         type="text"
+                         label="Google Client Id"
+                         value="{{domain.secret_api_keys.google.client_id}}"
+                         maxlength="60"
+                         char-counter class="mainInput">
+            </paper-input>
+
+            <paper-input id="googleClientSecret"
+                         name="googleClientSecret"
+                         type="text"
+                         label="Google Client Secret"
+                         value="{{domain.secret_api_keys.google.client_secret}}"
+                         maxlength="60"
+                         char-counter class="mainInput">
+            </paper-input>
+          </section>
+
+        </neon-animated-pages>
 
     </yp-edit-dialog>
   </template>
@@ -104,11 +161,17 @@
       },
 
       domain: {
-        type: Object
+        type: Object,
+        observer: '_domainChanged'
       },
 
       params: {
         type: String
+      },
+
+      selected: {
+        type: Number,
+        value: 0
       },
 
       method: {
@@ -130,6 +193,12 @@
 
       status: {
         type: String
+      }
+    },
+
+    _domainChanged: function (domain) {
+      if (domain) {
+
       }
     },
 

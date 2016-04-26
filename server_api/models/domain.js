@@ -7,6 +7,11 @@ var toJson = require('../utils/to_json');
 var Community = require('./community');
 // https://www.npmjs.org/package/enum for state of posts
 
+var checkValidKeys = function (keys) {
+  return ((keys.client_id && keys.client_id!='') &&
+  (keys.client_secret && keys.client_secret != ''))
+};
+
 module.exports = function(sequelize, DataTypes) {
   var Domain = sequelize.define("Domain", {
     name: { type: DataTypes.STRING, allowNull: false },
@@ -41,6 +46,17 @@ module.exports = function(sequelize, DataTypes) {
 
       simple: function() {
         return { id: this.id, name: this.name, domain_name: this.domain_name };
+      },
+
+      ensureApiKeySetup: function () {
+        if (!this.secret_api_keys) {
+          this.secret_api_keys = {
+            facebook: {},
+            google: {},
+            github: {},
+            twitter: {}
+          }
+        }
       },
 
       setupLogoImage: function(body, done) {
@@ -114,14 +130,7 @@ module.exports = function(sequelize, DataTypes) {
         sequelize.models.Domain.findAll().then(function(domains) {
           async.eachSeries(domains, function (domain, seriesCallback) {
 
-            domain.secret_api_keys = {
-              facebook: {
-                client_id: process.env.FACEBOOK_CLIENT_ID,
-                client_secret: process.env.FACEBOOK_CLIENT_SECRET
-              }
-            };
-
-            if (domain.secret_api_keys && domain.secret_api_keys.google) {
+            if (false && domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.google)) {
               providers.push({
                 name            : 'google-strategy-'+domain.id,
                 provider        : 'google',
@@ -136,7 +145,7 @@ module.exports = function(sequelize, DataTypes) {
               });
             }
 
-            if (domain.secret_api_keys && domain.secret_api_keys.facebook) {
+            if (domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.facebook)) {
               providers.push({
                 name            : 'facebook-strategy-'+domain.id,
                 provider        : 'facebook',

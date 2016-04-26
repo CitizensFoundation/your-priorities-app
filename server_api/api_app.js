@@ -148,13 +148,14 @@ passport.serializeUser(function(profile, done) {
       if (error) {
         log.error("Error in User from Facebook", {err: error });
         done(error);
-      } else
+      } else {
         log.info("User Connected to Facebook", { context: 'loginFromFacebook', user: toJson(user)});
         done(null, user.id);
-      });
-    } else {
-    log.info("User Serialized", { context: 'deserializeUser', userEmail: user.email, userId: user.id });
-    done(null, user.id);
+      }
+    });
+  } else {
+    log.info("User Serialized", { context: 'deserializeUser', userEmail: profile.email, userId: profile.id });
+    done(null, profile.id);
   }
 });
 
