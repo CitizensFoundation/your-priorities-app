@@ -130,6 +130,21 @@ module.exports = function(sequelize, DataTypes) {
         sequelize.models.Domain.findAll().then(function(domains) {
           async.eachSeries(domains, function (domain, seriesCallback) {
 
+            var callbackDomainName;
+            if (process.env.STAGING_SETUP) {
+              if (domain.domain_name=='betrireykjavik.is') {
+                callbackDomainName = 'betri.'+domain.domain_name;
+              } else if (domain.domain_name=='betraisland.is') {
+                callbackDomainName = 'betra.'+domain.domain_name;
+              } else if (domain.domain_name=='yrpri.org') {
+                callbackDomainName = 'beta.'+domain.domain_name;
+              } else {
+                callbackDomainName = domain.domain_name;
+              }
+            } else {
+              callbackDomainName = domain.domain_name;
+            }
+
             if (false && domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.google)) {
               providers.push({
                 name            : 'google-strategy-'+domain.id,
@@ -141,7 +156,7 @@ module.exports = function(sequelize, DataTypes) {
                 clientSecret    : domain.secret_api_keys.google.client_secret,
                 scope           : ['email', 'profile'],
                 fields          : null,
-                urlCallback     : 'https://'+domain.domain_name+'/api/users/auth/google/callback'
+                urlCallback     : 'https://'+callbackDomainName+'/api/users/auth/google/callback'
               });
             }
 
@@ -156,7 +171,7 @@ module.exports = function(sequelize, DataTypes) {
                 clientSecret    : domain.secret_api_keys.facebook.client_secret,
                 scope           : ['email'],
                 fields          : ['id', 'displayName', 'email'],
-                urlCallback     : 'https://betri.'+domain.domain_name+'/api/users/auth/facebook/callback'
+                urlCallback     : 'https://'+callbackDomainName+'/api/users/auth/facebook/callback'
               });
             }
 
