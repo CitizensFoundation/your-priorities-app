@@ -83,6 +83,7 @@
       @media (max-width: 480px) {
         div[title] {
           font-size: 17px;
+          white-space: normal !important;
         }
 
         .backIcon {
@@ -95,7 +96,34 @@
           font-size: 15px;
           padding: 4px;
         }
+
+        paper-menu-button {
+          padding: 0;
+        }
+
+        paper-button {
+          padding:0;
+          margin: 0;
+        }
       }
+      @media (max-width: 340px) {
+        div[title] {
+          font-size: 17px;
+          white-space: normal !important;
+        }
+
+        .backIcon {
+          width: 40px;
+          height: 40px;
+          padding-right: 8px;
+        }
+
+        .loginButton {
+          font-size: 12px;
+          padding: 0;
+        }
+      }
+
     </style>
 
     <iron-signals on-iron-signal-yp-i18n-ready="_i18nReady"></iron-signals>
@@ -125,12 +153,12 @@
               <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon"
                                  hidden$="[[!showBack]]"></paper-icon-button>
               <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
-              <div title>[[headerTitle]]</div>
+              <div title class="layout vertical wrap">[[headerTitle]]</div>
 
-              <span class="flex"></span>
+              <span class="flex" hidden></span>
 
               <!-- Toolbar icons -->
-              <paper-icon-button icon="search" on-tap="toggleSearch" hidden$="[[!showSearch]]"></paper-icon-button>
+              <paper-icon-button icon="search" on-tap="toggleSearch" hidden hiddesn$="[[!showSearch]]"></paper-icon-button>
 
               <paper-menu-button horizontal-align="right">
                 <paper-icon-button icon="help-outline" class="dropdown-trigger"></paper-icon-button>
