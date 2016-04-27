@@ -84,6 +84,18 @@
       .dropdown-content {
         width: 200px;
       }
+
+      @media (max-width: 480px) {
+        div[title] {
+          font-size: 16px;
+        }
+
+        .backIcon {
+          width: 40px;
+          height: 40px;
+          padding-right: 16px;
+        }
+      }
     </style>
 
     <iron-signals on-iron-signal-yp-i18n-ready="_i18nReady"></iron-signals>

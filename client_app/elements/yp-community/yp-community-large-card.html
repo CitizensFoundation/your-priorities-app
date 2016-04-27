@@ -87,32 +87,6 @@
         padding-bottom: 32px;
       }
 
-      @media (max-width: 900px) {
-        :host {
-          width: 432px;
-        }
-
-        .large-card {
-          width: 432px;
-          height: 486px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        :host {
-          width: 306px;
-        }
-
-        .large-card {
-          width: 306px;
-          height: 486px;
-        }
-
-        iron-image {
-          width: 216px;
-          height: 122px;
-        }
-      }
 
       .description {
         padding: 0;
@@ -136,6 +110,36 @@
       .textBox {
         margin-right: 32px;
       }
+
+      @media (max-width: 930px) {
+        :host {
+          width: 306px;
+          margin-top: 40px;
+        }
+
+        .large-card {
+          width: 306px;
+          height: 180px;
+          margin-bottom: 16px;
+        }
+
+        iron-image {
+          width: 216px;
+          height: 92px !important;
+        }
+
+        .imageCard {
+          height: 92px !important;
+        }
+
+        .community-name {
+          font-size: 25px;
+        }
+
+        .stats {
+        }
+      }
+
     </style>
 
     <iron-media-query query="(max-width: 480px)" query-matches="{{phoneSize}}"></iron-media-query>
@@ -160,7 +164,7 @@
             </paper-menu>
           </paper-menu-button>
         </paper-material>
-        <paper-material id="cardImage" elevation="2" animated class="large-card">
+        <paper-material id="cardImage" elevation="2" animated class="large-card imageCard">
           <template is="dom-if" if="[[phoneSize]]">
             <div>
               <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
