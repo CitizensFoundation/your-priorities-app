@@ -38958,6 +38958,15 @@ value. `setMax` should move the slider to the maximum value.
       padding-top: 16px;
       cursor: pointer;
     }
+
+    @media (max-width: 480px) {
+      paper-dialog {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    }
   </style>
 
   <template>
@@ -43264,7 +43273,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
       }
 
+      @media (max-width: 480px) {
 
+      }
     </style>
 
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
@@ -46562,6 +46573,14 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         left: 0px;
         bottom: 4px;
         color: #eee;
+      }
+
+      @media (max-width: 480px) {
+        .typeName {
+          font-size: 22px;
+          padding-top: 12px;
+          padding-left: 4px;
+        }
       }
     </style>
 
@@ -51679,25 +51698,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         height: 180px;
       }
 
-      @media (max-width: 420px) {
-        :host {
-          width: 304px;
-        }
 
-        .communityCard {
-          margin-left: 8px;
-          margin-right: 8px;
-          height: 100% !important;
-          padding-left: 0;
-          padding-right: 0;
-          width: 304px;
-        }
-
-        iron-image {
-          width: 304px;
-          height: 165px;
-        }
-      }
 
       .card-content {
         padding: 0;
@@ -51749,6 +51750,26 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         position: absolute;
         top: 146px;
         right: 55px;
+      }
+
+      @media (max-width: 480px) {
+        :host {
+          width: 304px;
+        }
+
+        .communityCard {
+          margin-left: 8px;
+          margin-right: 8px;
+          height: 350px;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
+        }
+
+        iron-image {
+          width: 304px;
+          height: 165px;
+        }
       }
     </style>
 
@@ -52434,21 +52455,25 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     </style>
 
     <div class="stats layout horizontal end-justified">
-      <iron-icon title="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
-      <div title="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(domain.counter_posts)}}</div>
+      <div class="layout horizontal wrap">
+        <div class="layout horizontal">
+          <iron-icon title="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
+          <div title="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(domain.counter_posts)}}</div>
 
-      <iron-icon title="[[t('stats.discussions')]]" icon="communication:forum" class="stats-icon"></iron-icon>
-      <div title="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(domain.counter_points)}}</div>
+          <iron-icon title="[[t('stats.discussions')]]" icon="communication:forum" class="stats-icon"></iron-icon>
+          <div title="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(domain.counter_points)}}</div>
 
-      <iron-icon title="[[t('stats.communities')]]" icon="group-work" class="stats-icon"></iron-icon>
-      <div title="[[t('stats.communities')]]" class="stats-text" style="">{{formatNumber(domain.counter_communities)}}</div>
+          <iron-icon title="[[t('stats.communities')]]" icon="group-work" class="stats-icon"></iron-icon>
+          <div title="[[t('stats.communities')]]" class="stats-text" style="">{{formatNumber(domain.counter_communities)}}</div>
+        </div>
+        <div class="layout horizontal">
+          <iron-icon title="[[t('stats.groups')]]" icon="social:people" class="stats-icon"></iron-icon>
+          <div title="[[t('stats.groups')]]" class="stats-text" style="">{{formatNumber(domain.counter_groups)}}</div>
 
-      <iron-icon title="[[t('stats.groups')]]" icon="social:people" class="stats-icon"></iron-icon>
-      <div title="[[t('stats.groups')]]" class="stats-text" style="">{{formatNumber(domain.counter_groups)}}</div>
-
-      <iron-icon title="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
-      <div title="[[t('stats.users')]]" class="stats-text">{{formatNumber(domain.counter_users)}}</div>
-
+          <iron-icon title="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
+          <div title="[[t('stats.users')]]" class="stats-text">{{formatNumber(domain.counter_users)}}</div>
+        </div>
+      </div>
     </div>
 
   </template>
@@ -52525,33 +52550,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         margin-right: 0;
       }
 
-      @media (max-width: 900px) {
-        :host {
-          width: 432px;
-        }
-
-        .large-card {
-          width: 432px;
-          height: 486px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        :host {
-          width: 306px;
-        }
-
-        .large-card {
-          width: 306px;
-          height: 486px;
-        }
-
-        iron-image {
-          width: 216px;
-          height: 122px;
-        }
-      }
-
       h1 {
         font-size: 48px;
       }
@@ -52577,9 +52575,50 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         padding-left: 16px;
         padding-top: 16px;
       }
+
+      @media (max-width: 900px) {
+        :host {
+          width: 432px;
+        }
+
+        .large-card {
+          width: 432px;
+          height: 486px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        :host {
+          width: 306px;
+          margin-top: 40px;
+        }
+
+        .large-card {
+          width: 306px;
+          height: 180px;
+          margin-bottom: 16px;
+        }
+
+        iron-image {
+          width: 216px;
+          height: 92px !important;
+        }
+
+        .imageCard {
+         height: 92px !important;
+        }
+
+        .domain-name {
+          font-size: 25px;
+        }
+
+        .stats {
+        }
+      }
+
     </style>
     <template is="dom-if" if="[[domain]]">
-      <div class="layout horizontal center-center wrap">
+      <div class="layout horizontal  wrap">
         <paper-material id="card" elevation="5" animated="" class="large-card textBox">
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
@@ -52601,7 +52640,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             </paper-menu>
           </paper-menu-button>
         </paper-material>
-        <paper-material id="cardImage" elevation="3" animated="" class="large-card">
+        <paper-material id="cardImage" elevation="3" animated="" class="large-card imageCard">
           <div class="layout horizontal wrap">
             <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
           </div>
