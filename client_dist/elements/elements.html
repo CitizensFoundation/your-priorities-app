@@ -42431,6 +42431,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       #dialog {
         background-color: #FFF;
       }
+
+      @media (max-width: 600px) {
+        paper-dialog {
+          padding: 0;
+          margin: 0;
+        }
+      }
     </style>
 
     <paper-dialog id="dialog">
@@ -51409,7 +51416,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
 
         .community-name {
-          font-size: 25px;
+          font-size: 20px;
+        }
+
+        .communityDescription {
+          font-size: 13px;
+          padding-top: 6px;
         }
 
         .stats {
@@ -52731,12 +52743,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           <iron-icon title="[[t('stats.discussions')]]" icon="communication:forum" class="stats-icon"></iron-icon>
           <div title="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(domain.counter_points)}}</div>
 
-          <iron-icon class="hideIfMobile" title="[[t('stats.communities')]]" icon="group-work"></iron-icon>
-          <div class="hideIfMobile" title="[[t('stats.communities')]]" style="">{{formatNumber(domain.counter_communities)}}</div>
+          <iron-icon title="[[t('stats.communities')]]" icon="group-work" class="stats-icon hideIfMobile"></iron-icon>
+          <div title="[[t('stats.communities')]]" class="stats-text hideIfMobile" style="">{{formatNumber(domain.counter_communities)}}</div>
         </div>
         <div class="layout horizontal">
-          <iron-icon class="hideIfMobile" title="[[t('stats.groups')]]" icon="social:people"></iron-icon>
-          <div class="hideIfMobile" title="[[t('stats.groups')]]" style="">{{formatNumber(domain.counter_groups)}}</div>
+          <iron-icon title="[[t('stats.groups')]]" icon="social:people" class="stats-icon hideIfMobile"></iron-icon>
+          <div title="[[t('stats.groups')]]" class="stats-text hideIfMobile" style="">{{formatNumber(domain.counter_groups)}}</div>
 
           <iron-icon title="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
           <div title="[[t('stats.users')]]" class="stats-text">{{formatNumber(domain.counter_users)}}</div>
@@ -52875,7 +52887,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
 
         .domain-name {
-          font-size: 25px;
+          font-size: 22px;
         }
 
         .stats {
