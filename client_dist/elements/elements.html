@@ -52418,10 +52418,36 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
 <dom-module id="polymer-instagram" assetpath="../bower_components/polymer-instagram/">
   <template>
-    <style is="custom-style">
+    <style>
+      #instafeed {
+        width: 640px;
+      }
+
+      @media (max-width: 680px) {
+        #instafeed {
+          width: 500px !important;
+        }
+      }
+
+      @media (max-width: 550px) {
+        #instafeed {
+          width: 400px !important;
+        }
+      }
+
+      @media (max-width: 440px) {
+        #instafeed {
+          width: 320px !important;
+        }
+      }
+      @media (max-width: 350px) {
+        #instafeed {
+          width: 280px !important;
+        }
+      }
     </style>
 
-    <div class="layout">
+    <div class="layout vertical container">
       <div id="instafeed" class="layout vertical center-center instafeed"></div>
     </div>
   </template>
@@ -52447,7 +52473,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _clientIdChanged: function (newValue) {
         if (newValue) {
-          var template = '<a href="{{link}}"><img height="{{height}}" width="{{width}}" src="{{image}}" /></a>';
+          var template = '<a href="{{link}}"><img src="{{image}}" style="width: 100%;"/></a>';
           template += '<div class="layout vertical"><div>{{caption}}</div><div>{{location}}</div></div>';
           this.async(function () {
             var feed = new Instafeed({
@@ -52458,6 +52484,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
               resolution: 'standard_resolution',
               links: true
             });
+            this.async(function () {
+              var allImages = Polymer.dom(this.$$("#instafeed")).querySelectorAll("a img");
+              _.each(allImages, function (image) {
+                image.style.width = "100%";
+                image.style.marginBottom = "16px";
+              });
+            },1200);
             feed.run();
           }.bind(this), 50);
         }
@@ -52479,21 +52512,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         max-width: 500px;
       }
 
-      paper-menu {
-        padding-right: 24px;
-        padding-top: 32px;
+      paper-item {
+        margin-top: 16px;
       }
     </style>
 
     <template is="dom-if" if="[[active]]">
-      <div class="layout horizontal center-center" style="width: 100%;">
-        <div class="layout vertical self-start paperMenu">
-          <div class="layout horizontal start-justified">
-            <paper-menu selected="{{selected}}">
-              <paper-item>Twitter</paper-item>
-              <paper-item>Instagram</paper-item>
-            </paper-menu>
-          </div>
+      <div class="layout vertical center-center" style="width: 100%;">
+        <div class="layout horizontal center-center">
+          <paper-item on-tap="_selectTwitter">Twitter</paper-item>
+          <paper-item on-tap="_selectInstagram">Instagram</paper-item>
         </div>
         <div class="layout vertical socialMediaArea">
           <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
@@ -52501,6 +52529,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
               <a class="twitter-timeline" lang="[[getLocale()]]" href="https://twitter.com/hashtag/BetriReykjavik" data-widget-id="713327367431782400">#BetriReykjavik Tweets</a>
             </section>
             <section class="feed">
+              <h3>Instagram</h3>
               <polymer-instagram class="layout horizontal start-aligned" client-id="[[_instagramClientId()]]" access-token="[[_instagramAccessToken()]]"></polymer-instagram>
             </section>
           </iron-pages>
@@ -52534,6 +52563,14 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           value: false,
           observer: '_activeChanged'
         }
+      },
+
+      _selectTwitter: function () {
+        this.set('selected', 0);
+      },
+
+      _selectInstagram: function () {
+        this.set('selected', 1);
       },
 
       _activeChanged: function (newValue) {
