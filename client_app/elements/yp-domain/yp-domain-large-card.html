@@ -76,33 +76,6 @@
         margin-right: 0;
       }
 
-      @media (max-width: 900px) {
-        :host {
-          width: 432px;
-        }
-
-        .large-card {
-          width: 432px;
-          height: 486px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        :host {
-          width: 306px;
-        }
-
-        .large-card {
-          width: 306px;
-          height: 486px;
-        }
-
-        iron-image {
-          width: 216px;
-          height: 122px;
-        }
-      }
-
       h1 {
         font-size: 48px;
       }
@@ -128,9 +101,50 @@
         padding-left: 16px;
         padding-top: 16px;
       }
+
+      @media (max-width: 900px) {
+        :host {
+          width: 432px;
+        }
+
+        .large-card {
+          width: 432px;
+          height: 486px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        :host {
+          width: 306px;
+          margin-top: 40px;
+        }
+
+        .large-card {
+          width: 306px;
+          height: 180px;
+          margin-bottom: 16px;
+        }
+
+        iron-image {
+          width: 216px;
+          height: 92px !important;
+        }
+
+        .imageCard {
+         height: 92px !important;
+        }
+
+        .domain-name {
+          font-size: 25px;
+        }
+
+        .stats {
+        }
+      }
+
     </style>
     <template is="dom-if" if="[[domain]]">
-      <div class="layout horizontal center-center wrap">
+      <div class="layout horizontal  wrap">
         <paper-material id="card" elevation="5" animated class="large-card textBox">
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
@@ -152,7 +166,7 @@
             </paper-menu>
           </paper-menu-button>
         </paper-material>
-        <paper-material id="cardImage" elevation="3" animated class="large-card">
+        <paper-material id="cardImage" elevation="3" animated class="large-card imageCard">
           <div class="layout horizontal wrap">
             <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
           </div>
