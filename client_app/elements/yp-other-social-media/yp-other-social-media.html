@@ -27,21 +27,16 @@
         max-width: 500px;
       }
 
-      paper-menu {
-        padding-right: 24px;
-        padding-top: 32px;
+      paper-item {
+        margin-top: 16px;
       }
     </style>
 
     <template is="dom-if" if="[[active]]">
-      <div class="layout horizontal center-center" style="width: 100%;">
-        <div class="layout vertical self-start paperMenu">
-          <div class="layout horizontal start-justified">
-            <paper-menu selected="{{selected}}">
-              <paper-item>Twitter</paper-item>
-              <paper-item>Instagram</paper-item>
-            </paper-menu>
-          </div>
+      <div class="layout vertical center-center" style="width: 100%;">
+        <div class="layout horizontal center-center">
+          <paper-item on-tap="_selectTwitter">Twitter</paper-item>
+          <paper-item on-tap="_selectInstagram">Instagram</paper-item>
         </div>
         <div class="layout vertical socialMediaArea">
           <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
@@ -49,6 +44,7 @@
               <a class="twitter-timeline" lang="[[getLocale()]]" href="https://twitter.com/hashtag/BetriReykjavik" data-widget-id="713327367431782400">#BetriReykjavik Tweets</a>
             </section>
             <section class="feed">
+              <h3>Instagram</h3>
               <polymer-instagram class="layout horizontal start-aligned" client-id="[[_instagramClientId()]]" access-token="[[_instagramAccessToken()]]"></polymer-instagram>
             </section>
           </iron-pages>
@@ -82,6 +78,14 @@
           value: false,
           observer: '_activeChanged'
         }
+      },
+
+      _selectTwitter: function () {
+        this.set('selected', 0);
+      },
+
+      _selectInstagram: function () {
+        this.set('selected', 1);
       },
 
       _activeChanged: function (newValue) {
