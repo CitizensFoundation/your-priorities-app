@@ -71,9 +71,10 @@
         color: #FFF;
         position: absolute;
         top: 0;
-        left: 390px;
+        left: 384px;
         padding-right: 0;
         margin-right: 0;
+        z-index: 999999;
       }
 
       h1 {
@@ -102,7 +103,11 @@
         padding-top: 16px;
       }
 
-      @media (max-width: 930px) {
+      .dropdown-content {
+        width: 200px;
+      }
+
+      @media (max-width: 945px) {
         :host {
           width: 306px;
           margin-top: 40px;
@@ -112,6 +117,10 @@
           width: 306px;
           height: 180px;
           margin-bottom: 16px;
+        }
+
+        .edit {
+          left: 265px;
         }
 
         iron-image {
@@ -129,31 +138,37 @@
 
         .stats {
         }
+
+        .textBox {
+          margin-right: 0;
+        }
       }
 
     </style>
     <template is="dom-if" if="[[domain]]">
-      <div class="layout horizontal  wrap">
+      <div class="layout horizontal wrap">
         <paper-material id="card" elevation="5" animated class="large-card textBox">
-          <div class="layout horizontal wrap">
-            <div class="layout vertical description-and-stats">
-              <div class="description">
-                <h1 class="domain-name">[[_domainName(domain)]]</h1>
-                <div class="domainDescription">
-                  [[_domainDescription(domain)]]
+          <div class="layout vertical">
+            <div class="layout horizontal wrap">
+              <div class="layout vertical description-and-stats">
+                <div class="description">
+                  <h1 class="domain-name">[[_domainName(domain)]]</h1>
+                  <div class="domainDescription">
+                    [[_domainDescription(domain)]]
+                  </div>
+                  <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
                 </div>
-                <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
               </div>
             </div>
+            <paper-menu-button vertical-align="top" horizontal-align="right" class="edit" hiddsen$="[[!hasDomainAccess(domain)]]">
+              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
+                <paper-item id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
+                <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              </paper-menu>
+            </paper-menu-button>
           </div>
-          <paper-menu-button class="edit" hidden$="[[!hasDomainAccess(domain)]]">
-            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-            <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-              <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
-              <paper-item id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
-              <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-            </paper-menu>
-          </paper-menu-button>
         </paper-material>
         <paper-material id="cardImage" elevation="3" animated class="large-card imageCard">
           <div class="layout horizontal wrap">

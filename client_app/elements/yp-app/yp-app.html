@@ -40,16 +40,11 @@
       }
 
       app-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
         color: #fff;
         background-color: var(--primary-background-color);
       }
 
       app-toolbar {
-        height: 64px;
         color: #FFF;
       }
 
@@ -119,7 +114,7 @@
 
         <app-header-layout id="mainArea">
 
-          <app-header effects="waterfall" reveals class="main-header">
+          <app-header id="appHeader" effects="waterfall" reveals class="main-header">
             <app-toolbar>
               <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
               <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon"
