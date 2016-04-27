@@ -43242,7 +43242,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .topArea {
         background-color: var(--primary-background-color);
         background-image: var(--top-area-background-image, none);
-
         height: 300px;
       }
 
@@ -43291,7 +43290,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
       }
 
-      @media (max-width: 500px) {
+      @media (max-width: 900px) {
         .tab-wrapper ::content > .tabs {
           max-width: 450px;
           font-size: 13px !important;
@@ -43301,6 +43300,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         .tab-wrapper ::content > .tabs .tab {
           width: 120px;
           word-wrap: break-word !important;
+        }
+
+        .topArea {
+          height: 100%;
         }
       }
 
@@ -45607,15 +45610,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         width: 100%;
       }
 
-      @media (max-width: 961px) {
-        :host {
-        }
-      }
-
-      @media (max-width: 600px) {
-        :host {
-        }
-      }
 
       .for {
         color: #777;
@@ -45639,11 +45633,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         padding-left: 16px;
       }
 
-      @media (max-width: 600px) {
-        .user-image {
-          display: none;
-        }
-      }
 
       .user-image-right {
         padding-right: 0px;
@@ -45680,6 +45669,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       .thumbDown {
         color: var(--master-point-down-color);
+      }
+
+
+      @media (max-width: 320px) {
+        .user-image {
+          display: none;
+        }
       }
     </style>
 
@@ -46142,6 +46138,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       .commentText {
         padding-top: 4px;
+      }
+
+      @media (max-width: 820px) {
+        iron-list {
+          width: 100%;
+        }
+
+        .container {
+          max-width: 600px;
+        }
       }
     </style>
 
@@ -47736,43 +47742,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         width: 430px;
       }
 
-      @media (max-width: 985px) {
-        .pointText {
-          width: 420px;
-          font-size: 30px;
-        }
-      }
-
-      @media (max-width: 600px) {
-        .pointText {
-          width: 140px;
-          font-size: 30px;
-        }
-
-        yp-point {
-          width: 140px;
-        }
-
-        .main-container {
-          width: 140px;
-        }
-      }
-
-      @media (max-width: 360px) {
-        .pointText {
-          width: 110px;
-          font-size: 9px;
-        }
-
-        yp-point {
-          width: 140px;
-        }
-
-        .main-container {
-          width: 110px;
-        }
-      }
-
       paper-toast {
         z-index: 9999;
       }
@@ -47839,6 +47808,28 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       .penContainer {
         margin-top: 42px;
+      }
+
+      @media (max-width: 985px) {
+        .pointText {
+          width: 420px;
+          font-size: 30px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .pointText {
+          width: 310px;
+          font-size: 9px;
+        }
+
+        yp-point {
+          width: 300px;
+        }
+
+        .main-container {
+          width: 310px;
+        }
       }
     </style>
 
@@ -48112,7 +48103,36 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         height: 600px;
       }
 
+      @media (max-width: 800px) {
+        iron-image {
+          width: 600px;
+          height: 450px;
+        }
 
+        paper-material {
+          width: 600px;
+        }
+      }
+
+      @media (max-width: 620px) {
+        iron-image {
+          width: 400px;
+          height: 300px;
+        }
+        paper-material {
+          width: 400px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        iron-image {
+          width: 320px;
+          height: 240px;
+        }
+        paper-material {
+          width: 320px;
+        }
+      }
     </style>
 
     <paper-material elevation="2" class="layout vertical">
@@ -48850,7 +48870,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                 </div>
               </div>
               <template is="dom-if" if="[[headerMode]]">
-                <paper-menu-button class="edit" hidden$="[[!hasPostAccess(post)]]">
+                <paper-menu-button vertical-align="top" horizontal-align="right" class="edit" hidden$="[[!hasPostAccess(post)]]">
                   <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
                   <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                     <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
@@ -50833,6 +50853,22 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         padding-top: 30px;
         padding-left: 16px;
         padding-right: 16px;
+      }
+
+      @media (max-width: 840px) {
+        :host {
+          width: 100%;
+        }
+
+        paper-textarea {
+          width: 100%;
+        }
+
+        .userImage {
+          padding-top: 30px;
+          padding-left: 0px;
+          padding-right: 8px;
+        }
       }
     </style>
 
