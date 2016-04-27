@@ -80,7 +80,12 @@
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused>
         <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
         <paper-tab class="tab">[[t('news')]]</paper-tab>
-        <paper-tab class="tab">[[t('socialMedia.other')]]</paper-tab>
+        <paper-tab class="tab">
+          <div class="layout vertical center-center">
+            <div>[[t('other')]]</div>
+            <div>[[t('socialMedia')]]</div>
+          </div>
+        </paper-tab>
       </paper-tabs>
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
