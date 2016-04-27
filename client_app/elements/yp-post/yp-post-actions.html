@@ -155,25 +155,6 @@
         margin-left: 8px;
       }
 
-      @media (max-width: 360px) {
-        :host {
-          width: 100%;
-          padding-right:0;
-        }
-
-        .action-bar {
-          padding-right:0;
-        }
-
-        .action-down {
-          padding-right: 42px;
-        }
-
-        .action-debate {
-          @apply(--layout-flex);
-        }
-      }
-
       @media (max-width: 320px) {
         :host {
           width: 250px;
@@ -191,7 +172,7 @@
       }
     </style>
 
-    <iron-media-query query="(max-width: 360px)" query-matches="{{small}}"></iron-media-query>
+    <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
 
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <paper-material elevation="[[elevationPlusOne]]" floating$="[[floating]]" animated class="action-bar">

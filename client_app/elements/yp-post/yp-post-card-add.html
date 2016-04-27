@@ -47,30 +47,6 @@
         --iron-icon-width: 220px;
       }
 
-      @media (max-width: 360px) {
-        :host {
-          width: 260px;
-        }
-
-        .postCard {
-          width: 260px !important;
-          height: 100% !important;
-          padding: 0 !important;
-        }
-      }
-
-      @media (max-width: 320px) {
-        :host .postCard {
-          width: 210px;
-        }
-
-        .postCard {
-          width: 290px;
-          height: 100%;
-          padding: 16px;
-        }
-      }
-
       .half {
         width: 50%;
       }
@@ -92,7 +68,24 @@
       .addNewIdeaText {
         padding-top: 20px;
         font-size: 24px;
+        width: 100%;
         color: var(--accent-color);
+      }
+
+      @media (max-width: 832px) {
+        .postCard {
+          width: 100%;
+          margin-left: 64px;
+          margin-right: 64px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .postCard {
+          width: 100%;
+          margin-left: 0;
+          margin-right: 32px;
+        }
       }
     </style>
 

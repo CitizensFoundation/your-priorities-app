@@ -49,14 +49,6 @@
         padding: 12px;
       }
 
-      @media (max-width: 360px) {
-        iron-list {
-          width: 306px;
-        }
-      }
-
-      @media (max-width: 320px) {
-      }
 
       yp-post-card {
         padding-bottom: 52px;
@@ -80,6 +72,32 @@
       yp-ajax {
         padding-top: 48px;
       }
+
+
+      @media (max-width: 1024px) {
+        iron-list {
+          width: 960px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        iron-list {
+          width: 600px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        iron-list {
+          width: 420px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        iron-list {
+          width: 360px;
+        }
+      }
+
     </style>
     <yp-posts-filter id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
                      group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"

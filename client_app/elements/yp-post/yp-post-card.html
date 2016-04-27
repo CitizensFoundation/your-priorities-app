@@ -97,20 +97,31 @@
         @apply(--layout-horizontal);
       }
 
+      .description {
+        padding-bottom: 2px;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      paper-icon-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+
       @media (max-width: 960px) {
         :host {
           width: 600px;
         }
 
         .postCard {
-          height: 100%;
           width: 600px;
           @apply(--layout-wrap);
         }
 
         yp-post-cover-media {
-          width: 600px;
-          height: 343px;
+          width: 420px;
+          height: 232px;
         }
 
         .voting {
@@ -119,6 +130,8 @@
         }
 
         .card-actions {
+          left: 24px;
+          right: 0;
           width: 320px;
         }
 
@@ -126,9 +139,17 @@
           width: 600px !important;
           padding-bottom: 74px;
         }
+
+        .infoContainer {
+          width: 100%;
+        }
+
+        .description {
+          padding-bottom: 32px;
+        }
       }
 
-      @media (max-width: 360px) {
+      @media (max-width: 420px) {
         :host {
           width: 304px;
         }
@@ -142,31 +163,23 @@
           width: 304px !important;
           height: 168px !important;
         }
-      }
 
-      .description {
-        padding-bottom: 2px;
-        padding-left: 8px;
-        padding-right: 8px;
-        cursor: pointer;
-      }
-
-      paper-icon-button {
-        position: absolute;
-        top: 0;
-        right: 0;
+        .card-actions {
+          left: 0;
+          width: 280px;
+        }
       }
     </style>
 
     <template is="dom-if" if="[[post]]" restamp>
       <div class="layout horizontal center-center">
         <paper-material class="postCard" elevation="[[elevation]]" animated>
-          <div class="layout vertical">
+          <div class="layout vertical wrap">
             <h1 class="post-name" on-tap="goToPost">[[postName(post)]]</h1>
-            <div class="layout horizontal">
+            <div class="layout horizontal center-center wrap">
               <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
               <div class="layout vertical">
-                <div class="infoContainer postCardCursor" on-tap="goToPost">
+                <div class="infoContainer postCardCursor">
                   <div class="description">[[trimmedDescription]]</div>
                 </div>
                 <div class="card-actions">
