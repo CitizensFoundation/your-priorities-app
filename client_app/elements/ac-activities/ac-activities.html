@@ -153,10 +153,20 @@
           padding-left: 4px;
         }
       }
+
+      .full {
+        width: 100%;
+      }
+
+      @media (max-width: 400px) {
+        .userInfoContainer {
+          padding-left: 64px;
+        }
+      }
     </style>
 
     <template is="dom-if" if="[[loggedInUser]]">
-      <div class="layout vertical center-center">
+      <div class="layout vertical center-center full">
         <yp-point-news-story-edit domain-id="[[domainId]]"
                                   community-id="[[communityId]]"
                                   group-id="[[groupId]]"
@@ -173,30 +183,38 @@
             <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
               <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
               <div class="layout horizontal topHeader">
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-                  <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
-                </template>
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
-                  <iron-icon icon="communication:forum" class="stats-icon"></iron-icon>
-                </template>
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
-                  <iron-icon icon="face" class="stats-icon"></iron-icon>
-                </template>
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
-                  <iron-icon icon="icons:language" class="stats-icon"></iron-icon>
-                </template>
-                <div class="layout vertical flex headerText">
-                  <div class="layout horizontal typeName">
-                    <div class="layout vertical">
-                      <div>[[_getActivityTypeName(activity)]]</div>
-                      <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
-                        [[fromTime(activity.created_at)]]
+                <div class="layout horizontal flex wrap">
+                  <div class="layout horizontal">
+                    <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
+                      <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
+                    </template>
+                    <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
+                      <iron-icon icon="communication:forum" class="stats-icon"></iron-icon>
+                    </template>
+                    <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
+                      <iron-icon icon="face" class="stats-icon"></iron-icon>
+                    </template>
+                    <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
+                      <iron-icon icon="icons:language" class="stats-icon"></iron-icon>
+                    </template>
+                    <div class="layout vertical flex headerText">
+                      <div class="layout horizontal typeName">
+                        <div class="layout vertical">
+                          <div>[[_getActivityTypeName(activity)]]</div>
+                          <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
+                            [[fromTime(activity.created_at)]]
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <div class="flex"></div>
+                  <div class="layout horiztonal end-justified userInfoContainer">
+                    <ac-activity-header class="layout end-justified headerUserImage" activity="[[activity]]"></ac-activity-header>
+                  </div>
                 </div>
-                <ac-activity-header class="layout end-justified headerUserImage" activity="[[activity]]"></ac-activity-header>
               </div>
+
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                 <ac-activity-post activity="[[activity]]"></ac-activity-post>
               </template>
