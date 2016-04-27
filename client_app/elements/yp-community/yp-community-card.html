@@ -48,7 +48,6 @@
       }
 
       .communityCard {
-        cursor: pointer;
         height: 430px;
         width: 320px;
         background-color: #fff;
@@ -69,8 +68,6 @@
         width: 336px;
         height: 180px;
       }
-
-
 
       .card-content {
         padding: 0;
@@ -103,10 +100,7 @@
         padding: 16px;
         background-color: var(--primary-color-800);
         color: #FFF;
-      }
-
-      .community-name[featured] {
-        font-size: 46px;
+        cursor: pointer;
       }
 
       yp-membership-button {
@@ -130,7 +124,6 @@
         }
 
         .communityCard {
-          margin-left: 8px;
           margin-right: 8px;
           height: 350px;
           padding-left: 0;
@@ -142,17 +135,33 @@
           width: 304px;
           height: 165px;
         }
+
+        .community-name[featured] {
+          font-size: 26px;
+        }
+
+        .description[featured] {
+          font-size: 16px;
+        }
+
+        .communityCard[featured] {
+          width: 304px;
+        }
+
+        .secondImage {
+          display: none;
+        }
       }
     </style>
 
     <template is="dom-if" if="[[community]]">
       <paper-card featured$="[[featured]]" class="communityCard" animated elevation="[[elevation]]" class="layout vertical flex">
         <div class="layout horizontal">
-          <iron-image sizing="cover" featured$="[[featured]]" preload src="[[communityLogoImagePath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
-          <iron-image sizing="cover" hidden$="[[!featured]]" featured$="[[featured]]" preload src="[[communityLogoImageNextPath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
+          <iron-image sizing="cover" featured$="[[featured]]" preload src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
+          <iron-image sizing="cover" hidden$="[[!featured]]" featured$="[[featured]]" preload src="[[communityLogoImageNextPath(community)]]" class="post-image secondImage"></iron-image>
         </div>
-        <div class="informationText" on-tap="_goToCommunity">
-          <div class="community-name" featured$="[[featured]]">[[communityName(community)]]</div>
+        <div class="informationText">
+          <div class="community-name" featured$="[[featured]]" on-tap="_goToCommunity">[[communityName(community)]]</div>
           <template is="dom-if" if="[[featured]]">
             <div class="description" featured$="[[featured]]">[[communityDescription(community,700)]]</div>
           </template>
@@ -160,7 +169,7 @@
             <div class="description">[[communityDescription(community)]]</div>
           </template>
         </div>
-        <yp-community-stats on-tap="_goToCommunity" class="stats" community="[[community]]"></yp-community-stats>
+        <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
         <yp-membership-button featured$="[[featured]]" large$="[[featured]]" community="[[community]]"></yp-membership-button>
       </paper-card>
     </template>
