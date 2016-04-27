@@ -48926,7 +48926,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         height: 90px;
         margin-top: 24px;
         padding: 13px;
-        background-color: var(--primary-background-color);
+        background-color: #FFF;
         color: var(--primary-color-600);
         font-size: 22px;
       }
@@ -48993,10 +48993,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
     <paper-card elevation="[[elevation]]" class="postCard">
       <div class="layout horizontal">
+        <div class="layout flex introText">[[t('post.addNewIntroBoxText')]]</div>
+        <iron-icon icon="trending-flat"></iron-icon>
         <div class="layout horizontal center-center">
           <paper-fab on-tap="_newPost" icon="lightbulb-outline"></paper-fab>
         </div>
-        <div class="layout flex introText">[[t('post.addNewIntroBoxText')]]</div>
       </div>
     </paper-card>
   </template>
@@ -49985,7 +49986,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
           <div class="layout horizontal center-center">
-            <yp-post-card-add on-new-post="_newPost" elevation="0"></yp-post-card-add>
+            <yp-post-card-add on-new-post="_newPost" elevation="4"></yp-post-card-add>
           </div>
           <ac-activities id="groupActivities" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
         </section>
@@ -50298,26 +50299,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         color: var(--primary-color-more-darker, #424242);
       }
 
-      @media (max-width: 420px) {
-        :host {
-          width: 304px;
-        }
-
-        .groupCard {
-          margin-left: 8px;
-          margin-right: 8px;
-          height: 100% !important;
-          padding-left: 0;
-          padding-right: 0;
-          width: 304px;
-        }
-
-        iron-image {
-          width: 304px;
-          height: 165px;
-        }
-      }
-
       paper-card {
         background-color: #f00;
         vertical-align: text-top;
@@ -50352,20 +50333,48 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .objectives {
         padding: 8px;
       }
+
+      @media (max-width: 420px) {
+        :host {
+          width: 304px;
+        }
+
+        .groupCard {
+          margin-left: 0;
+          margin-right: 8px;
+          height: 100% !important;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
+        }
+
+        iron-image {
+          width: 304px;
+          height: 165px;
+        }
+
+        .description {
+          margin-bottom: 32px;
+        }
+
+        yp-membership-button {
+          top: 144px;
+        }
+      }
     </style>
 
     <template is="dom-if" if="[[group]]">
       <paper-card class="groupCard" animated="" elevation="[[elevation]]">
-        <div class="card-content" on-tap="_goToGroup">
+        <div class="card-content">
           <div class="layout">
             <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath(group)]]"></iron-image>
           </div>
           <div class="description">
-            <h2 class="group-name">[[groupName(group)]]</h2>
+            <h2 class="group-name" on-tap="_goToGroup">[[groupName(group)]]</h2>
             <div class="objectives">[[groupObjectives(group)]]</div>
           </div>
         </div>
-        <yp-group-stats on-tap="_goToGroup" class="stats" group="[[group]]"></yp-group-stats>
+        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
         <yp-membership-button group="[[group]]"></yp-membership-button>
       </paper-card>
     </template>
@@ -50413,6 +50422,47 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       h1 {
         padding: 24px;
       }
+
+      @media (max-width: 934px) {
+        .mapContainer {
+          margin: 16px;
+          width: 800px;
+          height: 400px;
+        }
+      }
+
+      @media (max-width: 832px) {
+        .mapContainer {
+          margin: 8px;
+          width: 600px;
+          height: 340px;
+        }
+      }
+
+      @media (max-width: 632px) {
+        .mapContainer {
+          margin: 8px;
+          width: 400px;
+          height: 300px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .mapContainer {
+          margin: 8px;
+          width: 330px;
+          height: 250px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .mapContainer {
+          margin: 8px;
+          width: 280px;
+          height: 200px;
+        }
+      }
+
     </style>
 
     <div class="layout vertical center-center">
@@ -51271,6 +51321,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         margin-top: 0 !important;
       }
 
+      .image {
+        width: 432px;
+        height: 243px;
+      }
+
       .description-and-stats {
         max-width: 432px;
       }
@@ -51316,7 +51371,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         margin-right: 32px;
       }
 
-      @media (max-width: 930px) {
+      @media (max-width: 945px) {
         :host {
           width: 306px;
           margin-top: 40px;
@@ -51328,8 +51383,18 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           margin-bottom: 16px;
         }
 
+        .edit {
+          left: 265px;
+        }
+
         iron-image {
-          width: 216px;
+          width: 306px;
+          height: 92px !important;
+        }
+
+
+        .image {
+          width: 306px;
           height: 92px !important;
         }
 
@@ -51343,6 +51408,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         .stats {
         }
+
+        .textBox {
+          margin-right: 0;
+        }
       }
 
     </style>
@@ -51350,24 +51419,28 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     <iron-media-query query="(max-width: 480px)" query-matches="{{phoneSize}}"></iron-media-query>
 
     <template is="dom-if" if="[[community]]">
-      <div class="layout horizontal center-center wrap">
+      <div class="layout horizontal wrap">
         <paper-material id="card" elevation="5" animated="" class="large-card textBox">
-          <div class="layout vertical description-and-stats">
-            <div class="description">
-              <h2 class="community-name">[[communityName(community,1)]]</h2>
-              <div hidden="" class="communityAccess">[[_communityAccessText(community.access)]]</div>
-              <div class="communityDescription">[[communityDescription(community,1)]]</div>
-              <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+          <div class="layout vertical">
+            <div class="layout horizontal wrap">
+              <div class="layout vertical description-and-stats">
+                <div class="description">
+                  <h2 class="community-name">[[communityName(community,1)]]</h2>
+                  <div hidden="" class="communityAccess">[[_communityAccessText(community.access)]]</div>
+                  <div class="communityDescription">[[communityDescription(community,1)]]</div>
+                  <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+                </div>
+              </div>
             </div>
+            <paper-menu-button class="edit" vertical-align="top" horizontal-align="right" hidden$="[[!hasCommunityAccess(community)]]">
+              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
+                <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
+                <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              </paper-menu>
+            </paper-menu-button>
           </div>
-          <paper-menu-button class="edit" hidden$="[[!hasCommunityAccess(community)]]">
-            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-            <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-              <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
-              <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
-              <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-            </paper-menu>
-          </paper-menu-button>
         </paper-material>
         <paper-material id="cardImage" elevation="2" animated="" class="large-card imageCard">
           <template is="dom-if" if="[[phoneSize]]">
@@ -51376,7 +51449,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             </div>
           </template>
           <template is="dom-if" if="[[!phoneSize]]">
-            <iron-image class="image" sizing="contain" src$="[[communityLogoImagePath(community)]]"></iron-image>
+            <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
           </template>
         </paper-material>
       </div>
@@ -51874,6 +51947,15 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           width: 304px;
           height: 165px;
         }
+
+        iron-image[featured] {
+          width: 304px;
+          height: 165px;
+        }
+
+        yp-membership-button {
+          top: 144px;
+        }
       }
 
       @media (max-width: 680px) {
@@ -51899,7 +51981,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
 
         iron-image[featured] {
-          width: 336px;
+          width: 320px;
           height: 180px;
         }
 
@@ -52768,7 +52850,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
 
         iron-image {
-          width: 216px;
+          width: 306px;
           height: 92px !important;
         }
 
@@ -53471,13 +53553,18 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       @media (max-width: 480px) {
         div[title] {
-          font-size: 16px;
+          font-size: 17px;
         }
 
         .backIcon {
           width: 40px;
           height: 40px;
-          padding-right: 16px;
+          padding-right: 8px;
+        }
+
+        .loginButton {
+          font-size: 15px;
+          padding: 4px;
         }
       }
     </style>
@@ -53527,7 +53614,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
               </template>
 
               <template is="dom-if" if="[[!user]]">
-                <paper-button on-tap="_login">[[t('user.login')]]</paper-button>
+                <paper-button class="loginButton" on-tap="_login">[[t('user.login')]]</paper-button>
               </template>
             </app-toolbar>
           </app-header>
