@@ -24,7 +24,6 @@
       .topArea {
         background-color: var(--primary-background-color);
         background-image: var(--top-area-background-image, none);
-
         height: 300px;
       }
 
@@ -73,7 +72,7 @@
         }
       }
 
-      @media (max-width: 500px) {
+      @media (max-width: 900px) {
         .tab-wrapper ::content > .tabs {
           max-width: 450px;
           font-size: 13px !important;
@@ -83,6 +82,10 @@
         .tab-wrapper ::content > .tabs .tab {
           width: 120px;
           word-wrap: break-word !important;
+        }
+
+        .topArea {
+          height: 100%;
         }
       }
 

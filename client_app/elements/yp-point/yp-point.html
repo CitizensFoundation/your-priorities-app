@@ -25,15 +25,6 @@
         width: 100%;
       }
 
-      @media (max-width: 961px) {
-        :host {
-        }
-      }
-
-      @media (max-width: 600px) {
-        :host {
-        }
-      }
 
       .for {
         color: #777;
@@ -57,11 +48,6 @@
         padding-left: 16px;
       }
 
-      @media (max-width: 600px) {
-        .user-image {
-          display: none;
-        }
-      }
 
       .user-image-right {
         padding-right: 0px;
@@ -98,6 +84,13 @@
 
       .thumbDown {
         color: var(--master-point-down-color);
+      }
+
+
+      @media (max-width: 320px) {
+        .user-image {
+          display: none;
+        }
       }
     </style>
 

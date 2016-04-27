@@ -48,6 +48,22 @@
         padding-left: 16px;
         padding-right: 16px;
       }
+
+      @media (max-width: 840px) {
+        :host {
+          width: 100%;
+        }
+
+        paper-textarea {
+          width: 100%;
+        }
+
+        .userImage {
+          padding-top: 30px;
+          padding-left: 0px;
+          padding-right: 8px;
+        }
+      }
     </style>
 
     <div class="layout vertical" hidden$="[[!loggedInUser]]">
