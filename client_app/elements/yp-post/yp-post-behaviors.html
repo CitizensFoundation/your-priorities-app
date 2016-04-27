@@ -29,7 +29,7 @@
 
     postName: function (post) {
       if (post && post.name) {
-        return this.truncate(this.trim(post.name), 60);
+        return this.truncate(this.trim(post.name), 100);
       } else if (post) {
         return post.short_name;
       } else {

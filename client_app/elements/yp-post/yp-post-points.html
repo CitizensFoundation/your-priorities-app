@@ -114,6 +114,23 @@
         margin-top: 42px;
       }
 
+      .upOrDown {
+        margin-top: 72px;
+      }
+
+      paper-radio-button {
+        --paper-radio-button-checked-color: var(--accent-color) !important;
+        font-size: 16px;
+      }
+
+      #pointUpOrDownMaterial {
+        margin-top: 16px;
+      }
+
+      .mobileFab {
+        margin-top: 8px;
+      }
+      
       @media (max-width: 985px) {
         .pointText {
           width: 420px;
@@ -149,9 +166,6 @@
           <div class="main-container">
             <div class="point">
               <div id="pointUpMaterial" elevation="0" class="pointText" animated>
-                <div hidden class="layout horizontal start-justified">
-                  <iron-icon icon="thumb-up" class="thumbIcon"></iron-icon>
-                </div>
                 <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                                 bind-value="{{textValueUp}}" value=[[textValueUp]] label="[[t('point.for')]]"
                                 char-counter rows="2"
@@ -177,10 +191,6 @@
             <div class="point">
 
               <div id="pointDownMaterial" elevation="0" class="pointText" animated>
-                <div hidden class="layout horizontal start">
-                  <iron-icon icon="thumb-down" class="thumbIcon"></iron-icon>
-                </div>
-
                 <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                                 bind-value="{{textValueDown}}" value=[[textValueDown]] label="[[t('point.against')]]"
                                 char-counter rows="2"
@@ -206,6 +216,24 @@
         </div>
       </template>
       <template is="dom-if" if="[[!largeMode]]">
+        <div id="pointUpOrDownMaterial" elevation="0" class="pointText" animated>
+          <paper-textarea id="mobileUpOrDownPoint" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
+                          bind-value="{{textValueMobileUpOrDown}}" value=[[textValueMobileUpOrDown]] label="[[labelMobileUpOrDown]]"
+                          char-counter rows="2"
+                          max-rows="5" maxlength="500"></paper-textarea>
+          <div class="layout horizontal center-center">
+            <paper-radio-group id="upOrDown" attribute-for-selected="name" selected="{{pointUpOrDownSelected}}">
+              <paper-radio-button name="pointFor">[[t('point.for')]]</paper-radio-button>
+              <paper-radio-button name="pointAgainst">[[t('point.against')]]</paper-radio-button>
+            </paper-radio-group>
+          </div>
+          <template is="dom-if" if="[[ifLengthIsRight(textValueMobileUpOrDown)]]">
+            <div class="addPointFab layout horizontal center-center mobileFab">
+              <paper-fab icon="add" mini="" z="3" on-tap="addMobilePointUpOrDown"
+                         title="[[t('point.add_down')]]"></paper-fab>
+            </div>
+          </template>
+        </div>
         <template is="dom-repeat" items="[[points]]" as="point">
           <paper-material elevation="1" class="pointMaterial">
             <yp-point point="[[point]]"></yp-point>
@@ -274,6 +302,24 @@
           largeMode: {
             type: Boolean,
             value: false
+          },
+
+          textValueMobileUpOrDown: String,
+
+          labelMobileUpOrDown: String,
+
+          pointUpOrDownSelected: {
+            type: String,
+            observer: '_pointUpOrDownSelectedChanged',
+            value: 'pointFor'
+          }
+        },
+
+        _pointUpOrDownSelectedChanged: function (newValue) {
+          if (newValue=='pointFor') {
+            this.set('labelMobileUpOrDown', this.t('point.for'));
+          } else if (newValue=='pointAgainst') {
+            this.set('labelMobileUpOrDown', this.t('point.against'));
           }
         },
 
@@ -287,7 +333,6 @@
 
         _response: function (event, detail) {
           this.set('points', detail.response);
-
           this.removeElementsByClass(this, 'inserted-outside-list');
 
           if (this.points.length > 0) {
@@ -333,6 +378,7 @@
             this.newPointTextCombined = this.t("new.point.against.added") + " " + this.truncate(point.content, 21);
             this.set("textValueDown", "");
           }
+          this.set("textValueMobileUpOrDown", "");
           this._insertNewPoint(point);
           this.set('post.counter_points', this.post.counter_points + 1);
           this.$.newPointToast.show();
@@ -346,6 +392,16 @@
         addPointDown: function () {
           this.addPoint(this.textValueDown, -1);
           window.appGlobals.activity('add', 'pointDown');
+        },
+
+        addMobilePointUpOrDown: function () {
+          if (this.pointUpOrDownSelected=='pointFor') {
+            this.addPoint(this.textValueMobileUpOrDown, 1);
+            window.appGlobals.activity('add', 'pointUp');
+          } else if (this.pointUpOrDownSelected=='pointAgainst') {
+            this.addPoint(this.textValueMobileUpOrDown, -1);
+            window.appGlobals.activity('add', 'pointDown');
+          }
         },
 
         addPoint: function (content, value) {
