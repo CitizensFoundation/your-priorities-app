@@ -262,9 +262,10 @@
     "loginNotAuthorized": "Email or password wrong"
   },
 
-  "socialMedia": {
-    "other": "Other social media"
-  },
+  "other": "Other",
+
+  "socialMedia": "Social Media",
+
   "location": {
     "set": "Set location"
   },

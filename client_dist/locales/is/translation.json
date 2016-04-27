@@ -265,9 +265,9 @@
 
   },
 
-  "socialMedia": {
-    "other": "Aðrir samfélagsmiðlar"
-  },
+  "other": "Aðrir",
+
+  "socialMedia": "Samfélagsmiðlar",
 
   "login": {
     "name": "Nafn",

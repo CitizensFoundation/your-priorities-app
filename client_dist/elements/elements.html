@@ -43256,16 +43256,20 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       @media (max-width: 500px) {
         .tab-wrapper ::content > .tabs {
           max-width: 450px;
+          font-size: 14px !important;
+          word-wrap: break-word !important;
         }
 
         .tab-wrapper ::content > .tabs .tab {
           width: 120px;
+          word-wrap: break-word !important;
         }
       }
 
       @media (max-width: 330px) {
         .tab-wrapper ::content > .tabs {
           max-width: 330px;
+          font-size: 12px !important;
         }
 
         .tab-wrapper ::content > paper-tab {
@@ -43274,7 +43278,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       @media (max-width: 480px) {
-
       }
     </style>
 
@@ -51676,7 +51679,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .communityCard {
-        cursor: pointer;
         height: 430px;
         width: 320px;
         background-color: #fff;
@@ -51697,8 +51699,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         width: 336px;
         height: 180px;
       }
-
-
 
       .card-content {
         padding: 0;
@@ -51731,10 +51731,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         padding: 16px;
         background-color: var(--primary-color-800);
         color: #FFF;
-      }
-
-      .community-name[featured] {
-        font-size: 46px;
+        cursor: pointer;
       }
 
       yp-membership-button {
@@ -51758,7 +51755,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
 
         .communityCard {
-          margin-left: 8px;
           margin-right: 8px;
           height: 350px;
           padding-left: 0;
@@ -51771,16 +51767,34 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           height: 165px;
         }
       }
+
+      @media (max-width: 680px) {
+        .community-name[featured] {
+          font-size: 26px;
+        }
+
+        .description[featured] {
+          font-size: 16px;
+        }
+
+        .communityCard[featured] {
+          width: 304px;
+        }
+
+        .secondImage {
+          display: none;
+        }
+      }
     </style>
 
     <template is="dom-if" if="[[community]]">
       <paper-card featured$="[[featured]]" class="communityCard" animated="" elevation="[[elevation]]">
         <div class="layout horizontal">
-          <iron-image sizing="cover" featured$="[[featured]]" preload="" src="[[communityLogoImagePath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
-          <iron-image sizing="cover" hidden$="[[!featured]]" featured$="[[featured]]" preload="" src="[[communityLogoImageNextPath(community)]]" on-tap="_goToCommunity" class="post-image"></iron-image>
+          <iron-image sizing="cover" featured$="[[featured]]" preload="" src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
+          <iron-image sizing="cover" hidden$="[[!featured]]" featured$="[[featured]]" preload="" src="[[communityLogoImageNextPath(community)]]" class="post-image secondImage"></iron-image>
         </div>
-        <div class="informationText" on-tap="_goToCommunity">
-          <div class="community-name" featured$="[[featured]]">[[communityName(community)]]</div>
+        <div class="informationText">
+          <div class="community-name" featured$="[[featured]]" on-tap="_goToCommunity">[[communityName(community)]]</div>
           <template is="dom-if" if="[[featured]]">
             <div class="description" featured$="[[featured]]">[[communityDescription(community,700)]]</div>
           </template>
@@ -51788,7 +51802,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             <div class="description">[[communityDescription(community)]]</div>
           </template>
         </div>
-        <yp-community-stats on-tap="_goToCommunity" class="stats" community="[[community]]"></yp-community-stats>
+        <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
         <yp-membership-button featured$="[[featured]]" large$="[[featured]]" community="[[community]]"></yp-membership-button>
       </paper-card>
     </template>
@@ -52587,7 +52601,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
       }
 
-      @media (max-width: 480px) {
+      @media (max-width: 930px) {
         :host {
           width: 306px;
           margin-top: 40px;
@@ -52791,7 +52805,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
         <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
         <paper-tab class="tab">[[t('news')]]</paper-tab>
-        <paper-tab class="tab">[[t('socialMedia.other')]]</paper-tab>
+        <paper-tab class="tab">
+          <div class="layout vertical center-center">
+            <div>[[t('other')]]</div>
+            <div>[[t('socialMedia')]]</div>
+          </div>
+        </paper-tab>
       </paper-tabs>
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
