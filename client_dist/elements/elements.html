@@ -48830,6 +48830,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         .description {
           padding-bottom: 32px;
         }
+
+        .mediaAndInfoContainer {
+          @apply(--layout-center-center);
+        }
       }
 
       @media (max-width: 420px) {
@@ -48859,7 +48863,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         <paper-material class="postCard" elevation="[[elevation]]" animated="">
           <div class="layout vertical wrap">
             <h1 class="post-name" on-tap="goToPost">[[postName(post)]]</h1>
-            <div class="layout horizontal center-center wrap">
+            <div class="layout horizontal wrap mediaAndInfoContainer">
               <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
               <div class="layout vertical">
                 <div class="infoContainer postCardCursor">
