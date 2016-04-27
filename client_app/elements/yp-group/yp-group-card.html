@@ -82,26 +82,6 @@
         color: var(--primary-color-more-darker, #424242);
       }
 
-      @media (max-width: 420px) {
-        :host {
-          width: 304px;
-        }
-
-        .groupCard {
-          margin-left: 8px;
-          margin-right: 8px;
-          height: 100% !important;
-          padding-left: 0;
-          padding-right: 0;
-          width: 304px;
-        }
-
-        iron-image {
-          width: 304px;
-          height: 165px;
-        }
-      }
-
       paper-card {
         background-color: #f00;
         vertical-align: text-top;
@@ -136,20 +116,48 @@
       .objectives {
         padding: 8px;
       }
+
+      @media (max-width: 420px) {
+        :host {
+          width: 304px;
+        }
+
+        .groupCard {
+          margin-left: 0;
+          margin-right: 8px;
+          height: 100% !important;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
+        }
+
+        iron-image {
+          width: 304px;
+          height: 165px;
+        }
+
+        .description {
+          margin-bottom: 32px;
+        }
+
+        yp-membership-button {
+          top: 144px;
+        }
+      }
     </style>
 
     <template is="dom-if" if="[[group]]">
       <paper-card class="groupCard" animated elevation="[[elevation]]" class="groupCard">
-        <div class="card-content" on-tap="_goToGroup">
+        <div class="card-content">
           <div class="layout">
             <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
           </div>
           <div class="description">
-            <h2 class="group-name">[[groupName(group)]]</h2>
+            <h2 class="group-name" on-tap="_goToGroup">[[groupName(group)]]</h2>
             <div class="objectives">[[groupObjectives(group)]]</div>
           </div>
         </div>
-        <yp-group-stats on-tap="_goToGroup" class="stats" group="[[group]]"></yp-group-stats>
+        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
         <yp-membership-button group="[[group]]"></yp-membership-button>
       </paper-card>
     </template>

@@ -82,13 +82,18 @@
 
       @media (max-width: 480px) {
         div[title] {
-          font-size: 16px;
+          font-size: 17px;
         }
 
         .backIcon {
           width: 40px;
           height: 40px;
-          padding-right: 16px;
+          padding-right: 8px;
+        }
+
+        .loginButton {
+          font-size: 15px;
+          padding: 4px;
         }
       }
     </style>
@@ -141,7 +146,7 @@
               </template>
 
               <template is="dom-if" if="[[!user]]">
-                <paper-button on-tap="_login">[[t('user.login')]]</paper-button>
+                <paper-button class="loginButton" on-tap="_login">[[t('user.login')]]</paper-button>
               </template>
             </app-toolbar>
           </app-header>
