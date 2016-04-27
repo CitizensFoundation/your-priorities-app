@@ -129,6 +129,10 @@
         }
       }
 
+      .toolbar {
+        padding-top: 8px;
+      }
+
       .bigHeader {
         background-color: var(--accent-color);
         max-height: 120px;
@@ -165,7 +169,7 @@
       <iron-media-query query="(max-width: 600px)" query-matches="{{narrow}}"></iron-media-query>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
       <template is="dom-if" if="opened" restamp>
-        <template is="dom-if" if="[[narrow]]">
+        <template is="dom-if" if="[[narrow]]" restamp>
           <paper-header-panel main id="headerPanel" class="no-padding" mode="{{mode}}">
             <paper-toolbar id="toolbar">
               <paper-icon-button id="dismissBtn" icon="close" dialog-dismiss></paper-icon-button>
