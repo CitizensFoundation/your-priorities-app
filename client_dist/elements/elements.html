@@ -12188,6 +12188,10 @@ of where they are in DOM.
   })();
 </script>
 <script>
+  /**
+   * Singleton IronMeta instance.
+   */
+  Polymer.IronValidatableBehaviorMeta = null;
 
   /**
    * `Use Polymer.IronValidatableBehavior` to implement an element that validates user input.
@@ -12218,14 +12222,6 @@ of where they are in DOM.
     properties: {
 
       /**
-       * Namespace for this validator.
-       */
-      validatorType: {
-        type: String,
-        value: 'validator'
-      },
-
-      /**
        * Name of the validator to use.
        */
       validator: {
@@ -12242,22 +12238,35 @@ of where they are in DOM.
         value: false
       },
 
+      /**
+       * This property is deprecated and should not be used. Use the global
+       * validator meta singleton, `Polymer.IronValidatableBehaviorMeta` instead.
+       */
       _validatorMeta: {
         type: Object
-      }
+      },
 
+      /**
+       * Namespace for this validator. This property is deprecated and should
+       * not be used. For all intents and purposes, please consider it a
+       * read-only, config-time property.
+       */
+      validatorType: {
+        type: String,
+        value: 'validator'
+      },
+
+      _validator: {
+        computed: '__computeValidator(validator)'
+      }
     },
 
     observers: [
       '_invalidChanged(invalid)'
     ],
 
-    get _validator() {
-      return this._validatorMeta && this._validatorMeta.byKey(this.validator);
-    },
-
-    ready: function() {
-      this._validatorMeta = new Polymer.IronMeta({type: this.validatorType});
+    registered: function() {
+      Polymer.IronValidatableBehaviorMeta = new Polymer.IronMeta({type: 'validator'});
     },
 
     _invalidChanged: function() {
@@ -12304,6 +12313,11 @@ of where they are in DOM.
         return this._validator.validate(value);
       }
       return true;
+    },
+
+    __computeValidator: function() {
+      return Polymer.IronValidatableBehaviorMeta &&
+          Polymer.IronValidatableBehaviorMeta.byKey(this.validator);
     }
   };
 
@@ -22687,6 +22701,12 @@ CSS properties               | Action
       var overlay = /** @type {?} */ (this.currentOverlay());
       // Check if clicked outside of top overlay.
       if (overlay && this._overlayInPath(Polymer.dom(event).path) !== overlay) {
+        if (overlay.withBackdrop) {
+          // There's no need to stop the propagation as the backdrop element
+          // already got this mousedown/touchstart event. Calling preventDefault
+          // on this event ensures that click/tap won't be triggered at all.
+          event.preventDefault();
+        }
         overlay._onCaptureClick(event);
       }
     },
@@ -22957,7 +22977,9 @@ context. You should place this element as a child of `<body>` whenever possible.
       },
 
       /**
-       * Returns the reason this dialog was last closed.
+       * Contains the reason(s) this overlay was last closed (see `iron-overlay-closed`).
+       * `IronOverlayBehavior` provides the `canceled` reason; implementers of the
+       * behavior can provide other reasons in addition to `canceled`.
        */
       closingReason: {
         // was a getter before, but needs to be a property so other
@@ -23166,16 +23188,23 @@ context. You should place this element as a child of `<body>` whenever possible.
 
       this._manager.addOrRemoveOverlay(this);
 
-      this.__isAnimating = true;
-
-      // requestAnimationFrame for non-blocking rendering
       if (this.__openChangedAsync) {
         window.cancelAnimationFrame(this.__openChangedAsync);
       }
+
+      // Defer any animation-related code on attached
+      // (_openedChanged gets called again on attached).
+      if (!this.isAttached) {
+        return;
+      }
+
+      this.__isAnimating = true;
+
       if (this.opened) {
         if (this.withBackdrop) {
           this.backdropElement.prepare();
         }
+        // requestAnimationFrame for non-blocking rendering
         this.__openChangedAsync = window.requestAnimationFrame(function() {
           this.__openChangedAsync = null;
           this._prepareRenderOpened();
@@ -23418,24 +23447,26 @@ context. You should place this element as a child of `<body>` whenever possible.
   Polymer.IronOverlayBehavior = [Polymer.IronFitBehavior, Polymer.IronResizableBehavior, Polymer.IronOverlayBehaviorImpl];
 
   /**
-  * Fired after the `iron-overlay` opens.
-  * @event iron-overlay-opened
-  */
+   * Fired after the overlay opens.
+   * @event iron-overlay-opened
+   */
 
   /**
-  * Fired when the `iron-overlay` is canceled, but before it is closed.
-  * Cancel the event to prevent the `iron-overlay` from closing.
-  * @event iron-overlay-canceled
-  * @param {Event} event The closing of the `iron-overlay` can be prevented
-  * by calling `event.preventDefault()`. The `event.detail` is the original event that originated
-  * the canceling (e.g. ESC keyboard event or click event outside the `iron-overlay`).
-  */
+   * Fired when the overlay is canceled, but before it is closed.
+   * @event iron-overlay-canceled
+   * @param {Event} event The closing of the overlay can be prevented
+   * by calling `event.preventDefault()`.
+   * @param {Event} event.detail It is the original event that originated
+   * the canceling (e.g. ESC keyboard event or click event outside the overlay).
+   */
 
   /**
-  * Fired after the `iron-overlay` closes.
-  * @event iron-overlay-closed
-  * @param {{canceled: (boolean|undefined)}} closingReason Contains `canceled` (whether the overlay was canceled).
-  */
+   * Fired after the overlay closes.
+   * @event iron-overlay-closed
+   * @param {Event} event The event
+   * @param {Object} event.detail It is the `closingReason` property (contains
+   * `canceled`, whether the overlay was canceled).
+   */
 
 })();
 </script>
@@ -43256,7 +43287,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       @media (max-width: 500px) {
         .tab-wrapper ::content > .tabs {
           max-width: 450px;
-          font-size: 14px !important;
+          font-size: 13px !important;
           word-wrap: break-word !important;
         }
 
@@ -43269,7 +43300,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       @media (max-width: 330px) {
         .tab-wrapper ::content > .tabs {
           max-width: 330px;
-          font-size: 12px !important;
+          font-size: 11px !important;
         }
 
         .tab-wrapper ::content > paper-tab {
@@ -50731,6 +50762,20 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         margin-top:8px;
         padding-left: 6px;
       }
+
+
+      @media (max-width: 680px) {
+        paper-fab[large] {
+          width: 40px;
+          height: 40px;
+        }
+
+        paper-fab[large]::shadow #icon {
+          width: 26px;
+          height: 26px;
+        }
+
+      }
     </style>
 
     <paper-fab large$="[[large]]" id="button" on-tap="_toggleMembership" disabled="[[disabled]]" class="heartButton" icon="favorite"></paper-fab>
@@ -51188,32 +51233,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         padding-bottom: 32px;
       }
 
-      @media (max-width: 900px) {
-        :host {
-          width: 432px;
-        }
-
-        .large-card {
-          width: 432px;
-          height: 486px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        :host {
-          width: 306px;
-        }
-
-        .large-card {
-          width: 306px;
-          height: 486px;
-        }
-
-        iron-image {
-          width: 216px;
-          height: 122px;
-        }
-      }
 
       .description {
         padding: 0;
@@ -51237,6 +51256,36 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .textBox {
         margin-right: 32px;
       }
+
+      @media (max-width: 930px) {
+        :host {
+          width: 306px;
+          margin-top: 40px;
+        }
+
+        .large-card {
+          width: 306px;
+          height: 180px;
+          margin-bottom: 16px;
+        }
+
+        iron-image {
+          width: 216px;
+          height: 92px !important;
+        }
+
+        .imageCard {
+          height: 92px !important;
+        }
+
+        .community-name {
+          font-size: 25px;
+        }
+
+        .stats {
+        }
+      }
+
     </style>
 
     <iron-media-query query="(max-width: 480px)" query-matches="{{phoneSize}}"></iron-media-query>
@@ -51261,7 +51310,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             </paper-menu>
           </paper-menu-button>
         </paper-material>
-        <paper-material id="cardImage" elevation="2" animated="" class="large-card">
+        <paper-material id="cardImage" elevation="2" animated="" class="large-card imageCard">
           <template is="dom-if" if="[[phoneSize]]">
             <div>
               <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
@@ -51781,9 +51830,20 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           width: 304px;
         }
 
+        yp-membership-button[featured] {
+          top: 157px;
+          right: 16px;
+        }
+
         .secondImage {
           display: none;
         }
+
+        iron-image[featured] {
+          width: 336px;
+          height: 180px;
+        }
+
       }
     </style>
 
@@ -52559,9 +52619,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         color: #FFF;
         position: absolute;
         top: 0;
-        left: 390px;
+        left: 384px;
         padding-right: 0;
         margin-right: 0;
+        z-index: 999999;
       }
 
       h1 {
@@ -52590,18 +52651,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         padding-top: 16px;
       }
 
-      @media (max-width: 900px) {
-        :host {
-          width: 432px;
-        }
-
-        .large-card {
-          width: 432px;
-          height: 486px;
-        }
+      .dropdown-content {
+        width: 200px;
       }
 
-      @media (max-width: 930px) {
+      @media (max-width: 945px) {
         :host {
           width: 306px;
           margin-top: 40px;
@@ -52611,6 +52665,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           width: 306px;
           height: 180px;
           margin-bottom: 16px;
+        }
+
+        .edit {
+          left: 265px;
         }
 
         iron-image {
@@ -52628,31 +52686,37 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         .stats {
         }
+
+        .textBox {
+          margin-right: 0;
+        }
       }
 
     </style>
     <template is="dom-if" if="[[domain]]">
-      <div class="layout horizontal  wrap">
+      <div class="layout horizontal wrap">
         <paper-material id="card" elevation="5" animated="" class="large-card textBox">
-          <div class="layout horizontal wrap">
-            <div class="layout vertical description-and-stats">
-              <div class="description">
-                <h1 class="domain-name">[[_domainName(domain)]]</h1>
-                <div class="domainDescription">
-                  [[_domainDescription(domain)]]
+          <div class="layout vertical">
+            <div class="layout horizontal wrap">
+              <div class="layout vertical description-and-stats">
+                <div class="description">
+                  <h1 class="domain-name">[[_domainName(domain)]]</h1>
+                  <div class="domainDescription">
+                    [[_domainDescription(domain)]]
+                  </div>
+                  <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
                 </div>
-                <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
               </div>
             </div>
+            <paper-menu-button vertical-align="top" horizontal-align="right" class="edit" hiddsen$="[[!hasDomainAccess(domain)]]">
+              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
+                <paper-item id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
+                <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              </paper-menu>
+            </paper-menu-button>
           </div>
-          <paper-menu-button class="edit" hidden$="[[!hasDomainAccess(domain)]]">
-            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-            <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-              <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
-              <paper-item id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
-              <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-            </paper-menu>
-          </paper-menu-button>
         </paper-material>
         <paper-material id="cardImage" elevation="3" animated="" class="large-card imageCard">
           <div class="layout horizontal wrap">
@@ -53269,16 +53333,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       app-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
         color: #fff;
         background-color: var(--primary-background-color);
       }
 
       app-toolbar {
-        height: 64px;
         color: #FFF;
       }
 
@@ -53313,6 +53372,18 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .dropdown-content {
         width: 200px;
       }
+
+      @media (max-width: 480px) {
+        div[title] {
+          font-size: 16px;
+        }
+
+        .backIcon {
+          width: 40px;
+          height: 40px;
+          padding-right: 16px;
+        }
+      }
     </style>
 
     <iron-signals on-iron-signal-yp-i18n-ready="_i18nReady"></iron-signals>
@@ -53334,7 +53405,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         <app-header-layout id="mainArea">
 
-          <app-header effects="waterfall" reveals="" class="main-header">
+          <app-header id="appHeader" effects="waterfall" reveals="" class="main-header">
             <app-toolbar>
               <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
               <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
@@ -54914,88 +54985,6 @@ module.exports = Array.isArray || function (arr) {
   }
 
 
-  /* Theme Black and White */
-  .rootDisabled {
-    --primary-background-color: var(--paper-grey-400);
-
-    --primary-color: var(--paper-grey-500);
-    --primary-color-200: var(--paper-grey-200);
-    --primary-color-300: var(--paper-grey-300);
-    --primary-color-400: var(--paper-grey-400);
-    --primary-color-600: var(--paper-grey-600);
-    --primary-color-700: var(--paper-grey-700);
-    --primary-color-800: var(--paper-grey-800);
-
-    --accent-color: #000;
-    --accent-color-100: #111;
-    --accent-color-200: #222;
-    --accent-color-300: #333;
-    --accent-color-400: #444;
-
-    --paper-dialog-button-color: var(--accent-color);
-    --paper-tabs-selection-bar-color: var(--accent-color);
-    --paper-input-container-focus-color: var(--accent-color);
-
-  }
-
-  .disabledBody {
-    background-color:  var(--paper-grey-500);
-  }
-
-  /* Theme Blue and Yello*/
-  .rootDisabled {
-    --primary-background-color: #FFF;
-
-    --primary-color: var(--paper-indigo-500);
-    --primary-color-200: var(--paper-indigo-200);
-    --primary-color-300: var(--paper-indigo-300);
-    --primary-color-400: var(--paper-indigo-400);
-    --primary-color-600: var(--paper-indigo-600);
-    --primary-color-700: var(--paper-indigo-700);
-    --primary-color-800: var(--paper-indigo-800);
-
-    --accent-color: var(--paper-deep-orange-a200);
-    --accent-color-100: var(--paper-deep-orange-a100);
-    --accent-color-200: var(--paper-deep-orange-a200);
-    --accent-color-300: var(--paper-deep-orange-a400);
-    --accent-color-400: var(--paper-deep-orange-a400);
-
-    --paper-dialog-button-color: var(--accent-color);
-    --paper-tabs-selection-bar-color: var(--accent-color);
-    --paper-input-container-focus-color: var(--accent-color);
-  }
-
-  .disabledBody {
-    background-color: var(--paper-indigo-500);
-  }
-
-  /* Theme Lime */
-  .rootDisabled {
-    --primary-background-color: var(--paper-lime-500);
-
-    --primary-color: var(--paper-light-green-500);
-    --primary-color-200: var(--paper-light-green-200);
-    --primary-color-300: var(--paper-light-green-300);
-    --primary-color-400: var(--paper-light-green-400);
-    --primary-color-600: var(--paper-light-green-600);
-    --primary-color-700: var(--paper-light-green-700);
-    --primary-color-800: var(--paper-light-green-800);
-
-    --accent-color: var(--paper-deep-purple-a100);
-    --accent-color-100: var(--paper-deep-purple-a100);
-    --accent-color-200: var(--paper-deep-purple-a100);
-    --accent-color-300: var(--paper-deep-purple-a100);
-    --accent-color-400: var(--paper-deep-purple-a100);
-
-    --paper-dialog-button-color: var(--accent-color);
-    --paper-tabs-selection-bar-color: var(--accent-color);
-    --paper-input-container-focus-color: var(--accent-color);
-  }
-
-  .disabledBody {
-    background-color: var(--paper-lime-500);
-  }
-
   :root {
 
     --paper-dropdown-menu: {
@@ -55033,16 +55022,11 @@ module.exports = Array.isArray || function (arr) {
 
 
   paper-toolbar.tall {
-    background-color: transparent;
-    height: 315px;
+
   }
 
   paper-scroll-header-panel {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+
     background-color: var(--primary-background-color , #fff);
   /* background for toolbar when it is at its full size */
   --paper-scroll-header-panel-full-header: {
@@ -55120,12 +55104,9 @@ module.exports = Array.isArray || function (arr) {
   }
 
   #mainToolbar .middle-container  {
-    height: 100%;
   }
 
   #mainToolbar:not(.tall) .middle {
-    font-size: 26px;
-    padding-bottom: 0;
     background-color: var(--primary-background-color)
   }
 
@@ -55134,8 +55115,8 @@ module.exports = Array.isArray || function (arr) {
     width: 38px;
     height: 38px;
   }
+
   #mainToolbar .bottom {
-    margin-left: 48px;
     /* Required for main area's paper-scroll-header-panel custom condensing transformation */
     -webkit-transform-origin: left center;
     transform-origin: left center;
