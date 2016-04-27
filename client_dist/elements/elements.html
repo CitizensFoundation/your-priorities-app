@@ -48919,22 +48919,23 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
   <template>
     <style>
       :host {
+        margin-top: 8px;
       }
 
       .postCard {
         width: 800px;
-        height: 90px;
-        margin-top: 24px;
-        padding: 13px;
+        height: 100%;
+        margin-top: 16px;
+        padding: 0px;
         background-color: #FFF;
         color: var(--primary-color-600);
-        font-size: 22px;
+        font-size: 25px;
       }
 
       paper-icon-button {
-        height: 250px;
-        width: 250px;
-        color: var(--accent-color)
+        height: 170px;
+        width: 170px;
+        color: var(--accent-color);
       }
 
       .header {
@@ -48989,15 +48990,20 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .introText {
         padding-top: 18px;
       }
+
+      .addNewIdeaText {
+        padding-top: 20px;
+        font-size: 24px;
+        color: var(--accent-color);
+      }
     </style>
 
     <paper-card elevation="[[elevation]]" class="postCard">
-      <div class="layout horizontal">
-        <div class="layout flex introText">[[t('post.addNewIntroBoxText')]]</div>
-        <iron-icon icon="trending-flat"></iron-icon>
-        <div class="layout horizontal center-center">
-          <paper-fab on-tap="_newPost" icon="lightbulb-outline"></paper-fab>
-        </div>
+      <div class="layout horizontal center-center addNewIdeaText">
+        [[t('post.add_new')]]
+      </div>
+      <div class="layout horizontal center-center">
+        <paper-icon-button on-tap="_newPost" icon="add"></paper-icon-button>
       </div>
     </paper-card>
   </template>
@@ -49950,7 +49956,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     </style>
 
-    <yp-page id="page" create-fab-icon="lightbulb-outline" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
+    <yp-page id="page" create-fab-icon="add" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
 
       <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
 
