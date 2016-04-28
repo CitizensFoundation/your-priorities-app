@@ -16,6 +16,13 @@ var setupLocale = function (locale) {
          app._i18nReady();
        } else {
         console.warn("App has not been upgraded to Polymer object when translation is ready");
+        setTimeout(function(){
+          if (typeof app._i18nReady == 'function') {
+            app._i18nReady();
+          } else {
+            console.error("App has not been upgraded to Polymer object when translation is ready");
+          }
+        }, 3500);
       }
     } else {
       console.warn("App not ready when i18n is ready");
