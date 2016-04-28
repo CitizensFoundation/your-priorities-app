@@ -9034,38 +9034,40 @@ this.fire('dom-change');
 			}
 		}
 		function events(el) {
-			el.button.addEventListener("mouseleave", function (event) {
-				if(el.isDisabled == true) return;
-				this.className = el.class;
-			});
-			el.button.addEventListener("mousemove", function (event) {
-				if(el.isDisabled == true) return;
-				var left = this.getBoundingClientRect().left,
-					width = this.offsetWidth,
-					direction = "";
-				event.pageX < (left + (width * .3)) ?
-					direction = "left" :
-				event.pageX > (left + (width * .65)) ?
-					direction = "right" :
-				direction = "middle"
-				this.className = (this.className.replace(/middle|right|left/i,"").trim() + " " + direction).trim();
-			});
-			el.button.addEventListener("mousedown", function (event) {
-				if(el.isDisabled == true) return;
-				var self = this;
-				self.className = ((self.className || "") + " active").trim();
-				if (el.time) clearTimeout(element.time);
-				el.time = setTimeout(function (e) {
-					var eventTrigger = new Event('action');
-					console.log("DA")
-					el.dispatchEvent(eventTrigger);
-					self.className = el.class + " middle";
-				}, 300);
-			});
-			el.button.addEventListener("click", function(event){
-				if(el.isDisabled == true) return;
-				action(el);
-			});
+      if (el.button) {
+        el.button.addEventListener("mouseleave", function (event) {
+          if(el.isDisabled == true) return;
+          this.className = el.class;
+        });
+        el.button.addEventListener("mousemove", function (event) {
+          if(el.isDisabled == true) return;
+          var left = this.getBoundingClientRect().left,
+            width = this.offsetWidth,
+            direction = "";
+          event.pageX < (left + (width * .3)) ?
+            direction = "left" :
+            event.pageX > (left + (width * .65)) ?
+              direction = "right" :
+              direction = "middle"
+          this.className = (this.className.replace(/middle|right|left/i,"").trim() + " " + direction).trim();
+        });
+        el.button.addEventListener("mousedown", function (event) {
+          if(el.isDisabled == true) return;
+          var self = this;
+          self.className = ((self.className || "") + " active").trim();
+          if (el.time) clearTimeout(element.time);
+          el.time = setTimeout(function (e) {
+            var eventTrigger = new Event('action');
+            console.log("DA")
+            el.dispatchEvent(eventTrigger);
+            self.className = el.class + " middle";
+          }, 300);
+        });
+        el.button.addEventListener("click", function(event){
+          if(el.isDisabled == true) return;
+          action(el);
+        });
+      }
 		}
 		function getContent(nodes){
 			var text = []
