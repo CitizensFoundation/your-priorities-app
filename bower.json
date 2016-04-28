@@ -24,7 +24,7 @@
     "instafeed.js": "https://github.com/evejweinberg/instafeed.js.git#master",
     "i18next": "~2.4.1",
     "vaadin-grid": "~1.0.0",
-    "awesome-button": "*"
+    "awesome-button": "https://github.com/rbjarnason/awesome-button.git#master"
   },
   "devDependencies": {
     "web-component-tester": "*",
