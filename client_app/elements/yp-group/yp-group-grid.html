@@ -1,0 +1,55 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="yp-group-card.html">
+
+<dom-module id="yp-group-grid">
+
+  <template>
+
+    <style>
+      .card {
+        padding: 16px;
+      }
+    </style>
+    <div class="layout vertical wrap">
+      <div class="layout horizontal center-center wrap">
+        <template is="dom-repeat" class="list" items="[[featuredGroups]]" as="group">
+          <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+        </template>
+        <template is="dom-repeat" class="list" items="[[activeGroups]]" as="group">
+          <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+        </template>
+      </div>
+      <div class="layout horizontal center-center">
+        <h1 class="archivedText" hidden$="[[!archivedGroups]]">
+          [[t('archived')]]
+        </h1>
+      </div>
+      <div class="layout horizontal center-center wrap">
+        <template is="dom-repeat" class="list" items="[[archivedGroups]]" as="group">
+          <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-group-grid',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        featuredGroups: Array,
+        archivedGroups: Array,
+        activeGroups: Array
+      }
+
+    });
+  </script>
+</dom-module>

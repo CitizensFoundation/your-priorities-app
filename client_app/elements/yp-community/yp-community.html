@@ -21,6 +21,8 @@
 <link rel="import" href="../yp-group/yp-group-edit.html">
 <link rel="import" href="../yp-group/yp-group-card-add.html">
 <link rel="import" href="../yp-page/yp-page.html">
+<link rel="import" href="../yp-group/yp-group-collection-behaviors.html">
+<link rel="import" href="../yp-group/yp-group-grid.html">
 
 <link rel="import" href="yp-community-edit.html">
 <link rel="import" href="yp-community-large-card.html">
@@ -61,26 +63,11 @@
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
           <div class="layout horizontal center-center wrap">
-            <div class="layout vertical wrap">
-              <div class="layout horizontal center-center wrap">
-                <template is="dom-repeat" class="list" items="[[featuredGroups]]" as="group">
-                  <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
-                </template>
-                <template is="dom-repeat" class="list" items="[[activeGroups]]" as="group">
-                  <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
-                </template>
-              </div>
-              <div class="layout horizontal center-center">
-                <h1 class="archivedText" hidden$="[[!archivedGroups]]">
-                  [[t('archived')]]
-                </h1>
-              </div>
-              <div class="layout horizontal center-center wrap">
-                <template is="dom-repeat" class="list" items="[[archivedGroups]]" as="group">
-                  <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
-                </template>
-              </div>
-            </div>
+            <yp-group-grid
+              featured-groups="[[featuredGroups]]"
+              active-groups="[[activeGroups]]"
+              archived-groups="[[archivedGroups]]">
+            </yp-group-grid>
             <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
           </div>
         </section>
@@ -107,27 +94,11 @@
       behaviors: [
         Polymer.appHelpers,
         Polymer.ypThemeBehavior,
-        Polymer.CollectionHelpers
+        Polymer.CollectionHelpers,
+        Polymer.GroupCollectionBehaviors
       ],
 
       properties: {
-        activeGroups: {
-          type: Array,
-          notify: true
-        },
-
-        featuredGroups: {
-          type: Array
-        },
-
-        archivedGroups: {
-          type: Array
-        },
-
-        groupsLength: {
-          type: Number
-        },
-
         communityId: {
           type: Number,
           value: null,
@@ -250,13 +221,7 @@
         var url = this._communityHeaderUrl(this.community);
         //headerPanel.style.background = "#f5f5f5 url('"+url+"') no-repeat center top";
 
-        this.set('groupsLength', this.community.Groups.length);
-        var splitGroups = this.splitByStatus(this.community.Groups);
-        if (splitGroups.archived.length>0) {
-          this.set('archivedGroups', splitGroups.archived);
-        }
-        this.set('featuredGroups', splitGroups.featured);
-        this.set('activeGroups', splitGroups.active);
+        this.setupGroups(this.community.Groups)
 
         Polymer.Base.async(function() {
           var communityCard = this.$$('#communityCard');
