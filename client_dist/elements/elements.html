@@ -8937,7 +8937,7 @@ this.fire('dom-change');
 			}
 			function run(tag) {
 				var params = {}
-				var url = encodeURIComponent(tag.getAttribute("href") || window.location.href);
+				var url = encodeURIComponent(tag.getAttribute("targetUrl") || window.location.href);
 				var size = dimensions();
 				switch (tag.getAttribute("type")) {
 					case "facebook":
@@ -44262,6 +44262,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .awesomeButton {
         padding: 2px;
       }
+
+      .awesomeShare {
+        padding: 8px;
+        background-color: #FFF;
+      }
     </style>
 
     <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
@@ -44287,14 +44292,14 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <div class="share">
         <paper-icon-button title="[[t('shareInfo')]]" icon="social:share" on-tap="_toggleShare" class="shareIcon" id="shareButton"></paper-icon-button>
       </div>
-      <template>
-        <div class="layout horizontal awesomeButtonContainer" hidden$="[[!showShareButtons]]">
-          <awesome-button href$="[[_postUrl(post)]]" class="awesomeButton" type="facebook" sharer=""></awesome-button>
-          <awesome-button href$="[[_postUrl(post)]]" class="awesomeButton" type="twitter" sharer=""></awesome-button>
-          <awesome-button href$="[[_postUrl(post)]]" class="awesomeButton" type="plus" sharer=""></awesome-button>
-          <awesome-button href$="[[_postUrl(post)]]" class="awesomeButton" type="pinterest" sharer=""></awesome-button>
-        </div>
-      </template>
+      <div class="layout horizontal awesomeButtonContainer" hidden$="[[!showShareButtons]]">
+        <paper-material elevation="5" class="awesomeShare">
+          <awesome-button targeturl$="[[_postUrl(post)]]" class="awesomeButton" type="facebook" sharer=""></awesome-button>
+          <awesome-button targeturl$="[[_postUrl(post)]]" class="awesomeButton" type="twitter" sharer=""></awesome-button>
+          <awesome-button targeturl$="[[_postUrl(post)]]" class="awesomeButton" type="plus" sharer=""></awesome-button>
+          <awesome-button targeturl$="[[_postUrl(post)]]" class="awesomeButton" type="pinterest" sharer=""></awesome-button>
+        </paper-material>
+      </div>
     </paper-material>
 
     <iron-signals on-iron-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></iron-signals>
