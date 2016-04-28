@@ -39,10 +39,6 @@
         @apply(--layout-wrap);
       }
 
-      .card {
-        padding: 16px;
-      }
-
       @media (max-width: 330px) {
         .card {
           padding-left: 0;
@@ -76,34 +72,16 @@
       <yp-domain-large-card id="domainCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
 
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused>
-        <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
-        <paper-tab class="tab">[[t('news')]]</paper-tab>
-        <paper-tab class="tab">[[t('socialMedia.other')]]</paper-tab>
+        <paper-tab class="tab"><span>[[t('myCommunities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
+        <paper-tab class="tab"><span>[[t('myGroups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
+        <paper-tab class="tab">[[t('myActivity')]]</paper-tab>
+        <paper-tab class="tab">[[t('myPost')]]</paper-tab>
       </paper-tabs>
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
           <div class="card-container layout center-center wrap">
-            <div class="layout vertical wrap">
-              <div class="layout horizontal center-center wrap">
-                <template is="dom-repeat" class="list" items="[[featuredCommunities]]" as="community">
-                  <yp-community-card class="card" featured community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-                </template>
-                <template is="dom-repeat" class="list" items="[[activeCommunities]]" as="community">
-                  <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-                </template>
-              </div>
-              <div class="layout horizontal center-center">
-                <h1 class="archivedText" hidden$="[[!archivedCommunities]]">
-                  [[t('archived')]]
-                </h1>
-              </div>
-              <div class="layout horizontal center-center wrap">
-                <template is="dom-repeat" class="list" items="[[archivedCommunities]]" as="community">
-                  <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-                </template>
-              </div>
-            </div>
+
             <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
           </div>
         </section>

@@ -1,0 +1,56 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="yp-community-card.html">
+
+<dom-module id="yp-community-grid">
+
+  <template>
+
+    <style>
+      .card {
+        padding: 16px;
+      }
+    </style>
+
+    <div class="layout vertical wrap">
+      <div class="layout horizontal center-center wrap">
+        <template is="dom-repeat" class="list" items="[[featuredCommunities]]" as="community">
+          <yp-community-card class="card" featured community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+        </template>
+        <template is="dom-repeat" class="list" items="[[activeCommunities]]" as="community">
+          <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+        </template>
+      </div>
+      <div class="layout horizontal center-center">
+        <h1 class="archivedText" hidden$="[[!archivedCommunities]]">
+          [[t('archived')]]
+        </h1>
+      </div>
+      <div class="layout horizontal center-center wrap">
+        <template is="dom-repeat" class="list" items="[[archivedCommunities]]" as="community">
+          <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-community-grid',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        featuredCommunities: Array,
+        archivedCommunities: Array,
+        activeCommunities: Array
+      }
+
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,43 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../yp-behaviors/collection-helpers.html">
+
+<script>
+  /**
+   * @polymerBehavior CommunityBehaviors
+   */
+  Polymer.CommunityCollectionBehaviors = {
+
+    properties: {
+      activeCommunities: {
+        type: Array,
+        notify: true
+      },
+
+      featuredCommunities: {
+        type: Array
+      },
+
+      archivedCommunities: {
+        type: Array
+      },
+
+      communitiesLength: {
+        type: Number
+      }
+    },
+
+    behaviors: [
+      Polymer.CollectionHelpers
+    ],
+
+    setupCommunities: function (communities) {
+      this.set('communitiesLength', communities.length);
+      var splitCommunities = this.splitByStatus(communities);
+      if (splitCommunities.archived.length>0) {
+        this.set('archivedCommunities', splitCommunities.archived);
+      }
+      this.set('featuredCommunities', splitCommunities.featured);
+      this.set('activeCommunities', splitCommunities.active);
+    }
+  };
+</script>
