@@ -9088,9 +9088,9 @@ this.fire('dom-change');
 			el.shadow = el.createShadowRoot();
 			el.shadow.appendChild(clone);
 			el.time = null;
-			el.em = el.shadow.querySelector('#em');
-			el.button = el.shadow.querySelector('#button');
-			el.content = el.shadow.querySelector("#content");
+			el.em = el.shadow.querySelector('em');
+			el.button = el.shadow.querySelector('button');
+			el.content = el.shadow.querySelector("content");
 			el.text = getContent(el.content.getDistributedNodes());
 			el.class = "awesome-button";
 		}
@@ -44294,14 +44294,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <div class="share">
         <paper-icon-button title="[[t('shareInfo')]]" icon="social:share" on-tap="_toggleShare" class="shareIcon" id="shareButton"></paper-icon-button>
       </div>
-      <div class="layout horizontal awesomeButtonContainer" hidden$="[[!showShareButtons]]">
-        <paper-material elevation="5" class="awesomeShare">
-          <awesome-button targeturl$="[[_postUrl(post)]]" class="awesomeButton" type="facebook" sharer=""></awesome-button>
-          <awesome-button targeturl$="[[_postUrl(post)]]" class="awesomeButton" type="twitter" sharer=""></awesome-button>
-          <awesome-button targeturl$="[[_postUrl(post)]]" class="awesomeButton" type="plus" sharer=""></awesome-button>
-          <awesome-button targeturl$="[[_postUrl(post)]]" class="awesomeButton" type="pinterest" sharer=""></awesome-button>
-        </paper-material>
-      </div>
+      <template is="dom-if" if="[[showShareButtons]]">
+        <div class="layout horizontal awesomeButtonContainer">
+          <paper-material elevation="5" class="awesomeShare">
+            <awesome-button targeturl$="[[_postUrl(post)]]" class="awesomeButton" type="facebook" sharer=""></awesome-button>
+            <awesome-button targeturl$="[[_postUrl(post)]]" class="awesomeButton" type="twitter" sharer=""></awesome-button>
+            <awesome-button targeturl$="[[_postUrl(post)]]" class="awesomeButton" type="plus" sharer=""></awesome-button>
+            <awesome-button targeturl$="[[_postUrl(post)]]" class="awesomeButton" type="pinterest" sharer=""></awesome-button>
+          </paper-material>
+        </div>
+      </template>
     </paper-material>
 
     <iron-signals on-iron-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></iron-signals>
