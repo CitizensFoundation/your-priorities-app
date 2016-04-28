@@ -8872,10 +8872,10 @@ this.fire('dom-change');
 			}
 		}
 	</style>
-	<button class="awesome-button">
+	<button id="button" class="awesome-button">
 		<span>
-			<em>
-				<content></content>
+			<em id="em">
+				<content id="content"></content>
 			</em>
 		</span>
 	</button>
@@ -9088,9 +9088,9 @@ this.fire('dom-change');
 			el.shadow = el.createShadowRoot();
 			el.shadow.appendChild(clone);
 			el.time = null;
-			el.em = el.shadow.querySelector('em');
-			el.button = el.shadow.querySelector('button');
-			el.content = el.shadow.querySelector("content");
+			el.em = el.shadow.querySelector('#em');
+			el.button = el.shadow.querySelector('#button');
+			el.content = el.shadow.querySelector("#content");
 			el.text = getContent(el.content.getDistributedNodes());
 			el.class = "awesome-button";
 		}
