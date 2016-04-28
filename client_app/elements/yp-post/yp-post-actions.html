@@ -200,7 +200,7 @@
       <div class="share" >
         <paper-icon-button title="[[t('shareInfo')]]" icon="social:share" on-tap="_toggleShare" class="shareIcon" id="shareButton"></paper-icon-button>
       </div>
-      <template is="dom-if" if="[[showShareButtons]]">
+      <template>
         <div class="layout horizontal awesomeButtonContainer">
           <paper-material elevation="5" class="awesomeShare">
             <awesome-button targetUrl$="[[_postUrl(post)]]" class="awesomeButton" type="facebook" sharer></awesome-button>
