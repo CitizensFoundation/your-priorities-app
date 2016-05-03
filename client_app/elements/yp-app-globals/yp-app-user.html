@@ -23,9 +23,9 @@
     <yp-session id="session"></yp-session>
 
     <div class="layout horizontal center-center">
-      <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
-      <yp-ajax id="adminRightsAjax" method="GET" url="/api/users/adminRights" on-response="_adminRightsResponse"></yp-ajax>
-      <yp-ajax id="membershipsAjax" method="GET" url="/api/users/memberships" on-response="_membershipsResponse"></yp-ajax>
+      <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/loggedInUser/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
+      <yp-ajax id="adminRightsAjax" method="GET" url="/api/users/loggedInUser/adminRights" on-response="_adminRightsResponse"></yp-ajax>
+      <yp-ajax id="membershipsAjax" method="GET" url="/api/users/loggedInUser/memberships" on-response="_membershipsResponse"></yp-ajax>
       <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
     </div>
 

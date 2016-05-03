@@ -127,14 +127,15 @@ var bearerCallback = function (req, token) {
 };
 
 app.use(function (req, res, next) {
-  sso.init(req.ypDomain.loginHosts, req.ypDomain.loginProviders, {
-    authorize: bearerCallback,
-    login    : models.User.localCallback
-  });
-  req.sso = sso;
+  if (req.url.indexOf('/users/') > -1) {
+    sso.init(req.ypDomain.loginHosts, req.ypDomain.loginProviders, {
+      authorize: bearerCallback,
+      login: models.User.localCallback
+    });
+    req.sso = sso;
+  }
   next();
 });
-
 
 if (app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_app')));

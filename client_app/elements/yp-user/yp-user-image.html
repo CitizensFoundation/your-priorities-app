@@ -23,6 +23,12 @@
         background-color: var(--primary-color-lighter,#434343);
       }
 
+      .veryLarge {
+        height: 200px;
+        width: 200px;
+        background-color: var(--primary-color-lighter,#434343);
+      }
+
       .medium {
         height: 48px;
         width: 48px;
@@ -40,6 +46,15 @@
         -webkit-border-radius: 50px;
         -moz-border-radius: 50px;
         border-radius: 50px;
+        display: block;
+        vertical-align: top;
+        align: top;
+      }
+
+      .rounded-even-more {
+        -webkit-border-radius: 90px;
+        -moz-border-radius: 90px;
+        border-radius: 90px;
         display: block;
         vertical-align: top;
         align: top;
@@ -92,6 +107,11 @@
           value: false
         },
 
+        veryLarge: {
+          type: Boolean,
+          value: false
+        },
+
         user: {
           type: Object,
           observer: "_userChanged"
@@ -125,6 +145,8 @@
           return 'small rounded';
         else if (this.large)
           return 'large rounded-more';
+        else if (this.veryLarge)
+          return 'veryLarge rounded-even-more';
         else
           return 'medium rounded';
       },

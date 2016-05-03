@@ -118,7 +118,9 @@
       </div>
     </div>
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
-      <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="1" class="createCommunity" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
+      <template is="dom-if" if="[[createFabIcon]]">
+        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="1" class="createCommunity" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
+      </template>
     </div>
   </template>
 
@@ -134,7 +136,8 @@
         },
 
         createFabIcon: {
-          type: String
+          type: String,
+          value: null
         },
 
         createFabTitle: {

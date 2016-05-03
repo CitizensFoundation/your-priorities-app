@@ -40,7 +40,8 @@ module.exports = function(sequelize, DataTypes) {
     legacy_user_id: DataTypes.INTEGER,
     legacy_new_domain_id: DataTypes.INTEGER,
     theme_id: { type: DataTypes.INTEGER, defaultValue: null },
-    legacy_passwords_disabled: { type: DataTypes.BOOLEAN, defaultValue: false }
+    legacy_passwords_disabled: { type: DataTypes.BOOLEAN, defaultValue: false },
+    privacy_settings:  DataTypes.JSONB
   }, {
     underscored: true,
 

@@ -131,6 +131,7 @@
   },
 
   "posts": {
+    "posts": "Hugmyndir",
     "open": "Hugmyndir",
     "inProgress": "Í ferli",
     "successful": "Samþykktar",

@@ -217,13 +217,17 @@ module.exports = function(sequelize, DataTypes) {
             log.info('Domain Loaded', { domain: toJson(domain.simple()), context: 'create' });
           }
           req.ypDomain = domain;
-          sequelize.models.Domain.getLoginProviders(function (error, providers) {
-            req.ypDomain.loginProviders = providers;
-            sequelize.models.Domain.getLoginHosts(function (error, hosts) {
-              req.ypDomain.loginHosts = hosts;
-              next();
+          if (req.url.indexOf('/users/') > -1) {
+            sequelize.models.Domain.getLoginProviders(function (error, providers) {
+              req.ypDomain.loginProviders = providers;
+              sequelize.models.Domain.getLoginHosts(function (error, hosts) {
+                req.ypDomain.loginHosts = hosts;
+                next();
+              });
             });
-          });
+          } else {
+            next();
+          }
         });
       },
 

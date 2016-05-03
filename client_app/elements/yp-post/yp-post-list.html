@@ -99,10 +99,13 @@
       }
 
     </style>
-    <yp-posts-filter id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
-                     group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
-                     category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
-    </yp-posts-filter>
+    <template is="dom-if" if="[[group]]">
+      <yp-posts-filter id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
+                       group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
+                       category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+      </yp-posts-filter>
+
+    </template>
 
     <div id="scrollableRegion">
       <iron-list id="list" items="[[posts]]" as="post">
@@ -150,6 +153,10 @@
         groupId: {
           type: Number,
           observer: "_groupIdChanged"
+        },
+
+        userId: {
+          type: Number
         },
 
         group: {
@@ -210,7 +217,6 @@
         event.currentTarget.elevation = 1;
       },
 
-
       buildPostsUrlPath: function () {
         return this.$.postsFilter.buildPostsUrlPath();
       },
@@ -243,12 +249,22 @@
 
       _loadMoreData: function () {
         this.set('moreToLoad', false);
+        var objectId, objectType;
+
+        if (this.userId) {
+          objectId = this.userId + '/posts';
+          objectType = 'users';
+        } else {
+          objectId = this.groupId;
+          objectType = 'groups';
+        }
+
         if (!this.filter)
           this.set('filter','top');
         if (this.searchingFor) {
-          this.$$('#ajax').url = '/api/groups/' + this.groupId + '/search/' + this.searchingFor;
+          this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
         } else {
-          this.$$('#ajax').url = '/api/groups/' + this.groupId + '/posts/' + this.filter;
+          this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
           if (this.categoryId) {
             this.$$('#ajax').url += '/' + this.categoryId;
           } else {
@@ -283,7 +299,7 @@
       },
 
       _processCategories: function () {
-        if (this.categoryId) {
+        if (this.categoryId && this.group) {
           for (var i = 0; i < this.group.Categories.length; i++) {
             if (this.group.Categories[i].id == this.categoryId) {
               this.selectedCategoryName = this.group.Categories[i].name;

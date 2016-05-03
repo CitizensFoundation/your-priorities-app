@@ -29,6 +29,7 @@
 
 <link rel="import" href="yp-app-drawer.html">
 <link rel="import" href="yp-app-nav-drawer.html">
+<link href="../yp-user/yp-user-page.html" rel="import">
 
 <dom-module id="yp-app">
 
@@ -211,6 +212,11 @@
               </template>
             </section>
 
+            <section data-route="user">
+              <template is="dom-if" if="[[params.userId]]" restamp>
+                <yp-user-page user-id="{{params.userId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-user-page>
+              </template>
+            </section>
           </iron-pages>
 
         </app-header-layout>

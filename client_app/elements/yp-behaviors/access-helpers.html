@@ -81,6 +81,15 @@
         console.error("No domain in hasAccess");
         return false;
       }
+    },
+
+    hasUserAccess: function(user) {
+      if (user && window.appUser && window.appUser.user && window.appUser.user.id == user.id) {
+        return true
+      } else {
+        return false;
+      }
     }
+
   };
 </script>
