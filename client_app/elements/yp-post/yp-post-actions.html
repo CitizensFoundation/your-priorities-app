@@ -13,7 +13,9 @@
 
 <link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html" >
 
-<link rel="import" href="../../bower_components/awesome-button/awesome-button.html">
+<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-facebook.html">
+<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-twitter.html">
+<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-google.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
@@ -145,10 +147,12 @@
       .shareIcon::shadow #icon {
         width: 32px !important;
         height: 32px !important;
+        color: var(--accent-color-100);
+      }
+
+      .shareIcon {
         margin-left: 16px;
         margin-top: 2px;
-        margin-right: 16px;
-        color: var(--accent-color-100);
       }
 
       .up-vote-icon {
@@ -161,19 +165,28 @@
         }
       }
 
-      .awesomeButtonContainer {
+      .shareButtonContainer {
         position: absolute;
         bottom: 55px;
         right: -32px;
+        padding: 0;
+        margin: 0;
+        margin-bottom: 8px;
       }
 
-      .awesomeButton {
+      .shareButton {
         padding: 2px;
       }
 
-      .awesomeShare {
-        padding: 8px;
+      .shareShare {
+        padding: 0;
+        margin: 0;
         background-color: #FFF;
+      }
+
+      paper-share-facebook {
+        padding: 0;
+        margin: 0;
       }
     </style>
 
@@ -200,13 +213,12 @@
       <div class="share" >
         <paper-icon-button title="[[t('shareInfo')]]" icon="social:share" on-tap="_toggleShare" class="shareIcon" id="shareButton"></paper-icon-button>
       </div>
-      <template>
-        <div class="layout horizontal awesomeButtonContainer">
-          <paper-material elevation="5" class="awesomeShare">
-            <awesome-button targetUrl$="[[_postUrl(post)]]" class="awesomeButton" type="facebook" sharer></awesome-button>
-            <awesome-button targetUrl$="[[_postUrl(post)]]" class="awesomeButton" type="twitter" sharer></awesome-button>
-            <awesome-button targetUrl$="[[_postUrl(post)]]" class="awesomeButton" type="plus" sharer></awesome-button>
-            <awesome-button targetUrl$="[[_postUrl(post)]]" class="awesomeButton"  type="pinterest" sharer></awesome-button>
+      <template is="dom-if" if="[[showShareButtons]]">
+        <div class="layout horizontal shareButtonContainer">
+          <paper-material elevation="5" class="shareShare">
+            <paper-share-facebook link$="[[_postUrl(post)]]" class="shareButton"></paper-share-facebook>
+            <paper-share-google link$="[[_postUrl(post)]]" class="shareButton"></paper-share-google>
+            <paper-share-twitter link$="[[_postUrl(post)]]" class="shareButton"></paper-share-twitter>
           </paper-material>
         </div>
       </template>
