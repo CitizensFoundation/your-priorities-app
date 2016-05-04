@@ -44873,7 +44873,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       },
 
       _postUrl: function (post) {
-        return encodeURIComponent("https://"+window.location.host+"/#!/post/"+post.id);
+        if (post) {
+          return encodeURIComponent("https://"+window.location.host+"/#!/post/"+post.id);
+        } else {
+          console.warn("Can't find post for action");
+        }
       },
 
       _toggleShare: function () {
@@ -50063,11 +50067,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
     </style>
-    <template is="dom-if" if="[[group]]">
-      <yp-posts-filter id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
-      </yp-posts-filter>
-
-    </template>
+    <yp-posts-filter id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+    </yp-posts-filter>
 
     <div id="scrollableRegion">
       <iron-list id="list" items="[[posts]]" as="post">
