@@ -27576,18 +27576,18 @@ context. You should place this element as a child of `<body>` whenever possible.
 </defs></svg>
 </iron-iconset-svg>
 <dom-module id="paper-share-facebook" assetpath="../bower_components/paper-share-buttons/">
-  <style>
-    #button {
-      color: #4B65BE;
-    }
-
-    #button[raised] {
-      background: #4B65BE;
-      color: white;
-    }
-  </style>
-
   <template>
+    <style>
+      #button {
+        color: #4B65BE;
+      }
+  
+      #button[raised] {
+        background: #4B65BE;
+        color: white;
+      }
+    </style>
+  
     <paper-button id="button" on-click="navigate" raised$="{{raised}}" noink$="{{noink}}">
       Facebook
     </paper-button>
@@ -27639,18 +27639,17 @@ context. You should place this element as a child of `<body>` whenever possible.
   });
 </script>
 <dom-module id="paper-share-twitter" assetpath="../bower_components/paper-share-buttons/">
-  <style>
-    #button {
-      color: #24A9F2;
-    }
-
-    #button[raised] {
-      background: #24A9F2;
-      color: white;
-    }
-  </style>
-
   <template>
+    <style>
+      #button {
+        color: #24A9F2;
+      }
+  
+      #button[raised] {
+        background: #24A9F2;
+        color: white;
+      }
+    </style>
     <paper-button id="button" on-click="navigate" raised$="{{raised}}" noink$="{{noink}}">
       Twitter
     </paper-button>
@@ -27712,18 +27711,17 @@ context. You should place this element as a child of `<body>` whenever possible.
   });
 </script>
 <dom-module id="paper-share-google" assetpath="../bower_components/paper-share-buttons/">
-  <style>
-    #button {
-      color: #DC4335;
-    }
-
-    #button[raised] {
-      background: #DC4335;
-      color: white;
-    }
-  </style>
-
   <template>
+    <style>
+      #button {
+        color: #DC4335;
+      }
+  
+      #button[raised] {
+        background: #DC4335;
+        color: white;
+      }
+    </style>
     <paper-button id="button" on-click="navigate" raised$="{{raised}}" noink$="{{noink}}">
       Google
     </paper-button>
@@ -44875,7 +44873,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       },
 
       _postUrl: function (post) {
-        return "https://"+window.location.host+"/#!/post/"+post.id;
+        return encodeURIComponent("https://"+window.location.host+"/#!/post/"+post.id);
       },
 
       _toggleShare: function () {
