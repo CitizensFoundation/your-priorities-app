@@ -84,7 +84,7 @@ router.get('/:parentPointId/comments', auth.can('view point'), function(req, res
         include: [
           {
             model: models.User,
-            attributes: models.User.defaultAttributesWithSocialMedia,
+            attributes: models.User.defaultAttributesWithSocialMediaPublic,
             include: [
               {
                 model: models.Image, as: 'UserProfileImages',
@@ -114,7 +114,8 @@ router.get('/:parentPointId/commentsCount', auth.can('view point'), function(req
         model: models.PointRevision,
         include: [
           {
-            model: models.User
+            model: models.User,
+            attributes: ['id','name','created_at']
           }
         ]
       }

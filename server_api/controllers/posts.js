@@ -188,7 +188,8 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       // User
       {
         model: models.User,
-        required: false
+        required: false,
+        attributes: models.User.defaultAttributesWithSocialMediaPublic
       },
       // Image
       {

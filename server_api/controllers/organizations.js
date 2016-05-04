@@ -50,7 +50,8 @@ var getOrganizationAndUser = function (organizationId, userId, callback) {
         models.User.find({
           where: {
             id: userId
-          }
+          },
+          attributes: ['id','email','name','created_at']
         }).then(function (userIn) {
           if (userIn) {
             user = userIn;

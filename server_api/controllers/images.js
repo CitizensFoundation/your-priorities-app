@@ -93,7 +93,7 @@ router.get('/:imageId/comments', auth.can('view image'), function(req, res) {
         include: [
           {
             model: models.User,
-            attributes: models.User.defaultAttributesWithSocialMedia,
+            attributes: models.User.defaultAttributesWithSocialMediaPublic,
             include: [
               {
                 model: models.Image, as: 'UserProfileImages',

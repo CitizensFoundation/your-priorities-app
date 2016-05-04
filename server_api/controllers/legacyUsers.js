@@ -19,7 +19,8 @@ router.get('/:id', function(req, res) {
     where: {
       legacy_user_id: cleanLegacyId,
       legacy_new_domain_id: req.ypDomain.id
-    }
+    },
+    attributes: ['id','name','created_at']
   }).then(function(user) {
     if (user) {
       var returnUrl = hostPartOfUrl(req)+"/#!/user/" + user.id;

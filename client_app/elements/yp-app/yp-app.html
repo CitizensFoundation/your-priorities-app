@@ -352,6 +352,7 @@
       },
 
       _isAppAndI18nReady: function (appReady, i18nReady) {
+        debugger;
         if ((appReady && i18nReady) || (appReady && window.i18nTranslation)) {
           this.set('appAndI18nReady', true);
         }

@@ -31,7 +31,7 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
 var getUserWithAll = function (userId, callback) {
   models.User.find({
     where: {id: userId},
-    attributes: _.concat(models.User.defaultAttributesWithSocialMedia, ['notifications_settings']),
+    attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings']),
     order: [
       [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
       [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
@@ -103,7 +103,8 @@ router.post('/register', function (req, res) {
 // Edit User
 router.put('/:id', auth.can('edit user'), function (req, res) {
   models.User.find({
-    where: {id: req.params.id}
+    where: {id: req.params.id},
+    attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'notifications_settings'])
   }).then(function (user) {
     if (user) {
       user.name = req.body.name;

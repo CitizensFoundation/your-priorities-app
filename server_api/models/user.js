@@ -41,7 +41,8 @@ module.exports = function(sequelize, DataTypes) {
     legacy_new_domain_id: DataTypes.INTEGER,
     theme_id: { type: DataTypes.INTEGER, defaultValue: null },
     legacy_passwords_disabled: { type: DataTypes.BOOLEAN, defaultValue: false },
-    privacy_settings:  DataTypes.JSONB
+    privacy_settings:  DataTypes.JSONB,
+    ignore_list: DataTypes.JSONB
   }, {
     underscored: true,
 
@@ -162,8 +163,10 @@ module.exports = function(sequelize, DataTypes) {
         });
       },
 
-      defaultAttributesWithSocialMedia: ['id', 'email', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id'],
-      
+      defaultAttributesWithSocialMedia: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id'],
+
+      defaultAttributesWithSocialMediaPublic: ['id', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id'],
+
       associate: function(models) {
         User.hasMany(models.Post);
         User.hasMany(models.Point);

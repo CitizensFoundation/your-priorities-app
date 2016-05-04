@@ -49,7 +49,8 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
         models.User.find({
           where: {
             id: userId
-          }
+          },
+          attributes: ['id','email','name','created_at']
         }).then(function (userIn) {
           if (userIn) {
             user = userIn;
@@ -67,7 +68,8 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
         models.User.find({
           where: {
             email: userEmail
-          }
+          },
+          attributes: ['id','email','name','created_at']
         }).then(function (userIn) {
           if (userIn) {
             user = userIn;

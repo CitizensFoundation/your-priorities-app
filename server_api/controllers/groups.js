@@ -50,7 +50,8 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
         models.User.find({
           where: {
             id: userId
-          }
+          },
+          attributes: ['id','email','name','created_at']
         }).then(function (userIn) {
           if (userIn) {
             user = userIn;
@@ -68,7 +69,8 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
         models.User.find({
           where: {
             email: userEmail
-          }
+          },
+          attributes: ['id','email','name','created_at']
         }).then(function (userIn) {
           if (userIn) {
             user = userIn;
@@ -375,7 +377,7 @@ router.get('/:groupId/admin_users', auth.can('edit group'), function (req, res) 
     include: [
       {
         model: models.User,
-        attributes: _.concat(models.User.defaultAttributesWithSocialMedia, ['created_at', 'last_login_at']),
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'last_login_at']),
         as: 'GroupAdmins',
         required: true,
         include: [
@@ -409,7 +411,7 @@ router.get('/:groupId/users', auth.can('edit group'), function (req, res) {
     include: [
       {
         model: models.User,
-        attributes: _.concat(models.User.defaultAttributesWithSocialMedia, ['created_at', 'last_login_at']),
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'last_login_at']),
         as: 'GroupUsers',
         required: true,
         include: [

@@ -45,7 +45,8 @@ auth.role('user.admin', function (user, req, done) {
     done(null, false);
   } else {
     models.User.findOne({
-      where: { id: user.id }
+      where: { id: user.id },
+      attributes: ['id']
     }).then(function (user) {
       if (user.id === req.user.id) {
         done(null, true);
