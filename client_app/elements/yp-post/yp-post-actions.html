@@ -282,7 +282,7 @@
       },
 
       _postUrl: function (post) {
-        return "https://"+window.location.host+"/#!/post/"+post.id;
+        return encodeURIComponent("https://"+window.location.host+"/#!/post/"+post.id);
       },
 
       _toggleShare: function () {
