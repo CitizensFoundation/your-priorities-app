@@ -84,6 +84,7 @@
   },
 
   "posts": {
+    "posts": "Ideas",
     "open": "Open",
     "inProgress": "In progress",
     "successful": "Successful",
