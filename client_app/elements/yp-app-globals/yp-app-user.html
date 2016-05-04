@@ -152,7 +152,7 @@
           this.setLoggedInUser(user);
           this.$.adminRightsAjax.generateRequest();
           this.$.membershipsAjax.generateRequest();
-          this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.email;
+          this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.name;
           this.$.loginToast.show();
           if (this.loginForEditParams) {
             var loginParams = this.loginForEditParams;
@@ -303,7 +303,7 @@
         },
 
         _logoutResponse: function (event, detail) {
-          this.toastLogoutTextCombined = this.t("logout.complete.for")+ " " + this.user.email;
+          this.toastLogoutTextCombined = this.t("logout.complete.for")+ " " + this.user.name;
           this.removeUserSession();
           this.$.logoutToast.show();
           this.async(function() {
@@ -314,7 +314,7 @@
         _isLoggedInResponse: function(event, detail) {
           if (detail.response===0) {
             this.removeUserSession();
-          } else if (detail.response.email) {
+          } else if (detail.response.name) {
             this.setLoggedInUser(detail.response);
           }
         },

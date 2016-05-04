@@ -127,7 +127,7 @@ module.exports = function(sequelize, DataTypes) {
 
       addUserToGroupIfNeeded: function (groupId, req, done) {
         sequelize.models.Group.find({
-          where: {id: groupId}
+          where: { id: groupId }
         }).then(function (group) {
           group.hasGroupUser(req.user).then(function(result) {
             if (!result) {

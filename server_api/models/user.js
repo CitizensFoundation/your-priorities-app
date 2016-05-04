@@ -41,8 +41,8 @@ module.exports = function(sequelize, DataTypes) {
     legacy_new_domain_id: DataTypes.INTEGER,
     theme_id: { type: DataTypes.INTEGER, defaultValue: null },
     legacy_passwords_disabled: { type: DataTypes.BOOLEAN, defaultValue: false },
-    privacy_settings:  DataTypes.JSONB,
-    ignore_list: DataTypes.JSONB
+    /*privacy_settings:  DataTypes.JSONB,
+    ignore_list: DataTypes.JSONB */
   }, {
     underscored: true,
 
@@ -81,7 +81,8 @@ module.exports = function(sequelize, DataTypes) {
             sequelize.models.User.find({
               where: {
                 facebook_id: profile.identifier
-              }
+              },
+              attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id']
             }).then (function (userIn) {
               if (userIn) {
                 user = userIn;
@@ -98,7 +99,8 @@ module.exports = function(sequelize, DataTypes) {
               sequelize.models.User.find({
                 where: {
                   email: profile.email
-                }
+                },
+                attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id']
               }).then (function (userIn) {
                 if (userIn) {
                   userIn.facebook_id = profile.identifier;
@@ -149,7 +151,8 @@ module.exports = function(sequelize, DataTypes) {
 
       localCallback: function (req, email, password, done) {
         sequelize.models.User.find({
-          where: { email: email }
+          where: { email: email },
+          attributes: ['id', 'encrypted_password']
         }).then(function(user) {
           if (user) {
             user.validatePassword(password, done);
