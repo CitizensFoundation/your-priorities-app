@@ -99,13 +99,10 @@
       }
 
     </style>
-    <template is="dom-if" if="[[group]]">
-      <yp-posts-filter id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
-                       group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
-                       category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
-      </yp-posts-filter>
-
-    </template>
+    <yp-posts-filter id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
+                     group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
+                     category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+    </yp-posts-filter>
 
     <div id="scrollableRegion">
       <iron-list id="list" items="[[posts]]" as="post">

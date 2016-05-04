@@ -282,7 +282,11 @@
       },
 
       _postUrl: function (post) {
-        return encodeURIComponent("https://"+window.location.host+"/#!/post/"+post.id);
+        if (post) {
+          return encodeURIComponent("https://"+window.location.host+"/#!/post/"+post.id);
+        } else {
+          console.warn("Can't find post for action");
+        }
       },
 
       _toggleShare: function () {
