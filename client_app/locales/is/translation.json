@@ -146,6 +146,7 @@
   },
 
   "post": {
+    "shareInfo": "Deila hugmynd",
     "new": "Ný hugmynd",
     "top": "Efstu hugmyndir",
     "description": "Lýsing",
@@ -157,6 +158,7 @@
     "add_new":"Bættu við nýrri hugmynd",
     "up_vote":"Kjósa upp",
     "down_vote":"Kjósa niður",
+    "debate": "Rökræða",
     "report": "Report post",
     "notify": "Notify me about this post",
     "share": "Share this post",
