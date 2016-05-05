@@ -75,7 +75,7 @@
       }
     </style>
 
-    <yp-page id="page" create-fab-icon="group-work" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
+    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
 
       <yp-domain-large-card id="domainCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
 
@@ -124,10 +124,17 @@
         Polymer.appHelpers,
         Polymer.ypThemeBehavior,
         Polymer.CommunityCollectionBehaviors,
-        Polymer.CollectionHelpers
+        Polymer.CollectionHelpers,
+        Polymer.AccessHelpers
       ],
 
       properties: {
+
+        createFabIcon: {
+          type: String,
+          value: null,
+          notify: true
+        },
 
         domainId: {
           type: Number,
@@ -232,6 +239,11 @@
         if (this.domain.theme_id!=null) {
           this.setTheme(this.domain.theme_id);
         }
+
+        if (!this.domain.only_admins_can_create_communities || this.hasDomainAccess(this.domain)) {
+          this.set('createFabIcon', 'group-work');
+        }
+
         this.$.pagesAjax.url = "/api/domains/"+this.domain.id+"/pages";
         this.$.pagesAjax.generateRequest();
 

@@ -320,7 +320,9 @@
         },
 
         _adminRightsResponse: function (event, detail) {
-          this.set('adminRights', detail.response);
+          if (detail.response && detail.response!=0) {
+            this.set('adminRights', detail.response);
+          }
         },
 
         _updateMembershipsIndex: function (memberships) {
@@ -342,9 +344,11 @@
         },
 
         _membershipsResponse: function (event, detail) {
-          this.set('memberships', detail.response);
-          this._updateMembershipsIndex(this.memberships);
-          this.fire('iron-signal', {name: 'got-memberships'});
+          if (detail.response && detail.response!=0) {
+            this.set('memberships', detail.response);
+            this._updateMembershipsIndex(this.memberships);
+            this.fire('iron-signal', {name: 'got-memberships'});
+          }
         }
       });
     }());

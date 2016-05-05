@@ -216,6 +216,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('secret_api_keys.github.client_secret', req.body.githubClientSecret);
       domain.name = req.body.name;
       domain.description = req.body.description;
+      domain.only_admins_can_create_communities = req.body.onlyAdminsCanCreateCommunities ? true : false;
       domain.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
       domain.save().then(function () {
         log.info('Domain Updated', { domain: toJson(domain), user: toJson(req.user) });

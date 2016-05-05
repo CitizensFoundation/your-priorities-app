@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
 
@@ -41,6 +42,10 @@
       .imageSizeInfo {
         font-size: 13px;
       }
+
+      .sectionMargin {
+        margin-top: 24px;
+      }
     </style>
 
     <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
@@ -49,6 +54,7 @@
       <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
         <paper-tab><span>[[t('domain.info')]]</span></paper-tab>
         <paper-tab>[[t('domain.apis')]]</paper-tab>
+        <paper-tab>[[t('domain.settings')]]</paper-tab>
       </paper-tabs>
 
       <div class="layout vertical wrap container">
@@ -135,7 +141,9 @@
                          char-counter class="mainInput">
             </paper-input>
           </section>
-
+          <section class="sectionMargin">
+            <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
+          </section>
         </neon-animated-pages>
 
     </yp-edit-dialog>
