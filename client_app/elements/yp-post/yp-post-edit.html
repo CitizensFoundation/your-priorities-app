@@ -153,7 +153,8 @@
               <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
                 <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
                 <span>[[t('image.upload')]]</span><br>
-                <span class="imageSizeInfo">864 x 486 (16/9)</span>
+                <span class="imageSizeInfo">864 x 486</span><br>
+                <span class="imageSizeInfo">(16/9 widescreen)</span>
               </file-upload>
               <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
               <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal" selected="{{selectedCoverMediaType}}">
