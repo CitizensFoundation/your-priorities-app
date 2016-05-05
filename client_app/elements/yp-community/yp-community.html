@@ -68,7 +68,7 @@
               active-groups="[[activeGroups]]"
               archived-groups="[[archivedGroups]]">
             </yp-group-grid>
-            <yp-group-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
+            <yp-group-card-add hidden$="[[!createFabIcon]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
           </div>
         </section>
         <section>

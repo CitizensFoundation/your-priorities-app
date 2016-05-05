@@ -98,7 +98,7 @@
               active-communities="[[activeCommunities]]"
               archived-communities="[[archivedCommunities]]">
             </yp-community-grid>
-            <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
+            <yp-community-card-add hidden$="[[!createFabIcon]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
           </div>
         </section>
         <section>
