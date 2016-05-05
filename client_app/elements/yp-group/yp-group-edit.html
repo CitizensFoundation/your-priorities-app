@@ -87,6 +87,10 @@
       </div>
 
       <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
+
+      <paper-checkbox name="canVote" checked$="{{group.configuration.canVote}}">[[t('group.canVote')]]</paper-checkbox>
+      <paper-checkbox name="canAddNewPosts" checked$="{{group.configuration.canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
+
       <input type="hidden" name="themeId" value="[[themeId]]">
 
       <div class="layout horizontal center-center">

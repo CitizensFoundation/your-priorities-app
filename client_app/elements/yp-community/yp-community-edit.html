@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
 
@@ -82,6 +83,9 @@
       </div>
 
       <yp-theme-selector object="[[community]]"  selected-theme="{{themeId}}"></yp-theme-selector>
+
+      <paper-checkbox name="onlyAdminsCanCreateGroups" checked$="{{community.only_admins_can_create_groups}}">[[t('community.onlyAdminsCanCreateGroups')]]</paper-checkbox>
+
       <input type="hidden" name="themeId" value="[[themeId]]">
 
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">

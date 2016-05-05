@@ -372,6 +372,7 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
     if (community) {
       community.name = req.body.name;
       community.description = req.body.description;
+      community.only_admins_can_create_groups = req.body.onlyAdminsCanCreateGroups ? true : false;
       community.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
       if (req.body.status && req.body.status!="") {
         community.status = req.body.status;

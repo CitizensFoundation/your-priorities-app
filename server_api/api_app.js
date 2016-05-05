@@ -138,7 +138,7 @@ app.use(function (req, res, next) {
 });
 
 if (app.get('env') === 'development') {
-  app.use(express.static(path.join(__dirname, '../client_dist')));
+  app.use(express.static(path.join(__dirname, '../client_app')));
 } else {
   app.use(express.static(path.join(__dirname, '../client_dist')));
 }
