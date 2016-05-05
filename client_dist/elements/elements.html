@@ -37774,6 +37774,10 @@ event and do your own custom submission:
       </div>
 
       <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
+
+      <paper-checkbox name="canVote" checked$="{{group.configuration.canVote}}">[[t('group.canVote')]]</paper-checkbox>
+      <paper-checkbox name="canAddNewPosts" checked$="{{group.configuration.canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
+
       <input type="hidden" name="themeId" value="[[themeId]]">
 
       <div class="layout horizontal center-center">
@@ -37950,6 +37954,9 @@ event and do your own custom submission:
       </div>
 
       <yp-theme-selector object="[[community]]" selected-theme="{{themeId}}"></yp-theme-selector>
+
+      <paper-checkbox name="onlyAdminsCanCreateGroups" checked$="{{community.only_admins_can_create_groups}}">[[t('community.onlyAdminsCanCreateGroups')]]</paper-checkbox>
+
       <input type="hidden" name="themeId" value="[[themeId]]">
 
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
@@ -53843,7 +53850,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     </style>
 
-    <yp-page id="page" create-fab-icon="social:group" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
+    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
 
       <yp-community-large-card id="communityCard" class="largeCard card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
 
@@ -53885,10 +53892,18 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         Polymer.appHelpers,
         Polymer.ypThemeBehavior,
         Polymer.CollectionHelpers,
-        Polymer.GroupCollectionBehaviors
+        Polymer.GroupCollectionBehaviors,
+        Polymer.AccessHelpers
       ],
 
       properties: {
+
+        createFabIcon: {
+          type: String,
+          value: null,
+          notify: true
+        },
+
         communityId: {
           type: Number,
           value: null,
@@ -53996,6 +54011,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _response: function (event, detail, sender) {
         this.set('community', detail.response);
+        if (!this.community.only_admins_can_create_groups || this.hasCommunityAccess(this.community)) {
+          this.set('createFabIcon', 'social:group');
+        }
         if (this.community.theme_id!=null) {
           this.setTheme(this.community.theme_id);
         } else if (this.community.Domain.theme_id!=null) {
