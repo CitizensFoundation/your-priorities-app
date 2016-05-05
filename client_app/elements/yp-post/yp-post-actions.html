@@ -343,7 +343,7 @@
 //          return 'favorite';
           return 'favorite';
         } else if (endorseMode=='love' && upDown=='down') {
-          return 'clear';
+          return 'notification:do-not-disturb';
         } else if (endorseMode=='arrow' && upDown=='up') {
           return 'hardware:keyboard-arrow-down';
         } else if (endorseMode=='arrow' && upDown=='down') {
@@ -356,13 +356,13 @@
         if (this.endorseMode=='love') {
           if (value > 0) {
             this.$.actionUp.className += ' ' + 'love-up-selected';
-            this.removeClass(this.$.actionDown, 'love-down-selected');
+            this.removeClass(this.$.actionDown, 'love-up-selected');
           } else if (value < 0) {
-            this.$.actionDown.className += ' ' + 'love-down-selected';
+            this.$.actionDown.className += ' ' + 'love-up-selected';
             this.removeClass(this.$.actionUp,'love-up-selected');
           } else {
             this.removeClass(this.$.actionUp,'love-up-selected');
-            this.removeClass(this.$.actionDown, 'love-down-selected');
+            this.removeClass(this.$.actionDown, 'love-up-selected');
           }
         }
       },
