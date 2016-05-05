@@ -99,7 +99,9 @@
   },
 
   "post": {
+    "shareInfo": "Share post",
     "description": "Description",
+    "debate": "Debate",
     "formInvalid": "Complete filling out the form",
     "status": "Status of this post",
     "new": "New post",

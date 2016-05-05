@@ -60,11 +60,6 @@ body {
 
 html {
   overflow-y: scroll;
-  -ms-word-break: break-all;
-  word-break: break-all;
-
-  /* Non standard for webkit */
-  word-break: break-word;
 
   -webkit-hyphens: auto;
   -moz-hyphens: auto;
@@ -45029,7 +45024,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <paper-material elevation="[[elevationPlusOne]]" floating$="[[floating]]" animated="" class="action-bar">
       <div id="actionUp" class="action-up">
-        <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.vote.up')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
+        <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.up_vote')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">{{formatNumber(post.counter_endorsements_up)}}</div>
       </div>
 
@@ -45041,11 +45036,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <div class="flex" hidden$="[[!_hideDebate(small,forceSmall)]]"></div>
 
       <div id="actionDown" class="action-down">
-        <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.vote.down')]]" icon$="[[endorseModeIcon(endorseMode,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
+        <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.down_vote')]]" icon$="[[endorseModeIcon(endorseMode,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
         <div class="action-text down-text">{{formatNumber(post.counter_endorsements_down)}}</div>
       </div>
       <div class="share">
-        <paper-icon-button title="[[t('shareInfo')]]" icon="social:share" on-tap="_toggleShare" class="shareIcon" id="shareButton"></paper-icon-button>
+        <paper-icon-button title="[[t('post.shareInfo')]]" icon="social:share" on-tap="_toggleShare" class="shareIcon" id="shareButton"></paper-icon-button>
       </div>
       <template is="dom-if" if="[[showShareButtons]]">
         <div class="layout horizontal shareButtonContainer">
@@ -45177,7 +45172,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 //          return 'favorite';
           return 'favorite';
         } else if (endorseMode=='love' && upDown=='down') {
-          return 'clear';
+          return 'notification:do-not-disturb';
         } else if (endorseMode=='arrow' && upDown=='up') {
           return 'hardware:keyboard-arrow-down';
         } else if (endorseMode=='arrow' && upDown=='down') {
@@ -45190,13 +45185,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         if (this.endorseMode=='love') {
           if (value > 0) {
             this.$.actionUp.className += ' ' + 'love-up-selected';
-            this.removeClass(this.$.actionDown, 'love-down-selected');
+            this.removeClass(this.$.actionDown, 'love-up-selected');
           } else if (value < 0) {
-            this.$.actionDown.className += ' ' + 'love-down-selected';
+            this.$.actionDown.className += ' ' + 'love-up-selected';
             this.removeClass(this.$.actionUp,'love-up-selected');
           } else {
             this.removeClass(this.$.actionUp,'love-up-selected');
-            this.removeClass(this.$.actionDown, 'love-down-selected');
+            this.removeClass(this.$.actionDown, 'love-up-selected');
           }
         }
       },
