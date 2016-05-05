@@ -66,6 +66,10 @@
       section {
         margin-top: 32px;
       }
+
+      .imageSizeInfo {
+        font-size: 13px;
+      }
     </style>
 
     <yp-edit-dialog double-width id="editDialog" icon="icons:lightbulb-outline" action="[[action]]"
@@ -148,7 +152,8 @@
             <div class="layout vertical center-center">
               <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
                 <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
-                <span>[[t('image.upload')]]</span>
+                <span>[[t('image.upload')]]</span><br>
+                <span class="imageSizeInfo">864 x 486 (16/9)</span>
               </file-upload>
               <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
               <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal" selected="{{selectedCoverMediaType}}">
