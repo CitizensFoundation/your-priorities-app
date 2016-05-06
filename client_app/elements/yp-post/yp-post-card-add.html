@@ -82,10 +82,25 @@
 
       @media (max-width: 420px) {
         .postCard {
-          width: 100%;
+          width: 100% !important;
+          min-width: 260px;
           margin-left: 0;
           margin-right: 32px;
         }
+
+        .addNewIdeaText {
+          padding-top: 16px;
+          font-size: 18px;
+          width: 100%;
+          color: var(--accent-color);
+        }
+
+        paper-icon-button {
+          height: 80px;
+          width: 80px;
+          color: var(--accent-color);
+        }
+
       }
     </style>
 
