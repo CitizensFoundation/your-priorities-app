@@ -128,7 +128,7 @@
     "photoDeleteConfirmation": "Are you sure you want to delete this photo?",
     "tabs": {
       "debate": "Debate",
-      "news": "Feed",
+      "news": "News",
       "location": "Location",
       "photos": "Photos",
       "solutions": "Solutions",
@@ -176,7 +176,7 @@
     "howToWrite": "Let's brainstorm the best points for and against and think in solutions..."
   },
 
-  "news": "Feed",
+  "news": "News",
 
   "uploading": {
     "inProgress": "Uploading..."
