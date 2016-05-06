@@ -230,7 +230,7 @@
         this.set('currentlyEditingTitle', null);
       },
 
-      _dispatchAjax(ajax, pageId, path) {
+      _dispatchAjax: function(ajax, pageId, path) {
         var pageIdPath;
         if (pageId) {
           pageIdPath = "/" + pageId + "/" + path;

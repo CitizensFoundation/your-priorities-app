@@ -118,7 +118,7 @@
           }
         },
 
-        setupGoogleAnalytics(domain) {
+        setupGoogleAnalytics: function(domain) {
           if (domain.public_api_keys && domain.public_api_keys && domain.public_api_keys.google && domain.public_api_keys.google.analytics_tracking_id) {
             ga('create', domain.public_api_keys.google.analytics_tracking_id, 'auto');
           }
