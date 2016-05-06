@@ -87,12 +87,23 @@ html {
 }
 
 .loadingText {
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .loadingHostname {
-  font-size: 21px;
+  font-size: 26px;
   margin-bottom: 16px;
+}
+
+@media (max-width: 420px) {
+  .loadingText {
+    font-size: 13px;
+  }
+
+  .loadingHostname {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
 }
 
 #splashSub {
