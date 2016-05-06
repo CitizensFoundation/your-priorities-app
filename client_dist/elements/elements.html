@@ -72,99 +72,60 @@ html {
   padding-top: 8px;
 }
 
-#splashBR {
-  display: flex;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  transition: opacity 400ms cubic-bezier(0,0,0.2,1);
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
   opacity: 0;
-  will-change: opacity;
+  animation: fadeIn 1s ease-in 1 forwards;
+}
+
+.is-paused {
+  animation-play-state: paused;
+}
+
+#splashCore {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 7;
-}
-
-#splashBR::before {
-  position: absolute;
-  content: '';
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 6;
-  height: 101%;
-  width: 100%;
-  background: url("https://s3.amazonaws.com/yrpri-direct-asset/betrireykjavik_merki2_fb400_splash.png") no-repeat 50% 50%;
-  background-size: 312px;
   background-color: #fff;
-}
-
-#splashBI {
-  display: flex;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  transition: opacity 400ms cubic-bezier(0,0,0.2,1);
-  opacity: 0;
-  will-change: opacity;
-  z-index: 7;
-}
-
-#splashBI::before {
-  position: absolute;
-  content: '';
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 6;
-  height: 101%;
+  display: inline-block;
+  position: fixed;
   width: 100%;
-  background: url("https://s3.amazonaws.com/yrpri-direct-asset/top_logo_org.png") no-repeat 50% 50%;
-  background-size: 312px;
-  background-color: #fff;
+  height: 100%;
+  margin: auto;
 }
 
-#splashYrPri {
-  display: flex;
-  position: absolute;
+.loadingText {
+  font-size: 14px;
+}
+
+.loadingHostname {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+#splashSub {
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  transition: opacity 400ms cubic-bezier(0,0,0.2,1);
-  opacity: 0;
-  will-change: opacity;
-  z-index: 7;
-}
-
-#splashYrPri::before {
-  position: absolute;
-  content: '';
-  height: 101%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 6;
-  background: url("https://i.imgur.com/6MWkhrR.png") no-repeat 50% 50%;
-  background-size: 350px;
+  z-index: 8;
   background-color: #fff;
+  display: inline-block;
+  position: fixed;
+  width: 320px;
+  height: 400px;
+  margin: auto;
+  text-align:center;
 }
 
-body.loading #splashYrPri {
-  opacity: 1;
-}
-
-body.loading #splashBR {
-  opacity: 1;
-}
-
-body.loading #splashBI {
+body.loading #splashCore {
   opacity: 1;
 }
 
@@ -43812,17 +43773,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         _removeSplashNode: function (splash) {
           if (splash) {
-            splash.addEventListener('transitionend',function(event) {
-              splash.parentNode.removeChild(splash);
-            });
+            splash.parentNode.removeChild(splash);
             document.body.classList.remove('loading');
           }
         },
 
         _removeSplash: function () {
-          this._removeSplashNode(document.getElementById('splashYrPri'));
-          this._removeSplashNode(document.getElementById('splashBR'));
-          this._removeSplashNode(document.getElementById('splashBI'));
+          this._removeSplashNode(document.getElementById('splashCore'));
         },
 
         _removeSplashWithDelay: function () {
