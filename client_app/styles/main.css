@@ -27,21 +27,6 @@ html {
   padding-top: 8px;
 }
 
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-}
-
-.fade-in {
-  opacity: 0;
-  animation: fadeIn 1s ease-in 1 forwards;
-}
-
-.is-paused {
-  animation-play-state: paused;
-}
-
 #splashCore {
   top: 0;
   left: 0;
@@ -57,11 +42,11 @@ html {
 }
 
 .loadingText {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .loadingHostname {
-  font-size: 24px;
+  font-size: 22px;
   margin-bottom: 16px;
 }
 
