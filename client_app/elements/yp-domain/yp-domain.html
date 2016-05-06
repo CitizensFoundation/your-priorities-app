@@ -252,7 +252,7 @@
           this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);
         }
         if (this.domain.Communities) {
-          this.setupCommunities(this.domain.Communities);
+          this.setupCommunities(_.dropRight(this.domain.Communities, this.domain.Communities.length-15));
         }
 
         this.$.domainCard.setElevation(5);
