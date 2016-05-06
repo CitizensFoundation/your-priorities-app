@@ -63,7 +63,7 @@ html {
 
   overflow-wrap: break-word;
   word-wrap: break-word;
-  
+
   -webkit-hyphens: auto;
   -moz-hyphens: auto;
   -ms-hyphens: auto;
@@ -28666,6 +28666,8 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
         if (this.dispatchError) {
           if (event.detail.request.xhr.response && event.detail.request.xhr.response.error) {
             this.fire("error", event.detail.request.xhr.response.error);
+          } else if (event.detail.request.xhr.response.message) {
+            this.fire("error", event.detail.request.xhr.response.message);
           } else if (event.detail.request.xhr.statusText) {
             this.fire("error", event.detail.request.xhr.statusText);
           } else {
