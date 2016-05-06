@@ -16,6 +16,8 @@ body {
 html {
   overflow-y: scroll;
 
+  overflow-wrap: break-word;
+
   -webkit-hyphens: auto;
   -moz-hyphens: auto;
   -ms-hyphens: auto;
