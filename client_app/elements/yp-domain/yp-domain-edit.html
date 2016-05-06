@@ -140,6 +140,34 @@
                          maxlength="60"
                          char-counter class="mainInput">
             </paper-input>
+
+            <paper-input id="samlEntryPoint"
+                         name="samlEntryPoint"
+                         type="text"
+                         label="SAML EntryPoint"
+                         value="{{domain.secret_api_keys.saml.entryPoint}}"
+                         maxlength="100"
+                         char-counter class="mainInput">
+            </paper-input>
+
+            <paper-input id="samlCallbackUrl"
+                         name="samlCallbackUrl"
+                         type="text"
+                         label="SAML CallbackUrl"
+                         value="{{domain.secret_api_keys.saml.callbackUrl}}"
+                         maxlength="100"
+                         char-counter class="mainInput">
+            </paper-input>
+
+            <paper-input id="samlCert"
+                         name="samlCert"
+                         type="text"
+                         label="SAML Cert"
+                         value="{{domain.secret_api_keys.saml.cert}}"
+                         maxlength="2500"
+                         char-counter class="mainInput">
+            </paper-input>
+
           </section>
           <section class="sectionMargin">
             <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>

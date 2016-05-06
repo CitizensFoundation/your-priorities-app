@@ -45,7 +45,7 @@ var models = require('./models');
 var auth = require('./authorization');
 var log = require('./utils/logger');
 var toJson = require('./utils/to_json');
-var sso = require('passport-sso');
+var sso = require('./passport-sso');
 
 if (process.env.REDISTOGO_URL) {
   process.env.REDIS_URL = process.env.REDISTOGO_URL;
@@ -96,6 +96,12 @@ app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
 
+if (app.get('env') === 'development') {
+  app.use(express.static(path.join(__dirname, '../client_app')));
+} else {
+  app.use(express.static(path.join(__dirname, '../client_dist')));
+}
+
 // Setup the current domain from the host
 app.use(function (req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
@@ -127,7 +133,7 @@ var bearerCallback = function (req, token) {
 };
 
 app.use(function (req, res, next) {
-  if (req.url.indexOf('/users/') > -1) {
+  if (req.url.indexOf('/auth') > -1) {
     sso.init(req.ypDomain.loginHosts, req.ypDomain.loginProviders, {
       authorize: bearerCallback,
       login: models.User.localCallback
@@ -136,12 +142,6 @@ app.use(function (req, res, next) {
   }
   next();
 });
-
-if (app.get('env') === 'development') {
-  app.use(express.static(path.join(__dirname, '../client_app')));
-} else {
-  app.use(express.static(path.join(__dirname, '../client_dist')));
-}
 
 passport.serializeUser(function(profile, done) {
   if (profile.provider && profile.provider=='facebook') {

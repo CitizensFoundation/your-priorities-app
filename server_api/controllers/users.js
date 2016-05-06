@@ -705,6 +705,12 @@ router.get('/auth/facebook', function(req, res, next) {
   });
 });
 
+// SAML Authentication
+router.get('/auth/saml', function(req, res, next) {
+  req.sso.authenticate('saml-strategy-'+req.ypDomain.id, {}, req, res, function(err, user) {
+    console.log(user);
+  });
+});
 router.get('/auth/facebook/callback', function(req, res) {
   req.sso.authenticate('facebook-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
     if (error) {

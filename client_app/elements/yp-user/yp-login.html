@@ -210,6 +210,9 @@
               <div class="btn-auth btn-facebook" on-tap="_facebookLogin">
                 [[t('user.facebookLogin')]]
               </div>
+              <div class="btn-auth btn-facebook" on-tap="_islandIsLogin">
+                [[t('user.islandIs')]]
+              </div>
             </div>
 
             <div class="layout horizontal center-center">
@@ -341,6 +344,15 @@
       top = (window.outerHeight - height) / 2,
       left = (window.outerWidth - width) / 2;
       window.open(url, 'facebook_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+    },
+
+    _islandIsLogin: function () {
+      var url = '/api/users/auth/saml',
+        width = 1000,
+        height = 650,
+        top = (window.outerHeight - height) / 2,
+        left = (window.outerWidth - width) / 2;
+      window.open(url, 'saml_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
     },
 
     _openedChanged: function (newValue) {

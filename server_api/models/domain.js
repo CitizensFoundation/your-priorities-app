@@ -176,6 +176,17 @@ module.exports = function(sequelize, DataTypes) {
               });
             }
 
+            if (domain.secret_api_keys && domain.secret_api_keys.saml &&
+                domain.secret_api_keys.saml.entryPoint && domain.secret_api_keys.saml.entryPoint!='') {
+              providers.push({
+                name            : 'saml-strategy-'+domain.id,
+                provider        : 'saml',
+                protocol        : 'saml',
+                strategyObject  : 'Strategy',
+                strategyPackage : 'passport-saml',
+                entryPoint      : domain.secret_api_keys.saml.entryPoint
+              });
+            }
             seriesCallback();
           }, function (error) {
             callback(error, providers);

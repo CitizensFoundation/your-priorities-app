@@ -214,6 +214,11 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('secret_api_keys.twitter.client_secret', req.body.twitterClientSecret);
       domain.set('secret_api_keys.github.client_id', req.body.githubClientId);
       domain.set('secret_api_keys.github.client_secret', req.body.githubClientSecret);
+      if (req.body.samlEntryPoint) {
+        domain.set('secret_api_keys.saml.entryPoint', req.body.samlEntryPoint);
+        domain.set('secret_api_keys.saml.callbackUrl', req.body.samlCallbackUrl);
+        domain.set('secret_api_keys.saml.cert', req.body.samlCert);
+      }
       domain.name = req.body.name;
       domain.description = req.body.description;
       domain.only_admins_can_create_communities = req.body.onlyAdminsCanCreateCommunities ? true : false;
