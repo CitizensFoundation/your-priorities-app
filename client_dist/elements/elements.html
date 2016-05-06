@@ -47425,7 +47425,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                     <div class="layout vertical flex headerText">
                       <div class="layout horizontal typeName">
                         <div class="layout vertical">
-                          <div>[[_getActivityTypeName(activity)]]</div>
+                          <div style="cursor: pointer" data-args$="[[activity]]" on-tap="_joinPost">[[_getActivityTypeName(activity)]]</div>
                           <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
                             [[fromTime(activity.created_at)]]
                           </div>
