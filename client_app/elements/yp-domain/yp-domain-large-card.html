@@ -102,10 +102,6 @@
         padding-top: 16px;
       }
 
-      .dropdown-content {
-        width: 200px;
-      }
-
       @media (max-width: 945px) {
         :host {
           width: 306px;
@@ -159,7 +155,7 @@
                 </div>
               </div>
             </div>
-            <paper-menu-button vertical-align="top" horizontal-align="right" class="edit" hidden$="[[!hasDomainAccess(domain)]]">
+            <paper-menu-button vertical-align="top" horizontal-align="[[editMenuAlign]]" class="edit" hidden$="[[!hasDomainAccess(domain)]]">
               <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
               <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                 <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
@@ -176,6 +172,8 @@
         </paper-material>
       </div>
     </template>
+
+    <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
   </template>
 
   <script>

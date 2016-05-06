@@ -166,8 +166,6 @@
 
     </style>
 
-    <iron-media-query query="(max-width: 480px)" query-matches="{{phoneSize}}"></iron-media-query>
-
     <template is="dom-if" if="[[community]]">
       <div class="layout horizontal wrap">
         <paper-material id="card" elevation="5" animated class="large-card textBox">
@@ -182,7 +180,7 @@
                 </div>
               </div>
             </div>
-            <paper-menu-button class="edit" vertical-align="top" horizontal-align="right" hidden$="[[!hasCommunityAccess(community)]]">
+            <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasCommunityAccess(community)]]">
               <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
               <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                 <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
@@ -193,17 +191,11 @@
           </div>
         </paper-material>
         <paper-material id="cardImage" elevation="2" animated class="large-card imageCard">
-          <template is="dom-if" if="[[phoneSize]]">
-            <div>
-              <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
-            </div>
-          </template>
-          <template is="dom-if" if="[[!phoneSize]]">
-            <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
-          </template>
+          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
         </paper-material>
       </div>
     </template>
+    <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
   </template>
 
   <script>
@@ -211,10 +203,6 @@
       is: 'yp-community-large-card',
 
       properties: {
-        phoneSize: {
-          type: Boolean
-        },
-
         community: {
           type: Object
         }
