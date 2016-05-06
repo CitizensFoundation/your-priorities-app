@@ -10984,7 +10984,8 @@ of where they are in DOM.
         <div name="zot">Zot</div>
       </iron-selector>
 
-  If no matching element is found using `attForSelected`, use `fallbackSelection` as fallback.
+  You can specify a default fallback with `fallbackSelection` in case the `selected` attribute does
+  not match the `attrForSelected` attribute of any elements.
 
   Example:
 
@@ -11602,6 +11603,7 @@ of where they are in DOM.
       },
 
       _validator: {
+        type: Object,
         computed: '__computeValidator(validator)'
       }
     },
@@ -11910,7 +11912,8 @@ of where they are in DOM.
 
       if (event.target === this) {
         this._setFocused(event.type === 'focus');
-      } else if (!this.shadowRoot && !this.isLightDescendant(event.target)) {
+      } else if (!this.shadowRoot &&
+          !this.isLightDescendant(Polymer.dom(event).localTarget)) {
         this.fire(event.type, {sourceEvent: event}, {
           node: this,
           bubbles: event.bubbles,
@@ -21553,18 +21556,8 @@ Use `noOverlap` to position the element around another element without overlappi
       },
 
       /**
-       * A pixel value that will be added to the position calculated for the
-       * given `horizontalAlign`, in the direction of alignment. You can think
-       * of it as increasing or decreasing the distance to the side of the
-       * screen given by `horizontalAlign`.
-       *
-       * If `horizontalAlign` is "left", this offset will increase or decrease
-       * the distance to the left side of the screen: a negative offset will
-       * move the element to the left; a positive one, to the right.
-       *
-       * Conversely if `horizontalAlign` is "right", this offset will increase
-       * or decrease the distance to the right side of the screen: a negative
-       * offset will move the element to the right; a positive one, to the left.
+       * The same as setting margin-left and margin-right css properties.
+       * @deprecated
        */
       horizontalOffset: {
         type: Number,
@@ -21573,18 +21566,8 @@ Use `noOverlap` to position the element around another element without overlappi
       },
 
       /**
-       * A pixel value that will be added to the position calculated for the
-       * given `verticalAlign`, in the direction of alignment. You can think
-       * of it as increasing or decreasing the distance to the side of the
-       * screen given by `verticalAlign`.
-       *
-       * If `verticalAlign` is "top", this offset will increase or decrease
-       * the distance to the top side of the screen: a negative offset will
-       * move the element upwards; a positive one, downwards.
-       *
-       * Conversely if `verticalAlign` is "bottom", this offset will increase
-       * or decrease the distance to the bottom side of the screen: a negative
-       * offset will move the element downwards; a positive one, upwards.
+       * The same as setting margin-top and margin-bottom css properties.
+       * @deprecated
        */
       verticalOffset: {
         type: Number,
@@ -21653,7 +21636,7 @@ Use `noOverlap` to position the element around another element without overlappi
     get _defaultPositionTarget() {
       var parent = Polymer.dom(this).parentNode;
 
-      if (parent.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+      if (parent && parent.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
         parent = parent.host;
       }
 
@@ -21710,6 +21693,7 @@ Use `noOverlap` to position the element around another element without overlappi
       }
       var target = window.getComputedStyle(this);
       var sizer = window.getComputedStyle(this.sizingTarget);
+
       this._fitInfo = {
         inlineStyle: {
           top: this.style.top || '',
@@ -21740,6 +21724,20 @@ Use `noOverlap` to position the element around another element without overlappi
           left: parseInt(target.marginLeft, 10) || 0
         }
       };
+
+      // Support these properties until they are removed.
+      if (this.verticalOffset) {
+        this._fitInfo.margin.top = this._fitInfo.margin.bottom = this.verticalOffset;
+        this._fitInfo.inlineStyle.marginTop = this.style.marginTop || '';
+        this._fitInfo.inlineStyle.marginBottom = this.style.marginBottom || '';
+        this.style.marginTop = this.style.marginBottom = this.verticalOffset + 'px';
+      }
+      if (this.horizontalOffset) {
+        this._fitInfo.margin.left = this._fitInfo.margin.right = this.horizontalOffset;
+        this._fitInfo.inlineStyle.marginLeft = this.style.marginLeft || '';
+        this._fitInfo.inlineStyle.marginRight = this.style.marginRight || '';
+        this.style.marginLeft = this.style.marginRight = this.horizontalOffset + 'px';
+      }
     },
 
     /**
@@ -21788,11 +21786,15 @@ Use `noOverlap` to position the element around another element without overlappi
       var positionRect = this.__getNormalizedRect(this.positionTarget);
       var fitRect = this.__getNormalizedRect(this.fitInto);
 
-      var alignRight = this.__isAlignRight(this._localeHorizontalAlign, rect, positionRect, fitRect);
-      var alignBottom = this.__isAlignBottom(this.verticalAlign, rect, positionRect, fitRect);
+      // Consider the margin as part of the size for position calculations.
+      var width = rect.width + this._fitInfo.margin.left + this._fitInfo.margin.right;
+      var height = rect.height + this._fitInfo.margin.top + this._fitInfo.margin.bottom;
 
-      var top = alignBottom ? positionRect.bottom - rect.height - this.verticalOffset : positionRect.top + this.verticalOffset;
-      var left = alignRight ? positionRect.right - rect.width - this.horizontalOffset : positionRect.left + this.horizontalOffset;
+      var alignRight = this.__isAlignRight(this._localeHorizontalAlign, width, positionRect, fitRect);
+      var alignBottom = this.__isAlignBottom(this.verticalAlign, height, positionRect, fitRect);
+
+      var top = alignBottom ? positionRect.bottom - height : positionRect.top;
+      var left = alignRight ? positionRect.right - width : positionRect.left;
 
       if (this.noOverlap) {
         // We can overlap one of the dimensions, choose the one that minimizes the cropped area.
@@ -21801,30 +21803,34 @@ Use `noOverlap` to position the element around another element without overlappi
         var areaOverlapLeft = this.__getCroppedArea({
           top: noOverlapTop,
           left: left,
-          width: rect.width,
-          height: rect.height
+          width: width,
+          height: height
         }, fitRect);
         var areaOverlapTop = this.__getCroppedArea({
           top: top,
           left: noOverlapLeft,
-          width: rect.width,
-          height: rect.height
+          width: width,
+          height: height
         }, fitRect);
-        if (areaOverlapLeft < areaOverlapTop) {
+        if (areaOverlapLeft >= areaOverlapTop) {
           left = noOverlapLeft;
         } else {
           top = noOverlapTop;
         }
       }
 
+      left += this._fitInfo.margin.left;
+      top += this._fitInfo.margin.top;
+
+      // Use original size (without margin)
       var right = left + rect.width;
       var bottom = top + rect.height;
 
-      left = Math.max(left, 0);
-      top = Math.max(top, 0);
+      left = Math.max(left, this._fitInfo.margin.left);
+      top = Math.max(top, this._fitInfo.margin.top);
 
-      var maxWidth = Math.min(fitRect.right, right) - left;
-      var maxHeight = Math.min(fitRect.bottom, bottom) - top;
+      var maxWidth = Math.min(fitRect.right - this._fitInfo.margin.right, right) - left;
+      var maxHeight = Math.min(fitRect.bottom - this._fitInfo.margin.bottom, bottom) - top;
 
       var minWidth = this._fitInfo.sizedBy.minWidth;
       var minHeight = this._fitInfo.sizedBy.minHeight;
@@ -21951,24 +21957,38 @@ Use `noOverlap` to position the element around another element without overlappi
       return target.getBoundingClientRect();
     },
 
-    __isAlignRight: function(hAlign, rect, positionRect, fitRect) {
+    __isAlignRight: function(hAlign, size, positionRect, fitRect) {
       if (hAlign === 'right') {
         return true;
       }
       if (hAlign === 'auto') {
-        return positionRect.left + positionRect.width/2 > fitRect.left + fitRect.width/2 ||
-          (!this.noOverlap && positionRect.left < 0 && positionRect.right - rect.width > positionRect.left);
+        // We should align on the right if positionTarget is on the right of fitInto,
+        // or if we can overlap and aligning on the left would cause more cropping
+        // than aligning on the right.
+        var positionTargetCenter = positionRect.left + positionRect.width/2;
+        var fitIntoCenter = fitRect.left + fitRect.width/2;
+        var croppedLeft = Math.abs(Math.min(0, positionRect.left));
+        var croppedRight = Math.abs(Math.min(0, positionRect.right - size));
+        return positionTargetCenter > fitIntoCenter ||
+          (!this.noOverlap && croppedLeft > croppedRight);
       }
       return false;
     },
 
-    __isAlignBottom: function(vAlign, rect, positionRect, fitRect) {
+    __isAlignBottom: function(vAlign, size, positionRect, fitRect) {
       if (vAlign === 'bottom') {
         return true;
       }
       if (vAlign === 'auto') {
-        return positionRect.top + positionRect.height/2 > fitRect.top + fitRect.height/2 ||
-          (!this.noOverlap && positionRect.top < 0 && positionRect.bottom - rect.height > positionRect.top);
+        // We should align on the bottom if positionTarget is on the bottom of fitInto,
+        // or if we can overlap and aligning on the top would cause more cropping
+        // than aligning on the bottom.
+        var positionTargetCenter = positionRect.top + positionRect.height/2;
+        var fitIntoCenter = fitRect.top + fitRect.height/2;
+        var croppedTop = Math.abs(Math.min(0, positionRect.top));
+        var croppedBottom = Math.abs(Math.min(0, positionRect.bottom - size));
+        return positionTargetCenter > fitIntoCenter ||
+          (!this.noOverlap && croppedTop > croppedBottom);
       }
       return false;
     },
@@ -21976,7 +21996,7 @@ Use `noOverlap` to position the element around another element without overlappi
     __getCroppedArea: function(rect, fitRect) {
       var verticalCrop = Math.min(0, rect.top) + Math.min(0, fitRect.bottom - (rect.top + rect.height));
       var horizontalCrop = Math.min(0, rect.left) + Math.min(0, fitRect.right - (rect.left + rect.width));
-      return verticalCrop * rect.width + horizontalCrop * rect.height;
+      return Math.abs(verticalCrop) * rect.width + Math.abs(horizontalCrop) * rect.height;
     }
 
   };
@@ -22085,8 +22105,12 @@ Use `noOverlap` to position the element around another element without overlappi
       }
     },
 
-    _openedChanged: function() {
-      if (this.opened) {
+    /**
+     * @param {boolean} opened
+     * @private
+     */
+    _openedChanged: function(opened) {
+      if (opened) {
         // Auto-attach.
         this.prepare();
       } else {
@@ -23702,6 +23726,7 @@ context. You should place this element as a child of `<body>` whenever possible.
           /**
            * The orientation against which to align the dropdown content
            * horizontally relative to the dropdown trigger.
+           * Overridden from `Polymer.IronFitBehavior`.
            */
           horizontalAlign: {
             type: String,
@@ -23712,59 +23737,12 @@ context. You should place this element as a child of `<body>` whenever possible.
           /**
            * The orientation against which to align the dropdown content
            * vertically relative to the dropdown trigger.
+           * Overridden from `Polymer.IronFitBehavior`.
            */
           verticalAlign: {
             type: String,
             value: 'top',
             reflectToAttribute: true
-          },
-
-          /**
-           * A pixel value that will be added to the position calculated for the
-           * given `horizontalAlign`, in the direction of alignment. You can think
-           * of it as increasing or decreasing the distance to the side of the
-           * screen given by `horizontalAlign`.
-           *
-           * If `horizontalAlign` is "left", this offset will increase or decrease
-           * the distance to the left side of the screen: a negative offset will
-           * move the dropdown to the left; a positive one, to the right.
-           *
-           * Conversely if `horizontalAlign` is "right", this offset will increase
-           * or decrease the distance to the right side of the screen: a negative
-           * offset will move the dropdown to the right; a positive one, to the left.
-           */
-          horizontalOffset: {
-            type: Number,
-            value: 0,
-            notify: true
-          },
-
-          /**
-           * A pixel value that will be added to the position calculated for the
-           * given `verticalAlign`, in the direction of alignment. You can think
-           * of it as increasing or decreasing the distance to the side of the
-           * screen given by `verticalAlign`.
-           *
-           * If `verticalAlign` is "top", this offset will increase or decrease
-           * the distance to the top side of the screen: a negative offset will
-           * move the dropdown upwards; a positive one, downwards.
-           *
-           * Conversely if `verticalAlign` is "bottom", this offset will increase
-           * or decrease the distance to the bottom side of the screen: a negative
-           * offset will move the dropdown downwards; a positive one, upwards.
-           */
-          verticalOffset: {
-            type: Number,
-            value: 0,
-            notify: true
-          },
-
-          /**
-           * The element that should be used to position the dropdown when
-           * it is opened.
-           */
-          positionTarget: {
-            type: Object
           },
 
           /**
@@ -23820,12 +23798,6 @@ context. You should place this element as a child of `<body>` whenever possible.
           '_updateOverlayPosition(positionTarget, verticalAlign, horizontalAlign, verticalOffset, horizontalOffset)'
         ],
 
-        attached: function() {
-          // Memoize this to avoid expensive calculations & relayouts.
-          this._isRTL = window.getComputedStyle(this).direction == 'rtl';
-          this.positionTarget = this.positionTarget || this._defaultPositionTarget;
-        },
-
         /**
          * The element that is contained by the dropdown, if any.
          */
@@ -23839,72 +23811,6 @@ context. You should place this element as a child of `<body>` whenever possible.
          */
         get _focusTarget() {
           return this.focusTarget || this.containedElement;
-        },
-
-        /**
-         * The element that should be used to position the dropdown when
-         * it opens, if no position target is configured.
-         */
-        get _defaultPositionTarget() {
-          var parent = Polymer.dom(this).parentNode;
-
-          if (parent.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-            parent = parent.host;
-          }
-
-          return parent;
-        },
-
-        /**
-         * The horizontal align value, accounting for the RTL/LTR text direction.
-         */
-        get _localeHorizontalAlign() {
-          // In RTL, "left" becomes "right".
-          if (this._isRTL) {
-            return this.horizontalAlign === 'right' ? 'left' : 'right';
-          } else {
-            return this.horizontalAlign;
-          }
-        },
-
-        /**
-         * The horizontal offset value used to position the dropdown.
-         * @param {ClientRect} dropdownRect
-         * @param {ClientRect} positionRect
-         * @param {boolean=} fromRight
-         * @return {number} pixels
-         * @private
-         */
-        _horizontalAlignTargetValue: function(dropdownRect, positionRect, fromRight) {
-          var target;
-          if (fromRight) {
-            target = document.documentElement.clientWidth - positionRect.right - (this._fitWidth - dropdownRect.right);
-          } else {
-            target = positionRect.left - dropdownRect.left;
-          }
-          target += this.horizontalOffset;
-
-          return Math.max(target, 0);
-        },
-
-        /**
-         * The vertical offset value used to position the dropdown.
-         * @param {ClientRect} dropdownRect
-         * @param {ClientRect} positionRect
-         * @param {boolean=} fromBottom
-         * @return {number} pixels
-         * @private
-         */
-        _verticalAlignTargetValue: function(dropdownRect, positionRect, fromBottom) {
-          var target;
-          if (fromBottom) {
-            target = document.documentElement.clientHeight - positionRect.bottom - (this._fitHeight - dropdownRect.bottom);
-          } else {
-            target = positionRect.top - dropdownRect.top;
-          }
-          target += this.verticalOffset;
-
-          return Math.max(target, 0);
         },
 
         /**
@@ -24036,41 +23942,6 @@ context. You should place this element as a child of `<body>` whenever possible.
             containedElement.scrollTop = scrollTop;
             containedElement.scrollLeft = scrollLeft;
           }
-        },
-
-        /**
-         * Resets the target element's position and size constraints, and clear
-         * the memoized data.
-         */
-        resetFit: function() {
-          Polymer.IronFitBehavior.resetFit.apply(this, arguments);
-
-          var hAlign = this._localeHorizontalAlign;
-          var vAlign = this.verticalAlign;
-          // Set to 0, 0 in order to discover any offset caused by parent stacking contexts.
-          this.style[hAlign] = this.style[vAlign] = '0px';
-
-          var dropdownRect = this.getBoundingClientRect();
-          var positionRect = this.positionTarget.getBoundingClientRect();
-          var horizontalValue = this._horizontalAlignTargetValue(dropdownRect, positionRect, hAlign === 'right');
-          var verticalValue = this._verticalAlignTargetValue(dropdownRect, positionRect, vAlign === 'bottom');
-
-          this.style[hAlign] = horizontalValue + 'px';
-          this.style[vAlign] = verticalValue + 'px';
-        },
-
-        /**
-         * Overridden from `IronFitBehavior`.
-         * Ensure positionedBy has correct values for horizontally & vertically.
-         */
-        _discoverInfo: function() {
-          Polymer.IronFitBehavior._discoverInfo.apply(this, arguments);
-          // Note(valdrin): in Firefox, an element with style `position: fixed; bottom: 90vh; height: 20vh`
-          // would have `getComputedStyle(element).top < 0` (instead of being `auto`) http://jsbin.com/cofired/3/edit?html,output
-          // This would cause IronFitBehavior's `constrain` to wrongly calculate sizes
-          // (it would use `top` instead of `bottom`), so we ensure we give the correct values.
-          this._fitInfo.positionedBy.horizontally = this._localeHorizontalAlign;
-          this._fitInfo.positionedBy.vertically = this.verticalAlign;
         },
 
         /**
@@ -42248,7 +42119,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         this.set('currentlyEditingTitle', null);
       },
 
-      _dispatchAjax(ajax, pageId, path) {
+      _dispatchAjax: function(ajax, pageId, path) {
         var pageIdPath;
         if (pageId) {
           pageIdPath = "/" + pageId + "/" + path;
@@ -42906,7 +42777,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     Polymer({
       is: 'yp-dialog-container',
 
-      getDialog(idName) {
+      getDialog: function (idName) {
         return this.$$("#"+idName);
       },
 
@@ -43196,7 +43067,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           }
         },
 
-        setupGoogleAnalytics(domain) {
+        setupGoogleAnalytics: function(domain) {
           if (domain.public_api_keys && domain.public_api_keys && domain.public_api_keys.google && domain.public_api_keys.google.analytics_tracking_id) {
             ga('create', domain.public_api_keys.google.analytics_tracking_id, 'auto');
           }
@@ -46885,9 +46756,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
   <script>
     Polymer({
-
-      defaultKeyActivities: ['activity.post.status.change', 'activity.post.officialStatus.successful',
-        'activity.post.officialStatus.failed', 'activity.post.officialStatus.inProgress'],
 
       is: 'ac-activities',
 
@@ -53896,12 +53764,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       </paper-tabs>
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <section>
+        <section class="layout vertical">
           <div class="card-container layout center-center wrap">
             <yp-community-grid featured-communities="[[featuredCommunities]]" active-communities="[[activeCommunities]]" archived-communities="[[archivedCommunities]]">
             </yp-community-grid>
-            <yp-community-card-add hidden$="[[!createFabIcon]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
           </div>
+          <yp-community-card-add hidden$="[[!createFabIcon]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
         </section>
         <section>
           <ac-activities domain-id="[[domain.id]]"></ac-activities>
@@ -54642,7 +54510,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         this.set('appReady', true);
       },
 
-      getDialog(idName) {
+      getDialog: function (idName) {
         return this.$$("#dialogContainer").getDialog(idName);
       },
 
