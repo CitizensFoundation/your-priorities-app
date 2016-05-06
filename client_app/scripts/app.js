@@ -3,7 +3,7 @@ var app;
 (function(document) {
   'use strict';
 
-  var splashDiv;
+  var splashDiv, splashCore;
   app = document.querySelector("#app");
 
   var setupLocale = function (locale) {
@@ -39,26 +39,55 @@ var app;
   };
 
   var setupBetterReykjavikSplash = function () {
+    splashCore = document.createElement("div");
+    splashCore.id = "splashCore";
     splashDiv = document.createElement("div");
-    splashDiv.id = "splashBR";
-    splashDiv.onclick = onSplashClick;
-    document.body.appendChild(splashDiv);
+    splashDiv.id = "splashSub";
+    splashDiv.innerHTML = '<span class="loadingText">Hleð inn...</span><br><span class="loadingHostname">'+window.location.hostname+'</span>';
+    splashDiv.innerHTML += '<img width="280px" src="https://s3.amazonaws.com/yrpri-direct-asset/betrireykjavik_merki2_fb400_splash.png">';
+    splashDiv.innerHTML += '<img src="https://s3.amazonaws.com/yrpri-direct-asset/heartSpinner.gif">';
+
+    splashDiv.className = "js-fade fade-in";
+
+    splashCore.onclick = onSplashClick;
+    splashCore.appendChild(splashDiv);
+    document.body.appendChild(splashCore);
     document.title = "Betri Reykjavík";
   };
 
   var setupBetterIcelandSplash = function () {
+    splashCore = document.createElement("div");
+    splashCore.id = "splashCore";
     splashDiv = document.createElement("div");
-    splashDiv.id = "splashBI";
-    splashDiv.onclick = onSplashClick;
-    document.body.appendChild(splashDiv);
+    splashDiv.id = "splashSub";
+    splashDiv.innerHTML = '<span class="loadingText">Hleð inn...</span><br><span class="loadingHostname">'+window.location.hostname+'</span>';
+    splashDiv.innerHTML += '<img src="https://s3.amazonaws.com/yrpri-direct-asset/BI_Splash_1.png">';
+    splashDiv.innerHTML += '<img src="https://s3.amazonaws.com/yrpri-direct-asset/heartSpinner.gif">';
+
+    splashDiv.className = "js-fade fade-in";
+
+    splashCore.onclick = onSplashClick;
+    splashCore.appendChild(splashDiv);
+    document.body.appendChild(splashCore);
+
     document.title = "Betra Ísland";
   };
 
   var setupYourPrioritiesSplash = function () {
+    splashCore = document.createElement("div");
+    splashCore.id = "splashCore";
     splashDiv = document.createElement("div");
-    splashDiv.id = "splashYrPri";
-    splashDiv.onclick = onSplashClick;
-    document.body.appendChild(splashDiv);
+    splashDiv.id = "splashSub";
+    // splashDiv.innerHTML = '<img src="">';
+    splashDiv.innerHTML = '<span class="loadingText">Loading...</span><br><span class="loadingHostname">'+window.location.hostname+'</span>';
+    splashDiv.innerHTML += '<img src="https://i.imgur.com/6MWkhrR.png">';
+    splashDiv.innerHTML += '<img src="https://s3.amazonaws.com/yrpri-direct-asset/heartSpinner.gif">';
+
+    splashDiv.className = "js-fade fade-in";
+
+    splashCore.onclick = onSplashClick;
+    splashCore.appendChild(splashDiv);
+    document.body.appendChild(splashCore);
     document.title = "Your Priorities";
   };
 
@@ -74,15 +103,7 @@ var app;
   }
 
   function onSplashClick() {
-    var loadContainer = document.getElementById('splashYrPri');
-    if (loadContainer) {
-      loadContainer.parentNode.removeChild(loadContainer);
-    }
-    loadContainer = document.getElementById('splashBR');
-    if (loadContainer) {
-      loadContainer.parentNode.removeChild(loadContainer);
-    }
-    loadContainer = document.getElementById('splashBI');
+    var loadContainer = document.getElementById('splashCore');
     if (loadContainer) {
       loadContainer.parentNode.removeChild(loadContainer);
     }

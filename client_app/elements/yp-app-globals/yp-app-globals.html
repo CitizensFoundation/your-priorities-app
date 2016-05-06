@@ -95,17 +95,13 @@
 
         _removeSplashNode: function (splash) {
           if (splash) {
-            splash.addEventListener('transitionend',function(event) {
-              splash.parentNode.removeChild(splash);
-            });
+            splash.parentNode.removeChild(splash);
             document.body.classList.remove('loading');
           }
         },
 
         _removeSplash: function () {
-          this._removeSplashNode(document.getElementById('splashYrPri'));
-          this._removeSplashNode(document.getElementById('splashBR'));
-          this._removeSplashNode(document.getElementById('splashBI'));
+          this._removeSplashNode(document.getElementById('splashCore'));
         },
 
         _removeSplashWithDelay: function () {
