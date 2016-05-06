@@ -91,15 +91,15 @@
       </paper-tabs>
 
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <section>
+        <section class="layout vertical">
           <div class="card-container layout center-center wrap">
             <yp-community-grid
               featured-communities="[[featuredCommunities]]"
               active-communities="[[activeCommunities]]"
               archived-communities="[[archivedCommunities]]">
             </yp-community-grid>
-            <yp-community-card-add hidden$="[[!createFabIcon]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
           </div>
+          <yp-community-card-add hidden$="[[!createFabIcon]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
         </section>
         <section>
           <ac-activities domain-id="[[domain.id]]"></ac-activities>
