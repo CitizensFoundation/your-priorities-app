@@ -339,18 +339,28 @@ if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     log.error("General Error", { context: 'generalError', user: toJson(req.user), err: err, errorStatus: 500 });
-    res.send({
-      message: err.message,
-      error: err
+    airbrake.notify(err, function(airbrakeErr, url) {
+      if (airbrakeErr) {
+        log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
+      }
+      res.send({
+        message: err.message,
+        error: err
+      });
     });
   });
 } else {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     log.error("General Error", { context: 'generalError', user: toJson(req.user), err: err, errStack: err.stack, errorStatus: 500 });
-    res.send({
-      message: err.message,
-      error: {}
+    airbrake.notify(err, function(airbrakeErr, url) {
+      if (airbrakeErr) {
+        log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
+      }
+      res.send({
+        message: err.message,
+        error: err
+      });
     });
   });
 }
