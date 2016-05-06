@@ -1,10 +1,8 @@
-var app;
-
 (function(document) {
   'use strict';
 
   var splashDiv, splashCore;
-  app = document.querySelector("#app");
+  window.app = document.querySelector("#app");
 
   var setupLocale = function (locale) {
 
@@ -16,14 +14,14 @@ var app;
     }
 
     i18n.init({ lng: window.locale }, function(loaded) {
-      if (app) {
-        if (typeof app._i18nReady == 'function') {
-           app._i18nReady();
+      if (window.app) {
+        if (typeof window.app._i18nReady == 'function') {
+           window.app._i18nReady();
          } else {
           console.warn("App has not been upgraded to Polymer object when translation is ready");
           setTimeout(function(){
-            if (typeof app._i18nReady == 'function') {
-              app._i18nReady();
+            if (typeof window.app._i18nReady == 'function') {
+              window.app._i18nReady();
             } else {
               console.error("App has not been upgraded to Polymer object when translation is ready");
             }

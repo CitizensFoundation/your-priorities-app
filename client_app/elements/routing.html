@@ -14,8 +14,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     // Middleware
     function scrollToTop(ctx, next) {
-      if (app) {
-        app.scrollPageToTop();
+      if (window.app) {
+        window.app.scrollPageToTop();
       }
       next();
     }
@@ -32,79 +32,79 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     // client-side router inspired by the Express router
     // More info: https://visionmedia.github.io/page.js/
     page('/', scrollToTop, function () {
-      app.route = 'home';
+      window.window.app.route = 'home';
       // TODO: Do we want to do this each time?
       document.querySelector('#appGlobals').reBoot();
     });
 
     page('/domain/:domainId', scrollToTop, function (data) {
-      app.route = 'domain';
-      app.params = data.params;
+      window.app.route = 'domain';
+      window.app.params = data.params;
     });
 
     page('/domain/:domainId/:tabName', scrollToTop, function (data) {
-      app.route = 'domain';
-      app.params = data.params;
+      window.app.route = 'domain';
+      window.app.params = data.params;
     });
 
     page('/community/:communityId', scrollToTop, function (data) {
-      app.route = 'community';
-      app.params = data.params;
+      window.app.route = 'community';
+      window.app.params = data.params;
     });
 
     page('/community/:communityId/:tabName', scrollToTop, function (data) {
-      app.route = 'community';
-      app.params = data.params;
+      window.app.route = 'community';
+      window.app.params = data.params;
     });
 
     page('/group/:groupId', scrollToTop, function (data) {
-      app.route = 'group';
-      app.params = data.params;
+      window.app.route = 'group';
+      window.app.params = data.params;
     });
 
     page('/group/:groupId/:tabName', scrollToTop, function (data) {
-      app.route = 'group';
-      app.params = data.params;
+      window.app.route = 'group';
+      window.app.params = data.params;
     });
 
     page('/group/:groupId/:tabName/:groupName/posts/:filterValue', scrollToTop, function (data) {
-      app.route = 'group';
-      app.params = data.params;
+      window.app.route = 'group';
+      window.app.params = data.params;
     });
 
     page('/group/:groupId/:tabName/:groupName/posts/:filterValue/:categoryId/:categoryName', scrollToTop, function (data) {
-      app.route = 'group';
-      app.params = data.params;
+      window.app.route = 'group';
+      window.app.params = data.params;
     });
 
     page('/group/:groupId/:tabName/:groupName/search/:searchingFor', scrollToTop, function (data) {
-      app.route = 'group';
-      app.params = data.params;
+      window.app.route = 'group';
+      window.app.params = data.params;
     });
 
     page('/post/:postId', scrollToTop, function (data) {
-      app.route = 'post';
-      app.params = data.params;
+      window.app.route = 'post';
+      window.app.params = data.params;
     });
 
     page('/post/:postId/:tabName', scrollToTop, function (data) {
-      app.route = 'post';
-      app.params = data.params;
+      window.app.route = 'post';
+      window.app.params = data.params;
     });
 
     page('/user/:userId', scrollToTop, function (data) {
-      app.route = 'user';
-      app.params = data.params;
+      window.app.route = 'user';
+      window.app.params = data.params;
     });
 
     page('/user/:userId/:tabName', scrollToTop, function (data) {
-      app.route = 'user';
-      app.params = data.params;
+      window.app.route = 'user';
+      window.app.params = data.params;
     });
 
     page('/user/reset_password/:resetPasswordToken', scrollToTop, function (data) {
-      app.route = 'home';
-      app.params = data.params;
+      window.app.route = 'home';
+      window.app.params = data.params;
       Polymer.Base.async(function() {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("resetPassword");
           dialog.open(data.params.resetPasswordToken);
@@ -112,8 +112,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
 
     page('/user/acceptInvite/:inviteToken', scrollToTop, function (data) {
-      app.route = 'home';
-      app.params = data.params;
+      window.app.route = 'home';
+      window.app.params = data.params;
       Polymer.Base.async(function() {
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("acceptInvite");
         dialog.open(data.params.inviteToken);
