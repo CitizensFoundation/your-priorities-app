@@ -130,7 +130,6 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
 });
 
 router.get('/:id', function (req, res) {
-  req.dfsdfsd.fdfd = 1;
   var groupsInclude, communitiesInclude;
 
   var where = {
