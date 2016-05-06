@@ -96,7 +96,13 @@ router.post('/register', function (req, res) {
       sendUserOrError(res, user, 'registerUser', error, 401);
     });
   }).catch(function (error) {
-    sendUserOrError(res, null, 'create', error);
+    if (error && error.name=='SequelizeUniqueConstraintError') {
+      log.error("User Error", { context: 'SequelizeUniqueConstraintError', user: user, err: error,
+        errorStatus: 500 });
+      res.status(500).send({status:500, message: error.name, type:'internal'});
+      } else {
+      sendUserOrError(res, null, 'create', error);
+    }
   });
 });
 

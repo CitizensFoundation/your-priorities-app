@@ -133,6 +133,8 @@
         if (this.dispatchError) {
           if (event.detail.request.xhr.response && event.detail.request.xhr.response.error) {
             this.fire("error", event.detail.request.xhr.response.error);
+          } else if (event.detail.request.xhr.response.message) {
+            this.fire("error", event.detail.request.xhr.response.message);
           } else if (event.detail.request.xhr.statusText) {
             this.fire("error", event.detail.request.xhr.statusText);
           } else {
