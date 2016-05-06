@@ -123,7 +123,7 @@
     "email": "Netfang",
     "name": "Fullt nafn",
     "password": "Lykilorð",
-    "alreadyRegisterred": "Þetta netfang er þegar skráð",
+    "alreadyRegisterred": "Þetta netfang er þegar skráð. Þú getur búið til nýtt lykilorð ef það gamla er gleymt.",
     "registrationError": "Villa við nýskráningu",
     "loginError": "Vill við innskráningu",
     "completeForm": "Kláraðu að fylla út form",

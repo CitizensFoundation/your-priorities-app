@@ -258,7 +258,7 @@
     "logout": "Logout",
     "newPassword": "new password",
     "register": "New user",
-    "alreadyRegisterred": "This email is already registered",
+    "alreadyRegisterred": "This email is already registered. You can create a New Password if needed.",
     "registrationError": "Error in registration",
     "loginError": "Login error",
     "completeForm": "Fill our the form correctly",
