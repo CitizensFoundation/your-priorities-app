@@ -105,7 +105,9 @@
   },
 
   "user": {
+    "logoutCompleteFor": "Útskráning fyrir",
     "loggedInWithFacebook": "Innskráning með Facebook",
+    "loggedInWithSaml": "Innskráning með island.is",
     "facebookLogin": "Facebook",
     "info":"Upplýsingar",
     "notifications": "Tilkynningar",
@@ -202,6 +204,8 @@
     "the_all": "Allir flokkar"
   },
   "point": {
+    "forAdded": "Bætti við rökum með",
+    "againstAdded": "Bætti við rökum á móti",
     "point": "Rök",
     "for": "Með...",
     "against": "Á móti...",

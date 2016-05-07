@@ -50,6 +50,8 @@
       }
     },
     "point": {
+      "forAdded": "Added point for",
+      "againstAdded": "Added point against",
       "new": "New point",
       "newFor": "New point for",
       "newAgainst": "New point against",
@@ -239,6 +241,8 @@
   },
 
   "user": {
+    "logoutCompleteFor": "Logout for",
+    "loggedInWithSaml": "Logged in with SAML",
     "loggedInWithFacebook": "Logged in with Facebook",
     "facebookLogin": "Facebook login",
     "info":"Info",

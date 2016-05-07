@@ -133,7 +133,7 @@ var bearerCallback = function (req, token) {
 };
 
 app.use(function (req, res, next) {
-  if (req.url.indexOf('/auth') > -1) {
+  if (req.url.indexOf('/auth') > -1 || req.url.indexOf('/login') > -1) {
     sso.init(req.ypDomain.loginHosts, req.ypDomain.loginProviders, {
       authorize: bearerCallback,
       login: models.User.localCallback
@@ -154,6 +154,16 @@ passport.serializeUser(function(profile, done) {
         done(null, user.id);
       }
     });
+  } else if (profile.provider && profile.provider=='saml') {
+      models.User.serializeSamlUser(profile, function (error, user) {
+        if (error) {
+          log.error("Error in User from SAML", {err: error });
+          done(error);
+        } else {
+          log.info("User Connected to SAML", { context: 'loginFromSaml', user: toJson(user)});
+          done(null, user.id);
+        }
+      });
   } else {
     log.info("User Serialized", { context: 'deserializeUser', userEmail: profile.email, userId: profile.id });
     done(null, profile.id);
@@ -188,117 +198,6 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-
-/*
-// Username and Password Authentication
-passport.use(new LocalStrategy(
-  {
-    usernameField: "email"
-  },
-  function(email, password, done) {
-    models.User.find({
-      where: { email: email }
-    }).then(function(user) {
-      if (user) {
-        user.validatePassword(password, done);
-      } else {
-        log.warn("User LocalStrategy Incorrect username", { context: 'localStrategy', user: toJson(user), err: 'Incorrect username', errorStatus: 401 });
-        return done(null, false, { message: 'Incorrect username.' });
-      }
-    }).catch(function(error) {
-      log.error("User LocalStrategy Error", { context: 'localStrategy', err: error, errorStatus: 500 });
-      done(error);
-    });
-  }
-));
-
-if (process.env.FACEBOOK_APP_ID) {
-  // Facebook Authentication
-  passport.use(new FacebookStrategy({
-      clientID: process.env.FACEBOOK_APP_ID,
-      clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: "/api/users/auth/facebook/callback",
-      enableProof: false,
-      profileFields: ['id', 'displayName', 'emails']
-    },
-    function(accessToken, refreshToken, profile, done) {
-      var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
-      User.findOrCreate({where: { facebook_id: profile.id },
-          defaults: { email: email, name: profile.displayName, facebook_profile: profile }})
-        .spread(function(user, created) {
-          log.info(created ? "User Created from Facebook" : "User Connected to Facebook", { context: 'loginFromFacebook', user: toJson(user)});
-          done(error, user)
-        }).catch(function (error) {
-        done(error);
-      });
-    }
-  ));
-}
-
-if (process.env.TWITTER_CONSUMER_KEY) {
-  // Twitter Authentication
-  passport.use(new TwitterStrategy({
-      consumerKey: process.env.TWITTER_CONSUMER_KEY,
-      consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-      callbackURL: "/api/users/auth/twitter/callback"
-    },
-    function(token, tokenSecret, profile, done) {
-      var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
-      User.findOrCreate({where: { twitter_id: profile.id },
-          defaults: { email: email, name: profile.displayName, twitter_profile: profile }})
-        .spread(function(user, created) {
-          log.info(created ? "User Created from Twitter" : "User Connected to Twitter", { context: 'loginFromTwitter', user: toJson(user)});
-          done(error, user)
-        }).catch(function (error) {
-        done(error);
-      });
-    }
-  ));
-}
-
-// Google Authentication
-if (process.env.GOOGLE_CONSUMER_KEY) {
-  passport.use(new GoogleStrategy({
-      consumerKey: process.env.GOOGLE_CONSUMER_KEY,
-      consumerSecret: process.env.GOOGLE_CONSUMER_SECRET,
-      callbackURL: "/api/users/auth/google/callback"
-    },
-    function(token, tokenSecret, profile, done) {
-      var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
-      User.findOrCreate({where: { google_id: profile.id },
-          defaults: { email: email, name: profile.displayName, google_profile: profile }})
-        .spread(function(user, created) {
-          log.info(created ? "User Created from Google" : "User Connected to Google", { context: 'loginFromGoogle', user: toJson(user)});
-          done(error, user)
-        }).catch(function (error) {
-        done(error);
-      });
-    }
-  ));
-}
-
-// Github Authentication
-if (process.env.GITHUB_CLIENT_ID) {
-  passport.use(new GitHubStrategy({
-      clientID: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: "/api/users/auth/github/callback"
-    },
-    function(accessToken, refreshToken, profile, done) {
-      var email = (profile.emails && profile.emails.length>0) ? profile.emails[0]: null;
-      User.findOrCreate({where: { github_id: profile.id },
-          defaults: { email: email, name: profile.displayName, github_profile: profile }})
-        .spread(function(user, created) {
-          log.info(created ? "User Created from Github" : "User Connected to Github", { context: 'loginFromGoogle', user: toJson(user)});
-          done(error, user)
-        }).catch(function (error) {
-        done(error);
-      });
-    }
-  ));
-}
-*/
-
 app.use('/', index);
 app.use('/api/domains', domains);
 app.use('/api/organizations', organizations);
@@ -315,6 +214,24 @@ app.use('/api/activities', activities);
 app.use('/ideas', legacyPosts);
 app.use('/users', legacyUsers);
 app.use('/pages', legacyPages);
+
+app.post('/authenticate_from_island_is', function (req, res) {
+  var a = 1;
+  req.sso.authenticate('saml-strategy-'+req.ypDomain.id, { failureRedirect: '/', failureFlash: true }, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from SAML login", { err: error });
+      error.url = req.url;
+      airbrake.notify(error, function(airbrakeErr, url) {
+        if (airbrakeErr) {
+          log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
+        }
+        res.sendStatus(500);
+      });
+    } else {
+      res.render('samlLoginComplete', {});
+    }
+  })
+});
 
 app.use(function(err, req, res, next) {
   if (err instanceof auth.UnauthorizedError) {
@@ -339,6 +256,8 @@ if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     log.error("General Error", { context: 'generalError', user: toJson(req.user), err: err, errorStatus: 500 });
+    err.url = req.url;
+    err.params = req.params;
     airbrake.notify(err, function(airbrakeErr, url) {
       if (airbrakeErr) {
         log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
@@ -353,6 +272,8 @@ if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     log.error("General Error", { context: 'generalError', user: toJson(req.user), err: err, errStack: err.stack, errorStatus: 500 });
+    err.url = req.url;
+    err.params = req.params;
     airbrake.notify(err, function(airbrakeErr, url) {
       if (airbrakeErr) {
         log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });

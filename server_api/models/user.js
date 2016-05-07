@@ -66,6 +66,12 @@ module.exports = function(sequelize, DataTypes) {
         operator: 'jsonb_path_ops'
       },
       {
+        fields: ['ssn']
+      },
+      {
+        fields: ['facebook_id']
+      },
+      {
         fields: ['notifications_settings'],
         using: 'gin',
         operator: 'jsonb_path_ops'
@@ -73,6 +79,56 @@ module.exports = function(sequelize, DataTypes) {
     ],
 
     classMethods: {
+
+      serializeSamlUser: function (profile, callback) {
+        var user;
+        async.series([
+          function (seriesCallback) {
+            sequelize.models.User.find({
+              where: {
+                ssn: profile.UserSSN
+              },
+              attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id', 'ssn']
+            }).then (function (userIn) {
+              if (userIn) {
+                user = userIn;
+                seriesCallback();
+              } else {
+                seriesCallback();
+              }
+            }).catch (function (error) {
+              seriesCallback(error);
+            })
+          },
+          function (seriesCallback) {
+            if (!user) {
+              sequelize.models.User.create(
+                {
+                  ssn: profile.UserSSN,
+                  name: profile.name,
+                  status: 'active'
+                }).then (function (userIn) {
+                if (userIn) {
+                  user = userIn;
+                  seriesCallback();
+                } else {
+                  seriesCallback("Could not create user from SAML");
+                }
+              }).catch (function (error) {
+                seriesCallback(error);
+              })
+            } else {
+              seriesCallback();
+            }
+          }
+        ], function (error) {
+          if (error) {
+            callback(error);
+          } else {
+            callback(null, user);
+          }
+        });
+      },
 
       serializeFacebookUser: function (profile, callback) {
         var user;

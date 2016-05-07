@@ -9,7 +9,8 @@ var Community = require('./community');
 
 var checkValidKeys = function (keys) {
   return ((keys.client_id && keys.client_id!='') &&
-  (keys.client_secret && keys.client_secret != ''))
+           keys.client_id.length>6 &&
+          (keys.client_secret && keys.client_secret != ''))
 };
 
 module.exports = function(sequelize, DataTypes) {
@@ -177,7 +178,8 @@ module.exports = function(sequelize, DataTypes) {
             }
 
             if (domain.secret_api_keys && domain.secret_api_keys.saml &&
-                domain.secret_api_keys.saml.entryPoint && domain.secret_api_keys.saml.entryPoint!='') {
+                domain.secret_api_keys.saml.entryPoint && domain.secret_api_keys.saml.entryPoint!='' &&
+                domain.secret_api_keys.saml.entryPoint.length>6) {
               providers.push({
                 name            : 'saml-strategy-'+domain.id,
                 provider        : 'saml',
@@ -185,6 +187,7 @@ module.exports = function(sequelize, DataTypes) {
                 strategyObject  : 'Strategy',
                 strategyPackage : 'passport-saml',
                 entryPoint      : domain.secret_api_keys.saml.entryPoint
+
               });
             }
             seriesCallback();

@@ -227,6 +227,12 @@
           this.checkLogin();
         },
 
+        loginFromSaml: function () {
+          window.appGlobals.notifyUserViaToast(this.t('user.loggedInWithSaml'));
+          this._closeUserLogin();
+          this.checkLogin();
+        },
+
         checkLogin: function () {
           this.$.isLoggedInAjax.generateRequest();
           this.$.adminRightsAjax.generateRequest();
@@ -303,7 +309,7 @@
         },
 
         _logoutResponse: function (event, detail) {
-          this.toastLogoutTextCombined = this.t("logout.complete.for")+ " " + this.user.name;
+          this.toastLogoutTextCombined = this.t("user.logoutCompleteFor")+ " " + this.user.name;
           this.removeUserSession();
           this.$.logoutToast.show();
           this.async(function() {

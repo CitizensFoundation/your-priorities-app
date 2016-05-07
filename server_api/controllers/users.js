@@ -700,17 +700,24 @@ router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
 
 // Facebook Authentication
 router.get('/auth/facebook', function(req, res, next) {
-  req.sso.authenticate('facebook-strategy-'+req.ypDomain.id, {}, req, res, function(err, user) {
-    console.log(user);
+  req.sso.authenticate('facebook-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from Facebook login init", { err: error });
+      throw error;
+    }
   });
 });
 
 // SAML Authentication
 router.get('/auth/saml', function(req, res, next) {
-  req.sso.authenticate('saml-strategy-'+req.ypDomain.id, {}, req, res, function(err, user) {
-    console.log(user);
+  req.sso.authenticate('saml-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from SAML login", { err: error });
+      throw error;
+    }
   });
 });
+
 router.get('/auth/facebook/callback', function(req, res) {
   req.sso.authenticate('facebook-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
     if (error) {
