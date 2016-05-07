@@ -45,7 +45,7 @@ var models = require('./models');
 var auth = require('./authorization');
 var log = require('./utils/logger');
 var toJson = require('./utils/to_json');
-var sso = require('./passport-sso');
+var sso = require('passport-sso');
 
 if (process.env.REDISTOGO_URL) {
   process.env.REDIS_URL = process.env.REDISTOGO_URL;

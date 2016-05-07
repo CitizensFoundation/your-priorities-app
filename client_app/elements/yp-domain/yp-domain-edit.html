@@ -159,15 +159,15 @@
                          char-counter class="mainInput">
             </paper-input>
 
-            <paper-input id="samlCert"
-                         name="samlCert"
-                         type="text"
-                         label="SAML Cert"
-                         value="{{domain.secret_api_keys.saml.cert}}"
-                         maxlength="2500"
-                         char-counter class="mainInput">
-            </paper-input>
-
+            <paper-textarea id="samlCert"
+                            name="samlCert"
+                            value="{{domain.secret_api_keys.saml.cert}}"
+                            label="SAML Verification Certificate Chain"
+                            char-counter
+                            rows="2"
+                            max-rows="5"
+                            maxlength="20000" class="mainInput">
+            </paper-textarea>
           </section>
           <section class="sectionMargin">
             <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
