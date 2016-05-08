@@ -39000,10 +39000,10 @@ value. `setMax` should move the slider to the maximum value.
             </paper-input>
 
             <div class="layout horizontal center-center socialMediaLogin">
-              <div class="btn-auth btn-facebook" on-tap="_facebookLogin">
+              <div class="btn-auth btn-facebook" on-tap="_facebookLogin" hidden$="[[!_facebookProvider()]]">
                 [[t('user.facebookLogin')]]
               </div>
-              <div class="btn-auth btn-facebook" on-tap="_islandIsLogin">
+              <div class="btn-auth btn-facebook" on-tap="_islandIsLogin" hidden$="[[!_samlProvider()]]">
                 [[t('user.islandIs')]]
               </div>
             </div>
@@ -39140,11 +39140,19 @@ value. `setMax` should move the slider to the maximum value.
 
     _islandIsLogin: function () {
       var url = '/api/users/auth/saml',
-        width = 1000,
+        width = 1200,
         height = 650,
         top = (window.outerHeight - height) / 2,
         left = (window.outerWidth - width) / 2;
       window.open(url, 'saml_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+    },
+
+    _facebookProvider: function () {
+      return (window.appGlobals.domain.facebookLoginProvided)
+    },
+
+    _samlProvider: function () {
+      return (window.appGlobals.domain.samlLoginProvided)
     },
 
     _openedChanged: function (newValue) {
@@ -54222,6 +54230,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _response: function (event, detail, sender) {
         this.set('domain', detail.response);
+        window.appGlobals.domain = this.domain;
         if (this.domain.theme_id!=null) {
           this.setTheme(this.domain.theme_id);
         }
