@@ -44088,10 +44088,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     })
   </script>
 </dom-module>
-<dom-module id="ac-activity-header" assetpath="ac-activities/">
+<dom-module id="yp-user-with-organization" assetpath="yp-user/">
   <template>
     <style>
-
       yp-user-image {
         padding-right: 16px;
         padding-left: 16px;
@@ -44102,6 +44101,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         color: #fff;
         font-weight: bold;
         text-align: right;
+      }
+
+      .name[inverted] {
+        color: #444;
       }
 
       .imageStatus {
@@ -44119,22 +44122,75 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         color: #eee;
         text-align: right;
       }
+
+      .organizationName[inverted] {
+        color: #666;
+      }
+
     </style>
 
-    <div class="layout horizontal">
-      <div class="layout vertical" hidden$="[[noText]]">
-        <div class="name">
-          [[activity.User.name]]
+    <template is="dom-if" if="[[user]]">
+      <div class="layout horizontal">
+        <div class="layout vertical">
+        <div class="name" inverted$="[[inverted]]">
+          [[user.name]]
         </div>
-        <div class="organizationName" hidden$="[[!_organizationName(activity.User)]]">
-          [[_organizationName(activity.User)]]
+        <div class="organizationName" inverted$="[[inverted]]" hidden$="[[!_organizationName(user)]]">
+          [[_organizationName(user)]]
         </div>
       </div>
-      <template is="dom-if" if="[[_organizationImageUrl(activity.User)]]">
-        <img sizing="cover" class="imageStatus rounded" src$="[[_organizationImageUrl(activity.User)]]">
+      <template is="dom-if" if="[[_organizationImageUrl(user)]]">
+        <img sizing="cover" class="imageStatus rounded" src$="[[_organizationImageUrl(user)]]">
       </template>
-      <yp-user-image user="[[activity.User]]" hidden$="[[noImage]]"></yp-user-image>
-    </div>
+      <yp-user-image user="[[user]]"></yp-user-image>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-user-with-organization',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        user: {
+          type: Object
+        },
+
+        inverted: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _organizationName: function (user) {
+        if (user.OrganizationUsers && user.OrganizationUsers.length > 0 && user.OrganizationUsers[0].name) {
+          return user.OrganizationUsers[0].name;
+        } else {
+          return null;
+        }
+      },
+
+      _organizationImageUrl: function (user) {
+        if (user.OrganizationUsers && user.OrganizationUsers.length > 0 &&
+          user.OrganizationUsers[0].OrganizationLogoImages &&
+          user.OrganizationUsers[0].OrganizationLogoImages.length > 0) {
+          var url = this.getImageFormatUrl(user.OrganizationUsers[0].OrganizationLogoImages, 2);
+          return url;
+        } else {
+          return null;
+        }
+      }
+    });
+  </script>
+</dom-module>
+<dom-module id="ac-activity-header" assetpath="ac-activities/">
+  <template>
+    <yp-user-with-organization user="[[activity.User]]"></yp-user-with-organization>
   </template>
 
   <script>
@@ -44151,35 +44207,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         activity: {
           type: Object,
           observer: '_activityChanged'
-        },
-
-        noImage: {
-          type: Boolean,
-          value: false
-        },
-
-        noText: {
-          type: Boolean,
-          value: false
-        }
-      },
-
-      _organizationName: function (user) {
-        if (user.OrganizationUsers && user.OrganizationUsers.length > 0 && user.OrganizationUsers[0].name) {
-          return user.OrganizationUsers[0].name;
-        } else {
-          return null;
-        }
-      },
-
-      _organizationImageUrl: function (user) {
-        if (user.OrganizationUsers && user.OrganizationUsers.length > 0 &&
-            user.OrganizationUsers[0].OrganizationLogoImages &&
-            user.OrganizationUsers[0].OrganizationLogoImages.length > 0) {
-          var url = this.getImageFormatUrl(user.OrganizationUsers[0].OrganizationLogoImages, 2);
-          return url;
-        } else {
-          return null;
         }
       },
 
@@ -45922,68 +45949,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       :host {
         display: block;
         @apply(--layout-vertical);
-        width: 100%;
       }
 
-
-      .for {
-        color: #777;
-      }
-
-      .against {
-        color: #777;
-      }
-
-      .point-container {
-        @apply(--layout-horizontal);
-      }
 
       .point-content {
         @apply(--layout-vertical);
-        padding-right: 8px;
-      }
-
-      .user-image {
         padding-right: 16px;
         padding-left: 16px;
-      }
-
-
-      .user-image-right {
-        padding-right: 0px;
-        padding-left: 16px;
-      }
-
-      yp-point-actions {
-      }
-
-      .userName {
-        color: #777;
-      }
-
-      yp-user-image {
-        padding-top: 4px;
-      }
-
-      .userName {
-        padding-bottom: 4px;
-      }
-
-
-      .thumbIcon {
-        height: 20px;
-        width: 20px;
-        padding-top: 16px;
-        color: var(--primary-color-300);
-        padding-bottom: 24px;
-      }
-
-      .thumbUp {
-        color: var(--master-point-up-color);
-      }
-
-      .thumbDown {
-        color: var(--master-point-down-color);
       }
 
 
@@ -45992,32 +45964,39 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           display: none;
         }
       }
+
+      .userInfoContainer {
+        border-bottom: solid 2px;
+        width: 100%;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+      }
+
+      .userInfoContainer[up-vote] {
+        border-bottom-color:  var(--master-point-up-color);
+      }
+
+      .userInfoContainer[down-vote] {
+        border-bottom-color: var(--master-point-down-color);
+      }
+
     </style>
 
     <template is="dom-if" if="[[point]]">
 
-      <div class="point-container">
+      <div class="layout vertical">
 
-        <div class="user-image layout vertical" hidden$="[[hideUser]]">
-          <yp-user-image user="[[user]]"></yp-user-image>
-          <div class="layout horizontal center-center">
-            <iron-icon icon="thumb-down" class="thumbIcon thumbDown" hidden$="[[upVote(point)]]"></iron-icon>
-            <iron-icon icon="thumb-up" class="thumbIcon thumbUp" hidden$="[[downVote(point)]]"></iron-icon>
-          </div>
+        <div class="userInfoContainer layout horizontal end-justified" up-vote$="[[upVote(point)]]" down-vote$="[[downVote(point)]]" hidden$="[[hideUser]]">
+          <yp-user-with-organization inverted="" user="[[user]]"></yp-user-with-organization>
         </div>
 
         <div class="point-content">
-          <div>
-            <div class$="[[computeClass(point)]] userName" hidden$="[[hideUser]]">
-              [[user.name]]
-            </div>
-            <span hidden$="[[!point.name]]">
-              <span>[[point.name]]</span>.
-            </span>
-            <span>[[point.content]]</span>
-            <div class="layout horizontal">
-              <yp-point-actions point="[[point]]"></yp-point-actions>
-            </div>
+          <span hidden$="[[!point.name]]">
+            <span>[[point.name]]</span>.
+          </span>
+          <span>[[point.content]]</span>
+          <div class="layout horizontal">
+            <yp-point-actions point="[[point]]"></yp-point-actions>
           </div>
         </div>
 
@@ -48074,10 +48053,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         width: 420px;
       }
 
-      yp-point {
-        width: 430px;
-      }
-
       paper-toast {
         z-index: 9999;
       }
@@ -48087,13 +48062,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       yp-point {
-        padding-top: 16px;
+        padding-top: 8px;
       }
 
       .pointMaterial {
         margin-bottom: 18px;
         padding-top: 8px;
         background-color: #FFF;
+        padding-left: 0;
+        padding-right: 0;
+        width: 430px;
       }
 
       .thumbIcon {
@@ -48176,7 +48154,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           font-size: 9px;
         }
 
-        yp-point {
+        .pointMaterial {
           width: 300px;
         }
 
