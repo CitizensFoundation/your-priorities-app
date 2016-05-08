@@ -36450,6 +36450,15 @@ event and do your own custom submission:
         @apply(--layout-center-justified);
       }
 
+      file-upload::shadow paper-button {
+        background-color: var(--accent-color);
+        color: #FFF;
+      }
+
+      file-upload {
+        margin-top: 16px;
+      }
+
       .accessHeader {
         color: var(--primary-color,#777);
         font-weight: normal;
@@ -37682,7 +37691,7 @@ event and do your own custom submission:
         '--accent-color-200': 'var(--paper-orange-a200)',
         '--accent-color-300': 'var(--paper-orange-a300)',
         '--accent-color-400': 'var(--paper-orange-a400)',
-        '--middle-color': 'var(--primary-background-color)',
+        '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
     },
@@ -48590,7 +48599,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       paper-button {
         margin-top: 32px;
         margin-bottom: 8px;
-        background-color: var(--accent-color-300);
+        background-color: var(--accent-color);
         color: #FFF;
         width: 242px;
       }
