@@ -61,13 +61,22 @@
 
       [title] {
         /* The difference in font size is used to calculate the scale of the title in the transition. */
-        font-size: 26px;
+        font-size: 22;
+        padding-top: 8px;
+        padding-left: 8px;
       }
 
       .backIcon {
         width: 48px;
         height: 48px;
         padding-right: 16px;
+        padding-bottom: 8px;
+        padding-top: 0;
+      }
+
+      .closePostIcon {
+        width: 52px;
+        height: 52px;
       }
 
       .main-header {
@@ -91,6 +100,11 @@
           width: 40px;
           height: 40px;
           padding-right: 8px;
+        }
+
+        .closePostIcon {
+          width: 48px;
+          height: 48px;
         }
 
         .loginButton {
@@ -156,7 +170,7 @@
                 <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
               </div>
               <template is="dom-if" if="[[closePostHeader]]">
-                <paper-icon-button id="paperToggleNavMenu" icon="clear" on-tap="_closePost"></paper-icon-button>
+                <paper-icon-button id="paperToggleNavMenu" class="closePostIcon" icon="clear" on-tap="_closePost"></paper-icon-button>
               </template>
 
               <span class="flex"></span>
