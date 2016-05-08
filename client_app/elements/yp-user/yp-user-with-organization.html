@@ -1,0 +1,109 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html" >
+<link rel="import" href="../../bower_components/paper-button/paper-button.html" >
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-user/yp-user-image.html">
+
+<dom-module id="yp-user-with-organization">
+  <template>
+    <style>
+      yp-user-image {
+        padding-right: 16px;
+        padding-left: 16px;
+      }
+
+      .name {
+        padding-top: 4px;
+        color: #fff;
+        font-weight: bold;
+        text-align: right;
+      }
+
+      .name[inverted] {
+        color: #444;
+      }
+
+      .imageStatus {
+        padding-left: 16px;
+      }
+
+      .rousnded {
+        -webkit-border-radius: 25px;
+        -moz-border-radius: 25px;
+        border-radius: 25px;
+        display: block;
+      }
+
+      .organizationName {
+        color: #eee;
+        text-align: right;
+      }
+
+      .organizationName[inverted] {
+        color: #666;
+      }
+
+    </style>
+
+    <template is="dom-if" if="[[user]]">
+      <div class="layout horizontal">
+        <div class="layout vertical">
+        <div class="name" inverted$="[[inverted]]">
+          [[user.name]]
+        </div>
+        <div class="organizationName" inverted$="[[inverted]]" hidden$="[[!_organizationName(user)]]">
+          [[_organizationName(user)]]
+        </div>
+      </div>
+      <template is="dom-if" if="[[_organizationImageUrl(user)]]">
+        <img sizing="cover" class="imageStatus rounded" src$="[[_organizationImageUrl(user)]]">
+      </template>
+      <yp-user-image user="[[user]]"></yp-user-image>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-user-with-organization',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        user: {
+          type: Object
+        },
+
+        inverted: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _organizationName: function (user) {
+        if (user.OrganizationUsers && user.OrganizationUsers.length > 0 && user.OrganizationUsers[0].name) {
+          return user.OrganizationUsers[0].name;
+        } else {
+          return null;
+        }
+      },
+
+      _organizationImageUrl: function (user) {
+        if (user.OrganizationUsers && user.OrganizationUsers.length > 0 &&
+          user.OrganizationUsers[0].OrganizationLogoImages &&
+          user.OrganizationUsers[0].OrganizationLogoImages.length > 0) {
+          var url = this.getImageFormatUrl(user.OrganizationUsers[0].OrganizationLogoImages, 2);
+          return url;
+        } else {
+          return null;
+        }
+      }
+    });
+  </script>
+</dom-module>
