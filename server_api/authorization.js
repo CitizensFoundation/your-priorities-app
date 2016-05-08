@@ -27,6 +27,26 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
   });
 };
 
+auth.hasDomainAdmin = function (domainId, req, done) {
+  models.Domain.findOne({
+    where: { id: domainId }
+  }).then(function (domain) {
+    if (!req.isAuthenticated()) {
+      done(null, false);
+    } else if (domain.user_id === req.user.id) {
+      done(null, true);
+    } else {
+      domain.hasDomainAdmin(req.user).then(function (result) {
+        if (result) {
+          done(null, true);
+        } else {
+          done(null, false);
+        }
+      });
+    }
+  });
+};
+
 auth.isLoggedIn = function (req, res, next) {
   if (req.isAuthenticated()) {
     log.info('User is Logged in', { context: 'isLoggedInAuth', user: toJson(req.user) });

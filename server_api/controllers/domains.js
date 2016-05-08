@@ -152,52 +152,63 @@ router.get('/', function(req, res) {
 });
 
 router.get('/:id', auth.can('view domain'), function(req, res) {
-  models.Domain.find({
-    where: { id: req.params.id },
-    order: [
-      [ { model: models.Community } ,'counter_users', 'desc' ],
-      [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'asc' ],
-      [ { model: models.Image, as: 'DomainHeaderImages' } , 'created_at', 'asc' ],
-      [ models.Community, { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ]
-    ],
-    include: [
-      {
-        model: models.Image, as: 'DomainLogoImages',
-        required: false
-      },
-      {
-        model: models.Image, as: 'DomainHeaderImages',
-        required: false
-      },
-      { model: models.Community,
-        where: {
-          access: {
-            $ne: models.Community.ACCESS_SECRET
-          }
-        },
-        include: [
-          {
-            model: models.Image, as: 'CommunityLogoImages',
-            required: false
-          },
-          {
-            model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
-            required: false
-          }
-        ],
-        required: false
-      }
-    ]
-  }).then(function(domain) {
-    if (domain) {
-      log.info('Domain Viewed', { domain: toJson(domain.simple()), context: 'view', user: toJson(req.user) });
-      res.send(domain);
-    } else {
-      sendDomainOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
+
+  var attributes = null;
+
+  auth.hasDomainAdmin(req.params.id, req, function (error, isAdmin) {
+    if (!isAdmin) {
+      attributes = models.Domain.defaultAttributesPublic;
     }
-  }).catch(function(error) {
-    sendDomainOrError(res, null, 'view', req.user, error);
+    
+    models.Domain.find({
+      where: { id: req.params.id },
+      attributes: attributes,
+      order: [
+        [ { model: models.Community } ,'counter_users', 'desc' ],
+        [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'asc' ],
+        [ { model: models.Image, as: 'DomainHeaderImages' } , 'created_at', 'asc' ],
+        [ models.Community, { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ]
+      ],
+      include: [
+        {
+          model: models.Image, as: 'DomainLogoImages',
+          required: false
+        },
+        {
+          model: models.Image, as: 'DomainHeaderImages',
+          required: false
+        },
+        { model: models.Community,
+          where: {
+            access: {
+              $ne: models.Community.ACCESS_SECRET
+            }
+          },
+          include: [
+            {
+              model: models.Image, as: 'CommunityLogoImages',
+              required: false
+            },
+            {
+              model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+              required: false
+            }
+          ],
+          required: false
+        }
+      ]
+    }).then(function(domain) {
+      if (domain) {
+        log.info('Domain Viewed', { domain: toJson(domain.simple()), context: 'view', user: toJson(req.user) });
+        res.send(domain);
+      } else {
+        sendDomainOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
+      }
+    }).catch(function(error) {
+      sendDomainOrError(res, null, 'view', req.user, error);
+    });
   });
+
 });
 
 router.put('/:id', auth.can('edit domain'), function(req, res) {

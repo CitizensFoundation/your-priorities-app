@@ -111,6 +111,12 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_CLOSED: 1,
       ACCESS_SECRET: 2,
 
+      defaultAttributesPublic: ['id', 'name', 'domain_name', 'access', 'deleted', 'description',
+        'default_locale', 'message_to_users', 'message_for_new_idea','google_analytics_code',
+        'counter_communities','counter_users','counter_groups','counter_points','counter_posts',
+        'counter_organizations','only_admins_can_create_communities','theme_id','other_social_media_info',
+        'public_api_keys','info_texts'],
+
       getLoginProviders: function (callback) {
         var providers = [];
 
