@@ -31,7 +31,7 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
 var getUserWithAll = function (userId, callback) {
   models.User.find({
     where: {id: userId},
-    attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings']),
+    attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','email']),
     order: [
       [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
       [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
@@ -75,6 +75,11 @@ router.post('/login', function (req, res) {
         log.error("User Login Error", {context: 'login', user: user.id, err: error, errorStatus: 500});
         res.sendStatus(500);
       } else {
+        if (user.email) {
+          delete user.email;
+        } else {
+          user.missingEmail = true;
+        }
         res.send(user)
       }
     });
@@ -163,6 +168,10 @@ router.get('/:id', function (req, res) {
   };
 
   var attributes = ['id','name','description'];
+
+  if (req.user && req.user.id==req.params.id) {
+    attributes = _.concat(attributes, ['email'])
+  }
 
   if (req.user && req.user.id == parseInt(req.params.id)) {
   } else {
@@ -425,6 +434,11 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
         log.error("User IsLoggedIn Error", { context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500 });
         res.sendStatus(500);
       } else {
+        if (user.email && user.email!="") {
+          delete user.email;
+        } else {
+          user.dataValues.missingEmail = true;
+        }
         res.send(user);
       }
     })
@@ -692,14 +706,14 @@ router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
         }
       })
     } else {
-      log.info('User Invite Token Not found', {user: toJson(user), context: 'get_invite_info'});
+      log.warn('User Invite Token Not found', {user: toJson(user), context: 'get_invite_info'});
       res.sendStatus(404);
     }
   });
 });
 
 // Facebook Authentication
-router.get('/auth/facebook', function(req, res, next) {
+router.get('/auth/facebook', function(req, res) {
   req.sso.authenticate('facebook-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
     if (error) {
       log.error("Error from Facebook login init", { err: error });
@@ -708,12 +722,99 @@ router.get('/auth/facebook', function(req, res, next) {
   });
 });
 
+router.put('/missingEmail/setEmail', function(req, res, next) {
+  models.User.find({
+    where: {
+      email: req.body.email
+    }}).then( function (user) {
+      if (user) {
+        res.send({
+          alreadyRegistered: true
+        })
+      } else {
+        models.User.find({
+          where: {
+            id: req.user.id
+          }}).then( function (user) {
+            user.email = req.body.email;
+            user.save().then(function (results) {
+              res.send({email: user.email});
+            });
+          })
+       }
+    }).catch(function (error) {
+      log.error("Error from setEmail", { err: error });
+      res.sendStatus(500);
+  });
+});
+
+router.put('/missingEmail/linkAccounts', function(req, res, next) {
+  models.User.find({
+    where: {
+      email: req.body.email
+    }}).then( function (user) {
+    if (user) {
+      user.validatePassword( req.body.password, function (hmm, userWithPassword, message) {
+        if (!userWithPassword) {
+          res.send( {
+           error: 'wrong password'
+          });
+        } else {
+          var foundLoginProvider = true;
+          if (req.user.loginProvider=='facebook') {
+            user.facebook_id = req.user.facebook_id;
+            req.user.facebook_id = null;
+          } else if (req.user.loginProvider=='google') {
+              user.google_id = req.user.google_id;
+              req.user.google_id = null;
+          } else if (req.user.loginProvider=='twitter') {
+            user.twitter_id = req.user.twitter_id;
+            req.user.twitter_id = null;
+          } else if (req.user.loginProvider=='github') {
+            user.github_id = req.user.github_id;
+            req.user.github_id = null;
+          } else if (req.user.loginProvider=='saml') {
+            user.ssn = req.user.ssn;
+            req.user.ssn = null;
+          } else {
+            foundLoginProvider = false;
+          }
+          if (foundLoginProvider) {
+            user.save().then(function (results) {
+              req.user.save().then(function (results) {
+                log.info("Linked Accounts", { userFrom: req.user, toUser: user });
+                req.logIn(user, function (error, detail) {
+                  if (error) {
+                    sendUserOrError(res, null, 'linkAccounts', error, 401);
+                  } else {
+                    res.send({email: user.email});
+                  }
+                });
+              })
+            });
+          } else {
+            req.send( {
+              error: 'no login provider to move from'
+            });
+          }
+        }
+      });
+    } else {
+      log.error("Email not found for linkAccounts", {});
+      req.sendStatus(404);
+    }
+  }).catch(function (error) {
+    log.error("Error from linkAccounts", { err: error });
+    res.sendStatus(500);
+  });
+});
+
 // SAML Authentication
 router.get('/auth/saml', function(req, res, next) {
   req.sso.authenticate('saml-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
     if (error) {
       log.error("Error from SAML login", { err: error });
-      throw error;
+      res.sendStatus(500);
     }
   });
 });

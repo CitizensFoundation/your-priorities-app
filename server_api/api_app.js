@@ -151,7 +151,7 @@ passport.serializeUser(function(profile, done) {
         done(error);
       } else {
         log.info("User Connected to Facebook", { context: 'loginFromFacebook', user: toJson(user)});
-        done(null, user.id);
+        done(null, { userId: user.id, loginProvider: 'facebook' });
       }
     });
   } else if (profile.provider && profile.provider=='saml') {
@@ -161,18 +161,18 @@ passport.serializeUser(function(profile, done) {
           done(error);
         } else {
           log.info("User Connected to SAML", { context: 'loginFromSaml', user: toJson(user)});
-          done(null, user.id);
+          done(null, { userId: user.id, loginProvider: 'facebook' });
         }
       });
   } else {
     log.info("User Serialized", { context: 'deserializeUser', userEmail: profile.email, userId: profile.id });
-    done(null, profile.id);
+    done(null, { userId: profile.id, loginProvider: 'email' } );
   }
 });
 
-passport.deserializeUser(function(id, done) {
+passport.deserializeUser(function(sessionUser, done) {
   models.User.find({
-    where: {id: id},
+    where: { id: sessionUser.userId },
     attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
     include: [
       {
@@ -187,6 +187,7 @@ passport.deserializeUser(function(id, done) {
   }).then(function(user) {
     if (user) {
       log.info("User Deserialized", { context: 'deserializeUser', user: toJson(user)});
+      user.loginProvider = sessionUser.loginProvider;
       done(null, user);
     } else {
       log.error("User Deserialized Not found", { context: 'deserializeUser' });
@@ -216,7 +217,6 @@ app.use('/users', legacyUsers);
 app.use('/pages', legacyPages);
 
 app.post('/authenticate_from_island_is', function (req, res) {
-  var a = 1;
   req.sso.authenticate('saml-strategy-'+req.ypDomain.id, { failureRedirect: '/', failureFlash: true }, req, res, function(error, user) {
     if (error) {
       log.error("Error from SAML login", { err: error });

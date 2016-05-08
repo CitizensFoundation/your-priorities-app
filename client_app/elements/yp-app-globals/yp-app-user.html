@@ -182,9 +182,9 @@
           this.fire("login");
         },
 
-        _forgotPassword: function () {
+        _forgotPassword: function (event, detail) {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("forgotPassword");
-          dialog.open();
+          dialog.open(detail);
         },
 
         _resetPassword: function (event, detail) {
@@ -322,6 +322,10 @@
             this.removeUserSession();
           } else if (detail.response.name) {
             this.setLoggedInUser(detail.response);
+          }
+          if (detail.response.missingEmail) {
+            var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("missingEmail");
+            dialog.open(detail.response.loginProvider);
           }
         },
 
