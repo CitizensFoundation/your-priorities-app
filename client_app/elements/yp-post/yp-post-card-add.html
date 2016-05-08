@@ -21,19 +21,20 @@
       }
 
       .postCard {
-        width: 800px;
+        width: 360px;
         height: 100%;
         margin-top: 16px;
         padding: 0px;
-        background-color: #FFF;
-        color: var(--primary-color-600);
+        background-color: var(--accent-color);
+        color: #FFF;
         font-size: 25px;
+        cursor: pointer;
       }
 
       paper-icon-button {
-        height: 170px;
-        width: 170px;
-        color: var(--accent-color);
+        height: 120px;
+        width: 120px;
+        color: #FFF;
       }
 
       .header {
@@ -43,8 +44,8 @@
       }
 
       .icon {
-        --iron-icon-height: 220px;
-        --iron-icon-width: 220px;
+        --iron-icon-height: 140px;
+        --iron-icon-width: 140px;
       }
 
       .half {
@@ -55,21 +56,20 @@
         margin-right: 12px;
       }
 
+      .addText {
+        padding-left: 16px;
+      }
+
       iron-icon {
         width: 64px;
         height: 64px;
         padding-right: 64px;
       }
 
-      .introText {
-        padding-top: 18px;
-      }
-
       .addNewIdeaText {
-        padding-top: 20px;
-        font-size: 24px;
+        font-size: 26px;
         width: 100%;
-        color: var(--accent-color);
+        color: #FFF;
       }
 
       @media (max-width: 832px) {
@@ -104,12 +104,12 @@
       }
     </style>
 
-    <paper-card elevation="[[elevation]]" class="postCard">
+    <paper-card elevation="[[elevation]]" class="postCard" on-tap="_newPost" >
       <div class="layout horizontal center-center addNewIdeaText">
-        [[t('post.add_new')]]
-      </div>
-      <div class="layout horizontal center-center">
-        <paper-icon-button on-tap="_newPost" icon="add"></paper-icon-button>
+        <div class="flex addText">
+          [[t('post.add_new')]]
+        </div>
+        <paper-icon-button icon="lightbulb-outline"></paper-icon-button>
       </div>
     </paper-card>
   </template>
