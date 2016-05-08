@@ -179,6 +179,7 @@ module.exports = function(sequelize, DataTypes) {
                 clientSecret    : domain.secret_api_keys.facebook.client_secret,
                 scope           : ['email'],
                 fields          : ['id', 'displayName', 'email'],
+                //urlCallback     : 'http://fbtest.betrireykjavik.is:4242/api/users/auth/facebook/callback'
                 urlCallback     : 'https://'+callbackDomainName+'/api/users/auth/facebook/callback'
               });
             }

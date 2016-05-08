@@ -43444,6 +43444,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         height: 300px;
       }
 
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        .topArea {
+          min-height: 300px;
+        }
+      }
+
       .middleArea {
         background-color: var(--primary-color-600);
       }
@@ -44515,7 +44521,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         <div class="action-text debate-text">{{formatNumber(post.counter_points)}}</div>
       </div>
 
-      <div class="flex" hidden$="[[!_hideDebate(small,forceSmall)]]"></div>
+      <div class="" hidden$="[[!_hideDebate(small,forceSmall)]]"></div>
 
       <div id="actionDown" class="action-down">
         <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.down_vote')]]" icon$="[[endorseModeIcon(endorseMode,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
@@ -45468,6 +45474,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         text-align: center;
         padding-left: 16px;
         padding-right: 24px;
+        margin-bottom: 24px;
       }
 
       .card-actions {
