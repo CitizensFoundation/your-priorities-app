@@ -191,11 +191,21 @@ passport.deserializeUser(function(sessionUser, done) {
       done(null, user);
     } else {
       log.error("User Deserialized Not found", { context: 'deserializeUser' });
-      done();
+      airbrake.notify("User Deserialized Not found", function(airbrakeErr, url) {
+        if (airbrakeErr) {
+          log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
+        }
+        done(null, false);
+      });
     }
   }).catch(function(error) {
     log.error("User Deserialize Error", { context: 'deserializeUser', user: id, err: error, errorStatus: 500 });
-    done(error);
+    airbrake.notify(error, function(airbrakeErr, url) {
+      if (airbrakeErr) {
+        log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
+      }
+      done(null, false);
+    });
   });
 });
 
