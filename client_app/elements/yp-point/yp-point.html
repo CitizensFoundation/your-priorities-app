@@ -22,68 +22,13 @@
       :host {
         display: block;
         @apply(--layout-vertical);
-        width: 100%;
       }
 
-
-      .for {
-        color: #777;
-      }
-
-      .against {
-        color: #777;
-      }
-
-      .point-container {
-        @apply(--layout-horizontal);
-      }
 
       .point-content {
         @apply(--layout-vertical);
-        padding-right: 8px;
-      }
-
-      .user-image {
         padding-right: 16px;
         padding-left: 16px;
-      }
-
-
-      .user-image-right {
-        padding-right: 0px;
-        padding-left: 16px;
-      }
-
-      yp-point-actions {
-      }
-
-      .userName {
-        color: #777;
-      }
-
-      yp-user-image {
-        padding-top: 4px;
-      }
-
-      .userName {
-        padding-bottom: 4px;
-      }
-
-
-      .thumbIcon {
-        height: 20px;
-        width: 20px;
-        padding-top: 16px;
-        color: var(--primary-color-300);
-        padding-bottom: 24px;
-      }
-
-      .thumbUp {
-        color: var(--master-point-up-color);
-      }
-
-      .thumbDown {
-        color: var(--master-point-down-color);
       }
 
 
@@ -92,32 +37,39 @@
           display: none;
         }
       }
+
+      .userInfoContainer {
+        border-bottom: solid 2px;
+        width: 100%;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+      }
+
+      .userInfoContainer[up-vote] {
+        border-bottom-color:  var(--master-point-up-color);
+      }
+
+      .userInfoContainer[down-vote] {
+        border-bottom-color: var(--master-point-down-color);
+      }
+
     </style>
 
     <template is="dom-if" if="[[point]]">
 
-      <div class="point-container">
+      <div class="layout vertical">
 
-        <div class="user-image layout vertical" hidden$="[[hideUser]]">
-          <yp-user-image user="[[user]]"></yp-user-image>
-          <div class="layout horizontal center-center">
-            <iron-icon icon="thumb-down" class="thumbIcon thumbDown" hidden$="[[upVote(point)]]"></iron-icon>
-            <iron-icon icon="thumb-up" class="thumbIcon thumbUp" hidden$="[[downVote(point)]]"></iron-icon>
-          </div>
+        <div class="userInfoContainer layout horizontal end-justified" up-vote$=[[upVote(point)]]  down-vote$=[[downVote(point)]] hidden$="[[hideUser]]">
+          <yp-user-with-organization inverted user="[[user]]"></yp-user-with-organization>
         </div>
 
         <div class="point-content">
-          <div>
-            <div class$="[[computeClass(point)]] userName" hidden$="[[hideUser]]">
-              [[user.name]]
-            </div>
-            <span hidden$="[[!point.name]]">
-              <span>[[point.name]]</span>.
-            </span>
-            <span>[[point.content]]</span>
-            <div class="layout horizontal">
-              <yp-point-actions point="[[point]]"></yp-point-actions>
-            </div>
+          <span hidden$="[[!point.name]]">
+            <span>[[point.name]]</span>.
+          </span>
+          <span>[[point.content]]</span>
+          <div class="layout horizontal">
+            <yp-point-actions point="[[point]]"></yp-point-actions>
           </div>
         </div>
 
