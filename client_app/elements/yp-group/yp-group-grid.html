@@ -13,6 +13,33 @@
       .card {
         padding: 16px;
       }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+
+        @media (max-width: 1800px) {
+          :host {
+            width: 1500px !important;
+          }
+        }
+
+        @media (max-width: 1600px) {
+          :host {
+            width: 1100px;
+          }
+        }
+
+        @media (max-width: 1200px) {
+          :host {
+            width: 700px;
+          }
+        }
+
+        @media (max-width: 800px) {
+          :host {
+            width: 500px;
+          }
+        }
+      }
     </style>
     <div class="layout vertical wrap">
       <div class="layout horizontal center-center wrap">

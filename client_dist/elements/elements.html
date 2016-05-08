@@ -44498,6 +44498,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         padding: 0;
         margin: 0;
       }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        .action-debate {
+          display: none;
+        }
+      }
     </style>
 
     <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
@@ -47565,8 +47571,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         },
 
         checkLogin: function () {
+          this.$.isLoggedInAjax.url = "/api/users/loggedInUser/isloggedin" + "?" + (new Date()).getTime();
           this.$.isLoggedInAjax.generateRequest();
+          this.$.adminRightsAjax.url = "/api/users/loggedInUser/adminRights" + "?" + (new Date()).getTime();
           this.$.adminRightsAjax.generateRequest();
+          this.$.membershipsAjax.url = "/api/users/loggedInUser/memberships" + "?" + (new Date()).getTime();
           this.$.membershipsAjax.generateRequest();
         },
 
@@ -50961,6 +50970,33 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .card {
         padding: 16px;
       }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+
+        @media (max-width: 1800px) {
+          :host {
+            width: 1500px !important;
+          }
+        }
+
+        @media (max-width: 1600px) {
+          :host {
+            width: 1100px;
+          }
+        }
+
+        @media (max-width: 1200px) {
+          :host {
+            width: 700px;
+          }
+        }
+
+        @media (max-width: 800px) {
+          :host {
+            width: 500px;
+          }
+        }
+      }
     </style>
     <div class="layout vertical wrap">
       <div class="layout horizontal center-center wrap">
@@ -51498,6 +51534,18 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         padding-left: 6px;
       }
 
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        paper-fab {
+          width: 64px;
+          height: 64px;
+        }
+
+        paper-fab[large]::shadow #icon {
+          width: 36px;
+          height: 36px;
+        }
+      }
 
       @media (max-width: 680px) {
         paper-fab[large] {
@@ -53665,9 +53713,36 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .card {
         padding: 16px;
       }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+
+        @media (max-width: 1800px) {
+          .mainContainer {
+            width: 1500px !important;
+          }
+        }
+
+        @media (max-width: 1600px) {
+          .mainContainer {
+            width: 1100px !important;;
+          }
+        }
+
+        @media (max-width: 1200px) {
+          .mainContainer {
+            width: 700px !important;;
+          }
+        }
+
+        @media (max-width: 800px) {
+          .mainContainer {
+            width: 500px !important;;
+          }
+        }
+      }
     </style>
 
-    <div class="layout vertical wrap">
+    <div class="layout vertical wrap mainContainer">
       <div class="layout horizontal center-center wrap">
         <template is="dom-repeat" class="list" items="[[featuredCommunities]]" as="community">
           <yp-community-card class="card" featured="" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>

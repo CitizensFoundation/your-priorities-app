@@ -43,6 +43,18 @@
       }
 
 
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        paper-fab {
+          width: 64px;
+          height: 64px;
+        }
+
+        paper-fab[large]::shadow #icon {
+          width: 36px;
+          height: 36px;
+        }
+      }
+
       @media (max-width: 680px) {
         paper-fab[large] {
           width: 40px;

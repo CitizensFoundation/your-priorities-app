@@ -180,6 +180,12 @@
         padding: 0;
         margin: 0;
       }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        .action-debate {
+          display: none;
+        }
+      }
     </style>
 
     <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>

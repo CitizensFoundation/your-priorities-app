@@ -76,6 +76,7 @@ app.use(useragent.express());
 app.use(requestIp.mw());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.disable('etag');
 
 var sessionConfig = {
   store: new RedisStore({url: process.env.REDIS_URL}),
