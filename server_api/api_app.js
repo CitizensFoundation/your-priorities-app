@@ -96,7 +96,7 @@ app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
 
-if (app.get('env') === 'development') {
+if (false && app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_app')));
 } else {
   app.use(express.static(path.join(__dirname, '../client_dist')));
