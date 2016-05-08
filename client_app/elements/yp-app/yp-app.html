@@ -150,11 +150,16 @@
 
           <app-header id="appHeader" effects="waterfall" reveals class="main-header">
             <app-toolbar>
-              <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
-              <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon"
-                                 hidden$="[[!showBack]]"></paper-icon-button>
-              <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
-              <div title class="layout vertical wrap">[[headerTitle]]</div>
+              <div hidden$="[[!closePostHeader]]">
+                <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
+                <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon"
+                                   hidden$="[[!showBack]]"></paper-icon-button>
+                <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
+                <div title class="layout vertical wrap">[[headerTitle]]</div>
+              </div>
+              <div hidden$="[[closePostHeader]]">
+                <paper-icon-button id="paperToggleNavMenu" icon="clear" on-tap="_closePost"></paper-icon-button>
+              </div>
 
               <span class="flex" hidden></span>
 
@@ -186,19 +191,19 @@
             </section>
 
             <section data-route="domain">
-              <template is="dom-if" if="[[params.domainId]]" restamp>
+              <template is="dom-if" if="[[domainOpen]]" restamp>
                 <yp-domain domain-id="{{params.domainId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-domain>
               </template>
             </section>
 
             <section data-route="community">
-              <template is="dom-if" if="[[params.communityId]]" restamp>
+              <template is="dom-if" if="[[communityOpen]]" restamp>
                 <yp-community community-id="{{params.communityId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-community>
               </template>
             </section>
 
             <section data-route="group">
-              <template is="dom-if" if="[[params.groupId]]" restamp>
+              <template is="dom-if" if="[[groupOpen]]" restamp>
                 <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]"
                           searching-for="[[params.searchingFor]]" tab-name="[[params.tabName]]"
                           category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
@@ -313,6 +318,31 @@
 
         pages: {
           type: Array
+        },
+
+        keepOpenForPost: {
+          type: Boolean,
+          value: false
+        },
+
+        groupOpen: {
+          type: Boolean,
+          computed: '_isGroupOpen(params, keepOpenForPost)'
+        },
+
+        communityOpen: {
+          type: Boolean,
+          computed: '_isCommunityOpen(params, keepOpenForPost)'
+        },
+
+        domainOpen: {
+          type: Boolean,
+          computed: '_isDomainOpen(params, keepOpenForPost)'
+        },
+
+        closePostHeader: {
+          type: Boolean,
+          computed: '_closePostHeader(parans, keepOpenForPost)'
         }
       },
 
@@ -322,6 +352,42 @@
 
       listeners: {
         'yp-set-pages': '_setPages'
+      },
+
+      setKeepOpenForPostsOn: function () {
+        this.set('keepOpenForPost', true);
+      },
+
+      _closePost: function () {
+        page.back();
+      },
+
+      _closePostHeader: function (params, keepOpenForPost) {
+        if (params.postId && keepOpenForPost)
+          return true;
+        else
+          return false;
+      },
+
+      _isGroupOpen: function (params, keepOpenForPost) {
+        if (params.groupId || (params.postId && keepOpenForPost))
+          return true;
+        else
+          return false;
+      },
+
+      _isCommunityOpen: function (params, keepOpenForPost) {
+        if (params.communityId || (params.postId && keepOpenForPost))
+          return true;
+        else
+          return false;
+      },
+
+      _isDomainOpen: function (params, keepOpenForPost) {
+        if (params.domainId || (params.postId && keepOpenForPost))
+          return true;
+        else
+          return false;
       },
 
       _toggleNavDrawer: function () {
@@ -446,11 +512,13 @@
       },
 
       routeChanged: function (newValue, oldValue) {
+        if (!this.params.postId) {
+          this.set('keepOpenForPost', false);
+        }
         if (this.$$("#drawer") && (!this.$$("#drawer").persistent)) {
           this.$$("#drawer").close();
         }
       }
-
     });
   </script>
 </dom-module>

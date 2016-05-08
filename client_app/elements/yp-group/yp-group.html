@@ -268,10 +268,6 @@
         this.$$("#groupEdit").open('edit', { groupId: this.group.id });
       },
 
-      _goToNewPost: function (event, detail) {
-        this.goToPost(detail.response.id);
-      },
-
       _refresh: function () {
         this.$.ajax.generateRequest();
         this.$$("#groupActivities").loadNewData();
