@@ -27676,7 +27676,10 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       }
       var postUrl = '/post/' + postId;
       window.appGlobals.activity('open', 'post', postUrl);
-      page(postUrl);
+      window.app.setKeepOpenForPostsOn(page.current);
+      this.async(function () {
+        page(postUrl);
+      });
     },
 
     getPositionInArrayFromId: function (collection, id) {
@@ -37832,6 +37835,15 @@ event and do your own custom submission:
 
             <paper-input id="googleClientSecret" name="googleClientSecret" type="text" label="Google Client Secret" value="{{domain.secret_api_keys.google.client_secret}}" maxlength="60" char-counter="" class="mainInput">
             </paper-input>
+
+            <paper-input id="samlEntryPoint" name="samlEntryPoint" type="text" label="SAML EntryPoint" value="{{domain.secret_api_keys.saml.entryPoint}}" maxlength="100" char-counter="" class="mainInput">
+            </paper-input>
+
+            <paper-input id="samlCallbackUrl" name="samlCallbackUrl" type="text" label="SAML CallbackUrl" value="{{domain.secret_api_keys.saml.callbackUrl}}" maxlength="100" char-counter="" class="mainInput">
+            </paper-input>
+
+            <paper-textarea id="samlCert" name="samlCert" value="{{domain.secret_api_keys.saml.cert}}" label="SAML Verification Certificate Chain" char-counter="" rows="2" max-rows="5" maxlength="20000" class="mainInput">
+            </paper-textarea>
           </section>
           <section class="sectionMargin">
             <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
@@ -38991,6 +39003,9 @@ value. `setMax` should move the slider to the maximum value.
               <div class="btn-auth btn-facebook" on-tap="_facebookLogin">
                 [[t('user.facebookLogin')]]
               </div>
+              <div class="btn-auth btn-facebook" on-tap="_islandIsLogin">
+                [[t('user.islandIs')]]
+              </div>
             </div>
 
             <div class="layout horizontal center-center">
@@ -39123,6 +39138,15 @@ value. `setMax` should move the slider to the maximum value.
       window.open(url, 'facebook_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
     },
 
+    _islandIsLogin: function () {
+      var url = '/api/users/auth/saml',
+        width = 1000,
+        height = 650,
+        top = (window.outerHeight - height) / 2,
+        left = (window.outerWidth - width) / 2;
+      window.open(url, 'saml_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+    },
+
     _openedChanged: function (newValue) {
       if (newValue) {
         this.async(function () {
@@ -39242,6 +39266,197 @@ value. `setMax` should move the slider to the maximum value.
 
   });
 </script>
+<dom-module id="yp-missing-email" assetpath="yp-user/">
+
+  <style>
+    paper-dialog {
+      background-color: #FFF;
+      min-width: 400px;
+    }
+
+    @media (max-width: 480px) {
+      paper-dialog {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    }
+  </style>
+
+  <template>
+    <div id="outer">
+      <paper-dialog id="dialog" modal="">
+        <h3>[[heading]]</h3>
+        <div class="setEmailInfo">
+          [[t('user.setEmailInfo')]]
+        </div>
+        <form is="iron-form" id="form">
+          <paper-input id="email" type="text" label="[[t('user.email')]]" value="{{email}}" pattern="[[emailValidationPattern]]" error-message="[[emailErrorMessage]]">
+          </paper-input>
+
+          <template is="dom-if" if="[[needPassword]]">
+            <div class="linkAccounts">
+              [[t('user.existsLinkAccountInfo')]]
+            </div>
+            <paper-input id="password" type="password" label="[[t('user.password')]]" value="{{password}}" pattern="[[passwordValidationPattern]]" error-message="[[passwordErrorMessage]]">
+            </paper-input>
+          </template>
+        </form>
+        <div class="buttons">
+          <paper-button on-tap="_logout">[[t('user.logout')]]</paper-button>
+          <paper-button on-tap="_forgotPassword" hidden$="[[!needPassword]]">[[t('user.newPassword')]]</paper-button>
+          <paper-button id="sendButton" autofocus="" on-tap="_validateAndSend">[[submitText]]</paper-button>
+        </div>
+      </paper-dialog>
+
+      <yp-ajax id="setEmailAjax" dispatch-error="" method="PUT" url="/api/users/missingEmail/setEmail" on-response="_setEmailResponse"></yp-ajax>
+      <yp-ajax id="linkAccountsAjax" method="PUT" dispatch-error="" on-error="_registerError" url="/api/users/missingEmail/linkAccounts" on-response="_linkAccountsResponse"></yp-ajax>
+      <iron-a11y-keys id="a11y" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
+    </div>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-missing-email',
+
+    behaviors: [
+      Polymer.appHelpers
+    ],
+
+    properties: {
+
+
+      emailValidationPattern: {
+        type: String,
+        value: "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+      },
+
+      passwordValidationPattern: {
+        type: String,
+        value: '^[a-zA-Z0-9]+$'
+      },
+
+      emailErrorMessage: {
+        type: String
+      },
+
+      passwordErrorMessage: {
+        type: String
+      },
+
+      needPassword: {
+        type: Boolean,
+        value: false
+      },
+
+      email: {
+        type: String,
+        value: "" //robert@citizens.is"
+      },
+
+      password: {
+        type: String,
+        value: "" //"DksdSodksSokssss"
+      },
+
+      credentials: {
+        type: String,
+        notify: true,
+        computed: '_computeCredentials(email, password)'
+      },
+
+      submitText: {
+        type: String,
+        value: ""
+      },
+
+      heading: {
+        type: String
+      },
+
+      target: {
+        type: Object,
+        value: function() {
+          return this.$$("#form");
+        }
+      }
+
+    },
+
+    onEnter: function (event) {
+      this._validateAndSend();
+    },
+
+    _logout: function () {
+      window.appUser.logout();
+    },
+
+    _forgotPassword: function () {
+      window.appUser.fire("yp-forgot-password", { email: this.email });
+    },
+
+    ready: function () {
+      this.header = this.t('user.setEmail');
+      this.set('submitText',this.t('user.setEmail'));
+    },
+
+    _computeCredentials: function(email, password) {
+     return JSON.stringify({
+        email: email,
+        password: password
+      });
+    },
+
+    _validateAndSend: function(e) {
+      if (this.$$("#form").checkValidity() && this.email){
+        if (this.needPassword && this.password) {
+          this.$$("#linkAccountsAjax").body = this.credentials;
+          this.$$("#linkAccountsAjax").generateRequest();
+        } else {
+          this.$$("#setEmailAjax").body = {email: this.email };
+          this.$$("#setEmailAjax").generateRequest();
+        }
+      } else {
+        this.$$("#linkAccountsAjax").showErrorDialog(this.t('user.completeForm'));
+        return false;
+      }
+    },
+
+    _setEmailResponse: function(event, detail) {
+      if (detail.response && detail.response.alreadyRegistered) {
+        this.set('needPassword', true);
+        this.set('header', this.t('user.linkAccount'));
+        this.set('submitText', this.t('user.linkAccounts'));
+      } else {
+        window.appGlobals.notifyUserViaToast(this.t('user.haveSetEmail')+ " " + detail.response.email);
+        this.close();
+      }
+    },
+
+    _linkAccountsResponse: function(event, detail) {
+      if (detail.response.accountLinked) {
+        window.appGlobals.notifyUserViaToast(this.t('user.haveLinkedAccounts')+ " " + detail.response.email);
+        window.appUser.checkLogin();
+      } else {
+        this.$$("#linkAccountsAjax").showErrorDialog(this.t('user.passwordWrong'));
+      }
+    },
+
+    open: function(loginProvider) {
+      this.$$("#dialog").open();
+    },
+
+    close: function() {
+      this.$$("#dialog").close();
+    }
+
+  });
+</script>
 <dom-module id="yp-forgot-password" assetpath="yp-user/">
 
   <style>
@@ -39336,7 +39551,10 @@ value. `setMax` should move the slider to the maximum value.
       this.fire("login", user);
     },
 
-    open: function() {
+    open: function(detail) {
+      if (detail && detail.email) {
+        this.set('email', detail.email);
+      }
       this.$.dialog.open();
     },
 
@@ -42752,6 +42970,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       <yp-accept-invite id="acceptInvite"></yp-accept-invite>
 
+      <yp-missing-email id="missingEmail"></yp-missing-email>
+
       
 
       <yp-domain-edit id="domainEdit"></yp-domain-edit>
@@ -44934,37 +45154,34 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     </style>
 
-    <template is="dom-if" if="[[post]]" restamp="">
       <div class="mapCanvas">
-        <template is="dom-if" if="[[_withCoverMediaType(post,'none')]]">
+        <template is="dom-if" if="[[noneActive]]">
           <iron-image sizing="cover" class="main-image" src="https://i.imgur.com/sdsFAoT.png"></iron-image>
         </template>
 
-        <template is="dom-if" if="[[_withCoverMediaType(post,'category')]]">
+        <template is="dom-if" if="[[categoryActive]]">
           <div class="layout horizontal center-center">
             <iron-image class="category-icon" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath(post)]]"></iron-image>
           </div>
         </template>
 
-        <template is="dom-if" if="[[_withCoverMediaType(post,'image')]]">
+        <template is="dom-if" if="[[imageActive]]">
           <iron-image sizing="cover" class="main-image" src="[[postImagePath()]]"></iron-image>
         </template>
 
-        <template is="dom-if" if="[[post.location]]" restamp="">
-          <template is="dom-if" if="[[_withCoverMediaType(post,'streetView')]]" restamp="">
-            <google-streetview-pano position="[[_getMapPosition()]]" heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" pitch="2" zoom="0.8" disable-default-ui="">
-            </google-streetview-pano>
-          </template>
+        <template is="dom-if" if="[[streetViewActive]]" restamp="">
+          <google-streetview-pano position="[[mapPosition]]" heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" pitch="2" zoom="0.8" disable-default-ui="">
+          </google-streetview-pano>
+        </template>
 
-          <template is="dom-if" if="[[_withCoverMediaType(post,'map')]]" restamp="">
-            <google-map class="map" libraries="places" fit-to-markers="" zoom="[[_zoomLevel(post)]]" map-type="[[_mapType(post)]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-              <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
-            </google-map>
-          </template>
+        <template is="dom-if" if="[[mapActive]]" restamp="">
+          <google-map id="coverMediaMap" class="map" libraries="places" fit-to-markers="" zoom="[[_zoomLevel(post)]]" map-type="[[_mapType(post)]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+            <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
+          </google-map>
         </template>
       </div>
     </template>
-  </template>
+
 
   <script>
     Polymer({
@@ -44980,7 +45197,97 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           type: Object,
           notify: true,
           observer: "_postChanged"
+        },
+
+
+        noneActive: {
+          type: Boolean,
+          computed: '_isNoneActive(post)'
+        },
+
+        categoryActive: {
+          type: Boolean,
+          computed: '_isCategoryActive(post)'
+        },
+
+        imageActive: {
+          type: Boolean,
+          computed: '_isImageActive(post)'
+        },
+
+        mapActive: {
+          type: Boolean,
+          computed: '_isMapActive(post, post.location, post.location.latitude)'
+        },
+
+        streetViewActive: {
+          type: Boolean,
+          computed: '_isStreetViewActive(post, post.location, post.location.latitude)'
+        },
+
+        latitude: {
+          type: Number,
+          computed: '_getLatitute(post.location.latitude)'
+        },
+
+        longitude: {
+          type: Number,
+          computed: '_getLongitude(post.location.longitude)'
+        },
+
+        mapPosition: {
+          type: Object,
+          computed: '_getMapPosition(post.location)'
         }
+      },
+
+      _getLatitute: function (latitude) {
+        if (latitude)
+          return latitude;
+        else
+          return 0
+      },
+
+      _getLongitude: function (longitude) {
+        if (longitude)
+          return longitude;
+        else
+          return 0
+      },
+
+      _isNoneActive: function (post) {
+        if (this._withCoverMediaType(post, 'none'))
+          return true
+        else
+          return false
+      },
+
+      _isCategoryActive: function (post) {
+        if (this._withCoverMediaType(post, 'category'))
+          return true
+        else
+          return false
+      },
+
+      _isImageActive: function (post) {
+        if (this._withCoverMediaType(post,'image'))
+          return true
+        else
+          return false
+      },
+
+      _isMapActive: function (post, postLocation, lat) {
+        if (lat && postLocation && this._withCoverMediaType(post,'map'))
+          return true
+        else
+          return false
+      },
+
+      _isStreetViewActive: function (post, postLocation, lat) {
+        if (lat && postLocation && this._withCoverMediaType(post,'streetView'))
+          return true
+        else
+          return false
       },
 
       _postChanged: function(newValue, oldValue) {
@@ -45013,8 +45320,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
       },
 
-      _getMapPosition: function () {
-        return { lat: this.post.location.latitude, lng: this.post.location.longitude }
+      _getMapPosition: function (location) {
+        if (location) {
+          return { lat: location.latitude, lng: location.longitude }
+        } else {
+          return { lat: 0, lng: 0 }
+        }
       },
 
       postImagePath: function () {
@@ -47195,9 +47506,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.fire("login");
         },
 
-        _forgotPassword: function () {
+        _forgotPassword: function (event, detail) {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("forgotPassword");
-          dialog.open();
+          dialog.open(detail);
         },
 
         _resetPassword: function (event, detail) {
@@ -47236,6 +47547,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         loginFromFacebook: function () {
           window.appGlobals.notifyUserViaToast(this.t('user.loggedInWithFacebook'));
+          this._closeUserLogin();
+          this.checkLogin();
+        },
+
+        loginFromSaml: function () {
+          window.appGlobals.notifyUserViaToast(this.t('user.loggedInWithSaml'));
           this._closeUserLogin();
           this.checkLogin();
         },
@@ -47316,7 +47633,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         },
 
         _logoutResponse: function (event, detail) {
-          this.toastLogoutTextCombined = this.t("logout.complete.for")+ " " + this.user.name;
+          this.toastLogoutTextCombined = this.t("user.logoutCompleteFor")+ " " + this.user.name;
           this.removeUserSession();
           this.$.logoutToast.show();
           this.async(function() {
@@ -47329,6 +47646,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             this.removeUserSession();
           } else if (detail.response.name) {
             this.setLoggedInUser(detail.response);
+          }
+          if (detail.response.missingEmail) {
+            var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("missingEmail");
+            dialog.open(detail.response.loginProvider);
           }
         },
 
@@ -48050,10 +48371,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         _newPointResponse: function (event, detail) {
           var point = detail.response;
           if (point.value > 0) {
-            this.newPointTextCombined = this.t("new.point.for.added") + " " + this.truncate(point.content, 21);
+            this.newPointTextCombined = this.t("point.forAdded") + " " + this.truncate(point.content, 21);
             this.set("textValueUp", "");
           } else {
-            this.newPointTextCombined = this.t("new.point.against.added") + " " + this.truncate(point.content, 21);
+            this.newPointTextCombined = this.t("point.againstAdded") + " " + this.truncate(point.content, 21);
             this.set("textValueDown", "");
           }
           this.set("textValueMobileUpOrDown", "");
@@ -48614,7 +48935,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             value: false
           },
 
-          tabName: {
+          postTabName: {
             type: String,
             value: null,
             observer: '_tabNameChanged'
@@ -49676,14 +49997,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       },
 
       ready: function () {
-        this.set("posts", []);
-        this._loadMoreData();
+
       },
 
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue) {
-        } else {
-          this.set("posts",[]);
+          this.set("posts", []);
+          this._loadMoreData();
         }
       },
 
@@ -50193,7 +50513,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
           </div>
           <div class="layout horizontal center-center">
-            <yp-post-list id="openPostList" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+            <yp-post-list id="openPostList" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
           </div>
         </section>
         <section>
@@ -50202,17 +50522,17 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section>
             <div class="layout horizontal center-center">
-              <yp-post-list id="inProgressPostList" selected-tab="[[selected]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              <yp-post-list id="inProgressPostList" selected-tab="[[selected]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section>
             <div class="layout horizontal center-center">
-              <yp-post-list id="successfulPostList" selected-tab="[[selected]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              <yp-post-list id="successfulPostList" selected-tab="[[selected]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section>
             <div class="layout horizontal center-center">
-              <yp-post-list id="failedPostList" selected-tab="[[selected]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              <yp-post-list id="failedPostList" selected-tab="[[selected]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
         </template>
@@ -50279,7 +50599,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           value: false
         },
 
-        tabName: {
+        groupTabName: {
           type: String,
           value: null,
           observer: '_tabNameChanged'
@@ -50288,6 +50608,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         mapActive: {
           type: Boolean,
           value: false
+        },
+
+        lastValidGroupId: {
+          type: String
         }
       },
 
@@ -50375,10 +50699,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         this.$$("#groupEdit").open('edit', { groupId: this.group.id });
       },
 
-      _goToNewPost: function (event, detail) {
-        this.goToPost(detail.response.id);
-      },
-
       _refresh: function () {
         this.$.ajax.generateRequest();
         this.$$("#groupActivities").loadNewData();
@@ -50388,7 +50708,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       },
 
       _groupIdChanged: function (newValue, oldValue) {
-        if (newValue) {
+        if (newValue && newValue!=this.lastValidGroupId) {
+          this.set('lastValidGroupId', newValue);
           this.$.ajax.url = '/api/groups/' + this.groupId;
           this.$.ajax.generateRequest();
         }
@@ -50415,8 +50736,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages);
         }
 
-        if (this.tabName) {
-          this._setSelectedFromTabName(this.tabName);
+        if (this.groupTabName) {
+          this._setSelectedFromTabName(this.groupTabName);
         }
 
         this.fire("change-header", { headerTitle: this.group.Community.name,
@@ -52691,7 +53012,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           observer: '_selectedChanged'
         },
 
-        tabName: {
+        userTabName: {
           type: String,
           value: null,
           observer: '_tabNameChanged'
@@ -53175,7 +53496,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           observer: '_selectedChanged'
         },
 
-        tabName: {
+        communityTabName: {
           type: String,
           value: null,
           observer: '_tabNameChanged'
@@ -53841,7 +54162,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           value: false
         },
 
-        tabName: {
+        domainTabName: {
           type: String,
           value: null,
           observer: '_tabNameChanged'
@@ -54212,13 +54533,22 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       [title] {
         /* The difference in font size is used to calculate the scale of the title in the transition. */
-        font-size: 32px;
+        font-size: 22;
+        padding-top: 8px;
+        padding-left: 8px;
       }
 
       .backIcon {
         width: 48px;
         height: 48px;
         padding-right: 16px;
+        padding-bottom: 8px;
+        padding-top: 0;
+      }
+
+      .closePostIcon {
+        width: 52px;
+        height: 52px;
       }
 
       .main-header {
@@ -54242,6 +54572,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           width: 40px;
           height: 40px;
           padding-right: 8px;
+        }
+
+        .closePostIcon {
+          width: 48px;
+          height: 48px;
         }
 
         .loginButton {
@@ -54293,18 +54628,22 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           <yp-app-nav-drawer id="ypNavDrawer" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
         </app-drawer>
 
-        <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
+        <app-scrollpos-control selected="{{route}}"></app-scrollpos-control>
 
         <app-header-layout id="mainArea">
 
           <app-header id="appHeader" effects="waterfall" reveals="" class="main-header">
             <app-toolbar>
-              <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
-              <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
-              <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden=""></iron-icon>
-              <div title="" class="layout vertical wrap">[[headerTitle]]</div>
+              <div hidden$="[[closePostHeader]]" class="layout horizontal">
+                <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
+                <div title="" class="layout vertical wrap">[[headerTitle]]</div>
+                <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
+              </div>
+              <template is="dom-if" if="[[closePostHeader]]">
+                <paper-icon-button id="paperToggleNavMenu" class="closePostIcon" icon="clear" on-tap="_closePost"></paper-icon-button>
+              </template>
 
-              <span class="flex" hidden=""></span>
+              <span class="flex"></span>
 
               
               <paper-icon-button icon="search" on-tap="toggleSearch" hidden="" hiddesn$="[[!showSearch]]"></paper-icon-button>
@@ -54334,19 +54673,19 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             </section>
 
             <section data-route="domain">
-              <template is="dom-if" if="[[params.domainId]]" restamp="">
+              <template is="dom-if" if="[[domainOpen]]" restamp="">
                 <yp-domain domain-id="{{params.domainId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-domain>
               </template>
             </section>
 
             <section data-route="community">
-              <template is="dom-if" if="[[params.communityId]]" restamp="">
+              <template is="dom-if" if="[[communityOpen]]" restamp="">
                 <yp-community community-id="{{params.communityId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-community>
               </template>
             </section>
 
             <section data-route="group">
-              <template is="dom-if" if="[[params.groupId]]" restamp="">
+              <template is="dom-if" if="[[groupOpen]]" restamp="">
                 <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]" searching-for="[[params.searchingFor]]" tab-name="[[params.tabName]]" category-id="[[params.categoryId]]" category-name="[[params.categoryName]]" on-change-header="onChangeHeader"></yp-group>
               </template>
             </section>
@@ -54422,6 +54761,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           type: String
         },
 
+        storedBackPath: String,
+
         headerTitle: {
           type: String
         },
@@ -54458,6 +54799,32 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         pages: {
           type: Array
+        },
+
+        keepOpenForPost: {
+          type: String,
+          value: null
+        },
+
+        groupOpen: {
+          type: Boolean,
+          computed: '_isGroupOpen(params, keepOpenForPost)'
+        },
+
+        communityOpen: {
+          type: Boolean,
+          computed: '_isCommunityOpen(params, keepOpenForPost)'
+        },
+
+        domainOpen: {
+          type: Boolean,
+          computed: '_isDomainOpen(params, keepOpenForPost)'
+        },
+
+        closePostHeader: {
+          type: Boolean,
+          computed: '_closePostHeader(params, keepOpenForPost)',
+          value: null
         }
       },
 
@@ -54467,6 +54834,49 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       listeners: {
         'yp-set-pages': '_setPages'
+      },
+
+      setKeepOpenForPostsOn: function (goBackToPage) {
+        this.set('keepOpenForPost', goBackToPage);
+        this.set('storedBackPath', this.backPath);
+      },
+
+      _closePost: function () {
+        if (this.keepOpenForPost)
+          page(this.keepOpenForPost)
+
+        if (this.storedBackPath)
+          this.set('backPath', this.storedBackPath);
+
+        this.set('this.keepOpenForPost', null);
+      },
+
+      _closePostHeader: function (params, keepOpenForPost) {
+        if (params.postId && keepOpenForPost)
+          return true;
+        else
+          return false;
+      },
+
+      _isGroupOpen: function (params, keepOpenForPost) {
+        if (params.groupId || (params.postId && keepOpenForPost))
+          return true;
+        else
+          return false;
+      },
+
+      _isCommunityOpen: function (params, keepOpenForPost) {
+        if (params.communityId || (params.postId && keepOpenForPost))
+          return true;
+        else
+          return false;
+      },
+
+      _isDomainOpen: function (params, keepOpenForPost) {
+        if (params.domainId || (params.postId && keepOpenForPost))
+          return true;
+        else
+          return false;
       },
 
       _toggleNavDrawer: function () {
@@ -54595,7 +55005,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.$$("#drawer").close();
         }
       }
-
     });
   </script>
 </dom-module>
@@ -54680,8 +55089,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
    *   page('/from', '/to')
    *   page();
    *
-   * @param {String|Function} path
-   * @param {Function} fn...
+   * @param {string|!Function|!Object} path
+   * @param {Function=} fn
    * @api public
    */
 
@@ -54693,7 +55102,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
     // route <path> to <callback ...>
     if ('function' === typeof fn) {
-      var route = new Route(path);
+      var route = new Route(/** @type {string} */ (path));
       for (var i = 1; i < arguments.length; ++i) {
         page.callbacks.push(route.middleware(arguments[i]));
       }
@@ -54715,7 +55124,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
   /**
    * Current path being processed
-   * @type {String}
+   * @type {string}
    */
   page.current = '';
 
@@ -54733,7 +55142,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
   /**
    * Get or set basepath to `path`.
    *
-   * @param {String} path
+   * @param {string} path
    * @api public
    */
 
@@ -54789,10 +55198,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
   /**
    * Show `path` with optional `state` object.
    *
-   * @param {String} path
-   * @param {Object} state
-   * @param {Boolean} dispatch
-   * @return {Context}
+   * @param {string} path
+   * @param {Object=} state
+   * @param {boolean=} dispatch
+   * @param {boolean=} push
+   * @return {!Context}
    * @api public
    */
 
@@ -54808,8 +55218,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
    * Goes back in the history
    * Back should always let the current route push state and then go back.
    *
-   * @param {String} path - fallback path to go back if no more history exists, if undefined defaults to page.base
-   * @param {Object} [state]
+   * @param {string} path - fallback path to go back if no more history exists, if undefined defaults to page.base
+   * @param {Object=} state
    * @api public
    */
 
@@ -54835,8 +55245,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
    * Register route to redirect from one path to other
    * or just redirect to another route
    *
-   * @param {String} from - if param 'to' is undefined redirects to 'from'
-   * @param {String} [to]
+   * @param {string} from - if param 'to' is undefined redirects to 'from'
+   * @param {string=} to
    * @api public
    */
   page.redirect = function(from, to) {
@@ -54844,7 +55254,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     if ('string' === typeof from && 'string' === typeof to) {
       page(from, function(e) {
         setTimeout(function() {
-          page.replace(to);
+          page.replace(/** @type {!string} */ (to));
         }, 0);
       });
     }
@@ -54860,9 +55270,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
   /**
    * Replace `path` with optional `state` object.
    *
-   * @param {String} path
-   * @param {Object} state
-   * @return {Context}
+   * @param {string} path
+   * @param {Object=} state
+   * @param {boolean=} init
+   * @param {boolean=} dispatch
+   * @return {!Context}
    * @api public
    */
 
@@ -54879,10 +55291,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
   /**
    * Dispatch the given `ctx`.
    *
-   * @param {Object} ctx
+   * @param {Context} ctx
    * @api private
    */
-
   page.dispatch = function(ctx) {
     var prev = prevContext,
       i = 0,
@@ -54922,7 +55333,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
    * @param {Context} ctx
    * @api private
    */
-
   function unhandled(ctx) {
     if (ctx.handled) return;
     var current;
@@ -54961,7 +55371,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
    * Accommodates whitespace in both x-www-form-urlencoded
    * and regular percent-encoded form.
    *
-   * @param {str} URL component to decode
+   * @param {string} val - URL component to decode
    */
   function decodeURLEncodedURIComponent(val) {
     if (typeof val !== 'string') { return val; }
@@ -54972,8 +55382,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
    * Initialize a new "request" `Context`
    * with the given `path` and optional initial `state`.
    *
-   * @param {String} path
-   * @param {Object} state
+   * @constructor
+   * @param {string} path
+   * @param {Object=} state
    * @api public
    */
 
@@ -55039,8 +55450,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
    *   - `sensitive`    enable case-sensitive routes
    *   - `strict`       enable strict matching for trailing slashes
    *
-   * @param {String} path
-   * @param {Object} options.
+   * @constructor
+   * @param {string} path
+   * @param {Object=} options
    * @api private
    */
 
@@ -55050,8 +55462,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     this.method = 'GET';
     this.regexp = pathtoRegexp(this.path,
       this.keys = [],
-      options.sensitive,
-      options.strict);
+      options);
   }
 
   /**
@@ -55081,9 +55492,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
    * Check if this route matches `path`, if so
    * populate `params`.
    *
-   * @param {String} path
+   * @param {string} path
    * @param {Object} params
-   * @return {Boolean}
+   * @return {boolean}
    * @api private
    */
 
@@ -55149,7 +55560,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
 
     // ensure link
-    var el = e.target;
+    // use shadow dom when available
+    var el = e.path ? e.path[0] : e.target;
     while (el && 'A' !== el.nodeName) el = el.parentNode;
     if (!el || 'A' !== el.nodeName) return;
 
@@ -55714,7 +56126,7 @@ module.exports = Array.isArray || function (arr) {
 
     // Middleware
     function scrollToTop(ctx, next) {
-      if (window.app) {
+      if (window.app && !window.app.keepOpenForPost) {
         window.app.scrollPageToTop();
       }
       next();
@@ -55742,7 +56154,7 @@ module.exports = Array.isArray || function (arr) {
       window.app.params = data.params;
     });
 
-    page('/domain/:domainId/:tabName', scrollToTop, function (data) {
+    page('/domain/:domainId/:domainTabName', scrollToTop, function (data) {
       window.app.route = 'domain';
       window.app.params = data.params;
     });
@@ -55752,7 +56164,7 @@ module.exports = Array.isArray || function (arr) {
       window.app.params = data.params;
     });
 
-    page('/community/:communityId/:tabName', scrollToTop, function (data) {
+    page('/community/:communityId/:communityTabName', scrollToTop, function (data) {
       window.app.route = 'community';
       window.app.params = data.params;
     });
@@ -55762,22 +56174,22 @@ module.exports = Array.isArray || function (arr) {
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:tabName', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:tabName/:groupName/posts/:filterValue', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/:groupName/posts/:filterValue', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:tabName/:groupName/posts/:filterValue/:categoryId/:categoryName', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/:groupName/posts/:filterValue/:categoryId/:categoryName', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:tabName/:groupName/search/:searchingFor', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/:groupName/search/:searchingFor', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
@@ -55787,7 +56199,7 @@ module.exports = Array.isArray || function (arr) {
       window.app.params = data.params;
     });
 
-    page('/post/:postId/:tabName', scrollToTop, function (data) {
+    page('/post/:postId/:postTabName', scrollToTop, function (data) {
       window.app.route = 'post';
       window.app.params = data.params;
     });
@@ -55797,7 +56209,7 @@ module.exports = Array.isArray || function (arr) {
       window.app.params = data.params;
     });
 
-    page('/user/:userId/:tabName', scrollToTop, function (data) {
+    page('/user/:userId/:userTabName', scrollToTop, function (data) {
       window.app.route = 'user';
       window.app.params = data.params;
     });
