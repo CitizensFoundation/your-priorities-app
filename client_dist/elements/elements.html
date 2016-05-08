@@ -44326,8 +44326,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         @apply(--layout-horizontal);
         position: relative;
         background-color: #FFF;
-        padding-right: 0px;
-        padding-top: 130px;
       }
 
       .action-bar-small {
@@ -45406,12 +45404,26 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         width: 96%;
       }
 
-      .description {
+      .descriptionOuter {
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--description-line-height, 1.3);
-        padding: 12px;
-        padding-bottom: 36px;
+        padding-top: 16px;
+        padding-bottom: 16px;
+        margin: 0;
+        width: 400px;
+      }
+
+      .description, .post-name {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .post-name {
+        font-size: 24px;
+        padding-bottom: 4px;
+        margin: 0;
+        padding-top: 0;
       }
 
       .voting {
@@ -45428,11 +45440,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         right: 0;
       }
 
-      .post-name {
-        padding: 0;
-        padding-bottom: 4px;
-        margin: 0;
-      }
 
       .category-icon {
         width: 64px;
@@ -45449,8 +45456,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       yp-post-cover-media {
-        width: 420px;
-        height: 232px;
+        width: 400px;
+        height: 221px;
         padding-bottom: 4px;
       }
 
@@ -45472,8 +45479,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
 
         yp-post-cover-media {
-          width: 600px;
-          height: 343px;
+          width: 300px;
+          height: 166px;
         }
 
         .voting {
@@ -45488,6 +45495,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         .card-content {
           width: 600px !important;
           padding-bottom: 74px;
+        }
+
+        .description {
+          width: 300px;
         }
       }
 
@@ -45509,20 +45520,18 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     </style>
 
     <div class="layout horizontal wrap">
-      <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
-      <yp-post-actions elevation="-1" floating="" endorse-mode="[[endorseMode]]" class="voting layout vertical end" post="[[activity.Post]]"></yp-post-actions>
+      <div class="layout vertical descriptionOuter">
+        <h3 class="post-name postCardCursor" on-tap="goToPost">[[postName(activity.Post)]]</h3>
+        <div class="description">[[postDescription(activity.Post)]]</div>
+      </div>
+      <div class="layout horizontal">
+        <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
+      </div>
+      <div class="layout horizontal center-center">
+        <yp-post-actions elevation="2" floating="" endorse-mode="[[endorseMode]]" class="voting layout vertical end" post="[[activity.Post]]"></yp-post-actions>
+      </div>
     </div>
 
-    <div class="layout vertical">
-      <div class="layout vertical description">
-        <div class="postCardCursor" on-tap="goToPost">
-          <h3 class="post-name">[[postName(activity.Post)]]</h3>
-          <div>[[postDescription(activity.Post)]]</div>
-        </div>
-      </div>
-      <div class="card-actions layout horizontal center-center">
-      </div>
-    </div>
 
   </template>
 
@@ -46870,8 +46879,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         padding-left: 16px;
       }
 
+      .topHeader[newpost] {
+        background-color: var(--accent-color);
+      }
+
       ac-activity-header {
         padding-left: 16px;
+      }
+
+      ac-activity-post {
+        width :100%;
       }
 
       .headerUserImage {
@@ -46988,7 +47005,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           <div>
             <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
               <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
-              <div class="layout horizontal topHeader">
+              <div class="layout horizontal topHeader" newpost$="[[_isActivityType(activity,'activity.post.new')]]">
                 <div class="layout horizontal flex wrap">
                   <div class="layout horizontal">
                     <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
@@ -49432,16 +49449,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
 
         .addNewIdeaText {
-          padding-top: 16px;
           font-size: 18px;
           width: 100%;
-          color: var(--accent-color);
         }
 
         paper-icon-button {
-          height: 80px;
-          width: 80px;
-          color: var(--accent-color);
+          height: 72px;
+          width: 72px;
         }
 
       }
@@ -54676,31 +54690,31 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
             <section data-route="domain">
               <template is="dom-if" if="[[domainOpen]]" restamp="">
-                <yp-domain domain-id="{{params.domainId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-domain>
+                <yp-domain domain-id="{{params.domainId}}" domain-tab-name="[[params.domainTabName]]" on-change-header="onChangeHeader"></yp-domain>
               </template>
             </section>
 
             <section data-route="community">
               <template is="dom-if" if="[[communityOpen]]" restamp="">
-                <yp-community community-id="{{params.communityId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-community>
+                <yp-community community-id="{{params.communityId}}" community-tab-name="[[params.communityTabName]]" on-change-header="onChangeHeader"></yp-community>
               </template>
             </section>
 
             <section data-route="group">
               <template is="dom-if" if="[[groupOpen]]" restamp="">
-                <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]" searching-for="[[params.searchingFor]]" tab-name="[[params.tabName]]" category-id="[[params.categoryId]]" category-name="[[params.categoryName]]" on-change-header="onChangeHeader"></yp-group>
+                <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]" searching-for="[[params.searchingFor]]" group-tab-name="[[params.groupTabName]]" category-id="[[params.categoryId]]" category-name="[[params.categoryName]]" on-change-header="onChangeHeader"></yp-group>
               </template>
             </section>
 
             <section data-route="post">
               <template is="dom-if" if="[[params.postId]]" restamp="">
-                <yp-post post-id="{{params.postId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-post>
+                <yp-post post-id="{{params.postId}}" post-tab-name="[[params.postTabName]]" on-change-header="onChangeHeader"></yp-post>
               </template>
             </section>
 
             <section data-route="user">
               <template is="dom-if" if="[[params.userId]]" restamp="">
-                <yp-user-page user-id="{{params.userId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-user-page>
+                <yp-user-page user-id="{{params.userId}}" user-tab-name="[[params.userTabName]]" on-change-header="onChangeHeader"></yp-user-page>
               </template>
             </section>
           </iron-pages>
