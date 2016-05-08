@@ -14,34 +14,32 @@
         padding: 16px;
       }
 
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-
-        @media (max-width: 1800px) {
-          :host {
-            width: 1500px !important;
-          }
-        }
-
-        @media (max-width: 1600px) {
-          :host {
-            width: 1100px;
-          }
-        }
-
-        @media (max-width: 1200px) {
-          :host {
-            width: 700px;
-          }
-        }
-
-        @media (max-width: 800px) {
-          :host {
-            width: 500px;
-          }
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1800px) {
+        .mainContainer {
+          width: 1800px !important;
         }
       }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1600px) {
+        .mainContainer {
+          width: 1600px !important;;
+        }
+      }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1200px) {
+        .mainContainer {
+          width: 1200px !important;;
+        }
+      }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 800px) {
+        .mainContainer {
+          width: 800px;
+        }
+      }
+
     </style>
-    <div class="layout vertical wrap">
+    <div class="layout vertical wrap mainContainer">
       <div class="layout horizontal center-center wrap">
         <template is="dom-repeat" class="list" items="[[featuredGroups]]" as="group">
           <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>

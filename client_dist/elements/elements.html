@@ -47006,7 +47006,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                       <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
                     </template>
                     <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
-                      <iron-icon icon="communication:forum" class="stats-icon"></iron-icon>
+                      <iron-icon icon="communication:chat-bubble-outline" class="stats-icon"></iron-icon>
                     </template>
                     <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
                       <iron-icon icon="face" class="stats-icon"></iron-icon>
@@ -48853,7 +48853,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     </style>
 
-    <yp-page create-fab-icon="communication:forum" create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
+    <yp-page create-fab-icon="communication:chat-bubble-outline" create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
 
       <yp-post-card id="postCard" class="largeCard" post="[[post]]" on-refresh="_refresh" header-mode=""></yp-post-card>
 
@@ -50164,7 +50164,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <iron-icon title="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
       <div title="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(group.counter_posts)}}</div>
 
-      <iron-icon title="[[t('stats.discussions')]]" icon="communication:forum" class="stats-icon"></iron-icon>
+      <iron-icon title="[[t('stats.discussions')]]" icon="communication:chat-bubble-outline" class="stats-icon"></iron-icon>
       <div title="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(group.counter_points)}}</div>
 
       <iron-icon title="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
@@ -50971,34 +50971,32 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         padding: 16px;
       }
 
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-
-        @media (max-width: 1800px) {
-          :host {
-            width: 1500px !important;
-          }
-        }
-
-        @media (max-width: 1600px) {
-          :host {
-            width: 1100px;
-          }
-        }
-
-        @media (max-width: 1200px) {
-          :host {
-            width: 700px;
-          }
-        }
-
-        @media (max-width: 800px) {
-          :host {
-            width: 500px;
-          }
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1800px) {
+        .mainContainer {
+          width: 1800px !important;
         }
       }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1600px) {
+        .mainContainer {
+          width: 1600px !important;;
+        }
+      }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1200px) {
+        .mainContainer {
+          width: 1200px !important;;
+        }
+      }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 800px) {
+        .mainContainer {
+          width: 800px;
+        }
+      }
+
     </style>
-    <div class="layout vertical wrap">
+    <div class="layout vertical wrap mainContainer">
       <div class="layout horizontal center-center wrap">
         <template is="dom-repeat" class="list" items="[[featuredGroups]]" as="group">
           <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
@@ -51537,13 +51535,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
         paper-fab {
-          width: 64px;
-          height: 64px;
+          width: 55px;
+          height: 55px;
         }
 
         paper-fab[large]::shadow #icon {
-          width: 36px;
-          height: 36px;
+          width: 34px;
+          height: 34px;
         }
       }
 
@@ -53714,32 +53712,30 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         padding: 16px;
       }
 
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-
-        @media (max-width: 1800px) {
-          .mainContainer {
-            width: 1500px !important;
-          }
-        }
-
-        @media (max-width: 1600px) {
-          .mainContainer {
-            width: 1100px !important;;
-          }
-        }
-
-        @media (max-width: 1200px) {
-          .mainContainer {
-            width: 700px !important;;
-          }
-        }
-
-        @media (max-width: 800px) {
-          .mainContainer {
-            width: 500px !important;;
-          }
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1800px) {
+        .mainContainer {
+          width: 1800px !important;
         }
       }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1600px) {
+        .mainContainer {
+          width: 1600px !important;;
+        }
+      }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1200px) {
+        .mainContainer {
+          width: 1200px !important;;
+        }
+      }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 800px) {
+        .mainContainer {
+          width: 800px;
+        }
+      }
+
     </style>
 
     <div class="layout vertical wrap mainContainer">
@@ -53822,7 +53818,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           <iron-icon title="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
           <div title="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(domain.counter_posts)}}</div>
 
-          <iron-icon title="[[t('stats.discussions')]]" icon="communication:forum" class="stats-icon"></iron-icon>
+          <iron-icon title="[[t('stats.discussions')]]" icon="communication:chat-bubble-outline" class="stats-icon"></iron-icon>
           <div title="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(domain.counter_points)}}</div>
 
           <iron-icon title="[[t('stats.communities')]]" icon="group-work" class="stats-icon hideIfMobile"></iron-icon>
