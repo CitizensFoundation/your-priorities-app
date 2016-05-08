@@ -61,7 +61,7 @@
 
       [title] {
         /* The difference in font size is used to calculate the scale of the title in the transition. */
-        font-size: 32px;
+        font-size: 26px;
       }
 
       .backIcon {
@@ -144,24 +144,22 @@
           <yp-app-nav-drawer id="ypNavDrawer" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
         </app-drawer>
 
-        <app-scrollpos-control selected="{{route}}" reset="{{__equal(route, 'detail')}}"></app-scrollpos-control>
+        <app-scrollpos-control selected="{{route}}"></app-scrollpos-control>
 
         <app-header-layout id="mainArea">
 
           <app-header id="appHeader" effects="waterfall" reveals class="main-header">
             <app-toolbar>
-              <div hidden$="[[!closePostHeader]]">
+              <div hidden$="[[closePostHeader]]" class="layout horizontal">
                 <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
-                <paper-icon-button icon="arrow-back" on-tap="goBack" class="backIcon"
-                                   hidden$="[[!showBack]]"></paper-icon-button>
-                <iron-icon class="headerIcon" icon$="[[headerIcon]]" hidden$="[[!headerIcon]]" hidden></iron-icon>
                 <div title class="layout vertical wrap">[[headerTitle]]</div>
+                <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
               </div>
-              <div hidden$="[[closePostHeader]]">
+              <template is="dom-if" if="[[closePostHeader]]">
                 <paper-icon-button id="paperToggleNavMenu" icon="clear" on-tap="_closePost"></paper-icon-button>
-              </div>
+              </template>
 
-              <span class="flex" hidden></span>
+              <span class="flex"></span>
 
               <!-- Toolbar icons -->
               <paper-icon-button icon="search" on-tap="toggleSearch" hidden hiddesn$="[[!showSearch]]"></paper-icon-button>
@@ -282,6 +280,8 @@
           type: String
         },
 
+        storedBackPath: String,
+
         headerTitle: {
           type: String
         },
@@ -321,8 +321,8 @@
         },
 
         keepOpenForPost: {
-          type: Boolean,
-          value: false
+          type: String,
+          value: null
         },
 
         groupOpen: {
@@ -342,7 +342,8 @@
 
         closePostHeader: {
           type: Boolean,
-          computed: '_closePostHeader(parans, keepOpenForPost)'
+          computed: '_closePostHeader(params, keepOpenForPost)',
+          value: null
         }
       },
 
@@ -354,12 +355,19 @@
         'yp-set-pages': '_setPages'
       },
 
-      setKeepOpenForPostsOn: function () {
-        this.set('keepOpenForPost', true);
+      setKeepOpenForPostsOn: function (goBackToPage) {
+        this.set('keepOpenForPost', goBackToPage);
+        this.set('storedBackPath', this.backPath);
       },
 
       _closePost: function () {
-        page.back();
+        if (this.keepOpenForPost)
+          page(this.keepOpenForPost)
+
+        if (this.storedBackPath)
+          this.set('backPath', this.storedBackPath);
+
+        this.set('this.keepOpenForPost', null);
       },
 
       _closePostHeader: function (params, keepOpenForPost) {
@@ -512,9 +520,6 @@
       },
 
       routeChanged: function (newValue, oldValue) {
-        if (!this.params.postId) {
-          this.set('keepOpenForPost', false);
-        }
         if (this.$$("#drawer") && (!this.$$("#drawer").persistent)) {
           this.$$("#drawer").close();
         }

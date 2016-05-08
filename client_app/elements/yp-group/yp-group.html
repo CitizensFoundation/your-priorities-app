@@ -86,7 +86,7 @@
             <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
           </div>
           <div class="layout horizontal center-center">
-            <yp-post-list id="openPostList" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+            <yp-post-list id="openPostList" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
           </div>
         </section>
         <section>
@@ -95,17 +95,17 @@
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section>
             <div class="layout horizontal center-center">
-              <yp-post-list id="inProgressPostList" selected-tab="[[selected]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              <yp-post-list id="inProgressPostList" selected-tab="[[selected]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section>
             <div class="layout horizontal center-center">
-              <yp-post-list id="successfulPostList" selected-tab="[[selected]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              <yp-post-list id="successfulPostList" selected-tab="[[selected]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section>
             <div class="layout horizontal center-center">
-              <yp-post-list id="failedPostList" selected-tab="[[selected]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
+              <yp-post-list id="failedPostList" selected-tab="[[selected]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
         </template>
@@ -181,6 +181,10 @@
         mapActive: {
           type: Boolean,
           value: false
+        },
+
+        lastValidGroupId: {
+          type: String
         }
       },
 
@@ -277,7 +281,8 @@
       },
 
       _groupIdChanged: function (newValue, oldValue) {
-        if (newValue) {
+        if (newValue && newValue!=this.lastValidGroupId) {
+          this.set('lastValidGroupId', newValue);
           this.$.ajax.url = '/api/groups/' + this.groupId;
           this.$.ajax.generateRequest();
         }

@@ -12,7 +12,7 @@
     "paper-elements": "PolymerElements/paper-elements",
     "platinum-elements": "PolymerElements/platinum-elements",
     "neon-elements": "PolymerElements/neon-elements",
-    "page": "visionmedia/page.js#~1.6.3",
+    "page": "visionmedia/page.js#~1.7.1",
     "moment": "~2.11.2",
     "app-layout": "PolymerLabs/app-layout",
     "lodash-element": "~1.0.2",

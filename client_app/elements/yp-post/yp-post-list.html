@@ -228,14 +228,13 @@
       },
 
       ready: function () {
-        this.set("posts", []);
-        this._loadMoreData();
+
       },
 
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue) {
-        } else {
-          this.set("posts",[]);
+          this.set("posts", []);
+          this._loadMoreData();
         }
       },
 

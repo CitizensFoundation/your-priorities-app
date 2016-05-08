@@ -66,48 +66,45 @@
       }
     </style>
 
-    <template is="dom-if" if="[[post]]" restamp>
       <div class="mapCanvas">
-        <template is="dom-if" if="[[_withCoverMediaType(post,'none')]]">
+        <template is="dom-if" if="[[noneActive]]">
           <iron-image sizing="cover" class="main-image" src="https://i.imgur.com/sdsFAoT.png"></iron-image>
         </template>
 
-        <template is="dom-if" if="[[_withCoverMediaType(post,'category')]]">
+        <template is="dom-if" if="[[categoryActive]]">
           <div class="layout horizontal center-center">
             <iron-image class="category-icon" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath(post)]]"></iron-image>
           </div>
         </template>
 
-        <template is="dom-if" if="[[_withCoverMediaType(post,'image')]]">
+        <template is="dom-if" if="[[imageActive]]">
           <iron-image sizing="cover" class="main-image" src="[[postImagePath()]]"></iron-image>
         </template>
 
-        <template is="dom-if" if="[[post.location]]" restamp>
-          <template is="dom-if" if="[[_withCoverMediaType(post,'streetView')]]" restamp>
-            <google-streetview-pano
-              position="[[_getMapPosition()]]"
-              heading="330"
-              api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
-              pitch="2"
-              zoom="0.8"
-              disable-default-ui>
-            </google-streetview-pano>
-          </template>
+        <template is="dom-if" if="[[streetViewActive]]" restamp>
+          <google-streetview-pano
+            position="[[mapPosition]]"
+            heading="330"
+            api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
+            pitch="2"
+            zoom="0.8"
+            disable-default-ui>
+          </google-streetview-pano>
+        </template>
 
-          <template is="dom-if" if="[[_withCoverMediaType(post,'map')]]" restamp>
-            <google-map class="map"
-                        libraries="places"
-                        fit-to-markers
-                        zoom="[[_zoomLevel(post)]]"
-                        map-type="[[_mapType(post)]]"
-                        api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-              <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"></google-map-marker>
-            </google-map>
-          </template>
+        <template is="dom-if" if="[[mapActive]]" restamp>
+          <google-map id="coverMediaMap" class="map"
+                      libraries="places"
+                      fit-to-markers
+                      zoom="[[_zoomLevel(post)]]"
+                      map-type="[[_mapType(post)]]"
+                      api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+            <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
+          </google-map>
         </template>
       </div>
     </template>
-  </template>
+
 
   <script>
     Polymer({
@@ -123,7 +120,97 @@
           type: Object,
           notify: true,
           observer: "_postChanged"
+        },
+
+
+        noneActive: {
+          type: Boolean,
+          computed: '_isNoneActive(post)'
+        },
+
+        categoryActive: {
+          type: Boolean,
+          computed: '_isCategoryActive(post)'
+        },
+
+        imageActive: {
+          type: Boolean,
+          computed: '_isImageActive(post)'
+        },
+
+        mapActive: {
+          type: Boolean,
+          computed: '_isMapActive(post, post.location, post.location.latitude)'
+        },
+
+        streetViewActive: {
+          type: Boolean,
+          computed: '_isStreetViewActive(post, post.location, post.location.latitude)'
+        },
+
+        latitude: {
+          type: Number,
+          computed: '_getLatitute(post.location.latitude)'
+        },
+
+        longitude: {
+          type: Number,
+          computed: '_getLongitude(post.location.longitude)'
+        },
+
+        mapPosition: {
+          type: Object,
+          computed: '_getMapPosition(post.location)'
         }
+      },
+
+      _getLatitute: function (latitude) {
+        if (latitude)
+          return latitude;
+        else
+          return 0
+      },
+
+      _getLongitude: function (longitude) {
+        if (longitude)
+          return longitude;
+        else
+          return 0
+      },
+
+      _isNoneActive: function (post) {
+        if (this._withCoverMediaType(post, 'none'))
+          return true
+        else
+          return false
+      },
+
+      _isCategoryActive: function (post) {
+        if (this._withCoverMediaType(post, 'category'))
+          return true
+        else
+          return false
+      },
+
+      _isImageActive: function (post) {
+        if (this._withCoverMediaType(post,'image'))
+          return true
+        else
+          return false
+      },
+
+      _isMapActive: function (post, postLocation, lat) {
+        if (lat && postLocation && this._withCoverMediaType(post,'map'))
+          return true
+        else
+          return false
+      },
+
+      _isStreetViewActive: function (post, postLocation, lat) {
+        if (lat && postLocation && this._withCoverMediaType(post,'streetView'))
+          return true
+        else
+          return false
       },
 
       _postChanged: function(newValue, oldValue) {
@@ -156,8 +243,12 @@
         }
       },
 
-      _getMapPosition: function () {
-        return { lat: this.post.location.latitude, lng: this.post.location.longitude }
+      _getMapPosition: function (location) {
+        if (location) {
+          return { lat: location.latitude, lng: location.longitude }
+        } else {
+          return { lat: 0, lng: 0 }
+        }
       },
 
       postImagePath: function () {

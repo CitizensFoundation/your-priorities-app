@@ -84,8 +84,10 @@
       }
       var postUrl = '/post/' + postId;
       window.appGlobals.activity('open', 'post', postUrl);
-      window.app.setKeepOpenForPostsOn();
-      page(postUrl);
+      window.app.setKeepOpenForPostsOn(page.current);
+      this.async(function () {
+        page(postUrl);
+      });
     },
 
     getPositionInArrayFromId: function (collection, id) {
