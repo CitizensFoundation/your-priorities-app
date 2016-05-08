@@ -59,8 +59,16 @@
         padding-left: 16px;
       }
 
+      .topHeader[newpost] {
+        background-color: var(--accent-color);
+      }
+
       ac-activity-header {
         padding-left: 16px;
+      }
+
+      ac-activity-post {
+        width :100%;
       }
 
       .headerUserImage {
@@ -182,7 +190,7 @@
           <div>
             <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
               <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
-              <div class="layout horizontal topHeader">
+              <div class="layout horizontal topHeader" newpost$="[[_isActivityType(activity,'activity.post.new')]]">
                 <div class="layout horizontal flex wrap">
                   <div class="layout horizontal">
                     <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">

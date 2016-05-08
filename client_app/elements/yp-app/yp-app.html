@@ -204,20 +204,20 @@
 
             <section data-route="domain">
               <template is="dom-if" if="[[domainOpen]]" restamp>
-                <yp-domain domain-id="{{params.domainId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-domain>
+                <yp-domain domain-id="{{params.domainId}}" domain-tab-name="[[params.domainTabName]]" on-change-header="onChangeHeader"></yp-domain>
               </template>
             </section>
 
             <section data-route="community">
               <template is="dom-if" if="[[communityOpen]]" restamp>
-                <yp-community community-id="{{params.communityId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-community>
+                <yp-community community-id="{{params.communityId}}" community-tab-name="[[params.communityTabName]]" on-change-header="onChangeHeader"></yp-community>
               </template>
             </section>
 
             <section data-route="group">
               <template is="dom-if" if="[[groupOpen]]" restamp>
                 <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]"
-                          searching-for="[[params.searchingFor]]" tab-name="[[params.tabName]]"
+                          searching-for="[[params.searchingFor]]" group-tab-name="[[params.groupTabName]]"
                           category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
                           on-change-header="onChangeHeader"></yp-group>
               </template>
@@ -225,13 +225,13 @@
 
             <section data-route="post">
               <template is="dom-if" if="[[params.postId]]" restamp>
-                <yp-post post-id="{{params.postId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-post>
+                <yp-post post-id="{{params.postId}}" post-tab-name="[[params.postTabName]]" on-change-header="onChangeHeader"></yp-post>
               </template>
             </section>
 
             <section data-route="user">
               <template is="dom-if" if="[[params.userId]]" restamp>
-                <yp-user-page user-id="{{params.userId}}" tab-name="[[params.tabName]]" on-change-header="onChangeHeader"></yp-user-page>
+                <yp-user-page user-id="{{params.userId}}" user-tab-name="[[params.userTabName]]" on-change-header="onChangeHeader"></yp-user-page>
               </template>
             </section>
           </iron-pages>
