@@ -47238,10 +47238,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       },
 
       _joinPost: function (event) {
-        if (event.model.activity.Post) {
-          this.goToPost(event.model.activity.Post.id);
-        } else if (event.model.activity.PostStatusChange) {
-          this.goToPost(event.model.activity.PostStatusChange.post_id);
+        if (!this.postId) {
+          if (event.model.activity.Post) {
+            this.goToPost(event.model.activity.Post.id);
+          } else if (event.model.activity.PostStatusChange) {
+            this.goToPost(event.model.activity.PostStatusChange.post_id);
+          }
         }
       },
 
