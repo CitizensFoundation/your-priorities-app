@@ -42,7 +42,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       window.app.params = data.params;
     });
 
-    page('/domain/:domainId/:tabName', scrollToTop, function (data) {
+    page('/domain/:domainId/:domainTabName', scrollToTop, function (data) {
       window.app.route = 'domain';
       window.app.params = data.params;
     });
@@ -52,7 +52,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       window.app.params = data.params;
     });
 
-    page('/community/:communityId/:tabName', scrollToTop, function (data) {
+    page('/community/:communityId/:communityTabName', scrollToTop, function (data) {
       window.app.route = 'community';
       window.app.params = data.params;
     });
@@ -62,22 +62,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:tabName', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:tabName/:groupName/posts/:filterValue', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/:groupName/posts/:filterValue', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:tabName/:groupName/posts/:filterValue/:categoryId/:categoryName', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/:groupName/posts/:filterValue/:categoryId/:categoryName', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:tabName/:groupName/search/:searchingFor', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/:groupName/search/:searchingFor', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
@@ -87,7 +87,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       window.app.params = data.params;
     });
 
-    page('/post/:postId/:tabName', scrollToTop, function (data) {
+    page('/post/:postId/:postTabName', scrollToTop, function (data) {
       window.app.route = 'post';
       window.app.params = data.params;
     });
@@ -97,7 +97,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       window.app.params = data.params;
     });
 
-    page('/user/:userId/:tabName', scrollToTop, function (data) {
+    page('/user/:userId/:userTabName', scrollToTop, function (data) {
       window.app.route = 'user';
       window.app.params = data.params;
     });

@@ -172,7 +172,7 @@
           value: false
         },
 
-        tabName: {
+        groupTabName: {
           type: String,
           value: null,
           observer: '_tabNameChanged'
@@ -309,8 +309,8 @@
           this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages);
         }
 
-        if (this.tabName) {
-          this._setSelectedFromTabName(this.tabName);
+        if (this.groupTabName) {
+          this._setSelectedFromTabName(this.groupTabName);
         }
 
         this.fire("change-header", { headerTitle: this.group.Community.name,
