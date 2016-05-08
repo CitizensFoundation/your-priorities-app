@@ -24,6 +24,75 @@ var sendDomainOrError = function (res, domain, context, user, error, errorStatus
   }
 };
 
+var getDomain = function (req, domainId, done) {
+  var attributes = null;
+  auth.hasDomainAdmin(domainId, req, function (error, isAdmin) {
+    if (!isAdmin) {
+      attributes = models.Domain.defaultAttributesPublic;
+    }
+
+    models.Domain.find({
+      where: {id: domainId},
+      attributes: attributes,
+      order: [
+        [{model: models.Community}, 'counter_users', 'desc'],
+        [{model: models.Image, as: 'DomainLogoImages'}, 'created_at', 'asc'],
+        [{model: models.Image, as: 'DomainHeaderImages'}, 'created_at', 'asc'],
+        [models.Community, {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
+      ],
+      include: [
+        {
+          model: models.Image, as: 'DomainLogoImages',
+          required: false
+        },
+        {
+          model: models.Image, as: 'DomainHeaderImages',
+          required: false
+        },
+        {
+          model: models.Community,
+          where: {
+            access: {
+              $ne: models.Community.ACCESS_SECRET
+            }
+          },
+          include: [
+            {
+              model: models.Image, as: 'CommunityLogoImages',
+              required: false
+            },
+            {
+              model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+              required: false
+            }
+          ],
+          required: false
+        }
+      ]
+    }).then(function (domain) {
+      if (domain) {
+        log.info('Domain Viewed', {domain: toJson(domain.simple()), context: 'view', user: toJson(req.user)});
+        if (req.ypDomain && req.ypDomain.secret_api_keys &&
+          req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
+          req.ypDomain.secret_api_keys.saml.entryPoint.length > 6) {
+          domain.dataValues.samlLoginProvided = true;
+        }
+
+        if (req.ypDomain && req.ypDomain.secret_api_keys &&
+          req.ypDomain.secret_api_keys.facebook && req.ypDomain.secret_api_keys.facebook.client_secret &&
+          req.ypDomain.secret_api_keys.facebook.client_secret.length > 6) {
+          domain.dataValues.facebookLoginProvided = true;
+        }
+        done(null, domain);
+      } else {
+        done("Not found")
+      }
+    }).catch(function (error) {
+      done(error)
+    });
+  });
+};
+
 router.delete('/:domainId/:activityId/delete_activity', auth.can('edit domain'), function(req, res) {
   models.AcActivity.find({
     where: {
@@ -142,73 +211,32 @@ router.post('/:domainId/news_story', auth.isLoggedIn, auth.can('view domain'), f
 });
 
 router.get('/', function(req, res) {
-  if (req.ypCommunity) {
-    log.info('Domain Lookup Found Community', { domain: toJson(req.ypCommunity), context: 'index', user: toJson(req.user) });
-    res.send({domain: req.ypCommunity, domain: req.ypDomain});
-  } else {
-    log.info('Domain Lookup Found Domain', { domain: toJson(req.ypDomain), context: 'index', user: toJson(req.user) });
-    res.send({domain: req.ypDomain})
-  }
+  getDomain(req, req.ypDomain.id, function (error, domain) {
+    if (error) {
+      if (error=='Not found')
+        sendDomainOrError(res, null, 'view', req.user, error, 404);
+      else
+        sendDomainOrError(res, null, 'view', req.user, error);
+    } else {
+      if (req.ypCommunity) {
+        log.info('Domain Lookup Found Community', { domain: toJson(req.ypCommunity), context: 'index', user: toJson(req.user) });
+        res.send({domain: req.ypCommunity, domain: domain});
+      } else {
+        log.info('Domain Lookup Found Domain', { domain: toJson(domain), context: 'index', user: toJson(req.user) });
+        res.send({domain: domain})
+      }
+    }
+  });
 });
 
 router.get('/:id', auth.can('view domain'), function(req, res) {
-
-  var attributes = null;
-
-  auth.hasDomainAdmin(req.params.id, req, function (error, isAdmin) {
-    if (!isAdmin) {
-      attributes = models.Domain.defaultAttributesPublic;
-    }
-    
-    models.Domain.find({
-      where: { id: req.params.id },
-      attributes: attributes,
-      order: [
-        [ { model: models.Community } ,'counter_users', 'desc' ],
-        [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'asc' ],
-        [ { model: models.Image, as: 'DomainHeaderImages' } , 'created_at', 'asc' ],
-        [ models.Community, { model: models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc' ]
-      ],
-      include: [
-        {
-          model: models.Image, as: 'DomainLogoImages',
-          required: false
-        },
-        {
-          model: models.Image, as: 'DomainHeaderImages',
-          required: false
-        },
-        { model: models.Community,
-          where: {
-            access: {
-              $ne: models.Community.ACCESS_SECRET
-            }
-          },
-          include: [
-            {
-              model: models.Image, as: 'CommunityLogoImages',
-              required: false
-            },
-            {
-              model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
-              required: false
-            }
-          ],
-          required: false
-        }
-      ]
-    }).then(function(domain) {
-      if (domain) {
-        log.info('Domain Viewed', { domain: toJson(domain.simple()), context: 'view', user: toJson(req.user) });
-        res.send(domain);
-      } else {
-        sendDomainOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
-      }
-    }).catch(function(error) {
+  getDomain(req, req.params.id, function (error, domain) {
+    if (error) {
       sendDomainOrError(res, null, 'view', req.user, error);
-    });
+    } else {
+      res.send(domain);
+    }
   });
-
 });
 
 router.put('/:id', auth.can('edit domain'), function(req, res) {

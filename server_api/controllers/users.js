@@ -443,17 +443,6 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
         if (req.user.loginProvider)
           user.dataValues.loginProvider = req.user.loginProvider;
 
-        if (req.ypDomain && req.ypDomain.secret_api_keys &&
-          req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
-          req.ypDomain.secret_api_keys.saml.entryPoint.length>6) {
-          user.dataValues.samlLoginProvided = true;
-        }
-
-        if (req.ypDomain && req.ypDomain.secret_api_keys &&
-          req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
-          req.ypDomain.secret_api_keys.facebook.client_secret.length>6) {
-          user.dataValues.samlLoginProvided = true;
-        }
         res.send(user);
       }
     })

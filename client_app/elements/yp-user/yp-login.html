@@ -207,10 +207,10 @@
             </paper-input>
 
             <div class="layout horizontal center-center socialMediaLogin">
-              <div class="btn-auth btn-facebook" on-tap="_facebookLogin">
+              <div class="btn-auth btn-facebook" on-tap="_facebookLogin" hidden$="[[!_facebookProvider()]]">
                 [[t('user.facebookLogin')]]
               </div>
-              <div class="btn-auth btn-facebook" on-tap="_islandIsLogin">
+              <div class="btn-auth btn-facebook" on-tap="_islandIsLogin" hidden$="[[!_samlProvider()]]">
                 [[t('user.islandIs')]]
               </div>
             </div>
@@ -348,11 +348,19 @@
 
     _islandIsLogin: function () {
       var url = '/api/users/auth/saml',
-        width = 1000,
+        width = 1200,
         height = 650,
         top = (window.outerHeight - height) / 2,
         left = (window.outerWidth - width) / 2;
       window.open(url, 'saml_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+    },
+
+    _facebookProvider: function () {
+      return (window.appGlobals.domain.facebookLoginProvided)
+    },
+
+    _samlProvider: function () {
+      return (window.appGlobals.domain.samlLoginProvided)
     },
 
     _openedChanged: function (newValue) {

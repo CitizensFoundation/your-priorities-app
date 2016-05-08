@@ -84,7 +84,8 @@ router.get('/:id', auth.can('view organization'), function(req, res) {
     ],
     include: [
       {
-        model: models.Domain
+        model: models.Domain,
+        attributes: models.Domain.defaultAttributesPublic
       },
       {
         model: models.Image, as: 'OrganizationLogoImages',
