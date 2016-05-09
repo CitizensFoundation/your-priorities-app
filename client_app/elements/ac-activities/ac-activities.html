@@ -50,7 +50,7 @@
         height: 100%;
         overflow: visible;
         padding-top: 24px;
-        @apply(--layout-vertical);
+        @apply(--layout-flex);
       }
 
       .topHeader {
@@ -185,7 +185,7 @@
       </div>
     </template>
     <div id="scrollableRegion">
-      <iron-list id="list" items="[[activities]]" as="activity">
+      <iron-list id="list" items="[[activities]]" as="activity" class="flex">
         <template>
           <div>
             <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">

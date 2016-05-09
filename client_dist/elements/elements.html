@@ -46954,7 +46954,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         height: 100%;
         overflow: visible;
         padding-top: 24px;
-        @apply(--layout-vertical);
+        @apply(--layout-flex);
       }
 
       .topHeader {
@@ -47084,7 +47084,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       </div>
     </template>
     <div id="scrollableRegion">
-      <iron-list id="list" items="[[activities]]" as="activity">
+      <iron-list id="list" items="[[activities]]" as="activity" class="flex">
         <template>
           <div>
             <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
@@ -49968,6 +49968,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       #scrollableRegion {
         height: 100%;
+        @apply(--layout-flex);
       }
 
       iron-list {
