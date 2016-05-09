@@ -55,6 +55,15 @@
                      char-counter class="mainInput">
         </paper-input>
 
+        <paper-input id="shortName"
+                     name="shortName"
+                     type="text"
+                     label="[[t('community.url')]]"
+                     value="{{community.short_name}}"
+                     maxlength="80"
+                     char-counter class="mainInput">
+        </paper-input>
+
         <paper-textarea id="description"
                         name="description"
                         value="{{community.description}}"
