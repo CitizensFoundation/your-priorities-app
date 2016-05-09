@@ -164,8 +164,8 @@
 
   "point": {
     "point": "Point",
-    "for": "For...",
-    "against": "Against...",
+    "for": "Your point for...",
+    "against": "Your point against...",
     "add_up": "Add point for",
     "add_down": "Add point against",
     "helpful": "Vote point up as helpful",

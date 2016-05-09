@@ -48183,6 +48183,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         margin-top: 8px;
       }
 
+      paper-button {
+        color: #FFF;
+        background-color: var(--accent-color);
+      }
+      
       @media (max-width: 985px) {
         .pointText {
           width: 420px;
@@ -48222,7 +48227,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
                 <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
                   <div class="addPointFab layout horizontal center-center">
-                    <paper-fab icon="add" mini="" elevation="3" on-tap="addPointUp" title="[[t('point.add_up')]]"></paper-fab>
+                    <paper-button icon="add" mini="" elevation="3" on-tap="addPointUp" title="[[t('point.add_up')]]">[[t('point.postComment')]]</paper-button>
                   </div>
                 </template>
               </div>
@@ -48243,7 +48248,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
                 <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
                   <div class="addPointFab layout horizontal center-center">
-                    <paper-fab icon="add" mini="" z="3" on-tap="addPointDown" title="[[t('point.add_down')]]"></paper-fab>
+                    <paper-button icon="add" mini="" z="3" on-tap="addPointDown" title="[[t('point.add_down')]]">[[t('point.postComment')]]</paper-button>
                   </div>
                 </template>
               </div>
@@ -48473,7 +48478,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         },
 
         ifLengthIsRight: function (textValue) {
-          return textValue.length > 20;
+          return textValue.length > 6;
         }
 
       });
