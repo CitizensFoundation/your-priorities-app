@@ -39035,9 +39035,11 @@ value. `setMax` should move the slider to the maximum value.
               </div>
             </div>
 
-            <div class="layout horizontal center-center">
-              <re-captcha sitekey="[[reCaptchaSiteKey]]" lang="[[getLocale()]]"></re-captcha>
-            </div>
+            <template>
+              <div class="layout horizontal center-center">
+                <re-captcha sitekey="[[reCaptchaSiteKey]]" lang="[[getLocale()]]"></re-captcha>
+              </div>
+            </template>
 
           </form>
           <div class="buttons">
@@ -39535,8 +39537,6 @@ value. `setMax` should move the slider to the maximum value.
         <paper-button autofocus="" on-tap="_validateAndSend">[[t('user.forgotPassword')]]</paper-button>
       </div>
     </paper-dialog>
-
-
   </template>
 
 </dom-module>
