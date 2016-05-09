@@ -43884,7 +43884,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     properties: {
       moreToLoad: {
         type: Boolean,
-        value: false
+        value: false,
+        notify: true
       }
     },
 
@@ -43908,12 +43909,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     },
 
     setMoreToLoad: function () {
-      this.async(function () {
-        this.set('moreToLoad', true);
+      if (false) {
         this.async(function () {
-          this._isLoadMoreElementInView();
-        }, 400);
-      }, 250);
+          this.set('moreToLoad', true);
+          this.async(function () {
+            this._isLoadMoreElementInView();
+          }, 800);
+        }, 50);
+      } else {
+        this.set('moreToLoad', true);
+      }
     }
   }
 </script>
@@ -47429,7 +47434,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         this.$.list.fire('iron-resize');
         this.async(function () {
           this.$.list.fire('iron-resize');
-        }, 750);
+        }, 1200);
       }
     });
   </script>
