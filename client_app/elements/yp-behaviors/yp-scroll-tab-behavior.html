@@ -9,7 +9,8 @@
     properties: {
       moreToLoad: {
         type: Boolean,
-        value: false
+        value: false,
+        notify: true
       }
     },
 
@@ -33,12 +34,16 @@
     },
 
     setMoreToLoad: function () {
-      this.async(function () {
-        this.set('moreToLoad', true);
+      if (false) {
         this.async(function () {
-          this._isLoadMoreElementInView();
-        }, 400);
-      }, 250);
+          this.set('moreToLoad', true);
+          this.async(function () {
+            this._isLoadMoreElementInView();
+          }, 800);
+        }, 50);
+      } else {
+        this.set('moreToLoad', true);
+      }
     }
   }
 </script>
