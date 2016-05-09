@@ -36303,7 +36303,7 @@ event and do your own custom submission:
 
     <google-map-search id="mapSearch" map="[[map]]" on-google-map-search-results="_mapSearchResults"></google-map-search>
 
-    <google-map id="map" zoom="[[location.map_zoom]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" map="{{map}}" libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers="">
+    <google-map id="map" zoom="[[mapZoom]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" map="{{map}}" libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers="">
       <google-map-marker latitude="64.13897027178841" longitude="-21.876912117004395" id="marker"></google-map-marker>
     </google-map>
 
@@ -36348,6 +36348,12 @@ event and do your own custom submission:
           notify: true
         },
 
+        mapZoom: {
+          type: Number,
+          value: 13,
+          computed: '_computeMapZoom(location)'
+        },
+
         encodedLocation: {
           type: String,
           notify: true
@@ -36366,6 +36372,13 @@ event and do your own custom submission:
           type: Boolean,
           value: false
         }
+      },
+
+      _computeMapZoom: function (location) {
+        if (location && location.map_zoom)
+          return location.map_zoom;
+        else
+          return this.mapZoom
       },
 
       _submitOnEnter: function (event) {
@@ -36393,12 +36406,14 @@ event and do your own custom submission:
 
       ready: function () {
         if (!this.location) {
-          if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-              if (!this.location)
-                this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, map_zoom: 13 }
-            }.bind(this));
-          }
+          this.async(function () {
+            if ("geolocation" in navigator) {
+              navigator.geolocation.getCurrentPosition(function(position) {
+                if (!this.location)
+                  this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, map_zoom: 13 }
+              }.bind(this));
+            }
+          },50);
         }
       },
 
