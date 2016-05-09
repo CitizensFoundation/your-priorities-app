@@ -54498,9 +54498,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
     <style>
 
-      paper-material{
+      paper-material {
         z-index: 1000;
-        background-color: #F00;
+        background-color: #FFF;
       }
 
       app-header-layout {
@@ -54524,34 +54524,34 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .material {
-        background-color: var(--primary-color-800);
+        background-color: #FFF;
+        color: var(--primary-color-800)
+      }
+
+      paper-item {
+        cursor: pointer;
       }
     </style>
 
     <paper-material elevation="1" class="material">
-      <app-header-layout has-scrolling-region="">
-        <app-header fixed="">
-          <div class="layout vertical">
+      <div class="layout vertical">
+        <div class="header">[[t('myDomains')]]</div>
+        <template is="dom-repeat" items="[[myDomains]]" as="domain">
+          <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[domain.name]]</paper-item>
+        </template>
 
-            <div class="header">[[t('myDomains')]]</div>
-            <template is="dom-repeat" items="[[myDomains]]" as="domain">
-              <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[domain.name]]</paper-item>
-            </template>
-
-            <div class="header">[[t('myCommunities')]]</div>
-            <template is="dom-repeat" items="[[myCommunities]]" as="community">
-              <div class="layout horizontal">
-                <paper-item data-args$="[[community.id]]" on-tap="_goToCommunity">[[community.name]]</paper-item>
-              </div>
-            </template>
-
-            <div class="header">[[t('myGroups')]]</div>
-            <template is="dom-repeat" items="[[myGroups]]" as="group">
-              <paper-item data-args$="[[group.id]]" on-tap="_goToGroup">[[group.name]]</paper-item>
-            </template>
+        <div class="header">[[t('myCommunities')]]</div>
+        <template is="dom-repeat" items="[[myCommunities]]" as="community">
+          <div class="layout horizontal">
+            <paper-item data-args$="[[community.id]]" on-tap="_goToCommunity">[[community.name]]</paper-item>
           </div>
-        </app-header>
-      </app-header-layout>
+        </template>
+
+        <div class="header">[[t('myGroups')]]</div>
+        <template is="dom-repeat" items="[[myGroups]]" as="group">
+          <paper-item data-args$="[[group.id]]" on-tap="_goToGroup">[[group.name]]</paper-item>
+        </template>
+      </div>
     </paper-material>
     <iron-signals on-iron-signal-got-memberships="_userMembershipsReady"></iron-signals>
   </template>
@@ -54620,7 +54620,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _reset: function () {
         if (window.appUser && window.appUser.memberships) {
-          this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 7));
+          this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 1000));
           this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 7));
           this.set('myDomains', _.take(window.appUser.memberships.DomainUsers, 3));
         }
@@ -54755,11 +54755,15 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <app-drawer-layout drawer-width="360px" responsive-width="16000px">
 
         <app-drawer id="drawer" align="end" position="right" swipe-open="">
-          <yp-app-drawer id="ypDrawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
+          <div style="height: 100%; overflow: auto;">
+            <yp-app-drawer id="ypDrawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
+          </div>
         </app-drawer>
 
         <app-drawer id="navDrawer" align="start" position="left" swipe-open="">
-          <yp-app-nav-drawer id="ypNavDrawer" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
+          <div style="height: 100%; overflow: auto;">
+            <yp-app-nav-drawer id="ypNavDrawer" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
+          </div>
         </app-drawer>
 
         <app-scrollpos-control selected="{{route}}"></app-scrollpos-control>
