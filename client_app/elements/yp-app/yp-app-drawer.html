@@ -15,6 +15,7 @@
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
+<link href="../yp-user/yp-user-language-selector.html" rel="import">
 
 <link rel="import" href="../yp-user/yp-user-info.html">
 
@@ -32,15 +33,6 @@
         background-color: #FFF; /* @apply(--primary-background-color, #F2F2F2); */
         z-index: 1000;
       }
-
-      .language {
-        margin-top: 16px;
-      }
-
-      .languageSelection {
-        margin-top: 16px;
-        font-weight: bold;
-      }
     </style>
 
     <paper-material elevation="1" class="material">
@@ -50,15 +42,8 @@
             <template is="dom-if" if="[[user]]">
               <yp-user-info on-open-user-edit="_openEdit" user="{{user}}"></yp-user-info>
             </template>
-            <div class="layout vertical center-center">
-              <div class="languageSelection">
-                [[t('selectLanguage')]]
-              </div>
-              <div class="layout horizontal">
-                <paper-button class="language" on-tap="_selectEnglish">English</paper-button>
-                <paper-button class="language" on-tap="_selectIcelandic">Íslenska</paper-button>
-              </div>
-            </div>
+            <yp-user-language-selector></yp-user-language-selector>
+          </div>
         </app-header>
       </app-header-layout>
     </paper-material>
@@ -89,17 +74,6 @@
       behaviors: [
         Polymer.appHelpers
       ],
-
-      // TODO: Do proper language based on dynamic localized strings, this is a hack ;)
-      _selectEnglish: function () {
-        localStorage.setItem('yp-user-locale','en');
-        location.reload();
-      },
-
-      _selectIcelandic: function () {
-        localStorage.setItem('yp-user-locale','is');
-        location.reload();
-      },
 
       _openEdit: function () {
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userEdit");

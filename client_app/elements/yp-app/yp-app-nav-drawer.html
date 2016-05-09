@@ -16,7 +16,7 @@
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
-
+<link href="../yp-user/yp-user-language-selector.html" rel="import">
 <link rel="import" href="../yp-user/yp-user-info.html">
 
 <dom-module id="yp-app-nav-drawer">
@@ -60,8 +60,9 @@
       }
     </style>
 
-    <paper-material elevation="1" class="material">
-      <div class="layout vertical">
+    <paper-material elevation="0" class="material">
+      <yp-user-language-selector hidden$="[[user]]"></yp-user-language-selector>
+      <div class="layout vertical" hidden$="[[!user]]">
         <div class="header">[[t('myDomains')]]</div>
         <template is="dom-repeat" items="[[myDomains]]" as="domain">
           <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[domain.name]]</paper-item>
