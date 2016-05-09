@@ -38,7 +38,7 @@ var sendDomain = function (id, req, res) {
       var imageUrl = '';
       if (domain.DomainLogoImages && domain.DomainLogoImages.length>0) {
         var formats = JSON.parse(domain.DomainLogoImages[0].formats);
-        imageUrl = formats[1];
+        imageUrl = formats[0];
       }
       var botOptions = {
         url       : fullUrl(req),
@@ -77,7 +77,7 @@ var sendCommunity = function (id, req, res) {
       var imageUrl = '';
       if (community.CommunityLogoImages && community.CommunityLogoImages.length>0) {
         var formats = JSON.parse(community.CommunityLogoImages[0].formats);
-        imageUrl = formats[1];
+        imageUrl = formats[0];
       }
       var botOptions = {
         url       : fullUrl(req),
@@ -133,10 +133,10 @@ var sendGroup = function (id, req, res) {
       var imageUrl = '';
       if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
         formats = JSON.parse(group.GroupLogoImages[0].formats);
-        imageUrl = formats[1];
+        imageUrl = formats[0];
       } else if (group.Community.CommunityLogoImages && group.Community.CommunityLogoImages.length>0) {
           formats = JSON.parse(group.Community.CommunityLogoImages[0].formats);
-          imageUrl = formats[1];
+          imageUrl = formats[0];
       }
       var botOptions = {
         url       : fullUrl(req),
@@ -207,13 +207,13 @@ var sendPost = function (id, req, res) {
       var imageUrl = '';
       if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
         formats = JSON.parse(post.PostHeaderImages[0].formats);
-        imageUrl = formats[1];
+        imageUrl = formats[0];
       } else if (post.Group.GroupLogoImages && post.Group.GroupLogoImages.length>0) {
         formats = JSON.parse(post.Group.GroupLogoImages[0].formats);
-        imageUrl = formats[1];
+        imageUrl = formats[0];
       } else if (post.Group.Community.CommunityLogoImages && post.Group.Community.CommunityLogoImages.length>0) {
         formats = JSON.parse(post.Group.Community.CommunityLogoImages[0].formats);
-        imageUrl = formats[1];
+        imageUrl = formats[0];
       }
       var botOptions = {
         url       : fullUrl(req),
@@ -253,7 +253,7 @@ var sendUser = function (id, req, res) {
       var imageUrl = '';
       if (user.UserProfileImages && user.UserProfileImages.length>0) {
         var formats = JSON.parse(user.UserProfileImages[0].formats);
-        imageUrl = formats[1];
+        imageUrl = formats[0];
       }
       var botOptions = {
         url       : fullUrl(req),
