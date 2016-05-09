@@ -27839,7 +27839,7 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
       is: 'yp-ajax',
 
       behaviors: [
-        Polymer.FixDialog
+        Polymer.appHelpers
       ],
 
       properties: {
@@ -27940,9 +27940,27 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
         this.$.ajax.body = body;
       },
 
+      _transformErrorText: function (errorText) {
+        if (errorText && errorText.indexOf('status code: 404') > -1) {
+          return this.t('errorNotFound');
+        } else if (errorText && errorText.indexOf('status code: 500') > -1) {
+          return this.t('generalError');
+        } else if (errorText && errorText.indexOf('status code: 401') > -1) {
+          return this.t('errorNotAuthorized');
+        } else {
+          return errorText;
+        }
+      },
+
       showErrorDialog: function(errorText) {
+        var text;
+        if (errorText.message) {
+          text = errorText.message;
+        } else {
+          text = errorText;
+        }
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("errorDialog");
-        dialog.showErrorDialog(errorText);
+        dialog.showErrorDialog(this._transformErrorText(text));
       },
 
       _resetErrorText: function(event) {
@@ -44130,7 +44148,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.$.postNewsStoryAjax.body = body;
           this.$.postNewsStoryAjax.generateRequest();
         } else {
-          this.$.postNewsStoryAjax.showErrorDialog(this.t('point.comment.toShort'));
+          this.$.postNewsStoryAjax.showErrorDialog(this.t('point.commentToShort'));
         }
       },
 
@@ -51580,7 +51598,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.$.postCommentAjax.body = _.merge(body, { comment: this.comment } );
           this.$.postCommentAjax.generateRequest();
         } else {
-          this.$.postCommentAjax.showErrorDialog(this.t('point.comment.toShort'));
+          this.$.postCommentAjax.showErrorDialog(this.t('point.commentToShort'));
         }
       },
 

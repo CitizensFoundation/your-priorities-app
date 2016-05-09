@@ -1,4 +1,7 @@
 {
+  "errorNotFound": "Not found...",
+  "errorNotAuthorized": "You do not have access to this!",
+  "generalError": "There has been an unexpected error. We have been notified.",
   "stats": {
     "posts": "Number of posts",
     "discussions": "Number of discussions",
@@ -175,7 +178,8 @@
     "addComment": "Your comment...",
     "postComment": "Post comment",
     "comments": "Comments",
-    "howToWrite": "Let's brainstorm the best points for and against and think in solutions..."
+    "howToWrite": "Let's brainstorm the best points for and against and think in solutions...",
+    "commentToShort": "The text is too short!"
   },
 
   "news": "News",
