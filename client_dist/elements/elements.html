@@ -38977,7 +38977,7 @@ value. `setMax` should move the slider to the maximum value.
     paper-dialog {
       padding-left: 8px;
       padding-right: 8px;
-      width: 400px;
+      width: 440px;
       background-color: #fff;
     }
 
@@ -39306,7 +39306,7 @@ value. `setMax` should move the slider to the maximum value.
   <style>
     paper-dialog {
       background-color: #FFF;
-      min-width: 400px;
+      min-width: 420px;
     }
 
     @media (max-width: 480px) {
@@ -39498,9 +39498,18 @@ value. `setMax` should move the slider to the maximum value.
     paper-dialog {
       padding-left: 8px;
       padding-right: 8px;
-      width: 380px;
+      width: 420px;
       background-color: #fff;
       z-index: 9999;
+    }
+
+    @media (max-width: 480px) {
+      paper-dialog {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
     }
   </style>
 
@@ -39605,9 +39614,19 @@ value. `setMax` should move the slider to the maximum value.
     paper-dialog {
       padding-left: 8px;
       padding-right: 8px;
-      width: 380px;
+      width: 420px;
       background-color: #fff;
       z-index: 9999;
+    }
+
+
+    @media (max-width: 480px) {
+      paper-dialog {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
     }
   </style>
 
@@ -39629,7 +39648,7 @@ value. `setMax` should move the slider to the maximum value.
         <paper-button autofocus="" on-tap="_validateAndSend">[[t('user.resetPassword')]]</paper-button>
       </div>
     </paper-dialog>
-    
+
   </template>
 
 </dom-module>
@@ -42870,9 +42889,18 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     paper-dialog {
       padding-left: 8px;
       padding-right: 8px;
-      width: 380px;
+      width: 420px;
       background-color: #fff;
       z-index: 9999;
+    }
+
+    @media (max-width: 480px) {
+      paper-dialog {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
     }
   </style>
 
@@ -42885,13 +42913,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <p>[[t('user.acceptInviteInstructions')]]</p>
 
       <div class="buttons">
+        <yp-ajax id="acceptInviteAjax" method="POST" on-response="_acceptInviteResponse"></yp-ajax>
+        <yp-ajax id="getInviteSenderAjax" method="GET" on-response="_getInviteSenderResponse"></yp-ajax>
         <paper-button on-tap="_cancel" dialog-dismiss="">[[t('cancel')]]</paper-button>
         <paper-button autofocus="" on-tap="_acceptInvite">[[t('user.acceptInvite')]]</paper-button>
       </div>
     </paper-dialog>
 
-    <yp-ajax id="acceptInviteAjax" method="POST" on-response="_acceptInviteResponse"></yp-ajax>
-    <yp-ajax id="getInviteSenderAjax" method="GET" on-response="_getInviteSenderResponse"></yp-ajax>
 
   </template>
 
