@@ -56311,6 +56311,15 @@ module.exports = Array.isArray || function (arr) {
       window.app.params = data.params;
     });
 
+    page('/user/reset_password/:resetPasswordToken', scrollToTop, function (data) {
+      window.app.route = 'home';
+      window.app.params = data.params;
+      Polymer.Base.async(function() {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("resetPassword");
+        dialog.open(data.params.resetPasswordToken);
+      }, 500);
+    });
+
     page('/user/:userId', scrollToTop, function (data) {
       window.app.route = 'user';
       window.app.params = data.params;
@@ -56319,15 +56328,6 @@ module.exports = Array.isArray || function (arr) {
     page('/user/:userId/:userTabName', scrollToTop, function (data) {
       window.app.route = 'user';
       window.app.params = data.params;
-    });
-
-    page('/user/reset_password/:resetPasswordToken', scrollToTop, function (data) {
-      window.app.route = 'home';
-      window.app.params = data.params;
-      Polymer.Base.async(function() {
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("resetPassword");
-          dialog.open(data.params.resetPasswordToken);
-      }, 500);
     });
 
     page('/user/acceptInvite/:inviteToken', scrollToTop, function (data) {
