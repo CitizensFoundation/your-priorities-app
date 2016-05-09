@@ -37173,6 +37173,9 @@ event and do your own custom submission:
         <paper-input id="name" name="name" type="text" label="[[t('name')]]" value="{{community.name}}" maxlength="60" char-counter="" class="mainInput">
         </paper-input>
 
+        <paper-input id="shortName" name="shortName" type="text" label="[[t('community.url')]]" value="{{community.short_name}}" maxlength="80" char-counter="" class="mainInput">
+        </paper-input>
+
         <paper-textarea id="description" name="description" value="{{community.description}}" label="[[t('description')]]" char-counter="" rows="2" max-rows="5" maxlength="300" class="mainInput">
         </paper-textarea>
       </div>
@@ -48187,7 +48190,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         color: #FFF;
         background-color: var(--accent-color);
       }
-      
+
       @media (max-width: 985px) {
         .pointText {
           width: 420px;
