@@ -40,6 +40,7 @@
         margin-bottom: 16px;
         padding: 16px;
         width: 420px;
+        min-height: 140px;
       }
 
       paper-toast {
@@ -169,6 +170,7 @@
         <div class="layout vertical topContainer">
           <div class="main-container">
             <div class="point">
+
               <div id="pointUpMaterial" elevation="0" class="pointText" animated>
                 <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                                 bind-value="{{textValueUp}}" value=[[textValueUp]] label="[[t('point.for')]]"

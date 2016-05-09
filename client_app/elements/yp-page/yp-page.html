@@ -24,7 +24,6 @@
       .topArea {
         background-color: var(--primary-background-color);
         background-image: var(--top-area-background-image, none);
-        height: 300px;
       }
 
       @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
@@ -93,9 +92,13 @@
         .topArea {
           height: 300px;
         }
+
+        .topArea[is-post] {
+          min-height: 500px;
+        }
       }
 
-      @media (max-width: 330px) {
+      @media (max-width: 380px) {
         .tab-wrapper ::content > .tabs {
           max-width: 330px;
           font-size: 11px !important;
@@ -103,6 +106,10 @@
 
         .tab-wrapper ::content > paper-tab {
           width: 100px;
+        }
+
+        .topArea[is-post] {
+          min-height: 600px;
         }
       }
 
@@ -113,7 +120,7 @@
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
 
     <div class="layout vertical flex mainArea">
-      <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea">
+      <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post$="[[isPost]]">
         <content select=".largeCard"></content>
       </div>
       <div class="tab-wrapper layout horizontal center-center">
@@ -148,6 +155,11 @@
 
         createFabTitle: {
           type: String
+        },
+
+        isPost: {
+          type: Boolean,
+          value: false
         }
       },
 
