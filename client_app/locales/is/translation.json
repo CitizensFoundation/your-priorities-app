@@ -1,4 +1,7 @@
 {
+  "errorNotFound": "Fannst ekki...",
+  "errorNotAuthorized": "Þú hefur ekki aðgang að þessu!",
+  "generalError": "Óvænt villa hefur komið upp. Við höfum verið látin vita.",
   "stats": {
     "posts": "Fjöldi hugmynda",
     "discussions": "Fjöldi umræðna",

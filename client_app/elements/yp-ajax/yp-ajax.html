@@ -53,7 +53,7 @@
       is: 'yp-ajax',
 
       behaviors: [
-        Polymer.FixDialog
+        Polymer.appHelpers
       ],
 
       properties: {
@@ -154,9 +154,21 @@
         this.$.ajax.body = body;
       },
 
+      _transformErrorText: function (errorText) {
+        if (errorText && errorText.indexOf('status code: 404') > -1) {
+          return this.t('errorNotFound');
+        } else if (errorText && errorText.indexOf('status code: 500') > -1) {
+          return this.t('generalError');
+        } else if (errorText && errorText.indexOf('status code: 401') > -1) {
+          return this.t('errorNotAuthorized');
+        } else {
+          return errorText;
+        }
+      },
+
       showErrorDialog: function(errorText) {
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("errorDialog");
-        dialog.showErrorDialog(errorText);
+        dialog.showErrorDialog(this._transformErrorText(errorText.message));
       },
 
       _resetErrorText: function(event) {
