@@ -57,11 +57,6 @@ async.series([
   },
   function(callback) {
     models.Community.findAll({
-      where: {
-        access: {
-          $ne: models.Community.ACCESS_SECRET
-        }
-      }
     }).then(function (models) {
       async.eachSeries(models, function (model, seriesCallback) {
         model.hasCommunityAdmins(user).then(function (results) {
@@ -84,11 +79,6 @@ async.series([
   },
   function(callback) {
     models.Group.findAll({
-      where: {
-        access: {
-          $ne: models.Group.ACCESS_SECRET
-        }
-      }
     }).then(function (models) {
       async.eachSeries(models, function (model, seriesCallback) {
         model.hasGroupAdmins(user).then(function (results) {

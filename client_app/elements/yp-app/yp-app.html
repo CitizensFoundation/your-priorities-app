@@ -151,11 +151,15 @@
       <app-drawer-layout drawer-width="360px" responsive-width="16000px">
 
         <app-drawer id="drawer" align="end" position="right" swipe-open>
-          <yp-app-drawer id="ypDrawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
+          <div style="height: 100%; overflow: auto;">
+            <yp-app-drawer id="ypDrawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
+          </div>
         </app-drawer>
 
         <app-drawer id="navDrawer" align="start" position="left" swipe-open>
-          <yp-app-nav-drawer id="ypNavDrawer" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
+          <div style="height: 100%; overflow: auto;">
+            <yp-app-nav-drawer id="ypNavDrawer" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
+          </div>
         </app-drawer>
 
         <app-scrollpos-control selected="{{route}}"></app-scrollpos-control>
