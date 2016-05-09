@@ -1,4 +1,5 @@
 {
+  "update": "Update",
   "errorNotFound": "Not found...",
   "errorNotAuthorized": "You do not have access to this!",
   "generalError": "There has been an unexpected error. We have been notified.",
