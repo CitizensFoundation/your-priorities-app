@@ -76,7 +76,6 @@ app.use(useragent.express());
 app.use(requestIp.mw());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.disable('etag');
 
 var sessionConfig = {
   store: new RedisStore({url: process.env.REDIS_URL}),
@@ -96,6 +95,16 @@ app.use(session(sessionConfig));
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(function(req,res,next) {
+  var ua = req.headers['user-agent'];
+  if (/^(facebookexternalhit)|(Twitterbot)|(Slackbot)|(Pinterest)/gi.test(ua)) {
+    console.log(ua,' is a bot');
+    nonSPArouter(req,res,next);
+  } else {
+    next();
+  }
+});
 
 if (app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_app')));
@@ -117,16 +126,6 @@ app.use(function (req, res, next) {
     log.info("Setup Community Completed", { context: 'setYpCommunity', community: toJson(req.ypCommunity) });
     next();
   });
-});
-
-app.use(function(req,res,next) {
-  var ua = req.headers['user-agent'];
-  if (/^(facebookexternalhit)|(Twitterbot)|(Slackbot)|(Pinterest)/gi.test(ua)) {
-    console.log(ua,' is a bot');
-    nonSPArouter(req,res,next);
-  } else {
-    next();
-  }
 });
 
 var bearerCallback = function (req, token) {
