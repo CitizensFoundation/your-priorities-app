@@ -1,5 +1,5 @@
 var i18n = require('i18next');
-var Backend = require('i18next-sync-fs-backend');
+var Backend = require('i18next-node-fs-backend');
 
 i18n
   .use(Backend)

@@ -25,7 +25,7 @@
     "flickrapi": "~0.3.28",
     "gulp-version-append": "^0.2.0",
     "i18next": "^2.0.22",
-    "i18next-sync-fs-backend": "^0.1.0",
+    "i18next-node-fs-backend": "^0.1.2",
     "ip": "^1.1.0",
     "jade": "^1.11.0",
     "kue": "^0.10.4",
