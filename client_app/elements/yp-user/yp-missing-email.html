@@ -61,14 +61,14 @@
           </template>
         </form>
         <div class="buttons">
+          <yp-ajax id="setEmailAjax" dispatch-error method="PUT" url="/api/users/missingEmail/setEmail" on-response="_setEmailResponse"></yp-ajax>
+          <yp-ajax id="linkAccountsAjax" method="PUT" dispatch-error on-error="_registerError" url="/api/users/missingEmail/linkAccounts" on-response="_linkAccountsResponse"></yp-ajax>
           <paper-button on-tap="_logout">[[t('user.logout')]]</paper-button>
           <paper-button on-tap="_forgotPassword" hidden$="[[!needPassword]]">[[t('user.newPassword')]]</paper-button>
           <paper-button id="sendButton" autofocus on-tap="_validateAndSend">[[submitText]]</paper-button>
         </div>
       </paper-dialog>
 
-      <yp-ajax id="setEmailAjax" dispatch-error method="PUT" url="/api/users/missingEmail/setEmail" on-response="_setEmailResponse"></yp-ajax>
-      <yp-ajax id="linkAccountsAjax" method="PUT" dispatch-error on-error="_registerError" url="/api/users/missingEmail/linkAccounts" on-response="_linkAccountsResponse"></yp-ajax>
       <iron-a11y-keys id="a11y" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
     </div>
   </template>
