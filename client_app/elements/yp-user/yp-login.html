@@ -215,9 +215,11 @@
               </div>
             </div>
 
-            <div class="layout horizontal center-center">
-              <re-captcha sitekey="[[reCaptchaSiteKey]]" lang="[[getLocale()]]"></re-captcha>
-            </div>
+            <template>
+              <div class="layout horizontal center-center">
+                <re-captcha sitekey="[[reCaptchaSiteKey]]" lang="[[getLocale()]]"></re-captcha>
+              </div>
+            </template>
 
           </form>
           <div class="buttons">
