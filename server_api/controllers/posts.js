@@ -179,10 +179,16 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       // Group
       {
         model: models.Group,
-        include: [{
-          model: models.Category,
-          required: false
-        }
+        include: [
+          {
+            model: models.Category,
+            required: false
+          },
+          {
+            model: models.Community,
+            attributes: ['id','name','theme_id'],
+            required: false
+          }
         ]
       },
       // User
