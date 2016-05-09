@@ -18,9 +18,18 @@
     paper-dialog {
       padding-left: 8px;
       padding-right: 8px;
-      width: 380px;
+      width: 420px;
       background-color: #fff;
       z-index: 9999;
+    }
+
+    @media (max-width: 480px) {
+      paper-dialog {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
     }
   </style>
 
@@ -33,13 +42,13 @@
       <p>[[t('user.acceptInviteInstructions')]]</p>
 
       <div class="buttons">
+        <yp-ajax id="acceptInviteAjax" method="POST" on-response="_acceptInviteResponse"></yp-ajax>
+        <yp-ajax id="getInviteSenderAjax" method="GET" on-response="_getInviteSenderResponse"></yp-ajax>
         <paper-button on-tap="_cancel" dialog-dismiss>[[t('cancel')]]</paper-button>
         <paper-button autofocus on-tap="_acceptInvite">[[t('user.acceptInvite')]]</paper-button>
       </div>
     </paper-dialog>
 
-    <yp-ajax id="acceptInviteAjax" method="POST" on-response="_acceptInviteResponse"></yp-ajax>
-    <yp-ajax id="getInviteSenderAjax" method="GET" on-response="_getInviteSenderResponse"></yp-ajax>
 
   </template>
 
