@@ -49118,6 +49118,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.set("post", detail.response);
           if (this.post.Group.theme_id!=null) {
             this.setTheme(this.post.Group.theme_id);
+          } else if (this.post.Group.Community && this.post.Group.Community.theme_id!=null) {
+            this.setTheme(this.post.Group.Community.theme_id);
           }
           if (this.post.description === null) {
             this.post.description = this.post.Points[0].content;
