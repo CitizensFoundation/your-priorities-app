@@ -167,8 +167,14 @@
       },
 
       showErrorDialog: function(errorText) {
+        var text;
+        if (errorText.message) {
+          text = errorText.message;
+        } else {
+          text = errorText;
+        }
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("errorDialog");
-        dialog.showErrorDialog(this._transformErrorText(errorText.message));
+        dialog.showErrorDialog(this._transformErrorText(text));
       },
 
       _resetErrorText: function(event) {

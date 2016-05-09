@@ -221,7 +221,8 @@
     "addComment": "Þín athugasemd",
     "postComment": "Skrá",
     "comments": "Athugasemdir",
-    "howToWrite": "Finnum saman bestu rökin með og á móti. Hugsum í lausnum..."
+    "howToWrite": "Finnum saman bestu rökin með og á móti. Hugsum í lausnum...",
+    "commentToShort": "Þessi texti er of stuttur!"
   },
 
   "uploading": {
