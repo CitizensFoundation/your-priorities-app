@@ -1,0 +1,11 @@
+{
+  "notification": {
+    "email": {
+      "password_recovery": "Create a new password",
+      "dear": "Hi",
+      "reset_password_1": "Someone has requested a link to change your password, and you can do this through the link below.",
+      "reset_password_2": "If you didn't request this, please ignore this email.",
+      "reset_password_3": "Your password won't change until you access the link above and create a new one."
+    }
+  }
+}
