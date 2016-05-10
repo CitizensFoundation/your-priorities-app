@@ -83,8 +83,8 @@ var sessionConfig = {
   name: 'yrpri.sid',
   secret: process.env.SESSION_SECRET ? process.env.SESSION_SECRET : 'not so secret... use env var.',
   resave: true,
-  saveUninitialized: true,
-  cookie: {}
+  cookie: { domain:'.yrpri.org'},
+  saveUninitialized: true
 };
 
 if (app.get('env') === 'production') {
