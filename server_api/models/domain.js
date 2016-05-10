@@ -185,9 +185,11 @@ module.exports = function(sequelize, DataTypes) {
               });
             }
 
+            log.info("SAML SAML SAML", {domainId: domain.id, domainKeys: domain.secret_api_keys});
             if (domain.secret_api_keys && domain.secret_api_keys.saml &&
                 domain.secret_api_keys.saml.entryPoint && domain.secret_api_keys.saml.entryPoint!='' &&
                 domain.secret_api_keys.saml.entryPoint.length>6) {
+              log.info("SAML SAML SAML 2000", {domainId: domain.id, domainKeys: domain.secret_api_keys});
               providers.push({
                 name            : 'saml-strategy-'+domain.id,
                 provider        : 'saml',
