@@ -43397,8 +43397,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.setupGoogleAnalytics(this.domain);
           var hash = window.location.hash;
           if (hash===null || hash==="") {
-            if (detail.response.community_id) {
-              page("#!/community/"+detail.response.community_id);
+            if (detail.response.community) {
+              page("#!/community/"+detail.response.community.id);
             } else {
               page("#!/domain/" + this.domain.id);
               this.fire("change-header", { headerTitle: this.domain.domain_name,
