@@ -227,8 +227,8 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
       post_id: req.params.id
     },
     order: [
-      models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
-      [ models.PointRevision, models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+      models.sequelize.literal('(counter_quality_up-counter_quality_down) desc')
+ //     [ models.PointRevision, models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
     ],
     include: [
       {
@@ -242,7 +242,8 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
               {
                 model: models.Image, as: 'UserProfileImages',
                 required: false
-              },
+              }
+              /* ,
               {
                 model: models.Organization,
                 as: 'OrganizationUsers',
@@ -256,7 +257,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
                     required: false
                   }
                 ]
-              }
+              }*/
             ]
           }
         ]
