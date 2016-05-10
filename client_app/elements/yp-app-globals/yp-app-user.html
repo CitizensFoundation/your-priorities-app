@@ -218,7 +218,22 @@
 
         ready: function () {
           window.appUser = this;
-          this.checkLogin()
+          this.checkLogin();
+
+          function receiveMessage(event)
+          {
+            if (event.data=='samlLogin') {
+              this.loginFromSaml();
+            }
+            // Do we trust the sender of this message?  (might be
+            // different from what we originally opened, for example).
+            //if (event.origin !== "http://example.org")
+            //   return;
+
+            // event.source is popup
+            // event.data is "hi there yourself!  the secret response is: rheeeeet!"
+          }
+          window.addEventListener("message", receiveMessage.bind(this), false);
         },
 
         loginFromFacebook: function () {
