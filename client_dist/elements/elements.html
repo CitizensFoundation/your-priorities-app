@@ -36559,7 +36559,7 @@ event and do your own custom submission:
                 <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
               </template>
 
-              <paper-input id="name" required="" minlength="5" name="name" type="text" label="[[t('name')]]" value="{{post.name}}" maxlength="60" char-counter="">
+              <paper-input id="name" required="" minlength="5" name="name" type="text" label="[[t('title')]]" value="{{post.name}}" maxlength="60" char-counter="">
               </paper-input>
 
 
@@ -47443,10 +47443,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.setMoreToLoad();
         }
 
-        this.$.list.fire('iron-resize');
+//        this.$.list.fire('iron-resize');
         this.async(function () {
           this.$.list.fire('iron-resize');
-        }, 1200);
+        });
       }
     });
   </script>
