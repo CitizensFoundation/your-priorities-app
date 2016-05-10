@@ -8,7 +8,13 @@ var _ = require('lodash');
 
 var sequelize;
 if (process.env.NODE_ENV === 'production') {
-  sequelize = new Sequelize(process.env.DATABASE_URL, {});
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: true
+    },
+    logging: true
+  });
 } else {
   var config = require(__dirname + '/../config/config.json')[env];
   sequelize = new Sequelize(config.database, config.username, config.password, _.merge(config, {
