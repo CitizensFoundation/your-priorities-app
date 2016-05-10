@@ -40,12 +40,12 @@
         margin-bottom: 16px;
         padding: 16px;
         width: 420px;
-        min-height: 140px;
       }
 
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+      @media only screen and (min-device-width : 768px) and (max-device-width : 1024px)  {
         .pointText {
-          min-height: 250px;
+          max-height: 160px;
+          min-height: 160px;
         }
       }
 
@@ -181,7 +181,7 @@
                 <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                                 bind-value="{{textValueUp}}" value=[[textValueUp]] label="[[t('point.for')]]"
                                 char-counter rows="2"
-                                max-rows="5" maxlength="500"></paper-textarea>
+                                max-rows="3" maxlength="500"></paper-textarea>
 
                 <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
                   <div class="addPointFab layout horizontal center-center">
@@ -232,7 +232,7 @@
           <paper-textarea id="mobileUpOrDownPoint" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                           bind-value="{{textValueMobileUpOrDown}}" value=[[textValueMobileUpOrDown]] label="[[labelMobileUpOrDown]]"
                           char-counter rows="2"
-                          max-rows="5" maxlength="500"></paper-textarea>
+                          max-rows="3" maxlength="500"></paper-textarea>
           <div class="layout horizontal center-center">
             <paper-radio-group id="upOrDown" attribute-for-selected="name" selected="{{pointUpOrDownSelected}}">
               <paper-radio-button name="pointFor">[[t('point.for')]]</paper-radio-button>
