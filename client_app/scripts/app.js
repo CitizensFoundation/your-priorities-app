@@ -3,7 +3,7 @@
 
   window.addEventListener('storage', function(e) {
     debugger;
-    if (e.key=="loginFromYrpriSaml") {
+    if (e.key=="loginFromYrpriSaml"  && e.newValue!=null) {
       if (window.appUser) {
         window.appUser.loginFromSaml();
       }
