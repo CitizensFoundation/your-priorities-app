@@ -154,6 +154,7 @@
   },
 
   "post": {
+    "noLocation": "Engin staðsetning",
     "shareInfo": "Deila hugmynd",
     "new": "Ný hugmynd",
     "top": "Vinsælustu hugmyndir",

@@ -10,13 +10,9 @@
 
 // Listen to message from child window
   eventer(messageEvent,function(e) {
-    console.log('parent received message', e.data);
     if (e.data=='samlLogin' && window.appUser) {
-      console.log("Have contacted app user 1");
       window.appUser.loginFromSaml();
       console.log("Have contacted app user 2");
-    } else {
-      console.error("Can't find appuser")
     }
   },false);
 

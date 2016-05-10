@@ -251,7 +251,9 @@
           <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
         </div>
         <section>
-          <ac-activities selected-tab="[[selected]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
+          <div class="layout vertical flex" style="height: 600px;">
+            <ac-activities style="min-height: 600px;height: 600px;" selected-tab="[[selected]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
+          </div>
         </section>
         <section>
           <div class="layout horizontal center-center">
@@ -266,14 +268,16 @@
             </template>
             <template is="dom-if" if="[[post]]">
               <template is="dom-if" if="[[!post.location]]">
-                <h1>[[t('post.noLocation')]]</h1>
+                <h1 style="padding-top: 48px">[[t('post.noLocation')]]</h1>
               </template>
             </template>
           </div>
         </section>
         <section>
-          <div class="layout horizontal center-center">
-            <yp-post-user-images post="[[post]]"></yp-post-user-images>
+          <div class="layout vertical flex">
+            <div class="layout horizontal center-center">
+              <yp-post-user-images post="[[post]]"></yp-post-user-images>
+            </div>
           </div>
         </section>
       </iron-pages>
