@@ -28,7 +28,7 @@ module.exports = function(sequelize, DataTypes) {
     only_admins_can_create_groups: { type: DataTypes.BOOLEAN, defaultValue: false },
     theme_id: { type: DataTypes.INTEGER, defaultValue: null },
     other_social_media_info: DataTypes.JSONB,
-    //    configuration:  DataTypes.JSONB
+    configuration:  DataTypes.JSONB
   }, {
 
     defaultScope: {

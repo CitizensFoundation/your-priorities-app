@@ -41,8 +41,8 @@ module.exports = function(sequelize, DataTypes) {
     legacy_new_domain_id: DataTypes.INTEGER,
     theme_id: { type: DataTypes.INTEGER, defaultValue: null },
     legacy_passwords_disabled: { type: DataTypes.BOOLEAN, defaultValue: false },
-    /*privacy_settings:  DataTypes.JSONB,
-    ignore_list: DataTypes.JSONB */
+    privacy_settings:  DataTypes.JSONB,
+    ignore_list: DataTypes.JSONB
   }, {
     underscored: true,
 

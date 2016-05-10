@@ -38,7 +38,7 @@ module.exports = function(sequelize, DataTypes) {
     secret_api_keys: DataTypes.JSONB,
     public_api_keys: DataTypes.JSONB,
     info_texts: DataTypes.JSONB,
-//    configuration:  DataTypes.JSONB
+    configuration:  DataTypes.JSONB
   }, {
     underscored: true,
 
