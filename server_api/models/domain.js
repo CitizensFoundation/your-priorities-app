@@ -1,6 +1,7 @@
 var async = require("async");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var parseDomain = require('parse-domain');
 
 "use strict";
 
@@ -226,8 +227,17 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       setYpDomain: function (req,res,next) {
-        var domainName = Domain.extractDomain(req.headers.host);
-        log.info("DOMAIN: "+req.useragent.source);
+        var domainName;
+        var parsedDomain = parseDomain(req.headers.host);
+        if (parsedDomain && parsedDomain.domain) {
+          domainName = parsedDomain.domain+'.'+parsedDomain.tld;
+        } else if (parsedDomain) {
+          domainName = parsedDomain.tld;
+        } else {
+          domainName = 'localhost';
+        }
+        log.info("DOMAIN NAME", { domainName: domainName });
+
         Domain.findOrCreate({where: { domain_name: domainName },
                                       defaults: { access: Domain.ACCESS_PUBLIC,
                                                   default_locale: 'en',
