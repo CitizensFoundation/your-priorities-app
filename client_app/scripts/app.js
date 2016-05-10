@@ -8,6 +8,9 @@ console.log("Have created event listener");
 // Listen to message from child window
 eventer(messageEvent,function(e) {
   console.log('parent received message!:  ',e.data);
+  if (e.data=='samlLogin' && window.appUser) {
+    window.appUser.loginFromSaml();
+  }
 },false);
 
 (function(document) {
