@@ -114,6 +114,7 @@ if (app.get('env') === 'development') {
 
 // Setup the current domain from the host
 app.use(function (req, res, next) {
+  log.info("SAML SAML SAML IN DOMAIN SETUP", { url: req.url });
   models.Domain.setYpDomain(req, res, function () {
     log.info("Setup Domain Completed", { context: 'setYpDomain', domain: toJson(req.ypDomain.simple()) });
     next();
