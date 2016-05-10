@@ -577,7 +577,7 @@ router.post('/reset/:token', function(req, res) {
         }
       }).then(function (user) {
         if (user) {
-          user.password = req.body.password;
+          user.createPasswordHash(req.body.password);
           user.reset_password_token = null;
           user.reset_password_expires = null;
           user.legacy_passwords_disabled = true;
