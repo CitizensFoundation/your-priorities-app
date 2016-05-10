@@ -36296,9 +36296,9 @@ event and do your own custom submission:
         height: 100%;
       }
 
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1800px) {
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
         #map {
-          min-height: 256px;
+          min-height: 220px;
         }
       }
 
@@ -47372,11 +47372,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         return this.t(activity.type) + ' ' + activity.Post.name;
       },
 
-      _isNotActivityType(activity, type) {
+      _isNotActivityType: function (activity, type) {
         return activity.type!=type
       },
 
-      _isActivityType(activity, type) {
+      _isActivityType: function (activity, type) {
         return activity.type==type
       },
 
@@ -48183,6 +48183,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         min-height: 140px;
       }
 
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        .pointText {
+          min-height: 250px;
+        }
+      }
+
       paper-toast {
         z-index: 9999;
       }
@@ -48924,15 +48930,14 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         margin: 24px;
         width: 960px;
         height: 500px;
-        margin-top: 24px;
       }
 
       .counterInfo {
         font-size: 11px;
       }
 
-      .largeCard {
-        margin-top: 56px;
+      .topContainer {
+        margin-top: 16px;
       }
 
       .tabs {
@@ -48978,31 +48983,92 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           height: 200px;
         }
       }
+
+
+      .tabs {
+        width: 1100px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      .tabs .tab {
+        width: 250px;
+      }
+
+      @media (max-width: 1024px) {
+        .tabs {
+          max-width: 920px;
+        }
+
+        .tabs .tab {
+          width: 200px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .tabs {
+          max-width: 450px;
+          font-size: 13px !important;
+          word-wrap: break-word !important;
+        }
+
+        .tabs .tab {
+          width: 120px;
+          word-wrap: break-word !important;
+        }
+
+        .topArea {
+          height: 300px;
+        }
+
+        .topArea[is-post] {
+          min-height: 470px;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .tabs {
+          max-width: 330px;
+          font-size: 11px !important;
+        }
+
+        paper-tab {
+          width: 100px;
+        }
+
+        .topArea[is-post] {
+          min-height: 530px;
+        }
+
+        ac-activities {
+          min-height: 600px !important;
+        }
+      }
     </style>
 
-    <div is-post="" create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
+    <div class="topContainer" is-post="" create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
 
       <yp-post-card id="postCard" class="largeCard" post="[[post]]" on-refresh="_refresh" header-mode=""></yp-post-card>
 
-      <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
-        <paper-tab>
-          <div class="layout vertical center-center tabCounterContainer">
-            <span>[[t('post.tabs.debate')]]</span><div class="counterInfo" id="tabCountDebate"></div>
-          </div>
-        </paper-tab>
-        <paper-tab>[[t('post.tabs.news')]]</paper-tab>
-        <paper-tab>[[t('post.tabs.location')]]</paper-tab>
-        <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
-      </paper-tabs>
+      <div class="layout horizontal center-center">
+        <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
+          <paper-tab>
+            <div class="layout vertical center-center tabCounterContainer">
+              <span>[[t('post.tabs.debate')]]</span><div class="counterInfo" id="tabCountDebate"></div>
+            </div>
+          </paper-tab>
+          <paper-tab>[[t('post.tabs.news')]]</paper-tab>
+          <paper-tab>[[t('post.tabs.location')]]</paper-tab>
+          <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
+        </paper-tabs>
+      </div>
 
       <iron-pages id="pages" class="tabPages" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <div class="layout horizontal center-center">
           <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
         </div>
         <section>
-          <div class="layout vertical flex" style="height: 600px;">
-            <ac-activities style="min-height: 600px;height: 600px;" selected-tab="[[selected]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
-          </div>
+          <ac-activities selected-tab="[[selected]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
         </section>
         <section>
           <div class="layout horizontal center-center">
@@ -49017,7 +49083,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             </template>
             <template is="dom-if" if="[[post]]">
               <template is="dom-if" if="[[!post.location]]">
-                <h1 style="padding-top: 48px">[[t('post.noLocation')]]</h1>
+                <h1 style="padding-top: 16px">[[t('post.noLocation')]]</h1>
               </template>
             </template>
           </div>

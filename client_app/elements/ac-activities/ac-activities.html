@@ -453,11 +453,11 @@
         return this.t(activity.type) + ' ' + activity.Post.name;
       },
 
-      _isNotActivityType(activity, type) {
+      _isNotActivityType: function (activity, type) {
         return activity.type!=type
       },
 
-      _isActivityType(activity, type) {
+      _isActivityType: function (activity, type) {
         return activity.type==type
       },
 
