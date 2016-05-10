@@ -1,6 +1,30 @@
 (function(document) {
   'use strict';
 
+  function receiveSamlLoginMessage(event)
+  {
+    console.log("Got samlLogin message");
+    console.log(event.data);
+    if (event.data=='samlLogin') {
+      //this.loginFromSaml();
+    }
+    // Do we trust the sender of this message?  (might be
+    // different from what we originally opened, for example).
+    //if (event.origin !== "http://example.org")
+    //   return;
+
+    // event.source is popup
+    // event.data is "hi there yourself!  the secret response is: rheeeeet!"
+  }
+
+  if (window.addEventListener) {
+    console.log("Have set message listener");
+    window.addEventListener("message", receiveSamlLoginMessage, false);
+  } else {
+    console.log("Have set onmessage listener");
+    window.attachEvent("onmessage", receiveSamlLoginMessage);
+  }
+
   var splashDiv, splashCore;
   window.app = document.querySelector("#app");
 
