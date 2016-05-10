@@ -45024,8 +45024,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     update: function() {
       this.rAFid = requestAnimationFrame(this.update.bind(this));
       var pov = this.pano.getPov();
-      pov.heading += 0.03;
-      this.pano.setPov(pov);
+      if (pov) {
+        pov.heading += 0.03;
+        this.pano.setPov(pov);
+      }
     },
 
     _autoUpdate: function() {
@@ -48916,7 +48918,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         margin: 24px;
         width: 960px;
         height: 500px;
-        padding-top: 16px;
+        margin-top: 24px;
       }
 
       .counterInfo {
