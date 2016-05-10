@@ -47457,7 +47457,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     console.log("Got samlLogin message");
     console.log(event.data);
     if (event.data=='samlLogin') {
-      this.loginFromSaml();
+      //this.loginFromSaml();
     }
     // Do we trust the sender of this message?  (might be
     // different from what we originally opened, for example).
@@ -47466,6 +47466,14 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
     // event.source is popup
     // event.data is "hi there yourself!  the secret response is: rheeeeet!"
+  }
+
+  if (window.addEventListener) {
+    console.log("Have set message listener");
+    window.addEventListener("message", receiveSamlLoginMessage, false);
+  } else {
+    console.log("Have set onmessage listener");
+    window.attachEvent("onmessage", receiveSamlLoginMessage);
   }
 </script>
 <dom-module id="yp-app-user" assetpath="yp-app-globals/">
@@ -47675,13 +47683,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         ready: function () {
           window.appUser = this;
           this.checkLogin();
-          if (window.addEventListener) {
-            console.log("Have set message listener");
-            window.addEventListener("message", receiveSamlLoginMessage.bind(this), false);
-          } else {
-            console.log("Have set onmessage listener");
-            window.attachEvent("onmessage", receiveSamlLoginMessage.bind(this));
-          }
+
         },
 
         loginFromFacebook: function () {
