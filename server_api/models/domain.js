@@ -118,7 +118,7 @@ module.exports = function(sequelize, DataTypes) {
         'counter_organizations','only_admins_can_create_communities','theme_id','other_social_media_info',
         'public_api_keys','info_texts'],
 
-      getLoginProviders: function (callback) {
+      getLoginProviders: function (req, callback) {
         var providers = [];
 
         providers.push(
@@ -151,7 +151,7 @@ module.exports = function(sequelize, DataTypes) {
                 callbackDomainName = domain.domain_name;
               }
             } else {
-              callbackDomainName = domain.domain_name;
+              callbackDomainName = req.headers.host; //domain.domain_name;
             }
             
             if (false && domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.google)) {
@@ -252,7 +252,7 @@ module.exports = function(sequelize, DataTypes) {
           }
           req.ypDomain = domain;
           if (req.url.indexOf('/auth') > -1 || req.url.indexOf('/users/') > -1) {
-            sequelize.models.Domain.getLoginProviders(function (error, providers) {
+            sequelize.models.Domain.getLoginProviders(req, function (error, providers) {
               req.ypDomain.loginProviders = providers;
               sequelize.models.Domain.getLoginHosts(function (error, hosts) {
                 req.ypDomain.loginHosts = hosts;

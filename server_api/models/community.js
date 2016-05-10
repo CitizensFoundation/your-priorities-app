@@ -125,7 +125,7 @@ module.exports = function(sequelize, DataTypes) {
             hostname = "betri-hverfi-2012";
           }
         }
-        
+
         log.info("PARSE 2", {hostname: hostname});
 
         if (!hostname && req.params.communityHostname)
