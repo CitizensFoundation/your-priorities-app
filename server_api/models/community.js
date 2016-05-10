@@ -1,6 +1,7 @@
 var async = require("async");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var parseDomain = require('parse-domain');
 
 "use strict";
 
@@ -106,7 +107,13 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_SECRET: 2,
 
       setYpCommunity: function (req,res,next) {
-        var hostname = sequelize.models.Domain.extractHost(req.headers.host);
+        var hostname = null;
+
+        var parsedDomain = parseDomain(req.headers.host);
+        if (parsedDomain && parsedDomain.subdomain) {
+          hostname = parsedDomain.subdomain;
+        }
+
         if (!hostname && req.params.communityHostname)
           hostname = req.params.communityHostname;
         if (hostname && hostname!="" && hostname!="www" && hostname!="new") {
