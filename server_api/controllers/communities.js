@@ -330,38 +330,43 @@ router.get('/:id', auth.can('view community'), function(req, res) {
 });
 
 router.post('/:domainId', auth.can('create community'), function(req, res) {
-  var hostname;
-  if (req.hostname=='localhost') {
-    hostname = 'localhost';
-  } else {
-    hostname = models.Domain.extractHost(req.headers.host);
-  }
-  var admin_email = req.user.email;
-  var admin_name = "Administrator";
-  var community = models.Community.build({
-    name: req.body.name,
-    description: req.body.description,
-    access: models.Community.convertAccessFromRadioButtons(req.body),
-    domain_id: req.params.domainId,
-    user_id: req.user.id,
-    hostname: hostname,
-    website: req.body.website,
-    admin_email: admin_email,
-    admin_name: admin_name,
-    user_agent: req.useragent.source,
-    ip_address: req.clientIp
-  });
-  community.save().then(function() {
-    log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
-    community.updateAllExternalCounters(req, 'up', 'counter_communities', function () {
-      community.setupImages(req.body, function(error) {
-        community.addCommunityAdmins(req.user).then(function (results) {
-          sendCommunityOrError(res, community, 'setupImages', req.user, error);
-        });
+  models.Community.find({
+    where: {
+      hostname: req.body.hostname
+    }
+  }).then(function (community) {
+    if (community) {
+      log.error("Can't save community, hostname already taken", {hostname:  req.body.hostname});
+      res.send({hostnameTaken: true});
+    } else {
+      var admin_email = req.user.email;
+      var admin_name = "Administrator";
+      var community = models.Community.build({
+        name: req.body.name,
+        description: req.body.description,
+        access: models.Community.convertAccessFromRadioButtons(req.body),
+        domain_id: req.params.domainId,
+        user_id: req.user.id,
+        hostname: req.body.hostname,
+        website: req.body.website,
+        admin_email: admin_email,
+        admin_name: admin_name,
+        user_agent: req.useragent.source,
+        ip_address: req.clientIp
       });
-    });
-  }).catch(function(error) {
-    sendCommunityOrError(res, null, 'create', req.user, error);
+      community.save().then(function() {
+        log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
+        community.updateAllExternalCounters(req, 'up', 'counter_communities', function () {
+          community.setupImages(req.body, function(error) {
+            community.addCommunityAdmins(req.user).then(function (results) {
+              sendCommunityOrError(res, community, 'setupImages', req.user, error);
+            });
+          });
+        });
+      }).catch(function(error) {
+        sendCommunityOrError(res, null, 'create', req.user, error);
+      });
+    }
   });
 });
 
