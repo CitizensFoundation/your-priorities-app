@@ -1,11 +1,15 @@
 (function(document) {
   'use strict';
 
-  window.addEventListener("DOMContentLoaded", function() {
-    window.addEventListener("message", function(e) {
-      console.log("Message");
-    })
-  }, false);
+  window.addEventListener('storage', function(e) {
+    debugger;
+    if (e.key=="loginFromYrpriSaml") {
+      if (window.appUser) {
+        window.appUser.loginFromSaml();
+      }
+      localStorage.setItem('loginFromYrpriSaml', null);
+    }
+  });
 
   var splashDiv, splashCore;
   window.app = document.querySelector("#app");

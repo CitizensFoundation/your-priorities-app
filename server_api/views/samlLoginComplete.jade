@@ -6,6 +6,6 @@ html(lang='en')
         meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
     body
         script(type='text/javascript').
-            window.top.postMessage("loaded", "*")
-            alert("have sent top message");
+            localStorage.setItem('loginFromYrpriSaml', true);
+            window.close();
 
