@@ -114,16 +114,18 @@ module.exports = function(sequelize, DataTypes) {
           hostname = parsedDomain.subdomain;
         }
 
-        if (hostname.indexOf('betri-hverfi-2015') > -1) {
-          hostname = "betri-hverfi-2015";
-        } else if (hostname.indexOf('betri-hverfi-2014') > -1) {
-          hostname = "betri-hverfi-2014";
-        } else if (hostname.indexOf('betri-hverfi-2013') > -1) {
-          hostname = "betri-hverfi-2013";
-        } else if (hostname.indexOf('betri-hverfi-2012') > -1) {
-          hostname = "betri-hverfi-2012";
+        if (hostname) {
+          if (hostname.indexOf('betri-hverfi-2015') > -1) {
+            hostname = "betri-hverfi-2015";
+          } else if (hostname.indexOf('betri-hverfi-2014') > -1) {
+            hostname = "betri-hverfi-2014";
+          } else if (hostname.indexOf('betri-hverfi-2013') > -1) {
+            hostname = "betri-hverfi-2013";
+          } else if (hostname.indexOf('betri-hverfi-2012') > -1) {
+            hostname = "betri-hverfi-2012";
+          }
         }
-
+        
         log.info("PARSE 2", {hostname: hostname});
 
         if (!hostname && req.params.communityHostname)
