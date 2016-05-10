@@ -1,20 +1,22 @@
-// Create IE + others compatible event handler
-var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-var eventer = window[eventMethod];
-var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
-
-console.log("Have created event listener");
-
-// Listen to message from child window
-eventer(messageEvent,function(e) {
-  console.log('parent received message!:  ',e.data);
-  if (e.data=='samlLogin' && window.appUser) {
-    window.appUser.loginFromSaml();
-  }
-},false);
-
 (function(document) {
   'use strict';
+
+  // Create IE + others compatible event handler
+  var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+  var eventer = window[eventMethod];
+  var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+
+  console.log("Have created event listener");
+
+// Listen to message from child window
+  eventer(messageEvent,function(e) {
+    console.log('parent received message!:  ',e.data);
+    if (e.data=='samlLogin' && window.appUser) {
+      window.appUser.loginFromSaml();
+    } else {
+      console.error("Can't find appuser")
+    }
+  },false);
 
   var splashDiv, splashCore;
   window.app = document.querySelector("#app");
