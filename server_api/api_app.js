@@ -46,6 +46,7 @@ var auth = require('./authorization');
 var log = require('./utils/logger');
 var toJson = require('./utils/to_json');
 var sso = require('passport-sso');
+var cors = require('cors');
 
 if (process.env.REDISTOGO_URL) {
   process.env.REDIS_URL = process.env.REDISTOGO_URL;
@@ -53,6 +54,7 @@ if (process.env.REDISTOGO_URL) {
 
 var app = express();
 app.set('port', process.env.PORT || 4242);
+app.use(cors());
 
 var airbrake = require('airbrake').createClient(process.env.AIRBRAKE_PROJECT_ID, process.env.AIRBRAKE_API_KEY);
 airbrake.handleExceptions();
