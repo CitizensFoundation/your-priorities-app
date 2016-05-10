@@ -109,9 +109,12 @@ module.exports = function(sequelize, DataTypes) {
       setYpCommunity: function (req,res,next) {
         var hostname = null;
         var parsedDomain = parseDomain(req.headers.host);
+        log.info("PARSE", {parsedDomain: parsedDomain});
         if (parsedDomain && parsedDomain.subdomain) {
           hostname = parsedDomain.subdomain;
         }
+
+        log.info("PARSE 2", {hostname: hostname});
 
         if (!hostname && req.params.communityHostname)
           hostname = req.params.communityHostname;
