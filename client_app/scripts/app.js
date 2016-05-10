@@ -1,15 +1,17 @@
+// Create IE + others compatible event handler
+var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+var eventer = window[eventMethod];
+var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+
+console.log("Have created event listener");
+
+// Listen to message from child window
+eventer(messageEvent,function(e) {
+  console.log('parent received message!:  ',e.data);
+},false);
+
 (function(document) {
   'use strict';
-
-  // Create IE + others compatible event handler
-  var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-  var eventer = window[eventMethod];
-  var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
-
-  // Listen to message from child window
-  eventer(messageEvent,function(e) {
-    console.log('parent received message!:  ',e.data);
-  },false);
 
   var splashDiv, splashCore;
   window.app = document.querySelector("#app");

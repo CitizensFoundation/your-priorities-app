@@ -6,6 +6,6 @@ html(lang='en')
         meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
     body
         script(type='text/javascript').
-            parent.postMessage("Hello","*");
-            alert(parent);
+            window.opener.postMessage("samlLogin","*");
+
 
