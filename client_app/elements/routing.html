@@ -67,17 +67,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:groupTabName/:groupName/posts/:filterValue', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/posts/:filterValue', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:groupTabName/:groupName/posts/:filterValue/:categoryId/:categoryName', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/posts/:filterValue/:categoryId/:categoryName', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:groupTabName/:groupName/search/:searchingFor', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/search/:searchingFor', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });

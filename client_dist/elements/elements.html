@@ -49678,7 +49678,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         padding-left: 0;
         margin-left: 0;
       }
-      
+
       @media (max-width: 600px) {
         .subTitle {
           font-size: 18px;
@@ -49904,7 +49904,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       buildPostsUrlPath: function () {
         var newLocation = '#!/group/' + this.group.id + '/' + this.tabName;
         if (this.filter) {
-          newLocation += '/' + this.group.name + '/posts/' + this.filter;
+          newLocation += '/' + '/posts/' + this.filter;
         }
         if (this.categoryId) {
           newLocation += '/' + this.categoryId + '/' + this.categoryName;
@@ -56271,17 +56271,17 @@ module.exports = Array.isArray || function (arr) {
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:groupTabName/:groupName/posts/:filterValue', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/posts/:filterValue', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:groupTabName/:groupName/posts/:filterValue/:categoryId/:categoryName', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/posts/:filterValue/:categoryId/:categoryName', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    page('/group/:groupId/:groupTabName/:groupName/search/:searchingFor', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/search/:searchingFor', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });

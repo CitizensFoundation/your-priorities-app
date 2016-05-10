@@ -67,7 +67,7 @@
         padding-left: 0;
         margin-left: 0;
       }
-      
+
       @media (max-width: 600px) {
         .subTitle {
           font-size: 18px;
@@ -293,7 +293,7 @@
       buildPostsUrlPath: function () {
         var newLocation = '#!/group/' + this.group.id + '/' + this.tabName;
         if (this.filter) {
-          newLocation += '/' + this.group.name + '/posts/' + this.filter;
+          newLocation += '/' + '/posts/' + this.filter;
         }
         if (this.categoryId) {
           newLocation += '/' + this.categoryId + '/' + this.categoryName;
