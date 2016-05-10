@@ -47661,6 +47661,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
           function receiveMessage(event)
           {
+            console.log("Got samlLogin message");
+            console.log(event.data);
             if (event.data=='samlLogin') {
               this.loginFromSaml();
             }
