@@ -241,6 +241,20 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
               {
                 model: models.Image, as: 'UserProfileImages',
                 required: false
+              },
+              {
+                model: models.Organization,
+                as: 'OrganizationUsers',
+                required: false,
+                attributes: ['id', 'name'],
+                include: [
+                  {
+                    model: models.Image,
+                    as: 'OrganizationLogoImages',
+                    attributes: ['id', 'formats'],
+                    required: false
+                  }
+                ]
               }
             ]
           }
