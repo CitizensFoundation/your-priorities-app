@@ -228,7 +228,9 @@ app.use('/users', legacyUsers);
 app.use('/pages', legacyPages);
 
 app.post('/authenticate_from_island_is', function (req, res) {
-  req.sso.authenticate('saml-strategy-'+req.ypDomain.id, { failureRedirect: '/', failureFlash: true }, req, res, function(error, user) {
+  log.info("SAML SAML 1", {domainId: req.ypDomain.id});
+  req.sso.authenticate('saml-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+    log.info("SAML SAML 2", {domainId: req.ypDomain.id, err: error});
     if (error) {
       log.error("Error from SAML login", { err: error });
       error.url = req.url;
@@ -239,6 +241,7 @@ app.post('/authenticate_from_island_is', function (req, res) {
         res.sendStatus(500);
       });
     } else {
+      log.info("SAML SAML 3", {domainId: req.ypDomain.id});
       res.render('samlLoginComplete', {});
     }
   })
