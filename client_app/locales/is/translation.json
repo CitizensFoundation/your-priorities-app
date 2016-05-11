@@ -112,6 +112,10 @@
   },
 
   "user": {
+    "setEmail": "Bættu við netfangi",
+    "linkAccount": "Tengja reikning við netfang",
+    "setEmailInfo": "Bættu við netfangi",
+    "existsLinkAccountInfo": "Skráðu lykilorð to að tengja þennan aðgang við þinn netfangs reikning.",
     "logoutCompleteFor": "Útskráning fyrir",
     "loggedInWithFacebook": "Innskráning með Facebook",
     "loggedInWithSaml": "Innskráning með island.is",

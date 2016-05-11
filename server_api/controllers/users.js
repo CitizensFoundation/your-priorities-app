@@ -791,10 +791,14 @@ router.put('/missingEmail/linkAccounts', function(req, res, next) {
                   if (error) {
                     sendUserOrError(res, null, 'linkAccounts', error, 401);
                   } else {
-                    res.send({email: user.email});
+                    res.send({email: user.email, accountLinked: true });
                   }
                 });
               })
+            }).catch(function (error) {
+              req.send( {
+                error: 'Unexpected error'
+              });
             });
           } else {
             req.send( {

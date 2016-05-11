@@ -21,6 +21,10 @@
       min-width: 420px;
     }
 
+    .linkAccounts {
+      padding-top: 16px;
+    }
+
     @media (max-width: 480px) {
       paper-dialog {
         padding: 0;
@@ -34,7 +38,7 @@
   <template>
     <div id="outer">
       <paper-dialog id="dialog" modal>
-        <h3>[[heading]]</h3>
+        <h2>[[heading]]</h2>
         <div class="setEmailInfo">
           [[t('user.setEmailInfo')]]
         </div>
@@ -188,7 +192,7 @@
       if (detail.response && detail.response.alreadyRegistered) {
         this.set('needPassword', true);
         this.set('header', this.t('user.linkAccount'));
-        this.set('submitText', this.t('user.linkAccounts'));
+        this.set('submitText', this.t('user.linkAccount'));
       } else {
         window.appGlobals.notifyUserViaToast(this.t('user.haveSetEmail')+ " " + detail.response.email);
         this.close();
@@ -196,11 +200,13 @@
     },
 
     _linkAccountsResponse: function(event, detail) {
+      debugger;
       if (detail.response.accountLinked) {
         window.appGlobals.notifyUserViaToast(this.t('user.haveLinkedAccounts')+ " " + detail.response.email);
         window.appUser.checkLogin();
+        this.close();
       } else {
-        this.$$("#linkAccountsAjax").showErrorDialog(this.t('user.passwordWrong'));
+        this.$$("#linkAccountsAjax").showErrorDialog(this.t('user.loginNotAuthorized'));
       }
     },
 
