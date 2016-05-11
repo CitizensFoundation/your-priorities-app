@@ -159,7 +159,6 @@
   },
 
   "post": {
-    "photoNew": "Ný mynd",
     "photoUpdate": "Breyta mynd",
     "noLocation": "Engin staðsetning",
     "shareInfo": "Deila hugmynd",
@@ -184,7 +183,6 @@
     "location": "Staðsetning",
     "photo": "Mynd",
     "newPhoto": "Ný mynd",
-    "photoUpdate": "Breyta mynd",
     "photoDeleteConfirmation": "Ertu viss um að þú viljir eyða þessari mynd?",
     "photographerName": "Ljósmyndari",
     "tabs": {

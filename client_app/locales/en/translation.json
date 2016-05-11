@@ -108,8 +108,6 @@
   },
 
   "post": {
-    "photoNew": "New photo",
-    "photoUpdate": "Update photo",
     "noLocation": "No location",
     "shareInfo": "Share post",
     "description": "Description",
