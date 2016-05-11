@@ -145,7 +145,8 @@
 
         posts: {
           type: Array,
-          value: null
+          value: null,
+          notify: true
         },
 
         groupId: {
@@ -242,7 +243,9 @@
 
       _refreshGroupFromFilter: function () {
         this.set("posts", []);
-        this.$$("#list").fire('iron-resize');
+        this.async(function () {
+          this.$$("#list").fire('iron-resize');
+        }, 5);
         this._loadMoreData();
       },
 
@@ -289,6 +292,10 @@
         }.bind(this));
 
         this.$$("#list").fire('iron-resize');
+
+        this.async(function () {
+          this.$$("#list").fire('iron-resize');
+        }, 720);
 
         if (posts.length>0) {
           this.setMoreToLoad();
