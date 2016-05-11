@@ -34400,17 +34400,17 @@ event and do your own custom submission:
 
     <template restamp="" is="dom-if" if="[[user]]">
       <template is="dom-if" if="[[profileImageUrl]]">
-        <iron-image sizing="cover" title="{{user.name}}" preload="" src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
+        <iron-image sizing="cover" title="[[userTitle]]" preload="" src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
       </template>
 
       <template is="dom-if" if="[[!profileImageUrl]]">
         <template is="dom-if" if="[[user.facebook_id]]">
-          <iron-image sizing="cover" title="{{user.name}}" preload="" src$="[[computeFacebookSrc(user)]]" class$="[[computeClass(small)]]"></iron-image>
+          <iron-image sizing="cover" title="[[userTitle]]" preload="" src$="[[computeFacebookSrc(user)]]" class$="[[computeClass(small)]]"></iron-image>
         </template>
 
         <template is="dom-if" if="[[!noDefault]]">
           <template is="dom-if" if="[[!user.facebook_id]]">
-            <iron-image sizing="cover" title="{{user.name}}" preload="" src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class$="[[computeClass(small)]]"></iron-image>
+            <iron-image sizing="cover" title="[[userTitle]]" preload="" src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class$="[[computeClass(small)]]"></iron-image>
           </template>
         </template>
 
@@ -34444,6 +34444,15 @@ event and do your own custom submission:
           value: false
         },
 
+        titleFromUser: {
+          type: String
+        },
+
+        userTitle: {
+          type: String,
+          computed: '_computeUserTitle(user, title)'
+        },
+
         user: {
           type: Object,
           observer: "_userChanged"
@@ -34457,6 +34466,14 @@ event and do your own custom submission:
         noDefault: {
           type: Boolean,
           value: false
+        }
+      },
+
+      _computeUserTitle: function (user, titleFromUser) {
+        if (title) {
+          return title;
+        } else {
+          return user.name;
         }
       },
 
@@ -39525,7 +39542,6 @@ value. `setMax` should move the slider to the maximum value.
     },
 
     _linkAccountsResponse: function(event, detail) {
-      debugger;
       if (detail.response.accountLinked) {
         window.appGlobals.notifyUserViaToast(this.t('user.haveLinkedAccounts')+ " " + detail.response.email);
         window.appUser.checkLogin();
@@ -44271,7 +44287,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     </style>
 
     <template is="dom-if" if="[[user]]">
-      <div class="layout horizontal">
+      <div class="layout horizontal" title="[[userTitle]]">
         <div class="layout vertical">
         <div class="name" inverted$="[[inverted]]">
           [[user.name]]
@@ -44283,7 +44299,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <template is="dom-if" if="[[_organizationImageUrl(user)]]">
         <img sizing="cover" class="imageStatus rounded" src$="[[_organizationImageUrl(user)]]">
       </template>
-      <yp-user-image user="[[user]]"></yp-user-image>
+      <yp-user-image titlefromuser="[[userTitle]]" user="[[user]]"></yp-user-image>
       </div>
     </template>
   </template>
@@ -44302,10 +44318,23 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           type: Object
         },
 
+        titleDate: {
+          type: Date
+        },
+
+        userTitle: {
+          type: String,
+          computed: '_computeUserTitle(user, titleDate)'
+        },
+
         inverted: {
           type: Boolean,
           value: false
         }
+      },
+
+      _computeUserTitle: function (user, titleDate) {
+        return user.name + ' ' + moment(titleDate).fromNow();
       },
 
       _organizationName: function (user) {
@@ -46131,7 +46160,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <div class="layout vertical">
 
         <div class="userInfoContainer layout horizontal end-justified" up-vote$="[[upVote(point)]]" down-vote$="[[downVote(point)]]" hidden$="[[hideUser]]">
-          <yp-user-with-organization inverted="" user="[[user]]"></yp-user-with-organization>
+          <yp-user-with-organization title-date="[[point.created_at]]" inverted="" user="[[user]]"></yp-user-with-organization>
         </div>
 
         <div class="point-content">
@@ -46161,6 +46190,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           notify: true,
           observer: "_pointChanged"
         },
+
+
 
         user: {
           type: Object,
@@ -56329,7 +56360,6 @@ module.exports = Array.isArray || function (arr) {
 
     // Middleware
     function scrollToTop(ctx, next) {
-      debugger;
       if (window.app && !window.app.keepOpenForPost) {
         window.app.scrollPageToTop();
       }
