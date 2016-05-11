@@ -33,6 +33,10 @@
       return (this.offsetParent && Boolean(this.offsetParent.offsetWidth || this.offsetParent.offsetHeight));
     },
 
+    unsetMoreToLoad: function () {
+      this.set('moreToLoad', false);
+    },
+
     setMoreToLoad: function () {
       if (false) {
         this.async(function () {

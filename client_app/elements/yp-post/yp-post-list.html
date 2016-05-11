@@ -99,20 +99,34 @@
         }
       }
 
+      yp-posts-filter {
+        margin-bottom: 8px;
+        margin-left: 8px;
+        margin-top: 16px;
+      }
+
+      #list {
+        margin-top: 42px;
+      }
     </style>
-    <yp-posts-filter id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
-                     group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
-                     category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
-    </yp-posts-filter>
+
+    <div class="layout horizontal center-center">
+      <yp-posts-filter id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
+                       group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
+                       category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+      </yp-posts-filter>
+    </div>
 
     <div id="scrollableRegion">
-      <iron-list id="list" items="[[posts]]" as="post">
-        <template>
-          <div class="layout vertical center-center">
-            <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
-          </div>
-        </template>
-      </iron-list>
+      <template is="dom-if" if="[[posts]]" restamp>
+        <iron-list id="list" items="[[posts]]" as="post">
+          <template>
+            <div class="layout vertical center-center">
+              <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+            </div>
+          </template>
+        </iron-list>
+      </template>
       <div class="layout horizontal center-center">
         <yp-ajax id="ajax" large-spinner on-response="_postsResponse"></yp-ajax>
         <template is="dom-if" if="[[moreToLoad]]" restamp>
@@ -235,17 +249,13 @@
 
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue) {
-          this.set("posts", []);
-          this.$$("#list").fire('iron-resize');
+          this.set("posts", null);
           this._loadMoreData();
         }
       },
 
       _refreshGroupFromFilter: function () {
-        this.set("posts", []);
-        this.async(function () {
-          this.$$("#list").fire('iron-resize');
-        }, 5);
+        this.set("posts", null);
         this._loadMoreData();
       },
 
@@ -274,11 +284,12 @@
           }
           this.$$('#ajax').url += '/'+this.statusFilter;
         }
-        this.$$('#ajax').url += "?offset="+this.posts.length;
+        this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
         this.$$('#ajax').generateRequest();
       },
 
       _postsResponse: function (event, detail, sender) {
+        this.set('posts', []);
         var posts = detail.response.posts;
         this.set('postsCount', detail.response.totalPostsCount);
         this.fire('yp-post-count', {
@@ -291,11 +302,9 @@
           this.push('posts', post);
         }.bind(this));
 
-        this.$$("#list").fire('iron-resize');
-
         this.async(function () {
           this.$$("#list").fire('iron-resize');
-        }, 720);
+        },10);
 
         if (posts.length>0) {
           this.setMoreToLoad();
