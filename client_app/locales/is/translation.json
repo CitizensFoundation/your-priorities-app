@@ -159,6 +159,8 @@
   },
 
   "post": {
+    "photoNew": "Ný mynd",
+    "photoUpdate": "Breyta mynd",
     "noLocation": "Engin staðsetning",
     "shareInfo": "Deila hugmynd",
     "new": "Ný hugmynd",
