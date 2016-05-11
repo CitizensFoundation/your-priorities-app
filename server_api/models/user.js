@@ -105,7 +105,7 @@ module.exports = function(sequelize, DataTypes) {
               sequelize.models.User.create(
                 {
                   ssn: profile.UserSSN,
-                  name: profile.name,
+                  name: profile.Name,
                   notification_settings: sequelize.models.AcNotification.defaultNotificationSettings,
                   status: 'active'
                 }).then (function (userIn) {
