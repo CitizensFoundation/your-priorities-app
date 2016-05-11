@@ -106,6 +106,7 @@ module.exports = function(sequelize, DataTypes) {
                 {
                   ssn: profile.UserSSN,
                   name: profile.name,
+                  notification_settings: sequelize.models.AcNotification.defaultNotificationSettings,
                   status: 'active'
                 }).then (function (userIn) {
                 if (userIn) {
@@ -181,6 +182,7 @@ module.exports = function(sequelize, DataTypes) {
                   email: profile.email,
                   facebook_id: profile.identifier,
                   name: profile.nameDisplay,
+                  notification_settings: sequelize.models.AcNotification.defaultNotificationSettings,
                   status: 'active'
               }).then (function (userIn) {
                 if (userIn) {
