@@ -289,7 +289,9 @@
       },
 
       _postsResponse: function (event, detail, sender) {
-        this.set('posts', []);
+        if (!this.posts) {
+          this.set('posts', []);
+        }
         var posts = detail.response.posts;
         this.set('postsCount', detail.response.totalPostsCount);
         this.fire('yp-post-count', {
