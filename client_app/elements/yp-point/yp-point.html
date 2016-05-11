@@ -60,7 +60,7 @@
       <div class="layout vertical">
 
         <div class="userInfoContainer layout horizontal end-justified" up-vote$=[[upVote(point)]]  down-vote$=[[downVote(point)]] hidden$="[[hideUser]]">
-          <yp-user-with-organization inverted user="[[user]]"></yp-user-with-organization>
+          <yp-user-with-organization title-date="[[point.created_at]]" inverted user="[[user]]"></yp-user-with-organization>
         </div>
 
         <div class="point-content">
@@ -90,6 +90,8 @@
           notify: true,
           observer: "_pointChanged"
         },
+
+
 
         user: {
           type: Object,

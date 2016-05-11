@@ -68,17 +68,17 @@
 
     <template restamp is="dom-if" if="[[user]]">
       <template is="dom-if" if="[[profileImageUrl]]">
-        <iron-image sizing="cover" title="{{user.name}}" preload src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
+        <iron-image sizing="cover" title="[[userTitle]]" preload src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
       </template>
 
       <template is="dom-if" if="[[!profileImageUrl]]">
         <template is="dom-if" if="[[user.facebook_id]]">
-          <iron-image sizing="cover" title="{{user.name}}" preload src$="[[computeFacebookSrc(user)]]" class$="[[computeClass(small)]]"></iron-image>
+          <iron-image sizing="cover" title="[[userTitle]]" preload src$="[[computeFacebookSrc(user)]]" class$="[[computeClass(small)]]"></iron-image>
         </template>
 
         <template is="dom-if" if="[[!noDefault]]">
           <template is="dom-if" if="[[!user.facebook_id]]">
-            <iron-image sizing="cover" title="{{user.name}}" preload src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class$="[[computeClass(small)]]"></iron-image>
+            <iron-image sizing="cover" title="[[userTitle]]" preload src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class$="[[computeClass(small)]]"></iron-image>
           </template>
         </template>
 
@@ -112,6 +112,15 @@
           value: false
         },
 
+        titleFromUser: {
+          type: String
+        },
+
+        userTitle: {
+          type: String,
+          computed: '_computeUserTitle(user, title)'
+        },
+
         user: {
           type: Object,
           observer: "_userChanged"
@@ -125,6 +134,14 @@
         noDefault: {
           type: Boolean,
           value: false
+        }
+      },
+
+      _computeUserTitle: function (user, titleFromUser) {
+        if (title) {
+          return title;
+        } else {
+          return user.name;
         }
       },
 

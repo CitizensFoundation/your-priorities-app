@@ -43,18 +43,18 @@
 
   "activity": {
     "post": {
-      "new": "Ný hugmynd",
+      "new": "Hugmynd",
       "status": {
         "change": "Fréttir"
       }
     },
     "point": {
       "new": "Rök",
-      "newFor": "Ný rök með",
-      "newAgainst": "Ný rök á móti",
-      "newComment": "Ný athugasemd",
+      "newFor": "Rök með",
+      "newAgainst": "Rök á móti",
+      "newComment": "Athugasemd",
       "newsStory": {
-        "new": "Ný frétt frá notanda"
+        "new": "Frétt frá notanda"
       }
     }
   },

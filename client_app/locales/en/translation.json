@@ -51,7 +51,7 @@
 
   "activity": {
     "post": {
-      "new": "New idea",
+      "new": "Idea",
       "status": {
        "change": "Status update"
       }
@@ -59,12 +59,12 @@
     "point": {
       "forAdded": "Added point for",
       "againstAdded": "Added point against",
-      "new": "New point",
-      "newFor": "New point for",
-      "newAgainst": "New point against",
-      "newComment": "New comment",
+      "new": "Point",
+      "newFor": "Point for",
+      "newAgainst": "Point against",
+      "newComment": "Comment",
       "newsStory": {
-        "new": "New user story"
+        "new": "User news"
       }
     }
   },
