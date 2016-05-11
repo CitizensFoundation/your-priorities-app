@@ -170,6 +170,8 @@
   },
 
   "point": {
+    "theseAreFor": "Point for",
+    "theseAreAgainst": "Point against",
     "point": "Point",
     "for": "Your point for...",
     "against": "Your point against...",
