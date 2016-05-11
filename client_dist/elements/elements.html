@@ -49778,7 +49778,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           <paper-icon-button icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
         </template>
         <template is="dom-if" if="[[showFilter]]">
-          <paper-menu-button id="filterDropdown" class="selected-items" icon="editor:merge-type">
+          <paper-menu-button id="filterDropdown" class="selected-items" icon="editor:merge-type" vertical-align="bottom" horizontal-align="left">
             <paper-icon-button icon="filter-list" class="dropdown-trigger"></paper-icon-button>
             <div class="layout horizontal dropdown-content">
               <div>
@@ -56312,6 +56312,7 @@ module.exports = Array.isArray || function (arr) {
 
     // Middleware
     function scrollToTop(ctx, next) {
+      debugger;
       if (window.app && !window.app.keepOpenForPost) {
         window.app.scrollPageToTop();
       }
