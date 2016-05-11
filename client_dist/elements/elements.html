@@ -50288,7 +50288,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       },
 
       _postsResponse: function (event, detail, sender) {
-        this.set('posts', []);
+        if (!this.posts) {
+          this.set('posts', []);
+        }
         var posts = detail.response.posts;
         this.set('postsCount', detail.response.totalPostsCount);
         this.fire('yp-post-count', {
