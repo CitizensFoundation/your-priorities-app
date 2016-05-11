@@ -38152,6 +38152,10 @@ event and do your own custom submission:
               enumValue: 0
             },
             {
+              name: this.t('notification.hourly'),
+              enumValue: 1
+            },
+            {
               name: this.t('notification.daily'),
               enumValue: 2
             },
@@ -38230,7 +38234,12 @@ event and do your own custom submission:
 
     <style>
       .container {
+        margin-top: 16px;
         height: 100%;
+      }
+
+      .additionalSettings {
+        margin-top: 16px;
       }
     </style>
 
@@ -39347,6 +39356,10 @@ value. `setMax` should move the slider to the maximum value.
       min-width: 420px;
     }
 
+    .linkAccounts {
+      padding-top: 16px;
+    }
+
     @media (max-width: 480px) {
       paper-dialog {
         padding: 0;
@@ -39360,7 +39373,7 @@ value. `setMax` should move the slider to the maximum value.
   <template>
     <div id="outer">
       <paper-dialog id="dialog" modal="">
-        <h3>[[heading]]</h3>
+        <h2>[[heading]]</h2>
         <div class="setEmailInfo">
           [[t('user.setEmailInfo')]]
         </div>
@@ -39504,7 +39517,7 @@ value. `setMax` should move the slider to the maximum value.
       if (detail.response && detail.response.alreadyRegistered) {
         this.set('needPassword', true);
         this.set('header', this.t('user.linkAccount'));
-        this.set('submitText', this.t('user.linkAccounts'));
+        this.set('submitText', this.t('user.linkAccount'));
       } else {
         window.appGlobals.notifyUserViaToast(this.t('user.haveSetEmail')+ " " + detail.response.email);
         this.close();
@@ -39512,11 +39525,13 @@ value. `setMax` should move the slider to the maximum value.
     },
 
     _linkAccountsResponse: function(event, detail) {
+      debugger;
       if (detail.response.accountLinked) {
         window.appGlobals.notifyUserViaToast(this.t('user.haveLinkedAccounts')+ " " + detail.response.email);
         window.appUser.checkLogin();
+        this.close();
       } else {
-        this.$$("#linkAccountsAjax").showErrorDialog(this.t('user.passwordWrong'));
+        this.$$("#linkAccountsAjax").showErrorDialog(this.t('user.loginNotAuthorized'));
       }
     },
 

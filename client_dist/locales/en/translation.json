@@ -22,6 +22,7 @@
     "email": "Email",
     "asItHappens": "As it happens",
     "daily": "Daily",
+    "hourly": "Hourly",
     "weekly": "Weekly",
     "monthly": "Monthly",
     "myPostsEndorsements": "Posts I like",
@@ -251,6 +252,10 @@
   },
 
   "user": {
+    "setEmail": "Add email to account",
+    "linkAccount": "Connect with account",
+    "setEmailInfo": "Add email to account",
+    "existsLinkAccountInfo": "Enter your password to connect to this access your email account.",
     "logoutCompleteFor": "Logout for",
     "loggedInWithSaml": "Logged in with SAML",
     "loggedInWithFacebook": "Logged in with Facebook",
