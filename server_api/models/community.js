@@ -109,12 +109,12 @@ module.exports = function(sequelize, DataTypes) {
       setYpCommunity: function (req,res,next) {
         var hostname = null;
         var parsedDomain = parseDomain(req.headers.host);
-        log.info("PARSE", {parsedDomain: parsedDomain});
+
         if (parsedDomain && parsedDomain.subdomain) {
           hostname = parsedDomain.subdomain;
         }
 
-        if (hostname) {
+        if (hostname!=null) {
           if (hostname.indexOf('betri-hverfi-2015') > -1) {
             hostname = "betri-hverfi-2015";
           } else if (hostname.indexOf('betri-hverfi-2014') > -1) {
@@ -125,8 +125,6 @@ module.exports = function(sequelize, DataTypes) {
             hostname = "betri-hverfi-2012";
           }
         }
-
-        log.info("PARSE 2", {hostname: hostname});
 
         if (!hostname && req.params.communityHostname)
           hostname = req.params.communityHostname;
@@ -146,7 +144,6 @@ module.exports = function(sequelize, DataTypes) {
             }
           }.bind(this));
         } else {
-          log.info("PARSE 5 CANT FIND COMMU");
           req.ypCommunity = { id: null };
           next();
         }

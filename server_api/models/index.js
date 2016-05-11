@@ -59,9 +59,11 @@ Object.keys(db).forEach(function(modelName) {
   }
 });
 
-sequelize.sync().done(function() {
-  db.Post.addFullTextIndex();
-});
+if (process.env.NODE_ENV === 'development') {
+  sequelize.sync().done(function() {
+    db.Post.addFullTextIndex();
+  });
+}
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
