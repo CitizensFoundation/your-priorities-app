@@ -235,12 +235,14 @@
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue) {
           this.set("posts", []);
+          this.$$("#list").fire('iron-resize');
           this._loadMoreData();
         }
       },
 
       _refreshGroupFromFilter: function () {
         this.set("posts", []);
+        this.$$("#list").fire('iron-resize');
         this._loadMoreData();
       },
 
@@ -257,7 +259,7 @@
         }
 
         if (!this.filter)
-          this.set('filter','top');
+          this.set('filter','newest');
         if (this.searchingFor) {
           this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
         } else {
