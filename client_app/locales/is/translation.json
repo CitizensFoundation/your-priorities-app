@@ -48,7 +48,7 @@
       }
     },
     "point": {
-      "new": "Rökræða",
+      "new": "Rök",
       "newFor": "Ný rök með",
       "newAgainst": "Ný rök á móti",
       "newComment": "Ný athugasemd",
@@ -167,7 +167,7 @@
     "add_new":"Bættu við nýrri hugmynd",
     "up_vote":"Kjósa upp",
     "down_vote":"Kjósa niður",
-    "debate": "Rökræða",
+    "debate": "Rök",
     "report": "Report post",
     "notify": "Notify me about this post",
     "share": "Share this post",
@@ -181,7 +181,7 @@
     "photoDeleteConfirmation": "Ertu viss um að þú viljir eyða þessari mynd?",
     "photographerName": "Ljósmyndari",
     "tabs": {
-      "debate": "Rökræða",
+      "debate": "Rök",
       "news": "Nýjasta Efni",
       "location": "Staðsetning",
       "photos": "Myndefni",
@@ -211,13 +211,15 @@
     "the_all": "Allir flokkar"
   },
   "point": {
+    "theseAreFor": "Rök með",
+    "theseAreAgainst": "Rök á móti",
     "forAdded": "Bætti við rökum með",
     "againstAdded": "Bætti við rökum á móti",
     "point": "Rök",
-    "for": "Þín rök með...",
-    "against": "Þín rök á móti...",
-    "add_up": "Bæta við rökum með",
-    "add_down": "Bæta við rökum á móti",
+    "for": "Skrá rök með...",
+    "against": "Skrá rök á móti...",
+    "add_up": "Skrá rök með",
+    "add_down": "Skrá rök á móti",
     "helpful": "Hjálplegt",
     "not_helpful": "Ekki hjálplegt",
     "addNewsStory": "Bættu við frétt",
