@@ -83,7 +83,7 @@ var sessionConfig = {
   name: 'yrpri.sid',
   secret: process.env.SESSION_SECRET ? process.env.SESSION_SECRET : 'not so secret... use env var.',
   resave: true,
-  cookie: { domain: '.betraisland.is'},
+  cookie: { autoSubDomain: true },
   saveUninitialized: true
 };
 

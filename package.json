@@ -21,7 +21,7 @@
     "embedly": "^1.0.4",
     "express": "^4.13.3",
     "express-generator": "^4.9.0",
-    "express-session": "^1.13.0",
+    "express-session": "git+https://github.com/rbjarnason/session.git",
     "express-useragent": "^0.2.4",
     "flickrapi": "~0.3.28",
     "gulp-version-append": "^0.2.0",
