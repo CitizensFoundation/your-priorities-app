@@ -36983,7 +36983,7 @@ event and do your own custom submission:
 
         _setupTranslation: function () {
           if (this.new) {
-            this.editHeaderText = this.t('post.photoNew');
+            this.editHeaderText = this.t('post.newPhoto');
             this.toastText = this.t('post.photo.toast.added');
           } else {
             this.editHeaderText = this.t('post.photoUpdate');
@@ -49524,7 +49524,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                   <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
                   <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                     <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                    <paper-item id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
+                    <paper-item hidden="" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
                     <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
                   </paper-menu>
                 </paper-menu-button>
