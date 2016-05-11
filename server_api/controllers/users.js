@@ -91,7 +91,7 @@ router.post('/register', function (req, res) {
   var user = models.User.build({
     email: req.body.email,
     name: req.body.name,
-    notification_settings: models.AcNotification.defaultNotificationSettings,
+    notifications_settings: models.AcNotification.defaultNotificationSettings,
     status: 'active'
   });
   user.createPasswordHash(req.body.password);
