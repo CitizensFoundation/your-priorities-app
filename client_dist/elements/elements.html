@@ -50140,7 +50140,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         posts: {
           type: Array,
-          value: null
+          value: null,
+          notify: true
         },
 
         groupId: {
@@ -50237,7 +50238,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _refreshGroupFromFilter: function () {
         this.set("posts", []);
-        this.$$("#list").fire('iron-resize');
+        this.async(function () {
+          this.$$("#list").fire('iron-resize');
+        }, 5);
         this._loadMoreData();
       },
 
@@ -50284,6 +50287,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }.bind(this));
 
         this.$$("#list").fire('iron-resize');
+
+        this.async(function () {
+          this.$$("#list").fire('iron-resize');
+        }, 720);
 
         if (posts.length>0) {
           this.setMoreToLoad();
