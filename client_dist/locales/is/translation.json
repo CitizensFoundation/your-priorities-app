@@ -159,6 +159,7 @@
   },
 
   "post": {
+    "deleteConfirmation": "Ertu viss um að þú viljir eyða hugmynd?",
     "photoUpdate": "Breyta mynd",
     "noLocation": "Engin staðsetning",
     "shareInfo": "Deila hugmynd",
