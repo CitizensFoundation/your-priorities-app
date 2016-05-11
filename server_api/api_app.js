@@ -284,18 +284,21 @@ if (app.get('env') === 'development') {
   });
 } else {
   app.use(function(err, req, res, next) {
+    var status = err.status || 500;
     res.status(err.status || 500);
-    log.error("General Error", { context: 'generalError', user: toJson(req.user), err: err, errStack: err.stack, errorStatus: 500 });
+    log.error("General Error", { context: 'generalError', user: toJson(req.user), err: err, errStack: err.stack, errorStatus: status });
     err.url = req.url;
     err.params = req.params;
-    airbrake.notify(err, function(airbrakeErr, url) {
-      if (airbrakeErr) {
-        log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
-      }
-      res.send({
-        message: err.message,
-        error: err
+    if (status!=404) {
+      airbrake.notify(err, function(airbrakeErr, url) {
+        if (airbrakeErr) {
+          log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
+        }
       });
+    }
+    res.send({
+      message: err.message,
+      error: err
     });
   });
 }
