@@ -161,6 +161,8 @@
           return this.t('generalError');
         } else if (errorText && errorText.indexOf('status code: 401') > -1) {
           return this.t('errorNotAuthorized');
+        } else if (errorText && errorText.indexOf('503') > -1) {
+          return this.t('errorCantConnect');
         } else {
           return errorText;
         }

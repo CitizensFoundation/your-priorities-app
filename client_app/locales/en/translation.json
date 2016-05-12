@@ -2,6 +2,7 @@
   "title": "Title",
   "selectLanguage": "Select language",
   "update": "Update",
+  "errorCantConnect": "Can't connect to the server. Please try again a bit later. This might be due to high traffic or a software upgrade.",
   "errorNotFound": "Not found...",
   "errorNotAuthorized": "You do not have access to this!",
   "generalError": "There has been an unexpected error. We have been notified.",
