@@ -294,6 +294,7 @@
 
       _groupsResponse: function (event, detail, sender) {
         this.set('group', detail.response.group);
+        this.fire('yp-set-home-link', { type: 'group', id: this.group.id, name: this.group.name });
         if (this.group.theme_id!=null) {
           this.setTheme(this.group.theme_id);
         } else if (this.group.Community.theme_id!=null) {

@@ -158,7 +158,7 @@
 
         <app-drawer id="navDrawer" align="start" position="left" swipe-open>
           <div style="height: 100%; overflow: auto;">
-            <yp-app-nav-drawer id="ypNavDrawer" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
+            <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
           </div>
         </app-drawer>
 
@@ -262,6 +262,10 @@
       ],
 
       properties: {
+
+        homeLink: {
+          type: Object
+        },
 
         route: {
           type: String,
@@ -370,7 +374,14 @@
       ],
 
       listeners: {
-        'yp-set-pages': '_setPages'
+        'yp-set-pages': '_setPages',
+        'yp-set-home-link': '_setHomeLink'
+      },
+
+      _setHomeLink: function (event, homeLink) {
+        if (!this.homeLink) {
+          this.set('homeLink', homeLink);
+        }
       },
 
       setKeepOpenForPostsOn: function (goBackToPage) {

@@ -214,6 +214,7 @@
 
       _response: function (event, detail, sender) {
         this.set('community', detail.response);
+        this.fire('yp-set-home-link', { type: 'community', id: this.community.id, name: this.community.name });
         if (!this.community.only_admins_can_create_groups || this.hasCommunityAccess(this.community)) {
           this.set('createFabIcon', 'social:group');
         }

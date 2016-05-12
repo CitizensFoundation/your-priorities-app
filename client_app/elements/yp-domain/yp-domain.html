@@ -236,6 +236,7 @@
 
       _response: function (event, detail, sender) {
         this.set('domain', detail.response);
+        this.fire('yp-set-home-link', { type: 'domain', id: this.domain.id, name: this.domain.name });
         window.appGlobals.domain = this.domain;
         if (this.domain.theme_id!=null) {
           this.setTheme(this.domain.theme_id);
