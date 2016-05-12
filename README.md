@@ -44,6 +44,21 @@ deploy the template
 [https://prediction.io/](https://prediction.io/)
 [https://templates.prediction.io/PredictionIO/template-scala-parallel-universal-recommendation](https://templates.prediction.io/PredictionIO/template-scala-parallel-universal-recommendation)
 
+## Active Citizen Tensorflow Classifications (experimental)
+```
+Install TensorFlow
+
+The python classifier scripts are in active-citizen/engine/classifications
+
+The export files for Your Priorities content are in active-citizen/exporters
+
+Currently you need to use the exporters to generate datasets for the TensorFlow python scripts
+
+Example dataset from our Better Reykjavik citizen particiaption website is provided in
+active-citizen/exporters/datasets/better_reyjkavik
+
+```
+
 ## About Active Citizen
 ```
 Open source library, API and UI for activity streams and notifications 
