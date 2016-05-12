@@ -224,7 +224,9 @@ auth.role('community.viewUser', function (community, req, done) {
   models.Community.findOne({
     where: { id: community.id }
   }).then(function (community) {
-    if (community.access === models.Community.ACCESS_PUBLIC) {
+    if (!community) {
+      done(null, false);
+    } else if (community.access === models.Community.ACCESS_PUBLIC) {
       done(null, true);
     }  else if (!req.isAuthenticated()) {
       done(null, false);
