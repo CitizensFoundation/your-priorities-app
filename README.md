@@ -60,5 +60,6 @@ We believe that without participation there is no democracy.
 ## The Team
 - Robert Bjarnason
 - Gunnar Grimsson
+- Nathalie Stembert
 - Maren Valsdottir
 - Alexander Máni Gautason
