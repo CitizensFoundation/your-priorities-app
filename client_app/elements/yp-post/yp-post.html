@@ -304,7 +304,11 @@
           </paper-tab>
           <paper-tab>[[t('post.tabs.news')]]</paper-tab>
           <paper-tab>[[t('post.tabs.location')]]</paper-tab>
-          <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
+          <paper-tab>
+            <div class="layout vertical center-center tabCounterContainer">
+              <span>[[t('post.tabs.photos')]]</span><div class="counterInfo" id="tabCountPhotos"></div>
+            </div>
+          </paper-tab>
         </paper-tabs>
       </div>
 
@@ -415,7 +419,15 @@
         },
 
         listeners: {
-          'yp-debate-info': '_updateDebateInfo'
+          'yp-debate-info': '_updateDebateInfo',
+          'yp-post-image-count': '_updatePostImageCount'
+        },
+
+        _updatePostImageCount: function (event, imageCount) {
+          var tabCounter = this.$$('#tabCountPhotos');
+          if (tabCounter) {
+            tabCounter.innerHTML = this.formatNumber(imageCount);
+          }
         },
 
         _updateDebateInfo: function (event, detail) {

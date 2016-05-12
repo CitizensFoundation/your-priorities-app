@@ -86,6 +86,9 @@
 
         _response: function (event, detail) {
           this.set('images', detail.response);
+          if (this.images && this.images.length>0) {
+            this.fire('yp-post-image-count', this.images.length);
+          }
         }
       });
     }());
