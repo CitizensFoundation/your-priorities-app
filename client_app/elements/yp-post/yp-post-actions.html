@@ -198,7 +198,7 @@
       </div>
 
       <div class="action-debate layout vertical" hidden$="[[_hideDebate(small,forceSmall)]]">
-        <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.debate')]]" icon="communication:chat-bubble-outline" class="action-icon debate-icon largeButton" on-tap="goToPost"></paper-icon-button>
+        <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.debate')]]" icon="communication:chat-bubble-outline" class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
         <div class="action-text debate-text">{{formatNumber(post.counter_points)}}</div>
       </div>
 
@@ -243,6 +243,11 @@
           value: false
         },
 
+        headerMode: {
+          type: Boolean,
+          value: false
+        },
+
         forceSmall: {
           type: Boolean,
           value: false
@@ -277,6 +282,12 @@
           type: Boolean,
           value: false
         }
+      },
+
+      _goToPostIfNotHeader: function () {
+        if (!this.headerMode) {
+          this.goToPost();
+         }
       },
 
       _postUrl: function (post) {
