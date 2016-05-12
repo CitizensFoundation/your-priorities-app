@@ -355,6 +355,9 @@
 
     _customRedirect: function (post) {
       if (post) {
+        if (post.newEndorsement && window.appUser && window.appUser.endorsementPostsIndex) {
+          window.appUser.endorsementPostsIndex[post.id] = post.newEndorsement;
+        }
         page("#!/post/"+post.id);
       } else {
         console.warn('No post found on custom redirect');

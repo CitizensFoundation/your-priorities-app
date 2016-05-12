@@ -298,6 +298,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
     cover_media_type: req.body.coverMediaType,
     user_id: req.user.id,
     status: 'published',
+    counter_endorsements_up: 1,
     content_type: models.Post.CONTENT_IDEA,
     user_agent: req.useragent.source,
     ip_address: req.clientIp
@@ -308,16 +309,28 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
       post.updateAllExternalCounters(req, 'up', 'counter_posts', function () {
         models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
           post.setupImages(req.body, function (error) {
-            models.AcActivity.createActivity({
-              type: 'activity.post.new',
-              userId: post.user_id,
-              domainId: req.ypDomain.id,
-              groupId: post.group_id,
-              communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-              postId : post.id,
-              access: models.AcActivity.ACCESS_PUBLIC
-            }, function (error) {
-              sendPostOrError(res, post, 'setupImages', req.user, error);
+            models.Endorsement.build({
+              post_id: post.id,
+              value: 1,
+              user_id: req.user.id,
+              status: 'active',
+              user_agent: req.useragent.source,
+              ip_address: req.clientIp
+            }).save().then(function (endorsement) {
+              models.AcActivity.createActivity({
+                type: 'activity.post.new',
+                userId: post.user_id,
+                domainId: req.ypDomain.id,
+                groupId: post.group_id,
+                communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+                postId : post.id,
+                access: models.AcActivity.ACCESS_PUBLIC
+              }, function (error) {
+                if (post) {
+                  post.setDataValue('newEndorsement', endorsement);
+                }
+                sendPostOrError(res, post, 'setupImages', req.user, error);
+              });
             });
           })
         })
