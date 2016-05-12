@@ -28,6 +28,17 @@
       window.locale = locale;
     }
 
+    var splitLocale = window.location.href.split('locale=');
+
+    var localeFromUrl;
+    if (splitLocale && splitLocale[1]) {
+      localeFromUrl = splitLocale[1];
+    }
+
+    if (localeFromUrl && localeFromUrl.length==2) {
+      window.locale = localeFromUrl;
+    }
+
     i18n.init({ lng: window.locale }, function(loaded) {
       if (window.app) {
         if (typeof window.app._i18nReady == 'function') {
