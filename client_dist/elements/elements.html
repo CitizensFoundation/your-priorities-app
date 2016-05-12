@@ -43489,7 +43489,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         ready: function () {
           window.appStartTime = new Date();
           window.appGlobals = this;
-          moment.locale(window.locale);
 
           window.googleMapsApiKey = null; //'AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0';
           window.instagramAccessToken = '3066250812.cf0499d.4d1d4db0bb8b43b59c057346511161c8';
@@ -55213,6 +55212,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       _isAppAndI18nReady: function (appReady, i18nReady) {
         if ((appReady && i18nReady) || (appReady && window.i18nTranslation)) {
           this.set('appAndI18nReady', true);
+          moment.locale(window.locale);
         }
       },
 
