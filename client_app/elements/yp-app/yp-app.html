@@ -457,6 +457,7 @@
       _isAppAndI18nReady: function (appReady, i18nReady) {
         if ((appReady && i18nReady) || (appReady && window.i18nTranslation)) {
           this.set('appAndI18nReady', true);
+          moment.locale(window.locale);
         }
       },
 
