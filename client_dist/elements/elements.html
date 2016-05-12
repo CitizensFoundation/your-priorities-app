@@ -44672,7 +44672,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       </div>
 
       <div class="action-debate layout vertical" hidden$="[[_hideDebate(small,forceSmall)]]">
-        <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.debate')]]" icon="communication:chat-bubble-outline" class="action-icon debate-icon largeButton" on-tap="goToPost"></paper-icon-button>
+        <paper-icon-button disabled="[[allDisabled]]" title="[[t('post.debate')]]" icon="communication:chat-bubble-outline" class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
         <div class="action-text debate-text">{{formatNumber(post.counter_points)}}</div>
       </div>
 
@@ -44717,6 +44717,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           value: false
         },
 
+        headerMode: {
+          type: Boolean,
+          value: false
+        },
+
         forceSmall: {
           type: Boolean,
           value: false
@@ -44751,6 +44756,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           type: Boolean,
           value: false
         }
+      },
+
+      _goToPostIfNotHeader: function () {
+        if (!this.headerMode) {
+          this.goToPost();
+         }
       },
 
       _postUrl: function (post) {
@@ -49516,7 +49527,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                   <div class="description">[[trimmedDescription]]</div>
                 </div>
                 <div class="card-actions">
-                  <yp-post-actions elevation="[[elevation]]" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+                  <yp-post-actions header-mode="[[headerMode]]" elevation="[[elevation]]" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
                 </div>
               </div>
               <template is="dom-if" if="[[headerMode]]">
