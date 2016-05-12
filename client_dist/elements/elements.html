@@ -27947,6 +27947,8 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
           return this.t('generalError');
         } else if (errorText && errorText.indexOf('status code: 401') > -1) {
           return this.t('errorNotAuthorized');
+        } else if (errorText && errorText.indexOf('503') > -1) {
+          return this.t('errorCantConnect');
         } else {
           return errorText;
         }
@@ -36802,6 +36804,9 @@ event and do your own custom submission:
 
     _customRedirect: function (post) {
       if (post) {
+        if (post.newEndorsement && window.appUser && window.appUser.endorsementPostsIndex) {
+          window.appUser.endorsementPostsIndex[post.id] = post.newEndorsement;
+        }
         page("#!/post/"+post.id);
       } else {
         console.warn('No post found on custom redirect');
@@ -45739,7 +45744,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
       </div>
       <div class="layout horizontal center-center">
-        <yp-post-actions elevation="2" floating="" endorse-mode="[[endorseMode]]" class="voting layout vertical end" post="[[activity.Post]]"></yp-post-actions>
+        <yp-post-actions elevation="-1" floating="" endorse-mode="[[endorseMode]]" class="voting layout vertical end" post="[[activity.Post]]"></yp-post-actions>
       </div>
     </div>
 
@@ -48844,6 +48849,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         _response: function (event, detail) {
           this.set('images', detail.response);
+          if (this.images && this.images.length>0) {
+            this.fire('yp-post-image-count', this.images.length);
+          }
         }
       });
     }());
@@ -49120,7 +49128,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           </paper-tab>
           <paper-tab>[[t('post.tabs.news')]]</paper-tab>
           <paper-tab>[[t('post.tabs.location')]]</paper-tab>
-          <paper-tab>[[t('post.tabs.photos')]]</paper-tab>
+          <paper-tab>
+            <div class="layout vertical center-center tabCounterContainer">
+              <span>[[t('post.tabs.photos')]]</span><div class="counterInfo" id="tabCountPhotos"></div>
+            </div>
+          </paper-tab>
         </paper-tabs>
       </div>
 
@@ -49231,7 +49243,15 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         },
 
         listeners: {
-          'yp-debate-info': '_updateDebateInfo'
+          'yp-debate-info': '_updateDebateInfo',
+          'yp-post-image-count': '_updatePostImageCount'
+        },
+
+        _updatePostImageCount: function (event, imageCount) {
+          var tabCounter = this.$$('#tabCountPhotos');
+          if (tabCounter) {
+            tabCounter.innerHTML = this.formatNumber(imageCount);
+          }
         },
 
         _updateDebateInfo: function (event, detail) {
@@ -51029,6 +51049,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _groupsResponse: function (event, detail, sender) {
         this.set('group', detail.response.group);
+        this.fire('yp-set-home-link', { type: 'group', id: this.group.id, name: this.group.name });
         if (this.group.theme_id!=null) {
           this.setTheme(this.group.theme_id);
         } else if (this.group.Community.theme_id!=null) {
@@ -53785,6 +53806,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _response: function (event, detail, sender) {
         this.set('community', detail.response);
+        this.fire('yp-set-home-link', { type: 'community', id: this.community.id, name: this.community.name });
         if (!this.community.only_admins_can_create_groups || this.hasCommunityAccess(this.community)) {
           this.set('createFabIcon', 'social:group');
         }
@@ -54460,6 +54482,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _response: function (event, detail, sender) {
         this.set('domain', detail.response);
+        this.fire('yp-set-home-link', { type: 'domain', id: this.domain.id, name: this.domain.name });
         window.appGlobals.domain = this.domain;
         if (this.domain.theme_id!=null) {
           this.setTheme(this.domain.theme_id);
@@ -54637,15 +54660,30 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       paper-item {
         cursor: pointer;
       }
+
+      iron-icon {
+        width: 42px;
+        height: 42px;
+        cursor: pointer;
+      }
     </style>
 
     <paper-material elevation="0" class="material">
+      <div hidden$="[[!homeLink]]">
+        <div class="header layout vertical center-center">
+          <iron-icon icon="home" on-tap="_goBack"></iron-icon>
+          <paper-item on-tap="_goBack">[[homeLink.name]]</paper-item>
+        </div>
+      </div>
       <yp-user-language-selector hidden$="[[user]]"></yp-user-language-selector>
       <div class="layout vertical" hidden$="[[!user]]">
-        <div class="header">[[t('myDomains')]]</div>
-        <template is="dom-repeat" items="[[myDomains]]" as="domain">
-          <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[domain.name]]</paper-item>
-        </template>
+
+        <div hidden="">
+          <div class="header">[[t('myDomains')]]</div>
+          <template is="dom-repeat" items="[[myDomains]]" as="domain">
+            <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[domain.name]]</paper-item>
+          </template>
+        </div>
 
         <div class="header">[[t('myCommunities')]]</div>
         <template is="dom-repeat" items="[[myCommunities]]" as="community">
@@ -54672,6 +54710,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       ],
 
       properties: {
+        homeLink: {
+          type: Object
+        },
 
         user: {
           type: Object,
@@ -54697,6 +54738,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         myDomains: {
           type: Array
+        }
+      },
+
+      _goBack: function (event) {
+        if (this.homeLink) {
+          page('/'+this.homeLink.type+'/'+this.homeLink.id);
+          this.fire('yp-toggle-nav-drawer');
         }
       },
 
@@ -54869,7 +54917,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         <app-drawer id="navDrawer" align="start" position="left" swipe-open="">
           <div style="height: 100%; overflow: auto;">
-            <yp-app-nav-drawer id="ypNavDrawer" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
+            <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
           </div>
         </app-drawer>
 
@@ -54970,6 +55018,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       ],
 
       properties: {
+
+        homeLink: {
+          type: Object
+        },
 
         route: {
           type: String,
@@ -55078,7 +55130,14 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       ],
 
       listeners: {
-        'yp-set-pages': '_setPages'
+        'yp-set-pages': '_setPages',
+        'yp-set-home-link': '_setHomeLink'
+      },
+
+      _setHomeLink: function (event, homeLink) {
+        if (!this.homeLink) {
+          this.set('homeLink', homeLink);
+        }
       },
 
       setKeepOpenForPostsOn: function (goBackToPage) {
