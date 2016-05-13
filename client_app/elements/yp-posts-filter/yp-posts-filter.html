@@ -92,7 +92,7 @@
         </template>
         <template is="dom-if" if="[[showFilter]]">
           <paper-menu-button id="filterDropdown" class="selected-items" icon="editor:merge-type" vertical-align="bottom" horizontal-align="left">
-            <paper-icon-button icon="filter-list" class="dropdown-trigger"></paper-icon-button>
+            <paper-icon-button id="dropDownTrigger" icon="filter-list" class="dropdown-trigger"></paper-icon-button>
             <div class="layout horizontal dropdown-content">
               <div>
                 <paper-menu class="dropdown-content" on-iron-select="_changeFilter">
@@ -138,7 +138,7 @@
             </div>
           </paper-menu-button>
         </template>
-        <div>
+        <div on-tap="_openDropDown" style="cursor: pointer;">
           <h2 class="subTitle">[[subTitle]]</h2>
         </div>
       </div>
@@ -205,6 +205,13 @@
 
         tabName: {
           type: String
+        }
+      },
+
+      _openDropDown: function () {
+        var trigger = this.$$("#dropDownTrigger");
+        if (trigger) {
+          trigger.click();
         }
       },
 
