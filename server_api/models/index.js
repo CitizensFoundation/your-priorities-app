@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'production') {
     dialectOptions: {
       ssl: true
     },
-    logging: true
+    logging: false
   });
 } else {
   var config = require(__dirname + '/../config/config.json')[env];
