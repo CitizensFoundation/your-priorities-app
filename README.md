@@ -76,7 +76,7 @@ there is no democracy.
 
 ## The Team
 - Robert Bjarnason
-- Gunnar Grimsson
+- Gunnar Grímsson
 - Nathalie Stembert
-- Maren Valsdottir
+- Guðný Maren Valsdóttir
 - Alexander Máni Gautason
