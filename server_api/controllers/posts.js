@@ -211,7 +211,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
     ]
   }).then(function(post) {
     if (post) {
-      log.info('Post Viewed', { post: toJson(post), context: 'view', user: toJson(req.user) });
+      log.info('Post Viewed', { post: toJson(post.simple()), context: 'view', user: toJson(req.user) });
       res.send(post);
     } else {
       sendPostOrError(res, req.params.id, 'view', req.user, 'Not found', 404);

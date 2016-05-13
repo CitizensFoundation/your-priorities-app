@@ -222,7 +222,7 @@ router.get('/', function(req, res) {
         log.info('Domain Lookup Found Community', { community: req.ypCommunity.hostname, context: 'index', user: toJson(req.user) });
         res.send({community: req.ypCommunity, domain: domain});
       } else {
-        log.info('Domain Lookup Found Domain', { domain: toJson(domain), context: 'index', user: toJson(req.user) });
+        log.info('Domain Lookup Found Domain', { domain: toJson(domain.simple()), context: 'index', user: toJson(req.user) });
         res.send({domain: domain})
       }
     }
@@ -234,6 +234,7 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
     if (error) {
       sendDomainOrError(res, null, 'view', req.user, error);
     } else {
+      log.info('Domain Viewed', { domain: toJson(domain.simple()), context: 'index', user: req.user ? req.user.email : null });
       res.send(domain);
     }
   });

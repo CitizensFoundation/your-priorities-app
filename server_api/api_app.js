@@ -187,7 +187,7 @@ passport.deserializeUser(function(sessionUser, done) {
     ]
   }).then(function(user) {
     if (user) {
-      log.info("User Deserialized", { context: 'deserializeUser', user: toJson(user)});
+      log.info("User Deserialized", { context: 'deserializeUser', user: user.email});
       user.loginProvider = sessionUser.loginProvider;
       done(null, user);
     } else {

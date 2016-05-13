@@ -319,7 +319,7 @@ router.get('/:id', auth.can('view community'), function(req, res) {
     ]
   }).then(function(community) {
     if (community) {
-      log.info('Community Viewed', { community: toJson(community), context: 'view', user: toJson(req.user) });
+      log.info('Community Viewed', { community: toJson(community.simple()), context: 'view', user: toJson(req.user) });
       res.send(community);
     } else {
       sendCommunityOrError(res, req.params.id, 'view', req.user, 'Not found', 404);

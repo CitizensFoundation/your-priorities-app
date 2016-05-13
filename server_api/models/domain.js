@@ -248,7 +248,7 @@ module.exports = function(sequelize, DataTypes) {
           if (created) {
             log.info('Domain Created', { domain: toJson(domain.simple()), context: 'create' });
           } else {
-            log.info('Domain Loaded', { domain: toJson(domain.simple()), context: 'create' });
+            //log.info('Domain Loaded', { domain: toJson(domain.simple()), context: 'create' });
           }
           req.ypDomain = domain;
           if (req.url.indexOf('/auth') > -1 || req.url.indexOf('/users/') > -1) {

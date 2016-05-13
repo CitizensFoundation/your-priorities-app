@@ -554,7 +554,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     ]
   }).then(function(group) {
     if (group) {
-      log.info('Group Viewed', { group: toJson(group), context: 'view', user: toJson(req.user) });
+      log.info('Group Viewed', { group: toJson(group.simple()), context: 'view', user: toJson(req.user) });
       var PostsByNotOpen = models.Post.scope('not_open');
       PostsByNotOpen.count({ where: { status: { $in: ['published','inactive']}, group_id: req.params.id} }).then(function (count) {
         res.send({group: group, hasNonOpenPosts: count != 0});
