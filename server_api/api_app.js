@@ -275,15 +275,22 @@ app.use(function(err, req, res, next) {
   }
   err.url = req.url;
   err.params = req.params;
-  airbrake.notify(err, function(airbrakeErr, url) {
-    if (airbrakeErr) {
-      log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
-    }
+  if (status!=404) {
+    airbrake.notify(err, function(airbrakeErr, url) {
+      if (airbrakeErr) {
+        log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
+      }
+      res.send({
+        message: err.message,
+        error: err
+      });
+    });
+  } else {
     res.send({
       message: err.message,
       error: err
     });
-  });
+  }
 });
 
 var server = app.listen(app.get('port'), function() {
