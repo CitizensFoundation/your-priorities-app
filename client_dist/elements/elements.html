@@ -49322,6 +49322,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             this.post.Points.shift();
           }
           this.fire("change-header", { headerTitle: this.truncate(this.post.Group.name,80),
+                                       documentTitle: this.post.name,
                                        headerDescription: '',//this.truncate(this.post.Group.objectives,45),
                                        backPath: "#!/group/" + this.post.group_id });
         },
@@ -51078,6 +51079,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         this.fire("change-header", { headerTitle: this.group.Community.name,
           headerDescription: this.group.Community.description,
           headerIcon: "social:group",
+          documentTitle: this.group.name,
           enableSearch: true,
           backPath: "#!/community/" + this.group.community_id });
       },
@@ -53846,6 +53848,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         this.fire("change-header", { headerTitle: this.community.Domain.name,
                                      headerDescription: this.community.Domain.description,
                                      headerIcon: "group-work",
+                                     documentTitle: this.community.name,
                                      backPath: "#!/domain/" + this.community.domain_id });
         if (this.activeGroups.length>0) {
           this.hideAdd = true;
@@ -55066,6 +55069,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         storedBackPath: String,
 
+        storedLastDocumentTitle: String,
+
         headerTitle: {
           type: String
         },
@@ -55149,6 +55154,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       setKeepOpenForPostsOn: function (goBackToPage) {
         this.set('keepOpenForPost', goBackToPage);
         this.set('storedBackPath', this.backPath);
+        this.set('storedLastDocumentTitle', document.title);
       },
 
       _closePost: function () {
@@ -55157,6 +55163,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         if (this.storedBackPath)
           this.set('backPath', this.storedBackPath);
+
+        if (this.storedLastDocumentTitle) {
+          document.title = this.storedLastDocumentTitle;
+          this.set('storedLastDocumentTitle', null);
+        }
 
         this.set('this.keepOpenForPost', null);
       },
