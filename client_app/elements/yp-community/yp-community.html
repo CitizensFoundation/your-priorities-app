@@ -248,6 +248,7 @@
         this.fire("change-header", { headerTitle: this.community.Domain.name,
                                      headerDescription: this.community.Domain.description,
                                      headerIcon: "group-work",
+                                     documentTitle: this.community.name,
                                      backPath: "#!/domain/" + this.community.domain_id });
         if (this.activeGroups.length>0) {
           this.hideAdd = true;

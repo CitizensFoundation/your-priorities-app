@@ -499,6 +499,7 @@
             this.post.Points.shift();
           }
           this.fire("change-header", { headerTitle: this.truncate(this.post.Group.name,80),
+                                       documentTitle: this.post.name,
                                        headerDescription: '',//this.truncate(this.post.Group.objectives,45),
                                        backPath: "#!/group/" + this.post.group_id });
         },
