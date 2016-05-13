@@ -219,7 +219,7 @@ router.get('/', function(req, res) {
         sendDomainOrError(res, null, 'view', req.user, error);
     } else {
       if (req.ypCommunity && req.ypCommunity.id) {
-        log.info('Domain Lookup Found Community', { domain: toJson(req.ypCommunity), context: 'index', user: toJson(req.user) });
+        log.info('Domain Lookup Found Community', { community: req.ypCommunity.hostname, context: 'index', user: toJson(req.user) });
         res.send({community: req.ypCommunity, domain: domain});
       } else {
         log.info('Domain Lookup Found Domain', { domain: toJson(domain), context: 'index', user: toJson(req.user) });

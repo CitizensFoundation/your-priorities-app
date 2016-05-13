@@ -124,7 +124,7 @@ app.use(function (req, res, next) {
 // Setup the current community from the host
 app.use(function (req, res, next) {
   models.Community.setYpCommunity(req, res, function () {
-    log.info("Setup Community Completed", { context: 'setYpCommunity', community: toJson(req.ypCommunity) });
+    log.info("Setup Community Completed", { context: 'setYpCommunity', community: req.ypCommunity.hostname });
     next();
   });
 });

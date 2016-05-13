@@ -128,23 +128,30 @@ module.exports = function(sequelize, DataTypes) {
 
         if (!hostname && req.params.communityHostname)
           hostname = req.params.communityHostname;
+
         if (hostname && hostname!="" && hostname!="www" && hostname!="new") {
-          log.info("PARSE 3", {hostname: hostname});
+          //log.info("PARSE 3", {hostname: hostname});
           Community.find({
             where: {hostname: hostname}
           }).then(function (community) {
-            log.info("PARSE 4", {hostname: hostname, community: community});
+            //log.info("PARSE 4", {hostname: hostname, community: community});
             if (community) {
               req.ypCommunity = community;
               next();
             } else {
-              log.warn('PARSE Cant find community', { user: toJson(req.user), context: 'setYpCommunity', err: 'Community not found', errorStatus: 404 });
-              req.ypCommunity = { id: null };
+              log.warn('Cant find community', { user: toJson(req.user), context: 'setYpCommunity', err: 'Community not found', errorStatus: 404 });
+              req.ypCommunity = {
+                id: null,
+                hostname: 'not_found'
+              };
               next();
             }
           }.bind(this));
         } else {
-          req.ypCommunity = { id: null };
+          req.ypCommunity = {
+            id: null,
+            hostname: 'not_found_or_domain_level'
+          };
           next();
         }
       },
