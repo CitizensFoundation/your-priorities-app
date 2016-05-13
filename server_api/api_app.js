@@ -265,43 +265,26 @@ app.use(function(req, res, next) {
 });
 
 // Error handlers
-if (app.get('env') === 'development') {
-  console.log("Development mode");
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    log.error("General Error", { context: 'generalError', user: toJson(req.user), err: err, errorStatus: 500 });
-    err.url = req.url;
-    err.params = req.params;
-    airbrake.notify(err, function(airbrakeErr, url) {
-      if (airbrakeErr) {
-        log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
-      }
-      res.send({
-        message: err.message,
-        error: err
-      });
-    });
-  });
-} else {
-  app.use(function(err, req, res, next) {
-    var status = err.status || 500;
-    res.status(err.status || 500);
+app.use(function(err, req, res, next) {
+  var status = err.status || 500;
+  res.status(status);
+  if (status==404) {
+    log.warn("Not found", { context: 'notFound', errorStatus: status, url: req.url });
+  } else {
     log.error("General Error", { context: 'generalError', user: toJson(req.user), err: err, errStack: err.stack, errorStatus: status });
-    err.url = req.url;
-    err.params = req.params;
-    if (status!=404) {
-      airbrake.notify(err, function(airbrakeErr, url) {
-        if (airbrakeErr) {
-          log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
-        }
-      });
+  }
+  err.url = req.url;
+  err.params = req.params;
+  airbrake.notify(err, function(airbrakeErr, url) {
+    if (airbrakeErr) {
+      log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
     }
     res.send({
       message: err.message,
       error: err
     });
   });
-}
+});
 
 var server = app.listen(app.get('port'), function() {
   debug('Your Priorities server listening on port ' + server.address().port);
