@@ -304,6 +304,8 @@
 
         storedBackPath: String,
 
+        storedLastDocumentTitle: String,
+
         headerTitle: {
           type: String
         },
@@ -387,6 +389,7 @@
       setKeepOpenForPostsOn: function (goBackToPage) {
         this.set('keepOpenForPost', goBackToPage);
         this.set('storedBackPath', this.backPath);
+        this.set('storedLastDocumentTitle', document.title);
       },
 
       _closePost: function () {
@@ -395,6 +398,11 @@
 
         if (this.storedBackPath)
           this.set('backPath', this.storedBackPath);
+
+        if (this.storedLastDocumentTitle) {
+          document.title = this.storedLastDocumentTitle;
+          this.set('storedLastDocumentTitle', null);
+        }
 
         this.set('this.keepOpenForPost', null);
       },
