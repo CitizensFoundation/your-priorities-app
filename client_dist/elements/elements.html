@@ -49542,7 +49542,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             <div class="layout horizontal wrap mediaAndInfoContainer">
               <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
               <div class="layout vertical">
-                <div class="infoContainer">
+                <div class="infoContainer postCardCursor">
                   <div class="description">[[trimmedDescription]]</div>
                 </div>
                 <div class="card-actions">
@@ -49855,7 +49855,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         </template>
         <template is="dom-if" if="[[showFilter]]">
           <paper-menu-button id="filterDropdown" class="selected-items" icon="editor:merge-type" vertical-align="bottom" horizontal-align="left">
-            <paper-icon-button id="dropDownTrigger" icon="filter-list" class="dropdown-trigger"></paper-icon-button>
+            <paper-icon-button icon="filter-list" class="dropdown-trigger"></paper-icon-button>
             <div class="layout horizontal dropdown-content">
               <div>
                 <paper-menu class="dropdown-content" on-iron-select="_changeFilter">
@@ -49901,7 +49901,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             </div>
           </paper-menu-button>
         </template>
-        <div on-tap="_openDropDown" style="cursor: pointer;">
+        <div>
           <h2 class="subTitle">[[subTitle]]</h2>
         </div>
       </div>
@@ -49968,13 +49968,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         tabName: {
           type: String
-        }
-      },
-
-      _openDropDown: function () {
-        var trigger = this.$$("#dropDownTrigger");
-        if (trigger) {
-          trigger.click();
         }
       },
 
