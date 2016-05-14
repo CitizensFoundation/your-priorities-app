@@ -325,10 +325,11 @@ module.exports = function(sequelize, DataTypes) {
           if (this.legacy_passwords_disabled) {
             done(null, false, { message: 'Incorrect password.' });
           } else {
-            sequelize.models.UserLegacyPassword.findAll({
-              where: { user_id: this.id }
-            }).then(function(passwords) {
-              passwords.map( function(legacyPassword) {
+            sequelize.models.User.find({
+              where: { id: this.id },
+              include: [ sequelize.models.UserLegacyPassword ]
+            }).then(function(user) {
+              user.UserLegacyPasswords.map( function(legacyPassword) {
                 if (bcrypt.compareSync(password, legacyPassword.encrypted_password)) {
                   verified = true;
                 }

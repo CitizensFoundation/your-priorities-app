@@ -780,22 +780,26 @@ router.put('/missingEmail/linkAccounts', function(req, res, next) {
           } else if (req.user.loginProvider=='saml') {
             user.ssn = req.user.ssn;
             req.user.ssn = null;
+            log.info("Linked Accounts SAML", { userFrom: req.user, toUser: user });
           } else {
             foundLoginProvider = false;
           }
           if (foundLoginProvider) {
-            user.save().then(function (results) {
-              req.user.save().then(function (results) {
-                log.info("Linked Accounts", { userFrom: req.user, toUser: user });
-                req.logIn(user, function (error, detail) {
-                  if (error) {
-                    sendUserOrError(res, null, 'linkAccounts', error, 401);
-                  } else {
-                    res.send({email: user.email, accountLinked: true });
-                  }
-                });
-              })
-            }).catch(function (error) {
+            models.sequelize.transaction(function (t) {
+              return user.save({transaction: t}).then(function (user) {
+                return req.user.save({transaction: t});
+              });
+            }).then(function (result) {
+              log.info("Linked Accounts", { userFrom: req.user, toUser: user });
+              req.logIn(user, function (error, detail) {
+                if (error) {
+                  sendUserOrError(res, null, 'linkAccounts', error, 401);
+                } else {
+                  res.send({email: user.email, accountLinked: true });
+                }
+              });
+            }).catch(function (err) {
+              log.info("Linked Accounts Error", { userFrom: req.user, toUser: user, err: err });
               req.send( {
                 error: 'Unexpected error'
               });
