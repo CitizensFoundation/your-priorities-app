@@ -753,6 +753,7 @@ router.put('/missingEmail/setEmail', function(req, res, next) {
 });
 
 router.put('/missingEmail/linkAccounts', function(req, res, next) {
+  log.info("User Serialized Link 1", {loginProvider: req.user.loginProvider});
   models.User.find({
     where: {
       email: req.body.email
@@ -765,7 +766,7 @@ router.put('/missingEmail/linkAccounts', function(req, res, next) {
           });
         } else {
           var foundLoginProvider = true;
-          log.info("User Serialized Link", {loginProvider: req.user.loginProvider});
+          log.info("User Serialized Link 2", {loginProvider: req.user.loginProvider});
           if (req.user.loginProvider=='facebook') {
             user.facebook_id = req.user.facebook_id;
             req.user.facebook_id = null;
@@ -791,7 +792,7 @@ router.put('/missingEmail/linkAccounts', function(req, res, next) {
                 return req.user.save({transaction: t});
               });
             }).then(function (result) {
-              log.info("Linked Accounts", { userFrom: req.user, toUser: user });
+              log.info("User Serialized Linked Accounts", { userFrom: req.user, toUser: user });
               req.logIn(user, function (error, detail) {
                 if (error) {
                   sendUserOrError(res, null, 'linkAccounts', error, 401);
