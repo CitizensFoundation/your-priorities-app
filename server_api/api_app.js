@@ -166,7 +166,7 @@ passport.serializeUser(function(profile, done) {
         }
       });
   } else {
-    log.info("User Serialized", { context: 'deserializeUser', userEmail: profile.email, userId: profile.id });
+    log.info("User Serialized", { profile: profile, context: 'deserializeUser', userEmail: profile.email, userId: profile.id });
     done(null, { userId: profile.id, loginProvider: 'email' } );
   }
 });
