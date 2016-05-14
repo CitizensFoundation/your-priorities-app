@@ -149,20 +149,20 @@ passport.serializeUser(function(profile, done) {
   if (profile.provider && profile.provider=='facebook') {
     models.User.serializeFacebookUser(profile, function (error, user) {
       if (error) {
-        log.error("Error in User from Facebook", {err: error });
+        log.error("Error in User Serialized from Facebook", {err: error });
         done(error);
       } else {
-        log.info("User Connected to Facebook", { context: 'loginFromFacebook', user: toJson(user)});
+        log.info("User Serialized Connected to Facebook", { context: 'loginFromFacebook', user: toJson(user)});
         done(null, { userId: user.id, loginProvider: 'facebook' });
       }
     });
-  } else if (profile.provider && profile.provider=='saml') {
+  } else if (profile.provider && profile.UserSSN) {
       models.User.serializeSamlUser(profile, function (error, user) {
         if (error) {
-          log.error("Error in User from SAML", {err: error });
+          log.error("Error in User Serialized from SAML", {err: error });
           done(error);
         } else {
-          log.info("User Connected to SAML", { context: 'loginFromSaml', user: toJson(user)});
+          log.info("User Serialized Connected to SAML", { context: 'loginFromSaml', user: toJson(user)});
           done(null, { userId: user.id, loginProvider: 'saml' });
         }
       });
