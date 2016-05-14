@@ -765,6 +765,7 @@ router.put('/missingEmail/linkAccounts', function(req, res, next) {
           });
         } else {
           var foundLoginProvider = true;
+          log.info("User Serialized Link", {loginProvider: req.user.loginProvider});
           if (req.user.loginProvider=='facebook') {
             user.facebook_id = req.user.facebook_id;
             req.user.facebook_id = null;
@@ -780,7 +781,7 @@ router.put('/missingEmail/linkAccounts', function(req, res, next) {
           } else if (req.user.loginProvider=='saml') {
             user.ssn = req.user.ssn;
             req.user.ssn = null;
-            log.info("Linked Accounts SAML", { userFrom: req.user, toUser: user });
+            log.info("User Serialized Linked Accounts SAML", { userFrom: req.user, toUser: user });
           } else {
             foundLoginProvider = false;
           }
@@ -799,7 +800,7 @@ router.put('/missingEmail/linkAccounts', function(req, res, next) {
                 }
               });
             }).catch(function (err) {
-              log.info("Linked Accounts Error", { userFrom: req.user, toUser: user, err: err });
+              log.error("User Serialized Linked Accounts Error", { userFrom: req.user, toUser: user, err: err });
               req.send( {
                 error: 'Unexpected error'
               });
