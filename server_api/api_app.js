@@ -162,7 +162,7 @@ passport.serializeUser(function(profile, done) {
           done(error);
         } else {
           log.info("User Connected to SAML", { context: 'loginFromSaml', user: toJson(user)});
-          done(null, { userId: user.id, loginProvider: 'facebook' });
+          done(null, { userId: user.id, loginProvider: 'saml' });
         }
       });
   } else {
