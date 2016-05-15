@@ -780,9 +780,9 @@ router.put('/missingEmail/linkAccounts', function(req, res, next) {
             user.github_id = req.user.github_id;
             req.user.github_id = null;
           } else if (req.user.loginProvider=='saml') {
-            user.ssn = req.user.ssn;
-            req.user.ssn = null;
-            log.info("User Serialized Linked Accounts SAML", { userFrom: req.user, toUser: user });
+            user.set('ssn', req.user.ssn);
+            req.user.set('ssn', null);
+            log.info("User Serialized Linked Accounts SAML", { userFrom: req.user, toUser: user, toUserSsn: user.ssn, fromUserSsn: req.user.ssn });
           } else {
             foundLoginProvider = false;
           }
@@ -792,7 +792,7 @@ router.put('/missingEmail/linkAccounts', function(req, res, next) {
                 return req.user.save({transaction: t});
               });
             }).then(function (result) {
-              log.info("User Serialized Linked Accounts", { userFrom: req.user, toUser: user });
+              log.info("User Serialized Linked Accounts", { toUserSsn: user.ssn, fromUserSsn: req.user.ssn, userFrom: req.user, toUser: user });
               req.logIn(user, function (error, detail) {
                 if (error) {
                   sendUserOrError(res, null, 'linkAccounts', error, 401);
