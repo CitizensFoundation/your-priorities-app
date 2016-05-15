@@ -81,6 +81,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
 
       serializeSamlUser: function (profile, callback) {
+        log.info("User Serialized In Serialize SAML User", { context: 'serializeSamlUser', profile: profile });
         var user;
         async.series([
           function (seriesCallback) {
@@ -92,6 +93,7 @@ module.exports = function(sequelize, DataTypes) {
             }).then (function (userIn) {
               if (userIn) {
                 user = userIn;
+                log.info("User Serialized Found SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
                 seriesCallback();
               } else {
                 seriesCallback();
@@ -111,6 +113,7 @@ module.exports = function(sequelize, DataTypes) {
                 }).then (function (userIn) {
                 if (userIn) {
                   user = userIn;
+                  log.info("User Serialized Created SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
                   seriesCallback();
                 } else {
                   seriesCallback("Could not create user from SAML");
