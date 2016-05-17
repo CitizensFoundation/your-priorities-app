@@ -59,24 +59,22 @@
         margin-right: 24px !important;
       }
     </style>
-    <paper-header-panel mode="standard" class="layout fit">
-      <paper-toolbar class$="{{_computeHeaderClass(narrow)}}">
-        <paper-icon-button icon="arrow-back" on-tap="toggle"></paper-icon-button>
-        <input id="searchbox" placeholder="[[placeHolder]]" class="flex"
-               value="{{searchValue}}"
-               on-keyup="doSearch">
-        <paper-icon-button icon="av:mic" on-tap="getSpeechInput"></paper-icon-button>
-      </paper-toolbar>
-      <paper-menu on-iron-activate="onSelect">
-        <template is="dom-repeat" items="{{previousSearches}}">
-          <paper-item class="relative" data-value$="{{item}}">
-            <iron-icon icon="history"></iron-icon>
-            <span>{{item}}</span>
-            <paper-ripple></paper-ripple>
-          </paper-item>
-        </template>
-      </paper-menu>
-    </paper-header-panel>
+    <div class$="{{_computeHeaderClass(narrow)}}">
+      <paper-icon-button icon="arrow-back" on-tap="toggle"></paper-icon-button>
+      <input id="searchbox" placeholder="[[placeHolder]]" class="flex"
+             value="{{searchValue}}"
+             on-keyup="doSearch">
+      <paper-icon-button icon="av:mic" on-tap="getSpeechInput"></paper-icon-button>
+    </div>
+    <paper-menu on-iron-activate="onSelect">
+      <template is="dom-repeat" items="{{previousSearches}}">
+        <paper-item class="relative" data-value$="{{item}}">
+          <iron-icon icon="history"></iron-icon>
+          <span>{{item}}</span>
+          <paper-ripple></paper-ripple>
+        </paper-item>
+      </template>
+    </paper-menu>
   </template>
   <script>
     Polymer({
@@ -158,7 +156,7 @@
 
       _searchValueChanged: function () {
         if (this.searchValue) {
-          this.fire('search-change', {value: this.searchValue});
+          this.fire('search-change', { value: this.searchValue });
           this.searchValue = '';
         }
       },
