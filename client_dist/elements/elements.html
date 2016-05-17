@@ -47932,22 +47932,20 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         margin-right: 24px !important;
       }
     </style>
-    <paper-header-panel mode="standard" class="layout fit">
-      <paper-toolbar class$="{{_computeHeaderClass(narrow)}}">
-        <paper-icon-button icon="arrow-back" on-tap="toggle"></paper-icon-button>
-        <input id="searchbox" placeholder="[[placeHolder]]" class="flex" value="{{searchValue}}" on-keyup="doSearch">
-        <paper-icon-button icon="av:mic" on-tap="getSpeechInput"></paper-icon-button>
-      </paper-toolbar>
-      <paper-menu on-iron-activate="onSelect">
-        <template is="dom-repeat" items="{{previousSearches}}">
-          <paper-item class="relative" data-value$="{{item}}">
-            <iron-icon icon="history"></iron-icon>
-            <span>{{item}}</span>
-            <paper-ripple></paper-ripple>
-          </paper-item>
-        </template>
-      </paper-menu>
-    </paper-header-panel>
+    <div class$="{{_computeHeaderClass(narrow)}}">
+      <paper-icon-button icon="arrow-back" on-tap="toggle"></paper-icon-button>
+      <input id="searchbox" placeholder="[[placeHolder]]" class="flex" value="{{searchValue}}" on-keyup="doSearch">
+      <paper-icon-button icon="av:mic" on-tap="getSpeechInput"></paper-icon-button>
+    </div>
+    <paper-menu on-iron-activate="onSelect">
+      <template is="dom-repeat" items="{{previousSearches}}">
+        <paper-item class="relative" data-value$="{{item}}">
+          <iron-icon icon="history"></iron-icon>
+          <span>{{item}}</span>
+          <paper-ripple></paper-ripple>
+        </paper-item>
+      </template>
+    </paper-menu>
   </template>
   <script>
     Polymer({
@@ -48029,7 +48027,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _searchValueChanged: function () {
         if (this.searchValue) {
-          this.fire('search-change', {value: this.searchValue});
+          this.fire('search-change', { value: this.searchValue });
           this.searchValue = '';
         }
       },
@@ -49539,7 +49537,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <div class="layout horizontal center-center">
         <paper-material class="postCard" elevation="[[elevation]]" animated="">
           <div class="layout vertical wrap">
-            <h1 class="post-name" on-tap="goToPost">[[postName(post)]]</h1>
+            <h1 class="post-name" on-tap="goToPostIfNotHeader">[[postName(post)]]</h1>
             <div class="layout horizontal wrap mediaAndInfoContainer">
               <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
               <div class="layout vertical">
@@ -49602,6 +49600,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         trimmedDescription: {
           type: String,
           computed: '_trimmedDescription(post, post.description)'
+        }
+      },
+
+      goToPostIfNotHeader: function () {
+        if (!this.headerMode) {
+          this.goToPost();
         }
       },
 
