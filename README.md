@@ -30,6 +30,13 @@ Go to localhost:4242 in your browser
 AWS_ACCESS_KEY_ID=XXX AWS_SECRET_ACCESS_KEY=XXX S3_BUCKET=my-test ./start
 ```
 
+## Your Priorities uses Active Citizen
+```
+Active Citizen is an open source library, API and UI for activity streams and notifications 
+using machine learning to recommend content to users.
+```
+[https://github.com/rbjarnason/active-citizen](https://github.com/rbjarnason/active-citizen)
+
 ## Active Citizen PredictionIO recommendations (optional)
 ```
 Install PredictionIO
@@ -59,13 +66,6 @@ Example dataset from our Better Reykjavik citizen particiaption website is provi
 active-citizen/exporters/datasets/better_reyjkavik
 
 ```
-
-## About Active Citizen
-```
-Open source library, API and UI for activity streams and notifications 
-using machine learning to recommend content to users.
-```
-[https://github.com/rbjarnason/active-citizen](https://github.com/rbjarnason/active-citizen)
 
 ## Developed by the non-profit Citizens Foundation Iceland
 ```
