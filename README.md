@@ -42,6 +42,7 @@ train the template
 deploy the template
 ```
 [https://prediction.io/](https://prediction.io/)
+
 [https://templates.prediction.io/PredictionIO/template-scala-parallel-universal-recommendation](https://templates.prediction.io/PredictionIO/template-scala-parallel-universal-recommendation)
 
 ## Active Citizen Tensorflow Classifications (experimental)
@@ -77,6 +78,6 @@ there is no democracy.
 ## The Team
 - Robert Bjarnason
 - Gunnar Grímsson
-- Nathalie Stembert
 - Guðný Maren Valsdóttir
+- Nathalie Stembert
 - Alexander Máni Gautason
