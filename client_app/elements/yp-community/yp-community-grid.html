@@ -38,6 +38,17 @@
         }
       }
 
+      .archivedText {
+        font-size: 25px;
+        color: #333;
+      }
+
+      .archivedBorder {
+        border-bottom: 1px solid;
+        width: 95%;
+        margin-bottom: 12px;
+        border-color: #444;
+      }
     </style>
 
     <div class="layout vertical wrap mainContainer">
@@ -50,9 +61,11 @@
         </template>
       </div>
       <div class="layout horizontal center-center">
-        <h1 class="archivedText" hidden$="[[!archivedCommunities]]">
-          [[t('archived')]]
-        </h1>
+        <div class="archivedBorder">
+          <h1 class="archivedText layout horizontal center-center" hidden$="[[!archivedCommunities]]">
+            [[t('archived')]]
+          </h1>
+        </div>
       </div>
       <div class="layout horizontal center-center wrap">
         <template is="dom-repeat" class="list" items="[[archivedCommunities]]" as="community">
