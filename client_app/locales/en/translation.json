@@ -225,7 +225,11 @@
     "objectives": "Objectives",
     "public": "Public group",
     "closed": "Closed group",
-    "secret": "Secret group"
+    "secret": "Secret group",
+    "canVote": "Voting allowed",
+    "canAddNewPosts": "New posts allowed",
+    "config": "Config",
+    "update": "Update group"
   },
 
   "membership": {

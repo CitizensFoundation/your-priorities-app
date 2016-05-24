@@ -273,7 +273,11 @@
     "objectives": "Um þennan hóp",
     "closed": "Lokaður hópur",
     "public": "Opin hópur",
-    "secret": "Leynilegur hópur"
+    "secret": "Leynilegur hópur",
+    "canVote": "Hægt að kjósa",
+    "canAddNewPosts": "Hægt að bæta við hugmynd",
+    "config": "Stillingar",
+    "update": "Breyta hóp"
   },
 
   "membership": {

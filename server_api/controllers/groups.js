@@ -474,6 +474,11 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       group.objectives = req.body.objectives;
       group.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
       group.access = models.Community.convertAccessFromRadioButtons(req.body);
+      if (!group.configuration) {
+        group.set('configuration', {});
+      }
+      group.set('configuration.canVote', ((req.body.canVote && req.body.canVote!="") ? true : false));
+      group.set('configuration.canAddNewPosts', ((req.body.canAddNewPosts && req.body.canAddNewPosts!="") ? true : false));
       if (req.body.status && req.body.status!="") {
         group.status = req.body.status;
       }
