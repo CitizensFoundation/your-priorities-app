@@ -37029,6 +37029,15 @@ event and do your own custom submission:
       .half {
         width: 50%;
       }
+
+      .config {
+        padding: 8px;
+        vertical-align: top;
+      }
+
+      paper-checkbox {
+        padding-top: 8px;
+      }
     </style>
 
     <yp-edit-dialog id="editDialog" icon="social:people" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
@@ -37059,23 +37068,31 @@ event and do your own custom submission:
         <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       </div>
 
-      <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
+      <div class="layout horizontal wrap config">
+        <div class="layout vertica configl">
+          <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
+          <div class="layout horizontal center-center">
+            <paper-dropdown-menu label="[[t('status.select')]]">
+              <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
+                <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
+                  <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-dropdown-menu>
+            <input type="hidden" name="status" value="[[status]]">
+          </div>
+        </div>
+        <div class="layout vertical config">
+          <h2>[[t('group.config')]]</h2>
+          <paper-checkbox name="canVote" checked$="{{canVote}}">[[t('group.canVote')]]</paper-checkbox>
+          <paper-checkbox name="canAddNewPosts" checked$="{{canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
+        </div>
+      </div>
 
-      <paper-checkbox name="canVote" checked$="{{group.configuration.canVote}}">[[t('group.canVote')]]</paper-checkbox>
-      <paper-checkbox name="canAddNewPosts" checked$="{{group.configuration.canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
+      <input type="hidden" name="canVote" value$="[[canVote]]">
+      <input type="hidden" name="canAddNewPosts" value$="[[canAddNewPosts]]">
 
       <input type="hidden" name="themeId" value="[[themeId]]">
-
-      <div class="layout horizontal center-center">
-        <paper-dropdown-menu label="[[t('status.select')]]">
-          <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
-            <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
-              <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
-            </template>
-          </paper-menu>
-        </paper-dropdown-menu>
-        <input type="hidden" name="status" value="[[status]]">
-      </div>
 
       <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
@@ -37101,6 +37118,16 @@ event and do your own custom submission:
     ],
 
     properties: {
+
+      canVote: {
+        type: Boolean,
+        value: true
+      },
+
+      canAddNewPosts: {
+        type: Boolean,
+        value: true
+      },
 
       action: {
         type: String,
@@ -37152,6 +37179,11 @@ event and do your own custom submission:
       if (this.group && this.group.status) {
         this.set('status', this.group.status);
       }
+
+      if (this.group.configuration && this.group.configuration.canVote!=undefined) {
+        this.set('canVote', this.group.configuration.canVote);
+        this.set('canAddNewPosts', this.group.configuration.canAddNewPosts);
+      }
     },
 
     _clear: function () {
@@ -37178,7 +37210,7 @@ event and do your own custom submission:
         this.editHeaderText = this.t('group.new');
         this.toastText = this.t('group.toast.created');
       } else {
-        this.editHeaderText = this.t('group.edit.update');
+        this.editHeaderText = this.t('group.update');
         this.toastText = this.t('group.toast.updated');
       }
     }
@@ -50813,7 +50845,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     </style>
 
-    <yp-page id="page" create-fab-icon="lightbulb-outline" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
+    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
 
       <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
 
@@ -50849,7 +50881,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
           <div class="layout horizontal center-center">
-            <yp-post-card-add on-new-post="_newPost" elevation="3"></yp-post-card-add>
+            <yp-post-card-add on-new-post="_newPost" elevation="2" hidden$="[[!createFabIcon]]"></yp-post-card-add>
           </div>
           <div class="layout horizontal center-center">
             <yp-post-list id="openPostList" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
@@ -50905,6 +50937,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       },
 
       properties: {
+
+        createFabIcon: {
+          type: String,
+          value: null,
+          notify: true
+        },
 
         groupId: {
           type: Number,
@@ -51060,6 +51098,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _groupsResponse: function (event, detail, sender) {
         this.set('group', detail.response.group);
+        if (this.group.configuration && this.group.configuration.canAddNewPosts!=undefined) {
+          if (this.group.configuration.canAddNewPosts===true) {
+            this.set('createFabIcon',"lightbulb-outline");
+          }
+        } else {
+          this.set('createFabIcon',"lightbulb-outline");
+        }
         this.fire('yp-set-home-link', { type: 'group', id: this.group.id, name: this.group.name });
         if (this.group.theme_id!=null) {
           this.setTheme(this.group.theme_id);
@@ -51069,6 +51114,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.setTheme(this.group.Community.Domain.theme_id);
         }
         this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
+
         this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
         this.$.pagesAjax.generateRequest();
 
@@ -53930,6 +53976,17 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
       }
 
+      .archivedText {
+        font-size: 25px;
+        color: #333;
+      }
+
+      .archivedBorder {
+        border-bottom: 1px solid;
+        width: 95%;
+        margin-bottom: 12px;
+        border-color: #444;
+      }
     </style>
 
     <div class="layout vertical wrap mainContainer">
@@ -53942,9 +53999,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         </template>
       </div>
       <div class="layout horizontal center-center">
-        <h1 class="archivedText" hidden$="[[!archivedCommunities]]">
-          [[t('archived')]]
-        </h1>
+        <div class="archivedBorder">
+          <h1 class="archivedText layout horizontal center-center" hidden$="[[!archivedCommunities]]">
+            [[t('archived')]]
+          </h1>
+        </div>
       </div>
       <div class="layout horizontal center-center wrap">
         <template is="dom-repeat" class="list" items="[[archivedCommunities]]" as="community">
