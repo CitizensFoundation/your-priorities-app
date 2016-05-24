@@ -5,7 +5,7 @@ var ip = require('ip');
 var userEmail = process.argv[2];
 var user;
 
-console.log("Adding "+userEmail+" as admin to all public communities and groups + domains");
+console.log("Adding "+userEmail+" to all public communities and groups + domains");
 
 async.series([
   function(callback) {
@@ -22,12 +22,12 @@ async.series([
   function(callback) {
     models.Domain.findAll({}).then(function (models) {
         async.eachSeries(models, function (model, seriesCallback) {
-          model.hasDomainAdmins(user).then(function (results) {
+          model.hasDomainUsers(user).then(function (results) {
             if (!results) {
-              console.log("Adding admin user for: "+model.name);
-              model.addDomainAdmins(user).then(seriesCallback);
+              console.log("Adding users user for: "+model.name);
+              model.addDomainUsers(user).then(seriesCallback);
             } else {
-              console.log("Already admin for for: "+model.name);
+              console.log("Already users for for: "+model.name);
               seriesCallback();
             }
           });
@@ -40,12 +40,12 @@ async.series([
   function(callback) {
     models.Organization.findAll({}).then(function (models) {
       async.eachSeries(models, function (model, seriesCallback) {
-          model.hasOrganizationAdmins(user).then(function (results) {
+          model.hasOrganizationUsers(user).then(function (results) {
             if (!results) {
-              console.log("Adding admin user for: "+model.name);
-              model.addOrganizationAdmins(user).then(seriesCallback);
+              console.log("Adding users user for: "+model.name);
+              model.addOrganizationUsers(user).then(seriesCallback);
             } else {
-              console.log("Already admin for for: "+model.name);
+              console.log("Already users for for: "+model.name);
               seriesCallback();
             }
           });
@@ -59,15 +59,15 @@ async.series([
     models.Community.findAll({
     }).then(function (models) {
       async.eachSeries(models, function (model, seriesCallback) {
-        model.hasCommunityAdmins(user).then(function (results) {
+        model.hasCommunityUsers(user).then(function (results) {
           if (!results) {
-            console.log("Adding admin user for community: "+model.name);
-            model.addCommunityAdmins(user).then(function () {
+            console.log("Adding users user for community: "+model.name);
+            model.addCommunityUsers(user).then(function () {
               console.log("Im back");
               seriesCallback();
             });
           } else {
-            console.log("Already admin for for: "+model.name);
+            console.log("Already users for for: "+model.name);
             seriesCallback();
           }
         });
@@ -81,15 +81,15 @@ async.series([
     models.Group.findAll({
     }).then(function (models) {
       async.eachSeries(models, function (model, seriesCallback) {
-        model.hasGroupAdmins(user).then(function (results) {
+        model.hasGroupUsers(user).then(function (results) {
           if (!results) {
-            console.log("Adding admin user for group: "+model.name);
-            model.addGroupAdmins(user).then(function () {
+            console.log("Adding users user for group: "+model.name);
+            model.addGroupUsers(user).then(function () {
               console.log("Im back");
               seriesCallback();
             });
           } else {
-            console.log("Already admin for for: "+model.name);
+            console.log("Already users for for: "+model.name);
             seriesCallback();
           }
         });
