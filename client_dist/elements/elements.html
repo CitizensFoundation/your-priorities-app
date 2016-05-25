@@ -43242,6 +43242,17 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     },
 
+    checkPostAdminOnlyAccess: function (post) {
+      if (post && window.appUser && window.appUser.adminRights) {
+        return this._hasAdminRights(post.group_id, window.appUser.adminRights.GroupAdmins);
+      } else if (post) {
+        return false;
+      } else {
+        console.error("No post in hasAccess");
+        return false;
+      }
+    },
+
     checkGroupAccess: function (group) {
       if (group && window.appUser && window.appUser.adminRights) {
         return this._hasAccess(group, group.id, window.appUser.adminRights.GroupAdmins);
@@ -49630,14 +49641,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                 </div>
               </div>
               <template is="dom-if" if="[[headerMode]]">
-                <paper-menu-button vertical-align="top" horizontal-align="right" class="edit" hidden$="[[!hasPostAccess]]">
-                  <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-                  <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-                    <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                    <paper-item id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
-                    <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
-                  </paper-menu>
-                </paper-menu-button>
+                <template is="dom-if" if="[[hasPostAccess]]">
+                  <paper-menu-button vertical-align="top" horizontal-align="right" class="edit">
+                    <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                    <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                      <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+                      <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
+                      <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+                    </paper-menu>
+                  </paper-menu-button>
+                </template>
               </template>
             </div>
           </div>
