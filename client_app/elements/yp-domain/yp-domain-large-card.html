@@ -215,7 +215,11 @@
 
       _hasDomainAccess: function(domain, gotAdminRights) {
         if (domain && gotAdminRights) {
-          return this.checkDomainAccess(domain);
+          if (this.checkDomainAccess(domain)!=null) {
+            return true
+          } else {
+            return false;
+          }
         } else {
           return false;
         }

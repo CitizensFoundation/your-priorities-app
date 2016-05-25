@@ -226,7 +226,11 @@
 
       _hasCommunityAccess: function(community, gotAdminRights) {
         if (community && gotAdminRights) {
-          return this.checkCommunityAccess(community);
+          if (this.checkCommunityAccess(community)!=null) {
+            return true
+          } else {
+            return false;
+          }
         } else {
           return false;
         }

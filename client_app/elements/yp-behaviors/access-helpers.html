@@ -63,7 +63,6 @@
 
     checkCommunityAccess: function (community) {
       if (community && window.appUser && window.appUser.adminRights) {
-        debugger;
         return this._hasAccess(community, community.id, window.appUser.adminRights.CommunityAdmins);
       } else if (community) {
         return false;

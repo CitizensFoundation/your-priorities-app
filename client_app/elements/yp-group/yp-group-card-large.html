@@ -218,7 +218,11 @@
 
       _hasGroupAccess: function(group, gotAdminRights) {
         if (group && gotAdminRights) {
-          return this.checkGroupAccess(group);
+          if (this.checkGroupAccess(group)!=null) {
+            return true
+          } else {
+            return false;
+          }
         } else {
           return false;
         }

@@ -210,7 +210,7 @@
                   <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
                   <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                     <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                    <paper-item hidden id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
+                    <paper-item id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
                     <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
                   </paper-menu>
                 </paper-menu-button>
@@ -265,16 +265,21 @@
         hasPostAccess: {
           type: Boolean,
           value: false,
+          notify: true,
           computed: '_hasPostAccess(post, gotAdminRights)'
         }
       },
 
       _hasPostAccess: function(post, gotAdminRights) {
         if (post && gotAdminRights) {
-          return this.checkPostAccess(post);
+          if (this.checkPostAccess(post)!=null) {
+            return true
+          } else {
+            return false;
+          }
         } else {
           return false;
-        };
+        }
       },
 
       goToPostIfNotHeader: function () {
