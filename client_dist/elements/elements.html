@@ -32130,7 +32130,7 @@ event and do your own custom submission:
                 <content select="h2"></content>
               </div>
               <template is="dom-if" if="[[!useNextTabAction]]">
-                <paper-button on-tap="_submit">[[saveText]]</paper-button>
+                <paper-button id="submit1" on-tap="_submit">[[saveText]]</paper-button>
               </template>
               <template is="dom-if" if="[[useNextTabAction]]">
                 <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
@@ -32163,7 +32163,7 @@ event and do your own custom submission:
               <paper-button id="dismissBtn" dialog-dismiss="">[[t('cancel')]]</paper-button>
               <template is="dom-if" if="[[!uploadingState]]">
                 <template is="dom-if" if="[[!useNextTabAction]]">
-                  <paper-button on-tap="_submit">[[saveText]]</paper-button>
+                  <paper-button id="submit2" on-tap="_submit">[[saveText]]</paper-button>
                 </template>
                 <template is="dom-if" if="[[useNextTabAction]]">
                   <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
@@ -32359,6 +32359,7 @@ event and do your own custom submission:
       },
 
       _formResponse: function(response, detail) {
+        this._setSubmitDisabledStatus(false);
         this.$$("#spinner").active = false;
         this.response = response;
         this.close();
@@ -32371,12 +32372,14 @@ event and do your own custom submission:
       },
 
       _formError: function(event, detail) {
+        this._setSubmitDisabledStatus(false);
         console.log("Form error: ", detail.error);
         this._showErrorDialog(detail.error);
         this.$$("#spinner").active = false;
       },
 
       _formInvalid: function(event) {
+        this._setSubmitDisabledStatus(false);
         this.$$("#spinner").active = false;
       },
 
@@ -32389,7 +32392,18 @@ event and do your own custom submission:
         }
       },
 
+      _setSubmitDisabledStatus: function(status) {
+        var submit1 = this.$$("#submit1");
+        var submit2 = this.$$("#submit2");
+        if (submit1)
+          submit1.disabled = status;
+
+        if (submit2)
+          submit2.disabled = status;
+      },
+
       _reallySubmit: function() {
+        this._setSubmitDisabledStatus(true);
         if (this.params && this.params.communityId) {
           this.action = this.baseAction + '/'+this.params.communityId;
         } else if (this.params && this.params.groupId) {
@@ -34483,7 +34497,7 @@ event and do your own custom submission:
         if (newUser && newUser.UserProfileImages && newUser.UserProfileImages.length > 0) {
           var formatUrl = this.getImageFormatUrl(newUser.UserProfileImages, 0);
           if (formatUrl && formatUrl!="")
-            this.profileImageUrl = formatUrl;
+            this.set('profileImageUrl', formatUrl);
         }
       },
 
@@ -36573,6 +36587,10 @@ event and do your own custom submission:
         <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
           <section>
             <div class="layout vertical">
+
+              <paper-input id="name" required="" minlength="5" name="name" type="text" label="[[t('title')]]" value="{{post.name}}" maxlength="60" char-counter="">
+              </paper-input>
+
               <template is="dom-if" if="[[_showCategories(group)]]" restamp="">
                 <paper-dropdown-menu label="[[t('category.select')]]">
                   <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
@@ -36583,10 +36601,6 @@ event and do your own custom submission:
                 </paper-dropdown-menu>
                 <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
               </template>
-
-              <paper-input id="name" required="" minlength="5" name="name" type="text" label="[[t('title')]]" value="{{post.name}}" maxlength="60" char-counter="">
-              </paper-input>
-
 
               <paper-textarea id="description" required="" minlength="10" name="description" value="{{post.description}}" label="[[t('post.description')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
               </paper-textarea>
@@ -38437,7 +38451,7 @@ event and do your own custom submission:
     },
 
     _customRedirect: function (userId) {
-      //page("#!/users/"+userId);
+      window.appUser.checkLogin();
     },
 
     _clear: function () {
@@ -42829,13 +42843,17 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       .additionalSettings {
         padding-top: 16px;
       }
+
+      paper-textarea {
+        padding-top: 16px;
+      }
     </style>
 
-    <yp-edit-dialog id="editDialog" icon="language" confirmation-text="[[t('statusChange.confirmText')]]" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" double-width="" icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
       <div class="layout horizontal center-center">
-        <paper-dropdown-menu label="[[t('statusChange.selectNewStatus')]]">
+        <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
           <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{officialStatus}}">
             <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
               <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
@@ -42846,7 +42864,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       </div>
 
       <div class="layout vertical">
-        <paper-textarea id="content" name="content" value="{{postStatusChange.content}}" label="[[t('postStatusChange.content')]]" char-counter="" rows="7" max-rows="7" maxlength="5000" class="mainInput">
+        <paper-textarea id="content" name="content" value="{{postStatusChange.content}}" label="[[t('post.statusChangeContent')]]" char-counter="" rows="10" max-rows="10" maxlength="100000" class="mainInput">
         </paper-textarea>
       </div>
     </yp-edit-dialog>
@@ -42922,9 +42940,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     },
 
     _setupTranslation: function () {
-      this.set('editHeaderText', this.t('postStatusChange.new'));
-      this.set('toastText', this.t('postStatusChange.sent'));
-      this.set('saveText', this.t('postStatusChange.sendEmails'));
+      this.set('editHeaderText', this.t('post.statusChange'));
+      this.set('toastText', this.t('post.statusChangeSent'));
+      this.set('saveText', this.t('post.statusChange'));
     }
   });
 </script>
@@ -43213,7 +43231,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     },
 
-    hasPostAccess: function (post) {
+    checkPostAccess: function (post) {
       if (post && window.appUser && window.appUser.adminRights) {
         return this._hasAccess(post, post.group_id, window.appUser.adminRights.GroupAdmins);
       } else if (post) {
@@ -43224,7 +43242,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     },
 
-    hasGroupAccess: function (group) {
+    checkGroupAccess: function (group) {
       if (group && window.appUser && window.appUser.adminRights) {
         return this._hasAccess(group, group.id, window.appUser.adminRights.GroupAdmins);
       } else if (group) {
@@ -43235,7 +43253,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     },
 
-    hasCommunityAccess: function (community) {
+    checkCommunityAccess: function (community) {
       if (community && window.appUser && window.appUser.adminRights) {
         return this._hasAccess(community, community.id, window.appUser.adminRights.CommunityAdmins);
       } else if (community) {
@@ -43246,7 +43264,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     },
 
-    hasDomainAccess: function(domain) {
+    checkDomainAccess: function(domain) {
       if (domain && window.appUser && window.appUser.adminRights) {
         return this._hasAccess(domain, domain.id, window.appUser.adminRights.DomainAdmins);
       } else if (domain) {
@@ -43287,6 +43305,35 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     }
   };
+</script>
+<script>
+  /**
+   * @polymerBehavior ypLoggedInUserBehavior
+   */
+  Polymer.ypGotAdminRightsBehavior = {
+
+    properties: {
+      gotAdminRights: {
+        type: Boolean,
+        notify: true,
+        value: false
+      }
+    },
+
+    listeners: {
+      'yp-user-got-admin-rights': '_gotAdminRights'
+    },
+
+    ready: function () {
+      if (window.appUser && window.appUser.adminRights) {
+        this.set('gotAdminRights', true);
+      }
+    },
+
+    _gotAdminRights: function (event) {
+      this.set('gotAdminRights', true);
+    }
+  }
 </script>
 
 <dom-module id="yp-session" assetpath="yp-session/">
@@ -47397,13 +47444,13 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _hasActivityAccess: function (activity) {
         if (this.domainId) {
-          return this.hasDomainAccess(activity.Domain)
+          return this.checkDomainAccess(activity.Domain)
         } else if (this.communityId) {
-          return this.hasCommunityAccess(activity.Community)
+          return this.checkCommunityAccess(activity.Community)
         } else if (this.groupId) {
-          return this.hasGroupAccess(activity.Group)
+          return this.checkGroupAccess(activity.Group)
         } else if (this.postId) {
-          return this.hasPostAccess(activity.Post)
+          return this.checkPostAccess(activity.Post)
         } else {
           return false;
         }
@@ -47880,6 +47927,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         _adminRightsResponse: function (event, detail) {
           if (detail.response && detail.response!=0) {
             this.set('adminRights', detail.response);
+            this.fire('iron-signal', {name: 'got-admin-rights'});
           }
         },
 
@@ -49132,6 +49180,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
         paper-tab {
           width: 100px;
+          font-size: 10px !important;
         }
 
         .topArea[is-post] {
@@ -49581,11 +49630,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                 </div>
               </div>
               <template is="dom-if" if="[[headerMode]]">
-                <paper-menu-button vertical-align="top" horizontal-align="right" class="edit" hidden$="[[!hasPostAccess(post)]]">
+                <paper-menu-button vertical-align="top" horizontal-align="right" class="edit" hidden$="[[!hasPostAccess]]">
                   <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
                   <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                     <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                    <paper-item hidden="" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
+                    <paper-item id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
                     <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
                   </paper-menu>
                 </paper-menu-button>
@@ -49597,6 +49646,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       <template is="dom-if" if="[[headerMode]]">
       </template>
     </template>
+    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
 
   <script>
@@ -49606,10 +49656,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       behaviors: [
         Polymer.appHelpers,
         Polymer.YpPostBehavior,
-        Polymer.AccessHelpers
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior
       ],
 
       properties: {
+
         selectedMenuItem: {
           type: String
         },
@@ -49632,6 +49684,25 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         trimmedDescription: {
           type: String,
           computed: '_trimmedDescription(post, post.description)'
+        },
+
+        hasPostAccess: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          computed: '_hasPostAccess(post, gotAdminRights)'
+        }
+      },
+
+      _hasPostAccess: function(post, gotAdminRights) {
+        if (post && gotAdminRights) {
+          if (this.checkPostAccess(post)!=null) {
+            return true
+          } else {
+            return false;
+          }
+        } else {
+          return false;
         }
       },
 
@@ -50696,7 +50767,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                 </div>
               </div>
             </div>
-            <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasGroupAccess(group)]]">
+            <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasGroupAccess]]">
               <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
               <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                 <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
@@ -50715,6 +50786,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       </div>
     </template>
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
+    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
 
   <script>
@@ -50725,8 +50797,33 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         Polymer.appHelpers,
         Polymer.GroupBehaviors,
         Polymer.LargeCardBehaviors,
-        Polymer.AccessHelpers
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior
       ],
+
+      properties: {
+        group: {
+          type: Object
+        },
+
+        hasGroupAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasGroupAccess(group, gotAdminRights)'
+        }
+      },
+
+      _hasGroupAccess: function(group, gotAdminRights) {
+        if (group && gotAdminRights) {
+          if (this.checkGroupAccess(group)!=null) {
+            return true
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      },
 
       _groupAccessText: function(access) {
         switch (access) {
@@ -52143,7 +52240,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       properties: {
         user: {
           type: Object,
-          value: null
+          value: null,
+          notify: true
         }
       },
 
@@ -53587,7 +53685,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                 </div>
               </div>
             </div>
-            <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasCommunityAccess(community)]]">
+            <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasCommunityAccess]]">
               <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
               <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                 <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
@@ -53603,24 +53701,44 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       </div>
     </template>
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
+    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
 
   <script>
     Polymer({
       is: 'yp-community-large-card',
 
-      properties: {
-        community: {
-          type: Object
-        }
-      },
-
       behaviors: [
         Polymer.appHelpers,
         Polymer.CommunityBehaviors,
         Polymer.LargeCardBehaviors,
-        Polymer.AccessHelpers
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior
       ],
+
+      properties: {
+        community: {
+          type: Object
+        },
+
+        hasCommunityAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasCommunityAccess(community, gotAdminRights)'
+        }
+      },
+
+      _hasCommunityAccess: function(community, gotAdminRights) {
+        if (community && gotAdminRights) {
+          if (this.checkCommunityAccess(community)!=null) {
+            return true
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      },
 
       _communityAccessText: function(access) {
         switch (access) {
@@ -53865,7 +53983,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       _response: function (event, detail, sender) {
         this.set('community', detail.response);
         this.fire('yp-set-home-link', { type: 'community', id: this.community.id, name: this.community.name });
-        if (!this.community.only_admins_can_create_groups || this.hasCommunityAccess(this.community)) {
+        if (!this.community.only_admins_can_create_groups || this.checkCommunityAccess(this.community)) {
           this.set('createFabIcon', 'social:group');
         }
         if (this.community.theme_id!=null) {
@@ -54240,7 +54358,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                 </div>
               </div>
             </div>
-            <paper-menu-button vertical-align="top" horizontal-align="[[editMenuAlign]]" class="edit" hidden$="[[!hasDomainAccess(domain)]]">
+            <paper-menu-button vertical-align="top" horizontal-align="[[editMenuAlign]]" class="edit" hidden$="[[!hasDomainAccess]]">
               <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
               <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                 <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
@@ -54259,11 +54377,19 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     </template>
 
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
+    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
 
   <script>
     Polymer({
       is: 'yp-domain-large-card',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior
+      ],
 
       properties: {
 
@@ -54279,14 +54405,26 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         hideImage: {
           type: Boolean,
           value: false
+        },
+
+        hasDomainAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasDomainAccess(domain, gotAdminRights)'
         }
       },
 
-      behaviors: [
-        Polymer.appHelpers,
-        Polymer.LargeCardBehaviors,
-        Polymer.AccessHelpers
-      ],
+      _hasDomainAccess: function(domain, gotAdminRights) {
+        if (domain && gotAdminRights) {
+          if (this.checkDomainAccess(domain)!=null) {
+            return true
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      },
 
       _menuSelection: function (event, detail) {
         if (detail.item.id=="editMenuItem")
@@ -54560,7 +54698,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.setTheme(this.domain.theme_id);
         }
 
-        if (!this.domain.only_admins_can_create_communities || this.hasDomainAccess(this.domain)) {
+        if (!this.domain.only_admins_can_create_communities || this.checkDomainAccess(this.domain)) {
           this.set('createFabIcon', 'group-work');
         }
 

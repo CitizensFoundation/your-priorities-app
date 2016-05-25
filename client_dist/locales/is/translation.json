@@ -39,7 +39,11 @@
     "select": "Veldu stöðu",
     "active": "Virkt",
     "featured": "Mikilvægt",
-    "archived": "Eldra"
+    "archived": "Eldra",
+    "published": "Opin",
+    "successful": "Samþykkt",
+    "failed": "Hafnað",
+    "inProgress": "Í ferli"
   },
 
   "activity": {
@@ -160,6 +164,11 @@
   },
 
   "post": {
+    "statusChangeConfirmText": "Ertu viss um að þú viljir senda tölvupóst á alla sem styðja og eru á móti þessari hugmynd?",
+    "statusChangeSelectNewStatus": "Veldu stöðu hugmyndar",
+    "statusChangeContent": "Efni stöðubreytingar til að senda á alla sem eru með og á móti",
+    "statusChange": "Senda stöðupósta",
+    "statusChangeSent": "Hef sent tölvupósta",
     "deleteConfirmation": "Ertu viss um að þú viljir eyða hugmynd?",
     "photoUpdate": "Breyta mynd",
     "noLocation": "Engin staðsetning",
