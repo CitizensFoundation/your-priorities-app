@@ -20,13 +20,17 @@
       .additionalSettings {
         padding-top: 16px;
       }
+
+      paper-textarea {
+        padding-top: 16px;
+      }
     </style>
 
-    <yp-edit-dialog id="editDialog" icon="language" confirmation-text="[[t('statusChange.confirmText')]]" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" double-width icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
       <div class="layout horizontal center-center">
-        <paper-dropdown-menu label="[[t('statusChange.selectNewStatus')]]">
+        <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
           <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{officialStatus}}">
             <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
               <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
@@ -40,11 +44,11 @@
         <paper-textarea id="content"
                         name="content"
                         value="{{postStatusChange.content}}"
-                        label="[[t('postStatusChange.content')]]"
+                        label="[[t('post.statusChangeContent')]]"
                         char-counter
-                        rows="7"
-                        max-rows="7"
-                        maxlength="5000" class="mainInput">
+                        rows="10"
+                        max-rows="10"
+                        maxlength="100000" class="mainInput">
         </paper-textarea>
       </div>
     </yp-edit-dialog>
@@ -120,9 +124,9 @@
     },
 
     _setupTranslation: function () {
-      this.set('editHeaderText', this.t('postStatusChange.new'));
-      this.set('toastText', this.t('postStatusChange.sent'));
-      this.set('saveText', this.t('postStatusChange.sendEmails'));
+      this.set('editHeaderText', this.t('post.statusChange'));
+      this.set('toastText', this.t('post.statusChangeSent'));
+      this.set('saveText', this.t('post.statusChange'));
     }
   });
 </script>

@@ -47,7 +47,11 @@
     "select": "Select status",
     "active": "Active",
     "featured": "Featured",
-    "archived": "Archived"
+    "archived": "Archived",
+    "published": "Opin",
+    "successful": "Samþykkt",
+    "failed": "Hafnað",
+    "inProgress": "Í ferli"
   },
 
   "activity": {
@@ -109,6 +113,11 @@
   },
 
   "post": {
+    "statusChangeConfirmText": "Are you sure you want to send everybody that supports or opposes this post an email?",
+    "statusChangeSelectNewStatus": "Choose status for post",
+    "statusChangeContent": "Status change content to be sent to all supporters and opposers",
+    "statusChange": "Send status change emails",
+    "statusChangeSent": "Sent status change emails",
     "noLocation": "No location",
     "shareInfo": "Share post",
     "description": "Description",
