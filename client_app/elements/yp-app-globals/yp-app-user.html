@@ -336,6 +336,7 @@
         _adminRightsResponse: function (event, detail) {
           if (detail.response && detail.response!=0) {
             this.set('adminRights', detail.response);
+            this.fire('iron-signal', {name: 'got-admin-rights'});
           }
         },
 

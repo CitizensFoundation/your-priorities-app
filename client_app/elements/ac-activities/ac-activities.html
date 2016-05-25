@@ -381,13 +381,13 @@
 
       _hasActivityAccess: function (activity) {
         if (this.domainId) {
-          return this.hasDomainAccess(activity.Domain)
+          return this.checkDomainAccess(activity.Domain)
         } else if (this.communityId) {
-          return this.hasCommunityAccess(activity.Community)
+          return this.checkCommunityAccess(activity.Community)
         } else if (this.groupId) {
-          return this.hasGroupAccess(activity.Group)
+          return this.checkGroupAccess(activity.Group)
         } else if (this.postId) {
-          return this.hasPostAccess(activity.Post)
+          return this.checkPostAccess(activity.Post)
         } else {
           return false;
         }

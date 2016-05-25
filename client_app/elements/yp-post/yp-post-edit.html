@@ -98,16 +98,6 @@
         <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
           <section>
             <div class="layout vertical">
-              <template is="dom-if" if="[[_showCategories(group)]]" restamp>
-                <paper-dropdown-menu label="[[t('category.select')]]">
-                  <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
-                    <template is="dom-repeat" items="[[group.Categories]]" as="category">
-                      <paper-item data-category-id$="[[category.id]]">[[category.name]]</paper-item>
-                    </template>
-                  </paper-menu>
-                </paper-dropdown-menu>
-                <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
-              </template>
 
               <paper-input id="name"
                            required
@@ -120,6 +110,16 @@
                            char-counter>
               </paper-input>
 
+              <template is="dom-if" if="[[_showCategories(group)]]" restamp>
+                <paper-dropdown-menu label="[[t('category.select')]]">
+                  <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
+                    <template is="dom-repeat" items="[[group.Categories]]" as="category">
+                      <paper-item data-category-id$="[[category.id]]">[[category.name]]</paper-item>
+                    </template>
+                  </paper-menu>
+                </paper-dropdown-menu>
+                <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
+              </template>
 
               <paper-textarea id="description"
                               required

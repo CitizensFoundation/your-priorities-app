@@ -15,6 +15,8 @@
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
+
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
 <link rel="import" href="../yp-delete-dialog/yp-delete-dialog.html">
 
@@ -155,7 +157,7 @@
                 </div>
               </div>
             </div>
-            <paper-menu-button vertical-align="top" horizontal-align="[[editMenuAlign]]" class="edit" hidden$="[[!hasDomainAccess(domain)]]">
+            <paper-menu-button vertical-align="top" horizontal-align="[[editMenuAlign]]" class="edit" hidden$="[[!hasDomainAccess]]">
               <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
               <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                 <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
@@ -174,11 +176,19 @@
     </template>
 
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
+    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
 
   <script>
     Polymer({
       is: 'yp-domain-large-card',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior
+      ],
 
       properties: {
 
@@ -194,14 +204,22 @@
         hideImage: {
           type: Boolean,
           value: false
+        },
+
+        hasDomainAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasDomainAccess(domain, gotAdminRights)'
         }
       },
 
-      behaviors: [
-        Polymer.appHelpers,
-        Polymer.LargeCardBehaviors,
-        Polymer.AccessHelpers
-      ],
+      _hasDomainAccess: function(domain, gotAdminRights) {
+        if (domain && gotAdminRights) {
+          return this.checkDomainAccess(domain);
+        } else {
+          return false;
+        }
+      },
 
       _menuSelection: function (event, detail) {
         if (detail.item.id=="editMenuItem")

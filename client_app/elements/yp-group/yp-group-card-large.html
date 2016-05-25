@@ -19,6 +19,7 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
 
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
 <link rel="import" href="../yp-category/yp-category-edit.html">
@@ -169,7 +170,7 @@
                 </div>
               </div>
             </div>
-            <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasGroupAccess(group)]]">
+            <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasGroupAccess]]">
               <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
               <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                 <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
@@ -188,6 +189,7 @@
       </div>
     </template>
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
+    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
 
   <script>
@@ -198,8 +200,29 @@
         Polymer.appHelpers,
         Polymer.GroupBehaviors,
         Polymer.LargeCardBehaviors,
-        Polymer.AccessHelpers
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior
       ],
+
+      properties: {
+        group: {
+          type: Object
+        },
+
+        hasGroupAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasGroupAccess(group, gotAdminRights)'
+        }
+      },
+
+      _hasGroupAccess: function(group, gotAdminRights) {
+        if (group && gotAdminRights) {
+          return this.checkGroupAccess(group);
+        } else {
+          return false;
+        }
+      },
 
       _groupAccessText: function(access) {
         switch (access) {

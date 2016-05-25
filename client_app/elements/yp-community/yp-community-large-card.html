@@ -17,6 +17,7 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
 
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
 <link rel="import" href="../yp-delete-dialog/yp-delete-dialog.html">
@@ -180,7 +181,7 @@
                 </div>
               </div>
             </div>
-            <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasCommunityAccess(community)]]">
+            <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasCommunityAccess]]">
               <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
               <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                 <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
@@ -196,24 +197,40 @@
       </div>
     </template>
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
+    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
 
   <script>
     Polymer({
       is: 'yp-community-large-card',
 
-      properties: {
-        community: {
-          type: Object
-        }
-      },
-
       behaviors: [
         Polymer.appHelpers,
         Polymer.CommunityBehaviors,
         Polymer.LargeCardBehaviors,
-        Polymer.AccessHelpers
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior
       ],
+
+      properties: {
+        community: {
+          type: Object
+        },
+
+        hasCommunityAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasCommunityAccess(community, gotAdminRights)'
+        }
+      },
+
+      _hasCommunityAccess: function(community, gotAdminRights) {
+        if (community && gotAdminRights) {
+          return this.checkCommunityAccess(community);
+        } else {
+          return false;
+        }
+      },
 
       _communityAccessText: function(access) {
         switch (access) {

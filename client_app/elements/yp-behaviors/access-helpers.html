@@ -39,7 +39,7 @@
       }
     },
 
-    hasPostAccess: function (post) {
+    checkPostAccess: function (post) {
       if (post && window.appUser && window.appUser.adminRights) {
         return this._hasAccess(post, post.group_id, window.appUser.adminRights.GroupAdmins);
       } else if (post) {
@@ -50,7 +50,7 @@
       }
     },
 
-    hasGroupAccess: function (group) {
+    checkGroupAccess: function (group) {
       if (group && window.appUser && window.appUser.adminRights) {
         return this._hasAccess(group, group.id, window.appUser.adminRights.GroupAdmins);
       } else if (group) {
@@ -61,8 +61,9 @@
       }
     },
 
-    hasCommunityAccess: function (community) {
+    checkCommunityAccess: function (community) {
       if (community && window.appUser && window.appUser.adminRights) {
+        debugger;
         return this._hasAccess(community, community.id, window.appUser.adminRights.CommunityAdmins);
       } else if (community) {
         return false;
@@ -72,7 +73,7 @@
       }
     },
 
-    hasDomainAccess: function(domain) {
+    checkDomainAccess: function(domain) {
       if (domain && window.appUser && window.appUser.adminRights) {
         return this._hasAccess(domain, domain.id, window.appUser.adminRights.DomainAdmins);
       } else if (domain) {
