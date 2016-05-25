@@ -149,7 +149,7 @@
         if (newUser && newUser.UserProfileImages && newUser.UserProfileImages.length > 0) {
           var formatUrl = this.getImageFormatUrl(newUser.UserProfileImages, 0);
           if (formatUrl && formatUrl!="")
-            this.profileImageUrl = formatUrl;
+            this.set('profileImageUrl', formatUrl);
         }
       },
 
