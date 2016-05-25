@@ -1,0 +1,31 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /**
+   * @polymerBehavior ypLoggedInUserBehavior
+   */
+  Polymer.ypGotAdminRightsBehavior = {
+
+    properties: {
+      gotAdminRights: {
+        type: Boolean,
+        notify: true,
+        value: false
+      }
+    },
+
+    listeners: {
+      'yp-user-got-admin-rights': '_gotAdminRights'
+    },
+
+    ready: function () {
+      if (window.appUser && window.appUser.adminRights) {
+        this.set('gotAdminRights', true);
+      }
+    },
+
+    _gotAdminRights: function (event) {
+      this.set('gotAdminRights', true);
+    }
+  }
+</script>
