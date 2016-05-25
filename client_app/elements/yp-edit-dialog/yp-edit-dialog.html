@@ -178,7 +178,7 @@
                 <content select="h2"></content>
               </div>
               <template is="dom-if" if="[[!useNextTabAction]]">
-                <paper-button on-tap="_submit">[[saveText]]</paper-button>
+                <paper-button id="submit1" on-tap="_submit">[[saveText]]</paper-button>
               </template>
               <template is="dom-if" if="[[useNextTabAction]]">
                 <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
@@ -211,7 +211,7 @@
               <paper-button id="dismissBtn" dialog-dismiss>[[t('cancel')]]</paper-button>
               <template is="dom-if" if="[[!uploadingState]]">
                 <template is="dom-if" if="[[!useNextTabAction]]">
-                  <paper-button on-tap="_submit">[[saveText]]</paper-button>
+                  <paper-button id="submit2" on-tap="_submit">[[saveText]]</paper-button>
                 </template>
                 <template is="dom-if" if="[[useNextTabAction]]">
                   <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
@@ -407,6 +407,7 @@
       },
 
       _formResponse: function(response, detail) {
+        this._setSubmitDisabledStatus(false);
         this.$$("#spinner").active = false;
         this.response = response;
         this.close();
@@ -419,12 +420,14 @@
       },
 
       _formError: function(event, detail) {
+        this._setSubmitDisabledStatus(false);
         console.log("Form error: ", detail.error);
         this._showErrorDialog(detail.error);
         this.$$("#spinner").active = false;
       },
 
       _formInvalid: function(event) {
+        this._setSubmitDisabledStatus(false);
         this.$$("#spinner").active = false;
       },
 
@@ -437,7 +440,18 @@
         }
       },
 
+      _setSubmitDisabledStatus: function(status) {
+        var submit1 = this.$$("#submit1");
+        var submit2 = this.$$("#submit2");
+        if (submit1)
+          submit1.disabled = status;
+
+        if (submit2)
+          submit2.disabled = status;
+      },
+
       _reallySubmit: function() {
+        this._setSubmitDisabledStatus(true);
         if (this.params && this.params.communityId) {
           this.action = this.baseAction + '/'+this.params.communityId;
         } else if (this.params && this.params.groupId) {
