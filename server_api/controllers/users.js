@@ -477,7 +477,7 @@ router.post('/forgot_password', function(req, res) {
       }).then(function (user) {
         if (user) {
           user.reset_password_token = token;
-          user.reset_password_expires = Date.now() + 3600000; // 1 hour
+          user.reset_password_expires = Date.now() + (3600000 * 48); // 2 days
           user.save().then(function () {
             log.info('User Reset Password Token Created', { user: toJson(user), context: 'forgotPassword', loggedInUser: toJson(req.user) });
             done(null, token, user);
