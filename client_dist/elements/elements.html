@@ -39136,7 +39136,7 @@ value. `setMax` should move the slider to the maximum value.
             <paper-input id="email" type="text" label="[[t('user.email')]]" value="{{email}}" pattern="[[emailValidationPattern]]" error-message="[[emailErrorMessage]]">
             </paper-input>
 
-            <paper-input id="password" type="password" label="[[t('user.password')]]" value="{{password}}" autocomplete="off" pattern="[[passwordValidationPattern]]" error-message="[[passwordErrorMessage]]">
+            <paper-input id="password" type="password" label="[[t('user.password')]]" value="{{password}}" autocomplete="off" error-message="[[passwordErrorMessage]]">
             </paper-input>
 
             <div class="layout horizontal center-center socialMediaLogin">
@@ -39192,11 +39192,6 @@ value. `setMax` should move the slider to the maximum value.
       emailValidationPattern: {
         type: String,
         value: "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
-      },
-
-      passwordValidationPattern: {
-        type: String,
-        value: '^[a-zA-Z0-9]+$'
       },
 
       emailErrorMessage: {
@@ -39453,7 +39448,7 @@ value. `setMax` should move the slider to the maximum value.
             <div class="linkAccounts">
               [[t('user.existsLinkAccountInfo')]]
             </div>
-            <paper-input id="password" type="password" label="[[t('user.password')]]" value="{{password}}" autocomplete="off" pattern="[[passwordValidationPattern]]" error-message="[[passwordErrorMessage]]">
+            <paper-input id="password" type="password" label="[[t('user.password')]]" value="{{password}}" autocomplete="off" error-message="[[passwordErrorMessage]]">
             </paper-input>
           </template>
         </form>
@@ -39488,11 +39483,6 @@ value. `setMax` should move the slider to the maximum value.
       emailValidationPattern: {
         type: String,
         value: "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
-      },
-
-      passwordValidationPattern: {
-        type: String,
-        value: '^[a-zA-Z0-9]+$'
       },
 
       emailErrorMessage: {
@@ -39756,7 +39746,7 @@ value. `setMax` should move the slider to the maximum value.
       <p>[[t('user.resetPasswordInstructions')]]</p>
 
       <form is="iron-form" id="form">
-        <paper-input id="password" type="password" label="[[t('password')]]" value="{{password}}" autocomplete="off" pattern="[[passwordValidationPattern]]" error-message="[[passwordErrorMessage]]">
+        <paper-input id="password" type="password" label="[[t('password')]]" value="{{password}}" autocomplete="off" error-message="[[passwordErrorMessage]]">
         </paper-input>
 
       </form>
@@ -39783,11 +39773,6 @@ value. `setMax` should move the slider to the maximum value.
     ],
 
     properties: {
-
-      passwordValidationPattern: {
-        type: String,
-        value: '^[a-zA-Z0-9]+$'
-      },
 
       password: {
         type: String,
