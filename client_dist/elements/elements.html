@@ -36628,6 +36628,9 @@ event and do your own custom submission:
                 <span class="imageSizeInfo">864 x 486</span><br>
                 <span class="imageSizeInfo">(16/9 widescreen)</span>
               </file-upload>
+              <br>
+              <div>[[t('post.cover.imageInfo')]]</div>
+              <br>
               <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
               <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal" selected="{{selectedCoverMediaType}}">
                 <paper-radio-button name="none">[[t('post.cover.none')]]</paper-radio-button>
@@ -39116,6 +39119,16 @@ value. `setMax` should move the slider to the maximum value.
       height: 18px;
       padding-left: 16px;
     }
+
+    paper-spinner {
+      padding:0;
+      margin:0;
+    }
+
+    .buttons {
+      margin-left: 0;
+      padding-left: 0;
+    }
   </style>
 
   <template>
@@ -39156,6 +39169,7 @@ value. `setMax` should move the slider to the maximum value.
 
           </form>
           <div class="buttons">
+            <paper-spinner active="" hidden$="[[!userSpinner]]"></paper-spinner>
             <yp-ajax id="loginAjax" dispatch-error="" on-error="_loginError" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
             <yp-ajax id="registerAjax" method="POST" dispatch-error="" on-error="_registerError" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
             <paper-button on-tap="_forgotPassword">[[t('user.newPassword')]]</paper-button>
@@ -39183,6 +39197,11 @@ value. `setMax` should move the slider to the maximum value.
     ],
 
     properties: {
+
+      userSpinner: {
+        type: Boolean,
+        value: false
+      },
 
       reCaptchaSiteKey: {
         type: String,
@@ -39264,6 +39283,10 @@ value. `setMax` should move the slider to the maximum value.
         type: Function,
         value: null
       }
+    },
+
+    setUserSpinner: function (value) {
+      this.set('userSpinner', value)
     },
 
     _facebookLogin: function () {
@@ -39395,6 +39418,7 @@ value. `setMax` should move the slider to the maximum value.
 
     open: function(redirectTo) {
       this.redirectTo = redirectTo;
+      this.set('userSpinner', false);
       this.set('opened', false);
       this.async(function () {
         this.set('opened', true);
@@ -39407,6 +39431,7 @@ value. `setMax` should move the slider to the maximum value.
     close: function() {
       this.$$("#dialog").close();
       this.set('opened', false);
+      this.set('userSpinner', false);
     }
 
   });
@@ -47690,6 +47715,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
           memberships: {
             type: Object
+          },
+
+          completeExternalLoginText: {
+            type: String,
+            value: null
           }
         },
 
@@ -47732,6 +47762,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         _closeUserLogin: function () {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
           dialog.close();
+        },
+
+        _setUserLoginSpinner: function () {
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
+          dialog.setUserSpinner(true);
         },
 
         _handleLogin: function (user) {
@@ -47810,15 +47845,17 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         },
 
         loginFromFacebook: function () {
-          window.appGlobals.notifyUserViaToast(this.t('user.loggedInWithFacebook'));
-          this._closeUserLogin();
-          this.checkLogin();
+          this._completeExternalLogin(this.t('user.loggedInWithFacebook'));
         },
 
         loginFromSaml: function () {
-          window.appGlobals.notifyUserViaToast(this.t('user.loggedInWithSaml'));
-          this._closeUserLogin();
+          this._completeExternalLogin(this.t('user.loggedInWithSaml'));
+        },
+
+        _completeExternalLogin: function (fromString) {
           this.checkLogin();
+          this._setUserLoginSpinner();
+          this.set('completeExternalLoginText', fromString);
         },
 
         checkLogin: function () {
@@ -47917,6 +47954,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           if (detail.response.missingEmail) {
             var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("missingEmail");
             dialog.open(detail.response.loginProvider);
+          }
+
+          if (this.completeExternalLoginText) {
+            window.appGlobals.notifyUserViaToast(this.completeExternalLoginText);
+            this._closeUserLogin();
+            this.set('completeExternalLoginText', null);
           }
         },
 
