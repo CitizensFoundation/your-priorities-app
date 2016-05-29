@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
@@ -174,6 +175,16 @@
       height: 18px;
       padding-left: 16px;
     }
+
+    paper-spinner {
+      padding:0;
+      margin:0;
+    }
+
+    .buttons {
+      margin-left: 0;
+      padding-left: 0;
+    }
   </style>
 
   <template>
@@ -230,6 +241,7 @@
 
           </form>
           <div class="buttons">
+            <paper-spinner active hidden$="[[!userSpinner]]"></paper-spinner>
             <yp-ajax id="loginAjax" dispatch-error on-error="_loginError" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
             <yp-ajax id="registerAjax" method="POST" dispatch-error on-error="_registerError" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
             <paper-button on-tap="_forgotPassword">[[t('user.newPassword')]]</paper-button>
@@ -258,6 +270,11 @@
     ],
 
     properties: {
+
+      userSpinner: {
+        type: Boolean,
+        value: false
+      },
 
       reCaptchaSiteKey: {
         type: String,
@@ -339,6 +356,10 @@
         type: Function,
         value: null
       }
+    },
+
+    setUserSpinner: function (value) {
+      this.set('userSpinner', value)
     },
 
     _facebookLogin: function () {
@@ -470,6 +491,7 @@
 
     open: function(redirectTo) {
       this.redirectTo = redirectTo;
+      this.set('userSpinner', false);
       this.set('opened', false);
       this.async(function () {
         this.set('opened', true);
@@ -482,6 +504,7 @@
     close: function() {
       this.$$("#dialog").close();
       this.set('opened', false);
+      this.set('userSpinner', false);
     }
 
   });

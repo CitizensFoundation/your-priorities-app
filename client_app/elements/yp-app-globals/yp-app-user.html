@@ -103,6 +103,11 @@
 
           memberships: {
             type: Object
+          },
+
+          completeExternalLoginText: {
+            type: String,
+            value: null
           }
         },
 
@@ -145,6 +150,11 @@
         _closeUserLogin: function () {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
           dialog.close();
+        },
+
+        _setUserLoginSpinner: function () {
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
+          dialog.setUserSpinner(true);
         },
 
         _handleLogin: function (user) {
@@ -223,15 +233,17 @@
         },
 
         loginFromFacebook: function () {
-          window.appGlobals.notifyUserViaToast(this.t('user.loggedInWithFacebook'));
-          this._closeUserLogin();
-          this.checkLogin();
+          this._completeExternalLogin(this.t('user.loggedInWithFacebook'));
         },
 
         loginFromSaml: function () {
-          window.appGlobals.notifyUserViaToast(this.t('user.loggedInWithSaml'));
-          this._closeUserLogin();
+          this._completeExternalLogin(this.t('user.loggedInWithSaml'));
+        },
+
+        _completeExternalLogin: function (fromString) {
           this.checkLogin();
+          this._setUserLoginSpinner();
+          this.set('completeExternalLoginText', fromString);
         },
 
         checkLogin: function () {
@@ -330,6 +342,12 @@
           if (detail.response.missingEmail) {
             var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("missingEmail");
             dialog.open(detail.response.loginProvider);
+          }
+
+          if (this.completeExternalLoginText) {
+            window.appGlobals.notifyUserViaToast(this.completeExternalLoginText);
+            this._closeUserLogin();
+            this.set('completeExternalLoginText', null);
           }
         },
 
