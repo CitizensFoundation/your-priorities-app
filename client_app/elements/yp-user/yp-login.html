@@ -210,7 +210,6 @@
                          label="[[t('user.password')]]"
                          value="{{password}}"
                          autocomplete="off"
-                         pattern="[[passwordValidationPattern]]"
                          error-message="[[passwordErrorMessage]]">
             </paper-input>
 
@@ -268,11 +267,6 @@
       emailValidationPattern: {
         type: String,
         value: "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
-      },
-
-      passwordValidationPattern: {
-        type: String,
-        value: '^[a-zA-Z0-9]+$'
       },
 
       emailErrorMessage: {
