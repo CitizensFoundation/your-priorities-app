@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link href="../../bower_components/paper-search/paper-search.html" rel="import">
 
 <link rel="import" href="../with-in-viewport/with-in-viewport.html">
 
@@ -66,8 +67,12 @@
       }
 
       iron-list {
-        width: 1024px;
+        width: 960px;
         height: 100%;
+      }
+
+      .searchContainer {
+        width: 1024px;
       }
 
       yp-ajax {
@@ -76,25 +81,25 @@
 
 
       @media (max-width: 1024px) {
-        iron-list {
+        iron-list, .searchContainer {
           width: 960px;
         }
       }
 
       @media (max-width: 900px) {
-        iron-list {
+        iron-list, .searchContainer {
           width: 600px;
         }
       }
 
       @media (max-width: 640px) {
-        iron-list {
+        iron-list, .searchContainer {
           width: 420px;
         }
       }
 
       @media (max-width: 420px) {
-        iron-list {
+        iron-list, .searchContainer {
           width: 360px;
         }
       }
@@ -106,15 +111,54 @@
       }
 
       #list {
-        margin-top: 42px;
+        margin-top: 16px;
       }
+
+      .searchButton {
+        padding: 8px;
+        margin: 8px;
+      }
+
+      .searchContainer {
+        margin-top: 16px;
+      }
+
+      yp-posts-filter {
+        padding-right: 16px;
+      }
+
+      paper-search-bar {
+        width: 270px;
+      }
+
+      .half {
+        width: 50%
+      }
+
+      @media (max-width: 800px) {
+        .half {
+          width: 100%;
+        }
+
+        .searchContainer {
+          @apply(--layout-center-center);
+        }
+      }
+
     </style>
 
     <div class="layout horizontal center-center">
-      <yp-posts-filter id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
-                       group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
-                       category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
-      </yp-posts-filter>
+      <div class="searchContainer layout horizontal wrap">
+        <div class="layout horizontal center-center">
+          <paper-search-bar hide-clear-button hide-filter-button query="{{searchingFor}}" placeholder="[[t('searchFor')]]" on-paper-search-search="_search"></paper-search-bar>
+        </div>
+        <div class="layout horizontal center-center">
+          <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
+                           group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
+                           category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+          </yp-posts-filter>
+        </div>
+      </div>
     </div>
 
     <div id="scrollableRegion">
@@ -222,6 +266,10 @@
         }
       },
 
+      _search: function () {
+        this._refreshGroupFromFilter();
+      },
+
       cardMouseOver: function (event) {
         event.currentTarget.elevation = 4;
       },
@@ -308,7 +356,7 @@
           this.$$("#list").fire('iron-resize');
         },10);
 
-        if (posts.length>0) {
+        if (posts.length>0 && posts.length!=this.postsCount) {
           this.setMoreToLoad();
         }
 

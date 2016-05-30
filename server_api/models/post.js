@@ -222,6 +222,13 @@ module.exports = function(sequelize, DataTypes) {
             {
               model: modelCategory,
               required: false
+            },
+            {
+              model: sequelize.models.Group,
+              required: true,
+              where: {
+                id: groupId
+              }
             }
           ]
         });
