@@ -49051,6 +49051,28 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         }
       }
 
+
+      .createFab {
+        background-color: var(--accent-color);
+        color: var(--icon-general-color, #FFF);
+        position: fixed;
+        bottom: 24px;
+        right: 28px;
+      }
+
+      .createFab[wide-layout] {
+        width: 72px;
+        height: 72px;
+      }
+
+      .createFabContainer[wide-layout] .createFab {
+      }
+
+      paper-fab[wide-layout]::shadow #icon {
+        width: 40px;
+        height: 40px;
+      }
+
       @media (max-width: 360px) {
 
         .centerContainer {
@@ -49232,6 +49254,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
     </style>
 
+    <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
+
     <div class="topContainer" is-post="" create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
 
       <yp-post-card id="postCard" class="largeCard" post="[[post]]" on-refresh="_refresh" header-mode=""></yp-post-card>
@@ -49286,6 +49310,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           </div>
         </section>
       </iron-pages>
+    </div>
+    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer">
+      <template is="dom-if" if="[[createFabIcon]]">
+        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
+      </template>
     </div>
 
     <div class="layout horizontal center-center">
@@ -49342,7 +49371,24 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             type: String,
             value: null,
             observer: '_tabNameChanged'
+          },
+
+          wideWidth: {
+            type: Boolean,
+            value: false
+          },
+
+          createFabIcon: {
+            type: String,
+            value: null
           }
+        },
+
+        _newPost: function () {
+          window.appGlobals.activity('open', 'newPost');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
+          dialog.setup(null, this.post.Group, true, null);
+          dialog.open('new', { groupId: this.post.Group.id });
         },
 
         _tabNameChanged: function (newValue, oldValue) {
@@ -49435,6 +49481,15 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           } else if (this.post.Group.Community && this.post.Group.Community.theme_id!=null) {
             this.setTheme(this.post.Group.Community.theme_id);
           }
+
+          if (this.post.Group.configuration && this.post.Group.configuration.canAddNewPosts!=undefined) {
+            if (this.post.Group.configuration.canAddNewPosts===true) {
+              this.set('createFabIcon',"lightbulb-outline");
+            }
+          } else {
+            this.set('createFabIcon',"lightbulb-outline");
+          }
+
           if (this.post.description === null) {
             this.post.description = this.post.Points[0].content;
             this.post.Points.shift();
