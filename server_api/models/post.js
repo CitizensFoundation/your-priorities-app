@@ -220,7 +220,30 @@ module.exports = function(sequelize, DataTypes) {
           limit: 100,
           include: [
             {
-              model: modelCategory,
+              model: sequelize.models.Category,
+              required: false,
+              include: [
+                {
+                  model: sequelize.models.Image,
+                  required: false,
+                  as: 'CategoryIconImages',
+                  order: [
+                    [ { model: sequelize.models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
+                  ]
+                }
+              ]
+            },
+            {
+              model: sequelize.models.PostRevision,
+              required: false
+            },
+            {
+              model: sequelize.models.Point,
+              attributes: ['id','content'],
+              required: false
+            },
+            { model: sequelize.models.Image,
+              as: 'PostHeaderImages',
               required: false
             },
             {
