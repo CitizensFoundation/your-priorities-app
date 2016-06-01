@@ -49,8 +49,30 @@ var getNewFromUsers = function (post) {
   return "";
 };
 
+var getImageFormatUrl = function(image, formatId) {
+    var formats = JSON.parse(image.formats);
+    if (formats && formats.length>0)
+      return formats[formatId];
+    else
+      return ""
+};
+
 var getImages = function (post) {
-  return "";
+  var imagesText = "";
+
+  if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
+    imagesText += _.map(post.PostHeaderImages, function (image) {
+      return ""+getImageFormatUrl(image, 0)+"\n";
+    });
+  }
+
+  if (post.PostHeaderImages && post.PostUserImages.length>0) {
+    imagesText += _.map(post.PostUserImages, function (image) {
+      return ""+getImageFormatUrl(image, 0)+" \n";
+    });
+  }
+
+  return imagesText;
 };
 
 models.Post.findAll({
