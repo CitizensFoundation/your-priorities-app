@@ -85,6 +85,8 @@
 
   "community": {
     "edit": "Breyta svæði",
+    "admins": "Community admins",
+    "users": "Community users",
     "delete": "Eyða svæði",
     "new": "Nýtt svæði",
     "closed": "Lokað svæði",

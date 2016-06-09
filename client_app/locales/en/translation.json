@@ -91,6 +91,8 @@
 
   "community": {
     "edit": "Edit community",
+    "admins": "Community admins",
+    "users": "Community users",
     "delete": "Delete community",
     "new": "Create community",
     "public": "Public community",
