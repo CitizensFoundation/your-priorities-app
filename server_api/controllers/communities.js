@@ -144,6 +144,69 @@ router.post('/:communityId/user_membership', auth.isLoggedIn, auth.can('view com
   });
 });
 
+router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), function(req, res) {
+  var invite, user, token;
+  async.series([
+    function(callback) {
+      crypto.randomBytes(20, function(error, buf) {
+        token = buf.toString('hex');
+        callback(error);
+      });
+    },
+    function(callback) {
+      models.User.find({
+        where: { email: req.params.userEmail },
+        attributes: ['id','email']
+      }).then(function (userIn) {
+        if (userIn) {
+          user = userIn;
+        }
+        callback();
+      }).catch(function (error) {
+        callback(error);
+      });
+    },
+    function(callback) {
+      models.Invite.create({
+        token: token,
+        expires_at: Date.now() + (3600000*24*30*365*1000),
+        type: models.Invite.INVITE_TO_COMMUNITY,
+        community_id: req.params.communityId,
+        user_id: user ? user.id : null,
+        from_user_id: req.user.id
+      }).then(function (inviteIn) {
+        if (inviteIn) {
+          invite = inviteIn;
+          callback();
+        } else {
+          callback('Invite not found')
+        }
+      }).catch(function (error) {
+        callback(error);
+      });
+    },
+    function(callback) {
+      models.AcActivity.inviteCreated({
+        email: req.params.userEmail,
+        user_id: user ? user.id : null,
+        sender_user_id: req.user.id,
+        community_id: req.params.communityId,
+        invite_id: invite.id,
+        token: token}, function (error) {
+        callback(error);
+      });
+    }
+  ], function(error) {
+    if (error) {
+      log.error('Send Invite Error', { user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
+      res.sendStatus(500);
+    } else {
+      log.info('Send Invite Activity Created', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
+      res.sendStatus(200);
+    }
+  });
+});
+
 router.delete('/:communityId/:userId/remove_admin', auth.can('edit community'), function(req, res) {
   getCommunityAndUser(req.params.communityId, req.params.userId, null, function (error, community, user) {
     if (error) {

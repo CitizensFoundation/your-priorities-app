@@ -206,7 +206,6 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
       res.sendStatus(200);
     }
   });
-
 });
 
 router.delete('/:groupId/:userId/remove_admin', auth.can('edit group'), function(req, res) {
