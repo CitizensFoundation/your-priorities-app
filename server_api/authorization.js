@@ -382,10 +382,22 @@ auth.role('post.statusChange', function (post, req, done) {
 });
 
 auth.role('post.viewUser', function (post, req, done) {
+  //TODO: Profile this function for that second level Community include
   models.Post.findOne({
     where: { id: post.id },
     include: [
-      models.Group
+      {
+        model: models.Group,
+        required: true,
+        attributes: ['id','access'],
+        include: [
+          {
+            model: models.Community,
+            required: true,
+            attributes: ['id','access']
+          }
+        ]
+      }
     ]
   }).then(function (post) {
     var group = post.Group;
@@ -399,6 +411,14 @@ auth.role('post.viewUser', function (post, req, done) {
       group.hasGroupUsers(req.user).then(function (result) {
         if (result) {
           done(null, true);
+        } else if (group.access === models.Group.ACCESS_OPEN_TO_COMMUNITY) {
+          group.Community.hasCommunityUsers(req.user).then(function (result) {
+            if (result) {
+              done(null, true);
+            } else {
+              done(null, false);
+            }
+          });
         } else {
           done(null, false);
         }
