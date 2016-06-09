@@ -279,9 +279,17 @@ auth.role('group.admin', function (group, req, done) {
 
 auth.role('group.viewUser', function (group, req, done) {
   models.Group.findOne({
-    where: { id: group.id }
+    where: { id: group.id },
+    include: [
+      {
+        model: models.Community,
+        required: true,
+        attributes: ['id','access']
+      }
+    ]
   }).then(function (group) {
-    if (group.access === models.Group.ACCESS_PUBLIC) {
+    if (group.access === models.Group.ACCESS_PUBLIC &&
+        group.Community.access === models.Community.ACCESS_PUBLIC) {
       done(null, true);
     }  else if (!req.isAuthenticated()) {
       done(null, false);
@@ -291,6 +299,14 @@ auth.role('group.viewUser', function (group, req, done) {
       group.hasGroupUsers(req.user).then(function (result) {
         if (result) {
           done(null, true);
+        } else if (group.access === models.Group.ACCESS_OPEN_TO_COMMUNITY) {
+          group.Community.hasCommunityUsers(req.user).then(function (result) {
+            if (result) {
+              done(null, true);
+            } else {
+              done(null, false);
+            }
+          });
         } else {
           done(null, false);
         }

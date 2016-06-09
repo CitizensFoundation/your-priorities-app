@@ -1,4 +1,5 @@
 {
+  "access": "Aðgangur",
   "searchFor": "Leita að...",
   "title": "Titill",
   "selectLanguage": "Veldu tungumál",
@@ -285,6 +286,7 @@
     "closed": "Lokaður hópur",
     "public": "Opin hópur",
     "secret": "Leynilegur hópur",
+    "openToCommunity": "Opin fyrir svæði",
     "canVote": "Hægt að kjósa",
     "canAddNewPosts": "Hægt að bæta við hugmynd",
     "config": "Stillingar",

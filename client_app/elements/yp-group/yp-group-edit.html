@@ -123,9 +123,10 @@
 
       <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
-        <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
-        <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>
-        <paper-radio-button name="secret">[[t('secret')]]</paper-radio-button>
+        <paper-radio-button name="public" hidden$="[[!_publicCommunity()]]">[[t('group.public')]]</paper-radio-button>
+        <paper-radio-button name="closed">[[t('group.closed')]]</paper-radio-button>
+        <paper-radio-button name="secret">[[t('group.secret')]]</paper-radio-button>
+        <paper-radio-button name="open_to_community" hidden$="[[_publicCommunity()]]">[[t('group.openToCommunity')]]</paper-radio-button>
       </paper-radio-group>
 
     </yp-edit-dialog>
@@ -185,6 +186,10 @@
         type: String,
         value: null
       },
+    },
+
+    _publicCommunity: function (group) {
+      return group.Community.access==0
     },
 
     _customRedirect: function (group) {

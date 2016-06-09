@@ -1,4 +1,5 @@
 {
+  "access": "Access",
   "searchFor": "Search for...",
   "title": "Title",
   "selectLanguage": "Select language",
@@ -237,6 +238,7 @@
     "public": "Public group",
     "closed": "Closed group",
     "secret": "Secret group",
+    "openToCommunity": "Open to community",
     "canVote": "Voting allowed",
     "canAddNewPosts": "New posts allowed",
     "config": "Config",

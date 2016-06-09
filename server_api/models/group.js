@@ -125,6 +125,7 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_PUBLIC: 0,
       ACCESS_CLOSED: 1,
       ACCESS_SECRET: 2,
+      ACCESS_OPEN_TO_COMMUNITY: 3,
 
       addUserToGroupIfNeeded: function (groupId, req, done) {
         sequelize.models.Group.find({
@@ -178,6 +179,20 @@ module.exports = function(sequelize, DataTypes) {
         })
       },
 
+      convertAccessFromRadioButtons: function(body) {
+        var access = 0;
+        if (body.public) {
+          access = 0;
+        } else if (body.closed) {
+          access = 1;
+        } else if (body.secret) {
+          access = 2;
+        } else if (body.open_to_community) {
+          access = 3;
+        }
+        return access;
+      },
+      
       associate: function(models) {
         Group.hasMany(models.Post, { foreignKey: "group_id" });
         Group.hasMany(models.Point, { foreignKey: "group_id" });
