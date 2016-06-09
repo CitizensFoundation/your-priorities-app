@@ -202,7 +202,7 @@
 
       _getCommunity: function () {
         this.$$('#ajax').url = '/api/communities/' + this.communityId;
-        this.$$('#ajax').retryMethodAfterLogin = this._getCommunity.bind(this);
+        this.$$('#ajax').retryMethodAfter401Login = this._getCommunity.bind(this);
         this.$$('#ajax').generateRequest();
       },
 

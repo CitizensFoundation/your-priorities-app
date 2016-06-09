@@ -295,7 +295,7 @@
 
       _getGroup: function () {
         this.$.ajax.url = '/api/groups/' + this.groupId;
-        this.$.ajax.retryMethodAfterLogin = this._getGroup.bind(this);
+        this.$.ajax.retryMethodAfter401Login = this._getGroup.bind(this);
         this.$.ajax.generateRequest();
       },
 

@@ -527,11 +527,16 @@
         _postIdChanged: function (newValue, oldValue) {
           if (newValue) {
             this.set("post",null);
-            this.$.ajax.url = '/api/posts/' + this.postId;
-            this.$.ajax.generateRequest();
+            this._getPost();
           } else {
             this.set("post",null);
           }
+        },
+
+        _getPost: function () {
+          this.$.ajax.url = '/api/posts/' + this.postId;
+          this.$$('#ajax').retryMethodAfter401Login = this._getPost.bind(this);
+          this.$.ajax.generateRequest();
         },
 
         _response: function (event, detail, sender) {
