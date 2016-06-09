@@ -467,7 +467,14 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
 
 router.put('/:id', auth.can('edit group'), function(req, res) {
   models.Group.find({
-    where: {id: req.params.id }
+    where: {id: req.params.id },
+    include: [
+      {
+        model: models.Community,
+        required: true,
+        attributes: ['id','access']
+      }
+    ]
   }).then(function (group) {
     if (group) {
       group.name =req.body.name;
@@ -526,7 +533,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     include: [
       {
         model: models.Community,
-        attributes: ['id','theme_id','name'],
+        attributes: ['id','theme_id','name','access'],
         include: [
           {
             model: models.Domain,

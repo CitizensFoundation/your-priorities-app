@@ -123,10 +123,10 @@
 
       <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
-        <paper-radio-button name="public" hidden$="[[!_publicCommunity()]]">[[t('group.public')]]</paper-radio-button>
+        <paper-radio-button name="public" hidden$="[[!publicCommunity]]">[[t('group.public')]]</paper-radio-button>
+        <paper-radio-button name="open_to_community" hidden$="[[publicCommunity]]">[[t('group.openToCommunity')]]</paper-radio-button>
         <paper-radio-button name="closed">[[t('group.closed')]]</paper-radio-button>
         <paper-radio-button name="secret">[[t('group.secret')]]</paper-radio-button>
-        <paper-radio-button name="open_to_community" hidden$="[[_publicCommunity()]]">[[t('group.openToCommunity')]]</paper-radio-button>
       </paper-radio-group>
 
     </yp-edit-dialog>
@@ -182,6 +182,11 @@
 
       status: String,
 
+      publicCommunity: {
+        type: Boolean,
+        value: false
+      },
+
       themeId: {
         type: String,
         value: null
@@ -189,7 +194,9 @@
     },
 
     _publicCommunity: function (group) {
-      return group.Community.access==0
+      if (group) {
+        return group.Community.access==0
+      }
     },
 
     _customRedirect: function (group) {
@@ -201,20 +208,29 @@
     },
 
     _groupChanged: function (newValue, oldValue) {
-      if (this.group.access===0) {
-        this.groupAccess = "public"
-      } else if (this.group.access===1) {
-        this.groupAccess = "closed"
-      } else if (this.group.access===2) {
-        this.groupAccess = "secret"
-      }
-      if (this.group && this.group.status) {
-        this.set('status', this.group.status);
-      }
+      if (this.group) {
+        if (this.group.access==0) {
+          this.groupAccess = "public"
+        } else if (this.group.access==1) {
+          this.groupAccess = "closed"
+        } else if (this.group.access==2) {
+          this.groupAccess = "secret"
+        } else if (this.group.access==3) {
+          this.groupAccess = "open_to_community"
+        }
 
-      if (this.group.configuration && this.group.configuration.canVote!=undefined) {
-        this.set('canVote', this.group.configuration.canVote);
-        this.set('canAddNewPosts', this.group.configuration.canAddNewPosts);
+        if (this.group && this.group.status) {
+          this.set('status', this.group.status);
+        }
+
+        if (this.group.configuration && this.group.configuration.canVote!=undefined) {
+          this.set('canVote', this.group.configuration.canVote);
+          this.set('canAddNewPosts', this.group.configuration.canAddNewPosts);
+        }
+
+        if (this.group.Community.access==0) {
+          this.set('publicCommunity', true);
+        }
       }
     },
 
