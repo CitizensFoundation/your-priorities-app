@@ -111,6 +111,11 @@
         dispatchError: {
           type: Boolean,
           value: false
+        },
+
+        retryMethodAfterLogin: {
+          type: Function,
+          value: null
         }
       },
 
@@ -140,9 +145,17 @@
           } else {
             this.fire("error", event.detail.error);
           }
+        } else if (this._is401(event.detail.error) && this.retryMethodAfterLogin) {
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
+          dialog.setup(this.retryMethodAfterLogin);
+          dialog.open();
         } else if (this.useDialog) {
           this.showErrorDialog(event.detail.error);
         }
+      },
+
+      _is401(error) {
+        return (error && error.indexOf('status code: 401') > -1)
       },
 
       generateRequest: function () {

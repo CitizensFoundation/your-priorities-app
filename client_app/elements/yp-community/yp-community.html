@@ -195,10 +195,15 @@
           this.set("featuredGroups",null);
           this.set("activeGroups",null);
           this.set("archivedGroups",null);
-          this.$$('#ajax').url = '/api/communities/' + this.communityId;
-          this.$$('#ajax').generateRequest();
-          this.hideAdd = true;
+          this.set('hideAdd', true);
+          this._getCommunity();
         }
+      },
+
+      _getCommunity: function () {
+        this.$$('#ajax').url = '/api/communities/' + this.communityId;
+        this.$$('#ajax').retryMethodAfterLogin = this._getCommunity.bind(this);
+        this.$$('#ajax').generateRequest();
       },
 
       _newGroup: function () {

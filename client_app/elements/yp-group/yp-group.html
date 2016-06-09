@@ -289,10 +289,15 @@
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue && newValue!=this.lastValidGroupId) {
           this.set('lastValidGroupId', newValue);
-          this.$.ajax.url = '/api/groups/' + this.groupId;
-          this.$.ajax.generateRequest();
+          this._getGroup();
         }
        },
+
+      _getGroup: function () {
+        this.$.ajax.url = '/api/groups/' + this.groupId;
+        this.$.ajax.retryMethodAfterLogin = this._getGroup.bind(this);
+        this.$.ajax.generateRequest();
+      },
 
       _pagesResponse: function (event, detail) {
         this.fire('yp-set-pages', detail.response);
