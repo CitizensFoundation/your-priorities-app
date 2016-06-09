@@ -6,7 +6,7 @@ var _ = require('lodash');
 var groupId = process.argv[2];
 
 var clean = function (text) {
-  return text.replace('"',"'").replace('\n','').replace('\r','').trim();
+  return text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(',',';').trim();
 };
 
 var getLocation = function (post) {
@@ -62,13 +62,13 @@ var getImages = function (post) {
 
   if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
     imagesText += _.map(post.PostHeaderImages, function (image) {
-      return ""+getImageFormatUrl(image, 0)+"\n";
+      return ""+getImageFormatUrl(image, 0)+" ";
     });
   }
 
   if (post.PostHeaderImages && post.PostUserImages.length>0) {
     imagesText += _.map(post.PostUserImages, function (image) {
-      return ""+getImageFormatUrl(image, 0)+" \n";
+      return ""+getImageFormatUrl(image, 0)+" ";
     });
   }
 
@@ -112,12 +112,12 @@ models.Post.findAll({
   ]
 }).then(function (posts) {
   console.log(posts.length);
-  console.log("email,Name,Description,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images,News from Users");
+  console.log("email,Name,Description,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images");
   async.eachSeries(posts, function (post, seriesCallback) {
     console.log('"'+post.User.email+'","'+clean(post.name)+'","'+clean(post.description)+'",'+
                 getLocation(post)+','+post.counter_endorsements_up+','+post.counter_endorsements_down+
                 ','+post.counter_points+','+getPointsUp(post)+','+getPointsDown(post)+','+
-                getImages(post)+','+getNewFromUsers(post));
+                getImages(post));
     seriesCallback();
   }, function (error) {
     process.exit();
