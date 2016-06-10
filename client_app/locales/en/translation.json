@@ -32,7 +32,8 @@
     "myPoints": "My points",
     "myPointEndorsements": "Points I like",
     "allCommunity": "All notifications from my communities",
-    "allGroup": "All notifications from my groups"
+    "allGroup": "All notifications from my groups",
+    "invite_accepted_for": "Participating in"
   },
 
   "pages": {
@@ -274,6 +275,9 @@
   },
 
   "user": {
+    "acceptInvite": "Accept invite participate",
+    "hasSentYouAndInvitation": "has sent you an invitation to participate in",
+    "acceptInviteInstructions": "Click on the button below to accept the invitation",
     "setEmail": "Add email to account",
     "linkAccount": "Connect with account",
     "setEmailInfo": "Add email to account",

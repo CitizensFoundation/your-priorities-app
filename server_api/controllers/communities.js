@@ -6,6 +6,7 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var async = require('async');
+var crypto = require("crypto");
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
@@ -191,6 +192,8 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
         user_id: user ? user.id : null,
         sender_user_id: req.user.id,
         community_id: req.params.communityId,
+        sender_name: req.user.name,
+        domain_id: req.ypDomain.id,
         invite_id: invite.id,
         token: token}, function (error) {
         callback(error);
@@ -342,6 +345,75 @@ router.post('/:communityId/news_story', auth.isLoggedIn, auth.can('view communit
     }
   });
 });
+
+router.get('/:communityId/admin_users', auth.can('edit community'), function (req, res) {
+  models.Community.find({
+    where: {
+      id: req.params.communityId
+    },
+    include: [
+      {
+        model: models.User,
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'last_login_at']),
+        as: 'CommunityAdmins',
+        required: true,
+        include: [
+          {
+            model: models.Organization,
+            attributes: ['id', 'name'],
+            as: 'OrganizationUsers',
+            required: false
+          }
+        ]
+      }
+    ]
+  }).then(function (community) {
+    log.info('Got admin users', { context: 'admin_users', user: toJson(req.user.simple()) });
+    if (community) {
+      res.send(community.CommunityAdmins);
+    } else {
+      res.send([]);
+    }
+  }).catch(function (error) {
+    log.error('Could not get admin users', { err: error, context: 'admin_users', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:communityId/users', auth.can('edit community'), function (req, res) {
+  models.Community.find({
+    where: {
+      id: req.params.communityId
+    },
+    include: [
+      {
+        model: models.User,
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'last_login_at']),
+        as: 'CommunityUsers',
+        required: true,
+        include: [
+          {
+            model: models.Organization,
+            attributes: ['id', 'name'],
+            as: 'OrganizationUsers',
+            required: false
+          }
+        ]
+      }
+    ]
+  }).then(function (community) {
+    log.info('Got users', { context: 'users', user: toJson(req.user.simple()) });
+    if (community) {
+      res.send(community.CommunityUsers);
+    } else {
+      res.send([]);
+    }
+  }).catch(function (error) {
+    log.error('Could not get admin users', { err: error, context: 'users', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
 
 router.get('/:id', auth.can('view community'), function(req, res) {
   models.Community.find({

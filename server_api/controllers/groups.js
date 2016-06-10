@@ -173,6 +173,7 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
         expires_at: Date.now() + (3600000*24*30*365*1000),
         type: models.Invite.INVITE_TO_GROUP,
         group_id: req.params.groupId,
+        domain_id: req.ypDomain.id,
         user_id: user ? user.id : null,
         from_user_id: req.user.id
       }).then(function (inviteIn) {
@@ -191,6 +192,7 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
         email: req.params.userEmail,
         user_id: user ? user.id : null,
         sender_user_id: req.user.id,
+        sender_name: req.user.name,
         group_id: req.params.groupId,
         invite_id: invite.id,
         token: token}, function (error) {

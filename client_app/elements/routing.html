@@ -111,7 +111,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       window.app.params = data.params;
     });
 
-    page('/user/acceptInvite/:inviteToken', scrollToTop, function (data) {
+    page('/user/accept/invite/:inviteToken', scrollToTop, function (data) {
       window.app.route = 'home';
       window.app.params = data.params;
       Polymer.Base.async(function() {

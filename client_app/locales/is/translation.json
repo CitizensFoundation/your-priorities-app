@@ -32,7 +32,8 @@
     "myPoints": "Mín rök",
     "myPointEndorsements": "Rök sem mér finnst hjálpleg",
     "allCommunity": "Allt sem gerist á mínum svæðum",
-    "allGroup": "Allt sem gerist í mínum hópum"
+    "allGroup": "Allt sem gerist í mínum hópum",
+    "invite_accepted_for": "Tek þátt í"
   },
 
   "archived": "Eldra",
@@ -123,6 +124,9 @@
   },
 
   "user": {
+    "acceptInvite": "Samþykkja boð um þátttöku",
+    "hasSentYouAndInvitation": "sendi þér boð um að taka þátt í",
+    "acceptInviteInstructions": "Smelltu hérna að neðan til að taka þátt",
     "setEmail": "Bættu við netfangi",
     "linkAccount": "Tengja reikning við netfang",
     "setEmailInfo": "Bættu við netfangi",
