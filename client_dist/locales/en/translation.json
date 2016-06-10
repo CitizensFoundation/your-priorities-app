@@ -1,4 +1,5 @@
 {
+  "access": "Access",
   "searchFor": "Search for...",
   "title": "Title",
   "selectLanguage": "Select language",
@@ -31,7 +32,8 @@
     "myPoints": "My points",
     "myPointEndorsements": "Points I like",
     "allCommunity": "All notifications from my communities",
-    "allGroup": "All notifications from my groups"
+    "allGroup": "All notifications from my groups",
+    "invite_accepted_for": "Participating in"
   },
 
   "pages": {
@@ -87,15 +89,20 @@
   "myDomains": "My Domains",
   "myCommunities": "My Communities",
   "myGroups": "My Groups",
+  "myAdminCommunities": "Communities Admin",
+  "myAdminGroups": "Groups Admin",
 
   "community": {
     "edit": "Edit community",
+    "admins": "Community admins",
+    "users": "Community users",
     "delete": "Delete community",
     "new": "Create community",
     "public": "Public community",
     "closed": "Closed community",
     "secret": "Secret community",
-    "pages":"Community Pages"
+    "pages":"Community Pages",
+    "onlyAdminsCanCreateGroups": "Only admins can create groups"
   },
 
   "posts": {
@@ -237,6 +244,7 @@
     "public": "Public group",
     "closed": "Closed group",
     "secret": "Secret group",
+    "openToCommunity": "Open to community",
     "canVote": "Voting allowed",
     "canAddNewPosts": "New posts allowed",
     "config": "Config",
@@ -268,6 +276,10 @@
   },
 
   "user": {
+    "loginCompleteFor": "Login for",
+    "acceptInvite": "Accept invite participate",
+    "hasSentYouAndInvitation": "has sent you an invitation to participate in",
+    "acceptInviteInstructions": "Click on the button below to accept the invitation",
     "setEmail": "Add email to account",
     "linkAccount": "Connect with account",
     "setEmailInfo": "Add email to account",

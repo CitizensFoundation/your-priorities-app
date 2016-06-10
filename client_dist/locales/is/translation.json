@@ -1,4 +1,5 @@
 {
+  "access": "Aðgangur",
   "searchFor": "Leita að...",
   "title": "Titill",
   "selectLanguage": "Veldu tungumál",
@@ -31,7 +32,8 @@
     "myPoints": "Mín rök",
     "myPointEndorsements": "Rök sem mér finnst hjálpleg",
     "allCommunity": "Allt sem gerist á mínum svæðum",
-    "allGroup": "Allt sem gerist í mínum hópum"
+    "allGroup": "Allt sem gerist í mínum hópum",
+    "invite_accepted_for": "Tek þátt í"
   },
 
   "archived": "Eldra",
@@ -78,17 +80,22 @@
   "myDomains":  "Mínir vefir",
   "myCommunities": "Mín svæði",
   "myGroups": "Mínir hópar",
+  "myAdminCommunities": "Svæðastjórnun",
+  "myAdminGroups": "Hópastjórnun",
 
   "create": "Senda inn",
   "cancel": "Hætta við",
 
   "community": {
     "edit": "Breyta svæði",
+    "admins": "Vefstjórar svæðis",
+    "users": "Notendur svæðis",
     "delete": "Eyða svæði",
     "new": "Nýtt svæði",
     "closed": "Lokað svæði",
     "public": "Opið svæði",
-    "secret": "Leynilegt svæði"
+    "secret": "Leynilegt svæði",
+    "onlyAdminsCanCreateGroups": "Aðeins vefstjórar geta búið til hópa"
   },
 
   "news": "Nýjasta Efni",
@@ -112,12 +119,19 @@
   "users": {
     "removeAdmin": "Eyða vefstjóra",
     "addAdmin": "Bæta við vefstjóra",
-    "removeUser": "Taka notanda út",
+    "removeUser": "Eyða notanda",
     "inviteUser": "Bjóða notanda",
-    "email": "netfang"
+    "email": "netfang",
+    "removeFromOrganization": "Eyða",
+    "addToOrganization": "Samtök",
+    "selectOrganization": "Veldu samtök"
   },
 
   "user": {
+    "loginCompleteFor": "Innskráning fyrir",
+    "acceptInvite": "Samþykkja boð um þátttöku",
+    "hasSentYouAndInvitation": "sendi þér boð um að taka þátt í",
+    "acceptInviteInstructions": "Smelltu hérna að neðan til að taka þátt",
     "setEmail": "Bættu við netfangi",
     "linkAccount": "Tengja reikning við netfang",
     "setEmailInfo": "Bættu við netfangi",
@@ -285,6 +299,7 @@
     "closed": "Lokaður hópur",
     "public": "Opin hópur",
     "secret": "Leynilegur hópur",
+    "openToCommunity": "Opin fyrir svæði",
     "canVote": "Hægt að kjósa",
     "canAddNewPosts": "Hægt að bæta við hugmynd",
     "config": "Stillingar",

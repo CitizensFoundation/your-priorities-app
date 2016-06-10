@@ -30068,6 +30068,11 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
         dispatchError: {
           type: Boolean,
           value: false
+        },
+
+        retryMethodAfter401Login: {
+          type: Function,
+          value: null
         }
       },
 
@@ -30097,9 +30102,17 @@ return"ທີ່"+a}}),{m:"minutė_minutės_minutę",mm:"minutės_minučių_minu
           } else {
             this.fire("error", event.detail.error);
           }
+        } else if (event.detail.error && event.detail.error.message &&
+                   this._is401(event.detail.error.message) && !window.appUser.user &&
+                   this.retryMethodAfter401Login) {
+          window.appUser.loginFor401(this.retryMethodAfter401Login);
         } else if (this.useDialog) {
           this.showErrorDialog(event.detail.error);
         }
+      },
+
+      _is401(error) {
+        return (error && error.indexOf('status code: 401') > -1)
       },
 
       generateRequest: function () {
@@ -38078,9 +38091,10 @@ event and do your own custom submission:
 
       <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
-        <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
-        <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>
-        <paper-radio-button name="secret">[[t('secret')]]</paper-radio-button>
+        <paper-radio-button name="public" hidden$="[[!publicCommunity]]">[[t('group.public')]]</paper-radio-button>
+        <paper-radio-button name="open_to_community" hidden$="[[publicCommunity]]">[[t('group.openToCommunity')]]</paper-radio-button>
+        <paper-radio-button name="closed">[[t('group.closed')]]</paper-radio-button>
+        <paper-radio-button name="secret">[[t('group.secret')]]</paper-radio-button>
       </paper-radio-group>
 
     </yp-edit-dialog>
@@ -38121,6 +38135,10 @@ event and do your own custom submission:
         observer: "_groupChanged"
       },
 
+      community: {
+        type: Object
+      },
+
       groupAccess: {
         type: String,
         value: "public"
@@ -38136,14 +38154,26 @@ event and do your own custom submission:
 
       status: String,
 
+      publicCommunity: {
+        type: Boolean,
+        value: false
+      },
+
       themeId: {
         type: String,
         value: null
-      },
+      }
+    },
+
+    _publicCommunity: function (group) {
+      if (group) {
+        return group.Community.access==0
+      }
     },
 
     _customRedirect: function (group) {
       if (group) {
+        window.appUser.recheckAdminRights();
         page("#!/group/"+group.id);
       } else {
         console.warn('No group found on custom redirect');
@@ -38151,20 +38181,39 @@ event and do your own custom submission:
     },
 
     _groupChanged: function (newValue, oldValue) {
-      if (this.group.access===0) {
-        this.groupAccess = "public"
-      } else if (this.group.access===1) {
-        this.groupAccess = "closed"
-      } else if (this.group.access===2) {
-        this.groupAccess = "secret"
-      }
-      if (this.group && this.group.status) {
-        this.set('status', this.group.status);
-      }
+      if (this.group) {
+        if (this.group.access==0) {
+          this.groupAccess = "public"
+        } else if (this.group.access==1) {
+          this.groupAccess = "closed"
+        } else if (this.group.access==2) {
+          this.groupAccess = "secret"
+        } else if (this.group.access==3) {
+          this.groupAccess = "open_to_community"
+        }
 
-      if (this.group.configuration && this.group.configuration.canVote!=undefined) {
-        this.set('canVote', this.group.configuration.canVote);
-        this.set('canAddNewPosts', this.group.configuration.canAddNewPosts);
+        if (this.group && this.group.status) {
+          this.set('status', this.group.status);
+        }
+
+        if (this.group.configuration && this.group.configuration.canVote!=undefined) {
+          this.set('canVote', this.group.configuration.canVote);
+          this.set('canAddNewPosts', this.group.configuration.canAddNewPosts);
+        }
+
+        if (this.community) {
+          if (this.community.access==0) {
+            this.set('publicCommunity', true);
+          } else {
+            this.set('publicCommunity', false);
+          }
+        } else if (this.group.Community) {
+          if (this.group.Community.access==0) {
+            this.set('publicCommunity', true);
+          } else {
+            this.set('publicCommunity', false);
+          }
+        }
       }
     },
 
@@ -38178,7 +38227,19 @@ event and do your own custom submission:
 
     setup: function (group, newNotEdit, refreshFunction) {
       if (!group) {
-        this.set('group', { name: '', objectives: '', access: 0, status: 'active' });
+        var defaultAccess = 0;
+        if (this.community) {
+          if (this.community.access!=0) {
+            this.set('groupAccess', 'open_to_community');
+            defaultAccess = 3;
+          }
+        } else if (this.group.Community) {
+          if (this.group.Community.access!=0) {
+            this.set('groupAccess', 'open_to_community');
+            defaultAccess = 3;
+          }
+        }
+        this.set('group', { name: '', objectives: '', access: defaultAccess, status: 'active' });
       } else {
         this.set('group', group);
       }
@@ -38346,6 +38407,7 @@ event and do your own custom submission:
         dialog.showErrorDialog(this.t('hostnameTaken'));
       } else {
         if (community) {
+          window.appUser.recheckAdminRights();
           page("#!/community/"+community.id);
         } else {
           console.warn('No community found on custom redirect');
@@ -43999,6 +44061,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         width: 100%;
       }
     }
+
+    b {
+      padding: 0;
+      margin: 0;
+    }
   </style>
 
   <template>
@@ -44006,7 +44073,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     <paper-dialog id="dialog">
       <h3>[[t('user.acceptInvite')]]</h3>
 
-      [[inviteName]] [[t('user.hasSentYouAndInvitation')]] to [[targetName]]
+      [[inviteName]] [[t('user.hasSentYouAndInvitation')]]: <br>
+      <b>[[targetName]]</b>
       <p>[[t('user.acceptInviteInstructions')]]</p>
 
       <div class="buttons">
@@ -48649,6 +48717,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             type: Object
           },
 
+          loginFor401refreshFunction: {
+            type: Function,
+            value: null
+          },
+
           toastLoginTextCombined: {
             type: String
           },
@@ -48718,6 +48791,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.openUserlogin();
         },
 
+        loginFor401: function (refreshFunction) {
+          this.set('loginFor401refreshFunction', refreshFunction);
+          this.openUserlogin();
+        },
+
         openUserlogin: function () {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
           dialog.setup(this._handleLogin.bind(this));
@@ -48739,8 +48817,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.setLoggedInUser(user);
           this.$.adminRightsAjax.generateRequest();
           this.$.membershipsAjax.generateRequest();
-          this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.name;
+          this.toastLoginTextCombined = this.t("user.loginCompleteFor")+ " " + this.user.name;
           this.$.loginToast.show();
+          this.fire("login");
           if (this.loginForEditParams) {
             var loginParams = this.loginForEditParams;
             loginParams.editDialog.open(loginParams.newOrUpdate,loginParams.params);
@@ -48765,8 +48844,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             var acceptInviteParams = this.loginForAcceptInviteParams;
             acceptInviteParams.editDialog.open(acceptInviteParams.token);
             this.loginForAcceptInviteParams = null;
+          } else if (this.loginFor401refreshFunction) {
+            this.loginFor401refreshFunction();
           }
-          this.fire("login");
         },
 
         _forgotPassword: function (event, detail) {
@@ -48830,6 +48910,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.$.adminRightsAjax.generateRequest();
           this.$.membershipsAjax.url = "/api/users/loggedInUser/memberships" + "?" + (new Date()).getTime();
           this.$.membershipsAjax.generateRequest();
+        },
+
+        recheckAdminRights: function () {
+          this.$.adminRightsAjax.generateRequest();
         },
 
         updateEndorsementForPost: function (postId, newEndorsement) {
@@ -50432,11 +50516,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         _postIdChanged: function (newValue, oldValue) {
           if (newValue) {
             this.set("post",null);
-            this.$.ajax.url = '/api/posts/' + this.postId;
-            this.$.ajax.generateRequest();
+            this._getPost();
           } else {
             this.set("post",null);
           }
+        },
+
+        _getPost: function () {
+          this.$.ajax.url = '/api/posts/' + this.postId;
+          this.$$('#ajax').retryMethodAfter401Login = this._getPost.bind(this);
+          this.$.ajax.generateRequest();
         },
 
         _response: function (event, detail, sender) {
@@ -52293,10 +52382,15 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue && newValue!=this.lastValidGroupId) {
           this.set('lastValidGroupId', newValue);
-          this.$.ajax.url = '/api/groups/' + this.groupId;
-          this.$.ajax.generateRequest();
+          this._getGroup();
         }
        },
+
+      _getGroup: function () {
+        this.$.ajax.url = '/api/groups/' + this.groupId;
+        this.$.ajax.retryMethodAfter401Login = this._getGroup.bind(this);
+        this.$.ajax.generateRequest();
+      },
 
       _pagesResponse: function (event, detail) {
         this.fire('yp-set-pages', detail.response);
@@ -53444,11 +53538,15 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     },
 
     communityLogoImagePath: function (community) {
-      return this.getImageFormatUrl(community.CommunityLogoImages, 0);
+      if (community) {
+        return this.getImageFormatUrl(community.CommunityLogoImages, 0);
+      }
     },
 
     communityLogoImageNextPath: function (community) {
-      return this.getImageFormatNextUrl(community.CommunityLogoImages, 0);
+      if (community) {
+        return this.getImageFormatNextUrl(community.CommunityLogoImages, 0);
+      }
     },
 
     communityHeaderImagePath: function (community) {
@@ -53456,15 +53554,17 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     },
 
     communityName: function (community, showAll) {
-      if (community.name) {
+      if (community && community.name) {
         return this.truncate(this.trim(community.name),  showAll ? 300 : 35, '...');
-      } else {
+      } else if (community) {
         return community.short_name;
+      } else {
+        return "";
       }
     },
 
     communityDescription: function (community, showAll) {
-      if (community.description) {
+      if (community && community.description) {
         return this.truncate(this.trim(community.description), showAll ? 300 : 120, '...');
       } else {
         return "";
@@ -54335,56 +54435,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     });
   </script>
 </dom-module>
-<dom-module id="yp-user-language-selector" assetpath="yp-user/">
-
-  <template>
-
-    <style>
-
-      .language {
-        margin-top: 16px;
-      }
-
-      .languageSelection {
-        margin-top: 16px;
-        font-weight: bold;
-      }
-    </style>
-
-    <div class="layout vertical center-center">
-      <div class="languageSelection">
-        [[t('selectLanguage')]]
-      </div>
-      <div class="layout horizontal">
-        <paper-button class="language" on-tap="_selectEnglish">English</paper-button>
-        <paper-button class="language" on-tap="_selectIcelandic">Íslenska</paper-button>
-      </div>
-    </div>
-
-  </template>
-
-  <script>
-    Polymer({
-
-      is: 'yp-user-language-selector',
-
-      behaviors: [
-        Polymer.appHelpers
-      ],
-
-      // TODO: Do proper language based on dynamic localized strings, this is a hack ;)
-      _selectEnglish: function () {
-        localStorage.setItem('yp-user-locale','en');
-        location.reload();
-      },
-
-      _selectIcelandic: function () {
-        localStorage.setItem('yp-user-locale','is');
-        location.reload();
-      }
-    });
-  </script>
-</dom-module>
 <dom-module id="yp-user-page" assetpath="yp-user/">
   <template>
     <style>
@@ -54572,6 +54622,69 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
      //   this.$.userCard.lowerCardLater();
 
         this.fire("change-header", { historyBack: true });
+      }
+
+    });
+  </script>
+</dom-module>
+<dom-module id="yp-user-language-selector" assetpath="yp-user/">
+
+  <template>
+
+    <style>
+
+      .language {
+        margin-top: 16px;
+      }
+
+      .languageSelection {
+        margin-top: 16px;
+        font-weight: bold;
+      }
+    </style>
+
+    <div class="layout vertical center-center">
+      <div class="languageSelection">
+        [[t('selectLanguage')]]
+      </div>
+      <div class="layout vertical center-center">
+        <paper-button class="language" on-tap="_selectEnglish">English</paper-button>
+        <paper-button class="language" on-tap="_selectIcelandic">Íslenska</paper-button>
+        <paper-button class="language" on-tap="_selectPortuguese">Portuguese</paper-button>
+        <paper-button class="language" on-tap="_selectPolish">Polish</paper-button>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-user-language-selector',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      // TODO: Do proper language based on dynamic localized strings, this is a hack ;)
+      _selectEnglish: function () {
+        localStorage.setItem('yp-user-locale','en');
+        location.reload();
+      },
+
+      _selectIcelandic: function () {
+        localStorage.setItem('yp-user-locale','is');
+        location.reload();
+      },
+
+      _selectPolish: function () {
+        localStorage.setItem('yp-user-locale','pl');
+        location.reload();
+      },
+
+      _selectPortuguese: function () {
+        localStorage.setItem('yp-user-locale','pt');
+        location.reload();
       }
 
     });
@@ -54798,6 +54911,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
               <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
               <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                 <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
+                <paper-item id="usersMenuItem">[[t('community.users')]]</paper-item>
+                <paper-item id="adminsMenuItem">[[t('community.admins')]]</paper-item>
                 <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
                 <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
               </paper-menu>
@@ -54868,9 +54983,27 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this._openEdit();
         else if (detail.item.id=="deleteMenuItem")
           this._openDelete();
+        else if (detail.item.id=="usersMenuItem")
+          this._openUsersDialog();
+        else if (detail.item.id=="adminsMenuItem")
+          this._openAdminsDialog();
         else if (detail.item.id=="pagesMenuItem")
           this._openPagesDialog();
         this.set('selectedMenuItem', null);
+      },
+
+      _openUsersDialog: function () {
+        window.appGlobals.activity('open', 'community.users');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
+        dialog.setup(null, this.community.id, null, false);
+        dialog.open();
+      },
+
+      _openAdminsDialog: function () {
+        window.appGlobals.activity('open', 'community.admins');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
+        dialog.setup(null, this.community.id, null, true);
+        dialog.open();
       },
 
       _openPagesDialog: function () {
@@ -55072,15 +55205,21 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           this.set("featuredGroups",null);
           this.set("activeGroups",null);
           this.set("archivedGroups",null);
-          this.$$('#ajax').url = '/api/communities/' + this.communityId;
-          this.$$('#ajax').generateRequest();
-          this.hideAdd = true;
+          this.set('hideAdd', true);
+          this._getCommunity();
         }
+      },
+
+      _getCommunity: function () {
+        this.$$('#ajax').url = '/api/communities/' + this.communityId;
+        this.$$('#ajax').retryMethodAfter401Login = this._getCommunity.bind(this);
+        this.$$('#ajax').generateRequest();
       },
 
       _newGroup: function () {
         window.appGlobals.activity('open', 'newGroup');
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupEdit");
+        dialog.community = this.community;
         dialog.setup(null, true, null);
         dialog.open('new', { communityId: this.communityId });
       },
@@ -55996,11 +56135,26 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       </div>
       <yp-user-language-selector hidden$="[[user]]"></yp-user-language-selector>
       <div class="layout vertical" hidden$="[[!user]]">
-
         <div hidden="">
           <div class="header">[[t('myDomains')]]</div>
           <template is="dom-repeat" items="[[myDomains]]" as="domain">
             <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[domain.name]]</paper-item>
+          </template>
+        </div>
+
+        <div hidden$="[[!myAdminCommunities]]">
+          <div class="header">[[t('myAdminCommunities')]]</div>
+          <template is="dom-repeat" items="[[myAdminCommunities]]" as="community">
+            <div class="layout horizontal">
+              <paper-item data-args$="[[community.id]]" on-tap="_goToCommunity">[[community.name]]</paper-item>
+            </div>
+          </template>
+        </div>
+
+        <div hidden$="[[!myAdminGroups]]">
+          <div class="header">[[t('myAdminGroups')]]</div>
+          <template is="dom-repeat" items="[[myAdminGroups]]" as="group">
+            <paper-item data-args$="[[group.id]]" on-tap="_goToGroup">[[group.name]]</paper-item>
           </template>
         </div>
 
@@ -56018,6 +56172,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       </div>
     </paper-material>
     <iron-signals on-iron-signal-got-memberships="_userMembershipsReady"></iron-signals>
+    <iron-signals on-iron-signal-got-admin-rights="_reset"></iron-signals>
   </template>
 
   <script>
@@ -56045,6 +56200,16 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         route: {
           type: String,
           observer: 'routeChanged'
+        },
+
+        myAdminGroups: {
+          type: Array,
+          value: null
+        },
+
+        myAdminCommunities: {
+          type: Array,
+          value: null
         },
 
         myGroups: {
@@ -56095,8 +56260,18 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       _reset: function () {
         if (window.appUser && window.appUser.memberships) {
           this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 1000));
-          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 7));
+          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 500));
           this.set('myDomains', _.take(window.appUser.memberships.DomainUsers, 3));
+        }
+
+        if (window.appUser && window.appUser.adminRights &&
+            window.appUser.adminRights.CommunityAdmins && window.appUser.adminRights.CommunityAdmins.length>0) {
+          this.set('myAdminCommunities', window.appUser.adminRights.CommunityAdmins);
+        }
+
+        if (window.appUser && window.appUser.adminRights &&
+          window.appUser.adminRights.GroupAdmins && window.appUser.adminRights.GroupAdmins.length>0) {
+          this.set('myAdminGroups', window.appUser.adminRights.GroupAdmins);
         }
       },
 
@@ -57855,7 +58030,7 @@ module.exports = Array.isArray || function (arr) {
       window.app.params = data.params;
     });
 
-    page('/user/acceptInvite/:inviteToken', scrollToTop, function (data) {
+    page('/user/accept/invite/:inviteToken', scrollToTop, function (data) {
       window.app.route = 'home';
       window.app.params = data.params;
       Polymer.Base.async(function() {
