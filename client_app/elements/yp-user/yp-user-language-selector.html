@@ -1,0 +1,71 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+
+<link rel="import" href="../yp-user/yp-user-info.html">
+
+<dom-module id="yp-user-language-selector">
+
+  <template>
+
+    <style>
+
+      .language {
+        margin-top: 16px;
+      }
+
+      .languageSelection {
+        margin-top: 16px;
+        font-weight: bold;
+      }
+    </style>
+
+    <div class="layout vertical center-center">
+      <div class="languageSelection">
+        [[t('selectLanguage')]]
+      </div>
+      <div class="layout vertical center-center">
+        <paper-button class="language" on-tap="_selectEnglish">English</paper-button>
+        <paper-button class="language" on-tap="_selectIcelandic">Íslenska</paper-button>
+        <paper-button class="language" on-tap="_selectPortuguese">Portuguese</paper-button>
+        <paper-button class="language" on-tap="_selectPolish">Polish</paper-button>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-user-language-selector',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      // TODO: Do proper language based on dynamic localized strings, this is a hack ;)
+      _selectEnglish: function () {
+        localStorage.setItem('yp-user-locale','en');
+        location.reload();
+      },
+
+      _selectIcelandic: function () {
+        localStorage.setItem('yp-user-locale','is');
+        location.reload();
+      },
+
+      _selectPolish: function () {
+        localStorage.setItem('yp-user-locale','pl');
+        location.reload();
+      },
+
+      _selectPortuguese: function () {
+        localStorage.setItem('yp-user-locale','pt');
+        location.reload();
+      }
+
+    });
+  </script>
+</dom-module>
