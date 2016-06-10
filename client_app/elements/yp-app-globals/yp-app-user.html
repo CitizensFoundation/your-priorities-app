@@ -72,6 +72,11 @@
             type: Object
           },
 
+          loginFor401refreshFunction: {
+            type: Function,
+            value: null
+          },
+
           toastLoginTextCombined: {
             type: String
           },
@@ -141,6 +146,11 @@
           this.openUserlogin();
         },
 
+        loginFor401: function (refreshFunction) {
+          this.set('loginFor401refreshFunction', refreshFunction);
+          this.openUserlogin();
+        },
+
         openUserlogin: function () {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
           dialog.setup(this._handleLogin.bind(this));
@@ -164,6 +174,7 @@
           this.$.membershipsAjax.generateRequest();
           this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.name;
           this.$.loginToast.show();
+          this.fire("login");
           if (this.loginForEditParams) {
             var loginParams = this.loginForEditParams;
             loginParams.editDialog.open(loginParams.newOrUpdate,loginParams.params);
@@ -188,8 +199,9 @@
             var acceptInviteParams = this.loginForAcceptInviteParams;
             acceptInviteParams.editDialog.open(acceptInviteParams.token);
             this.loginForAcceptInviteParams = null;
+          } else if (this.loginFor401refreshFunction) {
+            this.loginFor401refreshFunction();
           }
-          this.fire("login");
         },
 
         _forgotPassword: function (event, detail) {
