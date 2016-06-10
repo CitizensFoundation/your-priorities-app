@@ -7,7 +7,14 @@ var toJson = require('./utils/to_json');
 
 auth.authNeedsGroupForCreate = function (group, req, done) {
   models.Group.findOne({
-    where: { id: group.id }
+    where: { id: group.id },
+    include: [
+      {
+        model: models.Community,
+        required: true,
+        attributes: ['id','access']
+      }
+    ]
   }).then(function (group) {
     if (!req.isAuthenticated()) {
       done(null, false);
@@ -19,6 +26,14 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
       group.hasGroupUsers(req.user).then(function (result) {
         if (result) {
           done(null, true);
+        } else if (group.access === models.Group.ACCESS_OPEN_TO_COMMUNITY) {
+          group.Community.hasCommunityUsers(req.user).then(function (result) {
+            if (result) {
+              done(null, true);
+            } else {
+              done(null, false);
+            }
+          });
         } else {
           done(null, false);
         }
