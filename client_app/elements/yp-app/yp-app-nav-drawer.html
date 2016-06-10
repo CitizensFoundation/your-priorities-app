@@ -112,6 +112,7 @@
       </div>
     </paper-material>
     <iron-signals on-iron-signal-got-memberships="_userMembershipsReady"></iron-signals>
+    <iron-signals on-iron-signal-got-admin-rights="_reset"></iron-signals>
   </template>
 
   <script>
@@ -142,11 +143,13 @@
         },
 
         myAdminGroups: {
-          type: Array
+          type: Array,
+          value: null
         },
 
         myAdminCommunities: {
-          type: Array
+          type: Array,
+          value: null
         },
 
         myGroups: {
@@ -201,11 +204,13 @@
           this.set('myDomains', _.take(window.appUser.memberships.DomainUsers, 3));
         }
 
-        if (window.appUser && window.appUser.adminRights && window.appUser.adminRights.CommunityAdmins) {
+        if (window.appUser && window.appUser.adminRights &&
+            window.appUser.adminRights.CommunityAdmins && window.appUser.adminRights.CommunityAdmins.length>0) {
           this.set('myAdminCommunities', window.appUser.adminRights.CommunityAdmins);
         }
 
-        if (window.appUser && window.appUser.adminRights && window.appUser.adminRights.GroupAdmins) {
+        if (window.appUser && window.appUser.adminRights &&
+          window.appUser.adminRights.GroupAdmins && window.appUser.adminRights.GroupAdmins.length>0) {
           this.set('myAdminGroups', window.appUser.adminRights.GroupAdmins);
         }
       },

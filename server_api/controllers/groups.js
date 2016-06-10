@@ -440,7 +440,7 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
   var group = models.Group.build({
     name: req.body.name,
     objectives: req.body.objectives,
-    access: models.Community.convertAccessFromRadioButtons(req.body),
+    access: models.Group.convertAccessFromRadioButtons(req.body),
     domain_id: req.ypDomain.id,
     user_id: req.user.id,
     community_id: req.params.communityId,

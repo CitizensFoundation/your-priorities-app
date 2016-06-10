@@ -209,6 +209,7 @@
       _newGroup: function () {
         window.appGlobals.activity('open', 'newGroup');
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupEdit");
+        dialog.community = this.community;
         dialog.setup(null, true, null);
         dialog.open('new', { communityId: this.communityId });
       },

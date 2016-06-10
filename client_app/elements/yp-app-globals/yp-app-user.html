@@ -255,6 +255,10 @@
           this.$.membershipsAjax.generateRequest();
         },
 
+        recheckAdminRights: function () {
+          this.$.adminRightsAjax.generateRequest();
+        },
+
         updateEndorsementForPost: function (postId, newEndorsement) {
           if (this.user.Endorsements) {
             var hasChanged = false;

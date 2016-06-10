@@ -167,6 +167,10 @@
         observer: "_groupChanged"
       },
 
+      community: {
+        type: Object
+      },
+
       groupAccess: {
         type: String,
         value: "public"
@@ -201,6 +205,7 @@
 
     _customRedirect: function (group) {
       if (group) {
+        window.appUser.recheckAdminRights();
         page("#!/group/"+group.id);
       } else {
         console.warn('No group found on custom redirect');
@@ -228,8 +233,14 @@
           this.set('canAddNewPosts', this.group.configuration.canAddNewPosts);
         }
 
-        if (this.group.Community.access==0) {
-          this.set('publicCommunity', true);
+        if (this.community) {
+          if (this.community.access==0) {
+            this.set('publicCommunity', true);
+          }
+        } else if (this.group.Community) {
+          if (this.group.Community.access==0) {
+            this.set('publicCommunity', true);
+          }
         }
       }
     },
@@ -244,7 +255,19 @@
 
     setup: function (group, newNotEdit, refreshFunction) {
       if (!group) {
-        this.set('group', { name: '', objectives: '', access: 0, status: 'active' });
+        var defaultAccess = 0;
+        if (this.community) {
+          if (this.community.access!=0) {
+            this.set('groupAccess', 'open_to_community');
+            defaultAccess = 3;
+          }
+        } else if (this.group.Community) {
+          if (this.group.Community.access!=0) {
+            this.set('groupAccess', 'open_to_community');
+            defaultAccess = 3;
+          }
+        }
+        this.set('group', { name: '', objectives: '', access: defaultAccess, status: 'active' });
       } else {
         this.set('group', group);
       }

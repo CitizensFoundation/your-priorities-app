@@ -181,6 +181,7 @@
         dialog.showErrorDialog(this.t('hostnameTaken'));
       } else {
         if (community) {
+          window.appUser.recheckAdminRights();
           page("#!/community/"+community.id);
         } else {
           console.warn('No community found on custom redirect');
