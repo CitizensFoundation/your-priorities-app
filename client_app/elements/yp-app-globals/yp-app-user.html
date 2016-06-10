@@ -172,7 +172,7 @@
           this.setLoggedInUser(user);
           this.$.adminRightsAjax.generateRequest();
           this.$.membershipsAjax.generateRequest();
-          this.toastLoginTextCombined = this.t("login.complete.for")+ " " + this.user.name;
+          this.toastLoginTextCombined = this.t("user.loginCompleteFor")+ " " + this.user.name;
           this.$.loginToast.show();
           this.fire("login");
           if (this.loginForEditParams) {

@@ -226,6 +226,22 @@ router.delete('/:groupId/:userId/remove_admin', auth.can('edit group'), function
   });
 });
 
+router.delete('/:groupId/:userId/remove_user', auth.can('edit group'), function(req, res) {
+  getGroupAndUser(req.params.groupId, req.params.userId, null, function (error, group, user) {
+    if (error) {
+      log.error('Could not remove_user', { err: error, groupId: req.params.groupId, userRemovedId: req.params.userId, context: 'remove_user', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else if (user && group) {
+      group.removeGroupUsers(user).then(function (results) {
+        log.info('User removed', {context: 'remove_user', groupId: req.params.groupId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
 router.post('/:groupId/:email/add_admin', auth.can('edit group'), function(req, res) {
   getGroupAndUser(req.params.groupId, null, req.params.email, function (error, group, user) {
     if (error) {

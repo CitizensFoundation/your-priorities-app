@@ -88,8 +88,8 @@
 
   "community": {
     "edit": "Breyta svæði",
-    "admins": "Community admins",
-    "users": "Community users",
+    "admins": "Vefstjórar svæðis",
+    "users": "Notendur svæðis",
     "delete": "Eyða svæði",
     "new": "Nýtt svæði",
     "closed": "Lokað svæði",
@@ -118,12 +118,16 @@
   "users": {
     "removeAdmin": "Eyða vefstjóra",
     "addAdmin": "Bæta við vefstjóra",
-    "removeUser": "Taka notanda út",
+    "removeUser": "Eyða notanda",
     "inviteUser": "Bjóða notanda",
-    "email": "netfang"
+    "email": "netfang",
+    "removeFromOrganization": "Eyða",
+    "addToOrganization": "Samtök",
+    "selectOrganization": "Veldu samtök"
   },
 
   "user": {
+    "loginCompleteFor": "Innskráning fyrir",
     "acceptInvite": "Samþykkja boð um þátttöku",
     "hasSentYouAndInvitation": "sendi þér boð um að taka þátt í",
     "acceptInviteInstructions": "Smelltu hérna að neðan til að taka þátt",

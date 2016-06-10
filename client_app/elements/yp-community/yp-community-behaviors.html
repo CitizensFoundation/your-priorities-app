@@ -20,11 +20,15 @@
     },
 
     communityLogoImagePath: function (community) {
-      return this.getImageFormatUrl(community.CommunityLogoImages, 0);
+      if (community) {
+        return this.getImageFormatUrl(community.CommunityLogoImages, 0);
+      }
     },
 
     communityLogoImageNextPath: function (community) {
-      return this.getImageFormatNextUrl(community.CommunityLogoImages, 0);
+      if (community) {
+        return this.getImageFormatNextUrl(community.CommunityLogoImages, 0);
+      }
     },
 
     communityHeaderImagePath: function (community) {
@@ -32,15 +36,17 @@
     },
 
     communityName: function (community, showAll) {
-      if (community.name) {
+      if (community && community.name) {
         return this.truncate(this.trim(community.name),  showAll ? 300 : 35, '...');
-      } else {
+      } else if (community) {
         return community.short_name;
+      } else {
+        return "";
       }
     },
 
     communityDescription: function (community, showAll) {
-      if (community.description) {
+      if (community && community.description) {
         return this.truncate(this.trim(community.description), showAll ? 300 : 120, '...');
       } else {
         return "";

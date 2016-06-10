@@ -226,6 +226,22 @@ router.delete('/:communityId/:userId/remove_admin', auth.can('edit community'), 
   });
 });
 
+router.delete('/:communityId/:userId/remove_user', auth.can('edit community'), function(req, res) {
+  getCommunityAndUser(req.params.communityId, req.params.userId, null, function (error, community, user) {
+    if (error) {
+      log.error('Could not remove_user', { err: error, communityId: req.params.communityId, userRemovedId: req.params.userId, context: 'remove_user', user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(500);
+    } else if (user && community) {
+      community.removeCommunityUsers(user).then(function (results) {
+        log.info('User removed', {context: 'remove_user', communityId: req.params.communityId, userRemovedId: req.params.userId, user: req.user ? toJson(req.user.simple()) : null });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
 router.post('/:communityId/:email/add_admin', auth.can('edit community'), function(req, res) {
   getCommunityAndUser(req.params.communityId, null, req.params.email, function (error, community, user) {
     if (error) {
