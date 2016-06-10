@@ -16,7 +16,7 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
     } else if (group.user_id === req.user.id) {
       done(null, true);
     } else {
-      group.hasUser(req.user).then(function (result) {
+      group.hasGroupUsers(req.user).then(function (result) {
         if (result) {
           done(null, true);
         } else {
@@ -36,7 +36,7 @@ auth.hasDomainAdmin = function (domainId, req, done) {
     } else if (domain.user_id === req.user.id) {
       done(null, true);
     } else {
-      domain.hasDomainAdmin(req.user).then(function (result) {
+      domain.hasDomainAdmins(req.user).then(function (result) {
         if (result) {
           done(null, true);
         } else {

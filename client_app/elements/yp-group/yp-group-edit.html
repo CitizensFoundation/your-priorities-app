@@ -194,7 +194,7 @@
       themeId: {
         type: String,
         value: null
-      },
+      }
     },
 
     _publicCommunity: function (group) {
@@ -236,10 +236,14 @@
         if (this.community) {
           if (this.community.access==0) {
             this.set('publicCommunity', true);
+          } else {
+            this.set('publicCommunity', false);
           }
         } else if (this.group.Community) {
           if (this.group.Community.access==0) {
             this.set('publicCommunity', true);
+          } else {
+            this.set('publicCommunity', false);
           }
         }
       }

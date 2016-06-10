@@ -101,7 +101,8 @@
     "public": "Public community",
     "closed": "Closed community",
     "secret": "Secret community",
-    "pages":"Community Pages"
+    "pages":"Community Pages",
+    "onlyAdminsCanCreateGroups": "Only admins can create groups"
   },
 
   "posts": {

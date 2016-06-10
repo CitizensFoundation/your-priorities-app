@@ -94,7 +94,8 @@
     "new": "Nýtt svæði",
     "closed": "Lokað svæði",
     "public": "Opið svæði",
-    "secret": "Leynilegt svæði"
+    "secret": "Leynilegt svæði",
+    "onlyAdminsCanCreateGroups": "Aðeins vefstjórar geta búið til hópa"
   },
 
   "news": "Nýjasta Efni",
