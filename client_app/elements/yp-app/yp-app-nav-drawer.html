@@ -75,11 +75,26 @@
       </div>
       <yp-user-language-selector hidden$="[[user]]"></yp-user-language-selector>
       <div class="layout vertical" hidden$="[[!user]]">
-
         <div hidden>
           <div class="header">[[t('myDomains')]]</div>
           <template is="dom-repeat" items="[[myDomains]]" as="domain">
             <paper-item data-args$="[[domain.id]]" on-tap="_goToDomain">[[domain.name]]</paper-item>
+          </template>
+        </div>
+
+        <div hidden$="[[!myAdminCommunities]]">
+          <div class="header">[[t('myAdminCommunities')]]</div>
+          <template is="dom-repeat" items="[[myAdminCommunities]]" as="community">
+            <div class="layout horizontal">
+              <paper-item data-args$="[[community.id]]" on-tap="_goToCommunity">[[community.name]]</paper-item>
+            </div>
+          </template>
+        </div>
+
+        <div hidden$="[[!myAdminGroups]]">
+          <div class="header">[[t('myAdminGroups')]]</div>
+          <template is="dom-repeat" items="[[myAdminGroups]]" as="group">
+            <paper-item data-args$="[[group.id]]" on-tap="_goToGroup">[[group.name]]</paper-item>
           </template>
         </div>
 
@@ -124,6 +139,14 @@
         route: {
           type: String,
           observer: 'routeChanged'
+        },
+
+        myAdminGroups: {
+          type: Array
+        },
+
+        myAdminCommunities: {
+          type: Array
         },
 
         myGroups: {
@@ -174,8 +197,16 @@
       _reset: function () {
         if (window.appUser && window.appUser.memberships) {
           this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 1000));
-          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 7));
+          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 500));
           this.set('myDomains', _.take(window.appUser.memberships.DomainUsers, 3));
+        }
+
+        if (window.appUser && window.appUser.adminRights && window.appUser.adminRights.CommunityAdmins) {
+          this.set('myAdminCommunities', window.appUser.adminRights.CommunityAdmins);
+        }
+
+        if (window.appUser && window.appUser.adminRights && window.appUser.adminRights.GroupAdmins) {
+          this.set('myAdminGroups', window.appUser.adminRights.GroupAdmins);
         }
       },
 

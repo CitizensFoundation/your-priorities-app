@@ -88,6 +88,8 @@
   "myDomains": "My Domains",
   "myCommunities": "My Communities",
   "myGroups": "My Groups",
+  "myAdminCommunities": "Communities Admin",
+  "myAdminGroups": "Groups Admin",
 
   "community": {
     "edit": "Edit community",

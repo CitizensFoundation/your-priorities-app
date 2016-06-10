@@ -79,6 +79,8 @@
   "myDomains":  "Mínir vefir",
   "myCommunities": "Mín svæði",
   "myGroups": "Mínir hópar",
+  "myAdminCommunities": "Svæðastjórnun",
+  "myAdminGroups": "Hópastjórnun",
 
   "create": "Senda inn",
   "cancel": "Hætta við",
