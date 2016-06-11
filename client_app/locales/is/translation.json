@@ -1,4 +1,5 @@
 {
+  "confirm": "Staðfesta",
   "access": "Aðgangur",
   "searchFor": "Leita að...",
   "title": "Titill",
@@ -179,6 +180,8 @@
   },
 
   "post": {
+    "move": "Færa hugmynd",
+    "confirmMove": "Staðfestu að þú vilt færa",
     "statusChangeConfirmText": "Ertu viss um að þú viljir senda tölvupóst á alla sem styðja og eru á móti þessari hugmynd?",
     "statusChangeSelectNewStatus": "Veldu stöðu hugmyndar",
     "statusChangeContent": "Efni stöðubreytingar til að senda á alla sem eru með og á móti",

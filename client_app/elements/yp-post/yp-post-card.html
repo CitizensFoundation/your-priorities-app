@@ -325,8 +325,7 @@
 
       _openMovePost: function () {
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postMove");
-        dialog.setup(this.post, this._refresh.bind(this));
-        dialog.open();
+        dialog.setupAndOpen(this.post, this._refresh.bind(this));
       },
 
       _openPostStatusChange: function () {

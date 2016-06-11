@@ -24,24 +24,24 @@
       paper-textarea {
         padding-top: 16px;
       }
+
+      .groupName {
+        cursor: pointer;
+      }
     </style>
 
-    <yp-edit-dialog id="editDialog" double-width icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
-      <div class="layout horizontal center-center">
-        <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
-          <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{officialStatus}}">
-            <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
-              <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
-            </template>
-          </paper-menu>
-        </paper-dropdown-menu>
-        <input type="hidden" name="official_status" value="[[officialStatus]]">
-      </div>
+      <iron-list items="[[availableGroups]]" as="group">
+        <template>
+          <div class="groupName" on-tap="_selectGroup" data-args$="[[group.id]]" data-args-name$="[[group.name]]">[[group.name]]</div>
+        </template>
+      </iron-list>
 
       <div class="layout horizontal center-center">
-        <yp-ajax method="GET" id="getAjax" on-response="_getGroupsResponse"></yp-ajax>
+        <yp-ajax method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" on-response="_getGroupsResponse"></yp-ajax>
+        <yp-ajax method="PUT" id="movePostAjax" on-response="_movePostResponse"></yp-ajax>
       </div>
     </yp-edit-dialog>
   </template>
@@ -70,20 +70,60 @@
         type: Object
       },
 
-      params: {
-        type: String
+      availableGroups: {
+        type: Array,
+        value: null
       },
 
-      method: {
-        type: String
-      },
-
-      officialStatus: Number,
       selectedGroupId: Number
     },
 
+    _selectGroup: function (event) {
+      this.set('selectedGroupId', event.target.getAttribute('data-args'));
+      var groupName = event.target.getAttribute('data-args-name');
+      var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+      dialog.open(this.t('post.confirmMove')+' "'+this.post.name+'" '+this.t('to')+' "'+groupName+'"', this._reallyMove.bind(this));
+    },
+
+    _reallyMove: function () {
+      this.$.movePostAjax.url="/api/posts/"+this.post.id+'/'+this.selectedGroupId+'/move';
+      this.$.movePostAjax.body = {};
+      this.$.movePostAjax.generateRequest();
+    },
+
+    _movePostResponse: function () {
+      location.reload();
+    },
+
+    _getGroupsResponse: function (event, detail) {
+      if (detail.response) {
+        var groups = [];
+        groups = groups.concat(window.appUser.adminRights.GroupAdmins, window.appUser.memberships.GroupUsers);
+        groups = groups.concat(detail.response.groups);
+        groups = this._uniqueInDomain(groups, detail.response.domainId);
+        this.set("availableGroups", groups);
+      }
+    },
+
+    _uniqueInDomain: function (array, domainId) {
+      var newArray = [];
+      var ids = {};
+      _.each(array, function (item) {
+        if (!ids[item.id]) {
+          ids[item.id] = item.id;
+          if (!item.configuration) {
+            item.configuration = {canAddNewPosts: true}
+          }
+          if (item.Community.domain_id==domainId && item.configuration.canAddNewPosts) {
+            newArray.push(item);
+          }
+        }
+      });
+      return newArray;
+    },
+
     _clear: function () {
-      this.set('selectedGroup', null);
+      this.set('selectedGroupId', null);
       this.set('post', null);
     },
 
@@ -91,6 +131,7 @@
       this.set('post', post);
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
+      this.$.getAvailableGroupsAjax.generateRequest();
       this.open();
     },
 

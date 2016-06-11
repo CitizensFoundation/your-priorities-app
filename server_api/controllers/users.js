@@ -273,8 +273,15 @@ router.get('/loggedInUser/adminRights', function (req, res) {
             {
               model: models.Group,
               as: 'GroupAdmins',
-              attributes: ['id','name'],
-              required: false
+              attributes: ['id','name','configuration'],
+              required: false,
+              include: [
+                {
+                  model: models.Community,
+                  attributes: ['id','name','domain_id'],
+                  required: true
+                }
+              ]
             }
           ]
         }).then(function(user) {
@@ -377,8 +384,15 @@ router.get('/loggedInUser/memberships', function (req, res) {
             {
               model: models.Group,
               as: 'GroupUsers',
-              attributes: ['id','name','counter_users'],
-              required: false
+              attributes: ['id','name','counter_users','configuration'],
+              required: false,
+              include: [
+                {
+                  model: models.Community,
+                  attributes: ['id','name','domain_id'],
+                  required: true
+                }
+              ]
             }
           ]
         }).then(function(user) {
@@ -819,6 +833,31 @@ router.put('/missingEmail/linkAccounts', function(req, res, next) {
     }
   }).catch(function (error) {
     log.error("Error from linkAccounts", { err: error });
+    res.sendStatus(500);
+  });
+});
+
+router.get('/available/groups', function(req, res, next) {
+  models.Group.findAll({
+    attributes: ['id','name','access','configuration'],
+    include: [
+      {
+        model: models.Community,
+        required: true,
+        attributes: [
+          'id','domain_id'
+        ],
+        where: {
+          domain_id: req.ypDomain.id
+        }
+      }
+    ],
+    where: {
+      access: models.Group.ACCESS_PUBLIC
+    }}).then( function (groups) {
+      res.send({ groups: groups, domainId: req.ypDomain.id });
+  }).catch(function (error) {
+    log.error("Error from get available groups", { err: error });
     res.sendStatus(500);
   });
 });

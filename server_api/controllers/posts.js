@@ -343,7 +343,9 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
 
 router.put('/:id', auth.can('edit post'), function(req, res) {
   models.Post.find({
-    where: {id: req.params.id }
+    where: {
+      id: req.params.id
+    }
   }).then(function (post) {
     if (post) {
       post.name = req.body.name;
@@ -362,6 +364,82 @@ router.put('/:id', auth.can('edit post'), function(req, res) {
     }
   }).catch(function(error) {
     sendPostOrError(res, null, 'update', req.user, error);
+  });
+});
+
+router.put('/:id/:groupId/move', auth.can('edit post'), function(req, res) {
+  var group, post, communityId, domainId;
+  async.series([
+    function (callback) {
+      models.Group.find({
+        where: {
+          id: req.params.groupId
+        },
+        include: [
+          {
+            model: models.Community,
+            required: true,
+            include: [
+              {
+                model: models.Domain,
+                required: true
+              }
+            ]
+          }
+        ]
+      }).then(function (groupIn) {
+        group = groupIn;
+        communityId = group.Community.id;
+        domainId = group.Community.Domain.id;
+        callback();
+      }).catch(function (error) {
+        callback(error);
+      });
+    },
+    function (callback) {
+      models.Post.find({
+        where: {
+          id: req.params.id
+        }
+      }).then(function (postIn) {
+        post = postIn;
+        post.set('group_id', group.id);
+        post.save().then(function (results) {
+          console.log("Have changed group id");
+          callback();
+        });
+      }).catch(function (error) {
+        callback(error);
+      });
+    },
+    function (callback) {
+      models.AcActivity.findAll({
+        where: {
+          post_id: post.id
+        }
+      }).then(function (activities) {
+        async.eachSeries(activities, function (activity, innerSeriesCallback) {
+          activity.set('group_id', group.id);
+          activity.set('community_id', communityId);
+          activity.set('domain_id', domainId);
+          activity.save().then(function (results) {
+            console.log("Have changed group and all: "+activity.id);
+            innerSeriesCallback();
+          });
+        }, function (error) {
+          callback();
+        })
+      }).catch(function (error) {
+        callback(error);
+      });
+    }
+  ], function (error) {
+    if (error) {
+      sendPostOrError(res, null, 'move', req.user, error);
+    } else {
+      log.info("Moved post to group", { postId: post.id, groupId: group.id });
+      res.sendStatus(200);
+    }
   });
 });
 
