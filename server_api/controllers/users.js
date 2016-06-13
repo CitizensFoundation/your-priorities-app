@@ -279,7 +279,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
                 {
                   model: models.Community,
                   attributes: ['id','name','domain_id'],
-                  required: true
+                  required: false
                 }
               ]
             }
@@ -390,7 +390,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
                 {
                   model: models.Community,
                   attributes: ['id','name','domain_id'],
-                  required: true
+                  required: false
                 }
               ]
             }
