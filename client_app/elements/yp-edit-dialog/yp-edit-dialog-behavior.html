@@ -64,7 +64,11 @@
       if (typeof this.refreshFunction == 'function') {
         this.refreshFunction(detail.response);
       }
-      this._clear();
+      if (event && event.detail && event.detail.response && event.detail.response.isError) {
+        console.log("Not clearing form because of user error");
+      } else {
+        this._clear();
+      }
     },
 
     _setupNewUpdateState: function () {

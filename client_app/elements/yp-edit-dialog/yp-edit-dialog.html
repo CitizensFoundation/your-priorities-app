@@ -409,14 +409,18 @@
       _formResponse: function(response, detail) {
         this._setSubmitDisabledStatus(false);
         this.$$("#spinner").active = false;
-        this.response = response;
-        this.close();
-        if (detail.response && detail.response.name) {
-          this.toastTextCombined = this.toastText + " " + detail.response.name;
+        if (response && response.detail && response.detail.response && response.detail.response.isError) {
+          console.log("There is an error in form handled by user");
         } else {
-          this.toastTextCombined = this.toastText;
+          this.response = response;
+          this.close();
+          if (detail.response && detail.response.name) {
+            this.toastTextCombined = this.toastText + " " + detail.response.name;
+          } else {
+            this.toastTextCombined = this.toastText;
+          }
+          this.$$("#toast").show();
         }
-        this.$$("#toast").show();
       },
 
       _formError: function(event, detail) {

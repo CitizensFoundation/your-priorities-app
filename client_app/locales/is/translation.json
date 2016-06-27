@@ -89,6 +89,7 @@
 
   "community": {
     "edit": "Breyta svæði",
+    "hostname": "Hostname",
     "admins": "Vefstjórar svæðis",
     "users": "Notendur svæðis",
     "delete": "Eyða svæði",

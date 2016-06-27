@@ -40,6 +40,10 @@
       .half {
         width: 50%;
       }
+
+      .hostnameInfo {
+        color: #888;
+      }
     </style>
 
     <yp-edit-dialog id="editDialog" icon="group-work" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
@@ -52,17 +56,25 @@
                      label="[[t('name')]]"
                      value="{{community.name}}"
                      maxlength="60"
+                     minlength="1"
+                     required
                      char-counter class="mainInput">
         </paper-input>
 
         <paper-input id="hostname"
                      name="hostname"
                      type="text"
+                     allowed-pattern="[a-zA-Z0-9-]"
                      label="[[t('community.hostname')]]"
                      value="{{community.hostname}}"
                      maxlength="80"
+                     minlength="1"
+                     required
                      char-counter class="mainInput">
         </paper-input>
+        <div class="hostnameInfo">
+          https://[[hostnameExample]]
+        </div>
 
         <paper-textarea id="description"
                         name="description"
@@ -71,6 +83,8 @@
                         char-counter
                         rows="2"
                         max-rows="5"
+                        minlength="1"
+                        required
                         maxlength="300" class="mainInput">
         </paper-textarea>
       </div>
@@ -146,6 +160,11 @@
         observer: "_communityChanged"
       },
 
+      hostnameExample: {
+        type: String,
+        computed: '_getExampleHostname(community.hostname)'
+      },
+
       communityAccess: {
         type: String,
         value: "public"
@@ -172,7 +191,15 @@
       themeId: {
         type: String,
         value: null
-      },
+      }
+    },
+
+    _getExampleHostname: function (hostname) {
+      if (hostname) {
+        return hostname + '.' + window.appGlobals.domain.domain_name;
+      } else {
+        return 'your-hostname.' + window.appGlobals.domain.domain_name;
+      }
     },
 
     _customRedirect: function (community) {

@@ -488,7 +488,7 @@ router.post('/:domainId', auth.can('create community'), function(req, res) {
   }).then(function (community) {
     if (community) {
       log.error("Can't save community, hostname already taken", {hostname:  req.body.hostname});
-      res.send({hostnameTaken: true});
+      res.send({hostnameTaken: true, isError: true});
     } else {
       var admin_email = req.user.email;
       var admin_name = "Administrator";
