@@ -33844,14 +33844,18 @@ event and do your own custom submission:
       _formResponse: function(response, detail) {
         this._setSubmitDisabledStatus(false);
         this.$$("#spinner").active = false;
-        this.response = response;
-        this.close();
-        if (detail.response && detail.response.name) {
-          this.toastTextCombined = this.toastText + " " + detail.response.name;
+        if (response && response.detail && response.detail.response && response.detail.response.isError) {
+          console.log("There is an error in form handled by user");
         } else {
-          this.toastTextCombined = this.toastText;
+          this.response = response;
+          this.close();
+          if (detail.response && detail.response.name) {
+            this.toastTextCombined = this.toastText + " " + detail.response.name;
+          } else {
+            this.toastTextCombined = this.toastText;
+          }
+          this.$$("#toast").show();
         }
-        this.$$("#toast").show();
       },
 
       _formError: function(event, detail) {
@@ -34008,7 +34012,11 @@ event and do your own custom submission:
       if (typeof this.refreshFunction == 'function') {
         this.refreshFunction(detail.response);
       }
-      this._clear();
+      if (event && event.detail && event.detail.response && event.detail.response.isError) {
+        console.log("Not clearing form because of user error");
+      } else {
+        this._clear();
+      }
     },
 
     _setupNewUpdateState: function () {
@@ -38559,19 +38567,26 @@ event and do your own custom submission:
       .half {
         width: 50%;
       }
+
+      .hostnameInfo {
+        color: #888;
+      }
     </style>
 
     <yp-edit-dialog id="editDialog" icon="group-work" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
       <div class="layout vertical">
-        <paper-input id="name" name="name" type="text" label="[[t('name')]]" value="{{community.name}}" maxlength="60" char-counter="" class="mainInput">
+        <paper-input id="name" name="name" type="text" label="[[t('name')]]" value="{{community.name}}" maxlength="60" minlength="1" required="" char-counter="" class="mainInput">
         </paper-input>
 
-        <paper-input id="hostname" name="hostname" type="text" label="[[t('community.hostname')]]" value="{{community.hostname}}" maxlength="80" char-counter="" class="mainInput">
+        <paper-input id="hostname" name="hostname" type="text" allowed-pattern="[a-zA-Z0-9-]" label="[[t('community.hostname')]]" value="{{community.hostname}}" maxlength="80" minlength="1" required="" char-counter="" class="mainInput">
         </paper-input>
+        <div class="hostnameInfo">
+          https://[[hostnameExample]]
+        </div>
 
-        <paper-textarea id="description" name="description" value="{{community.description}}" label="[[t('description')]]" char-counter="" rows="2" max-rows="5" maxlength="300" class="mainInput">
+        <paper-textarea id="description" name="description" value="{{community.description}}" label="[[t('description')]]" char-counter="" rows="2" max-rows="5" minlength="1" required="" maxlength="300" class="mainInput">
         </paper-textarea>
       </div>
 
@@ -38646,6 +38661,11 @@ event and do your own custom submission:
         observer: "_communityChanged"
       },
 
+      hostnameExample: {
+        type: String,
+        computed: '_getExampleHostname(community.hostname)'
+      },
+
       communityAccess: {
         type: String,
         value: "public"
@@ -38672,7 +38692,15 @@ event and do your own custom submission:
       themeId: {
         type: String,
         value: null
-      },
+      }
+    },
+
+    _getExampleHostname: function (hostname) {
+      if (hostname) {
+        return hostname + '.' + window.appGlobals.domain.domain_name;
+      } else {
+        return 'your-hostname.' + window.appGlobals.domain.domain_name;
+      }
     },
 
     _customRedirect: function (community) {

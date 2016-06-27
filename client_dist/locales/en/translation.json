@@ -95,6 +95,7 @@
 
   "community": {
     "edit": "Edit community",
+    "hostname": "Hostname",
     "admins": "Community admins",
     "users": "Community users",
     "delete": "Delete community",
