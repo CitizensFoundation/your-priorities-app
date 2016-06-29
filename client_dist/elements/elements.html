@@ -44463,212 +44463,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
   });
 </script>
-<dom-module id="yp-post-move" assetpath="yp-post/">
-  <template>
-
-    <style>
-      .additionalSettings {
-        padding-top: 16px;
-      }
-
-      paper-textarea {
-        padding-top: 16px;
-      }
-
-      .groupName {
-        cursor: pointer;
-      }
-    </style>
-
-    <yp-edit-dialog id="editDialog" icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
-      <h2>[[editHeaderText]]</h2>
-
-      <iron-list items="[[availableGroups]]" as="group">
-        <template>
-          <div class="groupName" on-tap="_selectGroup" data-args$="[[group.id]]" data-args-name$="[[group.name]]">[[group.name]]</div>
-        </template>
-      </iron-list>
-
-      <div class="layout horizontal center-center">
-        <yp-ajax method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" on-response="_getGroupsResponse"></yp-ajax>
-        <yp-ajax method="PUT" id="movePostAjax" on-response="_movePostResponse"></yp-ajax>
-      </div>
-    </yp-edit-dialog>
-  </template>
-
-</dom-module>
-
-<script>
-
-  Polymer({
-
-    is: 'yp-post-move',
-
-    behaviors: [
-      Polymer.appHelpers,
-      Polymer.ypEditDialogBehavior
-    ],
-
-    properties: {
-
-      action: {
-        type: String,
-        value: "/api/posts"
-      },
-
-      post: {
-        type: Object
-      },
-
-      availableGroups: {
-        type: Array,
-        value: null
-      },
-
-      selectedGroupId: Number
-    },
-
-    _selectGroup: function (event) {
-      this.set('selectedGroupId', event.target.getAttribute('data-args'));
-      var groupName = event.target.getAttribute('data-args-name');
-      var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
-      dialog.open(this.t('post.confirmMove')+' "'+this.post.name+'" '+this.t('to')+' "'+groupName+'"', this._reallyMove.bind(this));
-    },
-
-    _reallyMove: function () {
-      this.$.movePostAjax.url="/api/posts/"+this.post.id+'/'+this.selectedGroupId+'/move';
-      this.$.movePostAjax.body = {};
-      this.$.movePostAjax.generateRequest();
-    },
-
-    _movePostResponse: function () {
-      location.reload();
-    },
-
-    _getGroupsResponse: function (event, detail) {
-      if (detail.response) {
-        var groups = [];
-        groups = groups.concat(window.appUser.adminRights.GroupAdmins, window.appUser.memberships.GroupUsers);
-        groups = groups.concat(detail.response.groups);
-        groups = this._uniqueInDomain(groups, detail.response.domainId);
-        this.set("availableGroups", groups);
-      }
-    },
-
-    _uniqueInDomain: function (array, domainId) {
-      var newArray = [];
-      var ids = {};
-      _.each(array, function (item) {
-        if (!ids[item.id]) {
-          ids[item.id] = item.id;
-          if (!item.configuration) {
-            item.configuration = {canAddNewPosts: true}
-          }
-          if (item.Community.domain_id==domainId && item.configuration.canAddNewPosts) {
-            newArray.push(item);
-          }
-        }
-      });
-      return newArray;
-    },
-
-    _clear: function () {
-      this.set('selectedGroupId', null);
-      this.set('post', null);
-    },
-
-    setupAndOpen: function (post, refreshFunction) {
-      this.set('post', post);
-      this.set('refreshFunction', refreshFunction);
-      this._setupTranslation();
-      this.$.getAvailableGroupsAjax.generateRequest();
-      this.open();
-    },
-
-    _setupTranslation: function () {
-      this.set('editHeaderText', this.t('post.move'));
-      this.set('toastText', this.t('post.haveMovedPost'));
-      this.set('saveText', this.t('post.move'));
-    }
-  });
-</script>
-<dom-module id="yp-dialog-container" assetpath="yp-dialog-container/">
-  <template>
-    <style>
-      :host {
-        background-color: var(--primary-background-color);
-      }
-
-      #dialogs {
-        background-color: var(--primary-background-color) !important;
-      }
-    </style>
-
-    <div id="dialogs">
-      <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
-
-      <yp-login id="userLogin" on-yp-forgot-password="_forgotPassword"></yp-login>
-
-      <yp-forgot-password id="forgotPassword"></yp-forgot-password>
-
-      <yp-reset-password id="resetPassword"></yp-reset-password>
-
-      <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
-
-      <yp-post-edit id="postEdit"></yp-post-edit>
-
-      <yp-delete-dialog id="deleteDialog"></yp-delete-dialog>
-
-      <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
-
-      <paper-toast id="masterToast"></paper-toast>
-
-      <yp-page-dialog id="pageDialog"></yp-page-dialog>
-
-      <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
-
-      <yp-accept-invite id="acceptInvite"></yp-accept-invite>
-
-      <yp-missing-email id="missingEmail"></yp-missing-email>
-
-      
-
-      <yp-domain-edit id="domainEdit"></yp-domain-edit>
-
-      <yp-organization-edit id="organizationEdit"></yp-organization-edit>
-
-      <yp-community-edit id="communityEdit"></yp-community-edit>
-
-      <yp-group-edit new="" id="groupEdit"></yp-group-edit>
-
-      <yp-category-edit new="" id="categoryEdit"></yp-category-edit>
-
-      <yp-users-grid id="usersGrid"></yp-users-grid>
-
-      <yp-pages-grid id="pagesGrid"></yp-pages-grid>
-
-      <yp-post-status-change-edit id="postStatusChangeEdit"></yp-post-status-change-edit>
-
-      <yp-post-move id="postMove"></yp-post-move>
-
-    </div>
-  </template>
-
-  <script>
-    Polymer({
-      is: 'yp-dialog-container',
-
-      getDialog: function (idName) {
-        return this.$$("#"+idName);
-      },
-
-      _forgotPassword: function () {
-        this.$.forgotPassword.open();
-      }
-
-    });
-  </script>
-</dom-module>
 <script>
   /**
    * @polymerBehavior AccessHelpers
@@ -44773,6 +44567,216 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
   };
 </script>
+<dom-module id="yp-post-move" assetpath="yp-post/">
+  <template>
+
+    <style>
+      .additionalSettings {
+        padding-top: 16px;
+      }
+
+      paper-textarea {
+        padding-top: 16px;
+      }
+
+      .groupName {
+        cursor: pointer;
+      }
+    </style>
+
+    <yp-edit-dialog id="editDialog" icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <h2>[[editHeaderText]]</h2>
+
+      <iron-list items="[[availableGroups]]" as="group">
+        <template>
+          <div class="groupName" on-tap="_selectGroup" data-args$="[[group.id]]" data-args-name$="[[group.name]]">[[group.name]]</div>
+        </template>
+      </iron-list>
+
+      <div class="layout horizontal center-center">
+        <yp-ajax method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" on-response="_getGroupsResponse"></yp-ajax>
+        <yp-ajax method="PUT" id="movePostAjax" on-response="_movePostResponse"></yp-ajax>
+      </div>
+    </yp-edit-dialog>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-post-move',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior,
+      Polymer.AccessHelpers
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/posts"
+      },
+
+      post: {
+        type: Object
+      },
+
+      availableGroups: {
+        type: Array,
+        value: null
+      },
+
+      selectedGroupId: Number
+    },
+
+    _selectGroup: function (event) {
+      this.set('selectedGroupId', event.target.getAttribute('data-args'));
+      var groupName = event.target.getAttribute('data-args-name');
+      var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+      dialog.open(this.t('post.confirmMove')+' "'+this.post.name+'" '+this.t('to')+' "'+groupName+'"', this._reallyMove.bind(this));
+    },
+
+    _reallyMove: function () {
+      this.$.movePostAjax.url="/api/posts/"+this.post.id+'/'+this.selectedGroupId+'/move';
+      this.$.movePostAjax.body = {};
+      this.$.movePostAjax.generateRequest();
+    },
+
+    _movePostResponse: function () {
+      location.reload();
+    },
+
+    _getGroupsResponse: function (event, detail) {
+      if (detail.response) {
+        var groups = [];
+        groups = groups.concat(window.appUser.adminRights.GroupAdmins, window.appUser.memberships.GroupUsers);
+        groups = groups.concat(detail.response.groups);
+        groups = this._uniqueInDomain(groups, detail.response.domainId);
+        this.set("availableGroups", groups);
+      }
+    },
+
+    _uniqueInDomain: function (array, domainId) {
+      var newArray = [];
+      var ids = {};
+      _.each(array, function (item) {
+        if (!ids[item.id]) {
+          ids[item.id] = item.id;
+          if (!item.configuration) {
+            item.configuration = {canAddNewPosts: true}
+          }
+          if (item.Community && item.Community.domain_id==domainId &&
+             (item.configuration.canAddNewPosts || this._hasAdminRights(item.id, window.appUser.adminRights.GroupAdmins))) {
+            newArray.push(item);
+          } else {
+            console.log("Ignoring group:"+item.name);
+          }
+        }
+      }.bind(this));
+      return newArray;
+    },
+
+    _clear: function () {
+      this.set('selectedGroupId', null);
+      this.set('post', null);
+    },
+
+    setupAndOpen: function (post, refreshFunction) {
+      this.set('post', post);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+      this.$.getAvailableGroupsAjax.generateRequest();
+      this.open();
+    },
+
+    _setupTranslation: function () {
+      this.set('editHeaderText', this.t('post.move'));
+      this.set('toastText', this.t('post.haveMovedPost'));
+      this.set('saveText', this.t('post.move'));
+    }
+  });
+</script>
+<dom-module id="yp-dialog-container" assetpath="yp-dialog-container/">
+  <template>
+    <style>
+      :host {
+        background-color: var(--primary-background-color);
+      }
+
+      #dialogs {
+        background-color: var(--primary-background-color) !important;
+      }
+    </style>
+
+    <div id="dialogs">
+      <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
+
+      <yp-login id="userLogin" on-yp-forgot-password="_forgotPassword"></yp-login>
+
+      <yp-forgot-password id="forgotPassword"></yp-forgot-password>
+
+      <yp-reset-password id="resetPassword"></yp-reset-password>
+
+      <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
+
+      <yp-post-edit id="postEdit"></yp-post-edit>
+
+      <yp-delete-dialog id="deleteDialog"></yp-delete-dialog>
+
+      <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
+
+      <paper-toast id="masterToast"></paper-toast>
+
+      <yp-page-dialog id="pageDialog"></yp-page-dialog>
+
+      <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
+
+      <yp-accept-invite id="acceptInvite"></yp-accept-invite>
+
+      <yp-missing-email id="missingEmail"></yp-missing-email>
+
+      
+
+      <yp-domain-edit id="domainEdit"></yp-domain-edit>
+
+      <yp-organization-edit id="organizationEdit"></yp-organization-edit>
+
+      <yp-community-edit id="communityEdit"></yp-community-edit>
+
+      <yp-group-edit new="" id="groupEdit"></yp-group-edit>
+
+      <yp-category-edit new="" id="categoryEdit"></yp-category-edit>
+
+      <yp-users-grid id="usersGrid"></yp-users-grid>
+
+      <yp-pages-grid id="pagesGrid"></yp-pages-grid>
+
+      <yp-post-status-change-edit id="postStatusChangeEdit"></yp-post-status-change-edit>
+
+      <yp-post-move id="postMove"></yp-post-move>
+
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-dialog-container',
+
+      getDialog: function (idName) {
+        return this.$$("#"+idName);
+      },
+
+      _forgotPassword: function () {
+        this.$.forgotPassword.open();
+      }
+
+    });
+  </script>
+</dom-module>
 <script>
   /**
    * @polymerBehavior CollectionHelpers
