@@ -9,6 +9,7 @@
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
 
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
@@ -56,7 +57,8 @@
 
     behaviors: [
       Polymer.appHelpers,
-      Polymer.ypEditDialogBehavior
+      Polymer.ypEditDialogBehavior,
+      Polymer.AccessHelpers
     ],
 
     properties: {
@@ -114,11 +116,14 @@
           if (!item.configuration) {
             item.configuration = {canAddNewPosts: true}
           }
-          if (item.Community.domain_id==domainId && item.configuration.canAddNewPosts) {
+          if (item.Community && item.Community.domain_id==domainId &&
+             (item.configuration.canAddNewPosts || this._hasAdminRights(item.id, window.appUser.adminRights.GroupAdmins))) {
             newArray.push(item);
+          } else {
+            console.log("Ignoring group:"+item.name);
           }
         }
-      });
+      }.bind(this));
       return newArray;
     },
 
