@@ -20,6 +20,11 @@
         margin-top: 16px;
         font-weight: bold;
       }
+
+      paper-button {
+        height: 15px;
+
+      }
     </style>
 
     <div class="layout vertical center-center">
@@ -29,6 +34,9 @@
       <div class="layout vertical center-center">
         <paper-button class="language" on-tap="_selectEnglish">English</paper-button>
         <paper-button class="language" on-tap="_selectIcelandic">Íslenska</paper-button>
+        <paper-button class="language" on-tap="_selectNorwegian">Norwegian</paper-button>
+        <paper-button class="language" on-tap="_selectCroatian">Croatian</paper-button>
+        <paper-button class="language" on-tap="_selectSlovenian">Slovenian</paper-button>
         <paper-button class="language" on-tap="_selectPortuguese">Portuguese</paper-button>
         <paper-button class="language" on-tap="_selectPolish">Polish</paper-button>
       </div>
@@ -63,6 +71,21 @@
 
       _selectPortuguese: function () {
         localStorage.setItem('yp-user-locale','pt');
+        location.reload();
+      },
+
+      _selectNorwegian: function () {
+        localStorage.setItem('yp-user-locale','no');
+        location.reload();
+      },
+
+      _selectCroatian: function () {
+        localStorage.setItem('yp-user-locale','hr');
+        location.reload();
+      },
+
+      _selectSlovenian: function () {
+        localStorage.setItem('yp-user-locale','sl');
         location.reload();
       }
 
