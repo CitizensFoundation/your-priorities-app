@@ -112,9 +112,9 @@ models.Post.findAll({
   ]
 }).then(function (posts) {
   console.log(posts.length);
-  console.log("email,Name,Description,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images");
+  console.log("email,User Name,Post Name,Description,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images");
   async.eachSeries(posts, function (post, seriesCallback) {
-    console.log('"'+post.User.email+'","'+clean(post.name)+'","'+clean(post.description)+'",'+
+    console.log('"'+post.User.email+'","'+post.User.name+'","'+clean(post.name)+'","'+clean(post.description)+'",'+
                 getLocation(post)+','+post.counter_endorsements_up+','+post.counter_endorsements_down+
                 ','+post.counter_points+','+getPointsUp(post)+','+getPointsDown(post)+','+
                 getImages(post));
