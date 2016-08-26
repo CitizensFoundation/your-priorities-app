@@ -504,6 +504,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       }
       group.set('configuration.canVote', ((req.body.canVote && req.body.canVote!="") ? true : false));
       group.set('configuration.canAddNewPosts', ((req.body.canAddNewPosts && req.body.canAddNewPosts!="") ? true : false));
+      group.set('configuration.locationHidden', ((req.body.locationHidden && req.body.locationHidden!="") ? true : false));
       if (req.body.status && req.body.status!="") {
         group.status = req.body.status;
       }

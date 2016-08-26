@@ -87,12 +87,14 @@
                     use-next-tab-action="[[new]]" on-next-tab-action="_nextTab" method="[[method]]"
                     save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
       <h2>[[editHeaderText]]</h2>
-      <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
+      <paper-tabs selected="{{selected}}" id="paperTabs" focused>
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
         <template is="dom-if" restamp if="[[new]]">
           <paper-tab>[[t('post.yourPoint')]]</paper-tab>
         </template>
-        <paper-tab>[[t('post.location')]]</paper-tab>
+        <template is="dom-if" if="[[!locationHidden]]" restamp>
+          <paper-tab>[[t('post.location')]]</paper-tab>
+        </template>
         <paper-tab>[[t('post.photo')]]</paper-tab>
       </paper-tabs>
 
@@ -153,11 +155,13 @@
             </section>
           </template>
 
-          <section>
-            <template is="dom-if" if="[[mapActive]]" restamp>
-              <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]"></yp-post-location>
-            </template>
-          </section>
+          <template is="dom-if" if="[[!locationHidden]]" restamp>
+            <section>
+                <template is="dom-if" if="[[mapActive]]" restamp>
+                  <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]"></yp-post-location>
+                </template>
+            </section>
+          </template>
 
           <section>
             <div class="layout vertical center-center">
@@ -223,6 +227,12 @@
         type: Object
       },
 
+      locationHidden: {
+        type: Boolean,
+        value: false,
+        observer: '_locationHiddenChanged'
+      },
+
       location: {
         type: Object,
         observer: '_locationChanged'
@@ -266,8 +276,24 @@
     },
 
     listeners: {
-      'iron-form-invalid': '_formInvalid',
+      'iron-form-invalid': '_formInvalid'
     },
+
+    _locationHiddenChanged: function (newValue) {
+      this.async(function () {
+        var pages = this.$$("#pages");
+        if (pages) {
+          pages.forceSynchronousItemUpdate();
+        }
+
+        var paperTabs = this.$$("#paperTabs");
+        if (paperTabs) {
+          paperTabs.forceSynchronousItemUpdate();
+        }
+        console.log("Location hidden changed");
+      }, 10);
+    },
+
 
     _formInvalid: function () {
       this.set('selected', 0);
@@ -300,19 +326,28 @@
     },
 
     _nextTab: function () {
-      if (this.selected< this.new ? 3 : 2) {
+      var length = 3;
+      if (!this.new) {
+        length = 2;
+      }
+      if (this.locationHidden) {
+        length -= 1;
+      }
+      if (this.selected<length) {
         this.set('selected', this.selected+1)
       }
     },
 
     _selectedChanged: function (newValue) {
-      if (newValue==(this.new ? 2 : 1)) {
+      if (!this.locationHidden && newValue==(this.new ? 2 : 1)) {
         this.set('mapActive', true);
       } else {
         this.set('mapActive', false);
       }
 
-      if ((this.new && newValue==3) || !this.new) {
+      var finalTabNumber = this.locationHidden ? 2 : 3;
+
+      if (!this.new || (this.new && newValue==finalTabNumber)) {
         this.$$("#editDialog").useNextTabAction = false;
       } else {
         this.$$("#editDialog").useNextTabAction = true;
@@ -378,12 +413,22 @@
         this.set('selected', 0);
         this.set('uploadedHeaderImageId',null);
         this.$$("#imageFileUpload").clear();
+        this.set('selectedCoverMediaType', 'none');
       }
     },
 
     setup: function (post, group, newNotEdit, refreshFunction) {
       if (group) {
         this.set('group', group);
+        if (this.group.configuration && this.group.configuration.locationHidden) {
+          if (this.group.configuration.locationHidden == true) {
+            this.set('locationHidden', true);
+          } else {
+            this.set('locationHidden', false);
+          }
+        } else {
+          this.set('locationHidden', false);
+        }
       } else {
         this.set('group', null);
       }
@@ -395,6 +440,7 @@
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
+      this._clear();
     },
 
     _setupTranslation: function () {
