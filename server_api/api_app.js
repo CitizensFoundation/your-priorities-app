@@ -97,22 +97,6 @@ app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(function(req,res,next) {
-  var ua = req.headers['user-agent'];
-  if (/^(facebookexternalhit)|(Twitterbot)|(Slackbot)|(Pinterest)/gi.test(ua)) {
-    console.log(ua,' is a bot');
-    nonSPArouter(req,res,next);
-  } else {
-    next();
-  }
-});
-
-if (app.get('env') === 'development') {
-  app.use(express.static(path.join(__dirname, '../client_app')));
-} else {
-  app.use(express.static(path.join(__dirname, '../client_dist')));
-}
-
 // Setup the current domain from the host
 app.use(function (req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
@@ -128,6 +112,22 @@ app.use(function (req, res, next) {
     next();
   });
 });
+
+app.use(function(req,res,next) {
+  var ua = req.headers['user-agent'];
+  if (/^(facebookexternalhit)|(Twitterbot)|(Slackbot)|(Pinterest)/gi.test(ua)) {
+    console.log(ua,' is a bot');
+    nonSPArouter(req,res,next);
+  } else {
+    next();
+  }
+});
+
+if (app.get('env') === 'development') {
+  app.use(express.static(path.join(__dirname, '../client_app')));
+} else {
+  app.use(express.static(path.join(__dirname, '../client_dist')));
+}
 
 var bearerCallback = function (req, token) {
   return console.log('The user has tried to authenticate with a bearer token');
