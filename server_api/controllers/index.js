@@ -6,7 +6,7 @@ var toJson = require('../utils/to_json');
 /* GET home page. */
 router.get('/', function(req, res) {
   log.info('Index Viewed', { context: 'view', user: toJson(req.user) });
-  res.sendfile('./client_app/index.html');
+  res.sendfile('./client_app/index_yp.html');
 });
 
 module.exports = router;
