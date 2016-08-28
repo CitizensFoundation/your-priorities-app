@@ -51,7 +51,7 @@
             } else {
               console.error("App has not been upgraded to Polymer object when translation is ready");
             }
-          }, 10000);
+          }, 3000);
         }
       } else {
         console.error("App not ready when i18n is ready");

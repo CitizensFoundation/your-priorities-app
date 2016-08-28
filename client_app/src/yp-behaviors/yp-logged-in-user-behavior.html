@@ -10,13 +10,16 @@
       loggedInUser: {
         type: Object,
         notify: true,
-        value: null
+        value: null,
+        observer: '_loggedInUserChanged'
       }
     },
 
     listeners: {
       'yp-user-is-logged-in': '_userLoggedIn'
     },
+
+    _loggedInUserChanged: function () {},
 
     ready: function () {
       if (window.appUser && window.appUser.user) {

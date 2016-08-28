@@ -6,6 +6,9 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var url = require('url');
 
+// TODO: Make sure to load the latest image
+// TODO: Make sure to still support the escaped_fragment routes after moving to the direct urls for backwards sharing capacity
+
 var fullUrl = function (req) {
   var replacedUrl =  req.originalUrl.replace(/[?]_escaped_fragment_=/g,'#!');
   var formattedUrl = url.format({

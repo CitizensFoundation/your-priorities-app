@@ -1,6 +1,6 @@
 {
-  "name": "Polymer Starter Kit",
-  "short_name": "Polymer Starter Kit",
+  "name": "Your Priorities App",
+  "short_name": "Your Priorities App",
   "icons": [{
         "src": "images/touch/icon-128x128.png",
         "sizes": "128x128",

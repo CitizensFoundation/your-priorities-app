@@ -2,7 +2,7 @@
 
 <script>
   /**
-   * @polymerBehavior ypLoggedInUserBehavior
+   * @polymerBehavior ypGotAdminRightsBehavior
    */
   Polymer.ypGotAdminRightsBehavior = {
 
@@ -10,13 +10,16 @@
       gotAdminRights: {
         type: Boolean,
         notify: true,
-        value: false
+        value: false,
+        observer: '_gotAdminRightsChanged'
       }
     },
 
     listeners: {
       'yp-user-got-admin-rights': '_gotAdminRights'
     },
+
+    _gotAdminRightsChanged: function () {},
 
     ready: function () {
       if (window.appUser && window.appUser.adminRights) {
