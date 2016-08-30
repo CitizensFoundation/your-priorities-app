@@ -58398,15 +58398,23 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       },
 
       _openPage: function (event) {
-        var index = JSON.parse(event.target.getAttribute('data-args'));
+        var index = JSON.parse(event.currentTarget.getAttribute('data-args'));
         var page = this.pages[index];
         window.appGlobals.activity('open', 'pages', page.id);
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pageDialog");
-        dialog.open(page.title[window.locale], page.content[window.locale]);
+        var pageLocale = 'en';
+        if (page.title[window.locale]) {
+          pageLocale = window.locale;
+        }
+        dialog.open(page.title[pageLocale], page.content[pageLocale]);
       },
 
       _getLocalizePageTitle: function (page) {
-        return page.title[window.locale];
+        var pageLocale = 'en';
+        if (page.title[window.locale]) {
+          pageLocale = window.locale;
+        }
+        return page.title[pageLocale];
       },
 
       ready: function () {
