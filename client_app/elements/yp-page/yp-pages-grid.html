@@ -298,7 +298,7 @@
         if (this.newLocaleValue && this.newLocaleValue.length>1) {
           var pageId = event.target.getAttribute('data-args');
           this.$.updatePageAjax.body = {
-            locale: this.newLocaleValue,
+            locale: this.newLocaleValue.toLowerCase(),
             content: '',
             title: ''
           };
