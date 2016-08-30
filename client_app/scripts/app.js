@@ -37,6 +37,7 @@
 
     if (localeFromUrl && localeFromUrl.length==2) {
       window.locale = localeFromUrl;
+      localStorage.setItem('yp-user-locale', localeFromUrl);
     }
 
     i18n.init({ lng: window.locale }, function(loaded) {
