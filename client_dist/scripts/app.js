@@ -127,6 +127,14 @@
       setupLocale('no');
     } else if (window.location.hostname.indexOf('bolja-pula') > -1) {
       setupLocale('hr');
+    } else if (window.location.hostname.indexOf('boljikarlovac') > -1) {
+      setupLocale('hr');
+    } else if (window.location.hostname.indexOf('boljilosinj') > -1) {
+      setupLocale('hr');
+    } else if (window.location.hostname.indexOf('pulaodlucuje') > -1) {
+      setupLocale('hr');
+    } else if (window.location.hostname.indexOf('/group/801') > -1) {
+      setupLocale('sl');
     } else {
       setupLocale('en');
     }
