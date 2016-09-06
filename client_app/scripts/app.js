@@ -133,7 +133,7 @@
       setupLocale('hr');
     } else if (window.location.hostname.indexOf('pulaodlucuje') > -1) {
       setupLocale('hr');
-    } else if (window.location.hostname.indexOf('/group/801') > -1) {
+    } else if (window.location.href.indexOf("group/801") > -1) {
       setupLocale('sl');
     } else {
       setupLocale('en');
