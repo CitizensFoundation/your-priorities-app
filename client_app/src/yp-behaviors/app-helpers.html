@@ -21,23 +21,52 @@
     properties: {
       t: {
         type: Function,
-        computed: '_translate(language)'
+        computed: '_translate(loadedLanguage)'
       },
 
       language: {
         type: String,
-        value: 'en'
+        value: null,
+        observer: '_languageChanged'
+      },
+
+      loadedLanguage: {
+        type: String,
+        value: null
+      },
+
+      languageLoadingInProgress: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    ready: function () {
+      if (window.i18nTranslation) {
+        this.set('loadedLanguage', window.locale);
+        this.set('language', window.locale);
+      }
+    },
+
+    _languageEvent: function (event, detail) {
+      if (detail.type == 'language-loaded') {
+        this.set('loadedLanguage', detail.language);
+        this.set('language', detail.language);
+      } else if (detail.type == 'language-changed') {
+        this.set('language', detail.language);
+      }
+    },
+
+    _languageChanged: function (newLanguage) {
+      if (newLanguage!=this.loadedLanguage) {
+        i18n.init({ lng: newLanguage }, function(loaded) {
+          this.set('loadedLanguage', newLanguage);
+        }.bind(this));
       }
     },
 
     redirectTo: function (path) {
       window.location = path;
-    },
-
-    ready: function () {
-      if (window.locale) {
-        this.set('language', window.locale);
-      }
     },
 
     _translate: function(language) {

@@ -40,25 +40,10 @@
       localStorage.setItem('yp-user-locale', localeFromUrl);
     }
 
-    i18n.init({ lng: window.locale }, function(loaded) {
-      if (window.app) {
-        if (typeof window.app._i18nReady == 'function') {
-           window.app._i18nReady();
-         } else {
-          console.warn("App has not been upgraded to Polymer object when translation is ready");
-          setTimeout(function(){
-            if (typeof window.app._i18nReady == 'function') {
-              window.app._i18nReady();
-            } else {
-              console.error("App has not been upgraded to Polymer object when translation is ready");
-            }
-          }, 3000);
-        }
-      } else {
-        console.error("App not ready when i18n is ready");
-      }
+    var language = window.locale;
+    i18n.init({ lng: language }, function(loaded) {
       window.i18nTranslation = i18n;
-      var event = new CustomEvent("iron-signal", { detail: { name: 'yp-18n-ready', data: null } } );
+      var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-loaded', language: language } } } );
       document.dispatchEvent(event);
     });
   };
