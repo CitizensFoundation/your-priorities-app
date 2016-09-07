@@ -2,6 +2,7 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
@@ -27,6 +28,7 @@
         margin-bottom: 32px;
       }
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical center-center">
       <template is="dom-if" if="[[post]]">

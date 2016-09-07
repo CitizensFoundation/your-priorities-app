@@ -2,6 +2,7 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 <link rel="import" href="../../bower_components/google-map/google-map-marker.html">
@@ -82,6 +83,7 @@
       }
 
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical center-center">
       <template is="dom-if" if="[[posts]]">

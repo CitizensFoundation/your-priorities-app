@@ -6,7 +6,6 @@
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
@@ -65,6 +64,7 @@
         }
       }
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical" hidden$="[[!loggedInUser]]">
       <div class="layout horizontal start">

@@ -65,6 +65,7 @@
         cursor: pointer;
       }
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <paper-material elevation="0" class="material">
       <div hidden$="[[!homeLink]]">
@@ -119,6 +120,7 @@
     Polymer({
 
       is: 'yp-app-nav-drawer',
+
       behaviors: [
         Polymer.appHelpers
       ],

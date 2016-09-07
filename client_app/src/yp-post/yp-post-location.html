@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
@@ -65,6 +66,7 @@
         padding-top: 32px;
       }
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
 

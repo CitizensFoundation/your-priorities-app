@@ -1,8 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-
 <link rel="import" href="../../bower_components/iron-icons/places-icons.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
@@ -42,6 +42,7 @@
         width: 50%;
       }
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <yp-edit-dialog id="editDialog" icon="places:business-center" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>

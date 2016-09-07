@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="ac-notification-selection.html">
 
@@ -9,6 +10,7 @@
   <template>
     <style>
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <ac-notification-selection
       name="[[t('notification.myPosts')]]"

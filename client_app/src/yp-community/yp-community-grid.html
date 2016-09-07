@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="yp-community-card.html">
@@ -50,6 +51,7 @@
         border-color: #444;
       }
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical wrap mainContainer">
       <div class="layout horizontal center-center wrap">

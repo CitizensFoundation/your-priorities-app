@@ -10,6 +10,7 @@
 <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html" >
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-icons/notification-icons.html" >
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html" >
 
@@ -187,6 +188,7 @@
         }
       }
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
 

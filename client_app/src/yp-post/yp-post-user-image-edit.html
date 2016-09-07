@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
@@ -15,6 +16,7 @@
 
     <style>
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <yp-edit-dialog double-width id="editDialog" icon="image:photo-camera" action="[[action]]"
                     method="[[method]]" save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">

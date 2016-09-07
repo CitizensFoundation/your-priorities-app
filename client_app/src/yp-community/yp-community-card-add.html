@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
@@ -58,6 +59,7 @@
       }
 
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <paper-card elevation="[[elevation]]" class="layout vertical center communityCard">
       <h2 class="header">[[t('community.new')]]</h2>

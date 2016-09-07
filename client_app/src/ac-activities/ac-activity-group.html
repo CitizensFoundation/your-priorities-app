@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-point/yp-point.html">
@@ -53,6 +54,8 @@
         padding-top: 16px;
       }
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
     <div id="groupInfo" class="layout horizontal cursor" on-tap="_goToGroup">
       <div>
         <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>

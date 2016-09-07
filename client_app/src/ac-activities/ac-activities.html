@@ -3,6 +3,8 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
@@ -172,6 +174,7 @@
         }
       }
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <template is="dom-if" if="[[loggedInUser]]">
       <div class="layout vertical center-center full">
@@ -264,7 +267,9 @@
         </template>
       </div>
     </div>
+
     <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
   </template>
 
   <script>

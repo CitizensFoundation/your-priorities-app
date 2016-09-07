@@ -136,7 +136,9 @@
       }
 
     </style>
-    <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader" on-app-ready="_appReady"></yp-app-globals>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
 
     <app-location route="{{route}}"></app-location>
 
@@ -288,24 +290,6 @@
           type: Boolean
         },
 
-        appReady: {
-          type: Boolean,
-          notify: true,
-          value: false
-        },
-
-        i18nReady: {
-          type: Boolean,
-          notify: true,
-          value: false
-        },
-
-        appAndI18nReady: {
-          type: Boolean,
-          notify: true,
-          value: false
-        },
-
         pages: {
           type: Array
         },
@@ -323,7 +307,6 @@
       },
 
       observers: [
-        '_isAppAndI18nReady(appReady, i18nReady)',
         '_routePageChanged(routeData.page)'
       ],
 
@@ -435,21 +418,6 @@
       },
 
       ready: function () {
-      },
-
-      _isAppAndI18nReady: function (appReady, i18nReady) {
-        if ((appReady && i18nReady) || (appReady && window.i18nTranslation)) {
-          this.set('appAndI18nReady', true);
-          moment.locale(window.locale);
-        }
-      },
-
-      _i18nReady: function () {
-        this.set('i18nReady', true);
-      },
-
-      _appReady: function () {
-        this.set('appReady', true);
       },
 
       getDialog: function (idName) {

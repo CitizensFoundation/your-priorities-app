@@ -7,6 +7,7 @@
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html" >
 
@@ -40,6 +41,7 @@
         margin-right:4px;
       }
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="stats layout horizontal end-justified">
       <iron-icon title="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>

@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
@@ -142,6 +143,8 @@
       }
 
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
     <template is="dom-if" if="[[domain]]">
       <div class="layout horizontal wrap">
         <paper-material id="card" elevation="5" animated class="large-card textBox">

@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../../bower_components/re-captcha/re-captcha.html">
 <link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
@@ -15,27 +16,28 @@
 
 <dom-module id="yp-missing-email">
 
-  <style>
-    paper-dialog {
-      background-color: #FFF;
-      width: 420px;
-    }
-
-    .linkAccounts {
-      padding-top: 16px;
-    }
-
-    @media (max-width: 480px) {
-      paper-dialog {
-        padding: 0;
-        margin: 0;
-        height: 100%;
-        width: 100%;
-      }
-    }
-  </style>
-
   <template>
+    <style>
+      paper-dialog {
+        background-color: #FFF;
+        width: 420px;
+      }
+
+      .linkAccounts {
+        padding-top: 16px;
+      }
+
+      @media (max-width: 480px) {
+        paper-dialog {
+          padding: 0;
+          margin: 0;
+          height: 100%;
+          width: 100%;
+        }
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
     <div id="outer">
       <paper-dialog id="dialog" modal>
         <h2>[[heading]]</h2>
