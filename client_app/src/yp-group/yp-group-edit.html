@@ -13,6 +13,7 @@
 
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
+<link rel="import" href="../yp-theme/yp-theme-selector.html">
 
 <dom-module id="yp-group-edit">
   <template>
@@ -198,7 +199,9 @@
       themeId: {
         type: String,
         value: null
-      }
+      },
+
+      locationHidden: Boolean
     },
 
     _publicCommunity: function (group) {

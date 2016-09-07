@@ -44,14 +44,14 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="stats layout horizontal end-justified">
-      <iron-icon title="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
-      <div title="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(group.counter_posts)}}</div>
+      <iron-icon title$="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
+      <div title$="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(group.counter_posts)}}</div>
 
-      <iron-icon title="[[t('stats.discussions')]]" icon="communication:chat-bubble-outline" class="stats-icon"></iron-icon>
-      <div title="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(group.counter_points)}}</div>
+      <iron-icon title$="[[t('stats.discussions')]]" icon="communication:chat-bubble-outline" class="stats-icon"></iron-icon>
+      <div title$="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(group.counter_points)}}</div>
 
-      <iron-icon title="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
-      <div title="[[t('stats.users')]]" class="stats-text">{{formatNumber(group.counter_users)}}</div>
+      <iron-icon title$="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
+      <div title$="[[t('stats.users')]]" class="stats-text">{{formatNumber(group.counter_users)}}</div>
     </div>
 
   </template>
