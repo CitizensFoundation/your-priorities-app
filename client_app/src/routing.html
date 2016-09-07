@@ -20,7 +20,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       next();
     }
 
-    this.redirectTo('*', function(ctx, next) {
+    page('*', function(ctx, next) {
       Polymer.Base.async(function () {
         ga('set', 'page', ctx.path);
         ga('send', 'pageview');
@@ -31,78 +31,78 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     // We use Page.js for routing. This is a Micro
     // client-side router inspired by the Express router
     // More info: https://visionmedia.github.io/page.js/
-    this.redirectTo('/', scrollToTop, function () {
+    page('/', scrollToTop, function () {
       window.window.app.route = 'home';
       // TODO: Do we want to do this each time?
       document.querySelector('#appGlobals').reBoot();
     });
 
-    this.redirectTo('/domain/:domainId', scrollToTop, function (data) {
+    page('/domain/:domainId', scrollToTop, function (data) {
       window.app.route = 'domain';
       window.app.params = data.params;
     });
 
-    this.redirectTo('/domain/:domainId/:domainTabName', scrollToTop, function (data) {
+    page('/domain/:domainId/:domainTabName', scrollToTop, function (data) {
       window.app.route = 'domain';
       window.app.params = data.params;
     });
 
-    this.redirectTo('/community/:communityId', scrollToTop, function (data) {
+    page('/community/:communityId', scrollToTop, function (data) {
       window.app.route = 'community';
       window.app.params = data.params;
     });
 
-    this.redirectTo('/community/:communityId/:communityTabName', scrollToTop, function (data) {
+    page('/community/:communityId/:communityTabName', scrollToTop, function (data) {
       window.app.route = 'community';
       window.app.params = data.params;
     });
 
-    this.redirectTo('/group/:groupId', scrollToTop, function (data) {
+    page('/group/:groupId', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    this.redirectTo('/group/:groupId/:groupTabName', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    this.redirectTo('/group/:groupId/:groupTabName/posts/:filterValue', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/posts/:filterValue', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    this.redirectTo('/group/:groupId/:groupTabName/posts/:filterValue/:categoryId/:categoryName', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/posts/:filterValue/:categoryId/:categoryName', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    this.redirectTo('/group/:groupId/:groupTabName/search/:searchingFor', scrollToTop, function (data) {
+    page('/group/:groupId/:groupTabName/search/:searchingFor', scrollToTop, function (data) {
       window.app.route = 'group';
       window.app.params = data.params;
     });
 
-    this.redirectTo('/post/:postId', scrollToTop, function (data) {
+    page('/post/:postId', scrollToTop, function (data) {
       window.app.route = 'post';
       window.app.params = data.params;
     });
 
-    this.redirectTo('/post/:postId/:postTabName', scrollToTop, function (data) {
+    page('/post/:postId/:postTabName', scrollToTop, function (data) {
       window.app.route = 'post';
       window.app.params = data.params;
     });
 
-    this.redirectTo('/user/:userId', scrollToTop, function (data) {
+    page('/user/:userId', scrollToTop, function (data) {
       window.app.route = 'user';
       window.app.params = data.params;
     });
 
-    this.redirectTo('/user/:userId/:userTabName', scrollToTop, function (data) {
+    page('/user/:userId/:userTabName', scrollToTop, function (data) {
       window.app.route = 'user';
       window.app.params = data.params;
     });
 
-    this.redirectTo('/user/reset_password/:resetPasswordToken', scrollToTop, function (data) {
+    page('/user/reset_password/:resetPasswordToken', scrollToTop, function (data) {
       window.app.route = 'home';
       window.app.params = data.params;
       Polymer.Base.async(function() {
@@ -111,7 +111,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }, 500);
     });
 
-    this.redirectTo('/user/accept/invite/:inviteToken', scrollToTop, function (data) {
+    page('/user/accept/invite/:inviteToken', scrollToTop, function (data) {
       window.app.route = 'home';
       window.app.params = data.params;
       Polymer.Base.async(function() {
@@ -121,7 +121,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
 
     // add #! before urls
-    this.redirectTo({
+    page({
       hashbang: true
     });
 

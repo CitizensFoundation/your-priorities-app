@@ -159,6 +159,28 @@
         }
       },
 
+      openResetPasswordDialog: function () {
+        page('/user/reset_password/:resetPasswordToken', scrollToTop, function (data) {
+          window.app.route = 'home';
+          window.app.params = data.params;
+          Polymer.Base.async(function() {
+            var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("resetPassword");
+            dialog.open(data.params.resetPasswordToken);
+          }, 500);
+        });
+      },
+
+      openAcceptInvitationDialog: function () {
+        page('/user/accept/invite/:inviteToken', scrollToTop, function (data) {
+          window.app.route = 'home';
+          window.app.params = data.params;
+          Polymer.Base.async(function() {
+            var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("acceptInvite");
+            dialog.open(data.params.inviteToken);
+          }, 500);
+        });
+      },
+
       _tabNameChanged: function (newValue) {
         if (newValue) {
           if (newValue=='communities') {
