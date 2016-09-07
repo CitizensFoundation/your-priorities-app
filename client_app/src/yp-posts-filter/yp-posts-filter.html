@@ -248,9 +248,9 @@
 
       searchFor: function (value) {
         this.set('searchingFor', value);
-        var newLocation = '#!/group/' + this.group.id + '/open/' + this.group.name + '/search/' + this.searchingFor;
+        var newLocation = '/group/' + this.group.id + '/open/' + this.group.name + '/search/' + this.searchingFor;
         window.appGlobals.activity('change', 'filter', newLocation);
-        page(newLocation);
+        this.redirectTo(newLocation);
         this.fire("refresh-group");
       },
 
@@ -298,7 +298,7 @@
       },
 
       buildPostsUrlPath: function () {
-        var newLocation = '#!/group/' + this.group.id + '/' + this.tabName;
+        var newLocation = '/group/' + this.group.id + '/' + this.tabName;
         if (this.filter) {
           newLocation += '/posts/' + this.filter;
         }
@@ -313,7 +313,7 @@
           this.set('filter','newest');
         var newLocation = this.buildPostsUrlPath();
         window.appGlobals.activity('change', 'filter', newLocation);
-     //   page(newLocation);
+     //   this.redirectTo(newLocation);
         this.fire("refresh-group");
       },
 

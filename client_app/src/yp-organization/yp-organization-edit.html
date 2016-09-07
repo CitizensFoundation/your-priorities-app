@@ -155,7 +155,7 @@
 
     _customRedirect: function (organization) {
       if (organization) {
-        page("#!/organization/"+organization.id);
+        this.redirectTo("/organization/"+organization.id);
       } else {
         console.warn('No organization found on custom redirect');
       }

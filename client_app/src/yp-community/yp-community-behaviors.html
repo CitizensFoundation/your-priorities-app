@@ -16,7 +16,7 @@
     _goToCommunity: function (e) {
       var communityUrl = '/community/' + this.community.id;
       window.appGlobals.activity('open', 'community', communityUrl);
-      page(communityUrl);
+      this.redirectTo(communityUrl);
     },
 
     communityLogoImagePath: function (community) {

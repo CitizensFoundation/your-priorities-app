@@ -22,7 +22,7 @@ router.get('/:id', function(req, res) {
     }
   }).then(function(page) {
     if (page) {
-      var returnUrl = hostPartOfUrl(req)+"/#!/page/" + page.id;
+      var returnUrl = hostPartOfUrl(req)+"/page/" + page.id;
       res.redirect(301, returnUrl);
     } else {
       res.sendStatus(404);

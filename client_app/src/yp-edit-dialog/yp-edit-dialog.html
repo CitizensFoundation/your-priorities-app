@@ -10,7 +10,6 @@
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-behaviors/fix-dialog.html">
 
 <link rel="import" href="yp-fullscreen-dialog.html">
 
@@ -246,8 +245,7 @@
       is: 'yp-edit-dialog',
 
       behaviors: [
-        Polymer.appHelpers,
-        Polymer.FixDialog
+        Polymer.appHelpers
       ],
 
       properties: {
@@ -502,7 +500,6 @@
 
       _showErrorDialog: function(errorText) {
         this.set('errorText', errorText);
-//        this.moveDialogToTopDom("formErrorDialog");
         this.$$("#formErrorDialog").open();
       },
 

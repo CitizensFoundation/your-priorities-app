@@ -20,7 +20,7 @@
     _goToGroup: function (e) {
       var groupUrl = '/group/' + this.group.id;
       window.appGlobals.activity('open', 'group', groupUrl);
-      page(groupUrl);
+      this.redirectTo(groupUrl);
     },
 
     groupLogoImagePath: function (group) {

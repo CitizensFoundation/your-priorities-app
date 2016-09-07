@@ -209,7 +209,7 @@
       } else {
         if (community) {
           window.appUser.recheckAdminRights();
-          page("#!/community/"+community.id);
+          this.redirectTo("/community/"+community.id);
         } else {
           console.warn('No community found on custom redirect');
         }

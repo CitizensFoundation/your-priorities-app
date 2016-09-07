@@ -562,7 +562,7 @@
           this.fire("change-header", { headerTitle: this.truncate(this.post.Group.name,80),
                                        documentTitle: this.post.name,
                                        headerDescription: '',//this.truncate(this.post.Group.objectives,45),
-                                       backPath: "#!/group/" + this.post.group_id });
+                                       backPath: "/group/" + this.post.group_id });
         },
 
         selectedChanged: function (selected, oldValue) {
@@ -583,13 +583,13 @@
 
           if (this.post && selected != oldValue) {
             if (selected == 0) {
-              page("#!/post/" + this.post.id + '/debate');
+              this.redirectTo("/post/" + this.post.id + '/debate');
             } else if (selected == 1) {
-              page("#!/post/" + this.post.id + '/news');
+              this.redirectTo("/post/" + this.post.id + '/news');
             } else if (selected == 2) {
-              page("#!/post/" + this.post.id + '/location');
+              this.redirectTo("/post/" + this.post.id + '/location');
             } else if (selected == 3) {
-              page("#!/post/" + this.post.id + '/photos');
+              this.redirectTo("/post/" + this.post.id + '/photos');
             }
           }
         },

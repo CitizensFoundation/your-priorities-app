@@ -167,23 +167,23 @@
 
       _goBack: function (event) {
         if (this.homeLink) {
-          page('/'+this.homeLink.type+'/'+this.homeLink.id);
+          this.redirectTo('/'+this.homeLink.type+'/'+this.homeLink.id);
           this.fire('yp-toggle-nav-drawer');
         }
       },
 
       _goToGroup: function (event) {
-        page("/group/"+ event.target.getAttribute('data-args'));
+        this.redirectTo("/group/"+ event.target.getAttribute('data-args'));
         this.fire('yp-toggle-nav-drawer');
       },
 
       _goToCommunity: function (event) {
-        page("/community/"+ event.target.getAttribute('data-args'));
+        this.redirectTo("/community/"+ event.target.getAttribute('data-args'));
         this.fire('yp-toggle-nav-drawer');
       },
 
       _goToDomain: function (event) {
-        page("/domain/"+ event.target.getAttribute('data-args'));
+        this.redirectTo("/domain/"+ event.target.getAttribute('data-args'));
         this.fire('yp-toggle-nav-drawer');
       },
 

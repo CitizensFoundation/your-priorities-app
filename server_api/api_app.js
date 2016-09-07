@@ -212,6 +212,11 @@ passport.deserializeUser(function(sessionUser, done) {
 });
 
 app.use('/', index);
+app.use('/domain', index);
+app.use('/community', index);
+app.use('/group', index);
+app.use('/post', index);
+app.use('/user', index);
 app.use('/api/domains', domains);
 app.use('/api/organizations', organizations);
 app.use('/api/communities', communities);

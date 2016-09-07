@@ -67,8 +67,7 @@
     is: 'yp-accept-invite',
 
     behaviors: [
-      Polymer.appHelpers,
-      Polymer.FixDialog
+      Polymer.appHelpers
     ],
 
     properties: {
@@ -106,11 +105,11 @@
     _acceptInviteResponse: function(event, detail) {
       this.close();
       window.appGlobals.notifyUserViaToast(this.t('notification.invite_accepted_for')+ detail.response.name);
-      page(detail.response.redirectTo);
+      this.redirectTo(detail.response.redirectTo);
     },
 
     _cancel: function () {
-      page('/');
+      this.redirectTo('/');
     },
 
     open: function(token) {

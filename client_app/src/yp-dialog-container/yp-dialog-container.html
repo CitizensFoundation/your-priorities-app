@@ -66,6 +66,13 @@
         Polymer.ypGotAdminRightsBehavior
       ],
 
+      properties: {
+        waitForUpgradeCounter: {
+          type: Number,
+          value: 0
+        }
+      }
+
       _loggedInUserChanged: function (newValue) {
         if (newValue===true) {
           this.importHref(this.resolveUrl('yp-dialog-container-logged-in.html'), null, null, true);
@@ -79,12 +86,19 @@
       },
 
       getDialog: function (idName) {
-        if (this.loggedInUser || this.gotAdminRights || idName=='userLogin') {
+        var element = this.$$("#"+idName);
+        if (typeof element.ready === "function") {
+          this.set('waitForUpgradeCounter', 0);
           return this.$$("#"+idName);
         } else {
+          console.warn("Element not upgraded: "+idName);
+          this.waitForUpgradeCounter += 1;
+          if (this.waitForUpgradeCounter>10) {
+            console.error("Element upgraded after wait: "+idName);
+          }
           this.async(function () {
-            return this.$$("#"+idName);
-          }.bind(this), 20);
+            this.getDialog(idName);
+          }.bind(this), 100);
         }
       },
 

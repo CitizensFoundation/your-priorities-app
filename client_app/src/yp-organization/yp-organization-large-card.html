@@ -216,7 +216,7 @@
       },
 
       _onDeleted: function () {
-        page("#!/domain/"+this.community.domain_id);
+        this.redirectTo("/domain/"+this.community.domain_id);
       },
 
       _refresh: function (community) {

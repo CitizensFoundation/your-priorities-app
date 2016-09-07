@@ -1,36 +1,31 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-signals/iron-signals.html">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 
-<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
-<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
-<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
 
-<link rel="import" href="../yp-domain/yp-domain.html">
-<link rel="import" href="../yp-community/yp-community.html">
-<link rel="import" href="../yp-group/yp-group.html">
-<link rel="import" href="../yp-post/yp-post.html">
-<link rel="import" href="../yp-user/yp-user-page.html" >
+<link rel="import" href="yp-domain/yp-domain.html">
 
-<link rel="import" href="../yp-app-globals/yp-app-globals.html">
-<link rel="import" href="../yp-app-globals/yp-app-user.html">
+<link rel="import" href="yp-app-globals/yp-app-globals.html">
+<link rel="import" href="yp-app-globals/yp-app-user.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-behaviors/fix-dialog.html">
+<link rel="import" href="yp-behaviors/app-helpers.html">
 
-<link rel="import" href="../yp-user/yp-user-info.html">
-<link rel="import" href="yp-app-drawer.html">
-<link rel="import" href="yp-app-nav-drawer.html">
+<link rel="import" href="yp-user/yp-user-info.html">
+<link rel="import" href="yp-app/yp-app-drawer.html">
+<link rel="import" href="yp-app/yp-app-nav-drawer.html">
 
 <dom-module id="yp-app">
 
@@ -141,115 +136,81 @@
       }
 
     </style>
-
-    <iron-signals on-iron-signal-yp-i18n-ready="_i18nReady"></iron-signals>
-
-    <template is="dom-if" if="[[appAndI18nReady]]" restamp>
-      <!--    <material-search id="search" narrow="[[narrow]]"
-                           previous-searches="{{previousSearches}}"
-                           on-search-change="_onSearch" class="fit"></material-search> -->
-
-      <app-drawer-layout drawer-width="360px" responsive-width="16000px">
-
-        <app-drawer id="drawer" align="end" position="right" swipe-open>
-          <div style="height: 100%; overflow: auto;">
-            <yp-app-drawer id="ypDrawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
-          </div>
-        </app-drawer>
-
-        <app-drawer id="navDrawer" align="start" position="left" swipe-open>
-          <div style="height: 100%; overflow: auto;">
-            <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
-          </div>
-        </app-drawer>
-
-        <app-scrollpos-control selected="{{route}}"></app-scrollpos-control>
-
-        <app-header-layout id="mainArea">
-
-          <app-header id="appHeader" effects="waterfall" reveals class="main-header">
-            <app-toolbar>
-              <div hidden$="[[closePostHeader]]" class="layout horizontal">
-                <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
-                <div title class="layout vertical wrap">[[headerTitle]]</div>
-                <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
-              </div>
-              <template is="dom-if" if="[[closePostHeader]]">
-                <paper-icon-button id="paperToggleNavMenu" class="closePostIcon" icon="clear" on-tap="_closePost"></paper-icon-button>
-              </template>
-
-              <span class="flex"></span>
-
-              <!-- Toolbar icons -->
-              <paper-icon-button icon="search" on-tap="toggleSearch" hidden hiddesn$="[[!showSearch]]"></paper-icon-button>
-
-              <paper-menu-button horizontal-align="right">
-                <paper-icon-button icon="help-outline" class="dropdown-trigger"></paper-icon-button>
-                <paper-menu class="dropdown-content">
-                  <template is="dom-repeat" items="[[pages]]" as="page">
-                    <paper-item data-args$="[[index]]" on-tap="_openPage">[[_getLocalizePageTitle(page)]]</paper-item>
-                  </template>
-                </paper-menu>
-              </paper-menu-button>
-
-              <template is="dom-if" if="[[user]]">
-                <paper-icon-button on-tap="_toggleUserDrawer" icon="face"></paper-icon-button>
-              </template>
-
-              <template is="dom-if" if="[[!user]]">
-                <paper-button class="loginButton" on-tap="_login">[[t('user.login')]]</paper-button>
-              </template>
-            </app-toolbar>
-          </app-header>
-
-          <iron-pages attr-for-selected="data-route" selected="{{route}}">
-
-            <section data-route="home">
-            </section>
-
-            <section data-route="domain">
-              <template is="dom-if" if="[[domainOpen]]" restamp>
-                <yp-domain domain-id="{{params.domainId}}" domain-tab-name="[[params.domainTabName]]" on-change-header="onChangeHeader"></yp-domain>
-              </template>
-            </section>
-
-            <section data-route="community">
-              <template is="dom-if" if="[[communityOpen]]" restamp>
-                <yp-community community-id="{{params.communityId}}" community-tab-name="[[params.communityTabName]]" on-change-header="onChangeHeader"></yp-community>
-              </template>
-            </section>
-
-            <section data-route="group">
-              <template is="dom-if" if="[[groupOpen]]" restamp>
-                <yp-group group-id="{{params.groupId}}" filter="[[params.filterValue]]"
-                          searching-for="[[params.searchingFor]]" group-tab-name="[[params.groupTabName]]"
-                          category-id="[[params.categoryId]]" category-name="[[params.categoryName]]"
-                          on-change-header="onChangeHeader"></yp-group>
-              </template>
-            </section>
-
-            <section data-route="post">
-              <template is="dom-if" if="[[params.postId]]" restamp>
-                <yp-post post-id="{{params.postId}}" post-tab-name="[[params.postTabName]]" on-change-header="onChangeHeader"></yp-post>
-              </template>
-            </section>
-
-            <section data-route="user">
-              <template is="dom-if" if="[[params.userId]]" restamp>
-                <yp-user-page user-id="{{params.userId}}" user-tab-name="[[params.userTabName]]" on-change-header="onChangeHeader"></yp-user-page>
-              </template>
-            </section>
-          </iron-pages>
-
-        </app-header-layout>
-
-      </app-drawer-layout>
-
-      <yp-dialog-container id="dialogContainer"></yp-dialog-container>
-      <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
-    </template>
-
     <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader" on-app-ready="_appReady"></yp-app-globals>
+
+    <app-location route="{{route}}"></app-location>
+
+    <app-route
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subRoute}}"></app-route>
+
+    <app-drawer-layout drawer-width="360px" responsive-width="16000px">
+
+      <app-drawer id="drawer" align="end" position="right" swipe-open>
+        <div style="height: 100%; overflow: auto;">
+          <yp-app-drawer id="ypDrawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
+        </div>
+      </app-drawer>
+
+      <app-drawer id="navDrawer" align="start" position="left" swipe-open>
+        <div style="height: 100%; overflow: auto;">
+          <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
+        </div>
+      </app-drawer>
+
+      <app-scrollpos-control selected="{{route}}"></app-scrollpos-control>
+
+      <app-header-layout id="mainArea">
+
+        <app-header id="appHeader" effects="waterfall" reveals class="main-header">
+          <app-toolbar>
+            <div hidden$="[[closePostHeader]]" class="layout horizontal">
+              <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
+              <div title class="layout vertical wrap">[[headerTitle]]</div>
+              <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
+            </div>
+            <template is="dom-if" if="[[closePostHeader]]">
+              <paper-icon-button id="closePostButton" class="closePostIcon" icon="clear" on-tap="_closePost"></paper-icon-button>
+            </template>
+
+            <span class="flex"></span>
+
+            <paper-menu-button horizontal-align="right">
+              <paper-icon-button icon="help-outline" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content">
+                <template is="dom-repeat" items="[[pages]]" as="page">
+                  <paper-item data-args$="[[index]]" on-tap="_openPage">[[_getLocalizePageTitle(page)]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-menu-button>
+
+            <template is="dom-if" if="[[user]]">
+              <paper-icon-button on-tap="_toggleUserDrawer" icon="face"></paper-icon-button>
+            </template>
+
+            <template is="dom-if" if="[[!user]]">
+              <paper-button class="loginButton" on-tap="_login">[[t('user.login')]]</paper-button>
+            </template>
+          </app-toolbar>
+        </app-header>
+
+        <iron-pages selected="{{page}}" attr-for-selected="name" fallback-selection="view404">
+          <yp-domain name="domain" sub-route="subRoute" on-change-header="onChangeHeader"></yp-domain>
+          <yp-community name="community" sub-route on-change-header="onChangeHeader"></yp-community>
+          <yp-group name="group" on-change-header="onChangeHeader"></yp-group>
+          <yp-post name="post" on-change-header="onChangeHeader"></yp-post>
+          <yp-user name="user" on-change-header="onChangeHeader"></yp-user>
+          <yp-view-404 name="view404"></yp-view-404>
+        </iron-pages>
+
+      </app-header-layout>
+
+    </app-drawer-layout>
+
+    <yp-dialog-container id="dialogContainer"></yp-dialog-container>
+    <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
   </template>
 
   <script>
@@ -258,8 +219,7 @@
       is: 'yp-app',
 
       behaviors: [
-        Polymer.appHelpers,
-        Polymer.FixDialog
+        Polymer.appHelpers
       ],
 
       properties: {
@@ -268,10 +228,15 @@
           type: Object
         },
 
-        route: {
+        page: {
           type: String,
-          value: 'home',
-          observer: 'routeChanged'
+          reflectToAttribute: true,
+          observer: '_pageChanged'
+        },
+
+        route: {
+          type: Object,
+          observer: '_routeChanged'
         },
 
         appTitle: {
@@ -350,21 +315,6 @@
           value: null
         },
 
-        groupOpen: {
-          type: Boolean,
-          computed: '_isGroupOpen(params, keepOpenForPost)'
-        },
-
-        communityOpen: {
-          type: Boolean,
-          computed: '_isCommunityOpen(params, keepOpenForPost)'
-        },
-
-        domainOpen: {
-          type: Boolean,
-          computed: '_isDomainOpen(params, keepOpenForPost)'
-        },
-
         closePostHeader: {
           type: Boolean,
           computed: '_closePostHeader(params, keepOpenForPost)',
@@ -373,12 +323,32 @@
       },
 
       observers: [
-        '_isAppAndI18nReady(appReady, i18nReady)'
+        '_isAppAndI18nReady(appReady, i18nReady)',
+        '_routePageChanged(routeData.page)'
       ],
 
       listeners: {
         'yp-set-pages': '_setPages',
         'yp-set-home-link': '_setHomeLink'
+      },
+
+      _routeChanged: function () {
+        if (window.location.href.indexOf("/#!/") > -1) {
+          window.location = window.location.href.replace("/#!/", "/");
+        }
+      },
+
+      _routePageChanged: function(page) {
+        this.page = page || 'domain';
+      },
+
+      _pageChanged: function(page) {
+        var resolvedPageUrl = this.resolveUrl('yp-' + page + '/' + 'yp-' + page + '.html');
+        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      },
+
+      _showPage404: function() {
+        this.page = 'view404';
       },
 
       _setHomeLink: function (event, homeLink) {
@@ -395,7 +365,7 @@
 
       _closePost: function () {
         if (this.keepOpenForPost)
-          page(this.keepOpenForPost)
+          this.redirectTo(this.keepOpenForPost)
 
         if (this.storedBackPath)
           this.set('backPath', this.storedBackPath);
@@ -538,7 +508,7 @@
 
       goBack: function (event, detail) {
         if (this.backPath)
-          page(this.backPath);
+          this.redirectTo(this.backPath);
       },
 
       _onSearch: function (e) {

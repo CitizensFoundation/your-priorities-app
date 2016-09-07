@@ -208,7 +208,7 @@
     _customRedirect: function (group) {
       if (group) {
         window.appUser.recheckAdminRights();
-        page("#!/group/"+group.id);
+        this.redirectTo("/group/"+group.id);
       } else {
         console.warn('No group found on custom redirect');
       }

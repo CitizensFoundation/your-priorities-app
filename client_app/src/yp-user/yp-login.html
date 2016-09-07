@@ -265,8 +265,7 @@
     is: 'yp-login',
 
     behaviors: [
-      Polymer.appHelpers,
-      Polymer.FixDialog
+      Polymer.appHelpers
     ],
 
     properties: {
@@ -481,7 +480,7 @@
     _loginCompleted: function (user) {
       window.appUser.setLoggedInUser(user);
       if (this.redirectTo)
-        page(this.redirectTo);
+        this.redirectTo(this.redirectTo);
       this.fire("login", user);
       if (this.onLoginFunction) {
         this.onLoginFunction(user);

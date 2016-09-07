@@ -7,7 +7,6 @@
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-behaviors/fix-dialog.html">
 
 <link rel="import" href="../yp-session/yp-session.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
@@ -137,9 +136,9 @@
           var hash = window.location.hash;
           if (hash===null || hash==="") {
             if (detail.response.community) {
-              page("#!/community/"+detail.response.community.id);
+              this.redirectTo("/community/"+detail.response.community.id);
             } else {
-              page("#!/domain/" + this.domain.id);
+              this.redirectTo("/domain/" + this.domain.id);
               this.fire("change-header", { headerTitle: this.domain.domain_name,
                 headerDescription: this.domain.description});
             }

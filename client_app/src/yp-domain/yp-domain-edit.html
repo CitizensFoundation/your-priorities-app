@@ -240,7 +240,7 @@
 
     _customRedirect: function (domain) {
       if (this.new) {
-        page("#!/domain/"+domain.id);
+        this.redirectTo("/domain/"+domain.id);
       }
     },
 
