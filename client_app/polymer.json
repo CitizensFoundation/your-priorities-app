@@ -7,7 +7,8 @@
     "src/yp-group/yp-group.html",
     "src/yp-post/yp-post.html",
     "src/yp-dialog-container/yp-dialog-container-logged-in.html",
-    "src/yp-dialog-container/yp-dialog-container-admin.html"
+    "src/yp-dialog-container/yp-dialog-container-admin.html",
+    "src/yp-app/yp-view-404.html"
   ],
   "sourceGlobs": [
     "src/**/*",

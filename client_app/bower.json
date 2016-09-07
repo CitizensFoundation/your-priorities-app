@@ -12,9 +12,7 @@
     "paper-elements": "PolymerElements/paper-elements",
     "platinum-elements": "PolymerElements/platinum-elements",
     "neon-elements": "PolymerElements/neon-elements",
-    "page": "visionmedia/page.js#~1.7.1",
     "moment": "~2.11.2",
-    "app-layout": "PolymerLabs/app-layout",
     "lodash-element": "~1.0.2",
     "moment-element": "~0.3.0",
     "re-captcha": "~1.1.1",
@@ -25,7 +23,9 @@
     "i18next": "~2.4.1",
     "vaadin-grid": "~1.0.0",
     "paper-share-buttons": "https://github.com/rbjarnason/paper-share-buttons.git#master",
-    "paper-search": "https://github.com/rbjarnason/paper-search.git#master"
+    "paper-search": "https://github.com/rbjarnason/paper-search.git#master",
+    "app-layout": "PolymerElements/app-layout#^0.10.0",
+    "app-route": "PolymerElements/app-route#^0.9.0"
   },
   "devDependencies": {
     "web-component-tester": "*",

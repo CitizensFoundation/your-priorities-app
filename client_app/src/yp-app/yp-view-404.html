@@ -1,0 +1,26 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<dom-module id="yp-view-404">
+  <template>
+    <style>
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <h1>[[t('pageNotFound')]]</h1>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-view-404',
+
+      behaviors: [
+        Polymer.appHelpers
+      ]
+    });
+  </script>
+</dom-module>
