@@ -10,7 +10,7 @@
   "generalError": "Zgodila se je nepričakovana napaka. Administratorjem je bilo poslano obvestilo.",
   "stats": {
     "posts": "Število objav",
-    "discussions": "Število debat",
+    "discussions": "Število razprav",
     "communities": "Število skupnosti",
     "groups": "Število skupin",
     "users": "Število uporabnikov"
@@ -105,10 +105,10 @@
 
   "posts": {
     "posts": "Predlogi",
-    "open": "Odpri",
+    "open": "Aktualni predlogi",
     "inProgress": "Se izvaja",
     "successful": "Uspešno",
-    "failed": "neuspešno",
+    "failed": "Neuspešno",
     "map": "Zemljevid",
     "noMapPosts": "Ni objav z lokacijami",
     "newUserImage": "Dodaj fotografijo"
@@ -127,7 +127,7 @@
     "noLocation": "Ni lokacije",
     "shareInfo": "Deli objavo",
     "description": "Opis",
-    "debate": "Debata",
+    "debate": "Razprava",
     "formInvalid": "Izpolnite celoten obrazec",
     "status": "Status objave",
     "new": "Nova objava",
@@ -138,7 +138,7 @@
     "inProgress": "Objave v obdelavi",
     "groups": "Objavi skupine",
     "search": "Iskanje objav",
-    "add_new":"Dodaj objavo",
+    "add_new":"Podaj predlog",
     "up_vote":"Podpri predlog",
     "down_vote":"Zavrni predlog",
     "report": "Prijava objave",
@@ -153,9 +153,9 @@
     "photoUpdate": "Posodobi fotografijo",
     "photoDeleteConfirmation": "Ali želite izbrisati to fotografijo?",
     "tabs": {
-      "debate": "Debata",
+      "debate": "Razprava",
       "news": "Novice",
-      "location": "lokacija",
+      "location": "Lokacija",
       "photos": "Fotografija",
       "solutions": "Rešitve",
       "not_implemented": "Še ni implementirano"
@@ -286,7 +286,7 @@
     "notifications": "Obvestila",
     "name": "Ime in priimek",
     "email": "Elektronski naslov",
-    "edit": "Uredi uporabnika",
+    "edit": "Uredi uporabniški profil",
     "password": "Geslo",
     "forgotPassword": "Vpišite novo geslo",
     "forgotPasswordInstructions": "Vnesite vaš elektronski naslov in poslali vam bomo sporočilo z povezavo preko katere lahko izberete novo geslo.",

@@ -42,6 +42,41 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
   });
 };
 
+auth.authNeedsGroupAdminForCreate = function (group, req, done) {
+  models.Group.findOne({
+    where: { id: group.id },
+    include: [
+      {
+        model: models.Community,
+        required: true,
+        attributes: ['id','access']
+      }
+    ]
+  }).then(function (group) {
+    if (!req.isAuthenticated()) {
+      done(null, false);
+    } else if (group.user_id === req.user.id) {
+      done(null, true);
+    } else {
+      group.hasGroupAdmins(req.user).then(function (result) {
+        if (result) {
+          done(null, true);
+        } else if (group.access === models.Group.ACCESS_OPEN_TO_COMMUNITY) {
+          group.Community.hasCommunityAdmins(req.user).then(function (result) {
+            if (result) {
+              done(null, true);
+            } else {
+              done(null, false);
+            }
+          });
+        } else {
+          done(null, false);
+        }
+      });
+    }
+  });
+};
+
 auth.hasDomainAdmin = function (domainId, req, done) {
   models.Domain.findOne({
     where: { id: domainId }
@@ -762,7 +797,7 @@ auth.entity('category', function(req, done) {
 // Create category
 
 auth.role('createGroupCategory.createCategory', function (group, req, done) {
-  auth.authNeedsGroupForCreate(group, req, done);
+  auth.authNeedsGroupAdminForCreate(group, req, done);
 });
 
 auth.entity('createGroupCategory', function(req, done) {

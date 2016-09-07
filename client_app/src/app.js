@@ -37,6 +37,7 @@
 
     if (localeFromUrl && localeFromUrl.length==2) {
       window.locale = localeFromUrl;
+      localStorage.setItem('yp-user-locale', localeFromUrl);
     }
 
     i18n.init({ lng: window.locale }, function(loaded) {
@@ -122,7 +123,21 @@
     setupLocale('is');
     setupBetterIcelandSplash();
   } else {
-    setupLocale('en');
+    if (window.location.hostname.indexOf('forbrukerraadet') > -1) {
+      setupLocale('no');
+    } else if (window.location.hostname.indexOf('bolja-pula') > -1) {
+      setupLocale('hr');
+    } else if (window.location.hostname.indexOf('boljikarlovac') > -1) {
+      setupLocale('hr');
+    } else if (window.location.hostname.indexOf('boljilosinj') > -1) {
+      setupLocale('hr');
+    } else if (window.location.hostname.indexOf('pulaodlucuje') > -1) {
+      setupLocale('hr');
+    } else if (window.location.href.indexOf("group/801") > -1) {
+      setupLocale('sl');
+    } else {
+      setupLocale('en');
+    }
     setupYourPrioritiesSplash();
   }
 
