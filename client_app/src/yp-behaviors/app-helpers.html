@@ -60,7 +60,7 @@
     _languageChanged: function (newLanguage) {
       if (newLanguage!=this.loadedLanguage && !this.languageLoadingInProgress) {
         this.set('languageLoadingInProgress', true);
-        i18n.init({ lng: newLanguage }, function(loaded) {
+        i18n.init({ lng: newLanguage, resGetPath: '/locales/__lng__/__ns__.json'  }, function(loaded) {
           this.set('languageLoadingInProgress', false);
           this.set('loadedLanguage', newLanguage);
         }.bind(this));
