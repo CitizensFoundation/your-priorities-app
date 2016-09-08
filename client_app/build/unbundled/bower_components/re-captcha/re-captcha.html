@@ -1,0 +1,16 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+
+
+</head><body><dom-module id="re-captcha">
+    <style>
+        :host {
+            display: block;
+        }
+    </style>
+    <template>
+        <content></content>
+    </template>
+</dom-module>
+
+<script>Recaptcha=function(){"use strict";var e=!1,t=Polymer({is:"re-captcha",_API_URL:"https://www.google.com/recaptcha/api.js",_RETRY_DELAY:200,_delay:0,_captchaId:"",_container:null,properties:{timeout:{type:Number,value:3e3},sitekey:{type:String,value:""},theme:{type:String,value:"light"},type:{type:String,value:"image"},tabindex:{type:Number,value:0},response:{type:String,value:"",notify:!0},lang:{type:String,value:"",notify:!0}},observers:["_validate(theme, type, timeout)"],_validate:function(){"dark"!=this.theme&&"light"!=this.theme&&(this.theme="light"),"audio"!=this.type&&"image"!=this.type&&(this.type="image"),isNaN(this.timeout)&&(this.timeout=3e3)},removeCaptcha:function(){this._captchaId="",window.grecaptcha=null,this._removeScriptApiTag(),Polymer.dom(this).removeChild(this._container),this._container=null},reload:function(){this.removeCaptcha(),this._generateScriptApiTag(),this._generateContainer(),this._renderWhenApiReady()},_resetScriptLoaded:function(){e=!1},_removeScriptApiTag:function(){var t=document.querySelector("script#captcha"),i=document.getElementsByTagName("head")[0];t&&(i.removeChild(t),e=!1)},_generateScriptApiTag:function(){var t=document.getElementsByTagName("head")[0],i=document.createElement("script");i.setAttribute("async",""),i.setAttribute("id","captcha"),i.setAttribute("defer",""),i.setAttribute("type","text/javascript"),i.setAttribute("src",this._API_URL),this.lang?i.setAttribute("src",this._API_URL+"?hl="+this.lang):i.setAttribute("src",this._API_URL),t.appendChild(i),e=!0},attached:function(){if(""===this.sitekey)throw new Error("sitekey attribute is mandatory for recaptcha element");e||this._generateScriptApiTag(),this.isWidgetLoaded()||(this._generateContainer(),this._renderWhenApiReady())},_generateContainer:function(){null===this._container&&(this._container=document.createElement("div"),Polymer.dom(this).appendChild(this._container))},_renderWhenApiReady:function(){window.grecaptcha?this._render():this._delay<this.timeout&&(setTimeout(function(){this._renderWhenApiReady()}.bind(this),this._RETRY_DELAY),this._delay+=this._RETRY_DELAY)},_render:function(){this._captchaId=window.grecaptcha.render(this._container,{sitekey:this.sitekey,theme:this.theme,type:this.type,tabindex:this.tabindex,callback:this._responseHandler.bind(this),"expired-callback":this._expiredHandler.bind(this)}),this.fire("captcha-rendered",null)},reset:function(){window.grecaptcha.reset(this._captchaId)},getResponse:function(){var e=window.grecaptcha.getResponse(this._captchaId);return e},_responseHandler:function(e){this.response=e,this.fire("captcha-response",{response:e})},_expiredHandler:function(){this.fire("captcha-expired")},isWidgetLoaded:function(){return""!==this._captchaId}});return t}();</script>
+</body></html>

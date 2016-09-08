@@ -1,0 +1,89 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/collection-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
+<link rel="import" href="../ac-activities/ac-activities.html">
+<link rel="import" href="../yp-theme/yp-theme-behavior.html">
+
+<link rel="import" href="../yp-post/yp-post-map.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+<link rel="import" href="../yp-group/yp-group-card.html">
+<link rel="import" href="../yp-group/yp-group-edit.html">
+<link rel="import" href="../yp-group/yp-group-card-add.html">
+<link rel="import" href="../yp-page/yp-page.html">
+<link rel="import" href="../yp-group/yp-group-collection-behaviors.html">
+<link rel="import" href="../yp-group/yp-group-grid.html">
+
+<link rel="import" href="yp-community-edit.html">
+<link rel="import" href="yp-community-large-card.html">
+
+</head><body><dom-module id="yp-community">
+  <template>
+    <style>
+      .card-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        width: 100%;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      yp-ajax {
+        background-color: var(--primary-background-color) !important;
+      }
+
+      .archivedText {
+        font-size: 26px;
+        color: #333;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
+
+      <yp-community-large-card id="communityCard" class="largeCard card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
+
+      <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
+        <paper-tab class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
+        <paper-tab class="tab">[[t('news')]]</paper-tab>
+        <paper-tab class="tab">[[t('posts.map')]]</paper-tab>
+      </paper-tabs>
+
+      <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <section>
+          <div class="layout horizontal center-center wrap">
+            <yp-group-grid featured-groups="[[featuredGroups]]" active-groups="[[activeGroups]]" archived-groups="[[archivedGroups]]">
+            </yp-group-grid>
+            <yp-group-card-add hidden$="[[!createFabIcon]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
+          </div>
+        </section>
+        <section>
+          <ac-activities community-id="[[community.id]]"></ac-activities>
+        </section>
+        <section>
+          <template is="dom-if" if="[[mapActive]]" restamp="">
+            <yp-post-map community-id="[[community.id]]"></yp-post-map>
+          </template>
+        </section>
+      </iron-pages>
+    </yp-page>
+
+    <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
+    <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+  </template>
+
+  <script>Polymer({is:"yp-community",behaviors:[Polymer.appHelpers,Polymer.ypThemeBehavior,Polymer.CollectionHelpers,Polymer.GroupCollectionBehaviors,Polymer.AccessHelpers],properties:{createFabIcon:{type:String,value:null,notify:!0},communityId:{type:Number,value:null,observer:"_communityIdChanged"},community:{type:Object},communityEmpty:{type:Boolean,value:!1},hideAdd:{type:Boolean,value:!0},selected:{type:Number,value:0,observer:"_selectedChanged"},communityTabName:{type:String,value:null,observer:"_tabNameChanged"},mapActive:{type:Boolean,value:!1}},_tabNameChanged:function(e){e&&("groups"==e?this.set("selected",0):"news"==e?this.set("selected",1):"map"==e&&this.set("selected",2))},_selectedChanged:function(e){this.community&&(0==e?this.redirectTo("/community/"+this.community.id+"/groups"):1==e?this.redirectTo("/community/"+this.community.id+"/news"):2==e&&this.redirectTo("/community/"+this.community.id+"/map")),2==e?this.set("mapActive",!0):this.set("mapActive",!1)},_hideEdit:function(){return!this.community||(!window.appUser.loggedIn()||window.appUser.user.id!=this.community.user_id)},_communityHeaderUrl:function(e){return this.getImageFormatUrl(e.CommunityHeaderImages,2)},_communityIdChanged:function(e,t){e&&(this.set("community",null),this.set("featuredGroups",null),this.set("activeGroups",null),this.set("archivedGroups",null),this.set("hideAdd",!0),this._getCommunity())},_getCommunity:function(){this.$$("#ajax").url="/api/communities/"+this.communityId,this.$$("#ajax").retryMethodAfter401Login=this._getCommunity.bind(this),this.$$("#ajax").generateRequest()},_newGroup:function(){window.appGlobals.activity("open","newGroup");var e=Polymer.dom(document).querySelector("yp-app").getDialog("groupEdit");e.community=this.community,e.setup(null,!0,null),e.open("new",{communityId:this.communityId})},_pagesResponse:function(e,t){this.fire("yp-set-pages",t.response)},_response:function(e,t,i){this.set("community",t.response),this.fire("yp-set-home-link",{type:"community",id:this.community.id,name:this.community.name}),this.community.only_admins_can_create_groups&&!this.checkCommunityAccess(this.community)||this.set("createFabIcon","social:group"),null!=this.community.theme_id?this.setTheme(this.community.theme_id):null!=this.community.Domain.theme_id&&this.setTheme(this.community.Domain.theme_id),this.$.pagesAjax.url="/api/communities/"+this.community.id+"/pages",this.$.pagesAjax.generateRequest(),this.community.CommunityHeaderImages&&this.community.CommunityHeaderImages.length>0&&this.$.page.setupTopHeaderImage(this.community.CommunityHeaderImages);this._communityHeaderUrl(this.community);this.setupGroups(this.community.Groups),Polymer.Base.async(function(){var e=this.$$("#communityCard");e&&(e.setElevation(5),e.lowerCardLater())},20),0===t.response.Groups.length?this.communityEmpty=!0:this.communityEmpty=!1,this.fire("change-header",{headerTitle:this.community.Domain.name,headerDescription:this.community.Domain.description,headerIcon:"group-work",documentTitle:this.community.name,backPath:"/domain/"+this.community.domain_id}),this.activeGroups.length>0?this.hideAdd=!0:this.hideAdd=!1},defaultGroupFirst:function(e){for(var t=[],i=null,n=0;n<e.length;n++){var m=e[n];"default"!=m.short_name?t.push(m):i=m}return t.unshift(i),t},noTestGroup:function(e){for(var t=[],i=0;i<e.length;i++){var n=e[i];"test"!=n.short_name&&"ac-posts"!=n.short_name&&"development"!=n.short_name&&n.short_name.indexOf("2012")==-1&&n.short_name.indexOf("2013")==-1&&t.push(n)}return t},_refresh:function(){this.$$("#ajax").generateRequest()},ready:function(){}});</script>
+</dom-module>
+</body></html>

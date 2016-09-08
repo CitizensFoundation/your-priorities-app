@@ -10,7 +10,6 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-post/yp-post.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-post/yp-post-card.html">
 <link rel="import" href="../yp-post/yp-post-edit.html">
@@ -44,8 +43,6 @@
 
     <yp-ajax id="ajax" url="" on-response="_postsResponse"></yp-ajax>
 
-    <yp-post-edit id="postEdit" on-iron-form-response="_refresh"></yp-post-edit>
-
     <yp-group-edit new="false" id="groupEdit" group="{{group}}" on-iron-form-response="_refresh"></yp-group-edit>
 
     <div class="card-container">
@@ -56,7 +53,6 @@
         </template>
       </template>
       <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>
-      <paper-fab icon="add" z="1" class="createPost" title="[[computeTitle()]]" on-tap="newPost"></paper-fab>
     </div>
   </template>
 
@@ -121,11 +117,6 @@
         } else {
           this.set("posts",null);
         }
-      },
-
-      newPost: function () {
-        window.appGlobals.activity('open', 'newPost');
-        this.$.postEdit.open('new', {groupId: this.groupId});
       },
 
       _postsResponse: function (event, detail, sender) {

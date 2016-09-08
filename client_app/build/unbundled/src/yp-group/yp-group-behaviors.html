@@ -1,0 +1,4 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>Polymer.GroupBehaviors={properties:{group:{type:Object,notify:!0},elevation:{type:Number}},_goToGroup:function(t){var e="/group/"+this.group.id;window.appGlobals.activity("open","group",e),this.redirectTo(e)},groupLogoImagePath:function(t){return this.getImageFormatUrl(t.GroupLogoImages,0)},groupHeaderImagePath:function(t){return this.getImageFormatUrl(t.GroupHeaderImages,0)},groupName:function(t){return t.name?this.truncate(this.trim(t.name),60):t.short_name},groupObjectives:function(t){return t.objectives?this.truncate(this.trim(t.objectives),200,"..."):""}};</script>
+</head><body></body></html>

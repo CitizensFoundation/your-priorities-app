@@ -1,0 +1,53 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<link rel="import" href="../yp-point/yp-point.html">
+
+<link rel="import" href="./ac-activity-post-header.html">
+
+</head><body><dom-module id="ac-activity-post-status-update">
+  <template>
+    <style>
+      :host {
+        padding-top: 24px;
+      }
+
+      .statusChange {
+        width: 92%;
+        padding-left: 32px;
+        padding-right: 32px;
+        padding-top: 8px;
+        font-size: 19px;
+      }
+
+      .postName {
+        padding-left: 32px;
+        font-weight: bold;
+        font-size: 19px;
+      }
+
+      .groupName {
+        padding-left: 32px;
+        padding-top: 2px;
+        font-size: 14px;
+        padding-bottom: 8px;
+      }
+    </style>
+
+    <div class="layout vertical">
+      <div class="postName">
+        [[activity.Post.name]]
+      </div>
+      <div class="groupName">
+        [[activity.Group.name]]
+      </div>
+      <div id="statusChange" class="statusChange"></div>
+    </div>
+  </template>
+
+  <script>Polymer({is:"ac-activity-post-status-update",behaviors:[Polymer.appHelpers],properties:{activity:{type:Object,observer:"_activityChanged"}},_activityChanged:function(t){if(t){var e=this.formatContent(t.PostStatusChange);this.$.statusChange.innerHTML=e}},formatContent:function(t){if(t&&t.content){var e=this.truncate(this.trim(t.content),5e5,"...");return e.replace(/(\r\n|\n|\r)/g,"<br />")}return""}});</script>
+</dom-module>
+</body></html>

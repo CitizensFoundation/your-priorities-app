@@ -1,0 +1,9 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+</head><body><dom-module id="yp-session">
+  <template>
+  </template>
+  <script>Polymer({is:"yp-session",properties:{prefix:{type:String,value:"session_",readOnly:!0},storage:{type:Object,value:function(){return window.localStorage}}},has:function(t){var e=this.prefix+t,r=this.storage.getItem(e);return null!==r},get:function(t){var e,r=this.prefix+t,s=this.storage.getItem(r);try{e=JSON.parse(s)}catch(t){e=null}return e},set:function(t,e){var r=this.prefix+t,s=JSON.stringify(e);this.storage.setItem(r,s)},unset:function(t){var e=this.prefix+t;this.storage.removeItem(e)},clear:function(){this.storage.clear()}});</script>
+</dom-module>
+</body></html>

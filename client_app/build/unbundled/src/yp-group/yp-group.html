@@ -1,0 +1,134 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
+<link rel="import" href="../ac-activities/ac-activities.html">
+<link rel="import" href="../yp-page/yp-page.html">
+
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+<link rel="import" href="../yp-post/yp-post-card.html">
+<link rel="import" href="../yp-post/yp-post-edit.html">
+<link rel="import" href="../yp-post/yp-post-card-add.html">
+
+<link rel="import" href="../yp-posts-filter/yp-posts-filter.html">
+<link rel="import" href="../yp-post/yp-post-list.html">
+<link rel="import" href="../yp-post/yp-post-map.html">
+<link rel="import" href="../yp-theme/yp-theme-behavior.html">
+
+<link rel="import" href="yp-group-card-large.html">
+
+</head><body><dom-module id="yp-group">
+  <template>
+    <style>
+      .objectives {
+        padding-bottom: 40px;
+        max-width: 432px;
+      }
+
+      .description {
+        padding: 12px;
+      }
+
+      yp-ajax {
+        background-color: var(--primary-background-color);
+      }
+
+      .counterInfo {
+        font-size: 11px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
+
+      <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
+
+      <div class="largeAddButton">
+        <yp-post-card-add on-new-post="_newPost" elevation="2" hidden$="[[!createFabIcon]]"></yp-post-card-add>
+      </div>
+
+      <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
+        <template is="dom-if" if="[[group]]">
+          <paper-tab id="tab1">
+            <div class="layout vertical center-center tabCounterContainer">
+              <span>[[t('posts.open')]]</span><div class="counterInfo" id="tabCountOpen"></div>
+            </div>
+          </paper-tab>
+          <paper-tab>[[t('news')]]</paper-tab>
+          <template is="dom-if" if="[[hasNonOpenPosts]]">
+            <paper-tab>
+              <div class="layout vertical center-center tabCounterContainer">
+                <span>[[t('posts.inProgress')]]</span><div class="counterInfo" id="tabCountInProgress"></div>
+              </div>
+            </paper-tab>
+            <paper-tab>
+              <div class="layout vertical center-center tabCounterContainer">
+                <span>[[t('posts.successful')]]</span><div class="counterInfo" id="tabCountSuccessful"></div>
+              </div>
+            </paper-tab>
+            <paper-tab>
+              <div class="layout vertical center-center tabCounterContainer">
+                <span>[[t('posts.failed')]]</span><div class="counterInfo" id="tabCountFailed"></div>
+              </div>
+            </paper-tab>
+          </template>
+          <paper-tab>[[t('posts.map')]]</paper-tab>
+        </template>
+      </paper-tabs>
+
+      <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <section>
+          <div class="layout horizontal center-center">
+            <yp-post-list id="openPostList" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+          </div>
+        </section>
+        <section>
+          <ac-activities id="groupActivities" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
+        </section>
+        <template is="dom-if" if="[[hasNonOpenPosts]]">
+          <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list id="inProgressPostList" selected-tab="[[selected]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+            </div>
+          </section>
+          <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list id="successfulPostList" selected-tab="[[selected]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+            </div>
+          </section>
+          <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list id="failedPostList" selected-tab="[[selected]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+            </div>
+          </section>
+        </template>
+        <section>
+          <template is="dom-if" if="[[mapActive]]" restamp="">
+            <yp-post-map group-id="[[group.id]]"></yp-post-map>
+          </template>
+        </section>
+      </iron-pages>
+    </yp-page>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax large-spinner="" id="ajax" on-response="_groupsResponse"></yp-ajax>
+      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+    </div>
+
+  </template>
+
+  <script>Polymer({is:"yp-group",behaviors:[Polymer.appHelpers,Polymer.ypThemeBehavior],listeners:{"yp-post-count":"_updateTabPostCount"},properties:{createFabIcon:{type:String,value:null,notify:!0},groupId:{type:Number,observer:"_groupIdChanged"},group:{type:Object,notify:!0,value:null},hideAdd:{type:Boolean,value:!0},searchingFor:{type:String,value:null},selected:{type:Number,value:0,observer:"_selectedChanged"},hasNonOpenPosts:{type:Boolean,value:!1},groupTabName:{type:String,value:null,observer:"_tabNameChanged"},mapActive:{type:Boolean,value:!1},lastValidGroupId:{type:String}},_tabNameChanged:function(e){e&&this._setSelectedFromTabName(e)},_setSelectedFromTabName:function(e){e&&("open"==e?this.set("selected",0):"news"==e?this.set("selected",1):this.hasNonOpenPosts?"in_progress"==e?this.set("selected",2):"successful"==e?this.set("selected",3):"failed"==e?this.set("selected",4):"map"==e&&this.set("selected",5):"map"==e&&this.set("selected",2))},_selectedChanged:function(e,t){this.group&&e!=t&&(0==e&&this.$$("#openPostList")?this.redirectTo(this.$$("#openPostList").buildPostsUrlPath()):1==e?this.redirectTo("/group/"+this.group.id+"/news"):this.hasNonOpenPosts&&this.$$("#inProgressPostList")?2==e?this.redirectTo(this.$$("#inProgressPostList").buildPostsUrlPath()):3==e?this.redirectTo(this.$$("#successfulPostList").buildPostsUrlPath()):4==e?this.redirectTo(this.$$("#failedPostList").buildPostsUrlPath()):5==e&&this.redirectTo("/group/"+this.group.id+"/map"):2==e&&this.redirectTo("/group/"+this.group.id+"/map")),(e==this.hasNonOpenPosts?5:2)?this.set("mapActive",!0):this.set("mapActive",!1)},_isTab:function(e,t){return t==e},_updateTabPostCount:function(e,t){var s=this.$$("#"+t.tabCounterId);s&&(s.innerHTML=this.formatNumber(t.count))},_searchingForChanged:function(e,t){},_filterChanged:function(e,t){},_categoryIdChanged:function(e,t){},_openEdit:function(){this.$$("#groupEdit").open("edit",{groupId:this.group.id})},_refresh:function(){this.$.ajax.generateRequest(),this.$$("#groupActivities").loadNewData()},ready:function(){},_groupIdChanged:function(e,t){e&&e!=this.lastValidGroupId&&(this.set("lastValidGroupId",e),this._getGroup())},_getGroup:function(){this.$.ajax.url="/api/groups/"+this.groupId,this.$.ajax.retryMethodAfter401Login=this._getGroup.bind(this),this.$.ajax.generateRequest()},_pagesResponse:function(e,t){this.fire("yp-set-pages",t.response)},_groupsResponse:function(e,t,s){this.set("group",t.response.group),this.group.configuration&&void 0!=this.group.configuration.canAddNewPosts?this.group.configuration.canAddNewPosts===!0&&this.set("createFabIcon","lightbulb-outline"):this.set("createFabIcon","lightbulb-outline"),this.fire("yp-set-home-link",{type:"group",id:this.group.id,name:this.group.name}),null!=this.group.theme_id?this.setTheme(this.group.theme_id):null!=this.group.Community.theme_id?this.setTheme(this.group.Community.theme_id):null!=this.group.Community.Domain.theme_id&&this.setTheme(this.group.Community.Domain.theme_id),this.set("hasNonOpenPosts",t.response.hasNonOpenPosts),this.$.pagesAjax.url="/api/groups/"+this.group.id+"/pages",this.$.pagesAjax.generateRequest(),this.group.GroupHeaderImages&&this.group.GroupHeaderImages.length>0&&this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages),this.groupTabName&&this._setSelectedFromTabName(this.groupTabName),this.fire("change-header",{headerTitle:this.group.Community.name,headerDescription:this.group.Community.description,headerIcon:"social:group",documentTitle:this.group.name,enableSearch:!0,backPath:"/community/"+this.group.community_id})},_newPost:function(){window.appGlobals.activity("open","newPost");var e=Polymer.dom(document).querySelector("yp-app").getDialog("postEdit");e.setup(null,this.group,!0,null),e.open("new",{groupId:this.groupId})}});</script>
+</dom-module>
+</body></html>

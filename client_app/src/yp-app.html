@@ -310,27 +310,48 @@
       },
 
       observers: [
-        '_routePageChanged(routeData.page)'
+        '_routePageChanged(routeData.page)',
+        '_routePathChanged(routeData.path)'
       ],
 
       listeners: {
         'yp-set-pages': '_setPages',
-        'yp-set-home-link': '_setHomeLink'
+        'yp-set-home-link': '_setHomeLink',
+        'yp-redirect-to': '_redirectTo'
       },
 
-      _routeChanged: function () {
+      _redirectTo: function (event, detail) {
+        debugger;
+        if (detail.path) {
+          this.set('route.path', detail.path);
+        }
+      },
+
+      _routePathChanged: function(path) {
+        debugger;
+      },
+
+      _routeChanged: function (route) {
+        debugger;
         if (window.location.href.indexOf("/#!/") > -1) {
           window.location = window.location.href.replace("/#!/", "/");
         }
       },
 
       _routePageChanged: function(page) {
-        this.page = page || 'domain';
+        this.page = page;
       },
 
       _pageChanged: function(page) {
-        var resolvedPageUrl = this.resolveUrl('yp-' + page + '/' + 'yp-' + page + '.html');
-        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+        debugger;
+        if (page) {
+          var resolvedPageUrl
+          if (page=="view404") {
+
+          }
+          resolvedPageUrl = this.resolveUrl('yp-' + page + '/' + 'yp-' + page + '.html');
+          this.importHref(resolvedPageUrl, null, this._showPage404, true);
+        }
       },
 
       _showPage404: function() {

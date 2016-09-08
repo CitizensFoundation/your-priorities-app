@@ -1,0 +1,6 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-jsonp-library/iron-jsonp-library.html">
+
+
+<script>Polymer({is:"google-maps-api",behaviors:[Polymer.IronJsonpLibraryBehavior],properties:{mapsUrl:{type:String,value:"https://maps.googleapis.com/maps/api/js?callback=%%callback%%"},apiKey:{type:String,value:""},clientId:{type:String,value:""},version:{type:String,value:"3.exp"},language:{type:String,value:""},signedIn:{type:Boolean,value:!1},notifyEvent:{type:String,value:"api-load"},libraryUrl:{type:String,computed:"_computeUrl(mapsUrl, version, apiKey, clientId, language, signedIn)"}},_computeUrl:function(e,a,t,i,o,r){var n=e+"&v="+a;if(n+="&libraries=drawing,geometry,places,visualization",t&&!i&&(n+="&key="+t),i&&(n+="&client="+i),!t&&!i){var l="No Google Maps API Key or Client ID specified. See https://developers.google.com/maps/documentation/javascript/get-api-key for instructions to get started with a key or client id.";console.warn(l)}return o&&(n+="&language="+o),r&&(n+="&signed_in="+r),n},get api(){return google.maps}});</script>
+</head><body></body></html>

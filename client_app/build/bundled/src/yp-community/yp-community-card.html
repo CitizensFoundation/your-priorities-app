@@ -1,0 +1,205 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="yp-community-stats.html">
+<link rel="import" href="yp-community-behaviors.html">
+<link rel="import" href="../yp-membership-button/yp-membership-button.html">
+
+</head><body><dom-module id="yp-community-card">
+
+  <template>
+    <style>
+      :host {
+        @apply(--layout-vertical);
+      }
+
+      .description {
+        @apply(--layout-vertical);
+        color: var(--primary-color-more-darker, #424242);
+        line-height: var(--description-line-height, 1.3);
+        padding: 8px;
+        margin-top: 4px;
+      }
+
+      .description[featured] {
+        font-size: 18px;
+      }
+
+      .stats {
+        color: var(--primary-color-more-darker, #424242);
+        position: absolute;
+        bottom: 0;
+        right: 8px;
+      }
+
+      .post-image {
+        width: 100%;
+      }
+
+      .communityCard {
+        height: 430px;
+        width: 320px;
+        background-color: #fff;
+        padding: 0;
+        margin: 0;
+      }
+
+      .communityCard[featured] {
+        width: 672px;
+      }
+
+      iron-image {
+        width: 320px;
+        height: 180px;
+      }
+
+      iron-image[featured] {
+        width: 336px;
+        height: 180px;
+      }
+
+      .card-content {
+        padding: 0;
+        padding-bottom: 48px;
+      }
+
+      iron-image {
+        padding: 0;
+        margin: 0;
+      }
+
+      iron-image {
+        padding: 0;
+        margin: 0;
+      }
+
+      paper-card {
+        background-color: #f00;
+        vertical-align: text-top;
+      }
+
+      .informationText {
+        vertical-align: text-top;
+      }
+
+      .community-name {
+        font-size: 26px;
+        margin-top: -4px;
+        height: 56px;
+        padding: 16px;
+        background-color: var(--primary-color-800);
+        color: #FFF;
+        cursor: pointer;
+      }
+
+      yp-membership-button {
+        position: absolute;
+        top: 157px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+        color: var(--icon-general-color, #FFF);
+      }
+
+      yp-membership-button[featured] {
+        position: absolute;
+        top: 146px;
+        right: 55px;
+      }
+
+      @media (max-width: 480px) {
+        :host {
+          width: 304px;
+        }
+
+        .communityCard {
+          margin-right: 8px;
+          heigth: 430px;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
+        }
+
+        iron-image {
+          width: 304px;
+          height: 165px;
+        }
+
+        iron-image[featured] {
+          width: 304px;
+          height: 165px;
+        }
+
+        yp-membership-button {
+          top: 144px;
+        }
+
+        .description {
+          margin-bottom: 32px;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .community-name[featured] {
+          font-size: 26px;
+        }
+
+        .description[featured] {
+          font-size: 16px;
+        }
+
+        .communityCard[featured] {
+          width: 304px;
+        }
+
+        yp-membership-button[featured] {
+          top: 157px;
+          right: 16px;
+        }
+
+        .secondImage {
+          display: none;
+        }
+
+        iron-image[featured] {
+          width: 320px;
+          height: 180px;
+        }
+
+      }
+    </style>
+
+    <template is="dom-if" if="[[community]]">
+      <paper-card featured$="[[featured]]" class="communityCard" animated="" elevation="[[elevation]]">
+        <div class="layout horizontal">
+          <iron-image sizing="cover" featured$="[[featured]]" preload="" src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
+          <iron-image sizing="cover" hidden$="[[!featured]]" featured$="[[featured]]" preload="" src="[[communityLogoImageNextPath(community)]]" class="post-image secondImage"></iron-image>
+        </div>
+        <div class="informationText">
+          <div class="community-name" featured$="[[featured]]" on-tap="_goToCommunity">[[communityName(community)]]</div>
+          <template is="dom-if" if="[[featured]]">
+            <div class="description" featured$="[[featured]]">[[communityDescription(community,700)]]</div>
+          </template>
+          <template is="dom-if" if="[[!featured]]">
+            <div class="description">[[communityDescription(community)]]</div>
+          </template>
+        </div>
+        <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+        <yp-membership-button featured$="[[featured]]" large$="[[featured]]" community="[[community]]"></yp-membership-button>
+      </paper-card>
+    </template>
+  </template>
+
+  <script>Polymer({is:"yp-community-card",behaviors:[Polymer.appHelpers,Polymer.CommunityBehaviors],properties:{featured:{type:Boolean,value:!1}}});</script>
+</dom-module>
+</body></html>

@@ -1,0 +1,151 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+</head><body><dom-module id="yp-posts-filter">
+  <template>
+    <style>
+      :host {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+      }
+
+      .filterIcon {
+        padding-right: 16px;
+      }
+
+      .filterIconTransform {
+        -moz-transform: scaleY(-1);
+        -o-transform: scaleY(-1);
+        -webkit-transform: scaleY(-1);
+        transform: scaleY(-1);
+        filter: FlipV;
+        -ms-filter: "FlipV";
+      }
+
+      .dropdown-trigger iron-icon {
+        width: 42px;
+        height: 42px;
+      }
+
+      .clear-search-trigger {
+        width: 42px;
+        height: 42px;
+        margin-top: 12px;
+      }
+
+      .clear-search-trigger iron-icon {
+        width: 42px;
+        height: 42px;
+      }
+
+      paper-item {
+        min-height: 32px;
+      }
+
+      .subTitle {
+        font-size: 24px;
+      }
+
+      #filterDropdown {
+        padding-left: 0;
+        margin-left: 0;
+      }
+
+      @media (max-width: 600px) {
+        .subTitle {
+          font-size: 18px;
+        }
+
+        .dropdown-trigger {
+          padding-left: 0;
+          margin-left: 0;
+        }
+
+        .clear-search-trigger {
+          width: 40px;
+          height: 40px;
+          margin-top: 5px;
+        }
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <template is="dom-if" if="[[group]]">
+      <div class="layout horizontal mainContainer">
+        <template is="dom-if" if="[[searchingFor]]">
+          <paper-icon-button icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
+        </template>
+        <template is="dom-if" if="[[showFilter]]">
+          <paper-menu-button id="filterDropdown" class="selected-items" icon="editor:merge-type" vertical-align="bottom" horizontal-align="left">
+            <paper-icon-button id="dropDownTrigger" icon="filter-list" class="dropdown-trigger"></paper-icon-button>
+            <div class="layout horizontal dropdown-content">
+              <div>
+                <paper-menu class="dropdown-content" on-iron-select="_changeFilter">
+                  <paper-item data-filter="top">
+                    <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
+                    <span>[[t('post.top')]]</span>
+                  </paper-item>
+                  <paper-item data-filter="newest">
+                    <iron-icon icon="av:new-releases" class="filterIcon"></iron-icon>
+                    <span>[[t('post.newest')]]</span>
+                  </paper-item>
+                  <paper-item data-filter="random">
+                    <iron-icon icon="cached" class="filterIcon"></iron-icon>
+                    <span>[[t('post.random')]]</span>
+                  </paper-item>
+                </paper-menu>
+              </div>
+
+              <template is="dom-if" if="[[_ifCategories()]]">
+                <div>
+                  <paper-menu id="clearMenu" class="dropdown-content" on-iron-select="_changeCategory">
+                    <paper-item data-category-id="-1">
+                      <iron-icon icon="select-all" class="filterIcon"></iron-icon>
+                      <span>[[t('categories.all')]]</span>
+                    </paper-item>
+                  </paper-menu>
+                  <div class="layout= horizontal">
+                    <template is="dom-repeat" items="[[_categoryItems()]]" as="categoriesGroups">
+                      <div class="layout vertical">
+                        <paper-menu id="categoryMenu" class="dropdown-content" on-iron-select="_changeCategory">
+                          <template is="dom-repeat" items="[[categoriesGroups]]" as="category">
+                            <paper-item data-category-id$="[[category.id]]" data-category-name$="[[category.name]]">
+                              <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
+                              <span>[[category.name]]</span>
+                            </paper-item>
+                          </template>
+                        </paper-menu>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </paper-menu-button>
+        </template>
+        <div on-tap="_openDropDown" style="cursor: pointer">
+          <h2 class="subTitle">[[subTitle]]</h2>
+        </div>
+      </div>
+    </template>
+  </template>
+  <script>Polymer({is:"yp-posts-filter",behaviors:[Polymer.appHelpers],properties:{filter:{type:String,value:"newest",notify:!0,observer:"_filterChanged"},filterName:{type:String},categoryId:{type:String,notify:!0,observer:"_categoryIdChanged"},categoryName:{type:String},group:{type:Object,observer:"_groupChanged"},subTitle:{type:String,value:""},searchingFor:{type:String,value:null,notify:!0,observer:"_searchingForChanged"},showFilter:{type:Boolean,value:!0},postsCount:{type:Number,notify:!0},tabName:{type:String}},_openDropDown:function(){var t=this.$$("#dropDownTrigger");t&&t.click()},_searchingForChanged:function(t,e){t?this.showFilter=!1:this.showFilter=!0},_clearSearch:function(){this.set("searchingFor",null),this.set("filter","newest"),this._updateAfterFiltering()},openFilter:function(){window.appGlobals.activity("open","filter")},_filterChanged:function(t,e){t&&(this.filterName="post."+this.filter,this._updateTitle())},_categoryIdChanged:function(t,e){t&&this._updateTitle()},searchFor:function(t){this.set("searchingFor",t);var e="/group/"+this.group.id+"/open/"+this.group.name+"/search/"+this.searchingFor;window.appGlobals.activity("change","filter",e),this.redirectTo(e),this.fire("refresh-group")},_updateTitle:function(){if(this.searchingFor)this.subTitle=this.t("post.searchingFor")+this.searchingFor;else{var t,e=this.t(this.filterName);t=this.categoryName?this.categoryName:this.t("categories.all");var i=this.t("short_word.in");this._ifCategories()?(this.subTitle=e+" "+i+" "+t,this.postsCount&&(this.subTitle+=" ("+this.postsCount+")")):this.subTitle=e}},_changeFilter:function(t,e){this.set("filter",e.item.dataset.filter),this._updateAfterFiltering()},_changeCategory:function(t,e){var i=e.item.dataset.categoryId;"-1"!=i?(this.set("categoryId",i),this.categoryName=e.item.dataset.categoryName):(this.set("categoryId",null),this.categoryName=null,this.$$("#categoryMenu").selected=null,this.$$("#clearMenu").selected=null),this._updateTitle(),this._updateAfterFiltering()},buildPostsUrlPath:function(){var t="/group/"+this.group.id+"/"+this.tabName;return this.filter&&(t+="/posts/"+this.filter),this.categoryId&&(t+="/"+this.categoryId+"/"+this.categoryName),t},_updateAfterFiltering:function(){this.filter||this.set("filter","newest");var t=this.buildPostsUrlPath();window.appGlobals.activity("change","filter",t),this.fire("refresh-group")},_ifCategories:function(){return!!this.group&&(this.group.Categories&&this.group.Categories.length>0)},_groupChanged:function(t,e){t&&this._updateTitle()},_categoryItems:function(){return this.group.Categories?this.splitArray(this.group.Categories,7):[]},_categoryImageSrc:function(t){return this.getImageFormatUrl(t.CategoryIconImages,0)}});</script>
+</dom-module>
+</body></html>

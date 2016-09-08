@@ -1,0 +1,38 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+</head><body><dom-module id="yp-ajax">
+  <style>
+    :host {
+
+    }
+
+    .large {
+      height: 64px !important;
+      width: 64px !important;
+      --paper-spinner-stroke-width: 7px;
+    }
+
+    paper-spinner {
+      background: transparent;
+    }
+  </style>
+  <template>
+
+    <paper-spinner id="spinner" hidden$="[[!useSpinner]]"></paper-spinner>
+
+    <iron-ajax id="ajax" url="[[url]]" params="[[params]]" auto="[[auto]]" method="[[method]]" body="[[body]]" handle-as="json" content-type="application/json" on-error="_error" on-response="_response" loading="{{loading}}">
+    </iron-ajax>
+
+  </template>
+
+</dom-module>
+
+<script>!function(){Polymer({is:"yp-ajax",behaviors:[Polymer.appHelpers],properties:{url:{type:String,value:""},method:{type:String,value:"GET"},loading:{type:Boolean},params:{type:Object,value:{}},body:{type:Object,notify:!0},auto:{type:Boolean,value:!1},errorText:{type:String,value:""},useDialog:{type:Boolean,value:!0,notify:!0},useSpinner:{type:Boolean,value:!0},largeSpinner:{type:Boolean,value:!1},dispatchError:{type:Boolean,value:!1},retryMethodAfter401Login:{type:Function,value:null}},_response:function(e){this.$.spinner.active=!1,this.fire("response",e.detail)},ready:function(){this.auto&&(this.$.spinner.active=!0),this.largeSpinner&&this.$.spinner.toggleClass("large",!0)},_error:function(e){this.$.spinner.active=!1,this.dispatchError?e.detail.request.xhr.response&&e.detail.request.xhr.response.error?this.fire("error",e.detail.request.xhr.response.error):e.detail.request.xhr.response&&e.detail.request.xhr.response.message?this.fire("error",e.detail.request.xhr.response.message):e.detail.request.xhr.statusText?this.fire("error",e.detail.request.xhr.statusText):this.fire("error",e.detail.error):e.detail.error&&e.detail.error.message&&this._is401(e.detail.error.message)&&!window.appUser.user&&this.retryMethodAfter401Login?window.appUser.loginFor401(this.retryMethodAfter401Login):this.useDialog&&this.showErrorDialog(e.detail.error)},_is401:function(e){return e&&e.indexOf("status code: 401")>-1},generateRequest:function(){this.$.spinner.active=!0,this.$.ajax.generateRequest()},setBody:function(e){this.$.ajax.body=e},_transformErrorText:function(e){return e&&e.indexOf("status code: 404")>-1?this.t("errorNotFound"):e&&e.indexOf("status code: 500")>-1?this.t("generalError"):e&&e.indexOf("status code: 401")>-1?this.t("errorNotAuthorized"):e&&e.indexOf("503")>-1?this.t("errorCantConnect"):e},showErrorDialog:function(e){var r;r=e.message?e.message:e;var t=Polymer.dom(document).querySelector("yp-app").getDialog("errorDialog");t.showErrorDialog(this._transformErrorText(r))},_resetErrorText:function(e){var r=Polymer.dom(document).querySelector("yp-app").getDialog("errorDialog");r.resetErrorText()}})}();</script>
+
+</body></html>

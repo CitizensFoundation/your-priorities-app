@@ -1,0 +1,128 @@
+<!DOCTYPE html><html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-list/iron-list.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-item/paper-item-body.html">
+<link rel="import" href="../paper-styles/paper-styles.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../neon-animation/neon-animated-pages.html">
+<link rel="import" href="../neon-animation/neon-animatable.html">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+
+
+</head><body><dom-module id="paper-filter-dialog">
+
+	<template>
+
+		<style>
+			.dialog {
+		    	@apply(--paper-filter-dialog);
+		    	--paper-dialog-background-color: var(--paper-filter-dialog-background-color);
+			}
+
+			paper-toolbar {
+				@apply(--paper-filter-toolbar);
+				--paper-toolbar-background: var(--paper-filter-toolbar-background);
+			}
+
+			.dialog,.animated {
+				@apply(--layout-fit);
+			}
+
+			.animated {
+				margin: 0;
+			}
+
+			.filters,.value {
+				background: white;
+			}
+
+			.filter {
+				border-bottom: 1px solid var(--divider-color);
+			}
+
+			.filter,.value {
+				cursor: pointer;
+			}
+
+			/** Workaround for IE11 to center column */
+			.filter-body {
+				height: 1px;
+			}
+
+			/**
+			 * Workaround for IE11 to center column
+			 * @see https://github.com/PolymerElements/paper-item/pull/65/commits/b41815d6f147a52755fc6db188a3f32a329640ee
+			 */
+			.value-holder {
+				@apply(--layout-vertical);
+			}
+
+			.nrResults {
+				color: var(--secondary-text-color);
+			}
+		</style>
+
+		<paper-dialog id="dialog" class="dialog" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+			<array-selector id="selector" items="{{filters}}" selected="{{_selectedFilter}}"></array-selector>
+
+			<neon-animated-pages class="animated" selected="[[_getSelectedPage(_selectedFilter)]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+				<neon-animatable>
+					<paper-header-panel mode="seamed">
+					  	<paper-toolbar>
+							<paper-icon-button on-tap="close" icon="close"></paper-icon-button>
+							<span class="title"></span>
+							<paper-button on-tap="_tapReset" class="reset" hidden$="[[!_hasSelectedFilters(_selectedFilters,_forceRedrawDummy)]]">[[resetButton]]</paper-button>
+							<paper-button on-tap="_tapApply" dialog-confirm="">[[saveButton]]</paper-button>
+					    </paper-toolbar>
+
+						<div class="filters">
+							<template is="dom-repeat" items="[[filters]]" as="filter">
+								<paper-item class="filter" on-tap="_tapSelectFilter">
+									<paper-ripple fit=""></paper-ripple>
+									<paper-item-body two-line="" class="filter-body">
+										<div class="name">[[filter.name]]</div>
+										<div secondary="">[[_getSelectedValuesNames(filter,_selectedFilters,_forceRedrawDummy)]]</div>
+									</paper-item-body>
+								</paper-item>
+							</template>
+						</div>
+					</paper-header-panel>
+				</neon-animatable>
+
+				<neon-animatable>
+			    	<paper-header-panel mode="seamed">
+					    <paper-toolbar>
+					    	<paper-icon-button icon="arrow-back" on-tap="_tapSelectValues"></paper-icon-button>
+						    <span class="title">[[_selectedFilter.name]]</span>
+						</paper-toolbar>
+
+						<iron-list id="valuesList" items="[[_selectedFilter.values]]" as="filterValue" selection-enabled="" multi-selection="">
+							<template>
+								<div class="value-holder">
+									<paper-item class="value">
+										<paper-checkbox name="[[filterValue.id]]" checked="{{selected}}"></paper-checkbox>
+										<div>
+											[[filterValue.name]]
+											<span class="nrResults" hidden="[[!filterValue.count]]">([[filterValue.count]])</span>
+										</div>
+									</paper-item>
+								</div>
+							</template>
+						</iron-list>
+					</paper-header-panel>
+				</neon-animatable>
+			</neon-animated-pages>
+		</paper-dialog>
+	</template>
+</dom-module>
+
+<script>!function(){Polymer({is:"paper-filter-dialog",properties:{filters:Array,selectedFilters:{type:Object,notify:!0,value:{}},resetButton:{type:String,value:"Reset"},saveButton:{type:String,value:"Save filters"},noValuesLabel:{type:String,value:"No filters yet"},_selectedFilters:{type:Object,value:{}},_selectedFilter:Object,_forceRedrawDummy:{type:Number,value:0}},open:function(){Polymer.dom(document.body).appendChild(this),setTimeout(function(){this.$.dialog.open(),this._selectedFilters={};for(var e in this.selectedFilters)this._selectedFilters[e]=this.selectedFilters[e];this._redrawFilterValues(),this.$.valuesList.fire("iron-resize")}.bind(this),1)},close:function(){this.$.dialog.close()},_tapSelectFilter:function(e){this.$.selector.select(e.model.filter),this._preselectFilterValues()},_preselectFilterValues:function(){var e=this._selectedFilters[this._selectedFilter.id];"undefined"!=typeof e&&"undefined"!=typeof this._selectedFilter.values&&(this.$.valuesList.clearSelection(),this._selectedFilter.values.forEach(function(t){e.indexOf(t.id)>=0&&this.$.valuesList.selectItem(t)}.bind(this)))},_tapReset:function(e){this._selectedFilters={},this._redrawFilterValues()},_tapApply:function(e){this.selectedFilters=this._selectedFilters,this.fire("save")},_tapSelectValues:function(e){var t=[];this.$.valuesList.selectedItems.forEach(function(e){t.push(e.id)}),this._selectedFilters[this._selectedFilter.id]=t,this.$.selector.deselect(this._selectedFilter),this._redrawFilterValues()},_hasSelectedFilters:function(e,t){for(selectedFilter in e)if(e[selectedFilter].length>0)return!0;return!1},_getSelectedValuesNames:function(e,t,i){var s=t[e.id];if("undefined"==typeof e.values||"undefined"==typeof s)return this.noValuesLabel;var l=[];return e.values.forEach(function(e){s.indexOf(e.id)>=0&&l.push(e.name)}),0===l.length?this.noValuesLabel:l.join(", ")},_redrawFilterValues:function(){this._forceRedrawDummy=Math.random()},_getSelectedPage:function(e){return e?1:0}})}();</script>
+</body></html>

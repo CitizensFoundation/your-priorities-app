@@ -1,0 +1,146 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
+<link rel="import" href="../yp-user/yp-user-image.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+
+<link rel="import" href="yp-point-news-story-embed.html">
+
+</head><body><dom-module id="yp-point-news-story-edit">
+
+  <template>
+
+    <style>
+      :host {
+        width: 100%;
+        height: 100%;
+        margin-top: 32px;
+      }
+
+      paper-material {
+        background-color: #FFF;
+      }
+
+      paper-textarea {
+        width: 720px;
+        padding-right: 8px;
+        padding-top: 16px;
+      }
+
+      paper-button {
+        margin-top: 16px;
+        background-color: var(--accent-color);
+        color: #FFF;
+      }
+
+      .embedData {
+        padding-top: 24px;
+        max-width: 695px;
+      }
+
+      .userImage {
+        padding-bottom: 32px;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      paper-icon-button {
+        margin-top: 16px;
+        padding-bottom: 0;
+      }
+
+      paper-icon-button::shadow #icon {
+        width: 36px;
+        height: 36px;
+        color: #777;
+      }
+
+      .container {
+        width: 100%;
+      }
+
+      @media (max-width: 720px) {
+        paper-textarea {
+          width: 450px;
+        }
+
+        .embedData {
+          max-width: 450px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        paper-textarea {
+          width: 280px;
+        }
+
+        .embedData {
+          max-width: 280px;
+        }
+
+        :host {
+          margin-top: 16px;
+        }
+      }
+
+      @media (max-width: 320px) {
+        paper-textarea {
+          width: 240px;
+        }
+
+        .embedData {
+          max-width: 240px;
+        }
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div elevation="3" class="container">
+      <div class="layout vertical">
+        <div class="layout horizontal center-center">
+          <yp-user-image class="userImage" user="[[loggedInUser]]"></yp-user-image>
+          <div class="layout vertical">
+            <paper-textarea id="pointNewsStory" required="" minlength="15" name="pointNewsStory" value="{{point.content}}" label="[[t('point.addNewsStory')]]" char-counter="" rows="2" max-rows="5" on-keydown="_keyDown" maxlength="500">
+            </paper-textarea>
+            <div class="layout horizontal end-justified">
+              <paper-button raised="" on-tap="_sendStory">[[t('point.postNewsStory')]]</paper-button>
+            </div>
+          </div>
+        </div>
+
+        <div class="layout horizontal center-center">
+          <template is="dom-if" if="[[point.embed_data]]">
+            <div class="embedData layout vertical center-center">
+              <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
+              <paper-icon-button icon="clear" on-tap="_clearEmbed"></paper-icon-button>
+            </div>
+          </template>
+        </div>
+
+        <div class="layout horizontal center-center">
+          <yp-ajax id="urlPreviewAjax" url="/api/points/url_preview" hidden$="[[point.embed_detail]]" on-response="_urlPreviewResponse"></yp-ajax>
+          <yp-ajax id="postNewsStoryAjax" method="POST" on-response="_newsStoryResponse"></yp-ajax>
+        </div>
+
+      </div>
+    </div>
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+  </template>
+
+  <script>Polymer({is:"yp-point-news-story-edit",properties:{loadingUrlPreview:{type:Boolean,notify:!0},loadingPostStory:{type:Boolean,notify:!0},point:{type:Object,notify:!0},postId:{type:Number},postGroupId:{type:Number},groupId:{type:Number},communityId:{type:Number},domainId:{type:Number}},behaviors:[Polymer.appHelpers,Polymer.ypLoggedInUserBehavior],ready:function(){this._reset(),this.$.pointNewsStory.addEventListener("paste",function(){this.async(function(){this._checkForUrl()},50)}.bind(this))},_reset:function(){this.set("point",{content:""})},_sendStory:function(){var t={point:this.point};this.point.content&&this.point.content.length>2?(this.postId&&this.postGroupId?(_.merge(t,{post_id:this.postId}),this.$.postNewsStoryAjax.url="/api/groups/"+this.postGroupId+"/post/news_story"):this.groupId?(_.merge(t,{group_id:this.groupId}),this.$.postNewsStoryAjax.url="/api/groups/"+this.groupId+"/news_story"):this.communityId?(_.merge(t,{community_id:this.communityId}),this.$.postNewsStoryAjax.url="/api/communities/"+this.communityId+"/news_story"):this.domainId?(this.$.postNewsStoryAjax.url="/api/domains/"+this.domainId+"/news_story",_.merge(t,{domain_id:this.domainId})):console.error("Can't find send ids"),this.$.postNewsStoryAjax.body=t,this.$.postNewsStoryAjax.generateRequest()):this.$.postNewsStoryAjax.showErrorDialog(this.t("point.commentToShort"))},_urlPreviewResponse:function(t,e){e.response&&e.response.length>0&&this.set("point.embed_data",e.response[0])},_newsStoryResponse:function(){this.fire("refresh"),this._reset()},_keyDown:function(t){"Space"!=t.code&&"enter"!=t.code||this._checkForUrl(t)},_clearEmbed:function(){this.set("point.embed_data",null)},_checkForUrl:function(t){if(!this.point.embed_data){var e=/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi,o=/((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi,s=(e.exec(this.point.content),o.exec(this.point.content));s&&s.length>0&&(this.$.urlPreviewAjax.params={url:s[0]},this.$.urlPreviewAjax.generateRequest())}}});</script>
+</dom-module>
+</body></html>

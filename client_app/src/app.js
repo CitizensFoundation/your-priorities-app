@@ -8,7 +8,7 @@
 
   console.log("Have created event listener");
 
-// Listen to message from child window
+  // Listen to message from child window
   eventer(messageEvent,function(e) {
     if (e.data=='samlLogin' && window.appUser) {
       window.appUser.loginFromSaml();
@@ -103,10 +103,8 @@
 
   if (window.location.hostname.indexOf('betrireykjavik') > -1) {
     setupLocale('is');
-    setupBetterReykjavikSplash();
   } else if (window.location.hostname.indexOf('betraisland') > -1) {
     setupLocale('is');
-    setupBetterIcelandSplash();
   } else {
     if (window.location.hostname.indexOf('forbrukerraadet') > -1) {
       setupLocale('no');
@@ -123,7 +121,6 @@
     } else {
       setupLocale('en');
     }
-    setupYourPrioritiesSplash();
   }
 
   function onSplashClick() {

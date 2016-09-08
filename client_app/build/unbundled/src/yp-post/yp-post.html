@@ -1,0 +1,392 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
+
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
+<link rel="import" href="../../bower_components/google-map/google-map-search.html">
+
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../yp-page/yp-page.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<link rel="import" href="../ac-activities/ac-activities.html">
+<link rel="import" href="../yp-theme/yp-theme-behavior.html">
+
+<link rel="import" href="yp-post-card.html">
+<link rel="import" href="yp-post-header.html">
+<link rel="import" href="yp-post-points.html">
+<link rel="import" href="yp-post-actions.html">
+<link rel="import" href="yp-post-users.html">
+<link rel="import" href="yp-post-cover-media.html">
+<link rel="import" href="yp-post-user-images.html">
+
+</head><body><dom-module id="yp-post">
+  <template>
+    <style>
+      :host {
+      }
+
+      .container {
+        padding-top: 0;
+        margin-top: -70px;
+        height: 100%;
+      }
+
+      .flex {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
+      .centerContainer {
+        @apply(--layout-center-center);
+      }
+
+      .postHeader {
+        padding: 16px;
+        background-color: #fefefe;
+        width: 940px;
+      }
+
+      yp-post-cover-media {
+        width: 420px !important;
+        height: 232px !important;
+      }
+
+      .statusHeader {
+        padding: 16px;
+        background-color: #fefefe;
+        width: 940px;
+        margin-top: 16px;
+        height: 48px;
+      }
+
+      .description {
+        width: 510px;
+        padding-left: 24px;
+      }
+
+      yp-post-actions {
+        width: 270px;
+      }
+
+      ac-activities {
+        padding-top: 8px;
+      }
+
+      .statusColumn {
+        width: 670px;
+        padding-bottom: 16px;
+      }
+
+      .mainPage {
+        background-color: #FFF;
+      }
+
+      yp-post-user-images {
+        padding-top: 32px;
+      }
+
+      @media (max-width: 961px) {
+        .postHeader {
+          width: 600px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .postHeader {
+          width: 400px;
+        }
+      }
+
+
+      .createFab {
+        background-color: var(--accent-color);
+        color: var(--icon-general-color, #FFF);
+        position: fixed;
+        bottom: 24px;
+        right: 28px;
+      }
+
+      .createFab[wide-layout] {
+        width: 72px;
+        height: 72px;
+      }
+
+      .createFabContainer[wide-layout] .createFab {
+      }
+
+      paper-fab[wide-layout]::shadow #icon {
+        width: 40px;
+        height: 40px;
+      }
+
+      @media (max-width: 360px) {
+
+        .centerContainer {
+          @apply(--layout-vertical);
+        }
+
+        .postHeader {
+          height: 100%;
+          width: 360px;
+          padding: 0;
+        }
+
+        .tabsMaterial {
+          width: 360px;
+        }
+
+        yp-post-cover-media {
+          width: 320px !important;
+          height: 181px !important;
+          padding-top: 16px;
+          padding-left: 20px;
+        }
+
+        .statusHeader {
+          width: 360px;
+          height: 120px;
+          padding: 0px;
+          padding-left: 20px;
+        }
+
+        .statusColumn {
+          height: 60px;
+          padding: 0px;
+        }
+
+        .description {
+          width: 320px;
+          padding: 8px;
+          padding-left: 20px;
+          padding-bottom: 16px;
+        }
+
+        yp-post-actions {
+          width: 320px;
+          padding-left: 20px;
+        }
+
+        .statusColumn {
+          width: 320px;
+        }
+
+        paper-tab {
+          font-size: 14px;
+        }
+      }
+
+      yp-ajax {
+        background-color: var(--primary-background-color);
+      }
+
+      .mapContainer {
+        margin: 24px;
+        width: 960px;
+        height: 500px;
+      }
+
+      .counterInfo {
+        font-size: 11px;
+      }
+
+      .topContainer {
+        margin-top: 16px;
+      }
+
+      .tabs {
+        margin-top: 64px;
+      }
+
+      @media (max-width: 934px) {
+        .mapContainer {
+          margin: 16px;
+          width: 800px;
+          height: 400px;
+        }
+      }
+
+      @media (max-width: 832px) {
+        .mapContainer {
+          margin: 8px;
+          width: 600px;
+          height: 340px;
+        }
+      }
+
+      @media (max-width: 632px) {
+        .mapContainer {
+          margin: 8px;
+          width: 400px;
+          height: 300px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .mapContainer {
+          margin: 8px;
+          width: 330px;
+          height: 250px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .mapContainer {
+          margin: 8px;
+          width: 280px;
+          height: 200px;
+        }
+      }
+
+
+      .tabs {
+        width: 1100px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      .tabs .tab {
+        width: 250px;
+      }
+
+      @media (max-width: 1024px) {
+        .tabs {
+          max-width: 920px;
+        }
+
+        .tabs .tab {
+          width: 200px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .tabs {
+          max-width: 450px;
+          font-size: 13px !important;
+          word-wrap: break-word !important;
+        }
+
+        .tabs .tab {
+          width: 120px;
+          word-wrap: break-word !important;
+        }
+
+        .topArea {
+          height: 300px;
+        }
+
+        .topArea[is-post] {
+          min-height: 470px;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .tabs {
+          max-width: 330px;
+          font-size: 10px !important;
+        }
+
+        paper-tab {
+          width: 100px;
+          font-size: 10px !important;
+        }
+
+        .topArea[is-post] {
+          min-height: 530px;
+        }
+
+        ac-activities {
+          min-height: 600px !important;
+        }
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
+
+    <div class="topContainer" is-post="" create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
+
+      <yp-post-card id="postCard" class="largeCard" post="[[post]]" on-refresh="_refresh" header-mode=""></yp-post-card>
+
+      <div class="layout horizontal center-center">
+        <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
+          <paper-tab>
+            <div class="layout vertical center-center tabCounterContainer">
+              <span>[[t('post.tabs.debate')]]</span><div class="counterInfo" id="tabCountDebate"></div>
+            </div>
+          </paper-tab>
+          <paper-tab>[[t('post.tabs.news')]]</paper-tab>
+          <paper-tab>[[t('post.tabs.location')]]</paper-tab>
+          <paper-tab>
+            <div class="layout vertical center-center tabCounterContainer">
+              <span>[[t('post.tabs.photos')]]</span><div class="counterInfo" id="tabCountPhotos"></div>
+            </div>
+          </paper-tab>
+        </paper-tabs>
+      </div>
+
+      <iron-pages id="pages" class="tabPages" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <div class="layout horizontal center-center">
+          <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
+        </div>
+        <section>
+          <ac-activities selected-tab="[[selected]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
+        </section>
+        <section>
+          <div class="layout horizontal center-center">
+            <template is="dom-if" if="[[post.location]]" restamp="">
+              <template is="dom-if" if="[[mapActive]]" restamp="">
+                <paper-material class="mapContainer" elevation="3">
+                  <google-map api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" id="map" libraries="places" class="map" map-type="[[post.location.mapType]]" zoom="[[post.location.map_zoom]]" fit-to-markers="">
+                    <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" id="marker"></google-map-marker>
+                  </google-map>
+                </paper-material>
+              </template>
+            </template>
+            <template is="dom-if" if="[[post]]">
+              <template is="dom-if" if="[[!post.location]]">
+                <h1 style="padding-top: 16px">[[t('post.noLocation')]]</h1>
+              </template>
+            </template>
+          </div>
+        </section>
+        <section>
+          <div class="layout vertical flex">
+            <div class="layout horizontal center-center">
+              <yp-post-user-images post="[[post]]"></yp-post-user-images>
+            </div>
+          </div>
+        </section>
+      </iron-pages>
+    </div>
+    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer">
+      <template is="dom-if" if="[[createFabIcon]]">
+        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
+      </template>
+    </div>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+    </div>
+  </template>
+
+  <script>!function(){Polymer({is:"yp-post",behaviors:[Polymer.appHelpers,Polymer.ypThemeBehavior],properties:{postId:{type:Number,value:null,observer:"_postIdChanged"},post:{type:Object,value:null,notify:!0,observer:"_postChanged"},selected:{type:Number,value:0,observer:"selectedChanged"},small:{type:Boolean},method:{type:String},mapActive:{type:Boolean,value:!1},postTabName:{type:String,value:null,observer:"_tabNameChanged"},wideWidth:{type:Boolean,value:!1},createFabIcon:{type:String,value:null}},_newPost:function(){window.appGlobals.activity("open","newPost");var t=Polymer.dom(document).querySelector("yp-app").getDialog("postEdit");t.setup(null,this.post.Group,!0,null),t.open("new",{groupId:this.post.Group.id})},_tabNameChanged:function(t,e){t&&t!=e&&("debate"==t?this.set("selected",0):"news"==t?this.set("selected",1):"location"==t?this.set("selected",2):"photos"==t&&this.set("selected",3))},listeners:{"yp-debate-info":"_updateDebateInfo","yp-post-image-count":"_updatePostImageCount"},_updatePostImageCount:function(t,e){var o=this.$$("#tabCountPhotos");o&&(o.innerHTML=this.formatNumber(e))},_updateDebateInfo:function(t,e){var o=this.$$("#tabCountDebate");o&&(o.innerHTML=this.formatNumber(e.count)),this.$.postCard.updateDescriptionIfEmpty(e.firstPoint.content)},_mainContainerClasses:function(t){return t?"layout horizontal wrap":"layout horizontal center-center"},_headerClasses:function(t){return t?"layout vertical postHeader wrap":"layout horizontal postHeader"},postName:function(t){return t&&t.name?this.truncate(this.trim(t.name),200):t?t.short_name:void 0},postDescription:function(t){return t&&t.description?this.truncate(this.trim(t.description),1e4,"..."):""},_refresh:function(){this.$.ajax.generateRequest()},_postChanged:function(t,e){},_postIdChanged:function(t,e){t?(this.set("post",null),this._getPost()):this.set("post",null)},_getPost:function(){this.$.ajax.url="/api/posts/"+this.postId,this.$$("#ajax").retryMethodAfter401Login=this._getPost.bind(this),this.$.ajax.generateRequest()},_response:function(t,e,o){this.set("post",e.response),null!=this.post.Group.theme_id?this.setTheme(this.post.Group.theme_id):this.post.Group.Community&&null!=this.post.Group.Community.theme_id&&this.setTheme(this.post.Group.Community.theme_id),this.post.Group.configuration&&void 0!=this.post.Group.configuration.canAddNewPosts?this.post.Group.configuration.canAddNewPosts===!0&&this.set("createFabIcon","lightbulb-outline"):this.set("createFabIcon","lightbulb-outline"),null===this.post.description&&(this.post.description=this.post.Points[0].content,this.post.Points.shift()),this.fire("change-header",{headerTitle:this.truncate(this.post.Group.name,80),documentTitle:this.post.name,headerDescription:"",backPath:"/group/"+this.post.group_id})},selectedChanged:function(t,e){0==t?window.appGlobals.activity("open","pointsTab"):1==t?window.appGlobals.activity("open","newsfeedTab"):2==t?window.appGlobals.activity("open","locationTab"):3==t&&window.appGlobals.activity("open","photosTab"),2==t?this.set("mapActive",!0):this.set("mapActive",!1),this.post&&t!=e&&(0==t?this.redirectTo("/post/"+this.post.id+"/debate"):1==t?this.redirectTo("/post/"+this.post.id+"/news"):2==t?this.redirectTo("/post/"+this.post.id+"/location"):3==t&&this.redirectTo("/post/"+this.post.id+"/photos"))},ready:function(){},computeUrl:function(t){return"/api/posts/"+t}})}();</script>
+</dom-module>
+</body></html>

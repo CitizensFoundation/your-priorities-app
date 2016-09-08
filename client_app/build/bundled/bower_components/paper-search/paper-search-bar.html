@@ -1,0 +1,72 @@
+<!DOCTYPE html><html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icons/image-icons.html">
+<link rel="import" href="../iron-input/iron-input.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../paper-badge/paper-badge.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-styles/paper-styles.html">
+
+
+</head><body><dom-module id="paper-search-bar">
+
+	<template>
+		<style>
+			:host {
+				background: var(--background-color, white);
+				display: block;
+				padding: 0 16px;
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+			}
+
+			.input-panel {
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+			}
+
+			.icon {
+				color: var(--disabled-text-color);
+			}
+
+			#input {
+				margin: 0 10px;
+				border: 0;
+				outline: 0;
+				padding: 16px 0;
+				cursor: text;
+			}
+
+			#input[disabled] {
+				background: var(--background-color, white);
+			}
+
+			.badge {
+				--paper-badge-background: var(--paper-red-500);
+				--paper-badge-opacity: 1;
+				--paper-badge-width: 18px;
+				--paper-badge-height: 18px;
+				--paper-badge-margin-left: -15px;
+				--paper-badge-margin-bottom: -15px;
+			}
+		</style>
+
+		<div class="input-panel flex" on-tap="_enable">
+			<iron-icon icon="[[icon]]" class="icon"></iron-icon>
+			<input is="iron-input" id="input" bind-value="{{query}}" placeholder="[[placeholder]]" class="flex" disabled="[[!_enabled]]">
+		</div>
+		<div hidden$="[[hideClearButton]]">
+			<paper-icon-button icon="clear" hidden$="[[!query]]" on-tap="_clear" class="icon"></paper-icon-button>
+		</div>
+		<div hidden$="[[hideFilterButton]]">
+			<paper-icon-button id="filter" icon="image:tune" on-tap="_filter" class="icon"></paper-icon-button>
+			<paper-badge for="filter" label="[[nrSelectedFilters]]" class="badge" hidden$="[[!nrSelectedFilters]]"></paper-badge>
+		</div>
+	</template>
+
+</dom-module>
+
+<script>!function(){Polymer({is:"paper-search-bar",properties:{query:{type:String,notify:!0,value:""},hideFilterButton:{type:Boolean,value:!1},hideClearButton:{type:Boolean,value:!1},nrSelectedFilters:{type:Number,value:0},icon:{type:String,value:"search"},placeholder:{type:String,value:"Search"},_enabled:{type:Boolean,value:!1}},behaviors:[Polymer.IronA11yKeysBehavior],keyBindings:{enter:"_search"},_enable:function(e){this._enabled=!0,this.$.input.focus()},_filter:function(e){this.fire("paper-search-filter")},_clear:function(){this.query="",this.$.input.focus()},_search:function(){this._enabled=!1,this.fire("paper-search-search")}})}();</script>
+</body></html>

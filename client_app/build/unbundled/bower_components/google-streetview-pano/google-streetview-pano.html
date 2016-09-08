@@ -1,0 +1,22 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../google-apis/google-maps-api.html">
+
+
+
+</head><body><dom-module id="google-streetview-pano">
+  <style>
+    :host {
+      display: block;
+    }
+    #pano {
+      height: 100%;
+    }
+  </style>
+  <template>
+    <google-maps-api api-key="{{apiKey}}" version="{{version}}" libraries="{{libraries}}" client-id="{{clientId}}" language="{{language}}" client="" on-api-load="_mapApiLoaded"></google-maps-api>
+    <div id="pano" on-mouseenter="_autoStop" on-mouseleave="_autoUpdate"></div>
+  </template>
+</dom-module>
+
+<script>"use strict";Polymer({is:"google-streetview-pano",properties:{apiKey:String,clientId:String,language:String,libraries:{type:String,value:"places"},version:{type:String,value:"3.exp"},panoId:{type:String,observer:"_panoIdChanged"},position:{type:Object,observer:"_positionChanged"},heading:{type:Number,value:45},pitch:{type:Number,value:-2},zoom:{type:Number,value:1},disableDefaultUi:{type:Boolean,value:!1},disableAutoPan:{type:Boolean,value:!1}},pano:null,rAFid:null,_mapApiLoaded:function(){this.async(function(){this.pano=new google.maps.StreetViewPanorama(this.$.pano,this._getPanoOptions()),this.pano.setVisible(!0),this.disableAutoPan||(this.rAFid=requestAnimationFrame(this.update.bind(this)))})},_getPanoOptions:function(){var t={pano:this.panoId,position:this.position,pov:{heading:this.heading,pitch:this.pitch},disableDefaultUI:this.disableDefaultUi,zoom:this.zoom};return t},update:function(){this.rAFid=requestAnimationFrame(this.update.bind(this));var t=this.pano.getPov();t.heading+=.03,this.pano.setPov(t)},_autoUpdate:function(){this.disableAutoPan||this.update()},reset:function(){var t=this.pano.getPov();t.heading=this.heading,t.pitch=this.pitch,this.pano.setPov(t)},detached:function(){this.stop()},stop:function(){cancelAnimationFrame(this.rAFid)},_autoStop:function(){this.disableAutoPan||this.stop()},_panoIdChanged:function(t,i){this.pano&&(this.pano.setPano(t),this.reset())},_positionChanged:function(t,i){this.pano&&(this.pano.setPosition(t),this.reset())}});</script>
+</body></html>

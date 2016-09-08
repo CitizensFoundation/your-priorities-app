@@ -369,6 +369,15 @@
       }
     },
 
+    getPositionInArrayFromId: function (collection, id) {
+      for(var i = 0; i < collection.length; i++) {
+        if (collection[i].id==id) {
+          return i;
+        }
+      }
+      return null;
+    },
+
     _postChanged: function(newPost, oldPost) {
       if (newPost){
         if (newPost.location) {

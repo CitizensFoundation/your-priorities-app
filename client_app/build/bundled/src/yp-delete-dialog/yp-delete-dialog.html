@@ -1,0 +1,38 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+
+</head><body><dom-module id="yp-delete-dialog">
+  <template>
+    <style>
+      :host {
+        display: block;
+        height: 0;
+      }
+
+      paper-dialog {
+        background-color: #FFF;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-ajax method="DELETE" id="deleteAjax" on-response="_deleteResponse"></yp-ajax>
+    <paper-dialog id="deleteConfirmationDialog">
+      <div>[[confirmationText]]</div>
+      <div class="buttons">
+        <paper-button dialog-dismiss="">[[t('cancel')]]</paper-button>
+        <paper-button dialog-confirm="" on-tap="_delete">[[t('delete')]]</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>Polymer({is:"yp-delete-dialog",behaviors:[Polymer.appHelpers],properties:{confirmationText:{type:String},action:{type:String},actionId:{type:String},onDeletedFunction:{type:Function,value:null}},setup:function(e,t,i,n){this.set("action",e),this.set("actionId",t),this.set("confirmationText",i),this.set("onDeletedFunction",n)},open:function(){this.$$("#deleteConfirmationDialog").open()},_delete:function(){this.$$("#deleteAjax").url=this.action+this.actionId,this.$$("#deleteAjax").setBody({deleteConfirmed:!0}),this.$$("#deleteAjax").generateRequest()},_deleteResponse:function(){this.fire("deleted"),this.onDeletedFunction&&this.onDeletedFunction()}});</script>
+</dom-module>
+</body></html>

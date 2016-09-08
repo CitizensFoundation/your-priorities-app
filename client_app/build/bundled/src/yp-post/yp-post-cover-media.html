@@ -1,0 +1,100 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="yp-post-actions.html">
+<link rel="import" href="yp-post-users.html">
+
+</head><body><dom-module id="yp-post-cover-media">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+      }
+
+      google-streetview-pano {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      google-map {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .main-image {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .mapCanvas {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .category-icon {
+        width: 200px;
+        height: 200px;
+        padding-top: 32px;
+      }
+
+      @media (max-width: 600px) {
+        .category-icon {
+          width: 160px;
+          height: 160px;
+        }
+      }
+    </style>
+
+      <div class="mapCanvas">
+        <template is="dom-if" if="[[noneActive]]">
+          <iron-image sizing="cover" class="main-image" src="https://i.imgur.com/sdsFAoT.png"></iron-image>
+        </template>
+
+        <template is="dom-if" if="[[categoryActive]]">
+          <div class="layout horizontal center-center">
+            <iron-image class="category-icon" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath(post)]]"></iron-image>
+          </div>
+        </template>
+
+        <template is="dom-if" if="[[imageActive]]">
+          <iron-image sizing="cover" class="main-image" src="[[postImagePath()]]"></iron-image>
+        </template>
+
+        <template is="dom-if" if="[[streetViewActive]]" restamp="">
+          <google-streetview-pano position="[[mapPosition]]" heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" pitch="2" zoom="0.8" disable-default-ui="">
+          </google-streetview-pano>
+        </template>
+
+        <template is="dom-if" if="[[mapActive]]" restamp="">
+          <google-map id="coverMediaMap" class="map" libraries="places" fit-to-markers="" zoom="[[_zoomLevel(post)]]" map-type="[[_mapType(post)]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+            <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
+          </google-map>
+        </template>
+      </div>
+    </template>
+
+
+  <script>Polymer({is:"yp-post-cover-media",behaviors:[Polymer.appHelpers],properties:{post:{type:Object,notify:!0,observer:"_postChanged"},noneActive:{type:Boolean,computed:"_isNoneActive(post)"},categoryActive:{type:Boolean,computed:"_isCategoryActive(post)"},imageActive:{type:Boolean,computed:"_isImageActive(post)"},mapActive:{type:Boolean,computed:"_isMapActive(post, post.location, post.location.latitude)"},streetViewActive:{type:Boolean,computed:"_isStreetViewActive(post, post.location, post.location.latitude)"},latitude:{type:Number,computed:"_getLatitute(post.location.latitude)"},longitude:{type:Number,computed:"_getLongitude(post.location.longitude)"},mapPosition:{type:Object,computed:"_getMapPosition(post.location)"}},_getLatitute:function(t){return t?t:0},_getLongitude:function(t){return t?t:0},_isNoneActive:function(t){return!!this._withCoverMediaType(t,"none")},_isCategoryActive:function(t){return!!this._withCoverMediaType(t,"category")},_isImageActive:function(t){return!!this._withCoverMediaType(t,"image")},_isMapActive:function(t,e,o){return!!(o&&e&&this._withCoverMediaType(t,"map"))},_isStreetViewActive:function(t,e,o){return!!(o&&e&&this._withCoverMediaType(t,"streetView"))},_postChanged:function(t,e){},_zoomLevel:function(t){return t?t.location.map_zoom:"10"},_mapType:function(t){return t&&t.location?t.location.mapType:null},_withCoverMediaType:function(t,e){return!!t&&("none"==e?this.post&&!this.post.Category&&(!this.post.cover_media_type||"none"==this.post.cover_media_type):!("category"!=e||!this.post.Category||this.post.cover_media_type&&"none"!=this.post.cover_media_type)||this.post&&this.post.cover_media_type==e)},_getMapPosition:function(t){return t?{lat:t.latitude,lng:t.longitude}:{lat:0,lng:0}},postImagePath:function(){return this.getImageFormatUrl(this.post.PostHeaderImages,0)},getCategoryImagePath:function(t){return t&&t.Category&&t.Category.CategoryIconImages?this.getImageFormatUrl(t.Category.CategoryIconImages,0):""}});</script>
+</dom-module>
+</body></html>

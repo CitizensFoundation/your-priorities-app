@@ -1,0 +1,108 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-user/yp-user-image.html">
+<link rel="import" href="../yp-point/yp-point-news-story.html">
+
+<link rel="import" href="yp-point-comment.html">
+<link rel="import" href="yp-point-comment-edit.html">
+
+</head><body><dom-module id="yp-point-comment-list">
+
+  <template>
+
+    <style>
+      :host {
+        width: 100%;
+      }
+
+      yp-point-comment-edit {
+
+      }
+
+      iron-list {
+       max-height: 500px;
+       width: 650px;
+        --iron-list-items-container: {
+        };
+      }
+
+      .listContainer {
+        padding-top: 24px;
+        padding-left: 32px;
+        padding-right: 32px;
+        height: 100%;
+      }
+
+      .container {
+        max-width: 800px;
+        padding-left: 24px;
+      }
+
+      #commentCount {
+        font-size: 11px;
+        padding-top: 2px;
+      }
+
+      paper-icon-button.openCloseButton {
+        width: 56px;
+        height: 56px;
+      }
+
+      .commentText {
+        padding-top: 4px;
+      }
+
+      @media (max-width: 820px) {
+        iron-list {
+          width: 100%;
+        }
+
+        .container {
+          max-width: 600px;
+        }
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div class="container layout vertical">
+      <div class="layout horizontal start-justified">
+        <div class="commentText layout vertical center-center">
+          [[t('point.comments')]]
+          <div id="commentCount">[[commentsCount]]</div>
+        </div>
+        <div class="layout horizontal">
+          <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
+          <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
+        </div>
+      </div>
+      <template is="dom-if" if="[[open]]" restamp="">
+        <div class="layout vertical center-center listContainer">
+          <iron-list id="list" items="[[comments]]" as="point">
+            <template>
+              <yp-point-comment point="[[point]]" tabindex$="[[tabIndex]]"></yp-point-comment>
+            </template>
+          </iron-list>
+          <yp-point-comment-edit on-refresh="_refresh" point="[[point]]" image="[[image]]"></yp-point-comment-edit>
+        </div>
+      </template>
+      <div class="layout horizontal center-center">
+        <yp-ajax id="commentsListAjax" method="GET" on-response="_commentsResponse"></yp-ajax>
+        <yp-ajax id="commentsCountListAjax" method="GET" on-response="_countResponse"></yp-ajax>
+      </div>
+    </div>
+  </template>
+
+  <script>Polymer({is:"yp-point-comment-list",properties:{comments:{type:Array},point:{type:Object,notify:!0,observer:"_pointChanged"},image:{type:Object,notify:!0,observer:"_imageChanged"},open:{type:Boolean,value:!1,observer:"_openChanged"},loadingList:{type:Boolean},commentsCount:{type:Number,value:null}},behaviors:[Polymer.appHelpers,Polymer.IronResizableBehavior],_openChanged:function(e){e&&this.$.commentsListAjax.generateRequest()},_setOpen:function(){this.set("open",!0),this.async(function(){this.notifyResize()},50)},_setClosed:function(){this.set("open",!1),this.async(function(){this.notifyResize()},50)},_pointChanged:function(e){e&&(this.$.commentsListAjax.url="/api/points/"+e.id+"/comments",this.$.commentsCountListAjax.url="/api/points/"+e.id+"/commentsCount",this.$.commentsCountListAjax.generateRequest())},_refresh:function(){this.$.commentsListAjax.generateRequest(),this.$.commentsCountListAjax.generateRequest()},_imageChanged:function(e){e&&(this.$.commentsListAjax.url="/api/images/"+e.id+"/comments",this.$.commentsCountListAjax.url="/api/images/"+e.id+"/commentsCount",this.$.commentsCountListAjax.generateRequest())},_countResponse:function(e,t){this.set("commentsCount",t.response.count)},_commentsResponse:function(e,t){var n=t.response;this.set("comments",n),this.$$("#list").fire("iron-resize"),n&&n.length>0&&this.$$("#list").scrollToIndex(n.length-1),this.notifyResize()}});</script>
+</dom-module>
+</body></html>

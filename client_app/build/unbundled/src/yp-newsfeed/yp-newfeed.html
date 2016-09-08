@@ -1,0 +1,55 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+</head><body><dom-module id="yp-newsfeed">
+  <template>
+    <style>
+
+      :host {
+        @apply(--layout-horizontal);
+      }
+
+      iron-list {
+        width: 980px;
+      }
+
+      @media (max-width: 900px) {
+        iron-list {
+          width: 460px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        iron-list {
+          width: 320px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        iron-list {
+          width: 306px;
+        }
+      }
+
+      @media (max-width: 320px) {
+      }
+    </style>
+
+
+    <iron-list id="list" items="[[newsItems]]" as="item">
+      <template>
+        <div class="layout vertical center-center" tabindex$="[[tabIndex]]">
+          <yp-newsitem date="[[item.createdAt]]" user="[[actor.user]]"></yp-newsitem>
+        </div>
+      </template>
+    </iron-list>
+  </template>
+
+  <script>Polymer({is:"yp-newsfeed",behaviors:[Polymer.appHelpers],properties:{newsItems:{type:Array},targetType:{type:String},targetId:{type:Number,observer:"_targetIdChanged"}},_targetIdChanged:function(e,t){e?this._refreshFeed():this.set("newsItems",null)},_refreshFeed:function(){},_newsResponse:function(e,t,s){var r=t.response.group;this.set("posts",t.response.Posts);var i=this.$$("#list");i&&this.$$("#list").fire("iron-resize"),this.set("group",r),this._processCategories(),this.fire("change-header",{headerTitle:r.name,headerDescription:r.objectives,headerIcon:"social:group",enableSearch:!0,backPath:"/community/"+this.group.community_id}),this.$.groupCard.setElevation(5),this.$.groupCard.lowerCardLater(),this.hideAdd=!1},_processCategories:function(){if(this.categoryId)for(var e=0;e<this.group.Categories.length;e++)this.group.Categories[e].id==this.categoryId&&(window.selectedCategoryName=this.group.Categories[e].name);else window.selectedCategoryName="categories.all"}});</script>
+</dom-module>
+</body></html>

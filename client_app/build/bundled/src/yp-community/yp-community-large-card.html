@@ -1,0 +1,208 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
+
+<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
+
+<link rel="import" href="yp-community-behaviors.html">
+<link rel="import" href="yp-community-stats.html">
+
+</head><body><dom-module id="yp-community-large-card">
+
+  <template>
+    <style>
+      :host {
+      }
+
+      .communityAccess {
+        padding-bottom: 8px;
+      }
+
+      .description {
+        line-height: var(--description-line-height, 1.3);
+      }
+
+      .stats {
+        position: absolute;
+        bottom: 0;
+        right: 8px;
+      }
+
+      .community-name {
+        padding: 0;
+        padding-bottom: 4px;
+        padding-right: 1px;
+        margin: 0;
+      }
+
+      iron-image {
+        width: 432px;
+        height: 243px;
+      }
+
+      .large-card {
+        background-color: #fefefe;
+        color: #333;
+        height: 243px;
+        width: 432px;
+        padding: 0 !important;
+        margin-top: 0 !important;
+      }
+
+      .image {
+        width: 432px;
+        height: 243px;
+      }
+
+      .description-and-stats {
+        width: 100%;
+      }
+
+      .edit {
+        color: #FFF;
+        position: absolute;
+        top: 0px;
+        left: 390px;
+        padding-right: 0;
+        margin-right: 0;
+      }
+
+      .contentContainer {
+        @apply(--layout-horizontal);
+      }
+
+      .description-and-stats {
+        padding-bottom: 32px;
+      }
+
+
+      .description {
+        padding: 0;
+        margin: 0;
+      }
+
+      .communityDescription {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 16px;
+      }
+
+      .community-name {
+        background-color: var(--primary-color-800, #000);
+        color: #fafafa;
+        padding-left: 16px;
+        padding-top: 16px;
+        padding-bottom: 16px;
+      }
+
+      .textBox {
+        margin-right: 32px;
+      }
+
+      @media (max-width: 945px) {
+        :host {
+          width: 306px;
+          margin-top: 40px;
+        }
+
+        .large-card {
+          width: 306px;
+          height: 180px;
+          margin-bottom: 16px;
+        }
+
+        .edit {
+          left: 265px;
+        }
+
+        iron-image {
+          width: 306px;
+          height: 92px !important;
+        }
+
+
+        .image {
+          width: 306px;
+          height: 92px !important;
+        }
+
+        .imageCard {
+          height: 92px !important;
+        }
+
+        .community-name {
+          font-size: 20px;
+        }
+
+        .communityDescription {
+          font-size: 13px;
+          padding-top: 6px;
+        }
+
+        .stats {
+        }
+
+        .textBox {
+          margin-right: 0;
+        }
+      }
+
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <template is="dom-if" if="[[community]]">
+      <div class="layout horizontal wrap">
+        <paper-material id="card" elevation="5" animated="" class="large-card textBox">
+          <div class="layout vertical">
+            <div class="layout horizontal wrap">
+              <div class="layout vertical description-and-stats">
+                <div class="description">
+                  <h2 class="community-name">[[communityName(community,1)]]</h2>
+                  <div hidden="" class="communityAccess">[[_communityAccessText(community.access)]]</div>
+                  <div class="communityDescription">[[communityDescription(community,1)]]</div>
+                  <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+                </div>
+              </div>
+            </div>
+            <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasCommunityAccess]]">
+              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
+                <paper-item id="usersMenuItem">[[t('community.users')]]</paper-item>
+                <paper-item id="adminsMenuItem">[[t('community.admins')]]</paper-item>
+                <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
+                <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              </paper-menu>
+            </paper-menu-button>
+          </div>
+        </paper-material>
+        <paper-material id="cardImage" elevation="2" animated="" class="large-card imageCard">
+          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
+        </paper-material>
+      </div>
+    </template>
+    <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
+    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
+  </template>
+
+  <script>Polymer({is:"yp-community-large-card",behaviors:[Polymer.appHelpers,Polymer.CommunityBehaviors,Polymer.LargeCardBehaviors,Polymer.AccessHelpers,Polymer.ypGotAdminRightsBehavior],properties:{community:{type:Object},hasCommunityAccess:{type:Boolean,value:!1,computed:"_hasCommunityAccess(community, gotAdminRights)"}},_hasCommunityAccess:function(e,t){return!(!e||!t)&&null!=this.checkCommunityAccess(e)},_communityAccessText:function(e){switch(e){case 0:return this.t("community.public");case 1:return this.t("community.closed");case 2:return this.t("community.secret")}},_menuSelection:function(e,t){"editMenuItem"==t.item.id?this._openEdit():"deleteMenuItem"==t.item.id?this._openDelete():"usersMenuItem"==t.item.id?this._openUsersDialog():"adminsMenuItem"==t.item.id?this._openAdminsDialog():"pagesMenuItem"==t.item.id&&this._openPagesDialog(),this.set("selectedMenuItem",null)},_openUsersDialog:function(){window.appGlobals.activity("open","community.users");var e=Polymer.dom(document).querySelector("yp-app").getDialog("usersGrid");e.setup(null,this.community.id,null,!1),e.open()},_openAdminsDialog:function(){window.appGlobals.activity("open","community.admins");var e=Polymer.dom(document).querySelector("yp-app").getDialog("usersGrid");e.setup(null,this.community.id,null,!0),e.open()},_openPagesDialog:function(){window.appGlobals.activity("open","community.pagesAdmin");var e=Polymer.dom(document).querySelector("yp-app").getDialog("pagesGrid");e.setup(null,this.community.id,null,!1),e.open()},_openDelete:function(){var e=Polymer.dom(document).querySelector("yp-app").getDialog("deleteDialog");e.setup("/api/communities/",this.community.id,this.t("community.deleteConfirmation"),this._onDeleted.bind(this)),e.open()},_openEdit:function(){var e=Polymer.dom(document).querySelector("yp-app").getDialog("communityEdit");e.setup(this.community,!1,this._refresh.bind(this)),e.open("edit",{communityId:this.community.id})},_onDeleted:function(){this.redirectTo("/domain/"+this.community.domain_id)},_refresh:function(e){e&&this.set("community",e),this.fire("update-community")}});</script>
+</dom-module>
+</body></html>

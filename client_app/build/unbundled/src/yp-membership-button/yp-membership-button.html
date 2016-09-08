@@ -1,0 +1,79 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+</head><body><dom-module id="yp-membership-button">
+
+  <template>
+    <style>
+
+      :host {
+        background-color: transparent;
+      }
+
+      .member {
+        background-color: var(--accent-color);
+      }
+
+      paper-fab {
+        width: 40px;
+        height: 40px;
+        background-color: #999;
+        color: var(--icon-general-color, #FFF);
+      }
+
+      paper-fab[large] {
+        width: 64px;
+        height: 64px;
+      }
+
+      paper-fab[large]::shadow #icon {
+        width: 36px;
+        height: 36px;
+      }
+
+      .ajax {
+        margin-top:8px;
+        padding-left: 6px;
+      }
+
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        paper-fab {
+          width: 55px;
+          height: 55px;
+        }
+
+        paper-fab[large]::shadow #icon {
+          width: 34px;
+          height: 34px;
+        }
+      }
+
+      @media (max-width: 680px) {
+        paper-fab[large] {
+          width: 40px;
+          height: 40px;
+        }
+
+        paper-fab[large]::shadow #icon {
+          width: 26px;
+          height: 26px;
+        }
+
+      }
+    </style>
+
+    <paper-fab large$="[[large]]" id="button" on-tap="_toggleMembership" disabled="[[disabled]]" class="heartButton" icon="favorite"></paper-fab>
+    <yp-ajax class="ajax" id="membershipAjax" hidden$="[[!disabled]]" method="POST" on-response="_membershipResponse"></yp-ajax>
+
+    <iron-signals on-iron-signal-got-memberships="_updateMembershipFromSignal"></iron-signals>
+  </template>
+  <script>Polymer({is:"yp-membership-button",behaviors:[Polymer.appHelpers],properties:{community:{type:Object,observer:"_communityChanged"},group:{type:Object,observer:"_groupChanged"},membershipValue:{type:Boolean,value:!1},disabled:{type:Boolean,value:!1},large:{type:Boolean,value:!1}},_communityChanged:function(e){e&&this._updateMembership()},_groupChanged:function(e){e&&this._updateMembership()},_updateMembershipFromSignal:function(){this._updateMembership()},_updateMembership:function(){window.appUser.loggedIn()&&window.appUser&&window.appUser.membershipsIndex?this.community?this.set("membershipValue",window.appUser.membershipsIndex.communities[this.community.id]):this.group?this.set("membershipValue",window.appUser.membershipsIndex.groups[this.group.id]):this.set("membershipValue",!1):this.set("membershipValue",!1),this._resetClasses()},_resetClasses:function(){this.membershipValue?this.$.button.className+=" member":this.removeClass(this.$.button,"member")},_membershipResponse:function(e,i){this.set("disabled",!1),this.set("membershipValue",i.response.membershipValue),this.membershipValue?window.appGlobals.notifyUserViaToast(this.t("membership.joined")+" "+i.response.name):window.appGlobals.notifyUserViaToast(this.t("membership.left")+" "+i.response.name),this._resetClasses(),i.response.membershipValue===!0?this.community?window.appUser.membershipsIndex.communities[this.community.id]=!0:this.group&&(window.appUser.membershipsIndex.groups[this.group.id]=!0):this.community?window.appUser.membershipsIndex.communities[this.community.id]=null:this.group&&(window.appUser.membershipsIndex.groups[this.group.id]=null)},generateMembershipFromLogin:function(e){this.community?window.appUser.membershipsIndex.communities[this.community.id]||this.generateMembership(e):this.group&&(window.appUser.membershipsIndex.groups[this.group.id]||this.generateMembership(e))},_toggleMembership:function(){this.community?window.appGlobals.activity("clicked","toggleCommunityMembership",this.community.id):this.group&&window.appGlobals.activity("clicked","toggleGroupMembership",this.group.id),this.generateMembership(!this.membershipValue)},generateMembership:function(e){this.set("disabled",!0),window.appUser.loggedIn()===!0?(this.community?this.$.membershipAjax.url="/api/communities/"+this.community.id+"/user_membership":this.group&&(this.$.membershipAjax.url="/api/groups/"+this.group.id+"/user_membership"),this.$.membershipAjax.body={value:e},e?this.$.membershipAjax.method="POST":this.$.membershipAjax.method="DELETE",this.$.membershipAjax.generateRequest()):(this.set("disabled",!1),window.appUser.loginForMembership(this,{value:e}))}});</script>
+</dom-module>
+</body></html>

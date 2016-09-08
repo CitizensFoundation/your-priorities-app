@@ -1,0 +1,198 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app.html"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-delete-dialog" assetpath="../yp-delete-dialog/">
+  <template>
+    <style>
+      :host {
+        display: block;
+        height: 0;
+      }
+
+      paper-dialog {
+        background-color: #FFF;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-ajax method="DELETE" id="deleteAjax" on-response="_deleteResponse"></yp-ajax>
+    <paper-dialog id="deleteConfirmationDialog">
+      <div>[[confirmationText]]</div>
+      <div class="buttons">
+        <paper-button dialog-dismiss="">[[t('cancel')]]</paper-button>
+        <paper-button dialog-confirm="" on-tap="_delete">[[t('delete')]]</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>Polymer({is:"yp-delete-dialog",behaviors:[Polymer.appHelpers],properties:{confirmationText:{type:String},action:{type:String},actionId:{type:String},onDeletedFunction:{type:Function,value:null}},setup:function(e,t,i,n){this.set("action",e),this.set("actionId",t),this.set("confirmationText",i),this.set("onDeletedFunction",n)},open:function(){this.$$("#deleteConfirmationDialog").open()},_delete:function(){this.$$("#deleteAjax").url=this.action+this.actionId,this.$$("#deleteAjax").setBody({deleteConfirmed:!0}),this.$$("#deleteAjax").generateRequest()},_deleteResponse:function(){this.fire("deleted"),this.onDeletedFunction&&this.onDeletedFunction()}});</script>
+</dom-module>
+<dom-module id="ac-notification-selection" assetpath="../ac-notifications/">
+  <template>
+    <style>
+      .half {
+        width: 50%;
+      }
+
+      .notificationName {
+        padding-top: 16px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        padding-bottom: 4px;
+        color: #333;
+        border-bottom: solid 1px #ddd;
+      }
+
+      .notificationSub {
+        color: #888;
+      }
+
+      paper-radio-button {
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div class="layout vertical">
+      <div class="notificationName">[[name]]</div>
+      <div class="layout horizontal wrap">
+        <div class="layout vertical half">
+          <div class="notificationSub">[[t('notification.method')]]</div>
+          <div class="layout horizontal">
+            <paper-radio-group id="notificationMethodGroup" name="method" class="method" attr-for-selected="enum-value" selected="{{method}}">
+              <template is="dom-repeat" items="[[availableMethods]]">
+                <paper-radio-button enum-value$="[[item.enumValue]]">[[item.name]]</paper-radio-button>
+              </template>
+            </paper-radio-group>
+          </div>
+        </div>
+        <div class="layout vertical half">
+          <div class="notificationSub">[[t('notification.frequency')]]</div>
+          <div class="layout horizontal">
+            <paper-radio-group id="notificationFrequencyGroup" name="frequency" attr-for-selected="enum-value" class="frequency" selected="{{frequency}}">
+              <template is="dom-repeat" items="[[_getAvailableFrequencies(method)]]">
+                <paper-radio-button enum-value$="[[item.enumValue]]">[[item.name]]</paper-radio-button>
+              </template>
+            </paper-radio-group>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>Polymer({is:"ac-notification-selection",behaviors:[Polymer.appHelpers],properties:{name:String,setting:{type:Object,notify:!0,observer:"_settingChanged"},frequency:{type:Number,notify:!0,observer:"_frequencyChanged"},method:{type:Number,notify:!0,observer:"_methodChanged"},availableFrequencies:{type:Array,computed:"_getAvailableFrequencies(method)"},availableMethods:{type:Object,value:function(){return[{name:this.t("notification.muted"),enumValue:0},{name:this.t("notification.browser"),enumValue:1},{name:this.t("notification.email"),enumValue:2}]}}},_methodChanged:function(e){e=parseInt(e),this.setting.method!=e&&this.set("setting.method",e)},_frequencyChanged:function(e){e=parseInt(e),this.setting.frequency!=e&&this.set("setting.frequency",e)},_settingChanged:function(e){e&&(this.set("method",e.method),this.set("frequency",e.frequency))},_getAvailableFrequencies:function(e){var t=[];return e&&0!=e&&(1==e?(this.set("frequency",0),t=[{name:this.t("notification.asItHappens"),enumValue:0}]):2==e&&(t=[{name:this.t("notification.asItHappens"),enumValue:0},{name:this.t("notification.hourly"),enumValue:1},{name:this.t("notification.daily"),enumValue:2},{name:this.t("notification.weekly"),enumValue:3},{name:this.t("notification.monthly"),enumValue:5}])),t}});</script>
+</dom-module>
+<dom-module id="ac-notification-settings" assetpath="../ac-notifications/">
+  <template>
+    <style>
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <ac-notification-selection name="[[t('notification.myPosts')]]" setting="{{notificationsSettings.my_posts}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection name="[[t('notification.myPostsEndorsements')]]" setting="{{notificationsSettings.my_posts_endorsements}}">
+    </ac-notification-selection>
+
+
+    <ac-notification-selection name="[[t('notification.myPoints')]]" setting="{{notificationsSettings.my_points}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection name="[[t('notification.myPointEndorsements')]]" setting="{{notificationsSettings.my_points_endorsements}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection name="[[t('notification.allCommunity')]]" setting="{{notificationsSettings.all_community}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection name="[[t('notification.allGroup')]]" setting="{{notificationsSettings.all_group}}">
+    </ac-notification-selection>
+  </template>
+
+  <script>Polymer({is:"ac-notification-settings",behaviors:[Polymer.appHelpers],properties:{notificationsSettings:{type:Object,notify:!0,observer:"_notificationsSettingsChanged"}},observers:["settingsStarChanged(notificationsSettings.*)"],_notificationsSettingsChanged:function(t){},settingsStarChanged:function(t){this.fire("yp-notifications-changed",this.notificationsSettings)}});</script>
+</dom-module>
+<dom-module id="yp-user-edit" assetpath="../yp-user/">
+  <template>
+
+    <style>
+      .container {
+        margin-top: 16px;
+        height: 100%;
+      }
+
+      .additionalSettings {
+        margin-top: 16px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-edit-dialog id="editDialog" double-width="" icon="face" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <div class="container">
+        <h2>[[editHeaderText]]</h2>
+
+        <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+          <paper-tab><span>[[t('user.info')]]</span></paper-tab>
+          <paper-tab>[[t('user.notifications')]]</paper-tab>
+        </paper-tabs>
+
+        <div class="layout vertical wrap container">
+          <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
+            <section>
+              <paper-input id="name" name="name" type="text" label="[[t('Name')]]" value="{{user.name}}" maxlength="50" char-counter="">
+              </paper-input>
+
+              <paper-input id="email" name="email" type="text" label="[[t('Email')]]" value="{{user.email}}">
+              </paper-input>
+
+              <div class="layout vertical additionalSettings">
+                <file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
+                  <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                  <span>[[t('image.profile.upload')]]</span>
+                </file-upload>
+              </div>
+
+              <div class="layout vertical additionalSettings" hidden="">
+                <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
+                  <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                  <span>[[t('image.header.upload')]]</span>
+                </file-upload>
+              </div>
+
+              <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
+              <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+            </section>
+
+            <section>
+              <ac-notification-settings notifications-settings="{{notificationSettings}}"></ac-notification-settings>
+              <input type="hidden" name="notifications_settings" value="[[encodedUserNotificationSettings]]">
+            </section>
+          </neon-animated-pages>
+        </div>
+      </div>
+    </yp-edit-dialog>
+  </template>
+
+</dom-module>
+
+<script>Polymer({is:"yp-user-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/users"},user:{type:Object,observer:"_userChanged"},params:{type:String},method:{type:String},selected:{type:Number,value:0},encodedUserNotificationSettings:{type:String,observer:"_encodedUserNotificationSettingsChanged"},uploadedProfileImageId:{type:String},uploadedHeaderImageId:{type:String},notificationSettings:{type:Object,notify:!0,observer:"_notificationSettingsChanged"}},listeners:{"yp-notifications-changed":"_setNotificationSettings"},_setNotificationSettings:function(t,e){this.set("notificationSettings",e),this.set("encodedUserNotificationSettings",this._encodeNotificationsSettings(this.notificationSettings))},_notificationSettingsChanged:function(t){this.set("encodedUserNotificationSettings",this._encodeNotificationsSettings(this.notificationSettings))},_encodedUserNotificationSettingsChanged:function(t){},_encodeNotificationsSettings:function(t){return JSON.stringify(t)},_userChanged:function(t){this.set("notificationSettings",t.notifications_settings)},_profileImageUploaded:function(t,e){var i=JSON.parse(e.xhr.response);this.set("uploadedProfileImageId",i.id)},_headerImageUploaded:function(t,e){var i=JSON.parse(e.xhr.response);this.set("uploadedHeaderImageId",i.id)},_customRedirect:function(t){window.appUser.checkLogin()},_clear:function(){this.set("user",{name:"",email:"",access:2}),this.uploadedProfileImageId=null,this.uploadedHeaderImageId=null,this.$.headerImageUpload.clear(),this.$.profileImageUpload.clear()},setup:function(t,e,i){this.set("user",t),this.set("new",e),this.set("refreshFunction",i),this._setupTranslation()},_setupTranslation:function(){this.new?(this.editHeaderText=this.t("user.new"),this.toastText=this.t("user.toast.created")):(this.editHeaderText=this.t("user.edit"),this.toastText=this.t("user.toast.updated"))}});</script>
+<dom-module id="yp-confirmation-dialog" assetpath="/">
+  <template>
+
+    <style>
+      paper-dialog {
+        background-color: #FFF;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <paper-dialog id="confirmationDialog">
+      <div>[[confirmationText]]</div>
+      <div class="buttons">
+        <paper-button on-tap="_reset" dialog-dismiss="">[[t('cancel')]]</paper-button>
+        <paper-button dialog-confirm="" on-tap="_confirm">[[t('confirm')]]</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+
+  <script>Polymer({is:"yp-confirmation-dialog",behaviors:[Polymer.appHelpers],properties:{confirmationText:{type:String},onConfirmedFunction:{type:Function,value:null}},_reset:function(){this.set("confirmationText",null),this.set("onConfirmedFunction",null)},open:function(n,i){this.set("confirmationText",n),this.set("onConfirmedFunction",i),this.$$("#confirmationDialog").open()},_confirm:function(){this.onConfirmedFunction&&(this.onConfirmedFunction(),this._reset())}});</script>
+</dom-module>
+</div></body></html>

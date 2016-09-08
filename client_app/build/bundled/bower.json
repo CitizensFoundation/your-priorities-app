@@ -1,0 +1,34 @@
+{
+  "name": "your-priorities-app",
+  "version": "0.9.1",
+  "dependencies": {
+    "file-upload": "rbjarnason/file-upload#master",
+    "google-map": "GoogleWebComponents/google-map",
+    "google-streetview-pano": "https://github.com/rbjarnason/google-streetview-pano.git#timings-fix-maps-api-callback",
+    "polymer-instagram": "https://github.com/rbjarnason/polymer-instagram-feed.git#polymer1",
+    "iron-form": "rbjarnason/iron-form#add-put-support",
+    "polymer": "Polymer/polymer",
+    "iron-elements": "PolymerElements/iron-elements",
+    "paper-elements": "PolymerElements/paper-elements",
+    "platinum-elements": "PolymerElements/platinum-elements",
+    "neon-elements": "PolymerElements/neon-elements",
+    "moment": "~2.11.2",
+    "lodash-element": "~1.0.2",
+    "moment-element": "~0.3.0",
+    "re-captcha": "~1.1.1",
+    "within-viewport": "~1.0.0",
+    "vaadin-icons": "~1.0.0",
+    "iron-jsonp-library": "PolymerElements/iron-jsonp-library",
+    "instafeed.js": "https://github.com/evejweinberg/instafeed.js.git#master",
+    "i18next": "~2.4.1",
+    "vaadin-grid": "~1.0.0",
+    "paper-share-buttons": "https://github.com/rbjarnason/paper-share-buttons.git#master",
+    "paper-search": "https://github.com/rbjarnason/paper-search.git#master",
+    "app-layout": "PolymerElements/app-layout#^0.10.0",
+    "app-route": "PolymerElements/app-route#^0.9.0"
+  },
+  "devDependencies": {
+    "web-component-tester": "*",
+    "test-fixture": "PolymerElements/test-fixture#^1.0.0"
+  }
+}

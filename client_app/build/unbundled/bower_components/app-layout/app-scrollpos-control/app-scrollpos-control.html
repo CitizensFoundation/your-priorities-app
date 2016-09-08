@@ -1,0 +1,9 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+
+
+
+</head><body><dom-module id="app-scrollpos-control">
+  <script>Polymer({is:"app-scrollpos-control",behaviors:[Polymer.IronScrollTargetBehavior],properties:{selected:{type:String,observer:"_selectedChanged"},reset:{type:Boolean,value:!1}},observers:["_updateScrollPos(selected, reset)"],created:function(){this._scrollposMap={}},_selectedChanged:function(e,s){null!=s&&(this._scrollposMap[s]={x:this._scrollLeft,y:this._scrollTop})},_updateScrollPos:function(e,s){this.debounce("_updateScrollPos",function(){var e=this._scrollposMap[this.selected];null==e||this.reset?this.scroll(0,0):this.scroll(e.x,e.y)})}});</script>
+</dom-module>
+</body></html>

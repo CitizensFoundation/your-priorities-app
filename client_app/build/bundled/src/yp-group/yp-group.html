@@ -1,0 +1,1060 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app.html"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+
+  <template>
+    <style>
+      :host {
+        margin-top: 8px;
+      }
+
+      .postCard {
+        width: 280px;
+        height: 100%;
+        margin-top: 16px;
+        padding: 8px;
+        background-color: var(--accent-color);
+        color: #FFF;
+        font-size: 16px;
+        cursor: pointer;
+        margin-bottom: 8px;
+      }
+
+      paper-icon-button {
+        height: 80px;
+        width: 80px;
+        color: #FFF;
+      }
+
+      .header {
+        padding: 0;
+        margin: 0;
+        padding-top: 16px;
+      }
+
+      .icon {
+        --iron-icon-height: 140px;
+        --iron-icon-width: 140px;
+      }
+
+      .half {
+        width: 50%;
+      }
+
+      paper-fab {
+        margin-right: 12px;
+      }
+
+      .addText {
+        padding-left: 16px;
+      }
+
+      iron-icon {
+        width: 64px;
+        height: 64px;
+        padding-right: 64px;
+      }
+
+      .addNewIdeaText {
+        font-size: 26px;
+        width: 100%;
+        color: #FFF;
+      }
+
+      @media (max-width: 832px) {
+        .postCard {
+          width: 100%;
+          margin-left: 64px;
+          margin-right: 64px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .postCard {
+          width: 100% !important;
+          min-width: 260px;
+          margin-left: 0;
+          margin-right: 32px;
+          margin-bottom: 4px;
+        }
+
+        .addNewIdeaText {
+          font-size: 18px;
+          width: 100%;
+        }
+
+        paper-icon-button {
+          height: 72px;
+          width: 72px;
+        }
+
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <paper-card elevation="[[elevation]]" class="postCard" on-tap="_newPost">
+      <div class="layout horizontal center-center addNewIdeaText">
+        <div class="flex addText">
+          [[t('post.add_new')]]
+        </div>
+        <paper-icon-button icon="lightbulb-outline"></paper-icon-button>
+      </div>
+    </paper-card>
+  </template>
+
+  <script>Polymer({is:"yp-post-card-add",properties:{elevation:{type:Number}},_newPost:function(){this.fire("new-post")},behaviors:[Polymer.appHelpers]});</script>
+</dom-module>
+<iron-iconset-svg name="av" size="24">
+<svg><defs>
+<g id="add-to-queue"><path d="M21 3H3c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.11-.9-2-2-2zm0 14H3V5h18v12zm-5-7v2h-3v3h-2v-3H8v-2h3V7h2v3h3z"></path></g>
+<g id="airplay"><path d="M6 22h12l-6-6zM21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v-2H3V5h18v12h-4v2h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path></g>
+<g id="album"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path></g>
+<g id="art-track"><path d="M22 13h-8v-2h8v2zm0-6h-8v2h8V7zm-8 10h8v-2h-8v2zm-2-8v6c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V9c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2zm-1.5 6l-2.25-3-1.75 2.26-1.25-1.51L3.5 15h7z"></path></g>
+<g id="av-timer"><path d="M11 17c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1zm0-14v4h2V5.08c3.39.49 6 3.39 6 6.92 0 3.87-3.13 7-7 7s-7-3.13-7-7c0-1.68.59-3.22 1.58-4.42L12 13l1.41-1.41-6.8-6.8v.02C4.42 6.45 3 9.05 3 12c0 4.97 4.02 9 9 9 4.97 0 9-4.03 9-9s-4.03-9-9-9h-1zm7 9c0-.55-.45-1-1-1s-1 .45-1 1 .45 1 1 1 1-.45 1-1zM6 12c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1z"></path></g>
+<g id="closed-caption"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H9.5v-.5h-2v3h2V13H11v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V13H18v1c0 .55-.45 1-1 1h-3c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1z"></path></g>
+<g id="equalizer"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z"></path></g>
+<g id="explicit"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4 6h-4v2h4v2h-4v2h4v2H9V7h6v2z"></path></g>
+<g id="fast-forward"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"></path></g>
+<g id="fast-rewind"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"></path></g>
+<g id="fiber-dvr"><path d="M17.5 10.5h2v1h-2zm-13 0h2v3h-2zM21 3H3c-1.11 0-2 .89-2 2v14c0 1.1.89 2 2 2h18c1.11 0 2-.9 2-2V5c0-1.11-.89-2-2-2zM8 13.5c0 .85-.65 1.5-1.5 1.5H3V9h3.5c.85 0 1.5.65 1.5 1.5v3zm4.62 1.5h-1.5L9.37 9h1.5l1 3.43 1-3.43h1.5l-1.75 6zM21 11.5c0 .6-.4 1.15-.9 1.4L21 15h-1.5l-.85-2H17.5v2H16V9h3.5c.85 0 1.5.65 1.5 1.5v1z"></path></g>
+<g id="fiber-manual-record"><circle cx="12" cy="12" r="8"></circle></g>
+<g id="fiber-new"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zM8.5 15H7.3l-2.55-3.5V15H3.5V9h1.25l2.5 3.5V9H8.5v6zm5-4.74H11v1.12h2.5v1.26H11v1.11h2.5V15h-4V9h4v1.26zm7 3.74c0 .55-.45 1-1 1h-4c-.55 0-1-.45-1-1V9h1.25v4.51h1.13V9.99h1.25v3.51h1.12V9h1.25v5z"></path></g>
+<g id="fiber-pin"><path d="M5.5 10.5h2v1h-2zM20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zM9 11.5c0 .85-.65 1.5-1.5 1.5h-2v2H4V9h3.5c.85 0 1.5.65 1.5 1.5v1zm3.5 3.5H11V9h1.5v6zm7.5 0h-1.2l-2.55-3.5V15H15V9h1.25l2.5 3.5V9H20v6z"></path></g>
+<g id="fiber-smart-record"><g><circle cx="9" cy="12" r="8"></circle><path d="M17 4.26v2.09c2.33.82 4 3.04 4 5.65s-1.67 4.83-4 5.65v2.09c3.45-.89 6-4.01 6-7.74s-2.55-6.85-6-7.74z"></path></g></g>
+<g id="forward-10"><path d="M4 13c0 4.4 3.6 8 8 8s8-3.6 8-8h-2c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6v4l5-5-5-5v4c-4.4 0-8 3.6-8 8zm6.8 3H10v-3.3L9 13v-.7l1.8-.6h.1V16zm4.3-1.8c0 .3 0 .6-.1.8l-.3.6s-.3.3-.5.3-.4.1-.6.1-.4 0-.6-.1-.3-.2-.5-.3-.2-.3-.3-.6-.1-.5-.1-.8v-.7c0-.3 0-.6.1-.8l.3-.6s.3-.3.5-.3.4-.1.6-.1.4 0 .6.1.3.2.5.3.2.3.3.6.1.5.1.8v.7zm-.8-.8v-.5s-.1-.2-.1-.3-.1-.1-.2-.2-.2-.1-.3-.1-.2 0-.3.1l-.2.2s-.1.2-.1.3v2s.1.2.1.3.1.1.2.2.2.1.3.1.2 0 .3-.1l.2-.2s.1-.2.1-.3v-1.5z"></path></g>
+<g id="forward-30"><path d="M9.6 13.5h.4c.2 0 .4-.1.5-.2s.2-.2.2-.4v-.2s-.1-.1-.1-.2-.1-.1-.2-.1h-.5s-.1.1-.2.1-.1.1-.1.2v.2h-1c0-.2 0-.3.1-.5s.2-.3.3-.4.3-.2.4-.2.4-.1.5-.1c.2 0 .4 0 .6.1s.3.1.5.2.2.2.3.4.1.3.1.5v.3s-.1.2-.1.3-.1.2-.2.2-.2.1-.3.2c.2.1.4.2.5.4s.2.4.2.6c0 .2 0 .4-.1.5s-.2.3-.3.4-.3.2-.5.2-.4.1-.6.1c-.2 0-.4 0-.5-.1s-.3-.1-.5-.2-.2-.2-.3-.4-.1-.4-.1-.6h.8v.2s.1.1.1.2.1.1.2.1h.5s.1-.1.2-.1.1-.1.1-.2v-.5s-.1-.1-.1-.2-.1-.1-.2-.1h-.6v-.7zm5.7.7c0 .3 0 .6-.1.8l-.3.6s-.3.3-.5.3-.4.1-.6.1-.4 0-.6-.1-.3-.2-.5-.3-.2-.3-.3-.6-.1-.5-.1-.8v-.7c0-.3 0-.6.1-.8l.3-.6s.3-.3.5-.3.4-.1.6-.1.4 0 .6.1.3.2.5.3.2.3.3.6.1.5.1.8v.7zm-.9-.8v-.5s-.1-.2-.1-.3-.1-.1-.2-.2-.2-.1-.3-.1-.2 0-.3.1l-.2.2s-.1.2-.1.3v2s.1.2.1.3.1.1.2.2.2.1.3.1.2 0 .3-.1l.2-.2s.1-.2.1-.3v-1.5zM4 13c0 4.4 3.6 8 8 8s8-3.6 8-8h-2c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6v4l5-5-5-5v4c-4.4 0-8 3.6-8 8z"></path></g>
+<g id="forward-5"><path d="M4 13c0 4.4 3.6 8 8 8s8-3.6 8-8h-2c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6v4l5-5-5-5v4c-4.4 0-8 3.6-8 8zm6.7.9l.2-2.2h2.4v.7h-1.7l-.1.9s.1 0 .1-.1.1 0 .1-.1.1 0 .2 0h.2c.2 0 .4 0 .5.1s.3.2.4.3.2.3.3.5.1.4.1.6c0 .2 0 .4-.1.5s-.1.3-.3.5-.3.2-.5.3-.4.1-.6.1c-.2 0-.4 0-.5-.1s-.3-.1-.5-.2-.2-.2-.3-.4-.1-.3-.1-.5h.8c0 .2.1.3.2.4s.2.1.4.1c.1 0 .2 0 .3-.1l.2-.2s.1-.2.1-.3v-.6l-.1-.2-.2-.2s-.2-.1-.3-.1h-.2s-.1 0-.2.1-.1 0-.1.1-.1.1-.1.1h-.6z"></path></g>
+<g id="games"><path d="M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zM9 16.5V22h6v-5.5l-3-3-3 3zM16.5 9l-3 3 3 3H22V9h-5.5z"></path></g>
+<g id="hd"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8 12H9.5v-2h-2v2H6V9h1.5v2.5h2V9H11v6zm2-6h4c.55 0 1 .45 1 1v4c0 .55-.45 1-1 1h-4V9zm1.5 4.5h2v-3h-2v3z"></path></g>
+<g id="hearing"><path d="M17 20c-.29 0-.56-.06-.76-.15-.71-.37-1.21-.88-1.71-2.38-.51-1.56-1.47-2.29-2.39-3-.79-.61-1.61-1.24-2.32-2.53C9.29 10.98 9 9.93 9 9c0-2.8 2.2-5 5-5s5 2.2 5 5h2c0-3.93-3.07-7-7-7S7 5.07 7 9c0 1.26.38 2.65 1.07 3.9.91 1.65 1.98 2.48 2.85 3.15.81.62 1.39 1.07 1.71 2.05.6 1.82 1.37 2.84 2.73 3.55.51.23 1.07.35 1.64.35 2.21 0 4-1.79 4-4h-2c0 1.1-.9 2-2 2zM7.64 2.64L6.22 1.22C4.23 3.21 3 5.96 3 9s1.23 5.79 3.22 7.78l1.41-1.41C6.01 13.74 5 11.49 5 9s1.01-4.74 2.64-6.36zM11.5 9c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5-1.12-2.5-2.5-2.5-2.5 1.12-2.5 2.5z"></path></g>
+<g id="high-quality"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 11H9.5v-2h-2v2H6V9h1.5v2.5h2V9H11v6zm7-1c0 .55-.45 1-1 1h-.75v1.5h-1.5V15H14c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v4zm-3.5-.5h2v-3h-2v3z"></path></g>
+<g id="library-add"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"></path></g>
+<g id="library-books"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"></path></g>
+<g id="library-music"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 5h-3v5.5c0 1.38-1.12 2.5-2.5 2.5S10 13.88 10 12.5s1.12-2.5 2.5-2.5c.57 0 1.08.19 1.5.51V5h4v2zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6z"></path></g>
+<g id="loop"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"></path></g>
+<g id="mic"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"></path></g>
+<g id="mic-none"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1.2-9.1c0-.66.54-1.2 1.2-1.2.66 0 1.2.54 1.2 1.2l-.01 6.2c0 .66-.53 1.2-1.19 1.2-.66 0-1.2-.54-1.2-1.2V4.9zm6.5 6.1c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"></path></g>
+<g id="mic-off"><path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM4.27 3L3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z"></path></g>
+<g id="movie"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"></path></g>
+<g id="music-video"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM8 15c0-1.66 1.34-3 3-3 .35 0 .69.07 1 .18V6h5v2h-3v7.03c-.02 1.64-1.35 2.97-3 2.97-1.66 0-3-1.34-3-3z"></path></g>
+<g id="new-releases"><path d="M23 12l-2.44-2.78.34-3.68-3.61-.82-1.89-3.18L12 3 8.6 1.54 6.71 4.72l-3.61.81.34 3.68L1 12l2.44 2.78-.34 3.69 3.61.82 1.89 3.18L12 21l3.4 1.46 1.89-3.18 3.61-.82-.34-3.68L23 12zm-10 5h-2v-2h2v2zm0-4h-2V7h2v6z"></path></g>
+<g id="not-interested"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"></path></g>
+<g id="pause"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></g>
+<g id="pause-circle-filled"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"></path></g>
+<g id="pause-circle-outline"><path d="M9 16h2V8H9v8zm3-14C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-4h2V8h-2v8z"></path></g>
+<g id="play-arrow"><path d="M8 5v14l11-7z"></path></g>
+<g id="play-circle-filled"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"></path></g>
+<g id="play-circle-outline"><path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path></g>
+<g id="playlist-add"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zm4 8v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM2 16h8v-2H2v2z"></path></g>
+<g id="playlist-add-check"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z"></path></g>
+<g id="playlist-play"><path d="M19 9H2v2h17V9zm0-4H2v2h17V5zM2 15h13v-2H2v2zm15-2v6l5-3-5-3z"></path></g>
+<g id="queue"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"></path></g>
+<g id="queue-music"><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"></path></g>
+<g id="queue-play-next"><path d="M21 3H3c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h5v2h8v-2h2v-2H3V5h18v8h2V5c0-1.11-.9-2-2-2zm-8 7V7h-2v3H8v2h3v3h2v-3h3v-2h-3zm11 8l-4.5 4.5L18 21l3-3-3-3 1.5-1.5L24 18z"></path></g>
+<g id="radio"><path d="M3.24 6.15C2.51 6.43 2 7.17 2 8v12c0 1.1.89 2 2 2h16c1.11 0 2-.9 2-2V8c0-1.11-.89-2-2-2H8.3l8.26-3.34L15.88 1 3.24 6.15zM7 20c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-8h-2v-2h-2v2H4V8h16v4z"></path></g>
+<g id="recent-actors"><path d="M21 5v14h2V5h-2zm-4 14h2V5h-2v14zM14 5H2c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V6c0-.55-.45-1-1-1zM8 7.75c1.24 0 2.25 1.01 2.25 2.25S9.24 12.25 8 12.25 5.75 11.24 5.75 10 6.76 7.75 8 7.75zM12.5 17h-9v-.75c0-1.5 3-2.25 4.5-2.25s4.5.75 4.5 2.25V17z"></path></g>
+<g id="remove-from-queue"><path d="M21 3H3c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.11-.9-2-2-2zm0 14H3V5h18v12zm-5-7v2H8v-2h8z"></path></g>
+<g id="repeat"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"></path></g>
+<g id="repeat-one"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"></path></g>
+<g id="replay"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></g>
+<g id="replay-10"><path d="M12 5V1L7 6l5 5V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8zm-1.1 11H10v-3.3L9 13v-.7l1.8-.6h.1V16zm4.3-1.8c0 .3 0 .6-.1.8l-.3.6s-.3.3-.5.3-.4.1-.6.1-.4 0-.6-.1-.3-.2-.5-.3-.2-.3-.3-.6-.1-.5-.1-.8v-.7c0-.3 0-.6.1-.8l.3-.6s.3-.3.5-.3.4-.1.6-.1.4 0 .6.1c.2.1.3.2.5.3s.2.3.3.6.1.5.1.8v.7zm-.9-.8v-.5s-.1-.2-.1-.3-.1-.1-.2-.2-.2-.1-.3-.1-.2 0-.3.1l-.2.2s-.1.2-.1.3v2s.1.2.1.3.1.1.2.2.2.1.3.1.2 0 .3-.1l.2-.2s.1-.2.1-.3v-1.5z"></path></g>
+<g id="replay-30"><path d="M12 5V1L7 6l5 5V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8zm-2.4 8.5h.4c.2 0 .4-.1.5-.2s.2-.2.2-.4v-.2s-.1-.1-.1-.2-.1-.1-.2-.1h-.5s-.1.1-.2.1-.1.1-.1.2v.2h-1c0-.2 0-.3.1-.5s.2-.3.3-.4.3-.2.4-.2.4-.1.5-.1c.2 0 .4 0 .6.1s.3.1.5.2.2.2.3.4.1.3.1.5v.3s-.1.2-.1.3-.1.2-.2.2-.2.1-.3.2c.2.1.4.2.5.4s.2.4.2.6c0 .2 0 .4-.1.5s-.2.3-.3.4-.3.2-.5.2-.4.1-.6.1c-.2 0-.4 0-.5-.1s-.3-.1-.5-.2-.2-.2-.3-.4-.1-.4-.1-.6h.8v.2s.1.1.1.2.1.1.2.1h.5s.1-.1.2-.1.1-.1.1-.2v-.5s-.1-.1-.1-.2-.1-.1-.2-.1h-.6v-.7zm5.7.7c0 .3 0 .6-.1.8l-.3.6s-.3.3-.5.3-.4.1-.6.1-.4 0-.6-.1-.3-.2-.5-.3-.2-.3-.3-.6-.1-.5-.1-.8v-.7c0-.3 0-.6.1-.8l.3-.6s.3-.3.5-.3.4-.1.6-.1.4 0 .6.1.3.2.5.3.2.3.3.6.1.5.1.8v.7zm-.8-.8v-.5c0-.1-.1-.2-.1-.3s-.1-.1-.2-.2-.2-.1-.3-.1-.2 0-.3.1l-.2.2s-.1.2-.1.3v2s.1.2.1.3.1.1.2.2.2.1.3.1.2 0 .3-.1l.2-.2s.1-.2.1-.3v-1.5z"></path></g>
+<g id="replay-5"><path d="M12 5V1L7 6l5 5V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8zm-1.3 8.9l.2-2.2h2.4v.7h-1.7l-.1.9s.1 0 .1-.1.1 0 .1-.1.1 0 .2 0h.2c.2 0 .4 0 .5.1s.3.2.4.3.2.3.3.5.1.4.1.6c0 .2 0 .4-.1.5s-.1.3-.3.5-.3.2-.4.3-.4.1-.6.1c-.2 0-.4 0-.5-.1s-.3-.1-.5-.2-.2-.2-.3-.4-.1-.3-.1-.5h.8c0 .2.1.3.2.4s.2.1.4.1c.1 0 .2 0 .3-.1l.2-.2s.1-.2.1-.3v-.6l-.1-.2-.2-.2s-.2-.1-.3-.1h-.2s-.1 0-.2.1-.1 0-.1.1-.1.1-.1.1h-.7z"></path></g>
+<g id="shuffle"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"></path></g>
+<g id="skip-next"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path></g>
+<g id="skip-previous"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"></path></g>
+<g id="slow-motion-video"><path d="M13.05 9.79L10 7.5v9l3.05-2.29L16 12zm0 0L10 7.5v9l3.05-2.29L16 12zm0 0L10 7.5v9l3.05-2.29L16 12zM11 4.07V2.05c-2.01.2-3.84 1-5.32 2.21L7.1 5.69c1.11-.86 2.44-1.44 3.9-1.62zM5.69 7.1L4.26 5.68C3.05 7.16 2.25 8.99 2.05 11h2.02c.18-1.46.76-2.79 1.62-3.9zM4.07 13H2.05c.2 2.01 1 3.84 2.21 5.32l1.43-1.43c-.86-1.1-1.44-2.43-1.62-3.89zm1.61 6.74C7.16 20.95 9 21.75 11 21.95v-2.02c-1.46-.18-2.79-.76-3.9-1.62l-1.42 1.43zM22 12c0 5.16-3.92 9.42-8.95 9.95v-2.02C16.97 19.41 20 16.05 20 12s-3.03-7.41-6.95-7.93V2.05C18.08 2.58 22 6.84 22 12z"></path></g>
+<g id="snooze"><path d="M7.88 3.39L6.6 1.86 2 5.71l1.29 1.53 4.59-3.85zM22 5.72l-4.6-3.86-1.29 1.53 4.6 3.86L22 5.72zM12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 16c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7zm-3-9h3.63L9 15.2V17h6v-2h-3.63L15 10.8V9H9v2z"></path></g>
+<g id="sort-by-alpha"><path d="M14.94 4.66h-4.72l2.36-2.36zm-4.69 14.71h4.66l-2.33 2.33zM6.1 6.27L1.6 17.73h1.84l.92-2.45h5.11l.92 2.45h1.84L7.74 6.27H6.1zm-1.13 7.37l1.94-5.18 1.94 5.18H4.97zm10.76 2.5h6.12v1.59h-8.53v-1.29l5.92-8.56h-5.88v-1.6h8.3v1.26l-5.93 8.6z"></path></g>
+<g id="stop"><path d="M6 6h12v12H6z"></path></g>
+<g id="subscriptions"><path d="M20 8H4V6h16v2zm-2-6H6v2h12V2zm4 10v8c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-8c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2zm-6 4l-6-3.27v6.53L16 16z"></path></g>
+<g id="subtitles"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM4 12h4v2H4v-2zm10 6H4v-2h10v2zm6 0h-4v-2h4v2zm0-4H10v-2h10v2z"></path></g>
+<g id="surround-sound"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM7.76 16.24l-1.41 1.41C4.78 16.1 4 14.05 4 12c0-2.05.78-4.1 2.34-5.66l1.41 1.41C6.59 8.93 6 10.46 6 12s.59 3.07 1.76 4.24zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm5.66 1.66l-1.41-1.41C17.41 15.07 18 13.54 18 12s-.59-3.07-1.76-4.24l1.41-1.41C19.22 7.9 20 9.95 20 12c0 2.05-.78 4.1-2.34 5.66zM12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></g>
+<g id="video-library"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"></path></g>
+<g id="videocam"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"></path></g>
+<g id="videocam-off"><path d="M21 6.5l-4 4V7c0-.55-.45-1-1-1H9.82L21 17.18V6.5zM3.27 2L2 3.27 4.73 6H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.21 0 .39-.08.54-.18L19.73 21 21 19.73 3.27 2z"></path></g>
+<g id="volume-down"><path d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5z"></path></g>
+<g id="volume-mute"><path d="M7 9v6h4l5 5V4l-5 5H7z"></path></g>
+<g id="volume-off"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"></path></g>
+<g id="volume-up"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></g>
+<g id="web"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"></path></g>
+<g id="web-asset"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.89-2-2-2zm0 14H5V8h14v10z"></path></g>
+</defs></svg>
+</iron-iconset-svg>
+<dom-module id="yp-posts-filter" assetpath="../yp-posts-filter/">
+  <template>
+    <style>
+      :host {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+      }
+
+      .filterIcon {
+        padding-right: 16px;
+      }
+
+      .filterIconTransform {
+        -moz-transform: scaleY(-1);
+        -o-transform: scaleY(-1);
+        -webkit-transform: scaleY(-1);
+        transform: scaleY(-1);
+        filter: FlipV;
+        -ms-filter: "FlipV";
+      }
+
+      .dropdown-trigger iron-icon {
+        width: 42px;
+        height: 42px;
+      }
+
+      .clear-search-trigger {
+        width: 42px;
+        height: 42px;
+        margin-top: 12px;
+      }
+
+      .clear-search-trigger iron-icon {
+        width: 42px;
+        height: 42px;
+      }
+
+      paper-item {
+        min-height: 32px;
+      }
+
+      .subTitle {
+        font-size: 24px;
+      }
+
+      #filterDropdown {
+        padding-left: 0;
+        margin-left: 0;
+      }
+
+      @media (max-width: 600px) {
+        .subTitle {
+          font-size: 18px;
+        }
+
+        .dropdown-trigger {
+          padding-left: 0;
+          margin-left: 0;
+        }
+
+        .clear-search-trigger {
+          width: 40px;
+          height: 40px;
+          margin-top: 5px;
+        }
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <template is="dom-if" if="[[group]]">
+      <div class="layout horizontal mainContainer">
+        <template is="dom-if" if="[[searchingFor]]">
+          <paper-icon-button icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
+        </template>
+        <template is="dom-if" if="[[showFilter]]">
+          <paper-menu-button id="filterDropdown" class="selected-items" icon="editor:merge-type" vertical-align="bottom" horizontal-align="left">
+            <paper-icon-button id="dropDownTrigger" icon="filter-list" class="dropdown-trigger"></paper-icon-button>
+            <div class="layout horizontal dropdown-content">
+              <div>
+                <paper-menu class="dropdown-content" on-iron-select="_changeFilter">
+                  <paper-item data-filter="top">
+                    <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
+                    <span>[[t('post.top')]]</span>
+                  </paper-item>
+                  <paper-item data-filter="newest">
+                    <iron-icon icon="av:new-releases" class="filterIcon"></iron-icon>
+                    <span>[[t('post.newest')]]</span>
+                  </paper-item>
+                  <paper-item data-filter="random">
+                    <iron-icon icon="cached" class="filterIcon"></iron-icon>
+                    <span>[[t('post.random')]]</span>
+                  </paper-item>
+                </paper-menu>
+              </div>
+
+              <template is="dom-if" if="[[_ifCategories()]]">
+                <div>
+                  <paper-menu id="clearMenu" class="dropdown-content" on-iron-select="_changeCategory">
+                    <paper-item data-category-id="-1">
+                      <iron-icon icon="select-all" class="filterIcon"></iron-icon>
+                      <span>[[t('categories.all')]]</span>
+                    </paper-item>
+                  </paper-menu>
+                  <div class="layout= horizontal">
+                    <template is="dom-repeat" items="[[_categoryItems()]]" as="categoriesGroups">
+                      <div class="layout vertical">
+                        <paper-menu id="categoryMenu" class="dropdown-content" on-iron-select="_changeCategory">
+                          <template is="dom-repeat" items="[[categoriesGroups]]" as="category">
+                            <paper-item data-category-id$="[[category.id]]" data-category-name$="[[category.name]]">
+                              <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
+                              <span>[[category.name]]</span>
+                            </paper-item>
+                          </template>
+                        </paper-menu>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </paper-menu-button>
+        </template>
+        <div on-tap="_openDropDown" style="cursor: pointer">
+          <h2 class="subTitle">[[subTitle]]</h2>
+        </div>
+      </div>
+    </template>
+  </template>
+  <script>Polymer({is:"yp-posts-filter",behaviors:[Polymer.appHelpers],properties:{filter:{type:String,value:"newest",notify:!0,observer:"_filterChanged"},filterName:{type:String},categoryId:{type:String,notify:!0,observer:"_categoryIdChanged"},categoryName:{type:String},group:{type:Object,observer:"_groupChanged"},subTitle:{type:String,value:""},searchingFor:{type:String,value:null,notify:!0,observer:"_searchingForChanged"},showFilter:{type:Boolean,value:!0},postsCount:{type:Number,notify:!0},tabName:{type:String}},_openDropDown:function(){var t=this.$$("#dropDownTrigger");t&&t.click()},_searchingForChanged:function(t,e){t?this.showFilter=!1:this.showFilter=!0},_clearSearch:function(){this.set("searchingFor",null),this.set("filter","newest"),this._updateAfterFiltering()},openFilter:function(){window.appGlobals.activity("open","filter")},_filterChanged:function(t,e){t&&(this.filterName="post."+this.filter,this._updateTitle())},_categoryIdChanged:function(t,e){t&&this._updateTitle()},searchFor:function(t){this.set("searchingFor",t);var e="/group/"+this.group.id+"/open/"+this.group.name+"/search/"+this.searchingFor;window.appGlobals.activity("change","filter",e),this.redirectTo(e),this.fire("refresh-group")},_updateTitle:function(){if(this.searchingFor)this.subTitle=this.t("post.searchingFor")+this.searchingFor;else{var t,e=this.t(this.filterName);t=this.categoryName?this.categoryName:this.t("categories.all");var i=this.t("short_word.in");this._ifCategories()?(this.subTitle=e+" "+i+" "+t,this.postsCount&&(this.subTitle+=" ("+this.postsCount+")")):this.subTitle=e}},_changeFilter:function(t,e){this.set("filter",e.item.dataset.filter),this._updateAfterFiltering()},_changeCategory:function(t,e){var i=e.item.dataset.categoryId;"-1"!=i?(this.set("categoryId",i),this.categoryName=e.item.dataset.categoryName):(this.set("categoryId",null),this.categoryName=null,this.$$("#categoryMenu").selected=null,this.$$("#clearMenu").selected=null),this._updateTitle(),this._updateAfterFiltering()},buildPostsUrlPath:function(){var t="/group/"+this.group.id+"/"+this.tabName;return this.filter&&(t+="/posts/"+this.filter),this.categoryId&&(t+="/"+this.categoryId+"/"+this.categoryName),t},_updateAfterFiltering:function(){this.filter||this.set("filter","newest");var t=this.buildPostsUrlPath();window.appGlobals.activity("change","filter",t),this.fire("refresh-group")},_ifCategories:function(){return!!this.group&&(this.group.Categories&&this.group.Categories.length>0)},_groupChanged:function(t,e){t&&this._updateTitle()},_categoryItems:function(){return this.group.Categories?this.splitArray(this.group.Categories,7):[]},_categoryImageSrc:function(t){return this.getImageFormatUrl(t.CategoryIconImages,0)}});</script>
+</dom-module>
+<dom-module id="paper-badge" assetpath="../../bower_components/paper-badge/">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: absolute;
+        outline: none;
+      }
+
+      :host([hidden]), [hidden] {
+        display: none !important;
+      }
+
+      iron-icon {
+        --iron-icon-width: 12px;
+        --iron-icon-height: 12px;
+      }
+
+      .badge {
+        @apply(--layout);
+        @apply(--layout-center-center);
+        @apply(--paper-font-common-base);
+
+        font-weight: normal;
+        font-size: 11px;
+        border-radius: 50%;
+        margin-left: var(--paper-badge-margin-left, 0px);
+        margin-bottom: var(--paper-badge-margin-bottom, 0px);
+        width: var(--paper-badge-width, 20px);
+        height: var(--paper-badge-height, 20px);
+        background-color: var(--paper-badge-background, --accent-color);
+        opacity: var(--paper-badge-opacity, 1.0);
+        color: var(--paper-badge-text-color, white);
+
+        @apply(--paper-badge);
+      }
+    </style>
+
+    <div class="badge">
+      <iron-icon hidden$="{{!_computeIsIconBadge(icon)}}" icon="{{icon}}"></iron-icon>
+      <span id="badge-text" hidden$="{{_computeIsIconBadge(icon)}}">{{label}}</span>
+    </div>
+  </template>
+
+  <script>Polymer({is:"paper-badge",hostAttributes:{role:"status",tabindex:0},behaviors:[Polymer.IronResizableBehavior],listeners:{"iron-resize":"updatePosition"},properties:{for:{type:String,observer:"_forChanged"},label:{type:String,observer:"_labelChanged"},icon:{type:String,value:""}},attached:function(){this._updateTarget()},attributeChanged:function(t){"hidden"===t&&this.updatePosition()},_forChanged:function(){this.isAttached&&this._updateTarget()},_labelChanged:function(){this.setAttribute("aria-label",this.label)},_updateTarget:function(){this._target=this.target,this.async(this.notifyResize,1)},_computeIsIconBadge:function(t){return t.length>0},get target(){var t,e=Polymer.dom(this).parentNode,i=Polymer.dom(this).getOwnerRoot();return t=this.for?Polymer.dom(i).querySelector("#"+this.for):e.nodeType==Node.DOCUMENT_FRAGMENT_NODE?i.host:e},updatePosition:function(){if(this._target&&this.offsetParent){var t=this.offsetParent.getBoundingClientRect(),e=this._target.getBoundingClientRect(),i=this.getBoundingClientRect();this.style.left=e.left-t.left+(e.width-i.width/2)+"px",this.style.top=e.top-t.top-i.height/2+"px"}}});</script>
+</dom-module>
+<dom-module id="paper-search-bar" assetpath="../../bower_components/paper-search/">
+
+	<template>
+		<style>
+			:host {
+				background: var(--background-color, white);
+				display: block;
+				padding: 0 16px;
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+			}
+
+			.input-panel {
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+			}
+
+			.icon {
+				color: var(--disabled-text-color);
+			}
+
+			#input {
+				margin: 0 10px;
+				border: 0;
+				outline: 0;
+				padding: 16px 0;
+				cursor: text;
+			}
+
+			#input[disabled] {
+				background: var(--background-color, white);
+			}
+
+			.badge {
+				--paper-badge-background: var(--paper-red-500);
+				--paper-badge-opacity: 1;
+				--paper-badge-width: 18px;
+				--paper-badge-height: 18px;
+				--paper-badge-margin-left: -15px;
+				--paper-badge-margin-bottom: -15px;
+			}
+		</style>
+
+		<div class="input-panel flex" on-tap="_enable">
+			<iron-icon icon="[[icon]]" class="icon"></iron-icon>
+			<input is="iron-input" id="input" bind-value="{{query}}" placeholder="[[placeholder]]" class="flex" disabled="[[!_enabled]]">
+		</div>
+		<div hidden$="[[hideClearButton]]">
+			<paper-icon-button icon="clear" hidden$="[[!query]]" on-tap="_clear" class="icon"></paper-icon-button>
+		</div>
+		<div hidden$="[[hideFilterButton]]">
+			<paper-icon-button id="filter" icon="image:tune" on-tap="_filter" class="icon"></paper-icon-button>
+			<paper-badge for="filter" label="[[nrSelectedFilters]]" class="badge" hidden$="[[!nrSelectedFilters]]"></paper-badge>
+		</div>
+	</template>
+
+</dom-module>
+
+<script>!function(){Polymer({is:"paper-search-bar",properties:{query:{type:String,notify:!0,value:""},hideFilterButton:{type:Boolean,value:!1},hideClearButton:{type:Boolean,value:!1},nrSelectedFilters:{type:Number,value:0},icon:{type:String,value:"search"},placeholder:{type:String,value:"Search"},_enabled:{type:Boolean,value:!1}},behaviors:[Polymer.IronA11yKeysBehavior],keyBindings:{enter:"_search"},_enable:function(e){this._enabled=!0,this.$.input.focus()},_filter:function(e){this.fire("paper-search-filter")},_clear:function(){this.query="",this.$.input.focus()},_search:function(){this._enabled=!1,this.fire("paper-search-search")}})}();</script>
+<dom-module id="paper-item-body" assetpath="../../bower_components/paper-item/">
+  <template>
+    <style>
+      :host {
+        overflow: hidden; /* needed for text-overflow: ellipsis to work on ff */
+        @apply(--layout-vertical);
+        @apply(--layout-center-justified);
+        @apply(--layout-flex);
+      }
+
+      :host([two-line]) {
+        min-height: var(--paper-item-body-two-line-min-height, 72px);
+      }
+
+      :host([three-line]) {
+        min-height: var(--paper-item-body-three-line-min-height, 88px);
+      }
+
+      :host > ::content > * {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      :host > ::content [secondary] {
+        @apply(--paper-font-body1);
+
+        color: var(--paper-item-body-secondary-color, --secondary-text-color);
+
+        @apply(--paper-item-body-secondary);
+      }
+    </style>
+
+    <content></content>
+  </template>
+
+  <script>Polymer({is:"paper-item-body"});</script>
+</dom-module>
+<dom-module id="paper-filter-dialog" assetpath="../../bower_components/paper-search/">
+
+	<template>
+
+		<style>
+			.dialog {
+		    	@apply(--paper-filter-dialog);
+		    	--paper-dialog-background-color: var(--paper-filter-dialog-background-color);
+			}
+
+			paper-toolbar {
+				@apply(--paper-filter-toolbar);
+				--paper-toolbar-background: var(--paper-filter-toolbar-background);
+			}
+
+			.dialog,.animated {
+				@apply(--layout-fit);
+			}
+
+			.animated {
+				margin: 0;
+			}
+
+			.filters,.value {
+				background: white;
+			}
+
+			.filter {
+				border-bottom: 1px solid var(--divider-color);
+			}
+
+			.filter,.value {
+				cursor: pointer;
+			}
+
+			/** Workaround for IE11 to center column */
+			.filter-body {
+				height: 1px;
+			}
+
+			/**
+			 * Workaround for IE11 to center column
+			 * @see https://github.com/PolymerElements/paper-item/pull/65/commits/b41815d6f147a52755fc6db188a3f32a329640ee
+			 */
+			.value-holder {
+				@apply(--layout-vertical);
+			}
+
+			.nrResults {
+				color: var(--secondary-text-color);
+			}
+		</style>
+
+		<paper-dialog id="dialog" class="dialog" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+			<array-selector id="selector" items="{{filters}}" selected="{{_selectedFilter}}"></array-selector>
+
+			<neon-animated-pages class="animated" selected="[[_getSelectedPage(_selectedFilter)]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+				<neon-animatable>
+					<paper-header-panel mode="seamed">
+					  	<paper-toolbar>
+							<paper-icon-button on-tap="close" icon="close"></paper-icon-button>
+							<span class="title"></span>
+							<paper-button on-tap="_tapReset" class="reset" hidden$="[[!_hasSelectedFilters(_selectedFilters,_forceRedrawDummy)]]">[[resetButton]]</paper-button>
+							<paper-button on-tap="_tapApply" dialog-confirm="">[[saveButton]]</paper-button>
+					    </paper-toolbar>
+
+						<div class="filters">
+							<template is="dom-repeat" items="[[filters]]" as="filter">
+								<paper-item class="filter" on-tap="_tapSelectFilter">
+									<paper-ripple fit=""></paper-ripple>
+									<paper-item-body two-line="" class="filter-body">
+										<div class="name">[[filter.name]]</div>
+										<div secondary="">[[_getSelectedValuesNames(filter,_selectedFilters,_forceRedrawDummy)]]</div>
+									</paper-item-body>
+								</paper-item>
+							</template>
+						</div>
+					</paper-header-panel>
+				</neon-animatable>
+
+				<neon-animatable>
+			    	<paper-header-panel mode="seamed">
+					    <paper-toolbar>
+					    	<paper-icon-button icon="arrow-back" on-tap="_tapSelectValues"></paper-icon-button>
+						    <span class="title">[[_selectedFilter.name]]</span>
+						</paper-toolbar>
+
+						<iron-list id="valuesList" items="[[_selectedFilter.values]]" as="filterValue" selection-enabled="" multi-selection="">
+							<template>
+								<div class="value-holder">
+									<paper-item class="value">
+										<paper-checkbox name="[[filterValue.id]]" checked="{{selected}}"></paper-checkbox>
+										<div>
+											[[filterValue.name]]
+											<span class="nrResults" hidden="[[!filterValue.count]]">([[filterValue.count]])</span>
+										</div>
+									</paper-item>
+								</div>
+							</template>
+						</iron-list>
+					</paper-header-panel>
+				</neon-animatable>
+			</neon-animated-pages>
+		</paper-dialog>
+	</template>
+</dom-module>
+
+<script>!function(){Polymer({is:"paper-filter-dialog",properties:{filters:Array,selectedFilters:{type:Object,notify:!0,value:{}},resetButton:{type:String,value:"Reset"},saveButton:{type:String,value:"Save filters"},noValuesLabel:{type:String,value:"No filters yet"},_selectedFilters:{type:Object,value:{}},_selectedFilter:Object,_forceRedrawDummy:{type:Number,value:0}},open:function(){Polymer.dom(document.body).appendChild(this),setTimeout(function(){this.$.dialog.open(),this._selectedFilters={};for(var e in this.selectedFilters)this._selectedFilters[e]=this.selectedFilters[e];this._redrawFilterValues(),this.$.valuesList.fire("iron-resize")}.bind(this),1)},close:function(){this.$.dialog.close()},_tapSelectFilter:function(e){this.$.selector.select(e.model.filter),this._preselectFilterValues()},_preselectFilterValues:function(){var e=this._selectedFilters[this._selectedFilter.id];"undefined"!=typeof e&&"undefined"!=typeof this._selectedFilter.values&&(this.$.valuesList.clearSelection(),this._selectedFilter.values.forEach(function(t){e.indexOf(t.id)>=0&&this.$.valuesList.selectItem(t)}.bind(this)))},_tapReset:function(e){this._selectedFilters={},this._redrawFilterValues()},_tapApply:function(e){this.selectedFilters=this._selectedFilters,this.fire("save")},_tapSelectValues:function(e){var t=[];this.$.valuesList.selectedItems.forEach(function(e){t.push(e.id)}),this._selectedFilters[this._selectedFilter.id]=t,this.$.selector.deselect(this._selectedFilter),this._redrawFilterValues()},_hasSelectedFilters:function(e,t){for(selectedFilter in e)if(e[selectedFilter].length>0)return!0;return!1},_getSelectedValuesNames:function(e,t,i){var s=t[e.id];if("undefined"==typeof e.values||"undefined"==typeof s)return this.noValuesLabel;var l=[];return e.values.forEach(function(e){s.indexOf(e.id)>=0&&l.push(e.name)}),0===l.length?this.noValuesLabel:l.join(", ")},_redrawFilterValues:function(){this._forceRedrawDummy=Math.random()},_getSelectedPage:function(e){return e?1:0}})}();</script>
+<dom-module id="paper-spinner-lite" assetpath="../../bower_components/paper-spinner/">
+  <template strip-whitespace="">
+    <style include="paper-spinner-styles"></style>
+
+    <div id="spinnerContainer" class-name="[[__computeContainerClasses(active, __coolingDown)]]">
+      <div class="spinner-layer">
+        <div class="circle-clipper left"></div>
+        <div class="circle-clipper right"></div>
+      </div>
+    </div>
+  </template>
+
+  <script>Polymer({is:"paper-spinner-lite",behaviors:[Polymer.PaperSpinnerBehavior]});</script>
+</dom-module>
+<dom-module id="paper-more-button" assetpath="../../bower_components/paper-more-button/">
+
+	<template>
+		<paper-button hidden$="[[!_showMore(hasMore,loading)]]" on-tap="_tapMore"><content></content></paper-button>
+   	    <paper-spinner-lite active="[[loading]]"></paper-spinner-lite>
+	</template>
+
+</dom-module>
+
+<script>!function(){Polymer({is:"paper-more-button",properties:{hasMore:{type:Boolean,value:!1},loading:{type:Boolean,value:!1}},_tapMore:function(){this.fire("tap-more")},_showMore:function(e,o){return e&&!o}})}();</script>
+<dom-module id="paper-search-panel" assetpath="../../bower_components/paper-search/">
+
+	<template>
+		<style>
+			.search {
+				border-bottom: 1px solid #eee;
+			}
+
+			.noResults {
+				padding: 20px;
+			}
+
+			.more {
+				padding: 10px 0;
+				text-align: center;
+			}
+
+			.filter-dialog {
+				--paper-filter-dialog-background-color: #eee;
+				--paper-filter-toolbar-background: var(--paper-grey-200);
+				--paper-filter-dialog: {
+					margin: 0!important;
+				};
+				--paper-filter-toolbar: {
+					color: var(--paper-grey-900);
+				}
+			}
+		</style>
+
+		<paper-search-bar class="search" icon="[[icon]]" placeholder="[[placeholder]]" hide-filter-button="[[hideFilterButton]]" query="{{search}}" nr-selected-filters="[[_getNrSelectedFilters(selectedFilters)]]" on-paper-search-search="_onSearch" on-paper-search-filter="_onFilter">
+		</paper-search-bar>
+		<paper-filter-dialog id="filterDialog" class="filter-dialog" filters="[[filters]]" selected-filters="{{selectedFilters}}" reset-button="[[resetButton]]" save-button="[[saveButton]]" no-values-label="[[noValuesLabel]]">
+		</paper-filter-dialog>
+
+		<div hidden$="[[!_hasItems]]">
+			<content select=":not([fixed])"></content>
+		</div>
+
+		<content select="[fixed]"></content>
+
+		<div hidden$="[[!_showNoResults(_hasItems,loading)]]" class="noResults">[[noResultsText]]</div>
+
+		<div class="more" hidden$="[[!hasMore]]">
+			<paper-more-button has-more="[[hasMore]]" loading="[[loading]]" on-tap-more="_loadMore">[[moreButton]]</paper-more-button>
+		</div>
+	</template>
+</dom-module>
+
+<script>!function(){Polymer({is:"paper-search-panel",properties:{search:{type:String,observer:"_onChangeRequest",notify:!0},filters:Object,selectedFilters:{type:Object,observer:"_onChangeRequest",notify:!0,value:{}},items:Array,hasMore:Boolean,loading:{type:Boolean,value:!1},hideFilterButton:{type:Boolean,value:!1},count:{type:Number,notify:!0,value:20},icon:{type:String,value:"search"},placeholder:{type:String,value:"Search"},noResultsText:{type:String,value:"No matching results found."},moreButton:{type:String,value:"More"},resetButton:String,saveButton:String,noValuesLabel:String,_hasItems:{type:Boolean,computed:"_computeHasItems(items)",value:!1}},_loadMore:function(){this.count+=20,this._updateData()},_computeHasItems:function(e){return"undefined"!=typeof e&&e.length>0},_showNoResults:function(e,t){return!e&&!t},_onChangeRequest:function(e,t){"undefined"!=typeof t&&(this.count=20,this._updateData())},_updateData:function(){this.fire("change-request-params")},_onFilter:function(){this.$.filterDialog.open()},_onSearch:function(){this.fire("search")},_getNrSelectedFilters:function(e){if(Object.keys(e).length<=0)return 0;var t=Object.keys(e).map(function(t){return e[t].length}).reduce(function(e,t){return e+t});return t}})}();</script>
+<dom-module id="yp-post-list" assetpath="../yp-post/">
+  <template>
+    <style>
+
+      :host {
+      }
+
+      .container {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+      }
+
+      .postsFilter {
+        padding-left: 16px;
+        height: 36px;
+      }
+
+      .objectives {
+        padding-bottom: 40px;
+        max-width: 432px;
+      }
+
+      .description {
+        padding: 12px;
+      }
+
+
+      yp-post-card {
+        padding-bottom: 52px;
+      }
+
+      #outerRegion {
+        position: relative;
+        @apply(--layout-vertical);
+
+      }
+
+      #scrollableRegion {
+        height: 100%;
+        @apply(--layout-flex);
+      }
+
+      iron-list {
+        width: 960px;
+        height: 100%;
+      }
+
+      .searchContainer {
+        width: 1024px;
+      }
+
+      yp-ajax {
+        padding-top: 48px;
+      }
+
+
+      @media (max-width: 1024px) {
+        iron-list, .searchContainer {
+          width: 960px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        iron-list, .searchContainer {
+          width: 600px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        iron-list, .searchContainer {
+          width: 420px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        iron-list, .searchContainer {
+          width: 360px;
+        }
+      }
+
+      yp-posts-filter {
+        margin-bottom: 8px;
+        margin-left: 8px;
+        margin-top: 16px;
+      }
+
+      #list {
+        margin-top: 16px;
+      }
+
+      .searchButton {
+        padding: 8px;
+        margin: 8px;
+      }
+
+      .searchContainer {
+        margin-top: 16px;
+      }
+
+      yp-posts-filter {
+        padding-right: 16px;
+      }
+
+      paper-search-bar {
+        width: 270px;
+      }
+
+      .half {
+        width: 50%
+      }
+
+      @media (max-width: 800px) {
+        .half {
+          width: 100%;
+        }
+
+        .searchContainer {
+          @apply(--layout-center-center);
+        }
+      }
+
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div class="layout horizontal center-center">
+      <div class="searchContainer layout horizontal wrap">
+        <div class="layout horizontal center-center">
+          <paper-search-bar hide-clear-button="" hide-filter-button="" query="{{searchingFor}}" placeholder="[[t('searchFor')]]" on-paper-search-search="_search"></paper-search-bar>
+        </div>
+        <div class="layout horizontal center-center">
+          <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" on-refresh-group="_refreshGroupFromFilter" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+          </yp-posts-filter>
+        </div>
+      </div>
+    </div>
+
+    <div id="scrollableRegion">
+      <template is="dom-if" if="[[posts]]" restamp="">
+        <iron-list id="list" items="[[posts]]" as="post">
+          <template>
+            <div class="layout vertical center-center">
+              <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+            </div>
+          </template>
+        </iron-list>
+      </template>
+      <div class="layout horizontal center-center">
+        <yp-ajax id="ajax" large-spinner="" on-response="_postsResponse"></yp-ajax>
+        <template is="dom-if" if="[[moreToLoad]]" restamp="">
+          <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <script>Polymer({is:"yp-post-list",behaviors:[Polymer.appHelpers,Polymer.YpScrollTabBehavior],properties:{categories:{type:Array},defaultCategories:{type:Boolean,value:!1},posts:{type:Array,value:null,notify:!0},groupId:{type:Number,observer:"_groupIdChanged"},userId:{type:Number},group:{type:Object,notify:!0},filter:{type:String,value:"newest",observer:"_filterChanged"},statusFilter:{type:String,value:"open",notify:!0},categoryId:{type:String,observer:"_categoryIdChanged"},postsCount:{type:Number,notify:!0},categoryName:{type:String},searchingFor:{type:String,value:null,observer:"_searchingForChanged"},selectedCategoryName:{type:String},tabCounterId:{type:String},oldestPostAt:{type:Date}},_search:function(){window.appGlobals.activity("click","search"),this._refreshGroupFromFilter()},cardMouseOver:function(t){t.currentTarget.elevation=4},cardMouseOut:function(t){t.currentTarget.elevation=1},buildPostsUrlPath:function(){return this.$.postsFilter.buildPostsUrlPath()},_searchingForChanged:function(t,e){},_filterChanged:function(t,e){},_categoryIdChanged:function(t,e){},ready:function(){},_groupIdChanged:function(t,e){t&&(this.set("posts",null),this._loadMoreData())},_refreshGroupFromFilter:function(){this.set("posts",null),this._loadMoreData()},_loadMoreData:function(){this.set("moreToLoad",!1);var t,e;this.userId?(t=this.userId+"/posts",e="users"):(t=this.groupId,e="groups"),this.filter||this.set("filter","newest"),this.searchingFor?this.$$("#ajax").url="/api/"+e+"/"+t+"/search/"+this.searchingFor:(this.$$("#ajax").url="/api/"+e+"/"+t+"/posts/"+this.filter,this.categoryId?this.$$("#ajax").url+="/"+this.categoryId:this.$$("#ajax").url+="/null",this.$$("#ajax").url+="/"+this.statusFilter),this.$$("#ajax").url+="?offset="+(null!=this.posts?this.posts.length:0),this.$$("#ajax").generateRequest()},_postsResponse:function(t,e,s){this.posts||this.set("posts",[]);var r=e.response.posts;this.set("postsCount",e.response.totalPostsCount),this.fire("yp-post-count",{tabCounterId:this.tabCounterId,count:this.postsCount}),this.$$("#postsFilter")._updateTitle(),r.forEach(function(t){this.push("posts",t)}.bind(this)),this.async(function(){this.$$("#list").fire("iron-resize")},10),r.length>0&&r.length!=this.postsCount&&this.setMoreToLoad(),this._processCategories()},_processCategories:function(){if(this.categoryId&&this.group)for(var t=0;t<this.group.Categories.length;t++)this.group.Categories[t].id==this.categoryId&&(this.selectedCategoryName=this.group.Categories[t].name);else this.selectedCategoryName="categories.all"}});</script>
+</dom-module>
+<dom-module id="yp-group-card-large" assetpath="/">
+
+  <template>
+    <style>
+      :host {
+      }
+
+      .groupAccess {
+        padding-bottom: 8px;
+      }
+
+      .group-name {
+        padding-bottom: 4px;
+        margin: 0;
+      }
+
+      .objectives {
+        line-height: var(--objectives-line-height, 1.3);
+      }
+
+      .groupCard {
+        background-color: #fefefe;
+        color: #333;
+        height: 243px;
+        width: 432px;
+        padding: 0 !important;
+        margin-top: 0 !important;
+      }
+
+      .stats {
+        position: absolute;
+        bottom: 0px;
+        right: 8px;
+      }
+
+      .edit {
+        color: #FFF;
+        position: absolute;
+        top: 0;
+        left: 384px;
+        padding-right: 0;
+        margin-right: 0;
+      }
+
+      .description-and-stats {
+        width: 100%;
+      }
+
+      .newCategory {
+        color: var( --primary-background-color,#F2F2F2);
+        position: absolute;
+        top: 64px;
+        right: 0;
+      }
+
+      iron-image {
+        width: 432px;
+        height: 243px;
+      }
+
+      .description {
+        padding: 0;
+        margin: 0;
+      }
+
+      .groupDescription {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 16px;
+      }
+
+      .group-name {
+        background-color: var(--primary-color-800, #000);
+        color: #fafafa;
+        padding-left: 16px;
+        padding-top: 16px;
+        padding-bottom: 16px;
+      }
+
+      .textBox {
+        margin-right: 32px;
+      }
+
+      @media (max-width: 945px) {
+        :host {
+          width: 306px;
+          margin-top: 40px;
+        }
+
+        .groupCard {
+          width: 306px;
+          height: 180px;
+          margin-bottom: 16px;
+        }
+
+        .edit {
+          left: 265px;
+        }
+
+        iron-image {
+          width: 306px;
+          height: 92px !important;
+        }
+
+        .imageCard {
+          height: 92px !important;
+        }
+
+        .group-name {
+          font-size: 20px;
+        }
+
+        .groupDescription {
+          font-size: 13px;
+          padding-top: 6px;
+        }
+
+        .stats {
+        }
+
+        .textBox {
+          margin-right: 0;
+        }
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <template is="dom-if" if="[[group]]">
+      <div class="layout horizontal center-center wrap">
+        <paper-material id="card" elevation="[[elevation]]" animated-shadow="" class="groupCard textBox">
+          <div class="layout vertical">
+            <div class="layout horizontal wrap">
+              <div class="layout vertical description-and-stats">
+                <div class="description">
+                  <h2 class="group-name">[[groupName(group)]]</h2>
+                  <div hidden="" class="groupAccess">[[_groupAccessText(group.access)]]</div>
+                  <div class="groupDescription">[[group.objectives]]</div>
+                  <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
+                </div>
+              </div>
+            </div>
+            <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasGroupAccess]]">
+              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
+                <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
+                <paper-item id="usersMenuItem">[[t('group.users')]]</paper-item>
+                <paper-item id="adminsMenuItem">[[t('group.admins')]]</paper-item>
+                <paper-item id="deleteMenuItem">[[t('group.delete')]]</paper-item>
+                <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              </paper-menu>
+            </paper-menu-button>
+          </div>
+        </paper-material>
+        <paper-material id="cardImage" elevation="2" animated="" class="groupCard imageCard">
+          <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath(group)]]"></iron-image>
+        </paper-material>
+      </div>
+    </template>
+    <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
+    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
+  </template>
+
+  <script>Polymer({is:"yp-group-card-large",behaviors:[Polymer.appHelpers,Polymer.GroupBehaviors,Polymer.LargeCardBehaviors,Polymer.AccessHelpers,Polymer.ypGotAdminRightsBehavior],properties:{group:{type:Object},hasGroupAccess:{type:Boolean,value:!1,computed:"_hasGroupAccess(group, gotAdminRights)"}},_hasGroupAccess:function(e,o){return!(!e||!o)&&null!=this.checkGroupAccess(e)},_groupAccessText:function(e){switch(e){case 0:return this.t("group.public");case 1:return this.t("group.closed");case 2:return this.t("group.secret")}},_menuSelection:function(e,o){"editMenuItem"==o.item.id?this._openEdit():"newCategoryMenuItem"==o.item.id?this._openCategoryEdit():"deleteMenuItem"==o.item.id?this._openDelete():"usersMenuItem"==o.item.id?this._openUsersDialog():"adminsMenuItem"==o.item.id?this._openAdminsDialog():"pagesMenuItem"==o.item.id&&this._openPagesDialog(),this.selectedMenuItem=null},_openPagesDialog:function(){window.appGlobals.activity("open","group.pagesAdmin");var e=Polymer.dom(document).querySelector("yp-app").getDialog("pagesGrid");e.setup(this.group.id,null,null,!1),e.open()},_openUsersDialog:function(){window.appGlobals.activity("open","group.users");var e=Polymer.dom(document).querySelector("yp-app").getDialog("usersGrid");e.setup(this.group.id,null,null,!1),e.open()},_openAdminsDialog:function(){window.appGlobals.activity("open","group.admins");var e=Polymer.dom(document).querySelector("yp-app").getDialog("usersGrid");e.setup(this.group.id,null,null,!0),e.open()},_openEdit:function(){window.appGlobals.activity("open","group.new");var e=Polymer.dom(document).querySelector("yp-app").getDialog("groupEdit");e.setup(this.group,!1,this._refresh.bind(this)),e.open("edit",{groupId:this.group.id})},_openDelete:function(){window.appGlobals.activity("open","group.delete");var e=Polymer.dom(document).querySelector("yp-app").getDialog("deleteDialog");e.setup("/api/groups/",this.group.id,this.t("group.deleteConfirmation"),this._onDeleted.bind(this)),e.open()},_openCategoryEdit:function(){window.appGlobals.activity("open","category.new");var e=Polymer.dom(document).querySelector("yp-app").getDialog("categoryEdit");e.setup(this.group,!0,this._refreshCategory.bind(this)),e.open("new",{groupId:this.group.id})},_refreshCategory:function(e){this.fire("update-group")},_onDeleted:function(){this.redirectTo("/community/"+this.group.community_id)},_newCategory:function(){this.$$("#newCategory").open("new",{groupId:this.group.id})},_refresh:function(e){e&&this.set("group",e),this.fire("update-group")}});</script>
+</dom-module>
+</div><dom-module id="yp-group">
+  <template>
+    <style>
+      .objectives {
+        padding-bottom: 40px;
+        max-width: 432px;
+      }
+
+      .description {
+        padding: 12px;
+      }
+
+      yp-ajax {
+        background-color: var(--primary-background-color);
+      }
+
+      .counterInfo {
+        font-size: 11px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
+
+      <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
+
+      <div class="largeAddButton">
+        <yp-post-card-add on-new-post="_newPost" elevation="2" hidden$="[[!createFabIcon]]"></yp-post-card-add>
+      </div>
+
+      <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
+        <template is="dom-if" if="[[group]]">
+          <paper-tab id="tab1">
+            <div class="layout vertical center-center tabCounterContainer">
+              <span>[[t('posts.open')]]</span><div class="counterInfo" id="tabCountOpen"></div>
+            </div>
+          </paper-tab>
+          <paper-tab>[[t('news')]]</paper-tab>
+          <template is="dom-if" if="[[hasNonOpenPosts]]">
+            <paper-tab>
+              <div class="layout vertical center-center tabCounterContainer">
+                <span>[[t('posts.inProgress')]]</span><div class="counterInfo" id="tabCountInProgress"></div>
+              </div>
+            </paper-tab>
+            <paper-tab>
+              <div class="layout vertical center-center tabCounterContainer">
+                <span>[[t('posts.successful')]]</span><div class="counterInfo" id="tabCountSuccessful"></div>
+              </div>
+            </paper-tab>
+            <paper-tab>
+              <div class="layout vertical center-center tabCounterContainer">
+                <span>[[t('posts.failed')]]</span><div class="counterInfo" id="tabCountFailed"></div>
+              </div>
+            </paper-tab>
+          </template>
+          <paper-tab>[[t('posts.map')]]</paper-tab>
+        </template>
+      </paper-tabs>
+
+      <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <section>
+          <div class="layout horizontal center-center">
+            <yp-post-list id="openPostList" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+          </div>
+        </section>
+        <section>
+          <ac-activities id="groupActivities" selected-tab="[[selected]]" group-id="[[group.id]]"></ac-activities>
+        </section>
+        <template is="dom-if" if="[[hasNonOpenPosts]]">
+          <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list id="inProgressPostList" selected-tab="[[selected]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+            </div>
+          </section>
+          <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list id="successfulPostList" selected-tab="[[selected]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+            </div>
+          </section>
+          <section>
+            <div class="layout horizontal center-center">
+              <yp-post-list id="failedPostList" selected-tab="[[selected]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+            </div>
+          </section>
+        </template>
+        <section>
+          <template is="dom-if" if="[[mapActive]]" restamp="">
+            <yp-post-map group-id="[[group.id]]"></yp-post-map>
+          </template>
+        </section>
+      </iron-pages>
+    </yp-page>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax large-spinner="" id="ajax" on-response="_groupsResponse"></yp-ajax>
+      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+    </div>
+
+  </template>
+
+  <script>Polymer({is:"yp-group",behaviors:[Polymer.appHelpers,Polymer.ypThemeBehavior],listeners:{"yp-post-count":"_updateTabPostCount"},properties:{createFabIcon:{type:String,value:null,notify:!0},groupId:{type:Number,observer:"_groupIdChanged"},group:{type:Object,notify:!0,value:null},hideAdd:{type:Boolean,value:!0},searchingFor:{type:String,value:null},selected:{type:Number,value:0,observer:"_selectedChanged"},hasNonOpenPosts:{type:Boolean,value:!1},groupTabName:{type:String,value:null,observer:"_tabNameChanged"},mapActive:{type:Boolean,value:!1},lastValidGroupId:{type:String}},_tabNameChanged:function(e){e&&this._setSelectedFromTabName(e)},_setSelectedFromTabName:function(e){e&&("open"==e?this.set("selected",0):"news"==e?this.set("selected",1):this.hasNonOpenPosts?"in_progress"==e?this.set("selected",2):"successful"==e?this.set("selected",3):"failed"==e?this.set("selected",4):"map"==e&&this.set("selected",5):"map"==e&&this.set("selected",2))},_selectedChanged:function(e,t){this.group&&e!=t&&(0==e&&this.$$("#openPostList")?this.redirectTo(this.$$("#openPostList").buildPostsUrlPath()):1==e?this.redirectTo("/group/"+this.group.id+"/news"):this.hasNonOpenPosts&&this.$$("#inProgressPostList")?2==e?this.redirectTo(this.$$("#inProgressPostList").buildPostsUrlPath()):3==e?this.redirectTo(this.$$("#successfulPostList").buildPostsUrlPath()):4==e?this.redirectTo(this.$$("#failedPostList").buildPostsUrlPath()):5==e&&this.redirectTo("/group/"+this.group.id+"/map"):2==e&&this.redirectTo("/group/"+this.group.id+"/map")),(e==this.hasNonOpenPosts?5:2)?this.set("mapActive",!0):this.set("mapActive",!1)},_isTab:function(e,t){return t==e},_updateTabPostCount:function(e,t){var s=this.$$("#"+t.tabCounterId);s&&(s.innerHTML=this.formatNumber(t.count))},_searchingForChanged:function(e,t){},_filterChanged:function(e,t){},_categoryIdChanged:function(e,t){},_openEdit:function(){this.$$("#groupEdit").open("edit",{groupId:this.group.id})},_refresh:function(){this.$.ajax.generateRequest(),this.$$("#groupActivities").loadNewData()},ready:function(){},_groupIdChanged:function(e,t){e&&e!=this.lastValidGroupId&&(this.set("lastValidGroupId",e),this._getGroup())},_getGroup:function(){this.$.ajax.url="/api/groups/"+this.groupId,this.$.ajax.retryMethodAfter401Login=this._getGroup.bind(this),this.$.ajax.generateRequest()},_pagesResponse:function(e,t){this.fire("yp-set-pages",t.response)},_groupsResponse:function(e,t,s){this.set("group",t.response.group),this.group.configuration&&void 0!=this.group.configuration.canAddNewPosts?this.group.configuration.canAddNewPosts===!0&&this.set("createFabIcon","lightbulb-outline"):this.set("createFabIcon","lightbulb-outline"),this.fire("yp-set-home-link",{type:"group",id:this.group.id,name:this.group.name}),null!=this.group.theme_id?this.setTheme(this.group.theme_id):null!=this.group.Community.theme_id?this.setTheme(this.group.Community.theme_id):null!=this.group.Community.Domain.theme_id&&this.setTheme(this.group.Community.Domain.theme_id),this.set("hasNonOpenPosts",t.response.hasNonOpenPosts),this.$.pagesAjax.url="/api/groups/"+this.group.id+"/pages",this.$.pagesAjax.generateRequest(),this.group.GroupHeaderImages&&this.group.GroupHeaderImages.length>0&&this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages),this.groupTabName&&this._setSelectedFromTabName(this.groupTabName),this.fire("change-header",{headerTitle:this.group.Community.name,headerDescription:this.group.Community.description,headerIcon:"social:group",documentTitle:this.group.name,enableSearch:!0,backPath:"/community/"+this.group.community_id})},_newPost:function(){window.appGlobals.activity("open","newPost");var e=Polymer.dom(document).querySelector("yp-app").getDialog("postEdit");e.setup(null,this.group,!0,null),e.open("new",{groupId:this.groupId})}});</script>
+</dom-module>
+</body></html>

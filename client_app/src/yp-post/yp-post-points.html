@@ -345,6 +345,13 @@
           }
         },
 
+        removeElementsByClass: function (rootElement, className) {
+          var elements = rootElement.getElementsByClassName(className);
+          while(elements.length > 0){
+            elements[0].parentNode.removeChild(elements[0]);
+          }
+        },
+
         _response: function (event, detail) {
           this.set('points', detail.response);
           this.removeElementsByClass(this, 'inserted-outside-list');

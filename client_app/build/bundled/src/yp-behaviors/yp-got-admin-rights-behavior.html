@@ -1,0 +1,4 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>Polymer.ypGotAdminRightsBehavior={properties:{gotAdminRights:{type:Boolean,notify:!0,value:!1,observer:"_gotAdminRightsChanged"}},listeners:{"yp-user-got-admin-rights":"_gotAdminRights"},_gotAdminRightsChanged:function(){},ready:function(){window.appUser&&window.appUser.adminRights&&this.set("gotAdminRights",!0)},_gotAdminRights:function(i){this.set("gotAdminRights",!0)}};</script>
+</head><body></body></html>
