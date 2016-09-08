@@ -138,8 +138,6 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
-
     <app-location route="{{route}}"></app-location>
 
     <app-route
@@ -213,6 +211,7 @@
 
     <yp-dialog-container id="dialogContainer"></yp-dialog-container>
     <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
+    <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
   </template>
 
   <script>
@@ -335,7 +334,7 @@
         if (window.location.href.indexOf("/#!/") > -1) {
           window.location = window.location.href.replace("/#!/", "/");
         }
-        debugger;
+
         if (route.path.indexOf('domain') > -1) {
           this.set('domainSubRoute', this.subRoute);
         } else if (route.path.indexOf('community') > -1) {
@@ -351,8 +350,6 @@
 
       _routePageChanged: function(page) {
         this.page = page;
-        debugger;
-
       },
 
       _pageChanged: function(page) {

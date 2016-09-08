@@ -133,8 +133,7 @@
           this.set('requestInProgress', false);
           this.set('domain', detail.response.domain);
           this.setupGoogleAnalytics(this.domain);
-          var hash = window.location.hash;
-          if (hash===null || hash==="") {
+          if (window.location.pathname=="/") {
             if (detail.response.community) {
               this.redirectTo("/community/"+detail.response.community.id);
             } else {
