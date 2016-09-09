@@ -501,18 +501,22 @@
       },
 
       _domainIdChanged: function (newValue) {
+        this.set('activities', null);
         this._generateRequest(newValue, 'domains');
       },
 
       _communityIdChanged: function (newValue) {
+        this.set('activities', null);
         this._generateRequest(newValue, 'communities');
       },
 
       _groupIdChanged: function (newValue) {
+        this.set('activities', null);
         this._generateRequest(newValue, 'groups');
       },
 
       _postIdChanged: function (newValue) {
+        this.set('activities', null);
         this._generateRequest(newValue, 'posts');
       },
 

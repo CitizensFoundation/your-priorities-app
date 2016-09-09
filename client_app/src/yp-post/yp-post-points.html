@@ -339,6 +339,7 @@
 
         _postChanged: function (newPost) {
           // Remove any manually inserted points when the list is updated
+          this.set('points', null);
           if (newPost) {
             this.$.ajax.url = '/api/posts/' + newPost.id + '/points';
             this.$.ajax.generateRequest();

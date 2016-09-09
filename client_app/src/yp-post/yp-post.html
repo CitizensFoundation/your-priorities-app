@@ -482,7 +482,7 @@
           if (this.post) {
             this.redirectTo("/post/" + this.post.id + '/' + tabName);
           }
-          
+
           if (tabName == "location") {
             this.set('mapActive', true);
           } else {
@@ -562,11 +562,9 @@
         },
 
         _postIdChanged: function (newValue, oldValue) {
+          this.set("post",null);
           if (newValue) {
-            this.set("post",null);
             this._getPost();
-          } else {
-            this.set("post",null);
           }
         },
 
