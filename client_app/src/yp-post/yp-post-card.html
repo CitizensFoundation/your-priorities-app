@@ -196,7 +196,7 @@
       <div class="layout horizontal center-center">
         <paper-material class="postCard" elevation="[[elevation]]" animated>
           <div class="layout vertical wrap">
-            <h1 class="post-name" on-tap="goToPostIfNotHeader">[[postName(post)]]</h1>
+            <h1 class="post-name" on-tap="goToPostIfNotHeader">[[postName]]</h1>
             <div class="layout horizontal wrap mediaAndInfoContainer">
               <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
               <div class="layout vertical">
@@ -295,7 +295,7 @@
 
       _trimmedDescription: function (post, description) {
         if (post) {
-          return this.postDescription(post);
+          return this.postDescription;
         } else {
           return "";
         }

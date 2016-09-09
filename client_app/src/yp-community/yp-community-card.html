@@ -13,6 +13,7 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="yp-community-stats.html">
 <link rel="import" href="yp-community-behaviors.html">
+
 <link rel="import" href="../yp-membership-button/yp-membership-button.html">
 
 <dom-module id="yp-community-card">
@@ -182,16 +183,16 @@
     <template is="dom-if" if="[[community]]">
       <paper-card featured$="[[featured]]" class="communityCard" animated elevation="[[elevation]]" class="layout vertical flex">
         <div class="layout horizontal">
-          <iron-image sizing="cover" featured$="[[featured]]" preload src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
-          <iron-image sizing="cover" hidden$="[[!featured]]" featured$="[[featured]]" preload src="[[communityLogoImageNextPath(community)]]" class="post-image secondImage"></iron-image>
+          <iron-image sizing="cover" featured$="[[featured]]" preload src="[[communityLogoImagePath]]" class="post-image"></iron-image>
+          <iron-image sizing="cover" hidden$="[[!featured]]" featured$="[[featured]]" preload src="[[communityLogoImageNextPath]]" class="post-image secondImage"></iron-image>
         </div>
         <div class="informationText">
-          <div class="community-name" featured$="[[featured]]" on-tap="_goToCommunity">[[communityName(community)]]</div>
+          <div class="community-name" featured$="[[featured]]" on-tap="_goToCommunity">[[communityName]]</div>
           <template is="dom-if" if="[[featured]]">
-            <div class="description" featured$="[[featured]]">[[communityDescription(community,700)]]</div>
+            <div class="description" featured$="[[featured]]">[[communityDescriptionFull]]</div>
           </template>
           <template is="dom-if" if="[[!featured]]">
-            <div class="description">[[communityDescription(community)]]</div>
+            <div class="description">[[communityDescription]]</div>
           </template>
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>

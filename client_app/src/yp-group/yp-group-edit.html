@@ -10,6 +10,7 @@
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-collection-status-options.html">
 
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
@@ -104,7 +105,7 @@
           <div class="layout horizontal center-center">
             <paper-dropdown-menu label="[[t('status.select')]]">
               <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
-                <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
+                <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
                   <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
                 </template>
               </paper-menu>
@@ -147,7 +148,8 @@
 
     behaviors: [
       Polymer.appHelpers,
-      Polymer.ypEditDialogBehavior
+      Polymer.ypEditDialogBehavior,
+      Polymer.ypCollectionStatusOptions
     ],
 
     properties: {

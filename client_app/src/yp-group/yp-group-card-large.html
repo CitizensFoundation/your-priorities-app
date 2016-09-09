@@ -156,15 +156,15 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <template is="dom-if" if="[[group]]">
+    <template is="dom-if" if="[[group]]" restamp>
       <div class="layout horizontal center-center wrap">
         <paper-material id="card" elevation="[[elevation]]" animated-shadow class="groupCard textBox">
           <div class="layout vertical">
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">
                 <div class="description">
-                  <h2 class="group-name">[[groupName(group)]]</h2>
-                  <div hidden class="groupAccess">[[_groupAccessText(group.access)]]</div>
+                  <h2 class="group-name">[[groupName]]</h2>
+                  <div hidden class="groupAccess">[[groupAccessText]]</div>
                   <div class="groupDescription">[[group.objectives]]</div>
                   <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
                 </div>
@@ -184,7 +184,7 @@
           </div>
         </paper-material>
         <paper-material id="cardImage" elevation="2" animated class="groupCard imageCard">
-          <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath(group)]]"></iron-image>
+          <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
         </paper-material>
       </div>
     </template>
@@ -206,39 +206,50 @@
 
       properties: {
         group: {
-          type: Object
+          type: Object,
+          observer: '_groupChanged'
         },
 
         hasGroupAccess: {
           type: Boolean,
           value: false,
           computed: '_hasGroupAccess(group, gotAdminRights)'
+        },
+
+        groupAccessText: {
+          type: String,
+          computed: '_groupAccessText(group, language)'
         }
       },
 
       _hasGroupAccess: function(group, gotAdminRights) {
         if (group && gotAdminRights) {
-          if (this.checkGroupAccess(group)!=null) {
-            return true
-          } else {
-            return false;
-          }
+          return (this.checkGroupAccess(group)!=null);
         } else {
           return false;
         }
       },
 
-      _groupAccessText: function(access) {
-        switch (access) {
-          case 0: // Public
-            return this.t("group.public");
-            break;
-          case 1: // Closed
-            return this.t("group.closed");
-            break;
-          case 2: //Secert
-            return this.t("group.secret");
-            break;
+      resetGroup: function () {
+        this.set('group', null);
+      },
+
+      _groupChanged: function (group) {
+      },
+
+      _groupAccessText: function(group, language) {
+        if (group && language) {
+          switch (access) {
+            case 0: // Public
+              return this.t("group.public");
+              break;
+            case 1: // Closed
+              return this.t("group.closed");
+              break;
+            case 2: //Secert
+              return this.t("group.secret");
+              break;
+          }
         }
       },
 

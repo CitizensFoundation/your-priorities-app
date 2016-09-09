@@ -144,8 +144,8 @@
           @apply(--layout-center-center);
         }
       }
-
     </style>
+
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout horizontal center-center">
@@ -298,8 +298,8 @@
       },
 
       _groupIdChanged: function (newValue, oldValue) {
+        this.set("posts", null);
         if (newValue) {
-          this.set("posts", null);
           this._loadMoreData();
         }
       },

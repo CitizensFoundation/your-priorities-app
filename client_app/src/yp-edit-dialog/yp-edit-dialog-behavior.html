@@ -72,10 +72,10 @@
 
     _setupNewUpdateState: function () {
       if (this.new) {
-        this.saveText = window.i18nTranslation.t('create');
+        this.saveText = this.t('create');
         this.method = "POST";
       } else {
-        this.saveText = window.i18nTranslation.t('update');
+        this.saveText = this.t('update');
         this.method = "PUT";
       }
       this._setupTranslation();

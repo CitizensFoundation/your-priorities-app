@@ -118,13 +118,13 @@
             <div class="card-content">
               <template is="dom-if" if="[[post.Category]]">
                 <div class="category-image-container">
-                  <iron-image class="category-icon" sizing="contain" src$="[[getCategoryImagePath(post)]]"></iron-image>
+                  <iron-image class="category-icon" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
                 </div>
               </template>
               <div class="layout vertical">
                 <div class="description">
-                  <h1 class="post-name">[[postName(post)]]</h1>
-                  <div>[[postDescription(post)]]</div>
+                  <h1 class="post-name">[[postName]]</h1>
+                  <div>[[postDescription]]</div>
                 </div>
                 <div class="layout vertical">
                   <div class="card-actions">

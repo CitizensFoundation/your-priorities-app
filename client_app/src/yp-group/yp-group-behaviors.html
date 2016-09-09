@@ -14,6 +14,26 @@
 
       elevation: {
         type: Number
+      },
+
+      groupLogoImagePath: {
+        type: String,
+        computed: '_groupLogoImagePath(group)'
+      },
+
+      groupHeaderImagePath: {
+        type: String,
+        computed: '_groupHeaderImagePath(group)'
+      },
+
+      groupName: {
+        type: String,
+        computed: '_groupName(group)'
+      },
+
+      groupObjectives: {
+        type: String,
+        computed: '_groupObjectives(group)'
       }
     },
 
@@ -23,24 +43,36 @@
       this.redirectTo(groupUrl);
     },
 
-    groupLogoImagePath: function (group) {
-      return this.getImageFormatUrl(group.GroupLogoImages, 0);
-    },
-
-    groupHeaderImagePath: function (group) {
-      return this.getImageFormatUrl(group.GroupHeaderImages, 0);
-    },
-
-    groupName: function (group) {
-      if (group.name) {
-        return this.truncate(this.trim(group.name), 60);
+    _groupLogoImagePath: function (group) {
+      if (group) {
+        return this.getImageFormatUrl(group.GroupLogoImages, 0);
       } else {
-        return group.short_name;
+        return "";
       }
     },
 
-    groupObjectives: function (group) {
-      if (group.objectives) {
+    _groupHeaderImagePath: function (group) {
+      if (group) {
+        return this.getImageFormatUrl(group.GroupHeaderImages, 0);
+      } else {
+        return "";
+      }
+    },
+
+    _groupName: function (group) {
+      if (group) {
+        if (group.name) {
+          return this.truncate(this.trim(group.name), 60);
+        } else {
+          return group.short_name;
+        }
+      } else {
+        return "";
+      }
+    },
+
+    _groupObjectives: function (group) {
+      if (group && group.objectives) {
         return this.truncate(this.trim(group.objectives), 200, '...');
       } else {
         return "";

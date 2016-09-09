@@ -24,10 +24,25 @@
       elevation: {
         type: Number,
         value: 1
+      },
+
+      postName: {
+        type: String,
+        computed: 'postNameFunc(post)'
+      },
+
+      postDescription: {
+        type: String,
+        computed: 'postDescriptionFunc(post)'
+      },
+
+      getCategoryImagePath: {
+        type: String,
+        computed: '_getCategoryImagePath(post)'
       }
     },
 
-    postName: function (post) {
+    postNameFunc: function (post) {
       if (post && post.name) {
         return this.truncate(this.trim(post.name), 100);
       } else if (post) {
@@ -37,7 +52,7 @@
       }
     },
 
-    postDescription: function (post) {
+    postDescriptionFunc: function (post) {
       if (post && post.description) {
         return this.truncate(this.trim(post.description), 500, '...');
       } else if (post && post.Points && post.Points[0]) {
@@ -47,8 +62,8 @@
       }
     },
 
-    getCategoryImagePath: function (post) {
-      if (post.Category && post.Category.CategoryIconImages) {
+    _getCategoryImagePath: function (post) {
+      if (post && post.Category && post.Category.CategoryIconImages) {
         return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
       } else {
         return "";

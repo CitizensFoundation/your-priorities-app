@@ -35,7 +35,7 @@
       <div class="layout horizontal center-center">
         <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
           <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{officialStatus}}">
-            <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
+            <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
               <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
             </template>
           </paper-menu>
@@ -92,7 +92,12 @@
 
       officialStatus: Number,
 
-      postStatusChange: Object
+      postStatusChange: Object,
+
+      collectionStatusOptions: {
+        type: Object,
+        computed: '_collectionStatusOptions(language)'
+      }
     },
 
     _postChanged: function (newValue, oldValue) {
@@ -106,13 +111,17 @@
       this.set('post', null);
     },
 
-    collectionStatusOptions: function() {
-      return [
-        {name: 'published', official_value: 0, translatedName: this.t('status.published')},
-        {name: 'successful', official_value: 2, translatedName: this.t('status.successful')},
-        {name: 'failed', official_value: -2, translatedName: this.t('status.failed')},
-        {name: 'in_progress', official_value: -1, translatedName: this.t('status.inProgress')}
-      ]
+    _collectionStatusOptions: function(language) {
+      if (this.t) {
+        return [
+          {name: 'published', official_value: 0, translatedName: this.t('status.published')},
+          {name: 'successful', official_value: 2, translatedName: this.t('status.successful')},
+          {name: 'failed', official_value: -2, translatedName: this.t('status.failed')},
+          {name: 'in_progress', official_value: -1, translatedName: this.t('status.inProgress')}
+        ]
+      } else {
+        return [];
+      }
     },
 
     setup: function (post, postStatusChange, refreshFunction) {

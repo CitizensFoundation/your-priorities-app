@@ -134,8 +134,8 @@
 
     <div class="layout horizontal wrap">
       <div class="layout vertical descriptionOuter">
-        <h3 class="post-name postCardCursor" on-tap="goToPost">[[postName(activity.Post)]]</h3>
-        <div class="description">[[postDescription(activity.Post)]]</div>
+        <h3 class="post-name postCardCursor" on-tap="goToPost">[[postNameFunc(activity.Post)]]</h3>
+        <div class="description">[[postDescriptionFunc(activity.Post)]]</div>
       </div>
       <div class="layout horizontal">
         <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>

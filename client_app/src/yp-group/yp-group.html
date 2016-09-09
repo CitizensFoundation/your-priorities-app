@@ -272,6 +272,10 @@
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue && newValue!=this.lastValidGroupId) {
           this.set('lastValidGroupId', newValue);
+          this.set('group', null);
+          this.set('selectedTab', 'open');
+          this.$.groupCard.resetGroup();
+          this.set('hasNonOpenPosts', false);
           this._getGroup();
         }
        },

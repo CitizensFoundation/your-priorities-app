@@ -10,6 +10,41 @@
       community: {
         type: Object,
         notify: true
+      },
+
+      communityLogoImagePath: {
+        type: String,
+        computed: '_communityLogoImagePath(community)'
+      },
+
+      communityLogoImageNextPath: {
+        type: String,
+        computed: '_communityLogoImageNextPath(community)'
+      },
+
+      communityHeaderImagePath: {
+        type: String,
+        computed: '_communityHeaderImagePath(community)'
+      },
+
+      communityName: {
+        type: String,
+        computed: '_communityName(community)'
+      },
+
+      communityNameFull: {
+        type: String,
+        computed: '_communityName(community, 1)'
+      },
+
+      communityDescription: {
+        type: String,
+        computed: '_communityDescription(community)'
+      },
+
+      communityDescriptionFull: {
+        type: String,
+        computed: '_communityDescription(community,1)'
       }
     },
 
@@ -19,23 +54,25 @@
       this.redirectTo(communityUrl);
     },
 
-    communityLogoImagePath: function (community) {
+    _communityLogoImagePath: function (community) {
       if (community) {
         return this.getImageFormatUrl(community.CommunityLogoImages, 0);
       }
     },
 
-    communityLogoImageNextPath: function (community) {
+    _communityLogoImageNextPath: function (community) {
       if (community) {
         return this.getImageFormatNextUrl(community.CommunityLogoImages, 0);
       }
     },
 
-    communityHeaderImagePath: function (community) {
-      return this.getImageFormatUrl(community.CommunityHeaderImages, 0);
+    _communityHeaderImagePath: function (community) {
+      if (community) {
+        return this.getImageFormatUrl(community.CommunityHeaderImages, 0);
+      }
     },
 
-    communityName: function (community, showAll) {
+    _communityName: function (community, showAll) {
       if (community && community.name) {
         return this.truncate(this.trim(community.name),  showAll ? 300 : 35, '...');
       } else if (community) {
@@ -45,7 +82,7 @@
       }
     },
 
-    communityDescription: function (community, showAll) {
+    _communityDescription: function (community, showAll) {
       if (community && community.description) {
         return this.truncate(this.trim(community.description), showAll ? 300 : 120, '...');
       } else {
