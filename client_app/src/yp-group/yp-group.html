@@ -73,36 +73,34 @@
         <yp-post-card-add on-new-post="_newPost" elevation="2" hidden$="[[!createFabIcon]]"></yp-post-card-add>
       </div>
 
-      <paper-tabs id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
-        <template is="dom-if" if="[[group]]">
-          <paper-tab id="tab1" name="open">
+      <paper-tabs id="paperTabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
+        <paper-tab id="tab1" name="open">
+          <div class="layout vertical center-center tabCounterContainer">
+            <span>[[t('posts.open')]]</span><div class="counterInfo" id="tabCountOpen"></div>
+          </div>
+        </paper-tab>
+        <paper-tab name="news">[[t('news')]]</paper-tab>
+        <template is="dom-if" if="[[hasNonOpenPosts]]">
+          <paper-tab name="in_progress">
             <div class="layout vertical center-center tabCounterContainer">
-              <span>[[t('posts.open')]]</span><div class="counterInfo" id="tabCountOpen"></div>
+              <span>[[t('posts.inProgress')]]</span><div class="counterInfo" id="tabCountInProgress"></div>
             </div>
           </paper-tab>
-          <paper-tab name="news">[[t('news')]]</paper-tab>
-          <template is="dom-if" if="[[hasNonOpenPosts]]">
-            <paper-tab name="in_progress">
-              <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.inProgress')]]</span><div class="counterInfo" id="tabCountInProgress"></div>
-              </div>
-            </paper-tab>
-            <paper-tab name="successful">
-              <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.successful')]]</span><div class="counterInfo" id="tabCountSuccessful"></div>
-              </div>
-            </paper-tab>
-            <paper-tab name="failed">
-              <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.failed')]]</span><div class="counterInfo" id="tabCountFailed"></div>
-              </div>
-            </paper-tab>
-          </template>
-          <paper-tab name="map">[[t('posts.map')]]</paper-tab>
+          <paper-tab name="successful">
+            <div class="layout vertical center-center tabCounterContainer">
+              <span>[[t('posts.successful')]]</span><div class="counterInfo" id="tabCountSuccessful"></div>
+            </div>
+          </paper-tab>
+          <paper-tab name="failed">
+            <div class="layout vertical center-center tabCounterContainer">
+              <span>[[t('posts.failed')]]</span><div class="counterInfo" id="tabCountFailed"></div>
+            </div>
+          </paper-tab>
         </template>
+        <paper-tab name="map">[[t('posts.map')]]</paper-tab>
       </paper-tabs>
 
-      <iron-pages class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+      <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section name="open">
           <div class="layout horizontal center-center">
             <yp-post-list id="openPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
@@ -195,7 +193,8 @@
 
         hasNonOpenPosts: {
           type: Boolean,
-          value: false
+          value: false,
+          observer: '_hasNonOpenPostsChanged'
         },
 
         mapActive: {
@@ -241,6 +240,21 @@
         }
       },
 
+      _hasNonOpenPostsChanged: function () {
+        this.async(function () {
+          var pages = this.$$("#tabPages");
+          if (pages) {
+            pages.forceSynchronousItemUpdate();
+          }
+
+          var paperTabs = this.$$("#paperTabs");
+          if (paperTabs) {
+            paperTabs.forceSynchronousItemUpdate();
+            paperTabs.notifyResize();
+          }
+        }, 10);
+      },
+
       _updateTabPostCount: function (event, tabCounterInfo) {
         var tabCounter = this.$$('#'+tabCounterInfo.tabCounterId);
         if (tabCounter) {
@@ -273,8 +287,14 @@
         if (newValue && newValue!=this.lastValidGroupId) {
           this.set('lastValidGroupId', newValue);
           this.set('group', null);
-          this.set('selectedTab', 'open');
           this.$.groupCard.resetGroup();
+          this.$.tabCountOpen.innerHTML = "";
+          if (this.hasNonOpenPosts) {
+            this.$$("#tabCountInProgress").innerHTML = "";
+            this.$$("#tabCountSuccessful").innerHTML = "";
+            this.$$("#tabCountFailed").innerHTML = "";
+          }
+          this.set('selectedTab', 'open');
           this.set('hasNonOpenPosts', false);
           this._getGroup();
         }
