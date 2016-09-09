@@ -82,7 +82,7 @@
             translation = key;
           return translation;
         } else {
-          console.warn("Translation system i18n not initialized for "+key);
+          //console.warn("Translation system i18n not initialized for "+key);
         }
       };
     },
@@ -138,7 +138,7 @@
       }
       var postUrl = '/post/' + postId;
       window.appGlobals.activity('open', 'post', postUrl);
-      window.app.setKeepOpenForPostsOn(page.current);
+      window.app.setKeepOpenForPostsOn(window.location.pathname);
       this.async(function () {
         this.redirectTo(postUrl);
       });

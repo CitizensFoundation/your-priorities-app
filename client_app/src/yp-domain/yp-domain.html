@@ -174,13 +174,8 @@
           type: Object
         },
 
-        hideAdd: {
-          type: Boolean,
-          value: true
-        },
-
         selectedTab: {
-          type: Number,
+          type: String,
           value: 'communities',
           observer: '_selectedTabChanged'
         },
@@ -188,12 +183,6 @@
         otherSocialMediaActive: {
           type: Boolean,
           value: false
-        },
-
-        domainTabName: {
-          type: String,
-          value: null,
-          observer: '_tabNameChanged'
         }
       },
 
@@ -214,15 +203,19 @@
         }
       },
 
-      _selectedTabChanged: function (newValue) {
-        if (newValue=='other_social_media') {
+      _selectedTabChanged: function (tabName) {
+        if (tabName=='other_social_media') {
           this.set('otherSocialMediaActive', true);
         } else {
           this.set('otherSocialMediaActive', false);
         }
 
         if (this.domain) {
-          this.redirectTo("/domain/" + this.domain.id + '/' + newValue);
+          this.redirectTo("/domain/" + this.domain.id + '/' + tabName);
+        }
+
+        if (tabName && window.appGlobals) {
+          window.appGlobals.activity('open', 'domain_tab_'+tabName);
         }
       },
 
@@ -233,7 +226,6 @@
           this.set("archivedCommunities",null);
           this.$.ajax.url = '/api/domains/' + this.domainId;
           this.$.ajax.generateRequest();
-          this.hideAdd = true;
         }
       },
 
@@ -278,15 +270,16 @@
         this.$.domainCard.setElevation(5);
         this.$.domainCard.lowerCardLater();
 
-        this.fire("change-header", { headerTitle: null, documentTitle: this.domain.name,
-                                     headerDescription: this.domain.description});
+        this.refreshHeader();
+      },
 
-        if (this.activeCommunities.length>0) {
-          this.hideAdd = true;
-        } else {
-          this.hideAdd = false;
+      refreshHeader: function () {
+        if (this.domain) {
+          this.fire("change-header", { headerTitle: null, documentTitle: this.domain.name,
+            headerDescription: this.domain.description});
+
         }
-      }
+      },
 
     });
   </script>

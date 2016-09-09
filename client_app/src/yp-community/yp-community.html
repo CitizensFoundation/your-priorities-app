@@ -51,18 +51,31 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
+    <app-route
+      route="{{idRoute}}"
+      pattern="/:id"
+      data="{{idRouteData}}"
+      tail="{{tabRoute}}">
+    </app-route>
+
+    <app-route
+      route="{{tabRoute}}"
+      pattern="/:tabName"
+      data="{{tabRouteData}}">
+    </app-route>
+
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
 
       <yp-community-large-card id="communityCard" class="largeCard card" community="[[community]]" on-update-community="_refresh"></yp-community-large-card>
 
-      <paper-tabs  id="paper_tabs" class="tabs" selected="{{selected}}" focused>
-        <paper-tab class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
-        <paper-tab class="tab">[[t('news')]]</paper-tab>
-        <paper-tab class="tab">[[t('posts.map')]]</paper-tab>
+      <paper-tabs  id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
+        <paper-tab name="groups" class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
+        <paper-tab name="news" class="tab">[[t('news')]]</paper-tab>
+        <paper-tab name="map" class="tab">[[t('posts.map')]]</paper-tab>
       </paper-tabs>
 
-      <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <section>
+      <iron-pages class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <section name="groups">
           <div class="layout horizontal center-center wrap">
             <yp-group-grid
               featured-groups="[[featuredGroups]]"
@@ -72,10 +85,10 @@
             <yp-group-card-add hidden$="[[!createFabIcon]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
           </div>
         </section>
-        <section>
+        <section name="news">
           <ac-activities community-id="[[community.id]]"></ac-activities>
         </section>
-        <section>
+        <section name="map">
           <template is="dom-if" if="[[mapActive]]" restamp>
             <yp-post-map community-id="[[community.id]]"></yp-post-map>
           </template>
@@ -102,6 +115,11 @@
 
       properties: {
 
+        idRoute: Object,
+        tabRoute: Object,
+        idRouteData: Object,
+        tabRouteData: Object,
+
         createFabIcon: {
           type: String,
           value: null,
@@ -118,26 +136,10 @@
           type: Object
         },
 
-        communityEmpty: {
-          type: Boolean,
-          value: false
-        },
-
-        hideAdd: {
-          type: Boolean,
-          value: true
-        },
-
-        selected: {
-          type: Number,
-          value: 0,
-          observer: '_selectedChanged'
-        },
-
-        communityTabName: {
+        selectedTab: {
           type: String,
-          value: null,
-          observer: '_tabNameChanged'
+          value: 'groups',
+          observer: '_selectedTabChanged'
         },
 
         mapActive: {
@@ -146,33 +148,36 @@
         }
       },
 
-      _tabNameChanged: function (newValue) {
-        if (newValue) {
-          if (newValue=='groups') {
-            this.set('selected', 0);
-          } else if (newValue=='news') {
-            this.set('selected', 1);
-          } else if (newValue=='map') {
-            this.set('selected', 2);
-          }
+      observers: [
+        '_routeIdChanged(idRouteData.id)',
+        '_routeTabChanged(tabRouteData.tabName)'
+      ],
+
+      _routeIdChanged: function (newId) {
+        if (newId) {
+          this.set('communityId', newId);
         }
       },
 
-      _selectedChanged: function (newValue) {
+      _routeTabChanged: function (newTabName) {
+        if (newTabName) {
+          this.set('selectedTab', newTabName);
+        }
+      },
+
+      _selectedTabChanged: function (tabName) {
         if (this.community) {
-          if (newValue == 0) {
-            this.redirectTo("/community/" + this.community.id + '/groups');
-          } else if (newValue == 1) {
-            this.redirectTo("/community/" + this.community.id + '/news');
-          } else if (newValue == 2) {
-            this.redirectTo("/community/" + this.community.id + '/map');
-          }
+          this.redirectTo("/community/" + this.community.id + '/' + tabName);
         }
 
-        if (newValue == 2) {
+        if (tabName == "map") {
           this.set('mapActive', true);
         } else {
           this.set('mapActive', false);
+        }
+
+        if (tabName && window.appGlobals) {
+          window.appGlobals.activity('open', 'community_tab_' + tabName);
         }
       },
 
@@ -196,7 +201,6 @@
           this.set("featuredGroups",null);
           this.set("activeGroups",null);
           this.set("archivedGroups",null);
-          this.set('hideAdd', true);
           this._getCommunity();
         }
       },
@@ -248,19 +252,16 @@
           }
         },20);
 
-        if (detail.response.Groups.length===0)
-          this.communityEmpty = true;
-        else
-          this.communityEmpty = false;
-        this.fire("change-header", { headerTitle: this.community.Domain.name,
-                                     headerDescription: this.community.Domain.description,
-                                     headerIcon: "group-work",
-                                     documentTitle: this.community.name,
-                                     backPath: "/domain/" + this.community.domain_id });
-        if (this.activeGroups.length>0) {
-          this.hideAdd = true;
-        } else {
-          this.hideAdd = false;
+        this.refreshHeader();
+      },
+
+      refreshHeader: function () {
+        if (this.community) {
+          this.fire("change-header", { headerTitle: this.community.Domain.name,
+            headerDescription: this.community.Domain.description,
+            headerIcon: "group-work",
+            documentTitle: this.community.name,
+            backPath: "/domain/" + this.community.domain_id });
         }
       },
 

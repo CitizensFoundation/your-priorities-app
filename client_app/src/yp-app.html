@@ -160,7 +160,7 @@
         </div>
       </app-drawer>
 
-      <app-scrollpos-control selected="{{route}}"></app-scrollpos-control>
+      <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
 
       <app-header-layout id="mainArea">
 
@@ -197,11 +197,11 @@
         </app-header>
 
         <iron-pages selected="{{page}}" attr-for-selected="name" fallback-selection="view404">
-          <yp-domain name="domain" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
-          <yp-community name="community"id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
-          <yp-group name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
-          <yp-post name="post" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
-          <yp-user name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
+          <yp-domain id="domainPage" name="domain" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
+          <yp-community id="communityPage" name="community"id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
+          <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
+          <yp-post id="postPage" name="post" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
+          <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
           <yp-view-404 name="view404"></yp-view-404>
         </iron-pages>
 
@@ -309,7 +309,7 @@
 
         closePostHeader: {
           type: Boolean,
-          computed: '_closePostHeader(params, keepOpenForPost)',
+          computed: '_closePostHeader(page, keepOpenForPost)',
           value: null
         }
       },
@@ -337,14 +337,29 @@
 
         if (route.path.indexOf('domain') > -1) {
           this.set('domainSubRoute', this.subRoute);
+          if (typeof this.$.domainPage.refreshHeader !== "undefined") {
+            this.$.domainPage.refreshHeader();
+          }
         } else if (route.path.indexOf('community') > -1) {
           this.set('communitySubRoute', this.subRoute);
+          if (typeof this.$.communityPage.refreshHeader !== "undefined") {
+            this.$.communityPage.refreshHeader();
+          }
         } else if (route.path.indexOf('group') > -1) {
           this.set('groupSubRoute', this.subRoute);
+          if (typeof this.$.groupPage.refreshHeader !== "undefined") {
+            this.$.groupPage.refreshHeader();
+          }
         } else if (route.path.indexOf('post') > -1) {
           this.set('postSubRoute', this.subRoute);
+          if (typeof this.$.postPage.refreshHeader !== "undefined") {
+            this.$.postPage.refreshHeader();
+          }
         } else if (route.path.indexOf('user') > -1) {
           this.set('userSubRoute', this.subRoute);
+          if (typeof this.$.userPage.refreshHeader !== "undefined") {
+            this.$.userPage.refreshHeader();
+          }
         }
       },
 
@@ -352,7 +367,7 @@
         this.page = page;
       },
 
-      _pageChanged: function(page) {
+      _pageChanged: function(page, oldPage) {
         if (page) {
           var resolvedPageUrl;
           if (page=="view404") {
@@ -378,6 +393,7 @@
         this.set('keepOpenForPost', goBackToPage);
         this.set('storedBackPath', this.backPath);
         this.set('storedLastDocumentTitle', document.title);
+        debugger;
       },
 
       _closePost: function () {
@@ -395,8 +411,8 @@
         this.set('this.keepOpenForPost', null);
       },
 
-      _closePostHeader: function (params, keepOpenForPost) {
-        if (params.postId && keepOpenForPost)
+      _closePostHeader: function (page, keepOpenForPost) {
+        if (page=="post" && keepOpenForPost)
           return true;
         else
           return false;
@@ -452,6 +468,7 @@
       },
 
       ready: function () {
+        window.app = this;
       },
 
       getDialog: function (idName) {
