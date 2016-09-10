@@ -38,12 +38,14 @@
       <yp-missing-email id="missingEmail"></yp-missing-email>
       <yp-page-dialog id="pageDialog"></yp-page-dialog>
 
+      <!-- Those are upgraded later from bundles -->
+      <yp-community-edit id="communityEdit"></yp-community-edit>
+      <yp-group-edit new id="groupEdit"></yp-group-edit>
+      <yp-post-edit id="postEdit"></yp-post-edit>
+      <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
+
       <template is="dom-if" if="[[loggedInUser]]">
-        <yp-post-edit id="postEdit"></yp-post-edit>
         <yp-delete-dialog id="deleteDialog"></yp-delete-dialog>
-        <yp-community-edit id="communityEdit"></yp-community-edit>
-        <yp-group-edit new id="groupEdit"></yp-group-edit>
-        <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
         <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
         <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
       </template>
