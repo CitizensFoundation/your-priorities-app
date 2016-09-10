@@ -131,17 +131,17 @@
         <div class="contentContainer layout horizontal wrap">
           <template is="dom-if" if="[[phoneSize]]">
             <div>
-              <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
+              <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
             </div>
           </template>
           <template is="dom-if" if="[[!phoneSize]]">
-            <iron-image class="image" sizing="contain" src$="[[communityLogoImagePath(community)]]"></iron-image>
+            <iron-image class="image" sizing="contain" src$="[[communityLogoImagePath]]"></iron-image>
           </template>
           <div class="layout vertical description-and-stats">
             <div class="description">
-              <h2 class="community-name">[[communityName(community,1)]]</h2>
+              <h2 class="community-name">[[communityNameFull]]</h2>
               <div class="communityAccess">[[_communityAccessText(community.access)]]</div>
-              <div>[[communityDescription(community,1)]]</div>
+              <div>[[communityDescriptionFull]]</div>
             </div>
           </div>
           <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>

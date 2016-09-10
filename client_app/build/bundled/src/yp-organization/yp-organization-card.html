@@ -124,10 +124,10 @@
 
     <template is="dom-if" if="[[community]]">
       <paper-card class="communityCard" elevation="[[elevation]]" on-tap="_goToCommunity">
-        <iron-image sizing="cover" preload="" src="[[communityLogoImagePath(community)]]" class="post-image"></iron-image>
+        <iron-image sizing="cover" preload="" src="[[communityLogoImagePath]]" class="post-image"></iron-image>
         <div class="informationText">
-          <div class="community-name">[[communityName(community)]]</div>
-          <div class="description">[[communityDescription(community)]]</div>
+          <div class="community-name">[[communityName]]</div>
+          <div class="description">[[communityDescription]]</div>
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
         <paper-fab class="heartButton" icon="favorite"></paper-fab>

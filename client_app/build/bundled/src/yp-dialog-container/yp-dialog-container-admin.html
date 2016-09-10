@@ -991,6 +991,110 @@ l(115,147,{},rm),N(115),l(370,147,{},cm),eA.ad=function(n){Jo(this.a,dS,Fr(R(US,
 </dom-module>
 
 <script>Polymer({is:"yp-organization-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/organizations"},organization:{type:Object,observer:"_organizationChanged"},organizationAccess:{type:String,value:"public"},params:{type:String},method:{type:String},uploadedLogoImageId:{type:String},uploadedHeaderImageId:{type:String}},_customRedirect:function(t){t?this.redirectTo("/organization/"+t.id):console.warn("No organization found on custom redirect")},_organizationChanged:function(t,i){0===this.organization.access?this.organizationAccess="public":1===this.organization.access?this.organizationAccess="closed":2===this.organization.access&&(this.organizationAccess="secret")},_clear:function(){this.set("organization",{name:"",description:"",access:0}),this.uploadedLogoImageId=null,this.uploadedHeaderImageId=null,this.$.headerImageUpload.clear(),this.$.logoImageUpload.clear()},setup:function(t,i,e){t?this.set("organization",t):this.set("organization",{name:"",description:"",access:0}),this.set("new",i),this.set("refreshFunction",e),this._setupTranslation()},_setupTranslation:function(){this.new?(this.set("editHeaderText",this.t("organization.new")),this.set("toastText",this.t("organization.toast.created")),this.set("saveText",this.t("create"))):(this.set("editHeaderText",this.t("Update organization info")),this.set("toastText",this.t("organization.toast.updated")),this.set("saveText",this.t("update")))}});</script>
+<dom-module id="yp-domain-edit" assetpath="../yp-domain/">
+  <template>
+
+    <style>
+      .additionalSettings {
+        padding-top: 16px;
+        margin-top: 8px;
+      }
+
+      .mainInput {
+        max-width: 400px;
+      }
+
+      yp-theme-selector {
+        padding-top: 8px;
+        margin-bottom: 32px;
+      }
+
+      .imageSizeInfo {
+        font-size: 13px;
+      }
+
+      .sectionMargin {
+        margin-top: 24px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <h2>[[editHeaderText]]</h2>
+
+      <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+        <paper-tab><span>[[t('domain.info')]]</span></paper-tab>
+        <paper-tab>[[t('domain.apis')]]</paper-tab>
+        <paper-tab>[[t('domain.settings')]]</paper-tab>
+      </paper-tabs>
+
+      <div class="layout vertical wrap container">
+        <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
+
+          <section>
+            <paper-input id="name" name="name" type="text" label="[[t('Name')]]" value="{{domain.name}}" maxlength="60" char-counter="" class="mainInput">
+            </paper-input>
+
+            <paper-textarea id="description" name="description" value="{{domain.description}}" label="[[t('Description')]]" char-counter="" rows="2" max-rows="5" maxlength="300" class="mainInput">
+            </paper-textarea>
+
+            <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
+
+            <div class="layout vertical additionalSettings">
+              <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
+                <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                <span>[[t('image.logo.upload')]]</span><br>
+                <span class="imageSizeInfo">864 x 486</span>
+              </file-upload>
+            </div>
+
+            <div class="layout vertical additionalSettings">
+              <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-header" method="POST" on-success="_headerImageUploaded">
+                <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                <span>[[t('image.header.upload')]]</span><br>
+                <span class="imageSizeInfo">1920 x 600</span>
+              </file-upload>
+            </div>
+
+            <input type="hidden" name="themeId" value="[[themeId]]">
+            <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
+            <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+
+          </section>
+
+          <section>
+            <paper-input id="facebookClientId" name="facebookClientId" type="text" label="Facebook Client Id" value="{{domain.secret_api_keys.facebook.client_id}}" maxlength="60" char-counter="" class="mainInput">
+            </paper-input>
+
+            <paper-input id="facebookClientSecret" name="facebookClientSecret" type="text" label="Facebook Client Secret" value="{{domain.secret_api_keys.facebook.client_secret}}" maxlength="60" char-counter="" class="mainInput">
+            </paper-input>
+
+            <paper-input id="googleClientId" name="googleClientId" type="text" label="Google Client Id" value="{{domain.secret_api_keys.google.client_id}}" maxlength="60" char-counter="" class="mainInput">
+            </paper-input>
+
+            <paper-input id="googleClientSecret" name="googleClientSecret" type="text" label="Google Client Secret" value="{{domain.secret_api_keys.google.client_secret}}" maxlength="60" char-counter="" class="mainInput">
+            </paper-input>
+
+            <paper-input id="samlEntryPoint" name="samlEntryPoint" type="text" label="SAML EntryPoint" value="{{domain.secret_api_keys.saml.entryPoint}}" maxlength="100" char-counter="" class="mainInput">
+            </paper-input>
+
+            <paper-input id="samlCallbackUrl" name="samlCallbackUrl" type="text" label="SAML CallbackUrl" value="{{domain.secret_api_keys.saml.callbackUrl}}" maxlength="100" char-counter="" class="mainInput">
+            </paper-input>
+
+            <paper-textarea id="samlCert" name="samlCert" value="{{domain.secret_api_keys.saml.cert}}" label="SAML Verification Certificate Chain" char-counter="" rows="2" max-rows="5" maxlength="20000" class="mainInput">
+            </paper-textarea>
+          </section>
+          <section class="sectionMargin">
+            <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
+          </section>
+        </neon-animated-pages>
+
+    
+  </div></yp-edit-dialog></template>
+
+</dom-module>
+
+<script>Polymer({is:"yp-domain-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/domains"},domain:{type:Object,observer:"_domainChanged"},params:{type:String},selected:{type:Number,value:0},method:{type:String},uploadedLogoImageId:{type:String},uploadedHeaderImageId:{type:String},themeId:{type:String,value:null},status:{type:String}},_domainChanged:function(e){},_customRedirect:function(e){this.new&&this.redirectTo("/domain/"+e.id)},_clear:function(){this.domain={name:"",description:""},this.uploadedLogoImageId=null,this.uploadedHeaderImageId=null,this.$.headerImageUpload.clear(),this.$.logoImageUpload.clear()},setup:function(e,t,i){this.set("domain",e),this.set("new",t),this.set("refreshFunction",i),this._setupTranslation()},_setupTranslation:function(){this.new?(this.editHeaderText=this.t("domain.new"),this.toastText=this.t("domain.toast.created")):(this.editHeaderText=this.t("domain.edit"),this.toastText=this.t("domain.toast.updated"))}});</script>
 <dom-module id="yp-post-status-change-edit" assetpath="../yp-post/">
   <template>
 
@@ -1011,7 +1115,7 @@ l(115,147,{},rm),N(115),l(370,147,{},cm),eA.ad=function(n){Jo(this.a,dS,Fr(R(US,
       <div class="layout horizontal center-center">
         <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
           <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{officialStatus}}">
-            <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
+            <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
               <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
             </template>
           </paper-menu>
@@ -1028,7 +1132,7 @@ l(115,147,{},rm),N(115),l(370,147,{},cm),eA.ad=function(n){Jo(this.a,dS,Fr(R(US,
 
 </dom-module>
 
-<script>Polymer({is:"yp-post-status-change-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/posts"},post:{type:Object,observer:"_postChanged"},params:{type:String},method:{type:String},officialStatus:Number,postStatusChange:Object},_postChanged:function(t,s){t&&this.set("officialStatus",this.post.official_status)},_clear:function(){this.set("postStatusChange",{content:""}),this.set("post",null)},collectionStatusOptions:function(){return[{name:"published",official_value:0,translatedName:this.t("status.published")},{name:"successful",official_value:2,translatedName:this.t("status.successful")},{name:"failed",official_value:-2,translatedName:this.t("status.failed")},{name:"in_progress",official_value:-1,translatedName:this.t("status.inProgress")}]},setup:function(t,s,e){this.set("post",t),s?this.set("postStatusChange",s):this.set("postStatusChange",{content:""}),this.set("refreshFunction",e),this._setupTranslation()},_setupTranslation:function(){this.set("editHeaderText",this.t("post.statusChange")),this.set("toastText",this.t("post.statusChangeSent")),this.set("saveText",this.t("post.statusChange"))}});</script>
+<script>Polymer({is:"yp-post-status-change-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/posts"},post:{type:Object,observer:"_postChanged"},params:{type:String},method:{type:String},officialStatus:Number,postStatusChange:Object,collectionStatusOptions:{type:Object,computed:"_collectionStatusOptions(language)"}},_postChanged:function(t,s){t&&this.set("officialStatus",this.post.official_status)},_clear:function(){this.set("postStatusChange",{content:""}),this.set("post",null)},_collectionStatusOptions:function(t){return this.t?[{name:"published",official_value:0,translatedName:this.t("status.published")},{name:"successful",official_value:2,translatedName:this.t("status.successful")},{name:"failed",official_value:-2,translatedName:this.t("status.failed")},{name:"in_progress",official_value:-1,translatedName:this.t("status.inProgress")}]:[]},setup:function(t,s,e){this.set("post",t),s?this.set("postStatusChange",s):this.set("postStatusChange",{content:""}),this.set("refreshFunction",e),this._setupTranslation()},_setupTranslation:function(){this.set("editHeaderText",this.t("post.statusChange")),this.set("toastText",this.t("post.statusChangeSent")),this.set("saveText",this.t("post.statusChange"))}});</script>
 <dom-module id="yp-post-move" assetpath="../yp-post/">
   <template>
 

@@ -10,6 +10,9 @@
 <link rel="import" href="../yp-page/yp-page-dialog.html">
 <link rel="import" href="../yp-user/yp-accept-invite.html">
 
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
+
 <dom-module id="yp-dialog-container">
   <template>
     <style>
@@ -57,6 +60,6 @@
     </div>
   </template>
 
-  <script>Polymer({is:"yp-dialog-container",behaviors:[Polymer.ypLoggedInUserBehavior,Polymer.ypGotAdminRightsBehavior],properties:{waitForUpgradeCounter:{type:Number,value:0}},_loggedInUserChanged:function(o){o===!0&&this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"),null,null,!0)},_gotAdminRightsChanged:function(o){o===!0&&this.importHref(this.resolveUrl("yp-dialog-container-admin.html"),null,null,!0)},getDialog:function(o){var e=this.$$("#"+o);return"function"==typeof e.ready?(this.set("waitForUpgradeCounter",0),this.$$("#"+o)):(console.warn("Element not upgraded: "+o),this.waitForUpgradeCounter+=1,this.waitForUpgradeCounter>10&&console.error("Element upgraded after wait: "+o),this.async(function(){this.getDialog(o)}.bind(this),100),void 0)},_forgotPassword:function(){this.$.forgotPassword.open()}});</script>
+  <script>Polymer({is:"yp-dialog-container",behaviors:[Polymer.ypLoggedInUserBehavior,Polymer.ypGotAdminRightsBehavior],properties:{waitForUpgradeCounter:{type:Number,value:0}},_loggedInUserChanged:function(o){o&&this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"),null,null,!0)},_gotAdminRightsChanged:function(o){o===!0&&this.importHref(this.resolveUrl("yp-dialog-container-admin.html"),null,null,!0)},getDialog:function(o){var e=this.$$("#"+o);return e&&"function"==typeof e.ready?(this.set("waitForUpgradeCounter",0),this.$$("#"+o)):(console.warn("Element not upgraded: "+o),this.waitForUpgradeCounter+=1,this.waitForUpgradeCounter>100&&console.error("Element upgraded after wait: "+o),this.async(function(){this.getDialog(o)}.bind(this),100),void 0)},_forgotPassword:function(){this.$.forgotPassword.open()}});</script>
 </dom-module>
 </body></html>

@@ -319,6 +319,12 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
+    <app-route route="{{idRoute}}" pattern="/:id" data="{{idRouteData}}" tail="{{tabRoute}}">
+    </app-route>
+
+    <app-route route="{{tabRoute}}" pattern="/:tabName" data="{{tabRouteData}}">
+    </app-route>
+
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
 
     <div class="topContainer" is-post="" create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
@@ -326,15 +332,15 @@
       <yp-post-card id="postCard" class="largeCard" post="[[post]]" on-refresh="_refresh" header-mode=""></yp-post-card>
 
       <div class="layout horizontal center-center">
-        <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
-          <paper-tab>
+        <paper-tabs id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
+          <paper-tab name="debate">
             <div class="layout vertical center-center tabCounterContainer">
               <span>[[t('post.tabs.debate')]]</span><div class="counterInfo" id="tabCountDebate"></div>
             </div>
           </paper-tab>
-          <paper-tab>[[t('post.tabs.news')]]</paper-tab>
-          <paper-tab>[[t('post.tabs.location')]]</paper-tab>
-          <paper-tab>
+          <paper-tab name="news">[[t('post.tabs.news')]]</paper-tab>
+          <paper-tab name="location">[[t('post.tabs.location')]]</paper-tab>
+          <paper-tab name="photos">
             <div class="layout vertical center-center tabCounterContainer">
               <span>[[t('post.tabs.photos')]]</span><div class="counterInfo" id="tabCountPhotos"></div>
             </div>
@@ -342,14 +348,14 @@
         </paper-tabs>
       </div>
 
-      <iron-pages id="pages" class="tabPages" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <div class="layout horizontal center-center">
+      <iron-pages id="pages" class="tabPages" selected="[[selectedTab]]" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <div name="debate" class="layout horizontal center-center">
           <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
         </div>
-        <section>
+        <section name="news">
           <ac-activities selected-tab="[[selected]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
         </section>
-        <section>
+        <section name="location">
           <div class="layout horizontal center-center">
             <template is="dom-if" if="[[post.location]]" restamp="">
               <template is="dom-if" if="[[mapActive]]" restamp="">
@@ -367,7 +373,7 @@
             </template>
           </div>
         </section>
-        <section>
+        <section name="photos">
           <div class="layout vertical flex">
             <div class="layout horizontal center-center">
               <yp-post-user-images post="[[post]]"></yp-post-user-images>
@@ -387,6 +393,6 @@
     </div>
   </template>
 
-  <script>!function(){Polymer({is:"yp-post",behaviors:[Polymer.appHelpers,Polymer.ypThemeBehavior],properties:{postId:{type:Number,value:null,observer:"_postIdChanged"},post:{type:Object,value:null,notify:!0,observer:"_postChanged"},selected:{type:Number,value:0,observer:"selectedChanged"},small:{type:Boolean},method:{type:String},mapActive:{type:Boolean,value:!1},postTabName:{type:String,value:null,observer:"_tabNameChanged"},wideWidth:{type:Boolean,value:!1},createFabIcon:{type:String,value:null}},_newPost:function(){window.appGlobals.activity("open","newPost");var t=Polymer.dom(document).querySelector("yp-app").getDialog("postEdit");t.setup(null,this.post.Group,!0,null),t.open("new",{groupId:this.post.Group.id})},_tabNameChanged:function(t,e){t&&t!=e&&("debate"==t?this.set("selected",0):"news"==t?this.set("selected",1):"location"==t?this.set("selected",2):"photos"==t&&this.set("selected",3))},listeners:{"yp-debate-info":"_updateDebateInfo","yp-post-image-count":"_updatePostImageCount"},_updatePostImageCount:function(t,e){var o=this.$$("#tabCountPhotos");o&&(o.innerHTML=this.formatNumber(e))},_updateDebateInfo:function(t,e){var o=this.$$("#tabCountDebate");o&&(o.innerHTML=this.formatNumber(e.count)),this.$.postCard.updateDescriptionIfEmpty(e.firstPoint.content)},_mainContainerClasses:function(t){return t?"layout horizontal wrap":"layout horizontal center-center"},_headerClasses:function(t){return t?"layout vertical postHeader wrap":"layout horizontal postHeader"},postName:function(t){return t&&t.name?this.truncate(this.trim(t.name),200):t?t.short_name:void 0},postDescription:function(t){return t&&t.description?this.truncate(this.trim(t.description),1e4,"..."):""},_refresh:function(){this.$.ajax.generateRequest()},_postChanged:function(t,e){},_postIdChanged:function(t,e){t?(this.set("post",null),this._getPost()):this.set("post",null)},_getPost:function(){this.$.ajax.url="/api/posts/"+this.postId,this.$$("#ajax").retryMethodAfter401Login=this._getPost.bind(this),this.$.ajax.generateRequest()},_response:function(t,e,o){this.set("post",e.response),null!=this.post.Group.theme_id?this.setTheme(this.post.Group.theme_id):this.post.Group.Community&&null!=this.post.Group.Community.theme_id&&this.setTheme(this.post.Group.Community.theme_id),this.post.Group.configuration&&void 0!=this.post.Group.configuration.canAddNewPosts?this.post.Group.configuration.canAddNewPosts===!0&&this.set("createFabIcon","lightbulb-outline"):this.set("createFabIcon","lightbulb-outline"),null===this.post.description&&(this.post.description=this.post.Points[0].content,this.post.Points.shift()),this.fire("change-header",{headerTitle:this.truncate(this.post.Group.name,80),documentTitle:this.post.name,headerDescription:"",backPath:"/group/"+this.post.group_id})},selectedChanged:function(t,e){0==t?window.appGlobals.activity("open","pointsTab"):1==t?window.appGlobals.activity("open","newsfeedTab"):2==t?window.appGlobals.activity("open","locationTab"):3==t&&window.appGlobals.activity("open","photosTab"),2==t?this.set("mapActive",!0):this.set("mapActive",!1),this.post&&t!=e&&(0==t?this.redirectTo("/post/"+this.post.id+"/debate"):1==t?this.redirectTo("/post/"+this.post.id+"/news"):2==t?this.redirectTo("/post/"+this.post.id+"/location"):3==t&&this.redirectTo("/post/"+this.post.id+"/photos"))},ready:function(){},computeUrl:function(t){return"/api/posts/"+t}})}();</script>
+  <script>!function(){Polymer({is:"yp-post",behaviors:[Polymer.appHelpers,Polymer.ypThemeBehavior],properties:{idRoute:Object,tabRoute:Object,idRouteData:Object,tabRouteData:Object,postId:{type:Number,value:null,observer:"_postIdChanged"},post:{type:Object,value:null,notify:!0,observer:"_postChanged"},selectedTab:{type:String,value:"debate",observer:"_selectedTabChanged"},small:{type:Boolean},method:{type:String},mapActive:{type:Boolean,value:!1},wideWidth:{type:Boolean,value:!1},createFabIcon:{type:String,value:null}},observers:["_routeIdChanged(idRouteData.id)","_routeTabChanged(tabRouteData.tabName)"],_routeIdChanged:function(t){t&&this.set("postId",t)},_routeTabChanged:function(t){t&&this.set("selectedTab",t)},_selectedTabChanged:function(t){this.post&&this.redirectTo("/post/"+this.post.id+"/"+t),"location"==t?this.set("mapActive",!0):this.set("mapActive",!1),t&&window.appGlobals&&window.appGlobals.activity("open","post_tab_"+t)},_newPost:function(){window.appGlobals.activity("open","newPost");var t=Polymer.dom(document).querySelector("yp-app").getDialog("postEdit");t.setup(null,this.post.Group,!0,null),t.open("new",{groupId:this.post.Group.id})},listeners:{"yp-debate-info":"_updateDebateInfo","yp-post-image-count":"_updatePostImageCount"},_updatePostImageCount:function(t,e){var o=this.$$("#tabCountPhotos");o&&(o.innerHTML=this.formatNumber(e))},_updateDebateInfo:function(t,e){var o=this.$$("#tabCountDebate");o&&(o.innerHTML=this.formatNumber(e.count)),this.$.postCard.updateDescriptionIfEmpty(e.firstPoint.content)},_mainContainerClasses:function(t){return t?"layout horizontal wrap":"layout horizontal center-center"},_headerClasses:function(t){return t?"layout vertical postHeader wrap":"layout horizontal postHeader"},postName:function(t){return t&&t.name?this.truncate(this.trim(t.name),200):t?t.short_name:void 0},postDescription:function(t){return t&&t.description?this.truncate(this.trim(t.description),1e4,"..."):""},_refresh:function(){this.$.ajax.generateRequest()},_postChanged:function(t,e){},_postIdChanged:function(t,e){this.set("post",null),t&&this._getPost()},_getPost:function(){this.$.ajax.url="/api/posts/"+this.postId,this.$$("#ajax").retryMethodAfter401Login=this._getPost.bind(this),this.$.ajax.generateRequest()},_response:function(t,e,o){this.set("post",e.response),null!=this.post.Group.theme_id?this.setTheme(this.post.Group.theme_id):this.post.Group.Community&&null!=this.post.Group.Community.theme_id&&this.setTheme(this.post.Group.Community.theme_id),this.post.Group.configuration&&void 0!=this.post.Group.configuration.canAddNewPosts?this.post.Group.configuration.canAddNewPosts===!0&&this.set("createFabIcon","lightbulb-outline"):this.set("createFabIcon","lightbulb-outline"),null===this.post.description&&(this.post.description=this.post.Points[0].content,this.post.Points.shift()),this.refreshHeader()},refreshHeader:function(){this.post&&this.fire("change-header",{headerTitle:this.truncate(this.post.Group.name,80),documentTitle:this.post.name,headerDescription:"",backPath:"/group/"+this.post.group_id})},computeUrl:function(t){return"/api/posts/"+t}})}();</script>
 </dom-module>
 </body></html>

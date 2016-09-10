@@ -175,9 +175,9 @@
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">
                 <div class="description">
-                  <h2 class="community-name">[[communityName(community,1)]]</h2>
+                  <h2 class="community-name">[[communityNameFull]]</h2>
                   <div hidden="" class="communityAccess">[[_communityAccessText(community.access)]]</div>
-                  <div class="communityDescription">[[communityDescription(community,1)]]</div>
+                  <div class="communityDescription">[[communityDescriptionFull]]</div>
                   <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
                 </div>
               </div>
@@ -195,7 +195,7 @@
           </div>
         </paper-material>
         <paper-material id="cardImage" elevation="2" animated="" class="large-card imageCard">
-          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath(community)]]"></iron-image>
+          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
         </paper-material>
       </div>
     </template>

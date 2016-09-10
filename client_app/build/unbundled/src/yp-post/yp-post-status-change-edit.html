@@ -35,7 +35,7 @@
       <div class="layout horizontal center-center">
         <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
           <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{officialStatus}}">
-            <template is="dom-repeat" items="[[collectionStatusOptions()]]" as="statusOption">
+            <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
               <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
             </template>
           </paper-menu>
@@ -52,5 +52,5 @@
 
 </dom-module>
 
-<script>Polymer({is:"yp-post-status-change-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/posts"},post:{type:Object,observer:"_postChanged"},params:{type:String},method:{type:String},officialStatus:Number,postStatusChange:Object},_postChanged:function(t,s){t&&this.set("officialStatus",this.post.official_status)},_clear:function(){this.set("postStatusChange",{content:""}),this.set("post",null)},collectionStatusOptions:function(){return[{name:"published",official_value:0,translatedName:this.t("status.published")},{name:"successful",official_value:2,translatedName:this.t("status.successful")},{name:"failed",official_value:-2,translatedName:this.t("status.failed")},{name:"in_progress",official_value:-1,translatedName:this.t("status.inProgress")}]},setup:function(t,s,e){this.set("post",t),s?this.set("postStatusChange",s):this.set("postStatusChange",{content:""}),this.set("refreshFunction",e),this._setupTranslation()},_setupTranslation:function(){this.set("editHeaderText",this.t("post.statusChange")),this.set("toastText",this.t("post.statusChangeSent")),this.set("saveText",this.t("post.statusChange"))}});</script>
+<script>Polymer({is:"yp-post-status-change-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/posts"},post:{type:Object,observer:"_postChanged"},params:{type:String},method:{type:String},officialStatus:Number,postStatusChange:Object,collectionStatusOptions:{type:Object,computed:"_collectionStatusOptions(language)"}},_postChanged:function(t,s){t&&this.set("officialStatus",this.post.official_status)},_clear:function(){this.set("postStatusChange",{content:""}),this.set("post",null)},_collectionStatusOptions:function(t){return this.t?[{name:"published",official_value:0,translatedName:this.t("status.published")},{name:"successful",official_value:2,translatedName:this.t("status.successful")},{name:"failed",official_value:-2,translatedName:this.t("status.failed")},{name:"in_progress",official_value:-1,translatedName:this.t("status.inProgress")}]:[]},setup:function(t,s,e){this.set("post",t),s?this.set("postStatusChange",s):this.set("postStatusChange",{content:""}),this.set("refreshFunction",e),this._setupTranslation()},_setupTranslation:function(){this.set("editHeaderText",this.t("post.statusChange")),this.set("toastText",this.t("post.statusChangeSent")),this.set("saveText",this.t("post.statusChange"))}});</script>
 </body></html>
