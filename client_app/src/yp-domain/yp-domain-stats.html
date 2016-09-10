@@ -48,6 +48,7 @@
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
 
     <div class="stats layout horizontal end-justified">
       <div class="layout horizontal wrap">
@@ -58,12 +59,12 @@
           <iron-icon title$="[[t('stats.discussions')]]" icon="communication:chat-bubble-outline" class="stats-icon"></iron-icon>
           <div title$="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(domain.counter_points)}}</div>
 
-          <iron-icon title$="[[t('stats.communities')]]" icon="group-work" class="stats-icon hideIfMobile"></iron-icon>
-          <div title$="[[t('stats.communities')]]" class="stats-text hideIfMobile" style="">{{formatNumber(domain.counter_communities)}}</div>
+          <iron-icon hidden$="[[narrowScreen]]" title$="[[t('stats.communities')]]" icon="group-work" class="stats-icon hideIfMobile"></iron-icon>
+          <div hidden$="[[narrowScreen]]" title$="[[t('stats.communities')]]" class="stats-text hideIfMobile" style="">{{formatNumber(domain.counter_communities)}}</div>
         </div>
         <div class="layout horizontal">
-          <iron-icon title$="[[t('stats.groups')]]" icon="social:people" class="stats-icon hideIfMobile"></iron-icon>
-          <div title$="[[t('stats.groups')]]" class="stats-text hideIfMobile" style="">{{formatNumber(domain.counter_groups)}}</div>
+          <iron-icon hidden title$="[[t('stats.groups')]]" icon="social:people" class="stats-icon hideIfMobile"></iron-icon>
+          <div hidden title$="[[t('stats.groups')]]" class="stats-text hideIfMobile" style="">{{formatNumber(domain.counter_groups)}}</div>
 
           <iron-icon title$="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
           <div title$="[[t('stats.users')]]" class="stats-text">{{formatNumber(domain.counter_users)}}</div>
@@ -84,7 +85,8 @@
       properties: {
         domain: {
           type: Object
-        }
+        },
+        narrowScreen: Boolean
       }
 
     });

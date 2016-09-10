@@ -66,7 +66,7 @@
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
 
-      <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refresh"></yp-group-card-large>
+      <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-card-large>
 
       <div class="largeAddButton">
         <yp-post-card-add on-new-post="_newPost" elevation="2" hidden$="[[!createFabIcon]]"></yp-post-card-add>
@@ -274,7 +274,7 @@
         this.$$("#groupEdit").open('edit', { groupId: this.group.id });
       },
 
-      _refresh: function () {
+      _refreshAjax: function () {
         this.$.ajax.generateRequest();
         this.$$("#groupActivities").loadNewData();
       },
@@ -311,6 +311,9 @@
 
       _groupsResponse: function (event, detail, sender) {
         this.set('group', detail.response.group);
+
+        this.refresh();
+
         if (this.group.configuration && this.group.configuration.canAddNewPosts!=undefined) {
           if (this.group.configuration.canAddNewPosts===true) {
             this.set('createFabIcon',"lightbulb-outline");
@@ -318,38 +321,34 @@
         } else {
           this.set('createFabIcon',"lightbulb-outline");
         }
-        this.fire('yp-set-home-link', { type: 'group', id: this.group.id, name: this.group.name });
-        if (this.group.theme_id!=null) {
-          this.setTheme(this.group.theme_id);
-        } else if (this.group.Community.theme_id!=null) {
-          this.setTheme(this.group.Community.theme_id);
-        } else if (this.group.Community.Domain.theme_id!=null) {
-          this.setTheme(this.group.Community.Domain.theme_id);
-        }
+
         this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
-
-        this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
-        this.$.pagesAjax.generateRequest();
-
-        if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
-          this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages);
-        }
-
-        if (this.groupTabName) {
-          this._setSelectedFromTabName(this.groupTabName);
-        }
-
-        this.refreshHeader();
       },
 
-      refreshHeader: function () {
+      refresh: function () {
         if (this.group) {
+          this.fire('yp-set-home-link', { type: 'group', id: this.group.id, name: this.group.name });
+
+          if (this.group.theme_id!=null) {
+            this.setTheme(this.group.theme_id);
+          } else if (this.group.Community.theme_id!=null) {
+            this.setTheme(this.group.Community.theme_id);
+          } else if (this.group.Community.Domain.theme_id!=null) {
+            this.setTheme(this.group.Community.Domain.theme_id);
+          }
+
+          if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
+            this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages);
+          }
+
           this.fire("change-header", { headerTitle: this.group.Community.name,
-            headerDescription: this.group.Community.description,
-            headerIcon: "social:group",
-            documentTitle: this.group.name,
-            enableSearch: true,
-            backPath: "/community/" + this.group.community_id });
+                                       headerDescription: this.group.Community.description,
+                                       headerIcon: "social:group",
+                                       documentTitle: this.group.name,
+                                       enableSearch: true,
+                                       backPath: "/community/" + this.group.community_id });
+          this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
+          this.$.pagesAjax.generateRequest();
         }
       },
 

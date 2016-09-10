@@ -337,28 +337,28 @@
 
         if (route.path.indexOf('domain') > -1) {
           this.set('domainSubRoute', this.subRoute);
-          if (typeof this.$.domainPage.refreshHeader !== "undefined") {
-            this.$.domainPage.refreshHeader();
+          if (typeof this.$.domainPage.refresh !== "undefined") {
+            this.$.domainPage.refresh();
           }
         } else if (route.path.indexOf('community') > -1) {
           this.set('communitySubRoute', this.subRoute);
-          if (typeof this.$.communityPage.refreshHeader !== "undefined") {
-            this.$.communityPage.refreshHeader();
+          if (typeof this.$.communityPage.refresh !== "undefined") {
+            this.$.communityPage.refresh();
           }
         } else if (route.path.indexOf('group') > -1) {
           this.set('groupSubRoute', this.subRoute);
-          if (typeof this.$.groupPage.refreshHeader !== "undefined") {
-            this.$.groupPage.refreshHeader();
+          if (typeof this.$.groupPage.refresh !== "undefined") {
+            this.$.groupPage.refresh();
           }
         } else if (route.path.indexOf('post') > -1) {
           this.set('postSubRoute', this.subRoute);
-          if (typeof this.$.postPage.refreshHeader !== "undefined") {
-            this.$.postPage.refreshHeader();
+          if (typeof this.$.postPage.refresh !== "undefined") {
+            this.$.postPage.refresh();
           }
         } else if (route.path.indexOf('user') > -1) {
           this.set('userSubRoute', this.subRoute);
-          if (typeof this.$.userPage.refreshHeader !== "undefined") {
-            this.$.userPage.refreshHeader();
+          if (typeof this.$.userPage.refresh !== "undefined") {
+            this.$.userPage.refresh();
           }
         }
       },

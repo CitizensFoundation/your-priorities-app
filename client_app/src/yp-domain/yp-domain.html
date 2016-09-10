@@ -91,7 +91,7 @@
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
 
-      <yp-domain-large-card id="domainCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refresh"></yp-domain-large-card>
+      <yp-domain-large-card id="domainCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refreshAjax"></yp-domain-large-card>
 
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
         <paper-tab name="communities" class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
@@ -229,7 +229,7 @@
         }
       },
 
-      _refresh: function () {
+      _refreshAjax: function () {
         this.$.ajax.generateRequest();
       },
 
@@ -246,38 +246,39 @@
 
       _response: function (event, detail, sender) {
         this.set('domain', detail.response);
-        this.fire('yp-set-home-link', { type: 'domain', id: this.domain.id, name: this.domain.name });
+
         window.appGlobals.domain = this.domain;
-        if (this.domain.theme_id!=null) {
-          this.setTheme(this.domain.theme_id);
-        }
+
+        this.refresh();
 
         if (!this.domain.only_admins_can_create_communities || this.checkDomainAccess(this.domain)) {
           this.set('createFabIcon', 'group-work');
         }
 
-        this.$.pagesAjax.url = "/api/domains/"+this.domain.id+"/pages";
-        this.$.pagesAjax.generateRequest();
-
         window.appGlobals.setupGoogleAnalytics(this.domain);
-        if (this.domain.DomainHeaderImages && this.domain.DomainHeaderImages.length>0) {
-          this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);
-        }
+
         if (this.domain.Communities) {
           this.setupCommunities(_.dropRight(this.domain.Communities, this.domain.Communities.length-15));
         }
 
         this.$.domainCard.setElevation(5);
         this.$.domainCard.lowerCardLater();
-
-        this.refreshHeader();
       },
 
-      refreshHeader: function () {
+      refresh: function () {
         if (this.domain) {
+          if (this.domain.theme_id!=null) {
+            this.setTheme(this.domain.theme_id);
+          }
+          this.fire('yp-set-home-link', { type: 'domain', id: this.domain.id, name: this.domain.name });
           this.fire("change-header", { headerTitle: null, documentTitle: this.domain.name,
-            headerDescription: this.domain.description});
+                                       headerDescription: this.domain.description});
+          if (this.domain.DomainHeaderImages && this.domain.DomainHeaderImages.length>0) {
+            this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);
+          }
 
+          this.$.pagesAjax.url = "/api/domains/"+this.domain.id+"/pages";
+          this.$.pagesAjax.generateRequest();
         }
       },
 

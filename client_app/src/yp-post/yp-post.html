@@ -336,7 +336,7 @@
 
     <div class="topContainer" is-post create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
 
-      <yp-post-card id="postCard" class="largeCard" post="[[post]]" on-refresh="_refresh" header-mode></yp-post-card>
+      <yp-post-card id="postCard" class="largeCard" post="[[post]]" on-refresh="_refreshAjax" header-mode></yp-post-card>
 
       <div class="layout horizontal center-center">
         <paper-tabs id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
@@ -554,7 +554,7 @@
           }
         },
 
-        _refresh: function () {
+        _refreshAjax: function () {
           this.$.ajax.generateRequest();
         },
 
@@ -576,11 +576,8 @@
 
         _response: function (event, detail, sender) {
           this.set("post", detail.response);
-          if (this.post.Group.theme_id!=null) {
-            this.setTheme(this.post.Group.theme_id);
-          } else if (this.post.Group.Community && this.post.Group.Community.theme_id!=null) {
-            this.setTheme(this.post.Group.Community.theme_id);
-          }
+
+          this.refresh();
 
           if (this.post.Group.configuration && this.post.Group.configuration.canAddNewPosts!=undefined) {
             if (this.post.Group.configuration.canAddNewPosts===true) {
@@ -594,12 +591,15 @@
             this.post.description = this.post.Points[0].content;
             this.post.Points.shift();
           }
-
-          this.refreshHeader();
         },
 
-        refreshHeader: function () {
+        refresh: function () {
           if (this.post) {
+            if (this.post.Group.theme_id!=null) {
+              this.setTheme(this.post.Group.theme_id);
+            } else if (this.post.Group.Community && this.post.Group.Community.theme_id!=null) {
+              this.setTheme(this.post.Group.Community.theme_id);
+            }
             this.fire("change-header", { headerTitle: this.truncate(this.post.Group.name,80),
               documentTitle: this.post.name,
               headerDescription: '',//this.truncate(this.post.Group.objectives,45),
