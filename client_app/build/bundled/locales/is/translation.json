@@ -1,0 +1,355 @@
+{
+  "confirm": "Staðfesta",
+  "access": "Aðgangur",
+  "searchFor": "Leita að...",
+  "title": "Titill",
+  "selectLanguage": "Veldu tungumál",
+  "update": "Breyta",
+  "errorCantConnect": "Get ekki tengst vefþjóni. Þessi villa gæti verið vegna mikils álags eða uppfærslu á hugbúnaði. Við höfum verið látin vita.",
+  "errorNotFound": "Fannst ekki...",
+  "errorNotAuthorized": "Þú hefur ekki aðgang að þessu!",
+  "generalError": "Óvænt villa hefur komið upp. Við höfum verið látin vita.",
+  "stats": {
+    "posts": "Fjöldi hugmynda",
+    "discussions": "Fjöldi umræðna",
+    "communities": "Fjöldi svæða",
+    "groups": "Fjöldi hópa",
+    "users": "Fjöldi notenda"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "Lykilorði hefur verið breytt og þú er innskráð(ur)",
+    "method": "Aðferð",
+    "frequency": "Tíðni",
+    "myPosts": "Mínar hugmyndir",
+    "muted": "Slökkt",
+    "browser": "Vafri",
+    "email": "Tölvupóstur",
+    "asItHappens": "Þegar það gerist",
+    "hourly": "Klukkutíma",
+    "daily": "Daglega",
+    "weekly": "Vikulega",
+    "monthly": "Mánaðarlega",
+    "myPostsEndorsements": "Hugmyndir sem ég styð",
+    "myPoints": "Mín rök",
+    "myPointEndorsements": "Rök sem mér finnst hjálpleg",
+    "allCommunity": "Allt sem gerist á mínum svæðum",
+    "allGroup": "Allt sem gerist í mínum hópum",
+    "invite_accepted_for": "Tek þátt í"
+  },
+
+  "archived": "Eldra",
+
+  "status": {
+    "select": "Veldu stöðu",
+    "active": "Virkt",
+    "featured": "Mikilvægt",
+    "archived": "Eldra",
+    "published": "Opin",
+    "successful": "Samþykkt",
+    "failed": "Hafnað",
+    "inProgress": "Í ferli"
+  },
+
+  "activity": {
+    "post": {
+      "new": "Hugmynd",
+      "status": {
+        "change": "Fréttir"
+      }
+    },
+    "point": {
+      "new": "Rök",
+      "newFor": "Rök með",
+      "newAgainst": "Rök á móti",
+      "newComment": "Athugasemd",
+      "newsStory": {
+        "new": "Frétt frá notanda"
+      }
+    }
+  },
+  "join": "taktu þátt!",
+  "name": "Nafn",
+  "description": "Lýsing",
+  "domain": {
+    "edit": "Breyta vef"
+  },
+
+  "domains": "Vefir",
+  "communities": "Svæði",
+  "groups": "Hópar",
+
+  "myDomains":  "Mínir vefir",
+  "myCommunities": "Mín svæði",
+  "myGroups": "Mínir hópar",
+  "myAdminCommunities": "Svæðastjórnun",
+  "myAdminGroups": "Hópastjórnun",
+
+  "create": "Senda inn",
+  "cancel": "Hætta við",
+
+  "community": {
+    "edit": "Breyta svæði",
+    "hostname": "Hostname",
+    "admins": "Vefstjórar svæðis",
+    "users": "Notendur svæðis",
+    "delete": "Eyða svæði",
+    "new": "Nýtt svæði",
+    "closed": "Lokað svæði",
+    "public": "Opið svæði",
+    "secret": "Leynilegt svæði",
+    "onlyAdminsCanCreateGroups": "Aðeins vefstjórar geta búið til hópa"
+  },
+
+  "news": "Nýjasta Efni",
+
+  "pages": {
+    "addLocale": "Nýtt locale",
+    "unPublish": "Afturkalla",
+    "deletePage": "Eyða",
+    "addPage": "Ný síða",
+    "managePages": "Sýsla með síður"
+  },
+
+  "participate": "Taktu þátt",
+
+  "events": "Viðburðir",
+
+  "ideas": "Hugmyndir",
+
+  "official": "Opinber ferli",
+
+  "users": {
+    "removeAdmin": "Eyða vefstjóra",
+    "addAdmin": "Bæta við vefstjóra",
+    "removeUser": "Eyða notanda",
+    "inviteUser": "Bjóða notanda",
+    "email": "netfang",
+    "removeFromOrganization": "Eyða",
+    "addToOrganization": "Samtök",
+    "selectOrganization": "Veldu samtök"
+  },
+
+  "user": {
+    "loginCompleteFor": "Innskráning fyrir",
+    "acceptInvite": "Samþykkja boð um þátttöku",
+    "hasSentYouAndInvitation": "sendi þér boð um að taka þátt í",
+    "acceptInviteInstructions": "Smelltu hérna að neðan til að taka þátt",
+    "setEmail": "Bættu við netfangi",
+    "linkAccount": "Tengja reikning við netfang",
+    "setEmailInfo": "Bættu við netfangi",
+    "existsLinkAccountInfo": "Skráðu lykilorð to að tengja þennan aðgang við þinn netfangs reikning.",
+    "logoutCompleteFor": "Útskráning fyrir",
+    "loggedInWithFacebook": "Innskráning með Facebook",
+    "loggedInWithSaml": "Innskráning með island.is",
+    "facebookLogin": "Facebook",
+    "info":"Upplýsingar",
+    "notifications": "Tilkynningar",
+    "logout": "útskrá",
+    "login": "innskrá",
+    "create": "nýskrá",
+    "edit": "Breyta",
+    "newPassword": "nýtt lykilorð",
+    "forgotPassword": "Búa til nýtt lykilorð",
+    "forgotPasswordInstructions": "Sláðu inn netfang og við sendum þér póst með hlekk sem þú getur fylgt til að búa til nýtt lykilorð",
+    "forgotPasswordEmailHasBeenSent": "Tölvupóstur hefur verið sendur til þig með upplýsingum um hvernig þú býrð til nýtt lykilorð",
+    "resetPassword": "Búðu til nýtt lykilorð",
+    "resetPasswordInstructions": "Búðu til nýtt lykilorð sem er ekki auðvelt að giska á",
+    "register": "nýr notandi",
+    "email": "Netfang",
+    "name": "Fullt nafn",
+    "password": "Lykilorð",
+    "alreadyRegisterred": "Þetta netfang er þegar skráð. Þú getur búið til nýtt lykilorð ef það gamla er gleymt.",
+    "registrationError": "Villa við nýskráningu",
+    "loginError": "Vill við innskráningu",
+    "completeForm": "Kláraðu að fylla út form",
+    "loginNotAuthorized": "Netfang eða lykilorð rangt"
+  },
+
+  "posts": {
+    "posts": "Hugmyndir",
+    "open": "Hugmyndir",
+    "inProgress": "Í ferli",
+    "successful": "Samþykktar",
+    "failed": "Hafnað",
+    "map": "Kort",
+    "noMapPosts": "Engar hugmyndir með staðsetningu",
+    "newUserImage": "Bættu við mynd"
+  },
+
+  "form": {
+    "invalid": "Kláraðu að fylla út form"
+  },
+
+  "post": {
+    "move": "Færa hugmynd",
+    "confirmMove": "Staðfestu að þú vilt færa",
+    "statusChangeConfirmText": "Ertu viss um að þú viljir senda tölvupóst á alla sem styðja og eru á móti þessari hugmynd?",
+    "statusChangeSelectNewStatus": "Veldu stöðu hugmyndar",
+    "statusChangeContent": "Efni stöðubreytingar til að senda á alla sem eru með og á móti",
+    "statusChange": "Senda stöðupósta",
+    "statusChangeSent": "Hef sent tölvupósta",
+    "deleteConfirmation": "Ertu viss um að þú viljir eyða hugmynd?",
+    "photoUpdate": "Breyta mynd",
+    "noLocation": "Engin staðsetning",
+    "shareInfo": "Deila hugmynd",
+    "new": "Ný hugmynd",
+    "top": "Vinsælustu hugmyndir efst",
+    "description": "Lýsing",
+    "newest": "Nýjustu hugmyndir efst",
+    "random": "Hugmyndir af handahófi",
+    "inProgress": "Hugmyndir í ferli",
+    "groups": "Hugmyndahópar",
+    "search": "Leitaðu að hugmyndum",
+    "add_new":"Bættu við nýrri hugmynd",
+    "up_vote":"Kjósa upp",
+    "down_vote":"Kjósa niður",
+    "debate": "Rök",
+    "report": "Report post",
+    "notify": "Notify me about this post",
+    "share": "Share this post",
+    "searchingFor": "Leita að hugmynd ",
+    "yourPost": "Hugmynd",
+    "yourPoint": "Rök",
+    "location": "Staðsetning",
+    "photo": "Mynd",
+    "newPhoto": "Ný mynd",
+    "photoDeleteConfirmation": "Ertu viss um að þú viljir eyða þessari mynd?",
+    "photographerName": "Ljósmyndari",
+    "tabs": {
+      "debate": "Rök",
+      "news": "Nýjasta Efni",
+      "location": "Staðsetning",
+      "photos": "Myndir",
+      "solutions": "Lausnir",
+      "not_implemented": "Ekki tilbúið"
+    },
+    "cover": {
+      "media": "Veldu forsíðu",
+      "imageInfo": "Ef þú bætir við mynd þá aukast líkurnar á að aðrir deili þinni hugmynd.",
+      "map": "Kort",
+      "streetview": "StreetView",
+      "image": "Mynd",
+      "none": "Ekkert"
+    },
+    "edit": "Breyta hugmynd",
+    "delete": "Eyða hugmynd",
+    "addNewIntroBoxText": "Smelltu á ljósaperu til að bæta við nýrri hugmynd"
+  },
+  "short_word": {
+    "in": "í"
+  },
+  "category": {
+    "new": "Nýr flokkur",
+    "select": "Veldu flokk"
+  },
+  "categories": {
+    "all": "öllum flokkum",
+    "the_all": "Allir flokkar"
+  },
+  "point": {
+    "theseAreFor": "Rök með",
+    "theseAreAgainst": "Rök á móti",
+    "forAdded": "Bætti við rökum með",
+    "againstAdded": "Bætti við rökum á móti",
+    "point": "Rök",
+    "for": "Skrá rök með...",
+    "against": "Skrá rök á móti...",
+    "add_up": "Skrá rök með",
+    "add_down": "Skrá rök á móti",
+    "helpful": "Hjálplegt",
+    "not_helpful": "Ekki hjálplegt",
+    "addNewsStory": "Bættu við frétt",
+    "postNewsStory": "Senda inn frétt",
+    "addComment": "Þín athugasemd",
+    "postComment": "Skrá",
+    "comments": "Athugasemdir",
+    "howToWrite": "Finnum saman bestu rökin með og á móti. Hugsum í lausnum...",
+    "commentToShort": "Þessi texti er of stuttur!"
+  },
+
+  "uploading": {
+    "inProgress": "Sendi mynd..."
+  },
+
+  "notice": {
+    "ok": "Ok",
+    "feature_not_implemented_a": "Þessi virkni er ekki tilbúin ennþá.",
+    "feature_not_implemented_b": "Látið okkur vita hvað ykkur finnst :)",
+    "welcome_a": "Þetta er ný prufu útgáfa af Betri Reykjavík. Látið okkur vita hvað ykkur finnst :)",
+    "welcome_b": "Virkar bara í Chrome en mun virka á öllum vöfrum seinna á árinu.",
+    "welcome_heading": "Velkomin á prufu fyrir nýja útgáfu af Betri Reykjavík",
+    "continue": "Haldið áfram á prufu",
+    "deleteConfirmation": "Do you want to delete this group?"
+  },
+
+  "maps": {
+    "searchInput": "Heimilsfangi",
+    "search": "Leita"
+  },
+
+  "next": "áfram",
+
+  "group": {
+    "group": "Hópur",
+    "admins": "Hópur vefstjórar",
+    "users": "Hópur notendur",
+    "new": "Nýr hópur",
+    "edit": "Breyta hóp",
+    "invite": "Bjóða",
+    "invite_to_group": "Invite friend to this group",
+    "share_group": "Deila hóp",
+    "delete": "Eyða hóp",
+    "objectives": "Um þennan hóp",
+    "closed": "Lokaður hópur",
+    "public": "Opin hópur",
+    "secret": "Leynilegur hópur",
+    "openToCommunity": "Opin fyrir svæði",
+    "canVote": "Hægt að kjósa",
+    "canAddNewPosts": "Hægt að bæta við hugmynd",
+    "config": "Stillingar",
+    "update": "Breyta hóp"
+  },
+
+  "membership": {
+    "joined": "Þú ert nú meðlimur í",
+    "left": "Þú ert ekki lengur meðlimur í"
+  },
+
+  "menu": {
+    "my_pages": "Mín síða",
+    "about": "Um",
+    "help": "Hjálp",
+    "settings": "Stillingar"
+
+  },
+
+  "other": "Aðrir",
+
+  "socialMedia": "Samfélagsmiðlar",
+
+  "login": {
+    "name": "Nafn",
+    "email": "Tölvupóstur",
+    "password": "Lykilorð"
+  },
+
+  "location": {
+    "set": "Setja staðsettningu"
+  },
+
+  "image": {
+    "upload": "Settu inn mynd",
+    "logo": {
+      "upload": "Settu inn mynd"
+    },
+    "header": {
+      "upload": "Höfuðmynd"
+    },
+    "profile": {
+      "upload": "Mynd"
+    }
+  },
+  "theme": {
+    "choose": "Veldu útlits þema"
+  }
+}

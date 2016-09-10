@@ -202,7 +202,7 @@
           <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
           <yp-post id="postPage" name="post" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
           <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
-          <yp-view-404 name="view404"></yp-view-404>
+          <yp-view-404 name="view-404"></yp-view-404>
         </iron-pages>
 
       </app-header-layout>
@@ -370,7 +370,7 @@
       _pageChanged: function(page, oldPage) {
         if (page) {
           var resolvedPageUrl;
-          if (page=="view404") {
+          if (page=="view-404") {
             resolvedPageUrl = this.resolveUrl('yp-app/' + 'yp-' + page + '.html');
           } else {
             resolvedPageUrl = this.resolveUrl('yp-' + page + '/' + 'yp-' + page + '.html');
@@ -380,7 +380,7 @@
       },
 
       _showPage404: function() {
-        this.page = 'view404';
+        this.page = 'view-404';
       },
 
       _setHomeLink: function (event, homeLink) {

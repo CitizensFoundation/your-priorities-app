@@ -1,0 +1,331 @@
+{
+  "access": "Aceder",
+  "searchFor": "Procurar por...",
+  "title": "Título",
+  "selectLanguage": "Seleccionar idioma",
+  "update": "Actualizar",
+  "errorCantConnect": "Sem ligação ao servidor. Por favor tente mais tarde. Isto pode ser resultante do excesso de tráfego ou de uma actualização de software.",
+  "errorNotFound": "Sem resultados...",
+  "errorNotAuthorized": "Não tem permissões para aceder a esta área.",
+  "generalError": "Ocorreu um erro inesperado. Foi-nos enviada uma notificação sobre este erro. Obrigada!",
+  "stats": {
+    "posts": "Número de ideias propostas",
+    "discussions": "Número de comentários",
+    "communities": "Número de comunidades",
+    "groups": "Número de grupos",
+    "users": "Número de utilizadores"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "A password foi alterada e você está ligado.",
+    "method": "Método",
+    "frequency": "Frequência",
+    "myPosts": "As minhas publicações",
+    "muted": "Sem notificações",
+    "browser": "Browser",
+    "email": "Email",
+    "asItHappens": "Como é que acontece",
+    "daily": "Diariamente",
+    "hourly": "Hora a hora",
+    "weekly": "Semanalmente",
+    "monthly": "Mensalmente",
+    "myPostsEndorsements": "Ideias de que gostou",
+    "myPoints": "Os meus pontos",
+    "myPointEndorsements": "Pontos que colocou a favor",
+    "allCommunity": "Todas as notificações das minhas comunidades",
+    "allGroup": "Todas as notificações dos meus grupos"
+  },
+
+  "pages": {
+    "addLocale": "Adicionar local",
+    "unPublish": "Por publicar",
+    "deletePage": "Apagar",
+    "addPage": "Adicionar página",
+    "managePages": "Gerir páginas"
+  },
+
+  "archived": "Arquivada",
+
+  "status": {
+    "select": "Seleccionar estado",
+    "active": "Activo",
+    "featured": "Em destaque",
+    "archived": "Arquivado",
+    "published": "Opin",
+    "successful": "Samþykkt",
+    "failed": "Hafnað",
+    "inProgress": "Í ferli"
+  },
+
+  "activity": {
+    "post": {
+      "new": "Ideia",
+      "status": {
+       "change": "Actualização de estado"
+      }
+    },
+    "point": {
+      "forAdded": "Ponto a favor por",
+      "againstAdded": "Ponto contra por",
+      "new": "Ponto",
+      "newFor": "Ponto a favor por",
+      "newAgainst": "Ponto contra",
+      "newComment": "Comentário",
+      "newsStory": {
+        "new": "Notícias do utilizador"
+      }
+    }
+  },
+  "name": "Nome",
+
+  "domain": {
+    "edit": "Editar domínio"
+  },
+
+  "domains": "Domínios",
+  "communities": "Comunidades",
+  "groups": "Grupos",
+
+  "myDomains": "Os meus Domínios",
+  "myCommunities": "Comunidades em que participa",
+  "myGroups": "Grupos em que participa",
+  "myAdminCommunities": "Administrador das comunidades",
+  "myAdminGroups": "Administradores do grupo",
+
+  "community": {
+    "edit": "Editar comunidades",
+    "admins": "Administrador da comunidade",
+    "users": "Utilizadores do grupo",
+    "delete": "Apagar comunidade",
+    "new": "Criar comunidade",
+    "public": "Publicar comunidade",
+    "closed": "Comunidade fechada",
+    "secret": "Comunidade secreta",
+    "pages":"Páginas da Comunidade"
+  },
+
+  "posts": {
+    "posts": "Ideias",
+    "open": "Ideias",
+    "inProgress": "A decorrer",
+    "successful": "Bem sucedido",
+    "failed": "Falhou",
+    "map": "Mapa",
+    "noMapPosts": "Ainda não há publicações com localização",
+    "newUserImage": "Adicionar imagem"
+  },
+
+  "form": {
+    "invalid": "Falta terminar o formulário"
+  },
+
+  "post": {
+    "statusChangeConfirmText": "Tem a certeza que enviar um email a todos os que estão a favor ou contra esta ideia?",
+    "statusChangeSelectNewStatus": "Seleccione estado",
+    "statusChangeContent": "A alteração do estado será enviada a todas as pessoas a favor e contra a ideia",
+    "statusChange": "Enviar emails de alteração de estado",
+    "statusChangeSent": "Os emails de alteração de estado foram enviados",
+    "noLocation": "Não tem localização",
+    "shareInfo": "Partilhar publicação",
+    "description": "Descrição",
+    "debate": "Comentários",
+    "formInvalid": "Falta terminar o formulário",
+    "status": "Estado desta publicação",
+    "new": "Nova ideia",
+    "searchingFor": "Procurar por",
+    "top": "Ideias mais votadas",
+    "newest": "Ideias mais recentes",
+    "random": "Selecção aleatória de ideias",
+    "inProgress": "Publicações em desenvolvimento",
+    "groups": "Publicações dos grupos",
+    "search": "Procurar por publicações",
+    "add_new":"Propôr uma ideia",
+    "up_vote":"Voto a favor",
+    "down_vote":"Voto contra",
+    "report": "Denunciar publicação",
+    "notify": "Notificar-me sobre esta publicação",
+    "share": "Partilhar esta publicação",
+    "yourPost": "Ideia",
+    "yourPoint": "Ponto a favor por",
+    "location": "Localização",
+    "photo": "Imagem",
+    "photographerName": "Fotógrafo",
+    "newPhoto": "Nova imagem",
+    "photoUpdate": "Actualizar imagem",
+    "photoDeleteConfirmation": "Tem a certeza que deseja apagar esta imagem?",
+    "tabs": {
+      "debate": "Comentários",
+      "news": "Actividade recente",
+      "location": "Localização",
+      "photos": "Imagens",
+      "solutions": "Soluções",
+      "not_implemented": "Ainda não foi implementado"
+    },
+    "cover": {
+      "media": "Seleccionar imagem de capa",
+      "imageInfo": "Se adicionar uma imagem, é provável que mais pessoas partilhem a ideia.",
+      "map": "Mapa",
+      "streetview": "Vista de rua",
+      "image": "Imagem",
+      "none": "Nenhum"
+    },
+    "edit": "Editar publicação",
+    "delete": "Apagar publicação",
+    "addNewIntroBoxText": "Use o ícone da lâmpada para propôr novas ideias"
+  },
+
+  "short_word": {
+    "in": "de"
+  },
+
+  "category": {
+    "new": "Nova categoria",
+    "select": "Seleccionar categoria"
+  },
+
+  "categories": {
+    "all": "todas as categorias",
+    "the_all": "Todas as categorias"
+  },
+
+  "point": {
+    "theseAreFor": "Ponto a favor",
+    "theseAreAgainst": "Ponto contra",
+    "point": "Ponto",
+    "for": "Vota a favor porque...",
+    "against": "Vota contra porque...",
+    "add_up": "Adicionar ponto a favor",
+    "add_down": "Adicionar ponto contra",
+    "helpful": "Classificar o ponto a favor como útil",
+    "not_helpful": "Classificar o ponto contra como útil",
+    "addNewsStory": "Escreve uma notícia!",
+    "postNewsStory": "Adicionar notícia",
+    "addComment": "O seu comentário...",
+    "postComment": "Publicar comentário",
+    "comments": "Comentários",
+    "howToWrite": "Vamos reflectir sobre os melhores pontos a favor e contra e pensar em soluções...",
+    "commentToShort": "O texto é demasiado curto!"
+  },
+
+  "news": "Actividade recente",
+
+  "uploading": {
+    "inProgress": "A carregar..."
+  },
+
+  "notice": {
+    "ok": "Ok",
+    "feature_not_implemented_a": "Este recurso ainda não foi implementado nesta versão de pré-visualização do Your Priorities 6.0.",
+    "feature_not_implemented_b": "Partilhe connosco a sua opinião :)",
+    "welcome_a": "Esta é uma versão de pré-visualização do Your Priorities 6.0 para que possa ver o seu conteúdo, não alterá-lo. Os seus comentários serão muito bem-vindos.",
+    "welcome_b": "Actualmente só funciona no Chrome mas virá a funcionar em todos os principais browsers na sua data de lançamento.",
+    "welcome_heading": "Bem-vindo à versão de pré-visualização do Your Priorities 6.0",
+    "continue": "Continuar para a pré-visualização",
+    "deleteConfirmation": "Quer mesmo apagar este grupo?"
+  },
+
+  "maps": {
+    "searchInput": "Morada",
+    "search": "Procurar"
+  },
+
+  "group": {
+    "group": "Grupo",
+    "admins": "Administradores do grupo",
+    "users": "Utilizadores do grupo",
+    "new": "Adicionar um novo grupo",
+    "edit": "Editar o grupo",
+    "invite": "Convidar um amigo",
+    "invite_to_group": "Convidar um amigo para este grupo",
+    "share_group": "Partilhar este grupo",
+    "delete": "Apagar este grupo",
+    "objectives": "Objectivos",
+    "public": "Grupo público",
+    "closed": "Grupo fechado",
+    "secret": "Grupo secreto",
+    "openToCommunity": "Aberto à comunidade",
+    "canVote": "Voting allowed",
+    "canAddNewPosts": "New posts allowed",
+    "config": "Configurações",
+    "update": "Actualizar grupo"
+  },
+
+  "membership": {
+    "joined": "Você entrou",
+    "left": "Você saiu"
+  },
+
+  "menu": {
+    "my_pages": "O meu perfil",
+    "about": "Acerca",
+    "help": "Ajuda",
+    "settings": "Definições"
+
+  },
+
+  "users": {
+    "removeAdmin": "Apagar administrador",
+    "addAdmin": "Adicionar administrador",
+    "removeUser": "Apagar utilizador",
+    "inviteUser": "Convidar utilizador",
+    "email": "email",
+    "removeFromOrganization": "Remover",
+    "addToOrganization": "Organização",
+    "selectOrganization": "Seleccionar organização"
+  },
+
+  "user": {
+    "setEmail": "Adicionar email à conta",
+    "linkAccount": "Conectar com esta conta",
+    "setEmailInfo": "Adicionar email à conta",
+    "existsLinkAccountInfo": "Coloque a sua password para conectar a sua conta de email a este acesso.",
+    "logoutCompleteFor": "Sair",
+    "loggedInWithSaml": "Entrar com SAML",
+    "loggedInWithFacebook": "Entrar com o Facebook",
+    "facebookLogin": "Facebook login",
+    "info":"Informação",
+    "notifications": "Notificações",
+    "name": "Nome completo",
+    "email": "Email",
+    "edit": "Editar utilizador",
+    "password": "Password",
+    "forgotPassword": "Criar nova password",
+    "forgotPasswordInstructions": "Coloque o seu email. Iremos enviar-lhe uma mensagem com um link para que possa criar uma nova password.",
+    "forgotPasswordEmailHasBeenSent": "Foi-lhe enviado um email com as instruções para redefinir a sua password.",
+    "resetPassword": "Redefina a sua password",
+    "resetPasswordInstructions": "Crie uma nova password que não seja fácil de adivinhar",
+    "login": "Entrar",
+    "create": "Criar",
+    "cancel": "Cancelar",
+    "logout": "Sair",
+    "newPassword": "nova password",
+    "register": "Novo utilizador",
+    "alreadyRegisterred": "Este email já está registado. Poderá criar uma Nova Password se fôr necessário.",
+    "registrationError": "Erro no registo",
+    "loginError": "Erro na entrada",
+    "completeForm": "Preencha o formulário correctamente",
+    "loginNotAuthorized": "Email ou password errado"
+  },
+
+  "other": "Outro",
+
+  "socialMedia": "Redes Sociais",
+
+  "location": {
+    "set": "Definir localização"
+  },
+  "image": {
+    "upload": "Carregar imagem",
+    "logo": {
+      "upload": "Carregar logo"
+    },
+    "header": {
+      "upload": "Carregar cabeçalho"
+    },
+    "profile": {
+      "upload": "Carregar imagem de perfil"
+    }
+  },
+  "theme": {
+    "choose": "Escolha um tema"
+  }
+}
