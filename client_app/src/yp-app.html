@@ -368,10 +368,10 @@
       },
 
       _pageChanged: function(page, oldPage) {
-        if (page) {
+        if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl('yp-app/' + 'yp-' + page + '.html');
+            resolvedPageUrl = this.resolveUrl('yp-app/' + 'yp-view-404.html');
           } else {
             resolvedPageUrl = this.resolveUrl('yp-' + page + '/' + 'yp-' + page + '.html');
           }
