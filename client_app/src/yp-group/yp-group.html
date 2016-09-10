@@ -349,6 +349,7 @@
                                        documentTitle: this.group.name,
                                        enableSearch: true,
                                        backPath: "/community/" + this.group.community_id });
+
           this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
           this.$.pagesAjax.generateRequest();
         }
