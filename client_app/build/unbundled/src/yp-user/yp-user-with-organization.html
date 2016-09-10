@@ -54,18 +54,18 @@
         <div class="name" inverted$="[[inverted]]">
           [[user.name]]
         </div>
-        <div class="organizationName" inverted$="[[inverted]]" hidden$="[[!_organizationName(user)]]">
-          [[_organizationName(user)]]
+        <div class="organizationName" inverted$="[[inverted]]" hidden$="[[!organizationName]]">
+          [[_organizationName]]
         </div>
       </div>
-      <template is="dom-if" if="[[_organizationImageUrl(user)]]">
-        <img sizing="cover" class="imageStatus rounded" src$="[[_organizationImageUrl(user)]]">
+      <template is="dom-if" if="[[organizationImageUrl]]">
+        <img sizing="cover" class="imageStatus rounded" src$="[[organizationImageUrl]]">
       </template>
       <yp-user-image titlefromuser="[[userTitle]]" user="[[user]]"></yp-user-image>
       </div>
     </template>
   </template>
 
-  <script>Polymer({is:"yp-user-with-organization",behaviors:[Polymer.appHelpers],properties:{user:{type:Object},titleDate:{type:Date},userTitle:{type:String,computed:"_computeUserTitle(user, titleDate)"},inverted:{type:Boolean,value:!1}},_computeUserTitle:function(e,n){if(e&&n)return e.name+" "+moment(n).fromNow()},_organizationName:function(e){return e&&e.OrganizationUsers&&e.OrganizationUsers.length>0&&e.OrganizationUsers[0].name?e.OrganizationUsers[0].name:null},_organizationImageUrl:function(e){if(e&&e.OrganizationUsers&&e.OrganizationUsers.length>0&&e.OrganizationUsers[0].OrganizationLogoImages&&e.OrganizationUsers[0].OrganizationLogoImages.length>0){var n=this.getImageFormatUrl(e.OrganizationUsers[0].OrganizationLogoImages,2);return n}return null}});</script>
+  <script>Polymer({is:"yp-user-with-organization",behaviors:[Polymer.appHelpers],properties:{user:{type:Object},titleDate:{type:Date},userTitle:{type:String,computed:"_computeUserTitle(user, titleDate)"},inverted:{type:Boolean,value:!1},organizationName:{type:String,computed:"_organizationName(user)"},organizationImageUrl:{type:String,computed:"_organizationImageUrl(user)"}},_computeUserTitle:function(e,n){return e&&n?e.name+" "+moment(n).fromNow():null},_organizationName:function(e){return e&&e.OrganizationUsers&&e.OrganizationUsers.length>0&&e.OrganizationUsers[0].name?e.OrganizationUsers[0].name:null},_organizationImageUrl:function(e){if(e&&e.OrganizationUsers&&e.OrganizationUsers.length>0&&e.OrganizationUsers[0].OrganizationLogoImages&&e.OrganizationUsers[0].OrganizationLogoImages.length>0){var n=this.getImageFormatUrl(e.OrganizationUsers[0].OrganizationLogoImages,2);return n}return null}});</script>
 </dom-module>
 </body></html>
