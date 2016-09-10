@@ -238,7 +238,7 @@
 
       _groupAccessText: function(group, language) {
         if (group && language) {
-          switch (access) {
+          switch (group.access) {
             case 0: // Public
               return this.t("group.public");
               break;

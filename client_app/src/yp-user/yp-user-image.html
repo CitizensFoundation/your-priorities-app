@@ -73,7 +73,7 @@
 
       <template is="dom-if" if="[[!profileImageUrl]]">
         <template is="dom-if" if="[[user.facebook_id]]">
-          <iron-image sizing="cover" title="[[userTitle]]" preload src$="[[computeFacebookSrc(user)]]" class$="[[computeClass(small)]]"></iron-image>
+          <iron-image sizing="cover" title="[[userTitle]]" preload src$="[[computeFacebookSrc]]" class$="[[computeClass(small)]]"></iron-image>
         </template>
 
         <template is="dom-if" if="[[!noDefault]]">
@@ -122,18 +122,22 @@
         },
 
         user: {
-          type: Object,
-          observer: "_userChanged"
+          type: Object
         },
 
         profileImageUrl: {
           type: String,
-          value: null
+          computed: '_profileImageUrl(user)'
         },
 
         noDefault: {
           type: Boolean,
           value: false
+        },
+
+        computeFacebookSrc: {
+          type: String,
+          computed: '_computeFacebookSrc(user)'
         }
       },
 
@@ -145,11 +149,13 @@
         }
       },
 
-      _userChanged: function (newUser, oldValue) {
-        if (newUser && newUser.UserProfileImages && newUser.UserProfileImages.length > 0) {
-          var formatUrl = this.getImageFormatUrl(newUser.UserProfileImages, 0);
+      profileImageUrl: function (user) {
+        if (user && user.UserProfileImages && user.UserProfileImages.length > 0) {
+          var formatUrl = this.getImageFormatUrl(user.UserProfileImages, 0);
           if (formatUrl && formatUrl!="")
-            this.set('profileImageUrl', formatUrl);
+            return formatUrl;
+          else
+            return null;
         }
       },
 
@@ -168,7 +174,7 @@
           return 'medium rounded';
       },
 
-      computeFacebookSrc: function (user) {
+      _computeFacebookSrc: function (user) {
         if (user) {
           return 'https://graph.facebook.com/' + user.facebook_id + '/picture';
         } else {

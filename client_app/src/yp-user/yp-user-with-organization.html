@@ -54,12 +54,12 @@
         <div class="name" inverted$="[[inverted]]">
           [[user.name]]
         </div>
-        <div class="organizationName" inverted$="[[inverted]]" hidden$="[[!_organizationName(user)]]">
-          [[_organizationName(user)]]
+        <div class="organizationName" inverted$="[[inverted]]" hidden$="[[!organizationName]]">
+          [[_organizationName]]
         </div>
       </div>
-      <template is="dom-if" if="[[_organizationImageUrl(user)]]">
-        <img sizing="cover" class="imageStatus rounded" src$="[[_organizationImageUrl(user)]]">
+      <template is="dom-if" if="[[organizationImageUrl]]">
+        <img sizing="cover" class="imageStatus rounded" src$="[[organizationImageUrl]]">
       </template>
       <yp-user-image titleFromUser="[[userTitle]]" user="[[user]]"></yp-user-image>
       </div>
@@ -92,12 +92,24 @@
         inverted: {
           type: Boolean,
           value: false
+        },
+
+        organizationName {
+          type: String,
+          computed: '_organizationName(user)'
+        },
+
+        organizationImageUrl: {
+          type: String,
+          computed: '_organizationImageUrl(user)'
         }
       },
 
       _computeUserTitle: function (user, titleDate) {
         if (user && titleDate) {
           return user.name + ' ' + moment(titleDate).fromNow();
+        } else {
+          return null;
         }
       },
 
