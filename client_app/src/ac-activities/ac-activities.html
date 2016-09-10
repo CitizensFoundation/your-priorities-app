@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
@@ -27,7 +27,7 @@
 
 <dom-module id="ac-activities">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       iron-list {
         padding-bottom: 4px;
         --iron-list-items-container: {

@@ -3,7 +3,7 @@
 
 <dom-module id="yp-user-image">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       iron-image {
         display: block;
         vertical-align: text-top;
@@ -70,6 +70,8 @@
       <template is="dom-if" if="[[profileImageUrl]]">
         <iron-image sizing="cover" title="[[userTitle]]" preload src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
       </template>
+
+
 
       <template is="dom-if" if="[[!profileImageUrl]]">
         <template is="dom-if" if="[[user.facebook_id]]">
@@ -142,20 +144,26 @@
       },
 
       _computeUserTitle: function (user, titleFromUser) {
-        if (title) {
-          return title;
+        if (user) {
+          if (title) {
+            return title;
+          } else {
+            return user.name;
+          }
         } else {
-          return user.name;
+          return "";
         }
       },
 
-      profileImageUrl: function (user) {
+      _profileImageUrl: function (user) {
         if (user && user.UserProfileImages && user.UserProfileImages.length > 0) {
           var formatUrl = this.getImageFormatUrl(user.UserProfileImages, 0);
           if (formatUrl && formatUrl!="")
             return formatUrl;
           else
             return null;
+        } else {
+          return null;
         }
       },
 

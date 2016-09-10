@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
@@ -24,7 +24,7 @@
 
 <dom-module id="yp-organization">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       .card-container {
         @apply(--layout-horizontal);
         @apply(--layout-wrap);

@@ -9,7 +9,7 @@
 
 <dom-module id="yp-user-with-organization">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       yp-user-image {
         padding-right: 16px;
         padding-left: 16px;
@@ -55,7 +55,7 @@
           [[user.name]]
         </div>
         <div class="organizationName" inverted$="[[inverted]]" hidden$="[[!organizationName]]">
-          [[_organizationName]]
+          [[organizationName]]
         </div>
       </div>
       <template is="dom-if" if="[[organizationImageUrl]]">
@@ -125,8 +125,7 @@
         if (user && user.OrganizationUsers && user.OrganizationUsers.length > 0 &&
           user.OrganizationUsers[0].OrganizationLogoImages &&
           user.OrganizationUsers[0].OrganizationLogoImages.length > 0) {
-          var url = this.getImageFormatUrl(user.OrganizationUsers[0].OrganizationLogoImages, 2);
-          return url;
+          return this.getImageFormatUrl(user.OrganizationUsers[0].OrganizationLogoImages, 2);
         } else {
           return null;
         }
