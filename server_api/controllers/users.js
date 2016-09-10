@@ -29,41 +29,66 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
 };
 
 var getUserWithAll = function (userId, callback) {
-  models.User.find({
-    where: {id: userId},
-    attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','email']),
-    order: [
-      [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
-      [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
-    ],
-    include: [
-      {
-        model: models.Endorsement,
-        attributes: ['id', 'value', 'post_id'],
-        required: false
-      },
-      {
-        model: models.PointQuality,
-        attributes: ['id', 'value', 'point_id'],
-        required: false
-      },
-      {
-        model: models.Image, as: 'UserProfileImages',
-        attributes: ['id', 'created_at', 'formats'],
-        required: false
-      },
-      {
-        model: models.Image, as: 'UserHeaderImages',
-        attributes: ['id', 'created_at', 'formats'],
-        required: false
-      }
-    ]
-  }).then(function(user) {
-    callback(null, user);
-  }).catch(function(error) {
-    callback(error);
-  });
-};
+  var user, endorsements, pointQualities;
+
+  async.parallel([
+    function (seriesCallback) {
+      models.User.find({
+        where: {id: userId},
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','email']),
+        order: [
+          [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
+          [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
+        ],
+        include: [
+          {
+            model: models.Image, as: 'UserProfileImages',
+            attributes: ['id', 'created_at', 'formats'],
+            required: false
+          },
+          {
+            model: models.Image, as: 'UserHeaderImages',
+            attributes: ['id', 'created_at', 'formats'],
+            required: false
+          }
+        ]
+      }).then(function(userIn) {
+        user = userIn;
+        seriesCallback();
+      }).catch(function(error) {
+        seriesCallback(error);
+      });
+    },
+    function (seriesCallback) {
+      models.Endorsement.findAll({
+        where: {user_id: userId},
+        attributes: ['id', 'value', 'post_id']
+      }).then(function(endorsementsIn) {
+        endorsements = endorsementsIn;
+        seriesCallback();
+      }).catch(function(error) {
+        seriesCallback(error);
+      });
+    },
+    function (seriesCallback) {
+      models.PointQuality.findAll({
+        where: {user_id: userId},
+        attributes: ['id', 'value', 'point_id']
+      }).then(function (pointQualitiesIn) {
+        pointQualities = pointQualitiesIn;
+        seriesCallback();
+      }).catch(function (error) {
+        seriesCallback(error);
+      });
+    }
+  ], function (error) {
+    if (user) {
+      user.dataValues.Endorsements = endorsements;
+      user.dataValues.PointQualities = pointQualities;
+    }
+    callback(error, user);
+  })
+}
 
 // Login
 router.post('/login', function (req, res) {
