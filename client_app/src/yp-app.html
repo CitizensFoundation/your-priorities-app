@@ -335,7 +335,12 @@
           window.location = window.location.href.replace("/#!/", "/");
         }
 
-        if (route.path.indexOf('domain') > -1) {
+        var tokenParams = route.path.split('/');
+        if (route.path.indexOf('/user/reset_password') > -1) {
+          this.openResetPasswordDialog(tokenParams[tokenParams.length-1]);
+        } else if (route.path.indexOf('/user/accept/invite') > -1) {
+          this.openAcceptInvitationDialog(tokenParams[tokenParams.length-1]);
+        } else if (route.path.indexOf('domain') > -1) {
           this.set('domainSubRoute', this.subRoute);
           if (typeof this.$.domainPage.refresh !== "undefined") {
             this.$.domainPage.refresh();
@@ -364,7 +369,11 @@
       },
 
       _routePageChanged: function(page) {
-        this.page = page;
+        if (!this.route.path.indexOf('/user/reset_password') > -1 && !this.route.path.indexOf('/user/accept/invite') > -1) {
+          this.page = page;
+        } else if (this.route.path.indexOf('/user/accept/invite') > -1) {
+          this.page = "domain";
+        }
       },
 
       _pageChanged: function(page, oldPage) {
@@ -377,6 +386,18 @@
           }
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
         }
+      },
+
+      openResetPasswordDialog: function (resetPasswordToken) {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("resetPassword");
+        dialog.open(resetPasswordToken);
+      },
+
+      openAcceptInvitationDialog: function (inviteToken) {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("acceptInvite");
+        this.async(function () {
+          dialog.open(inviteToken);
+        }, 1000);
       },
 
       _showPage404: function() {

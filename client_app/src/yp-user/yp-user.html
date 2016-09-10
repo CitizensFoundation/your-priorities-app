@@ -72,7 +72,20 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <yp-page id="page">
+    <app-route
+      route="{{idRoute}}"
+      pattern="/:id"
+      data="{{idRouteData}}"
+      tail="{{tabRoute}}">
+    </app-route>
+
+    <app-route
+      route="{{tabRoute}}"
+      pattern="/:tabName"
+      data="{{tabRouteData}}">
+    </app-route>
+
+    <yp-page id="page" hidden>
 
       <yp-user-large-card id="userCard" class="largeCard card" user="[[user]]" on-update-domain="_refresh"></yp-user-large-card>
 
@@ -126,6 +139,15 @@
 
       properties: {
 
+        idRoute: {
+          type: Object,
+          observer: '_idRouteChanged'
+        },
+
+        tabRoute: Object,
+        idRouteData: Object,
+        tabRouteData: Object,
+
         userId: {
           type: Number,
           value: null,
@@ -158,27 +180,6 @@
         }
       },
 
-      openResetPasswordDialog: function () {
-        page('/user/reset_password/:resetPasswordToken', scrollToTop, function (data) {
-          window.app.route = 'home';
-          window.app.params = data.params;
-          Polymer.Base.async(function() {
-            var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("resetPassword");
-            dialog.open(data.params.resetPasswordToken);
-          }, 500);
-        });
-      },
-
-      openAcceptInvitationDialog: function () {
-        page('/user/accept/invite/:inviteToken', scrollToTop, function (data) {
-          window.app.route = 'home';
-          window.app.params = data.params;
-          Polymer.Base.async(function() {
-            var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("acceptInvite");
-            dialog.open(data.params.inviteToken);
-          }, 500);
-        });
-      },
 
       _tabNameChanged: function (newValue) {
         if (newValue) {

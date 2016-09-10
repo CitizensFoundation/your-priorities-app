@@ -681,7 +681,7 @@ router.get('/get_invite_info/:token', function(req, res) {
       }
       res.send({ targetName: targetName, inviteName: invite.FromUser.name });
     } else {
-      log.info('User Invite Token Not found', {user: toJson(user), context: 'get_invite_info'});
+      log.info('User Invite Token Not found', {context: 'get_invite_info'});
       res.sendStatus(404);
     }
   });
