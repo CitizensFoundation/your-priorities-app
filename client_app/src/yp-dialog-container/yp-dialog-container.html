@@ -77,7 +77,7 @@
       },
 
       _loggedInUserChanged: function (newValue) {
-        if (newValue===true) {
+        if (newValue) {
           this.importHref(this.resolveUrl('yp-dialog-container-logged-in.html'), null, null, true);
         }
       },
@@ -90,13 +90,13 @@
 
       getDialog: function (idName) {
         var element = this.$$("#"+idName);
-        if (typeof element.ready === "function") {
+        if (element && (typeof element.ready === "function")) {
           this.set('waitForUpgradeCounter', 0);
           return this.$$("#"+idName);
         } else {
           console.warn("Element not upgraded: "+idName);
           this.waitForUpgradeCounter += 1;
-          if (this.waitForUpgradeCounter>10) {
+          if (this.waitForUpgradeCounter>100) {
             console.error("Element upgraded after wait: "+idName);
           }
           this.async(function () {

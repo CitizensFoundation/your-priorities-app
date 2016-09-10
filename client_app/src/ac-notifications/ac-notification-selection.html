@@ -94,27 +94,33 @@
 
         availableFrequencies: {
           type: Array,
-          computed: '_getAvailableFrequencies(method)'
+          computed: '_getAvailableFrequencies(language, method)'
         },
 
         availableMethods: {
           type: Object,
-          value: function () {
-            return [
-              {
-                name: this.t('notification.muted'),
-                enumValue: 0
-              },
-              {
-                name: this.t('notification.browser'),
-                enumValue: 1
-              },
-              {
-                name: this.t('notification.email'),
-                enumValue: 2
-              }
-            ]
-          }
+          computed: '_availableMethods(language)'
+        }
+      },
+
+      _availableMethods: function (language) {
+        if (language) {
+          return [
+            {
+              name: this.t('notification.muted'),
+              enumValue: 0
+            },
+            {
+              name: this.t('notification.browser'),
+              enumValue: 1
+            },
+            {
+              name: this.t('notification.email'),
+              enumValue: 2
+            }
+          ]
+        } else {
+          return [];
         }
       },
 
@@ -139,41 +145,42 @@
         }
       },
 
-      _getAvailableFrequencies: function (method) {
+      _getAvailableFrequencies: function (language, method) {
         var frequencyArray = [];
-
-        if (!method || method==0) {
-        } else if (method==1) {
-          this.set('frequency', 0);
-          frequencyArray = [
-            {
-              name: this.t('notification.asItHappens'),
-              enumValue: 0
-            }
-          ]
-        } else if (method==2) {
-          frequencyArray = [
-            {
-              name: this.t('notification.asItHappens'),
-              enumValue: 0
-            },
-            {
-              name: this.t('notification.hourly'),
-              enumValue: 1
-            },
-            {
-              name: this.t('notification.daily'),
-              enumValue: 2
-            },
-            {
-              name: this.t('notification.weekly'),
-              enumValue: 3
-            },
-            {
-              name: this.t('notification.monthly'),
-              enumValue: 5
-            }
-          ]
+        if (language) {
+          if (!method || method==0) {
+          } else if (method==1) {
+            this.set('frequency', 0);
+            frequencyArray = [
+              {
+                name: this.t('notification.asItHappens'),
+                enumValue: 0
+              }
+            ]
+          } else if (method==2) {
+            frequencyArray = [
+              {
+                name: this.t('notification.asItHappens'),
+                enumValue: 0
+              },
+              {
+                name: this.t('notification.hourly'),
+                enumValue: 1
+              },
+              {
+                name: this.t('notification.daily'),
+                enumValue: 2
+              },
+              {
+                name: this.t('notification.weekly'),
+                enumValue: 3
+              },
+              {
+                name: this.t('notification.monthly'),
+                enumValue: 5
+              }
+            ]
+          }
         }
         return frequencyArray;
       }
