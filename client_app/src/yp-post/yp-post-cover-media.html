@@ -78,7 +78,7 @@
         </template>
 
         <template is="dom-if" if="[[imageActive]]">
-          <iron-image sizing="cover" class="main-image" src="[[postImagePath()]]"></iron-image>
+          <iron-image sizing="cover" class="main-image" src$="[[postImagePath]]"></iron-image>
         </template>
 
         <template is="dom-if" if="[[streetViewActive]]" restamp>
@@ -161,7 +161,18 @@
         mapPosition: {
           type: Object,
           computed: '_getMapPosition(post.location)'
+        },
+
+        getCategoryImagePath: {
+          type: String,
+          computed: '_getCategoryImagePath(post)'
+        },
+
+        postImagePath: {
+          type: String,
+          computed: '_postImagePath(post)'
         }
+
       },
 
       _getLatitute: function (latitude) {
@@ -235,7 +246,7 @@
         if (!post)
           return false;
         if (mediaType == 'none') {
-          return (this.post && (!this.post.Category && (!this.post.cover_media_type || this.post.cover_media_type == 'none')));
+          return (!this.post.Category && (!this.post.cover_media_type || this.post.cover_media_type == 'none'));
         } else  if ((mediaType=='category' && this.post.Category) && (!this.post.cover_media_type || this.post.cover_media_type == 'none')) {
           return true;
         } else {
@@ -251,11 +262,15 @@
         }
       },
 
-      postImagePath: function () {
-        return this.getImageFormatUrl(this.post.PostHeaderImages, 0);
+      _postImagePath: function (post) {
+        if (post) {
+          return this.getImageFormatUrl(post.PostHeaderImages, 0);
+        } else {
+          return "";
+        }
       },
 
-      getCategoryImagePath: function (post) {
+      _getCategoryImagePath: function (post) {
         if (post && post.Category && post.Category.CategoryIconImages) {
           return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
         } else {
