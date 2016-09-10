@@ -1,7 +1,7 @@
 <html><head><meta charset="UTF-8"><link rel="import" href="../yp-app.html"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-category-edit" assetpath="../yp-category/">
   <template>
 
-    <style>
+    <style include="iron-flex iron-flex-alignment">
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -658,7 +658,7 @@ l(115,147,{},rm),N(115),l(370,147,{},cm),eA.ad=function(n){Jo(this.a,dS,Fr(R(US,
 <script>function gridLoaded(){return window.vaadin&&vaadin.elements&&vaadin.elements.grid&&vaadin.elements.grid.GridElement}if(!gridLoaded()){var _Polymer=Polymer;Polymer=function(e){Polymer=_Polymer;var t=!1,i=HTMLImports.whenReady;HTMLImports.whenReady=function(n){var r=setInterval(function(){gridLoaded()&&(clearInterval(r),t||(_Polymer(e),t=!0),HTMLImports.whenReady=i,i(n))},3)}}}Polymer({is:"vaadin-grid",_grid:void 0,properties:{header:{type:Object,readOnly:!0,value:function(){var e=this;return{getCell:function(t,i){return e._grid.getStaticSection().getHeaderCell(t,i)},addRow:function(t,i){e._grid.getStaticSection().addHeader(t,i)},removeRow:function(t){e._grid.getStaticSection().removeHeader(t)},setRowClassName:function(t,i){e._grid.getStaticSection().setHeaderRowClassName(t,i)},get defaultRow(){return e._grid.getStaticSection().getDefaultHeader()},set defaultRow(t){e._grid.getStaticSection().setDefaultHeader(t)},get hidden(){return e._grid.getStaticSection().isHeaderHidden()},set hidden(t){e._grid.getStaticSection().setHeaderHidden(t)},get rowCount(){return e._grid.getStaticSection().getHeaderRowCount()}}}},footer:{type:Object,readOnly:!0,value:function(){var e=this;return{getCell:function(t,i){return e._grid.getStaticSection().getFooterCell(t,i)},addRow:function(t,i){e._grid.getStaticSection().addFooter(t,i)},removeRow:function(t){e._grid.getStaticSection().removeFooter(t)},setRowClassName:function(t,i){e._grid.getStaticSection().setFooterRowClassName(t,i)},get hidden(){return e._grid.getStaticSection().isFooterHidden()},set hidden(t){e._grid.getStaticSection().setFooterHidden(t)},get rowCount(){return e._grid.getStaticSection().getFooterRowCount()}}}},items:{type:Object,observer:"_itemsChanged"},selection:{type:Object,readOnly:!0,value:function(){var e=this;return{select:function(t){return e._grid.getSelectionModel().select(t),e},deselect:function(t){return e._grid.getSelectionModel().deselect(t),e},clear:function(){return e._grid.getSelectionModel().clear(),e},selectAll:function(){return e._grid.getSelectionModel().selectAll(),e},selected:function(t,i,n){return e._grid.getSelectionModel().selected(t,i,n)},deselected:function(t,i,n){return e._grid.getSelectionModel().deselected(t,i,n)},get size(){return e._grid.getSelectionModel().size()},get mode(){return e._grid.getSelectionMode()},set mode(t){e._grid.setSelectionMode(t)}}}},sortOrder:{type:Array,notify:!0,observer:"_sortOrderChanged"},size:{type:Number,observer:"_sizeChanged"}},attributeChanged:function(e,t,i){switch(e){case"disabled":var n="string"==typeof i;this.disabled!=n&&(this.disabled=n);break;case"selection-mode":this.selection.mode!=i&&(this.selection.mode=i);break;default:var r=Polymer.CaseMap.dashToCamelCase(e);this[r]!=i&&(this[r]=i)}},listeners:{"selection-mode-changed":"_onSelectionModeChange"},_itemsChanged:function(e){if(Array.isArray(e))this._grid.setDataSource(function(t,i){var n=e.slice(t.index,t.index+t.count);i(n)}),this.size=e.length,this.refreshItems();else{if("function"!=typeof e)throw new Error("Unknown items type: "+e+". Only arrays and functions are supported.");this._grid.setDataSource(e)}},_sizeChanged:function(e,t){this._grid.sizeChanged(e,t)},_onSelectionModeChange:function(){this.serializeValueToAttribute(this.selection.mode,"selection-mode")},_sortOrderChanged:function(e){this._grid.setSortOrder(e)},created:function(){this._grid=new vaadin.elements.grid.GridElement},ready:function(){this.toggleClass("vaadin-grid-loading",!0),this.async(function(){for(var e=0;e<this.attributes.length;e++)this.attributeChanged(this.attributes[e].nodeName,null,this.attributes[e].nodeValue)}),this._grid.init(this,this._findTableElement(Polymer.dom(this).children),Polymer.dom(this.root),this.$.measureobject)},_findTableElement:function(e){for(var t=0;t<e.length;t++){if("TABLE"===e[t].nodeName)return e[t];if("CONTENT"===e[t].nodeName){var i=Polymer.dom(e[t]).getDistributedNodes();return this._findTableElement(i)}}},_bindResizeListener:function(){var e=this;this.$.measureobject.addEventListener("load",function(){var t=this.contentDocument.defaultView,i=-1,n=-1;t.addEventListener("resize",function(r){var o=t.innerWidth,s=t.innerHeight;o==i&&s==n||(i=o,n=s,e._grid.updateSize())}.bind(this)),e._grid.updateSize()}),this.$.measureobject.src="about:blank"},attached:function(){var e=this;this._bindResizeListener(),this.then(function(){e.toggleClass("vaadin-grid-loading",!1)})},scrollToRow:function(e,t){return this._grid.scrollToRow(e,t),this},scrollToStart:function(){return this._grid.scrollToStart(),this},scrollToEnd:function(){return this._grid.scrollToEnd(),this},addColumn:function(e,t){this._grid.addColumn(e,t)},removeColumn:function(e){this._grid.removeColumn(e)},get rowClassGenerator(){return this._grid.getRowClassGenerator()},set rowClassGenerator(e){this._grid.setRowClassGenerator(e)},get cellClassGenerator(){return this._grid.getCellClassGenerator()},set cellClassGenerator(e){this._grid.setCellClassGenerator(e)},get disabled(){return this._grid.isDisabled()},set disabled(e){this._grid.setDisabled(e),this.reflectPropertyToAttribute("disabled")},get frozenColumns(){return this._grid.getFrozenColumns()},set frozenColumns(e){this._grid.setFrozenColumns(e),this.reflectPropertyToAttribute("frozenColumns")},get visibleRows(){var e=this._grid.getVisibleRows();return e>0?e:void 0},set visibleRows(e){this._grid.setVisibleRows(e),this.reflectPropertyToAttribute("visibleRows")},get columns(){return this._grid.getColumns()},set columns(e){this._grid.setColumns(e)},then:function(e){return this._grid.then(e)},set rowDetailsGenerator(e){this._grid.setRowDetailsGenerator(e)},get rowDetailsGenerator(){return this._grid.getRowDetailsGenerator()},setRowDetailsVisible:function(e,t){this._grid.setRowDetailsVisible(e,t)},refreshItems:function(){this._grid.getDataSource().refreshItems()},getItem:function(e,t,i){this._grid.getItem(e,t,i)}});</script>
 <dom-module id="yp-users-grid" assetpath="../yp-user/">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       #dialog {
         width: 90%;
         height: 90%;
@@ -772,7 +772,7 @@ l(115,147,{},rm),N(115),l(370,147,{},cm),eA.ad=function(n){Jo(this.a,dS,Fr(R(US,
 <script>Polymer.WordWrap={wordwrap:function(r,e,n){"object"==typeof r&&(n=r,r=n.start,e=n.stop),"object"==typeof e&&(n=e,r=r||n.start,e=void 0),e||(e=r,r=0),n||(n={});var t=n.mode||"soft",o="hard"===t?/\b/:/(\S+\s+)/;return function(n){var a=n.toString().split(o).reduce(function(n,o){if("hard"===t)for(var a=0;a<o.length;a+=e-r)n.push(o.slice(a,a+e-r));else n.push(o);return n},[]);return a.reduce(function(n,t){if(""===t)return n;var o=t.replace(/\t/g,"    "),a=n.length-1;if(n[a].length+o.length>e)n[a]=n[a].replace(/\s+$/,""),o.split(/\n/).forEach(function(e){n.push(new Array(r+1).join(" ")+e.replace(/^\s+/,""))});else if(o.match(/\n/)){var i=o.split(/\n/);n[a]+=i.shift(),i.forEach(function(e){n.push(new Array(r+1).join(" ")+e.replace(/^\s+/,""))})}else n[a]+=o;return n},[new Array(r+1).join(" ")]).join("\n")}}};</script>
 <dom-module id="yp-pages-grid" assetpath="../yp-page/">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       #dialog {
         width: 90%;
         max-height: 90%;
@@ -919,7 +919,7 @@ l(115,147,{},rm),N(115),l(370,147,{},cm),eA.ad=function(n){Jo(this.a,dS,Fr(R(US,
 <dom-module id="yp-organization-edit" assetpath="../yp-organization/">
   <template>
 
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       .access {
         @apply(--layout-horizontal);
         @apply(--layout-center-justified);
@@ -994,7 +994,7 @@ l(115,147,{},rm),N(115),l(370,147,{},cm),eA.ad=function(n){Jo(this.a,dS,Fr(R(US,
 <dom-module id="yp-domain-edit" assetpath="../yp-domain/">
   <template>
 
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       .additionalSettings {
         padding-top: 16px;
         margin-top: 8px;
@@ -1098,7 +1098,7 @@ l(115,147,{},rm),N(115),l(370,147,{},cm),eA.ad=function(n){Jo(this.a,dS,Fr(R(US,
 <dom-module id="yp-post-status-change-edit" assetpath="../yp-post/">
   <template>
 
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       .additionalSettings {
         padding-top: 16px;
       }
@@ -1136,7 +1136,7 @@ l(115,147,{},rm),N(115),l(370,147,{},cm),eA.ad=function(n){Jo(this.a,dS,Fr(R(US,
 <dom-module id="yp-post-move" assetpath="../yp-post/">
   <template>
 
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       .additionalSettings {
         padding-top: 16px;
       }

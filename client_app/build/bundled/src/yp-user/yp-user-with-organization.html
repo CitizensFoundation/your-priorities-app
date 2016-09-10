@@ -9,7 +9,7 @@
 
 </head><body><dom-module id="yp-user-with-organization">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       yp-user-image {
         padding-right: 16px;
         padding-left: 16px;
@@ -66,6 +66,6 @@
     </template>
   </template>
 
-  <script>Polymer({is:"yp-user-with-organization",behaviors:[Polymer.appHelpers],properties:{user:{type:Object},titleDate:{type:Date},userTitle:{type:String,computed:"_computeUserTitle(user, titleDate)"},inverted:{type:Boolean,value:!1},organizationName:{type:String,computed:"_organizationName(user)"},organizationImageUrl:{type:String,computed:"_organizationImageUrl(user)"}},_computeUserTitle:function(e,n){return e&&n?e.name+" "+moment(n).fromNow():null},_organizationName:function(e){return e&&e.OrganizationUsers&&e.OrganizationUsers.length>0&&e.OrganizationUsers[0].name?e.OrganizationUsers[0].name:null},_organizationImageUrl:function(e){if(e&&e.OrganizationUsers&&e.OrganizationUsers.length>0&&e.OrganizationUsers[0].OrganizationLogoImages&&e.OrganizationUsers[0].OrganizationLogoImages.length>0){var n=this.getImageFormatUrl(e.OrganizationUsers[0].OrganizationLogoImages,2);return n}return null}});</script>
+  <script>Polymer({is:"yp-user-with-organization",behaviors:[Polymer.appHelpers],properties:{user:{type:Object},titleDate:{type:Date},userTitle:{type:String,computed:"_computeUserTitle(user, titleDate)"},inverted:{type:Boolean,value:!1},organizationName:{type:String,computed:"_organizationName(user)"},organizationImageUrl:{type:String,computed:"_organizationImageUrl(user)"}},_computeUserTitle:function(e,n){return e&&n?e.name+" "+moment(n).fromNow():null},_organizationName:function(e){return e&&e.OrganizationUsers&&e.OrganizationUsers.length>0&&e.OrganizationUsers[0].name?e.OrganizationUsers[0].name:null},_organizationImageUrl:function(e){return e&&e.OrganizationUsers&&e.OrganizationUsers.length>0&&e.OrganizationUsers[0].OrganizationLogoImages&&e.OrganizationUsers[0].OrganizationLogoImages.length>0?this.getImageFormatUrl(e.OrganizationUsers[0].OrganizationLogoImages,2):null}});</script>
 </dom-module>
 </body></html>

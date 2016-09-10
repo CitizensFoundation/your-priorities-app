@@ -1,7 +1,7 @@
 <html><head><meta charset="UTF-8"><link rel="import" href="../yp-app.html"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       :host {
         margin-top: 8px;
       }
@@ -181,7 +181,7 @@
 </iron-iconset-svg>
 <dom-module id="yp-posts-filter" assetpath="../yp-posts-filter/">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       :host {
         padding-bottom: 0 !important;
         margin-bottom: 0 !important;
@@ -635,7 +635,7 @@
 <script>!function(){Polymer({is:"paper-search-panel",properties:{search:{type:String,observer:"_onChangeRequest",notify:!0},filters:Object,selectedFilters:{type:Object,observer:"_onChangeRequest",notify:!0,value:{}},items:Array,hasMore:Boolean,loading:{type:Boolean,value:!1},hideFilterButton:{type:Boolean,value:!1},count:{type:Number,notify:!0,value:20},icon:{type:String,value:"search"},placeholder:{type:String,value:"Search"},noResultsText:{type:String,value:"No matching results found."},moreButton:{type:String,value:"More"},resetButton:String,saveButton:String,noValuesLabel:String,_hasItems:{type:Boolean,computed:"_computeHasItems(items)",value:!1}},_loadMore:function(){this.count+=20,this._updateData()},_computeHasItems:function(e){return"undefined"!=typeof e&&e.length>0},_showNoResults:function(e,t){return!e&&!t},_onChangeRequest:function(e,t){"undefined"!=typeof t&&(this.count=20,this._updateData())},_updateData:function(){this.fire("change-request-params")},_onFilter:function(){this.$.filterDialog.open()},_onSearch:function(){this.fire("search")},_getNrSelectedFilters:function(e){if(Object.keys(e).length<=0)return 0;var t=Object.keys(e).map(function(t){return e[t].length}).reduce(function(e,t){return e+t});return t}})}();</script>
 <dom-module id="yp-post-list" assetpath="../yp-post/">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
 
       :host {
       }
@@ -793,7 +793,7 @@
 <dom-module id="yp-group-card-large" assetpath="/">
 
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       :host {
       }
 
@@ -953,11 +953,11 @@
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
 
-  <script>Polymer({is:"yp-group-card-large",behaviors:[Polymer.appHelpers,Polymer.GroupBehaviors,Polymer.LargeCardBehaviors,Polymer.AccessHelpers,Polymer.ypGotAdminRightsBehavior],properties:{group:{type:Object,observer:"_groupChanged"},hasGroupAccess:{type:Boolean,value:!1,computed:"_hasGroupAccess(group, gotAdminRights)"},groupAccessText:{type:String,computed:"_groupAccessText(group, language)"}},_hasGroupAccess:function(e,o){return!(!e||!o)&&null!=this.checkGroupAccess(e)},resetGroup:function(){this.set("group",null)},_groupChanged:function(e){},_groupAccessText:function(e,o){if(e&&o)switch(e.access){case 0:return this.t("group.public");case 1:return this.t("group.closed");case 2:return this.t("group.secret")}},_menuSelection:function(e,o){"editMenuItem"==o.item.id?this._openEdit():"newCategoryMenuItem"==o.item.id?this._openCategoryEdit():"deleteMenuItem"==o.item.id?this._openDelete():"usersMenuItem"==o.item.id?this._openUsersDialog():"adminsMenuItem"==o.item.id?this._openAdminsDialog():"pagesMenuItem"==o.item.id&&this._openPagesDialog(),this.selectedMenuItem=null},_openPagesDialog:function(){window.appGlobals.activity("open","group.pagesAdmin");var e=Polymer.dom(document).querySelector("yp-app").getDialog("pagesGrid");e.setup(this.group.id,null,null,!1),e.open()},_openUsersDialog:function(){window.appGlobals.activity("open","group.users");var e=Polymer.dom(document).querySelector("yp-app").getDialog("usersGrid");e.setup(this.group.id,null,null,!1),e.open()},_openAdminsDialog:function(){window.appGlobals.activity("open","group.admins");var e=Polymer.dom(document).querySelector("yp-app").getDialog("usersGrid");e.setup(this.group.id,null,null,!0),e.open()},_openEdit:function(){window.appGlobals.activity("open","group.new");var e=Polymer.dom(document).querySelector("yp-app").getDialog("groupEdit");e.setup(this.group,!1,this._refresh.bind(this)),e.open("edit",{groupId:this.group.id})},_openDelete:function(){window.appGlobals.activity("open","group.delete");var e=Polymer.dom(document).querySelector("yp-app").getDialog("deleteDialog");e.setup("/api/groups/",this.group.id,this.t("group.deleteConfirmation"),this._onDeleted.bind(this)),e.open()},_openCategoryEdit:function(){window.appGlobals.activity("open","category.new");var e=Polymer.dom(document).querySelector("yp-app").getDialog("categoryEdit");e.setup(this.group,!0,this._refreshCategory.bind(this)),e.open("new",{groupId:this.group.id})},_refreshCategory:function(e){this.fire("update-group")},_onDeleted:function(){this.redirectTo("/community/"+this.group.community_id)},_newCategory:function(){this.$$("#newCategory").open("new",{groupId:this.group.id})},_refresh:function(e){e&&this.set("group",e),this.fire("update-group")}});</script>
+  <script>Polymer({is:"yp-group-card-large",behaviors:[Polymer.appHelpers,Polymer.GroupBehaviors,Polymer.LargeCardBehaviors,Polymer.AccessHelpers,Polymer.ypGotAdminRightsBehavior],properties:{group:{type:Object,observer:"_groupChanged"},hasGroupAccess:{type:Boolean,value:!1,computed:"_hasGroupAccess(group, gotAdminRights)"},groupAccessText:{type:String,computed:"_groupAccessText(group, language)"}},_hasGroupAccess:function(e,o){return!(!e||!o)&&null!=this.checkGroupAccess(e)},resetGroup:function(){this.set("group",null)},_groupChanged:function(e){},_groupAccessText:function(e,o){if(!e||!o)return"";switch(e.access){case 0:return this.t("group.public");case 1:return this.t("group.closed");case 2:return this.t("group.secret")}},_menuSelection:function(e,o){"editMenuItem"==o.item.id?this._openEdit():"newCategoryMenuItem"==o.item.id?this._openCategoryEdit():"deleteMenuItem"==o.item.id?this._openDelete():"usersMenuItem"==o.item.id?this._openUsersDialog():"adminsMenuItem"==o.item.id?this._openAdminsDialog():"pagesMenuItem"==o.item.id&&this._openPagesDialog(),this.selectedMenuItem=null},_openPagesDialog:function(){window.appGlobals.activity("open","group.pagesAdmin");var e=Polymer.dom(document).querySelector("yp-app").getDialog("pagesGrid");e.setup(this.group.id,null,null,!1),e.open()},_openUsersDialog:function(){window.appGlobals.activity("open","group.users");var e=Polymer.dom(document).querySelector("yp-app").getDialog("usersGrid");e.setup(this.group.id,null,null,!1),e.open()},_openAdminsDialog:function(){window.appGlobals.activity("open","group.admins");var e=Polymer.dom(document).querySelector("yp-app").getDialog("usersGrid");e.setup(this.group.id,null,null,!0),e.open()},_openEdit:function(){window.appGlobals.activity("open","group.new");var e=Polymer.dom(document).querySelector("yp-app").getDialog("groupEdit");e.setup(this.group,!1,this._refresh.bind(this)),e.open("edit",{groupId:this.group.id})},_openDelete:function(){window.appGlobals.activity("open","group.delete");var e=Polymer.dom(document).querySelector("yp-app").getDialog("deleteDialog");e.setup("/api/groups/",this.group.id,this.t("group.deleteConfirmation"),this._onDeleted.bind(this)),e.open()},_openCategoryEdit:function(){window.appGlobals.activity("open","category.new");var e=Polymer.dom(document).querySelector("yp-app").getDialog("categoryEdit");e.setup(this.group,!0,this._refreshCategory.bind(this)),e.open("new",{groupId:this.group.id})},_refreshCategory:function(e){this.fire("update-group")},_onDeleted:function(){this.redirectTo("/community/"+this.group.community_id)},_newCategory:function(){this.$$("#newCategory").open("new",{groupId:this.group.id})},_refresh:function(e){e&&this.set("group",e),this.fire("update-group")}});</script>
 </dom-module>
 </div><dom-module id="yp-group">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       .objectives {
         padding-bottom: 40px;
         max-width: 432px;

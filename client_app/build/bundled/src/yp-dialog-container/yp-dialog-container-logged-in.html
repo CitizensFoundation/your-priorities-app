@@ -1,6 +1,6 @@
 <html><head><meta charset="UTF-8"><link rel="import" href="../yp-app.html"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-image-uploader" assetpath="../yp-image-uploader/">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       :host {
         display: block;
       }
@@ -30,7 +30,7 @@
 </dom-module>
 <dom-module id="yp-post-location" assetpath="../yp-post/">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       :host {
         display: block;
         width: 100%;
@@ -100,7 +100,7 @@
 <dom-module id="yp-post-edit" assetpath="../yp-post/">
   <template>
 
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       .access {
         @apply(--layout-horizontal);
         @apply(--layout-center-justified);
@@ -246,7 +246,7 @@
 <script>Polymer({is:"yp-post-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/posts"},new:{type:Boolean,value:!1},post:{type:Object,observer:"_postChanged"},group:{type:Object},locationHidden:{type:Boolean,value:!1,observer:"_locationHiddenChanged"},location:{type:Object,observer:"_locationChanged"},encodedLocation:{type:String,observer:"_encodedLocationChanged"},selectedCategoryArrayId:{type:Number,observer:"_selectedCategoryChanged"},selectedCategoryId:{type:Number},selectedCoverMediaType:{type:String,value:"none",observer:"_coverMediaTypeValueChanged"},uploadedHeaderImageId:{type:String,observer:"_uploadedHeaderImageIdChanged"},selected:{type:Number,value:0,observer:"_selectedChanged"},mapActive:{type:Boolean,value:!1}},listeners:{"iron-form-invalid":"_formInvalid"},_locationHiddenChanged:function(e){this.async(function(){var e=this.$$("#pages");e&&e.forceSynchronousItemUpdate();var t=this.$$("#paperTabs");t&&t.forceSynchronousItemUpdate(),console.log("Location hidden changed")},10)},_formInvalid:function(){this.set("selected",0),this.$$("#name").autoValidate=!0,this.$$("#description").autoValidate=!0,this.new&&(this.$$("#pointFor").autoValidate=!0)},_encodedLocationChanged:function(e){},_locationChanged:function(e){!e||this.selectedCoverMediaType&&""!=this.selectedCoverMediaType&&"none"!=this.selectedCoverMediaType||this.set("selectedCoverMediaType","map")},_uploadedHeaderImageIdChanged:function(e){e&&this.set("selectedCoverMediaType","image")},_nextOnEnter:function(e){13===e.keyCode&&this._searchMap()},_nextTab:function(){var e=3;this.new||(e=2),this.locationHidden&&(e-=1),this.selected<e&&this.set("selected",this.selected+1)},_selectedChanged:function(e){this.locationHidden||e!=(this.new?2:1)?this.set("mapActive",!1):this.set("mapActive",!0);var t=this.locationHidden?2:3;!this.new||this.new&&e==t?this.$$("#editDialog").useNextTabAction=!1:this.$$("#editDialog").useNextTabAction=!0},_selectedCategoryChanged:function(e,t){null!=e&&void 0!=e&&(this.selectedCategoryId=this.group.Categories[e].id)},_showCategories:function(e){return!(!e||!e.Categories)&&e.Categories.length>0},getPositionInArrayFromId:function(e,t){for(var o=0;o<e.length;o++)if(e[o].id==t)return o;return null},_postChanged:function(e,t){e&&(e.location&&(this.set("location",e.location),this.set("encodedLocation",JSON.stringify(this.location))),e.cover_media_type&&(this.selectedCoverMediaType=e.cover_media_type),e.category_id&&(this.selectedCategoryId=e.category_id,this.selectedCategoryArrayId=this.getPositionInArrayFromId(this.group.Categories,e.category_id)))},_imageUploaded:function(e,t){var o=JSON.parse(t.xhr.response);this.set("uploadedHeaderImageId",o.id)},_coverMediaTypeValueChanged:function(e,t){},_coverMediaTypeChanged:function(e,t){},_customRedirect:function(e){e?(e.newEndorsement&&window.appUser&&window.appUser.endorsementPostsIndex&&(window.appUser.endorsementPostsIndex[e.id]=e.newEndorsement),this.redirectTo("/post/"+e.id)):console.warn("No post found on custom redirect")},_clear:function(){this.new&&(this.set("post",{name:"",description:"",pointFor:"",categoryId:null}),this.set("location",null),this.set("selectedCategoryArrayId",null),this.set("selectedCategoryId",null),this.set("selected",0),this.set("uploadedHeaderImageId",null),this.$$("#imageFileUpload").clear(),this.set("selectedCoverMediaType","none"))},setup:function(e,t,o,i){t?(this.set("group",t),this.group.configuration&&this.group.configuration.locationHidden&&1==this.group.configuration.locationHidden?this.set("locationHidden",!0):this.set("locationHidden",!1)):this.set("group",null),e?this.set("post",e):this.set("post",null),this.set("new",o),this.set("refreshFunction",i),this._setupTranslation(),this._clear()},_setupTranslation:function(){this.new?(this.editHeaderText=this.t("post.new"),this.toastText=this.t("post.toast.created")):(this.editHeaderText=this.t("post.edit"),this.toastText=this.t("post.toast.updated"))}});</script>
 <dom-module id="yp-delete-dialog" assetpath="../yp-delete-dialog/">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       :host {
         display: block;
         height: 0;
@@ -274,7 +274,7 @@
 <dom-module id="yp-community-edit" assetpath="../yp-community/">
   <template>
 
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       .access {
         @apply(--layout-horizontal);
         @apply(--layout-center-justified);
@@ -373,7 +373,7 @@
 <dom-module id="yp-group-edit" assetpath="../yp-group/">
   <template>
 
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       .access {
         @apply(--layout-horizontal);
         @apply(--layout-center-justified);
@@ -485,7 +485,7 @@
 <dom-module id="yp-post-user-image-edit" assetpath="../yp-post/">
   <template>
 
-    <style>
+    <style include="iron-flex iron-flex-alignment">
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -515,7 +515,7 @@
 </dom-module>
 <dom-module id="ac-notification-selection" assetpath="../ac-notifications/">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       .half {
         width: 50%;
       }
@@ -572,7 +572,7 @@
 </dom-module>
 <dom-module id="ac-notification-settings" assetpath="../ac-notifications/">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -601,7 +601,7 @@
 <dom-module id="yp-user-edit" assetpath="../yp-user/">
   <template>
 
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       .container {
         margin-top: 16px;
         height: 100%;
@@ -665,7 +665,7 @@
 <dom-module id="yp-confirmation-dialog" assetpath="/">
   <template>
 
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       paper-dialog {
         background-color: #FFF;
       }

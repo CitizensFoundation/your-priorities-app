@@ -2,7 +2,7 @@
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
@@ -24,7 +24,7 @@
 
   <template>
 
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       :host {
         display: block;
       }
@@ -47,7 +47,6 @@
 
       .action-bar-small {
         @apply(--layout-horizontal);
-        @apply(--layout-flex);
         margin-top: 8px;
         position: absolute;
         width: 100%;
@@ -96,7 +95,6 @@
 
       .action-debate {
         @apply(--layout-horizontal);
-        @apply(--layout-flex);
         @apply(--layout-center-justified);
         color: var(--primary-color, #9E9E9E);
       }
@@ -193,13 +191,13 @@
     <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
 
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
-    <paper-material elevation="[[elevationPlusOne]]" floating$="[[floating]]" animated="" class="action-bar">
+    <paper-material elevation="[[elevationPlusOne]]" floating$="[[floating]]" animated="" class="action-bar layout horizontal">
       <div id="actionUp" class="action-up">
         <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.up_vote')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">{{formatNumber(post.counter_endorsements_up)}}</div>
       </div>
 
-      <div class="action-debate layout vertical" hidden$="[[_hideDebate(small,forceSmall)]]">
+      <div class="action-debate" hidden$="[[_hideDebate(small,forceSmall)]]">
         <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="communication:chat-bubble-outline" class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
         <div class="action-text debate-text">{{formatNumber(post.counter_points)}}</div>
       </div>

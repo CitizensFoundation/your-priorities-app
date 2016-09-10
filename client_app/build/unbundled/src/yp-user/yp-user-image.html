@@ -3,7 +3,7 @@
 
 </head><body><dom-module id="yp-user-image">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       iron-image {
         display: block;
         vertical-align: text-top;
@@ -71,6 +71,8 @@
         <iron-image sizing="cover" title="[[userTitle]]" preload="" src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
       </template>
 
+
+
       <template is="dom-if" if="[[!profileImageUrl]]">
         <template is="dom-if" if="[[user.facebook_id]]">
           <iron-image sizing="cover" title="[[userTitle]]" preload="" src$="[[computeFacebookSrc]]" class$="[[computeClass(small)]]"></iron-image>
@@ -87,6 +89,6 @@
     </template>
   </template>
 
-  <script>Polymer({is:"yp-user-image",behaviors:[Polymer.appHelpers],properties:{small:{type:Boolean,value:!1},large:{type:Boolean,value:!1},veryLarge:{type:Boolean,value:!1},titleFromUser:{type:String},userTitle:{type:String,computed:"_computeUserTitle(user, title)"},user:{type:Object},profileImageUrl:{type:String,computed:"_profileImageUrl(user)"},noDefault:{type:Boolean,value:!1},computeFacebookSrc:{type:String,computed:"_computeFacebookSrc(user)"}},_computeUserTitle:function(e,r){return title?title:e.name},_profileImageUrl:function(e){if(e&&e.UserProfileImages&&e.UserProfileImages.length>0){var r=this.getImageFormatUrl(e.UserProfileImages,0);return r&&""!=r?r:null}},computeIf:function(e){return!1},computeClass:function(e){return this.small?"small rounded":this.large?"large rounded-more":this.veryLarge?"veryLarge rounded-even-more":"medium rounded"},_computeFacebookSrc:function(e){return e?"https://graph.facebook.com/"+e.facebook_id+"/picture":(console.warn("Can't find user for computeFacebookSrc"),null)},usePlaceHolderImage:function(e){null==this.profileImageUrl&&null==e.facebook_id},ready:function(){}});</script>
+  <script>Polymer({is:"yp-user-image",behaviors:[Polymer.appHelpers],properties:{small:{type:Boolean,value:!1},large:{type:Boolean,value:!1},veryLarge:{type:Boolean,value:!1},titleFromUser:{type:String},userTitle:{type:String,computed:"_computeUserTitle(user, title)"},user:{type:Object},profileImageUrl:{type:String,computed:"_profileImageUrl(user)"},noDefault:{type:Boolean,value:!1},computeFacebookSrc:{type:String,computed:"_computeFacebookSrc(user)"}},_computeUserTitle:function(e,r){return e?title?title:e.name:""},_profileImageUrl:function(e){if(e&&e.UserProfileImages&&e.UserProfileImages.length>0){var r=this.getImageFormatUrl(e.UserProfileImages,0);return r&&""!=r?r:null}return null},computeIf:function(e){return!1},computeClass:function(e){return this.small?"small rounded":this.large?"large rounded-more":this.veryLarge?"veryLarge rounded-even-more":"medium rounded"},_computeFacebookSrc:function(e){return e?"https://graph.facebook.com/"+e.facebook_id+"/picture":(console.warn("Can't find user for computeFacebookSrc"),"")},usePlaceHolderImage:function(e){null==this.profileImageUrl&&null==e.facebook_id},ready:function(){}});</script>
 </dom-module>
 </body></html>
