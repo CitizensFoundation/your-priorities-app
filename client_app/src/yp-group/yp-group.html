@@ -108,7 +108,7 @@
           </div>
         </section>
         <section name="news">
-          <ac-activities id="groupActivities" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" group-id="[[group.id]]"></ac-activities>
+          <ac-activities id="groupActivities" disable-new-posts="[[disableNewPosts]]" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" group-id="[[group.id]]"></ac-activities>
         </section>
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section name="in_progress">
@@ -205,6 +205,11 @@
 
         lastValidGroupId: {
           type: String
+        },
+
+        disableNewPosts: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -319,6 +324,9 @@
         if (this.group.configuration && this.group.configuration.canAddNewPosts!=undefined) {
           if (this.group.configuration.canAddNewPosts===true) {
             this.set('createFabIcon',"lightbulb-outline");
+            this.set('disableNewPosts', false);
+          } else {
+            this.set('disableNewPosts', true);
           }
         } else {
           this.set('createFabIcon',"lightbulb-outline");

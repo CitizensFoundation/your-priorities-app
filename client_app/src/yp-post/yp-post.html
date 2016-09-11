@@ -362,7 +362,7 @@
           <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
         </div>
         <section name="news">
-          <ac-activities selected-tab="[[selected]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
+          <ac-activities selected-tab="[[selected]]" disable-new-posts="[[disableNewPosts]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
         </section>
         <section name="location">
           <div class="layout horizontal center-center">
@@ -460,6 +460,11 @@
           createFabIcon: {
             type: String,
             value: null
+          },
+
+          disableNewPosts: {
+            type: Boolean,
+            value: false
           }
         },
 
@@ -585,6 +590,9 @@
           if (this.post.Group.configuration && this.post.Group.configuration.canAddNewPosts!=undefined) {
             if (this.post.Group.configuration.canAddNewPosts===true) {
               this.set('createFabIcon',"lightbulb-outline");
+              this.set('disableNewPosts', false);
+            } else {
+              this.set('disableNewPosts', true);
             }
           } else {
             this.set('createFabIcon',"lightbulb-outline");

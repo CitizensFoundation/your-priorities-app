@@ -178,7 +178,7 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <template is="dom-if" if="[[loggedInUser]]">
-      <div class="layout vertical center-center full">
+      <div class="layout vertical center-center full" hidden$="[[disableNewPosts]]">
         <yp-point-news-story-edit domain-id="[[domainId]]"
                                   community-id="[[communityId]]"
                                   group-id="[[groupId]]"
@@ -286,6 +286,11 @@
       ],
 
       properties: {
+
+        disableNewPosts: {
+          type: Boolean,
+          value: false
+        },
 
         activities: {
           type: Array,
