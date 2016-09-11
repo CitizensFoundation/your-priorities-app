@@ -585,7 +585,7 @@ router.post('/createActivityFromApp', function(req, res) {
     sub_type: req.body.type,
     actor: { appActor: req.body.actor },
     object: { name: req.body.object },
-    context: { name: req.body.context, eventTime: req.body.event_time,
+    context: { pathName: req.body.path_name, name: req.body.context, eventTime: req.body.event_time,
                sessionId: req.body.sessionId, userAgent: req.body.user_agent },
     userId: req.user ? req.user.id : null,
     domainId: req.ypDomain.id,

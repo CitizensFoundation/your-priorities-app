@@ -72,7 +72,13 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <yp-page id="page">
+    <app-route route="{{idRoute}}" pattern="/:id" data="{{idRouteData}}" tail="{{tabRoute}}">
+    </app-route>
+
+    <app-route route="{{tabRoute}}" pattern="/:tabName" data="{{tabRouteData}}">
+    </app-route>
+
+    <yp-page id="page" hidden="">
 
       <yp-user-large-card id="userCard" class="largeCard card" user="[[user]]" on-update-domain="_refresh"></yp-user-large-card>
 
@@ -111,6 +117,6 @@
 
   </template>
 
-  <script>Polymer({is:"yp-user",behaviors:[Polymer.appHelpers,Polymer.ypThemeBehavior,Polymer.CollectionHelpers,Polymer.CommunityCollectionBehaviors,Polymer.GroupCollectionBehaviors],properties:{userId:{type:Number,value:null,observer:"_userIdChanged"},url:{type:String},domainEmpty:{type:Boolean,value:!1},user:{type:Object},selected:{type:Number,value:0,observer:"_selectedChanged"},userTabName:{type:String,value:null,observer:"_tabNameChanged"}},openResetPasswordDialog:function(){page("/user/reset_password/:resetPasswordToken",scrollToTop,function(e){window.app.route="home",window.app.params=e.params,Polymer.Base.async(function(){var s=Polymer.dom(document).querySelector("yp-app").getDialog("resetPassword");s.open(e.params.resetPasswordToken)},500)})},openAcceptInvitationDialog:function(){page("/user/accept/invite/:inviteToken",scrollToTop,function(e){window.app.route="home",window.app.params=e.params,Polymer.Base.async(function(){var s=Polymer.dom(document).querySelector("yp-app").getDialog("acceptInvite");s.open(e.params.inviteToken)},500)})},_tabNameChanged:function(e){e&&("communities"==e?this.set("selected",0):"news"==e?this.set("selected",1):"other_social_media"==e&&this.set("selected",2))},_selectedChanged:function(e){this.user&&(0==e?this.redirectTo("/user/"+this.user.id+"/news"):1==e?this.redirectTo("/user/"+this.user.id+"/communities"):2==e?this.redirectTo("/user/"+this.user.id+"/groups"):3==e&&this.redirectTo("/user/"+this.user.id+"/posts"))},_userIdChanged:function(e,s){e&&(this.set("featuredCommunities",null),this.set("activeCommunities",null),this.set("archivedCommunities",null),this.set("featuredGroups",null),this.set("activeGroups",null),this.set("archivedGroups",null),this.$.ajax.url="/api/users/"+this.userId,this.$.ajax.generateRequest())},_refresh:function(){this.$.ajax.generateRequest()},_response:function(e,s,t){this.set("user",s.response),null!=this.user.theme_id&&this.setTheme(this.user.theme_id),this.user.UserHeaderImages&&this.user.UserHeaderImages.length>0&&this.$.page.setupTopHeaderImage(this.user.UserHeaderImages),this.setupCommunities(this.user.CommunityUsers),this.setupGroups(this.user.GroupUsers),this.fire("change-header",{historyBack:!0})}});</script>
+  <script>Polymer({is:"yp-user",behaviors:[Polymer.appHelpers,Polymer.ypThemeBehavior,Polymer.CollectionHelpers,Polymer.CommunityCollectionBehaviors,Polymer.GroupCollectionBehaviors],properties:{idRoute:{type:Object,observer:"_idRouteChanged"},tabRoute:Object,idRouteData:Object,tabRouteData:Object,userId:{type:Number,value:null,observer:"_userIdChanged"},url:{type:String},domainEmpty:{type:Boolean,value:!1},user:{type:Object},selected:{type:Number,value:0,observer:"_selectedChanged"},userTabName:{type:String,value:null,observer:"_tabNameChanged"}},_tabNameChanged:function(e){e&&("communities"==e?this.set("selected",0):"news"==e?this.set("selected",1):"other_social_media"==e&&this.set("selected",2))},_selectedChanged:function(e){this.user&&(0==e?this.redirectTo("/user/"+this.user.id+"/news"):1==e?this.redirectTo("/user/"+this.user.id+"/communities"):2==e?this.redirectTo("/user/"+this.user.id+"/groups"):3==e&&this.redirectTo("/user/"+this.user.id+"/posts"))},_userIdChanged:function(e,s){e&&(this.set("featuredCommunities",null),this.set("activeCommunities",null),this.set("archivedCommunities",null),this.set("featuredGroups",null),this.set("activeGroups",null),this.set("archivedGroups",null),this.$.ajax.url="/api/users/"+this.userId,this.$.ajax.generateRequest())},_refresh:function(){this.$.ajax.generateRequest()},_response:function(e,s,t){this.set("user",s.response),null!=this.user.theme_id&&this.setTheme(this.user.theme_id),this.user.UserHeaderImages&&this.user.UserHeaderImages.length>0&&this.$.page.setupTopHeaderImage(this.user.UserHeaderImages),this.setupCommunities(this.user.CommunityUsers),this.setupGroups(this.user.GroupUsers),this.fire("change-header",{historyBack:!0})}});</script>
 </dom-module>
 </body></html>

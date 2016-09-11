@@ -255,6 +255,118 @@
 
   <script>Polymer({is:"yp-group-grid",behaviors:[Polymer.appHelpers],properties:{featuredGroups:Array,archivedGroups:Array,activeGroups:Array}});</script>
 </dom-module>
+<dom-module id="yp-group-edit" assetpath="../yp-group/">
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      .access {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+
+      .accessHeader {
+        color: var(--primary-color,#777);
+        font-weight: normal;
+        margin-bottom: 0;
+      }
+
+      paper-radio-button {
+        display: block;
+      }
+
+      .additionalSettings {
+        padding-top: 16px;
+      }
+
+      file-upload {
+        padding-top: 8px;
+      }
+
+      .half {
+        width: 50%;
+      }
+
+      .config {
+        padding: 8px;
+        vertical-align: top;
+      }
+
+      paper-checkbox {
+        padding-top: 8px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-edit-dialog id="editDialog" icon="social:people" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <h2>[[editHeaderText]]</h2>
+
+      <paper-input id="name" name="name" type="text" label="[[t('name')]]" value="{{group.name}}" maxlength="50" char-counter="">
+      </paper-input>
+
+      <paper-textarea id="objectives" name="objectives" value="{{group.objectives}}" label="[[t('group.objectives')]]" char-counter="" rows="2" max-rows="5" maxlength="300">
+      </paper-textarea>
+
+      <div class="layout horizontal">
+        <div class="layout vertical additionalSettings half">
+          <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('image.logo.upload')]]</span>
+          </file-upload>
+        </div>
+
+        <div class="layout vertical additionalSettings half">
+          <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('image.header.upload')]]</span>
+          </file-upload>
+        </div>
+
+        <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
+        <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+      </div>
+
+      <div class="layout horizontal wrap config">
+        <div class="layout vertica configl">
+          <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
+          <div class="layout horizontal center-center">
+            <paper-dropdown-menu label="[[t('status.select')]]">
+              <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
+                <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
+                  <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-dropdown-menu>
+            <input type="hidden" name="status" value="[[status]]">
+          </div>
+        </div>
+        <div class="layout vertical config">
+          <h2>[[t('group.config')]]</h2>
+          <paper-checkbox name="canVote" checked$="{{canVote}}">[[t('group.canVote')]]</paper-checkbox>
+          <paper-checkbox name="canAddNewPosts" checked$="{{canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
+          <paper-checkbox name="locationHidden" checked$="{{locationHidden}}">[[t('group.locationHidden')]]</paper-checkbox>
+        </div>
+      </div>
+
+      <input type="hidden" name="canVote" value$="[[canVote]]">
+      <input type="hidden" name="canAddNewPosts" value$="[[canAddNewPosts]]">
+      <input type="hidden" name="locationHidden" value$="[[locationHidden]]">
+
+      <input type="hidden" name="themeId" value="[[themeId]]">
+
+      <h3 class="accessHeader">[[t('access')]]</h3>
+      <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
+        <paper-radio-button name="public" hidden$="[[!publicCommunity]]">[[t('group.public')]]</paper-radio-button>
+        <paper-radio-button name="open_to_community" hidden$="[[publicCommunity]]">[[t('group.openToCommunity')]]</paper-radio-button>
+        <paper-radio-button name="closed">[[t('group.closed')]]</paper-radio-button>
+        <paper-radio-button name="secret">[[t('group.secret')]]</paper-radio-button>
+      </paper-radio-group>
+
+    </yp-edit-dialog>
+  </template>
+
+</dom-module>
+
+<script>Polymer({is:"yp-group-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior,Polymer.ypCollectionStatusOptions],properties:{canVote:{type:Boolean,value:!0},canAddNewPosts:{type:Boolean,value:!0},action:{type:String,value:"/api/groups"},group:{type:Object,observer:"_groupChanged"},community:{type:Object},groupAccess:{type:String,value:"public"},uploadedLogoImageId:{type:String},uploadedHeaderImageId:{type:String},status:String,publicCommunity:{type:Boolean,value:!1},themeId:{type:String,value:null},locationHidden:Boolean},_publicCommunity:function(t){if(t)return 0==t.Community.access},_customRedirect:function(t){t?(window.appUser.recheckAdminRights(),this.redirectTo("/group/"+t.id)):console.warn("No group found on custom redirect")},_groupChanged:function(t,o){this.group&&(0==this.group.access?this.groupAccess="public":1==this.group.access?this.groupAccess="closed":2==this.group.access?this.groupAccess="secret":3==this.group.access&&(this.groupAccess="open_to_community"),this.group&&this.group.status&&this.set("status",this.group.status),this.group.configuration&&void 0!=this.group.configuration.canVote&&(this.set("canVote",this.group.configuration.canVote),this.set("canAddNewPosts",this.group.configuration.canAddNewPosts)),this.group.configuration&&void 0!=this.group.configuration.locationHidden&&this.set("locationHidden",this.group.configuration.locationHidden),this.community?0==this.community.access?this.set("publicCommunity",!0):this.set("publicCommunity",!1):this.group.Community&&(0==this.group.Community.access?this.set("publicCommunity",!0):this.set("publicCommunity",!1)))},_clear:function(){this.group={name:"",objectives:"",access:0,status:"active"},this.uploadedLogoImageId=null,this.uploadedHeaderImageId=null,this.$.headerImageUpload.clear(),this.$.logoImageUpload.clear()},setup:function(t,o,s){if(t)this.set("group",t);else{var e=0;this.community?0!=this.community.access&&(this.set("groupAccess","open_to_community"),e=3):this.group.Community&&0!=this.group.Community.access&&(this.set("groupAccess","open_to_community"),e=3),this.set("group",{name:"",objectives:"",access:e,status:"active"})}this.set("new",o),this.set("refreshFunction",s),this._setupTranslation()},_setupTranslation:function(){this.new?(this.editHeaderText=this.t("group.new"),this.toastText=this.t("group.toast.created")):(this.editHeaderText=this.t("group.update"),this.toastText=this.t("group.toast.updated"))}});</script>
 <dom-module id="yp-community-large-card" assetpath="/">
 
   <template>
