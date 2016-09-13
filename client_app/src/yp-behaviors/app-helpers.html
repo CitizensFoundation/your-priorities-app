@@ -54,6 +54,9 @@
         this.set('language', detail.language);
       } else if (detail.type == 'language-changed') {
         this.set('language', detail.language);
+        if (window.appUser && window.appUser.user) {
+          window.appUser.setLocale(detail.language);
+        }
       }
     },
 

@@ -27,6 +27,7 @@
       <yp-ajax id="adminRightsAjax" method="GET" url="/api/users/loggedInUser/adminRights" on-response="_adminRightsResponse"></yp-ajax>
       <yp-ajax id="membershipsAjax" method="GET" url="/api/users/loggedInUser/memberships" on-response="_membershipsResponse"></yp-ajax>
       <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
+      <yp-ajax id="setLocaleAjax" method="PUT" url="/api/users/loggedInUser/setLocale"></yp-ajax>
     </div>
 
     <paper-toast id="loginToast" text="[[toastLoginTextCombined]]"></paper-toast>
@@ -236,6 +237,11 @@
         logout: function () {
           this.$.logoutAjax.body = {};
           this.$.logoutAjax.generateRequest();
+        },
+
+        setLocale: function (locale) {
+          setLocaleAjax.$.body = { locale: locale };
+          this.$.setLocaleAjax.generateRequest();
         },
 
         ready: function () {

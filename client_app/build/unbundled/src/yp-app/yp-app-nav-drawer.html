@@ -16,7 +16,7 @@
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
-<link href="../yp-user/yp-user-language-selector.html" rel="import">
+<link href="../yp-user/yp-language-selector.html" rel="import">
 <link rel="import" href="../yp-user/yp-user-info.html">
 
 </head><body><dom-module id="yp-app-nav-drawer">
@@ -74,7 +74,7 @@
           <paper-item on-tap="_goBack">[[homeLink.name]]</paper-item>
         </div>
       </div>
-      <yp-user-language-selector hidden$="[[user]]"></yp-user-language-selector>
+      <yp-language-selector hidden$="[[user]]"></yp-language-selector>
       <div class="layout vertical" hidden$="[[!user]]">
         <div hidden="">
           <div class="header">[[t('myDomains')]]</div>

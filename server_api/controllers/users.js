@@ -461,6 +461,28 @@ router.get('/loggedInUser/memberships', function (req, res) {
   }
 });
 
+router.put('/loggedInUser/setLocale', function (req, res) {
+  if (req.isAuthenticated() && req.user) {
+    getUserWithAll(req.user.id, function (error, user) {
+      if (error || !user) {
+        log.error("User setLocale Error", { context: 'setLocale', user: req.user.id, err: error, errorStatus: 500 });
+        res.sendStatus(500);
+      } else {
+        user.set('default_locale', req.body.locale);
+        user.save().then(function () {
+          log.info("User setLocale", {context: 'setLocale', user: req.user.id});
+          res.sendStatus(200);
+        }).catch(function (error) {
+          log.error("User setLocale Error", { context: 'setLocale', user: req.user.id, err: error, errorStatus: 500 });
+          res.sendStatus(500);
+        });
+      }
+    })
+  } else {
+    res.send('0');
+  }
+});
+
 router.get('/loggedInUser/isloggedin', function (req, res) {
   if (req.isAuthenticated()) {
     log.info('User Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
