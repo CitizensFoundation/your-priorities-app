@@ -240,7 +240,7 @@
         },
 
         setLocale: function (locale) {
-          setLocaleAjax.$.body = { locale: locale };
+          this.$.setLocaleAjax.body = { locale: locale };
           this.$.setLocaleAjax.generateRequest();
         },
 

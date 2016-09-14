@@ -469,7 +469,7 @@ router.put('/loggedInUser/setLocale', function (req, res) {
         res.sendStatus(500);
       } else {
         user.set('default_locale', req.body.locale);
-        user.save().then(function () {
+        user.save().then(function (user) {
           log.info("User setLocale", {context: 'setLocale', user: req.user.id});
           res.sendStatus(200);
         }).catch(function (error) {

@@ -75,7 +75,7 @@
           observer: '_selectedLocaleChanged'
         },
 
-        noEvents: {
+        noUserEvents: {
           type: Boolean,
           value: false
         }
@@ -96,10 +96,16 @@
       },
 
       _selectedLocaleChanged: function (locale) {
-        if (!this.noEvents) {
+        if (!this.noUserEvents) {
           localStorage.setItem('yp-user-locale', locale);
-          var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-changed', language: locale } } } );
-          document.dispatchEvent(event);
+          i18n.init({ lng: locale, resGetPath: '/locales/__lng__/__ns__.json' }, function(loaded) {
+            var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale } } } );
+            document.dispatchEvent(event);
+            window.appUser.setLocale(locale);
+          });
+          if (window.appUser && window.appUser.user) {
+            window.appUser.setLocale(locale);
+          }
         }
       }
     });
