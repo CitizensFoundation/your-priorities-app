@@ -16,5 +16,48 @@
   </template>
 </dom-module>
 
-<script>Polymer({is:"paper-share-google",properties:{link:{type:String,value:window.location.href},url:{type:String,computed:"computeUrl(link)"},raised:{type:Boolean,notify:!0,reflectToAttribute:!0}},computeUrl:function(e){return"https://plus.google.com/share?url="+e},navigate:function(){return window.open(this.url,"google-share","width=490,height=530"),!1}});</script>
+<script>
+  Polymer({
+    /**
+     * Element Prototype
+     */
+    is: 'paper-share-google',
+
+    /**
+     * Element properties
+     */
+    properties: {
+      link: {
+        type: String,
+        value: window.location.href
+      },
+
+      url: {
+        type: String,
+        computed: 'computeUrl(link)'
+      },
+
+      raised: {
+        type: Boolean,
+        notify: true,
+        reflectToAttribute: true
+      }
+    },
+
+    /**
+     * Concat the share url
+     */
+    computeUrl: function(link) {
+      return 'https://plus.google.com/share?url=' + link;
+    },
+
+    /**
+     * Navigate to the social authorization
+     */
+    navigate: function() {
+      window.open(this.url, 'google-share', 'width=490,height=530');
+      return false;
+    }
+  });
+</script>
 </body></html>

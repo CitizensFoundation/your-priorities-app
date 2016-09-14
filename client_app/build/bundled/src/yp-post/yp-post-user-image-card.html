@@ -79,7 +79,7 @@
       <div class="description">
         [[image.description]]
       </div>
-      <div class="layout horizontal" style="width: 100%">
+      <div class="layout horizontal" style="width: 100%;">
         <div class="photographer">
           [[image.photographer_name]]
         </div>
@@ -92,6 +92,53 @@
     </paper-material>
   </template>
 
-  <script>!function(){Polymer({is:"yp-post-user-image-card",behaviors:[Polymer.appHelpers,Polymer.AccessHelpers],properties:{image:{type:Object},post:{type:Object}},_openEdit:function(){window.appGlobals.activity("open","userImage.edit");var e=Polymer.dom(document).querySelector("yp-app").getDialog("userImageEdit");e.setup(this.post,this.image,!1,this._refresh.bind(this)),e.open("edit",{postId:this.post.id,userImages:!0})},_openDelete:function(){window.appGlobals.activity("open","userImage.delete");var e=Polymer.dom(document).querySelector("yp-app").getDialog("deleteDialog");e.setup("/api/images/",this.post.id+"/"+this.image.id+"/user_images",this.t("userImage.deleteConfirmation"),this._refresh.bind(this)),e.open()},_refresh:function(){this.fire("refresh")},_imageUrl:function(e){return this.getImageFormatUrl([e],0)}})}();</script>
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-user-image-card',
+
+        behaviors: [
+          Polymer.appHelpers,
+          Polymer.AccessHelpers
+        ],
+
+        properties: {
+
+          image: {
+            type: Object
+          },
+
+          post: {
+            type: Object
+          }
+        },
+
+        _openEdit: function () {
+          window.appGlobals.activity('open', 'userImage.edit');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userImageEdit");
+          dialog.setup(this.post, this.image, false, this._refresh.bind(this));
+          dialog.open('edit', { postId: this.post.id, userImages: true });
+        },
+
+        _openDelete: function () {
+          window.appGlobals.activity('open', 'userImage.delete');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
+          dialog.setup('/api/images/', this.post.id+'/'+this.image.id+'/user_images',
+            this.t('userImage.deleteConfirmation'),
+            this._refresh.bind(this));
+          dialog.open();
+        },
+
+        _refresh: function () {
+          this.fire('refresh');
+        },
+
+        _imageUrl: function (image) {
+          return this.getImageFormatUrl([image], 0);
+        }
+      });
+    }());
+  </script>
 </dom-module>
 </body></html>

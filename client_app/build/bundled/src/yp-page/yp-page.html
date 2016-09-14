@@ -141,6 +141,57 @@
     </div>
   </template>
 
-  <script>Polymer({is:"yp-page",properties:{wideWidth:{type:Boolean,value:!1},createFabIcon:{type:String,value:null},createFabTitle:{type:String},isPost:{type:Boolean,value:!1}},behaviors:[Polymer.appHelpers],listeners:{"yp-setup-header-image":"_setupTopHeaderImageEvent"},_setupTopHeaderImageEvent:function(e,t){this.setupTopHeaderImage(t)},setupTopHeaderImage:function(e){var t="url("+this.getImageFormatUrl(e,0)+")";this.customStyle["--top-area-background-image"]=t,this.updateStyles()},_fabTabChanged:function(e){},_createTap:function(){this.fire("yp-create-fab-tap")}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-page',
+
+      properties: {
+        wideWidth: {
+          type: Boolean,
+          value: false
+        },
+
+        createFabIcon: {
+          type: String,
+          value: null
+        },
+
+        createFabTitle: {
+          type: String
+        },
+
+        isPost: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      listeners: {
+        'yp-setup-header-image': '_setupTopHeaderImageEvent'
+      },
+
+      _setupTopHeaderImageEvent: function (event, image) {
+        this.setupTopHeaderImage(image);
+      },
+
+      setupTopHeaderImage: function (image) {
+        var url = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+        this.customStyle['--top-area-background-image'] = url;
+        this.updateStyles();
+      },
+
+      _fabTabChanged: function (newValue) {
+      },
+
+      _createTap: function () {
+        this.fire('yp-create-fab-tap');
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

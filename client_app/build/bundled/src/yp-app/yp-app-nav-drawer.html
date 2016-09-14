@@ -116,6 +116,116 @@
     <iron-signals on-iron-signal-got-admin-rights="_reset"></iron-signals>
   </template>
 
-  <script>Polymer({is:"yp-app-nav-drawer",behaviors:[Polymer.appHelpers],properties:{homeLink:{type:Object},user:{type:Object,observer:"_userChanged"},opened:{type:Boolean},route:{type:String,observer:"routeChanged"},myAdminGroups:{type:Array,value:null},myAdminCommunities:{type:Array,value:null},myGroups:{type:Array},myCommunities:{type:Array},myDomains:{type:Array}},_goBack:function(e){this.homeLink&&(this.redirectTo("/"+this.homeLink.type+"/"+this.homeLink.id),this.fire("yp-toggle-nav-drawer"))},_goToGroup:function(e){this.redirectTo("/group/"+e.target.getAttribute("data-args")),this.fire("yp-toggle-nav-drawer")},_goToCommunity:function(e){this.redirectTo("/community/"+e.target.getAttribute("data-args")),this.fire("yp-toggle-nav-drawer")},_goToDomain:function(e){this.redirectTo("/domain/"+e.target.getAttribute("data-args")),this.fire("yp-toggle-nav-drawer")},_userMembershipsReady:function(){this._reset()},_userChanged:function(e){e&&this._reset()},_reset:function(){window.appUser&&window.appUser.memberships&&(this.set("myGroups",_.take(window.appUser.memberships.GroupUsers,1e3)),this.set("myCommunities",_.take(window.appUser.memberships.CommunityUsers,500)),this.set("myDomains",_.take(window.appUser.memberships.DomainUsers,3))),window.appUser&&window.appUser.adminRights&&window.appUser.adminRights.CommunityAdmins&&window.appUser.adminRights.CommunityAdmins.length>0&&this.set("myAdminCommunities",window.appUser.adminRights.CommunityAdmins),window.appUser&&window.appUser.adminRights&&window.appUser.adminRights.GroupAdmins&&window.appUser.adminRights.GroupAdmins.length>0&&this.set("myAdminGroups",window.appUser.adminRights.GroupAdmins)},_openEdit:function(){var e=Polymer.dom(document).querySelector("yp-app").getDialog("userEdit");e.setup(this.user,!1,null),e.open("edit",{userId:this.user.id})},routeChanged:function(e,i){}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-app-nav-drawer',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        homeLink: {
+          type: Object
+        },
+
+        user: {
+          type: Object,
+          observer: '_userChanged'
+        },
+
+        opened: {
+          type: Boolean
+        },
+
+        route: {
+          type: String,
+          observer: 'routeChanged'
+        },
+
+        myAdminGroups: {
+          type: Array,
+          value: null
+        },
+
+        myAdminCommunities: {
+          type: Array,
+          value: null
+        },
+
+        myGroups: {
+          type: Array
+        },
+
+        myCommunities: {
+          type: Array
+        },
+
+        myDomains: {
+          type: Array
+        }
+      },
+
+      _goBack: function (event) {
+        if (this.homeLink) {
+          this.redirectTo('/'+this.homeLink.type+'/'+this.homeLink.id);
+          this.fire('yp-toggle-nav-drawer');
+        }
+      },
+
+      _goToGroup: function (event) {
+        this.redirectTo("/group/"+ event.target.getAttribute('data-args'));
+        this.fire('yp-toggle-nav-drawer');
+      },
+
+      _goToCommunity: function (event) {
+        this.redirectTo("/community/"+ event.target.getAttribute('data-args'));
+        this.fire('yp-toggle-nav-drawer');
+      },
+
+      _goToDomain: function (event) {
+        this.redirectTo("/domain/"+ event.target.getAttribute('data-args'));
+        this.fire('yp-toggle-nav-drawer');
+      },
+
+      _userMembershipsReady: function () {
+        this._reset();
+      },
+
+      _userChanged: function (user) {
+        if (user) {
+          this._reset();
+        }
+      },
+
+      _reset: function () {
+        if (window.appUser && window.appUser.memberships) {
+          this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 1000));
+          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 500));
+          this.set('myDomains', _.take(window.appUser.memberships.DomainUsers, 3));
+        }
+
+        if (window.appUser && window.appUser.adminRights &&
+            window.appUser.adminRights.CommunityAdmins && window.appUser.adminRights.CommunityAdmins.length>0) {
+          this.set('myAdminCommunities', window.appUser.adminRights.CommunityAdmins);
+        }
+
+        if (window.appUser && window.appUser.adminRights &&
+          window.appUser.adminRights.GroupAdmins && window.appUser.adminRights.GroupAdmins.length>0) {
+          this.set('myAdminGroups', window.appUser.adminRights.GroupAdmins);
+        }
+      },
+
+      _openEdit: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userEdit");
+        dialog.setup(this.user, false, null);
+        dialog.open('edit', { userId: this.user.id });
+      },
+
+      routeChanged: function(newValue, oldValue) {
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

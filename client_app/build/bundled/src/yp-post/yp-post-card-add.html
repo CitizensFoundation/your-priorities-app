@@ -115,6 +115,24 @@
     </paper-card>
   </template>
 
-  <script>Polymer({is:"yp-post-card-add",properties:{elevation:{type:Number}},_newPost:function(){this.fire("new-post")},behaviors:[Polymer.appHelpers]});</script>
+  <script>
+    Polymer({
+      is: 'yp-post-card-add',
+
+      properties: {
+        elevation: {
+          type: Number
+        }
+      },
+
+      _newPost: function () {
+        this.fire('new-post');
+      },
+
+      behaviors: [
+        Polymer.appHelpers
+    ]
+    });
+  </script>
 </dom-module>
 </body></html>

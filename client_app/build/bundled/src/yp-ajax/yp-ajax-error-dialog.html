@@ -24,6 +24,35 @@
 
 </dom-module>
 
-<script>!function(){Polymer({is:"yp-ajax-error-dialog",properties:{errorText:{type:String,value:""}},showErrorDialog:function(r){this.errorText=r,this.$$("#error").open();this.$$("#error")},resetErrorText:function(r){this.$.error.close(),this.$.errorText=""}})}();</script>
+<script>
+  (function() {
+    Polymer({
+
+      is: 'yp-ajax-error-dialog',
+
+
+      properties: {
+
+        errorText: {
+          type: String,
+          value: ""
+        }
+
+      },
+
+      showErrorDialog: function(errorText) {
+        this.errorText = errorText;
+        this.$$("#error").open();
+        var errorDialog = this.$$("#error");
+      },
+
+      resetErrorText: function(event) {
+        this.$.error.close();
+        this.$.errorText="";
+      }
+    })
+  })();
+
+</script>
 
 </body></html>

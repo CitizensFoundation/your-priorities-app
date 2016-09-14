@@ -71,5 +71,139 @@
 
 </dom-module>
 
-<script>Polymer({is:"yp-missing-email",behaviors:[Polymer.appHelpers],properties:{emailValidationPattern:{type:String,value:"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"},emailErrorMessage:{type:String},passwordErrorMessage:{type:String},needPassword:{type:Boolean,value:!1},email:{type:String,value:""},password:{type:String,value:""},credentials:{type:String,notify:!0,computed:"_computeCredentials(email, password)"},submitText:{type:String,value:""},heading:{type:String},target:{type:Object,value:function(){return this.$$("#form")}}},onEnter:function(e){this._validateAndSend()},_logout:function(){window.appUser.logout()},_forgotPassword:function(){window.appUser.fire("yp-forgot-password",{email:this.email})},ready:function(){this.header=this.t("user.setEmail"),this.set("submitText",this.t("user.setEmail"))},_computeCredentials:function(e,t){return JSON.stringify({email:e,password:t})},_validateAndSend:function(e){return this.$$("#form").checkValidity()&&this.email?void(this.needPassword&&this.password?(this.$$("#linkAccountsAjax").body=this.credentials,this.$$("#linkAccountsAjax").generateRequest()):(this.$$("#setEmailAjax").body={email:this.email},this.$$("#setEmailAjax").generateRequest())):(this.$$("#linkAccountsAjax").showErrorDialog(this.t("user.completeForm")),!1)},_setEmailResponse:function(e,t){t.response&&t.response.alreadyRegistered?(this.set("needPassword",!0),this.set("header",this.t("user.linkAccount")),this.set("submitText",this.t("user.linkAccount"))):(window.appGlobals.notifyUserViaToast(this.t("user.haveSetEmail")+" "+t.response.email),this.close())},_linkAccountsResponse:function(e,t){t.response.accountLinked?(window.appGlobals.notifyUserViaToast(this.t("user.haveLinkedAccounts")+" "+t.response.email),window.appUser.checkLogin(),this.close()):this.$$("#linkAccountsAjax").showErrorDialog(this.t("user.loginNotAuthorized"))},open:function(e){this.$$("#dialog").open()},close:function(){this.$$("#dialog").close()}});</script>
+<script>
+
+  Polymer({
+
+    is: 'yp-missing-email',
+
+    behaviors: [
+      Polymer.appHelpers
+    ],
+
+    properties: {
+
+
+      emailValidationPattern: {
+        type: String,
+        value: "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+      },
+
+      emailErrorMessage: {
+        type: String
+      },
+
+      passwordErrorMessage: {
+        type: String
+      },
+
+      needPassword: {
+        type: Boolean,
+        value: false
+      },
+
+      email: {
+        type: String,
+        value: "" //robert@citizens.is"
+      },
+
+      password: {
+        type: String,
+        value: "" //"DksdSodksSokssss"
+      },
+
+      credentials: {
+        type: String,
+        notify: true,
+        computed: '_computeCredentials(email, password)'
+      },
+
+      submitText: {
+        type: String,
+        value: ""
+      },
+
+      heading: {
+        type: String
+      },
+
+      target: {
+        type: Object,
+        value: function() {
+          return this.$$("#form");
+        }
+      }
+
+    },
+
+    onEnter: function (event) {
+      this._validateAndSend();
+    },
+
+    _logout: function () {
+      window.appUser.logout();
+    },
+
+    _forgotPassword: function () {
+      window.appUser.fire("yp-forgot-password", { email: this.email });
+    },
+
+    ready: function () {
+      this.header = this.t('user.setEmail');
+      this.set('submitText',this.t('user.setEmail'));
+    },
+
+    _computeCredentials: function(email, password) {
+     return JSON.stringify({
+        email: email,
+        password: password
+      });
+    },
+
+    _validateAndSend: function(e) {
+      if (this.$$("#form").checkValidity() && this.email){
+        if (this.needPassword && this.password) {
+          this.$$("#linkAccountsAjax").body = this.credentials;
+          this.$$("#linkAccountsAjax").generateRequest();
+        } else {
+          this.$$("#setEmailAjax").body = {email: this.email };
+          this.$$("#setEmailAjax").generateRequest();
+        }
+      } else {
+        this.$$("#linkAccountsAjax").showErrorDialog(this.t('user.completeForm'));
+        return false;
+      }
+    },
+
+    _setEmailResponse: function(event, detail) {
+      if (detail.response && detail.response.alreadyRegistered) {
+        this.set('needPassword', true);
+        this.set('header', this.t('user.linkAccount'));
+        this.set('submitText', this.t('user.linkAccount'));
+      } else {
+        window.appGlobals.notifyUserViaToast(this.t('user.haveSetEmail')+ " " + detail.response.email);
+        this.close();
+      }
+    },
+
+    _linkAccountsResponse: function(event, detail) {
+      if (detail.response.accountLinked) {
+        window.appGlobals.notifyUserViaToast(this.t('user.haveLinkedAccounts')+ " " + detail.response.email);
+        window.appUser.checkLogin();
+        this.close();
+      } else {
+        this.$$("#linkAccountsAjax").showErrorDialog(this.t('user.loginNotAuthorized'));
+      }
+    },
+
+    open: function(loginProvider) {
+      this.$$("#dialog").open();
+    },
+
+    close: function() {
+      this.$$("#dialog").close();
+    }
+
+  });
+</script>
 </body></html>

@@ -224,6 +224,226 @@
 
     <iron-signals on-iron-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></iron-signals>
   </template>
-  <script>Polymer({is:"yp-post-actions",behaviors:[Polymer.appHelpers],properties:{post:{type:Object,observer:"_onPostChanged"},small:{type:Boolean,value:!1},headerMode:{type:Boolean,value:!1},forceSmall:{type:Boolean,value:!1},endorseMode:{type:String,value:"love"},endorseValue:{type:Number,value:0},elevation:{type:Number,value:3},elevationPlusOne:{type:Number,computed:"_elevationPlusOne(elevation)"},allDisabled:{type:Boolean,value:!1},showShareButtons:{type:Boolean,value:!1},floating:{type:Boolean,value:!1}},_goToPostIfNotHeader:function(){this.headerMode||this.goToPost()},_postUrl:function(e){return e?encodeURIComponent("https://"+window.location.host+"/post/"+e.id):void console.warn("Can't find post for action")},_toggleShare:function(){this.set("showShareButtons",!this.showShareButtons)},_shareMouseOver:function(){this.set("showShareButtons",!0)},_shareMouseOut:function(){this.async(function(){this.set("showShareButtons",!1)},1200)},_elevationPlusOne:function(e){return e<5?e+1:e},_hideDebate:function(e,o){return e||o},_onPostChanged:function(e,o){e&&this._updateEndorsements()},_updateEndorsementsFromSignal:function(){this._updateEndorsements()},_updateEndorsements:function(){if(window.appUser.loggedIn()&&window.appUser.user&&window.appUser.user.Endorsements){var e=window.appUser.endorsementPostsIndex[this.post.id];e&&this._setEndorsement(e.value)}},endorseModeIcon:function(e,o){return"thumbs"==e&&"up"==o?"thumb-up":"thumbs"==e&&"down"==o?"thumb-down":"love"==e&&"up"==o?"favorite":"love"==e&&"down"==o?"notification:do-not-disturb":"arrow"==e&&"up"==o?"hardware:keyboard-arrow-down":"arrow"==e&&"down"==o?"hardware:keyboard-arrow-up":void 0},_setEndorsement:function(e){this.endorseValue=e,"love"==this.endorseMode&&(e>0?(this.$.actionUp.className+=" love-up-selected",this.removeClass(this.$.actionDown,"love-up-selected")):e<0?(this.$.actionDown.className+=" love-up-selected",this.removeClass(this.$.actionUp,"love-up-selected")):(this.removeClass(this.$.actionUp,"love-up-selected"),this.removeClass(this.$.actionDown,"love-up-selected")))},_endorseResponse:function(e,o){this.set("allDisabled",!1);var t=o.response.endorsement,s=o.response.oldEndorsementValue;this._setEndorsement(t.value),window.appUser.updateEndorsementForPost(this.post.id,t),s&&(s>0?this.set("post.counter_endorsements_up",this.post.counter_endorsements_up-1):s<0&&this.set("post.counter_endorsements_down",this.post.counter_endorsements_down-1)),t.value>0?this.set("post.counter_endorsements_up",this.post.counter_endorsements_up+1):t.value<0&&this.set("post.counter_endorsements_down",this.post.counter_endorsements_down+1)},generateEndorsementFromLogin:function(e){window.appUser.endorsementPostsIndex[this.post.id]||this.generateEndorsement(e)},generateEndorsement:function(e){window.appUser.loggedIn()===!0?(this.$.endorseAjax.url="/api/posts/"+this.post.id+"/endorse",this.$.endorseAjax.body={post_id:this.post.id,value:e},this.endorseValue===e?this.$.endorseAjax.method="DELETE":this.$.endorseAjax.method="POST",this.$.endorseAjax.generateRequest()):(this.set("allDisabled",!1),window.appUser.loginForEndorse(this,{value:e}))},upVote:function(e){this.set("allDisabled",!0),this.generateEndorsement(1),window.appGlobals.activity("clicked","endorse_up",this.post.id)},downVote:function(e){this.set("allDisabled",!0),this.generateEndorsement(-1),window.appGlobals.activity("clicked","endorse_down",this.post.id)},computeActionClass:function(e){return"action-bar"},ready:function(){this.endorseMode&&(this.$.actionDown.className+=" love-down",this.$.actionUp.className+=" love-up")}});</script>
+  <script>
+    Polymer({
+      is: 'yp-post-actions',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        post: {
+          type: Object,
+          observer: '_onPostChanged'
+        },
+
+        small: {
+          type: Boolean,
+          value: false
+        },
+
+        headerMode: {
+          type: Boolean,
+          value: false
+        },
+
+        forceSmall: {
+          type: Boolean,
+          value: false
+        },
+
+        endorseMode: {
+          type: String,
+          value: 'love'
+        },
+
+        endorseValue: {
+          type: Number,
+          value: 0
+        },
+
+        elevation: {
+          type: Number,
+          value: 3
+        },
+
+        elevationPlusOne: {
+          type: Number,
+          computed: '_elevationPlusOne(elevation)'
+        },
+
+        allDisabled: {
+          type: Boolean,
+          value: false
+        },
+
+        showShareButtons: {
+          type: Boolean,
+          value: false
+        },
+
+        floating: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _goToPostIfNotHeader: function () {
+        if (!this.headerMode) {
+          this.goToPost();
+         }
+      },
+
+      _postUrl: function (post) {
+        if (post) {
+          return encodeURIComponent("https://"+window.location.host+"/post/"+post.id);
+        } else {
+          console.warn("Can't find post for action");
+        }
+      },
+
+      _toggleShare: function () {
+        this.set('showShareButtons', !this.showShareButtons);
+      },
+
+      _shareMouseOver: function () {
+        this.set('showShareButtons', true);
+      },
+
+      _shareMouseOut: function () {
+        this.async(function () {
+          this.set('showShareButtons', false);
+        },1200);
+      },
+
+      _elevationPlusOne: function (elevation) {
+        if (elevation<5) {
+          return elevation + 1;
+        } else {
+          return elevation;
+        }
+      },
+
+      _hideDebate: function (small, forceSmall) {
+        return (small || forceSmall)
+      },
+
+      _onPostChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this._updateEndorsements();
+        }
+      },
+
+      _updateEndorsementsFromSignal: function () {
+        this._updateEndorsements();
+      },
+
+      _updateEndorsements: function () {
+        if (window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
+          var thisPostsEndorsement = window.appUser.endorsementPostsIndex[this.post.id];
+          if (thisPostsEndorsement)
+            this._setEndorsement(thisPostsEndorsement.value);
+        }
+      },
+
+      endorseModeIcon: function (endorseMode, upDown) {
+        if (endorseMode=='thumbs' && upDown=='up') {
+          return 'thumb-up';
+        } else if (endorseMode=='thumbs' && upDown=='down') {
+          return 'thumb-down';
+        } else if (endorseMode=='love' && upDown=='up') {
+//          return 'favorite';
+//          return 'favorite';
+          return 'favorite';
+        } else if (endorseMode=='love' && upDown=='down') {
+          return 'notification:do-not-disturb';
+        } else if (endorseMode=='arrow' && upDown=='up') {
+          return 'hardware:keyboard-arrow-down';
+        } else if (endorseMode=='arrow' && upDown=='down') {
+          return 'hardware:keyboard-arrow-up';
+        }
+      },
+
+      _setEndorsement: function (value) {
+        this.endorseValue = value;
+        if (this.endorseMode=='love') {
+          if (value > 0) {
+            this.$.actionUp.className += ' ' + 'love-up-selected';
+            this.removeClass(this.$.actionDown, 'love-up-selected');
+          } else if (value < 0) {
+            this.$.actionDown.className += ' ' + 'love-up-selected';
+            this.removeClass(this.$.actionUp,'love-up-selected');
+          } else {
+            this.removeClass(this.$.actionUp,'love-up-selected');
+            this.removeClass(this.$.actionDown, 'love-up-selected');
+          }
+        }
+      },
+
+      _endorseResponse: function (event, detail) {
+        this.set('allDisabled', false);
+        var endorsement = detail.response.endorsement;
+        var oldEndorsementValue = detail.response.oldEndorsementValue;
+        this._setEndorsement(endorsement.value);
+        window.appUser.updateEndorsementForPost(this.post.id, endorsement);
+        if (oldEndorsementValue) {
+          if (oldEndorsementValue>0)
+            this.set('post.counter_endorsements_up', this.post.counter_endorsements_up-1);
+          else if (oldEndorsementValue<0)
+            this.set('post.counter_endorsements_down', this.post.counter_endorsements_down-1);
+        }
+        if (endorsement.value>0)
+          this.set('post.counter_endorsements_up', this.post.counter_endorsements_up+1);
+        else if (endorsement.value<0)
+          this.set('post.counter_endorsements_down', this.post.counter_endorsements_down+1);
+      },
+
+      generateEndorsementFromLogin: function (value) {
+        if (!window.appUser.endorsementPostsIndex[this.post.id]) {
+          this.generateEndorsement(value);
+        }
+      },
+
+      generateEndorsement: function (value) {
+        if (window.appUser.loggedIn()===true) {
+          this.$.endorseAjax.url = '/api/posts/' + this.post.id + '/endorse';
+          this.$.endorseAjax.body = { post_id: this.post.id, value: value };
+          if (this.endorseValue === value) {
+            this.$.endorseAjax.method = 'DELETE';
+          } else {
+            this.$.endorseAjax.method = 'POST';
+          }
+          this.$.endorseAjax.generateRequest();
+        } else {
+          this.set('allDisabled', false);
+          window.appUser.loginForEndorse(this, { value: value } );
+        }
+      },
+
+      upVote: function (event) {
+        this.set('allDisabled', true);
+        this.generateEndorsement(1);
+        window.appGlobals.activity('clicked', 'endorse_up', this.post.id);
+      },
+
+      downVote: function (event) {
+        this.set('allDisabled', true);
+        this.generateEndorsement(-1);
+        window.appGlobals.activity('clicked', 'endorse_down', this.post.id);
+      },
+
+      computeActionClass: function (small) {
+        return small ? 'action-bar' : 'action-bar';
+      },
+
+      ready: function() {
+        if (this.endorseMode) {
+          this.$.actionDown.className += ' ' + 'love-down';
+          this.$.actionUp.className += ' ' + 'love-up';
+        }
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

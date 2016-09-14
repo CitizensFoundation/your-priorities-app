@@ -1,4 +1,0 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
-
-<script>Polymer.YpPostBehavior={properties:{post:{type:Object,notify:!0},endorseMode:{type:String},image:{type:Boolean,value:!0},elevation:{type:Number,value:1},postName:{type:String,computed:"postNameFunc(post)"},postDescription:{type:String,computed:"postDescriptionFunc(post)"},getCategoryImagePath:{type:String,computed:"_getCategoryImagePath(post)"}},postNameFunc:function(t){return t&&t.name?this.truncate(this.trim(t.name),100):t?t.short_name:""},postDescriptionFunc:function(t){return t&&t.description?this.truncate(this.trim(t.description),500,"..."):t&&t.Points&&t.Points[0]?this.truncate(this.trim(t.Points[0].content),500,"..."):""},_getCategoryImagePath:function(t){return t&&t.Category&&t.Category.CategoryIconImages?this.getImageFormatUrl(t.Category.CategoryIconImages,0):""}};</script>
-</head><body></body></html>

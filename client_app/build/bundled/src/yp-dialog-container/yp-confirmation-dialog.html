@@ -28,6 +28,45 @@
 
   </template>
 
-  <script>Polymer({is:"yp-confirmation-dialog",behaviors:[Polymer.appHelpers],properties:{confirmationText:{type:String},onConfirmedFunction:{type:Function,value:null}},_reset:function(){this.set("confirmationText",null),this.set("onConfirmedFunction",null)},open:function(n,i){this.set("confirmationText",n),this.set("onConfirmedFunction",i),this.$$("#confirmationDialog").open()},_confirm:function(){this.onConfirmedFunction&&(this.onConfirmedFunction(),this._reset())}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-confirmation-dialog',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        confirmationText: {
+          type: String
+        },
+
+        onConfirmedFunction: {
+          type: Function,
+          value: null
+        }
+      },
+
+      _reset: function () {
+        this.set('confirmationText', null);
+        this.set('onConfirmedFunction', null);
+      },
+
+      open: function (confirmationText, onConfirmedFunction) {
+        this.set('confirmationText', confirmationText);
+        this.set('onConfirmedFunction', onConfirmedFunction);
+        this.$$("#confirmationDialog").open();
+      },
+
+      _confirm: function () {
+        if (this.onConfirmedFunction) {
+          this.onConfirmedFunction();
+          this._reset();
+        }
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

@@ -268,6 +268,286 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
   </template>
 
-  <script>Polymer({is:"ac-activities",behaviors:[Polymer.appHelpers,Polymer.YpScrollTabBehavior,Polymer.ypLoggedInUserBehavior,Polymer.AccessHelpers],properties:{disableNewPosts:{type:Boolean,value:!1},activities:{type:Array,notify:!0},domainId:{type:Number,observer:"_domainIdChanged"},communityId:{type:Number,observer:"_communityIdChanged"},groupId:{type:Number,observer:"_groupIdChanged"},postId:{type:Number,observer:"_postIdChanged"},postGroupId:{type:Number},mode:{type:String,value:"activities"},url:{type:String},oldestProcessedActivityAt:{type:Date},latestProcessedActivityAt:{type:Date},activityIdToDelete:{type:Number}},_getActivityTypeName:function(t){return"activity.point.new"==t.type?t.Point.value>0?this.t("activity.point.newFor"):t.Point.value<0?this.t("activity.point.newAgainst"):this.t("activity.point.newComment"):this.t(t.type)},_hidePostListPadding:function(){return!this.postId},_showGroup:function(t){return!t.PostStatusChange&&(!!t.Group&&"hidden_public_group_for_domain_level_points"!=t.Group.name)},_elevationForType:function(t){return"activity.post.new"==t?5:"activity.post.status.change"==t?3:2},_hasActivityAccess:function(t){return this.domainId?this.checkDomainAccess(t.Domain):this.communityId?this.checkCommunityAccess(t.Community):this.groupId?this.checkGroupAccess(t.Group):!!this.postId&&this.checkPostAccess(t.Post)},_activityDeletedResponse:function(t,e){var i=e.response.activityId;this.set("activities",_.filter(this.activities,function(t){return t.id!=i}))},_deleteActivity:function(t){this.set("activityIdToDelete",t.model.activity.id);var e=Polymer.dom(document).querySelector("yp-app").getDialog("confirmationDialog");e.open(this.t("activity.confirmDelete"),this._reallyDelete.bind(this))},_reallyDelete:function(){this.domainId?this.$.deleteActivityAjax.url="/api/domains/"+this.domainId+"/"+this.activityIdToDelete+"/delete_activity":this.communityId?this.$.deleteActivityAjax.url="/api/communities/"+this.communityId+"/"+this.activityIdToDelete+"/delete_activity":this.groupId?this.$.deleteActivityAjax.url="/api/groups/"+this.groupId+"/"+this.activityIdToDelete+"/delete_activity":this.postId&&(this.$.deleteActivityAjax.url="/api/posts/"+this.postId+"/"+this.activityIdToDelete+"/delete_activity"),this.$.deleteActivityAjax.body={},this.$.deleteActivityAjax.generateRequest(),this.set("activityIdToDelete",null)},_upVote:function(t){return!(!t||0!=t.value)||!!t&&t.value>0},_downVote:function(t){return!(!t||0!=t.value)||!!t&&t.value<0},_joinPost:function(t){this.postId||(t.model.activity.Post?this.goToPost(t.model.activity.Post.id):t.model.activity.PostStatusChange&&this.goToPost(t.model.activity.PostStatusChange.post_id))},_getActivityWithPostTitle:function(t){return this.t(t.type)+" "+t.Post.name},_isNotActivityType:function(t,e){return t.type!=e},_isActivityType:function(t,e){return t.type==e},_generateRequest:function(t,e){t&&(this.set("activities",[]),this.set("oldestProcessedActivityAt",null),this.set("url","/api/"+this.mode+"/"+e+"/"+t),this.$.ajax.url=this.url,this.$.ajax.generateRequest())},_loadMoreData:function(){""!=this.url&&this.oldestProcessedActivityAt&&(this.set("moreToLoad",!1),this.$.ajax.url=this.url+"?beforeDate="+this.oldestProcessedActivityAt,this.$.ajax.generateRequest())},loadNewData:function(){""!=this.url&&this.latestProcessedActivityAt?(this.$.ajax.url=this.url+"?afterDate="+this.latestProcessedActivityAt,this.$.ajax.generateRequest()):this.latestProcessedActivityAt||(this.$.ajax.url=this.url,this.$.ajax.generateRequest())},_domainIdChanged:function(t){this.set("activities",null),this._generateRequest(t,"domains")},_communityIdChanged:function(t){this.set("activities",null),this._generateRequest(t,"communities")},_groupIdChanged:function(t){this.set("activities",null),this._generateRequest(t,"groups")},_postIdChanged:function(t){this.set("activities",null),this._generateRequest(t,"posts")},_activitiesResponse:function(t,e){var i=e.response.activities;e.response.oldestProcessedActivityAt&&this.set("oldestProcessedActivityAt",e.response.oldestProcessedActivityAt),i.forEach(function(t){this.$.ajax.url.indexOf("afterDate")>-1?this.unshift("activities",t):this.push("activities",t)}.bind(this)),i.length>0&&((!this.latestProcessedActivityAt||this.latestProcessedActivityAt<i[0].created_at)&&this.set("latestProcessedActivityAt",i[0].created_at),this.setMoreToLoad()),this.async(function(){this.$.list.fire("iron-resize")})}});</script>
+  <script>
+    Polymer({
+
+      is: 'ac-activities',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.YpScrollTabBehavior,
+        Polymer.ypLoggedInUserBehavior,
+        Polymer.AccessHelpers
+      ],
+
+      properties: {
+
+        disableNewPosts: {
+          type: Boolean,
+          value: false
+        },
+
+        activities: {
+          type: Array,
+          notify: true
+        },
+
+        domainId: {
+          type: Number,
+          observer: "_domainIdChanged"
+        },
+
+        communityId: {
+          type: Number,
+          observer: "_communityIdChanged"
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        postId: {
+          type: Number,
+          observer: "_postIdChanged"
+        },
+
+        postGroupId: {
+          type: Number
+        },
+
+        // 'activities' and 'news_feed'
+        mode: {
+          type: String,
+          value: "activities"
+        },
+
+        url: {
+          type: String
+        },
+
+        oldestProcessedActivityAt: {
+          type: Date
+        },
+
+        latestProcessedActivityAt: {
+          type: Date
+        },
+
+        activityIdToDelete: {
+          type: Number
+        }
+      },
+
+      _getActivityTypeName: function (activity) {
+        if (activity.type=='activity.point.new') {
+          if (activity.Point.value>0) {
+            return this.t('activity.point.newFor');
+          } else if (activity.Point.value<0) {
+            return this.t('activity.point.newAgainst');
+          } else {
+            return this.t('activity.point.newComment')
+          }
+        } else {
+          return this.t(activity.type);
+        }
+      },
+
+      _hidePostListPadding: function () {
+        if (!this.postId) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      _showGroup: function (activity) {
+        if (activity.PostStatusChange) {
+          return false;
+        } else if (activity.Group) {
+          if (activity.Group.name == 'hidden_public_group_for_domain_level_points') {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return false;
+        }
+      },
+
+      _elevationForType: function (type) {
+        if (type=='activity.post.new') {
+          return 5;
+        } else if (type=='activity.post.status.change') {
+          return 3;
+        } else {
+          return 2;
+        }
+      },
+
+      _hasActivityAccess: function (activity) {
+        if (this.domainId) {
+          return this.checkDomainAccess(activity.Domain)
+        } else if (this.communityId) {
+          return this.checkCommunityAccess(activity.Community)
+        } else if (this.groupId) {
+          return this.checkGroupAccess(activity.Group)
+        } else if (this.postId) {
+          return this.checkPostAccess(activity.Post)
+        } else {
+          return false;
+        }
+      },
+
+      _activityDeletedResponse: function (event, detail) {
+        var activityId = detail.response.activityId;
+        this.set('activities', _.filter(this.activities, function(o) { return (o.id!=activityId) }));
+      },
+
+      _deleteActivity: function (event) {
+        this.set('activityIdToDelete', event.model.activity.id);
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+        dialog.open(this.t('activity.confirmDelete'), this._reallyDelete.bind(this));
+      },
+
+      _reallyDelete: function () {
+        if (this.domainId) {
+          this.$.deleteActivityAjax.url = "/api/domains/"+this.domainId+"/"+this.activityIdToDelete+"/delete_activity";
+        } else if (this.communityId) {
+          this.$.deleteActivityAjax.url = "/api/communities/"+this.communityId+"/"+this.activityIdToDelete+"/delete_activity";
+        } else if (this.groupId) {
+          this.$.deleteActivityAjax.url = "/api/groups/"+this.groupId+"/"+this.activityIdToDelete+"/delete_activity";
+        } else if (this.postId) {
+          this.$.deleteActivityAjax.url = "/api/posts/"+this.postId+"/"+this.activityIdToDelete+"/delete_activity";
+        }
+        this.$.deleteActivityAjax.body = {};
+        this.$.deleteActivityAjax.generateRequest();
+        this.set('activityIdToDelete', null);
+      },
+
+      _upVote: function (point) {
+        if (point && point.value == 0) {
+          return true;
+        } else if (!point) {
+          return false;
+        } else {
+          return point.value > 0;
+        }
+      },
+
+      _downVote: function (point) {
+        if (point && point.value == 0) {
+          return true;
+        } else if (!point) {
+          return false;
+        } else {
+          return point.value < 0;
+        }
+      },
+
+      _joinPost: function (event) {
+        if (!this.postId) {
+          if (event.model.activity.Post) {
+            this.goToPost(event.model.activity.Post.id);
+          } else if (event.model.activity.PostStatusChange) {
+            this.goToPost(event.model.activity.PostStatusChange.post_id);
+          }
+        }
+      },
+
+      _getActivityWithPostTitle: function (activity) {
+        return this.t(activity.type) + ' ' + activity.Post.name;
+      },
+
+      _isNotActivityType: function (activity, type) {
+        return activity.type!=type
+      },
+
+      _isActivityType: function (activity, type) {
+        return activity.type==type
+      },
+
+      _generateRequest: function (typeId, type) {
+        if (typeId) {
+          this.set('activities', []);
+          this.set('oldestProcessedActivityAt', null);
+
+          //TODO: Test personalized news feeds better
+          if (false && window.appUser && window.appUser.user) {
+            this.mode = 'news_feeds';
+          }
+          this.set('url', '/api/'+this.mode+'/' + type + '/'+typeId);
+          this.$.ajax.url = this.url;
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      _loadMoreData: function () {
+        if (this.url!='' && this.oldestProcessedActivityAt) {
+          this.set('moreToLoad', false);
+          this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      loadNewData: function () {
+        if (this.url!='' && this.latestProcessedActivityAt) {
+          this.$.ajax.url = this.url + '?afterDate='+this.latestProcessedActivityAt;
+          this.$.ajax.generateRequest();
+        } else if (!this.latestProcessedActivityAt) {
+          this.$.ajax.url = this.url;
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      _domainIdChanged: function (newValue) {
+        this.set('activities', null);
+        this._generateRequest(newValue, 'domains');
+      },
+
+      _communityIdChanged: function (newValue) {
+        this.set('activities', null);
+        this._generateRequest(newValue, 'communities');
+      },
+
+      _groupIdChanged: function (newValue) {
+        this.set('activities', null);
+        this._generateRequest(newValue, 'groups');
+      },
+
+      _postIdChanged: function (newValue) {
+        this.set('activities', null);
+        this._generateRequest(newValue, 'posts');
+      },
+
+      _activitiesResponse: function (event, detail) {
+        var activities = detail.response.activities;
+
+        if (detail.response.oldestProcessedActivityAt) {
+          this.set('oldestProcessedActivityAt', detail.response.oldestProcessedActivityAt);
+        }
+
+        activities.forEach(function(activity) {
+          if (this.$.ajax.url.indexOf('afterDate') > -1) {
+            this.unshift('activities', activity);
+          } else {
+            this.push('activities', activity);
+          }
+        }.bind(this));
+
+        if (activities.length>0) {
+          if (!this.latestProcessedActivityAt || this.latestProcessedActivityAt < activities[0].created_at) {
+            this.set('latestProcessedActivityAt', activities[0].created_at);
+          }
+          this.setMoreToLoad();
+        }
+
+//        this.$.list.fire('iron-resize');
+        this.async(function () {
+          this.$.list.fire('iron-resize');
+        });
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

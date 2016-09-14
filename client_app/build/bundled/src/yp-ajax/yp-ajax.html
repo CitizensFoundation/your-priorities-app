@@ -33,6 +33,159 @@
 
 </dom-module>
 
-<script>!function(){Polymer({is:"yp-ajax",behaviors:[Polymer.appHelpers],properties:{url:{type:String,value:""},method:{type:String,value:"GET"},loading:{type:Boolean},params:{type:Object,value:{}},body:{type:Object,notify:!0},auto:{type:Boolean,value:!1},errorText:{type:String,value:""},useDialog:{type:Boolean,value:!0,notify:!0},useSpinner:{type:Boolean,value:!0},largeSpinner:{type:Boolean,value:!1},dispatchError:{type:Boolean,value:!1},retryMethodAfter401Login:{type:Function,value:null}},_response:function(e){this.$.spinner.active=!1,this.fire("response",e.detail)},ready:function(){this.auto&&(this.$.spinner.active=!0),this.largeSpinner&&this.$.spinner.toggleClass("large",!0)},_error:function(e){this.$.spinner.active=!1,this.dispatchError?e.detail.request.xhr.response&&e.detail.request.xhr.response.error?this.fire("error",e.detail.request.xhr.response.error):e.detail.request.xhr.response&&e.detail.request.xhr.response.message?this.fire("error",e.detail.request.xhr.response.message):e.detail.request.xhr.statusText?this.fire("error",e.detail.request.xhr.statusText):this.fire("error",e.detail.error):e.detail.error&&e.detail.error.message&&this._is401(e.detail.error.message)&&!window.appUser.user&&this.retryMethodAfter401Login?window.appUser.loginFor401(this.retryMethodAfter401Login):this.useDialog&&this.showErrorDialog(e.detail.error)},_is401:function(e){return e&&e.indexOf("status code: 401")>-1},generateRequest:function(){this.$.spinner.active=!0,this.$.ajax.generateRequest()},setBody:function(e){this.$.ajax.body=e},_transformErrorText:function(e){return e&&e.indexOf("status code: 404")>-1?this.t("errorNotFound"):e&&e.indexOf("status code: 500")>-1?this.t("generalError"):e&&e.indexOf("status code: 401")>-1?this.t("errorNotAuthorized"):e&&e.indexOf("503")>-1?this.t("errorCantConnect"):e},showErrorDialog:function(e){var r;r=e.message?e.message:e;var t=Polymer.dom(document).querySelector("yp-app").getDialog("errorDialog");t.showErrorDialog(this._transformErrorText(r))},_resetErrorText:function(e){var r=Polymer.dom(document).querySelector("yp-app").getDialog("errorDialog");r.resetErrorText()}})}();</script>
+<script>
+  (function() {
+    Polymer({
+
+      is: 'yp-ajax',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        url: {
+          type: String,
+          value: ""
+        },
+
+        method: {
+          type: String,
+          value: "GET"
+        },
+
+        loading: {
+          type: Boolean
+        },
+
+        params: {
+          type: Object,
+          value: {}
+        },
+
+        body: {
+          type: Object,
+          notify: true
+        },
+
+        auto: {
+          type: Boolean,
+          value: false
+        },
+
+        errorText: {
+          type: String,
+          value: ""
+        },
+
+        useDialog: {
+          type: Boolean,
+          value: true,
+          notify: true
+        },
+
+        useSpinner: {
+          type: Boolean,
+          value: true
+        },
+
+        largeSpinner: {
+          type: Boolean,
+          value: false
+        },
+
+        dispatchError: {
+          type: Boolean,
+          value: false
+        },
+
+        retryMethodAfter401Login: {
+          type: Function,
+          value: null
+        }
+      },
+
+      _response: function (event) {
+        this.$.spinner.active = false;
+        this.fire('response', event.detail);
+      },
+
+      ready: function() {
+        if (this.auto) {
+          this.$.spinner.active = true;
+        }
+        if (this.largeSpinner) {
+          this.$.spinner.toggleClass('large',true);
+        }
+      },
+
+      _error: function (event) {
+        this.$.spinner.active = false;
+        if (this.dispatchError) {
+          if (event.detail.request.xhr.response && event.detail.request.xhr.response.error) {
+            this.fire("error", event.detail.request.xhr.response.error);
+          } else if (event.detail.request.xhr.response && event.detail.request.xhr.response.message) {
+            this.fire("error", event.detail.request.xhr.response.message);
+          } else if (event.detail.request.xhr.statusText) {
+            this.fire("error", event.detail.request.xhr.statusText);
+          } else {
+            this.fire("error", event.detail.error);
+          }
+        } else if (event.detail.error && event.detail.error.message &&
+                   this._is401(event.detail.error.message) && !window.appUser.user &&
+                   this.retryMethodAfter401Login) {
+          window.appUser.loginFor401(this.retryMethodAfter401Login);
+        } else if (this.useDialog) {
+          this.showErrorDialog(event.detail.error);
+        }
+      },
+
+      _is401: function (error) {
+        return (error && error.indexOf('status code: 401') > -1)
+      },
+
+      generateRequest: function () {
+        this.$.spinner.active = true;
+        this.$.ajax.generateRequest();
+      },
+
+      setBody: function(body) {
+        this.$.ajax.body = body;
+      },
+
+      _transformErrorText: function (errorText) {
+        if (errorText && errorText.indexOf('status code: 404') > -1) {
+          return this.t('errorNotFound');
+        } else if (errorText && errorText.indexOf('status code: 500') > -1) {
+          return this.t('generalError');
+        } else if (errorText && errorText.indexOf('status code: 401') > -1) {
+          return this.t('errorNotAuthorized');
+        } else if (errorText && errorText.indexOf('503') > -1) {
+          return this.t('errorCantConnect');
+        } else {
+          return errorText;
+        }
+      },
+
+      showErrorDialog: function(errorText) {
+        var text;
+        if (errorText.message) {
+          text = errorText.message;
+        } else {
+          text = errorText;
+        }
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("errorDialog");
+        dialog.showErrorDialog(this._transformErrorText(text));
+      },
+
+      _resetErrorText: function(event) {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("errorDialog");
+        dialog.resetErrorText();
+      }
+    })
+  })();
+
+</script>
 
 </body></html>

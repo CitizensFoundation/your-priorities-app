@@ -34,6 +34,29 @@
     </div>
   </template>
 
-  <script>Polymer({is:"ac-activity-point-news-story",behaviors:[Polymer.appHelpers],properties:{activity:{type:Object,observer:"_activityChanged"}},_activityChanged:function(t){t&&(this.$.pointCommentList.open=!1)}});</script>
+  <script>
+    Polymer({
+
+      is: 'ac-activity-point-news-story',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        activity: {
+          type: Object,
+          observer: '_activityChanged'
+        }
+      },
+
+      _activityChanged: function (newValue) {
+        if (newValue) {
+          this.$.pointCommentList.open = false;
+        }
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

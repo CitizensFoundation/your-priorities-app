@@ -87,6 +87,143 @@
     </div>
   </template>
 
-  <script>Polymer({is:"yp-post-location",behaviors:[Polymer.appHelpers],properties:{map:{type:Object},mapSearchString:{type:String,value:""},mapSearchResultAddress:{type:String,value:""},location:{type:Object,observer:"_locationChanged",notify:!0},mapZoom:{type:Number,value:13,computed:"_computeMapZoom(location)"},encodedLocation:{type:String,notify:!0},post:{type:Object,observer:"_postChanged"},marker:{type:Object},active:{type:Boolean,value:!1},narrowPad:Boolean},_computeMapZoom:function(t){return t&&t.map_zoom?t.map_zoom:this.mapZoom},_submitOnEnter:function(t){13===t.keyCode&&this._searchMap()},_searchMap:function(){this.$.mapSearch.query=this.mapSearchString,this.$.mapSearch.search(),this.$.spinner.active=!0,this.set("mapSearchResultAddress","")},_mapSearchResults:function(t,o){this.$.spinner.active=!1,o&&o.length>0&&(this.set("location",{latitude:o[0].latitude,longitude:o[0].longitude,map_zoom:15}),this.mapSearchResultAddress=o[0].formatted_address,this.$.map.zoom=15,this.$.map.resize())},ready:function(){this.location||this.async(function(){"geolocation"in navigator&&navigator.geolocation.getCurrentPosition(function(t){this.location||(this.location={latitude:t.coords.latitude,longitude:t.coords.longitude,map_zoom:13})}.bind(this))},50)},_zoomChanged:function(t,o){o&&o.value&&this.set("location.map_zoom",o.value),this.set("encodedLocation",JSON.stringify(this.location))},_mapTypeChanged:function(t,o){o&&o.value&&this.set("location.mapType",o.value),this.set("encodedLocation",JSON.stringify(this.location))},_locationChanged:function(t,o){t&&(this.$.marker.setAttribute("latitude",t.latitude),this.$.marker.setAttribute("longitude",t.longitude),t.map_zoom&&(this.$.map.zoom=t.map_zoom),t.mapType&&(this.$.map.mapType=t.mapType),this.$.map.resize(),this.set("encodedLocation",JSON.stringify(t)))},_setLocation:function(t,o){this.set("location",{latitude:o.latLng.lat(),longitude:o.latLng.lng(),mapType:this.$.map.mapType,map_zoom:this.$.map.zoom})},_postChanged:function(t,o){t||this.set("location",null)}});</script>
+  <script>
+    Polymer({
+      is: 'yp-post-location',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        map: {
+          type: Object
+        },
+
+        mapSearchString: {
+          type: String,
+          value: ""
+        },
+
+        mapSearchResultAddress: {
+          type: String,
+          value: ""
+        },
+
+        location: {
+          type: Object,
+          observer: "_locationChanged",
+          notify: true
+        },
+
+        mapZoom: {
+          type: Number,
+          value: 13,
+          computed: '_computeMapZoom(location)'
+        },
+
+        encodedLocation: {
+          type: String,
+          notify: true
+        },
+
+        post: {
+          type: Object,
+          observer: "_postChanged"
+        },
+
+        marker: {
+          type: Object
+        },
+
+        active: {
+          type: Boolean,
+          value: false
+        },
+
+        narrowPad: Boolean
+      },
+
+      _computeMapZoom: function (location) {
+        if (location && location.map_zoom)
+          return location.map_zoom;
+        else
+          return this.mapZoom
+      },
+
+      _submitOnEnter: function (event) {
+        if (event.keyCode === 13) {
+          this._searchMap();
+        }
+      },
+
+      _searchMap: function () {
+        this.$.mapSearch.query = this.mapSearchString;
+        this.$.mapSearch.search();
+        this.$.spinner.active = true;
+        this.set('mapSearchResultAddress','');
+      },
+
+      _mapSearchResults: function (event, detail) {
+        this.$.spinner.active = false;
+        if (detail && detail.length>0) {
+          this.set('location', { latitude: detail[0].latitude, longitude: detail[0].longitude, map_zoom: 15 });
+          this.mapSearchResultAddress = detail[0].formatted_address;
+          this.$.map.zoom = 15;
+          this.$.map.resize();
+        }
+      },
+
+      ready: function () {
+        if (!this.location) {
+          this.async(function () {
+            if ("geolocation" in navigator) {
+              navigator.geolocation.getCurrentPosition(function(position) {
+                if (!this.location)
+                  this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, map_zoom: 13 }
+              }.bind(this));
+            }
+          },50);
+        }
+      },
+
+      _zoomChanged: function (event, detail) {
+        if (detail && detail.value) {
+          this.set('location.map_zoom', detail.value);
+        }
+        this.set('encodedLocation', JSON.stringify(this.location));
+      },
+
+      _mapTypeChanged: function (event, detail) {
+        if (detail && detail.value) {
+          this.set('location.mapType', detail.value);
+        }
+        this.set('encodedLocation', JSON.stringify(this.location));
+      },
+
+      _locationChanged: function (newLocationValue, oldValue) {
+        if (newLocationValue) {
+          this.$.marker.setAttribute('latitude', newLocationValue.latitude);
+          this.$.marker.setAttribute('longitude', newLocationValue.longitude);
+          if (newLocationValue.map_zoom)
+            this.$.map.zoom = newLocationValue.map_zoom;
+          if (newLocationValue.mapType)
+            this.$.map.mapType = newLocationValue.mapType;
+          this.$.map.resize();
+          this.set('encodedLocation', JSON.stringify(newLocationValue));
+        }
+      },
+
+      _setLocation: function (event, detail) {
+        this.set('location', { latitude: detail.latLng.lat(), longitude: detail.latLng.lng(), mapType: this.$.map.mapType, map_zoom: this.$.map.zoom });
+      },
+
+      _postChanged: function  (newValue, oldValue) {
+        if (!newValue) {
+          this.set("location", null);
+        }
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

@@ -1,4 +1,83 @@
 <html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<script>Polymer.GroupBehaviors={properties:{group:{type:Object,notify:!0},elevation:{type:Number},groupLogoImagePath:{type:String,computed:"_groupLogoImagePath(group)"},groupHeaderImagePath:{type:String,computed:"_groupHeaderImagePath(group)"},groupName:{type:String,computed:"_groupName(group)"},groupObjectives:{type:String,computed:"_groupObjectives(group)"}},_goToGroup:function(e){var t="/group/"+this.group.id;window.appGlobals.activity("open","group",t),this.redirectTo(t)},_groupLogoImagePath:function(e){return e?this.getImageFormatUrl(e.GroupLogoImages,0):""},_groupHeaderImagePath:function(e){return e?this.getImageFormatUrl(e.GroupHeaderImages,0):""},_groupName:function(e){return e?e.name?this.truncate(this.trim(e.name),60):e.short_name:""},_groupObjectives:function(e){return e&&e.objectives?this.truncate(this.trim(e.objectives),200,"..."):""}};</script>
+<script>
+  /**
+   * @polymerBehavior CommunityBehaviors
+   */
+  Polymer.GroupBehaviors = {
+
+    properties: {
+      group: {
+        type: Object,
+        notify: true
+      },
+
+      elevation: {
+        type: Number
+      },
+
+      groupLogoImagePath: {
+        type: String,
+        computed: '_groupLogoImagePath(group)'
+      },
+
+      groupHeaderImagePath: {
+        type: String,
+        computed: '_groupHeaderImagePath(group)'
+      },
+
+      groupName: {
+        type: String,
+        computed: '_groupName(group)'
+      },
+
+      groupObjectives: {
+        type: String,
+        computed: '_groupObjectives(group)'
+      }
+    },
+
+    _goToGroup: function (e) {
+      var groupUrl = '/group/' + this.group.id;
+      window.appGlobals.activity('open', 'group', groupUrl);
+      this.redirectTo(groupUrl);
+    },
+
+    _groupLogoImagePath: function (group) {
+      if (group) {
+        return this.getImageFormatUrl(group.GroupLogoImages, 0);
+      } else {
+        return "";
+      }
+    },
+
+    _groupHeaderImagePath: function (group) {
+      if (group) {
+        return this.getImageFormatUrl(group.GroupHeaderImages, 0);
+      } else {
+        return "";
+      }
+    },
+
+    _groupName: function (group) {
+      if (group) {
+        if (group.name) {
+          return this.truncate(this.trim(group.name), 60);
+        } else {
+          return group.short_name;
+        }
+      } else {
+        return "";
+      }
+    },
+
+    _groupObjectives: function (group) {
+      if (group && group.objectives) {
+        return this.truncate(this.trim(group.objectives), 200, '...');
+      } else {
+        return "";
+      }
+    }
+  };
+</script>
 </head><body></body></html>

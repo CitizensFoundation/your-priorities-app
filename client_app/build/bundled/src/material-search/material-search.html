@@ -74,6 +74,95 @@
       </template>
     </paper-menu>
   </template>
-  <script>Polymer({is:"material-search",properties:{previousSearches:{type:Array,value:function(){return[]},notify:!0},narrow:{type:Boolean,value:!1},active:{type:Boolean,value:!1,reflectToAttribute:!0,notify:!0},searchValue:{type:String,value:null,observer:"_searchValueChanged"},placeHolder:{type:String,value:"search"}},onSelect:function(e,t){this.async(function(){this.searchValue=t.item.dataset.value},250)},toggle:function(){this.active=!this.active,this.active&&this.$.searchbox.focus()},getSpeechInput:function(e){var t="SpeechRecognition"in window?new SpeechRecognition:"webkitSpeechRecognition"in window?new webkitSpeechRecognition:null;t&&(t.continuous=!1,t.interimResults=!1,t.onresult=function(e){var t=e.results[0][0].transcript;this.searchValue=t}.bind(this),t.start())},doSearch:function(e){13==e.keyCode&&this._searchValueChanged()},_searchValueChanged:function(){this.searchValue&&(this.fire("search-change",{value:this.searchValue}),this.searchValue="")},_computeHeaderClass:function(e){return e?"core-narrow":""}});</script>
+  <script>
+    Polymer({
+      is: 'material-search',
+
+      properties: {
+        previousSearches: {
+          type: Array,
+          value: function () {
+            return [];
+          },
+          notify: true
+        },
+
+        narrow: {
+          type: Boolean,
+          value: false
+        },
+
+        active: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          notify: true
+        },
+
+        searchValue: {
+          type: String,
+          value: null,
+          observer: '_searchValueChanged'
+        },
+
+        placeHolder: {
+          type: String,
+          value: "search"
+        }
+      },
+
+      onSelect: function (e, detail) {
+        this.async(function () {
+          this.searchValue = detail.item.dataset.value;
+        }, 250); // Introduce small delay so user sees ripple.
+      },
+
+      toggle: function () {
+        this.active = !this.active;
+        if (this.active) {
+          this.$.searchbox.focus();
+        }
+      },
+
+      getSpeechInput: function (e) {
+        var recognition = 'SpeechRecognition' in window ? new SpeechRecognition() :
+          'webkitSpeechRecognition' in window ? new webkitSpeechRecognition() :
+            null;
+        if (recognition) {
+          recognition.continuous = false;
+          recognition.interimResults = false;
+          recognition.onresult = function (e) {
+            var result = e.results[0][0].transcript;
+            this.searchValue = result;
+          }.bind(this);
+          recognition.start();
+        }
+      },
+
+      doSearch: function (e) {
+        if (e.keyCode == 13) {
+          this._searchValueChanged();
+        }
+      },
+
+      /** Fired when a search is made.
+       *
+       * @event search-change
+       * @param {Object} detail
+       * @param {Object} detail.searchValue The search string.
+       */
+
+      _searchValueChanged: function () {
+        if (this.searchValue) {
+          this.fire('search-change', { value: this.searchValue });
+          this.searchValue = '';
+        }
+      },
+
+      _computeHeaderClass: function (narrow) {
+        return narrow ? 'core-narrow' : '';
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

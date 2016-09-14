@@ -1,4 +1,0 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
-
-<script>Polymer.YpScrollTabBehavior={properties:{moreToLoad:{type:Boolean,value:!1,notify:!0}},attached:function(){window.addEventListener("scroll",this._isLoadMoreElementInView.bind(this))},detached:function(){window.removeEventListener("scroll",this._isLoadMoreElementInView)},_isLoadMoreElementInView:function(){var e=this.$$("#loadMoreButton");this._isVisible()&&e&&withinviewport(e)&&this._loadMoreData()},_isVisible:function(){return this.offsetParent&&Boolean(this.offsetParent.offsetWidth||this.offsetParent.offsetHeight)},unsetMoreToLoad:function(){this.set("moreToLoad",!1)},setMoreToLoad:function(){this.set("moreToLoad",!0)}};</script>
-</head><body></body></html>

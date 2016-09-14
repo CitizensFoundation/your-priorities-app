@@ -33,6 +33,59 @@
     </paper-dialog>
   </template>
 
-  <script>Polymer({is:"yp-delete-dialog",behaviors:[Polymer.appHelpers],properties:{confirmationText:{type:String},action:{type:String},actionId:{type:String},onDeletedFunction:{type:Function,value:null}},setup:function(e,t,i,n){this.set("action",e),this.set("actionId",t),this.set("confirmationText",i),this.set("onDeletedFunction",n)},open:function(){this.$$("#deleteConfirmationDialog").open()},_delete:function(){this.$$("#deleteAjax").url=this.action+this.actionId,this.$$("#deleteAjax").setBody({deleteConfirmed:!0}),this.$$("#deleteAjax").generateRequest()},_deleteResponse:function(){this.fire("deleted"),this.onDeletedFunction&&this.onDeletedFunction()}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-delete-dialog',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        confirmationText: {
+          type: String
+        },
+
+        action: {
+          type: String
+        },
+
+        actionId: {
+          type: String
+        },
+
+        onDeletedFunction: {
+          type: Function,
+          value: null
+        }
+      },
+
+      setup: function (action, actionId, confirmationText, onDeletedFunction) {
+        this.set('action', action);
+        this.set('actionId', actionId);
+        this.set('confirmationText', confirmationText);
+        this.set('onDeletedFunction', onDeletedFunction);
+      },
+
+      open: function () {
+        this.$$("#deleteConfirmationDialog").open();
+      },
+
+      _delete: function () {
+        this.$$("#deleteAjax").url = this.action + this.actionId;
+        this.$$("#deleteAjax").setBody({deleteConfirmed: true});
+        this.$$("#deleteAjax").generateRequest();
+      },
+
+      _deleteResponse: function () {
+        this.fire("deleted");
+        if (this.onDeletedFunction) {
+          this.onDeletedFunction();
+        }
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

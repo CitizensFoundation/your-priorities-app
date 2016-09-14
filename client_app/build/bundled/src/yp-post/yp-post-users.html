@@ -32,13 +32,13 @@
           <yp-user-image small="" no-default="" user="[[endorsement.User]]"></yp-user-image>
         </template>
 
-        <div id="moreImages" style="display:none">
+        <div id="moreImages" style="display:none;">
 
           <paper-icon-button class="more" id="moreImagesButton" icon="add" on-tap="_moreUserImages"></paper-icon-button>
 
           <span id="numberOfMoreUserImages">[[_userImagesCount()]]</span>
 
-          <span id="restOfUserImages" style="display: none">
+          <span id="restOfUserImages" style="display: none;">
             <template is="dom-repeat" items="[[limitFrom(endorsements, userImagesLimit, endorsements.length)]]" as="endorsement" index-as="endorsementIndex">
               <yp-user-image user="[[endorsement.User]]" small=""></yp-user-image>
             </template>
@@ -50,6 +50,122 @@
     <yp-ajax id="endorsementAjax" use-dialog="false" on-response="_response" handle-as="json"></yp-ajax>
   </template>
 
-  <script>Polymer({is:"yp-post-users",behaviors:[Polymer.appHelpers],properties:{endorsements:{type:Array,notify:!0},shownEndorsements:{type:Array,notify:!0},userImagesLimit:{type:Number,value:10},post:{type:Object,observer:"_postChanged"}},limitFrom:function(e,s,t){if(!(e instanceof Array||e instanceof String))return e;if(t=parseInt(t,10),e instanceof String)return t?t>=0?e.slice(s,t):e.slice(t,e.length):"";var n,r,i=[];for(t>e.length?t=e.length:t<-e.length&&(t=-e.length),t>0?(n=s,r=t):(n=e.length+t,r=e.length);n<r;n++)i.push(e[n]);return i},addEndorsement:function(e){this.endorsements&&this.endorsements.unshift(e)},_postChanged:function(e,s){e?(this.set("endorsements",null),this.$.endorsementAjax.url=this._computeUrl(e),this.$.endorsementAjax.generateRequest()):this.set("endorsements",null)},_response:function(e,s,t){this.set("endorsements",s.response),this.endorsements.length>this.userImagesLimit&&this.async(function(){this.$$("#moreImages").style.display="inline"},100)},_moreUserImages:function(){this.$$("#moreImagesButton").style.display="none",this.$$("#numberOfMoreUserImages").style.display="none",this.$$("#restOfUserImages").style.display="inline"},_computeUrl:function(e){return"/api/posts/"+e.id+"/endorsements"},allEndorsementsLength:function(e){return this.endorsements.length},countUserImagesLeft:function(e){return this.allEndorsementsLength(this.post)-this.userImagesLimit},_userImagesCount:function(){return this.countUserImagesLeft(0)}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-post-users',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        endorsements: {
+          type: Array,
+          notify: true
+        },
+
+        shownEndorsements: {
+          type: Array,
+          notify: true
+        },
+
+        userImagesLimit: {
+          type: Number,
+          value: 10
+        },
+
+        post: {
+          type: Object,
+          observer: "_postChanged"
+        }
+      },
+
+      limitFrom: function (input, offset, limit) {
+        if (!(input instanceof Array) && !(input instanceof String)) return input;
+
+        limit = parseInt(limit, 10);
+
+        if (input instanceof String) {
+          if (limit) {
+            return limit >= 0 ? input.slice(offset, limit) : input.slice(limit, input.length);
+          } else {
+            return "";
+          }
+        }
+
+        var out = [],
+          i, n;
+
+        if (limit > input.length)
+          limit = input.length;
+        else if (limit < -input.length)
+          limit = -input.length;
+
+        if (limit > 0) {
+          i = offset;
+          n = limit;
+        } else {
+          i = input.length + limit;
+          n = input.length;
+        }
+
+        for (; i < n; i++) {
+          out.push(input[i]);
+        }
+
+        return out;
+      },
+
+      addEndorsement: function (endorsement) {
+        if (this.endorsements) {
+          this.endorsements.unshift(endorsement);
+        }
+      },
+
+      _postChanged: function  (newValue, oldValue) {
+        if (newValue) {
+          this.set("endorsements",null);
+          this.$.endorsementAjax.url = this._computeUrl(newValue);
+          this.$.endorsementAjax.generateRequest();
+        } else {
+          this.set("endorsements",null);
+        }
+      },
+
+      _response: function (event, detail, sender) {
+        this.set('endorsements', detail.response);
+        if (this.endorsements.length > this.userImagesLimit) {
+          this.async(function () {
+            this.$$("#moreImages").style.display = 'inline';
+          }, 100);
+        }
+      },
+
+      _moreUserImages: function () {
+        this.$$("#moreImagesButton").style.display = 'none';
+        this.$$("#numberOfMoreUserImages").style.display = 'none';
+        this.$$("#restOfUserImages").style.display = 'inline';
+      },
+
+      _computeUrl: function (post) {
+        return '/api/posts/' + post.id + '/endorsements';
+      },
+
+      allEndorsementsLength: function (post) {
+        return this.endorsements.length;
+      },
+
+      countUserImagesLeft: function (e) {
+        return this.allEndorsementsLength(this.post) - this.userImagesLimit;
+      },
+
+      _userImagesCount: function () {
+        return this.countUserImagesLeft(0);
+      }
+
+    });
+  </script>
 </dom-module>
 </body></html>

@@ -95,6 +95,178 @@
     </template>
 
 
-  <script>Polymer({is:"yp-post-cover-media",behaviors:[Polymer.appHelpers],properties:{post:{type:Object,notify:!0,observer:"_postChanged"},noneActive:{type:Boolean,computed:"_isNoneActive(post)"},categoryActive:{type:Boolean,computed:"_isCategoryActive(post)"},imageActive:{type:Boolean,computed:"_isImageActive(post)"},mapActive:{type:Boolean,computed:"_isMapActive(post, post.location, post.location.latitude)"},streetViewActive:{type:Boolean,computed:"_isStreetViewActive(post, post.location, post.location.latitude)"},latitude:{type:Number,computed:"_getLatitute(post.location.latitude)"},longitude:{type:Number,computed:"_getLongitude(post.location.longitude)"},mapPosition:{type:Object,computed:"_getMapPosition(post.location)"},getCategoryImagePath:{type:String,computed:"_getCategoryImagePath(post)"},postImagePath:{type:String,computed:"_postImagePath(post)"}},_getLatitute:function(t){return t?t:0},_getLongitude:function(t){return t?t:0},_isNoneActive:function(t){return!!this._withCoverMediaType(t,"none")},_isCategoryActive:function(t){return!!this._withCoverMediaType(t,"category")},_isImageActive:function(t){return!!this._withCoverMediaType(t,"image")},_isMapActive:function(t,e,o){return!!(o&&e&&this._withCoverMediaType(t,"map"))},_isStreetViewActive:function(t,e,o){return!!(o&&e&&this._withCoverMediaType(t,"streetView"))},_postChanged:function(t,e){},_zoomLevel:function(t){return t?t.location.map_zoom:"10"},_mapType:function(t){return t&&t.location?t.location.mapType:null},_withCoverMediaType:function(t,e){return!!t&&("none"==e?!(this.post.Category||this.post.cover_media_type&&"none"!=this.post.cover_media_type):!("category"!=e||!this.post.Category||this.post.cover_media_type&&"none"!=this.post.cover_media_type)||this.post&&this.post.cover_media_type==e)},_getMapPosition:function(t){return t?{lat:t.latitude,lng:t.longitude}:{lat:0,lng:0}},_postImagePath:function(t){return t?this.getImageFormatUrl(t.PostHeaderImages,0):""},_getCategoryImagePath:function(t){return t&&t.Category&&t.Category.CategoryIconImages?this.getImageFormatUrl(t.Category.CategoryIconImages,0):""}});</script>
+  <script>
+    Polymer({
+      is: 'yp-post-cover-media',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        post: {
+          type: Object,
+          notify: true,
+          observer: "_postChanged"
+        },
+
+
+        noneActive: {
+          type: Boolean,
+          computed: '_isNoneActive(post)'
+        },
+
+        categoryActive: {
+          type: Boolean,
+          computed: '_isCategoryActive(post)'
+        },
+
+        imageActive: {
+          type: Boolean,
+          computed: '_isImageActive(post)'
+        },
+
+        mapActive: {
+          type: Boolean,
+          computed: '_isMapActive(post, post.location, post.location.latitude)'
+        },
+
+        streetViewActive: {
+          type: Boolean,
+          computed: '_isStreetViewActive(post, post.location, post.location.latitude)'
+        },
+
+        latitude: {
+          type: Number,
+          computed: '_getLatitute(post.location.latitude)'
+        },
+
+        longitude: {
+          type: Number,
+          computed: '_getLongitude(post.location.longitude)'
+        },
+
+        mapPosition: {
+          type: Object,
+          computed: '_getMapPosition(post.location)'
+        },
+
+        getCategoryImagePath: {
+          type: String,
+          computed: '_getCategoryImagePath(post)'
+        },
+
+        postImagePath: {
+          type: String,
+          computed: '_postImagePath(post)'
+        }
+
+      },
+
+      _getLatitute: function (latitude) {
+        if (latitude)
+          return latitude;
+        else
+          return 0
+      },
+
+      _getLongitude: function (longitude) {
+        if (longitude)
+          return longitude;
+        else
+          return 0
+      },
+
+      _isNoneActive: function (post) {
+        if (this._withCoverMediaType(post, 'none'))
+          return true
+        else
+          return false
+      },
+
+      _isCategoryActive: function (post) {
+        if (this._withCoverMediaType(post, 'category'))
+          return true
+        else
+          return false
+      },
+
+      _isImageActive: function (post) {
+        if (this._withCoverMediaType(post,'image'))
+          return true
+        else
+          return false
+      },
+
+      _isMapActive: function (post, postLocation, lat) {
+        if (lat && postLocation && this._withCoverMediaType(post,'map'))
+          return true
+        else
+          return false
+      },
+
+      _isStreetViewActive: function (post, postLocation, lat) {
+        if (lat && postLocation && this._withCoverMediaType(post,'streetView'))
+          return true
+        else
+          return false
+      },
+
+      _postChanged: function(newValue, oldValue) {
+        //debugger;
+      },
+
+      _zoomLevel: function (post) {
+        if (post)
+          return post.location.map_zoom;
+        else
+          return "10";
+      },
+
+      _mapType: function (post) {
+        if (post && post.location)
+          return post.location.mapType;
+        else
+          return null;
+      },
+
+      _withCoverMediaType: function (post, mediaType) {
+        if (!post)
+          return false;
+        if (mediaType == 'none') {
+          return (!this.post.Category && (!this.post.cover_media_type || this.post.cover_media_type == 'none'));
+        } else  if ((mediaType=='category' && this.post.Category) && (!this.post.cover_media_type || this.post.cover_media_type == 'none')) {
+          return true;
+        } else {
+          return (this.post && this.post.cover_media_type == mediaType);
+        }
+      },
+
+      _getMapPosition: function (location) {
+        if (location) {
+          return { lat: location.latitude, lng: location.longitude }
+        } else {
+          return { lat: 0, lng: 0 }
+        }
+      },
+
+      _postImagePath: function (post) {
+        if (post) {
+          return this.getImageFormatUrl(post.PostHeaderImages, 0);
+        } else {
+          return "";
+        }
+      },
+
+      _getCategoryImagePath: function (post) {
+        if (post && post.Category && post.Category.CategoryIconImages) {
+          return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
+        } else {
+          return "";
+        }
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

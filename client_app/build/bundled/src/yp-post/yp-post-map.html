@@ -109,6 +109,66 @@
 
   </div></template>
 
-  <script>Polymer({is:"yp-post-map",behaviors:[Polymer.appHelpers],properties:{posts:{type:Array,value:null},groupId:{type:Number,observer:"_groupIdChanged"},communityId:{type:Number,observer:"_communityIdChanged"},noPosts:{type:Boolean,value:!1}},_groupIdChanged:function(s,e){s?(this.set("posts",null),this.$.ajax.url="/api/groups/"+s+"/post_locations",this.$.ajax.generateRequest()):this.set("posts",null)},_communityIdChanged:function(s,e){s?(this.set("posts",null),this.$.ajax.url="/api/communities/"+s+"/post_locations",this.$.ajax.generateRequest()):this.set("posts",null)},_response:function(s,e){e.response&&e.response.length>0?(this.set("noPosts",!1),this.set("posts",e.response)):this.set("noPosts",!0)}});</script>
+  <script>
+    Polymer({
+      is: 'yp-post-map',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        posts: {
+          type: Array,
+          value: null
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        communityId: {
+          type: Number,
+          observer: "_communityIdChanged"
+        },
+
+        noPosts: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _groupIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("posts", null);
+          this.$.ajax.url = '/api/groups/'+newValue+'/post_locations';
+          this.$.ajax.generateRequest();
+        } else {
+          this.set("posts", null);
+        }
+      },
+
+      _communityIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("posts", null);
+          this.$.ajax.url = '/api/communities/'+newValue+'/post_locations';
+          this.$.ajax.generateRequest();
+        } else {
+          this.set("posts", null);
+        }
+      },
+
+      _response: function (event, detail) {
+        if (detail.response && detail.response.length>0) {
+          this.set('noPosts', false);
+          this.set('posts', detail.response);
+        } else {
+          this.set('noPosts', true);
+        }
+      }
+
+    });
+  </script>
 </dom-module>
 </body></html>

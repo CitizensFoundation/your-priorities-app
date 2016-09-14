@@ -44,6 +44,57 @@
     </div>
   </template>
 
-  <script>!function(){Polymer({is:"yp-post-user-images",behaviors:[Polymer.appHelpers],properties:{images:{type:Array,value:null},post:{type:Object,observer:"_postChanged"}},_refresh:function(){this.$.ajax.generateRequest()},_postChanged:function(e){e&&(this.$.ajax.url="/api/images/"+e.id+"/user_images",this.$.ajax.generateRequest())},_newImage:function(){window.appGlobals.activity("open","newUserImage");var e=Polymer.dom(document).querySelector("yp-app").getDialog("userImageEdit");e.setup(this.post,null,!0,this._refresh.bind(this)),e.open("new",{postId:this.post.id,userImages:!0})},_response:function(e,s){this.set("images",s.response),this.images&&this.images.length>0?this.fire("yp-post-image-count",this.images.length):this.fire("yp-post-image-count",0)}})}();</script>
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-user-images',
+
+        behaviors: [
+          Polymer.appHelpers
+        ],
+
+        properties: {
+
+          images: {
+            type: Array,
+            value: null
+          },
+
+          post: {
+            type: Object,
+            observer: '_postChanged'
+          }
+        },
+
+        _refresh: function () {
+          this.$.ajax.generateRequest();
+        },
+
+        _postChanged: function (newPost) {
+          if (newPost) {
+            this.$.ajax.url = '/api/images/' + newPost.id + '/user_images';
+            this.$.ajax.generateRequest();
+          }
+        },
+
+        _newImage: function () {
+          window.appGlobals.activity('open', 'newUserImage');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userImageEdit");
+          dialog.setup(this.post, null, true, this._refresh.bind(this));
+          dialog.open('new', { postId: this.post.id,  userImages: true });
+        },
+
+        _response: function (event, detail) {
+          this.set('images', detail.response);
+          if (this.images && this.images.length>0) {
+            this.fire('yp-post-image-count', this.images.length);
+          } else {
+            this.fire('yp-post-image-count', 0);
+          }
+        }
+      });
+    }());
+  </script>
 </dom-module>
 </body></html>

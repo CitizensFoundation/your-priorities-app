@@ -50,6 +50,34 @@
     </div>
   </template>
 
-  <script>Polymer({is:"ac-activity-point",behaviors:[Polymer.appHelpers],properties:{activity:{type:Object,observer:"_activityChanged"}},_activityChanged:function(e){},_isUpVote:function(e){return e.value>0},_isDownVote:function(e){return e.value<0}});</script>
+  <script>
+    Polymer({
+
+      is: 'ac-activity-point',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        activity: {
+          type: Object,
+          observer: '_activityChanged'
+        }
+      },
+
+      _activityChanged: function (newValue) {
+      },
+
+      _isUpVote: function (point) {
+        return point.value > 0;
+      },
+
+      _isDownVote: function (point) {
+        return point.value < 0;
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

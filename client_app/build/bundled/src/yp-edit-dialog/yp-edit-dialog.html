@@ -240,6 +240,278 @@
 
 </dom-module>
 
-<script>!function(){Polymer({is:"yp-edit-dialog",behaviors:[Polymer.appHelpers],properties:{action:{type:String},baseAction:{type:String},method:{type:String,value:"POST"},buttonText:{type:String},errorText:{type:String},toastText:{type:String},toastTextCombined:{type:String},response:{type:Object,notify:!0},dialogOpen:{type:Boolean,value:!0},saveText:{type:String},narrow:{type:Boolean,observer:"_narrowChanged",notify:!0},params:{type:String},doubleWidth:{type:Boolean,value:!1},icon:{type:String},opened:{type:Boolean,value:!1},useNextTabAction:{type:Boolean,value:!1,notify:!0},nextActionText:{type:String},uploadingState:{type:Boolean,value:!1},bodyDialog:{type:Object},confirmationText:{type:String}},_fileUploadStarting:function(t){this.set("uploadingState",!0)},_fileUploadComplete:function(t){this.set("uploadingState",!1)},_nextTab:function(){this.fire("next-tab-action")},_narrowChanged:function(){this.fire("paper-responsive-change",{narrow:this.narrow})},_computeClass:function(t){return t?"fullScreenDialog":this.doubleWidth?"popUpDialogDouble":"popUpDialog"},_computeScrollerClass:function(t){return t?"":(this.doubleWidth,"scrollerDialog")},listeners:{"iron-form-submit":"_formSubmitted","iron-form-response":"_formResponse","iron-form-error":"_formError","iron-form-invalid":"_formInvalid","file-upload-starting":"_fileUploadStarting","file-upload-complete":"_fileUploadComplete"},open:function(){this.set("opened",!1),this.async(function(){this.set("opened",!0),this.$$("#editDialog").open()})},close:function(){this.set("opened",!1),this.$$("#editDialog").close()},_formSubmitted:function(t){},ready:function(){this.baseAction=this.action},_formResponse:function(t,i){this._setSubmitDisabledStatus(!1),this.$$("#spinner").active=!1,t&&t.detail&&t.detail.response&&t.detail.response.isError?console.log("There is an error in form handled by user"):(this.response=t,this.close(),i.response&&i.response.name?this.toastTextCombined=this.toastText+" "+i.response.name:this.toastTextCombined=this.toastText,this.$$("#toast").show())},_formError:function(t,i){this._setSubmitDisabledStatus(!1),console.log("Form error: ",i.error),this._showErrorDialog(i.error),this.$$("#spinner").active=!1},_formInvalid:function(t){this._setSubmitDisabledStatus(!1),this.$$("#spinner").active=!1},_submit:function(){if(this.confirmationText){var t=Polymer.dom(document).querySelector("yp-app").getDialog("confirmationDialog");t.open(this.confirmationText,this._reallySubmit.bind(this))}else this._reallySubmit()},_setSubmitDisabledStatus:function(t){var i=this.$$("#submit1"),s=this.$$("#submit2");i&&(i.disabled=t),s&&(s.disabled=t)},_reallySubmit:function(){if(this._setSubmitDisabledStatus(!0),this.params&&this.params.communityId?this.action=this.baseAction+"/"+this.params.communityId:this.params&&this.params.groupId?this.action=this.baseAction+"/"+this.params.groupId:this.params&&this.params.userImages&&this.params.postId?this.action=this.baseAction+"/"+this.params.postId+"/user_images":this.params&&this.params.statusChange&&this.params.postId?this.action=this.baseAction+"/"+this.params.postId+"/status_change":this.params&&this.params.postId&&this.params.imageId?this.action=this.baseAction+"/"+this.params.postId+"/"+this.params.imageId+"/user_images":this.params&&this.params.postId?this.action=this.baseAction+"/"+this.params.postId:this.params&&this.params.userId?this.action=this.baseAction+"/"+this.params.userId:this.params&&this.params.domainId&&(this.action=this.baseAction+"/"+this.params.domainId),this.$$("#form").validate())this.$$("#form").submit(),this.$$("#spinner").active=!0;else{this.fire("iron-form-invalid");var t=this.t("form.invalid");this._showErrorDialog(t)}},submitForce:function(){this.$$("#spinner").active=!0,this.$$("#form").submit()},getForm:function(){return this.$$("#form")},stopSpinner:function(){this.$$("#spinner").active=!1},validate:function(){return this.$$("#form").validate()},_showErrorDialog:function(t){this.set("errorText",t),this.$$("#formErrorDialog").open()},_clearErrorText:function(t){this.$$("#formErrorDialog").close(),this.set("errorText",null)}})}();</script>
+<script>
+  (function() {
+    Polymer({
+
+      is: 'yp-edit-dialog',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        action: {
+          type: String
+        },
+
+        baseAction: {
+          type: String
+        },
+
+        method: {
+          type: String,
+          value: "POST"
+        },
+
+        buttonText: {
+          type: String
+        },
+
+        errorText: {
+          type: String
+        },
+
+        toastText: {
+          type: String
+        },
+
+        toastTextCombined: {
+          type: String
+        },
+
+        response: {
+          type: Object,
+          notify: true
+        },
+
+        dialogOpen: {
+          type: Boolean,
+          value: true
+        },
+
+        saveText: {
+          type: String
+        },
+
+        narrow: {
+          type: Boolean,
+          observer: '_narrowChanged',
+          notify: true
+        },
+
+        params: {
+          type: String
+        },
+
+        doubleWidth: {
+          type: Boolean,
+          value: false
+        },
+
+        icon: {
+          type: String
+        },
+
+        opened: {
+          type: Boolean,
+          value: false
+        },
+
+        useNextTabAction: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+
+        nextActionText: {
+          type: String
+        },
+
+        uploadingState: {
+          type: Boolean,
+          value: false
+        },
+
+        bodyDialog: {
+          type: Object
+        },
+
+        confirmationText: {
+          type: String
+        }
+      },
+
+      _fileUploadStarting: function (event) {
+        this.set('uploadingState', true);
+      },
+
+      _fileUploadComplete: function (event) {
+        this.set('uploadingState', false);
+      },
+
+      _nextTab: function () {
+        this.fire('next-tab-action')
+      },
+
+      _narrowChanged: function() {
+        this.fire('paper-responsive-change', {narrow: this.narrow});
+      },
+
+      _computeClass: function (narrow) {
+        if (narrow)
+          return "fullScreenDialog";
+        else if (this.doubleWidth)
+          return "popUpDialogDouble";
+        else
+          return "popUpDialog";
+      },
+
+      _computeScrollerClass: function (narrow) {
+        if (narrow)
+          return "";
+        else if (this.doubleWidth)
+          return "scrollerDialog";
+        else
+          return "scrollerDialog";
+      },
+
+      listeners: {
+        'iron-form-submit': '_formSubmitted',
+        'iron-form-response': '_formResponse',
+        'iron-form-error': '_formError',
+        'iron-form-invalid': '_formInvalid',
+        'file-upload-starting': '_fileUploadStarting',
+        'file-upload-complete': '_fileUploadComplete'
+      },
+
+      open: function() {
+        this.set("opened",false);
+        this.async(function () {
+          this.set("opened",true);
+          this.$$("#editDialog").open();
+        });
+      },
+
+      close: function() {
+        this.set("opened",false);
+        this.$$("#editDialog").close();
+      },
+
+      _formSubmitted: function(event) {
+      },
+
+      ready: function() {
+        this.baseAction = this.action;
+      },
+
+      _formResponse: function(response, detail) {
+        this._setSubmitDisabledStatus(false);
+        this.$$("#spinner").active = false;
+        if (response && response.detail && response.detail.response && response.detail.response.isError) {
+          console.log("There is an error in form handled by user");
+        } else {
+          this.response = response;
+          this.close();
+          if (detail.response && detail.response.name) {
+            this.toastTextCombined = this.toastText + " " + detail.response.name;
+          } else {
+            this.toastTextCombined = this.toastText;
+          }
+          this.$$("#toast").show();
+        }
+      },
+
+      _formError: function(event, detail) {
+        this._setSubmitDisabledStatus(false);
+        console.log("Form error: ", detail.error);
+        this._showErrorDialog(detail.error);
+        this.$$("#spinner").active = false;
+      },
+
+      _formInvalid: function(event) {
+        this._setSubmitDisabledStatus(false);
+        this.$$("#spinner").active = false;
+      },
+
+      _submit: function () {
+        if (this.confirmationText) {
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+          dialog.open(this.confirmationText, this._reallySubmit.bind(this));
+        } else {
+          this._reallySubmit();
+        }
+      },
+
+      _setSubmitDisabledStatus: function(status) {
+        var submit1 = this.$$("#submit1");
+        var submit2 = this.$$("#submit2");
+        if (submit1)
+          submit1.disabled = status;
+
+        if (submit2)
+          submit2.disabled = status;
+      },
+
+      _reallySubmit: function() {
+        this._setSubmitDisabledStatus(true);
+        if (this.params && this.params.communityId) {
+          this.action = this.baseAction + '/'+this.params.communityId;
+        } else if (this.params && this.params.groupId) {
+          this.action = this.baseAction + '/'+this.params.groupId;
+        } else if (this.params && this.params.userImages && this.params.postId) {
+          this.action = this.baseAction + '/'+this.params.postId+'/user_images';
+        } else if (this.params && this.params.statusChange && this.params.postId) {
+          this.action = this.baseAction + '/'+this.params.postId+'/status_change';
+        } else if (this.params && this.params.postId && this.params.imageId) {
+          this.action = this.baseAction + '/'+this.params.postId+'/'+this.params.imageId+'/user_images';
+        } else if (this.params && this.params.postId) {
+          this.action = this.baseAction + '/'+this.params.postId;
+        } else if (this.params && this.params.userId) {
+          this.action = this.baseAction + '/'+this.params.userId;
+        } else if (this.params && this.params.domainId) {
+          this.action = this.baseAction + '/'+this.params.domainId;
+        }
+        if (this.$$("#form").validate()) {
+          this.$$("#form").submit();
+          this.$$("#spinner").active = true;
+        } else {
+          this.fire('iron-form-invalid');
+          var error = this.t('form.invalid');
+          this._showErrorDialog(error);
+        }
+      },
+
+      submitForce: function() {
+        this.$$("#spinner").active = true;
+        this.$$("#form").submit();
+      },
+
+      getForm: function() {
+        return this.$$("#form");
+      },
+
+      stopSpinner: function() {
+        this.$$("#spinner").active = false;
+      },
+
+      validate: function() {
+        return this.$$("#form").validate();
+      },
+
+      _showErrorDialog: function(errorText) {
+        this.set('errorText', errorText);
+        this.$$("#formErrorDialog").open();
+      },
+
+      _clearErrorText: function(event) {
+        this.$$("#formErrorDialog").close();
+        this.set('errorText', null);
+      }
+    })
+  })();
+
+</script>
 
 </body></html>

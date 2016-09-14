@@ -78,6 +78,84 @@
     </template>
   </template>
 
-  <script>Polymer({is:"yp-point",properties:{point:{type:Object,notify:!0,observer:"_pointChanged"},user:{type:Object,value:null},hideUser:{type:Boolean,value:!1}},_pointChanged:function(n,e){n?this.user=this.point.PointRevisions[0].User:this.user=null},loginName:function(){return this.point.PointRevisions[0].User.name},upVote:function(n){return n?0==n.value||n.value>0:(console.warn("Can't find point for upVote"),!1)},downVote:function(n){return n?0==n.value||n.value<0:(console.warn("Can't find point for upVote"),!1)},computeClass:function(n){var e="description ";return n?e+=n.value>0?"for":"against":(console.warn("Can't find point for upVote"),e)}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-point',
+
+      properties: {
+
+        point: {
+          type: Object,
+          notify: true,
+          observer: "_pointChanged"
+        },
+
+
+
+        user: {
+          type: Object,
+          value: null
+        },
+
+        hideUser: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _pointChanged: function(newValue, oldValue) {
+        if (newValue) {
+          this.user = this.point.PointRevisions[0].User;
+        } else {
+          this.user = null;
+        }
+      },
+
+      loginName: function () {
+        return this.point.PointRevisions[0].User.name;
+      },
+
+      upVote: function(point) {
+        if (point) {
+          if (point.value == 0) {
+            return true;
+          } else {
+            return point.value>0;
+          }
+        } else {
+          console.warn("Can't find point for upVote");
+          return false;
+        }
+      },
+
+      downVote: function(point) {
+        if (point) {
+          if (point.value == 0) {
+            return true;
+          } else {
+            return point.value<0;
+          }
+        } else {
+          console.warn("Can't find point for upVote");
+          return false;
+        }
+      },
+
+      computeClass: function (point) {
+        var ret = 'description ';
+        if (point) {
+          if (point.value>0)
+            ret += 'for';
+          else
+            ret += 'against';
+          return ret;
+        } else {
+          console.warn("Can't find point for upVote");
+          return ret;
+        }
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

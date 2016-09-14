@@ -1,4 +1,0 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
-
-<script>Polymer.LargeCardBehaviors={properties:{editMenuAlign:{type:String,computed:"_getEditMenuAlignment(narrowScreen)"},narrowScreen:Boolean},_getEditMenuAlignment:function(e){return e?"right":"left"},lowerCardLater:function(){this.async(function(){this.setElevation(3)},2500)},setElevation:function(e){var t=this.$$("#card");t&&(t.elevation=e)},ready:function(){this.lowerCardLater()}};</script>
-</head><body></body></html>

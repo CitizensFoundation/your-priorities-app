@@ -50,6 +50,76 @@
     </iron-list>
   </template>
 
-  <script>Polymer({is:"yp-newsfeed",behaviors:[Polymer.appHelpers],properties:{newsItems:{type:Array},targetType:{type:String},targetId:{type:Number,observer:"_targetIdChanged"}},_targetIdChanged:function(e,t){e?this._refreshFeed():this.set("newsItems",null)},_refreshFeed:function(){},_newsResponse:function(e,t,s){var r=t.response.group;this.set("posts",t.response.Posts);var i=this.$$("#list");i&&this.$$("#list").fire("iron-resize"),this.set("group",r),this._processCategories(),this.fire("change-header",{headerTitle:r.name,headerDescription:r.objectives,headerIcon:"social:group",enableSearch:!0,backPath:"/community/"+this.group.community_id}),this.$.groupCard.setElevation(5),this.$.groupCard.lowerCardLater(),this.hideAdd=!1},_processCategories:function(){if(this.categoryId)for(var e=0;e<this.group.Categories.length;e++)this.group.Categories[e].id==this.categoryId&&(window.selectedCategoryName=this.group.Categories[e].name);else window.selectedCategoryName="categories.all"}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-newsfeed',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        newsItems: {
+          type: Array
+          },
+
+        targetType: {
+          type: String
+        },
+
+        targetId: {
+          type: Number,
+          observer: "_targetIdChanged"
+        }
+
+      },
+
+      _targetIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this._refreshFeed();
+        } else {
+          this.set("newsItems",null);
+        }
+      },
+
+      _refreshFeed: function () {
+      },
+
+      _newsResponse: function (event, detail, sender) {
+        var group = detail.response.group;
+        this.set("posts", detail.response.Posts);
+        var list = this.$$("#list");
+        if (list) {
+          this.$$("#list").fire('iron-resize');
+        }
+        this.set("group", group);
+        this._processCategories();
+        this.fire("change-header", { headerTitle: group.name,
+                                     headerDescription: group.objectives,
+                                     headerIcon: "social:group",
+                                     enableSearch: true,
+                                     backPath: "/community/" + this.group.community_id });
+        this.$.groupCard.setElevation(5);
+        this.$.groupCard.lowerCardLater();
+        this.hideAdd = false;
+      },
+
+      _processCategories: function () {
+        if (this.categoryId) {
+          for (var i = 0; i < this.group.Categories.length; i++) {
+            if (this.group.Categories[i].id == this.categoryId) {
+              window.selectedCategoryName = this.group.Categories[i].name;
+              //this.$.layout.updateFilter();
+            }
+          }
+        } else {
+          window.selectedCategoryName = 'categories.all';
+          //this.$.layout.updateFilter();
+        }
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

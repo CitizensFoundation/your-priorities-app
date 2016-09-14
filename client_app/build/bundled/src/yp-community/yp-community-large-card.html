@@ -203,6 +203,116 @@
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
 
-  <script>Polymer({is:"yp-community-large-card",behaviors:[Polymer.appHelpers,Polymer.CommunityBehaviors,Polymer.LargeCardBehaviors,Polymer.AccessHelpers,Polymer.ypGotAdminRightsBehavior],properties:{community:{type:Object},hasCommunityAccess:{type:Boolean,value:!1,computed:"_hasCommunityAccess(community, gotAdminRights)"}},_hasCommunityAccess:function(e,t){return!(!e||!t)&&null!=this.checkCommunityAccess(e)},_communityAccessText:function(e){switch(e){case 0:return this.t("community.public");case 1:return this.t("community.closed");case 2:return this.t("community.secret")}},_menuSelection:function(e,t){"editMenuItem"==t.item.id?this._openEdit():"deleteMenuItem"==t.item.id?this._openDelete():"usersMenuItem"==t.item.id?this._openUsersDialog():"adminsMenuItem"==t.item.id?this._openAdminsDialog():"pagesMenuItem"==t.item.id&&this._openPagesDialog(),this.set("selectedMenuItem",null)},_openUsersDialog:function(){window.appGlobals.activity("open","community.users");var e=Polymer.dom(document).querySelector("yp-app").getDialog("usersGrid");e.setup(null,this.community.id,null,!1),e.open()},_openAdminsDialog:function(){window.appGlobals.activity("open","community.admins");var e=Polymer.dom(document).querySelector("yp-app").getDialog("usersGrid");e.setup(null,this.community.id,null,!0),e.open()},_openPagesDialog:function(){window.appGlobals.activity("open","community.pagesAdmin");var e=Polymer.dom(document).querySelector("yp-app").getDialog("pagesGrid");e.setup(null,this.community.id,null,!1),e.open()},_openDelete:function(){var e=Polymer.dom(document).querySelector("yp-app").getDialog("deleteDialog");e.setup("/api/communities/",this.community.id,this.t("community.deleteConfirmation"),this._onDeleted.bind(this)),e.open()},_openEdit:function(){var e=Polymer.dom(document).querySelector("yp-app").getDialog("communityEdit");e.setup(this.community,!1,this._refresh.bind(this)),e.open("edit",{communityId:this.community.id})},_onDeleted:function(){this.redirectTo("/domain/"+this.community.domain_id)},_refresh:function(e){e&&this.set("community",e),this.fire("update-community")}});</script>
+  <script>
+    Polymer({
+      is: 'yp-community-large-card',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.CommunityBehaviors,
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior
+      ],
+
+      properties: {
+        community: {
+          type: Object
+        },
+
+        hasCommunityAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasCommunityAccess(community, gotAdminRights)'
+        }
+      },
+
+      _hasCommunityAccess: function(community, gotAdminRights) {
+        if (community && gotAdminRights) {
+          if (this.checkCommunityAccess(community)!=null) {
+            return true
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      },
+
+      _communityAccessText: function(access) {
+        switch (access) {
+          case 0:
+            return this.t("community.public");
+            break;
+          case 1:
+            return this.t("community.closed");
+            break;
+          case 2:
+            return this.t("community.secret");
+            break;
+        }
+      },
+
+      _menuSelection: function (event, detail) {
+        if (detail.item.id=="editMenuItem")
+          this._openEdit();
+        else if (detail.item.id=="deleteMenuItem")
+          this._openDelete();
+        else if (detail.item.id=="usersMenuItem")
+          this._openUsersDialog();
+        else if (detail.item.id=="adminsMenuItem")
+          this._openAdminsDialog();
+        else if (detail.item.id=="pagesMenuItem")
+          this._openPagesDialog();
+        this.set('selectedMenuItem', null);
+      },
+
+      _openUsersDialog: function () {
+        window.appGlobals.activity('open', 'community.users');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
+        dialog.setup(null, this.community.id, null, false);
+        dialog.open();
+      },
+
+      _openAdminsDialog: function () {
+        window.appGlobals.activity('open', 'community.admins');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
+        dialog.setup(null, this.community.id, null, true);
+        dialog.open();
+      },
+
+      _openPagesDialog: function () {
+        window.appGlobals.activity('open', 'community.pagesAdmin');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pagesGrid");
+        dialog.setup(null, this.community.id, null, false);
+        dialog.open();
+      },
+
+      _openDelete: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
+        dialog.setup('/api/communities/', this.community.id,
+                     this.t('community.deleteConfirmation'),
+                     this._onDeleted.bind(this));
+        dialog.open();
+      },
+
+      _openEdit: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("communityEdit");
+        dialog.setup(this.community, false, this._refresh.bind(this));
+        dialog.open('edit', { communityId: this.community.id });
+      },
+
+      _onDeleted: function () {
+        this.redirectTo("/domain/"+this.community.domain_id);
+      },
+
+      _refresh: function (community) {
+        if (community) {
+          this.set('community', community);
+        }
+        this.fire("update-community");
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

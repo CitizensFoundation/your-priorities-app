@@ -35,6 +35,35 @@
     </paper-dialog>
   </template>
 
-  <script>Polymer({is:"yp-page-dialog",behaviors:[Polymer.appHelpers],properties:{title:{type:String},page:Object},open:function(t,e){this.set("title",t),this.$.content.innerHTML=e,this.$.dialog.fit(),this.$.dialog.notifyResize(),this.$.dialog.open()},_close:function(){this.set("title",null),this.$.content.innerHTML=""}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-page-dialog',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        title: {
+          type: String
+        },
+        page: Object
+      },
+
+      open: function (title, content) {
+        this.set('title', title);
+        this.$.content.innerHTML = content;
+        this.$.dialog.fit();
+        this.$.dialog.notifyResize();
+        this.$.dialog.open();
+      },
+
+      _close: function () {
+        this.set('title', null);
+        this.$.content.innerHTML = '';
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

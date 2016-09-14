@@ -157,6 +157,74 @@
     </template>
   </template>
 
-  <script>Polymer({is:"yp-community-large-card",properties:{phoneSize:{type:Boolean},community:{type:Object}},behaviors:[Polymer.appHelpers,Polymer.CommunityBehaviors,Polymer.LargeCardBehaviors,Polymer.AccessHelpers],_communityAccessText:function(e){switch(e){case 0:return this.t("community.public");case 1:return this.t("community.closed");case 2:return this.t("community.secret")}},_menuSelection:function(e,t){"editMenuItem"==t.item.id?this._openEdit():"deleteMenuItem"==t.item.id&&this._openDelete(),this.selectedMenuItem=null},_openDelete:function(){var e=Polymer.dom(document).querySelector("yp-app").getDialog("deleteDialog");e.setup("/api/communities/",this.community.id,this.t("community.deleteConfirmation"),this._onDeleted.bind(this)),e.open()},_openEdit:function(){var e=Polymer.dom(document).querySelector("yp-app").getDialog("communityEdit");e.setup(this.community,!1,this._refresh.bind(this)),e.open("edit",{communityId:this.community.id})},_onDeleted:function(){this.redirectTo("/domain/"+this.community.domain_id)},_refresh:function(e){e&&this.set("community",e),this.fire("update-community")}});</script>
+  <script>
+    Polymer({
+      is: 'yp-community-large-card',
+
+      properties: {
+        phoneSize: {
+          type: Boolean
+        },
+
+        community: {
+          type: Object
+        }
+      },
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.CommunityBehaviors,
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers
+      ],
+
+      _communityAccessText: function(access) {
+        switch (access) {
+          case 0:
+            return this.t("community.public");
+            break;
+          case 1:
+            return this.t("community.closed");
+            break;
+          case 2:
+            return this.t("community.secret");
+            break;
+        }
+      },
+
+      _menuSelection: function (event, detail) {
+        if (detail.item.id=="editMenuItem")
+          this._openEdit();
+        else if (detail.item.id=="deleteMenuItem")
+          this._openDelete();
+        this.selectedMenuItem = null;
+      },
+
+      _openDelete: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
+        dialog.setup('/api/communities/', this.community.id,
+                     this.t('community.deleteConfirmation'),
+                     this._onDeleted.bind(this));
+        dialog.open();
+      },
+
+      _openEdit: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("communityEdit");
+        dialog.setup(this.community, false, this._refresh.bind(this));
+        dialog.open('edit', { communityId: this.community.id });
+      },
+
+      _onDeleted: function () {
+        this.redirectTo("/domain/"+this.community.domain_id);
+      },
+
+      _refresh: function (community) {
+        if (community) {
+          this.set('community', community);
+        }
+        this.fire("update-community");
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

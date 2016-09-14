@@ -36,6 +36,24 @@
 
   </template>
 
-  <script>Polymer({is:"test-header",behaviors:[Polymer.appHelpers],ready:function(e){this.$.post2.post={id:101,name:"Iceland top posts",top_banner_file_name:"NHScitizen_logo_final2c.png",description:"Your posts and participation will help provide a series of recommendations to the European Commission on the best strategies, policies and funding instruments.",Category:{id:105,icon_file_name:"NHS_icons_GG-2.png"},counter_endorsements_up:5454,counter_points:7778,counter_endorsements_down:1232}}});</script>
+  <script>
+    Polymer({
+      is: 'test-header',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      ready: function (e) {
+        this.$.post2.post = {id: 101,
+          name:'Iceland top posts',
+          top_banner_file_name: 'NHScitizen_logo_final2c.png',
+          description:'Your posts and participation will help provide a series of recommendations to the European Commission on the best strategies, policies and funding instruments.',
+          Category: {id: 105, icon_file_name: "NHS_icons_GG-2.png" },
+          counter_endorsements_up: 5454, counter_points: 7778, counter_endorsements_down: 1232
+        };
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

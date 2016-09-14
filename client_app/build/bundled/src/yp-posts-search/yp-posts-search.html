@@ -59,6 +59,47 @@
       </div>
     </base-layout>
   </template>
-  <script>Polymer({is:"yp-posts-search",properties:{posts:{type:Array,value:function(){return[]}},postsResponse:{type:Object,observer:"postsResponseChanged"}},postsResponseChanged:function(s,t,e){this.$.layout.setSpinner(!1),this.posts=s},ready:function(){this.$.layout.setSpinner(!0),window.appGlobals.activity("search","posts",this.$.postsAjax.url),this.$.postsAjax.go()},computeUrl:function(s,t){return"/api/groups/"+s+"/search/"+t},computeName:function(){return this.t("Search")}});</script>
+  <script>
+
+    Polymer({
+
+      is: 'yp-posts-search',
+
+      properties: {
+
+        posts: {
+          type: Array,
+          value: function () {
+            return [];
+          }
+        },
+
+        postsResponse: {
+          type: Object,
+          observer: 'postsResponseChanged'
+        }
+
+      },
+
+      postsResponseChanged: function (detail, e, sender) {
+        this.$.layout.setSpinner(false);
+        this.posts = detail;
+      },
+
+      ready: function () {
+        this.$.layout.setSpinner(true);
+        window.appGlobals.activity('search', 'posts', this.$.postsAjax.url);
+        this.$.postsAjax.go();
+      },
+
+      computeUrl: function (groupId, term) {
+        return '/api/groups/' + groupId + '/search/' + term;
+      },
+
+      computeName: function () {
+        return this.t('Search');
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

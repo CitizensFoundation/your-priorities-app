@@ -141,6 +141,125 @@
     <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
   </template>
 
-  <script>Polymer({is:"yp-point-news-story-edit",properties:{loadingUrlPreview:{type:Boolean,notify:!0},loadingPostStory:{type:Boolean,notify:!0},point:{type:Object,notify:!0},postId:{type:Number},postGroupId:{type:Number},groupId:{type:Number},communityId:{type:Number},domainId:{type:Number}},behaviors:[Polymer.appHelpers,Polymer.ypLoggedInUserBehavior],ready:function(){this._reset(),this.$.pointNewsStory.addEventListener("paste",function(){this.async(function(){this._checkForUrl()},50)}.bind(this))},_reset:function(){this.set("point",{content:""})},_sendStory:function(){var t={point:this.point};this.point.content&&this.point.content.length>2?(this.postId&&this.postGroupId?(_.merge(t,{post_id:this.postId}),this.$.postNewsStoryAjax.url="/api/groups/"+this.postGroupId+"/post/news_story"):this.groupId?(_.merge(t,{group_id:this.groupId}),this.$.postNewsStoryAjax.url="/api/groups/"+this.groupId+"/news_story"):this.communityId?(_.merge(t,{community_id:this.communityId}),this.$.postNewsStoryAjax.url="/api/communities/"+this.communityId+"/news_story"):this.domainId?(this.$.postNewsStoryAjax.url="/api/domains/"+this.domainId+"/news_story",_.merge(t,{domain_id:this.domainId})):console.error("Can't find send ids"),this.$.postNewsStoryAjax.body=t,this.$.postNewsStoryAjax.generateRequest()):this.$.postNewsStoryAjax.showErrorDialog(this.t("point.commentToShort"))},_urlPreviewResponse:function(t,e){e.response&&e.response.length>0&&this.set("point.embed_data",e.response[0])},_newsStoryResponse:function(){this.fire("refresh"),this._reset()},_keyDown:function(t){"Space"!=t.code&&"enter"!=t.code||this._checkForUrl(t)},_clearEmbed:function(){this.set("point.embed_data",null)},_checkForUrl:function(t){if(!this.point.embed_data){var e=/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi,o=/((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi,s=(e.exec(this.point.content),o.exec(this.point.content));s&&s.length>0&&(this.$.urlPreviewAjax.params={url:s[0]},this.$.urlPreviewAjax.generateRequest())}}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-point-news-story-edit',
+
+      properties: {
+
+        loadingUrlPreview: {
+          type: Boolean,
+          notify: true
+        },
+
+        loadingPostStory: {
+          type: Boolean,
+          notify: true
+        },
+
+        point: {
+          type: Object,
+          notify: true
+        },
+
+        postId: {
+          type: Number
+        },
+
+        postGroupId: {
+          type: Number
+        },
+
+        groupId: {
+          type: Number
+        },
+
+        communityId: {
+          type: Number
+        },
+
+        domainId: {
+          type: Number
+        }
+      },
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.ypLoggedInUserBehavior
+      ],
+
+      ready: function () {
+        this._reset();
+        this.$.pointNewsStory.addEventListener("paste", function () {
+          this.async(function () {
+            this._checkForUrl();
+          }, 50);
+        }.bind(this));
+      },
+
+      _reset: function () {
+        this.set('point', { content: '' });
+      },
+
+      _sendStory: function () {
+        var body = { point: this.point };
+        if (this.point.content && this.point.content.length>2) {
+          if (this.postId && this.postGroupId) {
+            _.merge(body, { post_id: this.postId })
+            this.$.postNewsStoryAjax.url = '/api/groups/'+this.postGroupId+'/post/news_story';
+          } else if (this.groupId) {
+            _.merge(body, { group_id: this.groupId })
+            this.$.postNewsStoryAjax.url = '/api/groups/'+this.groupId+'/news_story';
+          } else if (this.communityId) {
+            _.merge(body, { community_id: this.communityId })
+            this.$.postNewsStoryAjax.url = '/api/communities/'+this.communityId+'/news_story';
+          } else if (this.domainId) {
+            this.$.postNewsStoryAjax.url = '/api/domains/'+this.domainId+'/news_story';
+            _.merge(body, { domain_id: this.domainId })
+          } else {
+            console.error("Can't find send ids");
+          }
+          this.$.postNewsStoryAjax.body = body;
+          this.$.postNewsStoryAjax.generateRequest();
+        } else {
+          this.$.postNewsStoryAjax.showErrorDialog(this.t('point.commentToShort'));
+        }
+      },
+
+      _urlPreviewResponse: function (event, detail) {
+        if (detail.response && detail.response.length>0)
+        this.set('point.embed_data', detail.response[0]);
+      },
+
+      _newsStoryResponse: function () {
+        this.fire('refresh');
+        this._reset();
+      },
+
+      _keyDown: function (event) {
+        if (event.code == 'Space' || event.code == 'enter') {
+          this._checkForUrl(event);
+        }
+      },
+
+      _clearEmbed: function () {
+        this.set('point.embed_data', null);
+      },
+
+      _checkForUrl: function (event) {
+        if (!this.point.embed_data) {
+          var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+          var urlRegex2 = /((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi;
+          var urls1 = urlRegex.exec(this.point.content);
+          var urls2 = urlRegex2.exec(this.point.content);
+          if (urls2 && urls2.length > 0) {
+            this.$.urlPreviewAjax.params = { url: urls2[0] };
+            this.$.urlPreviewAjax.generateRequest();
+          }
+        }
+      }
+    })
+  </script>
 </dom-module>
 </body></html>

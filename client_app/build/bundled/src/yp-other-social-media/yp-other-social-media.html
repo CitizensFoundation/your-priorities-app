@@ -33,7 +33,7 @@
     </style>
 
     <template is="dom-if" if="[[active]]">
-      <div class="layout vertical center-center" style="width: 100%">
+      <div class="layout vertical center-center" style="width: 100%;">
         <div class="layout horizontal center-center">
           <paper-item on-tap="_selectTwitter">Twitter</paper-item>
           <paper-item on-tap="_selectInstagram">Instagram</paper-item>
@@ -54,6 +54,60 @@
 
   </template>
 
-  <script>Polymer({is:"yp-other-social-media",behaviors:[Polymer.appHelpers],properties:{domain:{type:Object},selected:{type:Number,value:0},active:{type:Boolean,value:!1,observer:"_activeChanged"}},_selectTwitter:function(){this.set("selected",0)},_selectInstagram:function(){this.set("selected",1)},_activeChanged:function(e){e&&this.async(function(){this._setupTwitter()}.bind(this))},_setupTwitter:function(){!function(e,t,n){var i,s=e.getElementsByTagName(t)[0],r=/^http:/.test(e.location)?"http":"https";e.getElementById(n)||(i=e.createElement(t),i.id=n,i.src=r+"://platform.twitter.com/widgets.js",s.parentNode.insertBefore(i,s))}(document,"script","twitter-wjs")},_instagramAccessToken:function(){return window.instagramAccessToken},_instagramClientId:function(){return window.instagramClientID}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-other-social-media',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        domain: {
+          type: Object
+        },
+
+        selected: {
+          type: Number,
+          value: 0
+        },
+
+        active: {
+          type: Boolean,
+          value: false,
+          observer: '_activeChanged'
+        }
+      },
+
+      _selectTwitter: function () {
+        this.set('selected', 0);
+      },
+
+      _selectInstagram: function () {
+        this.set('selected', 1);
+      },
+
+      _activeChanged: function (newValue) {
+        if (newValue) {
+          this.async(function () {
+            this._setupTwitter();
+          }.bind(this));
+        }
+      },
+
+      _setupTwitter: function () {
+        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+      },
+
+      _instagramAccessToken: function () {
+        return window.instagramAccessToken;
+      },
+
+      _instagramClientId: function () {
+        return window.instagramClientID;
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

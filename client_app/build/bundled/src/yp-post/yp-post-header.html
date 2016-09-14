@@ -141,6 +141,60 @@
     </template>
   
 
-  <script>Polymer({is:"yp-post-header",behaviors:[Polymer.appHelpers],properties:{post:{type:Object,notify:!0,observer:"_postChanged"}},addEndorsement:function(t){this.$$("#postUsers").addEndorsement(t)},_postChanged:function(t,o){},goToGroup:function(t){var o="/#/posts/"+this.post.id+"/posts/top/"+this.post.name;window.appGlobals.activity("open","post",o),window.location=o},postName:function(t){return t&&t.name?this.truncate(this.trim(t.name),200):t?t.short_name:void 0},postDescription:function(t){return t&&t.description?this.truncate(this.trim(t.description),1e4,"..."):""},getCategoryImagePath:function(t){return this.getImageFormatUrl(t.Category.CategoryIconImages,0)},ready:function(){}});</script>
+  <script>
+    Polymer({
+      is: 'yp-post-header',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        post: {
+          type: Object,
+          notify: true,
+          observer: "_postChanged"
+        }
+      },
+
+      addEndorsement: function (endorsement) {
+        this.$$("#postUsers").addEndorsement(endorsement);
+      },
+
+      _postChanged: function(newValue, oldValue) {
+      },
+
+      goToGroup: function (e) {
+        var postUrl = '/#/posts/' + this.post.id + '/posts/top/' + this.post.name;
+        window.appGlobals.activity('open', 'post', postUrl);
+        window.location = postUrl;
+      },
+
+      postName: function (post) {
+        if (post && post.name) {
+          return this.truncate(this.trim(post.name), 200);
+        } else if (post) {
+          return post.short_name;
+        }
+      },
+
+      postDescription: function (post) {
+        if (post && post.description) {
+          return this.truncate(this.trim(post.description), 10000, '...');
+        } else {
+          return "";
+        }
+      },
+
+      getCategoryImagePath: function (post) {
+        return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
+      },
+
+      ready: function () {
+        //this.post = {counter_endorsements_up: 1237, counter_points: 347, counter_endorsements_down: 432};
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

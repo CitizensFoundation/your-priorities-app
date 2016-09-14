@@ -66,6 +66,71 @@
     </template>
   </template>
 
-  <script>Polymer({is:"yp-user-with-organization",behaviors:[Polymer.appHelpers],properties:{user:{type:Object},titleDate:{type:Date},userTitle:{type:String,computed:"_computeUserTitle(user, titleDate)"},inverted:{type:Boolean,value:!1},organizationName:{type:String,computed:"_organizationName(user)"},organizationImageUrl:{type:String,computed:"_organizationImageUrl(user)"}},_computeUserTitle:function(e,n){return e&&n?e.name+" "+moment(n).fromNow():null},_organizationName:function(e){return e&&e.OrganizationUsers&&e.OrganizationUsers.length>0&&e.OrganizationUsers[0].name?e.OrganizationUsers[0].name:null},_organizationImageUrl:function(e){return e&&e.OrganizationUsers&&e.OrganizationUsers.length>0&&e.OrganizationUsers[0].OrganizationLogoImages&&e.OrganizationUsers[0].OrganizationLogoImages.length>0?this.getImageFormatUrl(e.OrganizationUsers[0].OrganizationLogoImages,2):null}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-user-with-organization',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        user: {
+          type: Object
+        },
+
+        titleDate: {
+          type: Date
+        },
+
+        userTitle: {
+          type: String,
+          computed: '_computeUserTitle(user, titleDate)'
+        },
+
+        inverted: {
+          type: Boolean,
+          value: false
+        },
+
+        organizationName: {
+          type: String,
+          computed: '_organizationName(user)'
+        },
+
+        organizationImageUrl: {
+          type: String,
+          computed: '_organizationImageUrl(user)'
+        }
+      },
+
+      _computeUserTitle: function (user, titleDate) {
+        if (user && titleDate) {
+          return user.name + ' ' + moment(titleDate).fromNow();
+        } else {
+          return null;
+        }
+      },
+
+      _organizationName: function (user) {
+        if (user && user.OrganizationUsers && user.OrganizationUsers.length > 0 && user.OrganizationUsers[0].name) {
+          return user.OrganizationUsers[0].name;
+        } else {
+          return null;
+        }
+      },
+
+      _organizationImageUrl: function (user) {
+        if (user && user.OrganizationUsers && user.OrganizationUsers.length > 0 &&
+          user.OrganizationUsers[0].OrganizationLogoImages &&
+          user.OrganizationUsers[0].OrganizationLogoImages.length > 0) {
+          return this.getImageFormatUrl(user.OrganizationUsers[0].OrganizationLogoImages, 2);
+        } else {
+          return null;
+        }
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

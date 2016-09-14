@@ -169,5 +169,272 @@
 
 </dom-module>
 
-<script>Polymer({is:"yp-post-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/posts"},new:{type:Boolean,value:!1},post:{type:Object,observer:"_postChanged"},group:{type:Object},locationHidden:{type:Boolean,value:!1,observer:"_locationHiddenChanged"},location:{type:Object,observer:"_locationChanged"},encodedLocation:{type:String,observer:"_encodedLocationChanged"},selectedCategoryArrayId:{type:Number,observer:"_selectedCategoryChanged"},selectedCategoryId:{type:Number},selectedCoverMediaType:{type:String,value:"none",observer:"_coverMediaTypeValueChanged"},uploadedHeaderImageId:{type:String,observer:"_uploadedHeaderImageIdChanged"},selected:{type:Number,value:0,observer:"_selectedChanged"},mapActive:{type:Boolean,value:!1}},listeners:{"iron-form-invalid":"_formInvalid"},_locationHiddenChanged:function(e){this.async(function(){var e=this.$$("#pages");e&&e.forceSynchronousItemUpdate();var t=this.$$("#paperTabs");t&&t.forceSynchronousItemUpdate(),console.log("Location hidden changed")},10)},_formInvalid:function(){this.set("selected",0),this.$$("#name").autoValidate=!0,this.$$("#description").autoValidate=!0,this.new&&(this.$$("#pointFor").autoValidate=!0)},_encodedLocationChanged:function(e){},_locationChanged:function(e){!e||this.selectedCoverMediaType&&""!=this.selectedCoverMediaType&&"none"!=this.selectedCoverMediaType||this.set("selectedCoverMediaType","map")},_uploadedHeaderImageIdChanged:function(e){e&&this.set("selectedCoverMediaType","image")},_nextOnEnter:function(e){13===e.keyCode&&this._searchMap()},_nextTab:function(){var e=3;this.new||(e=2),this.locationHidden&&(e-=1),this.selected<e&&this.set("selected",this.selected+1)},_selectedChanged:function(e){this.locationHidden||e!=(this.new?2:1)?this.set("mapActive",!1):this.set("mapActive",!0);var t=this.locationHidden?2:3;!this.new||this.new&&e==t?this.$$("#editDialog").useNextTabAction=!1:this.$$("#editDialog").useNextTabAction=!0},_selectedCategoryChanged:function(e,t){null!=e&&void 0!=e&&(this.selectedCategoryId=this.group.Categories[e].id)},_showCategories:function(e){return!(!e||!e.Categories)&&e.Categories.length>0},getPositionInArrayFromId:function(e,t){for(var o=0;o<e.length;o++)if(e[o].id==t)return o;return null},_postChanged:function(e,t){e&&(e.location&&(this.set("location",e.location),this.set("encodedLocation",JSON.stringify(this.location))),e.cover_media_type&&(this.selectedCoverMediaType=e.cover_media_type),e.category_id&&(this.selectedCategoryId=e.category_id,this.selectedCategoryArrayId=this.getPositionInArrayFromId(this.group.Categories,e.category_id)))},_imageUploaded:function(e,t){var o=JSON.parse(t.xhr.response);this.set("uploadedHeaderImageId",o.id)},_coverMediaTypeValueChanged:function(e,t){},_coverMediaTypeChanged:function(e,t){},_customRedirect:function(e){e?(e.newEndorsement&&window.appUser&&window.appUser.endorsementPostsIndex&&(window.appUser.endorsementPostsIndex[e.id]=e.newEndorsement),this.redirectTo("/post/"+e.id)):console.warn("No post found on custom redirect")},_clear:function(){this.new&&(this.set("post",{name:"",description:"",pointFor:"",categoryId:null}),this.set("location",null),this.set("selectedCategoryArrayId",null),this.set("selectedCategoryId",null),this.set("selected",0),this.set("uploadedHeaderImageId",null),this.$$("#imageFileUpload").clear(),this.set("selectedCoverMediaType","none"))},setup:function(e,t,o,i){t?(this.set("group",t),this.group.configuration&&this.group.configuration.locationHidden&&1==this.group.configuration.locationHidden?this.set("locationHidden",!0):this.set("locationHidden",!1)):this.set("group",null),e?this.set("post",e):this.set("post",null),this.set("new",o),this.set("refreshFunction",i),this._setupTranslation(),this._clear()},_setupTranslation:function(){this.new?(this.editHeaderText=this.t("post.new"),this.toastText=this.t("post.toast.created")):(this.editHeaderText=this.t("post.edit"),this.toastText=this.t("post.toast.updated"))}});</script>
+<script>
+
+  Polymer({
+
+    is: 'yp-post-edit',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/posts"
+      },
+
+      new: {
+        type: Boolean,
+        value: false
+      },
+
+      post: {
+        type: Object,
+        observer: "_postChanged"
+      },
+
+      group: {
+        type: Object
+      },
+
+      locationHidden: {
+        type: Boolean,
+        value: false,
+        observer: '_locationHiddenChanged'
+      },
+
+      location: {
+        type: Object,
+        observer: '_locationChanged'
+      },
+
+      encodedLocation: {
+        type: String,
+        observer: "_encodedLocationChanged"
+      },
+
+      selectedCategoryArrayId: {
+        type: Number,
+        observer: "_selectedCategoryChanged"
+      },
+
+      selectedCategoryId: {
+        type: Number
+      },
+
+      selectedCoverMediaType: {
+        type: String,
+        value: 'none',
+        observer: "_coverMediaTypeValueChanged"
+      },
+
+      uploadedHeaderImageId: {
+        type: String,
+        observer: '_uploadedHeaderImageIdChanged'
+      },
+
+      selected: {
+        type: Number,
+        value: 0,
+        observer: '_selectedChanged'
+      },
+
+      mapActive: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    listeners: {
+      'iron-form-invalid': '_formInvalid'
+    },
+
+    _locationHiddenChanged: function (newValue) {
+      this.async(function () {
+        var pages = this.$$("#pages");
+        if (pages) {
+          pages.forceSynchronousItemUpdate();
+        }
+
+        var paperTabs = this.$$("#paperTabs");
+        if (paperTabs) {
+          paperTabs.forceSynchronousItemUpdate();
+        }
+        console.log("Location hidden changed");
+      }, 10);
+    },
+
+
+    _formInvalid: function () {
+      this.set('selected', 0);
+      this.$$('#name').autoValidate = true;
+      this.$$('#description').autoValidate = true;
+      if (this.new) {
+        this.$$('#pointFor').autoValidate = true;
+      }
+    },
+
+    _encodedLocationChanged: function (newValue) {
+    },
+
+    _locationChanged: function (newValue) {
+      if (newValue && (!this.selectedCoverMediaType || this.selectedCoverMediaType=='' || this.selectedCoverMediaType=='none')) {
+        this.set('selectedCoverMediaType','map');
+      }
+    },
+
+    _uploadedHeaderImageIdChanged: function (newValue) {
+      if (newValue) {
+        this.set('selectedCoverMediaType','image');
+      }
+    },
+
+    _nextOnEnter: function (event) {
+      if (event.keyCode === 13) {
+        this._searchMap();
+      }
+    },
+
+    _nextTab: function () {
+      var length = 3;
+      if (!this.new) {
+        length = 2;
+      }
+      if (this.locationHidden) {
+        length -= 1;
+      }
+      if (this.selected<length) {
+        this.set('selected', this.selected+1)
+      }
+    },
+
+    _selectedChanged: function (newValue) {
+      if (!this.locationHidden && newValue==(this.new ? 2 : 1)) {
+        this.set('mapActive', true);
+      } else {
+        this.set('mapActive', false);
+      }
+
+      var finalTabNumber = this.locationHidden ? 2 : 3;
+
+      if (!this.new || (this.new && newValue==finalTabNumber)) {
+        this.$$("#editDialog").useNextTabAction = false;
+      } else {
+        this.$$("#editDialog").useNextTabAction = true;
+      }
+    },
+
+    _selectedCategoryChanged: function (newCategoryArrayId, oldValue) {
+      if (newCategoryArrayId!=null && newCategoryArrayId!=undefined)
+        this.selectedCategoryId = this.group.Categories[newCategoryArrayId].id;
+    },
+
+    _showCategories: function (group) {
+      if (group && group.Categories) {
+        return group.Categories.length>0;
+      } else {
+        return false;
+      }
+    },
+
+    getPositionInArrayFromId: function (collection, id) {
+      for(var i = 0; i < collection.length; i++) {
+        if (collection[i].id==id) {
+          return i;
+        }
+      }
+      return null;
+    },
+
+    _postChanged: function(newPost, oldPost) {
+      if (newPost){
+        if (newPost.location) {
+          this.set('location', newPost.location);
+          this.set('encodedLocation', JSON.stringify(this.location));
+        }
+        if (newPost.cover_media_type)
+          this.selectedCoverMediaType = newPost.cover_media_type;
+        if (newPost.category_id) {
+          this.selectedCategoryId = newPost.category_id;
+          this.selectedCategoryArrayId = this.getPositionInArrayFromId(this.group.Categories, newPost.category_id);
+        }
+      }
+    },
+
+    _imageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedHeaderImageId', image.id);
+    },
+
+    _coverMediaTypeValueChanged: function(newValue, oldValue) {
+    },
+
+    _coverMediaTypeChanged: function(event, detail) {
+    },
+
+    _customRedirect: function (post) {
+      if (post) {
+        if (post.newEndorsement && window.appUser && window.appUser.endorsementPostsIndex) {
+          window.appUser.endorsementPostsIndex[post.id] = post.newEndorsement;
+        }
+        this.redirectTo("/post/"+post.id);
+      } else {
+        console.warn('No post found on custom redirect');
+      }
+    },
+
+    _clear: function () {
+      if (this.new) {
+        this.set('post', { name: '', description: '', pointFor: '', categoryId: null });
+        this.set('location', null);
+        this.set('selectedCategoryArrayId',null);
+        this.set('selectedCategoryId',null);
+        this.set('selected', 0);
+        this.set('uploadedHeaderImageId',null);
+        this.$$("#imageFileUpload").clear();
+        this.set('selectedCoverMediaType', 'none');
+      }
+    },
+
+    setup: function (post, group, newNotEdit, refreshFunction) {
+      if (group) {
+        this.set('group', group);
+        if (this.group.configuration && this.group.configuration.locationHidden) {
+          if (this.group.configuration.locationHidden == true) {
+            this.set('locationHidden', true);
+          } else {
+            this.set('locationHidden', false);
+          }
+        } else {
+          this.set('locationHidden', false);
+        }
+      } else {
+        this.set('group', null);
+      }
+      if (post) {
+        this.set('post', post);
+      } else {
+        this.set('post', null);
+      }
+      this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+      this._clear();
+    },
+
+    _setupTranslation: function () {
+      if (this.new) {
+        this.editHeaderText = this.t('post.new');
+        this.toastText = this.t('post.toast.created');
+      } else {
+        this.editHeaderText = this.t('post.edit');
+        this.toastText = this.t('post.toast.updated');
+      }
+    }
+  });
+</script>
 </body></html>

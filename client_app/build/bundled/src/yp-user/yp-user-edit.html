@@ -84,5 +84,124 @@
 
 </dom-module>
 
-<script>Polymer({is:"yp-user-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/users"},user:{type:Object,observer:"_userChanged"},params:{type:String},method:{type:String},selected:{type:Number,value:0},encodedUserNotificationSettings:{type:String,observer:"_encodedUserNotificationSettingsChanged"},uploadedProfileImageId:{type:String},uploadedHeaderImageId:{type:String},notificationSettings:{type:Object,notify:!0,observer:"_notificationSettingsChanged"}},listeners:{"yp-notifications-changed":"_setNotificationSettings"},_setNotificationSettings:function(t,e){this.set("notificationSettings",e),this.set("encodedUserNotificationSettings",this._encodeNotificationsSettings(this.notificationSettings))},_notificationSettingsChanged:function(t){this.set("encodedUserNotificationSettings",this._encodeNotificationsSettings(this.notificationSettings))},_encodedUserNotificationSettingsChanged:function(t){},_encodeNotificationsSettings:function(t){return JSON.stringify(t)},_userChanged:function(t){this.set("notificationSettings",t.notifications_settings)},_profileImageUploaded:function(t,e){var i=JSON.parse(e.xhr.response);this.set("uploadedProfileImageId",i.id)},_headerImageUploaded:function(t,e){var i=JSON.parse(e.xhr.response);this.set("uploadedHeaderImageId",i.id)},_customRedirect:function(t){window.appUser.checkLogin()},_clear:function(){this.set("user",{name:"",email:"",access:2}),this.uploadedProfileImageId=null,this.uploadedHeaderImageId=null,this.$.headerImageUpload.clear(),this.$.profileImageUpload.clear()},setup:function(t,e,i){this.set("user",t),this.set("new",e),this.set("refreshFunction",i),this._setupTranslation()},_setupTranslation:function(){this.new?(this.editHeaderText=this.t("user.new"),this.toastText=this.t("user.toast.created")):(this.editHeaderText=this.t("user.edit"),this.toastText=this.t("user.toast.updated"))}});</script>
+<script>
+
+  Polymer({
+
+    is: 'yp-user-edit',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/users"
+      },
+
+      user: {
+        type: Object,
+        observer: '_userChanged'
+      },
+
+      params: {
+        type: String
+      },
+
+      method: {
+        type: String
+      },
+
+      selected: {
+        type: Number,
+        value: 0
+      },
+
+      encodedUserNotificationSettings: {
+        type: String,
+        observer: '_encodedUserNotificationSettingsChanged'
+      },
+
+      uploadedProfileImageId: {
+        type: String
+      },
+
+      uploadedHeaderImageId: {
+        type: String
+      },
+
+      notificationSettings: {
+        type: Object,
+        notify: true,
+        observer: '_notificationSettingsChanged'
+      }
+    },
+
+    listeners: {
+      'yp-notifications-changed': '_setNotificationSettings'
+    },
+
+    _setNotificationSettings: function (event, detail) {
+      this.set('notificationSettings', detail);
+      this.set('encodedUserNotificationSettings', this._encodeNotificationsSettings(this.notificationSettings));
+    },
+
+    _notificationSettingsChanged: function (value) {
+      this.set('encodedUserNotificationSettings', this._encodeNotificationsSettings(this.notificationSettings));
+    },
+
+    _encodedUserNotificationSettingsChanged: function (value) {
+    },
+
+    _encodeNotificationsSettings: function (settings) {
+      return JSON.stringify(settings);
+    },
+
+    _userChanged: function (newValue) {
+      this.set('notificationSettings', newValue.notifications_settings);
+    },
+
+    _profileImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedProfileImageId', image.id);
+    },
+
+    _headerImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedHeaderImageId', image.id);
+    },
+
+    _customRedirect: function (userId) {
+      window.appUser.checkLogin();
+    },
+
+    _clear: function () {
+      this.set('user', { name: '', email: '', access: 2 } );
+      this.uploadedProfileImageId = null;
+      this.uploadedHeaderImageId = null;
+      this.$.headerImageUpload.clear();
+      this.$.profileImageUpload.clear();
+    },
+
+    setup: function (user, newNotEdit, refreshFunction) {
+      this.set('user', user);
+      this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+    },
+
+    _setupTranslation: function () {
+      if (this.new) {
+        this.editHeaderText = this.t('user.new');
+        this.toastText = this.t('user.toast.created');
+      } else {
+        this.editHeaderText = this.t('user.edit');
+        this.toastText = this.t('user.toast.updated');
+      }
+    }
+  });
+</script>
 </body></html>

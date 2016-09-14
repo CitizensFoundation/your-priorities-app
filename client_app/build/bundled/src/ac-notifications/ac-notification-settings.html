@@ -32,6 +32,34 @@
     </ac-notification-selection>
   </template>
 
-  <script>Polymer({is:"ac-notification-settings",behaviors:[Polymer.appHelpers],properties:{notificationsSettings:{type:Object,notify:!0,observer:"_notificationsSettingsChanged"}},observers:["settingsStarChanged(notificationsSettings.*)"],_notificationsSettingsChanged:function(t){},settingsStarChanged:function(t){this.fire("yp-notifications-changed",this.notificationsSettings)}});</script>
+  <script>
+    Polymer({
+
+      is: 'ac-notification-settings',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        notificationsSettings: {
+          type: Object,
+          notify: true,
+          observer: '_notificationsSettingsChanged'
+        }
+      },
+
+      observers: [
+        'settingsStarChanged(notificationsSettings.*)'
+      ],
+
+      _notificationsSettingsChanged: function (value) {
+      },
+
+      settingsStarChanged: function (object) {
+        this.fire('yp-notifications-changed', this.notificationsSettings);
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

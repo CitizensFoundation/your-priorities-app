@@ -1,4 +1,12 @@
-<html><head><link rel="import" href="../polymer/polymer.html">
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><html><head><link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../paper-behaviors/paper-button-behavior.html">
@@ -6,7 +14,43 @@
 <link rel="import" href="../paper-styles/color.html">
 <link rel="import" href="../paper-styles/default-theme.html">
 
+<!--
+Material design: [Floating Action Button](https://www.google.com/design/spec/components/buttons-floating-action-button.html)
 
+`paper-fab` is a floating action button. It contains an image placed in the center and
+comes in two sizes: regular size and a smaller size by applying the attribute `mini`. When
+the user touches the button, a ripple effect emanates from the center of the button.
+
+You may import `iron-icons` to use with this element, or provide a URL to a custom icon.
+See `iron-iconset` for more information about how to use a custom icon set.
+
+Example:
+
+    <link href="path/to/iron-icons/iron-icons.html" rel="import">
+
+    <paper-fab icon="add"></paper-fab>
+    <paper-fab mini icon="favorite"></paper-fab>
+    <paper-fab src="star.png"></paper-fab>
+
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-fab-background` | The background color of the button | `--accent-color`
+`--paper-fab-keyboard-focus-background` | The background color of the button when focused | `--paper-pink-900`
+`--paper-fab-disabled-background` | The background color of the button when it's disabled | `--paper-grey-300`
+`--paper-fab-disabled-text` | The text color of the button when it's disabled | `--paper-grey-500`
+`--paper-fab` | Mixin applied to the button | `{}`
+`--paper-fab-mini` | Mixin applied to a mini button | `{}`
+`--paper-fab-disabled` | Mixin applied to a disabled button | `{}`
+`--paper-fab-iron-icon` | Mixin applied to the iron-icon within the button | `{}`
+
+@group Paper Elements
+@demo demo/index.html
+-->
 
 </head><body><dom-module id="paper-fab">
   <template strip-whitespace="">
@@ -79,6 +123,61 @@
     <span hidden$="{{_computeIsIconFab(icon, src)}}">{{label}}</span>
   </template>
 
-  <script>Polymer({is:"paper-fab",behaviors:[Polymer.PaperButtonBehavior],properties:{src:{type:String,value:""},icon:{type:String,value:""},mini:{type:Boolean,value:!1,reflectToAttribute:!0},label:{type:String,observer:"_labelChanged"}},_labelChanged:function(){this.setAttribute("aria-label",this.label)},_computeIsIconFab:function(e,t){return e.length>0||t.length>0}});</script>
+  <script>
+    Polymer({
+      is: 'paper-fab',
+
+      behaviors: [
+        Polymer.PaperButtonBehavior
+      ],
+
+      properties: {
+        /**
+         * The URL of an image for the icon. If the src property is specified,
+         * the icon property should not be.
+         */
+        src: {
+          type: String,
+          value: ''
+        },
+
+        /**
+         * Specifies the icon name or index in the set of icons available in
+         * the icon's icon set. If the icon property is specified,
+         * the src property should not be.
+         */
+        icon: {
+          type: String,
+          value: ''
+        },
+
+        /**
+         * Set this to true to style this is a "mini" FAB.
+         */
+        mini: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+
+        /**
+         * The label displayed in the badge. The label is centered, and ideally
+         * should have very few characters.
+         */
+        label: {
+          type: String,
+          observer: '_labelChanged'
+        }
+      },
+
+      _labelChanged: function() {
+        this.setAttribute('aria-label', this.label);
+      },
+
+      _computeIsIconFab: function(icon, src) {
+        return (icon.length > 0) || (src.length > 0);
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

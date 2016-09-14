@@ -53,5 +53,102 @@
 
 </dom-module>
 
-<script>Polymer({is:"yp-post-move",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior,Polymer.AccessHelpers],properties:{action:{type:String,value:"/api/posts"},post:{type:Object},availableGroups:{type:Array,value:null},selectedGroupId:Number},_selectGroup:function(t){this.set("selectedGroupId",t.target.getAttribute("data-args"));var e=t.target.getAttribute("data-args-name"),s=Polymer.dom(document).querySelector("yp-app").getDialog("confirmationDialog");s.open(this.t("post.confirmMove")+' "'+this.post.name+'" '+this.t("to")+' "'+e+'"',this._reallyMove.bind(this))},_reallyMove:function(){this.$.movePostAjax.url="/api/posts/"+this.post.id+"/"+this.selectedGroupId+"/move",this.$.movePostAjax.body={},this.$.movePostAjax.generateRequest()},_movePostResponse:function(){location.reload()},_getGroupsResponse:function(t,e){if(e.response){var s=[];s=s.concat(window.appUser.adminRights.GroupAdmins,window.appUser.memberships.GroupUsers),s=s.concat(e.response.groups),s=this._uniqueInDomain(s,e.response.domainId),this.set("availableGroups",s)}},_uniqueInDomain:function(t,e){var s=[],o={};return _.each(t,function(t){o[t.id]||(o[t.id]=t.id,t.configuration||(t.configuration={canAddNewPosts:!0}),t.Community&&t.Community.domain_id==e&&(t.configuration.canAddNewPosts||this._hasAdminRights(t.id,window.appUser.adminRights.GroupAdmins))?s.push(t):console.log("Ignoring group:"+t.name))}.bind(this)),s},_clear:function(){this.set("selectedGroupId",null),this.set("post",null)},setupAndOpen:function(t,e){this.set("post",t),this.set("refreshFunction",e),this._setupTranslation(),this.$.getAvailableGroupsAjax.generateRequest(),this.open()},_setupTranslation:function(){this.set("editHeaderText",this.t("post.move")),this.set("toastText",this.t("post.haveMovedPost")),this.set("saveText",this.t("post.move"))}});</script>
+<script>
+
+  Polymer({
+
+    is: 'yp-post-move',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior,
+      Polymer.AccessHelpers
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/posts"
+      },
+
+      post: {
+        type: Object
+      },
+
+      availableGroups: {
+        type: Array,
+        value: null
+      },
+
+      selectedGroupId: Number
+    },
+
+    _selectGroup: function (event) {
+      this.set('selectedGroupId', event.target.getAttribute('data-args'));
+      var groupName = event.target.getAttribute('data-args-name');
+      var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+      dialog.open(this.t('post.confirmMove')+' "'+this.post.name+'" '+this.t('to')+' "'+groupName+'"', this._reallyMove.bind(this));
+    },
+
+    _reallyMove: function () {
+      this.$.movePostAjax.url="/api/posts/"+this.post.id+'/'+this.selectedGroupId+'/move';
+      this.$.movePostAjax.body = {};
+      this.$.movePostAjax.generateRequest();
+    },
+
+    _movePostResponse: function () {
+      location.reload();
+    },
+
+    _getGroupsResponse: function (event, detail) {
+      if (detail.response) {
+        var groups = [];
+        groups = groups.concat(window.appUser.adminRights.GroupAdmins, window.appUser.memberships.GroupUsers);
+        groups = groups.concat(detail.response.groups);
+        groups = this._uniqueInDomain(groups, detail.response.domainId);
+        this.set("availableGroups", groups);
+      }
+    },
+
+    _uniqueInDomain: function (array, domainId) {
+      var newArray = [];
+      var ids = {};
+      _.each(array, function (item) {
+        if (!ids[item.id]) {
+          ids[item.id] = item.id;
+          if (!item.configuration) {
+            item.configuration = {canAddNewPosts: true}
+          }
+          if (item.Community && item.Community.domain_id==domainId &&
+             (item.configuration.canAddNewPosts || this._hasAdminRights(item.id, window.appUser.adminRights.GroupAdmins))) {
+            newArray.push(item);
+          } else {
+            console.log("Ignoring group:"+item.name);
+          }
+        }
+      }.bind(this));
+      return newArray;
+    },
+
+    _clear: function () {
+      this.set('selectedGroupId', null);
+      this.set('post', null);
+    },
+
+    setupAndOpen: function (post, refreshFunction) {
+      this.set('post', post);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+      this.$.getAvailableGroupsAjax.generateRequest();
+      this.open();
+    },
+
+    _setupTranslation: function () {
+      this.set('editHeaderText', this.t('post.move'));
+      this.set('toastText', this.t('post.haveMovedPost'));
+      this.set('saveText', this.t('post.move'));
+    }
+  });
+</script>
 </body></html>

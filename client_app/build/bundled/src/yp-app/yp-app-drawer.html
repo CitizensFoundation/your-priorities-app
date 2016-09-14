@@ -50,6 +50,40 @@
 
   </template>
 
-  <script>Polymer({is:"yp-app-drawer",properties:{user:{type:Object},opened:{type:Boolean},route:{type:String,observer:"routeChanged"}},behaviors:[Polymer.appHelpers],_openEdit:function(){var e=Polymer.dom(document).querySelector("yp-app").getDialog("userEdit");e.setup(this.user,!1,null),e.open("edit",{userId:this.user.id})},routeChanged:function(e,r){}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-app-drawer',
+
+      properties: {
+
+        user: {
+          type: Object
+        },
+
+        opened: {
+          type: Boolean
+        },
+
+        route: {
+          type: String,
+          observer: 'routeChanged'
+        }
+      },
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      _openEdit: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userEdit");
+        dialog.setup(this.user, false, null);
+        dialog.open('edit', { userId: this.user.id });
+      },
+
+      routeChanged: function(newValue, oldValue) {
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

@@ -201,6 +201,23 @@
     </template>
   </template>
 
-  <script>Polymer({is:"yp-community-card",behaviors:[Polymer.appHelpers,Polymer.CommunityBehaviors],properties:{featured:{type:Boolean,value:!1}}});</script>
+  <script>
+    Polymer({
+      is: 'yp-community-card',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.CommunityBehaviors
+      ],
+
+      properties: {
+        featured: {
+          type: Boolean,
+          value: false
+        }
+      }
+
+    });
+  </script>
 </dom-module>
 </body></html>

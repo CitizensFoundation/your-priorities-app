@@ -100,7 +100,25 @@
     </paper-card>
   </template>
 
-  <script>Polymer({is:"yp-post-card-add",properties:{elevation:{type:Number}},_newPost:function(){this.fire("new-post")},behaviors:[Polymer.appHelpers]});</script>
+  <script>
+    Polymer({
+      is: 'yp-post-card-add',
+
+      properties: {
+        elevation: {
+          type: Number
+        }
+      },
+
+      _newPost: function () {
+        this.fire('new-post');
+      },
+
+      behaviors: [
+        Polymer.appHelpers
+    ]
+    });
+  </script>
 </dom-module>
 <iron-iconset-svg name="av" size="24">
 <svg><defs>
@@ -302,14 +320,279 @@
             </div>
           </paper-menu-button>
         </template>
-        <div on-tap="_openDropDown" style="cursor: pointer">
+        <div on-tap="_openDropDown" style="cursor: pointer;">
           <h2 class="subTitle">[[subTitle]]</h2>
         </div>
       </div>
     </template>
   </template>
-  <script>Polymer({is:"yp-posts-filter",behaviors:[Polymer.appHelpers],properties:{filter:{type:String,value:"newest",notify:!0,observer:"_filterChanged"},filterName:{type:String},categoryId:{type:String,notify:!0,observer:"_categoryIdChanged"},categoryName:{type:String},group:{type:Object,observer:"_groupChanged"},subTitle:{type:String,value:""},searchingFor:{type:String,value:null,notify:!0,observer:"_searchingForChanged"},showFilter:{type:Boolean,value:!0},postsCount:{type:Number,notify:!0},tabName:{type:String}},observers:["_listLanguageChanged(language)"],_openDropDown:function(){var t=this.$$("#dropDownTrigger");t&&t.click()},_searchingForChanged:function(t,e){t?this.showFilter=!1:this.showFilter=!0},_clearSearch:function(){this.set("searchingFor",null),this.set("filter","newest"),this._updateAfterFiltering()},openFilter:function(){window.appGlobals.activity("open","filter")},_filterChanged:function(t,e){t&&(this.filterName="post."+this.filter,this._updateTitle())},_categoryIdChanged:function(t,e){t&&this._updateTitle()},_listLanguageChanged:function(t){t&&this.t&&this._updateTitle()},searchFor:function(t){this.set("searchingFor",t);var e="/group/"+this.group.id+"/open/"+this.group.name+"/search/"+this.searchingFor;window.appGlobals.activity("change","filter",e),this.redirectTo(e),this.fire("refresh-group")},_updateTitle:function(){if(this.searchingFor)this.subTitle=this.t("post.searchingFor")+this.searchingFor;else{var t,e=this.t(this.filterName);t=this.categoryName?this.categoryName:this.t("categories.all");var i=this.t("short_word.in");this._ifCategories()?(this.subTitle=e+" "+i+" "+t,this.postsCount&&(this.subTitle+=" ("+this.postsCount+")")):this.subTitle=e}},_changeFilter:function(t,e){this.set("filter",e.item.dataset.filter),this._updateAfterFiltering()},_changeCategory:function(t,e){var i=e.item.dataset.categoryId;"-1"!=i?(this.set("categoryId",i),this.categoryName=e.item.dataset.categoryName):(this.set("categoryId",null),this.categoryName=null,this.$$("#categoryMenu").selected=null,this.$$("#clearMenu").selected=null),this._updateTitle(),this._updateAfterFiltering()},buildPostsUrlPath:function(){var t="/group/"+this.group.id+"/"+this.tabName;return this.filter&&(t+="/posts/"+this.filter),this.categoryId&&(t+="/"+this.categoryId+"/"+this.categoryName),t},_updateAfterFiltering:function(){this.filter||this.set("filter","newest");var t=this.buildPostsUrlPath();window.appGlobals.activity("change","filter",t),this.fire("refresh-group")},_ifCategories:function(){return!!this.group&&(this.group.Categories&&this.group.Categories.length>0)},_groupChanged:function(t,e){t&&this._updateTitle()},_categoryItems:function(){return this.group.Categories?this.splitArray(this.group.Categories,7):[]},_categoryImageSrc:function(t){return this.getImageFormatUrl(t.CategoryIconImages,0)}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-posts-filter',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        filter: {
+          type: String,
+          value: "newest",
+          notify: true,
+          observer: "_filterChanged"
+        },
+
+        filterName: {
+          type: String
+        },
+
+        categoryId: {
+          type: String,
+          notify: true,
+          observer: "_categoryIdChanged"
+        },
+
+        categoryName: {
+          type: String
+        },
+
+        group: {
+          type: Object,
+          observer: "_groupChanged"
+        },
+
+        subTitle: {
+          type: String,
+          value: ''
+        },
+
+        searchingFor: {
+          type: String,
+          value: null,
+          notify: true,
+          observer: "_searchingForChanged"
+        },
+
+        showFilter: {
+          type: Boolean,
+          value: true
+        },
+
+        postsCount: {
+          type: Number,
+          notify: true
+        },
+
+        tabName: {
+          type: String
+        }
+      },
+
+      observers: [
+        '_listLanguageChanged(language)'
+      ],
+
+      _openDropDown: function () {
+        var trigger = this.$$("#dropDownTrigger");
+        if (trigger) {
+          trigger.click();
+        }
+      },
+
+      _searchingForChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.showFilter = false;
+        } else {
+          this.showFilter = true;
+        }
+      },
+
+      _clearSearch: function () {
+        this.set('searchingFor', null);
+        this.set('filter', 'newest');
+        this._updateAfterFiltering();
+      },
+
+      openFilter: function () {
+        window.appGlobals.activity('open', 'filter');
+      },
+
+      _filterChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.filterName = 'post.' + this.filter;
+          this._updateTitle();
+        }
+      },
+
+      _categoryIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this._updateTitle();
+        }
+      },
+
+      _listLanguageChanged: function (language) {
+        if (language && this.t) {
+          this._updateTitle();
+        }
+      },
+
+      searchFor: function (value) {
+        this.set('searchingFor', value);
+        var newLocation = '/group/' + this.group.id + '/open/' + this.group.name + '/search/' + this.searchingFor;
+        window.appGlobals.activity('change', 'filter', newLocation);
+        this.redirectTo(newLocation);
+        this.fire("refresh-group");
+      },
+
+      _updateTitle: function () {
+        if (this.searchingFor) {
+          this.subTitle = this.t('post.searchingFor') + this.searchingFor;
+        } else {
+          var translatedFilterName = this.t(this.filterName);
+          var translatedCategoryName;
+          if (this.categoryName) {
+            translatedCategoryName = this.categoryName;
+          } else {
+            translatedCategoryName = this.t('categories.all');
+          }
+          var inWord = this.t('short_word.in');
+          if (this._ifCategories()) {
+            this.subTitle = translatedFilterName + ' ' + inWord + ' ' + translatedCategoryName;
+            if (this.postsCount) {
+              this.subTitle += ' (' + this.postsCount + ')';
+            }
+          } else {
+            this.subTitle = translatedFilterName;
+          }
+        }
+      },
+
+      _changeFilter: function (e, detail) {
+        this.set('filter',detail.item.dataset.filter);
+        this._updateAfterFiltering();
+      },
+
+      _changeCategory: function (e, detail) {
+        var categoryId = detail.item.dataset.categoryId;
+        if (categoryId != '-1') {
+          this.set('categoryId',categoryId);
+          this.categoryName = detail.item.dataset.categoryName;
+        } else {
+          this.set('categoryId',null);
+          this.categoryName = null;
+          this.$$("#categoryMenu").selected = null;
+          this.$$("#clearMenu").selected = null;
+        }
+        this._updateTitle();
+        this._updateAfterFiltering();
+      },
+
+      buildPostsUrlPath: function () {
+        var newLocation = '/group/' + this.group.id + '/' + this.tabName;
+        if (this.filter) {
+          newLocation += '/posts/' + this.filter;
+        }
+        if (this.categoryId) {
+          newLocation += '/' + this.categoryId + '/' + this.categoryName;
+        }
+        return newLocation;
+      },
+
+      _updateAfterFiltering: function () {
+        if (!this.filter)
+          this.set('filter','newest');
+        var newLocation = this.buildPostsUrlPath();
+        window.appGlobals.activity('change', 'filter', newLocation);
+     //   this.redirectTo(newLocation);
+        this.fire("refresh-group");
+      },
+
+      _ifCategories: function () {
+        if (this.group) {
+          return this.group.Categories && this.group.Categories.length > 0;
+        } else {
+          return false;
+        }
+      },
+
+      _groupChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this._updateTitle();
+        }
+      },
+
+      _categoryItems: function () {
+        if (this.group.Categories)
+          return this.splitArray(this.group.Categories, 7);
+        else
+          return [];
+      },
+
+      _categoryImageSrc: function (category) {
+        return this.getImageFormatUrl(category.CategoryIconImages, 0);
+      }
+    });
+  </script>
 </dom-module>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><!--
+`<paper-badge>` is a circular text badge that is displayed on the top right
+corner of an element, representing a status or a notification. It will badge
+the anchor element specified in the `for` attribute, or, if that doesn't exist,
+centered to the parent node containing it.
+
+Badges can also contain an icon by adding the `icon` attribute and setting
+it to the id of the desired icon. Please note that you should still set the
+`label` attribute in order to keep the element accessible. Also note that you will need to import
+the `iron-iconset` that includes the icons you want to use. See [iron-icon](../iron-icon)
+for more information on how to import and use icon sets.
+
+Example:
+
+    <div style="display:inline-block">
+      <span>Inbox</span>
+      <paper-badge label="3"></paper-badge>
+    </div>
+
+    <div>
+      <paper-button id="btn">Status</paper-button>
+      <paper-badge icon="favorite" for="btn" label="favorite icon"></paper-badge>
+    </div>
+
+    <div>
+      <paper-icon-button id="account-box" icon="account-box" alt="account-box"></paper-icon-button>
+      <paper-badge icon="social:mood" for="account-box" label="mood icon"></paper-badge>
+    </div>
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-badge-background` | The background color of the badge | `--accent-color`
+`--paper-badge-opacity` | The opacity of the badge | `1.0`
+`--paper-badge-text-color` | The color of the badge text | `white`
+`--paper-badge-width` | The width of the badge circle | `20px`
+`--paper-badge-height` | The height of the badge circle | `20px`
+`--paper-badge-margin-left` | Optional spacing added to the left of the badge. | `0px`
+`--paper-badge-margin-bottom` | Optional spacing added to the bottom of the badge. | `0px`
+`--paper-badge` | Mixin applied to the badge | `{}`
+
+@group Paper Elements
+@element paper-badge
+@demo demo/index.html
+-->
+
 <dom-module id="paper-badge" assetpath="../../bower_components/paper-badge/">
   <template>
     <style>
@@ -354,8 +637,141 @@
     </div>
   </template>
 
-  <script>Polymer({is:"paper-badge",hostAttributes:{role:"status",tabindex:0},behaviors:[Polymer.IronResizableBehavior],listeners:{"iron-resize":"updatePosition"},properties:{for:{type:String,observer:"_forChanged"},label:{type:String,observer:"_labelChanged"},icon:{type:String,value:""}},attached:function(){this._updateTarget()},attributeChanged:function(t){"hidden"===t&&this.updatePosition()},_forChanged:function(){this.isAttached&&this._updateTarget()},_labelChanged:function(){this.setAttribute("aria-label",this.label)},_updateTarget:function(){this._target=this.target,this.async(this.notifyResize,1)},_computeIsIconBadge:function(t){return t.length>0},get target(){var t,e=Polymer.dom(this).parentNode,i=Polymer.dom(this).getOwnerRoot();return t=this.for?Polymer.dom(i).querySelector("#"+this.for):e.nodeType==Node.DOCUMENT_FRAGMENT_NODE?i.host:e},updatePosition:function(){if(this._target&&this.offsetParent){var t=this.offsetParent.getBoundingClientRect(),e=this._target.getBoundingClientRect(),i=this.getBoundingClientRect();this.style.left=e.left-t.left+(e.width-i.width/2)+"px",this.style.top=e.top-t.top-i.height/2+"px"}}});</script>
+  <script>
+    Polymer({
+      is: 'paper-badge',
+
+      hostAttributes: {
+        role: 'status',
+        tabindex: 0
+      },
+
+      behaviors: [
+        Polymer.IronResizableBehavior
+      ],
+
+      listeners: {
+        'iron-resize': 'updatePosition'
+      },
+
+      properties: {
+        /**
+         * The id of the element that the badge is anchored to. This element
+         * must be a sibling of the badge.
+         */
+        for: {
+          type: String,
+          observer: '_forChanged'
+        },
+
+        /**
+         * The label displayed in the badge. The label is centered, and ideally
+         * should have very few characters.
+         */
+        label: {
+          type: String,
+          observer: '_labelChanged'
+        },
+
+        /**
+         * An iron-icon ID. When given, the badge content will use an
+         * `<iron-icon>` element displaying the given icon ID rather than the
+         * label text. However, the label text will still be used for
+         * accessibility purposes.
+         */
+        icon: {
+          type: String,
+          value: ''
+        }
+      },
+
+      attached: function() {
+        this._updateTarget();
+      },
+
+      attributeChanged: function (name) {
+        if (name === 'hidden') {
+          this.updatePosition();
+        }
+      },
+
+      _forChanged: function() {
+        // The first time the property is set is before the badge is attached,
+        // which means we're not ready to position it yet.
+        if (!this.isAttached) {
+          return;
+        }
+        this._updateTarget();
+      },
+
+      _labelChanged: function() {
+        this.setAttribute('aria-label', this.label);
+      },
+
+      _updateTarget: function() {
+        this._target = this.target;
+        this.async(this.notifyResize, 1);
+      },
+
+      _computeIsIconBadge: function(icon) {
+        return icon.length > 0;
+      },
+
+      /**
+       * Returns the target element that this badge is anchored to. It is
+       * either the element given by the `for` attribute, or the immediate parent
+       * of the badge.
+       */
+      get target () {
+        var parentNode = Polymer.dom(this).parentNode;
+        // If the parentNode is a document fragment, then we need to use the host.
+        var ownerRoot = Polymer.dom(this).getOwnerRoot();
+        var target;
+
+        if (this.for) {
+          target = Polymer.dom(ownerRoot).querySelector('#' + this.for);
+        } else {
+          target = parentNode.nodeType == Node.DOCUMENT_FRAGMENT_NODE ?
+              ownerRoot.host : parentNode;
+        }
+
+        return target;
+      },
+
+      /**
+       * Repositions the badge relative to its anchor element. This is called
+       * automatically when the badge is attached or an `iron-resize` event is
+       * fired (for exmaple if the window has resized, or your target is a
+       * custom element that implements IronResizableBehavior).
+       *
+       * You should call this in all other cases when the achor's position
+       * might have changed (for example, if it's visibility has changed, or
+       * you've manually done a page re-layout).
+       */
+      updatePosition: function() {
+        if (!this._target)
+          return;
+
+        if (!this.offsetParent)
+          return;
+
+        var parentRect = this.offsetParent.getBoundingClientRect();
+        var targetRect = this._target.getBoundingClientRect();
+        var thisRect = this.getBoundingClientRect();
+
+        this.style.left = targetRect.left - parentRect.left +
+            (targetRect.width - thisRect.width / 2) + 'px';
+        this.style.top = targetRect.top - parentRect.top -
+            (thisRect.height / 2) + 'px';
+      }
+    })
+  </script>
 </dom-module>
+<!--
+Bar in which the user can enter search terms and filter
+
+@demo demo/paper-search-bar.html
+-->
 <dom-module id="paper-search-bar" assetpath="../../bower_components/paper-search/">
 
 	<template>
@@ -414,7 +830,144 @@
 
 </dom-module>
 
-<script>!function(){Polymer({is:"paper-search-bar",properties:{query:{type:String,notify:!0,value:""},hideFilterButton:{type:Boolean,value:!1},hideClearButton:{type:Boolean,value:!1},nrSelectedFilters:{type:Number,value:0},icon:{type:String,value:"search"},placeholder:{type:String,value:"Search"},_enabled:{type:Boolean,value:!1}},behaviors:[Polymer.IronA11yKeysBehavior],keyBindings:{enter:"_search"},_enable:function(e){this._enabled=!0,this.$.input.focus()},_filter:function(e){this.fire("paper-search-filter")},_clear:function(){this.query="",this.$.input.focus()},_search:function(){this._enabled=!1,this.fire("paper-search-search")}})}();</script>
+<script>
+
+	(function() {
+
+		Polymer({
+			is: 'paper-search-bar',
+
+			/**
+			 * Fired when the user requests to open the filtering dialog
+			 *
+			 * @event paper-search-filter
+			 */
+			/**
+			 * Fired when the user requests to search for a query
+			 *
+			 * @event paper-search-search
+			 */
+
+			properties: {
+				/**
+				 * Text for which the user is searching
+				 */
+				query: {
+					type: String,
+					notify: true,
+					value: ''
+				},
+				/**
+				 * Whether to hide the Filter button. Set attribute "hide-filter-button" to do so.
+				 */
+				hideFilterButton: {
+					type: Boolean,
+					value: false
+				},
+
+				/**
+				 * Whether to hide the Clear button. Set attribute "hide-clear-button" to do so.
+				 */
+				hideClearButton: {
+					type: Boolean,
+					value: false
+				},
+
+				/**
+				 * Number of filters the user has been selected (shown in the badge) (optional)
+				 */
+				nrSelectedFilters: {
+					type: Number,
+					value: 0
+				},
+				/**
+				 * Icon shown in the search background
+				 */
+				icon: {
+					type: String,
+					value: 'search'
+				},
+				/**
+				 * Text shown in the search box if the user didn't enter any query
+				 */
+				placeholder: {
+					type: String,
+					value: 'Search'
+				},
+
+				/**
+				 * Text input box is only opened when the user clicks on it. This avoids auto-focusing in Cordova applications.
+				 */
+				_enabled: {
+					type: Boolean,
+					value: false
+				}
+			},
+
+			behaviors: [
+				Polymer.IronA11yKeysBehavior
+			],
+
+			keyBindings: {
+				'enter': '_search'
+			},
+
+			// Private methods
+			_enable: function(e) {
+				this._enabled = true;
+				this.$.input.focus();
+			},
+			_filter: function(e) {
+				this.fire('paper-search-filter');
+			},
+			_clear: function() {
+				this.query = "";
+				this.$.input.focus();
+			},
+			_search: function() {
+				this._enabled = false;
+
+				this.fire('paper-search-search');
+			}
+		});
+
+	})();
+
+</script>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><!--
+Use `<paper-item-body>` in a `<paper-item>` or `<paper-icon-item>` to make two- or
+three- line items. It is a flex item that is a vertical flexbox.
+
+    <paper-item>
+      <paper-item-body two-line>
+        <div>Show your status</div>
+        <div secondary>Your status is visible to everyone</div>
+      </paper-item-body>
+    </paper-item>
+
+The child elements with the `secondary` attribute is given secondary text styling.
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-item-body-two-line-min-height`   | Minimum height of a two-line item          | `72px`
+`--paper-item-body-three-line-min-height` | Minimum height of a three-line item        | `88px`
+`--paper-item-body-secondary-color`       | Foreground color for the `secondary` area  | `--secondary-text-color`
+`--paper-item-body-secondary`             | Mixin applied to the `secondary` area      | `{}`
+
+-->
+
 <dom-module id="paper-item-body" assetpath="../../bower_components/paper-item/">
   <template>
     <style>
@@ -451,8 +1004,17 @@
     <content></content>
   </template>
 
-  <script>Polymer({is:"paper-item-body"});</script>
+  <script>
+    Polymer({
+      is: 'paper-item-body'
+    });
+  </script>
 </dom-module>
+<!--
+Dialog with which the user can filter the result set
+
+@demo demo/paper-filter-dialog.html
+-->
 <dom-module id="paper-filter-dialog" assetpath="../../bower_components/paper-search/">
 
 	<template>
@@ -560,7 +1122,229 @@
 	</template>
 </dom-module>
 
-<script>!function(){Polymer({is:"paper-filter-dialog",properties:{filters:Array,selectedFilters:{type:Object,notify:!0,value:{}},resetButton:{type:String,value:"Reset"},saveButton:{type:String,value:"Save filters"},noValuesLabel:{type:String,value:"No filters yet"},_selectedFilters:{type:Object,value:{}},_selectedFilter:Object,_forceRedrawDummy:{type:Number,value:0}},open:function(){Polymer.dom(document.body).appendChild(this),setTimeout(function(){this.$.dialog.open(),this._selectedFilters={};for(var e in this.selectedFilters)this._selectedFilters[e]=this.selectedFilters[e];this._redrawFilterValues(),this.$.valuesList.fire("iron-resize")}.bind(this),1)},close:function(){this.$.dialog.close()},_tapSelectFilter:function(e){this.$.selector.select(e.model.filter),this._preselectFilterValues()},_preselectFilterValues:function(){var e=this._selectedFilters[this._selectedFilter.id];"undefined"!=typeof e&&"undefined"!=typeof this._selectedFilter.values&&(this.$.valuesList.clearSelection(),this._selectedFilter.values.forEach(function(t){e.indexOf(t.id)>=0&&this.$.valuesList.selectItem(t)}.bind(this)))},_tapReset:function(e){this._selectedFilters={},this._redrawFilterValues()},_tapApply:function(e){this.selectedFilters=this._selectedFilters,this.fire("save")},_tapSelectValues:function(e){var t=[];this.$.valuesList.selectedItems.forEach(function(e){t.push(e.id)}),this._selectedFilters[this._selectedFilter.id]=t,this.$.selector.deselect(this._selectedFilter),this._redrawFilterValues()},_hasSelectedFilters:function(e,t){for(selectedFilter in e)if(e[selectedFilter].length>0)return!0;return!1},_getSelectedValuesNames:function(e,t,i){var s=t[e.id];if("undefined"==typeof e.values||"undefined"==typeof s)return this.noValuesLabel;var l=[];return e.values.forEach(function(e){s.indexOf(e.id)>=0&&l.push(e.name)}),0===l.length?this.noValuesLabel:l.join(", ")},_redrawFilterValues:function(){this._forceRedrawDummy=Math.random()},_getSelectedPage:function(e){return e?1:0}})}();</script>
+<script>
+
+(function() {
+
+	Polymer({
+		is: 'paper-filter-dialog',
+
+		/**
+		 * Fired when the user requests to save the filter selection
+		 *
+		 * @event save
+		 */
+
+		properties: {
+			/**
+			 * All filters from which the user can choose
+			 */
+			filters: Array,
+			/**
+			 * All filters that have been selected by the user, e.g. `{ age: [ "child", "teen" ] }`
+			 */
+			selectedFilters: {
+				type: Object,
+				notify: true,
+				value: {}
+			},
+
+			/**
+			 * Text for the reset button. Use this property to localize the element.
+			 */
+			resetButton: {
+				type: String,
+				value: 'Reset'
+			},
+
+			/**
+			 * Text for the save button. Use this property to localize the element.
+			 */
+			saveButton: {
+				type: String,
+				value: 'Save filters'
+			},
+
+			/**
+			 * Label shown if no values are selected for a filter. Use this property to localize the element.
+			 */
+			noValuesLabel: {
+				type: String,
+				value: 'No filters yet'
+			},
+
+			/**
+			 * Internal copy that is changed. Copied back to original variable only once the user clicks on [Apply]
+			 */
+			_selectedFilters: {
+				type: Object,
+				value: {}
+			},
+			_selectedFilter: Object,
+			_forceRedrawDummy: {
+				type: Number,
+				value: 0
+			}
+		},
+
+		// Public methods
+		/**
+		 * Opens the filter dialog
+		 */
+		open: function() {
+			// Attach dialog to the body to ensure it's on top of all existing overlays
+			Polymer.dom(document.body).appendChild(this);
+
+			// Wait until dialog is added to the DOM (required for Safari)
+			setTimeout(function() {
+				this.$.dialog.open();
+
+				// Clone selected filters, so it can be changed without touching the external property
+				this._selectedFilters = {};
+				for (var selectedFilterId in this.selectedFilters) {
+					this._selectedFilters[selectedFilterId] = this.selectedFilters[selectedFilterId];
+				}
+
+				// Redraw filters in case they are still here from a formerly filtering attempt that was cancelled
+				this._redrawFilterValues();
+
+				// @see https://github.com/PolymerElements/neon-animation/issues/60#issuecomment-152345020
+				this.$.valuesList.fire('iron-resize');
+			}.bind(this), 1);
+		},
+
+		close: function() {
+			this.$.dialog.close();
+		},
+
+		// Actions
+		_tapSelectFilter: function(e) {
+			this.$.selector.select(e.model.filter);
+
+			this._preselectFilterValues();
+		},
+		// Pre-select selected filter values
+		_preselectFilterValues: function() {
+			var selectedValueIds = this._selectedFilters[this._selectedFilter.id];
+			if (typeof selectedValueIds !== 'undefined' && typeof this._selectedFilter.values !== 'undefined') {
+				this.$.valuesList.clearSelection();
+				this._selectedFilter.values.forEach(function(value) {
+					if (selectedValueIds.indexOf(value.id) >= 0) {
+						// Value is selected
+						this.$.valuesList.selectItem(value);
+					}
+				}.bind(this));
+			}
+		},
+		_tapReset: function(e) {
+			this._selectedFilters = {};
+			this._redrawFilterValues();
+		},
+		_tapApply: function(e) {
+			this.selectedFilters = this._selectedFilters;
+
+			this.fire('save');
+		},
+		_tapSelectValues: function(e) {
+			// Captured selected valuesList
+			var selectedValues = [];
+			this.$.valuesList.selectedItems.forEach(function(selectedItem) {
+				selectedValues.push(selectedItem.id);
+			});
+			this._selectedFilters[this._selectedFilter.id] = selectedValues;
+
+			this.$.selector.deselect(this._selectedFilter);
+
+			this._redrawFilterValues();
+		},
+
+		// Returns if any filters were selected
+		_hasSelectedFilters: function(_selectedFilters, _forceRedrawDummy) {
+			// Iterate until we find a filter that is selected
+			for (selectedFilter in _selectedFilters) {
+				if (_selectedFilters[selectedFilter].length > 0) {
+					return true;
+				}
+			}
+
+			return false;
+		},
+		// Returns the concated names of the selected values for a specific filter
+		_getSelectedValuesNames: function(filter, _selectedFilters, _forceRedrawDummy) {
+			var selectedValueIds = _selectedFilters[filter.id];
+			if (typeof filter.values === 'undefined' || typeof selectedValueIds === 'undefined') {
+				return this.noValuesLabel;
+			}
+
+			// Look up names
+			var names = [];
+			filter.values.forEach(function(value) {
+				// Add names of values that are selected
+				if (selectedValueIds.indexOf(value.id) >= 0) {
+					names.push(value.name);
+				}
+			});
+
+			if (names.length === 0) {
+				return this.noValuesLabel;
+			}
+
+			return names.join(', ');
+		},
+		// Forces to redraw filters (required because Polymer doesn't pick up all data changes to arrays)
+		_redrawFilterValues: function() {
+			this._forceRedrawDummy = Math.random();
+		},
+		_getSelectedPage: function(_selectedFilter) {
+			// Show all filters if no filter is selected
+			return !_selectedFilter ? 0 : 1;
+		}
+	});
+
+})();
+
+</script>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><!--
+Material design: [Progress & activity](https://www.google.com/design/spec/components/progress-activity.html)
+
+Element providing a single color material design circular spinner.
+
+    <paper-spinner-lite active></paper-spinner-lite>
+
+The default spinner is blue. It can be customized to be a different color.
+
+### Accessibility
+
+Alt attribute should be set to provide adequate context for accessibility. If not provided,
+it defaults to 'loading'.
+Empty alt can be provided to mark the element as decorative if alternative content is provided
+in another form (e.g. a text block following the spinner).
+
+    <paper-spinner-lite alt="Loading contacts list" active></paper-spinner-lite>
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-spinner-color` | Color of the spinner | `--google-blue-500`
+`--paper-spinner-stroke-width` | The width of the spinner stroke | 3px
+
+@group Paper Elements
+@element paper-spinner-lite
+@hero hero.svg
+@demo demo/index.html
+-->
+
 <dom-module id="paper-spinner-lite" assetpath="../../bower_components/paper-spinner/">
   <template strip-whitespace="">
     <style include="paper-spinner-styles"></style>
@@ -573,8 +1357,27 @@
     </div>
   </template>
 
-  <script>Polymer({is:"paper-spinner-lite",behaviors:[Polymer.PaperSpinnerBehavior]});</script>
+  <script>
+    Polymer({
+      is: 'paper-spinner-lite',
+
+      behaviors: [
+        Polymer.PaperSpinnerBehavior
+      ]
+    });
+  </script>
 </dom-module>
+<!--
+A material design button to load more items in a list.
+
+### Example
+
+```html
+<paper-more-button has-more=[[hasMore]] loading=[[loading]]>More</paper-more-button>
+```
+
+@demo demo/index.html
+-->
 <dom-module id="paper-more-button" assetpath="../../bower_components/paper-more-button/">
 
 	<template>
@@ -584,7 +1387,69 @@
 
 </dom-module>
 
-<script>!function(){Polymer({is:"paper-more-button",properties:{hasMore:{type:Boolean,value:!1},loading:{type:Boolean,value:!1}},_tapMore:function(){this.fire("tap-more")},_showMore:function(e,o){return e&&!o}})}();</script>
+<script>
+
+(function() {
+
+	Polymer({
+		is: 'paper-more-button',
+
+	    properties: {
+	    	/**
+	    	 * True if the lister has more items than currently shown
+	    	 */
+			hasMore: {
+				type: Boolean,
+				value: false
+			},
+
+	    	/**
+	    	 * True if the lister is currently loading items
+	    	 */
+			loading: {
+				type: Boolean,
+				value: false
+			}
+		},
+		
+		// Private methods
+		_tapMore: function() {
+			this.fire('tap-more');
+		},
+		_showMore: function(hasMore, loading) {
+			return hasMore && !loading;
+		}
+	});
+
+})();
+
+</script>
+<!--
+Panel with a search bar and filtering dialog.
+
+### Example
+
+```html
+<paper-search-panel
+  search="{{search}}"
+  count="{{count}}"
+  items="[[items]]"
+  has-more="[[hasMore]]"
+  loading="[[loading]]"
+  filters="[[filters]]"
+  selected-filters="{{selectedFilters}}"
+  on-change-request-params="loadData">
+  <div>
+  	Show your [[count]] results for "[[search]]"
+  </div>
+</paper-search-panel>
+```
+
+The content is hidden if no results are available. Content with attribute `fixed`
+is shown even without no results (check the demo for an example).
+
+@demo demo/paper-search-panel.html
+-->
 <dom-module id="paper-search-panel" assetpath="../../bower_components/paper-search/">
 
 	<template>
@@ -633,7 +1498,183 @@
 	</template>
 </dom-module>
 
-<script>!function(){Polymer({is:"paper-search-panel",properties:{search:{type:String,observer:"_onChangeRequest",notify:!0},filters:Object,selectedFilters:{type:Object,observer:"_onChangeRequest",notify:!0,value:{}},items:Array,hasMore:Boolean,loading:{type:Boolean,value:!1},hideFilterButton:{type:Boolean,value:!1},count:{type:Number,notify:!0,value:20},icon:{type:String,value:"search"},placeholder:{type:String,value:"Search"},noResultsText:{type:String,value:"No matching results found."},moreButton:{type:String,value:"More"},resetButton:String,saveButton:String,noValuesLabel:String,_hasItems:{type:Boolean,computed:"_computeHasItems(items)",value:!1}},_loadMore:function(){this.count+=20,this._updateData()},_computeHasItems:function(e){return"undefined"!=typeof e&&e.length>0},_showNoResults:function(e,t){return!e&&!t},_onChangeRequest:function(e,t){"undefined"!=typeof t&&(this.count=20,this._updateData())},_updateData:function(){this.fire("change-request-params")},_onFilter:function(){this.$.filterDialog.open()},_onSearch:function(){this.fire("search")},_getNrSelectedFilters:function(e){if(Object.keys(e).length<=0)return 0;var t=Object.keys(e).map(function(t){return e[t].length}).reduce(function(e,t){return e+t});return t}})}();</script>
+<script>
+
+(function() {
+
+	Polymer({
+		is: 'paper-search-panel',
+
+		/**
+		 * Fired when the user changes the parameter defining the currently shown items
+		 *
+		 * @event change-request-params
+		 */
+		 /**
+		 * Fired when the user requests to search for a query
+		 *
+		 * @event search
+		 */
+
+		properties: {
+			/**
+			 * Query for which the user was searching
+			 */
+			search: {
+				type: String,
+				observer: '_onChangeRequest',
+				notify: true
+			},
+			/**
+			 * All filters from which the user can choose
+			 */
+			filters: Object,
+			/**
+			 * All filters that have been selected by the user, e.g. `{ age: [ "child", "teen" ] }`
+			 */
+			selectedFilters: {
+				type: Object,
+				observer: '_onChangeRequest',
+				notify: true,
+				value: {}
+			},
+			/**
+			 * Items that are currently shown in the lister
+			 */
+			items: Array,
+			/**
+			 * True if further items could be loaded
+			 */
+			hasMore: Boolean,
+			/**
+			 * True if items are currently loaded
+			 */
+			loading: {
+				type: Boolean,
+				value: false
+			},
+
+			/**
+             * Whether to hide the Filter button. Set attribute "hide-filter-button" to do so.
+             */
+            hideFilterButton: {
+                type: Boolean,
+                value: false
+            },
+
+			/**
+			 * Number of items loaded per page (i.e. for each click on [more])
+			 */
+			count: {
+				type: Number,
+				notify: true,
+				value: 20
+			},
+			/**
+			 * Icon shown in the search background
+			 */
+			icon: {
+				type: String,
+				value: 'search'
+			},
+			/**
+			 * Text shown in the search box if the user didn't enter any query
+			 */
+			placeholder: {
+				type: String,
+				value: 'Search'
+			},
+
+			/**
+			 * Text shown if no results are found. Use this property to localize the element.
+			 */
+			noResultsText: {
+				type: String,
+				value: 'No matching results found.'
+			},
+
+			/**
+			 * Text for the more button to load more data. Use this property to localize the element.
+			 */
+			moreButton: {
+				type: String,
+				value: 'More'
+			},
+
+			/**
+			 * Text for the reset button in the filter dialog. Use this property to localize the element.
+			 */
+			resetButton: String,
+
+			/**
+			 * Text for the save button in the filter dialog. Use this property to localize the element.
+			 */
+			saveButton: String,
+
+			/**
+			 * Label shown if no values are selected for a filter. Use this property to localize the element.
+			 */
+			noValuesLabel: String,
+
+			_hasItems: {
+				type: Boolean,
+				computed: '_computeHasItems(items)',
+				value: false
+			}
+		},
+
+		// Private methods
+		_loadMore: function() {
+			this.count += 20;
+
+			this._updateData();
+		},
+		_computeHasItems: function(items) {
+			return typeof items !== 'undefined' && items.length > 0;
+		},
+		_showNoResults: function(_hasItems, loading) {
+			return !_hasItems && !loading;
+		},
+		_onChangeRequest: function(newValue, oldValue) {
+			// Ignore initial setting of properties (caller is supposed to trigger this call automatically)
+			if (typeof oldValue !== 'undefined') {
+				// Set back to default to avoid endless listers
+				this.count = 20;
+				this._updateData();
+			}
+		},
+		_updateData: function() {
+			this.fire('change-request-params');
+		},
+		_onFilter: function() {
+			this.$.filterDialog.open();
+		},
+		_onSearch: function() {
+			this.fire('search');
+		},
+		// Counts the selected filters
+		_getNrSelectedFilters: function(selectedFilters) {
+			if (Object.keys(selectedFilters).length <= 0) {
+				return 0;
+			}
+
+			var nrSelectedFilters = Object.keys(selectedFilters)
+				.map(function(key) {
+					// Returns number of selected value for a filter
+					return selectedFilters[key].length;
+				})
+				.reduce(function(sum, value) {
+					// Sum up the selected values across filters
+					return sum + value;
+				});
+
+			return nrSelectedFilters;
+		}
+	});
+
+})();
+
+</script>
 <dom-module id="yp-post-list" assetpath="../yp-post/">
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -789,7 +1830,205 @@
     </div>
   </template>
 
-  <script>Polymer({is:"yp-post-list",behaviors:[Polymer.appHelpers,Polymer.YpScrollTabBehavior],properties:{categories:{type:Array},defaultCategories:{type:Boolean,value:!1},posts:{type:Array,value:null,notify:!0},groupId:{type:Number,observer:"_groupIdChanged"},userId:{type:Number},group:{type:Object,notify:!0},filter:{type:String,value:"newest",observer:"_filterChanged"},statusFilter:{type:String,value:"open",notify:!0},categoryId:{type:String,observer:"_categoryIdChanged"},postsCount:{type:Number,notify:!0},categoryName:{type:String},searchingFor:{type:String,value:null,observer:"_searchingForChanged"},selectedCategoryName:{type:String},tabCounterId:{type:String},oldestPostAt:{type:Date}},_search:function(){window.appGlobals.activity("click","search"),this._refreshGroupFromFilter()},cardMouseOver:function(t){t.currentTarget.elevation=4},cardMouseOut:function(t){t.currentTarget.elevation=1},buildPostsUrlPath:function(){return this.$.postsFilter.buildPostsUrlPath()},_searchingForChanged:function(t,e){},_filterChanged:function(t,e){},_categoryIdChanged:function(t,e){},ready:function(){},_groupIdChanged:function(t,e){this.set("posts",null),t&&this._loadMoreData()},_refreshGroupFromFilter:function(){this.set("posts",null),this._loadMoreData()},_loadMoreData:function(){this.set("moreToLoad",!1);var t,e;this.userId?(t=this.userId+"/posts",e="users"):(t=this.groupId,e="groups"),this.filter||this.set("filter","newest"),this.searchingFor?this.$$("#ajax").url="/api/"+e+"/"+t+"/search/"+this.searchingFor:(this.$$("#ajax").url="/api/"+e+"/"+t+"/posts/"+this.filter,this.categoryId?this.$$("#ajax").url+="/"+this.categoryId:this.$$("#ajax").url+="/null",this.$$("#ajax").url+="/"+this.statusFilter),this.$$("#ajax").url+="?offset="+(null!=this.posts?this.posts.length:0),this.$$("#ajax").generateRequest()},_postsResponse:function(t,e,s){this.posts||this.set("posts",[]);var r=e.response.posts;this.set("postsCount",e.response.totalPostsCount),this.fire("yp-post-count",{tabCounterId:this.tabCounterId,count:this.postsCount}),this.$$("#postsFilter")._updateTitle(),r.forEach(function(t){this.push("posts",t)}.bind(this)),this.async(function(){this.$$("#list").fire("iron-resize")},10),r.length>0&&r.length!=this.postsCount&&this.setMoreToLoad(),this._processCategories()},_processCategories:function(){if(this.categoryId&&this.group)for(var t=0;t<this.group.Categories.length;t++)this.group.Categories[t].id==this.categoryId&&(this.selectedCategoryName=this.group.Categories[t].name);else this.selectedCategoryName="categories.all"}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-post-list',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.YpScrollTabBehavior
+      ],
+
+      properties: {
+
+        categories: {
+          type: Array
+          },
+
+        defaultCategories: {
+          type: Boolean,
+          value: false
+        },
+
+        posts: {
+          type: Array,
+          value: null,
+          notify: true
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        userId: {
+          type: Number
+        },
+
+        group: {
+          type: Object,
+          notify: true
+        },
+
+        filter: {
+          type: String,
+          value: "newest",
+          observer: "_filterChanged"
+        },
+
+        statusFilter: {
+          type: String,
+          value: "open",
+          notify: true
+        },
+
+        categoryId: {
+          type: String,
+          observer: "_categoryIdChanged"
+        },
+
+        postsCount: {
+          type: Number,
+          notify: true
+        },
+
+        categoryName: {
+          type: String
+        },
+
+        searchingFor: {
+          type: String,
+          value: null,
+          observer: "_searchingForChanged"
+        },
+
+        selectedCategoryName: {
+          type: String
+        },
+
+        tabCounterId: {
+          type: String
+        },
+
+        oldestPostAt: {
+          type: Date
+        }
+      },
+
+      _search: function () {
+        window.appGlobals.activity('click', 'search');
+        this._refreshGroupFromFilter();
+      },
+
+      cardMouseOver: function (event) {
+        event.currentTarget.elevation = 4;
+      },
+
+      cardMouseOut: function (event) {
+        event.currentTarget.elevation = 1;
+      },
+
+      buildPostsUrlPath: function () {
+        return this.$.postsFilter.buildPostsUrlPath();
+      },
+
+      _searchingForChanged: function (newValue, oldValue) {
+      },
+
+      _filterChanged: function (newValue, oldValue) {
+      },
+
+      _categoryIdChanged: function (newValue, oldValue) {
+      },
+
+      ready: function () {
+
+      },
+
+      _groupIdChanged: function (newValue, oldValue) {
+        this.set("posts", null);
+        if (newValue) {
+          this._loadMoreData();
+        }
+      },
+
+      _refreshGroupFromFilter: function () {
+        this.set("posts", null);
+        this._loadMoreData();
+      },
+
+      _loadMoreData: function () {
+        this.set('moreToLoad', false);
+        var objectId, objectType;
+
+        if (this.userId) {
+          objectId = this.userId + '/posts';
+          objectType = 'users';
+        } else {
+          objectId = this.groupId;
+          objectType = 'groups';
+        }
+
+        if (!this.filter)
+          this.set('filter','newest');
+        if (this.searchingFor) {
+          this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
+        } else {
+          this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
+          if (this.categoryId) {
+            this.$$('#ajax').url += '/' + this.categoryId;
+          } else {
+            this.$$('#ajax').url += '/null';
+          }
+          this.$$('#ajax').url += '/'+this.statusFilter;
+        }
+        this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
+        this.$$('#ajax').generateRequest();
+      },
+
+      _postsResponse: function (event, detail, sender) {
+        if (!this.posts) {
+          this.set('posts', []);
+        }
+        var posts = detail.response.posts;
+        this.set('postsCount', detail.response.totalPostsCount);
+        this.fire('yp-post-count', {
+          tabCounterId: this.tabCounterId,
+          count: this.postsCount
+        } );
+
+        this.$$("#postsFilter")._updateTitle();
+        posts.forEach(function(post) {
+          this.push('posts', post);
+        }.bind(this));
+
+        this.async(function () {
+          this.$$("#list").fire('iron-resize');
+        },10);
+
+        if (posts.length>0 && posts.length!=this.postsCount) {
+          this.setMoreToLoad();
+        }
+
+        this._processCategories();
+      },
+
+      _processCategories: function () {
+        if (this.categoryId && this.group) {
+          for (var i = 0; i < this.group.Categories.length; i++) {
+            if (this.group.Categories[i].id == this.categoryId) {
+              this.selectedCategoryName = this.group.Categories[i].name;
+              //this.$.layout.updateFilter();
+            }
+          }
+        } else {
+          this.selectedCategoryName = 'categories.all';
+          //this.$.layout.updateFilter();
+        }
+      }
+    });
+  </script>
 </dom-module>
 <dom-module id="yp-group-card-large" assetpath="/">
 
@@ -954,7 +2193,150 @@
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
 
-  <script>Polymer({is:"yp-group-card-large",behaviors:[Polymer.appHelpers,Polymer.GroupBehaviors,Polymer.LargeCardBehaviors,Polymer.AccessHelpers,Polymer.ypGotAdminRightsBehavior],properties:{group:{type:Object,observer:"_groupChanged"},hasGroupAccess:{type:Boolean,value:!1,computed:"_hasGroupAccess(group, gotAdminRights)"},groupAccessText:{type:String,computed:"_groupAccessText(group, language)"}},_hasGroupAccess:function(e,o){return!(!e||!o)&&null!=this.checkGroupAccess(e)},resetGroup:function(){this.set("group",null)},_groupChanged:function(e){},_groupAccessText:function(e,o){if(!e||!o)return"";switch(e.access){case 0:return this.t("group.public");case 1:return this.t("group.closed");case 2:return this.t("group.secret")}},_menuSelection:function(e,o){"editMenuItem"==o.item.id?this._openEdit():"newCategoryMenuItem"==o.item.id?this._openCategoryEdit():"deleteMenuItem"==o.item.id?this._openDelete():"usersMenuItem"==o.item.id?this._openUsersDialog():"adminsMenuItem"==o.item.id?this._openAdminsDialog():"pagesMenuItem"==o.item.id&&this._openPagesDialog(),this.selectedMenuItem=null},_openPagesDialog:function(){window.appGlobals.activity("open","group.pagesAdmin");var e=Polymer.dom(document).querySelector("yp-app").getDialog("pagesGrid");e.setup(this.group.id,null,null,!1),e.open()},_openUsersDialog:function(){window.appGlobals.activity("open","group.users");var e=Polymer.dom(document).querySelector("yp-app").getDialog("usersGrid");e.setup(this.group.id,null,null,!1),e.open()},_openAdminsDialog:function(){window.appGlobals.activity("open","group.admins");var e=Polymer.dom(document).querySelector("yp-app").getDialog("usersGrid");e.setup(this.group.id,null,null,!0),e.open()},_openEdit:function(){window.appGlobals.activity("open","group.new");var e=Polymer.dom(document).querySelector("yp-app").getDialog("groupEdit");e.setup(this.group,!1,this._refresh.bind(this)),e.open("edit",{groupId:this.group.id})},_openDelete:function(){window.appGlobals.activity("open","group.delete");var e=Polymer.dom(document).querySelector("yp-app").getDialog("deleteDialog");e.setup("/api/groups/",this.group.id,this.t("group.deleteConfirmation"),this._onDeleted.bind(this)),e.open()},_openCategoryEdit:function(){window.appGlobals.activity("open","category.new");var e=Polymer.dom(document).querySelector("yp-app").getDialog("categoryEdit");e.setup(this.group,!0,this._refreshCategory.bind(this)),e.open("new",{groupId:this.group.id})},_refreshCategory:function(e){this.fire("update-group")},_onDeleted:function(){this.redirectTo("/community/"+this.group.community_id)},_newCategory:function(){this.$$("#newCategory").open("new",{groupId:this.group.id})},_refresh:function(e){e&&this.set("group",e),this.fire("update-group")}});</script>
+  <script>
+    Polymer({
+      is: 'yp-group-card-large',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.GroupBehaviors,
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior
+      ],
+
+      properties: {
+        group: {
+          type: Object,
+          observer: '_groupChanged'
+        },
+
+        hasGroupAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasGroupAccess(group, gotAdminRights)'
+        },
+
+        groupAccessText: {
+          type: String,
+          computed: '_groupAccessText(group, language)'
+        }
+      },
+
+      _hasGroupAccess: function(group, gotAdminRights) {
+        if (group && gotAdminRights) {
+          return (this.checkGroupAccess(group)!=null);
+        } else {
+          return false;
+        }
+      },
+
+      resetGroup: function () {
+        this.set('group', null);
+      },
+
+      _groupChanged: function (group) {
+      },
+
+      _groupAccessText: function(group, language) {
+        if (group && language) {
+          switch (group.access) {
+            case 0: // Public
+              return this.t("group.public");
+              break;
+            case 1: // Closed
+              return this.t("group.closed");
+              break;
+            case 2: //Secert
+              return this.t("group.secret");
+              break;
+          }
+        } else {
+          return "";
+        }
+      },
+
+      _menuSelection: function (event, detail) {
+        if (detail.item.id=="editMenuItem")
+          this._openEdit();
+        else if (detail.item.id=="newCategoryMenuItem")
+          this._openCategoryEdit();
+        else if (detail.item.id=="deleteMenuItem")
+          this._openDelete();
+        else if (detail.item.id=="usersMenuItem")
+          this._openUsersDialog();
+        else if (detail.item.id=="adminsMenuItem")
+          this._openAdminsDialog();
+        else if (detail.item.id=="pagesMenuItem")
+          this._openPagesDialog();
+        this.selectedMenuItem = null;
+      },
+
+      _openPagesDialog: function () {
+        window.appGlobals.activity('open', 'group.pagesAdmin');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pagesGrid");
+        dialog.setup(this.group.id, null, null, false);
+        dialog.open();
+      },
+
+      _openUsersDialog: function () {
+        window.appGlobals.activity('open', 'group.users');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
+        dialog.setup(this.group.id, null, null, false);
+        dialog.open();
+      },
+
+      _openAdminsDialog: function () {
+        window.appGlobals.activity('open', 'group.admins');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
+        dialog.setup(this.group.id, null, null, true);
+        dialog.open();
+      },
+
+      _openEdit: function () {
+        window.appGlobals.activity('open', 'group.new');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupEdit");
+        dialog.setup(this.group, false, this._refresh.bind(this));
+        dialog.open('edit', { groupId: this.group.id });
+      },
+
+      _openDelete: function () {
+        window.appGlobals.activity('open', 'group.delete');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
+        dialog.setup('/api/groups/', this.group.id,
+          this.t('group.deleteConfirmation'),
+          this._onDeleted.bind(this));
+        dialog.open();
+      },
+
+      _openCategoryEdit: function () {
+        window.appGlobals.activity('open', 'category.new');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("categoryEdit");
+        dialog.setup(this.group, true, this._refreshCategory.bind(this));
+        dialog.open("new", { groupId: this.group.id });
+      },
+
+      _refreshCategory: function (category) {
+        this.fire("update-group");
+      },
+
+      _onDeleted: function () {
+        this.redirectTo("/community/"+this.group.community_id);
+      },
+
+      _newCategory: function () {
+
+        this.$$("#newCategory").open('new', { groupId: this.group.id });
+      },
+
+      _refresh: function (group) {
+        if (group) {
+          this.set('group', group);
+        }
+        this.fire("update-group");
+      }
+    });
+  </script>
 </dom-module>
 </div><dom-module id="yp-group">
   <template>
@@ -1060,6 +2442,238 @@
 
   </template>
 
-  <script>Polymer({is:"yp-group",behaviors:[Polymer.appHelpers,Polymer.ypThemeBehavior],listeners:{"yp-post-count":"_updateTabPostCount"},properties:{idRoute:Object,tabRoute:Object,idRouteData:Object,tabRouteData:Object,listRoute:Object,createFabIcon:{type:String,value:null,notify:!0},groupId:{type:Number,observer:"_groupIdChanged"},group:{type:Object,notify:!0,value:null},searchingFor:{type:String,value:null},selectedTab:{type:String,value:"open",observer:"_selectedTabChanged"},hasNonOpenPosts:{type:Boolean,value:!1,observer:"_hasNonOpenPostsChanged"},mapActive:{type:Boolean,value:!1},lastValidGroupId:{type:String},disableNewPosts:{type:Boolean,value:!1}},observers:["_routeIdChanged(idRouteData.id)","_routeTabChanged(tabRouteData.tabName)"],_routeIdChanged:function(e){e&&this.set("groupId",e)},_routeTabChanged:function(e){e&&this.set("selectedTab",e)},_selectedTabChanged:function(e){this.group&&this.redirectTo("/group/"+this.group.id+"/"+e),"map"==e?this.set("mapActive",!0):this.set("mapActive",!1),e&&window.appGlobals&&window.appGlobals.activity("open","group_tab_"+e)},_hasNonOpenPostsChanged:function(){this.async(function(){var e=this.$$("#tabPages");e&&e.forceSynchronousItemUpdate();var t=this.$$("#paperTabs");t&&(t.forceSynchronousItemUpdate(),t.notifyResize())},10)},_updateTabPostCount:function(e,t){var o=this.$$("#"+t.tabCounterId);o&&(o.innerHTML=this.formatNumber(t.count))},_searchingForChanged:function(e,t){},_filterChanged:function(e,t){},_categoryIdChanged:function(e,t){},_openEdit:function(){this.$$("#groupEdit").open("edit",{groupId:this.group.id})},_refreshAjax:function(){this.$.ajax.generateRequest(),this.$$("#groupActivities").loadNewData()},ready:function(){},_groupIdChanged:function(e,t){e&&e!=this.lastValidGroupId&&(this.set("lastValidGroupId",e),this.set("group",null),this.$.groupCard.resetGroup(),this.$.tabCountOpen.innerHTML="",this.hasNonOpenPosts&&(this.$$("#tabCountInProgress").innerHTML="",this.$$("#tabCountSuccessful").innerHTML="",this.$$("#tabCountFailed").innerHTML=""),this.set("selectedTab","open"),this.set("hasNonOpenPosts",!1),this._getGroup())},_getGroup:function(){this.$.ajax.url="/api/groups/"+this.groupId,this.$.ajax.retryMethodAfter401Login=this._getGroup.bind(this),this.$.ajax.generateRequest()},_pagesResponse:function(e,t){this.fire("yp-set-pages",t.response)},_groupsResponse:function(e,t,o){this.set("group",t.response.group),this.refresh(),this.group.configuration&&void 0!=this.group.configuration.canAddNewPosts?this.group.configuration.canAddNewPosts===!0?(this.set("createFabIcon","lightbulb-outline"),this.set("disableNewPosts",!1)):this.set("disableNewPosts",!0):this.set("createFabIcon","lightbulb-outline"),this.set("hasNonOpenPosts",t.response.hasNonOpenPosts)},refresh:function(){this.group&&(this.fire("yp-set-home-link",{type:"group",id:this.group.id,name:this.group.name}),this.group.configuration&&null!=this.group.configuration.defaultLocale&&this.changeLocaleIfNeeded(this.group.configuration.defaultLocale),null!=this.group.theme_id?this.setTheme(this.group.theme_id):null!=this.group.Community.theme_id?this.setTheme(this.group.Community.theme_id):null!=this.group.Community.Domain.theme_id&&this.setTheme(this.group.Community.Domain.theme_id),this.group.GroupHeaderImages&&this.group.GroupHeaderImages.length>0&&this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages),this.fire("change-header",{headerTitle:this.group.Community.name,headerDescription:this.group.Community.description,headerIcon:"social:group",documentTitle:this.group.name,enableSearch:!0,backPath:"/community/"+this.group.community_id}),this.$.pagesAjax.url="/api/groups/"+this.group.id+"/pages",this.$.pagesAjax.generateRequest())},_newPost:function(){window.appGlobals.activity("open","newPost");var e=Polymer.dom(document).querySelector("yp-app").getDialog("postEdit");e.setup(null,this.group,!0,null),e.open("new",{groupId:this.groupId})}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-group',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.ypThemeBehavior
+      ],
+
+      listeners: {
+        'yp-post-count': '_updateTabPostCount'
+      },
+
+      properties: {
+
+        idRoute: Object,
+        tabRoute: Object,
+        idRouteData: Object,
+        tabRouteData: Object,
+        listRoute: Object,
+
+        createFabIcon: {
+          type: String,
+          value: null,
+          notify: true
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        group: {
+          type: Object,
+          notify: true,
+          value: null
+        },
+
+        searchingFor: {
+          type: String,
+          value: null
+        },
+
+        selectedTab: {
+          type: String,
+          value: 'open',
+          observer: '_selectedTabChanged'
+        },
+
+        hasNonOpenPosts: {
+          type: Boolean,
+          value: false,
+          observer: '_hasNonOpenPostsChanged'
+        },
+
+        mapActive: {
+          type: Boolean,
+          value: false
+        },
+
+        lastValidGroupId: {
+          type: String
+        },
+
+        disableNewPosts: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      observers: [
+        '_routeIdChanged(idRouteData.id)',
+        '_routeTabChanged(tabRouteData.tabName)'
+      ],
+
+      _routeIdChanged: function (newId) {
+        if (newId) {
+          this.set('groupId', newId);
+        }
+      },
+
+      _routeTabChanged: function (newTabName) {
+        if (newTabName) {
+          this.set('selectedTab', newTabName);
+        }
+      },
+
+      _selectedTabChanged: function (tabName) {
+        if (this.group) {
+          this.redirectTo("/group/" + this.group.id + '/' + tabName);
+        }
+
+        if (tabName == "map") {
+          this.set('mapActive', true);
+        } else {
+          this.set('mapActive', false);
+        }
+
+        if (tabName && window.appGlobals) {
+          window.appGlobals.activity('open', 'group_tab_' + tabName);
+        }
+      },
+
+      _hasNonOpenPostsChanged: function () {
+        this.async(function () {
+          var pages = this.$$("#tabPages");
+          if (pages) {
+            pages.forceSynchronousItemUpdate();
+          }
+
+          var paperTabs = this.$$("#paperTabs");
+          if (paperTabs) {
+            paperTabs.forceSynchronousItemUpdate();
+            paperTabs.notifyResize();
+          }
+        }, 10);
+      },
+
+      _updateTabPostCount: function (event, tabCounterInfo) {
+        var tabCounter = this.$$('#'+tabCounterInfo.tabCounterId);
+        if (tabCounter) {
+          tabCounter.innerHTML = this.formatNumber(tabCounterInfo.count);
+        }
+      },
+
+      _searchingForChanged: function (newValue, oldValue) {
+      },
+
+      _filterChanged: function (newValue, oldValue) {
+      },
+
+      _categoryIdChanged: function (newValue, oldValue) {
+      },
+
+      _openEdit: function () {
+        this.$$("#groupEdit").open('edit', { groupId: this.group.id });
+      },
+
+      _refreshAjax: function () {
+        this.$.ajax.generateRequest();
+        this.$$("#groupActivities").loadNewData();
+      },
+
+      ready: function () {
+      },
+
+      _groupIdChanged: function (newValue, oldValue) {
+        if (newValue && newValue!=this.lastValidGroupId) {
+          this.set('lastValidGroupId', newValue);
+          this.set('group', null);
+          this.$.groupCard.resetGroup();
+          this.$.tabCountOpen.innerHTML = "";
+          if (this.hasNonOpenPosts) {
+            this.$$("#tabCountInProgress").innerHTML = "";
+            this.$$("#tabCountSuccessful").innerHTML = "";
+            this.$$("#tabCountFailed").innerHTML = "";
+          }
+          this.set('selectedTab', 'open');
+          this.set('hasNonOpenPosts', false);
+          this._getGroup();
+        }
+       },
+
+      _getGroup: function () {
+        this.$.ajax.url = '/api/groups/' + this.groupId;
+        this.$.ajax.retryMethodAfter401Login = this._getGroup.bind(this);
+        this.$.ajax.generateRequest();
+      },
+
+      _pagesResponse: function (event, detail) {
+        this.fire('yp-set-pages', detail.response);
+      },
+
+      _groupsResponse: function (event, detail, sender) {
+        this.set('group', detail.response.group);
+
+        this.refresh();
+
+        if (this.group.configuration && this.group.configuration.canAddNewPosts!=undefined) {
+          if (this.group.configuration.canAddNewPosts===true) {
+            this.set('createFabIcon',"lightbulb-outline");
+            this.set('disableNewPosts', false);
+          } else {
+            this.set('disableNewPosts', true);
+          }
+        } else {
+          this.set('createFabIcon',"lightbulb-outline");
+        }
+
+        this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
+      },
+
+      refresh: function () {
+        if (this.group) {
+          this.fire('yp-set-home-link', { type: 'group', id: this.group.id, name: this.group.name });
+
+          if (this.group.configuration && this.group.configuration.defaultLocale!=null) {
+            this.changeLocaleIfNeeded(this.group.configuration.defaultLocale);
+          }
+
+          if (this.group.theme_id!=null) {
+            this.setTheme(this.group.theme_id);
+          } else if (this.group.Community.theme_id!=null) {
+            this.setTheme(this.group.Community.theme_id);
+          } else if (this.group.Community.Domain.theme_id!=null) {
+            this.setTheme(this.group.Community.Domain.theme_id);
+          }
+
+          if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
+            this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages);
+          }
+
+          this.fire("change-header", { headerTitle: this.group.Community.name,
+                                       headerDescription: this.group.Community.description,
+                                       headerIcon: "social:group",
+                                       documentTitle: this.group.name,
+                                       enableSearch: true,
+                                       backPath: "/community/" + this.group.community_id });
+
+          this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
+          this.$.pagesAjax.generateRequest();
+        }
+      },
+
+      _newPost: function () {
+        window.appGlobals.activity('open', 'newPost');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
+        dialog.setup(null, this.group, true, null);
+        dialog.open('new', { groupId: this.groupId });
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

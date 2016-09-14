@@ -1,4 +1,84 @@
-<html><head><link rel="import" href="../app-scroll-effects-behavior.html">
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><html><head><link rel="import" href="../app-scroll-effects-behavior.html">
 
-<script>!function(){function t(t,e,i,n){i.apply(n,e.map(function(e){return e[0]+(e[1]-e[0])*t}))}Polymer.AppLayout.registerEffect("resize-title",{setUp:function(){var t=this._getDOMRef("mainTitle"),e=this._getDOMRef("condensedTitle");if(!e)return this._warn(this._logf("effects[resize-title]","undefined `condensed-title`")),!1;if(!t)return this._warn(this._logf("effects[resize-title]","undefined `main-title`")),!1;e.style.willChange="opacity",t.style.willChange="opacity",e.style.webkitTransform="translateZ(0)",t.style.webkitTransform="translateZ(0)",e.style.transform="translateZ(0)",t.style.transform="translateZ(0)";var i=t.getBoundingClientRect(),n=e.getBoundingClientRect(),s={};s.scale=parseInt(window.getComputedStyle(e)["font-size"],10)/parseInt(window.getComputedStyle(t)["font-size"],10),s.titleDX=i.left-n.left,s.titleDY=i.top-n.top,s.condensedTitle=e,s.title=t,this._fxResizeTitle=s},run:function(e,i){var n=this._fxResizeTitle;this.condenses||(i=0),e>=1?(n.title.style.opacity=0,n.condensedTitle.style.opacity=1):(n.title.style.opacity=1,n.condensedTitle.style.opacity=0),t(Math.min(1,e),[[1,n.scale],[0,-n.titleDX],[i,i-n.titleDY]],function(t,e,i){this.transform("translate("+e+"px, "+i+"px) scale3d("+t+", "+t+", 1)",n.title)},this)},tearDown:function(){delete this._fxResizeTitle}})}();</script>
+<script>
+  (function() {
+    function interpolate(progress, points, fn, ctx) {
+      fn.apply(ctx, points.map(function(point) {
+        return point[0] + (point[1] - point[0]) * progress;
+      }));
+    }
+
+    /**
+     * Transform the font size of a designated title element between two values based on the scroll
+     * position.
+     */
+    Polymer.AppLayout.registerEffect('resize-title', {
+      /** @this Polymer.AppLayout.ElementWithBackground */
+      setUp: function setUp() {
+        var title = this._getDOMRef('mainTitle');
+        var condensedTitle = this._getDOMRef('condensedTitle');
+
+        if (!condensedTitle) {
+          this._warn(this._logf('effects[resize-title]', 'undefined `condensed-title`'));
+          return false;
+        }
+        if (!title) {
+          this._warn(this._logf('effects[resize-title]', 'undefined `main-title`'));
+          return false;
+        }
+
+        condensedTitle.style.willChange = 'opacity';
+        title.style.willChange = 'opacity';
+        condensedTitle.style.webkitTransform = 'translateZ(0)';
+        title.style.webkitTransform = 'translateZ(0)';
+        condensedTitle.style.transform = 'translateZ(0)';
+        title.style.transform = 'translateZ(0)';
+
+        var titleClientRect = title.getBoundingClientRect();
+        var condensedTitleClientRect = condensedTitle.getBoundingClientRect();
+        var fx = {};
+
+        fx.scale = parseInt(window.getComputedStyle(condensedTitle)['font-size'], 10) /
+            parseInt(window.getComputedStyle(title)['font-size'], 10);
+        fx.titleDX = titleClientRect.left - condensedTitleClientRect.left;
+        fx.titleDY = titleClientRect.top - condensedTitleClientRect.top;
+        fx.condensedTitle = condensedTitle;
+        fx.title = title;
+
+        this._fxResizeTitle = fx;
+      },
+      /** @this PolymerElement */
+      run: function run(p, y) {
+        var fx = this._fxResizeTitle;
+        if (!this.condenses) {
+          y = 0;
+        }
+        if (p >= 1) {
+          fx.title.style.opacity = 0;
+          fx.condensedTitle.style.opacity = 1;
+        } else {
+          fx.title.style.opacity = 1;
+          fx.condensedTitle.style.opacity = 0;
+        }
+        interpolate(Math.min(1, p), [ [1, fx.scale], [0, -fx.titleDX], [y, y-fx.titleDY] ],
+          function(scale, translateX, translateY) {
+            this.transform('translate(' + translateX + 'px, ' + translateY + 'px) ' +
+                'scale3d(' + scale + ', ' + scale + ', 1)', fx.title);
+          }, this);
+      },
+      /** @this Polymer.AppLayout.ElementWithBackground */
+      tearDown: function tearDown() {
+        delete this._fxResizeTitle;
+      }
+    });
+  })();
+</script>
 </head><body></body></html>

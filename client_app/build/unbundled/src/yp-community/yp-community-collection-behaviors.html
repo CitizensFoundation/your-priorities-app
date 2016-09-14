@@ -1,4 +1,0 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
-
-<script>Polymer.CommunityCollectionBehaviors={properties:{activeCommunities:{type:Array,notify:!0},featuredCommunities:{type:Array},archivedCommunities:{type:Array},communitiesLength:{type:Number}},setupCommunities:function(e){this.set("communitiesLength",e.length);var t=this.splitByStatus(e);t.archived.length>0&&this.set("archivedCommunities",t.archived),this.set("featuredCommunities",t.featured),this.set("activeCommunities",t.active)}};</script>
-</head><body></body></html>

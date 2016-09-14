@@ -55,6 +55,31 @@
     </template>
   </template>
 
-  <script>Polymer({is:"yp-user-info",behaviors:[Polymer.appHelpers],properties:{user:{type:Object,value:null,notify:!0}},_openEdit:function(){this.fire("open-user-edit")},onLogout:function(){document.querySelector("#appUser").logout()}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-user-info',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        user: {
+          type: Object,
+          value: null,
+          notify: true
+        }
+      },
+
+      _openEdit: function () {
+        this.fire('open-user-edit');
+      },
+
+      onLogout: function() {
+        document.querySelector('#appUser').logout();
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

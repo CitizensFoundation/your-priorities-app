@@ -229,6 +229,132 @@
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
 
-  <script>Polymer({is:"yp-post-card",behaviors:[Polymer.appHelpers,Polymer.YpPostBehavior,Polymer.AccessHelpers,Polymer.ypGotAdminRightsBehavior],properties:{selectedMenuItem:{type:String},headerMode:{type:Boolean,value:!1},elevation:{type:Number,value:2},post:{type:Object,notify:!0},trimmedDescription:{type:String,computed:"_trimmedDescription(post, post.description)"},hasPostAccess:{type:Boolean,value:!1,notify:!0,computed:"_hasPostAccess(post, gotAdminRights)"}},_hasPostAccess:function(e,t){return!(!e||!t)&&null!=this.checkPostAccess(e)},goToPostIfNotHeader:function(){this.headerMode||this.goToPost()},_trimmedDescription:function(e,t){return e?this.postDescription:""},updateDescriptionIfEmpty:function(e){this.post.description&&""!=this.post.description||this.set("post.description",e)},_refresh:function(){var e=Polymer.dom(document).querySelector("yp-app").getDialog("postEdit");e.selected=0,this.fire("refresh")},_menuSelection:function(e,t){"editMenuItem"==t.item.id?this._openEdit():"deleteMenuItem"==t.item.id?this._openDelete():"statusChangeMenuItem"==t.item.id?this._openPostStatusChange():"moveMenuItem"==t.item.id&&this._openMovePost(),this.selectedMenuItem=null},_openMovePost:function(){var e=Polymer.dom(document).querySelector("yp-app").getDialog("postMove");e.setupAndOpen(this.post,this._refresh.bind(this))},_openPostStatusChange:function(){var e=Polymer.dom(document).querySelector("yp-app").getDialog("postStatusChangeEdit");e.setup(this.post,null,this._refresh.bind(this)),e.open("new",{postId:this.post.id,statusChange:!0})},_openEdit:function(){window.appGlobals.activity("open","post.new");var e=Polymer.dom(document).querySelector("yp-app").getDialog("postEdit");e.setup(this.post,this.post.Group,!1,this._refresh.bind(this)),e.open("edit",{postId:this.post.id})},_openDelete:function(){window.appGlobals.activity("open","post.delete");var e=Polymer.dom(document).querySelector("yp-app").getDialog("deleteDialog");e.setup("/api/posts/",this.post.id,this.t("post.deleteConfirmation"),this._onDeleted.bind(this)),e.open()},_onDeleted:function(){this.redirectTo("/group/"+this.post.group_id)}});</script>
+  <script>
+    Polymer({
+      is: 'yp-post-card',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.YpPostBehavior,
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior
+      ],
+
+      properties: {
+
+        selectedMenuItem: {
+          type: String
+        },
+
+        headerMode: {
+          type: Boolean,
+          value: false
+        },
+
+        elevation: {
+          type: Number,
+          value: 2
+        },
+
+        post: {
+          type: Object,
+          notify: true
+        },
+
+        trimmedDescription: {
+          type: String,
+          computed: '_trimmedDescription(post, post.description)'
+        },
+
+        hasPostAccess: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          computed: '_hasPostAccess(post, gotAdminRights)'
+        }
+      },
+
+      _hasPostAccess: function(post, gotAdminRights) {
+        if (post && gotAdminRights) {
+          if (this.checkPostAccess(post)!=null) {
+            return true
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      },
+
+      goToPostIfNotHeader: function () {
+        if (!this.headerMode) {
+          this.goToPost();
+        }
+      },
+
+      _trimmedDescription: function (post, description) {
+        if (post) {
+          return this.postDescription;
+        } else {
+          return "";
+        }
+      },
+
+      updateDescriptionIfEmpty: function (description) {
+        if (!this.post.description || this.post.description=='') {
+          this.set('post.description', description);
+        }
+      },
+
+      _refresh: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
+        dialog.selected = 0;
+        this.fire('refresh');
+      },
+
+      _menuSelection: function (event, detail) {
+        if (detail.item.id=="editMenuItem")
+          this._openEdit();
+        else if (detail.item.id=="deleteMenuItem")
+          this._openDelete();
+        else if (detail.item.id=="statusChangeMenuItem")
+          this._openPostStatusChange();
+        else if (detail.item.id=="moveMenuItem")
+          this._openMovePost();
+        this.selectedMenuItem = null;
+      },
+
+      _openMovePost: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postMove");
+        dialog.setupAndOpen(this.post, this._refresh.bind(this));
+      },
+
+      _openPostStatusChange: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postStatusChangeEdit");
+        dialog.setup(this.post, null, this._refresh.bind(this));
+        dialog.open('new', { postId: this.post.id, statusChange: true });
+      },
+
+      _openEdit: function () {
+        window.appGlobals.activity('open', 'post.new');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
+        dialog.setup(this.post, this.post.Group, false, this._refresh.bind(this));
+        dialog.open('edit', { postId: this.post.id });
+      },
+
+      _openDelete: function () {
+        window.appGlobals.activity('open', 'post.delete');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
+        dialog.setup('/api/posts/', this.post.id,
+          this.t('post.deleteConfirmation'),
+          this._onDeleted.bind(this));
+        dialog.open();
+      },
+
+      _onDeleted: function () {
+        this.redirectTo("/group/"+this.post.group_id);
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

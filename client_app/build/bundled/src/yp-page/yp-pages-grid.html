@@ -135,6 +135,252 @@
 
   </template>
 
-  <script>Polymer({is:"yp-pages-grid",behaviors:[Polymer.appHelpers,Polymer.WordWrap],properties:{pages:{type:Array,notify:!0},headerText:{type:String},groupId:{type:Number,observer:"_groupIdChanged"},domainId:{type:Number,observer:"_domainIdChanged"},communityId:{type:Number,observer:"_communityIdChanged"},selected:{type:Object},modelType:{type:String},newLocaleValue:{type:String},currentlyEditingLocale:{type:String},currentlyEditingPage:{type:Object},currentlyEditingTitle:{type:String},currentlyEditingContent:{type:String}},_toLocaleArray:function(e){var t=Object.keys(e).map(function(t){return{locale:t,value:e[t]}});return _.sortBy(t,function(e){return e.item})},_editPageLocale:function(e){this.set("currentlyEditingPage",JSON.parse(e.target.getAttribute("data-args-page"))),this.set("currentlyEditingLocale",e.target.getAttribute("data-args-locale")),this.set("currentlyEditingContent",this.wordwrap(120)(this.currentlyEditingPage.content[this.currentlyEditingLocale])),this.set("currentlyEditingTitle",this.currentlyEditingPage.title[this.currentlyEditingLocale]),this.$.editPageLocale.open()},_closePageLocale:function(){this.set("currentlyEditingPage",null),this.set("currentlyEditingLocale",null),this.set("currentlyEditingContent",null),this.set("currentlyEditingTitle",null)},_dispatchAjax:function(e,t,a){var i;i=t?"/"+t+"/"+a:"/"+a,"groups"==this.modelType&&this.groupId?(e.url="/api/"+this.modelType+"/"+this.groupId+i,e.generateRequest()):"communities"==this.modelType&&this.communityId?(e.url="/api/"+this.modelType+"/"+this.communityId+i,e.generateRequest()):"domains"==this.modelType&&this.domainId?(e.url="/api/"+this.modelType+"/"+this.domainId+i,e.generateRequest()):console.warn("Can't find model type or ids")},_updatePageLocale:function(){this.$.updatePageAjax.body={locale:this.currentlyEditingLocale,content:this.currentlyEditingContent,title:this.currentlyEditingTitle},this._dispatchAjax(this.$.updatePageAjax,this.currentlyEditingPage.id,"update_page_locale"),this._closePageLocale()},_publishPage:function(){this.$.updatePageAjax.body={};var e=event.target.getAttribute("data-args");this._dispatchAjax(this.$.updatePageAjax,e,"publish_page")},_publishPageResponse:function(){window.appGlobals.notifyUserViaToast(this.t("pages.pagePublished")),this.$.ajax.generateRequest()},_unPublishPage:function(){this.$.updatePageAjax.body={};var e=event.target.getAttribute("data-args");this._dispatchAjax(this.$.updatePageAjax,e,"un_publish_page")},_unPublishPageResponse:function(){window.appGlobals.notifyUserViaToast(this.t("pages.pageUnPublished")),this.$.ajax.generateRequest()},_deletePage:function(){this.$.deletePageAjax.body={};var e=event.target.getAttribute("data-args");this._dispatchAjax(this.$.deletePageAjax,e,"delete_page")},_deletePageResponse:function(){window.appGlobals.notifyUserViaToast(this.t("pages.pageDeleted")),this.$.ajax.generateRequest()},_addLocale:function(e){if(this.newLocaleValue&&this.newLocaleValue.length>1){var t=e.target.getAttribute("data-args");this.$.updatePageAjax.body={locale:this.newLocaleValue.toLowerCase(),content:"",title:""},this._dispatchAjax(this.$.updatePageAjax,t,"update_page_locale"),this.set("newLocaleValue",null)}},_addPage:function(e){this.$.newPageAjax.body={},this.$.addPageButton.disabled=!0,this._dispatchAjax(this.$.newPageAjax,null,"add_page")},_newPageResponse:function(){window.appGlobals.notifyUserViaToast(this.t("pages.newPageCreated")),this.$.ajax.generateRequest(),this.$.addPageButton.disabled=!1},_updatePageResponse:function(){window.appGlobals.notifyUserViaToast(this.t("posts.updated")),this.$.ajax.generateRequest()},_domainIdChanged:function(e){e&&(this.set("modelType","domains"),this._generateRequest(e))},_groupIdChanged:function(e){e&&(this.set("modelType","groups"),this._generateRequest(e))},_communityIdChanged:function(e){e&&(this.set("modelType","communities"),this._generateRequest(e))},_generateRequest:function(e){this.$.ajax.url="/api/"+this.modelType+"/"+e+"/pages_for_admin",this.$.ajax.generateRequest()},_pagesResponse:function(e,t){this.set("pages",t.response)},setup:function(e,t,a,i){this.set("groupId",null),this.set("communityId",null),this.set("domainId",null),this.set("pages",null),e&&this.set("groupId",e),t&&this.set("communityId",t),a&&this.set("domainId",a),this._setupHeaderText()},open:function(){this.$.dialog.open()},_setupHeaderText:function(){this.groupId?this.set("headerText",this.t("group.pages")):this.communityId?this.set("headerText",this.t("community.pages")):this.domainId&&this.set("headerText",this.t("domain.pages"))}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-pages-grid',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.WordWrap
+      ],
+
+      properties: {
+        pages: {
+          type: Array,
+          notify: true
+        },
+
+        headerText: {
+          type: String
+        },
+
+        groupId: {
+          type: Number,
+          observer: '_groupIdChanged'
+        },
+
+        domainId: {
+          type: Number,
+          observer: '_domainIdChanged'
+        },
+
+        communityId: {
+          type: Number,
+          observer: '_communityIdChanged'
+        },
+
+        selected: {
+          type: Object
+        },
+
+        modelType: {
+          type: String
+        },
+
+        newLocaleValue: {
+          type: String
+        },
+
+        currentlyEditingLocale: {
+          type: String
+        },
+
+        currentlyEditingPage: {
+          type: Object
+        },
+
+        currentlyEditingTitle: {
+          type: String
+        },
+
+        currentlyEditingContent: {
+          type: String
+        }
+      },
+
+      _toLocaleArray: function(obj) {
+        var array = Object.keys(obj).map(function(key) {
+          return {
+            locale: key,
+            value: obj[key]
+          };
+        });
+
+        return _.sortBy(array, function(o) { return o.item; });
+      },
+
+      _editPageLocale: function (event) {
+        this.set('currentlyEditingPage', JSON.parse(event.target.getAttribute('data-args-page')));
+        this.set('currentlyEditingLocale', event.target.getAttribute('data-args-locale'));
+        this.set('currentlyEditingContent',this.wordwrap(120)(this.currentlyEditingPage["content"][this.currentlyEditingLocale]));
+        this.set('currentlyEditingTitle',this.currentlyEditingPage["title"][this.currentlyEditingLocale]);
+        this.$.editPageLocale.open();
+      },
+
+      _closePageLocale: function () {
+        this.set('currentlyEditingPage', null);
+        this.set('currentlyEditingLocale', null);
+        this.set('currentlyEditingContent', null);
+        this.set('currentlyEditingTitle', null);
+      },
+
+      _dispatchAjax: function(ajax, pageId, path) {
+        var pageIdPath;
+        if (pageId) {
+          pageIdPath = "/" + pageId + "/" + path;
+        } else {
+          pageIdPath = "/" + path;
+        }
+        if (this.modelType=="groups" && this.groupId) {
+          ajax.url = "/api/" + this.modelType + "/" + this.groupId + pageIdPath;
+          ajax.generateRequest();
+        } else if (this.modelType=="communities" && this.communityId) {
+          ajax.url = "/api/" + this.modelType + "/" + this.communityId +  pageIdPath;
+          ajax.generateRequest();
+        } else if (this.modelType=="domains" && this.domainId) {
+          ajax.url = "/api/" + this.modelType + "/" + this.domainId + pageIdPath;
+          ajax.generateRequest();
+        } else {
+          console.warn("Can't find model type or ids");
+        }
+      },
+
+      _updatePageLocale: function () {
+        this.$.updatePageAjax.body = {
+          locale: this.currentlyEditingLocale,
+          content: this.currentlyEditingContent,
+          title: this.currentlyEditingTitle
+        };
+        this._dispatchAjax(this.$.updatePageAjax, this.currentlyEditingPage.id, "update_page_locale")
+        this._closePageLocale();
+      },
+
+      _publishPage: function () {
+        this.$.updatePageAjax.body = {};
+        var pageId = event.target.getAttribute('data-args');
+        this._dispatchAjax(this.$.updatePageAjax, pageId, "publish_page")
+      },
+
+      _publishPageResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('pages.pagePublished'));
+        this.$.ajax.generateRequest();
+      },
+
+      _unPublishPage: function () {
+        this.$.updatePageAjax.body = {};
+        var pageId = event.target.getAttribute('data-args');
+        this._dispatchAjax(this.$.updatePageAjax, pageId, "un_publish_page")
+      },
+
+      _unPublishPageResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('pages.pageUnPublished'));
+        this.$.ajax.generateRequest();
+      },
+
+      _deletePage: function () {
+        this.$.deletePageAjax.body = {};
+        var pageId = event.target.getAttribute('data-args');
+        this._dispatchAjax(this.$.deletePageAjax, pageId, "delete_page")
+      },
+
+      _deletePageResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('pages.pageDeleted'));
+        this.$.ajax.generateRequest();
+      },
+
+      _addLocale: function (event) {
+        if (this.newLocaleValue && this.newLocaleValue.length>1) {
+          var pageId = event.target.getAttribute('data-args');
+          this.$.updatePageAjax.body = {
+            locale: this.newLocaleValue.toLowerCase(),
+            content: '',
+            title: ''
+          };
+          this._dispatchAjax(this.$.updatePageAjax, pageId, "update_page_locale")
+          this.set('newLocaleValue', null);
+        }
+      },
+
+      _addPage: function (event) {
+        this.$.newPageAjax.body = {};
+        this.$.addPageButton.disabled = true;
+        this._dispatchAjax(this.$.newPageAjax, null, "add_page")
+      },
+
+      _newPageResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('pages.newPageCreated'));
+        this.$.ajax.generateRequest();
+        this.$.addPageButton.disabled = false;
+      },
+
+      _updatePageResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('posts.updated'));
+        this.$.ajax.generateRequest();
+      },
+
+      _domainIdChanged: function (newGroupId) {
+        if (newGroupId) {
+          this.set('modelType', 'domains');
+          this._generateRequest(newGroupId);
+        }
+      },
+
+      _groupIdChanged: function (newGroupId) {
+        if (newGroupId) {
+          this.set('modelType', 'groups');
+          this._generateRequest(newGroupId);
+        }
+      },
+
+      _communityIdChanged: function (newCommunityId) {
+        if (newCommunityId) {
+          this.set('modelType', 'communities');
+          this._generateRequest(newCommunityId);
+        }
+      },
+
+      _generateRequest: function (id) {
+        this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/pages_for_admin";
+        this.$.ajax.generateRequest();
+      },
+
+      _pagesResponse: function (event, detail) {
+        this.set('pages', detail.response);
+      },
+
+      setup: function (groupId, communityId, domainId, adminUsers) {
+        this.set('groupId', null);
+        this.set('communityId', null);
+        this.set('domainId', null);
+        this.set('pages', null);
+
+        if (groupId)
+          this.set('groupId', groupId);
+
+        if (communityId)
+          this.set('communityId', communityId);
+
+        if (domainId)
+          this.set('domainId', domainId);
+
+        this._setupHeaderText();
+      },
+
+      open: function () {
+        this.$.dialog.open();
+      },
+
+      _setupHeaderText: function () {
+        if (this.groupId) {
+          this.set('headerText', this.t('group.pages'));
+        } else if (this.communityId) {
+          this.set('headerText', this.t('community.pages'));
+        } else if (this.domainId) {
+          this.set('headerText', this.t('domain.pages'));
+        }
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

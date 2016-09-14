@@ -1,4 +1,0 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
-
-<script>Polymer.ypLoggedInUserBehavior={properties:{loggedInUser:{type:Object,notify:!0,value:null,observer:"_loggedInUserChanged"}},listeners:{"yp-user-is-logged-in":"_userLoggedIn"},_loggedInUserChanged:function(){},ready:function(){window.appUser&&window.appUser.user&&this.set("loggedInUser",window.appUser.user)},_userLoggedIn:function(e,n){this.set("loggedInUser",n)}};</script>
-</head><body></body></html>

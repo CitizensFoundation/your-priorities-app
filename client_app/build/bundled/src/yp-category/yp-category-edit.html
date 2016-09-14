@@ -53,5 +53,88 @@
 
 </dom-module>
 
-<script>Polymer({is:"yp-category-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/categories"},category:{type:Object},group:{type:Object},categoryAccess:{type:String},params:{type:String},method:{type:String},uploadedIconImageId:{type:String},uploadedHeaderImageId:{type:String}},_iconImageUploaded:function(e,t){var a=JSON.parse(t.xhr.response);this.set("uploadedIconImageId",a.id)},_headerImageUploaded:function(e,t){var a=JSON.parse(t.xhr.response);this.set("uploadedHeaderImageId",a.id)},setup:function(e,t,a){this.set("group",e),this.set("new",t),this.set("refreshFunction",a),this._setupTranslation(),this._setupNewUpdateState()},_clear:function(){this.category={name:"",description:""},this.uploadedIconImageId=null,this.uploadedHeaderImageId=null,this.$.headerImageUpload.clear(),this.$.iconImageUpload.clear()},_setupTranslation:function(){this.new?(this.editHeaderText=this.t("New category"),this.toastText=this.t("category.toast.created")):(this.editHeaderText=this.t("Update category info"),this.toastText=this.t("category.toast.updated"))}});</script>
+<script>
+
+  Polymer({
+
+    is: 'yp-category-edit',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/categories"
+      },
+
+      category: {
+        type: Object
+      },
+
+      group: {
+        type: Object
+      },
+
+      categoryAccess: {
+        type: String
+      },
+
+      params: {
+        type: String
+      },
+
+      method: {
+        type: String
+      },
+
+      uploadedIconImageId: {
+        type: String
+      },
+
+      uploadedHeaderImageId: {
+        type: String
+      }
+    },
+
+    _iconImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedIconImageId', image.id);
+    },
+
+    _headerImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedHeaderImageId', image.id);
+    },
+
+    setup: function (group, newNotEdit, refreshFunction) {
+      this.set('group', group);
+      this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+      this._setupNewUpdateState();
+    },
+
+    _clear: function () {
+      this.category = { name: '', description: '' };
+      this.uploadedIconImageId = null;
+      this.uploadedHeaderImageId = null;
+      this.$.headerImageUpload.clear();
+      this.$.iconImageUpload.clear();
+    },
+
+    _setupTranslation: function () {
+      if (this.new) {
+        this.editHeaderText = this.t('New category');
+        this.toastText = this.t('category.toast.created');
+      } else {
+        this.editHeaderText = this.t('Update category info');
+        this.toastText = this.t('category.toast.updated');
+      }
+    }
+  });
+</script>
 </body></html>

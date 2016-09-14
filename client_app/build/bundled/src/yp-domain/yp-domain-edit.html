@@ -128,5 +128,95 @@
 
 </dom-module>
 
-<script>Polymer({is:"yp-domain-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/domains"},domain:{type:Object,observer:"_domainChanged",notify:!0},params:{type:String},selected:{type:Number,value:0},method:{type:String},uploadedLogoImageId:{type:String},uploadedHeaderImageId:{type:String},themeId:{type:String,value:null},status:{type:String}},_domainChanged:function(t){},_customRedirect:function(t){this.new&&this.redirectTo("/domain/"+t.id)},_clear:function(){this.domain={name:"",description:""},this.uploadedLogoImageId=null,this.uploadedHeaderImageId=null,this.$.headerImageUpload.clear(),this.$.logoImageUpload.clear()},setup:function(t,e,i){this.set("domain",t),this.set("new",e),this.set("refreshFunction",i),this._setupTranslation()},_setupTranslation:function(){this.new?(this.editHeaderText=this.t("domain.new"),this.toastText=this.t("domain.toast.created")):(this.editHeaderText=this.t("domain.edit"),this.toastText=this.t("domain.toast.updated"))}});</script>
+<script>
+
+  Polymer({
+
+    is: 'yp-domain-edit',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior
+    ],
+
+    properties: {
+      action: {
+        type: String,
+        value: "/api/domains"
+      },
+
+      domain: {
+        type: Object,
+        observer: '_domainChanged',
+        notify: true
+      },
+
+      params: {
+        type: String
+      },
+
+      selected: {
+        type: Number,
+        value: 0
+      },
+
+      method: {
+        type: String
+      },
+
+      uploadedLogoImageId: {
+        type: String
+      },
+
+      uploadedHeaderImageId: {
+        type: String
+      },
+
+      themeId: {
+        type: String,
+        value: null
+      },
+
+      status: {
+        type: String
+      }
+    },
+
+    _domainChanged: function (domain) {
+      if (domain) {
+      }
+    },
+
+    _customRedirect: function (domain) {
+      if (this.new) {
+        this.redirectTo("/domain/"+domain.id);
+      }
+    },
+
+    _clear: function () {
+      this.domain = { name: '', description: '' };
+      this.uploadedLogoImageId = null;
+      this.uploadedHeaderImageId = null;
+      this.$.headerImageUpload.clear();
+      this.$.logoImageUpload.clear();
+    },
+
+    setup: function (domain, newNotEdit, refreshFunction) {
+      this.set('domain', domain);
+      this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+    },
+
+    _setupTranslation: function () {
+      if (this.new) {
+        this.editHeaderText = this.t('domain.new');
+        this.toastText = this.t('domain.toast.created');
+      } else {
+        this.editHeaderText = this.t('domain.edit');
+        this.toastText = this.t('domain.toast.updated');
+      }
+    }
+  });
+</script>
 </body></html>

@@ -86,6 +86,73 @@
     <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
   </template>
 
-  <script>Polymer({is:"yp-point-comment-edit",properties:{comment:{type:Object,notify:!0},point:{type:Object,notify:!0},image:{type:Object,notify:!0}},behaviors:[Polymer.appHelpers,Polymer.ypLoggedInUserBehavior],ready:function(){this._reset()},_reset:function(){this.set("comment",{content:""})},_sendComment:function(){var t;this.comment.content&&this.comment.content.length>0?(this.point?(t={point_id:this.point.id},this.$.postCommentAjax.url="/api/points/"+this.point.id+"/comment"):this.image?(t={image_id:this.image.id},this.$.postCommentAjax.url="/api/images/"+this.image.id+"/comment"):console.error("Can't find send ids"),this.$.postCommentAjax.body=_.merge(t,{comment:this.comment}),this.$.postCommentAjax.generateRequest()):this.$.postCommentAjax.showErrorDialog(this.t("point.commentToShort"))},_newsCommentResponse:function(){this.fire("refresh"),this._reset()},_keyDown:function(t){"enter"==t.code&&this._sendComment()}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-point-comment-edit',
+
+      properties: {
+
+        comment: {
+          type: Object,
+          notify: true
+        },
+
+        point: {
+          type: Object,
+          notify: true
+        },
+
+        image: {
+          type: Object,
+          notify: true
+        }
+
+      },
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.ypLoggedInUserBehavior
+      ],
+
+      ready: function () {
+        this._reset();
+      },
+
+      _reset: function () {
+        this.set('comment', { content: '' });
+      },
+
+      _sendComment: function () {
+        var body;
+        if (this.comment.content && this.comment.content.length>0) {
+          if (this.point) {
+            body = { point_id: this.point.id };
+            this.$.postCommentAjax.url = '/api/points/'+this.point.id+'/comment';
+          } else if (this.image) {
+            body = { image_id: this.image.id };
+            this.$.postCommentAjax.url = '/api/images/'+this.image.id+'/comment';
+          } else {
+            console.error("Can't find send ids");
+          }
+          this.$.postCommentAjax.body = _.merge(body, { comment: this.comment } );
+          this.$.postCommentAjax.generateRequest();
+        } else {
+          this.$.postCommentAjax.showErrorDialog(this.t('point.commentToShort'));
+        }
+      },
+
+      _newsCommentResponse: function () {
+        this.fire('refresh');
+        this._reset();
+      },
+
+      _keyDown: function (event) {
+        if (event.code == 'enter') {
+          this._sendComment();
+        }
+      }
+    })
+  </script>
 </dom-module>
 </body></html>

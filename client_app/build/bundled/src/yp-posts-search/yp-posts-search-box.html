@@ -91,6 +91,75 @@
     <iron-a11y-keys target="{{searchbox}}" keys="enter" on-keys-pressed="enterHandler"></iron-a11y-keys>
   </template>
 
-  <script>Polymer({is:"yp-posts-search-box",properties:{active:{type:Boolean,value:!1,notify:!0,reflectToAttribute:!0},groupId:{notify:!0},narrow:{type:Boolean,value:!1,notify:!0,reflectToAttribute:!0},previousSearches:{notify:!0}},enterHandler:function(){window.location="/#/groups/"+this.groupId+"/search/"+this.term},created:function(){this.previousSearches=[]},onSelect:function(t,e,o){e.isSelected&&this.async(function(){this.toggle()},null,250)},toggle:function(){window.appGlobals.activity("toggle","search",this.active),this.active=!this.active,this.active&&this.$.searchbox.focus()},computeClass:function(t){return this.tokenList({"core-narrow":t})},computePlaceholder:function(){return this.t("post.search")},tokenList:function(t){var e=[];for(key in t)t[key]&&e.push(key);return e.join(" ")}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-posts-search-box',
+
+      properties: {
+
+        active: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        groupId: { notify: true },
+
+        narrow: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        previousSearches: { notify: true }
+      },
+
+      enterHandler: function () {
+        window.location = '/#/groups/' + this.groupId + '/search/' + this.term;
+      },
+
+      created: function () {
+        this.previousSearches = [];
+      },
+
+      onSelect: function (e, detail, sender) {
+        if (detail.isSelected) {
+          this.async(function () {
+            this.toggle();
+          }, null, 250);
+        }
+      },
+
+      // Introduce small delay so user sees ripple.
+      toggle: function () {
+        window.appGlobals.activity('toggle', 'search', this.active);
+        this.active = !this.active;
+        if (this.active) {
+          this.$.searchbox.focus();
+        }
+      },
+
+      computeClass: function (narrow) {
+        return this.tokenList({ 'core-narrow': narrow });
+      },
+
+      computePlaceholder: function () {
+        return this.t('post.search');
+      },
+
+      tokenList: function (obj) {
+        var pieces = [];
+        for (key in obj) {
+          if (obj[key]) {
+            pieces.push(key);
+          }
+        }
+        return pieces.join(' ');
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

@@ -118,5 +118,131 @@
 
 </dom-module>
 
-<script>Polymer({is:"yp-community-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior,Polymer.ypCollectionStatusOptions],properties:{action:{type:String,value:"/api/communities"},community:{type:Object,observer:"_communityChanged"},hostnameExample:{type:String,computed:"_getExampleHostname(community.hostname)"},communityAccess:{type:String,value:"public"},params:{type:String},method:{type:String},uploadedLogoImageId:{type:String},uploadedHeaderImageId:{type:String},status:String,themeId:{type:String,value:null}},_getExampleHostname:function(t){return t?t+"."+window.appGlobals.domain.domain_name:"your-hostname."+window.appGlobals.domain.domain_name},_customRedirect:function(t){if(t&&t.hostnameTaken){var e=Polymer.dom(document).querySelector("yp-app").getDialog("errorDialog");e.showErrorDialog(this.t("hostnameTaken"))}else t?(window.appUser.recheckAdminRights(),this.redirectTo("/community/"+t.id)):console.warn("No community found on custom redirect")},_communityChanged:function(t,e){t&&(0===this.community.access?this.communityAccess="public":1===this.community.access?this.communityAccess="closed":2===this.community.access&&(this.communityAccess="secret"),this.community.status&&this.set("status",this.community.status))},_clear:function(){this.set("community",{name:"",description:"",access:0}),this.uploadedLogoImageId=null,this.uploadedHeaderImageId=null,this.$.headerImageUpload.clear(),this.$.logoImageUpload.clear()},setup:function(t,e,i){t?this.set("community",t):this.set("community",{name:"",description:"",access:0,status:"active"}),this.set("new",e),this.set("refreshFunction",i),this._setupTranslation()},_setupTranslation:function(){this.new?(this.set("editHeaderText",this.t("community.new")),this.set("toastText",this.t("community.toast.created")),this.set("saveText",this.t("create"))):(this.set("editHeaderText",this.t("Update community info")),this.set("toastText",this.t("community.toast.updated")),this.set("saveText",this.t("update")))}});</script>
+<script>
+
+  Polymer({
+
+    is: 'yp-community-edit',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior,
+      Polymer.ypCollectionStatusOptions
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/communities"
+      },
+
+      community: {
+        type: Object,
+        observer: "_communityChanged"
+      },
+
+      hostnameExample: {
+        type: String,
+        computed: '_getExampleHostname(community.hostname)'
+      },
+
+      communityAccess: {
+        type: String,
+        value: "public"
+      },
+
+      params: {
+        type: String
+      },
+
+      method: {
+        type: String
+      },
+
+      uploadedLogoImageId: {
+        type: String
+      },
+
+      uploadedHeaderImageId: {
+        type: String
+      },
+
+      status: String,
+
+      themeId: {
+        type: String,
+        value: null
+      }
+    },
+
+    _getExampleHostname: function (hostname) {
+      if (hostname) {
+        return hostname + '.' + window.appGlobals.domain.domain_name;
+      } else {
+        return 'your-hostname.' + window.appGlobals.domain.domain_name;
+      }
+    },
+
+    _customRedirect: function (community) {
+      if (community && community.hostnameTaken) {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("errorDialog");
+        dialog.showErrorDialog(this.t('hostnameTaken'));
+      } else {
+        if (community) {
+          window.appUser.recheckAdminRights();
+          this.redirectTo("/community/"+community.id);
+        } else {
+          console.warn('No community found on custom redirect');
+        }
+      }
+    },
+
+    _communityChanged: function (newValue, oldValue) {
+      if (newValue) {
+        if (this.community.access===0) {
+          this.communityAccess = "public"
+        } else if (this.community.access===1) {
+          this.communityAccess = "closed"
+        } else if (this.community.access===2) {
+          this.communityAccess = "secret"
+        }
+        if (this.community.status) {
+          this.set('status', this.community.status);
+        }
+      }
+    },
+
+    _clear: function () {
+      this.set('community', { name: '', description: '', access: 0 });
+      this.uploadedLogoImageId = null;
+      this.uploadedHeaderImageId = null;
+      this.$.headerImageUpload.clear();
+      this.$.logoImageUpload.clear();
+    },
+
+    setup: function (community, newNotEdit, refreshFunction) {
+      if (!community) {
+        this.set('community', { name: '', description: '', access: 0, status: 'active' });
+      } else {
+        this.set('community', community);
+      }
+      this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+    },
+
+    _setupTranslation: function () {
+      if (this.new) {
+        this.set('editHeaderText', this.t('community.new'));
+        this.set('toastText', this.t('community.toast.created'));
+        this.set('saveText', this.t('create'));
+      } else {
+        this.set('editHeaderText', this.t('Update community info'));
+        this.set('toastText', this.t('community.toast.updated'));
+        this.set('saveText', this.t('update'));
+      }
+    }
+  });
+</script>
 </body></html>

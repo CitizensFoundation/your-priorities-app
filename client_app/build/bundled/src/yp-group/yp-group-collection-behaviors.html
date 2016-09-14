@@ -1,4 +1,39 @@
 <html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<script>Polymer.GroupCollectionBehaviors={properties:{activeGroups:{type:Array,notify:!0},featuredGroups:{type:Array},archivedGroups:{type:Array},groupsLength:{type:Number}},setupGroups:function(e){this.set("groupsLength",e.length);var t=this.splitByStatus(e);t.archived.length>0&&this.set("archivedGroups",t.archived),this.set("featuredGroups",t.featured),this.set("activeGroups",t.active)}};</script>
+<script>
+  /**
+   * @polymerBehavior GroupCollectionBehaviors
+   */
+  Polymer.GroupCollectionBehaviors = {
+
+    properties: {
+      activeGroups: {
+        type: Array,
+        notify: true
+      },
+
+      featuredGroups: {
+        type: Array
+      },
+
+      archivedGroups: {
+        type: Array
+      },
+
+      groupsLength: {
+        type: Number
+      }
+    },
+
+    setupGroups: function (groups) {
+      this.set('groupsLength', groups.length);
+      var splitGroups = this.splitByStatus(groups);
+      if (splitGroups.archived.length>0) {
+        this.set('archivedGroups', splitGroups.archived);
+      }
+      this.set('featuredGroups', splitGroups.featured);
+      this.set('activeGroups', splitGroups.active);
+    }
+  };
+</script>
 </head><body></body></html>

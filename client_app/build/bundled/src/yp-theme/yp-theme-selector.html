@@ -25,6 +25,45 @@
 
   </template>
 
-  <script>Polymer({is:"yp-theme-selector",behaviors:[Polymer.appHelpers,Polymer.ypThemeBehavior],properties:{selectedTheme:{type:Number,value:null,notify:!0,observer:"_selectedThemeChanged"},object:{type:Object,observer:"_objectChanged"}},_objectChanged:function(e){e&&null!=e.theme_id&&this.set("selectedTheme",e.theme_id)},_selectedThemeChanged:function(e){e&&this.setTheme(e)}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-theme-selector',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.ypThemeBehavior
+      ],
+
+      properties: {
+
+        selectedTheme: {
+          type: Number,
+          value: null,
+          notify: true,
+          observer: '_selectedThemeChanged'
+        },
+
+        object: {
+          type: Object,
+          observer: '_objectChanged'
+        }
+
+      },
+
+      _objectChanged: function (newObject) {
+        if (newObject && newObject.theme_id!=null) {
+          this.set('selectedTheme', newObject.theme_id);
+        }
+      },
+
+      _selectedThemeChanged: function (newTheme) {
+        if (newTheme) {
+          this.setTheme(newTheme);
+        }
+      }
+
+    });
+  </script>
 </dom-module>
 </body></html>

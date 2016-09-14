@@ -31,7 +31,7 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="upload-button">
-      <input type="file" style="display: none" id="fileUploader" name="filename">
+      <input type="file" style="display: none;" id="fileUploader" name="filename">
       <paper-button raised="" on-tap="_openUploadFile">
         <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
         <span>[[t('image.upload')]]</span>
@@ -40,6 +40,48 @@
 
   </template>
 
-  <script>Polymer({is:"yp-image-uploader",behaviors:[Polymer.appHelpers],properties:{post:{type:Object,observer:"_postChanged"}},_openUploadFile:function(){this.$.fileUploader.click()},_postChanged:function(e,s){e||this.set("location",null)},_response:function(e,s,t){this.endorsements=s.response,this.endorsements.length>this.userImagesLimit&&(this.$$("#moreImages").style.display="inline")},_moreUserImages:function(){this.$$("#moreImagesButton").style.display="none",this.$$("#numberOfMoreUserImages").style.display="none",this.$.restOfUserImages.style.display="inline"}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-image-uploader',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        post: {
+          type: Object,
+          observer: "_postChanged"
+        }
+      },
+
+      _openUploadFile: function () {
+        this.$.fileUploader.click();
+      },
+
+      _postChanged: function  (newValue, oldValue) {
+        if (newValue) {
+        } else {
+          this.set("location",null);
+        }
+      },
+
+      _response: function (event, detail, sender) {
+        this.endorsements = detail.response;
+        if (this.endorsements.length > this.userImagesLimit) {
+          this.$$("#moreImages").style.display = 'inline';
+        }
+      },
+
+      _moreUserImages: function () {
+        this.$$("#moreImagesButton").style.display = 'none';
+        this.$$("#numberOfMoreUserImages").style.display = 'none';
+        this.$.restOfUserImages.style.display = 'inline';
+      }
+
+    });
+  </script>
 </dom-module>
 </body></html>

@@ -22,7 +22,60 @@
     </paper-dialog>
   </template>
 
-  <script>Polymer({is:"yp-delete-dialog",behaviors:[Polymer.appHelpers],properties:{confirmationText:{type:String},action:{type:String},actionId:{type:String},onDeletedFunction:{type:Function,value:null}},setup:function(e,t,i,n){this.set("action",e),this.set("actionId",t),this.set("confirmationText",i),this.set("onDeletedFunction",n)},open:function(){this.$$("#deleteConfirmationDialog").open()},_delete:function(){this.$$("#deleteAjax").url=this.action+this.actionId,this.$$("#deleteAjax").setBody({deleteConfirmed:!0}),this.$$("#deleteAjax").generateRequest()},_deleteResponse:function(){this.fire("deleted"),this.onDeletedFunction&&this.onDeletedFunction()}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-delete-dialog',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        confirmationText: {
+          type: String
+        },
+
+        action: {
+          type: String
+        },
+
+        actionId: {
+          type: String
+        },
+
+        onDeletedFunction: {
+          type: Function,
+          value: null
+        }
+      },
+
+      setup: function (action, actionId, confirmationText, onDeletedFunction) {
+        this.set('action', action);
+        this.set('actionId', actionId);
+        this.set('confirmationText', confirmationText);
+        this.set('onDeletedFunction', onDeletedFunction);
+      },
+
+      open: function () {
+        this.$$("#deleteConfirmationDialog").open();
+      },
+
+      _delete: function () {
+        this.$$("#deleteAjax").url = this.action + this.actionId;
+        this.$$("#deleteAjax").setBody({deleteConfirmed: true});
+        this.$$("#deleteAjax").generateRequest();
+      },
+
+      _deleteResponse: function () {
+        this.fire("deleted");
+        if (this.onDeletedFunction) {
+          this.onDeletedFunction();
+        }
+      }
+    });
+  </script>
 </dom-module>
 <dom-module id="ac-notification-selection" assetpath="../ac-notifications/">
   <template>
@@ -79,7 +132,130 @@
     </div>
   </template>
 
-  <script>Polymer({is:"ac-notification-selection",behaviors:[Polymer.appHelpers],properties:{name:String,setting:{type:Object,notify:!0,observer:"_settingChanged"},frequency:{type:Number,notify:!0,observer:"_frequencyChanged"},method:{type:Number,notify:!0,observer:"_methodChanged"},availableFrequencies:{type:Array,computed:"_getAvailableFrequencies(language, method)"},availableMethods:{type:Object,computed:"_availableMethods(language)"}},_availableMethods:function(e){return e?[{name:this.t("notification.muted"),enumValue:0},{name:this.t("notification.browser"),enumValue:1},{name:this.t("notification.email"),enumValue:2}]:[]},_methodChanged:function(e){e=parseInt(e),this.setting.method!=e&&this.set("setting.method",e)},_frequencyChanged:function(e){e=parseInt(e),this.setting.frequency!=e&&this.set("setting.frequency",e)},_settingChanged:function(e){e&&(this.set("method",e.method),this.set("frequency",e.frequency))},_getAvailableFrequencies:function(e,t){var n=[];return e&&t&&0!=t&&(1==t?(this.set("frequency",0),n=[{name:this.t("notification.asItHappens"),enumValue:0}]):2==t&&(n=[{name:this.t("notification.asItHappens"),enumValue:0},{name:this.t("notification.hourly"),enumValue:1},{name:this.t("notification.daily"),enumValue:2},{name:this.t("notification.weekly"),enumValue:3},{name:this.t("notification.monthly"),enumValue:5}])),n}});</script>
+  <script>
+    Polymer({
+
+      is: 'ac-notification-selection',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        name: String,
+
+        setting: {
+          type: Object,
+          notify: true,
+          observer: '_settingChanged'
+        },
+
+        frequency:  {
+          type: Number,
+          notify: true,
+          observer: "_frequencyChanged"
+        },
+
+        method: {
+          type: Number,
+          notify: true,
+          observer: "_methodChanged"
+        },
+
+        availableFrequencies: {
+          type: Array,
+          computed: '_getAvailableFrequencies(language, method)'
+        },
+
+        availableMethods: {
+          type: Object,
+          computed: '_availableMethods(language)'
+        }
+      },
+
+      _availableMethods: function (language) {
+        if (language) {
+          return [
+            {
+              name: this.t('notification.muted'),
+              enumValue: 0
+            },
+            {
+              name: this.t('notification.browser'),
+              enumValue: 1
+            },
+            {
+              name: this.t('notification.email'),
+              enumValue: 2
+            }
+          ]
+        } else {
+          return [];
+        }
+      },
+
+      _methodChanged: function (value) {
+        value = parseInt(value);
+        if (this.setting.method!=value) {
+          this.set('setting.method', value);
+        }
+      },
+
+      _frequencyChanged: function (value) {
+        value = parseInt(value);
+        if (this.setting.frequency!=value) {
+          this.set('setting.frequency', value);
+        }
+      },
+
+      _settingChanged: function (value) {
+        if (value) {
+          this.set('method', value.method);
+          this.set('frequency', value.frequency);
+        }
+      },
+
+      _getAvailableFrequencies: function (language, method) {
+        var frequencyArray = [];
+        if (language) {
+          if (!method || method==0) {
+          } else if (method==1) {
+            this.set('frequency', 0);
+            frequencyArray = [
+              {
+                name: this.t('notification.asItHappens'),
+                enumValue: 0
+              }
+            ]
+          } else if (method==2) {
+            frequencyArray = [
+              {
+                name: this.t('notification.asItHappens'),
+                enumValue: 0
+              },
+              {
+                name: this.t('notification.hourly'),
+                enumValue: 1
+              },
+              {
+                name: this.t('notification.daily'),
+                enumValue: 2
+              },
+              {
+                name: this.t('notification.weekly'),
+                enumValue: 3
+              },
+              {
+                name: this.t('notification.monthly'),
+                enumValue: 5
+              }
+            ]
+          }
+        }
+        return frequencyArray;
+      }
+    });
+  </script>
 </dom-module>
 <dom-module id="ac-notification-settings" assetpath="../ac-notifications/">
   <template>
@@ -107,7 +283,35 @@
     </ac-notification-selection>
   </template>
 
-  <script>Polymer({is:"ac-notification-settings",behaviors:[Polymer.appHelpers],properties:{notificationsSettings:{type:Object,notify:!0,observer:"_notificationsSettingsChanged"}},observers:["settingsStarChanged(notificationsSettings.*)"],_notificationsSettingsChanged:function(t){},settingsStarChanged:function(t){this.fire("yp-notifications-changed",this.notificationsSettings)}});</script>
+  <script>
+    Polymer({
+
+      is: 'ac-notification-settings',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        notificationsSettings: {
+          type: Object,
+          notify: true,
+          observer: '_notificationsSettingsChanged'
+        }
+      },
+
+      observers: [
+        'settingsStarChanged(notificationsSettings.*)'
+      ],
+
+      _notificationsSettingsChanged: function (value) {
+      },
+
+      settingsStarChanged: function (object) {
+        this.fire('yp-notifications-changed', this.notificationsSettings);
+      }
+    });
+  </script>
 </dom-module>
 <dom-module id="yp-user-edit" assetpath="../yp-user/">
   <template>
@@ -172,7 +376,126 @@
 
 </dom-module>
 
-<script>Polymer({is:"yp-user-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/users"},user:{type:Object,observer:"_userChanged"},params:{type:String},method:{type:String},selected:{type:Number,value:0},encodedUserNotificationSettings:{type:String,observer:"_encodedUserNotificationSettingsChanged"},uploadedProfileImageId:{type:String},uploadedHeaderImageId:{type:String},notificationSettings:{type:Object,notify:!0,observer:"_notificationSettingsChanged"}},listeners:{"yp-notifications-changed":"_setNotificationSettings"},_setNotificationSettings:function(t,e){this.set("notificationSettings",e),this.set("encodedUserNotificationSettings",this._encodeNotificationsSettings(this.notificationSettings))},_notificationSettingsChanged:function(t){this.set("encodedUserNotificationSettings",this._encodeNotificationsSettings(this.notificationSettings))},_encodedUserNotificationSettingsChanged:function(t){},_encodeNotificationsSettings:function(t){return JSON.stringify(t)},_userChanged:function(t){this.set("notificationSettings",t.notifications_settings)},_profileImageUploaded:function(t,e){var i=JSON.parse(e.xhr.response);this.set("uploadedProfileImageId",i.id)},_headerImageUploaded:function(t,e){var i=JSON.parse(e.xhr.response);this.set("uploadedHeaderImageId",i.id)},_customRedirect:function(t){window.appUser.checkLogin()},_clear:function(){this.set("user",{name:"",email:"",access:2}),this.uploadedProfileImageId=null,this.uploadedHeaderImageId=null,this.$.headerImageUpload.clear(),this.$.profileImageUpload.clear()},setup:function(t,e,i){this.set("user",t),this.set("new",e),this.set("refreshFunction",i),this._setupTranslation()},_setupTranslation:function(){this.new?(this.editHeaderText=this.t("user.new"),this.toastText=this.t("user.toast.created")):(this.editHeaderText=this.t("user.edit"),this.toastText=this.t("user.toast.updated"))}});</script>
+<script>
+
+  Polymer({
+
+    is: 'yp-user-edit',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/users"
+      },
+
+      user: {
+        type: Object,
+        observer: '_userChanged'
+      },
+
+      params: {
+        type: String
+      },
+
+      method: {
+        type: String
+      },
+
+      selected: {
+        type: Number,
+        value: 0
+      },
+
+      encodedUserNotificationSettings: {
+        type: String,
+        observer: '_encodedUserNotificationSettingsChanged'
+      },
+
+      uploadedProfileImageId: {
+        type: String
+      },
+
+      uploadedHeaderImageId: {
+        type: String
+      },
+
+      notificationSettings: {
+        type: Object,
+        notify: true,
+        observer: '_notificationSettingsChanged'
+      }
+    },
+
+    listeners: {
+      'yp-notifications-changed': '_setNotificationSettings'
+    },
+
+    _setNotificationSettings: function (event, detail) {
+      this.set('notificationSettings', detail);
+      this.set('encodedUserNotificationSettings', this._encodeNotificationsSettings(this.notificationSettings));
+    },
+
+    _notificationSettingsChanged: function (value) {
+      this.set('encodedUserNotificationSettings', this._encodeNotificationsSettings(this.notificationSettings));
+    },
+
+    _encodedUserNotificationSettingsChanged: function (value) {
+    },
+
+    _encodeNotificationsSettings: function (settings) {
+      return JSON.stringify(settings);
+    },
+
+    _userChanged: function (newValue) {
+      this.set('notificationSettings', newValue.notifications_settings);
+    },
+
+    _profileImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedProfileImageId', image.id);
+    },
+
+    _headerImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedHeaderImageId', image.id);
+    },
+
+    _customRedirect: function (userId) {
+      window.appUser.checkLogin();
+    },
+
+    _clear: function () {
+      this.set('user', { name: '', email: '', access: 2 } );
+      this.uploadedProfileImageId = null;
+      this.uploadedHeaderImageId = null;
+      this.$.headerImageUpload.clear();
+      this.$.profileImageUpload.clear();
+    },
+
+    setup: function (user, newNotEdit, refreshFunction) {
+      this.set('user', user);
+      this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+    },
+
+    _setupTranslation: function () {
+      if (this.new) {
+        this.editHeaderText = this.t('user.new');
+        this.toastText = this.t('user.toast.created');
+      } else {
+        this.editHeaderText = this.t('user.edit');
+        this.toastText = this.t('user.toast.updated');
+      }
+    }
+  });
+</script>
 <dom-module id="yp-confirmation-dialog" assetpath="/">
   <template>
 
@@ -193,6 +516,45 @@
 
   </template>
 
-  <script>Polymer({is:"yp-confirmation-dialog",behaviors:[Polymer.appHelpers],properties:{confirmationText:{type:String},onConfirmedFunction:{type:Function,value:null}},_reset:function(){this.set("confirmationText",null),this.set("onConfirmedFunction",null)},open:function(n,i){this.set("confirmationText",n),this.set("onConfirmedFunction",i),this.$$("#confirmationDialog").open()},_confirm:function(){this.onConfirmedFunction&&(this.onConfirmedFunction(),this._reset())}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-confirmation-dialog',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        confirmationText: {
+          type: String
+        },
+
+        onConfirmedFunction: {
+          type: Function,
+          value: null
+        }
+      },
+
+      _reset: function () {
+        this.set('confirmationText', null);
+        this.set('onConfirmedFunction', null);
+      },
+
+      open: function (confirmationText, onConfirmedFunction) {
+        this.set('confirmationText', confirmationText);
+        this.set('onConfirmedFunction', onConfirmedFunction);
+        this.$$("#confirmationDialog").open();
+      },
+
+      _confirm: function () {
+        if (this.onConfirmedFunction) {
+          this.onConfirmedFunction();
+          this._reset();
+        }
+      }
+    });
+  </script>
 </dom-module>
 </div></body></html>

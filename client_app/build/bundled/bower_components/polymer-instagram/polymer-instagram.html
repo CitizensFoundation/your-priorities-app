@@ -15,6 +15,53 @@
     </div>
   </template>
 
-  <script>Polymer({is:"polymer-instagram",properties:{accessToken:{type:String,value:null},clientId:{type:String,value:null,observer:"_clientIdChanged"}},_clientIdChanged:function(e){if(e){var i='<a href="{{link}}"><img height="{{height}}" width="{{width}}" src="{{image}}" /></a>';i+='<div class="layout vertical"><div>{{caption}}</div><div>{{location}}</div></div>',this.async(function(){var e=new Instafeed({get:"user",userId:"3066250812",clientId:this.clientId,accessToken:this.accessToken,resolution:"standard_resolution",links:!0});this.async(function(){var e=Polymer.dom(this.$$("#instafeed")).querySelectorAll("a img");_.each(e,function(e){e.style.width="100%",e.style.marginBottom="16px"})},1200),e.run()}.bind(this),50)}},ready:function(){}});</script>
+  <script>
+    Polymer({
+
+      is: 'polymer-instagram',
+
+      properties: {
+
+        accessToken: {
+          type: String,
+          value: null
+        },
+
+        clientId: {
+          type: String,
+          value: null,
+          observer: '_clientIdChanged'
+        }
+      },
+
+      _clientIdChanged: function (newValue) {
+        if (newValue) {
+          var template = '<a href="{{link}}"><img height="{{height}}" width="{{width}}" src="{{image}}" /></a>';
+          template += '<div class="layout vertical"><div>{{caption}}</div><div>{{location}}</div></div>';
+          this.async(function () {
+            var feed = new Instafeed({
+              get: 'user',
+              userId: '3066250812',
+              clientId: this.clientId,
+              accessToken: this.accessToken,
+              resolution: 'standard_resolution',
+              links: true
+            });
+            this.async(function () {
+              var allImages = Polymer.dom(this.$$("#instafeed")).querySelectorAll("a img");
+              _.each(allImages, function (image) {
+                image.style.width = "100%";
+                image.style.marginBottom = "16px";
+              });
+            },1200);
+            feed.run();
+          }.bind(this), 50);
+        }
+      },
+
+      ready: function () {
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

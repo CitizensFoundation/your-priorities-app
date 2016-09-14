@@ -131,5 +131,168 @@
 
 </dom-module>
 
-<script>Polymer({is:"yp-group-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior,Polymer.ypCollectionStatusOptions],properties:{canVote:{type:Boolean,value:!0},canAddNewPosts:{type:Boolean,value:!0},action:{type:String,value:"/api/groups"},group:{type:Object,observer:"_groupChanged"},community:{type:Object},groupAccess:{type:String,value:"public"},uploadedLogoImageId:{type:String},uploadedHeaderImageId:{type:String},status:String,publicCommunity:{type:Boolean,value:!1},themeId:{type:String,value:null},locationHidden:Boolean},_publicCommunity:function(t){if(t)return 0==t.Community.access},_customRedirect:function(t){t?(window.appUser.recheckAdminRights(),this.redirectTo("/group/"+t.id)):console.warn("No group found on custom redirect")},_groupChanged:function(t,o){this.group&&(0==this.group.access?this.groupAccess="public":1==this.group.access?this.groupAccess="closed":2==this.group.access?this.groupAccess="secret":3==this.group.access&&(this.groupAccess="open_to_community"),this.group&&this.group.status&&this.set("status",this.group.status),this.group.configuration&&void 0!=this.group.configuration.canVote&&(this.set("canVote",this.group.configuration.canVote),this.set("canAddNewPosts",this.group.configuration.canAddNewPosts)),this.group.configuration&&void 0!=this.group.configuration.locationHidden&&this.set("locationHidden",this.group.configuration.locationHidden),this.community?0==this.community.access?this.set("publicCommunity",!0):this.set("publicCommunity",!1):this.group.Community&&(0==this.group.Community.access?this.set("publicCommunity",!0):this.set("publicCommunity",!1)))},_clear:function(){this.group={name:"",objectives:"",access:0,status:"active"},this.uploadedLogoImageId=null,this.uploadedHeaderImageId=null,this.$.headerImageUpload.clear(),this.$.logoImageUpload.clear()},setup:function(t,o,s){if(t)this.set("group",t);else{var e=0;this.community?0!=this.community.access&&(this.set("groupAccess","open_to_community"),e=3):this.group.Community&&0!=this.group.Community.access&&(this.set("groupAccess","open_to_community"),e=3),this.set("group",{name:"",objectives:"",access:e,status:"active"})}this.set("new",o),this.set("refreshFunction",s),this._setupTranslation()},_setupTranslation:function(){this.new?(this.editHeaderText=this.t("group.new"),this.toastText=this.t("group.toast.created")):(this.editHeaderText=this.t("group.update"),this.toastText=this.t("group.toast.updated"))}});</script>
+<script>
+
+  Polymer({
+
+    is: 'yp-group-edit',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior,
+      Polymer.ypCollectionStatusOptions
+    ],
+
+    properties: {
+
+      canVote: {
+        type: Boolean,
+        value: true
+      },
+
+      canAddNewPosts: {
+        type: Boolean,
+        value: true
+      },
+
+      action: {
+        type: String,
+        value: "/api/groups"
+      },
+
+      group: {
+        type: Object,
+        observer: "_groupChanged"
+      },
+
+      community: {
+        type: Object
+      },
+
+      groupAccess: {
+        type: String,
+        value: "public"
+      },
+
+      uploadedLogoImageId: {
+        type: String
+      },
+
+      uploadedHeaderImageId: {
+        type: String
+      },
+
+      status: String,
+
+      publicCommunity: {
+        type: Boolean,
+        value: false
+      },
+
+      themeId: {
+        type: String,
+        value: null
+      },
+
+      locationHidden: Boolean
+    },
+
+    _publicCommunity: function (group) {
+      if (group) {
+        return group.Community.access==0
+      }
+    },
+
+    _customRedirect: function (group) {
+      if (group) {
+        window.appUser.recheckAdminRights();
+        this.redirectTo("/group/"+group.id);
+      } else {
+        console.warn('No group found on custom redirect');
+      }
+    },
+
+    _groupChanged: function (newValue, oldValue) {
+      if (this.group) {
+        if (this.group.access==0) {
+          this.groupAccess = "public"
+        } else if (this.group.access==1) {
+          this.groupAccess = "closed"
+        } else if (this.group.access==2) {
+          this.groupAccess = "secret"
+        } else if (this.group.access==3) {
+          this.groupAccess = "open_to_community"
+        }
+
+        if (this.group && this.group.status) {
+          this.set('status', this.group.status);
+        }
+
+        if (this.group.configuration && this.group.configuration.canVote!=undefined) {
+          this.set('canVote', this.group.configuration.canVote);
+          this.set('canAddNewPosts', this.group.configuration.canAddNewPosts);
+        }
+
+        if (this.group.configuration && this.group.configuration.locationHidden!=undefined) {
+          this.set('locationHidden', this.group.configuration.locationHidden);
+        }
+
+        if (this.community) {
+          if (this.community.access==0) {
+            this.set('publicCommunity', true);
+          } else {
+            this.set('publicCommunity', false);
+          }
+        } else if (this.group.Community) {
+          if (this.group.Community.access==0) {
+            this.set('publicCommunity', true);
+          } else {
+            this.set('publicCommunity', false);
+          }
+        }
+      }
+    },
+
+    _clear: function () {
+      this.group = { name: '', objectives: '', access: 0, status: 'active' };
+      this.uploadedLogoImageId = null;
+      this.uploadedHeaderImageId = null;
+      this.$.headerImageUpload.clear();
+      this.$.logoImageUpload.clear();
+    },
+
+    setup: function (group, newNotEdit, refreshFunction) {
+      if (!group) {
+        var defaultAccess = 0;
+        if (this.community) {
+          if (this.community.access!=0) {
+            this.set('groupAccess', 'open_to_community');
+            defaultAccess = 3;
+          }
+        } else if (this.group.Community) {
+          if (this.group.Community.access!=0) {
+            this.set('groupAccess', 'open_to_community');
+            defaultAccess = 3;
+          }
+        }
+        this.set('group', { name: '', objectives: '', access: defaultAccess, status: 'active' });
+      } else {
+        this.set('group', group);
+      }
+      this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+    },
+
+    _setupTranslation: function () {
+      if (this.new) {
+        this.editHeaderText = this.t('group.new');
+        this.toastText = this.t('group.toast.created');
+      } else {
+        this.editHeaderText = this.t('group.update');
+        this.toastText = this.t('group.toast.updated');
+      }
+    }
+  });
+</script>
 </body></html>

@@ -11,6 +11,27 @@
     <yp-user-with-organization user="[[activity.User]]"></yp-user-with-organization>
   </template>
 
-  <script>Polymer({is:"ac-activity-header",behaviors:[Polymer.appHelpers],properties:{activity:{type:Object,observer:"_activityChanged"}},_activityChanged:function(e){}});</script>
+  <script>
+    Polymer({
+
+      is: 'ac-activity-header',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        activity: {
+          type: Object,
+          observer: '_activityChanged'
+        }
+      },
+
+      _activityChanged: function (newValue) {
+      }
+
+    });
+  </script>
 </dom-module>
 </body></html>

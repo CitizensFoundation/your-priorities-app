@@ -140,12 +140,220 @@
             </div>
           </paper-menu-button>
         </template>
-        <div on-tap="_openDropDown" style="cursor: pointer">
+        <div on-tap="_openDropDown" style="cursor: pointer;">
           <h2 class="subTitle">[[subTitle]]</h2>
         </div>
       </div>
     </template>
   </template>
-  <script>Polymer({is:"yp-posts-filter",behaviors:[Polymer.appHelpers],properties:{filter:{type:String,value:"newest",notify:!0,observer:"_filterChanged"},filterName:{type:String},categoryId:{type:String,notify:!0,observer:"_categoryIdChanged"},categoryName:{type:String},group:{type:Object,observer:"_groupChanged"},subTitle:{type:String,value:""},searchingFor:{type:String,value:null,notify:!0,observer:"_searchingForChanged"},showFilter:{type:Boolean,value:!0},postsCount:{type:Number,notify:!0},tabName:{type:String}},observers:["_listLanguageChanged(language)"],_openDropDown:function(){var t=this.$$("#dropDownTrigger");t&&t.click()},_searchingForChanged:function(t,e){t?this.showFilter=!1:this.showFilter=!0},_clearSearch:function(){this.set("searchingFor",null),this.set("filter","newest"),this._updateAfterFiltering()},openFilter:function(){window.appGlobals.activity("open","filter")},_filterChanged:function(t,e){t&&(this.filterName="post."+this.filter,this._updateTitle())},_categoryIdChanged:function(t,e){t&&this._updateTitle()},_listLanguageChanged:function(t){t&&this.t&&this._updateTitle()},searchFor:function(t){this.set("searchingFor",t);var e="/group/"+this.group.id+"/open/"+this.group.name+"/search/"+this.searchingFor;window.appGlobals.activity("change","filter",e),this.redirectTo(e),this.fire("refresh-group")},_updateTitle:function(){if(this.searchingFor)this.subTitle=this.t("post.searchingFor")+this.searchingFor;else{var t,e=this.t(this.filterName);t=this.categoryName?this.categoryName:this.t("categories.all");var i=this.t("short_word.in");this._ifCategories()?(this.subTitle=e+" "+i+" "+t,this.postsCount&&(this.subTitle+=" ("+this.postsCount+")")):this.subTitle=e}},_changeFilter:function(t,e){this.set("filter",e.item.dataset.filter),this._updateAfterFiltering()},_changeCategory:function(t,e){var i=e.item.dataset.categoryId;"-1"!=i?(this.set("categoryId",i),this.categoryName=e.item.dataset.categoryName):(this.set("categoryId",null),this.categoryName=null,this.$$("#categoryMenu").selected=null,this.$$("#clearMenu").selected=null),this._updateTitle(),this._updateAfterFiltering()},buildPostsUrlPath:function(){var t="/group/"+this.group.id+"/"+this.tabName;return this.filter&&(t+="/posts/"+this.filter),this.categoryId&&(t+="/"+this.categoryId+"/"+this.categoryName),t},_updateAfterFiltering:function(){this.filter||this.set("filter","newest");var t=this.buildPostsUrlPath();window.appGlobals.activity("change","filter",t),this.fire("refresh-group")},_ifCategories:function(){return!!this.group&&(this.group.Categories&&this.group.Categories.length>0)},_groupChanged:function(t,e){t&&this._updateTitle()},_categoryItems:function(){return this.group.Categories?this.splitArray(this.group.Categories,7):[]},_categoryImageSrc:function(t){return this.getImageFormatUrl(t.CategoryIconImages,0)}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-posts-filter',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        filter: {
+          type: String,
+          value: "newest",
+          notify: true,
+          observer: "_filterChanged"
+        },
+
+        filterName: {
+          type: String
+        },
+
+        categoryId: {
+          type: String,
+          notify: true,
+          observer: "_categoryIdChanged"
+        },
+
+        categoryName: {
+          type: String
+        },
+
+        group: {
+          type: Object,
+          observer: "_groupChanged"
+        },
+
+        subTitle: {
+          type: String,
+          value: ''
+        },
+
+        searchingFor: {
+          type: String,
+          value: null,
+          notify: true,
+          observer: "_searchingForChanged"
+        },
+
+        showFilter: {
+          type: Boolean,
+          value: true
+        },
+
+        postsCount: {
+          type: Number,
+          notify: true
+        },
+
+        tabName: {
+          type: String
+        }
+      },
+
+      observers: [
+        '_listLanguageChanged(language)'
+      ],
+
+      _openDropDown: function () {
+        var trigger = this.$$("#dropDownTrigger");
+        if (trigger) {
+          trigger.click();
+        }
+      },
+
+      _searchingForChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.showFilter = false;
+        } else {
+          this.showFilter = true;
+        }
+      },
+
+      _clearSearch: function () {
+        this.set('searchingFor', null);
+        this.set('filter', 'newest');
+        this._updateAfterFiltering();
+      },
+
+      openFilter: function () {
+        window.appGlobals.activity('open', 'filter');
+      },
+
+      _filterChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.filterName = 'post.' + this.filter;
+          this._updateTitle();
+        }
+      },
+
+      _categoryIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this._updateTitle();
+        }
+      },
+
+      _listLanguageChanged: function (language) {
+        if (language && this.t) {
+          this._updateTitle();
+        }
+      },
+
+      searchFor: function (value) {
+        this.set('searchingFor', value);
+        var newLocation = '/group/' + this.group.id + '/open/' + this.group.name + '/search/' + this.searchingFor;
+        window.appGlobals.activity('change', 'filter', newLocation);
+        this.redirectTo(newLocation);
+        this.fire("refresh-group");
+      },
+
+      _updateTitle: function () {
+        if (this.searchingFor) {
+          this.subTitle = this.t('post.searchingFor') + this.searchingFor;
+        } else {
+          var translatedFilterName = this.t(this.filterName);
+          var translatedCategoryName;
+          if (this.categoryName) {
+            translatedCategoryName = this.categoryName;
+          } else {
+            translatedCategoryName = this.t('categories.all');
+          }
+          var inWord = this.t('short_word.in');
+          if (this._ifCategories()) {
+            this.subTitle = translatedFilterName + ' ' + inWord + ' ' + translatedCategoryName;
+            if (this.postsCount) {
+              this.subTitle += ' (' + this.postsCount + ')';
+            }
+          } else {
+            this.subTitle = translatedFilterName;
+          }
+        }
+      },
+
+      _changeFilter: function (e, detail) {
+        this.set('filter',detail.item.dataset.filter);
+        this._updateAfterFiltering();
+      },
+
+      _changeCategory: function (e, detail) {
+        var categoryId = detail.item.dataset.categoryId;
+        if (categoryId != '-1') {
+          this.set('categoryId',categoryId);
+          this.categoryName = detail.item.dataset.categoryName;
+        } else {
+          this.set('categoryId',null);
+          this.categoryName = null;
+          this.$$("#categoryMenu").selected = null;
+          this.$$("#clearMenu").selected = null;
+        }
+        this._updateTitle();
+        this._updateAfterFiltering();
+      },
+
+      buildPostsUrlPath: function () {
+        var newLocation = '/group/' + this.group.id + '/' + this.tabName;
+        if (this.filter) {
+          newLocation += '/posts/' + this.filter;
+        }
+        if (this.categoryId) {
+          newLocation += '/' + this.categoryId + '/' + this.categoryName;
+        }
+        return newLocation;
+      },
+
+      _updateAfterFiltering: function () {
+        if (!this.filter)
+          this.set('filter','newest');
+        var newLocation = this.buildPostsUrlPath();
+        window.appGlobals.activity('change', 'filter', newLocation);
+     //   this.redirectTo(newLocation);
+        this.fire("refresh-group");
+      },
+
+      _ifCategories: function () {
+        if (this.group) {
+          return this.group.Categories && this.group.Categories.length > 0;
+        } else {
+          return false;
+        }
+      },
+
+      _groupChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this._updateTitle();
+        }
+      },
+
+      _categoryItems: function () {
+        if (this.group.Categories)
+          return this.splitArray(this.group.Categories, 7);
+        else
+          return [];
+      },
+
+      _categoryImageSrc: function (category) {
+        return this.getImageFormatUrl(category.CategoryIconImages, 0);
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

@@ -62,6 +62,129 @@
     </div>
   </template>
 
-  <script>Polymer({is:"ac-notification-selection",behaviors:[Polymer.appHelpers],properties:{name:String,setting:{type:Object,notify:!0,observer:"_settingChanged"},frequency:{type:Number,notify:!0,observer:"_frequencyChanged"},method:{type:Number,notify:!0,observer:"_methodChanged"},availableFrequencies:{type:Array,computed:"_getAvailableFrequencies(language, method)"},availableMethods:{type:Object,computed:"_availableMethods(language)"}},_availableMethods:function(e){return e?[{name:this.t("notification.muted"),enumValue:0},{name:this.t("notification.browser"),enumValue:1},{name:this.t("notification.email"),enumValue:2}]:[]},_methodChanged:function(e){e=parseInt(e),this.setting.method!=e&&this.set("setting.method",e)},_frequencyChanged:function(e){e=parseInt(e),this.setting.frequency!=e&&this.set("setting.frequency",e)},_settingChanged:function(e){e&&(this.set("method",e.method),this.set("frequency",e.frequency))},_getAvailableFrequencies:function(e,t){var n=[];return e&&t&&0!=t&&(1==t?(this.set("frequency",0),n=[{name:this.t("notification.asItHappens"),enumValue:0}]):2==t&&(n=[{name:this.t("notification.asItHappens"),enumValue:0},{name:this.t("notification.hourly"),enumValue:1},{name:this.t("notification.daily"),enumValue:2},{name:this.t("notification.weekly"),enumValue:3},{name:this.t("notification.monthly"),enumValue:5}])),n}});</script>
+  <script>
+    Polymer({
+
+      is: 'ac-notification-selection',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        name: String,
+
+        setting: {
+          type: Object,
+          notify: true,
+          observer: '_settingChanged'
+        },
+
+        frequency:  {
+          type: Number,
+          notify: true,
+          observer: "_frequencyChanged"
+        },
+
+        method: {
+          type: Number,
+          notify: true,
+          observer: "_methodChanged"
+        },
+
+        availableFrequencies: {
+          type: Array,
+          computed: '_getAvailableFrequencies(language, method)'
+        },
+
+        availableMethods: {
+          type: Object,
+          computed: '_availableMethods(language)'
+        }
+      },
+
+      _availableMethods: function (language) {
+        if (language) {
+          return [
+            {
+              name: this.t('notification.muted'),
+              enumValue: 0
+            },
+            {
+              name: this.t('notification.browser'),
+              enumValue: 1
+            },
+            {
+              name: this.t('notification.email'),
+              enumValue: 2
+            }
+          ]
+        } else {
+          return [];
+        }
+      },
+
+      _methodChanged: function (value) {
+        value = parseInt(value);
+        if (this.setting.method!=value) {
+          this.set('setting.method', value);
+        }
+      },
+
+      _frequencyChanged: function (value) {
+        value = parseInt(value);
+        if (this.setting.frequency!=value) {
+          this.set('setting.frequency', value);
+        }
+      },
+
+      _settingChanged: function (value) {
+        if (value) {
+          this.set('method', value.method);
+          this.set('frequency', value.frequency);
+        }
+      },
+
+      _getAvailableFrequencies: function (language, method) {
+        var frequencyArray = [];
+        if (language) {
+          if (!method || method==0) {
+          } else if (method==1) {
+            this.set('frequency', 0);
+            frequencyArray = [
+              {
+                name: this.t('notification.asItHappens'),
+                enumValue: 0
+              }
+            ]
+          } else if (method==2) {
+            frequencyArray = [
+              {
+                name: this.t('notification.asItHappens'),
+                enumValue: 0
+              },
+              {
+                name: this.t('notification.hourly'),
+                enumValue: 1
+              },
+              {
+                name: this.t('notification.daily'),
+                enumValue: 2
+              },
+              {
+                name: this.t('notification.weekly'),
+                enumValue: 3
+              },
+              {
+                name: this.t('notification.monthly'),
+                enumValue: 5
+              }
+            ]
+          }
+        }
+        return frequencyArray;
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

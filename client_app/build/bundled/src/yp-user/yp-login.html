@@ -244,5 +244,254 @@
 
 </dom-module>
 
-<script>Polymer({is:"yp-login",behaviors:[Polymer.appHelpers],properties:{userSpinner:{type:Boolean,value:!1},reCaptchaSiteKey:{type:String,value:"6Ld9UBsTAAAAAPq059P_AGqo-tVE_T9gPj5ifrmY"},emailValidationPattern:{type:String,value:"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"},emailErrorMessage:{type:String},passwordErrorMessage:{type:String},name:{type:String,value:""},email:{type:String,value:""},password:{type:String,value:""},credentials:{type:String,notify:!0,computed:"_computeCredentials(name, email, password)"},registerMode:{type:Number,value:0,observer:"_onRegisterChanged"},submitText:{type:String,value:""},redirectTo:{type:String},forgotPasswordOpen:{type:Boolean,value:!1},heading:{type:String},opened:{type:Boolean,value:!1,observer:"_openedChanged"},target:{type:Object,value:function(){return this.$$("#form")}},onLoginFunction:{type:Function,value:null}},setUserSpinner:function(e){this.set("userSpinner",e)},_facebookLogin:function(){var e="/api/users/auth/facebook",t=1e3,i=650,r=(window.outerHeight-i)/2,o=(window.outerWidth-t)/2;window.open(e,"facebook_login","width="+t+",height="+i+",scrollbars=0,top="+r+",left="+o)},_islandIsLogin:function(){var e="/api/users/auth/saml",t=1200,i=650,r=(window.outerHeight-i)/2,o=(window.outerWidth-t)/2;window.open(e,"saml_login","width="+t+",height="+i+",scrollbars=0,top="+r+",left="+o)},_facebookProvider:function(){return window.appGlobals.domain.facebookLoginProvided},_samlProvider:function(){return window.appGlobals.domain.samlLoginProvided},_openedChanged:function(e){e&&this.async(function(){this.$$("#a11y").target=this.$$("#form")}.bind(this),50)},onEnter:function(e){this._validateAndSend()},_registerError:function(e,t){"SequelizeUniqueConstraintError"==t?this.$$("#registerAjax").showErrorDialog(this.t("user.alreadyRegisterred")):this.$$("#registerAjax").showErrorDialog(this.t("user.registrationError")+": "+t)},_loginError:function(e,t){"Unauthorized"==t?this.$$("#loginAjax").showErrorDialog(this.t("user.loginNotAuthorized")):this.$$("#loginAjax").showErrorDialog(this.t("user.loginError")+": "+t)},_forgotPassword:function(){this.fire("yp-forgot-password")},_onRegisterChanged:function(e,t){this._setTexts()},ready:function(){},setup:function(e){this.set("onLoginFunction",e),this._setTexts()},_setTexts:function(){this.emailErrorMessage=this.t("user.email.error"),this.passwordErrorMessage=this.t("user.password.error"),1===this.registerMode?(this.header=this.t("user.registerHeader"),this.set("submitText",this.t("user.create"))):(this.header=this.t("user.header"),this.set("submitText",this.t("user.login")))},_computeCredentials:function(e,t,i){return JSON.stringify({name:e,email:t,identifier:t,username:t,password:i})},_validateAndSend:function(e){return this.$$("#form").checkValidity()&&this.email&&this.password?void(this.registerMode?(this.$$("#registerAjax").body=this.credentials,this.$$("#registerAjax").generateRequest()):(this.$$("#loginAjax").body=this.credentials,this.$$("#loginAjax").generateRequest())):(this.$$("#loginAjax").showErrorDialog(this.t("user.completeForm")),!1)},_registerResponse:function(e,t){this._loginCompleted(t.response)},_loginResponse:function(e,t){this._loginCompleted(t.response)},_loginCompleted:function(e){window.appUser.setLoggedInUser(e),this.redirectTo&&this.redirectTo(this.redirectTo),this.fire("login",e),this.onLoginFunction&&this.onLoginFunction(e),this.fire("iron-signal",{name:"logged-in",data:e})},open:function(e){this.redirectTo=e,this.set("userSpinner",!1),this.set("opened",!1),this.async(function(){this.set("opened",!0),this.async(function(){this.$$("#dialog").open()})})},close:function(){this.$$("#dialog").close(),this.set("opened",!1),this.set("userSpinner",!1)}});</script>
+<script>
+
+  Polymer({
+
+    is: 'yp-login',
+
+    behaviors: [
+      Polymer.appHelpers
+    ],
+
+    properties: {
+
+      userSpinner: {
+        type: Boolean,
+        value: false
+      },
+
+      reCaptchaSiteKey: {
+        type: String,
+        value: '6Ld9UBsTAAAAAPq059P_AGqo-tVE_T9gPj5ifrmY'
+      },
+
+      emailValidationPattern: {
+        type: String,
+        value: "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+      },
+
+      emailErrorMessage: {
+        type: String
+      },
+
+      passwordErrorMessage: {
+        type: String
+      },
+
+      name: {
+        type: String,
+        value: "" //"Róbert Viðar Bjarnason"
+      },
+
+      email: {
+        type: String,
+        value: "" //robert@citizens.is"
+      },
+
+      password: {
+        type: String,
+        value: "" //"DksdSodksSokssss"
+      },
+
+      credentials: {
+        type: String,
+        notify: true,
+        computed: '_computeCredentials(name, email, password)'
+      },
+
+      registerMode: {
+        type: Number,
+        value: 0,
+        observer: "_onRegisterChanged"
+      },
+
+      submitText: {
+        type: String,
+        value: ""
+      },
+
+      redirectTo: {
+        type: String
+      },
+
+      forgotPasswordOpen: {
+        type: Boolean,
+        value: false
+      },
+
+      heading: {
+        type: String
+      },
+
+      opened: {
+        type: Boolean,
+        value: false,
+        observer: '_openedChanged'
+      },
+
+      target: {
+        type: Object,
+        value: function() {
+          return this.$$("#form");
+        }
+      },
+
+      onLoginFunction: {
+        type: Function,
+        value: null
+      }
+    },
+
+    setUserSpinner: function (value) {
+      this.set('userSpinner', value)
+    },
+
+    _facebookLogin: function () {
+      var url = '/api/users/auth/facebook',
+      width = 1000,
+      height = 650,
+      top = (window.outerHeight - height) / 2,
+      left = (window.outerWidth - width) / 2;
+      window.open(url, 'facebook_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+    },
+
+    _islandIsLogin: function () {
+      var url = '/api/users/auth/saml',
+        width = 1200,
+        height = 650,
+        top = (window.outerHeight - height) / 2,
+        left = (window.outerWidth - width) / 2;
+      window.open(url, 'saml_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+    },
+
+    _facebookProvider: function () {
+      return (window.appGlobals.domain.facebookLoginProvided)
+    },
+
+    _samlProvider: function () {
+      return (window.appGlobals.domain.samlLoginProvided)
+    },
+
+    _openedChanged: function (newValue) {
+      if (newValue) {
+        this.async(function () {
+          this.$$("#a11y").target = this.$$("#form");
+        }.bind(this), 50);
+      }
+    },
+
+    onEnter: function (event) {
+      this._validateAndSend();
+    },
+
+    _registerError: function (event, error) {
+      if (error=='SequelizeUniqueConstraintError') {
+        this.$$("#registerAjax").showErrorDialog(this.t('user.alreadyRegisterred'));
+      } else {
+        this.$$("#registerAjax").showErrorDialog(this.t('user.registrationError')+': '+error);
+      }
+    },
+
+    _loginError: function (event, error) {
+      if (error=='Unauthorized') {
+        this.$$("#loginAjax").showErrorDialog(this.t('user.loginNotAuthorized'));
+      } else {
+        this.$$("#loginAjax").showErrorDialog(this.t('user.loginError')+': '+error);
+      }
+    },
+
+    _forgotPassword: function () {
+      this.fire("yp-forgot-password");
+    },
+
+    _onRegisterChanged: function (newValue, oldValue) {
+      this._setTexts();
+    },
+
+    ready: function () {
+      //this._setTexts();
+    },
+
+    setup: function (onLoginFunction) {
+      this.set('onLoginFunction', onLoginFunction);
+      this._setTexts();
+    },
+
+    _setTexts: function () {
+      this.emailErrorMessage = this.t('user.email.error');
+      this.passwordErrorMessage = this.t('user.password.error');
+      if (this.registerMode===1) {
+        this.header = this.t('user.registerHeader');
+        this.set('submitText',this.t('user.create'));
+      } else {
+        this.header = this.t('user.header');
+        this.set('submitText',this.t('user.login'));
+      }
+    },
+
+    _computeCredentials: function(name, email, password) {
+     return  JSON.stringify({
+        name: name,
+        email: email,
+        identifier: email,
+        username: email,
+        password: password
+      });
+    },
+
+    _validateAndSend: function(e) {
+      if (this.$$("#form").checkValidity() && this.email && this.password){
+        if (this.registerMode) {
+          this.$$("#registerAjax").body = this.credentials;
+          this.$$("#registerAjax").generateRequest();
+        } else {
+          this.$$("#loginAjax").body = this.credentials;
+          this.$$("#loginAjax").generateRequest();
+        }
+      } else {
+        this.$$("#loginAjax").showErrorDialog(this.t('user.completeForm'));
+        return false;
+      }
+    },
+
+    _registerResponse: function(event, detail) {
+      this._loginCompleted(detail.response);
+    },
+
+    _loginResponse: function(event, detail) {
+      this._loginCompleted(detail.response);
+    },
+
+    _loginCompleted: function (user) {
+      window.appUser.setLoggedInUser(user);
+      if (this.redirectTo)
+        this.redirectTo(this.redirectTo);
+      this.fire("login", user);
+      if (this.onLoginFunction) {
+        this.onLoginFunction(user);
+      }
+      this.fire('iron-signal', {name: 'logged-in', data: user});
+    },
+
+    open: function(redirectTo) {
+      this.redirectTo = redirectTo;
+      this.set('userSpinner', false);
+      this.set('opened', false);
+      this.async(function () {
+        this.set('opened', true);
+        this.async(function () {
+          this.$$("#dialog").open();
+        });
+      });
+    },
+
+    close: function() {
+      this.$$("#dialog").close();
+      this.set('opened', false);
+      this.set('userSpinner', false);
+    }
+
+  });
+</script>
 </body></html>

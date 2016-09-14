@@ -121,7 +121,61 @@
     </template>
   
 
-  <script>Polymer({is:"yp-post-header",behaviors:[Polymer.appHelpers],properties:{post:{type:Object,notify:!0,observer:"_postChanged"}},addEndorsement:function(t){this.$$("#postUsers").addEndorsement(t)},_postChanged:function(t,o){},goToGroup:function(t){var o="/#/posts/"+this.post.id+"/posts/top/"+this.post.name;window.appGlobals.activity("open","post",o),window.location=o},postName:function(t){return t&&t.name?this.truncate(this.trim(t.name),200):t?t.short_name:void 0},postDescription:function(t){return t&&t.description?this.truncate(this.trim(t.description),1e4,"..."):""},getCategoryImagePath:function(t){return this.getImageFormatUrl(t.Category.CategoryIconImages,0)},ready:function(){}});</script>
+  <script>
+    Polymer({
+      is: 'yp-post-header',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        post: {
+          type: Object,
+          notify: true,
+          observer: "_postChanged"
+        }
+      },
+
+      addEndorsement: function (endorsement) {
+        this.$$("#postUsers").addEndorsement(endorsement);
+      },
+
+      _postChanged: function(newValue, oldValue) {
+      },
+
+      goToGroup: function (e) {
+        var postUrl = '/#/posts/' + this.post.id + '/posts/top/' + this.post.name;
+        window.appGlobals.activity('open', 'post', postUrl);
+        window.location = postUrl;
+      },
+
+      postName: function (post) {
+        if (post && post.name) {
+          return this.truncate(this.trim(post.name), 200);
+        } else if (post) {
+          return post.short_name;
+        }
+      },
+
+      postDescription: function (post) {
+        if (post && post.description) {
+          return this.truncate(this.trim(post.description), 10000, '...');
+        } else {
+          return "";
+        }
+      },
+
+      getCategoryImagePath: function (post) {
+        return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
+      },
+
+      ready: function () {
+        //this.post = {counter_endorsements_up: 1237, counter_points: 347, counter_endorsements_down: 432};
+      }
+    });
+  </script>
 </dom-module>
 <dom-module id="yp-post-points" assetpath="/">
   <template>
@@ -361,7 +415,202 @@
   </template>
 
 
-  <script>!function(){Polymer({is:"yp-post-points",behaviors:[Polymer.appHelpers],properties:{downPoints:{type:Array,value:function(){return[]}},upPoints:{type:Array,value:function(){return[]}},textValueUp:{type:String},textValueDown:{type:String},newPointTextCombined:{type:String},post:{type:Object,observer:"_postChanged"},points:{type:Array,value:null},largeMode:{type:Boolean,value:!1},textValueMobileUpOrDown:String,labelMobileUpOrDown:String,pointUpOrDownSelected:{type:String,observer:"_pointUpOrDownSelectedChanged",value:"pointFor"}},_pointUpOrDownSelectedChanged:function(t){"pointFor"==t?this.set("labelMobileUpOrDown",this.t("point.for")):"pointAgainst"==t&&this.set("labelMobileUpOrDown",this.t("point.against"))},_postChanged:function(t){this.set("points",null),t&&(this.$.ajax.url="/api/posts/"+t.id+"/points",this.$.ajax.generateRequest())},removeElementsByClass:function(t,n){for(var i=t.getElementsByClassName(n);i.length>0;)i[0].parentNode.removeChild(i[0])},_response:function(t,n){this.set("points",n.response),this.removeElementsByClass(this,"inserted-outside-list"),this.points.length>0?(this.set("upPoints",this.points.filter(function(t){return t.value>0})),this.set("downPoints",this.points.filter(function(t){return t.value<0}))):(this.set("upPoints",[]),this.set("downPoints",[])),this.fire("yp-debate-info",{count:this.upPoints.length+this.downPoints.length,firstPoint:this.upPoints[0]}),this.set("points",this.interleaveArrays(this.upPoints,this.downPoints))},_insertNewPoint:function(t){this.largeMode?t.value>0?this.unshift("upPoints",t):t.value<0&&this.unshift("downPoints",t):this.unshift("points",t)},_newPointResponse:function(t,n){var i=n.response;i.value>0?(this.newPointTextCombined=this.t("point.forAdded")+" "+this.truncate(i.content,21),this.set("textValueUp","")):(this.newPointTextCombined=this.t("point.againstAdded")+" "+this.truncate(i.content,21),this.set("textValueDown","")),this.set("textValueMobileUpOrDown",""),this._insertNewPoint(i),this.set("post.counter_points",this.post.counter_points+1),this.$.newPointToast.show()},addPointUp:function(){this.addPoint(this.textValueUp,1),window.appGlobals.activity("add","pointUp")},addPointDown:function(){this.addPoint(this.textValueDown,-1),window.appGlobals.activity("add","pointDown")},addMobilePointUpOrDown:function(){"pointFor"==this.pointUpOrDownSelected?(this.addPoint(this.textValueMobileUpOrDown,1),window.appGlobals.activity("add","pointUp")):"pointAgainst"==this.pointUpOrDownSelected&&(this.addPoint(this.textValueMobileUpOrDown,-1),window.appGlobals.activity("add","pointDown"))},addPoint:function(t,n){window.appUser.loggedIn()===!0?(this.$.newPointAjax.url="/api/points/"+this.post.group_id,this.$.newPointAjax.body={postId:this.post.id,content:t,value:n},this.$.newPointAjax.generateRequest()):window.appUser.loginForNewPoint(this,{content:t,value:n})},focusUpPoint:function(){window.appGlobals.activity("focus","pointUp")},focusDownPoint:function(){window.appGlobals.activity("focus","pointDown")},focusTextArea:function(t){t.currentTarget.parentElement.elevation=4},blurTextArea:function(t){event.currentTarget.parentElement.elevation=0},ifLengthIsRight:function(t){return t.length>6}})}();</script>
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-points',
+
+        behaviors: [
+          Polymer.appHelpers
+        ],
+
+        properties: {
+
+          downPoints: {
+            type: Array,
+            value: function () {
+              return [];
+            }
+          },
+
+          upPoints: {
+            type: Array,
+            value: function () {
+              return [];
+            }
+          },
+
+          textValueUp: {
+            type: String
+          },
+
+          textValueDown: {
+            type: String
+          },
+
+          newPointTextCombined: {
+            type: String
+          },
+
+          post: {
+            type: Object,
+            observer: "_postChanged"
+          },
+
+          points: {
+            type: Array,
+            value: null
+          },
+
+          largeMode: {
+            type: Boolean,
+            value: false
+          },
+
+          textValueMobileUpOrDown: String,
+
+          labelMobileUpOrDown: String,
+
+          pointUpOrDownSelected: {
+            type: String,
+            observer: '_pointUpOrDownSelectedChanged',
+            value: 'pointFor'
+          }
+        },
+
+        _pointUpOrDownSelectedChanged: function (newValue) {
+          if (newValue=='pointFor') {
+            this.set('labelMobileUpOrDown', this.t('point.for'));
+          } else if (newValue=='pointAgainst') {
+            this.set('labelMobileUpOrDown', this.t('point.against'));
+          }
+        },
+
+        _postChanged: function (newPost) {
+          // Remove any manually inserted points when the list is updated
+          this.set('points', null);
+          if (newPost) {
+            this.$.ajax.url = '/api/posts/' + newPost.id + '/points';
+            this.$.ajax.generateRequest();
+          }
+        },
+
+        removeElementsByClass: function (rootElement, className) {
+          var elements = rootElement.getElementsByClassName(className);
+          while(elements.length > 0){
+            elements[0].parentNode.removeChild(elements[0]);
+          }
+        },
+
+        _response: function (event, detail) {
+          this.set('points', detail.response);
+          this.removeElementsByClass(this, 'inserted-outside-list');
+
+          if (this.points.length > 0) {
+            this.set('upPoints', this.points.filter(function (x) {
+              return x.value > 0;
+            }));
+            this.set('downPoints', this.points.filter(function (x) {
+              return x.value < 0;
+            }));
+          } else {
+            this.set('upPoints', []);
+            this.set('downPoints', []);
+          }
+
+          this.fire('yp-debate-info', {
+            count: this.upPoints.length + this.downPoints.length,
+            firstPoint: this.upPoints[0]
+          });
+
+          this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
+        },
+
+        _insertNewPoint: function (point) {
+          if (this.largeMode) {
+            if (point.value > 0) {
+              this.unshift('upPoints', point);
+            } else if (point.value < 0) {
+              this.unshift('downPoints', point);
+            }
+          } else {
+            this.unshift('points', point);
+          }
+        },
+
+        _newPointResponse: function (event, detail) {
+          var point = detail.response;
+          if (point.value > 0) {
+            this.newPointTextCombined = this.t("point.forAdded") + " " + this.truncate(point.content, 21);
+            this.set("textValueUp", "");
+          } else {
+            this.newPointTextCombined = this.t("point.againstAdded") + " " + this.truncate(point.content, 21);
+            this.set("textValueDown", "");
+          }
+          this.set("textValueMobileUpOrDown", "");
+          this._insertNewPoint(point);
+          this.set('post.counter_points', this.post.counter_points + 1);
+          this.$.newPointToast.show();
+        },
+
+        addPointUp: function () {
+          this.addPoint(this.textValueUp, 1);
+          window.appGlobals.activity('add', 'pointUp');
+        },
+
+        addPointDown: function () {
+          this.addPoint(this.textValueDown, -1);
+          window.appGlobals.activity('add', 'pointDown');
+        },
+
+        addMobilePointUpOrDown: function () {
+          if (this.pointUpOrDownSelected=='pointFor') {
+            this.addPoint(this.textValueMobileUpOrDown, 1);
+            window.appGlobals.activity('add', 'pointUp');
+          } else if (this.pointUpOrDownSelected=='pointAgainst') {
+            this.addPoint(this.textValueMobileUpOrDown, -1);
+            window.appGlobals.activity('add', 'pointDown');
+          }
+        },
+
+        addPoint: function (content, value) {
+          if (window.appUser.loggedIn() === true) {
+            this.$.newPointAjax.url = "/api/points/" + this.post.group_id;
+            this.$.newPointAjax.body = {
+              postId: this.post.id,
+              content: content,
+              value: value
+            };
+            this.$.newPointAjax.generateRequest();
+          } else {
+            window.appUser.loginForNewPoint(this, {content: content, value: value});
+          }
+        },
+
+        focusUpPoint: function () {
+          window.appGlobals.activity('focus', 'pointUp');
+        },
+
+        focusDownPoint: function () {
+          window.appGlobals.activity('focus', 'pointDown');
+        },
+
+        focusTextArea: function (event) {
+          event.currentTarget.parentElement.elevation = 4;
+        },
+
+        blurTextArea: function (e) {
+          event.currentTarget.parentElement.elevation = 0;
+        },
+
+        ifLengthIsRight: function (textValue) {
+          return textValue.length > 6;
+        }
+
+      });
+    }());
+  </script>
 </dom-module>
 <dom-module id="yp-post-user-image-card" assetpath="/">
   <template>
@@ -429,7 +678,7 @@
       <div class="description">
         [[image.description]]
       </div>
-      <div class="layout horizontal" style="width: 100%">
+      <div class="layout horizontal" style="width: 100%;">
         <div class="photographer">
           [[image.photographer_name]]
         </div>
@@ -442,7 +691,54 @@
     </paper-material>
   </template>
 
-  <script>!function(){Polymer({is:"yp-post-user-image-card",behaviors:[Polymer.appHelpers,Polymer.AccessHelpers],properties:{image:{type:Object},post:{type:Object}},_openEdit:function(){window.appGlobals.activity("open","userImage.edit");var e=Polymer.dom(document).querySelector("yp-app").getDialog("userImageEdit");e.setup(this.post,this.image,!1,this._refresh.bind(this)),e.open("edit",{postId:this.post.id,userImages:!0})},_openDelete:function(){window.appGlobals.activity("open","userImage.delete");var e=Polymer.dom(document).querySelector("yp-app").getDialog("deleteDialog");e.setup("/api/images/",this.post.id+"/"+this.image.id+"/user_images",this.t("userImage.deleteConfirmation"),this._refresh.bind(this)),e.open()},_refresh:function(){this.fire("refresh")},_imageUrl:function(e){return this.getImageFormatUrl([e],0)}})}();</script>
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-user-image-card',
+
+        behaviors: [
+          Polymer.appHelpers,
+          Polymer.AccessHelpers
+        ],
+
+        properties: {
+
+          image: {
+            type: Object
+          },
+
+          post: {
+            type: Object
+          }
+        },
+
+        _openEdit: function () {
+          window.appGlobals.activity('open', 'userImage.edit');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userImageEdit");
+          dialog.setup(this.post, this.image, false, this._refresh.bind(this));
+          dialog.open('edit', { postId: this.post.id, userImages: true });
+        },
+
+        _openDelete: function () {
+          window.appGlobals.activity('open', 'userImage.delete');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
+          dialog.setup('/api/images/', this.post.id+'/'+this.image.id+'/user_images',
+            this.t('userImage.deleteConfirmation'),
+            this._refresh.bind(this));
+          dialog.open();
+        },
+
+        _refresh: function () {
+          this.fire('refresh');
+        },
+
+        _imageUrl: function (image) {
+          return this.getImageFormatUrl([image], 0);
+        }
+      });
+    }());
+  </script>
 </dom-module>
 <dom-module id="yp-post-user-images" assetpath="/">
   <template>
@@ -477,7 +773,58 @@
     </div>
   </template>
 
-  <script>!function(){Polymer({is:"yp-post-user-images",behaviors:[Polymer.appHelpers],properties:{images:{type:Array,value:null},post:{type:Object,observer:"_postChanged"}},_refresh:function(){this.$.ajax.generateRequest()},_postChanged:function(e){e&&(this.$.ajax.url="/api/images/"+e.id+"/user_images",this.$.ajax.generateRequest())},_newImage:function(){window.appGlobals.activity("open","newUserImage");var e=Polymer.dom(document).querySelector("yp-app").getDialog("userImageEdit");e.setup(this.post,null,!0,this._refresh.bind(this)),e.open("new",{postId:this.post.id,userImages:!0})},_response:function(e,s){this.set("images",s.response),this.images&&this.images.length>0?this.fire("yp-post-image-count",this.images.length):this.fire("yp-post-image-count",0)}})}();</script>
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-user-images',
+
+        behaviors: [
+          Polymer.appHelpers
+        ],
+
+        properties: {
+
+          images: {
+            type: Array,
+            value: null
+          },
+
+          post: {
+            type: Object,
+            observer: '_postChanged'
+          }
+        },
+
+        _refresh: function () {
+          this.$.ajax.generateRequest();
+        },
+
+        _postChanged: function (newPost) {
+          if (newPost) {
+            this.$.ajax.url = '/api/images/' + newPost.id + '/user_images';
+            this.$.ajax.generateRequest();
+          }
+        },
+
+        _newImage: function () {
+          window.appGlobals.activity('open', 'newUserImage');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userImageEdit");
+          dialog.setup(this.post, null, true, this._refresh.bind(this));
+          dialog.open('new', { postId: this.post.id,  userImages: true });
+        },
+
+        _response: function (event, detail) {
+          this.set('images', detail.response);
+          if (this.images && this.images.length>0) {
+            this.fire('yp-post-image-count', this.images.length);
+          } else {
+            this.fire('yp-post-image-count', 0);
+          }
+        }
+      });
+    }());
+  </script>
 </dom-module>
 <dom-module id="yp-post-user-image-edit" assetpath="/">
   <template>
@@ -508,7 +855,124 @@
     </yp-edit-dialog>
   </template>
 
-  <script>!function(){Polymer({is:"yp-post-user-image-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{new:{type:Boolean,value:!1},image:{type:Object,observer:"_imageChanged"},post:{type:Object,observer:"_postChange"},action:{type:String,value:"/api/images"},imageUploadTarget:{type:String,notify:!0},uploadedPostUserImageId:{type:String},oldUploadedPostUserImageId:{type:String},editHeaderText:{type:String},saveText:{type:String},method:{type:String}},_postChange:function(t){t&&(this.$.imageFileUpload.target="/api/images?itemType=post-user-image&postId="+t.id)},listeners:{"iron-form-invalid":"_formInvalid"},_imageChanged:function(t){t&&this.set("oldUploadedPostUserImageId",t.id)},_formInvalid:function(){this.set("selected",0),this.$$("#photographerName").autoValidate=!0,this.$$("#description").autoValidate=!0},_imageUploaded:function(t,e){var i=JSON.parse(e.xhr.response);this.set("uploadedPostUserImageId",i.id)},_clear:function(){this.set("uploadedPostUserImageId",null),this.$$("#imageFileUpload").clear()},setup:function(t,e,i,s){e?this.set("image",e):this.set("image",{description:"",photographerName:""}),t?this.set("post",t):this.set("post",null),this.set("new",i),this.set("refreshFunction",s),this._setupTranslation()},_setupTranslation:function(){this.new?(this.editHeaderText=this.t("post.newPhoto"),this.toastText=this.t("post.photo.toast.added")):(this.editHeaderText=this.t("post.photoUpdate"),this.toastText=this.t("post.photo.toast.updated"))}})}();</script>
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-user-image-edit',
+
+        behaviors: [
+          Polymer.appHelpers,
+          Polymer.ypEditDialogBehavior
+        ],
+
+        properties: {
+          new: {
+            type: Boolean,
+            value: false
+          },
+
+          image: {
+            type: Object,
+            observer: '_imageChanged'
+          },
+
+          post: {
+            type: Object,
+            observer: '_postChange'
+          },
+
+          action: {
+            type: String,
+            value: "/api/images"
+          },
+
+          imageUploadTarget: {
+            type: String,
+            notify: true
+          },
+
+          uploadedPostUserImageId: {
+            type: String
+          },
+
+          oldUploadedPostUserImageId: {
+            type: String
+          },
+
+          editHeaderText: {
+            type: String
+          },
+
+          saveText: {
+            type: String
+          },
+
+          method: {
+            type: String
+          }
+        },
+
+        _postChange: function (newPost) {
+          if (newPost) {
+            this.$.imageFileUpload.target = '/api/images?itemType=post-user-image&postId='+newPost.id;
+          }
+        },
+
+        listeners: {
+          'iron-form-invalid': '_formInvalid'
+        },
+
+        _imageChanged: function (newValue) {
+          if (newValue) {
+            this.set('oldUploadedPostUserImageId', newValue.id)
+          }
+        },
+
+        _formInvalid: function () {
+          this.set('selected', 0);
+          this.$$('#photographerName').autoValidate = true;
+          this.$$('#description').autoValidate = true;
+        },
+
+        _imageUploaded: function (event, detail) {
+          var image = JSON.parse(detail.xhr.response);
+          this.set('uploadedPostUserImageId', image.id);
+        },
+
+        _clear: function () {
+          this.set('uploadedPostUserImageId', null);
+          this.$$("#imageFileUpload").clear();
+        },
+
+        setup: function (post, image, newNotEdit, refreshFunction) {
+          if (image) {
+            this.set('image', image);
+          } else {
+            this.set('image', { description: '' , photographerName: '' })
+          }
+          if (post) {
+            this.set('post', post);
+          } else {
+            this.set('post', null);
+          }
+          this.set('new', newNotEdit);
+          this.set('refreshFunction', refreshFunction);
+          this._setupTranslation();
+        },
+
+        _setupTranslation: function () {
+          if (this.new) {
+            this.editHeaderText = this.t('post.newPhoto');
+            this.toastText = this.t('post.photo.toast.added');
+          } else {
+            this.editHeaderText = this.t('post.photoUpdate');
+            this.toastText = this.t('post.photo.toast.updated');
+          }
+        }
+      });
+    }());
+  </script>
 </dom-module>
 </div><dom-module id="yp-post">
   <template>
@@ -866,6 +1330,245 @@
     </div>
   </template>
 
-  <script>!function(){Polymer({is:"yp-post",behaviors:[Polymer.appHelpers,Polymer.ypThemeBehavior],properties:{idRoute:Object,tabRoute:Object,idRouteData:Object,tabRouteData:Object,postId:{type:Number,value:null,observer:"_postIdChanged"},post:{type:Object,value:null,notify:!0,observer:"_postChanged"},selectedTab:{type:String,value:"debate",observer:"_selectedTabChanged"},small:{type:Boolean},method:{type:String},mapActive:{type:Boolean,value:!1},wideWidth:{type:Boolean,value:!1},createFabIcon:{type:String,value:null},disableNewPosts:{type:Boolean,value:!1}},observers:["_routeIdChanged(idRouteData.id)","_routeTabChanged(tabRouteData.tabName)"],_routeIdChanged:function(t){t&&this.set("postId",t)},_routeTabChanged:function(t){t&&this.set("selectedTab",t)},_selectedTabChanged:function(t){this.post&&this.redirectTo("/post/"+this.post.id+"/"+t),"location"==t?this.set("mapActive",!0):this.set("mapActive",!1),t&&window.appGlobals&&window.appGlobals.activity("open","post_tab_"+t)},_newPost:function(){window.appGlobals.activity("open","newPost");var t=Polymer.dom(document).querySelector("yp-app").getDialog("postEdit");t.setup(null,this.post.Group,!0,null),t.open("new",{groupId:this.post.Group.id})},listeners:{"yp-debate-info":"_updateDebateInfo","yp-post-image-count":"_updatePostImageCount"},_updatePostImageCount:function(t,e){var o=this.$$("#tabCountPhotos");o&&(o.innerHTML=this.formatNumber(e))},_updateDebateInfo:function(t,e){var o=this.$$("#tabCountDebate");o&&(o.innerHTML=this.formatNumber(e.count)),this.$.postCard.updateDescriptionIfEmpty(e.firstPoint.content)},_mainContainerClasses:function(t){return t?"layout horizontal wrap":"layout horizontal center-center"},_headerClasses:function(t){return t?"layout vertical postHeader wrap":"layout horizontal postHeader"},postName:function(t){return t&&t.name?this.truncate(this.trim(t.name),200):t?t.short_name:void 0},postDescription:function(t){return t&&t.description?this.truncate(this.trim(t.description),1e4,"..."):""},_refreshAjax:function(){this.$.ajax.generateRequest()},_postChanged:function(t,e){},_postIdChanged:function(t,e){this.set("post",null),t&&(this._getPost(),this.set("selectedTab","debate"))},_getPost:function(){this.$.ajax.url="/api/posts/"+this.postId,this.$$("#ajax").retryMethodAfter401Login=this._getPost.bind(this),this.$.ajax.generateRequest()},_response:function(t,e,o){this.set("post",e.response),this.refresh(),this.post.Group.configuration&&void 0!=this.post.Group.configuration.canAddNewPosts?this.post.Group.configuration.canAddNewPosts===!0?(this.set("createFabIcon","lightbulb-outline"),this.set("disableNewPosts",!1)):this.set("disableNewPosts",!0):this.set("createFabIcon","lightbulb-outline"),null===this.post.description&&(this.post.description=this.post.Points[0].content,this.post.Points.shift())},refresh:function(){this.post&&(null!=this.post.Group.theme_id?this.setTheme(this.post.Group.theme_id):this.post.Group.Community&&null!=this.post.Group.Community.theme_id&&this.setTheme(this.post.Group.Community.theme_id),this.post.Group.configuration&&null!=this.post.Group.configuration.defaultLocale&&this.changeLocaleIfNeeded(this.post.Group.configuration.defaultLocale),this.fire("change-header",{headerTitle:this.truncate(this.post.Group.name,80),documentTitle:this.post.name,headerDescription:"",backPath:"/group/"+this.post.group_id}))},setupTopHeaderImage:function(t){var e="url("+this.getImageFormatUrl(t,0)+")";this.customStyle["--top-area-background-image"]=e,this.updateStyles()},computeUrl:function(t){return"/api/posts/"+t}})}();</script>
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post',
+
+        behaviors: [
+          Polymer.appHelpers,
+          Polymer.ypThemeBehavior
+        ],
+
+        properties: {
+
+          idRoute: Object,
+          tabRoute: Object,
+          idRouteData: Object,
+          tabRouteData: Object,
+
+          postId: {
+            type: Number,
+            value: null,
+            observer: "_postIdChanged"
+          },
+
+          post: {
+            type: Object,
+            value: null,
+            notify: true,
+            observer: "_postChanged"
+          },
+
+          selectedTab: {
+            type: String,
+            value: 'debate',
+            observer: '_selectedTabChanged'
+          },
+
+          small: {
+            type: Boolean
+          },
+
+          method: {
+            type: String
+          },
+
+          mapActive: {
+            type: Boolean,
+            value: false
+          },
+
+          wideWidth: {
+            type: Boolean,
+            value: false
+          },
+
+          createFabIcon: {
+            type: String,
+            value: null
+          },
+
+          disableNewPosts: {
+            type: Boolean,
+            value: false
+          }
+        },
+
+        observers: [
+          '_routeIdChanged(idRouteData.id)',
+          '_routeTabChanged(tabRouteData.tabName)'
+        ],
+
+        _routeIdChanged: function (newId) {
+          if (newId) {
+            this.set('postId', newId);
+          }
+        },
+
+        _routeTabChanged: function (newTabName) {
+          if (newTabName) {
+            this.set('selectedTab', newTabName);
+          }
+        },
+
+        _selectedTabChanged: function (tabName) {
+          if (this.post) {
+            this.redirectTo("/post/" + this.post.id + '/' + tabName);
+          }
+
+          if (tabName == "location") {
+            this.set('mapActive', true);
+          } else {
+            this.set('mapActive', false);
+          }
+
+          if (tabName && window.appGlobals) {
+            window.appGlobals.activity('open', 'post_tab_' + tabName);
+          }
+        },
+
+        _newPost: function () {
+          window.appGlobals.activity('open', 'newPost');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
+          dialog.setup(null, this.post.Group, true, null);
+          dialog.open('new', { groupId: this.post.Group.id });
+        },
+
+
+        listeners: {
+          'yp-debate-info': '_updateDebateInfo',
+          'yp-post-image-count': '_updatePostImageCount'
+        },
+
+        _updatePostImageCount: function (event, imageCount) {
+          var tabCounter = this.$$('#tabCountPhotos');
+          if (tabCounter) {
+            tabCounter.innerHTML = this.formatNumber(imageCount);
+          }
+        },
+
+        _updateDebateInfo: function (event, detail) {
+          var tabCounter = this.$$('#tabCountDebate');
+          if (tabCounter) {
+            tabCounter.innerHTML = this.formatNumber(detail.count);
+          }
+          this.$.postCard.updateDescriptionIfEmpty(detail.firstPoint.content);
+        },
+
+        _mainContainerClasses: function(small) {
+          if (small) {
+            return "layout horizontal wrap";
+          } else {
+            return "layout horizontal center-center";
+          }
+        },
+
+        _headerClasses: function(small) {
+          if (small) {
+            return "layout vertical postHeader wrap";
+          } else {
+            return "layout horizontal postHeader";
+          }
+        },
+
+        postName: function (post) {
+          if (post && post.name) {
+            return this.truncate(this.trim(post.name), 200);
+          } else if (post) {
+            return post.short_name;
+          }
+        },
+
+        postDescription: function (post) {
+          if (post && post.description) {
+            return this.truncate(this.trim(post.description), 10000, '...');
+          } else {
+            return "";
+          }
+        },
+
+        _refreshAjax: function () {
+          this.$.ajax.generateRequest();
+        },
+
+        _postChanged: function (newValue, oldValue) {
+        },
+
+        _postIdChanged: function (newValue, oldValue) {
+          this.set("post",null);
+          if (newValue) {
+            this._getPost();
+            this.set('selectedTab', 'debate');
+          }
+        },
+
+        _getPost: function () {
+          this.$.ajax.url = '/api/posts/' + this.postId;
+          this.$$('#ajax').retryMethodAfter401Login = this._getPost.bind(this);
+          this.$.ajax.generateRequest();
+        },
+
+        _response: function (event, detail, sender) {
+          this.set("post", detail.response);
+
+          this.refresh();
+
+          if (this.post.Group.configuration && this.post.Group.configuration.canAddNewPosts!=undefined) {
+            if (this.post.Group.configuration.canAddNewPosts===true) {
+              this.set('createFabIcon',"lightbulb-outline");
+              this.set('disableNewPosts', false);
+            } else {
+              this.set('disableNewPosts', true);
+            }
+          } else {
+            this.set('createFabIcon',"lightbulb-outline");
+          }
+
+          if (this.post.description === null) {
+            this.post.description = this.post.Points[0].content;
+            this.post.Points.shift();
+          }
+        },
+
+        refresh: function () {
+          if (this.post) {
+            if (this.post.Group.theme_id!=null) {
+              this.setTheme(this.post.Group.theme_id);
+            } else if (this.post.Group.Community && this.post.Group.Community.theme_id!=null) {
+              this.setTheme(this.post.Group.Community.theme_id);
+            }
+
+            if (this.post.Group.configuration && this.post.Group.configuration.defaultLocale!=null) {
+              this.changeLocaleIfNeeded(this.post.Group.configuration.defaultLocale);
+            }
+
+            /*
+            if (this.post.Group.GroupHeaderImages && this.post.Group.GroupHeaderImages.length>0) {
+              this.setupTopHeaderImage(this.post.Group.GroupHeaderImages);
+            } else  if (this.post.Group.Community.CommunityHeaderImages && this.post.Group.Community.CommunityHeaderImages.length>0) {
+              this.setupTopHeaderImage(this.post.Group.Community.CommunityHeaderImage);
+            }
+            */
+            this.fire("change-header", { headerTitle: this.truncate(this.post.Group.name,80),
+              documentTitle: this.post.name,
+              headerDescription: '',//this.truncate(this.post.Group.objectives,45),
+              backPath: "/group/" + this.post.group_id });
+          }
+        },
+
+        setupTopHeaderImage: function (image) {
+          var url = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+          this.customStyle['--top-area-background-image'] = url;
+          this.updateStyles();
+        },
+
+        computeUrl: function (post_id) {
+          return '/api/posts/' + post_id;
+        }
+      });
+    }());
+  </script>
 </dom-module>
 </body></html>

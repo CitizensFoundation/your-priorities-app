@@ -180,6 +180,112 @@
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
 
-  <script>Polymer({is:"yp-domain-large-card",behaviors:[Polymer.appHelpers,Polymer.LargeCardBehaviors,Polymer.AccessHelpers,Polymer.ypGotAdminRightsBehavior],properties:{domain:{type:Object,notify:!0},elevation:{type:Number},hideImage:{type:Boolean,value:!1},hasDomainAccess:{type:Boolean,value:!1,computed:"_hasDomainAccess(domain, gotAdminRights)"}},_hasDomainAccess:function(e,i){return!(!e||!i)&&null!=this.checkDomainAccess(e)},_menuSelection:function(e,i){"editMenuItem"==i.item.id?this._openEdit():"createOrganizationMenuItem"==i.item.id?this._newOrganization():"pagesMenuItem"==i.item.id&&this._openPagesDialog(),this.set("selectedMenuItem",null)},_openPagesDialog:function(){window.appGlobals.activity("open","domain.pagesAdmin");var e=Polymer.dom(document).querySelector("yp-app").getDialog("pagesGrid");e.setup(null,null,this.domain.id,!1),e.open()},_openEdit:function(){var e=Polymer.dom(document).querySelector("yp-app").getDialog("domainEdit");e.setup(this.domain,!1,this._refresh.bind(this)),e.open("edit",{domainId:this.domain.id})},_newOrganization:function(){var e=Polymer.dom(document).querySelector("yp-app").getDialog("organizationEdit");e.setup(null,!0,this._refresh.bind(this)),e.open("new",{domainId:this.domain.id})},_refresh:function(e){e&&this.set("domain",e),this.fire("update-domain")},_domainName:function(e){return e.name?this.truncate(this.trim(e.name),200):e.short_name},_domainDescription:function(e){return e.description?this.truncate(this.trim(e.description),1e4,"..."):""},_domainLogoImagePath:function(e){return this.getImageFormatUrl(e.DomainLogoImages,0)},_domainHeaderImagePath:function(e){return this.getImageFormatUrl(e.DomainHeaderImages,0)}});</script>
+  <script>
+    Polymer({
+      is: 'yp-domain-large-card',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior
+      ],
+
+      properties: {
+
+        domain: {
+          type: Object,
+          notify: true
+        },
+
+        elevation: {
+          type: Number
+        },
+
+        hideImage: {
+          type: Boolean,
+          value: false
+        },
+
+        hasDomainAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasDomainAccess(domain, gotAdminRights)'
+        }
+      },
+
+      _hasDomainAccess: function(domain, gotAdminRights) {
+        if (domain && gotAdminRights) {
+          if (this.checkDomainAccess(domain)!=null) {
+            return true
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      },
+
+      _menuSelection: function (event, detail) {
+        if (detail.item.id=="editMenuItem")
+          this._openEdit();
+        else if (detail.item.id=="createOrganizationMenuItem")
+          this._newOrganization();
+        else if (detail.item.id=="pagesMenuItem")
+          this._openPagesDialog();
+        this.set('selectedMenuItem', null);
+      },
+
+      _openPagesDialog: function () {
+        window.appGlobals.activity('open', 'domain.pagesAdmin');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pagesGrid");
+        dialog.setup(null, null, this.domain.id, false);
+        dialog.open();
+      },
+
+      _openEdit: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("domainEdit");
+        dialog.setup(this.domain, false, this._refresh.bind(this));
+        dialog.open('edit', { domainId: this.domain.id });
+      },
+
+      _newOrganization: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("organizationEdit");
+        dialog.setup(null, true, this._refresh.bind(this));
+        dialog.open('new', { domainId: this.domain.id });
+      },
+
+      _refresh: function (domain) {
+        if (domain) {
+          this.set('domain', domain);
+        }
+        this.fire("update-domain");
+      },
+
+      _domainName: function (domain) {
+        if (domain.name) {
+          return this.truncate(this.trim(domain.name), 200);
+        } else {
+          return domain.short_name;
+        }
+      },
+
+      _domainDescription: function (domain) {
+        if (domain.description) {
+          return this.truncate(this.trim(domain.description), 10000, '...');
+        } else {
+          return "";
+        }
+      },
+
+      _domainLogoImagePath: function (domain) {
+        return this.getImageFormatUrl(domain.DomainLogoImages, 0);
+      },
+
+      _domainHeaderImagePath: function (domain) {
+        return this.getImageFormatUrl(domain.DomainHeaderImages, 0);
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

@@ -1,4 +1,80 @@
 <html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<script>Polymer.WordWrap={wordwrap:function(r,e,n){"object"==typeof r&&(n=r,r=n.start,e=n.stop),"object"==typeof e&&(n=e,r=r||n.start,e=void 0),e||(e=r,r=0),n||(n={});var t=n.mode||"soft",o="hard"===t?/\b/:/(\S+\s+)/;return function(n){var a=n.toString().split(o).reduce(function(n,o){if("hard"===t)for(var a=0;a<o.length;a+=e-r)n.push(o.slice(a,a+e-r));else n.push(o);return n},[]);return a.reduce(function(n,t){if(""===t)return n;var o=t.replace(/\t/g,"    "),a=n.length-1;if(n[a].length+o.length>e)n[a]=n[a].replace(/\s+$/,""),o.split(/\n/).forEach(function(e){n.push(new Array(r+1).join(" ")+e.replace(/^\s+/,""))});else if(o.match(/\n/)){var i=o.split(/\n/);n[a]+=i.shift(),i.forEach(function(e){n.push(new Array(r+1).join(" ")+e.replace(/^\s+/,""))})}else n[a]+=o;return n},[new Array(r+1).join(" ")]).join("\n")}}};</script>
+<script>
+  /**
+   * @polymerBehavior Wordwrap
+   */
+  Polymer.WordWrap = {
+    wordwrap: function (start, stop, params) {
+      if (typeof start === 'object') {
+        params = start;
+        start = params.start;
+        stop = params.stop;
+      }
+
+      if (typeof stop === 'object') {
+        params = stop;
+        start = start || params.start;
+        stop = undefined;
+      }
+
+      if (!stop) {
+        stop = start;
+        start = 0;
+      }
+
+      if (!params) params = {};
+      var mode = params.mode || 'soft';
+      var re = mode === 'hard' ? /\b/ : /(\S+\s+)/;
+
+      return function (text) {
+        var chunks = text.toString()
+          .split(re)
+          .reduce(function (acc, x) {
+            if (mode === 'hard') {
+              for (var i = 0; i < x.length; i += stop - start) {
+                acc.push(x.slice(i, i + stop - start));
+              }
+            }
+            else acc.push(x)
+            return acc;
+          }, [])
+          ;
+
+        return chunks.reduce(function (lines, rawChunk) {
+          if (rawChunk === '') return lines;
+
+          var chunk = rawChunk.replace(/\t/g, '    ');
+
+          var i = lines.length - 1;
+          if (lines[i].length + chunk.length > stop) {
+            lines[i] = lines[i].replace(/\s+$/, '');
+
+            chunk.split(/\n/).forEach(function (c) {
+              lines.push(
+                new Array(start + 1).join(' ')
+                + c.replace(/^\s+/, '')
+              );
+            });
+          }
+          else if (chunk.match(/\n/)) {
+            var xs = chunk.split(/\n/);
+            lines[i] += xs.shift();
+            xs.forEach(function (c) {
+              lines.push(
+                new Array(start + 1).join(' ')
+                + c.replace(/^\s+/, '')
+              );
+            });
+          }
+          else {
+            lines[i] += chunk;
+          }
+
+          return lines;
+        }, [ new Array(start + 1).join(' ') ]).join('\n');
+      };
+    }
+  };
+</script>
 </head><body></body></html>

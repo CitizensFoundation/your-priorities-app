@@ -77,6 +77,21 @@
     </div>
   </template>
 
-  <script>Polymer({is:"yp-community-grid",behaviors:[Polymer.appHelpers],properties:{featuredCommunities:Array,archivedCommunities:Array,activeCommunities:Array}});</script>
+  <script>
+    Polymer({
+      is: 'yp-community-grid',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        featuredCommunities: Array,
+        archivedCommunities: Array,
+        activeCommunities: Array
+      }
+
+    });
+  </script>
 </dom-module>
 </body></html>

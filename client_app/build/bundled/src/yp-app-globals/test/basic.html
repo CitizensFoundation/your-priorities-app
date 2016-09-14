@@ -1,7 +1,7 @@
 <!DOCTYPE html><html><head>
   <meta charset="UTF-8">
   <title>yp-app-globals tests</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
   <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
   <script src="../../../bower_components/web-component-tester/browser.js"></script>
@@ -33,7 +33,108 @@
   </template>
 </test-fixture>
 
-<script>suite("basic",function(){var e,t={json:{"Content-Type":"application/json"}};setup(function(){e=sinon.fakeServer.create(),e.respondWith("GET",/\/activity-stream\/activity\/?timestamp=*/,[200,t,'{"status":"ok"}']),e.autoRespond=!0,i18n.init({lng:"en"}),window.i18n=i18n}),teardown(function(){e.restore()}),test("can access through window.global",function(){var e=(fixture("basic"),window.appGlobals);expect(e.localName).to.be.ok,expect(e.localName).to.be.equal("yp-app-globals")}),test("automatically open welcome dialog when new",function(e){var t=fixture("resetSeenWelcome");Polymer.Base.async(function(){var o=t.querySelector("#welcomeDialog");expect(o.opened).to.be.equal(!0);var n=t.querySelector("#seenWelcomeButton");n.click(),Polymer.Base.async(function(){expect(o.opened).to.be.equal(!1),e()})})}),test("welcome dialog closed on second use",function(e){var t=fixture("basic");Polymer.Base.async(function(){var o=t.querySelector("#welcomeDialog");expect(o.opened).to.be.equal(!1),e()})}),test("can send activity",function(t){var o=(fixture("basic"),window.appGlobals);o.activity("actor","verb","object","context"),Polymer.Base.async(function(){var o=e.requests[2];expect(o.requestBody).to.include("actor"),expect(o.requestBody).to.include("verb"),expect(o.requestBody).to.include("object"),expect(o.requestBody).to.include("context"),t()})}),test("can open default dialogue and close it",function(e){var t=fixture("basic"),o=t.querySelector("#dialog");t.openDialog("this.is.test"),Polymer.Base.async(function(){expect(o.opened).to.be.equal(!0),expect(o.innerHTML).to.include("this.is.test");var n=t.querySelector("#defaultOkButton");n.click(),Polymer.Base.async(function(){expect(o.opened).to.be.equal(!1),e()})})})});</script>
+<script>
+  suite('basic', function() {
+
+    var responseHeaders = {
+      json: { 'Content-Type': 'application/json' }
+    };
+
+    var ajax;
+    var request;
+    var server;
+
+    setup(function() {
+      server = sinon.fakeServer.create();
+      server.respondWith(
+              'GET',
+              /\/activity-stream\/activity\/?timestamp=*/,
+              [
+                200,
+                responseHeaders,
+                '{"status":"ok"}'
+              ]
+      );
+
+      server.autoRespond = true;
+
+      i18n.init({ lng: "en" });
+      window.i18n = i18n;
+    });
+
+    teardown(function() {
+      server.restore();
+    });
+
+    test('can access through window.global', function() {
+      var globals = fixture('basic');
+      var windowAppGlobals = window.appGlobals;
+      expect(windowAppGlobals.localName).to.be.ok;
+      expect(windowAppGlobals.localName).to.be.equal("yp-app-globals");
+    });
+
+    test('automatically open welcome dialog when new', function(done) {
+      var globals = fixture('resetSeenWelcome');
+
+      Polymer.Base.async(function() {
+        var welcomeDialog = globals.querySelector('#welcomeDialog');
+        expect(welcomeDialog.opened).to.be.equal(true);
+        var seenWelcomeButton = globals.querySelector('#seenWelcomeButton');
+        seenWelcomeButton.click()
+        Polymer.Base.async(function() {
+          expect(welcomeDialog.opened).to.be.equal(false);
+          done();
+        });
+      });
+    });
+
+    test('welcome dialog closed on second use', function(done) {
+      var globalsTwo = fixture('basic');
+
+      Polymer.Base.async(function() {
+        var welcomeDialog = globalsTwo.querySelector('#welcomeDialog');
+        expect(welcomeDialog.opened).to.be.equal(false);
+        done();
+      });
+    });
+
+    test('can send activity', function(done) {
+      var globals = fixture('basic');
+      var windowAppGlobals = window.appGlobals;
+
+      windowAppGlobals.activity("actor","verb","object","context");
+
+      Polymer.Base.async(function() {
+
+        var request = server.requests[2];
+
+        expect(request.requestBody).to.include("actor");
+        expect(request.requestBody).to.include("verb");
+        expect(request.requestBody).to.include("object");
+        expect(request.requestBody).to.include("context");
+
+        done();
+      });
+    });
+
+    test('can open default dialogue and close it', function(done) {
+      var globals = fixture('basic');
+      var defaultDialog = globals.querySelector('#dialog');
+      globals.openDialog("this.is.test");
+
+      Polymer.Base.async(function() {
+        expect(defaultDialog.opened).to.be.equal(true);
+        expect(defaultDialog.innerHTML).to.include("this.is.test");
+        var defaultOkButton = globals.querySelector('#defaultOkButton');
+        defaultOkButton.click()
+        Polymer.Base.async(function() {
+          expect(defaultDialog.opened).to.be.equal(false);
+          done();
+        });
+      });
+    });
+  });
+</script>
 
 
 </body></html>

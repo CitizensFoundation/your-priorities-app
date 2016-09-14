@@ -119,6 +119,164 @@
 
   </template>
 
-  <script>Polymer({is:"yp-domain",behaviors:[Polymer.appHelpers,Polymer.ypThemeBehavior,Polymer.CommunityCollectionBehaviors,Polymer.CollectionHelpers,Polymer.AccessHelpers],properties:{idRoute:Object,tabRoute:Object,idRouteData:Object,tabRouteData:Object,createFabIcon:{type:String,value:null,notify:!0},domainId:{type:Number,value:null,observer:"_domainIdChanged"},url:{type:String},domainEmpty:{type:Boolean,value:!1},domain:{type:Object},selectedTab:{type:String,value:"communities",observer:"_selectedTabChanged"},otherSocialMediaActive:{type:Boolean,value:!1}},observers:["_routeIdChanged(idRouteData.id)","_routeTabChanged(tabRouteData.tabName)"],_routeIdChanged:function(e){e&&this.set("domainId",e)},_routeTabChanged:function(e){e&&this.set("selectedTab",e)},_selectedTabChanged:function(e){"other_social_media"==e?this.set("otherSocialMediaActive",!0):this.set("otherSocialMediaActive",!1),this.domain&&this.redirectTo("/domain/"+this.domain.id+"/"+e),e&&window.appGlobals&&window.appGlobals.activity("open","domain_tab_"+e)},_domainIdChanged:function(e,i){e&&(this.set("featuredCommunities",null),this.set("activeCommunities",null),this.set("archivedCommunities",null),this.$.ajax.url="/api/domains/"+this.domainId,this.$.ajax.generateRequest())},_refreshAjax:function(){this.$.ajax.generateRequest()},_newCommunity:function(){window.appGlobals.activity("open","newCommunity");var e=Polymer.dom(document).querySelector("yp-app").getDialog("communityEdit");e.setup(null,!0,null),e.open("new",{domainId:this.domainId})},_pagesResponse:function(e,i){this.fire("yp-set-pages",i.response)},_response:function(e,i,t){this.set("domain",i.response),window.appGlobals.domain=this.domain,this.refresh(),this.domain.only_admins_can_create_communities&&!this.checkDomainAccess(this.domain)||this.set("createFabIcon","group-work"),window.appGlobals.setupGoogleAnalytics(this.domain),this.domain.Communities&&this.setupCommunities(_.dropRight(this.domain.Communities,this.domain.Communities.length-15)),this.$.domainCard.setElevation(5),this.$.domainCard.lowerCardLater()},refresh:function(){this.domain&&(null!=this.domain.default_locale&&this.changeLocaleIfNeeded(this.domain.default_locale),null!=this.domain.theme_id&&this.setTheme(this.domain.theme_id),this.fire("yp-set-home-link",{type:"domain",id:this.domain.id,name:this.domain.name}),this.fire("change-header",{headerTitle:null,documentTitle:this.domain.name,headerDescription:this.domain.description}),this.domain.DomainHeaderImages&&this.domain.DomainHeaderImages.length>0&&this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages),this.$.pagesAjax.url="/api/domains/"+this.domain.id+"/pages",this.$.pagesAjax.generateRequest())}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-domain',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.ypThemeBehavior,
+        Polymer.CommunityCollectionBehaviors,
+        Polymer.CollectionHelpers,
+        Polymer.AccessHelpers
+      ],
+
+      properties: {
+
+        idRoute: Object,
+        tabRoute: Object,
+        idRouteData: Object,
+        tabRouteData: Object,
+
+        createFabIcon: {
+          type: String,
+          value: null,
+          notify: true
+        },
+
+        domainId: {
+          type: Number,
+          value: null,
+          observer: "_domainIdChanged"
+        },
+
+        url: {
+          type: String
+        },
+
+        domainEmpty: {
+          type: Boolean,
+          value: false
+        },
+
+        domain: {
+          type: Object
+        },
+
+        selectedTab: {
+          type: String,
+          value: 'communities',
+          observer: '_selectedTabChanged'
+        },
+
+        otherSocialMediaActive: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      observers: [
+        '_routeIdChanged(idRouteData.id)',
+        '_routeTabChanged(tabRouteData.tabName)'
+      ],
+
+      _routeIdChanged: function (newId) {
+        if (newId) {
+          this.set('domainId', newId);
+        }
+      },
+
+      _routeTabChanged: function (newTabName) {
+        if (newTabName) {
+          this.set('selectedTab', newTabName);
+        }
+      },
+
+      _selectedTabChanged: function (tabName) {
+        if (tabName=='other_social_media') {
+          this.set('otherSocialMediaActive', true);
+        } else {
+          this.set('otherSocialMediaActive', false);
+        }
+
+        if (this.domain) {
+          this.redirectTo("/domain/" + this.domain.id + '/' + tabName);
+        }
+
+        if (tabName && window.appGlobals) {
+          window.appGlobals.activity('open', 'domain_tab_'+tabName);
+        }
+      },
+
+      _domainIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("featuredCommunities",null);
+          this.set("activeCommunities",null);
+          this.set("archivedCommunities",null);
+          this.$.ajax.url = '/api/domains/' + this.domainId;
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      _refreshAjax: function () {
+        this.$.ajax.generateRequest();
+      },
+
+      _newCommunity: function () {
+        window.appGlobals.activity('open', 'newCommunity');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("communityEdit");
+        dialog.setup(null, true, null);
+        dialog.open('new', { domainId: this.domainId });
+      },
+
+      _pagesResponse: function (event, detail) {
+        this.fire('yp-set-pages', detail.response);
+      },
+
+      _response: function (event, detail, sender) {
+        this.set('domain', detail.response);
+
+        window.appGlobals.domain = this.domain;
+
+        this.refresh();
+
+        if (!this.domain.only_admins_can_create_communities || this.checkDomainAccess(this.domain)) {
+          this.set('createFabIcon', 'group-work');
+        }
+
+        window.appGlobals.setupGoogleAnalytics(this.domain);
+
+        if (this.domain.Communities) {
+          this.setupCommunities(_.dropRight(this.domain.Communities, this.domain.Communities.length-15));
+        }
+
+        this.$.domainCard.setElevation(5);
+        this.$.domainCard.lowerCardLater();
+      },
+
+      refresh: function () {
+        if (this.domain) {
+          if (this.domain.default_locale!=null) {
+            this.changeLocaleIfNeeded(this.domain.default_locale);
+          }
+
+          if (this.domain.theme_id!=null) {
+            this.setTheme(this.domain.theme_id);
+          }
+          this.fire('yp-set-home-link', { type: 'domain', id: this.domain.id, name: this.domain.name });
+          this.fire("change-header", { headerTitle: null, documentTitle: this.domain.name,
+                                       headerDescription: this.domain.description});
+          if (this.domain.DomainHeaderImages && this.domain.DomainHeaderImages.length>0) {
+            this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);
+          }
+
+          this.$.pagesAjax.url = "/api/domains/"+this.domain.id+"/pages";
+          this.$.pagesAjax.generateRequest();
+        }
+      },
+
+    });
+  </script>
 </dom-module>
 </body></html>

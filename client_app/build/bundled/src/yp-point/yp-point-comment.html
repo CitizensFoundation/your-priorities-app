@@ -61,6 +61,41 @@
     </div>
   </template>
 
-  <script>Polymer({is:"yp-point-comment",properties:{point:{type:Object,notify:!0,observer:"_pointChanged"},user:{type:Object},hideUser:{type:Boolean,value:!1}},_pointChanged:function(e,i){e?this.user=this.point.PointRevisions[0].User:this.user=null},loginName:function(){return this.point.PointRevisions[0].User.name}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-point-comment',
+
+      properties: {
+
+        point: {
+          type: Object,
+          notify: true,
+          observer: "_pointChanged"
+        },
+
+        user: {
+          type: Object
+        },
+
+        hideUser: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _pointChanged: function(newValue, oldValue) {
+        if (newValue) {
+          this.user = this.point.PointRevisions[0].User;
+        } else {
+          this.user = null;
+        }
+      },
+
+      loginName: function () {
+        return this.point.PointRevisions[0].User.name;
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

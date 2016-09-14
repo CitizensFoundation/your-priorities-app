@@ -62,6 +62,26 @@
 
   </template>
 
-  <script>Polymer({is:"yp-point-news-story-embed",properties:{embedData:{type:Object,notify:!0,observer:"_embedDataChanged"}},_embedDataChanged:function(e){e&&e.html&&""!=e.html&&(this.$$("#embedHtml").innerHTML=e.html)}});</script>
+  <script>
+    Polymer({
+
+      is: 'yp-point-news-story-embed',
+
+      properties: {
+
+        embedData: {
+          type: Object,
+          notify: true,
+          observer: '_embedDataChanged'
+        }
+      },
+
+      _embedDataChanged: function (newValue) {
+        if (newValue && newValue.html && newValue.html != '') {
+          this.$$("#embedHtml").innerHTML = newValue.html;
+        }
+      }
+    })
+  </script>
 </dom-module>
 </body></html>

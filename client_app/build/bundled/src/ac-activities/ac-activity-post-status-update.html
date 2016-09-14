@@ -48,6 +48,39 @@
     </div>
   </template>
 
-  <script>Polymer({is:"ac-activity-post-status-update",behaviors:[Polymer.appHelpers],properties:{activity:{type:Object,observer:"_activityChanged"}},_activityChanged:function(t){if(t){var e=this.formatContent(t.PostStatusChange);this.$.statusChange.innerHTML=e}},formatContent:function(t){if(t&&t.content){var e=this.truncate(this.trim(t.content),5e5,"...");return e.replace(/(\r\n|\n|\r)/g,"<br />")}return""}});</script>
+  <script>
+    Polymer({
+
+      is: 'ac-activity-post-status-update',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        activity: {
+          type: Object,
+          observer: '_activityChanged'
+        }
+      },
+
+      _activityChanged: function (newValue) {
+        if (newValue) {
+          var content = this.formatContent(newValue.PostStatusChange);
+          this.$.statusChange.innerHTML = content;
+        }
+      },
+
+      formatContent: function (statusUpdate) {
+        if (statusUpdate && statusUpdate.content) {
+          var truncated = this.truncate(this.trim(statusUpdate.content), 500000, '...');
+          return truncated.replace(/(\r\n|\n|\r)/g,"<br />");
+        } else {
+          return '';
+        }
+      }
+    });
+  </script>
 </dom-module>
 </body></html>

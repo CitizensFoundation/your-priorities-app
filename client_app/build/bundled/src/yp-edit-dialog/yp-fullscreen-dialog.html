@@ -75,7 +75,100 @@
       </div>
     </paper-header-panel>
   </template>
-  <script>Polymer({properties:{dismissIcon:{type:String,value:"",observer:"_dismissIconChanged"},responsiveWidth:{type:String,value:"640px"},narrow:{type:Boolean,reflectToAttribute:!0,observer:"_narrowChanged",notify:!0},modal:{type:Boolean,value:!0},_confirmBtn:Object},behaviors:[Polymer.PaperDialogBehavior],attached:function(){this.sizingTarget=this.$.scroller;var i=Polymer.dom(this.$.confirmBtn).getDistributedNodes();i.length&&(this._confirmBtn=i[0]),this._dismissIconChanged()},_computeMediaQuery:function(i){var s="(max-width: "+i+")";return s},_dismissIconChanged:function(){this.dismissIcon?this.$.dismissBtn.icon=this.dismissIcon:this.$.dismissBtn.icon=this._confirmBtn?"close":"arrow-back"},_narrowChanged:function(){this.narrow?this.modal=!1:this.modal=!0,this.fire("paper-responsive-change",{narrow:this.narrow})}});</script>
+  <script>
+    Polymer({
+
+      /**
+       * Fired when the narrow layout changes.
+       *
+       * @event paper-responsive-change
+       * @param {Object} detail
+       * @param {boolean} detail.narrow true if the panel is in narrow layout.
+       */
+
+      properties: {
+        /**
+         * The `dismissIcon` attribute sets the icon for the dismiss button. The
+         * default behavior is to use the 'arrow-back' icon when there is no
+         * confirm button (implying that changes are applied immediately), and
+         * 'close' otherwise.
+         *
+         * @attribute dismissIcon
+         * @type string
+         * @default ''
+         */
+        dismissIcon: {
+          type: String,
+          value: '',
+          observer: '_dismissIconChanged'
+        },
+
+        /**
+         * When the browser window size is larger than the `responsiveWidth`,
+         * the dialog becomes a modal dialog with a backdrop.
+         *
+         * @attribute responsiveWidth
+         * @type string
+         * @default '600px'
+         */
+        responsiveWidth: {
+          type: String,
+          value: '640px'
+        },
+
+        narrow: {
+          type: Boolean,
+          reflectToAttribute: true,
+          observer: '_narrowChanged',
+          notify: true
+        },
+
+        modal: {
+          type: Boolean,
+          value: true
+        },
+
+        _confirmBtn: Object
+      },
+
+      behaviors: [
+        Polymer.PaperDialogBehavior
+      ],
+
+      attached: function() {
+        this.sizingTarget = this.$.scroller;
+        var nodes = Polymer.dom(this.$.confirmBtn).getDistributedNodes();
+        if (nodes.length) {
+          this._confirmBtn = nodes[0];
+        }
+        this._dismissIconChanged();
+      },
+
+      _computeMediaQuery: function(responsiveWidth) {
+        var mq = '(max-width: ' + responsiveWidth + ')';
+        return mq;
+      },
+
+      _dismissIconChanged: function() {
+        if (!this.dismissIcon) {
+          this.$.dismissBtn.icon = this._confirmBtn ? 'close' : 'arrow-back';
+        } else {
+          this.$.dismissBtn.icon = this.dismissIcon;
+        }
+      },
+
+      _narrowChanged: function() {
+        if (!this.narrow) {
+          this.modal = true;
+        } else {
+          this.modal = false;
+        }
+        this.fire('paper-responsive-change', {narrow: this.narrow});
+      },
+
+    });
+
+  </script>
 
 </dom-module>
 </body></html>

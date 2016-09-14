@@ -56,6 +56,28 @@
 
   </template>
 
-  <script>Polymer({is:"yp-group-stats",behaviors:[Polymer.appHelpers],properties:{group:{type:Object}},ready:function(){this.group&&this.group.IsoCountry&&(this.group.counter_users=30*this.group.counter_users)}});</script>
+  <script>
+    Polymer({
+      is: 'yp-group-stats',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        group: {
+          type: Object
+        }
+      },
+
+      ready: function () {
+        // Inaccurate fudge for Your Priorities country pages that mostly have a common user database not connected to
+        // the group
+        if (this.group && this.group.IsoCountry) {
+          this.group.counter_users = this.group.counter_users * 30;
+        }
+      }
+    });
+  </script>
 </dom-module>
 </body></html>
