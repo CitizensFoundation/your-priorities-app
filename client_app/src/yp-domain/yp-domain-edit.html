@@ -21,6 +21,7 @@
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 <link rel="import" href="../yp-theme/yp-theme-selector.html">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html">
 
 <dom-module id="yp-domain-edit">
   <template>
@@ -82,7 +83,9 @@
                             maxlength="300" class="mainInput">
             </paper-textarea>
 
-            <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
+            <div class="layout vertical">
+              <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
+            </div>
 
             <div class="layout vertical additionalSettings">
               <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
@@ -103,7 +106,6 @@
             <input type="hidden" name="themeId" value="[[themeId]]">
             <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
             <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-
           </section>
 
           <section>
@@ -173,6 +175,7 @@
           </section>
           <section class="sectionMargin">
             <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
+            <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{domain.default_locale}}"></yp-language-selector>
           </section>
         </neon-animated-pages>
 
@@ -200,7 +203,8 @@
 
       domain: {
         type: Object,
-        observer: '_domainChanged'
+        observer: '_domainChanged',
+        notify: true
       },
 
       params: {
@@ -236,7 +240,6 @@
 
     _domainChanged: function (domain) {
       if (domain) {
-
       }
     },
 

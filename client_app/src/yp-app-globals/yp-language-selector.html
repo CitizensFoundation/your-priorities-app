@@ -2,6 +2,7 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/iron-form-element-behavior/iron-form-element-behavior.html">
 
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
@@ -14,20 +15,10 @@
   <template>
 
     <style include="iron-flex iron-flex-alignment">
+    :host {
+      margin: 4px;
+    }
 
-      .language {
-        margin-top: 16px;
-      }
-
-      .languageSelection {
-        margin-top: 16px;
-        font-weight: bold;
-      }
-
-      paper-button {
-        height: 15px;
-
-      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -48,7 +39,8 @@
       is: 'yp-language-selector',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.IronFormElementBehavior
       ],
 
       properties: {
@@ -96,13 +88,10 @@
       },
 
       _selectedLocaleChanged: function (locale) {
+        this.set('value', locale);
         if (!this.noUserEvents) {
+          this.changeLocaleIfNeeded(locale);
           localStorage.setItem('yp-user-locale', locale);
-          i18n.init({ lng: locale, resGetPath: '/locales/__lng__/__ns__.json' }, function(loaded) {
-            var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale } } } );
-            document.dispatchEvent(event);
-            window.appUser.setLocale(locale);
-          });
           if (window.appUser && window.appUser.user) {
             window.appUser.setLocale(locale);
           }

@@ -257,6 +257,10 @@
             this.setTheme(this.community.Domain.theme_id);
           }
 
+          if (this.community.default_locale!=null) {
+            this.changeLocaleIfNeeded(this.community.default_locale);
+          }
+
           if (this.community.CommunityHeaderImages && this.community.CommunityHeaderImages.length>0) {
             this.$.page.setupTopHeaderImage(this.community.CommunityHeaderImages);
           }

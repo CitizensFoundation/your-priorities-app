@@ -54,6 +54,17 @@
       }
     },
 
+    changeLocaleIfNeeded: function (locale) {
+      if (locale && this.language!=locale) {
+        if (!localStorage.getItem('yp-user-locale')) {
+          i18n.init({ lng: locale, resGetPath: '/locales/__lng__/__ns__.json' }, function(loaded) {
+            var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale } } } );
+            document.dispatchEvent(event);
+          });
+        }
+      }
+    },
+
     redirectTo: function (path) {
       //this.fire("yp-redirect-to", { path: path });
       window.history.pushState({}, null, path);
