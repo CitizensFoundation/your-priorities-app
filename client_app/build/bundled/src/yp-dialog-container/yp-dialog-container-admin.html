@@ -1038,7 +1038,9 @@ l(115,147,{},rm),N(115),l(370,147,{},cm),eA.ad=function(n){Jo(this.a,dS,Fr(R(US,
             <paper-textarea id="description" name="description" value="{{domain.description}}" label="[[t('Description')]]" char-counter="" rows="2" max-rows="5" maxlength="300" class="mainInput">
             </paper-textarea>
 
-            <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
+            <div class="layout vertical">
+              <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
+            </div>
 
             <div class="layout vertical additionalSettings">
               <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
@@ -1059,7 +1061,6 @@ l(115,147,{},rm),N(115),l(370,147,{},cm),eA.ad=function(n){Jo(this.a,dS,Fr(R(US,
             <input type="hidden" name="themeId" value="[[themeId]]">
             <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
             <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-
           </section>
 
           <section>
@@ -1086,6 +1087,7 @@ l(115,147,{},rm),N(115),l(370,147,{},cm),eA.ad=function(n){Jo(this.a,dS,Fr(R(US,
           </section>
           <section class="sectionMargin">
             <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
+            <yp-language-selector name="defaultLocale" no-user-events="" selected-locale="{{domain.default_locale}}"></yp-language-selector>
           </section>
         </neon-animated-pages>
 
@@ -1094,7 +1096,7 @@ l(115,147,{},rm),N(115),l(370,147,{},cm),eA.ad=function(n){Jo(this.a,dS,Fr(R(US,
 
 </dom-module>
 
-<script>Polymer({is:"yp-domain-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/domains"},domain:{type:Object,observer:"_domainChanged"},params:{type:String},selected:{type:Number,value:0},method:{type:String},uploadedLogoImageId:{type:String},uploadedHeaderImageId:{type:String},themeId:{type:String,value:null},status:{type:String}},_domainChanged:function(e){},_customRedirect:function(e){this.new&&this.redirectTo("/domain/"+e.id)},_clear:function(){this.domain={name:"",description:""},this.uploadedLogoImageId=null,this.uploadedHeaderImageId=null,this.$.headerImageUpload.clear(),this.$.logoImageUpload.clear()},setup:function(e,t,i){this.set("domain",e),this.set("new",t),this.set("refreshFunction",i),this._setupTranslation()},_setupTranslation:function(){this.new?(this.editHeaderText=this.t("domain.new"),this.toastText=this.t("domain.toast.created")):(this.editHeaderText=this.t("domain.edit"),this.toastText=this.t("domain.toast.updated"))}});</script>
+<script>Polymer({is:"yp-domain-edit",behaviors:[Polymer.appHelpers,Polymer.ypEditDialogBehavior],properties:{action:{type:String,value:"/api/domains"},domain:{type:Object,observer:"_domainChanged",notify:!0},params:{type:String},selected:{type:Number,value:0},method:{type:String},uploadedLogoImageId:{type:String},uploadedHeaderImageId:{type:String},themeId:{type:String,value:null},status:{type:String}},_domainChanged:function(t){},_customRedirect:function(t){this.new&&this.redirectTo("/domain/"+t.id)},_clear:function(){this.domain={name:"",description:""},this.uploadedLogoImageId=null,this.uploadedHeaderImageId=null,this.$.headerImageUpload.clear(),this.$.logoImageUpload.clear()},setup:function(t,e,i){this.set("domain",t),this.set("new",e),this.set("refreshFunction",i),this._setupTranslation()},_setupTranslation:function(){this.new?(this.editHeaderText=this.t("domain.new"),this.toastText=this.t("domain.toast.created")):(this.editHeaderText=this.t("domain.edit"),this.toastText=this.t("domain.toast.updated"))}});</script>
 <dom-module id="yp-post-status-change-edit" assetpath="../yp-post/">
   <template>
 

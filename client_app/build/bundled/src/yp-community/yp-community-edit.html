@@ -15,6 +15,8 @@
 
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html">
+<link rel="import" href="../yp-theme/yp-theme-selector.html">
 
 </head><body><dom-module id="yp-community-edit">
   <template>
@@ -101,6 +103,8 @@
         </paper-dropdown-menu>
         <input type="hidden" name="status" value="[[status]]">
       </div>
+
+      <yp-language-selector name="defaultLocale" no-user-events="" selected-locale="{{community.default_locale}}"></yp-language-selector>
 
       <h3 class="accessHeader">[[t('Access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">

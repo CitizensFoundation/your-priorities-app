@@ -52,7 +52,7 @@
           <div class="notificationSub">[[t('notification.frequency')]]</div>
           <div class="layout horizontal">
             <paper-radio-group id="notificationFrequencyGroup" name="frequency" attr-for-selected="enum-value" class="frequency" selected="{{frequency}}">
-              <template is="dom-repeat" items="[[_getAvailableFrequencies(method)]]">
+              <template is="dom-repeat" items="[[availableFrequencies]]">
                 <paper-radio-button enum-value$="[[item.enumValue]]">[[item.name]]</paper-radio-button>
               </template>
             </paper-radio-group>
