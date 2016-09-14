@@ -27,6 +27,7 @@
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 
 <link rel="import" href="../yp-post/yp-post-edit.html">
+<link rel="import" href="../yp-group/yp-group-edit.html">
 
 <link rel="import" href="yp-group-card-large.html">
 
@@ -338,6 +339,10 @@
       refresh: function () {
         if (this.group) {
           this.fire('yp-set-home-link', { type: 'group', id: this.group.id, name: this.group.name });
+
+          if (this.group.configuration && this.group.configuration.defaultLocale!=null) {
+            this.changeLocaleIfNeeded(this.group.configuration.defaultLocale);
+          }
 
           if (this.group.theme_id!=null) {
             this.setTheme(this.group.theme_id);

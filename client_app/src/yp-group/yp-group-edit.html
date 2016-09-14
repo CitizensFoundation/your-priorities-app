@@ -15,6 +15,7 @@
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 <link rel="import" href="../yp-theme/yp-theme-selector.html">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html">
 
 <dom-module id="yp-group-edit">
   <template>
@@ -126,6 +127,8 @@
       <input type="hidden" name="locationHidden" value$="[[locationHidden]]">
 
       <input type="hidden" name="themeId" value="[[themeId]]">
+
+      <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{group.configuration.defaultLocale}}"></yp-language-selector>
 
       <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">

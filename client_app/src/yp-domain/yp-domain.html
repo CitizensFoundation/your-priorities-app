@@ -267,6 +267,10 @@
 
       refresh: function () {
         if (this.domain) {
+          if (this.domain.default_locale!=null) {
+            this.changeLocaleIfNeeded(this.domain.default_locale);
+          }
+
           if (this.domain.theme_id!=null) {
             this.setTheme(this.domain.theme_id);
           }

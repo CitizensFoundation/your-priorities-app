@@ -15,7 +15,6 @@
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 
-
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-posts-filter">
@@ -85,6 +84,7 @@
         }
       }
     </style>
+
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <template is="dom-if" if="[[group]]">
@@ -210,6 +210,10 @@
         }
       },
 
+      observers: [
+        '_listLanguageChanged(language)'
+      ],
+
       _openDropDown: function () {
         var trigger = this.$$("#dropDownTrigger");
         if (trigger) {
@@ -244,6 +248,12 @@
 
       _categoryIdChanged: function (newValue, oldValue) {
         if (newValue) {
+          this._updateTitle();
+        }
+      },
+
+      _listLanguageChanged: function (language) {
+        if (language && this.t) {
           this._updateTitle();
         }
       },
