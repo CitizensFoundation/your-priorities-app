@@ -90,7 +90,7 @@
       _selectedLocaleChanged: function (locale) {
         this.set('value', locale);
         if (!this.noUserEvents) {
-          this.changeLocaleIfNeeded(locale);
+          this.changeLocaleIfNeeded(locale, true);
           localStorage.setItem('yp-user-locale', locale);
           if (window.appUser && window.appUser.user) {
             window.appUser.setLocale(locale);
