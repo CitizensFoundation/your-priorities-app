@@ -13,7 +13,7 @@
 const path = require('path');
 const gulp = require('gulp');
 const gulpif = require('gulp-if');
-
+var versionAppend = require('gulp-version-append');
 
 // Got problems? Try logging 'em
 // const logging = require('plylog');
@@ -60,7 +60,7 @@ const project = require('./gulp-tasks/project.js');
 function source() {
   return project.splitSource()
     // Add your own build tasks here!
-
+    .pipe(versionAppend(['html', 'js', 'css']))
     .pipe(gulpif('**/*.{png,gif,jpg,svg}', images.minify()))
     .pipe(project.rejoin()); // Call rejoin when you're finished
 }
