@@ -10,15 +10,19 @@ var url = require('url');
 // TODO: Make sure to still support the escaped_fragment routes after moving to the direct urls for backwards sharing capacity
 
 var fullUrl = function (req) {
-  var replacedUrl =  req.originalUrl.replace(/[?]_escaped_fragment_=/g,'#!');
+  var replacedUrl = req.originalUrl;
+  if (replacedUrl.startsWith('/?_escaped_fragment_=')) {
+    replacedUrl =  req.originalUrl.replace(/[?]_escaped_fragment_=/g,'');
+    replacedUrl =  replacedUrl.replace('//','/');
+  }
+
   var formattedUrl = url.format({
     protocol: req.protocol,
     host: req.get('host'),
     pathname: replacedUrl
   });
 
-  var finalUrl = formattedUrl.replace(/%2F/g,"/").replace('%23','#');
-  return finalUrl;
+  return formattedUrl;
 };
 
 var sendDomain = function (id, req, res) {
@@ -276,23 +280,27 @@ var sendUser = function (id, req, res) {
   });
 };
 
-router.get('/', function(req, res, next) {
-  if (req.url.startsWith('/?_escaped_fragment_=')) {
-    var url = req.url.replace(/%2F/g,"/");
-    var splitUrl = url.split('/');
-    if (splitUrl[2]=='domain') {
-      sendDomain(splitUrl[3], req, res)
-    } else if (splitUrl[2]=='community') {
-      sendCommunity(splitUrl[3], req, res)
-    } else if (splitUrl[2]=='group') {
-      sendGroup(splitUrl[3], req, res)
-    } else if (splitUrl[2]=='post') {
-      sendPost(splitUrl[3], req, res)
-    } else if (splitUrl[2]=='user') {
-      sendUser(splitUrl[3], req, res)
-    } else {
-      next();
-    }
+router.get('/*', function(req, res, next) {
+  var url = req.url;
+  var splitPath = 1;
+
+  if (url.startsWith('/?_escaped_fragment_=')) {
+    url = req.url.replace(/%2F/g, "/");
+    splitPath = 2;
+  }
+
+  var splitUrl = url.split('/');
+
+  if (splitUrl[splitPath]=='domain') {
+    sendDomain(splitUrl[splitPath+1], req, res)
+  } else if (splitUrl[splitPath]=='community') {
+    sendCommunity(splitUrl[splitPath+1], req, res)
+  } else if (splitUrl[splitPath]=='group') {
+    sendGroup(splitUrl[splitPath+1], req, res)
+  } else if (splitUrl[splitPath]=='post') {
+    sendPost(splitUrl[splitPath+1], req, res)
+  } else if (splitUrl[splitPath]=='user') {
+    sendUser(splitUrl[splitPath+1], req, res)
   } else if (req.ypCommunity && req.ypCommunity.id != null) {
     sendCommunity(req.ypCommunity.id, req, res);
   } else if (req.ypDomain && req.ypDomain.id != null) {
