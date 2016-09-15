@@ -29,41 +29,66 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
 };
 
 var getUserWithAll = function (userId, callback) {
-  models.User.find({
-    where: {id: userId},
-    attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','email']),
-    order: [
-      [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
-      [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
-    ],
-    include: [
-      {
-        model: models.Endorsement,
-        attributes: ['id', 'value', 'post_id'],
-        required: false
-      },
-      {
-        model: models.PointQuality,
-        attributes: ['id', 'value', 'point_id'],
-        required: false
-      },
-      {
-        model: models.Image, as: 'UserProfileImages',
-        attributes: ['id', 'created_at', 'formats'],
-        required: false
-      },
-      {
-        model: models.Image, as: 'UserHeaderImages',
-        attributes: ['id', 'created_at', 'formats'],
-        required: false
-      }
-    ]
-  }).then(function(user) {
-    callback(null, user);
-  }).catch(function(error) {
-    callback(error);
-  });
-};
+  var user, endorsements, pointQualities;
+
+  async.parallel([
+    function (seriesCallback) {
+      models.User.find({
+        where: {id: userId},
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','email']),
+        order: [
+          [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
+          [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
+        ],
+        include: [
+          {
+            model: models.Image, as: 'UserProfileImages',
+            attributes: ['id', 'created_at', 'formats'],
+            required: false
+          },
+          {
+            model: models.Image, as: 'UserHeaderImages',
+            attributes: ['id', 'created_at', 'formats'],
+            required: false
+          }
+        ]
+      }).then(function(userIn) {
+        user = userIn;
+        seriesCallback();
+      }).catch(function(error) {
+        seriesCallback(error);
+      });
+    },
+    function (seriesCallback) {
+      models.Endorsement.findAll({
+        where: {user_id: userId},
+        attributes: ['id', 'value', 'post_id']
+      }).then(function(endorsementsIn) {
+        endorsements = endorsementsIn;
+        seriesCallback();
+      }).catch(function(error) {
+        seriesCallback(error);
+      });
+    },
+    function (seriesCallback) {
+      models.PointQuality.findAll({
+        where: {user_id: userId},
+        attributes: ['id', 'value', 'point_id']
+      }).then(function (pointQualitiesIn) {
+        pointQualities = pointQualitiesIn;
+        seriesCallback();
+      }).catch(function (error) {
+        seriesCallback(error);
+      });
+    }
+  ], function (error) {
+    if (user) {
+      user.dataValues.Endorsements = endorsements;
+      user.dataValues.PointQualities = pointQualities;
+    }
+    callback(error, user);
+  })
+}
 
 // Login
 router.post('/login', function (req, res) {
@@ -436,6 +461,28 @@ router.get('/loggedInUser/memberships', function (req, res) {
   }
 });
 
+router.put('/loggedInUser/setLocale', function (req, res) {
+  if (req.isAuthenticated() && req.user) {
+    getUserWithAll(req.user.id, function (error, user) {
+      if (error || !user) {
+        log.error("User setLocale Error", { context: 'setLocale', user: req.user.id, err: error, errorStatus: 500 });
+        res.sendStatus(500);
+      } else {
+        user.set('default_locale', req.body.locale);
+        user.save().then(function (user) {
+          log.info("User setLocale", {context: 'setLocale', user: req.user.id});
+          res.sendStatus(200);
+        }).catch(function (error) {
+          log.error("User setLocale Error", { context: 'setLocale', user: req.user.id, err: error, errorStatus: 500 });
+          res.sendStatus(500);
+        });
+      }
+    })
+  } else {
+    res.send('0');
+  }
+});
+
 router.get('/loggedInUser/isloggedin', function (req, res) {
   if (req.isAuthenticated()) {
     log.info('User Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
@@ -560,7 +607,7 @@ router.post('/createActivityFromApp', function(req, res) {
     sub_type: req.body.type,
     actor: { appActor: req.body.actor },
     object: { name: req.body.object },
-    context: { name: req.body.context, eventTime: req.body.event_time,
+    context: { pathName: req.body.path_name, name: req.body.context, eventTime: req.body.event_time,
                sessionId: req.body.sessionId, userAgent: req.body.user_agent },
     userId: req.user ? req.user.id : null,
     domainId: req.ypDomain.id,
@@ -681,7 +728,7 @@ router.get('/get_invite_info/:token', function(req, res) {
       }
       res.send({ targetName: targetName, inviteName: invite.FromUser.name });
     } else {
-      log.info('User Invite Token Not found', {user: toJson(user), context: 'get_invite_info'});
+      log.info('User Invite Token Not found', {context: 'get_invite_info'});
       res.sendStatus(404);
     }
   });

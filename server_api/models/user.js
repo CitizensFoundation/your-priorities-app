@@ -328,6 +328,7 @@ module.exports = function(sequelize, DataTypes) {
           if (this.legacy_passwords_disabled) {
             done(null, false, { message: 'Incorrect password.' });
           } else {
+            log.warn("Looking for legacy passwords");
             sequelize.models.User.find({
               where: { id: this.id },
               include: [ sequelize.models.UserLegacyPassword ]

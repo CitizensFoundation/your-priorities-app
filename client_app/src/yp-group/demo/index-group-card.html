@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+
+  <title>yp-group</title>
+
+  <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+  <script src="../../../bower_components/web-component-tester/browser.js"></script>
+  <script src="../../../bower_components/test-fixture/test-fixture-mocha.js"></script>
+
+  <script src="../../../bower_components/iron-test-helpers/test-helpers.js"></script>
+
+  <link rel="import" href="../../../bower_components/test-fixture/test-fixture.html">
+  <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+  <script type="text/javascript" src="../../i18next-1.7.4.min.js"></script>
+  <link rel="import" href="../../yp-app-globals/yp-app-globals.html">
+  <link rel="import" href="../yp-group-card.html">
+
+  <link rel="import" href="test-groups.html">
+
+  <meta charset = "utf-8" />
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+
+  <style include="iron-flex iron-flex-alignment">
+    body {
+      background: #fafafa;
+      font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <yp-app-globals disable-welcome setup-defaults></yp-app-globals>
+
+  <test-groups></test-groups>
+</body>
+
+
+</html>

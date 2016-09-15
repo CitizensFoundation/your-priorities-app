@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+FORCE_PRODUCTION = true;
+
 var debug = require('debug')('your-priorities-app');
 var express = require('express');
 var session = require('express-session');
@@ -123,10 +125,10 @@ app.use(function(req,res,next) {
   }
 });
 
-if (app.get('env') === 'development') {
+if (!FORCE_PRODUCTION && app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_app')));
 } else {
-  app.use(express.static(path.join(__dirname, '../client_dist')));
+  app.use(express.static(path.join(__dirname, '../client_app/build/bundled')));
 }
 
 var bearerCallback = function (req, token) {
@@ -212,6 +214,11 @@ passport.deserializeUser(function(sessionUser, done) {
 });
 
 app.use('/', index);
+app.use('/domain', index);
+app.use('/community', index);
+app.use('/group', index);
+app.use('/post', index);
+app.use('/user', index);
 app.use('/api/domains', domains);
 app.use('/api/organizations', organizations);
 app.use('/api/communities', communities);

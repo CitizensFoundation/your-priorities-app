@@ -508,6 +508,9 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       if (req.body.status && req.body.status!="") {
         group.status = req.body.status;
       }
+      if (req.body.defaultLocale && req.body.defaultLocale!="") {
+        group.set('configuration.defaultLocale', req.body.defaultLocale);
+      }
       group.save().then(function () {
         log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
         group.setupImages(req.body, function(error) {

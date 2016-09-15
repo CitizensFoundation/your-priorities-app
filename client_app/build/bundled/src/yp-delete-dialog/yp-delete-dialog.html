@@ -1,0 +1,91 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.3">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.3">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.3">
+
+</head><body><dom-module id="yp-delete-dialog">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        height: 0;
+      }
+
+      paper-dialog {
+        background-color: #FFF;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-ajax method="DELETE" id="deleteAjax" on-response="_deleteResponse"></yp-ajax>
+    <paper-dialog id="deleteConfirmationDialog">
+      <div>[[confirmationText]]</div>
+      <div class="buttons">
+        <paper-button dialog-dismiss="">[[t('cancel')]]</paper-button>
+        <paper-button dialog-confirm="" on-tap="_delete">[[t('delete')]]</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-delete-dialog',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        confirmationText: {
+          type: String
+        },
+
+        action: {
+          type: String
+        },
+
+        actionId: {
+          type: String
+        },
+
+        onDeletedFunction: {
+          type: Function,
+          value: null
+        }
+      },
+
+      setup: function (action, actionId, confirmationText, onDeletedFunction) {
+        this.set('action', action);
+        this.set('actionId', actionId);
+        this.set('confirmationText', confirmationText);
+        this.set('onDeletedFunction', onDeletedFunction);
+      },
+
+      open: function () {
+        this.$$("#deleteConfirmationDialog").open();
+      },
+
+      _delete: function () {
+        this.$$("#deleteAjax").url = this.action + this.actionId;
+        this.$$("#deleteAjax").setBody({deleteConfirmed: true});
+        this.$$("#deleteAjax").generateRequest();
+      },
+
+      _deleteResponse: function () {
+        this.fire("deleted");
+        if (this.onDeletedFunction) {
+          this.onDeletedFunction();
+        }
+      }
+    });
+  </script>
+</dom-module>
+</body></html>

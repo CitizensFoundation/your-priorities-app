@@ -1,0 +1,291 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.2.3">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.3">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.2.3">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.3">
+<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html?v=6.2.3">
+
+<link rel="import" href="yp-domain-stats.html?v=6.2.3">
+
+</head><body><dom-module id="yp-domain-large-card">
+
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+      }
+
+      .description {
+        line-height: var(--description-line-height, 1.3);
+      }
+
+      .stats {
+        position: absolute;
+        bottom: 0;
+        right: 8px;
+      }
+
+      yp-domain-stats {
+        color :#fff;
+      }
+
+      .domain-name {
+        padding: 0;
+        padding-bottom: 4px;
+        padding-right: 1px;
+        margin: 0;
+      }
+
+      .large-card {
+        background-color: #fefefe;
+        color: #333;
+        height: 243px;
+        width: 432px;
+        padding: 0 !important;
+        margin-top: 0 !important;
+      }
+
+      .image {
+        width: 432px;
+        height: 243px;
+      }
+
+      .description-and-stats {
+        width: 100%;
+      }
+
+      .edit {
+        color: #FFF;
+        position: absolute;
+        top: 0;
+        left: 384px;
+        padding-right: 0;
+        margin-right: 0;
+      }
+
+      h1 {
+        font-size: 42px;
+      }
+
+      .textBox {
+        margin-right: 32px;
+      }
+
+      .description {
+        padding: 0;
+        margin: 0;
+      }
+
+      .domainDescription {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 16px;
+      }
+
+      .domain-name {
+        background-color: var(--primary-color-800, #000);
+        color: #fafafa;
+        padding-left: 16px;
+        padding-top: 16px;
+      }
+
+      @media (max-width: 945px) {
+        :host {
+          width: 306px;
+          margin-top: 40px;
+        }
+
+        .large-card {
+          width: 306px;
+          height: 180px;
+          margin-bottom: 16px;
+        }
+
+        .edit {
+          left: 265px;
+        }
+
+        iron-image {
+          width: 306px;
+          height: 92px !important;
+        }
+
+        .imageCard {
+         height: 92px !important;
+        }
+
+        .domain-name {
+          font-size: 22px;
+        }
+
+        .stats {
+        }
+
+        .textBox {
+          margin-right: 0;
+        }
+      }
+
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <template is="dom-if" if="[[domain]]">
+      <div class="layout horizontal wrap">
+        <paper-material id="card" elevation="5" animated="" class="large-card textBox">
+          <div class="layout vertical">
+            <div class="layout horizontal wrap">
+              <div class="layout vertical description-and-stats">
+                <div class="description">
+                  <h1 class="domain-name">[[_domainName(domain)]]</h1>
+                  <div class="domainDescription">
+                    [[_domainDescription(domain)]]
+                  </div>
+                  <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
+                </div>
+              </div>
+            </div>
+            <paper-menu-button vertical-align="top" horizontal-align="[[editMenuAlign]]" class="edit" hidden$="[[!hasDomainAccess]]">
+              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
+                <paper-item id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
+                <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              </paper-menu>
+            </paper-menu-button>
+          </div>
+        </paper-material>
+        <paper-material id="cardImage" elevation="3" animated="" class="large-card imageCard">
+          <div class="layout horizontal wrap">
+            <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
+          </div>
+        </paper-material>
+      </div>
+    </template>
+
+    <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
+    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-domain-large-card',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior
+      ],
+
+      properties: {
+
+        domain: {
+          type: Object,
+          notify: true
+        },
+
+        elevation: {
+          type: Number
+        },
+
+        hideImage: {
+          type: Boolean,
+          value: false
+        },
+
+        hasDomainAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasDomainAccess(domain, gotAdminRights)'
+        }
+      },
+
+      _hasDomainAccess: function(domain, gotAdminRights) {
+        if (domain && gotAdminRights) {
+          if (this.checkDomainAccess(domain)!=null) {
+            return true
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      },
+
+      _menuSelection: function (event, detail) {
+        if (detail.item.id=="editMenuItem")
+          this._openEdit();
+        else if (detail.item.id=="createOrganizationMenuItem")
+          this._newOrganization();
+        else if (detail.item.id=="pagesMenuItem")
+          this._openPagesDialog();
+        this.set('selectedMenuItem', null);
+      },
+
+      _openPagesDialog: function () {
+        window.appGlobals.activity('open', 'domain.pagesAdmin');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pagesGrid");
+        dialog.setup(null, null, this.domain.id, false);
+        dialog.open();
+      },
+
+      _openEdit: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("domainEdit");
+        dialog.setup(this.domain, false, this._refresh.bind(this));
+        dialog.open('edit', { domainId: this.domain.id });
+      },
+
+      _newOrganization: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("organizationEdit");
+        dialog.setup(null, true, this._refresh.bind(this));
+        dialog.open('new', { domainId: this.domain.id });
+      },
+
+      _refresh: function (domain) {
+        if (domain) {
+          this.set('domain', domain);
+        }
+        this.fire("update-domain");
+      },
+
+      _domainName: function (domain) {
+        if (domain.name) {
+          return this.truncate(this.trim(domain.name), 200);
+        } else {
+          return domain.short_name;
+        }
+      },
+
+      _domainDescription: function (domain) {
+        if (domain.description) {
+          return this.truncate(this.trim(domain.description), 10000, '...');
+        } else {
+          return "";
+        }
+      },
+
+      _domainLogoImagePath: function (domain) {
+        return this.getImageFormatUrl(domain.DomainLogoImages, 0);
+      },
+
+      _domainHeaderImagePath: function (domain) {
+        return this.getImageFormatUrl(domain.DomainHeaderImages, 0);
+      }
+    });
+  </script>
+</dom-module>
+</body></html>

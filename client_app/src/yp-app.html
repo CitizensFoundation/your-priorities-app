@@ -1,0 +1,590 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<link rel="import" href="yp-app-globals/yp-app-globals.html">
+<link rel="import" href="yp-app-globals/yp-app-user.html">
+<link rel="import" href="yp-behaviors/app-helpers.html">
+<link rel="import" href="yp-app/yp-app-drawer.html">
+<link rel="import" href="yp-app/yp-app-nav-drawer.html">
+<link rel="import" href="yp-dialog-container/yp-dialog-container.html">
+
+<link rel="import" href="yp-domain/yp-domain.html">
+
+<dom-module id="yp-app">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        background-color: var(--primary-background-color);
+      }
+
+      app-header {
+        color: #fff;
+        background-color: var(--primary-background-color);
+      }
+
+      app-toolbar {
+        color: #FFF;
+      }
+
+      iron-pages {
+        background-color: var(--primary-background-color);
+      }
+
+      [condensed-title] {
+        /*        background-size: 76px; */
+        /* The difference in font size is used to calculate the scale of the title in the transition. */
+        font-size: 16px;
+      }
+
+      [title] {
+        /* The difference in font size is used to calculate the scale of the title in the transition. */
+        font-size: 22;
+        padding-top: 8px;
+        padding-left: 8px;
+      }
+
+      .backIcon {
+        width: 48px;
+        height: 48px;
+        padding-right: 16px;
+        padding-bottom: 8px;
+        padding-top: 0;
+      }
+
+      .closePostIcon {
+        width: 52px;
+        height: 52px;
+      }
+
+      .main-header {
+        border-bottom: 1px solid var(--primary-color-800);
+        background-color: var(--primary-color-800);
+        color: #333;
+        height: 64px;
+      }
+
+      .dropdown-content {
+        width: 200px;
+      }
+
+      @media (max-width: 480px) {
+        div[title] {
+          font-size: 17px;
+          white-space: normal !important;
+        }
+
+        .backIcon {
+          width: 40px;
+          height: 40px;
+          padding-right: 8px;
+        }
+
+        .closePostIcon {
+          width: 48px;
+          height: 48px;
+        }
+
+        .loginButton {
+          font-size: 15px;
+          padding: 4px;
+        }
+
+        paper-menu-button {
+          padding: 0;
+        }
+
+        paper-button {
+          padding:0;
+          margin: 0;
+        }
+      }
+      @media (max-width: 340px) {
+        div[title] {
+          font-size: 17px;
+          white-space: normal !important;
+        }
+
+        .backIcon {
+          width: 40px;
+          height: 40px;
+          padding-right: 8px;
+        }
+
+        .loginButton {
+          font-size: 12px;
+          padding: 0;
+        }
+      }
+
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <app-location route="{{route}}"></app-location>
+
+    <app-route
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subRoute}}"></app-route>
+
+    <app-drawer-layout drawer-width="360px" responsive-width="16000px">
+
+      <app-drawer id="drawer" align="end" position="right" swipe-open>
+        <div style="height: 100%; overflow: auto;">
+          <yp-app-drawer id="ypDrawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
+        </div>
+      </app-drawer>
+
+      <app-drawer id="navDrawer" align="start" position="left" swipe-open>
+        <div style="height: 100%; overflow: auto;">
+          <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
+        </div>
+      </app-drawer>
+
+      <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
+
+      <app-header-layout id="mainArea">
+
+        <app-header id="appHeader" effects="waterfall" reveals class="main-header">
+          <app-toolbar>
+            <div hidden$="[[closePostHeader]]" class="layout horizontal">
+              <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
+              <div title class="layout vertical wrap">[[headerTitle]]</div>
+              <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
+            </div>
+            <template is="dom-if" if="[[closePostHeader]]">
+              <paper-icon-button id="closePostButton" class="closePostIcon" icon="clear" on-tap="_closePost"></paper-icon-button>
+            </template>
+
+            <span class="flex"></span>
+
+            <paper-menu-button horizontal-align="right">
+              <paper-icon-button icon="help-outline" class="dropdown-trigger"></paper-icon-button>
+              <paper-menu class="dropdown-content">
+                <template is="dom-repeat" items="[[pages]]" as="page">
+                  <paper-item data-args$="[[index]]" on-tap="_openPage">[[_getLocalizePageTitle(page)]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-menu-button>
+
+            <template is="dom-if" if="[[user]]">
+              <paper-icon-button on-tap="_toggleUserDrawer" icon="face"></paper-icon-button>
+            </template>
+
+            <template is="dom-if" if="[[!user]]">
+              <paper-button class="loginButton" on-tap="_login">[[t('user.login')]]</paper-button>
+            </template>
+          </app-toolbar>
+        </app-header>
+
+        <iron-pages selected="{{page}}" attr-for-selected="name" fallback-selection="view404">
+          <yp-domain id="domainPage" name="domain" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
+          <yp-community id="communityPage" name="community"id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
+          <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
+          <yp-post id="postPage" name="post" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
+          <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
+          <yp-view-404 name="view-404"></yp-view-404>
+        </iron-pages>
+
+      </app-header-layout>
+
+    </app-drawer-layout>
+
+    <yp-dialog-container id="dialogContainer"></yp-dialog-container>
+    <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
+    <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-app',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        domainSubRoute: Object,
+        communitySubRoute: Object,
+        groupSubRoute: Object,
+        postSubRoute: Object,
+        userSubRoute: Object,
+
+        homeLink: {
+          type: Object
+        },
+
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged'
+        },
+
+        route: {
+          type: Object,
+          observer: '_routeChanged'
+        },
+
+        routeData: Object,
+        subRoute: Object,
+
+        appTitle: {
+          type: String,
+          value: "Your Priorities"
+        },
+
+        user: {
+          type: Object,
+          value: null
+        },
+
+        previousSearches: {
+          type: Array,
+          value: []
+        },
+
+        showSearch: {
+          type: Boolean,
+          value: false
+        },
+
+        showBack: {
+          type: Boolean,
+          value: false
+        },
+
+        backPath: {
+          type: String
+        },
+
+        storedBackPath: String,
+
+        storedLastDocumentTitle: String,
+
+        headerTitle: {
+          type: String
+        },
+
+        headerDescription: {
+          type: String
+        },
+
+        params: {
+          type: Object
+        },
+
+        narrow: {
+          type: Boolean
+        },
+
+        pages: {
+          type: Array
+        },
+
+        keepOpenForPost: {
+          type: String,
+          value: null
+        },
+
+        closePostHeader: {
+          type: Boolean,
+          computed: '_closePostHeader(page, keepOpenForPost)',
+          value: null
+        }
+      },
+
+      observers: [
+        '_routePageChanged(routeData.page)'
+      ],
+
+      listeners: {
+        'yp-set-pages': '_setPages',
+        'yp-set-home-link': '_setHomeLink',
+        'yp-redirect-to': '_redirectTo'
+      },
+
+      _redirectTo: function (event, detail) {
+        if (detail.path) {
+          this.set('route.path', detail.path);
+        }
+      },
+
+      _routeChanged: function (route) {
+        if (window.location.href.indexOf("/#!/") > -1) {
+          window.location = window.location.href.replace("/#!/", "/");
+        }
+
+        var tokenParams = route.path.split('/');
+        if (route.path.indexOf('/user/reset_password') > -1) {
+          this.openResetPasswordDialog(tokenParams[tokenParams.length-1]);
+        } else if (route.path.indexOf('/user/accept/invite') > -1) {
+          this.openAcceptInvitationDialog(tokenParams[tokenParams.length-1]);
+        } else if (route.path.indexOf('domain') > -1) {
+          this.set('domainSubRoute', this.subRoute);
+          if (typeof this.$.domainPage.refresh !== "undefined") {
+            this.$.domainPage.refresh();
+          }
+        } else if (route.path.indexOf('community') > -1) {
+          this.set('communitySubRoute', this.subRoute);
+          if (typeof this.$.communityPage.refresh !== "undefined") {
+            this.$.communityPage.refresh();
+          }
+        } else if (route.path.indexOf('group') > -1) {
+          this.set('groupSubRoute', this.subRoute);
+          if (typeof this.$.groupPage.refresh !== "undefined") {
+            this.$.groupPage.refresh();
+          }
+        } else if (route.path.indexOf('post') > -1) {
+          this.set('postSubRoute', this.subRoute);
+          if (typeof this.$.postPage.refresh !== "undefined") {
+            this.$.postPage.refresh();
+          }
+        } else if (route.path.indexOf('user') > -1) {
+          this.set('userSubRoute', this.subRoute);
+          if (typeof this.$.userPage.refresh !== "undefined") {
+            this.$.userPage.refresh();
+          }
+        }
+      },
+
+      _routePageChanged: function(page) {
+        if (!this.route.path.indexOf('/user/reset_password') > -1 && !this.route.path.indexOf('/user/accept/invite') > -1) {
+          this.page = page;
+        } else if (this.route.path.indexOf('/user/accept/invite') > -1) {
+          this.page = "domain";
+        }
+      },
+
+      _pageChanged: function(page, oldPage) {
+        if (page && page!='domain') {
+          var resolvedPageUrl;
+          if (page=="view-404") {
+            resolvedPageUrl = this.resolveUrl('yp-app/' + "yp-view-404.html");
+          } else {
+            resolvedPageUrl = this.resolveUrl('yp-' + page + '/' + 'yp-' + page + ".html");
+          }
+          this.importHref(resolvedPageUrl, null, this._showPage404, true);
+        }
+
+        if (page) {
+          this.async(function () {
+            window.appGlobals.activity('open', 'page', window.location.href);
+            ga('send', 'pageview', {
+              'page': location.pathname + location.search  + location.hash
+            });
+          });
+        }
+      },
+
+      openResetPasswordDialog: function (resetPasswordToken) {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("resetPassword");
+        dialog.open(resetPasswordToken);
+      },
+
+      openAcceptInvitationDialog: function (inviteToken) {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("acceptInvite");
+        this.async(function () {
+          dialog.open(inviteToken);
+        }, 1000);
+      },
+
+      _showPage404: function() {
+        this.page = 'view-404';
+      },
+
+      _setHomeLink: function (event, homeLink) {
+        if (!this.homeLink) {
+          this.set('homeLink', homeLink);
+        }
+      },
+
+      setKeepOpenForPostsOn: function (goBackToPage) {
+        this.set('keepOpenForPost', goBackToPage);
+        this.set('storedBackPath', this.backPath);
+        this.set('storedLastDocumentTitle', document.title);
+      },
+
+      _closePost: function () {
+        if (this.keepOpenForPost)
+          this.redirectTo(this.keepOpenForPost)
+
+        if (this.storedBackPath)
+          this.set('backPath', this.storedBackPath);
+
+        if (this.storedLastDocumentTitle) {
+          document.title = this.storedLastDocumentTitle;
+          this.set('storedLastDocumentTitle', null);
+        }
+
+        this.set('this.keepOpenForPost', null);
+      },
+
+      _closePostHeader: function (page, keepOpenForPost) {
+        if (page=="post" && keepOpenForPost)
+          return true;
+        else
+          return false;
+      },
+
+      _isGroupOpen: function (params, keepOpenForPost) {
+        if (params.groupId || (params.postId && keepOpenForPost))
+          return true;
+        else
+          return false;
+      },
+
+      _isCommunityOpen: function (params, keepOpenForPost) {
+        if (params.communityId || (params.postId && keepOpenForPost))
+          return true;
+        else
+          return false;
+      },
+
+      _isDomainOpen: function (params, keepOpenForPost) {
+        if (params.domainId || (params.postId && keepOpenForPost))
+          return true;
+        else
+          return false;
+      },
+
+      _toggleNavDrawer: function () {
+        this.$$("#navDrawer").toggle();
+      },
+
+      _setPages: function (event, pages) {
+        this.set('pages', pages);
+      },
+
+      _openPage: function (event) {
+        var index = JSON.parse(event.currentTarget.getAttribute('data-args'));
+        var page = this.pages[index];
+        window.appGlobals.activity('open', 'pages', page.id);
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pageDialog");
+        var pageLocale = 'en';
+        if (page.title[window.locale]) {
+          pageLocale = window.locale;
+        }
+        dialog.open(page.title[pageLocale], page.content[pageLocale]);
+      },
+
+      _getLocalizePageTitle: function (page) {
+        var pageLocale = 'en';
+        if (page.title[window.locale]) {
+          pageLocale = window.locale;
+        }
+        return page.title[pageLocale];
+      },
+
+      ready: function () {
+        window.app = this;
+      },
+
+      getDialog: function (idName) {
+        return this.$$("#dialogContainer").getDialog(idName);
+      },
+
+      scrollPageToTop: function() {
+        var mainArea = document.getElementById('#mainArea');
+        if (mainArea) {
+          mainArea.scroller.scrollTop = 0;
+        }
+      },
+
+      _toggleUserDrawer: function () {
+        this.$$("#drawer").toggle();
+      },
+
+      openEdit: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-dialog-container #userEdit');
+        dialog.setup(this.user, false, null);
+        dialog.open('edit', { userId: this.user.id});
+      },
+
+      _login: function () {
+        if (window.appUser) {
+          window.appUser.openUserlogin();
+        }
+      },
+
+      onChangeHeader: function (event, header) {
+        this.headerTitle = document.title = header.headerTitle;
+
+        if (header.documentTitle) {
+          document.title = header.documentTitle;
+        }
+        this.headerDescription = header.headerDescription;
+
+        //if (header.headerIcon)
+        //app.headerIcon = header.headerIcon;
+        if (header.enableSearch)
+          this.showSearch = true;
+        else
+          this.showSearch = false;
+        if (header.backPath) {
+          this.showBack = true;
+          this.backPath = header.backPath;
+        } else {
+          this.showBack = false;
+          this.backPath = null;
+        }
+      },
+
+      goBack: function (event, detail) {
+        if (this.backPath)
+          this.redirectTo(this.backPath);
+      },
+
+      _onSearch: function (e) {
+        this.toggleSearch();
+        this.unshift('previousSearches', e.detail.value);
+        var postsFilter = document.querySelector('#postsFilter');
+        if (postsFilter) {
+          postsFilter.searchFor(e.detail.value);
+        }
+      },
+
+      onUserChanged: function (event, detail) {
+        if (detail && detail.id) {
+          this.set('user', detail);
+        } else {
+          this.set('user', null);
+        }
+      },
+
+      toggleSearch: function () {
+        this.$$("#search").toggle();
+      },
+
+      __equal: function (a, b) {
+        return a === b;
+      },
+
+      routeChanged: function (newValue, oldValue) {
+        if (this.$$("#drawer") && (!this.$$("#drawer").persistent)) {
+          this.$$("#drawer").close();
+        }
+      }
+    });
+  </script>
+</dom-module>

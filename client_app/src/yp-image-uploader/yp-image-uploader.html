@@ -1,0 +1,86 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-user/yp-user-image.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+
+<dom-module id="yp-image-uploader">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+
+      .icon {
+        padding-right: 2px;
+      }
+
+      .upload-button {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div class="upload-button">
+      <input type="file" style="display: none;" id="fileUploader" name="filename" />
+      <paper-button raised on-tap="_openUploadFile">
+        <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+        <span>[[t('image.upload')]]</span>
+      </paper-button>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-image-uploader',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        post: {
+          type: Object,
+          observer: "_postChanged"
+        }
+      },
+
+      _openUploadFile: function () {
+        this.$.fileUploader.click();
+      },
+
+      _postChanged: function  (newValue, oldValue) {
+        if (newValue) {
+        } else {
+          this.set("location",null);
+        }
+      },
+
+      _response: function (event, detail, sender) {
+        this.endorsements = detail.response;
+        if (this.endorsements.length > this.userImagesLimit) {
+          this.$$("#moreImages").style.display = 'inline';
+        }
+      },
+
+      _moreUserImages: function () {
+        this.$$("#moreImagesButton").style.display = 'none';
+        this.$$("#numberOfMoreUserImages").style.display = 'none';
+        this.$.restOfUserImages.style.display = 'inline';
+      }
+
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,149 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="yp-organization-stats.html">
+<link rel="import" href="yp-organization-behaviors.html">
+
+<dom-module id="yp-community-card">
+
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+        width: 320px;
+      }
+
+      .description {
+        @apply(--layout-vertical);
+        color: var(--primary-color-more-darker, #424242);
+        line-height: var(--description-line-height, 1.3);
+        padding: 8px;
+        margin-top: 4px;
+      }
+
+      .stats {
+        @apply(--layout-self-center);
+        color: var(--primary-color-more-darker, #424242);
+        position: absolute;
+        bottom: 0;
+        right: 16px;
+      }
+
+
+      .post-image {
+        width: 100%;
+      }
+
+      .communityCard {
+        cursor: pointer;
+        height: 420px;
+        background-color: #fff;
+        padding: 0;
+        margin: 0;
+      }
+
+      iron-image {
+        width: 320px;
+        height: 180px;
+      }
+
+      @media (max-width: 420px) {
+        :host {
+          width: 304px;
+        }
+
+        .communityCard {
+          margin-left: 8px;
+          margin-right: 8px;
+          height: 100% !important;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
+        }
+
+        iron-image {
+          width: 304px;
+          height: 165px;
+        }
+      }
+
+      .card-content {
+        padding: 0;
+        padding-bottom: 48px;
+      }
+
+      iron-image {
+        padding: 0;
+        margin: 0;
+      }
+
+      iron-image {
+        padding: 0;
+        margin: 0;
+      }
+
+      paper-card {
+        background-color: #f00;
+        vertical-align: text-top;
+      }
+
+      .informationText {
+        vertical-align: text-top;
+      }
+
+      .community-name {
+        font-size: 26px;
+        margin-top: -4px;
+        height: 56px;
+        padding: 16px;
+        background-color: var(--primary-color-800);
+        color: #FFF;
+      }
+
+      .heartButton {
+        position: absolute;
+        top: 158px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+        background-color: #999;
+        color: var(--icon-general-color, #FFF);
+      }
+    </style>
+
+    <template is="dom-if" if="[[community]]">
+      <paper-card class="communityCard" elevation="[[elevation]]" on-tap="_goToCommunity" class="layout vertical flex">
+        <iron-image sizing="cover" preload src="[[communityLogoImagePath]]" class="post-image"></iron-image>
+        <div class="informationText">
+          <div class="community-name">[[communityName]]</div>
+          <div class="description">[[communityDescription]]</div>
+        </div>
+        <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+        <paper-fab class="heartButton" icon="favorite"></paper-fab>
+      </paper-card>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-community-card',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.CommunityBehaviors
+      ]
+
+    });
+  </script>
+</dom-module>

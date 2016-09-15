@@ -1,0 +1,86 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.3">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.3">
+
+<link rel="import" href="../yp-point/yp-point.html?v=6.2.3">
+
+<link rel="import" href="./ac-activity-post-header.html?v=6.2.3">
+
+</head><body><dom-module id="ac-activity-post-status-update">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        padding-top: 24px;
+      }
+
+      .statusChange {
+        width: 92%;
+        padding-left: 32px;
+        padding-right: 32px;
+        padding-top: 8px;
+        font-size: 19px;
+      }
+
+      .postName {
+        padding-left: 32px;
+        font-weight: bold;
+        font-size: 19px;
+      }
+
+      .groupName {
+        padding-left: 32px;
+        padding-top: 2px;
+        font-size: 14px;
+        padding-bottom: 8px;
+      }
+    </style>
+
+    <div class="layout vertical">
+      <div class="postName">
+        [[activity.Post.name]]
+      </div>
+      <div class="groupName">
+        [[activity.Group.name]]
+      </div>
+      <div id="statusChange" class="statusChange"></div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-activity-post-status-update',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        activity: {
+          type: Object,
+          observer: '_activityChanged'
+        }
+      },
+
+      _activityChanged: function (newValue) {
+        if (newValue) {
+          var content = this.formatContent(newValue.PostStatusChange);
+          this.$.statusChange.innerHTML = content;
+        }
+      },
+
+      formatContent: function (statusUpdate) {
+        if (statusUpdate && statusUpdate.content) {
+          var truncated = this.truncate(this.trim(statusUpdate.content), 500000, '...');
+          return truncated.replace(/(\r\n|\n|\r)/g,"<br />");
+        } else {
+          return '';
+        }
+      }
+    });
+  </script>
+</dom-module>
+</body></html>

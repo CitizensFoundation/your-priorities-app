@@ -1,0 +1,153 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+<link rel="import" href="../yp-post/yp-post-card.html">
+
+<dom-module id="yp-category">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+
+      :host {
+        @apply(--layout-horizontal);
+      }
+
+      .createPost {
+        background-color: --var(accent-color-darker,#f57c00);
+        position: fixed;
+        bottom:24px;
+        right: 28px;
+      }
+
+      .card-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+      }
+
+      yp-post-card {
+        padding: 16px;
+      }
+
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-ajax id="ajax" url="" on-response="_postsResponse"></yp-ajax>
+
+    <yp-group-edit new="false" id="groupEdit" group="{{group}}" on-iron-form-response="_refresh"></yp-group-edit>
+
+    <div class="card-container">
+      <h2 hidden$="[[!groupEmpty]]">[[t('group.is.empty')]]</h2>
+      <template is="dom-if" if="[[posts]]">
+        <template is="dom-repeat" class="list" items="[[posts]]" as="post">
+          <yp-post-card post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+        </template>
+      </template>
+      <paper-fab mini icon="create" on-tap="_openEdit"></paper-fab>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-category',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        categories: {
+          type: Array
+        },
+
+        defaultCategories: {
+          type: Boolean,
+          value: false
+        },
+
+        posts: {
+          type: Array
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        group: {
+          type: Object
+        },
+
+        groupEmpty: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _openEdit: function () {
+        this.$.groupEdit.open('edit', {groupId: this.group.id });
+      },
+
+      _refresh: function () {
+        this.$.ajax.generateRequest();
+      },
+
+      _groupIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("posts",null);
+          if (this.filter) {
+            window.selectedFilter = this.filter;
+          }
+          this.$.ajax.url = '/api/groups/' + this.groupId + '/posts/' + window.selectedFilter;
+          if (this.categoryId) {
+            this.$.ajax.url += '/' + this.categoryId;
+          }
+          this.$.ajax.generateRequest();
+        } else {
+          this.set("posts",null);
+        }
+      },
+
+      _postsResponse: function (event, detail, sender) {
+        var group = detail.response.group;
+        this.set("posts", detail.response.Posts);
+        this.set("group", group);
+        this._processCategories();
+        this.fire("change-header", { headerTitle: group.name,
+          headerDescription: group.objectives });
+        if (detail.response.Posts.length===0)
+          this.groupEmpty = true;
+        else
+          this.groupEmpty = false;
+      },
+
+      _processCategories: function () {
+        if (this.categoryId) {
+          for (var i = 0; i < this.group.Categories.length; i++) {
+            if (this.group.Categories[i].id == this.categoryId) {
+              window.selectedCategoryName = this.group.Categories[i].name;
+              //this.$.layout.updateFilter();
+            }
+          }
+        } else {
+          window.selectedCategoryName = 'categories.all';
+          //this.$.layout.updateFilter();
+        }
+      },
+
+      computeTitle: function () {
+        return this.t('post.add_new');
+      }
+    });
+  </script>
+</dom-module>

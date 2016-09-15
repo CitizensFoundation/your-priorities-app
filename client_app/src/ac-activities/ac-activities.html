@@ -1,0 +1,557 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+
+<link rel="import" href="../with-in-viewport/with-in-viewport.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
+
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+<link rel="import" href="../yp-point/yp-point-news-story-edit.html">
+
+<link rel="import" href="./ac-activity-header.html">
+<link rel="import" href="./ac-activity-post.html">
+<link rel="import" href="./ac-activity-point.html">
+<link rel="import" href="./ac-activity-point-news-story.html">
+<link rel="import" href="./ac-activity-post-status-update.html">
+<link rel="import" href="./ac-activity-group.html">
+
+<dom-module id="ac-activities">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      iron-list {
+        padding-bottom: 4px;
+        --iron-list-items-container: {
+          max-width: 800px;
+          margin: auto;
+          margin-top: 16px;
+          margin-bottom: 54px;
+        };
+      }
+
+      .activity {
+        margin-bottom: 32px;
+        background-color: #FFF;
+        width: 100%;
+        height: 100%;
+      }
+
+      .container {
+        position: relative;
+      }
+
+      #scrollableRegion {
+        height: 100%;
+        overflow: visible;
+        padding-top: 24px;
+        @apply(--layout-flex);
+      }
+
+      .topHeader {
+        background-color: var(--primary-color);
+        color: #fff;
+        padding-left: 16px;
+      }
+
+      .topHeader[newpost] {
+        background-color: var(--accent-color);
+      }
+
+      ac-activity-header {
+        padding-left: 16px;
+      }
+
+      ac-activity-post {
+        width :100%;
+      }
+
+      .headerUserImage {
+        padding-top: 16px;
+        padding-bottom: 16px;
+        padding-right: 8px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .userInfo {
+        padding-right: 18px;
+        text-align: right;
+      }
+
+      paper-button {
+        color: var(--accent-color);
+      }
+
+      iron-icon {
+        width: 48px;
+        height: 48px;
+        padding-top: 14px;
+      }
+
+      .headerText {
+        padding-left: 8px;
+      }
+
+      .typeName {
+        font-size: 30px;
+        padding-top: 12px;
+        padding-left: 4px;
+      }
+
+      .postName {
+        font-size: 18px;
+      }
+
+      .bulb {
+        width: 54px;
+        height: 54px;
+        padding-top: 10px;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      .grayLine {
+        background-color: #f0f0f0;
+      }
+
+      .thumbIconNewsFeed {
+        height: 28px;
+        width: 28px;
+        padding-top: 2px;
+        padding-left: 12px;
+      }
+
+      .participateButton {
+        padding-top: 24px;
+        padding-right: 4px;
+      }
+
+      .postPadding {
+        padding-top: 38px;
+      }
+
+      .createdAt {
+        color: #eee;
+        font-size: 14px;
+      }
+
+      yp-ajax {
+        background-color: var(--primary-background-color);
+      }
+
+      .deleteIcon {
+        position: absolute;
+        left: 0px;
+        bottom: 4px;
+        color: #eee;
+      }
+
+      @media (max-width: 480px) {
+        .typeName {
+          font-size: 22px;
+          padding-top: 12px;
+          padding-left: 4px;
+        }
+      }
+
+      .full {
+        width: 100%;
+      }
+
+      @media (max-width: 400px) {
+        .userInfoContainer {
+          padding-left: 64px;
+        }
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <template is="dom-if" if="[[loggedInUser]]">
+      <div class="layout vertical center-center full" hidden$="[[disableNewPosts]]">
+        <yp-point-news-story-edit domain-id="[[domainId]]"
+                                  community-id="[[communityId]]"
+                                  group-id="[[groupId]]"
+                                  post-group-id="[[postGroupId]]"
+                                  post-id="[[postId]]"
+                                  on-refresh="loadNewData">
+        </yp-point-news-story-edit>
+      </div>
+    </template>
+    <div id="scrollableRegion">
+      <iron-list id="list" items="[[activities]]" as="activity" class="flex">
+        <template>
+          <div>
+            <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
+              <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
+              <div class="layout horizontal topHeader" newpost$="[[_isActivityType(activity,'activity.post.new')]]">
+                <div class="layout horizontal flex wrap">
+                  <div class="layout horizontal">
+                    <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
+                      <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
+                    </template>
+                    <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
+                      <iron-icon icon="communication:chat-bubble-outline" class="stats-icon"></iron-icon>
+                    </template>
+                    <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
+                      <iron-icon icon="face" class="stats-icon"></iron-icon>
+                    </template>
+                    <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
+                      <iron-icon icon="icons:language" class="stats-icon"></iron-icon>
+                    </template>
+                    <div class="layout vertical flex headerText">
+                      <div class="layout horizontal typeName">
+                        <div class="layout vertical">
+                          <div style="cursor: pointer" data-args$="[[activity]]" on-tap="_joinPost">[[_getActivityTypeName(activity)]]</div>
+                          <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
+                            [[fromTime(activity.created_at)]]
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex"></div>
+                  <div class="layout horiztonal end-justified userInfoContainer">
+                    <ac-activity-header class="layout end-justified headerUserImage" activity="[[activity]]"></ac-activity-header>
+                  </div>
+                </div>
+              </div>
+
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
+                <ac-activity-post activity="[[activity]]"></ac-activity-post>
+              </template>
+
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
+                <ac-activity-point activity="[[activity]]"></ac-activity-point>
+              </template>
+
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
+                <ac-activity-point-news-story activity="[[activity]]"></ac-activity-point-news-story>
+              </template>
+
+              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
+                <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
+              </template>
+
+              <div class="postPadding" hidden$="[[_hidePostListPadding()]]"> </div>
+              <div class="layout horizontal" hidden$="[[postId]]">
+                <div hidden$="[[groupId]]">
+                  <template is="dom-if" if="[[_showGroup(activity)]]">
+                    <ac-activity-group group="[[activity.Group]]"></ac-activity-group>
+                  </template>
+                </div>
+                <template is="dom-if" if="[[activity.Post]]">
+                  <div class="layout horizontal flex end-justified participateButton">
+                    <paper-button data-args$="[[activity]]" on-tap="_joinPost">[[t('participate')]]</paper-button>
+                  </div>
+                </template>
+              </div>
+            </paper-material>
+          </div>
+        </template>
+      </iron-list>
+      <div class="layout horizontal center-center">
+        <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
+        <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner on-response="_activityDeletedResponse"></yp-ajax>
+        <template is="dom-if" if="[[moreToLoad]]" restamp>
+          <paper-button data-args$="[[activity]]" on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
+        </template>
+      </div>
+    </div>
+
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-activities',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.YpScrollTabBehavior,
+        Polymer.ypLoggedInUserBehavior,
+        Polymer.AccessHelpers
+      ],
+
+      properties: {
+
+        disableNewPosts: {
+          type: Boolean,
+          value: false
+        },
+
+        activities: {
+          type: Array,
+          notify: true
+        },
+
+        domainId: {
+          type: Number,
+          observer: "_domainIdChanged"
+        },
+
+        communityId: {
+          type: Number,
+          observer: "_communityIdChanged"
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        postId: {
+          type: Number,
+          observer: "_postIdChanged"
+        },
+
+        postGroupId: {
+          type: Number
+        },
+
+        // 'activities' and 'news_feed'
+        mode: {
+          type: String,
+          value: "activities"
+        },
+
+        url: {
+          type: String
+        },
+
+        oldestProcessedActivityAt: {
+          type: Date
+        },
+
+        latestProcessedActivityAt: {
+          type: Date
+        },
+
+        activityIdToDelete: {
+          type: Number
+        }
+      },
+
+      _getActivityTypeName: function (activity) {
+        if (activity.type=='activity.point.new') {
+          if (activity.Point.value>0) {
+            return this.t('activity.point.newFor');
+          } else if (activity.Point.value<0) {
+            return this.t('activity.point.newAgainst');
+          } else {
+            return this.t('activity.point.newComment')
+          }
+        } else {
+          return this.t(activity.type);
+        }
+      },
+
+      _hidePostListPadding: function () {
+        if (!this.postId) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      _showGroup: function (activity) {
+        if (activity.PostStatusChange) {
+          return false;
+        } else if (activity.Group) {
+          if (activity.Group.name == 'hidden_public_group_for_domain_level_points') {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return false;
+        }
+      },
+
+      _elevationForType: function (type) {
+        if (type=='activity.post.new') {
+          return 5;
+        } else if (type=='activity.post.status.change') {
+          return 3;
+        } else {
+          return 2;
+        }
+      },
+
+      _hasActivityAccess: function (activity) {
+        if (this.domainId) {
+          return this.checkDomainAccess(activity.Domain)
+        } else if (this.communityId) {
+          return this.checkCommunityAccess(activity.Community)
+        } else if (this.groupId) {
+          return this.checkGroupAccess(activity.Group)
+        } else if (this.postId) {
+          return this.checkPostAccess(activity.Post)
+        } else {
+          return false;
+        }
+      },
+
+      _activityDeletedResponse: function (event, detail) {
+        var activityId = detail.response.activityId;
+        this.set('activities', _.filter(this.activities, function(o) { return (o.id!=activityId) }));
+      },
+
+      _deleteActivity: function (event) {
+        this.set('activityIdToDelete', event.model.activity.id);
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+        dialog.open(this.t('activity.confirmDelete'), this._reallyDelete.bind(this));
+      },
+
+      _reallyDelete: function () {
+        if (this.domainId) {
+          this.$.deleteActivityAjax.url = "/api/domains/"+this.domainId+"/"+this.activityIdToDelete+"/delete_activity";
+        } else if (this.communityId) {
+          this.$.deleteActivityAjax.url = "/api/communities/"+this.communityId+"/"+this.activityIdToDelete+"/delete_activity";
+        } else if (this.groupId) {
+          this.$.deleteActivityAjax.url = "/api/groups/"+this.groupId+"/"+this.activityIdToDelete+"/delete_activity";
+        } else if (this.postId) {
+          this.$.deleteActivityAjax.url = "/api/posts/"+this.postId+"/"+this.activityIdToDelete+"/delete_activity";
+        }
+        this.$.deleteActivityAjax.body = {};
+        this.$.deleteActivityAjax.generateRequest();
+        this.set('activityIdToDelete', null);
+      },
+
+      _upVote: function (point) {
+        if (point && point.value == 0) {
+          return true;
+        } else if (!point) {
+          return false;
+        } else {
+          return point.value > 0;
+        }
+      },
+
+      _downVote: function (point) {
+        if (point && point.value == 0) {
+          return true;
+        } else if (!point) {
+          return false;
+        } else {
+          return point.value < 0;
+        }
+      },
+
+      _joinPost: function (event) {
+        if (!this.postId) {
+          if (event.model.activity.Post) {
+            this.goToPost(event.model.activity.Post.id);
+          } else if (event.model.activity.PostStatusChange) {
+            this.goToPost(event.model.activity.PostStatusChange.post_id);
+          }
+        }
+      },
+
+      _getActivityWithPostTitle: function (activity) {
+        return this.t(activity.type) + ' ' + activity.Post.name;
+      },
+
+      _isNotActivityType: function (activity, type) {
+        return activity.type!=type
+      },
+
+      _isActivityType: function (activity, type) {
+        return activity.type==type
+      },
+
+      _generateRequest: function (typeId, type) {
+        if (typeId) {
+          this.set('activities', []);
+          this.set('oldestProcessedActivityAt', null);
+
+          //TODO: Test personalized news feeds better
+          if (false && window.appUser && window.appUser.user) {
+            this.mode = 'news_feeds';
+          }
+          this.set('url', '/api/'+this.mode+'/' + type + '/'+typeId);
+          this.$.ajax.url = this.url;
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      _loadMoreData: function () {
+        if (this.url!='' && this.oldestProcessedActivityAt) {
+          this.set('moreToLoad', false);
+          this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      loadNewData: function () {
+        if (this.url!='' && this.latestProcessedActivityAt) {
+          this.$.ajax.url = this.url + '?afterDate='+this.latestProcessedActivityAt;
+          this.$.ajax.generateRequest();
+        } else if (!this.latestProcessedActivityAt) {
+          this.$.ajax.url = this.url;
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      _domainIdChanged: function (newValue) {
+        this.set('activities', null);
+        this._generateRequest(newValue, 'domains');
+      },
+
+      _communityIdChanged: function (newValue) {
+        this.set('activities', null);
+        this._generateRequest(newValue, 'communities');
+      },
+
+      _groupIdChanged: function (newValue) {
+        this.set('activities', null);
+        this._generateRequest(newValue, 'groups');
+      },
+
+      _postIdChanged: function (newValue) {
+        this.set('activities', null);
+        this._generateRequest(newValue, 'posts');
+      },
+
+      _activitiesResponse: function (event, detail) {
+        var activities = detail.response.activities;
+
+        if (detail.response.oldestProcessedActivityAt) {
+          this.set('oldestProcessedActivityAt', detail.response.oldestProcessedActivityAt);
+        }
+
+        activities.forEach(function(activity) {
+          if (this.$.ajax.url.indexOf('afterDate') > -1) {
+            this.unshift('activities', activity);
+          } else {
+            this.push('activities', activity);
+          }
+        }.bind(this));
+
+        if (activities.length>0) {
+          if (!this.latestProcessedActivityAt || this.latestProcessedActivityAt < activities[0].created_at) {
+            this.set('latestProcessedActivityAt', activities[0].created_at);
+          }
+          this.setMoreToLoad();
+        }
+
+//        this.$.list.fire('iron-resize');
+        this.async(function () {
+          this.$.list.fire('iron-resize');
+        });
+      }
+    });
+  </script>
+</dom-module>

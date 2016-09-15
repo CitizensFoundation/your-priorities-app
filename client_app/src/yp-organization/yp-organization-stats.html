@@ -1,0 +1,78 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+
+<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html" >
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-community-stats">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        @apply(--layout-horizontal);
+      }
+
+      .stats {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      .stats-text {
+        font-size: 18px;
+        text-align:right;
+        vertical-align: bottom;
+        padding-right:8px;
+      }
+
+      .stats-icon {
+        padding-left:8px;
+        margin-right:4px;
+      }
+
+      .bulb {
+        padding-top: -16px;
+      }
+    </style>
+
+    <div class="stats">
+      <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
+      <div class="stats-text" style="">{{formatNumber(community.counter_posts)}}</div>
+
+      <iron-icon icon="social:people" class="stats-icon"></iron-icon>
+      <div class="stats-text" style="">{{formatNumber(community.counter_groups)}}</div>
+
+      <iron-icon icon="face" class="stats-icon"></iron-icon>
+      <div class="stats-text">{{formatNumber(community.counter_users)}}</div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-community-stats',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        community: {
+          type: Object
+        }
+      }
+
+    });
+  </script>
+</dom-module>

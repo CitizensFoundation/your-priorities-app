@@ -1,0 +1,39 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.3">
+
+<script>
+  /**
+   * @polymerBehavior GroupCollectionBehaviors
+   */
+  Polymer.GroupCollectionBehaviors = {
+
+    properties: {
+      activeGroups: {
+        type: Array,
+        notify: true
+      },
+
+      featuredGroups: {
+        type: Array
+      },
+
+      archivedGroups: {
+        type: Array
+      },
+
+      groupsLength: {
+        type: Number
+      }
+    },
+
+    setupGroups: function (groups) {
+      this.set('groupsLength', groups.length);
+      var splitGroups = this.splitByStatus(groups);
+      if (splitGroups.archived.length>0) {
+        this.set('archivedGroups', splitGroups.archived);
+      }
+      this.set('featuredGroups', splitGroups.featured);
+      this.set('activeGroups', splitGroups.active);
+    }
+  };
+</script>
+</head><body></body></html>

@@ -1,0 +1,86 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-point-news-story-embed">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      iron-image {
+        width: 470px;
+        height: 246px;
+      }
+
+      #embedHtml {
+        width: 470px;
+        height: 246px;
+        margin-bottom: 8px;
+      }
+
+      a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+
+      .title {
+      }
+
+      .description {
+        padding-bottom: 20px;
+      }
+
+      .container {
+        border-bottom: solid #ddd;
+        border-bottom-width: 1px;
+        margin-left: 48px;
+        margin-right: 48px;
+        margin-bottom: 16px;
+      }
+    </style>
+
+    <div class="layout vertical" hidden$="[[!embedData]]">
+      <a href$="[[embedData.url]]" class="container" target="_blank">
+        <div class="layout vertical center-center">
+          <iron-image sizing="cover" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
+          <div id="embedHtml" hidden$="[[!embedData.html]]"></div>
+        </div>
+        <div class="layout vertical center-center">
+          <div class="title">
+            <h2>[[embedData.title]]</h2>
+          </div>
+          <div class="description">
+            [[embedData.description]]
+          </div>
+        </div>
+      </a>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-point-news-story-embed',
+
+      properties: {
+
+        embedData: {
+          type: Object,
+          notify: true,
+          observer: '_embedDataChanged'
+        }
+      },
+
+      _embedDataChanged: function (newValue) {
+        if (newValue && newValue.html && newValue.html != '') {
+          this.$$("#embedHtml").innerHTML = newValue.html;
+        }
+      }
+    })
+  </script>
+</dom-module>

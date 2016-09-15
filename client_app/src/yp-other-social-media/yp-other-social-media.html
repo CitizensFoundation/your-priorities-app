@@ -1,0 +1,112 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../../bower_components/polymer-instagram/polymer-instagram.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-other-social-media">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .feed {
+        margin-top: 24px;
+      }
+
+      .socialMediaArea {
+        max-width: 500px;
+      }
+
+      paper-item {
+        margin-top: 16px;
+      }
+    </style>
+
+    <template is="dom-if" if="[[active]]">
+      <div class="layout vertical center-center" style="width: 100%;">
+        <div class="layout horizontal center-center">
+          <paper-item on-tap="_selectTwitter">Twitter</paper-item>
+          <paper-item on-tap="_selectInstagram">Instagram</paper-item>
+        </div>
+        <div class="layout vertical socialMediaArea">
+          <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+            <section class="feed">
+              <a class="twitter-timeline" lang="[[language]]" href="https://twitter.com/hashtag/BetriReykjavik" data-widget-id="713327367431782400">#BetriReykjavik Tweets</a>
+            </section>
+            <section class="feed">
+              <h3>Instagram</h3>
+              <polymer-instagram class="layout horizontal start-aligned" client-id="[[_instagramClientId()]]" access-token="[[_instagramAccessToken()]]"></polymer-instagram>
+            </section>
+          </iron-pages>
+        </div>
+      </div>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-other-social-media',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        domain: {
+          type: Object
+        },
+
+        selected: {
+          type: Number,
+          value: 0
+        },
+
+        active: {
+          type: Boolean,
+          value: false,
+          observer: '_activeChanged'
+        }
+      },
+
+      _selectTwitter: function () {
+        this.set('selected', 0);
+      },
+
+      _selectInstagram: function () {
+        this.set('selected', 1);
+      },
+
+      _activeChanged: function (newValue) {
+        if (newValue) {
+          this.async(function () {
+            this._setupTwitter();
+          }.bind(this));
+        }
+      },
+
+      _setupTwitter: function () {
+        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+      },
+
+      _instagramAccessToken: function () {
+        return window.instagramAccessToken;
+      },
+
+      _instagramClientId: function () {
+        return window.instagramClientID;
+      }
+    });
+  </script>
+</dom-module>

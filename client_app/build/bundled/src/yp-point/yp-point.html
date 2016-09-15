@@ -1,0 +1,161 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.2.3">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.3">
+<link rel="import" href="../yp-user/yp-user-image.html?v=6.2.3">
+<link rel="import" href="yp-point-actions.html?v=6.2.3">
+
+</head><body><dom-module id="yp-point">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+      }
+
+
+      .point-content {
+        @apply(--layout-vertical);
+        padding-right: 16px;
+        padding-left: 16px;
+      }
+
+
+      @media (max-width: 320px) {
+        .user-image {
+          display: none;
+        }
+      }
+
+      .userInfoContainer {
+        border-bottom: solid 2px;
+        width: 100%;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+      }
+
+      .userInfoContainer[up-vote] {
+        border-bottom-color:  var(--master-point-up-color);
+      }
+
+      .userInfoContainer[down-vote] {
+        border-bottom-color: var(--master-point-down-color);
+      }
+
+    </style>
+
+    <template is="dom-if" if="[[point]]">
+
+      <div class="layout vertical">
+
+        <div class="userInfoContainer layout horizontal end-justified" up-vote$="[[upVote(point)]]" down-vote$="[[downVote(point)]]" hidden$="[[hideUser]]">
+          <yp-user-with-organization title-date="[[point.created_at]]" inverted="" user="[[user]]"></yp-user-with-organization>
+        </div>
+
+        <div class="point-content">
+          <span hidden$="[[!point.name]]">
+            <span>[[point.name]]</span>.
+          </span>
+          <span>[[point.content]]</span>
+          <div class="layout horizontal">
+            <yp-point-actions point="[[point]]"></yp-point-actions>
+          </div>
+        </div>
+
+      </div>
+
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-point',
+
+      properties: {
+
+        point: {
+          type: Object,
+          notify: true,
+          observer: "_pointChanged"
+        },
+
+
+
+        user: {
+          type: Object,
+          value: null
+        },
+
+        hideUser: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _pointChanged: function(newValue, oldValue) {
+        if (newValue) {
+          this.user = this.point.PointRevisions[0].User;
+        } else {
+          this.user = null;
+        }
+      },
+
+      loginName: function () {
+        return this.point.PointRevisions[0].User.name;
+      },
+
+      upVote: function(point) {
+        if (point) {
+          if (point.value == 0) {
+            return true;
+          } else {
+            return point.value>0;
+          }
+        } else {
+          console.warn("Can't find point for upVote");
+          return false;
+        }
+      },
+
+      downVote: function(point) {
+        if (point) {
+          if (point.value == 0) {
+            return true;
+          } else {
+            return point.value<0;
+          }
+        } else {
+          console.warn("Can't find point for upVote");
+          return false;
+        }
+      },
+
+      computeClass: function (point) {
+        var ret = 'description ';
+        if (point) {
+          if (point.value>0)
+            ret += 'for';
+          else
+            ret += 'against';
+          return ret;
+        } else {
+          console.warn("Can't find point for upVote");
+          return ret;
+        }
+      }
+    });
+  </script>
+</dom-module>
+</body></html>

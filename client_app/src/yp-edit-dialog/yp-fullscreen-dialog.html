@@ -1,0 +1,173 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+
+<dom-module id="yp-fullscreen-dialog">
+
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        position: absolute;
+        display: block;
+        top: 0;
+        bottom: 0;
+        margin: 0;
+        min-width: 360px;
+        z-index: auto;
+        @apply(--paper-fullscreen-dialog);
+      }
+
+      :host([narrow]) {
+        left: 0;
+        right: 0;
+        min-width: auto;
+        max-width: 100%;
+        @apply(--paper-fullscreen-dialog-narrow);
+      }
+
+      [main] {
+        background-color: var(--primary-background-color);
+      }
+
+      #toolbar {
+        background-color: var(--primary-color);
+        color: var(--text-primary_color);
+      }
+
+      #dismissBtn {
+        margin-left: 0px;
+        margin-right: 32px;
+        @apply(--paper-fullscreen-dialog-dismissbtn);
+      }
+
+      ::content paper-button[dialog-confirm] {
+        background: none;
+        min-width: 44px;
+        margin: 6px 0 0 16px;
+        line-height: 20px;
+      }
+
+      #scroller {
+        @apply(--paper-fullscreen-dialog-content);
+      }
+
+      .title ::content h2 {
+        @apply(--paper-font-title);
+      }
+    </style>
+
+    <iron-media-query query="[[_computeMediaQuery(responsiveWidth)]]" query-matches="{{narrow}}"></iron-media-query>
+
+    <paper-header-panel main id="headerPanel" class="no-padding" mode="{{mode}}">
+      <paper-toolbar id="toolbar">
+        <paper-icon-button id="dismissBtn" on-tap="dismiss" dialog-dismiss></paper-icon-button>
+        <div class="title flex"><content select="h2"></content></div>
+        <content id="confirmBtn" select="[dialog-confirm]"></content>
+      </paper-toolbar>
+      <div id="scroller" class="flex">
+        <content select="*"></content>
+      </div>
+    </paper-header-panel>
+  </template>
+  <script>
+    Polymer({
+
+      /**
+       * Fired when the narrow layout changes.
+       *
+       * @event paper-responsive-change
+       * @param {Object} detail
+       * @param {boolean} detail.narrow true if the panel is in narrow layout.
+       */
+
+      properties: {
+        /**
+         * The `dismissIcon` attribute sets the icon for the dismiss button. The
+         * default behavior is to use the 'arrow-back' icon when there is no
+         * confirm button (implying that changes are applied immediately), and
+         * 'close' otherwise.
+         *
+         * @attribute dismissIcon
+         * @type string
+         * @default ''
+         */
+        dismissIcon: {
+          type: String,
+          value: '',
+          observer: '_dismissIconChanged'
+        },
+
+        /**
+         * When the browser window size is larger than the `responsiveWidth`,
+         * the dialog becomes a modal dialog with a backdrop.
+         *
+         * @attribute responsiveWidth
+         * @type string
+         * @default '600px'
+         */
+        responsiveWidth: {
+          type: String,
+          value: '640px'
+        },
+
+        narrow: {
+          type: Boolean,
+          reflectToAttribute: true,
+          observer: '_narrowChanged',
+          notify: true
+        },
+
+        modal: {
+          type: Boolean,
+          value: true
+        },
+
+        _confirmBtn: Object
+      },
+
+      behaviors: [
+        Polymer.PaperDialogBehavior
+      ],
+
+      attached: function() {
+        this.sizingTarget = this.$.scroller;
+        var nodes = Polymer.dom(this.$.confirmBtn).getDistributedNodes();
+        if (nodes.length) {
+          this._confirmBtn = nodes[0];
+        }
+        this._dismissIconChanged();
+      },
+
+      _computeMediaQuery: function(responsiveWidth) {
+        var mq = '(max-width: ' + responsiveWidth + ')';
+        return mq;
+      },
+
+      _dismissIconChanged: function() {
+        if (!this.dismissIcon) {
+          this.$.dismissBtn.icon = this._confirmBtn ? 'close' : 'arrow-back';
+        } else {
+          this.$.dismissBtn.icon = this.dismissIcon;
+        }
+      },
+
+      _narrowChanged: function() {
+        if (!this.narrow) {
+          this.modal = true;
+        } else {
+          this.modal = false;
+        }
+        this.fire('paper-responsive-change', {narrow: this.narrow});
+      },
+
+    });
+
+  </script>
+
+</dom-module>

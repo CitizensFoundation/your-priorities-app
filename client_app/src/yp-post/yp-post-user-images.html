@@ -1,0 +1,99 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-point/yp-point.html">
+<link rel="import" href="yp-post-user-image-card.html">
+
+<dom-module id="yp-post-user-images">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      paper-button {
+        margin-top: 32px;
+        margin-bottom: 8px;
+        background-color: var(--accent-color);
+        color: #FFF;
+        width: 242px;
+      }
+
+      yp-post-user-image-card {
+        margin-top:32px;
+        margin-bottom: 32px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div class="layout vertical center-center">
+      <template is="dom-if" if="[[post]]">
+        <paper-button raised on-tap="_newImage">[[t('posts.newUserImage')]]</paper-button>
+        <template is="dom-if" if="[[images]]">
+          <template is="dom-repeat" items="[[images]]" as="image">
+            <yp-post-user-image-card post="[[post]]" image="[[image]]" on-refresh="_refresh"></yp-post-user-image-card>
+          </template>
+        </template>
+      </template>
+      <div class="layout horizontal center-center">
+        <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-user-images',
+
+        behaviors: [
+          Polymer.appHelpers
+        ],
+
+        properties: {
+
+          images: {
+            type: Array,
+            value: null
+          },
+
+          post: {
+            type: Object,
+            observer: '_postChanged'
+          }
+        },
+
+        _refresh: function () {
+          this.$.ajax.generateRequest();
+        },
+
+        _postChanged: function (newPost) {
+          if (newPost) {
+            this.$.ajax.url = '/api/images/' + newPost.id + '/user_images';
+            this.$.ajax.generateRequest();
+          }
+        },
+
+        _newImage: function () {
+          window.appGlobals.activity('open', 'newUserImage');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userImageEdit");
+          dialog.setup(this.post, null, true, this._refresh.bind(this));
+          dialog.open('new', { postId: this.post.id,  userImages: true });
+        },
+
+        _response: function (event, detail) {
+          this.set('images', detail.response);
+          if (this.images && this.images.length>0) {
+            this.fire('yp-post-image-count', this.images.length);
+          } else {
+            this.fire('yp-post-image-count', 0);
+          }
+        }
+      });
+    }());
+  </script>
+</dom-module>

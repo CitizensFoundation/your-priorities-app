@@ -1,0 +1,64 @@
+<html><head></head><body><dom-module id="paper-share-facebook">
+  <template>
+    <style>
+      #button {
+        color: #4B65BE;
+      }
+  
+      #button[raised] {
+        background: #4B65BE;
+        color: white;
+      }
+    </style>
+  
+    <paper-button id="button" on-click="navigate" raised$="{{raised}}" noink$="{{noink}}">
+      Facebook
+    </paper-button>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    /**
+     * Element Prototype
+     */
+    is: 'paper-share-facebook',
+
+    /**
+     * Element properties
+     */
+    properties: {
+      link: {
+        type: String,
+        value: window.location.href
+      },
+
+      url: {
+        type: String,
+        computed: 'computeUrl(link)'
+      },
+
+      raised: {
+        type: Boolean,
+        notify: true,
+        reflectToAttribute: true
+      }
+    },
+
+    /**
+     * Concat the share url
+     */
+    computeUrl: function(link) {
+      return 'https://www.facebook.com/sharer/sharer.php?u=' + link;
+    },
+
+    /**
+     * Navigate to the social authorization
+     */
+    navigate: function() {
+      window.open(this.url, 'facebook-share', 'width=580,height=296');
+      return false;
+    }
+  });
+</script>
+</body></html>

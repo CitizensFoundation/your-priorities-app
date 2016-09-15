@@ -23,7 +23,7 @@ router.get('/:id', function(req, res) {
     attributes: ['id','name','created_at']
   }).then(function(user) {
     if (user) {
-      var returnUrl = hostPartOfUrl(req)+"/#!/user/" + user.id;
+      var returnUrl = hostPartOfUrl(req)+"/user/" + user.id;
       res.redirect(301, returnUrl);
     } else {
       res.sendStatus(404);

@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>yp-points-actions tests</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../bower_components/web-component-tester/browser.js"></script>
+  <script src="../../../bower_components/test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../../bower_components/test-fixture/test-fixture.html">
+  <script type="text/javascript" src="../../i18next-1.7.4.min.js"></script>
+
+  <link rel="import" href="../../yp-app-globals/yp-app-globals.html">
+  <link rel="import" href="../yp-point-actions.html">
+
+</head>
+<body>
+
+<yp-app-globals disable-welcome></yp-app-globals>
+
+<test-fixture id="basic">
+  <template is="dom-template">
+    <yp-point-actions point="{{point}}" style="width:300px;"></yp-point-actions>
+  </template>
+</test-fixture>
+
+<script>
+  suite('point quality counted correctly', function() {
+
+    test('point quality count correct', function() {
+      var pointActions = fixture('basic', {point: {PointQualities: [{value: 1},{value: -1},{value: 1},{value: -1},
+                                                                   {value: -1},{value: 1},{value: 1},{value: 1}]}});
+      var point = pointActions.point;
+
+
+      expect(point.PointQualities).to.be.eql([{value: 1},{value: -1},{value: 1},{value: -1},
+                                             {value: -1},{value: 1},{value: 1},{value: 1}]);
+
+      expect(pointActions.voteCount(point.PointQualities,'up')).to.be.equal('5');
+      expect(pointActions.voteCount(point.PointQualities,'down')).to.be.equal('3');
+    });
+
+    test('displays counters', function() {
+      var pointActions = fixture('basic', {point: {PointQualities: [{value: 1},{value: -1},{value: 1},{value: -1},
+        {value: -1},{value: 1},{value: 1},{value: 1}]}});
+
+      expect(pointActions.innerHTML).to.include("5");
+      expect(pointActions.innerHTML).to.include("3");
+    });
+
+    test('point up vote dialog is displayed', function(done) {
+      var pointActions = fixture('basic', {point: {PointQualities: [{value: 1},{value: -1},{value: 1},{value: -1},
+        {value: -1},{value: 1},{value: 1},{value: 1}]}});
+
+      var button = pointActions.querySelector('.point-up-vote-icon');
+      button.click();
+
+      Polymer.Base.async(function() {
+        var defaultDialog = document.querySelector('#dialog');
+        expect(defaultDialog.opened).to.be.equal(true);
+        done();
+      });
+    });
+
+    test('point down vote dialog is displayed', function(done) {
+      var pointActions = fixture('basic', {point: {PointQualities: [{value: 1},{value: -1},{value: 1},{value: -1},
+        {value: -1},{value: 1},{value: 1},{value: 1}]}});
+
+      var button = pointActions.querySelector('.point-down-vote-icon');
+      button.click();
+
+      Polymer.Base.async(function() {
+        var defaultDialog = document.querySelector('#dialog');
+        expect(defaultDialog.opened).to.be.equal(true);
+        done();
+      });
+    });
+  });
+</script>
+</body>
+</html>

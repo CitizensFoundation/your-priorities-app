@@ -1,0 +1,67 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/iron-jsonp-library/iron-jsonp-library.html?v=6.2.3">
+<script type="text/javascript" src="../../bower_components/instafeed.js/instafeed.min.js"></script>
+
+</head><body><dom-module id="polymer-instagram">
+  <template>
+    <style is="custom-style">
+    </style>
+
+    <div class="layout">
+      <div id="instafeed" class="layout vertical center-center instafeed"></div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'polymer-instagram',
+
+      properties: {
+
+        accessToken: {
+          type: String,
+          value: null
+        },
+
+        clientId: {
+          type: String,
+          value: null,
+          observer: '_clientIdChanged'
+        }
+      },
+
+      _clientIdChanged: function (newValue) {
+        if (newValue) {
+          var template = '<a href="{{link}}"><img height="{{height}}" width="{{width}}" src="{{image}}" /></a>';
+          template += '<div class="layout vertical"><div>{{caption}}</div><div>{{location}}</div></div>';
+          this.async(function () {
+            var feed = new Instafeed({
+              get: 'user',
+              userId: '3066250812',
+              clientId: this.clientId,
+              accessToken: this.accessToken,
+              resolution: 'standard_resolution',
+              links: true
+            });
+            this.async(function () {
+              var allImages = Polymer.dom(this.$$("#instafeed")).querySelectorAll("a img");
+              _.each(allImages, function (image) {
+                image.style.width = "100%";
+                image.style.marginBottom = "16px";
+              });
+            },1200);
+            feed.run();
+          }.bind(this), 50);
+        }
+      },
+
+      ready: function () {
+      }
+    });
+  </script>
+</dom-module>
+</body></html>

@@ -1,0 +1,94 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.3">
+
+<script>
+  /**
+   * @polymerBehavior CommunityBehaviors
+   */
+  Polymer.CommunityBehaviors = {
+
+    properties: {
+      community: {
+        type: Object,
+        notify: true
+      },
+
+      communityLogoImagePath: {
+        type: String,
+        computed: '_communityLogoImagePath(community)'
+      },
+
+      communityLogoImageNextPath: {
+        type: String,
+        computed: '_communityLogoImageNextPath(community)'
+      },
+
+      communityHeaderImagePath: {
+        type: String,
+        computed: '_communityHeaderImagePath(community)'
+      },
+
+      communityName: {
+        type: String,
+        computed: '_communityName(community)'
+      },
+
+      communityNameFull: {
+        type: String,
+        computed: '_communityName(community, 1)'
+      },
+
+      communityDescription: {
+        type: String,
+        computed: '_communityDescription(community)'
+      },
+
+      communityDescriptionFull: {
+        type: String,
+        computed: '_communityDescription(community,1)'
+      }
+    },
+
+    _goToCommunity: function (e) {
+      var communityUrl = '/community/' + this.community.id;
+      window.appGlobals.activity('open', 'community', communityUrl);
+      this.redirectTo(communityUrl);
+    },
+
+    _communityLogoImagePath: function (community) {
+      if (community) {
+        return this.getImageFormatUrl(community.CommunityLogoImages, 0);
+      }
+    },
+
+    _communityLogoImageNextPath: function (community) {
+      if (community) {
+        return this.getImageFormatNextUrl(community.CommunityLogoImages, 0);
+      }
+    },
+
+    _communityHeaderImagePath: function (community) {
+      if (community) {
+        return this.getImageFormatUrl(community.CommunityHeaderImages, 0);
+      }
+    },
+
+    _communityName: function (community, showAll) {
+      if (community && community.name) {
+        return this.truncate(this.trim(community.name),  showAll ? 300 : 35, '...');
+      } else if (community) {
+        return community.short_name;
+      } else {
+        return "";
+      }
+    },
+
+    _communityDescription: function (community, showAll) {
+      if (community && community.description) {
+        return this.truncate(this.trim(community.description), showAll ? 300 : 120, '...');
+      } else {
+        return "";
+      }
+    }
+  };
+</script>
+</head><body></body></html>

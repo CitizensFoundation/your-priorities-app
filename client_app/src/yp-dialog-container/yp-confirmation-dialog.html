@@ -1,0 +1,71 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-confirmation-dialog">
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      paper-dialog {
+        background-color: #FFF;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <paper-dialog id="confirmationDialog">
+      <div>[[confirmationText]]</div>
+      <div class="buttons">
+        <paper-button on-tap="_reset" dialog-dismiss>[[t('cancel')]]</paper-button>
+        <paper-button dialog-confirm on-tap="_confirm">[[t('confirm')]]</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-confirmation-dialog',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        confirmationText: {
+          type: String
+        },
+
+        onConfirmedFunction: {
+          type: Function,
+          value: null
+        }
+      },
+
+      _reset: function () {
+        this.set('confirmationText', null);
+        this.set('onConfirmedFunction', null);
+      },
+
+      open: function (confirmationText, onConfirmedFunction) {
+        this.set('confirmationText', confirmationText);
+        this.set('onConfirmedFunction', onConfirmedFunction);
+        this.$$("#confirmationDialog").open();
+      },
+
+      _confirm: function () {
+        if (this.onConfirmedFunction) {
+          this.onConfirmedFunction();
+          this._reset();
+        }
+      }
+    });
+  </script>
+</dom-module>

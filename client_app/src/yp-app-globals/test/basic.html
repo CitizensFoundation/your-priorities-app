@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>yp-app-globals tests</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../bower_components/web-component-tester/browser.js"></script>
+  <script src="../../../bower_components/test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../../bower_components/test-fixture/test-fixture.html">
+  <script type="text/javascript" src="../../i18next-1.7.4.min.js"></script>
+
+  <link rel="import" href="../yp-app-globals.html">
+
+</head>
+<style include="iron-flex iron-flex-alignment">
+  body {
+    margin: 0;
+    padding: 0;
+  }
+</style>
+<body>
+
+<test-fixture id="basic">
+  <template>
+    <yp-app-globals></yp-app-globals>
+  </template>
+</test-fixture>
+
+<test-fixture id="resetSeenWelcome">
+  <template>
+    <yp-app-globals reset-seen-welcome></yp-app-globals>
+  </template>
+</test-fixture>
+
+<script>
+  suite('basic', function() {
+
+    var responseHeaders = {
+      json: { 'Content-Type': 'application/json' }
+    };
+
+    var ajax;
+    var request;
+    var server;
+
+    setup(function() {
+      server = sinon.fakeServer.create();
+      server.respondWith(
+              'GET',
+              /\/activity-stream\/activity\/?timestamp=*/,
+              [
+                200,
+                responseHeaders,
+                '{"status":"ok"}'
+              ]
+      );
+
+      server.autoRespond = true;
+
+      i18n.init({ lng: "en" });
+      window.i18n = i18n;
+    });
+
+    teardown(function() {
+      server.restore();
+    });
+
+    test('can access through window.global', function() {
+      var globals = fixture('basic');
+      var windowAppGlobals = window.appGlobals;
+      expect(windowAppGlobals.localName).to.be.ok;
+      expect(windowAppGlobals.localName).to.be.equal("yp-app-globals");
+    });
+
+    test('automatically open welcome dialog when new', function(done) {
+      var globals = fixture('resetSeenWelcome');
+
+      Polymer.Base.async(function() {
+        var welcomeDialog = globals.querySelector('#welcomeDialog');
+        expect(welcomeDialog.opened).to.be.equal(true);
+        var seenWelcomeButton = globals.querySelector('#seenWelcomeButton');
+        seenWelcomeButton.click()
+        Polymer.Base.async(function() {
+          expect(welcomeDialog.opened).to.be.equal(false);
+          done();
+        });
+      });
+    });
+
+    test('welcome dialog closed on second use', function(done) {
+      var globalsTwo = fixture('basic');
+
+      Polymer.Base.async(function() {
+        var welcomeDialog = globalsTwo.querySelector('#welcomeDialog');
+        expect(welcomeDialog.opened).to.be.equal(false);
+        done();
+      });
+    });
+
+    test('can send activity', function(done) {
+      var globals = fixture('basic');
+      var windowAppGlobals = window.appGlobals;
+
+      windowAppGlobals.activity("actor","verb","object","context");
+
+      Polymer.Base.async(function() {
+
+        var request = server.requests[2];
+
+        expect(request.requestBody).to.include("actor");
+        expect(request.requestBody).to.include("verb");
+        expect(request.requestBody).to.include("object");
+        expect(request.requestBody).to.include("context");
+
+        done();
+      });
+    });
+
+    test('can open default dialogue and close it', function(done) {
+      var globals = fixture('basic');
+      var defaultDialog = globals.querySelector('#dialog');
+      globals.openDialog("this.is.test");
+
+      Polymer.Base.async(function() {
+        expect(defaultDialog.opened).to.be.equal(true);
+        expect(defaultDialog.innerHTML).to.include("this.is.test");
+        var defaultOkButton = globals.querySelector('#defaultOkButton');
+        defaultOkButton.click()
+        Polymer.Base.async(function() {
+          expect(defaultDialog.opened).to.be.equal(false);
+          done();
+        });
+      });
+    });
+  });
+</script>
+</body>
+</html>

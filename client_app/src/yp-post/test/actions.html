@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>yp-post-actions tests</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../bower_components/web-component-tester/browser.js"></script>
+  <script src="../../../bower_components/test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../../bower_components/test-fixture/test-fixture.html">
+  <script type="text/javascript" src="../../i18next-1.7.4.min.js"></script>
+
+  <link rel="import" href="../../yp-app-globals/yp-app-globals.html">
+  <link rel="import" href="../yp-post-actions.html">
+
+</head>
+<body>
+
+<yp-app-globals disable-welcome></yp-app-globals>
+
+<test-fixture id="basic">
+  <template is="dom-template" style="width:300px;">
+    <yp-post-actions post="{{post}}"></yp-post-actions>
+  </template>
+</test-fixture>
+
+<test-fixture id="basicSmall">
+  <template is="dom-template" style="width:300px;">
+    <yp-post-actions post="{{post}}" small></yp-post-actions>
+  </template>
+</test-fixture>
+
+<script>
+  suite('basic', function() {
+
+    test('displays counters', function() {
+      var postActions = fixture('basic', {post: {counter_endorsements_up: 2000, counter_points: 1500, counter_endorsements_down: 9000}});
+      var post = postActions.post;
+      expect(post.counter_endorsements_up).to.be.equal(2000);
+      expect(post.counter_points).to.be.equal(1500);
+      expect(post.counter_endorsements_down).to.be.equal(9000);
+      expect(postActions.innerHTML).to.include("2,000");
+      expect(postActions.innerHTML).to.include("1,500");
+      expect(postActions.innerHTML).to.include("9,000");
+      expect(postActions.querySelectorAll('.action-debate')[0].hidden).to.be.equal(false);
+      expect(postActions.querySelectorAll('.action-debate')[1].hidden).to.be.equal(true);
+    });
+
+    test('hidden debate when small', function() {
+      var postActions = fixture('basicSmall', {post: {counter_endorsements_up: 2000, counter_points: 1500, counter_endorsements_down: 9000}});
+      expect(postActions.querySelectorAll('.action-debate')[0].hidden).to.be.equal(true);
+      expect(postActions.querySelectorAll('.action-debate')[1].hidden).to.be.equal(false);
+    });
+
+    test('up vote dialog is displayed', function(done) {
+      var postActions = fixture('basic', {post: {counter_endorsements_up: 2000, counter_points: 1500, counter_endorsements_down: 9000}});
+
+      var button = postActions.querySelector('.up-vote-icon');
+      button.click();
+
+      Polymer.Base.async(function() {
+        var defaultDialog = document.querySelector('#dialog');
+        expect(defaultDialog.opened).to.be.equal(true);
+        done();
+      });
+    });
+
+    test('down vote dialog is displayed', function(done) {
+      var postActions = fixture('basic', {post: {counter_endorsements_up: 2000, counter_points: 1500, counter_endorsements_down: 9000}});
+
+      var button = postActions.querySelector('.down-vote-icon');
+      button.click();
+
+      Polymer.Base.async(function() {
+        var defaultDialog = document.querySelector('#dialog');
+        expect(defaultDialog.opened).to.be.equal(true);
+        done();
+      });
+    });
+  });
+</script>
+</body>
+</html>

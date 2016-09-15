@@ -1,0 +1,69 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.2.3">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.3">
+
+<link rel="import" href="yp-theme-behavior.html?v=6.2.3">
+
+</head><body><dom-module id="yp-theme-selector">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+    </style>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <paper-dropdown-menu label="[[t('theme.choose')]]">
+      <paper-menu class="dropdown-content" selected="{{selectedTheme}}">
+        <template is="dom-repeat" items="[[themes]]" as="theme">
+          <paper-item name="[[index]]">[[theme.name]]</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-theme-selector',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.ypThemeBehavior
+      ],
+
+      properties: {
+
+        selectedTheme: {
+          type: Number,
+          value: null,
+          notify: true,
+          observer: '_selectedThemeChanged'
+        },
+
+        object: {
+          type: Object,
+          observer: '_objectChanged'
+        }
+
+      },
+
+      _objectChanged: function (newObject) {
+        if (newObject && newObject.theme_id!=null) {
+          this.set('selectedTheme', newObject.theme_id);
+        }
+      },
+
+      _selectedThemeChanged: function (newTheme) {
+        if (newTheme) {
+          this.setTheme(newTheme);
+        }
+      }
+
+    });
+  </script>
+</dom-module>
+</body></html>

@@ -1,0 +1,207 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.3">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.2.3">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html?v=6.2.3">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.2.3">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.3">
+
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.2.3">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.2.3">
+
+<link rel="import" href="../ac-notifications/ac-notification-settings.html?v=6.2.3">
+
+</head><body><dom-module id="yp-user-edit">
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      .container {
+        margin-top: 16px;
+        height: 100%;
+      }
+
+      .additionalSettings {
+        margin-top: 16px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-edit-dialog id="editDialog" double-width="" icon="face" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <div class="container">
+        <h2>[[editHeaderText]]</h2>
+
+        <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
+          <paper-tab><span>[[t('user.info')]]</span></paper-tab>
+          <paper-tab>[[t('user.notifications')]]</paper-tab>
+        </paper-tabs>
+
+        <div class="layout vertical wrap container">
+          <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
+            <section>
+              <paper-input id="name" name="name" type="text" label="[[t('Name')]]" value="{{user.name}}" maxlength="50" char-counter="">
+              </paper-input>
+
+              <paper-input id="email" name="email" type="text" label="[[t('Email')]]" value="{{user.email}}">
+              </paper-input>
+
+              <div class="layout vertical additionalSettings">
+                <file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
+                  <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                  <span>[[t('image.profile.upload')]]</span>
+                </file-upload>
+              </div>
+
+              <div class="layout vertical additionalSettings" hidden="">
+                <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
+                  <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                  <span>[[t('image.header.upload')]]</span>
+                </file-upload>
+              </div>
+
+              <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
+              <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+            </section>
+
+            <section>
+              <ac-notification-settings notifications-settings="{{notificationSettings}}"></ac-notification-settings>
+              <input type="hidden" name="notifications_settings" value="[[encodedUserNotificationSettings]]">
+            </section>
+          </neon-animated-pages>
+        </div>
+      </div>
+    </yp-edit-dialog>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-user-edit',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/users"
+      },
+
+      user: {
+        type: Object,
+        observer: '_userChanged'
+      },
+
+      params: {
+        type: String
+      },
+
+      method: {
+        type: String
+      },
+
+      selected: {
+        type: Number,
+        value: 0
+      },
+
+      encodedUserNotificationSettings: {
+        type: String,
+        observer: '_encodedUserNotificationSettingsChanged'
+      },
+
+      uploadedProfileImageId: {
+        type: String
+      },
+
+      uploadedHeaderImageId: {
+        type: String
+      },
+
+      notificationSettings: {
+        type: Object,
+        notify: true,
+        observer: '_notificationSettingsChanged'
+      }
+    },
+
+    listeners: {
+      'yp-notifications-changed': '_setNotificationSettings'
+    },
+
+    _setNotificationSettings: function (event, detail) {
+      this.set('notificationSettings', detail);
+      this.set('encodedUserNotificationSettings', this._encodeNotificationsSettings(this.notificationSettings));
+    },
+
+    _notificationSettingsChanged: function (value) {
+      this.set('encodedUserNotificationSettings', this._encodeNotificationsSettings(this.notificationSettings));
+    },
+
+    _encodedUserNotificationSettingsChanged: function (value) {
+    },
+
+    _encodeNotificationsSettings: function (settings) {
+      return JSON.stringify(settings);
+    },
+
+    _userChanged: function (newValue) {
+      this.set('notificationSettings', newValue.notifications_settings);
+    },
+
+    _profileImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedProfileImageId', image.id);
+    },
+
+    _headerImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedHeaderImageId', image.id);
+    },
+
+    _customRedirect: function (userId) {
+      window.appUser.checkLogin();
+    },
+
+    _clear: function () {
+      this.set('user', { name: '', email: '', access: 2 } );
+      this.uploadedProfileImageId = null;
+      this.uploadedHeaderImageId = null;
+      this.$.headerImageUpload.clear();
+      this.$.profileImageUpload.clear();
+    },
+
+    setup: function (user, newNotEdit, refreshFunction) {
+      this.set('user', user);
+      this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+    },
+
+    _setupTranslation: function () {
+      if (this.new) {
+        this.editHeaderText = this.t('user.new');
+        this.toastText = this.t('user.toast.created');
+      } else {
+        this.editHeaderText = this.t('user.edit');
+        this.toastText = this.t('user.toast.updated');
+      }
+    }
+  });
+</script>
+</body></html>

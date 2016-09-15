@@ -44,7 +44,7 @@ router.get('/:id', function(req, res) {
     ]
   }).then(function(post) {
     if (post) {
-      var returnUrl = hostPartOfUrl(req)+"/#!/post/" + post.id;
+      var returnUrl = hostPartOfUrl(req)+"/post/" + post.id;
       res.redirect(301, returnUrl);
     } else {
       res.sendStatus(404);

@@ -1,0 +1,313 @@
+<!DOCTYPE html><html><head><link rel="import" href="../polymer/polymer.html?v=6.2.3">
+<link rel="import" href="../iron-icons/iron-icons.html?v=6.2.3">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html?v=6.2.3">
+<link rel="import" href="../iron-list/iron-list.html?v=6.2.3">
+<link rel="import" href="../paper-button/paper-button.html?v=6.2.3">
+<link rel="import" href="../paper-dialog/paper-dialog.html?v=6.2.3">
+<link rel="import" href="../paper-header-panel/paper-header-panel.html?v=6.2.3">
+<link rel="import" href="../paper-toolbar/paper-toolbar.html?v=6.2.3">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html?v=6.2.3">
+<link rel="import" href="../paper-item/paper-item.html?v=6.2.3">
+<link rel="import" href="../paper-item/paper-item-body.html?v=6.2.3">
+<link rel="import" href="../paper-styles/paper-styles.html?v=6.2.3">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html?v=6.2.3">
+<link rel="import" href="../neon-animation/neon-animated-pages.html?v=6.2.3">
+<link rel="import" href="../neon-animation/neon-animatable.html?v=6.2.3">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html?v=6.2.3">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html?v=6.2.3">
+
+<!--
+Dialog with which the user can filter the result set
+
+@demo demo/paper-filter-dialog.html
+-->
+</head><body><dom-module id="paper-filter-dialog">
+
+	<template>
+
+		<style>
+			.dialog {
+		    	@apply(--paper-filter-dialog);
+		    	--paper-dialog-background-color: var(--paper-filter-dialog-background-color);
+			}
+
+			paper-toolbar {
+				@apply(--paper-filter-toolbar);
+				--paper-toolbar-background: var(--paper-filter-toolbar-background);
+			}
+
+			.dialog,.animated {
+				@apply(--layout-fit);
+			}
+
+			.animated {
+				margin: 0;
+			}
+
+			.filters,.value {
+				background: white;
+			}
+
+			.filter {
+				border-bottom: 1px solid var(--divider-color);
+			}
+
+			.filter,.value {
+				cursor: pointer;
+			}
+
+			/** Workaround for IE11 to center column */
+			.filter-body {
+				height: 1px;
+			}
+
+			/**
+			 * Workaround for IE11 to center column
+			 * @see https://github.com/PolymerElements/paper-item/pull/65/commits/b41815d6f147a52755fc6db188a3f32a329640ee
+			 */
+			.value-holder {
+				@apply(--layout-vertical);
+			}
+
+			.nrResults {
+				color: var(--secondary-text-color);
+			}
+		</style>
+
+		<paper-dialog id="dialog" class="dialog" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+			<array-selector id="selector" items="{{filters}}" selected="{{_selectedFilter}}"></array-selector>
+
+			<neon-animated-pages class="animated" selected="[[_getSelectedPage(_selectedFilter)]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+				<neon-animatable>
+					<paper-header-panel mode="seamed">
+					  	<paper-toolbar>
+							<paper-icon-button on-tap="close" icon="close"></paper-icon-button>
+							<span class="title"></span>
+							<paper-button on-tap="_tapReset" class="reset" hidden$="[[!_hasSelectedFilters(_selectedFilters,_forceRedrawDummy)]]">[[resetButton]]</paper-button>
+							<paper-button on-tap="_tapApply" dialog-confirm="">[[saveButton]]</paper-button>
+					    </paper-toolbar>
+
+						<div class="filters">
+							<template is="dom-repeat" items="[[filters]]" as="filter">
+								<paper-item class="filter" on-tap="_tapSelectFilter">
+									<paper-ripple fit=""></paper-ripple>
+									<paper-item-body two-line="" class="filter-body">
+										<div class="name">[[filter.name]]</div>
+										<div secondary="">[[_getSelectedValuesNames(filter,_selectedFilters,_forceRedrawDummy)]]</div>
+									</paper-item-body>
+								</paper-item>
+							</template>
+						</div>
+					</paper-header-panel>
+				</neon-animatable>
+
+				<neon-animatable>
+			    	<paper-header-panel mode="seamed">
+					    <paper-toolbar>
+					    	<paper-icon-button icon="arrow-back" on-tap="_tapSelectValues"></paper-icon-button>
+						    <span class="title">[[_selectedFilter.name]]</span>
+						</paper-toolbar>
+
+						<iron-list id="valuesList" items="[[_selectedFilter.values]]" as="filterValue" selection-enabled="" multi-selection="">
+							<template>
+								<div class="value-holder">
+									<paper-item class="value">
+										<paper-checkbox name="[[filterValue.id]]" checked="{{selected}}"></paper-checkbox>
+										<div>
+											[[filterValue.name]]
+											<span class="nrResults" hidden="[[!filterValue.count]]">([[filterValue.count]])</span>
+										</div>
+									</paper-item>
+								</div>
+							</template>
+						</iron-list>
+					</paper-header-panel>
+				</neon-animatable>
+			</neon-animated-pages>
+		</paper-dialog>
+	</template>
+</dom-module>
+
+<script>
+
+(function() {
+
+	Polymer({
+		is: 'paper-filter-dialog',
+
+		/**
+		 * Fired when the user requests to save the filter selection
+		 *
+		 * @event save
+		 */
+
+		properties: {
+			/**
+			 * All filters from which the user can choose
+			 */
+			filters: Array,
+			/**
+			 * All filters that have been selected by the user, e.g. `{ age: [ "child", "teen" ] }`
+			 */
+			selectedFilters: {
+				type: Object,
+				notify: true,
+				value: {}
+			},
+
+			/**
+			 * Text for the reset button. Use this property to localize the element.
+			 */
+			resetButton: {
+				type: String,
+				value: 'Reset'
+			},
+
+			/**
+			 * Text for the save button. Use this property to localize the element.
+			 */
+			saveButton: {
+				type: String,
+				value: 'Save filters'
+			},
+
+			/**
+			 * Label shown if no values are selected for a filter. Use this property to localize the element.
+			 */
+			noValuesLabel: {
+				type: String,
+				value: 'No filters yet'
+			},
+
+			/**
+			 * Internal copy that is changed. Copied back to original variable only once the user clicks on [Apply]
+			 */
+			_selectedFilters: {
+				type: Object,
+				value: {}
+			},
+			_selectedFilter: Object,
+			_forceRedrawDummy: {
+				type: Number,
+				value: 0
+			}
+		},
+
+		// Public methods
+		/**
+		 * Opens the filter dialog
+		 */
+		open: function() {
+			// Attach dialog to the body to ensure it's on top of all existing overlays
+			Polymer.dom(document.body).appendChild(this);
+
+			// Wait until dialog is added to the DOM (required for Safari)
+			setTimeout(function() {
+				this.$.dialog.open();
+
+				// Clone selected filters, so it can be changed without touching the external property
+				this._selectedFilters = {};
+				for (var selectedFilterId in this.selectedFilters) {
+					this._selectedFilters[selectedFilterId] = this.selectedFilters[selectedFilterId];
+				}
+
+				// Redraw filters in case they are still here from a formerly filtering attempt that was cancelled
+				this._redrawFilterValues();
+
+				// @see https://github.com/PolymerElements/neon-animation/issues/60#issuecomment-152345020
+				this.$.valuesList.fire('iron-resize');
+			}.bind(this), 1);
+		},
+
+		close: function() {
+			this.$.dialog.close();
+		},
+
+		// Actions
+		_tapSelectFilter: function(e) {
+			this.$.selector.select(e.model.filter);
+
+			this._preselectFilterValues();
+		},
+		// Pre-select selected filter values
+		_preselectFilterValues: function() {
+			var selectedValueIds = this._selectedFilters[this._selectedFilter.id];
+			if (typeof selectedValueIds !== 'undefined' && typeof this._selectedFilter.values !== 'undefined') {
+				this.$.valuesList.clearSelection();
+				this._selectedFilter.values.forEach(function(value) {
+					if (selectedValueIds.indexOf(value.id) >= 0) {
+						// Value is selected
+						this.$.valuesList.selectItem(value);
+					}
+				}.bind(this));
+			}
+		},
+		_tapReset: function(e) {
+			this._selectedFilters = {};
+			this._redrawFilterValues();
+		},
+		_tapApply: function(e) {
+			this.selectedFilters = this._selectedFilters;
+
+			this.fire('save');
+		},
+		_tapSelectValues: function(e) {
+			// Captured selected valuesList
+			var selectedValues = [];
+			this.$.valuesList.selectedItems.forEach(function(selectedItem) {
+				selectedValues.push(selectedItem.id);
+			});
+			this._selectedFilters[this._selectedFilter.id] = selectedValues;
+
+			this.$.selector.deselect(this._selectedFilter);
+
+			this._redrawFilterValues();
+		},
+
+		// Returns if any filters were selected
+		_hasSelectedFilters: function(_selectedFilters, _forceRedrawDummy) {
+			// Iterate until we find a filter that is selected
+			for (selectedFilter in _selectedFilters) {
+				if (_selectedFilters[selectedFilter].length > 0) {
+					return true;
+				}
+			}
+
+			return false;
+		},
+		// Returns the concated names of the selected values for a specific filter
+		_getSelectedValuesNames: function(filter, _selectedFilters, _forceRedrawDummy) {
+			var selectedValueIds = _selectedFilters[filter.id];
+			if (typeof filter.values === 'undefined' || typeof selectedValueIds === 'undefined') {
+				return this.noValuesLabel;
+			}
+
+			// Look up names
+			var names = [];
+			filter.values.forEach(function(value) {
+				// Add names of values that are selected
+				if (selectedValueIds.indexOf(value.id) >= 0) {
+					names.push(value.name);
+				}
+			});
+
+			if (names.length === 0) {
+				return this.noValuesLabel;
+			}
+
+			return names.join(', ');
+		},
+		// Forces to redraw filters (required because Polymer doesn't pick up all data changes to arrays)
+		_redrawFilterValues: function() {
+			this._forceRedrawDummy = Math.random();
+		},
+		_getSelectedPage: function(_selectedFilter) {
+			// Show all filters if no filter is selected
+			return !_selectedFilter ? 0 : 1;
+		}
+	});
+
+})();
+
+</script>
+</body></html>

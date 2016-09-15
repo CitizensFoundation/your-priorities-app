@@ -1,0 +1,1574 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app.html?v=6.2.3"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="/">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .description {
+        @apply(--layout-vertical);
+        color: var(--primary-color-more-darker, #424242);
+        line-height: var(--description-line-height, 1.3);
+        font-size: 18px;
+      }
+
+      .voting {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        text-align: center;
+        padding-right: 24px;
+        padding-left: 24px;
+      }
+
+      .join-button {
+        color: var(--accent-color-lighter, #FFB74D);
+      }
+
+      .container {
+        @apply(--layout-vertical);
+      }
+
+      .top-container {
+        @apply(--layout-vertical);
+      }
+
+      .stats-container {
+        @apply(--layout-horizontal);
+        padding-top: 24px;
+      }
+
+      .post-name {
+        padding: 0px;
+        padding-bottom: 4px;
+        margin: 0px;
+      }
+
+      .category-icon {
+        width: 80px;
+        height: 80px;
+      }
+
+      .category-image-container {
+        text-align: right;
+        margin-top: -41px;
+        padding-right: 72px;
+      }
+
+      .card-actions {
+        padding-top: 8px;
+        width: 420px;
+      }
+
+      yp-post-cover-media {
+        position: relative;
+        width: 400px;
+        height: 300px;
+      }
+
+      @media (max-width: 961px) {
+        .card-actions {
+          width: 300px;
+        }
+        yp-post-cover-media {
+          width: 400px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .card-actions {
+          width: 270px;
+        }
+        yp-post-cover-media {
+          width: 285px;
+        }
+      }
+
+    </style>
+
+      <div class="top-container">
+
+       <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
+
+        <template is="dom-if" if="[[post]]">
+          <div class="container">
+            <div class="card-content">
+              <template is="dom-if" if="[[post.Category]]">
+                <div class="category-image-container">
+                  <iron-image class="category-icon" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
+                </div>
+              </template>
+              <div class="layout vertical">
+                <div class="description">
+                  <h1 class="post-name">[[postName]]</h1>
+                  <div>[[postDescription]]</div>
+                </div>
+                <div class="layout vertical">
+                  <div class="card-actions">
+                    <yp-post-actions endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+                  </div>
+                  <yp-post-users id="postUsers" post="[[post]]"></yp-post-users>
+                </div>
+              </div>
+              <div class="stats-container"></div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </template>
+  
+
+  <script>
+    Polymer({
+      is: 'yp-post-header',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        post: {
+          type: Object,
+          notify: true,
+          observer: "_postChanged"
+        }
+      },
+
+      addEndorsement: function (endorsement) {
+        this.$$("#postUsers").addEndorsement(endorsement);
+      },
+
+      _postChanged: function(newValue, oldValue) {
+      },
+
+      goToGroup: function (e) {
+        var postUrl = '/#/posts/' + this.post.id + '/posts/top/' + this.post.name;
+        window.appGlobals.activity('open', 'post', postUrl);
+        window.location = postUrl;
+      },
+
+      postName: function (post) {
+        if (post && post.name) {
+          return this.truncate(this.trim(post.name), 200);
+        } else if (post) {
+          return post.short_name;
+        }
+      },
+
+      postDescription: function (post) {
+        if (post && post.description) {
+          return this.truncate(this.trim(post.description), 10000, '...');
+        } else {
+          return "";
+        }
+      },
+
+      getCategoryImagePath: function (post) {
+        return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
+      },
+
+      ready: function () {
+        //this.post = {counter_endorsements_up: 1237, counter_points: 347, counter_endorsements_down: 432};
+      }
+    });
+  </script>
+</dom-module>
+<dom-module id="yp-post-points" assetpath="/">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+
+      :host {
+        height: 100%;
+      }
+
+      .main-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+        background-color: var(--primary-background-color);
+      }
+
+      .point {
+        padding-top: 32px;
+        padding-bottom: 32px;
+        padding-left: 24px;
+        padding-right: 24px;
+        @apply(--layout-vertical);
+      }
+
+      .pointText {
+        margin-bottom: 16px;
+        padding: 16px;
+        width: 420px;
+      }
+
+      @media only screen and (min-device-width : 768px) and (max-device-width : 1024px)  {
+        .pointText {
+          max-height: 160px;
+          min-height: 160px;
+        }
+      }
+
+      paper-toast {
+        z-index: 9999;
+      }
+
+      paper-material {
+        background-color: #fff;
+      }
+
+      yp-point {
+        padding-top: 8px;
+      }
+
+      .pointMaterial {
+        margin-bottom: 18px;
+        padding-top: 8px;
+        background-color: #FFF;
+        padding-left: 0;
+        padding-right: 0;
+        width: 430px;
+      }
+
+      .thumbIcon {
+        height: 64px;
+        width: 64px;
+        padding-bottom: 16px;
+        color: var(--primary-color);
+      }
+
+      .editIcon {
+        height: 28px;
+        width: 28px;
+        padding-bottom: 16px;
+        color: var(--primary-color);
+      }
+
+      paper-fab::shadow #icon {
+        background-color: var(--accent-color);
+        color: #FFF;
+      }
+
+      paper-fab {
+        background-color: var(--accent-color);
+        color: #FFF;
+      }
+
+      .addPointFab {
+        width: 100%;
+        color: #FFF;
+      }
+
+      paper-textarea {
+        --paper-input-container-label: {
+          font-size: 30px;
+          height: 50px;
+          overflow: visible;
+        }
+      }
+
+      .howToWriteInfoText {
+        padding-top: 4px;
+        color: var(--primary-color);
+      }
+
+      .point .main-container .topContainer {
+        background-color: var(--primary-background-color) !important;
+      }
+
+      .penContainer {
+        margin-top: 42px;
+      }
+
+      .upOrDown {
+        margin-top: 72px;
+      }
+
+      paper-radio-button {
+        --paper-radio-button-checked-color: var(--accent-color) !important;
+        font-size: 16px;
+      }
+
+      #pointUpOrDownMaterial {
+        margin-top: 16px;
+      }
+
+      .mobileFab {
+        margin-top: 8px;
+      }
+
+      paper-button {
+        color: #FFF;
+        background-color: var(--accent-color);
+      }
+
+      @media (max-width: 985px) {
+        .pointText {
+          width: 420px;
+          font-size: 30px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .pointText {
+          width: 310px;
+          font-size: 9px;
+        }
+
+        .pointMaterial {
+          width: 300px;
+        }
+
+        .main-container {
+          width: 310px;
+        }
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <iron-media-query query="(min-width: 985px)" query-matches="{{largeMode}}"></iron-media-query>
+
+    <template is="dom-if" if="[[points]]">
+      <div class="layout horizontal center-center penContainer" hidden="">
+        <div class="howToWriteInfoText">[[t('point.howToWrite')]]</div>
+        <iron-icon icon="editor:mode-edit" class="editIcon"></iron-icon>
+      </div>
+      <template is="dom-if" if="[[largeMode]]">
+        <div class="layout vertical topContainer">
+          <div class="main-container">
+            <div class="point">
+
+              <div id="pointUpMaterial" elevation="0" class="pointText" animated="">
+                <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueUp}}" value="[[textValueUp]]" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
+
+                <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
+                  <div class="addPointFab layout horizontal center-center">
+                    <paper-button icon="add" mini="" elevation="3" on-tap="addPointUp" title="[[t('point.add_up')]]">[[t('point.postComment')]]</paper-button>
+                  </div>
+                </template>
+              </div>
+
+              <div id="allUpPoints">
+                <template is="dom-repeat" items="[[upPoints]]" as="point">
+                  <paper-material elevation="1" class="pointMaterial">
+                    <yp-point point="[[point]]"></yp-point>
+                  </paper-material>
+                </template>
+              </div>
+            </div>
+
+            <div class="point">
+
+              <div id="pointDownMaterial" elevation="0" class="pointText" animated="">
+                <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueDown}}" value="[[textValueDown]]" label="[[t('point.against')]]" char-counter="" rows="2" max-rows="5" maxlength="500"></paper-textarea>
+
+                <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
+                  <div class="addPointFab layout horizontal center-center">
+                    <paper-button icon="add" mini="" z="3" on-tap="addPointDown" title="[[t('point.add_down')]]">[[t('point.postComment')]]</paper-button>
+                  </div>
+                </template>
+              </div>
+
+              <div id="allDownPoints">
+                <template is="dom-repeat" items="[[downPoints]]" as="point">
+                  <paper-material elevation="1" class="pointMaterial">
+                    <yp-point point="[[point]]"></yp-point>
+                  </paper-material>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template is="dom-if" if="[[!largeMode]]">
+        <div id="pointUpOrDownMaterial" elevation="0" class="pointText" animated="">
+          <paper-textarea id="mobileUpOrDownPoint" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueMobileUpOrDown}}" value="[[textValueMobileUpOrDown]]" label="[[labelMobileUpOrDown]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
+          <div class="layout horizontal center-center">
+            <paper-radio-group id="upOrDown" attribute-for-selected="name" selected="{{pointUpOrDownSelected}}">
+              <paper-radio-button name="pointFor">[[t('point.for')]]</paper-radio-button>
+              <paper-radio-button name="pointAgainst">[[t('point.against')]]</paper-radio-button>
+            </paper-radio-group>
+          </div>
+          <template is="dom-if" if="[[ifLengthIsRight(textValueMobileUpOrDown)]]">
+            <div class="addPointFab layout horizontal center-center mobileFab">
+              <paper-fab icon="add" mini="" z="3" on-tap="addMobilePointUpOrDown" title="[[t('point.add_down')]]"></paper-fab>
+            </div>
+          </template>
+        </div>
+        <template is="dom-repeat" items="[[points]]" as="point">
+          <paper-material elevation="1" class="pointMaterial">
+            <yp-point point="[[point]]"></yp-point>
+          </paper-material>
+        </template>
+      </template>
+    </template>
+
+    <div hidden="" class="layout horizontal center-center">
+      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+      <yp-ajax id="newPointAjax" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
+    </div>
+
+    <paper-toast id="newPointToast" text="[[newPointTextCombined]]"></paper-toast>
+  </template>
+
+
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-points',
+
+        behaviors: [
+          Polymer.appHelpers
+        ],
+
+        properties: {
+
+          downPoints: {
+            type: Array,
+            value: function () {
+              return [];
+            }
+          },
+
+          upPoints: {
+            type: Array,
+            value: function () {
+              return [];
+            }
+          },
+
+          textValueUp: {
+            type: String
+          },
+
+          textValueDown: {
+            type: String
+          },
+
+          newPointTextCombined: {
+            type: String
+          },
+
+          post: {
+            type: Object,
+            observer: "_postChanged"
+          },
+
+          points: {
+            type: Array,
+            value: null
+          },
+
+          largeMode: {
+            type: Boolean,
+            value: false
+          },
+
+          textValueMobileUpOrDown: String,
+
+          labelMobileUpOrDown: String,
+
+          pointUpOrDownSelected: {
+            type: String,
+            observer: '_pointUpOrDownSelectedChanged',
+            value: 'pointFor'
+          }
+        },
+
+        _pointUpOrDownSelectedChanged: function (newValue) {
+          if (newValue=='pointFor') {
+            this.set('labelMobileUpOrDown', this.t('point.for'));
+          } else if (newValue=='pointAgainst') {
+            this.set('labelMobileUpOrDown', this.t('point.against'));
+          }
+        },
+
+        _postChanged: function (newPost) {
+          // Remove any manually inserted points when the list is updated
+          this.set('points', null);
+          if (newPost) {
+            this.$.ajax.url = '/api/posts/' + newPost.id + '/points';
+            this.$.ajax.generateRequest();
+          }
+        },
+
+        removeElementsByClass: function (rootElement, className) {
+          var elements = rootElement.getElementsByClassName(className);
+          while(elements.length > 0){
+            elements[0].parentNode.removeChild(elements[0]);
+          }
+        },
+
+        _response: function (event, detail) {
+          this.set('points', detail.response);
+          this.removeElementsByClass(this, 'inserted-outside-list');
+
+          if (this.points.length > 0) {
+            this.set('upPoints', this.points.filter(function (x) {
+              return x.value > 0;
+            }));
+            this.set('downPoints', this.points.filter(function (x) {
+              return x.value < 0;
+            }));
+          } else {
+            this.set('upPoints', []);
+            this.set('downPoints', []);
+          }
+
+          this.fire('yp-debate-info', {
+            count: this.upPoints.length + this.downPoints.length,
+            firstPoint: this.upPoints[0]
+          });
+
+          this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
+        },
+
+        _insertNewPoint: function (point) {
+          if (this.largeMode) {
+            if (point.value > 0) {
+              this.unshift('upPoints', point);
+            } else if (point.value < 0) {
+              this.unshift('downPoints', point);
+            }
+          } else {
+            this.unshift('points', point);
+          }
+        },
+
+        _newPointResponse: function (event, detail) {
+          var point = detail.response;
+          if (point.value > 0) {
+            this.newPointTextCombined = this.t("point.forAdded") + " " + this.truncate(point.content, 21);
+            this.set("textValueUp", "");
+          } else {
+            this.newPointTextCombined = this.t("point.againstAdded") + " " + this.truncate(point.content, 21);
+            this.set("textValueDown", "");
+          }
+          this.set("textValueMobileUpOrDown", "");
+          this._insertNewPoint(point);
+          this.set('post.counter_points', this.post.counter_points + 1);
+          this.$.newPointToast.show();
+        },
+
+        addPointUp: function () {
+          this.addPoint(this.textValueUp, 1);
+          window.appGlobals.activity('add', 'pointUp');
+        },
+
+        addPointDown: function () {
+          this.addPoint(this.textValueDown, -1);
+          window.appGlobals.activity('add', 'pointDown');
+        },
+
+        addMobilePointUpOrDown: function () {
+          if (this.pointUpOrDownSelected=='pointFor') {
+            this.addPoint(this.textValueMobileUpOrDown, 1);
+            window.appGlobals.activity('add', 'pointUp');
+          } else if (this.pointUpOrDownSelected=='pointAgainst') {
+            this.addPoint(this.textValueMobileUpOrDown, -1);
+            window.appGlobals.activity('add', 'pointDown');
+          }
+        },
+
+        addPoint: function (content, value) {
+          if (window.appUser.loggedIn() === true) {
+            this.$.newPointAjax.url = "/api/points/" + this.post.group_id;
+            this.$.newPointAjax.body = {
+              postId: this.post.id,
+              content: content,
+              value: value
+            };
+            this.$.newPointAjax.generateRequest();
+          } else {
+            window.appUser.loginForNewPoint(this, {content: content, value: value});
+          }
+        },
+
+        focusUpPoint: function () {
+          window.appGlobals.activity('focus', 'pointUp');
+        },
+
+        focusDownPoint: function () {
+          window.appGlobals.activity('focus', 'pointDown');
+        },
+
+        focusTextArea: function (event) {
+          event.currentTarget.parentElement.elevation = 4;
+        },
+
+        blurTextArea: function (e) {
+          event.currentTarget.parentElement.elevation = 0;
+        },
+
+        ifLengthIsRight: function (textValue) {
+          return textValue.length > 6;
+        }
+
+      });
+    }());
+  </script>
+</dom-module>
+<dom-module id="yp-post-user-image-card" assetpath="/">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .description {
+        padding-left: 64px;
+        padding-right: 64px;
+        padding-top: 8px;
+        color: #444;
+      }
+
+      .photographer {
+        padding-left: 64px;
+        padding-right: 64px;
+        padding-top: 8px;
+        color: #aaa;
+      }
+
+      paper-material {
+        width: 800px;
+        height: 100%;
+        background-color: #FFF;
+        padding: 0;
+      }
+
+      iron-image {
+        width: 800px;
+        height: 600px;
+      }
+
+      @media (max-width: 800px) {
+        iron-image {
+          width: 600px;
+          height: 450px;
+        }
+
+        paper-material {
+          width: 600px;
+        }
+      }
+
+      @media (max-width: 620px) {
+        iron-image {
+          width: 400px;
+          height: 300px;
+        }
+        paper-material {
+          width: 400px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        iron-image {
+          width: 320px;
+          height: 240px;
+        }
+        paper-material {
+          width: 320px;
+        }
+      }
+    </style>
+
+    <paper-material elevation="2" class="layout vertical">
+      <iron-image title$="[[image.description]]" sizing="cover" src$="[[_imageUrl(image)]]"></iron-image>
+      <div class="description">
+        [[image.description]]
+      </div>
+      <div class="layout horizontal" style="width: 100%;">
+        <div class="photographer">
+          [[image.photographer_name]]
+        </div>
+        <div class="editMenu layout horizontal flex end-justified" hidden$="[[!hasImageAccess(image, post)]]">
+          <paper-icon-button icon="create" on-tap="_openEdit"></paper-icon-button>
+          <paper-icon-button icon="clear" on-tap="_openDelete"></paper-icon-button>
+        </div>
+      </div>
+      <yp-point-comment-list image="[[image]]"></yp-point-comment-list>
+    </paper-material>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-user-image-card',
+
+        behaviors: [
+          Polymer.appHelpers,
+          Polymer.AccessHelpers
+        ],
+
+        properties: {
+
+          image: {
+            type: Object
+          },
+
+          post: {
+            type: Object
+          }
+        },
+
+        _openEdit: function () {
+          window.appGlobals.activity('open', 'userImage.edit');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userImageEdit");
+          dialog.setup(this.post, this.image, false, this._refresh.bind(this));
+          dialog.open('edit', { postId: this.post.id, userImages: true });
+        },
+
+        _openDelete: function () {
+          window.appGlobals.activity('open', 'userImage.delete');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
+          dialog.setup('/api/images/', this.post.id+'/'+this.image.id+'/user_images',
+            this.t('userImage.deleteConfirmation'),
+            this._refresh.bind(this));
+          dialog.open();
+        },
+
+        _refresh: function () {
+          this.fire('refresh');
+        },
+
+        _imageUrl: function (image) {
+          return this.getImageFormatUrl([image], 0);
+        }
+      });
+    }());
+  </script>
+</dom-module>
+<dom-module id="yp-post-user-images" assetpath="/">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      paper-button {
+        margin-top: 32px;
+        margin-bottom: 8px;
+        background-color: var(--accent-color);
+        color: #FFF;
+        width: 242px;
+      }
+
+      yp-post-user-image-card {
+        margin-top:32px;
+        margin-bottom: 32px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div class="layout vertical center-center">
+      <template is="dom-if" if="[[post]]">
+        <paper-button raised="" on-tap="_newImage">[[t('posts.newUserImage')]]</paper-button>
+        <template is="dom-if" if="[[images]]">
+          <template is="dom-repeat" items="[[images]]" as="image">
+            <yp-post-user-image-card post="[[post]]" image="[[image]]" on-refresh="_refresh"></yp-post-user-image-card>
+          </template>
+        </template>
+      </template>
+      <div class="layout horizontal center-center">
+        <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-user-images',
+
+        behaviors: [
+          Polymer.appHelpers
+        ],
+
+        properties: {
+
+          images: {
+            type: Array,
+            value: null
+          },
+
+          post: {
+            type: Object,
+            observer: '_postChanged'
+          }
+        },
+
+        _refresh: function () {
+          this.$.ajax.generateRequest();
+        },
+
+        _postChanged: function (newPost) {
+          if (newPost) {
+            this.$.ajax.url = '/api/images/' + newPost.id + '/user_images';
+            this.$.ajax.generateRequest();
+          }
+        },
+
+        _newImage: function () {
+          window.appGlobals.activity('open', 'newUserImage');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userImageEdit");
+          dialog.setup(this.post, null, true, this._refresh.bind(this));
+          dialog.open('new', { postId: this.post.id,  userImages: true });
+        },
+
+        _response: function (event, detail) {
+          this.set('images', detail.response);
+          if (this.images && this.images.length>0) {
+            this.fire('yp-post-image-count', this.images.length);
+          } else {
+            this.fire('yp-post-image-count', 0);
+          }
+        }
+      });
+    }());
+  </script>
+</dom-module>
+<dom-module id="yp-post-user-image-edit" assetpath="/">
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-edit-dialog double-width="" id="editDialog" icon="image:photo-camera" action="[[action]]" method="[[method]]" save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
+      <h2>[[editHeaderText]]</h2>
+
+      <div class="layout vertical center-center">
+        <file-upload id="imageFileUpload" raised="true" multi="false" method="POST" on-success="_imageUploaded">
+          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+          <span>[[t('image.upload')]]</span>
+        </file-upload>
+      </div>
+
+      <paper-input id="photographerName" name="photographerName" type="text" label="[[t('post.photographerName')]]" value="{{image.photographer_name}}" maxlength="60" char-counter="">
+      </paper-input>
+
+      <paper-textarea id="description" required="" minlength="15" name="description" value="{{image.description}}" label="[[t('post.description')]]" char-counter="" rows="2" max-rows="5" maxlength="200">
+      </paper-textarea>
+
+      <input type="hidden" name="uploadedPostUserImageId" value="[[uploadedPostUserImageId]]">
+      <input type="hidden" name="oldUploadedPostUserImageId" value="[[oldUploadedPostUserImageId]]">
+
+    </yp-edit-dialog>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-user-image-edit',
+
+        behaviors: [
+          Polymer.appHelpers,
+          Polymer.ypEditDialogBehavior
+        ],
+
+        properties: {
+          new: {
+            type: Boolean,
+            value: false
+          },
+
+          image: {
+            type: Object,
+            observer: '_imageChanged'
+          },
+
+          post: {
+            type: Object,
+            observer: '_postChange'
+          },
+
+          action: {
+            type: String,
+            value: "/api/images"
+          },
+
+          imageUploadTarget: {
+            type: String,
+            notify: true
+          },
+
+          uploadedPostUserImageId: {
+            type: String
+          },
+
+          oldUploadedPostUserImageId: {
+            type: String
+          },
+
+          editHeaderText: {
+            type: String
+          },
+
+          saveText: {
+            type: String
+          },
+
+          method: {
+            type: String
+          }
+        },
+
+        _postChange: function (newPost) {
+          if (newPost) {
+            this.$.imageFileUpload.target = '/api/images?itemType=post-user-image&postId='+newPost.id;
+          }
+        },
+
+        listeners: {
+          'iron-form-invalid': '_formInvalid'
+        },
+
+        _imageChanged: function (newValue) {
+          if (newValue) {
+            this.set('oldUploadedPostUserImageId', newValue.id)
+          }
+        },
+
+        _formInvalid: function () {
+          this.set('selected', 0);
+          this.$$('#photographerName').autoValidate = true;
+          this.$$('#description').autoValidate = true;
+        },
+
+        _imageUploaded: function (event, detail) {
+          var image = JSON.parse(detail.xhr.response);
+          this.set('uploadedPostUserImageId', image.id);
+        },
+
+        _clear: function () {
+          this.set('uploadedPostUserImageId', null);
+          this.$$("#imageFileUpload").clear();
+        },
+
+        setup: function (post, image, newNotEdit, refreshFunction) {
+          if (image) {
+            this.set('image', image);
+          } else {
+            this.set('image', { description: '' , photographerName: '' })
+          }
+          if (post) {
+            this.set('post', post);
+          } else {
+            this.set('post', null);
+          }
+          this.set('new', newNotEdit);
+          this.set('refreshFunction', refreshFunction);
+          this._setupTranslation();
+        },
+
+        _setupTranslation: function () {
+          if (this.new) {
+            this.editHeaderText = this.t('post.newPhoto');
+            this.toastText = this.t('post.photo.toast.added');
+          } else {
+            this.editHeaderText = this.t('post.photoUpdate');
+            this.toastText = this.t('post.photo.toast.updated');
+          }
+        }
+      });
+    }());
+  </script>
+</dom-module>
+</div><dom-module id="yp-post">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+      }
+
+      .container {
+        padding-top: 0;
+        margin-top: -70px;
+        height: 100%;
+      }
+
+      .flex {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
+      .centerContainer {
+        @apply(--layout-center-center);
+      }
+
+      .postHeader {
+        padding: 16px;
+        background-color: #fefefe;
+        width: 940px;
+      }
+
+      yp-post-cover-media {
+        width: 420px !important;
+        height: 232px !important;
+      }
+
+      .statusHeader {
+        padding: 16px;
+        background-color: #fefefe;
+        width: 940px;
+        margin-top: 16px;
+        height: 48px;
+      }
+
+      .description {
+        width: 510px;
+        padding-left: 24px;
+      }
+
+      yp-post-actions {
+        width: 270px;
+      }
+
+      ac-activities {
+        padding-top: 8px;
+      }
+
+      .statusColumn {
+        width: 670px;
+        padding-bottom: 16px;
+      }
+
+      .mainPage {
+        background-color: #FFF;
+      }
+
+      yp-post-user-images {
+        padding-top: 32px;
+      }
+
+      @media (max-width: 961px) {
+        .postHeader {
+          width: 600px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .postHeader {
+          width: 400px;
+        }
+      }
+
+
+      .createFab {
+        background-color: var(--accent-color);
+        color: var(--icon-general-color, #FFF);
+        position: fixed;
+        bottom: 24px;
+        right: 28px;
+      }
+
+      .createFab[wide-layout] {
+        width: 72px;
+        height: 72px;
+      }
+
+      .createFabContainer[wide-layout] .createFab {
+      }
+
+      paper-fab[wide-layout]::shadow #icon {
+        width: 40px;
+        height: 40px;
+      }
+
+      @media (max-width: 360px) {
+
+        .centerContainer {
+          @apply(--layout-vertical);
+        }
+
+        .postHeader {
+          height: 100%;
+          width: 360px;
+          padding: 0;
+        }
+
+        .tabsMaterial {
+          width: 360px;
+        }
+
+        yp-post-cover-media {
+          width: 320px !important;
+          height: 181px !important;
+          padding-top: 16px;
+          padding-left: 20px;
+        }
+
+        .statusHeader {
+          width: 360px;
+          height: 120px;
+          padding: 0px;
+          padding-left: 20px;
+        }
+
+        .statusColumn {
+          height: 60px;
+          padding: 0px;
+        }
+
+        .description {
+          width: 320px;
+          padding: 8px;
+          padding-left: 20px;
+          padding-bottom: 16px;
+        }
+
+        yp-post-actions {
+          width: 320px;
+          padding-left: 20px;
+        }
+
+        .statusColumn {
+          width: 320px;
+        }
+
+        paper-tab {
+          font-size: 14px;
+        }
+      }
+
+      yp-ajax {
+        background-color: var(--primary-background-color);
+      }
+
+      .mapContainer {
+        margin: 24px;
+        width: 960px;
+        height: 500px;
+      }
+
+      .counterInfo {
+        font-size: 11px;
+      }
+
+      .topContainer {
+        margin-top: 16px;
+      }
+
+      .tabs {
+        margin-top: 64px;
+      }
+
+      @media (max-width: 934px) {
+        .mapContainer {
+          margin: 16px;
+          width: 800px;
+          height: 400px;
+        }
+      }
+
+      @media (max-width: 832px) {
+        .mapContainer {
+          margin: 8px;
+          width: 600px;
+          height: 340px;
+        }
+      }
+
+      @media (max-width: 632px) {
+        .mapContainer {
+          margin: 8px;
+          width: 400px;
+          height: 300px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .mapContainer {
+          margin: 8px;
+          width: 330px;
+          height: 250px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .mapContainer {
+          margin: 8px;
+          width: 280px;
+          height: 200px;
+        }
+      }
+
+
+      .tabs {
+        width: 1100px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      .tabs .tab {
+        width: 250px;
+      }
+
+      @media (max-width: 1024px) {
+        .tabs {
+          max-width: 920px;
+        }
+
+        .tabs .tab {
+          width: 200px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .tabs {
+          max-width: 450px;
+          font-size: 13px !important;
+          word-wrap: break-word !important;
+        }
+
+        .tabs .tab {
+          width: 120px;
+          word-wrap: break-word !important;
+        }
+
+        .topArea {
+          height: 300px;
+        }
+
+        .topArea[is-post] {
+          min-height: 470px;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .tabs {
+          max-width: 330px;
+          font-size: 10px !important;
+        }
+
+        paper-tab {
+          width: 100px;
+          font-size: 10px !important;
+        }
+
+        .topArea[is-post] {
+          min-height: 530px;
+        }
+
+        ac-activities {
+          min-height: 600px !important;
+        }
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <app-route route="{{idRoute}}" pattern="/:id" data="{{idRouteData}}" tail="{{tabRoute}}">
+    </app-route>
+
+    <app-route route="{{tabRoute}}" pattern="/:tabName" data="{{tabRouteData}}">
+    </app-route>
+
+    <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
+
+    <div class="topContainer" is-post="" create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
+
+      <yp-post-card id="postCard" class="largeCard" post="[[post]]" on-refresh="_refreshAjax" header-mode=""></yp-post-card>
+
+      <div class="layout horizontal center-center">
+        <paper-tabs id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
+          <paper-tab name="debate">
+            <div class="layout vertical center-center tabCounterContainer">
+              <span>[[t('post.tabs.debate')]]</span><div class="counterInfo" id="tabCountDebate"></div>
+            </div>
+          </paper-tab>
+          <paper-tab name="news">[[t('post.tabs.news')]]</paper-tab>
+          <paper-tab name="location">[[t('post.tabs.location')]]</paper-tab>
+          <paper-tab name="photos">
+            <div class="layout vertical center-center tabCounterContainer">
+              <span>[[t('post.tabs.photos')]]</span><div class="counterInfo" id="tabCountPhotos"></div>
+            </div>
+          </paper-tab>
+        </paper-tabs>
+      </div>
+
+      <iron-pages id="pages" class="tabPages" selected="[[selectedTab]]" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <div name="debate" class="layout horizontal center-center">
+          <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
+        </div>
+        <section name="news">
+          <ac-activities disable-new-posts="[[disableNewPosts]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
+        </section>
+        <section name="location">
+          <div class="layout horizontal center-center">
+            <template is="dom-if" if="[[post.location]]" restamp="">
+              <template is="dom-if" if="[[mapActive]]" restamp="">
+                <paper-material class="mapContainer" elevation="3">
+                  <google-map api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" id="map" libraries="places" class="map" map-type="[[post.location.mapType]]" zoom="[[post.location.map_zoom]]" fit-to-markers="">
+                    <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" id="marker"></google-map-marker>
+                  </google-map>
+                </paper-material>
+              </template>
+            </template>
+            <template is="dom-if" if="[[post]]">
+              <template is="dom-if" if="[[!post.location]]">
+                <h1 style="padding-top: 16px">[[t('post.noLocation')]]</h1>
+              </template>
+            </template>
+          </div>
+        </section>
+        <section name="photos">
+          <div class="layout vertical flex">
+            <div class="layout horizontal center-center">
+              <yp-post-user-images post="[[post]]"></yp-post-user-images>
+            </div>
+          </div>
+        </section>
+      </iron-pages>
+    </div>
+    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer">
+      <template is="dom-if" if="[[createFabIcon]]">
+        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
+      </template>
+    </div>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+    </div>
+  </template>
+
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post',
+
+        behaviors: [
+          Polymer.appHelpers,
+          Polymer.ypThemeBehavior
+        ],
+
+        properties: {
+
+          idRoute: Object,
+          tabRoute: Object,
+          idRouteData: Object,
+          tabRouteData: Object,
+
+          postId: {
+            type: Number,
+            value: null,
+            observer: "_postIdChanged"
+          },
+
+          post: {
+            type: Object,
+            value: null,
+            notify: true,
+            observer: "_postChanged"
+          },
+
+          selectedTab: {
+            type: String,
+            value: 'debate',
+            observer: '_selectedTabChanged'
+          },
+
+          small: {
+            type: Boolean
+          },
+
+          method: {
+            type: String
+          },
+
+          mapActive: {
+            type: Boolean,
+            value: false
+          },
+
+          wideWidth: {
+            type: Boolean,
+            value: false
+          },
+
+          createFabIcon: {
+            type: String,
+            value: null
+          },
+
+          disableNewPosts: {
+            type: Boolean,
+            value: false
+          }
+        },
+
+        observers: [
+          '_routeIdChanged(idRouteData.id)',
+          '_routeTabChanged(tabRouteData.tabName)'
+        ],
+
+        _routeIdChanged: function (newId) {
+          if (newId) {
+            this.set('postId', newId);
+          }
+        },
+
+        _routeTabChanged: function (newTabName) {
+          if (newTabName) {
+            this.set('selectedTab', newTabName);
+          }
+        },
+
+        _selectedTabChanged: function (tabName) {
+          if (this.post) {
+            this.redirectTo("/post/" + this.post.id + '/' + tabName);
+          }
+
+          if (tabName == "location") {
+            this.set('mapActive', true);
+          } else {
+            this.set('mapActive', false);
+          }
+
+          if (tabName && window.appGlobals) {
+            window.appGlobals.activity('open', 'post_tab_' + tabName);
+          }
+        },
+
+        _newPost: function () {
+          window.appGlobals.activity('open', 'newPost');
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
+          dialog.setup(null, this.post.Group, true, null);
+          dialog.open('new', { groupId: this.post.Group.id });
+        },
+
+
+        listeners: {
+          'yp-debate-info': '_updateDebateInfo',
+          'yp-post-image-count': '_updatePostImageCount'
+        },
+
+        _updatePostImageCount: function (event, imageCount) {
+          var tabCounter = this.$$('#tabCountPhotos');
+          if (tabCounter) {
+            tabCounter.innerHTML = this.formatNumber(imageCount);
+          }
+        },
+
+        _updateDebateInfo: function (event, detail) {
+          var tabCounter = this.$$('#tabCountDebate');
+          if (tabCounter) {
+            tabCounter.innerHTML = this.formatNumber(detail.count);
+          }
+          this.$.postCard.updateDescriptionIfEmpty(detail.firstPoint.content);
+        },
+
+        _mainContainerClasses: function(small) {
+          if (small) {
+            return "layout horizontal wrap";
+          } else {
+            return "layout horizontal center-center";
+          }
+        },
+
+        _headerClasses: function(small) {
+          if (small) {
+            return "layout vertical postHeader wrap";
+          } else {
+            return "layout horizontal postHeader";
+          }
+        },
+
+        postName: function (post) {
+          if (post && post.name) {
+            return this.truncate(this.trim(post.name), 200);
+          } else if (post) {
+            return post.short_name;
+          }
+        },
+
+        postDescription: function (post) {
+          if (post && post.description) {
+            return this.truncate(this.trim(post.description), 10000, '...');
+          } else {
+            return "";
+          }
+        },
+
+        _refreshAjax: function () {
+          this.$.ajax.generateRequest();
+        },
+
+        _postChanged: function (newValue, oldValue) {
+        },
+
+        _postIdChanged: function (newValue, oldValue) {
+          this.set("post",null);
+          if (newValue) {
+            this._getPost();
+            this.set('selectedTab', 'debate');
+          }
+        },
+
+        _getPost: function () {
+          this.$.ajax.url = '/api/posts/' + this.postId;
+          this.$$('#ajax').retryMethodAfter401Login = this._getPost.bind(this);
+          this.$.ajax.generateRequest();
+        },
+
+        _response: function (event, detail, sender) {
+          this.set("post", detail.response);
+
+          this.refresh();
+
+          if (this.post.Group.configuration && this.post.Group.configuration.canAddNewPosts!=undefined) {
+            if (this.post.Group.configuration.canAddNewPosts===true) {
+              this.set('createFabIcon',"lightbulb-outline");
+              this.set('disableNewPosts', false);
+            } else {
+              this.set('disableNewPosts', true);
+            }
+          } else {
+            this.set('createFabIcon',"lightbulb-outline");
+          }
+
+          if (this.post.description === null) {
+            this.post.description = this.post.Points[0].content;
+            this.post.Points.shift();
+          }
+        },
+
+        refresh: function () {
+          if (this.post) {
+            if (this.post.Group.theme_id!=null) {
+              this.setTheme(this.post.Group.theme_id);
+            } else if (this.post.Group.Community && this.post.Group.Community.theme_id!=null) {
+              this.setTheme(this.post.Group.Community.theme_id);
+            }
+
+            if (this.post.Group.configuration && this.post.Group.configuration.defaultLocale!=null) {
+              this.changeLocaleIfNeeded(this.post.Group.configuration.defaultLocale);
+            }
+
+            /*
+            if (this.post.Group.GroupHeaderImages && this.post.Group.GroupHeaderImages.length>0) {
+              this.setupTopHeaderImage(this.post.Group.GroupHeaderImages);
+            } else  if (this.post.Group.Community.CommunityHeaderImages && this.post.Group.Community.CommunityHeaderImages.length>0) {
+              this.setupTopHeaderImage(this.post.Group.Community.CommunityHeaderImage);
+            }
+            */
+            this.fire("change-header", { headerTitle: this.truncate(this.post.Group.name,80),
+              documentTitle: this.post.name,
+              headerDescription: '',//this.truncate(this.post.Group.objectives,45),
+              backPath: "/group/" + this.post.group_id });
+          }
+        },
+
+        setupTopHeaderImage: function (image) {
+          var url = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+          this.customStyle['--top-area-background-image'] = url;
+          this.updateStyles();
+        },
+
+        computeUrl: function (post_id) {
+          return '/api/posts/' + post_id;
+        }
+      });
+    }());
+  </script>
+</dom-module>
+</body></html>

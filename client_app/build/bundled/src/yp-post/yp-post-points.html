@@ -1,0 +1,454 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-input/paper-input-char-counter.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.2.3">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.3">
+<link rel="import" href="../yp-point/yp-point.html?v=6.2.3">
+
+</head><body><dom-module id="yp-post-points">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+
+      :host {
+        height: 100%;
+      }
+
+      .main-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+        background-color: var(--primary-background-color);
+      }
+
+      .point {
+        padding-top: 32px;
+        padding-bottom: 32px;
+        padding-left: 24px;
+        padding-right: 24px;
+        @apply(--layout-vertical);
+      }
+
+      .pointText {
+        margin-bottom: 16px;
+        padding: 16px;
+        width: 420px;
+      }
+
+      @media only screen and (min-device-width : 768px) and (max-device-width : 1024px)  {
+        .pointText {
+          max-height: 160px;
+          min-height: 160px;
+        }
+      }
+
+      paper-toast {
+        z-index: 9999;
+      }
+
+      paper-material {
+        background-color: #fff;
+      }
+
+      yp-point {
+        padding-top: 8px;
+      }
+
+      .pointMaterial {
+        margin-bottom: 18px;
+        padding-top: 8px;
+        background-color: #FFF;
+        padding-left: 0;
+        padding-right: 0;
+        width: 430px;
+      }
+
+      .thumbIcon {
+        height: 64px;
+        width: 64px;
+        padding-bottom: 16px;
+        color: var(--primary-color);
+      }
+
+      .editIcon {
+        height: 28px;
+        width: 28px;
+        padding-bottom: 16px;
+        color: var(--primary-color);
+      }
+
+      paper-fab::shadow #icon {
+        background-color: var(--accent-color);
+        color: #FFF;
+      }
+
+      paper-fab {
+        background-color: var(--accent-color);
+        color: #FFF;
+      }
+
+      .addPointFab {
+        width: 100%;
+        color: #FFF;
+      }
+
+      paper-textarea {
+        --paper-input-container-label: {
+          font-size: 30px;
+          height: 50px;
+          overflow: visible;
+        }
+      }
+
+      .howToWriteInfoText {
+        padding-top: 4px;
+        color: var(--primary-color);
+      }
+
+      .point .main-container .topContainer {
+        background-color: var(--primary-background-color) !important;
+      }
+
+      .penContainer {
+        margin-top: 42px;
+      }
+
+      .upOrDown {
+        margin-top: 72px;
+      }
+
+      paper-radio-button {
+        --paper-radio-button-checked-color: var(--accent-color) !important;
+        font-size: 16px;
+      }
+
+      #pointUpOrDownMaterial {
+        margin-top: 16px;
+      }
+
+      .mobileFab {
+        margin-top: 8px;
+      }
+
+      paper-button {
+        color: #FFF;
+        background-color: var(--accent-color);
+      }
+
+      @media (max-width: 985px) {
+        .pointText {
+          width: 420px;
+          font-size: 30px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .pointText {
+          width: 310px;
+          font-size: 9px;
+        }
+
+        .pointMaterial {
+          width: 300px;
+        }
+
+        .main-container {
+          width: 310px;
+        }
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <iron-media-query query="(min-width: 985px)" query-matches="{{largeMode}}"></iron-media-query>
+
+    <template is="dom-if" if="[[points]]">
+      <div class="layout horizontal center-center penContainer" hidden="">
+        <div class="howToWriteInfoText">[[t('point.howToWrite')]]</div>
+        <iron-icon icon="editor:mode-edit" class="editIcon"></iron-icon>
+      </div>
+      <template is="dom-if" if="[[largeMode]]">
+        <div class="layout vertical topContainer">
+          <div class="main-container">
+            <div class="point">
+
+              <div id="pointUpMaterial" elevation="0" class="pointText" animated="">
+                <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueUp}}" value="[[textValueUp]]" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
+
+                <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
+                  <div class="addPointFab layout horizontal center-center">
+                    <paper-button icon="add" mini="" elevation="3" on-tap="addPointUp" title="[[t('point.add_up')]]">[[t('point.postComment')]]</paper-button>
+                  </div>
+                </template>
+              </div>
+
+              <div id="allUpPoints">
+                <template is="dom-repeat" items="[[upPoints]]" as="point">
+                  <paper-material elevation="1" class="pointMaterial">
+                    <yp-point point="[[point]]"></yp-point>
+                  </paper-material>
+                </template>
+              </div>
+            </div>
+
+            <div class="point">
+
+              <div id="pointDownMaterial" elevation="0" class="pointText" animated="">
+                <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueDown}}" value="[[textValueDown]]" label="[[t('point.against')]]" char-counter="" rows="2" max-rows="5" maxlength="500"></paper-textarea>
+
+                <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
+                  <div class="addPointFab layout horizontal center-center">
+                    <paper-button icon="add" mini="" z="3" on-tap="addPointDown" title="[[t('point.add_down')]]">[[t('point.postComment')]]</paper-button>
+                  </div>
+                </template>
+              </div>
+
+              <div id="allDownPoints">
+                <template is="dom-repeat" items="[[downPoints]]" as="point">
+                  <paper-material elevation="1" class="pointMaterial">
+                    <yp-point point="[[point]]"></yp-point>
+                  </paper-material>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template is="dom-if" if="[[!largeMode]]">
+        <div id="pointUpOrDownMaterial" elevation="0" class="pointText" animated="">
+          <paper-textarea id="mobileUpOrDownPoint" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueMobileUpOrDown}}" value="[[textValueMobileUpOrDown]]" label="[[labelMobileUpOrDown]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
+          <div class="layout horizontal center-center">
+            <paper-radio-group id="upOrDown" attribute-for-selected="name" selected="{{pointUpOrDownSelected}}">
+              <paper-radio-button name="pointFor">[[t('point.for')]]</paper-radio-button>
+              <paper-radio-button name="pointAgainst">[[t('point.against')]]</paper-radio-button>
+            </paper-radio-group>
+          </div>
+          <template is="dom-if" if="[[ifLengthIsRight(textValueMobileUpOrDown)]]">
+            <div class="addPointFab layout horizontal center-center mobileFab">
+              <paper-fab icon="add" mini="" z="3" on-tap="addMobilePointUpOrDown" title="[[t('point.add_down')]]"></paper-fab>
+            </div>
+          </template>
+        </div>
+        <template is="dom-repeat" items="[[points]]" as="point">
+          <paper-material elevation="1" class="pointMaterial">
+            <yp-point point="[[point]]"></yp-point>
+          </paper-material>
+        </template>
+      </template>
+    </template>
+
+    <div hidden="" class="layout horizontal center-center">
+      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+      <yp-ajax id="newPointAjax" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
+    </div>
+
+    <paper-toast id="newPointToast" text="[[newPointTextCombined]]"></paper-toast>
+  </template>
+
+
+  <script>
+    (function () {
+      Polymer({
+
+        is: 'yp-post-points',
+
+        behaviors: [
+          Polymer.appHelpers
+        ],
+
+        properties: {
+
+          downPoints: {
+            type: Array,
+            value: function () {
+              return [];
+            }
+          },
+
+          upPoints: {
+            type: Array,
+            value: function () {
+              return [];
+            }
+          },
+
+          textValueUp: {
+            type: String
+          },
+
+          textValueDown: {
+            type: String
+          },
+
+          newPointTextCombined: {
+            type: String
+          },
+
+          post: {
+            type: Object,
+            observer: "_postChanged"
+          },
+
+          points: {
+            type: Array,
+            value: null
+          },
+
+          largeMode: {
+            type: Boolean,
+            value: false
+          },
+
+          textValueMobileUpOrDown: String,
+
+          labelMobileUpOrDown: String,
+
+          pointUpOrDownSelected: {
+            type: String,
+            observer: '_pointUpOrDownSelectedChanged',
+            value: 'pointFor'
+          }
+        },
+
+        _pointUpOrDownSelectedChanged: function (newValue) {
+          if (newValue=='pointFor') {
+            this.set('labelMobileUpOrDown', this.t('point.for'));
+          } else if (newValue=='pointAgainst') {
+            this.set('labelMobileUpOrDown', this.t('point.against'));
+          }
+        },
+
+        _postChanged: function (newPost) {
+          // Remove any manually inserted points when the list is updated
+          this.set('points', null);
+          if (newPost) {
+            this.$.ajax.url = '/api/posts/' + newPost.id + '/points';
+            this.$.ajax.generateRequest();
+          }
+        },
+
+        removeElementsByClass: function (rootElement, className) {
+          var elements = rootElement.getElementsByClassName(className);
+          while(elements.length > 0){
+            elements[0].parentNode.removeChild(elements[0]);
+          }
+        },
+
+        _response: function (event, detail) {
+          this.set('points', detail.response);
+          this.removeElementsByClass(this, 'inserted-outside-list');
+
+          if (this.points.length > 0) {
+            this.set('upPoints', this.points.filter(function (x) {
+              return x.value > 0;
+            }));
+            this.set('downPoints', this.points.filter(function (x) {
+              return x.value < 0;
+            }));
+          } else {
+            this.set('upPoints', []);
+            this.set('downPoints', []);
+          }
+
+          this.fire('yp-debate-info', {
+            count: this.upPoints.length + this.downPoints.length,
+            firstPoint: this.upPoints[0]
+          });
+
+          this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
+        },
+
+        _insertNewPoint: function (point) {
+          if (this.largeMode) {
+            if (point.value > 0) {
+              this.unshift('upPoints', point);
+            } else if (point.value < 0) {
+              this.unshift('downPoints', point);
+            }
+          } else {
+            this.unshift('points', point);
+          }
+        },
+
+        _newPointResponse: function (event, detail) {
+          var point = detail.response;
+          if (point.value > 0) {
+            this.newPointTextCombined = this.t("point.forAdded") + " " + this.truncate(point.content, 21);
+            this.set("textValueUp", "");
+          } else {
+            this.newPointTextCombined = this.t("point.againstAdded") + " " + this.truncate(point.content, 21);
+            this.set("textValueDown", "");
+          }
+          this.set("textValueMobileUpOrDown", "");
+          this._insertNewPoint(point);
+          this.set('post.counter_points', this.post.counter_points + 1);
+          this.$.newPointToast.show();
+        },
+
+        addPointUp: function () {
+          this.addPoint(this.textValueUp, 1);
+          window.appGlobals.activity('add', 'pointUp');
+        },
+
+        addPointDown: function () {
+          this.addPoint(this.textValueDown, -1);
+          window.appGlobals.activity('add', 'pointDown');
+        },
+
+        addMobilePointUpOrDown: function () {
+          if (this.pointUpOrDownSelected=='pointFor') {
+            this.addPoint(this.textValueMobileUpOrDown, 1);
+            window.appGlobals.activity('add', 'pointUp');
+          } else if (this.pointUpOrDownSelected=='pointAgainst') {
+            this.addPoint(this.textValueMobileUpOrDown, -1);
+            window.appGlobals.activity('add', 'pointDown');
+          }
+        },
+
+        addPoint: function (content, value) {
+          if (window.appUser.loggedIn() === true) {
+            this.$.newPointAjax.url = "/api/points/" + this.post.group_id;
+            this.$.newPointAjax.body = {
+              postId: this.post.id,
+              content: content,
+              value: value
+            };
+            this.$.newPointAjax.generateRequest();
+          } else {
+            window.appUser.loginForNewPoint(this, {content: content, value: value});
+          }
+        },
+
+        focusUpPoint: function () {
+          window.appGlobals.activity('focus', 'pointUp');
+        },
+
+        focusDownPoint: function () {
+          window.appGlobals.activity('focus', 'pointDown');
+        },
+
+        focusTextArea: function (event) {
+          event.currentTarget.parentElement.elevation = 4;
+        },
+
+        blurTextArea: function (e) {
+          event.currentTarget.parentElement.elevation = 0;
+        },
+
+        ifLengthIsRight: function (textValue) {
+          return textValue.length > 6;
+        }
+
+      });
+    }());
+  </script>
+</dom-module>
+</body></html>

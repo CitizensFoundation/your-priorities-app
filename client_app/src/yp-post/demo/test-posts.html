@@ -1,0 +1,94 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../../bower_components/iron-icons/hardware-icons.html" >
+<link rel="import" href="../../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
+
+<dom-module id="test-posts">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+
+      .grid {
+        @apply(--layout-vertical);
+      }
+
+      yp-post-card {
+        padding: 8px;
+      }
+
+    </style>
+
+    <div class="grid">
+      <yp-post-card endorse-mode="love" id="post1"></yp-post-card>
+      <yp-post-card id="post2" street-view></yp-post-card>
+      <yp-post-card endorse-mode="arrow" id="post4"></yp-post-card>
+      <yp-post-card id="post3" map></yp-post-card>
+      <yp-post-card id="post5" street-view></yp-post-card>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'test-posts',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      ready: function (e) {
+        this.$.post3.post = {id: 105,
+          name:'NHS Citizen',
+          top_banner_file_name: 'NHScitizen_logo_final2c.png',
+          description:'This is a test version of the NHS Citizen Gather space; it helps people identify and discuss the issues that the NHS should be talking about. Posts that generate the most discussion and support or whith the right people.',
+          Category: {id: 101, icon_file_name: "NationalManagement.png" },
+          counter_endorsements_up: 1233, counter_points: 1656, counter_endorsements_down: 648
+        };
+
+        this.$.post2.post = {id: 101,
+          name:'Iceland top posts',
+          top_banner_file_name: 'NHScitizen_logo_final2c.png',
+          description:'Your posts and participation will help provide a series of recommendations to the European Commission on the best strategies, policies and funding instruments.',
+          Category: {id: 105, icon_file_name: "NHS_icons_GG-2.png" },
+          counter_endorsements_up: 5454, counter_points: 7778, counter_endorsements_down: 1232
+        };
+
+        this.$.post1.post = {id: 328,
+          name:'Educational priorities',
+          top_banner_file_name: 'NHScitizen_logo_final2c.png',
+          description:'Learn about transparency and the prioritization of posts. Students are posting what they would like to see happen in the classroom and the posts with many upvotes will be discussed and implemented.',
+          Category: {id: 107, icon_file_name: "MyVoice.png" },
+          counter_endorsements_up: 1233, counter_points: 1656, counter_endorsements_down: 648
+        };
+
+        this.$.post4.post = {id: 361,
+          name:'Iceland top posts',
+          top_banner_file_name: 'NHScitizen_logo_final2c.png',
+          description:'Your posts and participation will help provide a series of recommendations to the European Commission on the best strategies, policies and funding instruments.',
+          Category: {id: 107, icon_file_name: "MyVoice.png" },
+          counter_endorsements_up: 1233, counter_points: 1656, counter_endorsements_down: 648
+        };
+
+        this.$.post5.post = {id: 361,
+          name:'Iceland top posts',
+          top_banner_file_name: 'NHScitizen_logo_final2c.png',
+          description:'Your posts and participation will help provide a series of recommendations to the European Commission on the best strategies, policies and funding instruments.',
+          Category: {id: 101, icon_file_name: "NationalManagement.png" },
+          counter_endorsements_up: 1233, counter_points: 1656, counter_endorsements_down: 648
+        };
+      }
+    });
+  </script>
+</dom-module>

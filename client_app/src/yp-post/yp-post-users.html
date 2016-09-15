@@ -1,0 +1,170 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-user/yp-user-image.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+
+<dom-module id="yp-post-users">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+
+      .users {
+        @apply(--layout-horizontal);
+
+      }
+
+      yp-user-image {
+        padding: 2px;
+      }
+    </style>
+
+    <template is="dom-if" restamp="true" if="[[endorsements]]">
+      <div class="users">
+        <template is="dom-repeat" items="[[limitFrom(endorsements, 0, userImagesLimit)]]" as="endorsement" index-as="endorsementIndex">
+          <yp-user-image small no-default user="[[endorsement.User]]"></yp-user-image>
+        </template>
+
+        <div id="moreImages" style="display:none;">
+
+          <paper-icon-button class="more" id="moreImagesButton" icon="add" on-tap="_moreUserImages"></paper-icon-button>
+
+          <span id="numberOfMoreUserImages">[[_userImagesCount()]]</span>
+
+          <span id="restOfUserImages" style="display: none;">
+            <template is="dom-repeat" items="[[limitFrom(endorsements, userImagesLimit, endorsements.length)]]" as="endorsement" index-as="endorsementIndex">
+              <yp-user-image user="[[endorsement.User]]" small=""></yp-user-image>
+            </template>
+          </span>
+        </div>
+      </div>
+
+    </template>
+    <yp-ajax id="endorsementAjax" use-dialog="false" on-response="_response" handle-as="json"></yp-ajax>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-post-users',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        endorsements: {
+          type: Array,
+          notify: true
+        },
+
+        shownEndorsements: {
+          type: Array,
+          notify: true
+        },
+
+        userImagesLimit: {
+          type: Number,
+          value: 10
+        },
+
+        post: {
+          type: Object,
+          observer: "_postChanged"
+        }
+      },
+
+      limitFrom: function (input, offset, limit) {
+        if (!(input instanceof Array) && !(input instanceof String)) return input;
+
+        limit = parseInt(limit, 10);
+
+        if (input instanceof String) {
+          if (limit) {
+            return limit >= 0 ? input.slice(offset, limit) : input.slice(limit, input.length);
+          } else {
+            return "";
+          }
+        }
+
+        var out = [],
+          i, n;
+
+        if (limit > input.length)
+          limit = input.length;
+        else if (limit < -input.length)
+          limit = -input.length;
+
+        if (limit > 0) {
+          i = offset;
+          n = limit;
+        } else {
+          i = input.length + limit;
+          n = input.length;
+        }
+
+        for (; i < n; i++) {
+          out.push(input[i]);
+        }
+
+        return out;
+      },
+
+      addEndorsement: function (endorsement) {
+        if (this.endorsements) {
+          this.endorsements.unshift(endorsement);
+        }
+      },
+
+      _postChanged: function  (newValue, oldValue) {
+        if (newValue) {
+          this.set("endorsements",null);
+          this.$.endorsementAjax.url = this._computeUrl(newValue);
+          this.$.endorsementAjax.generateRequest();
+        } else {
+          this.set("endorsements",null);
+        }
+      },
+
+      _response: function (event, detail, sender) {
+        this.set('endorsements', detail.response);
+        if (this.endorsements.length > this.userImagesLimit) {
+          this.async(function () {
+            this.$$("#moreImages").style.display = 'inline';
+          }, 100);
+        }
+      },
+
+      _moreUserImages: function () {
+        this.$$("#moreImagesButton").style.display = 'none';
+        this.$$("#numberOfMoreUserImages").style.display = 'none';
+        this.$$("#restOfUserImages").style.display = 'inline';
+      },
+
+      _computeUrl: function (post) {
+        return '/api/posts/' + post.id + '/endorsements';
+      },
+
+      allEndorsementsLength: function (post) {
+        return this.endorsements.length;
+      },
+
+      countUserImagesLeft: function (e) {
+        return this.allEndorsementsLength(this.post) - this.userImagesLimit;
+      },
+
+      _userImagesCount: function () {
+        return this.countUserImagesLeft(0);
+      }
+
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,85 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.3">
+
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.3">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.3">
+
+<link rel="import" href="yp-user-image.html?v=6.2.3">
+
+</head><body><dom-module id="yp-user-info">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+
+      .avatar-container {
+        position: relative;
+        border: 2px solid #FF9800;
+        border-radius: 50%;
+        height: 90px;
+        padding: 2px;
+        width: 90px;
+        margin: 20px auto;
+      }
+
+      .contact-info {
+        margin: 0 20px;
+        padding-bottom: 4px;
+        text-align: center;
+      }
+
+      .contact-info .name {
+        font-weight: bold;
+      }
+
+      .contact-info .email {
+        color: #999;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <template restamp="" is="dom-if" if="[[user]]">
+      <div class="mainContainer">
+        <div class="avatar-container">
+          <yp-user-image large="" user="[[user]]"></yp-user-image>
+        </div>
+        <div class="contact-info">
+          <div class="name">[[user.name]]</div>
+          <div class="email">[[user.email]]</div>
+          <paper-button on-tap="onLogout">[[t('user.logout')]]</paper-button>
+          <paper-button on-tap="_openEdit">[[t('user.edit')]]</paper-button>
+        </div>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-user-info',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        user: {
+          type: Object,
+          value: null,
+          notify: true
+        }
+      },
+
+      _openEdit: function () {
+        this.fire('open-user-edit');
+      },
+
+      onLogout: function() {
+        document.querySelector('#appUser').logout();
+      }
+    });
+  </script>
+</dom-module>
+</body></html>
