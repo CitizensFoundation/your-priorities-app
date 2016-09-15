@@ -29,7 +29,7 @@
 
 
 /* eslint-disable quotes, comma-spacing */
-var PrecacheConfig = [["/index_yp.html","04c5fba86b6c3b0195b534ba55090679"],["/src/yp-app/yp-view-404.html","9e9e25ed55535a95974486fad260e15f"],["/src/yp-community/yp-community.html","56b3d0ca32d0c23cd062fa5534013e3a"],["/src/yp-dialog-container/yp-dialog-container-admin.html","9087f2bfc9e4c011afc64128eb946948"],["/src/yp-dialog-container/yp-dialog-container-logged-in.html","812c2a4edd33dc79fc739d4444b4734d"],["/src/yp-group/yp-group.html","e85464029a6848a409fcada9da0f1eec"],["/src/yp-post/yp-post.html","181ebe950da34a470604285d99b42ff5"]];
+var PrecacheConfig = [["/index_yp.html","f677ac0e5ba9b11ee719473c9f82fa59"],["/src/yp-app/yp-view-404.html","9e9e25ed55535a95974486fad260e15f"],["/src/yp-community/yp-community.html","56b3d0ca32d0c23cd062fa5534013e3a"],["/src/yp-dialog-container/yp-dialog-container-admin.html","9087f2bfc9e4c011afc64128eb946948"],["/src/yp-dialog-container/yp-dialog-container-logged-in.html","812c2a4edd33dc79fc739d4444b4734d"],["/src/yp-group/yp-group.html","e85464029a6848a409fcada9da0f1eec"],["/src/yp-post/yp-post.html","181ebe950da34a470604285d99b42ff5"]];
 /* eslint-enable quotes, comma-spacing */
 var CacheNamePrefix = 'sw-precache-v1--' + (self.registration ? self.registration.scope : '') + '-';
 

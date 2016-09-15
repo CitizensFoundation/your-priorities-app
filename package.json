@@ -1,6 +1,6 @@
 {
   "name": "your-priorities-app",
-  "version": "6.1.7",
+  "version": "6.2.0",
   "dependencies": {
     "airbrake": "^1.0.1",
     "async": "^1.4.2",
@@ -64,6 +64,7 @@
     "gulp": "gulpjs/gulp#4.0",
     "gulp-if": "^2.0.1",
     "gulp-imagemin": "^3.0.1",
+    "gulp-inject-version": "^1.0.1",
     "merge-stream": "^1.0.0",
     "plylog": "^0.4.0",
     "polymer-build": "^0.4.0",

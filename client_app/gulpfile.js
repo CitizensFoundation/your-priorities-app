@@ -14,6 +14,7 @@ const path = require('path');
 const gulp = require('gulp');
 const gulpif = require('gulp-if');
 var versionAppend = require('gulp-version-append');
+var injectVersion = require('gulp-inject-version');
 
 // Got problems? Try logging 'em
 // const logging = require('plylog');
@@ -61,6 +62,10 @@ function source() {
   return project.splitSource()
     // Add your own build tasks here!
     .pipe(versionAppend(['html', 'js', 'css']))
+    .pipe(injectVersion({
+      package_file: '../package.json',
+      // your other option overrides here
+    }))
     .pipe(gulpif('**/*.{png,gif,jpg,svg}', images.minify()))
     .pipe(project.rejoin()); // Call rejoin when you're finished
 }
