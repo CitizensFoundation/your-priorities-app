@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+FORCE_PRODUCTION = true;
+
 var debug = require('debug')('your-priorities-app');
 var express = require('express');
 var session = require('express-session');
@@ -123,7 +125,7 @@ app.use(function(req,res,next) {
   }
 });
 
-if (app.get('env') === 'development') {
+if (!FORCE_PRODUCTION && app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_app')));
 } else {
   app.use(express.static(path.join(__dirname, '../client_app/build/bundled')));

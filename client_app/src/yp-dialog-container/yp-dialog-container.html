@@ -80,13 +80,13 @@
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl('yp-dialog-container-logged-in.html?v='+CLIENT_APP_VERSION), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl('yp-dialog-container-admin.html?v='+CLIENT_APP_VERSION), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), null, null, true);
         }
       },
 

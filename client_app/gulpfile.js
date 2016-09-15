@@ -14,7 +14,7 @@ const path = require('path');
 const gulp = require('gulp');
 const gulpif = require('gulp-if');
 var versionAppend = require('gulp-version-append');
-var injectVersion = require('gulp-inject-version');
+const versionHtmlImports = require('gulp-version-html-imports');
 
 // Got problems? Try logging 'em
 // const logging = require('plylog');
@@ -62,10 +62,6 @@ function source() {
   return project.splitSource()
     // Add your own build tasks here!
     .pipe(versionAppend(['html', 'js', 'css']))
-    .pipe(injectVersion({
-      package_file: '../package.json'
-      // your other option overrides here
-    }))
     .pipe(gulpif('**/*.{png,gif,jpg,svg}', images.minify()))
     .pipe(project.rejoin()); // Call rejoin when you're finished
 }
@@ -79,11 +75,29 @@ function dependencies() {
     .pipe(project.rejoin());
 }
 
+gulp.task('versionHtmlImports', function(done) {
+  // do stuff
+  gulp.src('build/**/*/*.html')
+    .pipe(versionHtmlImports())
+    .pipe(gulp.dest('build'));
+  done();
+});
+
+gulp.task('versionHtmlImportsServiceWorker', function(done) {
+  // do stuff
+  gulp.src('build/bundled/service-worker.js', {base: './'})
+    .pipe(versionHtmlImports())
+    .pipe(gulp.dest('./',  {overwrite: true}));
+  done();
+});
+
 // Clean the build directory, split all source and dependency files into streams
 // and process them, and output bundled and unbundled versions of the project
 // with their own service workers
 gulp.task('default', gulp.series([
   clean.build,
   project.merge(source, dependencies),
-  project.serviceWorker
+  project.serviceWorker,
+  'versionHtmlImports',
+  'versionHtmlImportsServiceWorker'
 ]));

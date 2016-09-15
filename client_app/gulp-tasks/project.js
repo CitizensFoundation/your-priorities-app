@@ -74,19 +74,19 @@ function merge(source, dependencies) {
 // then output to the dest dir
 function writeBundledOutput(stream) {
   return new Promise(resolve => {
-    stream.pipe(project.bundler)
+      stream.pipe(project.bundler)
       .pipe(gulp.dest(bundledPath))
       .on('end', resolve);
-  });
+});
 }
 
 // Just output files to the dest dir without bundling. This is for projects that
 // use HTTP/2 server push
 function writeUnbundledOutput(stream) {
   return new Promise(resolve => {
-    stream.pipe(gulp.dest(unbundledPath))
+      stream.pipe(gulp.dest(unbundledPath))
       .on('end', resolve);
-  });
+});
 }
 
 // Returns a function which takes an argument for the user to specify the kind

@@ -16,6 +16,9 @@
     "locales/**/*",
     "index_br.html",
     "index_bi.html",
+    "manifest_yp.json",
+    "manifest_br.json",
+    "manifest_bi.json",
     "bower.json"
   ],
   "includeDependencies": [

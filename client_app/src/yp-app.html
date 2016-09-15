@@ -380,9 +380,9 @@
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl('yp-app/' + 'yp-view-404.html?v='+CLIENT_APP_VERSION);
+            resolvedPageUrl = this.resolveUrl('yp-app/' + "yp-view-404.html");
           } else {
-            resolvedPageUrl = this.resolveUrl('yp-' + page + '/' + 'yp-' + page + '.html?v='+CLIENT_APP_VERSION);
+            resolvedPageUrl = this.resolveUrl('yp-' + page + '/' + 'yp-' + page + ".html");
           }
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
         }
