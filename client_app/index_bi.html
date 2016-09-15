@@ -46,12 +46,13 @@
   <meta name="msapplication-TileColor" content="#000">
   <meta name="msapplication-tap-highlight" content="no">
 
-
   <script>
+    CLIENT_APP_VERSION = '%%GULP_INJECT_VERSION%%';
+
     // Setup Polymer options
     window.Polymer = {
       //dom: 'shadow',
-      lazyRegister: true
+      lazyRegister: 'max'
     };
 
     // Load webcomponentsjs polyfill if browser does not support native Web Components
@@ -77,7 +78,7 @@
       if (!webComponentsSupported) {
         var script = document.createElement('script');
         script.async = true;
-        script.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
+        script.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js?v=@version@';
         script.onload = onload;
         document.head.appendChild(script);
       } else {
@@ -99,18 +100,16 @@
     })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
   </script>
 
-  <link rel="import" href="/src/yp-app/yp-app.html">
+  <link rel="import" href="/src/yp-app.html?v=@version@">
 
-  <link rel="stylesheet" href="/styles/main.css">
-
+  <link rel="stylesheet" href="/styles/main.css?v=@version@">
+  <link rel="import" href="/styles/app-theme.html?v=@version@">
 </head>
 <body>
-<yp-app app-ready="{{appReady}}"></yp-app>
+<yp-app id="app" app-ready="{{appReady}}"></yp-app>
 
-<!-- build:js scripts/app.js -->
-<script src="src/i18next-1.7.4.min.js?v=@version@"></script>
-<script src="src/app.js?v=@version@"></script>
-<!-- endbuild-->
+<script src="/src/i18next-1.7.4.min.js"></script>
+<script src="/src/app.js?v=@version@"></script>
 
 <div id="fb-root"></div>
 </body>

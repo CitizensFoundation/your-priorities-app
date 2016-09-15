@@ -40,7 +40,7 @@ global.config = {
   // Service Worker precache options based on
   // https://github.com/GoogleChrome/sw-precache#options-parameter
   swPrecacheConfig: {
-    navigateFallback: '/index.html'
+    navigateFallback: '/index_yp.html'
   }
 };
 
@@ -63,7 +63,7 @@ function source() {
     // Add your own build tasks here!
     .pipe(versionAppend(['html', 'js', 'css']))
     .pipe(injectVersion({
-      package_file: '../package.json',
+      package_file: '../package.json'
       // your other option overrides here
     }))
     .pipe(gulpif('**/*.{png,gif,jpg,svg}', images.minify()))
