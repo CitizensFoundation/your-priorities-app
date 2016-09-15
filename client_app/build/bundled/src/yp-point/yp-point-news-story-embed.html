@@ -1,10 +1,10 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.3">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.4">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.3">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.3">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.3">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.4">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.4">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.4">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.3">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.4">
 
 </head><body><dom-module id="yp-point-news-story-embed">
 
@@ -47,7 +47,7 @@
       <a href$="[[embedData.url]]" class="container" target="_blank">
         <div class="layout vertical center-center">
           <iron-image sizing="cover" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
-          <div id="embe.html?v=6.2.3" hidden$="[[!embedData.html]]"></div>
+          <div id="embe.html?v=6.2.4" hidden$="[[!embedData.html]]"></div>
         </div>
         <div class="layout vertical center-center">
           <div class="title">
@@ -78,7 +78,7 @@
 
       _embedDataChanged: function (newValue) {
         if (newValue && newValue.html && newValue.html != '') {
-          this.$$("#embe.html?v=6.2.3").innerHTML = newValue.html;
+          this.$$("#embe.html?v=6.2.4").innerHTML = newValue.html;
         }
       }
     })

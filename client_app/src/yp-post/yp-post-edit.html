@@ -281,6 +281,10 @@
       'iron-form-invalid': '_formInvalid'
     },
 
+    observers: [
+      '_setupTranslation(language)'
+    ],
+
     _locationHiddenChanged: function (newValue) {
       this.async(function () {
         var pages = this.$$("#pages");
@@ -455,12 +459,14 @@
     },
 
     _setupTranslation: function () {
-      if (this.new) {
-        this.editHeaderText = this.t('post.new');
-        this.toastText = this.t('post.toast.created');
-      } else {
-        this.editHeaderText = this.t('post.edit');
-        this.toastText = this.t('post.toast.updated');
+      if (this.t) {
+        if (this.new) {
+          this.editHeaderText = this.t('post.new');
+          this.toastText = this.t('post.toast.created');
+        } else {
+          this.editHeaderText = this.t('post.edit');
+          this.toastText = this.t('post.toast.updated');
+        }
       }
     }
   });
