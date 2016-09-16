@@ -61,7 +61,6 @@ const project = require('./gulp-tasks/project.js');
 function source() {
   return project.splitSource()
     // Add your own build tasks here!
-    .pipe(versionAppend(['html', 'js', 'css']))
     .pipe(gulpif('**/*.{png,gif,jpg,svg}', images.minify()))
     .pipe(project.rejoin()); // Call rejoin when you're finished
 }
@@ -78,6 +77,7 @@ function dependencies() {
 gulp.task('versionHtmlImports', function(done) {
   // do stuff
   gulp.src('build/**/*/*.html')
+    .pipe(versionAppend(['html', 'js', 'css']))
     .pipe(versionHtmlImports())
     .pipe(gulp.dest('build'));
   done();
