@@ -1,9 +1,17 @@
 {
-  "access": "Access",
-  "searchFor": "Search for...",
+  "emojiSearchResults": "Search results",
+  "recentlyUsedEmoji": "Recently used",
+  "findAnEmoji": "Find emoji",
+  "cancel": "Odustani",
+  "ok": "U redu",
+  "next": "Nastavi",
+  "create": "Objavi",
+  "confirm": "Potvrdi",
+  "access": "Pristup",
+  "searchFor": "Pretraži...",
   "title": "Naslov",
   "selectLanguage": "Odaberi jezik",
-  "update": "Nadogradi",
+  "update": "Prihvati",
   "errorCantConnect": "Ne mogu se spojiti na server. Molim probaj ponovno malo kasnije. Razlog bi mogao biti pove\u0107an promet podataka ili nadogradnja softvera.",
   "errorNotFound": "Nije prona\u0111eno...",
   "errorNotAuthorized": "Nema\u0161 pristup ovome!",
@@ -20,7 +28,7 @@
     "method": "Na\u010din slanja obavijesti",
     "frequency": "U\u010destalost",
     "myPosts": "Moje objave",
-    "muted": "Uti\u0161ano",
+    "muted": "Ne šalji",
     "browser": "Preglednik",
     "email": "E-po\u0161ta",
     "asItHappens": "U\u017eivo",
@@ -32,7 +40,8 @@
     "myPoints": "Moji argumenti",
     "myPointEndorsements": "Argumenti koji mi se svi\u0111aju",
     "allCommunity": "Sve obavijesti iz svih mojih zajednica",
-    "allGroup": "Sve obavijesti iz svih mojih grupa"
+    "allGroup": "Sve obavijesti iz svih mojih grupa",
+    "invite_accepted_for": "Sudjeluje u "
   },
 
   "pages": {
@@ -50,10 +59,10 @@
     "active": "Aktivno",
     "featured": "Izdvojeno",
     "archived": "Arhivirano",
-    "published": "Opin",
-    "successful": "Samþykkt",
-    "failed": "Hafnað",
-    "inProgress": "Í ferli"
+    "published": "Otvoreni",
+    "successful": "Prihvaćeni",
+    "failed": "Odbijeni",
+    "inProgress": "U tijeku"
   },
 
   "activity": {
@@ -71,7 +80,7 @@
       "newAgainst": "Argument 'protiv'",
       "newComment": "Komentar",
       "newsStory": {
-        "new": "Novosti korisnika"
+        "new": "Upiši tekst novosti ili poveznicu na relevantan članak"
       }
     }
   },
@@ -88,19 +97,21 @@
   "myDomains": "Moje domene",
   "myCommunities": "Moje zajednice",
   "myGroups": "Moje grupe",
-  "myAdminCommunities": "Communities Admin",
-  "myAdminGroups": "Groups Admin",
+  "myAdminCommunities": "Administrator zajednica",
+  "myAdminGroups": "Administrator grupa",
 
   "community": {
     "edit": "Uredi zajednicu",
-    "admins": "Community admins",
-    "users": "Community users",
+    "hostname": "Adresa",
+    "admins": "Administratori zajednice",
+    "users": "Članovi zajednice",
     "delete": "Obri\u0161i zajednicu",
     "new": "Stvori novu zajednicu",
     "public": "Javna zajednica",
     "closed": "Zatvorena zajednica",
     "secret": "Tajna zajednica",
-    "pages":"Stranice zajednice"
+    "pages":"Stranice zajednice",
+    "onlyAdminsCanCreateGroups": "Grupe mogu otvarati samo administratori"
   },
 
   "posts": {
@@ -119,11 +130,13 @@
   },
 
   "post": {
-    "statusChangeConfirmText": "Are you sure you want to send everybody that supports or opposes this post an email?",
-    "statusChangeSelectNewStatus": "Choose status for post",
-    "statusChangeContent": "Status change content to be sent to all supporters and opposers",
-    "statusChange": "Send status change emails",
-    "statusChangeSent": "Sent status change emails",
+    "move": "Premjesti prijedlog",
+    "confirmMove": "Potvrdi da želiš premjestiti",
+    "statusChangeConfirmText": "Jesi li siguran da želiš poslati e-mail svima koji podržavaju ili se protive ovom prijedlogu?",
+    "statusChangeSelectNewStatus": "Odaberi status prijedloga",
+    "statusChangeContent": "Tekst obavijesti o promjeni statusa koji će biti poslan korisnicima koji su glasali za ili protiv prijedloga",
+    "statusChange": "Pošalji e-mailove o promjeni statusa",
+    "statusChangeSent": "E-mailovi o promjeni statusa su poslani",
     "noLocation": "Bez lokacije",
     "shareInfo": "Podijeli prijedlog sa prijateljima",
     "description": "Opis",
@@ -140,7 +153,7 @@
     "search": "Potra\u017ei prijedlog",
     "add_new":"Dodaj novi prijedlog",
     "up_vote":"Glasaj ZA ovaj prijedlog",
-    "down_vote":"Glasaj ZA prijedlog",
+    "down_vote":"Glasaj PROTIV ovog prijedloga",
     "report": "Prijavi prijedlog",
     "notify": "Obavje\u0161tavaj me o ovom prijedlogu",
     "share": "Podijeli ovaj prijedlog sa prijateljima",
@@ -162,7 +175,7 @@
     },
     "cover": {
       "media": "Odaberi izgled naslovnice",
-      "imageInfo": "If you add a picture people will more likely share it.",
+      "imageInfo": "Ako prijedlogu dodate sliku, veća je vjerojatnost da će ga ostali podijeliti na društvenim mrežama",
       "map": "Karta",
       "streetview": "Street View",
       "image": "Slika",
@@ -174,7 +187,7 @@
   },
 
   "short_word": {
-    "in": "u"
+    "in": "-"
   },
 
   "category": {
@@ -198,10 +211,10 @@
     "helpful": "Pozitivno ocijeni ovaj argument - koristan za raspravu",
     "not_helpful": "Negativno ocijeni ovaj argument - nije koristan za raspravu",
     "addNewsStory": "Dodaj novost",
-    "postNewsStory": "Dodaj \u010dlanak novosti",
+    "postNewsStory": "Objavi novost",
     "addComment": "Tvoj komentar...",
     "postComment": "Objavi komentar",
-    "comments": "Comments",
+    "comments": "Komentari",
     "howToWrite": "Poku\u0161ajmo osmisliti najbolje argumente za i protiv prijedloga te promisliti rje\u0161enja...",
     "commentToShort": "Tekst je prekratak!"
   },
@@ -232,7 +245,7 @@
     "group": "Grupa",
     "admins": "Administratori grupe",
     "users": "Korisnici u grupi",
-    "new": "Stvori novu grupu",
+    "new": "Otvori novu grupu",
     "edit": "Uredi grupu",
     "invite": "Pozovi prijatelja",
     "invite_to_group": "Pozovi prijatelje u ovu grupu",
@@ -242,11 +255,11 @@
     "public": "Javna grupa",
     "closed": "Zatvorena grupa",
     "secret": "Tajna grupa",
-    "openToCommunity": "Open to community",
-    "canVote": "Voting allowed",
-    "canAddNewPosts": "New posts allowed",
-    "config": "Config",
-    "update": "Update group"
+    "openToCommunity": "Otvoreno za zajednicu",
+    "canVote": "Glasanje dozvoljeno",
+    "canAddNewPosts": "Novi prijedlozi dozvoljeni",
+    "config": "Postavke",
+    "update": "Postavke grupe"
   },
 
   "membership": {
@@ -274,6 +287,10 @@
   },
 
   "user": {
+    "loginCompleteFor": "Prijava za",
+    "acceptInvite": "Prihvati pozivnicu za sudjelovanjem",
+    "hasSentYouAndInvitation": "ti je poslao pozivnicu za sudjelovanjem u",
+    "acceptInviteInstructions": "Klikni na donji gumb kako bi prihvatio pozivnicu",
     "setEmail": "Dodaj adresu e-po\u0161te svojem korisni\u010dkom ra\u010dunu",
     "linkAccount": "Pove\u017ei s korisni\u010dkim ra\u010dunom",
     "setEmailInfo": "Dodaj adresu e-po\u0161te korisni\u010dkom ra\u010dunu",
@@ -286,7 +303,7 @@
     "notifications": "Obavijesti",
     "name": "Ime i prezime",
     "email": "E-po\u0161ta",
-    "edit": "Uredi korisnika",
+    "edit": "Postavke korisnika",
     "password": "Lozinka",
     "forgotPassword": "Izradi novu lozinku",
     "forgotPasswordInstructions": "Unesi adresu svoje e-po\u0161te i poslat \u0107emo ti poruku s linkom za izradu nove lozinke.",
