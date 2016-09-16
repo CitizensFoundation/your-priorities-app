@@ -2,45 +2,45 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-  <title>Your Priorities</title>
+  <title>Betri Reykjavík</title>
 
   <meta name="description" content="Citizen participation application">
 
   <!-- Sharing information -->
-  <meta property="og:url" name="twitter:url" content="https://www.yrpri.org/">
-  <meta property="og:title" name="twitter:title" content="Your Priorities">
-  <meta property="og:description" name="twitter:description" content="Citizen participation application">
-  <meta property="og:image" content="/images/manifest_yp/icon-512x512.png">
+  <meta property="og:url" name="twitter:url" content="https://www.betrireykjavik.is/">
+  <meta property="og:title" name="twitter:title" content="Betri Reykjavík">
+  <meta property="og:description" name="twitter:description" content="Samráðsvefur fyrir íbúa Reykjavíkur">
+  <meta property="og:image" content="/images/manifest_br/icon-512x512.png">
   <meta property="og:type" content="website">
-  <meta name="twitter:card" content="Citizen participation application">
+  <meta name="twitter:card" content="Betri Reykjavík">
 
-  <link rel="shortcut icon" sizes="32x32" type="image/png" href="/images/manifest_yp/icon-32x32">
-  <link rel="shortcut icon" sizes="64x64" type="image/png" href="/images/manifest_yp/icon-64x64">
+  <link rel="shortcut icon" sizes="32x32" type="image/png" href="/images/manifest_br/icon-32x32.png">
+  <link rel="shortcut icon" sizes="64x64" type="image/png" href="/images/manifest_br/icon-64x64.png">
 
   <!-- See https://goo.gl/OOhYW5 -->
-  <link rel="manifest" href="/manifest_yp.json">
+  <link rel="manifest" href="/manifest_br.json">
 
   <!-- See https://goo.gl/qRE0vM -->
   <meta name="theme-color" content="#000">
 
   <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="Your Priorities">
+  <meta name="application-name" content="Betri Reykjavík">
 
   <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Your Priorities">
+  <meta name="apple-mobile-web-app-title" content="Betri Reykjavík">
 
   <!-- Homescreen icons -->
-  <link rel="apple-touch-icon" href="/images/manifest_yp/icon-48x48.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="/images/manifest_yp/icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="96x96" href="/images/manifest_yp/icon-96x96.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="/images/manifest_yp/icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="192x192" href="/images/manifest_yp/icon-192x192.png">
+  <link rel="apple-touch-icon" href="/images/manifest_br/icon-48x48.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/images/manifest_br/icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="96x96" href="/images/manifest_br/icon-96x96.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/images/manifest_br/icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="/images/manifest_br/icon-192x192.png">
 
   <!-- Tile icon for Windows 8 (144x144 + tile color) -->
-  <meta name="msapplication-TileImage" content="/images/manifest_yp/icon-144x144.png">
+  <meta name="msapplication-TileImage" content="/images/manifest_br/icon-144x144.png">
   <meta name="msapplication-TileColor" content="#3f51b5">
   <meta name="msapplication-tap-highlight" content="no">
 
@@ -74,7 +74,7 @@
       if (!webComponentsSupported) {
         var script = document.createElement('script');
         script.async = true;
-        script.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js?v=6.2.4';
+        script.src = "/bower_components/webcomponentsjs/webcomponents-lite.min.js?v=6.2.5";
         script.onload = onload;
         document.head.appendChild(script);
       } else {
@@ -96,16 +96,16 @@
     })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
   </script>
 
-  <link rel="import" href="/src/yp-app.html?v=6.2.4">
+  <link rel="import" href="/src/yp-app.html?v=6.2.5">
 
-  <link rel="stylesheet" href="/styles/main.css?v=6.2.4">
-  <link rel="import" href="/styles/app-theme.html?v=6.2.4">
+  <link rel="stylesheet" href="/styles/main.css?v=6.2.5">
+  <link rel="import" href="/styles/app-theme.html?v=6.2.5">
 </head>
 <body>
 <yp-app id="app" app-ready="{{appReady}}"></yp-app>
 
 <script src="/src/i18next-1.7.4.min.js"></script>
-<script src="/src/app.js?v=6.2.4"></script>
+<script src="/src/app.js?v=6.2.5"></script>
 
 <div id="fb-root"></div>
 

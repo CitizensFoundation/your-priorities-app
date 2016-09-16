@@ -6,7 +6,7 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.2.4">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.2.5">
 
 <script>
   (function() {
@@ -174,12 +174,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       * To get @ returned, set noSpecialChars = false
      */
     function normalizedKeyForEvent(keyEvent, noSpecialChars) {
-      // Fall back from .key, to .keyIdentifier, to .keyCode, and then to
-      // .detail.key to support artificial keyboard events.
-      return transformKey(keyEvent.key, noSpecialChars) ||
-        transformKeyIdentifier(keyEvent.keyIdentifier) ||
-        transformKeyCode(keyEvent.keyCode) ||
-        transformKey(keyEvent.detail ? keyEvent.detail.key : keyEvent.detail, noSpecialChars) || '';
+      // Fall back from .key, to .detail.key for artifical keyboard events,
+      // and then to deprecated .keyIdentifier and .keyCode.
+      if (keyEvent.key) {
+        return transformKey(keyEvent.key, noSpecialChars);
+      }
+      if (keyEvent.detail && keyEvent.detail.key) {
+        return transformKey(keyEvent.detail.key, noSpecialChars);
+      }
+      return transformKeyIdentifier(keyEvent.keyIdentifier) ||
+        transformKeyCode(keyEvent.keyCode) || '';
     }
 
     function keyComboMatchesEvent(keyCombo, event) {

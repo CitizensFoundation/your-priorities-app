@@ -1,11 +1,11 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.4">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.5">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.4">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.5">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.4">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.4">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.5">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.5">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.4">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.5">
 
 </head><body><dom-module id="yp-membership-button">
 
@@ -20,28 +20,17 @@
         background-color: var(--accent-color);
       }
 
+      .heartButton {
+        color: #FFF !important;
+      }
+
       paper-fab {
-        width: 40px;
-        height: 40px;
         background-color: #999;
-        color: var(--icon-general-color, #FFF);
+        color: #FFF;
+        --paper-fab-iron-icon {
+          color: #FFF;
+        }
       }
-
-      paper-fab[large] {
-        width: 64px;
-        height: 64px;
-      }
-
-      paper-fab[large]::shadow #icon {
-        width: 36px;
-        height: 36px;
-      }
-
-      .ajax {
-        margin-top:8px;
-        padding-left: 6px;
-      }
-
 
       @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
         paper-fab {
@@ -49,27 +38,27 @@
           height: 55px;
         }
 
-        paper-fab[large]::shadow #icon {
-          width: 34px;
-          height: 34px;
+        paper-fab[large] {
+          --paper-fab-iron-icon {
+            --iron-icon-height: 36px;
+            --iron-icon-width: 36px;
+          }
         }
       }
 
       @media (max-width: 680px) {
-        paper-fab[large] {
+        paper-fab {
           width: 40px;
           height: 40px;
+          --paper-fab-iron-icon {
+            --iron-icon-height: 32px;
+            --iron-icon-width: 32px;
+          }
         }
-
-        paper-fab[large]::shadow #icon {
-          width: 26px;
-          height: 26px;
-        }
-
       }
     </style>
 
-    <paper-fab large$="[[large]]" id="button" on-tap="_toggleMembership" disabled="[[disabled]]" class="heartButton" icon="favorite"></paper-fab>
+    <paper-fab mini$="[[!large]]" id="button" on-tap="_toggleMembership" disabled="[[disabled]]" class="heartButton" icon="favorite"></paper-fab>
     <yp-ajax class="ajax" id="membershipAjax" hidden$="[[!disabled]]" method="POST" on-response="_membershipResponse"></yp-ajax>
 
     <iron-signals on-iron-signal-got-memberships="_updateMembershipFromSignal"></iron-signals>

@@ -1,4 +1,8 @@
 {
+  "cancel": "Cancel",
+  "ok": "Ok",
+  "next": "Next",
+  "create": "Create",
   "confirm": "Confirm",
   "access": "Access",
   "searchFor": "Search for...",
