@@ -1,26 +1,27 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.15">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.15">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.15">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.15">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.15">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.15">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.15">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.15">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.15">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.2.15">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.15">
-<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.2.15">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.15">
-<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html?v=6.2.15">
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 
-<link rel="import" href="yp-domain-stats.html?v=6.2.15">
+<link rel="import" href="yp-domain-stats.html">
 
 </head><body><dom-module id="yp-domain-large-card">
 
@@ -151,7 +152,7 @@
               <div class="layout vertical description-and-stats">
                 <div class="description">
                   <h1 class="domain-name">[[_domainName(domain)]]</h1>
-                  <div class="domainDescription">
+                  <div id="description" class="domainDescription">
                     [[_domainDescription(domain)]]
                   </div>
                   <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
@@ -188,14 +189,16 @@
         Polymer.appHelpers,
         Polymer.LargeCardBehaviors,
         Polymer.AccessHelpers,
-        Polymer.ypGotAdminRightsBehavior
+        Polymer.ypGotAdminRightsBehavior,
+        Polymer.YpLinkifyAndEmjoi
       ],
 
       properties: {
 
         domain: {
           type: Object,
-          notify: true
+          notify: true,
+          observer: '_domainChanged'
         },
 
         elevation: {
@@ -211,6 +214,19 @@
           type: Boolean,
           value: false,
           computed: '_hasDomainAccess(domain, gotAdminRights)'
+        }
+      },
+
+      _domainChanged: function (domain) {
+        if (domain && domain.description) {
+          this.async(function () {
+            var description = this.$$("#description");
+            if (description) {
+              description.innerHTML = this.addLinksAndEmjois(domain.description);
+            } else {
+              console.error("Can't find domain description element");
+            }
+          });
         }
       },
 

@@ -1,22 +1,23 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.15">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.15">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.15">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.2.15">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.2.15">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.15">
-<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.2.15">
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-collection-status-options.html">
 
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.2.15">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.2.15">
-<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.2.15">
-<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.2.15">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html">
+<link rel="import" href="../yp-theme/yp-theme-selector.html">
+<link rel="import" href="../yp-behaviors/emoji-selector.html">
 
 </head><body><dom-module id="yp-community-edit">
   <template>
@@ -66,6 +67,9 @@
 
         <paper-textarea id="description" name="description" value="{{community.description}}" label="[[t('description')]]" char-counter="" rows="2" max-rows="5" minlength="1" required="" maxlength="300" class="mainInput">
         </paper-textarea>
+        <div class="horizontal end-justified layout">
+          <emoji-selector id="emojiSelectorDescription"></emoji-selector>
+        </div>
       </div>
 
       <div class="layout horizontal">
@@ -176,6 +180,18 @@
       }
     },
 
+    _updateEmojiBindings: function () {
+      this.async(function () {
+        var description = this.$$("#description");
+        var emojiSelector = this.$$("#emojiSelectorDescription");
+        if (description && emojiSelector) {
+          emojiSelector.inputTarget = description;
+        } else {
+          console.warn("Community edit: Can't bind emojis :(");
+        }
+      }.bind(this), 500);
+    },
+
     _getExampleHostname: function (hostname) {
       if (hostname) {
         return hostname + '.' + window.appGlobals.domain.domain_name;
@@ -211,6 +227,8 @@
           this.set('status', this.community.status);
         }
       }
+
+      this._updateEmojiBindings();
     },
 
     _clear: function () {

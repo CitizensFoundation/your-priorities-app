@@ -1,27 +1,28 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.15">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.15">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.15">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.15">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.2.15">
-<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html?v=6.2.15">
-<link rel="import" href="../../bower_components/neon-animation/neon-animation.html?v=6.2.15">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.2.15">
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.15">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.2.15">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.2.15">
-<link rel="import" href="../yp-image-uploader/yp-image-uploader.html?v=6.2.15">
-<link rel="import" href="yp-post-location.html?v=6.2.15">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html">
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/emoji-selector.html">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
+<link rel="import" href="../yp-image-uploader/yp-image-uploader.html">
+<link rel="import" href="yp-post-location.html">
 
 </head><body><dom-module id="yp-post-edit">
   <template>
@@ -82,6 +83,10 @@
         padding-bottom: 16px;
         color: #444;
       }
+
+      paper-dropdown-menu {
+        max-width: 250px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -119,6 +124,9 @@
 
               <paper-textarea id="description" required="" minlength="10" name="description" value="{{post.description}}" label="[[t('post.description')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
               </paper-textarea>
+              <div class="horizontal end-justified layout">
+                <emoji-selector id="emojiSelectorDescription"></emoji-selector>
+              </div>
             </div>
           </section>
 
@@ -126,6 +134,9 @@
             <section class="subContainer">
               <paper-textarea id="pointFor" required="" minlength="5" name="pointFor" value="{{post.pointFor}}" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
               </paper-textarea>
+              <div class="horizontal end-justified layout">
+                <emoji-selector id="emojiSelectorPointFor"></emoji-selector>
+              </div>
             </section>
           </template>
 
@@ -257,6 +268,23 @@
       '_setupTranslation(language)'
     ],
 
+    _updateEmojiBindings: function () {
+      this.async(function () {
+        var description = this.$$("#description");
+        var emojiSelector = this.$$("#emojiSelectorDescription");
+        if (description && emojiSelector) {
+          emojiSelector.inputTarget = description;
+        } else {
+          console.warn("Post edit: Can't bind emojis :(");
+        }
+        var emojiSelectorPointFor = this.$$("#emojiSelectorPointFor");
+        var pointFor = this.$$("#pointFor");
+        if (emojiSelectorPointFor && pointFor) {
+          emojiSelectorPointFor.inputTarget = pointFor;
+        }
+      }.bind(this), 500);
+    },
+
     _locationHiddenChanged: function (newValue) {
       this.async(function () {
         var pages = this.$$("#pages");
@@ -367,6 +395,7 @@
           this.selectedCategoryArrayId = this.getPositionInArrayFromId(this.group.Categories, newPost.category_id);
         }
       }
+      this._updateEmojiBindings();
     },
 
     _imageUploaded: function (event, detail) {

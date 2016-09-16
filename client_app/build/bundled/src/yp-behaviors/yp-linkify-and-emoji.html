@@ -1,0 +1,32 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script src="twemoji.min-2.1.2.js"></script>
+<script type="text/javascript" src="sanitize-html.min.js"></script>
+
+<script>
+  /**
+   * @polymerBehavior YpLinkifyAndEmjoi
+   */
+  Polymer.YpLinkifyAndEmjoi = {
+    addLinksAndEmjois: function (text) {
+      var sanitizedText = sanitizeHtml(text, {
+        allowedTags: [ 'b', 'i', 'em', 'strong'] });
+      sanitizedText = linkifyStr(sanitizedText, {
+        format: function (value, type) {
+          if (type === 'url' && value.length > 34) {
+            value = value.slice(0, 35) + '…';
+          }
+          return value;
+        },
+        ignoreTags: [
+          'b',
+          'i',
+          'em',
+          'strong'
+        ]
+      });
+      return twemoji.parse(sanitizedText);
+    }
+  }
+</script>
+</head><body></body></html>

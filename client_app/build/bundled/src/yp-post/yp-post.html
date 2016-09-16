@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app.html?v=6.2.15"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app.html"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="/">
 
   <template>
 
@@ -342,7 +342,11 @@
             <div class="point">
 
               <div id="pointUpMaterial" elevation="0" class="pointText" animated="">
-                <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueUp}}" value="[[textValueUp]]" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
+                <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueUp}}" value="[[textValueUp]]" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="3" maxlength="500">
+                </paper-textarea>
+                <div class="horizontal end-justified layout">
+                  <emoji-selector id="pointUpEmojiSelector"></emoji-selector>
+                </div>
 
                 <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
                   <div class="addPointFab layout horizontal center-center">
@@ -363,8 +367,11 @@
             <div class="point">
 
               <div id="pointDownMaterial" elevation="0" class="pointText" animated="">
-                <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueDown}}" value="[[textValueDown]]" label="[[t('point.against')]]" char-counter="" rows="2" max-rows="5" maxlength="500"></paper-textarea>
-
+                <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueDown}}" value="[[textValueDown]]" label="[[t('point.against')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
+                </paper-textarea>
+                <div class="horizontal end-justified layout">
+                  <emoji-selector id="pointDownEmojiSelector"></emoji-selector>
+                </div>
                 <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
                   <div class="addPointFab layout horizontal center-center">
                     <paper-button icon="add" mini="" z="3" on-tap="addPointDown" title="[[t('point.add_down')]]">[[t('point.postComment')]]</paper-button>
@@ -386,6 +393,9 @@
       <template is="dom-if" if="[[!largeMode]]">
         <div id="pointUpOrDownMaterial" elevation="0" class="pointText" animated="">
           <paper-textarea id="mobileUpOrDownPoint" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueMobileUpOrDown}}" value="[[textValueMobileUpOrDown]]" label="[[labelMobileUpOrDown]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
+          <div class="horizontal end-justified layout">
+            <emoji-selector id="pointUpDownEmojiSelector"></emoji-selector>
+          </div>
           <div class="layout horizontal center-center">
             <paper-radio-group id="upOrDown" attribute-for-selected="name" selected="{{pointUpOrDownSelected}}">
               <paper-radio-button name="pointFor">[[t('point.for')]]</paper-radio-button>
@@ -398,11 +408,13 @@
             </div>
           </template>
         </div>
-        <template is="dom-repeat" items="[[points]]" as="point">
-          <paper-material elevation="1" class="pointMaterial">
-            <yp-point point="[[point]]"></yp-point>
-          </paper-material>
-        </template>
+        <div class="layout vertical center-center">
+          <template is="dom-repeat" items="[[points]]" as="point">
+            <paper-material elevation="1" class="pointMaterial">
+              <yp-point point="[[point]]"></yp-point>
+            </paper-material>
+          </template>
+        </div>
       </template>
     </template>
 
@@ -460,12 +472,14 @@
 
           points: {
             type: Array,
-            value: null
+            value: null,
+            observer: '_pointsChanged'
           },
 
           largeMode: {
             type: Boolean,
-            value: false
+            value: false,
+            observer: '_updateEmojiBindings'
           },
 
           textValueMobileUpOrDown: String,
@@ -477,6 +491,37 @@
             observer: '_pointUpOrDownSelectedChanged',
             value: 'pointFor'
           }
+        },
+
+        _pointsChanged: function (points) {
+          if (points) {
+            this._updateEmojiBindings();
+          }
+        },
+
+        _updateEmojiBindings: function () {
+          this.async(function () {
+            if (this.largeMode) {
+              var upPoint = this.$$("#up_point");
+              var downPoint = this.$$("#down_point");
+              var upEmoji = this.$$("#pointUpEmojiSelector");
+              var downEmoji = this.$$("#pointDownEmojiSelector");
+              if (upPoint && downPoint && upEmoji && downEmoji) {
+                upEmoji.inputTarget = upPoint;
+                downEmoji.inputTarget = downPoint;
+              } else {
+                console.warn("Wide: Can't bind emojis :(");
+              }
+            } else {
+              var upDownPoint = this.$$("#mobileUpOrDownPoint");
+              var upDownEmoji = this.$$("#pointUpDownEmojiSelector");
+              if (upDownPoint && upDownEmoji) {
+                upDownEmoji.inputTarget = upDownPoint;
+              } else {
+                console.warn("Small: Can't bind emojis :(");
+              }
+            }
+          }.bind(this), 500);
         },
 
         _pointUpOrDownSelectedChanged: function (newValue) {
@@ -605,7 +650,7 @@
         },
 
         ifLengthIsRight: function (textValue) {
-          return textValue.length > 6;
+          return textValue.length > 1;
         }
 
       });

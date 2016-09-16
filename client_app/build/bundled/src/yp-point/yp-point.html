@@ -1,18 +1,19 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.15">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.15">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.15">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.15">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.15">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.15">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.15">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.15">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.2.15">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.15">
-<link rel="import" href="../yp-user/yp-user-image.html?v=6.2.15">
-<link rel="import" href="yp-point-actions.html?v=6.2.15">
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
+<link rel="import" href="../yp-user/yp-user-image.html">
+<link rel="import" href="yp-point-actions.html">
 
 </head><body><dom-module id="yp-point">
 
@@ -67,7 +68,7 @@
           <span hidden$="[[!point.name]]">
             <span>[[point.name]]</span>.
           </span>
-          <span>[[point.content]]</span>
+          <div id="pointContent"></div>
           <div class="layout horizontal">
             <yp-point-actions point="[[point]]"></yp-point-actions>
           </div>
@@ -91,8 +92,6 @@
           observer: "_pointChanged"
         },
 
-
-
         user: {
           type: Object,
           value: null
@@ -104,11 +103,26 @@
         }
       },
 
-      _pointChanged: function(newValue, oldValue) {
-        if (newValue) {
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.YpLinkifyAndEmjoi
+      ],
+
+      _pointChanged: function(point, oldValue) {
+        if (point) {
           this.user = this.point.PointRevisions[0].User;
         } else {
           this.user = null;
+        }
+        if (point && point.content) {
+          this.async(function () {
+            var content = this.$$("#pointContent");
+            if (content) {
+              content.innerHTML = this.addLinksAndEmjois(point.content);
+            } else {
+              console.error("Can't find pointContent element");
+            }
+          });
         }
       },
 

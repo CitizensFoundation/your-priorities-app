@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.15">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <script>
   /**
@@ -9,7 +9,8 @@
     properties: {
       community: {
         type: Object,
-        notify: true
+        notify: true,
+        observer: '_communityChanged'
       },
 
       communityLogoImagePath: {
@@ -45,6 +46,19 @@
       communityDescriptionFull: {
         type: String,
         computed: '_communityDescription(community,1)'
+      }
+    },
+
+    _communityChanged: function (community) {
+      if (false && community && community.description) {
+        this.async(function () {
+          var description = this.$$("#description");
+          if (description) {
+            description.innerHTML = this.addLinksAndEmjois(community.description);
+          } else {
+            console.error("Can't find community description element");
+          }
+        });
       }
     },
 
