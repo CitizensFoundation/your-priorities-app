@@ -17,6 +17,7 @@
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 <link rel="import" href="../yp-app-globals/yp-language-selector.html">
 <link rel="import" href="../yp-theme/yp-theme-selector.html">
+<link rel="import" href="../yp-behaviors/emoji-selector.html">
 
 <dom-module id="yp-community-edit">
   <template>
@@ -92,6 +93,9 @@
                         required
                         maxlength="300" class="mainInput">
         </paper-textarea>
+        <div class="horizontal end-justified layout">
+          <emoji-selector id="emojiSelectorDescription"></emoji-selector>
+        </div>
       </div>
 
       <div class="layout horizontal">
@@ -202,6 +206,18 @@
       }
     },
 
+    _updateEmojiBindings: function () {
+      this.async(function () {
+        var description = this.$$("#description");
+        var emojiSelector = this.$$("#emojiSelectorDescription");
+        if (description && emojiSelector) {
+          emojiSelector.inputTarget = description;
+        } else {
+          console.warn("Community edit: Can't bind emojis :(");
+        }
+      }.bind(this), 500);
+    },
+
     _getExampleHostname: function (hostname) {
       if (hostname) {
         return hostname + '.' + window.appGlobals.domain.domain_name;
@@ -237,6 +253,8 @@
           this.set('status', this.community.status);
         }
       }
+
+      this._updateEmojiBindings();
     },
 
     _clear: function () {

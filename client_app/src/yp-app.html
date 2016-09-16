@@ -136,15 +136,6 @@
       }
 
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-
-    <app-location route="{{route}}"></app-location>
-
-    <app-route
-      route="{{route}}"
-      pattern="/:page"
-      data="{{routeData}}"
-      tail="{{subRoute}}"></app-route>
 
     <app-drawer-layout drawer-width="360px" responsive-width="16000px">
 
@@ -159,8 +150,6 @@
           <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
         </div>
       </app-drawer>
-
-      <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
 
       <app-header-layout id="mainArea">
 
@@ -208,6 +197,18 @@
       </app-header-layout>
 
     </app-drawer-layout>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
+
+    <app-location route="{{route}}"></app-location>
+
+    <app-route
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subRoute}}"></app-route>
 
     <yp-dialog-container id="dialogContainer"></yp-dialog-container>
     <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>

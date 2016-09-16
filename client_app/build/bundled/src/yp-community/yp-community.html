@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app.html?v=6.2.9"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app.html?v=6.2.15"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -640,13 +640,6 @@
         color: #333;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-
-    <app-route route="{{idRoute}}" pattern="/:id" data="{{idRouteData}}" tail="{{tabRoute}}">
-    </app-route>
-
-    <app-route route="{{tabRoute}}" pattern="/:tabName" data="{{tabRouteData}}">
-    </app-route>
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
 
@@ -676,6 +669,14 @@
         </section>
       </iron-pages>
     </yp-page>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <app-route route="{{idRoute}}" pattern="/:id" data="{{idRouteData}}" tail="{{tabRoute}}">
+    </app-route>
+
+    <app-route route="{{tabRoute}}" pattern="/:tabName" data="{{tabRouteData}}">
+    </app-route>
 
     <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
     <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>

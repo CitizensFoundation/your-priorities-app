@@ -11,6 +11,7 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 <link rel="import" href="../yp-user/yp-user-image.html">
 <link rel="import" href="yp-point-actions.html">
 
@@ -67,7 +68,7 @@
           <span hidden$="[[!point.name]]">
             <span>[[point.name]]</span>.
           </span>
-          <span>[[point.content]]</span>
+          <div id="pointContent"></div>
           <div class="layout horizontal">
             <yp-point-actions point="[[point]]"></yp-point-actions>
           </div>
@@ -91,8 +92,6 @@
           observer: "_pointChanged"
         },
 
-
-
         user: {
           type: Object,
           value: null
@@ -104,11 +103,26 @@
         }
       },
 
-      _pointChanged: function(newValue, oldValue) {
-        if (newValue) {
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.YpLinkifyAndEmjoi
+      ],
+
+      _pointChanged: function(point, oldValue) {
+        if (point) {
           this.user = this.point.PointRevisions[0].User;
         } else {
           this.user = null;
+        }
+        if (point && point.content) {
+          this.async(function () {
+            var content = this.$$("#pointContent");
+            if (content) {
+              content.innerHTML = this.addLinksAndEmjois(point.content);
+            } else {
+              console.error("Can't find pointContent element");
+            }
+          });
         }
       },
 

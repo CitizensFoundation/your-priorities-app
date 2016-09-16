@@ -16,6 +16,7 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 
 <link rel="import" href="yp-post-actions.html">
 <link rel="import" href="yp-post-cover-media.html">
@@ -200,7 +201,7 @@
               <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
               <div class="layout vertical">
                 <div class="infoContainer">
-                  <div class="description">[[trimmedDescription]]</div>
+                  <div id="description" class="description"></div>
                 </div>
                 <div class="card-actions">
                   <yp-post-actions header-mode="[[headerMode]]" elevation="[[elevation]]" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
@@ -237,7 +238,8 @@
         Polymer.appHelpers,
         Polymer.YpPostBehavior,
         Polymer.AccessHelpers,
-        Polymer.ypGotAdminRightsBehavior
+        Polymer.ypGotAdminRightsBehavior,
+        Polymer.YpLinkifyAndEmjoi
       ],
 
       properties: {
@@ -258,12 +260,7 @@
 
         post: {
           type: Object,
-          notify: true
-        },
-
-        trimmedDescription: {
-          type: String,
-          computed: '_trimmedDescription(post, post.description)'
+          observer: '_postChanged'
         },
 
         hasPostAccess: {
@@ -292,11 +289,16 @@
         }
       },
 
-      _trimmedDescription: function (post, description) {
-        if (post) {
-          return this.postDescription;
-        } else {
-          return "";
+      _postChanged: function (post) {
+        if (post && post.description) {
+          this.async(function () {
+            var description = this.$$("#description");
+            if (description) {
+              description.innerHTML = this.addLinksAndEmjois(post.description);
+            } else {
+              console.error("Can't find description element");
+            }
+          });
         }
       },
 

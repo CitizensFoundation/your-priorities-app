@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app.html?v=6.2.9"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app.html?v=6.2.15"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -2358,13 +2358,6 @@ is shown even without no results (check the demo for an example).
         font-size: 11px;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-
-    <app-route route="{{idRoute}}" pattern="/:id" data="{{idRouteData}}" tail="{{tabRoute}}">
-    </app-route>
-
-    <app-route route="{{tabRoute}}" pattern="/:tabName" data="{{tabRouteData}}" tail="{{listRoute}}">
-    </app-route>
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
 
@@ -2434,6 +2427,14 @@ is shown even without no results (check the demo for an example).
         </section>
       </iron-pages>
     </yp-page>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <app-route route="{{idRoute}}" pattern="/:id" data="{{idRouteData}}" tail="{{tabRoute}}">
+    </app-route>
+
+    <app-route route="{{tabRoute}}" pattern="/:tabName" data="{{tabRouteData}}" tail="{{listRoute}}">
+    </app-route>
 
     <div class="layout horizontal center-center">
       <yp-ajax large-spinner="" id="ajax" on-response="_groupsResponse"></yp-ajax>

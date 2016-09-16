@@ -12,6 +12,7 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-collection-status-options.html">
+<link rel="import" href="../yp-behaviors/emoji-selector.html">
 
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
@@ -81,6 +82,9 @@
                       max-rows="5"
                       maxlength="300">
       </paper-textarea>
+      <div class="horizontal end-justified layout">
+        <emoji-selector id="emojiSelectorDescription"></emoji-selector>
+      </div>
 
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings half">
@@ -210,6 +214,18 @@
       locationHidden: Boolean
     },
 
+    _updateEmojiBindings: function () {
+      this.async(function () {
+        var description = this.$$("#objectives");
+        var emojiSelector = this.$$("#emojiSelectorDescription");
+        if (description && emojiSelector) {
+          emojiSelector.inputTarget = description;
+        } else {
+          console.warn("Group edit: Can't bind emojis :(");
+        }
+      }.bind(this), 500);
+    },
+
     _publicCommunity: function (group) {
       if (group) {
         return group.Community.access==0
@@ -264,6 +280,7 @@
           }
         }
       }
+      this._updateEmojiBindings();
     },
 
     _clear: function () {

@@ -53,21 +53,6 @@
         font-size: 11px;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-
-    <app-route
-      route="{{idRoute}}"
-      pattern="/:id"
-      data="{{idRouteData}}"
-      tail="{{tabRoute}}">
-    </app-route>
-
-    <app-route
-      route="{{tabRoute}}"
-      pattern="/:tabName"
-      data="{{tabRouteData}}"
-      tail="{{listRoute}}">
-    </app-route>
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
 
@@ -137,6 +122,22 @@
         </section>
       </iron-pages>
     </yp-page>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <app-route
+      route="{{idRoute}}"
+      pattern="/:id"
+      data="{{idRouteData}}"
+      tail="{{tabRoute}}">
+    </app-route>
+
+    <app-route
+      route="{{tabRoute}}"
+      pattern="/:tabName"
+      data="{{tabRouteData}}"
+      tail="{{listRoute}}">
+    </app-route>
 
     <div class="layout horizontal center-center">
       <yp-ajax large-spinner id="ajax" on-response="_groupsResponse"></yp-ajax>

@@ -103,9 +103,12 @@
 
   if (window.location.hostname.indexOf('betrireykjavik') > -1) {
     setupLocale('is');
+    setupBetterReykjavikSplash();
   } else if (window.location.hostname.indexOf('betraisland') > -1) {
     setupLocale('is');
+    setupBetterIcelandSplash();
   } else {
+    setupYourPrioritiesSplash();
     if (window.location.hostname.indexOf('forbrukerraadet') > -1) {
       setupLocale('no');
     } else if (window.location.hostname.indexOf('bolja-pula') > -1) {

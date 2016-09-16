@@ -18,6 +18,7 @@
 
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/emoji-selector.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 <link rel="import" href="../yp-image-uploader/yp-image-uploader.html">
@@ -82,6 +83,10 @@
         padding-bottom: 16px;
         color: #444;
       }
+
+      paper-dropdown-menu {
+        max-width: 250px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -138,6 +143,9 @@
                               max-rows="5"
                               maxlength="500">
               </paper-textarea>
+              <div class="horizontal end-justified layout">
+                <emoji-selector id="emojiSelectorDescription"></emoji-selector>
+              </div>
             </div>
           </section>
 
@@ -154,6 +162,9 @@
                               max-rows="5"
                               maxlength="500">
               </paper-textarea>
+              <div class="horizontal end-justified layout">
+                <emoji-selector id="emojiSelectorPointFor"></emoji-selector>
+              </div>
             </section>
           </template>
 
@@ -285,6 +296,23 @@
       '_setupTranslation(language)'
     ],
 
+    _updateEmojiBindings: function () {
+      this.async(function () {
+        var description = this.$$("#description");
+        var emojiSelector = this.$$("#emojiSelectorDescription");
+        if (description && emojiSelector) {
+          emojiSelector.inputTarget = description;
+        } else {
+          console.warn("Post edit: Can't bind emojis :(");
+        }
+        var emojiSelectorPointFor = this.$$("#emojiSelectorPointFor");
+        var pointFor = this.$$("#pointFor");
+        if (emojiSelectorPointFor && pointFor) {
+          emojiSelectorPointFor.inputTarget = pointFor;
+        }
+      }.bind(this), 500);
+    },
+
     _locationHiddenChanged: function (newValue) {
       this.async(function () {
         var pages = this.$$("#pages");
@@ -395,6 +423,7 @@
           this.selectedCategoryArrayId = this.getPositionInArrayFromId(this.group.Categories, newPost.category_id);
         }
       }
+      this._updateEmojiBindings();
     },
 
     _imageUploaded: function (event, detail) {

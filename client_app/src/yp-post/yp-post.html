@@ -320,22 +320,6 @@
         }
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-
-    <app-route
-      route="{{idRoute}}"
-      pattern="/:id"
-      data="{{idRouteData}}"
-      tail="{{tabRoute}}">
-    </app-route>
-
-    <app-route
-      route="{{tabRoute}}"
-      pattern="/:tabName"
-      data="{{tabRouteData}}">
-    </app-route>
-
-    <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
 
     <div class="topContainer" is-post create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
 
@@ -392,6 +376,24 @@
         </section>
       </iron-pages>
     </div>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <app-route
+      route="{{idRoute}}"
+      pattern="/:id"
+      data="{{idRouteData}}"
+      tail="{{tabRoute}}">
+    </app-route>
+
+    <app-route
+      route="{{tabRoute}}"
+      pattern="/:tabName"
+      data="{{tabRouteData}}">
+    </app-route>
+
+    <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
+
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer">
       <template is="dom-if" if="[[createFabIcon]]">
         <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>

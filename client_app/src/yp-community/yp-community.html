@@ -52,20 +52,6 @@
         color: #333;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-
-    <app-route
-      route="{{idRoute}}"
-      pattern="/:id"
-      data="{{idRouteData}}"
-      tail="{{tabRoute}}">
-    </app-route>
-
-    <app-route
-      route="{{tabRoute}}"
-      pattern="/:tabName"
-      data="{{tabRouteData}}">
-    </app-route>
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
 
@@ -98,6 +84,21 @@
         </section>
       </iron-pages>
     </yp-page>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <app-route
+      route="{{idRoute}}"
+      pattern="/:id"
+      data="{{idRouteData}}"
+      tail="{{tabRoute}}">
+    </app-route>
+
+    <app-route
+      route="{{tabRoute}}"
+      pattern="/:tabName"
+      data="{{tabRouteData}}">
+    </app-route>
 
     <yp-ajax id="ajax" url="/api/communities" on-response="_response"></yp-ajax>
     <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>

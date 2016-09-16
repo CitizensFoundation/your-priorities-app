@@ -17,6 +17,7 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/emoji-selector.html">
 
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
@@ -49,6 +50,7 @@
         margin-top: 24px;
       }
     </style>
+
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
@@ -82,6 +84,9 @@
                             max-rows="5"
                             maxlength="300" class="mainInput">
             </paper-textarea>
+            <div class="horizontal end-justified layout">
+              <emoji-selector id="emojiSelectorDescription"></emoji-selector>
+            </div>
 
             <div class="layout vertical">
               <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
@@ -238,9 +243,20 @@
       }
     },
 
+    _updateEmojiBindings: function () {
+      this.async(function () {
+        var description = this.$$("#description");
+        var emojiSelector = this.$$("#emojiSelectorDescription");
+        if (description && emojiSelector) {
+          emojiSelector.inputTarget = description;
+        } else {
+          console.warn("Domain edit: Can't bind emojis :(");
+        }
+      }.bind(this), 500);
+    },
+
     _domainChanged: function (domain) {
-      if (domain) {
-      }
+       this._updateEmojiBindings();
     },
 
     _customRedirect: function (domain) {

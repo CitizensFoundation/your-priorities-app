@@ -89,8 +89,13 @@
         }
 
         .topArea {
-          height: 300px;
+          height: 372px;
         }
+
+        .topArea {
+          min-height: 372px;
+        }
+
 
         .topArea[is-post] {
           min-height: 470px;
@@ -116,8 +121,6 @@
       }
     </style>
 
-    <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
-
     <div class="layout vertical mainArea">
       <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post$="[[isPost]]">
         <content select=".largeCard"></content>
@@ -137,6 +140,7 @@
         <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" class="createCommunity" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
       </template>
     </div>
+    <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
   </template>
 
   <script>
