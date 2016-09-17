@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.24"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.25"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -809,6 +809,8 @@
 
           if (this.community.CommunityHeaderImages && this.community.CommunityHeaderImages.length>0) {
             this.$.page.setupTopHeaderImage(this.community.CommunityHeaderImages);
+          } else {
+            this.$.page.setupTopHeaderImage(null);
           }
 
           this.fire("change-header", { headerTitle: this.community.Domain.name,

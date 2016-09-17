@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.24"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.25"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -2654,6 +2654,8 @@ is shown even without no results (check the demo for an example).
 
           if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
             this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages);
+          } else {
+            this.$.page.setupTopHeaderImage(null);
           }
 
           this.fire("change-header", { headerTitle: this.group.Community.name,
