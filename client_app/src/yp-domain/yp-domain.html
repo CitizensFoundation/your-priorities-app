@@ -288,6 +288,8 @@
                                        headerDescription: this.domain.description});
           if (this.domain.DomainHeaderImages && this.domain.DomainHeaderImages.length>0) {
             this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);
+          } else {
+            this.$.page.setupTopHeaderImage(null);
           }
 
           this.$.pagesAjax.url = "/api/domains/"+this.domain.id+"/pages";

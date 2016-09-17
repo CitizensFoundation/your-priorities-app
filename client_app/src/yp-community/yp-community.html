@@ -267,6 +267,8 @@
 
           if (this.community.CommunityHeaderImages && this.community.CommunityHeaderImages.length>0) {
             this.$.page.setupTopHeaderImage(this.community.CommunityHeaderImages);
+          } else {
+            this.$.page.setupTopHeaderImage(null);
           }
 
           this.fire("change-header", { headerTitle: this.community.Domain.name,

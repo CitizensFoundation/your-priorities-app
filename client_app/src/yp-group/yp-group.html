@@ -357,6 +357,8 @@
 
           if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
             this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages);
+          } else {
+            this.$.page.setupTopHeaderImage(null);
           }
 
           this.fire("change-header", { headerTitle: this.group.Community.name,
