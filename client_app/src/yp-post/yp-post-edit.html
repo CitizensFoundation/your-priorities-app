@@ -488,15 +488,17 @@
     },
 
     _setupTranslation: function () {
-      if (this.t) {
-        if (this.new) {
-          this.editHeaderText = this.t('post.new');
-          this.toastText = this.t('post.toast.created');
-        } else {
-          this.editHeaderText = this.t('post.edit');
-          this.toastText = this.t('post.toast.updated');
+      this.async(function () {
+        if (this.t) {
+          if (this.new) {
+            this.editHeaderText = this.t('post.new');
+            this.toastText = this.t('post.toast.created');
+          } else {
+            this.editHeaderText = this.t('post.edit');
+            this.toastText = this.t('post.toast.updated');
+          }
         }
-      }
+      }.bind(this), 20);
     }
   });
 </script>
