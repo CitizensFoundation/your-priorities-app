@@ -370,10 +370,10 @@
       },
 
       _routePageChanged: function(page) {
-        if (!this.route.path.indexOf('/user/reset_password') > -1 && !this.route.path.indexOf('/user/accept/invite') > -1) {
-          this.page = page;
-        } else if (this.route.path.indexOf('/user/accept/invite') > -1) {
+        if (this.route.path.indexOf('/user/reset_password') > -1 || this.route.path.indexOf('/user/accept/invite') > -1) {
           this.page = "domain";
+        } else {
+          this.page = page;
         }
       },
 
