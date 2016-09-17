@@ -16243,7 +16243,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.2.21">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.2.22">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -17690,7 +17690,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.2.21">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.2.22">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -17698,7 +17698,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.2.21">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.2.22">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -18473,7 +18473,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.21" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.2.22" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -23541,8 +23541,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.2.21">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.2.21">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.2.22">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.2.22">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -24984,7 +24984,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.21" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.2.22" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -28110,7 +28110,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.2.21">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.2.22">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -45747,6 +45747,10 @@ the `app-route` will update `route.path`. This in-turn will update the
       locationHidden: Boolean
     },
 
+    observers: [
+      '_setupTranslation(language)'
+    ],
+
     _updateEmojiBindings: function () {
       this.async(function () {
         var description = this.$$("#objectives");
@@ -45848,12 +45852,14 @@ the `app-route` will update `route.path`. This in-turn will update the
     },
 
     _setupTranslation: function () {
-      if (this.new) {
-        this.editHeaderText = this.t('group.new');
-        this.toastText = this.t('group.toast.created');
-      } else {
-        this.editHeaderText = this.t('group.update');
-        this.toastText = this.t('group.toast.updated');
+      if (this.t) {
+        if (this.new) {
+          this.editHeaderText = this.t('group.new');
+          this.toastText = this.t('group.toast.created');
+        } else {
+          this.editHeaderText = this.t('group.update');
+          this.toastText = this.t('group.toast.updated');
+        }
       }
     }
   });
@@ -48501,14 +48507,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.21">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.22">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.2.21">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.2.22">
    * ```
    *
    * ### Consuming effects
@@ -49306,7 +49312,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.21">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.22">
 ```
 
 #### List of effects
@@ -53477,13 +53483,13 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.2.21"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.2.22"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.2.21"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.2.22"), null, null, true);
         }
       },
 
@@ -54120,6 +54126,10 @@ value. `setMax` should move the slider to the maximum value.
       }
     },
 
+    observers: [
+      '_setupTranslation(language)'
+    ],
+
     _updateEmojiBindings: function () {
       this.async(function () {
         var description = this.$$("#description");
@@ -54191,14 +54201,16 @@ value. `setMax` should move the slider to the maximum value.
     },
 
     _setupTranslation: function () {
-      if (this.new) {
-        this.set('editHeaderText', this.t('community.new'));
-        this.set('toastText', this.t('community.toast.created'));
-        this.set('saveText', this.t('create'));
-      } else {
-        this.set('editHeaderText', this.t('Update community info'));
-        this.set('toastText', this.t('community.toast.updated'));
-        this.set('saveText', this.t('update'));
+      if (this.t) {
+        if (this.new) {
+          this.set('editHeaderText', this.t('community.new'));
+          this.set('toastText', this.t('community.toast.created'));
+          this.set('saveText', this.t('create'));
+        } else {
+          this.set('editHeaderText', this.t('Update community info'));
+          this.set('toastText', this.t('community.toast.updated'));
+          this.set('saveText', this.t('update'));
+        }
       }
     }
   });
@@ -54812,9 +54824,9 @@ value. `setMax` should move the slider to the maximum value.
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.2.21");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.2.22");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.2.21");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.2.22");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
