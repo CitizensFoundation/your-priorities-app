@@ -1,24 +1,25 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.26">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.26">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.26">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.26">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.27">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.27">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.27">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.27">
 
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.26">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.26">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.26">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.27">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.27">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.27">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.27">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.2.27">
 
-<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html?v=6.2.26">
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html?v=6.2.27">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.26">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.27">
 
-<link rel="import" href="yp-user-image.html?v=6.2.26">
+<link rel="import" href="yp-user-image.html?v=6.2.27">
 
 </head><body><dom-module id="yp-users-grid">
   <template>
     <style include="iron-flex iron-flex-alignment">
       #dialog {
-        width: 90%;
-        height: 90%;
+        width: 800px;
         background-color: #FFF;
       }
 
@@ -33,7 +34,7 @@
       }
 
       .id {
-        width: 60px;
+        width: 40px;
       }
 
       .name {
@@ -41,7 +42,15 @@
       }
 
       .email {
-        width: 240px;
+        width: 190px;
+      }
+
+      .organization {
+        width: 150px;
+      }
+
+      .addRemoveButtons {
+        width: 150px;
       }
 
       #selectOrganizationDialog {
@@ -53,11 +62,13 @@
 
     <paper-dialog id="selectOrganizationDialog" modal="">
       <h2>[[t('users.selectOrganization')]]</h2>
-      <paper-menu>
-        <template is="dom-repeat" items="[[availableOrganizations]]">
-          <paper-item on-tap="_selectOrganization" id="[[item.id]]">[[item.name]]</paper-item>
-        </template>
-      </paper-menu>
+      <paper-dialog-scrollable>
+        <paper-menu>
+          <template is="dom-repeat" items="[[availableOrganizations]]">
+            <paper-item on-tap="_selectOrganization" id="[[item.id]]">[[item.name]]</paper-item>
+          </template>
+        </paper-menu>
+      </paper-dialog-scrollable>
 
       <div class="buttons">
         <paper-button dialog-dismiss="">[[t('Close')]]</paper-button>
@@ -66,38 +77,40 @@
 
     <paper-dialog id="dialog">
       <h2>[[headerText]]</h2>
-      <iron-list items="[[users]]" as="user">
-        <template>
-          <div class="layout horizontal">
-            <div class="userItem id">
-              [[user.id]]
-            </div>
-            <div class="userItem name">
-              [[user.name]]
-            </div>
-            <div class="userItem email">
-              [[user.email]]
-            </div>
-            <template is="dom-if" if="[[!_userOrganizationName(user)]]">
-              <div class="organization">
-                <paper-button data-args$="[[user.id]]" on-tap="_addToOrganization">[[t('users.addToOrganization')]]</paper-button>
+      <paper-dialog-scrollable>
+        <iron-list items="[[users]]" as="user">
+          <template>
+            <div class="layout horizontal">
+              <div class="userItem id">
+                [[user.id]]
               </div>
-            </template>
-            <div class="organization" hidden$="[[!_userOrganizationName(user)]]">
-              <div class="organizationName">
-                [[_userOrganizationName(user)]]
+              <div class="userItem name">
+                [[user.name]]
               </div>
-              <paper-button data-args$="[[user.id]]" data-args-org$="[[_userOrganizationId(user)]]" on-tap="_removeFromOrganization">[[t('users.removeFromOrganization')]]</paper-button>
+              <div class="userItem email">
+                [[user.email]]
+              </div>
+              <template is="dom-if" if="[[!_userOrganizationName(user)]]">
+                <div class="organization">
+                  <paper-button data-args$="[[user.id]]" on-tap="_addToOrganization">[[t('users.addToOrganization')]]</paper-button>
+                </div>
+              </template>
+              <div class="organization" hidden$="[[!_userOrganizationName(user)]]">
+                <div class="organizationName">
+                  [[_userOrganizationName(user)]]
+                </div>
+                <paper-button data-args$="[[user.id]]" data-args-org$="[[_userOrganizationId(user)]]" on-tap="_removeFromOrganization">[[t('users.removeFromOrganization')]]</paper-button>
+              </div>
+              <div hidden$="[[!adminUsers]]" class="addRemoveButtons">
+                <paper-button data-args$="[[user.id]]" on-tap="_removeAdmin">[[t('users.removeAdmin')]]</paper-button>
+              </div>
+              <div hidden$="[[adminUsers]]">
+                <paper-button data-args$="[[user.id]]" on-tap="_removeUser">[[t('users.removeUser')]]</paper-button>
+              </div>
             </div>
-            <div hidden$="[[!adminUsers]]">
-              <paper-button data-args$="[[user.id]]" on-tap="_removeAdmin">[[t('users.removeAdmin')]]</paper-button>
-            </div>
-            <div hidden$="[[adminUsers]]">
-              <paper-button data-args$="[[user.id]]" on-tap="_removeUser">[[t('users.removeUser')]]</paper-button>
-            </div>
-          </div>
-        </template>
-      </iron-list>
+          </template>
+        </iron-list>
+      </paper-dialog-scrollable>
       <div hidden$="[[!adminUsers]]" class="layout horizontal">
         <paper-input label="[[t('users.email')]]" value="{{addAdminEmail}}"></paper-input>
         <paper-button on-tap="_addAdmin">[[t('users.addAdmin')]]</paper-button>
