@@ -119,8 +119,8 @@ router.get('/:imageId/commentsCount', auth.can('view image'), function(req, res)
       image_id: req.params.imageId
     }
   }).then(function (commentsCount) {
-    log.info('Point Comment Count for Image', {context: 'comment', user: req.user ? toJson(req.user.simple()) : null });
     res.send({count: commentsCount});
+    log.info('Point Comment Count for Image', {context: 'comment', user: req.user ? toJson(req.user.simple()) : null });
   }).catch(function (error) {
     log.error('Could not get comments count for image', { err: error, context: 'comment', user: req.user ? toJson(req.user.simple()) : null  });
     res.sendStatus(500);

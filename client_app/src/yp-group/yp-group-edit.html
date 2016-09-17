@@ -214,6 +214,10 @@
       locationHidden: Boolean
     },
 
+    observers: [
+      '_setupTranslation(language)'
+    ],
+
     _updateEmojiBindings: function () {
       this.async(function () {
         var description = this.$$("#objectives");
@@ -315,12 +319,14 @@
     },
 
     _setupTranslation: function () {
-      if (this.new) {
-        this.editHeaderText = this.t('group.new');
-        this.toastText = this.t('group.toast.created');
-      } else {
-        this.editHeaderText = this.t('group.update');
-        this.toastText = this.t('group.toast.updated');
+      if (this.t) {
+        if (this.new) {
+          this.editHeaderText = this.t('group.new');
+          this.toastText = this.t('group.toast.created');
+        } else {
+          this.editHeaderText = this.t('group.update');
+          this.toastText = this.t('group.toast.updated');
+        }
       }
     }
   });

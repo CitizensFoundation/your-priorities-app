@@ -206,6 +206,10 @@
       }
     },
 
+    observers: [
+      '_setupTranslation(language)'
+    ],
+
     _updateEmojiBindings: function () {
       this.async(function () {
         var description = this.$$("#description");
@@ -277,14 +281,16 @@
     },
 
     _setupTranslation: function () {
-      if (this.new) {
-        this.set('editHeaderText', this.t('community.new'));
-        this.set('toastText', this.t('community.toast.created'));
-        this.set('saveText', this.t('create'));
-      } else {
-        this.set('editHeaderText', this.t('Update community info'));
-        this.set('toastText', this.t('community.toast.updated'));
-        this.set('saveText', this.t('update'));
+      if (this.t) {
+        if (this.new) {
+          this.set('editHeaderText', this.t('community.new'));
+          this.set('toastText', this.t('community.toast.created'));
+          this.set('saveText', this.t('create'));
+        } else {
+          this.set('editHeaderText', this.t('Update community info'));
+          this.set('toastText', this.t('community.toast.updated'));
+          this.set('saveText', this.t('update'));
+        }
       }
     }
   });
