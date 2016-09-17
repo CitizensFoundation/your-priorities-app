@@ -383,11 +383,11 @@
     },
 
     _facebookProvider: function () {
-      return (window.appGlobals.domain.facebookLoginProvided)
+      return (window.appGlobals && window.appGlobals.domain && window.appGlobals.domain.facebookLoginProvided)
     },
 
     _samlProvider: function () {
-      return (window.appGlobals.domain.samlLoginProvided)
+      return (window.appGlobals && window.appGlobals.domain && window.appGlobals.domain.samlLoginProvided)
     },
 
     _openedChanged: function (newValue) {

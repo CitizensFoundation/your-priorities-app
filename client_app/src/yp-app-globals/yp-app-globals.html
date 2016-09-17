@@ -132,6 +132,7 @@
         _bootResponse: function (event, detail) {
           this.set('requestInProgress', false);
           this.set('domain', detail.response.domain);
+
           this.setupGoogleAnalytics(this.domain);
           if (window.location.pathname=="/") {
             if (detail.response.community) {
