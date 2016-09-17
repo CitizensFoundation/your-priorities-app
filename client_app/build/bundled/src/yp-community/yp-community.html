@@ -217,42 +217,6 @@
     });
   </script>
 </dom-module>
-<script>
-  /**
-   * @polymerBehavior GroupCollectionBehaviors
-   */
-  Polymer.GroupCollectionBehaviors = {
-
-    properties: {
-      activeGroups: {
-        type: Array,
-        notify: true
-      },
-
-      featuredGroups: {
-        type: Array
-      },
-
-      archivedGroups: {
-        type: Array
-      },
-
-      groupsLength: {
-        type: Number
-      }
-    },
-
-    setupGroups: function (groups) {
-      this.set('groupsLength', groups.length);
-      var splitGroups = this.splitByStatus(groups);
-      if (splitGroups.archived.length>0) {
-        this.set('archivedGroups', splitGroups.archived);
-      }
-      this.set('featuredGroups', splitGroups.featured);
-      this.set('activeGroups', splitGroups.active);
-    }
-  };
-</script>
 <dom-module id="yp-group-grid" assetpath="../yp-group/">
 
   <template>
