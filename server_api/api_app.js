@@ -244,7 +244,7 @@ app.post('/authenticate_from_island_is', function (req, res) {
       error.url = req.url;
       airbrake.notify(error, function(airbrakeErr, url) {
         if (airbrakeErr) {
-          log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
+          log.error("AirBrake Error", { context: 'airbrake', err: airbrakeErr, errorStatus: 500 });
         }
         res.sendStatus(500);
       });

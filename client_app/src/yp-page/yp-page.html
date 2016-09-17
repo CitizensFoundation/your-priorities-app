@@ -89,14 +89,17 @@
         }
 
         .topArea {
-          height: 372px;
+          height: 300px;
         }
 
         .topArea {
-          min-height: 372px;
+          min-height: 300px;
         }
 
-
+        .tab-wrapper {
+          min-height: 60px;
+        }
+        
         .topArea[is-post] {
           min-height: 470px;
         }
@@ -125,7 +128,7 @@
       <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post$="[[isPost]]">
         <content select=".largeCard"></content>
       </div>
-      <div class="layout horizontal center-center">
+      <div class="largeButtonWrapper layout horizontal center-center" hidden$="[[!wideWidth]]">
         <content select=".largeAddButton"></content>
       </div>
       <div class="tab-wrapper layout horizontal center-center">

@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app.html?v=6.2.19"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.19"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -2363,8 +2363,8 @@ is shown even without no results (check the demo for an example).
 
       <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-card-large>
 
-      <div class="largeAddButton">
-        <yp-post-card-add on-new-post="_newPost" elevation="2" hidden$="[[!createFabIcon]]"></yp-post-card-add>
+      <div class="largeAddButton" hidden$="[[!createFabIcon]]">
+        <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
       </div>
 
       <paper-tabs id="paperTabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
