@@ -137,6 +137,8 @@
 
     </style>
 
+    <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
+
     <app-drawer-layout drawer-width="360px" responsive-width="16000px">
 
       <app-drawer id="drawer" align="end" position="right" swipe-open>
@@ -199,8 +201,6 @@
     </app-drawer-layout>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-
-    <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
 
     <app-location route="{{route}}"></app-location>
 
