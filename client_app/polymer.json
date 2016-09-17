@@ -1,6 +1,6 @@
 {
   "entrypoint": "index_yp.html",
-  "shell": "src/yp-app.html",
+  "shell": "src/yp-app/yp-app.html",
   "fragments": [
     "src/yp-community/yp-community.html",
     "src/yp-group/yp-group.html",

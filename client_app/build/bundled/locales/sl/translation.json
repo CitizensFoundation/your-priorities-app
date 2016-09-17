@@ -1,4 +1,12 @@
 {
+  "emojiSearchResults": "Search results",
+  "recentlyUsedEmoji": "Recently used",
+  "findAnEmoji": "Find emoji",
+  "cancel": "Cancel",
+  "ok": "Ok",
+  "next": "Next",
+  "create": "Create",
+  "confirm": "Potrdi",
   "access": "Dostop",
   "searchFor": "Iskanje ...",
   "title": "Naziv",
@@ -32,7 +40,8 @@
     "myPoints": "Moji argumenti",
     "myPointEndorsements": "Argumenti, ki so mi všeč",
     "allCommunity": "Vsa obvestila iz mojih skupnosti",
-    "allGroup": "Vsa obvestila iz mojih skupin"
+    "allGroup": "Vsa obvestila iz mojih skupin",
+    "invite_accepted_for": "Sodelujoč v"
   },
 
   "pages": {
@@ -93,6 +102,7 @@
 
   "community": {
     "edit": "Uredi skupnost",
+    "hostname": "Ime gostitelja",
     "admins": "Administratorji skupnosti",
     "users": "Uporabniki skupnosti",
     "delete": "Izbriši skupnost",
@@ -100,7 +110,8 @@
     "public": "Javna skupnost",
     "closed": "Zaprta skupnost",
     "secret": "Skrita skupnost",
-    "pages":"Skupnostne strani"
+    "pages":"Skupnostne strani",
+    "onlyAdminsCanCreateGroups": "Le administratorji lahko ustvarijo skupine"
   },
 
   "posts": {
@@ -119,6 +130,8 @@
   },
 
   "post": {
+    "move": "Premakni objavo",
+    "confirmMove": "Potrdi premik",
     "statusChangeConfirmText": "Ste prepričani, da želite vsem, ki podpirajo ali nasprotujejo tej objavi elektronsko sporočilo?",
     "statusChangeSelectNewStatus": "Izberite status objave",
     "statusChangeContent": "Vsebina sprememb bo poslana vsem podpornikom in nasprotnikom predloga",
@@ -274,6 +287,10 @@
   },
 
   "user": {
+    "loginCompleteFor": "Prijava za",
+    "acceptInvite": "Sprejmi povabilo k sodelovanju",
+    "hasSentYouAndInvitation": "vam je poslal povabilo k sodelovanju v",
+    "acceptInviteInstructions": "Sprejmite povabilo s spodnjim gumbom",
     "setEmail": "Dodaj elektronski naslov",
     "linkAccount": "Poveži z profilom",
     "setEmailInfo": "Dodaj elektronski naslov",
@@ -288,7 +305,7 @@
     "email": "Elektronski naslov",
     "edit": "Uredi uporabniški profil",
     "password": "Geslo",
-    "forgotPassword": "Vpišite novo geslo",
+    "forgotPassword": "Ponastavite geslo",
     "forgotPasswordInstructions": "Vnesite vaš elektronski naslov in poslali vam bomo sporočilo z povezavo preko katere lahko izberete novo geslo.",
     "forgotPasswordEmailHasBeenSent": "Elektronska pošta z navodili za ponastavitev gesla je bila poslana.",
     "resetPassword": "Ponastavite geslo",

@@ -73,6 +73,12 @@
         font-size: 26px;
         color: #333;
       }
+
+      .ypBottomContainer {
+        position: absolute;
+        bottom: 8px;
+        right: 16px;
+      }
     </style>
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
@@ -115,8 +121,10 @@
     <app-route route="{{tabRoute}}" pattern="/:tabName" data="{{tabRouteData}}">
     </app-route>
 
-    <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
-    <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+    <div class="ypBottomContainer">
+      <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
+      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+    </div>
 
   </template>
 
