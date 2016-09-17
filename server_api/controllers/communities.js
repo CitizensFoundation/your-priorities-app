@@ -370,7 +370,7 @@ router.get('/:communityId/admin_users', auth.can('edit community'), function (re
     include: [
       {
         model: models.User,
-        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'last_login_at']),
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublicAndEmail, ['created_at', 'last_login_at']),
         as: 'CommunityAdmins',
         required: true,
         include: [
@@ -404,7 +404,7 @@ router.get('/:communityId/users', auth.can('edit community'), function (req, res
     include: [
       {
         model: models.User,
-        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'last_login_at']),
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublicAndEmail, ['created_at', 'last_login_at']),
         as: 'CommunityUsers',
         required: true,
         include: [

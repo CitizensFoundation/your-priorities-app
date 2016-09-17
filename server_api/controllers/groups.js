@@ -395,7 +395,7 @@ router.get('/:groupId/admin_users', auth.can('edit group'), function (req, res) 
     include: [
       {
         model: models.User,
-        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'last_login_at']),
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublicAndEmail, ['created_at', 'last_login_at']),
         as: 'GroupAdmins',
         required: true,
         include: [
@@ -429,7 +429,7 @@ router.get('/:groupId/users', auth.can('edit group'), function (req, res) {
     include: [
       {
         model: models.User,
-        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'last_login_at']),
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublicAndEmail, ['created_at', 'last_login_at']),
         as: 'GroupUsers',
         required: true,
         include: [

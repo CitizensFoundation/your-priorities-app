@@ -231,6 +231,8 @@ module.exports = function(sequelize, DataTypes) {
 
       defaultAttributesWithSocialMediaPublic: ['id', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id'],
 
+      defaultAttributesWithSocialMediaPublicAndEmail: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id'],
+
       associate: function(models) {
         User.hasMany(models.Post);
         User.hasMany(models.Point);
