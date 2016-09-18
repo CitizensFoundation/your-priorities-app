@@ -1,7 +1,7 @@
 {
-  "emojiSearchResults": "Search results",
-  "recentlyUsedEmoji": "Recently used",
-  "findAnEmoji": "Find emoji",
+  "emojiSearchResults": "Rezultati pretraživanja",
+  "recentlyUsedEmoji": "Nedavno korišteno",
+  "findAnEmoji": "Pretraži 'smajliće'",
   "cancel": "Odustani",
   "ok": "U redu",
   "next": "Nastavi",
@@ -27,7 +27,7 @@
     "passwordResetAndLoggedIn": "Tvoja lozinka je izmijenjena i sada si prijavljen.",
     "method": "Na\u010din slanja obavijesti",
     "frequency": "U\u010destalost",
-    "myPosts": "Moje objave",
+    "myPosts": "Moji prijedlozi",
     "muted": "Ne šalji",
     "browser": "Preglednik",
     "email": "E-po\u0161ta",
@@ -59,10 +59,10 @@
     "active": "Aktivno",
     "featured": "Izdvojeno",
     "archived": "Arhivirano",
-    "published": "Otvoreni",
-    "successful": "Prihvaćeni",
-    "failed": "Odbijeni",
-    "inProgress": "U tijeku"
+    "published": "Aktualan",
+    "successful": "Prihvaćen",
+    "failed": "Odbijen",
+    "inProgress": "U obradi"
   },
 
   "activity": {
@@ -80,7 +80,7 @@
       "newAgainst": "Argument 'protiv'",
       "newComment": "Komentar",
       "newsStory": {
-        "new": "Upiši tekst novosti ili poveznicu na relevantan članak"
+        "new": "Novost od strane korisnika"
       }
     }
   },
@@ -117,9 +117,9 @@
   "posts": {
     "posts": "Prijedlozi",
     "open": "Aktualno",
-    "inProgress": "U tijeku",
-    "successful": "Uspje\u0161no",
-    "failed": "Neuspjelo",
+    "inProgress": "U obradi",
+    "successful": "Prihvaćeno",
+    "failed": "Odbijeno",
     "map": "Karta",
     "noMapPosts": "Nema objava s tom lokacijom",
     "newUserImage": "Dodaj fotografiju"
@@ -210,7 +210,7 @@
     "add_down": "Dodaj argument 'protiv'",
     "helpful": "Pozitivno ocijeni ovaj argument - koristan za raspravu",
     "not_helpful": "Negativno ocijeni ovaj argument - nije koristan za raspravu",
-    "addNewsStory": "Dodaj novost",
+    "addNewsStory": "Upiši tekst novosti i/ili poveznicu na članak",
     "postNewsStory": "Objavi novost",
     "addComment": "Tvoj komentar...",
     "postComment": "Objavi komentar",
