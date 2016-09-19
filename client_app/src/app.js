@@ -43,6 +43,8 @@
     var language = window.locale;
     i18n.init({ lng: language, resGetPath: '/locales/__lng__/__ns__.json' }, function(loaded) {
       window.i18nTranslation = i18n;
+      moment.locale(language);
+      console.log("Changed language to "+language);
       var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-loaded', language: language } } } );
       document.dispatchEvent(event);
     });
