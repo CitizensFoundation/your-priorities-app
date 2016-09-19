@@ -1,5 +1,5 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.27">
-<link rel="import" href="../../bower_components/lodash-element/lodash.js.html?v=6.2.27">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.28">
+<link rel="import" href="../../bower_components/lodash-element/lodash.js.html?v=6.2.28">
 
 <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
 <script src="../../bower_components/linkifyjs/linkify.js"></script>
@@ -60,6 +60,8 @@
       if (locale && this.language!=locale) {
         if (force || !localStorage.getItem('yp-user-locale')) {
           i18n.init({ lng: locale, resGetPath: '/locales/__lng__/__ns__.json' }, function(loaded) {
+            moment.locale(locale);
+            console.log("Changed language to "+locale);
             var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale } } } );
             document.dispatchEvent(event);
           });
