@@ -1,0 +1,381 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.28">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.28">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.28">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.28">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.28">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.2.28">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.28">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.2.28">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.28">
+<link href="../../bower_components/paper-search/paper-search.html?v=6.2.28" rel="import">
+
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.2.28">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.28">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.2.28">
+<link rel="import" href="../ac-activities/ac-activities.html?v=6.2.28">
+
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.28">
+<link rel="import" href="../yp-post/yp-post-card.html?v=6.2.28">
+<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.2.28">
+
+<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.2.28">
+
+</head><body><dom-module id="yp-post-list">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+
+      :host {
+      }
+
+      .container {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+      }
+
+      .postsFilter {
+        padding-left: 16px;
+        height: 36px;
+      }
+
+      .objectives {
+        padding-bottom: 40px;
+        max-width: 432px;
+      }
+
+      .description {
+        padding: 12px;
+      }
+
+
+      yp-post-card {
+        padding-bottom: 52px;
+      }
+
+      #outerRegion {
+        position: relative;
+        @apply(--layout-vertical);
+
+      }
+
+      #scrollableRegion {
+        height: 100%;
+        @apply(--layout-flex);
+      }
+
+      iron-list {
+        width: 960px;
+        height: 100%;
+      }
+
+      .searchContainer {
+        width: 1024px;
+      }
+
+      yp-ajax {
+        padding-top: 48px;
+      }
+
+
+      @media (max-width: 1024px) {
+        iron-list, .searchContainer {
+          width: 960px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        iron-list, .searchContainer {
+          width: 600px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        iron-list, .searchContainer {
+          width: 420px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        iron-list, .searchContainer {
+          width: 360px;
+        }
+      }
+
+      yp-posts-filter {
+        margin-bottom: 8px;
+        margin-left: 8px;
+        margin-top: 16px;
+      }
+
+      #list {
+        margin-top: 16px;
+      }
+
+      .searchButton {
+        padding: 8px;
+        margin: 8px;
+      }
+
+      .searchContainer {
+        margin-top: 16px;
+      }
+
+      yp-posts-filter {
+        padding-right: 16px;
+      }
+
+      paper-search-bar {
+        width: 270px;
+      }
+
+      .half {
+        width: 50%
+      }
+
+      @media (max-width: 800px) {
+        .half {
+          width: 100%;
+        }
+
+        .searchContainer {
+          @apply(--layout-center-center);
+        }
+      }
+    </style>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div class="layout horizontal center-center">
+      <div class="searchContainer layout horizontal wrap">
+        <div class="layout horizontal center-center">
+          <paper-search-bar hide-clear-button="" hide-filter-button="" query="{{searchingFor}}" placeholder="[[t('searchFor')]]" on-paper-search-search="_search"></paper-search-bar>
+        </div>
+        <div class="layout horizontal center-center">
+          <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" on-refresh-group="_refreshGroupFromFilter" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+          </yp-posts-filter>
+        </div>
+      </div>
+    </div>
+
+    <div id="scrollableRegion">
+      <template is="dom-if" if="[[posts]]" restamp="">
+        <iron-list id="list" items="[[posts]]" as="post">
+          <template>
+            <div class="layout vertical center-center">
+              <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+            </div>
+          </template>
+        </iron-list>
+      </template>
+      <div class="layout horizontal center-center">
+        <yp-ajax id="ajax" large-spinner="" on-response="_postsResponse"></yp-ajax>
+        <template is="dom-if" if="[[moreToLoad]]" restamp="">
+          <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-post-list',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.YpScrollTabBehavior
+      ],
+
+      properties: {
+
+        categories: {
+          type: Array
+          },
+
+        defaultCategories: {
+          type: Boolean,
+          value: false
+        },
+
+        posts: {
+          type: Array,
+          value: null,
+          notify: true
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        userId: {
+          type: Number
+        },
+
+        group: {
+          type: Object,
+          notify: true
+        },
+
+        filter: {
+          type: String,
+          value: "newest",
+          observer: "_filterChanged"
+        },
+
+        statusFilter: {
+          type: String,
+          value: "open",
+          notify: true
+        },
+
+        categoryId: {
+          type: String,
+          observer: "_categoryIdChanged"
+        },
+
+        postsCount: {
+          type: Number,
+          notify: true
+        },
+
+        categoryName: {
+          type: String
+        },
+
+        searchingFor: {
+          type: String,
+          value: null,
+          observer: "_searchingForChanged"
+        },
+
+        selectedCategoryName: {
+          type: String
+        },
+
+        tabCounterId: {
+          type: String
+        },
+
+        oldestPostAt: {
+          type: Date
+        }
+      },
+
+      _search: function () {
+        window.appGlobals.activity('click', 'search');
+        this._refreshGroupFromFilter();
+      },
+
+      cardMouseOver: function (event) {
+        event.currentTarget.elevation = 4;
+      },
+
+      cardMouseOut: function (event) {
+        event.currentTarget.elevation = 1;
+      },
+
+      buildPostsUrlPath: function () {
+        return this.$.postsFilter.buildPostsUrlPath();
+      },
+
+      _searchingForChanged: function (newValue, oldValue) {
+      },
+
+      _filterChanged: function (newValue, oldValue) {
+      },
+
+      _categoryIdChanged: function (newValue, oldValue) {
+      },
+
+      ready: function () {
+
+      },
+
+      _groupIdChanged: function (newValue, oldValue) {
+        this.set("posts", null);
+        if (newValue) {
+          this._loadMoreData();
+        }
+      },
+
+      _refreshGroupFromFilter: function () {
+        this.set("posts", null);
+        this._loadMoreData();
+      },
+
+      _loadMoreData: function () {
+        this.set('moreToLoad', false);
+        var objectId, objectType;
+
+        if (this.userId) {
+          objectId = this.userId + '/posts';
+          objectType = 'users';
+        } else {
+          objectId = this.groupId;
+          objectType = 'groups';
+        }
+
+        if (!this.filter)
+          this.set('filter','newest');
+        if (this.searchingFor) {
+          this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
+        } else {
+          this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
+          if (this.categoryId) {
+            this.$$('#ajax').url += '/' + this.categoryId;
+          } else {
+            this.$$('#ajax').url += '/null';
+          }
+          this.$$('#ajax').url += '/'+this.statusFilter;
+        }
+        this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
+        this.$$('#ajax').generateRequest();
+      },
+
+      _postsResponse: function (event, detail, sender) {
+        if (!this.posts) {
+          this.set('posts', []);
+        }
+        var posts = detail.response.posts;
+        this.set('postsCount', detail.response.totalPostsCount);
+        this.fire('yp-post-count', {
+          tabCounterId: this.tabCounterId,
+          count: this.postsCount
+        } );
+
+        this.$$("#postsFilter")._updateTitle();
+        posts.forEach(function(post) {
+          this.push('posts', post);
+        }.bind(this));
+
+        this.async(function () {
+          this.$$("#list").fire('iron-resize');
+        },10);
+
+        if (posts.length>0 && posts.length!=this.postsCount) {
+          this.setMoreToLoad();
+        }
+
+        this._processCategories();
+      },
+
+      _processCategories: function () {
+        if (this.categoryId && this.group) {
+          for (var i = 0; i < this.group.Categories.length; i++) {
+            if (this.group.Categories[i].id == this.categoryId) {
+              this.selectedCategoryName = this.group.Categories[i].name;
+              //this.$.layout.updateFilter();
+            }
+          }
+        } else {
+          this.selectedCategoryName = 'categories.all';
+          //this.$.layout.updateFilter();
+        }
+      }
+    });
+  </script>
+</dom-module>
+</body></html>

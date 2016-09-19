@@ -64,7 +64,7 @@ router.post('/:groupId', auth.can('create category'), function(req, res) {
       userId: req.user.id,
       domainId: req.ypDomain.id,
       groupId: req.params.groupId,
-      communityId: req.ypCommunity ?  req.ypCommunity : null,
+      communityId: req.ypCommunity ?  req.ypCommunity.id : null, 
       object: { categoryId: category.id }
     }, function () {
       category.setupImages(req.body, function(error) {

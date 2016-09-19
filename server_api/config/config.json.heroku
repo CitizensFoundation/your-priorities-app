@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "x",
+    "password": "x",
+    "database": "x",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "protocol": "postgres"
+  },
+  "test": {
+    "username": "x",
+    "password": "x",
+    "database": "x",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+
+  },
+  "production": {
+    "use_env_variable": "DATABASE_URL",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}

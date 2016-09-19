@@ -1,0 +1,173 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+
+<dom-module id="yp-post-map">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .mapContainer {
+        margin: 24px;
+        width: 960px;
+        height: 500px;
+      }
+
+      .noMapContainer {
+        padding: 8px;
+        margin: 48px;
+        background-color: #FFF;
+      }
+
+      #map {
+      }
+
+      a {
+        color: var(--primary-color-700);
+      }
+
+      h1 {
+        padding: 24px;
+      }
+
+      @media (max-width: 934px) {
+        .mapContainer {
+          margin: 16px;
+          width: 800px;
+          height: 400px;
+        }
+      }
+
+      @media (max-width: 832px) {
+        .mapContainer {
+          margin: 8px;
+          width: 600px;
+          height: 340px;
+        }
+      }
+
+      @media (max-width: 632px) {
+        .mapContainer {
+          margin: 8px;
+          width: 400px;
+          height: 300px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .mapContainer {
+          margin: 8px;
+          width: 330px;
+          height: 250px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .mapContainer {
+          margin: 8px;
+          width: 280px;
+          height: 200px;
+        }
+      }
+
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div class="layout vertical center-center">
+      <template is="dom-if" if="[[posts]]">
+        <paper-material elevation="3" class="mapContainer">
+          <google-map id="map" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" fit-to-markers>
+            <template is="dom-repeat" items="[[posts]]" as="post">
+              <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" class="marker">
+                <a href="/post/[[post.id]]" target="_blank">[[post.name]]</a>
+              </google-map-marker>
+            </template>
+          </google-map>
+        </paper-material>
+      </template>
+
+      <template is="dom-if" if="[[noPosts]]">
+        <paper-material elevation="3" class="noMapContainer">
+          <h1>[[t('posts.noMapPosts')]]</h1>
+        </paper-material>
+      </template>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-post-map',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        posts: {
+          type: Array,
+          value: null
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        communityId: {
+          type: Number,
+          observer: "_communityIdChanged"
+        },
+
+        noPosts: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _groupIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("posts", null);
+          this.$.ajax.url = '/api/groups/'+newValue+'/post_locations';
+          this.$.ajax.generateRequest();
+        } else {
+          this.set("posts", null);
+        }
+      },
+
+      _communityIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("posts", null);
+          this.$.ajax.url = '/api/communities/'+newValue+'/post_locations';
+          this.$.ajax.generateRequest();
+        } else {
+          this.set("posts", null);
+        }
+      },
+
+      _response: function (event, detail) {
+        if (detail.response && detail.response.length>0) {
+          this.set('noPosts', false);
+          this.set('posts', detail.response);
+        } else {
+          this.set('noPosts', true);
+        }
+      }
+
+    });
+  </script>
+</dom-module>

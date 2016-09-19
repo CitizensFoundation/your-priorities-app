@@ -1,0 +1,164 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html" >
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html" >
+
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-posts-search-box">
+
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: none;
+        margin: 0;
+        background: rgba(255, 255, 255, 0.9);
+        color: #757575;
+        z-index: 20;
+      }
+
+      :host([active]) {
+        display: block;
+      }
+
+      :host[fit] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+
+      [fit] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+
+      core-menu {
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      core-toolbar {
+        background-color: white;
+      }
+
+      input {
+        border: none;
+        background: transparent;
+        font: inherit;
+        font-size: 16px;
+        outline: none;
+      }
+
+      @media (min-width: 600px) {
+        core-menu {
+          max-width: 50%;
+          margin: 0 auto;
+        }
+      }
+      paper-item::shadow core-icon {
+        margin-right: 24px !important;
+      }
+    </style>
+
+    <paper-header-panel mode="standard" fit="">
+
+      <paper-toolbar class$="{{computeClass(narrow)}}">
+        <paper-icon-button icon="arrow-back" on-tap="toggle"></paper-icon-button>
+        <input id="searchbox" placeholder="{{computePlaceholder()}}" value="{{term::input}}" flex="">
+        <paper-icon-button icon="av:mic"></paper-icon-button>
+      </paper-toolbar>
+
+      <paper-menu on-core-select="onSelect">
+        <template is="dom-repeat" items="{{previousSearches}}" as="p">
+          <paper-item icon="history" label="{{p}}"></paper-item>
+        </template>
+      </paper-menu>
+
+    </paper-header-panel>
+
+    <iron-a11y-keys target="{{searchbox}}" keys="enter" on-keys-pressed="enterHandler"></iron-a11y-keys>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-posts-search-box',
+
+      properties: {
+
+        active: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        groupId: { notify: true },
+
+        narrow: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        previousSearches: { notify: true }
+      },
+
+      enterHandler: function () {
+        window.location = '/#/groups/' + this.groupId + '/search/' + this.term;
+      },
+
+      created: function () {
+        this.previousSearches = [];
+      },
+
+      onSelect: function (e, detail, sender) {
+        if (detail.isSelected) {
+          this.async(function () {
+            this.toggle();
+          }, null, 250);
+        }
+      },
+
+      // Introduce small delay so user sees ripple.
+      toggle: function () {
+        window.appGlobals.activity('toggle', 'search', this.active);
+        this.active = !this.active;
+        if (this.active) {
+          this.$.searchbox.focus();
+        }
+      },
+
+      computeClass: function (narrow) {
+        return this.tokenList({ 'core-narrow': narrow });
+      },
+
+      computePlaceholder: function () {
+        return this.t('post.search');
+      },
+
+      tokenList: function (obj) {
+        var pieces = [];
+        for (key in obj) {
+          if (obj[key]) {
+            pieces.push(key);
+          }
+        }
+        return pieces.join(' ');
+      }
+    });
+  </script>
+</dom-module>

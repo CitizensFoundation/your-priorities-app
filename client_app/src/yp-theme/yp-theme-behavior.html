@@ -1,0 +1,219 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /**
+   * @polymerBehavior ypThemeBehavior
+   */
+  Polymer.ypThemeBehavior = {
+
+    properties: {
+
+      themes: {
+        type: Array,
+        value: function () { return [] }
+      },
+
+      selectedTheme: {
+        type: Number,
+        value: false
+      }
+    },
+
+    ready: function () {
+      //
+      this.push('themes', {
+        name: 'Reykjavík',
+        '--primary-background-color': 'var(--paper-blue-grey-100)',
+        '--primary-color': 'var(--yrpri-reykjavik-blue-500)',
+        '--primary-color-100': 'var(--yrpri-reykjavik-blue-100)',
+        '--primary-color-200': 'var(--yrpri-reykjavik-blue-200)',
+        '--primary-color-300': 'var(--yrpri-reykjavik-blue-300)',
+        '--primary-color-400': 'var(--yrpri-reykjavik-blue-300)',
+        '--primary-color-600': 'var(--yrpri-reykjavik-blue-300)',
+        '--primary-color-700': 'var(--yrpri-reykjavik-blue-400)',
+        '--primary-color-800': 'var(--yrpri-reykjavik-blue-500)',
+        '--primary-color-900': 'var(--yrpri-reykjavik-blue-600)',
+        '--accent-color': 'var(--paper-orange-a700)',
+        '--accent-color-100': 'var(--paper-orange-a100)',
+        '--accent-color-200': 'var(--paper-orange-a200)',
+        '--accent-color-300': 'var(--paper-orange-a400)',
+        '--accent-color-400': 'var(--paper-orange-a700)',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff'
+      });
+
+      this.push('themes', {
+        name: 'Basalt Gray',
+        '--primary-background-color': 'var(--paper-blue-grey-100)',
+        '--primary-color': 'var(--paper-blue-grey-500)',
+        '--primary-color-100': 'var(--paper-blue-grey-100)',
+        '--primary-color-200': 'var(--paper-blue-grey-200)',
+        '--primary-color-300': 'var(--paper-blue-grey-300)',
+        '--primary-color-400': 'var(--paper-blue-grey-400)',
+        '--primary-color-600': 'var(--paper-blue-grey-600)',
+        '--primary-color-700': 'var(--paper-blue-grey-700)',
+        '--primary-color-800': 'var(--paper-blue-grey-800)',
+        '--primary-color-900': 'var(--paper-blue-grey-900)',
+        '--accent-color': 'var(--paper-orange-a700)',
+        '--accent-color-100': 'var(--paper-orange-a100)',
+        '--accent-color-200': 'var(--paper-orange-a200)',
+        '--accent-color-300': 'var(--paper-orange-a300)',
+        '--accent-color-400': 'var(--paper-orange-a400)',
+        '--middle-color': 'var(--paper-blue-grey-600)',
+        '--icon-general-color': '#fff',
+        'body': 'var(--primary-background-color)'
+      });
+
+      this.push('themes', {
+        name: 'Green Moss',
+        '--primary-background-color': 'var(--paper-light-green-100)',
+        '--primary-color': 'var(--paper-light-green-900)',
+        '--primary-color-100': 'var(--paper-light-green-100)',
+        '--primary-color-200': 'var(--paper-light-green-200)',
+        '--primary-color-300': 'var(--paper-light-green-300)',
+        '--primary-color-400': 'var(--paper-light-green-400)',
+        '--primary-color-600': 'var(--paper-light-green-600)',
+        '--primary-color-700': 'var(--paper-light-green-700)',
+        '--primary-color-800': 'var(--paper-light-green-800)',
+        '--primary-color-900': 'var(--paper-light-green-900)',
+        '--accent-color': 'var(--paper-pink-a700)',
+        '--accent-color-100': 'var(--paper-pink-a100)',
+        '--accent-color-200': 'var(--paper-pink-a200)',
+        '--accent-color-300': 'var(--paper-pink-a300)',
+        '--accent-color-400': 'var(--paper-pink-a400)',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff',
+        'body': 'var(--primary-background-color)'
+      });
+
+      this.push('themes', {
+        name: 'Google Blue',
+        '--primary-background-color': 'var(--paper-blue-50)',
+        '--primary-color': 'var(--paper-blue-500)',
+        '--primary-color-200': 'var(--paper-blue-200)',
+        '--primary-color-300': 'var(--paper-blue-300)',
+        '--primary-color-400': 'var(--paper-blue-400)',
+        '--primary-color-600': 'var(--paper-blue-600)',
+        '--primary-color-700': 'var(--paper-blue-700)',
+        '--primary-color-800': 'var(--paper-blue-800)',
+        '--primary-color-900': 'var(--paper-blue-900)',
+        '--accent-color': 'var(--paper-deep-orange-a400)',
+        '--accent-color-100': 'var(--paper-deep-orange-a100)',
+        '--accent-color-200': 'var(--paper-deep-orange-a200)',
+        '--accent-color-300': 'var(--paper-deep-orange-a400)',
+        '--accent-color-400': 'var(--paper-deep-orange-a400)',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff',
+        'body': 'var(--primary-background-color)'
+      });
+
+      this.push('themes', {
+        name: 'Red Rhubarb',
+        '--primary-background-color': 'var(--paper-light-green-50)',
+        '--primary-color':  'var(--paper-red-500)',
+        '--primary-color-200': 'var(--paper-red-200)',
+        '--primary-color-300': 'var(--paper-red-300)',
+        '--primary-color-400': 'var(--paper-red-400)',
+        '--primary-color-600': 'var(--paper-red-600)',
+        '--primary-color-700': 'var(--paper-red-700)',
+        '--primary-color-800': 'var(--paper-red-800)',
+        '--primary-color-900': 'var(--paper-red-900)',
+        '--accent-color': 'var(--paper-yellow-a700)',
+        '--accent-color-100': 'var(--paper-yellow-a400)',
+        '--accent-color-200': 'var(--paper-yellow-a400)',
+        '--accent-color-300': 'var(--paper-yellow-a400)',
+        '--accent-color-400': 'var(--paper-yellow-a700)',
+        '--middle-color': 'var(--primary-color-200)',
+        '--icon-general-color': '#fff',
+        'body': 'var(--primary-background-color)'
+      });
+
+      this.push('themes', {
+        name: 'Mountain Roses',
+        '--primary-background-color': 'var(--paper-light-green-50)',
+        '--primary-color':  'var(--paper-green-500)',
+        '--primary-color-200': 'var(--paper-green-200)',
+        '--primary-color-300': 'var(--paper-green-300)',
+        '--primary-color-400': 'var(--paper-green-400)',
+        '--primary-color-600': 'var(--paper-green-600)',
+        '--primary-color-700': 'var(--paper-green-700)',
+        '--primary-color-800': 'var(--paper-green-800)',
+        '--primary-color-900': 'var(--paper-green-900)',
+        '--accent-color': 'var(--paper-red-a700)',
+        '--accent-color-100': 'var(--paper-red-a100)',
+        '--accent-color-200': 'var(--paper-red-a200)',
+        '--accent-color-300': 'var(--paper-red-a400)',
+        '--accent-color-400': 'var(--paper-red-a700)',
+        '--middle-color': 'var(--primary-background-color)',
+        '--icon-general-color': '#fff'
+      });
+
+      this.push('themes', {
+        name: 'Purple Wizards',
+        '--primary-background-color': 'var(--paper-deep-purple-50)',
+        '--primary-color':  'var(--paper-deep-purple-500)',
+        '--primary-color-200': 'var(--paper-deep-purple-200)',
+        '--primary-color-300': 'var(--paper-deep-purple-300)',
+        '--primary-color-400': 'var(--paper-deep-purple-400)',
+        '--primary-color-600': 'var(--paper-deep-purple-600)',
+        '--primary-color-700': 'var(--paper-deep-purple-700)',
+        '--primary-color-800': 'var(--paper-deep-purple-800)',
+        '--primary-color-900': 'var(--paper-deep-purple-900)',
+        '--accent-color': 'var(--paper-red-a700)',
+        '--accent-color-100': 'var(--paper-red-a100)',
+        '--accent-color-200': 'var(--paper-red-a200)',
+        '--accent-color-300': 'var(--paper-red-a400)',
+        '--accent-color-400': 'var(--paper-red-a700)',
+        '--middle-color': 'var(--primary-background-color)',
+        '--icon-general-color': '#fff'
+      });
+
+      this.push('themes', {
+        name: 'Kópavogur',
+        '--primary-background-color': '#F0F0F0',
+        '--primary-color': '#00853E',
+        '--primary-color-200': '#30AD6A',
+        '--primary-color-300': '##30AD6A',
+        '--primary-color-400': '#08A651',
+        '--primary-color-600': '#006C32',
+        '--primary-color-700': '#004E24',
+        '--primary-color-800': '#004E24',
+        '--primary-color-900': '#004E24',
+        '--accent-color': 'var(--paper-orange-a700)',
+        '--accent-color-100': 'var(--paper-orange-a100)',
+        '--accent-color-200': 'var(--paper-orange-a200)',
+        '--accent-color-300': 'var(--paper-orange-a300)',
+        '--accent-color-400': 'var(--paper-orange-a400)',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff'
+      });
+
+      this.push('themes', {
+        name: 'Forbrukerrådet',
+        '--primary-background-color': '#f5f5f5',
+        '--primary-color': '#7dbdc9',
+        '--primary-color-200': '#7dbdc9',
+        '--primary-color-300': '#7dbdc9',
+        '--primary-color-400': '#7dbdc9',
+        '--primary-color-600': '#6497a1',
+        '--primary-color-700': '#6497a1',
+        '--primary-color-800': '#4b7179',
+        '--primary-color-900': '#324c50',
+        '--accent-color': '#d0672f',
+        '--accent-color-100': 'var(--paper-orange-a100)',
+        '--accent-color-200': 'var(--paper-orange-a200)',
+        '--accent-color-300': 'var(--paper-orange-a300)',
+        '--accent-color-400': 'var(--paper-orange-a400)',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff'
+      });
+    },
+
+    setTheme: function (number) {
+      if (this.themes[number]) {
+        Polymer.updateStyles(this.themes[number]);
+      }
+    }
+
+  }
+</script>

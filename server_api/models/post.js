@@ -87,45 +87,52 @@ module.exports = function(sequelize, DataTypes) {
     scopes: {
       open: {
         where: {
-          official_status: 0
+          official_status: 0,
+          deleted: false
         }
       },
       not_open: {
         where: {
           official_status: {
             $in: [-2,-1,1,2]
-          }
+          },
+          deleted: false
         }
       },
       finished: {
         where: {
           official_status: {
             $in: [-2, -1, 2]
-          }
+          },
+          deleted: false
         }
       },
       successful: {
         where: {
-          official_status: 2
+          official_status: 2,
+          deleted: false
         }
       },
       compromised: {
         where: {
-          official_status: -991
+          official_status: -991,
+          deleted: false
         }
       },
       failed: {
         where: {
           official_status: {
-            $in: [-2, -1]
-          }
+            $in: [-2]
+          },
+          deleted: false
         }
       },
       in_progress: {
         where: {
           official_status: {
             $in: [-1, 1]
-          }
+          },
+          deleted: false
         }
       }
     },
@@ -213,8 +220,38 @@ module.exports = function(sequelize, DataTypes) {
           limit: 100,
           include: [
             {
-              model: modelCategory,
+              model: sequelize.models.Category,
+              required: false,
+              include: [
+                {
+                  model: sequelize.models.Image,
+                  required: false,
+                  as: 'CategoryIconImages',
+                  order: [
+                    [ { model: sequelize.models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
+                  ]
+                }
+              ]
+            },
+            {
+              model: sequelize.models.PostRevision,
               required: false
+            },
+            {
+              model: sequelize.models.Point,
+              attributes: ['id','content'],
+              required: false
+            },
+            { model: sequelize.models.Image,
+              as: 'PostHeaderImages',
+              required: false
+            },
+            {
+              model: sequelize.models.Group,
+              required: true,
+              where: {
+                id: groupId
+              }
             }
           ]
         });
@@ -222,6 +259,10 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     instanceMethods: {
+
+      simple: function() {
+        return { id: this.id, name: this.name };
+      },
 
       updateAllExternalCounters: function(req, direction, column, done) {
         async.parallel([

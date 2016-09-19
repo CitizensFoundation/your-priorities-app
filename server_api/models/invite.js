@@ -4,8 +4,26 @@ module.exports = function(sequelize, DataTypes) {
   var Invite = sequelize.define("Invite", {
     type: { type: DataTypes.INTEGER, allowNull: false },
     expires_at: DataTypes.DATE,
-    joined_at: DataTypes.DATE
+    token: DataTypes.STRING,
+    joined_at: DataTypes.DATE,
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
+
+    defaultScope: {
+      where: {
+        deleted: false
+      }
+    },
+
+    indexes: [
+      {
+        fields: ['token'],
+        where: {
+          deleted: false
+        }
+      }
+    ],
+
     underscored: true,
 
     tableName: 'invites',

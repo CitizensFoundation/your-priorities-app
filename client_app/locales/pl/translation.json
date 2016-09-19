@@ -1,0 +1,310 @@
+{
+  "title": "Tytuł",
+  "selectLanguage": "Wybierz język",
+  "update": "Aktualizacja",
+  "errorCantConnect": "Brak połączenia z serwerem. Może być to spowodowane przeciążeniem serwera lub aktualizacją oprogramowania. Ponów próbę za chwilę.",
+  "errorNotFound": "Nie znaleziono...",
+  "errorNotAuthorized": "Niestety nie masz dostępu do tego elementu.",
+  "generalError": "Wystąpił nieoczekiwany błąd. Wysłano powiadomienie o zaistniałej sytuacji.",
+  "stats": {
+    "posts": "Liczba postów",
+    "discussions": "Liczba wątków",
+    "communities": "Liczba społeczności",
+    "groups": "Liczba grup",
+    "users": "Liczba użytkowników"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "Twoje hasło zostało zmienione i zostałeś/aś zalogowany/a.",
+    "method": "Metoda",
+    "frequency": "Częśtość",
+    "myPosts": "Moje posty",
+    "muted": "Wyłączone",
+    "browser": "Wyszukiwarka",
+    "email": "Email",
+    "asItHappens": "W momencie pojawienia się",
+    "daily": "Raz dziennie",
+    "hourly": "Co godzina",
+    "weekly": "Raz na tydzień",
+    "monthly": "Raz na miesiąc",
+    "myPostsEndorsements": "Posty, które lubię",
+    "myPoints": "Moje głosy",
+    "myPointEndorsements": "Głosy, które lubię",
+    "allCommunity": "Wszystkie powiadomienia z moich społeczności",
+    "allGroup": "Wszystkie powiadomienia z moich grup"
+  },
+
+  "pages": {
+    "addLocale": "Dodaj miejsce",
+    "unPublish": "Cofnij publikację",
+    "deletePage": "Usuń",
+    "addPage": "Dodaj nową stronę",
+    "managePages": "Zarządzaj stronami"
+  },
+
+  "archived": "Archiwum",
+
+  "status": {
+    "select": "Wybierz status",
+    "active": "Aktywny",
+    "featured": "Opisany",
+    "archived": "Zarchiwizowany"
+  },
+
+  "activity": {
+    "post": {
+      "new": "Pomysł",
+      "status": {
+       "change": "Aktualizacja statusu"
+      }
+    },
+    "point": {
+      "forAdded": "Dodany głos \"za\"",
+      "againstAdded": "Dodany głos \"przeciw\"",
+      "new": "Głos",
+      "newFor": "Głos \"za\"",
+      "newAgainst": "Głos \"przeciw\"",
+      "newComment": "Komentarz",
+      "newsStory": {
+        "new": "Aktualności użytkownika"
+      }
+    }
+  },
+  "name": "Nazwa",
+
+  "domain": {
+    "edit": "Edytuj domenę"
+  },
+
+  "domains": "Domeny",
+  "communities": "Społeczności",
+  "groups": "Grupy",
+
+  "myDomains": "Moje domeny",
+  "myCommunities": "Moje społeczności",
+  "myGroups": "Moje grupy",
+
+  "community": {
+    "edit": "Edytuj społeczność",
+    "delete": "Usuń społeczność",
+    "new": "Stwórz społeczność",
+    "public": "Upublicznij społeczność",
+    "closed": "Społeczność zamknięta",
+    "secret": "Społeczność ukryta",
+    "pages":"Strony społeczności"
+  },
+
+  "posts": {
+    "posts": "Pomysły",
+    "open": "Otwarte",
+    "inProgress": "W toku",
+    "successful": "Zakończone sukcesem",
+    "failed": "Zakończone bez sukcesu",
+    "map": "Mapa",
+    "noMapPosts": "Brak postów z lokalizacją",
+    "newUserImage": "Dodaj zdjęcie"
+  },
+
+  "form": {
+    "invalid": "Dokończ wypełnianie formularza"
+  },
+
+  "post": {
+    "noLocation": "Brak lokalizacji",
+    "shareInfo": "Udostępnij post",
+    "description": "Opis",
+    "debate": "Debata",
+    "formInvalid": "Dokończ wypełnianie formularza",
+    "status": "Status tego posta",
+    "new": "Nowy post",
+    "searchingFor": "Szukanie",
+    "top": "Najpopularniejsze posty",
+    "newest": "Ostatnie posty",
+    "random": "Losowe posty",
+    "inProgress": "Posty w toku",
+    "groups": "Grupy postów",
+    "search": "Szukaj postów",
+    "add_new":"Dodaj nowy post",
+    "up_vote":"\"Podbij\" post",
+    "down_vote":"\"Obniż\" post",
+    "report": "Zgłoś post",
+    "notify": "Powiadamiaj mnie o tym poście",
+    "share": "Udostępnij ten post",
+    "yourPost": "Pomysł",
+    "yourPoint": "Głos \"za\"",
+    "location": "Lokalizacja",
+    "photo": "Zdjęcie",
+    "photographerName": "Autor zdjęcia",
+    "newPhoto": "Nowe zdjęcie",
+    "photoUpdate": "Aktualizuj zdjęcie",
+    "photoDeleteConfirmation": "Czy na pewno chcesz usunąć to zdjęcie?",
+    "tabs": {
+      "debate": "Debata",
+      "news": "Aktualności",
+      "location": "Lokalizacja",
+      "photos": "Zdjęcia",
+      "solutions": "Rozwiązania",
+      "not_implemented": "Jeszcze niewprowadzone"
+    },
+    "cover": {
+      "media": "Wybierz media",
+      "map": "Mapa",
+      "streetview": "Street View",
+      "image": "Obraz",
+      "none": "Brak"
+    },
+    "edit": "Edytuj post",
+    "delete": "Usuń post",
+    "addNewIntroBoxText": "Użyj przycisku żarówki, by dodać nowe pomysły"
+  },
+
+  "short_word": {
+    "in": "in"
+  },
+
+  "category": {
+    "new": "Nowa kategoria",
+    "select": "Wybierz kategorię"
+  },
+
+  "categories": {
+    "all": "wszystkie kategorie",
+    "the_all": "Wszystkie kategorie"
+  },
+
+  "point": {
+    "theseAreFor": "Głos \"za\"",
+    "theseAreAgainst": "Głos \"przeciw\"",
+    "point": "Głos",
+    "for": "Twój głos \"za\"...",
+    "against": "Twój głos \"przeciw\"...",
+    "add_up": "Dodaj głos \"za\"",
+    "add_down": "Dodaj głos \"przeciw\"",
+    "helpful": "Oznacz głos jako pomocny",
+    "not_helpful": "Oznacz głos jako mało pomocny",
+    "addNewsStory": "Dodaj aktualność",
+    "postNewsStory": "Dodaj nową aktualność",
+    "addComment": "Twój komentarz...",
+    "postComment": "Opublikuj komentarz",
+    "comments": "Komentarze",
+    "howToWrite": "Poszukajmy najlepszych argumentów \"za\" i przeciw\" i pomyślmy o rozwiązaniach...",
+    "commentToShort": "Tekst za krótki!"
+  },
+
+  "news": "Aktualności",
+
+  "uploading": {
+    "inProgress": "Ładowanie..."
+  },
+
+  "notice": {
+    "ok": "Ok",
+    "feature_not_implemented_a": "Ta funkcjonalność nie jest dostępna w wersji demo Your Priorities 6.0.",
+    "feature_not_implemented_b": "Powiedz nam, co myślisz :)",
+    "welcome_a": "Ta wersja demo Your Priorities 6.0 służy tylko do odczytu - możesz przeglądać jej zawartość, ale nie dodawać własne treści.",
+    "welcome_b": "Na razie działamy tylko w Chrome, ale już wkrótce będziemy obsługiwać wszystkie najpopularniejsze przeglądarki.",
+    "welcome_heading": "Witaj w demo Your Priorities 6.0!",
+    "continue": "Przejdź do podglądu.",
+    "deleteConfirmation": "Czy na pewno chcesz skasować tę grupę?"
+  },
+
+  "maps": {
+    "searchInput": "Adres",
+    "search": "Szukaj"
+  },
+
+  "group": {
+    "group": "Grupa",
+    "admins": "Admini grupy",
+    "users": "Użytkownicy grupy",
+    "new": "Dodaj nową grupę",
+    "edit": "Edytuj grupę",
+    "invite": "Zaproś znajomego",
+    "invite_to_group": "Zaproś znajomego do tej grupy",
+    "share_group": "Udostępnij tę grupę",
+    "delete": "Usuń grupę",
+    "objectives": "Cele",
+    "public": "Grupa publiczna",
+    "closed": "Grupa zamknięta",
+    "secret": "Grupa ukryta"
+  },
+
+  "membership": {
+    "joined": "Dołączyłeś/aś do grupy",
+    "left": "Opuściłeś/aś grupę"
+  },
+
+  "menu": {
+    "my_pages": "Mój profil",
+    "about": "Charakterystyka",
+    "help": "Pomoc",
+    "settings": "Ustawienia"
+
+  },
+
+  "users": {
+    "removeAdmin": "Usuń admina",
+    "addAdmin": "Dodaj admina",
+    "removeUser": "Usuń użytkownika",
+    "inviteUser": "Zaproś użytkownika",
+    "email": "Email",
+    "removeFromOrganization": "Usuń",
+    "addToOrganization": "Organizacja",
+    "selectOrganization": "Wybierz organizację"
+  },
+
+  "user": {
+    "setEmail": "Dodaj email do konta",
+    "linkAccount": "Połącz z kontem",
+    "setEmailInfo": "Dodaj email do konta",
+    "existsLinkAccountInfo": "Wprowadź hasło, aby się połączyć wejdź na swoją pocztę email.",
+    "logoutCompleteFor": "Wylogowanie",
+    "loggedInWithSaml": "Logowanie z użyciem SAML",
+    "loggedInWithFacebook": "Logowanie z użyciem Facebooka",
+    "facebookLogin": "Login z Facebooka",
+    "info":"Info",
+    "notifications": "Powiadomienia",
+    "name": "Imię i nazwisko",
+    "email": "Email",
+    "edit": "Edytuj użytkownika",
+    "password": "Hasło",
+    "forgotPassword": "Utwórz nowe hasło",
+    "forgotPasswordInstructions": "Wpisz swój adres email, a wyślemy ci link, z użyciem którego możesz wygenerować nowe hasło.",
+    "forgotPasswordEmailHasBeenSent": "Email z instrukcjami na temat zmiany hasła został wysłany.",
+    "resetPassword": "Zmień hasło",
+    "resetPasswordInstructions": "Stwórz nowe hasło, które jest trudne do odgadnięcia",
+    "login": "Login",
+    "create": "Utwórz",
+    "cancel": "Usuń",
+    "logout": "Wyloguj",
+    "newPassword": "Nowe hasło",
+    "register": "Nowy użytkownik",
+    "alreadyRegisterred": "Ten adres email został już wykorzystany. Jeśli chcesz, możesz zresetować hasło.",
+    "registrationError": "Błąd w rejestracji",
+    "loginError": "Błąd loginu",
+    "completeForm": "Wypełnij prawidłowo formularz.",
+    "loginNotAuthorized": "Błędny adres email lub hasło."
+  },
+
+  "other": "Inne",
+
+  "socialMedia": "Social Media",
+
+  "location": {
+    "set": "Ustaw lokalizację"
+  },
+  "image": {
+    "upload": "Załaduj obraz",
+    "logo": {
+      "upload": "Załaduj logo"
+    },
+    "header": {
+      "upload": "Załaduj nagłówek"
+    },
+    "profile": {
+      "upload": "Załaduj zdjęcie profilowe"
+    }
+  },
+  "theme": {
+    "choose": "Wybierz motyw"
+  }
+}

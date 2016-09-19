@@ -1,0 +1,104 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html" >
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html" >
+
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="../yp-post/yp-post-card.html">
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-posts-search">
+
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      card-container {
+        text-align: center;
+        padding-top: 16px;
+      }
+
+      .card {
+        display: inline-block;
+        background: white;
+        box-sizing: border-box;
+        width: 400px;
+        height: 240px;
+        margin: 16px;
+        padding: 16px;
+        border-radius: 2%;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .createPost {
+        background-color: var(--accent-color-darker,#f09300);
+        position: fixed;
+        bottom:24px;
+        right: 28px;
+      }
+
+      @media (max-width: 500px) {
+        .card {
+          width: 320px;
+          height: 250px;
+        }
+      }
+    </style>
+
+    <iron-ajax id="postsAjax" url="{{computeUrl(groupId, term)}}" last-response="{{postsResponse}}" handle-as="json"></iron-ajax>
+
+    <base-layout id="layout" selected="posts-search" name="{{computeName()}}" subtitle="{{term}}" groupname="{{groupName}}" groupid="{{groupId}}" showlogo="true">
+      <div class="card-container">
+        <template is="dom-repeat" items="{{posts}}" as="post">
+           <yrpri-post-card post="{{post}}" showcategory="true" small="true"></yrpri-post-card>
+        </template>
+        <paper-fab icon="add" z="1" class="createPost" title="create"></paper-fab>
+      </div>
+    </base-layout>
+  </template>
+  <script>
+
+    Polymer({
+
+      is: 'yp-posts-search',
+
+      properties: {
+
+        posts: {
+          type: Array,
+          value: function () {
+            return [];
+          }
+        },
+
+        postsResponse: {
+          type: Object,
+          observer: 'postsResponseChanged'
+        }
+
+      },
+
+      postsResponseChanged: function (detail, e, sender) {
+        this.$.layout.setSpinner(false);
+        this.posts = detail;
+      },
+
+      ready: function () {
+        this.$.layout.setSpinner(true);
+        window.appGlobals.activity('search', 'posts', this.$.postsAjax.url);
+        this.$.postsAjax.go();
+      },
+
+      computeUrl: function (groupId, term) {
+        return '/api/groups/' + groupId + '/search/' + term;
+      },
+
+      computeName: function () {
+        return this.t('Search');
+      }
+    });
+  </script>
+</dom-module>

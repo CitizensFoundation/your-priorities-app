@@ -1,6 +1,7 @@
 var async = require("async");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var parseDomain = require('parse-domain');
 
 "use strict";
 
@@ -19,10 +20,16 @@ module.exports = function(sequelize, DataTypes) {
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },
     weight: { type: DataTypes.INTEGER, defaultValue: 0 },
+    status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'active' },
     counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
-    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 }
+    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_organizations: { type: DataTypes.INTEGER, defaultValue: 0 },
+    only_admins_can_create_groups: { type: DataTypes.BOOLEAN, defaultValue: false },
+    theme_id: { type: DataTypes.INTEGER, defaultValue: null },
+    other_social_media_info: DataTypes.JSONB,
+    configuration:  DataTypes.JSONB
   }, {
 
     defaultScope: {
@@ -100,24 +107,51 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_SECRET: 2,
 
       setYpCommunity: function (req,res,next) {
-        var hostname = sequelize.models.Domain.extractHost(req.headers.host);
+        var hostname = null;
+        var parsedDomain = parseDomain(req.headers.host);
+
+        if (parsedDomain && parsedDomain.subdomain) {
+          hostname = parsedDomain.subdomain;
+        }
+
+        if (hostname!=null) {
+          if (hostname.indexOf('betri-hverfi-2015') > -1) {
+            hostname = "betri-hverfi-2015";
+          } else if (hostname.indexOf('betri-hverfi-2014') > -1) {
+            hostname = "betri-hverfi-2014";
+          } else if (hostname.indexOf('betri-hverfi-2013') > -1) {
+            hostname = "betri-hverfi-2013";
+          } else if (hostname.indexOf('betri-hverfi-2012') > -1) {
+            hostname = "betri-hverfi-2012";
+          }
+        }
+
         if (!hostname && req.params.communityHostname)
           hostname = req.params.communityHostname;
-        if (hostname && hostname!="www" && hostname!="new") {
+
+        if (hostname && hostname!="" && hostname!="www" && hostname!="new") {
+          //log.info("PARSE 3", {hostname: hostname});
           Community.find({
             where: {hostname: hostname}
           }).then(function (community) {
+            //log.info("PARSE 4", {hostname: hostname, community: community});
             if (community) {
               req.ypCommunity = community;
               next();
             } else {
               log.warn('Cant find community', { user: toJson(req.user), context: 'setYpCommunity', err: 'Community not found', errorStatus: 404 });
-              req.ypCommunity = { id: null };
+              req.ypCommunity = {
+                id: null,
+                hostname: 'not_found'
+              };
               next();
             }
           }.bind(this));
         } else {
-          req.ypCommunity = { id: null };
+          req.ypCommunity = {
+            id: null,
+            hostname: 'not_found_or_domain_level'
+          };
           next();
         }
       },
@@ -137,11 +171,11 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Community.hasMany(models.Group, { foreignKey: "community_id" });
         Community.belongsTo(models.Domain, {foreignKey: "domain_id"});
-        Community.belongsToMany(models.User, { as: 'CommunityUsers', through: 'CommunityUser' });
         Community.belongsTo(models.User);
         Community.belongsToMany(models.Image, { as: 'CommunityLogoImages', through: 'CommunityLogoImage' });
         Community.belongsToMany(models.Image, { as: 'CommunityHeaderImages', through: 'CommunityHeaderImage' });
-        Community.belongsToMany(models.User, { as: 'CommunityAdmin', through: 'CommunityAdmin' });
+        Community.belongsToMany(models.User, { as: 'CommunityUsers', through: 'CommunityUser' });
+        Community.belongsToMany(models.User, { as: 'CommunityAdmins', through: 'CommunityAdmin' });
       }
     }
   });

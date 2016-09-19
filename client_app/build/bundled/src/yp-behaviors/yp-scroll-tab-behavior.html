@@ -1,0 +1,54 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.28">
+
+<script>
+  /**
+   * @polymerBehavior YpScrollTabBehavior
+   */
+  Polymer.YpScrollTabBehavior = {
+
+    properties: {
+      moreToLoad: {
+        type: Boolean,
+        value: false,
+        notify: true
+      }
+    },
+
+    attached: function () {
+      window.addEventListener('scroll', this._isLoadMoreElementInView.bind(this));
+    },
+
+    detached: function () {
+      window.removeEventListener('scroll', this._isLoadMoreElementInView);
+    },
+
+    _isLoadMoreElementInView: function () {
+      var loadMoreButton = this.$$("#loadMoreButton");
+      if (this._isVisible() && loadMoreButton && withinviewport(loadMoreButton)) {
+        this._loadMoreData();
+      }
+    },
+
+    _isVisible: function () {
+      return (this.offsetParent && Boolean(this.offsetParent.offsetWidth || this.offsetParent.offsetHeight));
+    },
+
+    unsetMoreToLoad: function () {
+      this.set('moreToLoad', false);
+    },
+
+    setMoreToLoad: function () {
+      if (false) {
+        this.async(function () {
+          this.set('moreToLoad', true);
+          this.async(function () {
+            this._isLoadMoreElementInView();
+          }, 800);
+        }, 50);
+      } else {
+        this.set('moreToLoad', true);
+      }
+    }
+  }
+</script>
+</head><body></body></html>

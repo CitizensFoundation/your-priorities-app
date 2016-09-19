@@ -1,0 +1,76 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="ac-notification-selection.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="ac-notification-settings">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <ac-notification-selection
+      name="[[t('notification.myPosts')]]"
+      setting="{{notificationsSettings.my_posts}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection
+      name="[[t('notification.myPostsEndorsements')]]"
+      setting="{{notificationsSettings.my_posts_endorsements}}">
+    </ac-notification-selection>
+
+
+    <ac-notification-selection
+      name="[[t('notification.myPoints')]]"
+      setting="{{notificationsSettings.my_points}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection
+      name="[[t('notification.myPointEndorsements')]]"
+      setting="{{notificationsSettings.my_points_endorsements}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection
+      name="[[t('notification.allCommunity')]]"
+      setting="{{notificationsSettings.all_community}}">
+    </ac-notification-selection>
+
+    <ac-notification-selection
+      name="[[t('notification.allGroup')]]"
+      setting="{{notificationsSettings.all_group}}">
+    </ac-notification-selection>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-notification-settings',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        notificationsSettings: {
+          type: Object,
+          notify: true,
+          observer: '_notificationsSettingsChanged'
+        }
+      },
+
+      observers: [
+        'settingsStarChanged(notificationsSettings.*)'
+      ],
+
+      _notificationsSettingsChanged: function (value) {
+      },
+
+      settingsStarChanged: function (object) {
+        this.fire('yp-notifications-changed', this.notificationsSettings);
+      }
+    });
+  </script>
+</dom-module>

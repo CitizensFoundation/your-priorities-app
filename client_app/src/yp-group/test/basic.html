@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>yp-group tests</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../bower_components/web-component-tester/browser.js"></script>
+  <script src="../../../bower_components/test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../../bower_components/test-fixture/test-fixture.html">
+  <script type="text/javascript" src="../../i18next-1.7.4.min.js"></script>
+
+  <link rel="import" href="../../yp-app-globals/yp-app-globals.html">
+  <link rel="import" href="../yp-group-card.html">
+
+</head>
+<body>
+
+<yp-app-globals disable-welcome setup-defaults></yp-app-globals>
+
+<test-fixture id="basic">
+  <template is="dom-template">
+    <div id="card" style="width:500px;">
+      <yp-group id="group" group="{{group}}"></yp-group>
+    </div>
+  </template>
+</test-fixture>
+
+<script>
+  suite('basic', function() {
+
+    test('displays name, description & counters', function(done) {
+      var basicGroupFixture = fixture('basic', {group: {id: 368, name:'NHS Citizen',
+                                    top_banner_file_name: 'NHScitizen_logo_final2c.png',
+                                    description:'Test description about something rather. This group is about things. Test description about something rather. This group is about things.', counter_posts: 100,
+                                    counter_points: 1500, counter_users: 10000}});
+
+      var basicGroup = basicGroupFixture.querySelector('#group');
+
+      var group = basicGroup.group;
+      expect(group.counter_posts).to.be.equal(100);
+      expect(group.counter_points).to.be.equal(1500);
+      expect(group.counter_users).to.be.equal(10000);
+      expect(basicGroup.innerHTML).to.include("NHS Citizen");
+      expect(basicGroup.innerHTML).to.include("Test description");
+      expect(basicGroup.innerHTML).to.include("100");
+      expect(basicGroup.innerHTML).to.include("1,500");
+      expect(basicGroup.innerHTML).to.include("10,000");
+    });
+
+    test('displays IsoCountry image', function(done) {
+      var basicGroupFixture = fixture('basic', {group: {id: 368, name:'Test name',
+        top_banner_file_name: 'NHScitizen_logo_final2c.png',
+        description:'Test description', counter_posts: 100,
+        counter_points: 1500, counter_users: 10000, IsoCountry: {code:"is"}}});
+
+      var basicGroup = basicGroupFixture.querySelector('#group');
+
+      Polymer.Base.async(function() {
+        expect(basicGroup.innerHTML).to.include("assets/flags/64/is.png");
+        done();
+      },10000);
+    });
+  });
+</script>
+</body>
+</html>

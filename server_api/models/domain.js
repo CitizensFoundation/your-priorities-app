@@ -1,11 +1,18 @@
 var async = require("async");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var parseDomain = require('parse-domain');
 
 "use strict";
 
 var Community = require('./community');
 // https://www.npmjs.org/package/enum for state of posts
+
+var checkValidKeys = function (keys) {
+  return ((keys.client_id && keys.client_id!='') &&
+           keys.client_id.length>6 &&
+          (keys.client_secret && keys.client_secret != ''))
+};
 
 module.exports = function(sequelize, DataTypes) {
   var Domain = sequelize.define("Domain", {
@@ -25,14 +32,14 @@ module.exports = function(sequelize, DataTypes) {
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
-    facebook_client_id: { type: DataTypes.STRING },
-    facebook_client_secret: { type: DataTypes.STRING },
-    twitter_consumer_key: { type: DataTypes.STRING },
-    twitter_consumer_secret: { type: DataTypes.STRING },
-    google_consumer_key: { type: DataTypes.STRING },
-    google_consumer_secret: { type: DataTypes.STRING },
-    github_client_id: { type: DataTypes.STRING },
-    github_client_secret: { type: DataTypes.STRING }
+    counter_organizations: { type: DataTypes.INTEGER, defaultValue: 0 },
+    only_admins_can_create_communities: { type: DataTypes.BOOLEAN, defaultValue: false },
+    theme_id: { type: DataTypes.INTEGER, defaultValue: null },
+    other_social_media_info: DataTypes.JSONB,
+    secret_api_keys: DataTypes.JSONB,
+    public_api_keys: DataTypes.JSONB,
+    info_texts: DataTypes.JSONB,
+    configuration:  DataTypes.JSONB
   }, {
     underscored: true,
 
@@ -42,6 +49,17 @@ module.exports = function(sequelize, DataTypes) {
 
       simple: function() {
         return { id: this.id, name: this.name, domain_name: this.domain_name };
+      },
+
+      ensureApiKeySetup: function () {
+        if (!this.secret_api_keys) {
+          this.secret_api_keys = {
+            facebook: {},
+            google: {},
+            github: {},
+            twitter: {}
+          }
+        }
       },
 
       setupLogoImage: function(body, done) {
@@ -94,24 +112,157 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_CLOSED: 1,
       ACCESS_SECRET: 2,
 
+      defaultAttributesPublic: ['id', 'name', 'domain_name', 'access', 'deleted', 'description',
+        'default_locale', 'message_to_users', 'message_for_new_idea','google_analytics_code',
+        'counter_communities','counter_users','counter_groups','counter_points','counter_posts',
+        'counter_organizations','only_admins_can_create_communities','theme_id','other_social_media_info',
+        'public_api_keys','info_texts'],
+
+      getLoginProviders: function (req, callback) {
+        var providers = [];
+
+        providers.push(
+          {
+            name            : 'local-strategy',
+            provider        : 'local',
+            protocol        : 'local',
+            strategyObject  : 'Strategy',
+            strategyPackage : 'passport-local',
+            clientID        : 'false',
+            clientSecret    : 'false',
+            scope           : [],
+            fields          : null,
+            urlCallback     : 'http://localhost/callback/users/auth/local-strategy-1/callback'
+          }
+        );
+
+        sequelize.models.Domain.findAll().then(function(domains) {
+          async.eachSeries(domains, function (domain, seriesCallback) {
+
+            var callbackDomainName;
+            if (process.env.STAGING_SETUP) {
+              if (domain.domain_name=='betrireykjavik.is') {
+                callbackDomainName = 'betri.'+domain.domain_name;
+              } else if (domain.domain_name=='betraisland.is') {
+                callbackDomainName = 'betra.'+domain.domain_name;
+              } else if (domain.domain_name=='yrpri.org') {
+                callbackDomainName = 'beta.'+domain.domain_name;
+              } else {
+                callbackDomainName = domain.domain_name;
+              }
+            } else {
+              callbackDomainName = req.headers.host; //domain.domain_name;
+            }
+            
+            if (false && domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.google)) {
+              providers.push({
+                name            : 'google-strategy-'+domain.id,
+                provider        : 'google',
+                protocol        : 'oauth2',
+                strategyObject  : 'Strategy',
+                strategyPackage : 'passport-google-oauth',
+                clientID        : domain.secret_api_keys.google.client_id,
+                clientSecret    : domain.secret_api_keys.google.client_secret,
+                scope           : ['email', 'profile'],
+                fields          : null,
+                urlCallback     : 'https://'+callbackDomainName+'/api/users/auth/google/callback'
+              });
+            }
+
+            if (domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.facebook)) {
+              providers.push({
+                name            : 'facebook-strategy-'+domain.id,
+                provider        : 'facebook',
+                protocol        : 'oauth2',
+                strategyObject  : 'Strategy',
+                strategyPackage : 'passport-facebook',
+                clientID        : domain.secret_api_keys.facebook.client_id,
+                clientSecret    : domain.secret_api_keys.facebook.client_secret,
+                scope           : ['email'],
+                fields          : ['id', 'displayName', 'email'],
+                // urlCallback     : 'http://fbtest.betrireykjavik.is:4242/api/users/auth/facebook/callback'
+                urlCallback     : 'https://'+callbackDomainName+'/api/users/auth/facebook/callback'
+              });
+            }
+
+            if (domain.secret_api_keys && domain.secret_api_keys.saml &&
+                domain.secret_api_keys.saml.entryPoint && domain.secret_api_keys.saml.entryPoint!='' &&
+                domain.secret_api_keys.saml.entryPoint.length>6) {
+              providers.push({
+                name            : 'saml-strategy-'+domain.id,
+                provider        : 'saml',
+                protocol        : 'saml',
+                strategyObject  : 'Strategy',
+                strategyPackage : 'passport-saml',
+                certInPemFormat : true,
+                entryPoint      : domain.secret_api_keys.saml.entryPoint,
+                cert            : null, //domain.secret_api_keys.saml.cert,
+                callbackUrl     : null //'https://'+callbackDomainName+'/authenticate_from_island_is' //(domain.secret_api_keys.saml.callbackUrl && domain.secret_api_keys.saml.callbackUrl!="") ? domain.secret_api_keys.saml.callbackUrl : null
+              });
+            }
+            seriesCallback();
+          }, function (error) {
+            callback(error, providers);
+          })
+        }).catch(function (error) {
+          callback(error);
+        });
+      },
+
+      getLoginHosts: function (callback) {
+        var hosts = [];
+        hosts.push('127.0.0.1');
+        hosts.push('localhost');
+
+        sequelize.models.Domain.findAll().then(function(domains) {
+          async.eachSeries(domains, function (domain, seriesCallback) {
+            hosts.push(domain.domain_name);
+            seriesCallback();
+          }, function (error) {
+            callback(error, hosts);
+          })
+        }).catch(function (error) {
+          callback(error);
+        });
+      },
+
       setYpDomain: function (req,res,next) {
-        var domainName = Domain.extractDomain(req.headers.host);
-        log.info("DOMAIN: "+req.useragent.source);
+        var domainName;
+        var parsedDomain = parseDomain(req.headers.host);
+        if (parsedDomain && parsedDomain.domain) {
+          domainName = parsedDomain.domain+'.'+parsedDomain.tld;
+        } else if (parsedDomain) {
+          domainName = parsedDomain.tld;
+        } else {
+          domainName = 'localhost';
+        }
+        log.info("DOMAIN NAME", { domainName: domainName });
+
         Domain.findOrCreate({where: { domain_name: domainName },
                                       defaults: { access: Domain.ACCESS_PUBLIC,
                                                   default_locale: 'en',
                                                   name: 'New Your Priorities Domain',
                                                   user_agent: req.useragent.source,
                                                   ip_address: req.clientIp}})
-            .spread(function(domain, created) {
-              if (created) {
-                log.info('Domain Created', { domain: toJson(domain), context: 'create' });
-              } else {
-                log.info('Domain Loaded', { domain: toJson(domain), context: 'create' });
-              }
-              req.ypDomain = domain;
-              next();
+        .spread(function(domain, created) {
+          if (created) {
+            log.info('Domain Created', { domain: toJson(domain.simple()), context: 'create' });
+          } else {
+            //log.info('Domain Loaded', { domain: toJson(domain.simple()), context: 'create' });
+          }
+          req.ypDomain = domain;
+          if (req.url.indexOf('/auth') > -1 || req.url.indexOf('/users/') > -1) {
+            sequelize.models.Domain.getLoginProviders(req, function (error, providers) {
+              req.ypDomain.loginProviders = providers;
+              sequelize.models.Domain.getLoginHosts(function (error, hosts) {
+                req.ypDomain.loginHosts = hosts;
+                next();
+              });
             });
+          } else {
+            next();
+          }
+        });
       },
 
       extractDomain: function(url) {
@@ -155,7 +306,7 @@ module.exports = function(sequelize, DataTypes) {
         Domain.belongsToMany(models.Image, { as: 'DomainHeaderImages', through: 'DomainHeaderImage' });
         Domain.belongsToMany(models.User, { through: 'DomainUser' });
         Domain.belongsToMany(models.User, { as: 'DomainUsers', through: 'DomainUser' });
-        Domain.belongsToMany(models.User, { as: 'DomainAdmin', through: 'DomainAdmin' });
+        Domain.belongsToMany(models.User, { as: 'DomainAdmins', through: 'DomainAdmin' });
       }
     }
   });

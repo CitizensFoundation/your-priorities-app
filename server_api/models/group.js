@@ -14,9 +14,12 @@ module.exports = function(sequelize, DataTypes) {
     message_for_new_idea: DataTypes.TEXT,
     message_to_users: DataTypes.TEXT,
     weight: { type: DataTypes.INTEGER, defaultValue: 0 },
+    status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'active' },
     counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
-    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 }
+    counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
+    theme_id: { type: DataTypes.INTEGER, defaultValue: null },
+    configuration: DataTypes.JSONB
   }, {
 
     defaultScope: {
@@ -28,6 +31,15 @@ module.exports = function(sequelize, DataTypes) {
     underscored: true,
 
     tableName: 'groups',
+
+    indexes: [
+      {
+        fields: ['name'],
+        where: {
+          deleted: false
+        }
+      }
+    ],
 
     instanceMethods: {
 
@@ -113,10 +125,11 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_PUBLIC: 0,
       ACCESS_CLOSED: 1,
       ACCESS_SECRET: 2,
+      ACCESS_OPEN_TO_COMMUNITY: 3,
 
       addUserToGroupIfNeeded: function (groupId, req, done) {
         sequelize.models.Group.find({
-          where: {id: groupId}
+          where: { id: groupId }
         }).then(function (group) {
           group.hasGroupUser(req.user).then(function(result) {
             if (!result) {
@@ -166,18 +179,33 @@ module.exports = function(sequelize, DataTypes) {
         })
       },
 
+      convertAccessFromRadioButtons: function(body) {
+        var access = 0;
+        if (body.public) {
+          access = 0;
+        } else if (body.closed) {
+          access = 1;
+        } else if (body.secret) {
+          access = 2;
+        } else if (body.open_to_community) {
+          access = 3;
+        }
+        return access;
+      },
+      
       associate: function(models) {
         Group.hasMany(models.Post, { foreignKey: "group_id" });
         Group.hasMany(models.Point, { foreignKey: "group_id" });
         Group.hasMany(models.Endorsement, { foreignKey: "group_id" });
         Group.hasMany(models.Category, { foreignKey: "group_id" });
-        Group.belongsToMany(models.User, { as: 'GroupUsers', through: 'GroupUser' });
+        Group.belongsTo(models.Community);
         Group.belongsTo(models.IsoCountry, { foreignKey: "iso_country_id" });
         Group.belongsTo(models.User);
         Group.belongsToMany(models.Image, { through: 'GroupImage' });
         Group.belongsToMany(models.Image, { as: 'GroupLogoImages', through: 'GroupLogoImage' });
         Group.belongsToMany(models.Image, { as: 'GroupHeaderImages', through: 'GroupHeaderImage' });
-        Group.belongsToMany(models.User, { as: 'GroupAdmin', through: 'GroupAdmin' });
+        Group.belongsToMany(models.User, { as: 'GroupUsers', through: 'GroupUser' });
+        Group.belongsToMany(models.User, { as: 'GroupAdmins', through: 'GroupAdmin' });
       }
     }
   });

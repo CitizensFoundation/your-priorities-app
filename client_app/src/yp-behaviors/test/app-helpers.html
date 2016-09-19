@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>app helpers tests</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../bower_components/web-component-tester/browser.js"></script>
+  <script src="../../../bower_components/test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../../bower_components/test-fixture/test-fixture.html">
+  <script type="text/javascript" src="../../i18next-1.7.4.min.js"></script>
+
+  <link rel="import" href="../app-helpers.html">
+
+</head>
+<style include="iron-flex iron-flex-alignment">
+  body {
+    margin: 0;
+    padding: 0;
+  }
+</style>
+<body>
+
+<script>
+  suite('app helpers', function() {
+
+    test('localization method', function() {
+      expect(Polymer.appHelpers.t("this.is.a.test")).to.equal("this.is.a.test");
+    });
+
+    test('formatting numbers', function() {
+      expect(Polymer.appHelpers.formatNumber("10000000")).to.equal("10,000,000");
+    });
+
+    test('random number', function() {
+      expect(Polymer.appHelpers.getRandomNumber(99)).to.be.below(100);
+    });
+
+    test('pad number', function() {
+      expect(Polymer.appHelpers.padNumber(7)).to.equal("007");
+    });
+
+    test('split array', function() {
+      var splitArray = Polymer.appHelpers.splitArray([0,1,2,3,4,5],2);
+      var array = [[0,1],[2,3],[4,5]];
+      expect(splitArray).to.eql(array);
+    });
+
+    test('s3bucketName', function() {
+      window.s3bucketName = "test";
+      expect(Polymer.appHelpers.s3bucketName()).to.equal("test");
+    });
+
+  });
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-var reallyUploadImages = false;
+var reallyUploadImages = true;
 
 var bcrypt = require('bcrypt');
 var models = require('../models');
@@ -10,6 +10,9 @@ var fs = require('fs');
 var https = require('https');
 var temp = require('temp');
 temp.track();
+var _ = require('lodash');
+YAML = require('yamljs');
+var wordwrap = require('wordwrap')(100);
 
 var randomstring = require("randomstring");
 var filename = process.argv[2];
@@ -37,6 +40,7 @@ var comments = json['comments'];
 var promotions = json['promotions'];
 var pages = json['pages'];
 var activities = json['activities'];
+var followings = json['followings'];
 
 var allUsersIdsByEmail = {};
 var allUsersModelByEmail = {};
@@ -79,7 +83,7 @@ var fakeReq;
 var masterImageDownloadUrl;
 
 var activitiesTransform = {
-  ActivityIdeaStatusUpdate: 'activity.post.status.update',
+  ActivityIdeaStatusUpdate: 'activity.post.status.change',
   ActivityPointHelpfulDelete: 'activity.point.helpful.delete',
   ActivityIdeaOfficialStatusSuccessful: 'activity.post.officialStatus.successful',
   ActivityIdeaRevisionName: 'activity.post.revision.name',
@@ -139,60 +143,39 @@ var activitiesTransform = {
 var defaultNotificationsSettings = function(email) {
   var settings;
 
-  if (email=='robert@citizens.is' || email=='gunnar@citizens.is') {
+  if (email == 'robert@citizens.is' || email == 'gunnar@citizens.is') {
     settings = {
       my_posts: {
-        method:  models.AcNotification.METHOD_EMAIL,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
       },
       my_posts_endorsements: {
-        method:  models.AcNotification.METHOD_EMAIL,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
       },
       my_points: {
-        method:  models.AcNotification.METHOD_EMAIL,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
       },
       my_points_endorsements: {
-        method:  models.AcNotification.METHOD_EMAIL,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
       },
       all_community: {
-        method:  models.AcNotification.METHOD_EMAIL,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
       },
       all_group: {
-        method:  models.AcNotification.METHOD_EMAIL,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
+      },
+      newsletter: {
+        method: models.AcNotification.METHOD_EMAIL,
+        frequency: models.AcNotification.FREQUENCY_AS_IT_HAPPENS
       }
     }
   } else {
-    settings = {
-      my_posts: {
-        method:  models.AcNotification.METHOD_MUTED,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
-      },
-      my_posts_endorsements: {
-        method:  models.AcNotification.METHOD_MUTED,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
-      },
-      my_points: {
-        method:  models.AcNotification.METHOD_MUTED,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
-      },
-      my_points_endorsements: {
-        method:  models.AcNotification.METHOD_MUTED,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
-      },
-      all_community: {
-        method:  models.AcNotification.METHOD_MUTED,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
-      },
-      all_group: {
-        method:  models.AcNotification.METHOD_MUTED,
-        frequency:  models.AcNotification.FREQUENCY_AS_IT_HAPPENS
-      }
-    }
+    settings = models.AcNotification.defaultNotificationSettings;
   }
   return settings;
 };
@@ -217,6 +200,10 @@ var loadErrorUrls = function (callback) {
       callback();
     }
   });
+};
+
+var getDeletedStatus = function (status) {
+  return (status!='published' && status!='active' && status!='inactive')
 };
 
 var saveCacheUrls = function (callback) {
@@ -365,7 +352,10 @@ async.series([
     console.log('Processing domain '+domain);
     domain['ip_address'] = ip.address();
     domain['user_agent'] = 'yrpri script';
-    domain['default_locale'] = 'is';
+    if (!domain.default_locate) {
+      domain['default_locale'] = 'en';
+    }
+    domain.public_api_keys = { google: { analytics_tracking_id: domain['google_analytics_code'] } };
 
     models.Domain.build(domain).save().then(function (domain) {
       if (domain) {
@@ -544,81 +534,81 @@ async.series([
     console.log('Setting up Your Priorities if needed');
     if (currentDomain.domain_name.indexOf("yrpri.org") > -1) {
       async.series([
-        function(callback){
-          models.Community.build({
-            name: "World Countries",
-            description: "World Countries",
-            domain_id: currentDomain.id,
-            ip_address: ip.address(),
-            user_agent: 'yrpri script',
-            hostname: "world-countries",
-            access: 0
-          }).save().then(function (community) {
-            if (community) {
-              community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
-                communityWC = community;
-                callback();
-              });
-            } else {
-              callback('no communitity created');
-            }
-          }).catch(function (error) {
-            console.log(error);
-            callback(error);
-          });
-        },
+          function(callback){
+            models.Community.build({
+              name: "World Countries",
+              description: "World Countries",
+              domain_id: currentDomain.id,
+              ip_address: ip.address(),
+              user_agent: 'yrpri script',
+              hostname: "world-countries",
+              access: 0
+            }).save().then(function (community) {
+              if (community) {
+                community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                  communityWC = community;
+                  callback();
+                });
+              } else {
+                callback('no communitity created');
+              }
+            }).catch(function (error) {
+              console.log(error);
+              callback(error);
+            });
+          },
 
-        function(callback){
-          models.Community.build({
-            name: "NHS Citizen",
-            description: "NHS Citizen",
-            domain_id: currentDomain.id,
-            ip_address: ip.address(),
-            user_agent: 'yrpri script',
-            hostname: "world-countries",
-            access: 0
-          }).save().then(function (community) {
-            if (community) {
-              community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
-                communityNHS = community;
-                callback();
-              });
-            } else {
-              callback('no communitity created');
-            }
-          }).catch(function (error) {
-            console.log(error);
-            callback(error);
-          });
-        },
+          function(callback){
+            models.Community.build({
+              name: "NHS Citizen",
+              description: "NHS Citizen",
+              domain_id: currentDomain.id,
+              ip_address: ip.address(),
+              user_agent: 'yrpri script',
+              hostname: "world-countries",
+              access: 0
+            }).save().then(function (community) {
+              if (community) {
+                community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                  communityNHS = community;
+                  callback();
+                });
+              } else {
+                callback('no communitity created');
+              }
+            }).catch(function (error) {
+              console.log(error);
+              callback(error);
+            });
+          },
 
-        function(callback){
-          models.Community.build({
-            name: "Zero Heroes",
-            description: "Zero Heroes",
-            domain_id: currentDomain.id,
-            ip_address: ip.address(),
-            user_agent: 'yrpri script',
-            hostname: "world-countries",
-            access: 0
-          }).save().then(function (community) {
-            if (community) {
-              community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
-                communityZH = community;
-                callback();
-              });
-            } else {
-              callback('no communitity created');
-            }
-          }).catch(function (error) {
-            console.log(error);
-            callback(error);
-          });
-        }
-      ],
-      function(err, results){
-        seriesCallback(err);
-      });
+          function(callback){
+            models.Community.build({
+              name: "Zero Heroes",
+              description: "Zero Heroes",
+              domain_id: currentDomain.id,
+              ip_address: ip.address(),
+              user_agent: 'yrpri script',
+              hostname: "world-countries",
+              access: 0
+            }).save().then(function (community) {
+              if (community) {
+                community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
+                  communityZH = community;
+                  callback();
+                });
+              } else {
+                callback('no communitity created');
+              }
+            }).catch(function (error) {
+              console.log(error);
+              callback(error);
+            });
+          }
+        ],
+        function(err, results){
+          seriesCallback(err);
+        });
     } else {
       seriesCallback();
     }
@@ -631,6 +621,8 @@ async.series([
       incoming['id'] = null;
 
       incoming['legacy_user_id'] = oldId;
+      incoming['legacy_new_domain_id'] = currentDomain.id;
+
       incoming['notifications_settings'] = defaultNotificationsSettings(incoming.email);
 
       var buddyIconUrl = incoming['buddy_icon'];
@@ -658,70 +650,70 @@ async.series([
         allUsersByOldIds[oldId] = masterUser.id;
         allUserModelsByOldIds[oldId] = masterUser;
         async.series([
-          function(innerSeriesCallback){
-            if (incoming.encrypted_password &&
+            function(innerSeriesCallback){
+              if (incoming.encrypted_password &&
                 incoming.encrypted_password != masterUser.encrypted_password) {
-              models.UserLegacyPassword.find({
-                where: { encrypted_password: incoming.encrypted_password }
-              }).then(function(legacyPassword) {
-                if (legacyPassword) {
-                  innerSeriesCallback();
-                } else {
-                  models.UserLegacyPassword.build({
-                    encrypted_password: incoming.encrypted_password,
-                    user_id: masterUser.id
-                  }).save().then(function () {
+                models.UserLegacyPassword.find({
+                  where: { encrypted_password: incoming.encrypted_password }
+                }).then(function(legacyPassword) {
+                  if (legacyPassword) {
                     innerSeriesCallback();
-                  }).catch(function (error) {
-                    console.log(error);
-                    innerSeriesCallback(error);
-                  });
-                }
-              }).catch(function (error) {
-                console.log(error);
-                innerSeriesCallback(error);
-              });
-
-            } else {
-              innerSeriesCallback();
-            }
-          },
-          function(innerSeriesCallback){
-            if (incoming.facebook_uid && incoming.facebook_uid != masterUser.facebook_id && incoming.created_at>masterUser.created_at) {
-              masterUser.facebook_id = incoming.facebook_uid;
-              masterUser.save().then(function (newUser) {
-                allUsersModelByEmail[incoming.email] = newUser;
-                innerSeriesCallback();
-              }).catch(function (error) {
-                console.log(error);
-                innerSeriesCallback(error);
-              });
-            } else {
-              innerSeriesCallback();
-            }
-          },
-          function(innerSeriesCallback){
-            if (buddyIconUrl && buddyIconUrl!='') {
-              uploadImage(buddyIconUrl, 'user-profile', masterUser.id, function(error, image) {
-                console.log("Uploading buddy icon has been completed innerSeries");
-                if (error) {
+                  } else {
+                    models.UserLegacyPassword.build({
+                      encrypted_password: incoming.encrypted_password,
+                      user_id: masterUser.id
+                    }).save().then(function () {
+                      innerSeriesCallback();
+                    }).catch(function (error) {
+                      console.log(error);
+                      innerSeriesCallback(error);
+                    });
+                  }
+                }).catch(function (error) {
                   console.log(error);
+                  innerSeriesCallback(error);
+                });
+
+              } else {
+                innerSeriesCallback();
+              }
+            },
+            function(innerSeriesCallback){
+              if (incoming.facebook_uid && incoming.facebook_uid != masterUser.facebook_id && incoming.created_at>masterUser.created_at) {
+                masterUser.facebook_id = incoming.facebook_uid;
+                masterUser.save().then(function (newUser) {
+                  allUsersModelByEmail[incoming.email] = newUser;
                   innerSeriesCallback();
-                } else {
-                  masterUser.addUserProfileImage(image).then(function () {
-                    console.log("Uploading buddy header Image has been added innerSeries");
-                    innerSeriesCallback()
-                  });
-                }
-              });
-            } else {
-              innerSeriesCallback();
+                }).catch(function (error) {
+                  console.log(error);
+                  innerSeriesCallback(error);
+                });
+              } else {
+                innerSeriesCallback();
+              }
+            },
+            function(innerSeriesCallback){
+              if (buddyIconUrl && buddyIconUrl!='') {
+                uploadImage(buddyIconUrl, 'user-profile', masterUser.id, function(error, image) {
+                  console.log("Uploading buddy icon has been completed innerSeries");
+                  if (error) {
+                    console.log(error);
+                    innerSeriesCallback();
+                  } else {
+                    masterUser.addUserProfileImage(image).then(function () {
+                      console.log("Uploading buddy header Image has been added innerSeries");
+                      innerSeriesCallback()
+                    });
+                  }
+                });
+              } else {
+                innerSeriesCallback();
+              }
             }
-          }
-        ],
-        function(err){
-          callback(err);
-        });
+          ],
+          function(err){
+            callback(err);
+          });
       } else {
         incoming['ip_address'] = ip.address();
         incoming['user_agent'] = 'yrpri script';
@@ -797,7 +789,7 @@ async.series([
         } else if (incoming['name'].indexOf("2014") > -1) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityBH3.id;
         } else if (!(incoming['name'].indexOf("Betri Reykjavík") > -1)
-                    && (incoming['description'] && incoming['description'].indexOf("2015") > -1)) {
+          && (incoming['description'] && incoming['description'].indexOf("2015") > -1)) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityBH4.id;
         } else {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityBR.id;
@@ -825,15 +817,15 @@ async.series([
           console.error(error);
         });
       } else if (currentDomain.domain_name.indexOf("yrpri.org") > -1 &&
-                     (incoming['iso_country_id'] ||
-                     (incoming['name'] && incoming['name'].indexOf("NHS") > -1) ||
-                     (incoming['name'] && incoming['name'].indexOf("Barcombe and Hamsey") > -1) ||
-                     (incoming['description'] && incoming['description'].indexOf("community do") > -1))) {
+        (incoming['iso_country_id'] ||
+        (incoming['name'] && incoming['name'].indexOf("NHS") > -1) ||
+        (incoming['name'] && incoming['name'].indexOf("Barcombe and Hamsey") > -1) ||
+        (incoming['description'] && incoming['description'].indexOf("community do") > -1))) {
 
         if (incoming['name'] && incoming['name'].indexOf("NHS") > -1) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityNHS.id;
         } else if ((incoming['description'] && incoming['description'].indexOf("community do") > -1) ||
-                   (incoming['name'] && incoming['name'].indexOf("Barcombe and Hamsey") > -1)) {
+          (incoming['name'] && incoming['name'].indexOf("Barcombe and Hamsey") > -1)) {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityZH.id;
         } else {
           allCommunitiesByOldGroupIds[oldId] = incoming['community_id'] = communityWC.id;
@@ -885,6 +877,8 @@ async.series([
 
         models.Community.build(incoming).save().then(function (community) {
           if (community) {
+            allCommunitiesByOldGroupIds[oldId] = community.id;
+            console.log("ACTV DEBUG: oldId: "+oldId+" newCommunityId: "+ community.id);
             community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
               incoming['community_id'] = community.id;
               incoming['domain_id'] = null;
@@ -895,11 +889,11 @@ async.series([
               incoming['google_analytics_code'] = null;
               incoming['description'] = null;
               incoming['objectives'] = community.description;
-              allCommunitiesByOldGroupIds[oldId] = community.id;
               models.Group.build(incoming).save().then(function (group) {
                 if (group) {
                   group.updateAllExternalCounters(fakeReq, 'up', 'counter_groups', function () {
                     allGroupsByOldIds[oldId] = group.id;
+                    console.log("ACTV DEBUG: oldId: "+oldId+" newCommunityId: "+ community.id+ " newGroupId: " + group.id);
                     allGroupsModelByOldIds[oldId] = group;
                     if (headerUrl && headerUrl!='') {
                       uploadImage(headerUrl, 'group-logo', group.user_id, function(error, image) {
@@ -1011,6 +1005,8 @@ async.series([
 
       incoming['legacy_post_id'] = oldId;
 
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
+
       models.Post.build(incoming).save().then(function (post) {
         if (post) {
           post.updateAllExternalCounters(fakeReq, 'up', 'counter_posts', function () {
@@ -1052,6 +1048,8 @@ async.series([
       var oldId = incoming['id'];
       incoming['id'] = null;
 
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
+
       models.PostRevision.build(incoming).save().then(function (post_revision) {
         if (post_revision) {
           allPostRevisionsByOldIds[oldId] = post_revision.id;
@@ -1086,7 +1084,11 @@ async.series([
         incoming['content']="";
       }
 
-      incoming['status']="active";
+      if (incoming['status']==null) {
+        incoming['status']="active";
+      }
+
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       models.PostStatusChange.build(incoming).save().then(function (post_status_change) {
         if (post_status_change) {
@@ -1118,6 +1120,8 @@ async.series([
       incoming['id'] = null;
 
       incoming['user_agent'] = "Script import";
+
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       models.Endorsement.build(incoming).save().then(function (endorsement) {
         if (endorsement) {
@@ -1165,16 +1169,25 @@ async.series([
         incoming['status']="active";
       }
 
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
+
       models.Point.build(incoming).save().then(function (point) {
         if (point) {
           allPointsByOldIds[oldId] = point.id;
           models.Post.find({
             where: { id: point.post_id }
           }).then(function(post) {
-            post.updateAllExternalCounters({ ypDomain: currentDomain }, 'up', 'counter_points', function () {
-              post.increment('counter_points');
-              callback()
-            });
+            if (post) {
+              post.updateAllExternalCounters({ ypDomain: currentDomain }, 'up', 'counter_points', function () {
+                post.increment('counter_points');
+                callback()
+              });
+            } else {
+              point.deleted = true;
+              point.save().then(function (point) {
+                callback();
+              });
+            }
           });
         } else {
           callback('no point created');
@@ -1205,6 +1218,8 @@ async.series([
       if (incoming['status']==null) {
         incoming['status']="active";
       }
+
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       models.PointRevision.build(incoming).save().then(function (point_revision) {
         if (point_revisions) {
@@ -1239,6 +1254,8 @@ async.series([
       if (incoming['status']==null) {
         incoming['status']="active";
       }
+
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       if (incoming['value']==true) {
         incoming['value'] = 1
@@ -1283,7 +1300,8 @@ async.series([
       incoming['ip_address'] = ip.address();
       incoming['user_agent'] = 'yrpri script';
       incoming['value'] = 0;
-      incoming['status'] = 'active';
+
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       var oldId = incoming['id'];
       incoming['id'] = null;
@@ -1291,6 +1309,7 @@ async.series([
       models.Point.build(incoming).save().then(function (point) {
         if (point) {
           allCommentsByOldIds[oldId] = point.id;
+          allPointsByOldIds[oldId] = point.id;
           incoming['point_id'] = point.id;
           incoming['post_id'] = null;
           models.PointRevision.build(incoming).save().then(function (point_revision) {
@@ -1338,6 +1357,8 @@ async.series([
       var oldId = incoming['id'];
       incoming['id'] = null;
 
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
+
       models.Promotion.build(incoming).save().then(function (promotion) {
         if (promotion) {
           allPromotionsByOldIds[oldId] = promotion.id;
@@ -1361,11 +1382,22 @@ async.series([
     async.eachSeries(pages, function(incoming, callback) {
       console.log('Processing page ' + incoming);
       incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
-      incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
-      incoming['domain_id'] = currentDomain.id;
+      if (incoming['group_id']=='45' && parseInt(currentDomain.id) ==1) {
+        incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
+      } else {
+        incoming['community_id'] = allCommunitiesByOldGroupIds[incoming['group_id']];
+        incoming['group_id'] = null;
+      }
+      //incoming['domain_id'] = currentDomain.id;
+      incoming['content'] = YAML.parse(incoming['content']);
+      incoming['title'] = YAML.parse(incoming['title']);
+      incoming['published'] = true;
 
       var oldId = incoming['id'];
       incoming['id'] = null;
+
+      incoming['legacy_page_id'] = oldId;
+      incoming['legacy_new_domain_id'] = currentDomain.id;
 
       models.Page.build(incoming).save().then(function (page) {
         if (page) {
@@ -1387,11 +1419,36 @@ async.series([
   },
 
   function(seriesCallback){
+    async.eachSeries(followings, function(incoming, callback) {
+      console.log('Processing following ' + incoming);
+      incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
+      incoming['other_user_id'] = allUsersByOldIds[incoming['other_user_id']];
+      var oldId = incoming['id'];
+      incoming['id'] = null;
+
+      models.AcFollowing.build(incoming).save().then(function (following) {
+        if (following) {
+          callback()
+        } else {
+          callback('no following created');
+        }
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }, function(err){
+      if (err) {
+        console.log(err);
+      } else {
+        seriesCallback();
+      }
+    });
+  },
+
+  function(seriesCallback){
     async.eachSeries(activities, function(incoming, callback) {
       console.log('Processing activity ' + incoming);
 
       incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
-
       incoming['domain_id'] = currentDomain.id;
 
       if (incoming['post_id']) {
@@ -1399,16 +1456,23 @@ async.series([
       }
 
       if (incoming['group_id']) {
-        incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
         incoming['community_id'] = allCommunitiesByOldGroupIds[incoming['group_id']];
+        incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
+        console.log("ACTV DEBUG: newCommunityId: "+incoming['community_id']+" newGroupId: "+ incoming['group_id']);
+      } else {
+        console.log("ACTV DEBUG: NO GROUP ID");
       }
 
       if (incoming['point_id']) {
-        incoming['point_id'] = allPostsByOldIds[incoming['point_id']];
+        incoming['point_id'] = allPointsByOldIds[incoming['point_id']];
       }
 
       if (incoming['comment_id']) {
         incoming['point_id'] = allCommentsByOldIds[incoming['comment_id']];
+      }
+
+      if (incoming['post_status_change_id']) {
+        incoming['post_status_change_id'] = allPostStatusChangesByOldIds[incoming['post_status_change_id']];
       }
 
       var oldId = incoming['id'];
@@ -1416,9 +1480,13 @@ async.series([
 
       incoming['access'] = 0;
 
+      incoming['created_at'] = incoming['created_at'];
+
       if (activitiesTransform[incoming['type']]) {
         incoming['type'] = activitiesTransform[incoming['type']];
       }
+
+      incoming['deleted'] = getDeletedStatus(incoming['status']);
 
       models.AcActivity.build(incoming).save().then(function (activity) {
         if (activity) {
@@ -1436,6 +1504,38 @@ async.series([
       } else {
         seriesCallback();
       }
+    });
+  },
+
+  // Add missing user_id to ac_activities for status updates
+  function(seriesCallback){
+    async.eachSeries(needsGroupAdminPermissions, function(incoming, outerCallback) {
+      var user = allUserModelsByOldIds[incoming.user_id];
+      var group = allGroupsModelByOldIds[incoming.group_id];
+      console.log('Adding admin user starting ' + user.email + ' for group ' + group.name);
+      if ((currentDomain.id == 1 && _.includes(_.lowerCase(user.name), 'unnur')) ||
+        (!_.includes(_.lowerCase(user.email), 'deleted') && !_.includes(_.lowerCase(user.name), 'robert') && !_.includes(_.lowerCase(user.name), 'gunnar'))) {
+        models.AcActivity.findAll({
+          where: {
+            group_id: group.id,
+            user_id: null
+          }
+        }).then(function (activities) {
+          async.eachSeries(activities, function (activity, innerCallback) {
+            activity.user_id = user.id;
+            activity.save().then(function (results) {
+              console.log('Adding admin user to missing status updates for activities ' + user.email + ' for group ' + group.name);
+              innerCallback();
+            });
+          }, function (error) {
+            outerCallback();
+          });
+        })
+      } else {
+        outerCallback();
+      }
+    }, function (error) {
+      seriesCallback(error);
     });
   },
 
@@ -1463,11 +1563,11 @@ async.series([
       var user = allUserModelsByOldIds[incoming.user_id];
       var group = allGroupsModelByOldIds[incoming.group_id];
       console.log('Processing admin user in group user ' + user.email+' for group '+group.name);
-      group.hasGroupAdmin(user).then(function(results) {
+      group.hasGroupAdmins(user).then(function(results) {
         console.log('Has user results: '+results);
         if (!results) {
           console.log('Adding user to group');
-          group.addGroupAdmin(user).then(function () {
+          group.addGroupAdmins(user).then(function () {
             callback();
           });
         } else {
@@ -1492,10 +1592,10 @@ async.series([
       models.Community.find({
         where: {id: group.community_id}
       }).then(function (community) {
-        community.hasCommunityAdmin(user).then(function(results) {
+        community.hasCommunityAdmins(user).then(function(results) {
           if (!results) {
             console.log('Adding user to community');
-            community.addCommunityAdmin(user).then(function () {
+            community.addCommunityAdmins(user).then(function () {
               callback();
             });
           } else {
@@ -1511,6 +1611,92 @@ async.series([
         seriesCallback();
       }
     });
+  },
+
+  // Delete activities from deleted objects
+  function(seriesCallback) {
+    models.AcActivity.findAll({
+      where: {
+        type: 'activity.post.new'
+      },
+      include: [
+        {
+          model: models.Post,
+          required: true,
+          where: {
+            deleted: true
+          }
+        }
+      ]
+    }).then(function (activities) {
+      async.eachSeries(activities, function (activity, innerCallback) {
+        if (activity.Post.deleted!=true) {
+          console.log("POST DELETED NOT TRUE");
+        } else {
+          console.log("DELETING: "+activity.Post.name);
+        }
+        activity.deleted = true;
+        activity.save().then(function () {
+          innerCallback();
+        });
+      }, function done() {
+        seriesCallback();
+      });
+    })
+  },
+
+  function(seriesCallback) {
+    models.AcActivity.findAll({
+      where: {
+        type: 'activity.post.status.change'
+      },
+      include: [
+        {
+          model: models.PostStatusChange,
+          required: true,
+          where: {
+            deleted: true
+          }
+        }
+      ]
+    }).then(function (activities) {
+      async.eachSeries(activities, function (activity, innerCallback) {
+        activity.deleted = true;
+        console.log("DELETING: "+activity.PostStatusChange.content);
+        activity.save().then(function () {
+          innerCallback();
+        });
+      }, function done() {
+        seriesCallback();
+      });
+    })
+  },
+
+  function(seriesCallback) {
+    models.AcActivity.findAll({
+      where: {
+        type: 'activity.point.new'
+      },
+      include: [
+        {
+          model: models.Point,
+          required: true,
+          where: {
+            deleted: true
+          }
+        }
+      ]
+    }).then(function (activities) {
+      async.eachSeries(activities, function (activity, innerCallback) {
+        activity.deleted = true;
+        console.log("DELETING: "+activity.Point.name);
+        activity.save().then(function () {
+          innerCallback();
+        });
+      }, function done() {
+        seriesCallback();
+      });
+    })
   }
 ]);
 

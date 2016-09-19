@@ -1,0 +1,175 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="yp-group-stats.html">
+<link rel="import" href="yp-group-behaviors.html">
+<link rel="import" href="../yp-membership-button/yp-membership-button.html">
+
+<dom-module id="yp-group-card">
+
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+        width: 416px;
+      }
+
+      .description {
+        @apply(--layout-vertical);
+        color: var(--primary-color-more-darker, #424242);
+        line-height: var(--description-line-height, 1.3);
+      }
+
+      .card-content {
+        padding-bottom: 40px;
+      }
+
+      .groupCard {
+        height: 455px;
+        background-color: #fff;
+      }
+
+      .groupCard[featured] {
+        height: 455px;
+        width: 864px;
+        background-color: #fff;
+      }
+
+      .objectives {
+        @apply(--layout-vertical);
+        color: var(--primary-color-more-darker, #424242);
+        line-height: var(--objectives-line-height, 1.3);
+        padding: 16px;
+      }
+
+      .stats {
+        position: absolute;
+        bottom: 0px;
+        right: 8px;
+      }
+
+      .group-name {
+        padding: 0;
+        padding-bottom: 4px;
+        margin: 0;
+      }
+
+      .post-image {
+      }
+
+      .card-content {
+        padding: 0;
+      }
+
+      iron-image {
+        width: 416px;
+        height: 234px;
+      }
+
+      yp-group-stats {
+        color: var(--primary-color-more-darker, #424242);
+      }
+
+      paper-card {
+        background-color: #f00;
+        vertical-align: text-top;
+      }
+
+      .informationText {
+        vertical-align: text-top;
+      }
+
+      .group-name {
+        font-size: 26px;
+        margin-top: -4px;
+        height: 56px;
+        padding: 16px;
+        background-color: var(--primary-color-800);
+        color: #FFF;
+        cursor: pointer;
+      }
+
+      .group-name[featured] {
+        font-size: 42px;
+      }
+
+      yp-membership-button {
+        position: absolute;
+        top: 213px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+        color: var(--icon-general-color, #FFF);
+      }
+
+      .objectives {
+        padding: 8px;
+      }
+
+      @media (max-width: 420px) {
+        :host {
+          width: 304px;
+        }
+
+        .groupCard {
+          margin-left: 0;
+          margin-right: 8px;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
+        }
+
+        iron-image {
+          width: 304px;
+          height: 165px;
+        }
+
+        .description {
+          margin-bottom: 32px;
+        }
+
+        yp-membership-button {
+          top: 144px;
+        }
+      }
+    </style>
+
+    <template is="dom-if" if="[[group]]">
+      <paper-card class="groupCard" animated elevation="[[elevation]]" class="groupCard">
+        <div class="card-content">
+          <div class="layout">
+            <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
+          </div>
+          <div class="description">
+            <h2 class="group-name" on-tap="_goToGroup">[[groupName]]</h2>
+            <div class="objectives">[[groupObjectives]]</div>
+          </div>
+        </div>
+        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
+        <yp-membership-button group="[[group]]"></yp-membership-button>
+      </paper-card>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-group-card',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.GroupBehaviors
+      ]
+    });
+  </script>
+</dom-module>

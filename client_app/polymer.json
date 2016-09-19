@@ -1,0 +1,29 @@
+{
+  "entrypoint": "index_yp.html",
+  "shell": "src/yp-app/yp-app.html",
+  "fragments": [
+    "src/yp-community/yp-community.html",
+    "src/yp-group/yp-group.html",
+    "src/yp-post/yp-post.html",
+    "src/yp-dialog-container/yp-dialog-container-logged-in.html",
+    "src/yp-dialog-container/yp-dialog-container-admin.html",
+    "src/yp-user/yp-user.html",
+    "src/yp-app/yp-view-404.html"
+  ],
+  "sourceGlobs": [
+    "src/**/*",
+    "images/**/*",
+    "styles/**/*",
+    "locales/**/*",
+    "index_br.html",
+    "index_bi.html",
+    "manifest_yp.json",
+    "manifest_br.json",
+    "manifest_bi.json",
+    "bower.json"
+  ],
+  "includeDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
+  ]
+}

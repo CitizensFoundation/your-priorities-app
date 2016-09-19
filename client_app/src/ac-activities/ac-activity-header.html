@@ -1,0 +1,36 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-user/yp-user-with-organization.html">
+
+<dom-module id="ac-activity-header">
+  <template>
+    <yp-user-with-organization user="[[activity.User]]"></yp-user-with-organization>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-activity-header',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        activity: {
+          type: Object,
+          observer: '_activityChanged'
+        }
+      },
+
+      _activityChanged: function (newValue) {
+      }
+
+    });
+  </script>
+</dom-module>

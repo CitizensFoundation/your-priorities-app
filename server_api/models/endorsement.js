@@ -19,6 +19,15 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
 
+    indexes: [
+      {
+        fields: ['user_id', 'post_id'],
+        where: {
+          deleted: false
+        }
+      }
+    ],
+
     classMethods: {
       associate: function(models) {
         Endorsement.belongsTo(models.Post);

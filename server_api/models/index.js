@@ -4,13 +4,26 @@ var fs        = require("fs");
 var path      = require("path");
 var Sequelize = require("sequelize");
 var env       = process.env.NODE_ENV || "development";
+var _ = require('lodash');
 
 var sequelize;
 if (process.env.NODE_ENV === 'production') {
-  sequelize = new Sequelize(process.env.DATABASE_URL, {});
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: true
+    },
+    logging: false
+  });
 } else {
   var config = require(__dirname + '/../config/config.json')[env];
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+  sequelize = new Sequelize(config.database, config.username, config.password, _.merge(config, {
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: true
+    },
+    logging: true
+  }));
 }
 
 var db        = {};
@@ -46,9 +59,11 @@ Object.keys(db).forEach(function(modelName) {
   }
 });
 
-sequelize.sync().done(function() {
-  db.Post.addFullTextIndex();
-});
+if (process.env.NODE_ENV === 'development') {
+  sequelize.sync().done(function() {
+    db.Post.addFullTextIndex();
+  });
+}
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

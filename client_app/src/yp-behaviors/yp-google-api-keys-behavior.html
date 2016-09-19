@@ -1,0 +1,31 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /**
+   * @polymerBehavior ypLoggedInUserBehavior
+   */
+  Polymer.ypLoggedInUserBehavior = {
+
+    properties: {
+      googleMapsApiKey: {
+        type: String,
+        notify: true,
+        value: null
+      }
+    },
+
+    listeners: {
+      'yp-user-is-logged-in': '_setGoogleMapsApiKey'
+    },
+
+    ready: function () {
+      if (window.appUser && window.appUser.user) {
+        this.set('loggedInUser', window.appUser.user);
+      }
+    },
+
+    _userLoggedIn: function (event, detail) {
+      this.set('loggedInUser', detail);
+    }
+  }
+</script>

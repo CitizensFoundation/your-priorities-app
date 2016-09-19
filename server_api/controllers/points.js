@@ -5,6 +5,7 @@ var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var async = require('async');
+var embedly = require('embedly');
 
 var changePointCounter = function (pointId, column, upDown, next) {
   models.Point.find({
@@ -61,6 +62,87 @@ var sendPointOrError = function (res, point, context, user, error, errorStatus) 
     res.send(point);
   }
 };
+
+var validateEmbedUrl = function(urlIn) {
+  var urlRegex = /((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi;
+  var urls = urlRegex.exec(urlIn);
+  return (urls!=null && urls.length>0)
+};
+
+router.get('/:parentPointId/comments', auth.can('view point'), function(req, res) {
+  models.Point.findAll({
+    where: {
+      parent_point_id: req.params.parentPointId
+    },
+    order: [
+      ["created_at", "asc"],
+      [ models.PointRevision, models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ]
+    ],
+    include: [
+      {
+        model: models.PointRevision,
+        include: [
+          {
+            model: models.User,
+            attributes: models.User.defaultAttributesWithSocialMediaPublic,
+            include: [
+              {
+                model: models.Image, as: 'UserProfileImages',
+                required: false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }).then(function (comments) {
+    log.info('Point Comment for Parent Point', {context: 'comment', user: req.user ? toJson(req.user.simple()) : null  });
+    res.send(comments);
+  }).catch(function (error) {
+    log.error('Could not get comments for parent point', { err: error, context: 'comment', user: req.user ? toJson(req.user.simple()) : null  });
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:parentPointId/commentsCount', auth.can('view point'), function(req, res) {
+  models.Point.count({
+    where: {
+      parent_point_id: req.params.parentPointId
+    },
+    include: [
+      {
+        model: models.PointRevision,
+        include: [
+          {
+            model: models.User,
+            attributes: ['id','name','created_at']
+          }
+        ]
+      }
+    ],
+    order: [
+      ["created_at", "asc"]
+    ]
+  }).then(function (commentsCount) {
+    log.info('Point Comment Count for Parent Point', {context: 'comment', user: req.user ? toJson(req.user.simple()) : null  });
+    res.send({count: commentsCount});
+  }).catch(function (error) {
+    log.error('Could not get comments count for parent point', { err: error, context: 'comment', user: req.user ? toJson(req.user.simple()) : null });
+    res.sendStatus(500);
+  });
+});
+
+router.post('/:parentPointId/comment', auth.isLoggedIn, auth.can('view point'), function(req, res) {
+  models.Point.createComment(req, { parent_point_id: req.params.parentPointId, comment: req.body.comment }, function (error) {
+    if (error) {
+      log.error('Could not save comment point on parent point', { err: error, context: 'comment', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Point Comment Created on Parent Point', {context: 'news_story', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
 
 router.post('/:groupId', auth.can('create point'), function(req, res) {
   var point = models.Point.build({
@@ -136,7 +218,27 @@ router.delete('/:id', auth.can('edit point'), function(req, res) {
       }).then(function(post) {
         post.updateAllExternalCounters(req, 'down', 'counter_points', function () {
           post.decrement('counter_points');
-          res.sendStatus(200);
+          models.AcActivity.findAll({
+            attributes: ['id','deleted'],
+            include: [
+              {
+                model: models.Point,
+                required: true,
+                where: {
+                  id: point.id
+                }
+              }
+            ]
+          }).then(function (activities) {
+            async.eachSeries(activities, function (activity, innerCallback) {
+              activity.deleted = true;
+              activity.save().then(function () {
+                innerCallback();
+              });
+            }, function done() {
+              res.sendStatus(200);
+            });
+          });
         });
       });
     });
@@ -156,7 +258,8 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
         include: [
           {
             model: models.Post,
-            attributes: ['id','group_id']
+            attributes: ['id','group_id'],
+            required: false
           }
         ]
       }
@@ -165,7 +268,6 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
     var oldPointQualityValue;
     if (pointQuality) {
       point = pointQuality.Point;
-      post = point.Post;
       if (pointQuality.value>0)
         oldPointQualityValue = 1;
       else if (pointQuality.value<0)
@@ -198,23 +300,6 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
                 seriesCallback();
               } else {
                 seriesCallback("Can't find point")
-              }
-            });
-          }
-        },
-        function (seriesCallback) {
-          if (post) {
-            seriesCallback();
-          } else {
-            models.Post.find({
-              where: { id: point.post_id },
-              attributes: ['id','group_id']
-            }).then(function (results) {
-              if (results) {
-                post = results;
-                seriesCallback();
-              } else {
-                seriesCallback("Can't find post")
               }
             });
           }
@@ -255,7 +340,6 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
           })
         }
       });
-
     });
   });
 });
@@ -293,5 +377,30 @@ router.delete('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), f
     }
   });
 });
+
+router.get('/url_preview', auth.isLoggedIn, function(req, res) {
+  if (req.query.url && validateEmbedUrl(req.query.url)) {
+    new embedly({key: process.env.EMBEDLY_KEY},function(err, api) {
+      if (!!err) {
+        log.error('Embedly not working', { err: err, url: req.query.url, context: 'url_preview', user: toJson(req.user) });
+        res.sendStatus(500);
+      } else {
+        api.oembed({url: req.query.url, maxwidth: 470, width: 470, secure: true}, function (err, objs) {
+          if (!!err) {
+            log.error('Embedly not working', { err: err, url: req.query.url, context: 'url_preview', user: toJson(req.user) });
+            res.sendStatus(500);
+          } else {
+            res.send(objs);
+          }
+        });
+      }
+    });
+  } else {
+    log.error('Url not found or not valid', { url: req.params.url, context: 'url_preview', user: toJson(req.user) });
+    res.sendStatus(404);
+  }
+});
+
+
 
 module.exports = router;

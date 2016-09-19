@@ -1,0 +1,333 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../../bower_components/file-upload/file-upload.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-collection-status-options.html">
+<link rel="import" href="../yp-behaviors/emoji-selector.html">
+
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
+<link rel="import" href="../yp-theme/yp-theme-selector.html">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html">
+
+<dom-module id="yp-group-edit">
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      .access {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+
+      .accessHeader {
+        color: var(--primary-color,#777);
+        font-weight: normal;
+        margin-bottom: 0;
+      }
+
+      paper-radio-button {
+        display: block;
+      }
+
+      .additionalSettings {
+        padding-top: 16px;
+      }
+
+      file-upload {
+        padding-top: 8px;
+      }
+
+      .half {
+        width: 50%;
+      }
+
+      .config {
+        padding: 8px;
+        vertical-align: top;
+      }
+
+      paper-checkbox {
+        padding-top: 8px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-edit-dialog id="editDialog" icon="social:people" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <h2>[[editHeaderText]]</h2>
+
+      <paper-input id="name"
+                   name="name"
+                   type="text"
+                   label="[[t('name')]]"
+                   value="{{group.name}}"
+                   maxlength="50"
+                   char-counter>
+      </paper-input>
+
+      <paper-textarea id="objectives"
+                      name="objectives"
+                      value="{{group.objectives}}"
+                      label="[[t('group.objectives')]]"
+                      char-counter
+                      rows="2"
+                      max-rows="5"
+                      maxlength="300">
+      </paper-textarea>
+      <div class="horizontal end-justified layout">
+        <emoji-selector id="emojiSelectorDescription"></emoji-selector>
+      </div>
+
+      <div class="layout horizontal">
+        <div class="layout vertical additionalSettings half">
+          <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('image.logo.upload')]]</span>
+          </file-upload>
+        </div>
+
+        <div class="layout vertical additionalSettings half">
+          <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('image.header.upload')]]</span>
+          </file-upload>
+        </div>
+
+        <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
+        <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+      </div>
+
+      <div class="layout horizontal wrap config">
+        <div class="layout vertica configl">
+          <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
+          <div class="layout horizontal center-center">
+            <paper-dropdown-menu label="[[t('status.select')]]">
+              <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
+                <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
+                  <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-dropdown-menu>
+            <input type="hidden" name="status" value="[[status]]">
+          </div>
+        </div>
+        <div class="layout vertical config">
+          <h2>[[t('group.config')]]</h2>
+          <paper-checkbox name="canVote" checked$="{{canVote}}">[[t('group.canVote')]]</paper-checkbox>
+          <paper-checkbox name="canAddNewPosts" checked$="{{canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
+          <paper-checkbox name="locationHidden" checked$="{{locationHidden}}">[[t('group.locationHidden')]]</paper-checkbox>
+        </div>
+      </div>
+
+      <input type="hidden" name="canVote" value$="[[canVote]]">
+      <input type="hidden" name="canAddNewPosts" value$="[[canAddNewPosts]]">
+      <input type="hidden" name="locationHidden" value$="[[locationHidden]]">
+
+      <input type="hidden" name="themeId" value="[[themeId]]">
+
+      <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{group.configuration.defaultLocale}}"></yp-language-selector>
+
+      <h3 class="accessHeader">[[t('access')]]</h3>
+      <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
+        <paper-radio-button name="public" hidden$="[[!publicCommunity]]">[[t('group.public')]]</paper-radio-button>
+        <paper-radio-button name="open_to_community" hidden$="[[publicCommunity]]">[[t('group.openToCommunity')]]</paper-radio-button>
+        <paper-radio-button name="closed">[[t('group.closed')]]</paper-radio-button>
+        <paper-radio-button name="secret">[[t('group.secret')]]</paper-radio-button>
+      </paper-radio-group>
+
+    </yp-edit-dialog>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-group-edit',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior,
+      Polymer.ypCollectionStatusOptions
+    ],
+
+    properties: {
+
+      canVote: {
+        type: Boolean,
+        value: true
+      },
+
+      canAddNewPosts: {
+        type: Boolean,
+        value: true
+      },
+
+      action: {
+        type: String,
+        value: "/api/groups"
+      },
+
+      group: {
+        type: Object,
+        observer: "_groupChanged"
+      },
+
+      community: {
+        type: Object
+      },
+
+      groupAccess: {
+        type: String,
+        value: "public"
+      },
+
+      uploadedLogoImageId: {
+        type: String
+      },
+
+      uploadedHeaderImageId: {
+        type: String
+      },
+
+      status: String,
+
+      publicCommunity: {
+        type: Boolean,
+        value: false
+      },
+
+      themeId: {
+        type: String,
+        value: null
+      },
+
+      locationHidden: Boolean
+    },
+
+    observers: [
+      '_setupTranslation(language)'
+    ],
+
+    _updateEmojiBindings: function () {
+      this.async(function () {
+        var description = this.$$("#objectives");
+        var emojiSelector = this.$$("#emojiSelectorDescription");
+        if (description && emojiSelector) {
+          emojiSelector.inputTarget = description;
+        } else {
+          console.warn("Group edit: Can't bind emojis :(");
+        }
+      }.bind(this), 500);
+    },
+
+    _publicCommunity: function (group) {
+      if (group) {
+        return group.Community.access==0
+      }
+    },
+
+    _customRedirect: function (group) {
+      if (group) {
+        window.appUser.recheckAdminRights();
+        this.redirectTo("/group/"+group.id);
+      } else {
+        console.warn('No group found on custom redirect');
+      }
+    },
+
+    _groupChanged: function (newValue, oldValue) {
+      if (this.group) {
+        if (this.group.access==0) {
+          this.groupAccess = "public"
+        } else if (this.group.access==1) {
+          this.groupAccess = "closed"
+        } else if (this.group.access==2) {
+          this.groupAccess = "secret"
+        } else if (this.group.access==3) {
+          this.groupAccess = "open_to_community"
+        }
+
+        if (this.group && this.group.status) {
+          this.set('status', this.group.status);
+        }
+
+        if (this.group.configuration && this.group.configuration.canVote!=undefined) {
+          this.set('canVote', this.group.configuration.canVote);
+          this.set('canAddNewPosts', this.group.configuration.canAddNewPosts);
+        }
+
+        if (this.group.configuration && this.group.configuration.locationHidden!=undefined) {
+          this.set('locationHidden', this.group.configuration.locationHidden);
+        }
+
+        if (this.community) {
+          if (this.community.access==0) {
+            this.set('publicCommunity', true);
+          } else {
+            this.set('publicCommunity', false);
+          }
+        } else if (this.group.Community) {
+          if (this.group.Community.access==0) {
+            this.set('publicCommunity', true);
+          } else {
+            this.set('publicCommunity', false);
+          }
+        }
+      }
+      this._updateEmojiBindings();
+    },
+
+    _clear: function () {
+      this.group = { name: '', objectives: '', access: 0, status: 'active' };
+      this.uploadedLogoImageId = null;
+      this.uploadedHeaderImageId = null;
+      this.$.headerImageUpload.clear();
+      this.$.logoImageUpload.clear();
+    },
+
+    setup: function (group, newNotEdit, refreshFunction) {
+      if (!group) {
+        var defaultAccess = 0;
+        if (this.community) {
+          if (this.community.access!=0) {
+            this.set('groupAccess', 'open_to_community');
+            defaultAccess = 3;
+          }
+        } else if (this.group.Community) {
+          if (this.group.Community.access!=0) {
+            this.set('groupAccess', 'open_to_community');
+            defaultAccess = 3;
+          }
+        }
+        this.set('group', { name: '', objectives: '', access: defaultAccess, status: 'active' });
+      } else {
+        this.set('group', group);
+      }
+      this.set('new', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+    },
+
+    _setupTranslation: function () {
+      if (this.t) {
+        if (this.new) {
+          this.editHeaderText = this.t('group.new');
+          this.toastText = this.t('group.toast.created');
+        } else {
+          this.editHeaderText = this.t('group.update');
+          this.toastText = this.t('group.toast.updated');
+        }
+      }
+    }
+  });
+</script>

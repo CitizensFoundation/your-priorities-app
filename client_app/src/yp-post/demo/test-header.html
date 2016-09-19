@@ -1,0 +1,58 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../../bower_components/iron-icons/hardware-icons.html" >
+<link rel="import" href="../../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
+
+<dom-module id="test-header">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+
+      .grid {
+        @apply(--layout-vertical);
+      }
+
+      yp-post-header {
+        padding: 64px;
+      }
+
+    </style>
+
+    <div class="grid">
+      <yp-post-header id="post2" street-view></yp-post-header>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'test-header',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      ready: function (e) {
+        this.$.post2.post = {id: 101,
+          name:'Iceland top posts',
+          top_banner_file_name: 'NHScitizen_logo_final2c.png',
+          description:'Your posts and participation will help provide a series of recommendations to the European Commission on the best strategies, policies and funding instruments.',
+          Category: {id: 105, icon_file_name: "NHS_icons_GG-2.png" },
+          counter_endorsements_up: 5454, counter_points: 7778, counter_endorsements_down: 1232
+        };
+      }
+    });
+  </script>
+</dom-module>

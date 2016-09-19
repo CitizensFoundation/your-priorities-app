@@ -1,0 +1,497 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.28">
+
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.2.28">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.28">
+
+<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.2.28">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.2.28">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.28">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.2.28">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.28">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.2.28">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.28">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.2.28">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.28">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.28">
+
+</head><body><dom-module id="yp-login">
+
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .btn-auth,
+      .btn-auth:visited {
+        position: relative;
+        display: inline-block;
+        height: 22px;
+        padding: 0 1em;
+        border: 1px solid #999;
+        border-radius: 2px;
+        margin: 0;
+        text-align: center;
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 22px;
+        white-space: nowrap;
+        cursor: pointer;
+        color: #222;
+        background: #fff;
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        /* iOS */
+        -webkit-appearance: none; /* 1 */
+        /* IE6/7 hacks */
+        *overflow: visible;  /* 2 */
+        *display: inline; /* 3 */
+        *zoom: 1; /* 3 */
+      }
+
+      .btn-auth:hover,
+      .btn-auth:focus,
+      .btn-auth:active {
+        color: #222;
+        text-decoration: none;
+      }
+
+      .btn-auth:before {
+        content: "";
+        float: left;
+        width: 22px;
+        height: 22px;
+        background: url(/images/auth-icons.png) no-repeat 99px 99px;
+      }
+
+      /**
+       * 36px
+       */
+
+      .btn-auth.large {
+        height: 32px;
+        line-height: 36px;
+        font-size: 20px;
+      }
+
+      .btn-auth.large:before {
+        width: 36px;
+        height: 36px;
+      }
+
+      /*
+       * Remove excess padding and border in FF3+
+       */
+
+      .btn-auth::-moz-focus-inner {
+        border: 0;
+        padding: 0;
+      }
+
+
+      /* Facebook (extends .btn-auth)
+         ========================================================================== */
+
+      .btn-facebook,
+      .btn-facebook:visited {
+        border-color: #29447e;
+        border-bottom-color: #1a356e;
+        color: #fff;
+        background-color: #5872a7;
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#637bad), to(#5872a7));
+        background-image: -webkit-linear-gradient(#637bad, #5872a7);
+        background-image: -moz-linear-gradient(#637bad, #5872a7);
+        background-image: -ms-linear-gradient(#637bad, #5872a7);
+        background-image: -o-linear-gradient(#637bad, #5872a7);
+        background-image: linear-gradient(#637bad, #5872a7);
+        -webkit-box-shadow: inset 0 1px 0 #879ac0;
+        box-shadow: inset 0 1px 0 #879ac0;
+      }
+
+      .btn-facebook:hover,
+      .btn-facebook:focus {
+        color: #fff;
+        background-color: #3b5998;
+      }
+
+      .btn-facebook:active {
+        color: #fff;
+        background: #4f6aa3;
+        -webkit-box-shadow: inset 0 1px 0 #45619d;
+        box-shadow: inset 0 1px 0 #45619d;
+      }
+
+      /*
+       * Icon
+       */
+
+      .btn-facebook:before {
+        border-right: 1px solid #465f94;
+        margin: 0 1em 0 -1em;
+        background-position: 0 0;
+      }
+
+      .btn-facebook.large:before {
+        background-position: 0 -22px;
+      }
+
+      :host {
+      }
+
+      paper-dialog {
+        padding-left: 8px;
+        padding-right: 8px;
+        width: 440px;
+        background-color: #fff;
+      }
+
+      paper-dialog {
+        z-index: 9999;
+      }
+
+      re-captcha {
+        padding-top: 28px;
+        padding-bottom: 28px;
+      }
+
+      .socialMediaLogin {
+        padding-top: 24px;
+        padding-bottom: 8px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 480px) {
+        paper-dialog {
+          padding: 0;
+          margin: 0;
+          height: 100%;
+          width: 100%;
+        }
+      }
+
+      .islandIs {
+        width: 80px;
+        height: 18px;
+        padding-left: 16px;
+      }
+
+      paper-spinner {
+        padding:0;
+        margin:0;
+      }
+
+      .buttons {
+        margin-left: 0;
+        padding-left: 0;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div id="outer">
+      <template is="dom-if" if="[[opened]]" restamp="">
+        <paper-dialog id="dialog" with-backdrop="">
+          <h3>[[heading]]</h3>
+
+          <paper-tabs selected="{{registerMode}}" id="paper_tabs" focused="">
+            <paper-tab>[[t('user.login')]]</paper-tab>
+            <paper-tab>[[t('user.register')]]</paper-tab>
+          </paper-tabs>
+
+          <form is="iron-form" id="form">
+            <paper-input id="name" type="text" label="[[t('user.name')]]" value="{{name}}" hidden$="[[!registerMode]]" maxlength="50" char-counter="">
+            </paper-input>
+
+            <paper-input id="email" type="text" label="[[t('user.email')]]" value="{{email}}" pattern="[[emailValidationPattern]]" error-message="[[emailErrorMessage]]">
+            </paper-input>
+
+            <paper-input id="password" type="password" label="[[t('user.password')]]" value="{{password}}" autocomplete="off" error-message="[[passwordErrorMessage]]">
+            </paper-input>
+
+            <div class="layout horizontal center-center socialMediaLogin">
+              <div class="btn-auth btn-facebook" on-tap="_facebookLogin" hidden$="[[!_facebookProvider()]]">
+                [[t('user.facebookLogin')]]
+              </div>
+              <div class="islandIs" on-tap="_islandIsLogin" hidden$="[[!_samlProvider()]]">
+                <iron-image width="80" height="18" sizing="contain" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"></iron-image>
+              </div>
+            </div>
+
+            <template>
+              <div class="layout horizontal center-center">
+                <re-captcha sitekey="[[reCaptchaSiteKey]]" lang="[[language]]"></re-captcha>
+              </div>
+            </template>
+
+          </form>
+          <div class="buttons">
+            <paper-spinner active="" hidden$="[[!userSpinner]]"></paper-spinner>
+            <yp-ajax id="loginAjax" dispatch-error="" on-error="_loginError" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
+            <yp-ajax id="registerAjax" method="POST" dispatch-error="" on-error="_registerError" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
+            <paper-button on-tap="_forgotPassword">[[t('user.newPassword')]]</paper-button>
+            <paper-button dialog-dismiss="">[[t('cancel')]]</paper-button>
+            <paper-button autofocus="" on-tap="_validateAndSend">[[submitText]]</paper-button>
+          </div>
+        </paper-dialog>
+
+        <iron-a11y-keys id="a11y" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
+      </template>
+    </div>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-login',
+
+    behaviors: [
+      Polymer.appHelpers
+    ],
+
+    properties: {
+
+      userSpinner: {
+        type: Boolean,
+        value: false
+      },
+
+      reCaptchaSiteKey: {
+        type: String,
+        value: '6Ld9UBsTAAAAAPq059P_AGqo-tVE_T9gPj5ifrmY'
+      },
+
+      emailValidationPattern: {
+        type: String,
+        value: "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+      },
+
+      emailErrorMessage: {
+        type: String
+      },
+
+      passwordErrorMessage: {
+        type: String
+      },
+
+      name: {
+        type: String,
+        value: "" //"Róbert Viðar Bjarnason"
+      },
+
+      email: {
+        type: String,
+        value: "" //robert@citizens.is"
+      },
+
+      password: {
+        type: String,
+        value: "" //"DksdSodksSokssss"
+      },
+
+      credentials: {
+        type: String,
+        notify: true,
+        computed: '_computeCredentials(name, email, password)'
+      },
+
+      registerMode: {
+        type: Number,
+        value: 0,
+        observer: "_onRegisterChanged"
+      },
+
+      submitText: {
+        type: String,
+        value: ""
+      },
+
+      redirectTo: {
+        type: String
+      },
+
+      forgotPasswordOpen: {
+        type: Boolean,
+        value: false
+      },
+
+      heading: {
+        type: String
+      },
+
+      opened: {
+        type: Boolean,
+        value: false,
+        observer: '_openedChanged'
+      },
+
+      target: {
+        type: Object,
+        value: function() {
+          return this.$$("#form");
+        }
+      },
+
+      onLoginFunction: {
+        type: Function,
+        value: null
+      }
+    },
+
+    setUserSpinner: function (value) {
+      this.set('userSpinner', value)
+    },
+
+    _facebookLogin: function () {
+      var url = '/api/users/auth/facebook',
+      width = 1000,
+      height = 650,
+      top = (window.outerHeight - height) / 2,
+      left = (window.outerWidth - width) / 2;
+      window.open(url, 'facebook_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+    },
+
+    _islandIsLogin: function () {
+      var url = '/api/users/auth/saml',
+        width = 1200,
+        height = 650,
+        top = (window.outerHeight - height) / 2,
+        left = (window.outerWidth - width) / 2;
+      window.open(url, 'saml_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+    },
+
+    _facebookProvider: function () {
+      return (window.appGlobals && window.appGlobals.domain && window.appGlobals.domain.facebookLoginProvided)
+    },
+
+    _samlProvider: function () {
+      return (window.appGlobals && window.appGlobals.domain && window.appGlobals.domain.samlLoginProvided)
+    },
+
+    _openedChanged: function (newValue) {
+      if (newValue) {
+        this.async(function () {
+          this.$$("#a11y").target = this.$$("#form");
+        }.bind(this), 50);
+      }
+    },
+
+    onEnter: function (event) {
+      this._validateAndSend();
+    },
+
+    _registerError: function (event, error) {
+      if (error=='SequelizeUniqueConstraintError') {
+        this.$$("#registerAjax").showErrorDialog(this.t('user.alreadyRegisterred'));
+      } else {
+        this.$$("#registerAjax").showErrorDialog(this.t('user.registrationError')+': '+error);
+      }
+    },
+
+    _loginError: function (event, error) {
+      if (error=='Unauthorized') {
+        this.$$("#loginAjax").showErrorDialog(this.t('user.loginNotAuthorized'));
+      } else {
+        this.$$("#loginAjax").showErrorDialog(this.t('user.loginError')+': '+error);
+      }
+    },
+
+    _forgotPassword: function () {
+      this.fire("yp-forgot-password");
+    },
+
+    _onRegisterChanged: function (newValue, oldValue) {
+      this._setTexts();
+    },
+
+    ready: function () {
+      //this._setTexts();
+    },
+
+    setup: function (onLoginFunction) {
+      this.set('onLoginFunction', onLoginFunction);
+      this._setTexts();
+    },
+
+    _setTexts: function () {
+      this.emailErrorMessage = this.t('user.email.error');
+      this.passwordErrorMessage = this.t('user.password.error');
+      if (this.registerMode===1) {
+        this.header = this.t('user.registerHeader');
+        this.set('submitText',this.t('user.create'));
+      } else {
+        this.header = this.t('user.header');
+        this.set('submitText',this.t('user.login'));
+      }
+    },
+
+    _computeCredentials: function(name, email, password) {
+     return  JSON.stringify({
+        name: name,
+        email: email,
+        identifier: email,
+        username: email,
+        password: password
+      });
+    },
+
+    _validateAndSend: function(e) {
+      if (this.$$("#form").checkValidity() && this.email && this.password){
+        if (this.registerMode) {
+          this.$$("#registerAjax").body = this.credentials;
+          this.$$("#registerAjax").generateRequest();
+        } else {
+          this.$$("#loginAjax").body = this.credentials;
+          this.$$("#loginAjax").generateRequest();
+        }
+      } else {
+        this.$$("#loginAjax").showErrorDialog(this.t('user.completeForm'));
+        return false;
+      }
+    },
+
+    _registerResponse: function(event, detail) {
+      this._loginCompleted(detail.response);
+    },
+
+    _loginResponse: function(event, detail) {
+      this._loginCompleted(detail.response);
+    },
+
+    _loginCompleted: function (user) {
+      window.appUser.setLoggedInUser(user);
+      if (this.redirectTo)
+        this.redirectTo(this.redirectTo);
+      this.fire("login", user);
+      if (this.onLoginFunction) {
+        this.onLoginFunction(user);
+      }
+      this.fire('iron-signal', {name: 'logged-in', data: user});
+    },
+
+    open: function(redirectTo) {
+      this.redirectTo = redirectTo;
+      this.set('userSpinner', false);
+      this.set('opened', false);
+      this.async(function () {
+        this.set('opened', true);
+        this.async(function () {
+          this.$$("#dialog").open();
+        });
+      });
+    },
+
+    close: function() {
+      this.$$("#dialog").close();
+      this.set('opened', false);
+      this.set('userSpinner', false);
+    }
+
+  });
+</script>
+</body></html>

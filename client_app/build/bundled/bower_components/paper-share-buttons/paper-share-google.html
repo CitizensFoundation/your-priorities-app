@@ -1,0 +1,63 @@
+<html><head></head><body><dom-module id="paper-share-google">
+  <template>
+    <style>
+      #button {
+        color: #DC4335;
+      }
+  
+      #button[raised] {
+        background: #DC4335;
+        color: white;
+      }
+    </style>
+    <paper-button id="button" on-click="navigate" raised$="{{raised}}" noink$="{{noink}}">
+      Google
+    </paper-button>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    /**
+     * Element Prototype
+     */
+    is: 'paper-share-google',
+
+    /**
+     * Element properties
+     */
+    properties: {
+      link: {
+        type: String,
+        value: window.location.href
+      },
+
+      url: {
+        type: String,
+        computed: 'computeUrl(link)'
+      },
+
+      raised: {
+        type: Boolean,
+        notify: true,
+        reflectToAttribute: true
+      }
+    },
+
+    /**
+     * Concat the share url
+     */
+    computeUrl: function(link) {
+      return 'https://plus.google.com/share?url=' + link;
+    },
+
+    /**
+     * Navigate to the social authorization
+     */
+    navigate: function() {
+      window.open(this.url, 'google-share', 'width=490,height=530');
+      return false;
+    }
+  });
+</script>
+</body></html>

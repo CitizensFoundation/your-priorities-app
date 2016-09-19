@@ -1,0 +1,154 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.28">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.28">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.28">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.28">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.28">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.2.28">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.2.28">
+
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.2.28">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.28">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.28">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.28">
+
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.2.28">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.2.28">
+
+</head><body><dom-module id="yp-post-move">
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      .additionalSettings {
+        padding-top: 16px;
+      }
+
+      paper-textarea {
+        padding-top: 16px;
+      }
+
+      .groupName {
+        cursor: pointer;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-edit-dialog id="editDialog" icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <h2>[[editHeaderText]]</h2>
+
+      <iron-list items="[[availableGroups]]" as="group">
+        <template>
+          <div class="groupName" on-tap="_selectGroup" data-args$="[[group.id]]" data-args-name$="[[group.name]]">[[group.name]]</div>
+        </template>
+      </iron-list>
+
+      <div class="layout horizontal center-center">
+        <yp-ajax method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" on-response="_getGroupsResponse"></yp-ajax>
+        <yp-ajax method="PUT" id="movePostAjax" on-response="_movePostResponse"></yp-ajax>
+      </div>
+    </yp-edit-dialog>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-post-move',
+
+    behaviors: [
+      Polymer.appHelpers,
+      Polymer.ypEditDialogBehavior,
+      Polymer.AccessHelpers
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/posts"
+      },
+
+      post: {
+        type: Object
+      },
+
+      availableGroups: {
+        type: Array,
+        value: null
+      },
+
+      selectedGroupId: Number
+    },
+
+    _selectGroup: function (event) {
+      this.set('selectedGroupId', event.target.getAttribute('data-args'));
+      var groupName = event.target.getAttribute('data-args-name');
+      var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+      dialog.open(this.t('post.confirmMove')+' "'+this.post.name+'" '+this.t('to')+' "'+groupName+'"', this._reallyMove.bind(this));
+    },
+
+    _reallyMove: function () {
+      this.$.movePostAjax.url="/api/posts/"+this.post.id+'/'+this.selectedGroupId+'/move';
+      this.$.movePostAjax.body = {};
+      this.$.movePostAjax.generateRequest();
+    },
+
+    _movePostResponse: function () {
+      location.reload();
+    },
+
+    _getGroupsResponse: function (event, detail) {
+      if (detail.response) {
+        var groups = [];
+        groups = groups.concat(window.appUser.adminRights.GroupAdmins, window.appUser.memberships.GroupUsers);
+        groups = groups.concat(detail.response.groups);
+        groups = this._uniqueInDomain(groups, detail.response.domainId);
+        this.set("availableGroups", groups);
+      }
+    },
+
+    _uniqueInDomain: function (array, domainId) {
+      var newArray = [];
+      var ids = {};
+      _.each(array, function (item) {
+        if (!ids[item.id]) {
+          ids[item.id] = item.id;
+          if (!item.configuration) {
+            item.configuration = {canAddNewPosts: true}
+          }
+          if (item.Community && item.Community.domain_id==domainId &&
+             (item.configuration.canAddNewPosts || this._hasAdminRights(item.id, window.appUser.adminRights.GroupAdmins))) {
+            newArray.push(item);
+          } else {
+            console.log("Ignoring group:"+item.name);
+          }
+        }
+      }.bind(this));
+      return newArray;
+    },
+
+    _clear: function () {
+      this.set('selectedGroupId', null);
+      this.set('post', null);
+    },
+
+    setupAndOpen: function (post, refreshFunction) {
+      this.set('post', post);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+      this.$.getAvailableGroupsAjax.generateRequest();
+      this.open();
+    },
+
+    _setupTranslation: function () {
+      this.set('editHeaderText', this.t('post.move'));
+      this.set('toastText', this.t('post.haveMovedPost'));
+      this.set('saveText', this.t('post.move'));
+    }
+  });
+</script>
+</body></html>

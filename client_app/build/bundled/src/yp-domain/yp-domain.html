@@ -1,0 +1,293 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.28">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.28">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.28">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.28">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.2.28">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.28">
+
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.2.28">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.2.28">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html?v=6.2.28">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html?v=6.2.28">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.28">
+<link rel="import" href="../yp-behaviors/collection-helpers.html?v=6.2.28">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.28">
+<link rel="import" href="../yp-theme/yp-theme-behavior.html?v=6.2.28">
+<link rel="import" href="../yp-community/yp-community-collection-behaviors.html?v=6.2.28">
+
+<link rel="import" href="../ac-activities/ac-activities.html?v=6.2.28">
+
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.28">
+<link rel="import" href="../yp-community/yp-community-card.html?v=6.2.28">
+<link rel="import" href="../yp-community/yp-community-card-add.html?v=6.2.28">
+<link rel="import" href="../yp-page/yp-page.html?v=6.2.28">
+<link rel="import" href="../yp-other-social-media/yp-other-social-media.html?v=6.2.28">
+<link rel="import" href="../yp-community/yp-community-grid.html?v=6.2.28">
+
+<link rel="import" href="yp-domain-large-card.html?v=6.2.28">
+<link rel="import" href="../yp-community/yp-community-edit.html?v=6.2.28">
+
+</head><body><dom-module id="yp-domain">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      ac-activities {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
+      .card-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      @media (max-width: 330px) {
+        .card {
+          padding-left: 0;
+          padding-right: 0;
+          padding-bottom: 8px;
+          padding-top: 8px;
+        }
+
+        .card-container {
+          padding: 0;
+          margin: 0;
+        }
+      }
+
+      yp-ajax {
+        background-color: var(--primary-background-color);
+      }
+
+      .twitterFeed {
+        margin-top: 24px;
+      }
+
+      .archivedText {
+        font-size: 26px;
+        color: #333;
+      }
+
+      .ypBottomContainer {
+        position: absolute;
+        bottom: 8px;
+        right: 16px;
+      }
+    </style>
+
+    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
+
+      <yp-domain-large-card id="domainCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refreshAjax"></yp-domain-large-card>
+
+      <paper-tabs id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
+        <paper-tab name="communities" class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
+        <paper-tab name="news" class="tab">[[t('news')]]</paper-tab>
+        <paper-tab name="other_social_media" class="tab">
+          <div class="layout vertical center-center">
+            <div>[[t('other')]]</div>
+            <div>[[t('socialMedia')]]</div>
+          </div>
+        </paper-tab>
+      </paper-tabs>
+
+      <iron-pages class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <section name="communities" class="layout vertical">
+          <div class="card-container layout center-center wrap">
+            <yp-community-grid featured-communities="[[featuredCommunities]]" active-communities="[[activeCommunities]]" archived-communities="[[archivedCommunities]]">
+            </yp-community-grid>
+          </div>
+          <yp-community-card-add hidden$="[[!createFabIcon]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
+        </section>
+        <section name="news">
+          <ac-activities domain-id="[[domain.id]]"></ac-activities>
+        </section>
+        <section name="other_social_media" class="layout vertical">
+          <yp-other-social-media active$="[[otherSocialMediaActive]]"></yp-other-social-media>
+        </section>
+      </iron-pages>
+    </yp-page>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <app-route route="{{idRoute}}" pattern="/:id" data="{{idRouteData}}" tail="{{tabRoute}}">
+    </app-route>
+
+    <app-route route="{{tabRoute}}" pattern="/:tabName" data="{{tabRouteData}}">
+    </app-route>
+
+    <div class="ypBottomContainer">
+      <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
+      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-domain',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.ypThemeBehavior,
+        Polymer.CommunityCollectionBehaviors,
+        Polymer.CollectionHelpers,
+        Polymer.AccessHelpers
+      ],
+
+      properties: {
+
+        idRoute: Object,
+        tabRoute: Object,
+        idRouteData: Object,
+        tabRouteData: Object,
+
+        createFabIcon: {
+          type: String,
+          value: null,
+          notify: true
+        },
+
+        domainId: {
+          type: Number,
+          value: null,
+          observer: "_domainIdChanged"
+        },
+
+        url: {
+          type: String
+        },
+
+        domainEmpty: {
+          type: Boolean,
+          value: false
+        },
+
+        domain: {
+          type: Object
+        },
+
+        selectedTab: {
+          type: String,
+          value: 'communities',
+          observer: '_selectedTabChanged'
+        },
+
+        otherSocialMediaActive: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      observers: [
+        '_routeIdChanged(idRouteData.id)',
+        '_routeTabChanged(tabRouteData.tabName)'
+      ],
+
+      _routeIdChanged: function (newId) {
+        if (newId) {
+          this.set('domainId', newId);
+        }
+      },
+
+      _routeTabChanged: function (newTabName) {
+        if (newTabName) {
+          this.set('selectedTab', newTabName);
+        }
+      },
+
+      _selectedTabChanged: function (tabName) {
+        if (tabName=='other_social_media') {
+          this.set('otherSocialMediaActive', true);
+        } else {
+          this.set('otherSocialMediaActive', false);
+        }
+
+        if (this.domain) {
+          this.redirectTo("/domain/" + this.domain.id + '/' + tabName);
+        }
+
+        if (tabName && window.appGlobals) {
+          window.appGlobals.activity('open', 'domain_tab_'+tabName);
+        }
+      },
+
+      _domainIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("featuredCommunities",null);
+          this.set("activeCommunities",null);
+          this.set("archivedCommunities",null);
+          this.$.ajax.url = '/api/domains/' + this.domainId;
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      _refreshAjax: function () {
+        this.$.ajax.generateRequest();
+      },
+
+      _newCommunity: function () {
+        window.appGlobals.activity('open', 'newCommunity');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("communityEdit");
+        dialog.setup(null, true, null);
+        dialog.open('new', { domainId: this.domainId });
+      },
+
+      _pagesResponse: function (event, detail) {
+        this.fire('yp-set-pages', detail.response);
+      },
+
+      _response: function (event, detail, sender) {
+        this.set('domain', detail.response);
+
+        window.appGlobals.domain = this.domain;
+
+        this.refresh();
+
+        if (!this.domain.only_admins_can_create_communities || this.checkDomainAccess(this.domain)) {
+          this.set('createFabIcon', 'group-work');
+        }
+
+        window.appGlobals.setupGoogleAnalytics(this.domain);
+
+        if (this.domain.Communities) {
+          this.setupCommunities(_.dropRight(this.domain.Communities, this.domain.Communities.length-15));
+        }
+
+        this.$.domainCard.setElevation(5);
+        this.$.domainCard.lowerCardLater();
+      },
+
+      refresh: function () {
+        if (this.domain) {
+          if (this.domain.default_locale!=null) {
+            this.changeLocaleIfNeeded(this.domain.default_locale);
+          }
+
+          if (this.domain.theme_id!=null) {
+            this.setTheme(this.domain.theme_id);
+          }
+          this.fire('yp-set-home-link', { type: 'domain', id: this.domain.id, name: this.domain.name });
+          this.fire("change-header", { headerTitle: null, documentTitle: this.domain.name,
+                                       headerDescription: this.domain.description});
+          if (this.domain.DomainHeaderImages && this.domain.DomainHeaderImages.length>0) {
+            this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);
+          } else {
+            this.$.page.setupTopHeaderImage(null);
+          }
+
+          this.$.pagesAjax.url = "/api/domains/"+this.domain.id+"/pages";
+          this.$.pagesAjax.generateRequest();
+        }
+      },
+
+    });
+  </script>
+</dom-module>
+</body></html>

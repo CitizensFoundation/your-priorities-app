@@ -1,0 +1,169 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+
+<dom-module id="material-search">
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: none;
+        margin: 0;
+        background: rgba(255, 255, 255, 0.9);
+        color: #757575;
+        z-index: 20;
+      }
+
+      :host([active]) {
+        display: block;
+      }
+
+      paper-menu {
+        margin-left: 0;
+        margin-right: 0;
+        overflow: auto;
+      }
+
+      paper-toolbar {
+        background-color: white;
+      }
+
+      input {
+        border: none;
+        background: transparent;
+        font: inherit;
+        font-size: 16px;
+        outline: none;
+      }
+
+      @media (min-width: 600px) {
+        paper-menu {
+          max-width: 50%;
+          margin: 0 auto;
+          max-height: 50vh;
+        }
+      }
+
+      :host {
+        --paper-icon-button: {
+          color: var(--paper-grey-500);
+        };
+      }
+
+      paper-item iron-icon {
+        margin-right: 24px !important;
+      }
+    </style>
+    <div class$="{{_computeHeaderClass(narrow)}}">
+      <paper-icon-button icon="arrow-back" on-tap="toggle"></paper-icon-button>
+      <input id="searchbox" placeholder="[[placeHolder]]" class="flex"
+             value="{{searchValue}}"
+             on-keyup="doSearch">
+      <paper-icon-button icon="av:mic" on-tap="getSpeechInput"></paper-icon-button>
+    </div>
+    <paper-menu on-iron-activate="onSelect">
+      <template is="dom-repeat" items="{{previousSearches}}">
+        <paper-item class="relative" data-value$="{{item}}">
+          <iron-icon icon="history"></iron-icon>
+          <span>{{item}}</span>
+          <paper-ripple></paper-ripple>
+        </paper-item>
+      </template>
+    </paper-menu>
+  </template>
+  <script>
+    Polymer({
+      is: 'material-search',
+
+      properties: {
+        previousSearches: {
+          type: Array,
+          value: function () {
+            return [];
+          },
+          notify: true
+        },
+
+        narrow: {
+          type: Boolean,
+          value: false
+        },
+
+        active: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          notify: true
+        },
+
+        searchValue: {
+          type: String,
+          value: null,
+          observer: '_searchValueChanged'
+        },
+
+        placeHolder: {
+          type: String,
+          value: "search"
+        }
+      },
+
+      onSelect: function (e, detail) {
+        this.async(function () {
+          this.searchValue = detail.item.dataset.value;
+        }, 250); // Introduce small delay so user sees ripple.
+      },
+
+      toggle: function () {
+        this.active = !this.active;
+        if (this.active) {
+          this.$.searchbox.focus();
+        }
+      },
+
+      getSpeechInput: function (e) {
+        var recognition = 'SpeechRecognition' in window ? new SpeechRecognition() :
+          'webkitSpeechRecognition' in window ? new webkitSpeechRecognition() :
+            null;
+        if (recognition) {
+          recognition.continuous = false;
+          recognition.interimResults = false;
+          recognition.onresult = function (e) {
+            var result = e.results[0][0].transcript;
+            this.searchValue = result;
+          }.bind(this);
+          recognition.start();
+        }
+      },
+
+      doSearch: function (e) {
+        if (e.keyCode == 13) {
+          this._searchValueChanged();
+        }
+      },
+
+      /** Fired when a search is made.
+       *
+       * @event search-change
+       * @param {Object} detail
+       * @param {Object} detail.searchValue The search string.
+       */
+
+      _searchValueChanged: function () {
+        if (this.searchValue) {
+          this.fire('search-change', { value: this.searchValue });
+          this.searchValue = '';
+        }
+      },
+
+      _computeHeaderClass: function (narrow) {
+        return narrow ? 'core-narrow' : '';
+      }
+    });
+  </script>
+</dom-module>

@@ -16,7 +16,9 @@ module.exports = function(sequelize, DataTypes) {
     original_filename: DataTypes.STRING,
     s3_bucket_name: DataTypes.STRING,
     ip_address: { type: DataTypes.STRING, allowNull: false },
-    user_agent: { type: DataTypes.TEXT, allowNull: false }
+    user_agent: { type: DataTypes.TEXT, allowNull: false },
+    location: DataTypes.JSONB,
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
 
     underscored: true,
@@ -24,6 +26,9 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'images',
 
     defaultScope: {
+      where: {
+        deleted: false
+      },
       order: [
         ['created_at', 'asc' ]
       ]
@@ -59,19 +64,19 @@ module.exports = function(sequelize, DataTypes) {
             {
               maxHeight: 50,
               maxWidth: 50,
-              aspect: '1:1!',
+              aspect: '1:1!h',
               format: 'png',
-              suffix: '-mini',
+              suffix: '-tiny',
               quality: 99
             }
           ]
         } else if (itemType && itemType === 'domain-logo') {
             versions = [
               {
-                maxWidth: 1200,
-                maxHeight: 675,
+                maxWidth: 864,
+                maxHeight: 486,
                 format: 'png',
-                suffix: '-large',
+                suffix: '-retina',
                 quality: 99
               },
               {
@@ -85,10 +90,10 @@ module.exports = function(sequelize, DataTypes) {
         } else if (itemType && itemType === 'community-logo') {
           versions = [
             {
-              maxWidth: 1200,
-              maxHeight: 675,
+              maxWidth: 864,
+              maxHeight: 486,
               format: 'png',
-              suffix: '-large',
+              suffix: '-retina',
               quality: 99
             },
             {
@@ -99,13 +104,37 @@ module.exports = function(sequelize, DataTypes) {
               quality: 99
             }
           ]
+        } else if (itemType && itemType === 'organization-logo') {
+          versions = [
+            {
+              maxWidth: 1000,
+              maxHeight: 1000,
+              format: 'png',
+              suffix: '-large',
+              quality: 99
+            },
+            {
+              maxWidth: 200,
+              maxHeight: 200,
+              format: 'png',
+              suffix: '-medium',
+              quality: 99
+            },
+            {
+              maxWidth: 50,
+              maxHeight: 50,
+              format: 'png',
+              suffix: '-small',
+              quality: 99
+            }
+          ]
         } else if (itemType && itemType === 'group-logo') {
           versions = [
             {
-              maxWidth: 1200,
-              maxHeight: 675,
+              maxWidth: 864,
+              maxHeight: 486,
               format: 'png',
-              suffix: '-large',
+              suffix: '-retina',
               quality: 99
             },
             {
@@ -119,10 +148,10 @@ module.exports = function(sequelize, DataTypes) {
         } else if (itemType && itemType === 'post-header') {
           versions = [
             {
-              maxWidth: 1200,
-              maxHeight: 675,
+              maxWidth: 864,
+              maxHeight: 486,
               format: 'png',
-              suffix: '-large',
+              suffix: '-retina',
               quality: 99
             },
             {
@@ -130,13 +159,6 @@ module.exports = function(sequelize, DataTypes) {
               maxHeight: 243,
               format: 'png',
               suffix: '-medium',
-              quality: 99
-            },
-            {
-              maxWidth: 1920,
-              maxHeight: 1080,
-              format: 'png',
-              suffix: '-hd',
               quality: 99
             }
           ]
@@ -147,6 +169,39 @@ module.exports = function(sequelize, DataTypes) {
               maxWidth: 200,
               format: 'png',
               suffix: '-large',
+              quality: 99
+            }
+          ]
+        } else if (itemType && itemType.indexOf('-header') > -1) {
+          versions = [
+            {
+              maxHeight: 300,
+              format: 'png',
+              suffix: '-large',
+              quality: 99
+            }
+          ]
+        } else if (itemType && itemType.indexOf('post-user-image') > -1) {
+          versions = [
+            {
+              maxHeight: 2048,
+              maxWidth: 1536,
+              format: 'png',
+              suffix: '-desktop-retina',
+              quality: 99
+            },
+            {
+              maxHeight: 720,
+              maxWidth: 540,
+              format: 'png',
+              suffix: '-mobile-retina',
+              quality: 99
+            },
+            {
+              maxHeight: 120,
+              maxWidth: 90,
+              format: 'png',
+              suffix: '-thumb',
               quality: 99
             }
           ]
@@ -184,10 +239,6 @@ module.exports = function(sequelize, DataTypes) {
           cleanup: {
             versions: false,
             original: false
-          },
-
-          original: {
-            awsImageAcl: 'private'
           },
 
           versions: versions

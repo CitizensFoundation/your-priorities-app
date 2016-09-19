@@ -1,0 +1,174 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
+<link rel="import" href="../yp-user/yp-user-image.html">
+<link rel="import" href="yp-point-actions.html">
+
+<dom-module id="yp-point">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+      }
+
+
+      .point-content {
+        @apply(--layout-vertical);
+        padding-right: 16px;
+        padding-left: 16px;
+      }
+
+
+      @media (max-width: 320px) {
+        .user-image {
+          display: none;
+        }
+      }
+
+      .userInfoContainer {
+        border-bottom: solid 2px;
+        width: 100%;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+      }
+
+      .userInfoContainer[up-vote] {
+        border-bottom-color:  var(--master-point-up-color);
+      }
+
+      .userInfoContainer[down-vote] {
+        border-bottom-color: var(--master-point-down-color);
+      }
+
+    </style>
+
+    <template is="dom-if" if="[[point]]">
+
+      <div class="layout vertical">
+
+        <div class="userInfoContainer layout horizontal end-justified" up-vote$=[[upVote(point)]]  down-vote$=[[downVote(point)]] hidden$="[[hideUser]]">
+          <yp-user-with-organization title-date="[[point.created_at]]" inverted user="[[user]]"></yp-user-with-organization>
+        </div>
+
+        <div class="point-content">
+          <span hidden$="[[!point.name]]">
+            <span>[[point.name]]</span>.
+          </span>
+          <div id="pointContent"></div>
+          <div class="layout horizontal">
+            <yp-point-actions point="[[point]]"></yp-point-actions>
+          </div>
+        </div>
+
+      </div>
+
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-point',
+
+      properties: {
+
+        point: {
+          type: Object,
+          notify: true,
+          observer: "_pointChanged"
+        },
+
+        user: {
+          type: Object,
+          value: null
+        },
+
+        hideUser: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.YpLinkifyAndEmjoi
+      ],
+
+      _pointChanged: function(point, oldValue) {
+        if (point) {
+          this.user = this.point.PointRevisions[0].User;
+        } else {
+          this.user = null;
+        }
+        if (point && point.content) {
+          this.async(function () {
+            var content = this.$$("#pointContent");
+            if (content) {
+              content.innerHTML = this.addLinksAndEmjois(point.content);
+            } else {
+              console.error("Can't find pointContent element");
+            }
+          });
+        }
+      },
+
+      loginName: function () {
+        return this.point.PointRevisions[0].User.name;
+      },
+
+      upVote: function(point) {
+        if (point) {
+          if (point.value == 0) {
+            return true;
+          } else {
+            return point.value>0;
+          }
+        } else {
+          console.warn("Can't find point for upVote");
+          return false;
+        }
+      },
+
+      downVote: function(point) {
+        if (point) {
+          if (point.value == 0) {
+            return true;
+          } else {
+            return point.value<0;
+          }
+        } else {
+          console.warn("Can't find point for upVote");
+          return false;
+        }
+      },
+
+      computeClass: function (point) {
+        var ret = 'description ';
+        if (point) {
+          if (point.value>0)
+            ret += 'for';
+          else
+            ret += 'against';
+          return ret;
+        } else {
+          console.warn("Can't find point for upVote");
+          return ret;
+        }
+      }
+    });
+  </script>
+</dom-module>

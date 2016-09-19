@@ -1,0 +1,209 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+
+<dom-module id="yp-membership-button">
+
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+
+      :host {
+        background-color: transparent;
+      }
+
+      .member {
+        background-color: var(--accent-color);
+      }
+
+      .heartButton {
+        color: #FFF !important;
+      }
+
+      paper-fab {
+        background-color: #999;
+        color: #FFF;
+        --paper-fab-iron-icon {
+          color: #FFF;
+        }
+      }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        paper-fab {
+          width: 55px;
+          height: 55px;
+        }
+
+        paper-fab[large] {
+          --paper-fab-iron-icon {
+            --iron-icon-height: 36px;
+            --iron-icon-width: 36px;
+          }
+        }
+      }
+
+      @media (max-width: 680px) {
+        paper-fab {
+          width: 40px;
+          height: 40px;
+          --paper-fab-iron-icon {
+            --iron-icon-height: 32px;
+            --iron-icon-width: 32px;
+          }
+        }
+      }
+    </style>
+
+    <paper-fab mini$="[[!large]]" id="button" on-tap="_toggleMembership"  disabled="[[disabled]]" class="heartButton" icon="favorite"></paper-fab>
+    <yp-ajax class="ajax" id="membershipAjax" hidden$="[[!disabled]]" method="POST" on-response="_membershipResponse"></yp-ajax>
+
+    <iron-signals on-iron-signal-got-memberships="_updateMembershipFromSignal"></iron-signals>
+  </template>
+  <script>
+    Polymer({
+      is: 'yp-membership-button',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        community: {
+          type: Object,
+          observer: "_communityChanged"
+        },
+
+        group: {
+          type: Object,
+          observer: "_groupChanged"
+        },
+
+        membershipValue: {
+          type: Boolean,
+          value: false
+        },
+
+        disabled: {
+          type: Boolean,
+          value: false
+        },
+
+        large: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _communityChanged: function (community) {
+        if (community) {
+          this._updateMembership();
+        }
+      },
+
+      _groupChanged: function (group) {
+        if (group) {
+          this._updateMembership();
+        }
+      },
+
+      _updateMembershipFromSignal: function () {
+        this._updateMembership();
+      },
+
+      _updateMembership: function () {
+        if (window.appUser.loggedIn() && window.appUser && window.appUser.membershipsIndex) {
+          if (this.community) {
+            this.set('membershipValue',  window.appUser.membershipsIndex.communities[this.community.id]);
+          } else if (this.group) {
+            this.set('membershipValue',  window.appUser.membershipsIndex.groups[this.group.id]);
+          } else {
+            this.set('membershipValue', false);
+          }
+        } else {
+          this.set('membershipValue', false);
+        }
+        this._resetClasses();
+      },
+
+      _resetClasses: function () {
+        if (this.membershipValue) {
+          this.$.button.className += " " + "member";
+        } else {
+          this.removeClass(this.$.button, "member");
+        }
+      },
+
+      _membershipResponse: function (event, detail) {
+        this.set('disabled', false);
+        this.set('membershipValue', detail.response.membershipValue);
+        if (this.membershipValue) {
+          window.appGlobals.notifyUserViaToast(this.t('membership.joined')+ " " + detail.response.name);
+        } else {
+          window.appGlobals.notifyUserViaToast(this.t('membership.left')+ " " + detail.response.name);
+        }
+        this._resetClasses();
+        if (detail.response.membershipValue===true) {
+          if (this.community) {
+            window.appUser.membershipsIndex.communities[this.community.id] = true;
+          } else if (this.group) {
+            window.appUser.membershipsIndex.groups[this.group.id] = true;
+          }
+        } else {
+          if (this.community) {
+            window.appUser.membershipsIndex.communities[this.community.id] = null;
+          } else if (this.group) {
+            window.appUser.membershipsIndex.groups[this.group.id] = null;
+          }
+        }
+      },
+
+      generateMembershipFromLogin: function (value) {
+        if (this.community) {
+          if (!window.appUser.membershipsIndex.communities[this.community.id]) {
+            this.generateMembership(value);
+          }
+        } else if (this.group) {
+          if (!window.appUser.membershipsIndex.groups[this.group.id]) {
+            this.generateMembership(value);
+          }
+        }
+      },
+
+      _toggleMembership: function () {
+        if (this.community) {
+          window.appGlobals.activity('clicked', 'toggleCommunityMembership', this.community.id);
+        } else if (this.group) {
+          window.appGlobals.activity('clicked', 'toggleGroupMembership', this.group.id);
+        }
+        this.generateMembership(!this.membershipValue)
+      },
+
+      generateMembership: function (value) {
+        this.set('disabled', true);
+        if (window.appUser.loggedIn()===true) {
+          if (this.community) {
+            this.$.membershipAjax.url = "/api/communities/" + this.community.id + "/user_membership";
+          } else if (this.group) {
+            this.$.membershipAjax.url = "/api/groups/" + this.group.id + "/user_membership";
+          }
+          this.$.membershipAjax.body = { value: value };
+
+          if (value) {
+            this.$.membershipAjax.method = "POST";
+          } else {
+            this.$.membershipAjax.method = "DELETE";
+          }
+          this.$.membershipAjax.generateRequest();
+        } else {
+          this.set('disabled', false);
+          window.appUser.loginForMembership(this, { value: value } );
+        }
+      }
+
+    });
+  </script>
+</dom-module>
