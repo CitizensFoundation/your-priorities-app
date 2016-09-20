@@ -69,6 +69,69 @@ var validateEmbedUrl = function(urlIn) {
   return (urls!=null && urls.length>0)
 };
 
+var loadPointWithAll = function (pointId, callback) {
+  models.Point.find({
+    where: {
+      id: pointId
+    },
+    order: [
+      [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
+      [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+    ],
+    include: [
+      { model: models.User,
+        attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
+        required: false,
+        include: [
+          {
+            model: models.Image, as: 'UserProfileImages',
+            required: false
+          },
+          {
+            model: models.Organization,
+            as: 'OrganizationUsers',
+            required: false,
+            attributes: ['id', 'name'],
+            include: [
+              {
+                model: models.Image,
+                as: 'OrganizationLogoImages',
+                attributes: ['id', 'formats'],
+                required: false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        model: models.PointRevision,
+        required: false
+      },
+      { model: models.PointQuality,
+        required: false,
+        include: [
+          { model: models.User,
+            attributes: ["id", "name", "email"],
+            required: false
+          }
+        ]
+      },
+      {
+        model: models.Post,
+        required: false
+      }
+    ]
+  }).then(function(point) {
+    if (point) {
+      callback(null, point);
+    } else {
+      callback("Can't find point");
+    }
+  }).catch(function(error) {
+    callback(error);
+  });
+};
+
 router.get('/:parentPointId/comments', auth.can('view point'), function(req, res) {
   models.Point.findAll({
     where: {
@@ -195,7 +258,14 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
           }).then(function(post) {
             post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
               post.increment('counter_points');
-              res.send(point);
+              loadPointWithAll(point.id, function (error, loadedPoint) {
+                if (error) {
+                  log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
+                  res.sendStatus(500);
+                } else {
+                  res.send(loadedPoint);
+                }
+              });
             });
           });
         });

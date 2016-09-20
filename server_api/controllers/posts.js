@@ -227,40 +227,38 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
       post_id: req.params.id
     },
     order: [
-      models.sequelize.literal('(counter_quality_up-counter_quality_down) desc')
- //     [ models.PointRevision, models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+      models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
+      [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
+      [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
     ],
     include: [
-      {
-        model: models.PointRevision,
+      { model: models.User,
+        attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
         required: false,
         include: [
-          { model: models.User,
-            attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
+          {
+            model: models.Image, as: 'UserProfileImages',
+            required: false
+          },
+          {
+            model: models.Organization,
+            as: 'OrganizationUsers',
             required: false,
+            attributes: ['id', 'name'],
             include: [
               {
-                model: models.Image, as: 'UserProfileImages',
+                model: models.Image,
+                as: 'OrganizationLogoImages',
+                attributes: ['id', 'formats'],
                 required: false
               }
-              /* ,
-              {
-                model: models.Organization,
-                as: 'OrganizationUsers',
-                required: false,
-                attributes: ['id', 'name'],
-                include: [
-                  {
-                    model: models.Image,
-                    as: 'OrganizationLogoImages',
-                    attributes: ['id', 'formats'],
-                    required: false
-                  }
-                ]
-              }*/
             ]
           }
         ]
+      },
+      {
+        model: models.PointRevision,
+        required: false
       },
       { model: models.PointQuality,
         required: false,

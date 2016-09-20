@@ -56,17 +56,17 @@
 
     </style>
 
-    <template is="dom-if" if="[[point]]">
+    <template is="dom-if" if="[[latestPointRevision]]" restamp>
 
       <div class="layout vertical">
 
-        <div class="userInfoContainer layout horizontal end-justified" up-vote$=[[upVote(point)]]  down-vote$=[[downVote(point)]] hidden$="[[hideUser]]">
+        <div class="userInfoContainer layout horizontal end-justified" up-vote$="[[upVote(point)]]"  down-vote$="[[downVote(point)]]" hidden$="[[hideUser]]">
           <yp-user-with-organization title-date="[[point.created_at]]" inverted user="[[user]]"></yp-user-with-organization>
         </div>
 
         <div class="point-content">
-          <span hidden$="[[!point.name]]">
-            <span>[[point.name]]</span>.
+          <span hidden$="[[!latestPointRevision.name]]">
+            <span>[[latestPointRevision.name]]</span>.
           </span>
           <div id="pointContent"></div>
           <div class="layout horizontal">
@@ -92,6 +92,10 @@
           observer: "_pointChanged"
         },
 
+        latestPointRevision: {
+          type: Object
+        },
+
         user: {
           type: Object,
           value: null
@@ -110,15 +114,17 @@
 
       _pointChanged: function(point, oldValue) {
         if (point) {
-          this.user = this.point.PointRevisions[0].User;
+          this.set('user', this.point.User);
+          this.set('latestPointRevision', point.PointRevisions[point.PointRevisions.length-1]);
         } else {
-          this.user = null;
+          this.set('user', null);
+          this.set('latestPointRevision', null);
         }
-        if (point && point.content) {
+        if (this.latestPointRevision && this.latestPointRevision.content) {
           this.async(function () {
             var content = this.$$("#pointContent");
             if (content) {
-              content.innerHTML = this.addLinksAndEmjois(point.content);
+              content.innerHTML = this.addLinksAndEmjois(this.latestPointRevision.content);
             } else {
               console.error("Can't find pointContent element");
             }
@@ -127,7 +133,7 @@
       },
 
       loginName: function () {
-        return this.point.PointRevisions[0].User.name;
+        return this.point.User.name;
       },
 
       upVote: function(point) {
