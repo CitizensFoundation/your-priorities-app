@@ -221,8 +221,12 @@
 
         setLoggedInUser: function (user) {
           this.$.session.set('user', user);
-          this.user = user;
-          this.fire('iron-signal', {name: 'logged-in', data:  user });
+          this.set('user', user);
+          this.fire('iron-signal', {name: 'logged-in', data: user });
+          // Fire another signal a bit later in case some components had not set up their listeners
+          this.async(function () {
+            this.fire('iron-signal', {name: 'logged-in', data: user });
+          }, 1000);
         },
 
         removeUserSession: function () {
@@ -376,6 +380,10 @@
           if (detail.response && detail.response!=0) {
             this.set('adminRights', detail.response);
             this.fire('iron-signal', {name: 'got-admin-rights'});
+            // Fire another signal a bit later in case some components had not set up their listeners
+            this.async(function () {
+              this.fire('iron-signal', {name: 'got-admin-rights'});
+            }, 1000);
           }
         },
 

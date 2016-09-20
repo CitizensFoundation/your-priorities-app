@@ -27,7 +27,9 @@
       }
 
       .imageStatus {
-        padding-left: 16px;
+        margin-left: 16px;
+        width: 48px;
+        height: 48px;
       }
 
       .rousnded {
@@ -59,7 +61,7 @@
         </div>
       </div>
       <template is="dom-if" if="[[organizationImageUrl]]">
-        <img sizing="cover" class="imageStatus rounded" src$="[[organizationImageUrl]]">
+        <img width="48" height="48" sizing="cover" class="imageStatus" src$="[[organizationImageUrl]]">
       </template>
       <yp-user-image titleFromUser="[[userTitle]]" user="[[user]]"></yp-user-image>
       </div>

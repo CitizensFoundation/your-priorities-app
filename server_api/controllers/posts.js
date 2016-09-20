@@ -228,6 +228,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
     },
     order: [
       models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
+      [ models.PointRevision, 'created_at', 'asc' ],
       [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
       [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
     ],

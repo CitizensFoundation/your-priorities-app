@@ -50,6 +50,17 @@
       }
     },
 
+    checkPointAccess: function (point) {
+      if (point && window.appUser && window.appUser.adminRights) {
+        return this._hasAccess(point, point.Post.group_id, window.appUser.adminRights.GroupAdmins);
+      } else if (point) {
+        return false;
+      } else {
+        console.error("No point in hasAccess");
+        return false;
+      }
+    },
+
     checkPostAdminOnlyAccess: function (post) {
       if (post && window.appUser && window.appUser.adminRights) {
         return this._hasAdminRights(post.group_id, window.appUser.adminRights.GroupAdmins);

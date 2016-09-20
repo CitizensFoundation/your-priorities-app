@@ -529,7 +529,9 @@
           if (tabCounter) {
             tabCounter.innerHTML = this.formatNumber(detail.count);
           }
-          this.$.postCard.updateDescriptionIfEmpty(detail.firstPoint.content);
+          if (detail.firstPoint) {
+            this.$.postCard.updateDescriptionIfEmpty(detail.firstPoint.content);
+          }
         },
 
         _mainContainerClasses: function(small) {
