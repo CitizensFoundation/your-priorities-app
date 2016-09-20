@@ -213,40 +213,45 @@ router.put('/:pointId', auth.can('edit point'), function(req, res) {
       id: req.params.pointId
     }
   }).then(function(point) {
-    log.info('Point Edit', { point: toJson(point), context: 'edit', user: toJson(req.user) });
-    var pointRevision = models.PointRevision.build({
-      group_id: point.group_id,
-      post_id: point.post_id,
-      content: req.body.content,
-      user_id: req.user.id,
-      status: point.status,
-      value: point.value,
-      point_id: point.id,
-      user_agent: req.useragent.source,
-      ip_address: req.clientIp
-    });
-    pointRevision.save().then(function() {
-      log.info('PointRevision Created', { pointRevision: toJson(pointRevision), context: 'create', user: toJson(req.user) });
-      models.AcActivity.createActivity({
-        type:'activity.point.edited',
-        userId: point.user_id,
-        domainId: req.ypDomain.id,
-        communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-        groupId : point.group_id,
-        postId : point.post_id,
-        pointId: point.id,
-        access: models.AcActivity.ACCESS_PUBLIC
-      }, function (error) {
-        loadPointWithAll(point.id, function (error, loadedPoint) {
-          if (error) {
-            log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
-            res.sendStatus(500);
-          } else {
-            res.send(loadedPoint);
-          }
+    var maxNumberOfPointsBeforeEditFrozen = 5;
+    if ((point.counter_quality_up + point.counter_quality_down) <= maxNumberOfPointsBeforeEditFrozen) {
+      var pointRevision = models.PointRevision.build({
+        group_id: point.group_id,
+        post_id: point.post_id,
+        content: req.body.content,
+        user_id: req.user.id,
+        status: point.status,
+        value: point.value,
+        point_id: point.id,
+        user_agent: req.useragent.source,
+        ip_address: req.clientIp
+      });
+      pointRevision.save().then(function() {
+        log.info('PointRevision Created', { pointRevision: toJson(pointRevision), context: 'create', user: toJson(req.user) });
+        models.AcActivity.createActivity({
+          type:'activity.point.edited',
+          userId: point.user_id,
+          domainId: req.ypDomain.id,
+          communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+          groupId : point.group_id,
+          postId : point.post_id,
+          pointId: point.id,
+          access: models.AcActivity.ACCESS_PUBLIC
+        }, function (error) {
+          loadPointWithAll(point.id, function (error, loadedPoint) {
+            if (error) {
+              log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
+              res.sendStatus(500);
+            } else {
+              res.send(loadedPoint);
+            }
+          });
         });
       });
-    });
+    } else {
+      log.error('Trying to edit point with too many point qualities', { point: toJson(point), context: 'edit', user: toJson(req.user) });
+      res.sendStatus(401);
+    }
   }).catch(function(error) {
     sendPointOrError(res, null, 'edit', req.user, error);
   });
