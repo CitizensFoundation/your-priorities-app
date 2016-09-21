@@ -1,19 +1,25 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.28">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.29">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.28">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.28">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.28">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.28">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.28">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.28">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.29">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.29">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.29">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.29">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.29">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.29">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.28">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.2.28">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.29">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.2.29">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.2.29">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.28">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.2.28">
-<link rel="import" href="../yp-user/yp-user-image.html?v=6.2.28">
-<link rel="import" href="yp-point-actions.html?v=6.2.28">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.29">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.29">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.2.29">
+<link rel="import" href="../yp-user/yp-user-image.html?v=6.2.29">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.2.29">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.2.29">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.2.29">
+
+<link rel="import" href="yp-point-actions.html?v=6.2.29">
 
 </head><body><dom-module id="yp-point">
 
@@ -54,9 +60,15 @@
         border-bottom-color: var(--master-point-down-color);
       }
 
+      paper-icon-button {
+        color: #ccc;
+      }
     </style>
 
-    <template is="dom-if" if="[[point]]">
+    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+
+    <template is="dom-if" if="[[latestContent]]" restamp="">
 
       <div class="layout vertical">
 
@@ -65,17 +77,36 @@
         </div>
 
         <div class="point-content">
-          <span hidden$="[[!point.name]]">
-            <span>[[point.name]]</span>.
+          <span hidden$="[[!latestContent.name]]">
+            <span>[[latestContent.name]]</span>.
           </span>
-          <div id="pointContent"></div>
+          <div id="pointContent" hidden$="[[isEditing]]"></div>
+          <template is="dom-if" if="[[isEditing]]" restamp="">
+            <div class="layout vertical">
+              <paper-textarea id="pointContentEditor" char-counter="" maxlength="500" value="{{latestContent}}"></paper-textarea>
+              <div class="horizontal end-justified layout">
+                <emoji-selector id="pointEmojiSelector"></emoji-selector>
+              </div>
+              <div class="layout horizontal self-end">
+                <paper-button on-tap="_cancelEdit">[[t('cancel')]]</paper-button>
+                <paper-button on-tap="_saveEdit">[[t('update')]]</paper-button>
+              </div>
+            </div>
+          </template>
           <div class="layout horizontal">
             <yp-point-actions point="[[point]]"></yp-point-actions>
+            <div class="flex"></div>
+            <template is="dom-if" if="[[hasPointAccess]]">
+              <div class="layout horizontal self-end" hidden$="">
+                <yp-ajax id="editPointAjax" method="PUT" on-response="_editResponse"></yp-ajax>
+                <yp-ajax id="deletePointAjax" method="DELETE" on-response="_deleteResponse"></yp-ajax>
+                <paper-icon-button hidden$="[[!canEditPoint]]" icon="create" on-tap="_editPoint"></paper-icon-button>
+                <paper-icon-button icon="clear" on-tap="_deletePoint"></paper-icon-button>
+              </div>
+            </template>
           </div>
         </div>
-
       </div>
-
     </template>
   </template>
 
@@ -92,6 +123,20 @@
           observer: "_pointChanged"
         },
 
+        hasPointAccess: {
+          type: Boolean,
+          computed: '_hasPointAccess(point, gotAdminRights, loggedInUser)'
+        },
+
+        canEditPoint: {
+          type: Boolean,
+          computed: '_canEditPoint(point, gotAdminRights, loggedInUser)'
+        },
+
+        latestContent: {
+          type: String
+        },
+
         user: {
           type: Object,
           value: null
@@ -100,25 +145,107 @@
         hideUser: {
           type: Boolean,
           value: false
+        },
+
+        isEditing: {
+          type: Boolean,
+          value: false,
+          observer: '_updateEmojiBindings'
+        },
+
+        maxNumberOfPointsBeforeEditFrozen: {
+          type: Number,
+          value: 5
         }
       },
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpLinkifyAndEmjoi
+        Polymer.YpLinkifyAndEmjoi,
+        Polymer.AccessHelpers,
+        Polymer.ypLoggedInUserBehavior,
+        Polymer.ypGotAdminRightsBehavior
       ],
+
+      _updateEmojiBindings: function (isEditing) {
+        if (isEditing) {
+          this.async(function () {
+            var point = this.$$("#pointContentEditor");
+            var emoji = this.$$("#pointEmojiSelector");
+            if (point && emoji) {
+              emoji.inputTarget = point;
+            } else {
+              console.warn("Wide: Can't bind point edit emojis :(");
+            }
+          }.bind(this), 500);
+        }
+      },
+
+      _cancelEdit: function () {
+        this._setlatestContent(this.point);
+        this.set('isEditing', false);
+      },
+
+      _saveEdit: function () {
+        this.$$("#editPointAjax").url = "/api/points/"+this.point.id;
+        this.$$("#editPointAjax").body = { content: this.latestContent };
+        this.$$("#editPointAjax").generateRequest();
+      },
+
+      _deletePoint: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+        dialog.open(this.t('point.confirmDelete'), this._reallyDeletePoint.bind(this));
+      },
+
+      _reallyDeletePoint: function () {
+        this.$$("#deletePointAjax").url = "/api/points/"+this.point.id;
+        this.$$("#deletePointAjax").body = {};
+        this.$$("#deletePointAjax").generateRequest();
+      },
+
+      _editResponse: function (event, detail) {
+        if (detail.response) {
+          this.set('point', detail.response)
+        }
+        this.set('isEditing', false);
+      },
+
+      _deleteResponse: function () {
+        this.fire("yp-point-deleted", { pointId: this.point.id });
+        this.set('point', null);
+      },
+
+      _editPoint: function () {
+        if (this._hasPointAccess(this.point)) {
+          this.set('isEditing', true);
+        }
+      },
+
+      _hasPointAccess: function (point) {
+        return this.checkPointAccess(point);
+      },
+
+      _canEditPoint: function (point) {
+        return (point && (point.counter_quality_up + point.counter_quality_down) <= this.maxNumberOfPointsBeforeEditFrozen);
+      },
+
+      _setlatestContent: function (point) {
+        this.set('latestContent', point.PointRevisions[point.PointRevisions.length-1].content);
+      },
 
       _pointChanged: function(point, oldValue) {
         if (point) {
-          this.user = this.point.PointRevisions[0].User;
+          this.set('user', this.point.User);
+          this._setlatestContent(point);
         } else {
-          this.user = null;
+          this.set('user', null);
+          this.set('latestContent', null);
         }
-        if (point && point.content) {
+        if (this.latestContent) {
           this.async(function () {
             var content = this.$$("#pointContent");
             if (content) {
-              content.innerHTML = this.addLinksAndEmjois(point.content);
+              content.innerHTML = this.addLinksAndEmjois(this.latestContent);
             } else {
               console.error("Can't find pointContent element");
             }
@@ -127,7 +254,7 @@
       },
 
       loginName: function () {
-        return this.point.PointRevisions[0].User.name;
+        return this.point.User.name;
       },
 
       upVote: function(point) {

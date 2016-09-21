@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.28">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.29">
 
 <script>
   /**
@@ -46,6 +46,17 @@
         return false;
       } else {
         console.error("No post in hasAccess");
+        return false;
+      }
+    },
+
+    checkPointAccess: function (point) {
+      if (point && window.appUser && window.appUser.adminRights) {
+        return this._hasAccess(point, point.Post.group_id, window.appUser.adminRights.GroupAdmins);
+      } else if (point) {
+        return false;
+      } else {
+        console.error("No point in hasAccess");
         return false;
       }
     },

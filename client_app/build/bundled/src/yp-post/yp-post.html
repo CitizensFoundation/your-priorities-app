@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.28"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.29"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="/">
 
   <template>
 
@@ -493,6 +493,14 @@
           }
         },
 
+        listeners: {
+          'yp-point-deleted': '_pointDeleted'
+        },
+
+        _pointDeleted: function () {
+          this.$.ajax.generateRequest();
+        },
+
         _pointsChanged: function (points) {
           if (points) {
             this._updateEmojiBindings();
@@ -564,12 +572,16 @@
             this.set('downPoints', []);
           }
 
+          this._updateCounterInfo();
+
+          this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
+        },
+
+        _updateCounterInfo: function () {
           this.fire('yp-debate-info', {
             count: this.upPoints.length + this.downPoints.length,
             firstPoint: this.upPoints[0]
           });
-
-          this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
         },
 
         _insertNewPoint: function (point) {
@@ -597,6 +609,7 @@
           this._insertNewPoint(point);
           this.set('post.counter_points', this.post.counter_points + 1);
           this.$.newPointToast.show();
+          this._updateCounterInfo();
         },
 
         addPointUp: function () {
@@ -1501,7 +1514,9 @@
           if (tabCounter) {
             tabCounter.innerHTML = this.formatNumber(detail.count);
           }
-          this.$.postCard.updateDescriptionIfEmpty(detail.firstPoint.content);
+          if (detail.firstPoint) {
+            this.$.postCard.updateDescriptionIfEmpty(detail.firstPoint.content);
+          }
         },
 
         _mainContainerClasses: function(small) {

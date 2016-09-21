@@ -201,6 +201,9 @@
   },
 
   "point": {
+    "againstAdded": "Added point against",
+    "forAdded": "Added point for",
+    "confirmDelete": "Confirm that you want to delete this point",
     "theseAreFor": "Point for",
     "theseAreAgainst": "Point against",
     "point": "Point",
