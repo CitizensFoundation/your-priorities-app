@@ -547,9 +547,11 @@
           this.setMoreToLoad();
         }
 
+        this.$.list.fire('iron-resize');
+
         this.async(function () {
           this.$.list.fire('iron-resize');
-        }, 10);
+        }, 100);
       }
     });
   </script>
