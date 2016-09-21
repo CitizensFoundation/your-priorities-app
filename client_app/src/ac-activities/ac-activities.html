@@ -345,7 +345,7 @@
       },
 
       _getActivityTypeName: function (activity) {
-        if (activity.type=='activity.point.new') {
+        if (activity.type=='activity.point.new' && activity.Point) {
           if (activity.Point.value>0) {
             return this.t('activity.point.newFor');
           } else if (activity.Point.value<0) {
@@ -546,11 +546,6 @@
           }
           this.setMoreToLoad();
         }
-
-//        this.$.list.fire('iron-resize');
-        this.async(function () {
-          this.$.list.fire('iron-resize');
-        });
       }
     });
   </script>
