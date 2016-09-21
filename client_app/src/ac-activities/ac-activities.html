@@ -546,6 +546,10 @@
           }
           this.setMoreToLoad();
         }
+
+        this.async(function () {
+          this.$.list.fire('iron-resize');
+        }, 10);
       }
     });
   </script>
