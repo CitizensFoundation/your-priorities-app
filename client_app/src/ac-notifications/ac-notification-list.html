@@ -23,9 +23,11 @@
       }
     </style>
 
-    <iron-scroll-threshold on-lower-threshold="loadMoreData" id="threshold">
+    <template is="dom-if" if="[[loggedInUser]]"></template>
+    <iron-scroll-threshold on-lower-threshold="_loadMoreData" id="threshold">
       <iron-list scroll-target="threshold" items="[[notifications]]" as="notification">
         <template>
+          <h1>[[notification.type]]</h1>
           <template is="dom-if" if="[[_notificationType(notification, 'postEndorsment')]]">
           </template>
           <template is="dom-if" if="[[_notificationType(notification, 'pointQuality')]]">
@@ -42,7 +44,8 @@
       </iron-list>
     </iron-scroll-threshold>
 
-    <yp-ajax id="notificationsAjax"></yp-ajax>
+    <yp-ajax id="loadNotificationsAjax" on-response="_loadNotificationsResponse"></yp-ajax>
+    <yp-ajax id="loadNewNotificationsAjax" on-response="_loadNewNotificationsResponse"></yp-ajax>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
@@ -61,52 +64,66 @@
         notifications: Array,
         notificationGetTTL: {
           type: Number,
-          value: 250
+          value: 15000
         },
 
-        oldestNotificationAt: {
+        oldestProcessedNotificationAt: {
           type: Date
         },
 
-        latestNotficationAt: {
+        latestProcessedNotficationAt: {
           type: Date
         },
 
         url: {
           type: String,
-          value: "/api/"
+          value: "/api/notifications"
         }
       },
 
-      _notificationsResponse: function (event, detail) {
+      _notificationType: function (notification, type) {
+        return notifcation.type == type;
+      },
+
+      _loadNotificationsResponse: function (event, detail) {
+        this.set('notifications', detail.response);
+        if (detail.response.oldestProcessedNotificationAt) {
+          this.set('oldestProcessedNotificationAt', detail.response.oldestProcessedNotificationAt);
+        }
+
+
+      },
+
+      _loadNewNotificationsResponse: function (event, detail) {
+        this.set('notifications', detail.response);
         if (this.loggedInUser) {
           this.async(function () {
-            this._loadMoreData();
+            this.loadNewData();
           }.bind(this), this.notificationGetTTL)
         }
       },
 
       _loadMoreData: function () {
-        if (this.url!='' && this.oldestProcessedActivityAt) {
+        if (this.oldestProcessedNotificationAt) {
           this.set('moreToLoad', false);
-          this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
-          this.$.ajax.generateRequest();
+          this.$.loadNotificationsAjax.url = this.url + '?beforeDate='+this.oldestProcessedNotificationAt;
+          this.$.loadNotificationsAjax.generateRequest();
         }
       },
 
       loadNewData: function () {
-        if (this.url!='' && this.latestProcessedActivityAt) {
-          this.$.ajax.url = this.url + '?afterDate='+this.latestProcessedActivityAt;
-          this.$.ajax.generateRequest();
-        } else if (!this.latestProcessedActivityAt) {
-          this.$.ajax.url = this.url;
-          this.$.ajax.generateRequest();
+        if (this.latestProcessedNotficationAt) {
+          this.$.loadNewNotificationsAjax.url = this.url + '?afterDate='+this.latestProcessedNotficationAt;
+          this.$.loadNewNotificationsAjax.generateRequest();
+        } else if (!this.latestProcessedNotficationAt) {
+          this.$.loadNewNotificationsAjax.url = this.url;
+          this.$.loadNewNotificationsAjax.generateRequest();
         }
       },
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), null, null, true);
+          this._loadMoreData();
         }
       }
     });
