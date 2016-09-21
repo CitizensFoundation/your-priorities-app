@@ -331,32 +331,32 @@ router.delete('/:id', auth.can('edit point'), function(req, res) {
   models.Point.find({
     where: {id: req.params.id }
   }).then(function (point) {
-    point.deleted = true;
-    point.save().then(function () {
-      log.info('Point Deleted', { point: toJson(point), context: 'delete', user: toJson(req.user) });
-      models.Post.find({
-        where: { id: point.post_id }
-      }).then(function(post) {
-        post.updateAllExternalCounters(req, 'down', 'counter_points', function () {
-          post.decrement('counter_points');
-          models.AcActivity.findAll({
-            attributes: ['id','deleted'],
-            include: [
-              {
-                model: models.Point,
-                required: true,
-                where: {
-                  id: point.id
-                }
-              }
-            ]
-          }).then(function (activities) {
-            async.eachSeries(activities, function (activity, innerCallback) {
-              activity.deleted = true;
-              activity.save().then(function () {
-                innerCallback();
-              });
-            }, function done() {
+    models.AcActivity.findAll({
+      attributes: ['id','deleted'],
+      include: [
+        {
+          model: models.Point,
+          required: true,
+          where: {
+            id: point.id
+          }
+        }
+      ]
+    }).then(function (activities) {
+      async.eachSeries(activities, function (activity, innerCallback) {
+        activity.deleted = true;
+        activity.save().then(function () {
+          innerCallback();
+        });
+      }, function done() {
+        point.deleted = true;
+        point.save().then(function () {
+          log.info('Point Deleted', { point: toJson(point), context: 'delete', user: toJson(req.user) });
+          models.Post.find({
+            where: { id: point.post_id }
+          }).then(function(post) {
+            post.updateAllExternalCounters(req, 'down', 'counter_points', function () {
+              post.decrement('counter_points');
               res.sendStatus(200);
             });
           });

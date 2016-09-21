@@ -443,31 +443,32 @@ router.put('/:id/:groupId/move', auth.can('edit post'), function(req, res) {
 });
 
 router.delete('/:id', auth.can('edit post'), function(req, res) {
+  var postId = req.params.id;
   models.Post.find({
-    where: {id: req.params.id }
+    where: {id: postId }
   }).then(function (post) {
-    post.deleted = true;
-    post.save().then(function () {
-      log.info('Post Deleted', { post: toJson(post), context: 'delete', user: toJson(req.user) });
-      post.updateAllExternalCounters(req, 'down', 'counter_posts', function () {
-        models.AcActivity.findAll({
-          attributes: ['id','deleted'],
-          include: [
-            {
-              model: models.Post,
-              required: true,
-              where: {
-                id: post.id
-              }
-            }
-          ]
-        }).then(function (activities) {
-          async.eachSeries(activities, function (activity, innerCallback) {
-            activity.deleted = true;
-            activity.save().then(function () {
-              innerCallback();
-            });
-          }, function done() {
+    models.AcActivity.findAll({
+      attributes: ['id','deleted'],
+      include: [
+        {
+          model: models.Post,
+          required: true,
+          where: {
+            id: postId
+          }
+        }
+      ]
+    }).then(function (activities) {
+      async.eachSeries(activities, function (activity, innerCallback) {
+        activity.deleted = true;
+        activity.save().then(function () {
+          innerCallback();
+        });
+      }, function done() {
+        post.deleted = true;
+        post.save().then(function () {
+          log.info('Post Deleted', { post: toJson(post), context: 'delete', user: toJson(req.user) });
+          post.updateAllExternalCounters(req, 'down', 'counter_posts', function () {
             res.sendStatus(200);
           });
         });
