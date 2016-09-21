@@ -1,4 +1,5 @@
 {
+  "pageNotFound": "The page the app requested is not found",
   "participate": "Participate",
   "emojiSearchResults": "Search results",
   "recentlyUsedEmoji": "Recently used",

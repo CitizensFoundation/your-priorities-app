@@ -102,10 +102,11 @@
             <yp-community-grid
               featured-communities="[[featuredCommunities]]"
               active-communities="[[activeCommunities]]"
-              archived-communities="[[archivedCommunities]]">
+              archived-communities="[[archivedCommunities]]"
+              hide-add$="[[!createFabIcon]]"
+              on-add-new-community="_newCommunity">
             </yp-community-grid>
           </div>
-          <yp-community-card-add hidden$="[[!createFabIcon]]" class="card" on-tap="_newCommunity"></yp-community-card-add>
         </section>
         <section name="news">
           <ac-activities domain-id="[[domain.id]]"></ac-activities>

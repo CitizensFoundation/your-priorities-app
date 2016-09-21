@@ -69,9 +69,10 @@
             <yp-group-grid
               featured-groups="[[featuredGroups]]"
               active-groups="[[activeGroups]]"
-              archived-groups="[[archivedGroups]]">
+              archived-groups="[[archivedGroups]]"
+              hide-add$="[[!createFabIcon]]"
+              on-add-new-group="_newGroup">
             </yp-group-grid>
-            <yp-group-card-add hidden$="[[!createFabIcon]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
           </div>
         </section>
         <section name="news">

@@ -20,19 +20,7 @@
       :host {
         display: block;
         @apply(--layout-vertical);
-        height: 460px;
-        width: 316px;
-      }
-
-      @media (max-width: 600px) {
-        :host {
-          width: 285px !important;
-        }
-      }
-
-      .communityCard {
-        height: 460px;
-        background-color: #fff;
+        opacity: 0.80;
       }
 
       paper-icon-button {
@@ -52,16 +40,32 @@
         --iron-icon-width: 220px;
       }
 
-      @media (min-width: 481px) and (max-width: 1024px) {
-        :host {
-          width: 290px;
-        }
+      .communityCard {
+        height: 430px;
+        width: 320px;
+        background-color: #fff;
+        padding: 0;
+        margin: 0;
       }
 
+
+      @media (max-width: 480px) {
+        :host {
+          width: 304px;
+        }
+
+        .communityCard {
+          margin-right: 8px;
+          heigth: 430px;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
+        }
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <paper-card elevation="[[elevation]]" class="layout vertical center communityCard">
+    <paper-card elevation="[[elevation]]" class="layout vertical center-center communityCard">
       <h2 class="header">[[t('community.new')]]</h2>
       <paper-icon-button class="icon" icon="add"></paper-icon-button>
     </paper-card>

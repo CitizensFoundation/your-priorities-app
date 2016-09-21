@@ -1,0 +1,114 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+
+<dom-module id="ac-notification-list">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      iron-list {
+        flex: 1 1 auto;
+      }
+    </style>
+
+    <iron-scroll-threshold on-lower-threshold="loadMoreData" id="threshold">
+      <iron-list scroll-target="threshold" items="[[notifications]]" as="notification">
+        <template>
+          <template is="dom-if" if="[[_notificationType(notification, 'postEndorsment')]]">
+          </template>
+          <template is="dom-if" if="[[_notificationType(notification, 'pointQuality')]]">
+          </template>
+          <template is="dom-if" if="[[_notificationType(notification, 'newPost')]]">
+          </template>
+          <template is="dom-if" if="[[_notificationType(notification, 'newPoint')]]">
+          </template>
+          <template is="dom-if" if="[[_notificationType(notification, 'newRecommendation')]]">
+          </template>
+          <template is="dom-if" if="[[_notificationType(notification, 'system')]]">
+          </template>
+        </template>
+      </iron-list>
+    </iron-scroll-threshold>
+
+    <yp-ajax id="notificationsAjax"></yp-ajax>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-notification-list',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        notifications: Array,
+        notificationGetTTL: {
+          type: Number,
+          value: 250
+        },
+
+        oldestNotificationAt: {
+          type: Date
+        },
+
+        latestNotficationAt: {
+          type: Date
+        },
+
+        url: {
+          type: String,
+          value: "/api/"
+        }
+      },
+
+      _notificationsResponse: function (event, detail) {
+        if (this.loggedInUser) {
+          this.async(function () {
+            this._loadMoreData();
+          }.bind(this), this.notificationGetTTL)
+        }
+      },
+
+      _loadMoreData: function () {
+        if (this.url!='' && this.oldestProcessedActivityAt) {
+          this.set('moreToLoad', false);
+          this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      loadNewData: function () {
+        if (this.url!='' && this.latestProcessedActivityAt) {
+          this.$.ajax.url = this.url + '?afterDate='+this.latestProcessedActivityAt;
+          this.$.ajax.generateRequest();
+        } else if (!this.latestProcessedActivityAt) {
+          this.$.ajax.url = this.url;
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      _loggedInUserChanged: function (newValue) {
+        if (newValue) {
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), null, null, true);
+        }
+      }
+    });
+  </script>
+</dom-module>

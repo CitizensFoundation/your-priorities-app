@@ -5,6 +5,7 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="yp-group-card.html">
+<link rel="import" href="yp-group-card-add.html">
 
 <dom-module id="yp-group-grid">
 
@@ -50,6 +51,7 @@
         <template is="dom-repeat" class="list" items="[[activeGroups]]" as="group">
           <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
         </template>
+        <yp-group-card-add hidden="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
       </div>
       <div class="layout horizontal center-center">
         <h1 class="archivedText" hidden$="[[!archivedGroups]]">
@@ -75,7 +77,15 @@
       properties: {
         featuredGroups: Array,
         archivedGroups: Array,
-        activeGroups: Array
+        activeGroups: Array,
+        hideAdd: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _newGroup: function () {
+        this.fire('add-new-group');
       }
 
     });
