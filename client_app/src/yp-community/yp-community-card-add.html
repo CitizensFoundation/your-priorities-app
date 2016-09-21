@@ -20,12 +20,12 @@
       :host {
         display: block;
         @apply(--layout-vertical);
-        opacity: 0.80;
+        opacity: 0.75;
       }
 
       paper-icon-button {
-        height: 250px !important;
-        width: 250px !important;
+        height: 150px !important;
+        width: 150px !important;
         color: var(--accent-color)
       }
 
@@ -33,11 +33,12 @@
         padding: 0;
         margin: 0;
         padding-top: 16px;
+        color: #777;
       }
 
       .icon {
-        --iron-icon-height: 220px;
-        --iron-icon-width: 220px;
+        --iron-icon-height: 120px;
+        --iron-icon-width: 120px;
       }
 
       .communityCard {
@@ -67,7 +68,7 @@
 
     <paper-card elevation="[[elevation]]" class="layout vertical center-center communityCard">
       <h2 class="header">[[t('community.new')]]</h2>
-      <paper-icon-button class="icon" icon="add"></paper-icon-button>
+      <paper-icon-button class="icon" icon="create"></paper-icon-button>
     </paper-card>
   </template>
 
