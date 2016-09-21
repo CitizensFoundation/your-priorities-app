@@ -1,4 +1,5 @@
 {
+  "votingDisabled": "Voting is not active",
   "pageNotFound": "The page the app requested is not found",
   "participate": "Participate",
   "emojiSearchResults": "Search results",
@@ -247,6 +248,7 @@
   },
 
   "group": {
+    "locationHidden": "Disable location",
     "group": "Group",
     "admins": "Group admins",
     "users": "Group users",

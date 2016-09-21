@@ -1,4 +1,5 @@
 {
+  "votingDisabled": "Kosning er ekki virk",
   "pageNotFound": "Þessi síða fannst ekki",
   "emojiSearchResults": "Niðurstöður",
   "findAnEmoji": "Finndu emoji",
@@ -296,6 +297,7 @@
   "next": "áfram",
 
   "group": {
+    "locationHidden": "Ekki nota staðsetningu",
     "group": "Hópur",
     "admins": "Hópur vefstjórar",
     "users": "Hópur notendur",

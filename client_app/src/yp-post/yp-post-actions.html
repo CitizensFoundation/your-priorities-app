@@ -191,7 +191,7 @@
     <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
 
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
-    <paper-material elevation="[[elevationPlusOne]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
+    <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
       <div id="actionUp" class="action-up">
         <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.up_vote')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">{{formatNumber(post.counter_endorsements_up)}}</div>
@@ -278,6 +278,11 @@
           value: false
         },
 
+        disabledTitle: {
+          type: String,
+          value: null
+        },
+
         showShareButtons: {
           type: Boolean,
           value: false
@@ -286,13 +291,18 @@
         floating: {
           type: Boolean,
           value: false
+        },
+
+        votingDisabled: {
+          type: Boolean,
+          value: false
         }
       },
 
       _goToPostIfNotHeader: function () {
         if (!this.headerMode) {
           this.goToPost();
-         }
+        }
       },
 
       _postUrl: function (post) {
@@ -329,9 +339,14 @@
         return (small || forceSmall)
       },
 
-      _onPostChanged: function (newValue, oldValue) {
-        if (newValue) {
+      _onPostChanged: function (post, oldValue) {
+        if (post) {
           this._updateEndorsements();
+        }
+        if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
+          this.set('votingDisabled', true);
+          this.set('allDisabled', true);
+          this.set('disabledTitle', this.t('votingDisabled'));
         }
       },
 
@@ -381,8 +396,14 @@
         }
       },
 
+      _enableVoting: function () {
+        if (!this.votingDisabled) {
+          this.set('allDisabled', false);
+        }
+      },
+
       _endorseResponse: function (event, detail) {
-        this.set('allDisabled', false);
+        this._enableVoting();
         var endorsement = detail.response.endorsement;
         var oldEndorsementValue = detail.response.oldEndorsementValue;
         this._setEndorsement(endorsement.value);
@@ -416,7 +437,7 @@
           }
           this.$.endorseAjax.generateRequest();
         } else {
-          this.set('allDisabled', false);
+          this._enableVoting();
           window.appUser.loginForEndorse(this, { value: value } );
         }
       },

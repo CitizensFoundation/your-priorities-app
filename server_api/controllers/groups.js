@@ -669,9 +669,9 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         required: false
       },
       {
-        model: models.Point,
-        attributes: ['id','content'],
-        required: false
+        model: models.Group,
+        required: true,
+        attributes: ['id','configuration']
       },
       { model: models.Image,
         as: 'PostHeaderImages',
