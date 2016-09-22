@@ -3,7 +3,7 @@
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html" >
-<link rel="import" href="../../bower_components/paper-button/paper-button.html" >
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html" >
 
 <link rel="import" href="yp-user-image.html" >
 
@@ -48,8 +48,10 @@
         <div class="contact-info">
           <div class="name">[[user.name]]</div>
           <div class="email">[[user.email]]</div>
-          <paper-button on-tap="onLogout">[[t('user.logout')]]</paper-button>
-          <paper-button on-tap="_openEdit">[[t('user.edit')]]</paper-button>
+          <div class="layout horizontal center-justified">
+            <paper-icon-button icon="create" title$="[[t('user.edit')]]" on-tap="_openEdit"></paper-icon-button>
+            <paper-icon-button icon="input" title$="[[t('user.logout')]]" on-tap="onLogout"></paper-icon-button>
+          </div>
         </div>
       </div>
     </template>

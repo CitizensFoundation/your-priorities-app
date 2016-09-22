@@ -43,7 +43,9 @@
             <template is="dom-if" if="[[user]]">
               <yp-user-info on-open-user-edit="_openEdit" user="{{user}}"></yp-user-info>
             </template>
-            <yp-language-selector></yp-language-selector>
+            <div class="notificationHeader">
+              [[t('notifications')]]
+            </div>
             <ac-notification-list user="[[user]]" id="notificationList"></ac-notification-list>
           </div>
         </app-header>
