@@ -29,15 +29,9 @@
       <iron-list id="list" items="[[notifications]]" as="notification">
         <template>
           <p>[[notification.type]]</p>
-          <template is="dom-if" if="[[_notificationType(notification, 'postEndorsment')]]">
+          <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
           </template>
-          <template is="dom-if" if="[[_notificationType(notification, 'pointQuality')]]">
-          </template>
-          <template is="dom-if" if="[[_notificationType(notification, 'newPost')]]">
-          </template>
-          <template is="dom-if" if="[[_notificationType(notification, 'newPoint')]]">
-          </template>
-          <template is="dom-if" if="[[_notificationType(notification, 'newRecommendation')]]">
+          <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
           </template>
           <template is="dom-if" if="[[_notificationType(notification, 'system')]]">
           </template>
@@ -100,7 +94,13 @@
       },
 
       _notificationType: function (notification, type) {
-        return notification.type == type;
+        if (type=='postNotification') {
+          return (['notification.post.new', 'notification.post.endorsement'].indexOf(notification.type) > -1)
+        } else if (type=='pointNotification') {
+          return (['notification.point.new', 'notification.point.quality'].indexOf(notification.type) > -1)
+        } else if (type=='system') {
+          return false;
+        }
       },
 
       _loadNotificationsResponse: function (event, detail) {

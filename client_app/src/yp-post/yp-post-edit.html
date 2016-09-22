@@ -170,9 +170,9 @@
 
           <template is="dom-if" if="[[!locationHidden]]" restamp>
             <section>
-                <template is="dom-if" if="[[mapActive]]" restamp>
-                  <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]"></yp-post-location>
-                </template>
+              <template is="dom-if" if="[[mapActive]]" restamp>
+                <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]"></yp-post-location>
+              </template>
             </section>
           </template>
 
@@ -296,6 +296,11 @@
       '_setupTranslation(language)'
     ],
 
+    customFormResponse: function () {
+      var event = new CustomEvent("iron-signal", { detail: { name: 'yp-refresh-group-posts', data: { id: 4 } } } );
+      document.dispatchEvent(event);
+    },
+
     _updateEmojiBindings: function () {
       this.async(function () {
         var description = this.$$("#description");
@@ -327,7 +332,6 @@
         console.log("Location hidden changed");
       }, 10);
     },
-
 
     _formInvalid: function () {
       this.set('selected', 0);

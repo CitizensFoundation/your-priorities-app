@@ -257,7 +257,6 @@ router.put('/:pointId', auth.can('edit point'), function(req, res) {
   });
 });
 
-
 router.post('/:groupId', auth.can('create point'), function(req, res) {
   var point = models.Point.build({
     group_id: req.params.groupId,

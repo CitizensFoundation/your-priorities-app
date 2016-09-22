@@ -124,6 +124,7 @@
     </yp-page>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-yp-refresh-group-posts="_refreshGroupPosts"></iron-signals>
 
     <app-route
       route="{{idRoute}}"
@@ -226,6 +227,10 @@
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
+
+      _refreshGroupPosts: function () {
+        this.$$("#openPostList")._refreshGroupFromFilter();
+      },
 
       _routeIdChanged: function (newId) {
         if (newId) {

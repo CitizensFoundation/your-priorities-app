@@ -56,6 +56,9 @@
       this.set('uploadedHeaderImageId', image.id);
     },
 
+    customFormResponse: function () {
+    },
+
     _formResponse: function (event, detail) {
       if (typeof this._customRedirect == 'function') {
         this._customRedirect(detail.response);
@@ -68,6 +71,7 @@
       } else {
         this._clear();
       }
+      this.customFormResponse(event, detail);
     },
 
     _setupNewUpdateState: function () {

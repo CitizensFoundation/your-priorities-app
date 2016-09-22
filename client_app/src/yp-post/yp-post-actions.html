@@ -342,11 +342,13 @@
       _onPostChanged: function (post, oldValue) {
         if (post) {
           this._updateEndorsements();
-        }
-        if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
-          this.set('votingDisabled', true);
-          this.set('allDisabled', true);
-          this.set('disabledTitle', this.t('votingDisabled'));
+          if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
+            this.set('votingDisabled', true);
+            this.set('allDisabled', true);
+            this.set('disabledTitle', this.t('votingDisabled'));
+          }
+        } else {
+          console.warn("No post found for post actions");
         }
       },
 
