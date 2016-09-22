@@ -5,7 +5,7 @@
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 
 <dom-module id="ac-notification-list">
@@ -21,13 +21,14 @@
       iron-list {
         flex: 1 1 auto;
       }
+      p {
+        text-align: left;
+      }
     </style>
-
-    <template is="dom-if" if="[[loggedInUser]]"></template>
-    <iron-scroll-threshold on-lower-threshold="_loadMoreData" id="threshold">
-      <iron-list scroll-target="threshold" items="[[notifications]]" as="notification">
+    <div id="scrollableRegion">
+      <iron-list id="list" items="[[notifications]]" as="notification">
         <template>
-          <h1>[[notification.type]]</h1>
+          <p>[[notification.type]]</p>
           <template is="dom-if" if="[[_notificationType(notification, 'postEndorsment')]]">
           </template>
           <template is="dom-if" if="[[_notificationType(notification, 'pointQuality')]]">
@@ -42,13 +43,17 @@
           </template>
         </template>
       </iron-list>
-    </iron-scroll-threshold>
+    </div>
 
-    <yp-ajax id="loadNotificationsAjax" on-response="_loadNotificationsResponse"></yp-ajax>
-    <yp-ajax id="loadNewNotificationsAjax" on-response="_loadNewNotificationsResponse"></yp-ajax>
+    <div class="layout horizontal center-center">
+      <yp-ajax id="loadNotificationsAjax" on-response="_loadNotificationsResponse"></yp-ajax>
+      <yp-ajax id="loadNewNotificationsAjax" on-response="_loadNewNotificationsResponse"></yp-ajax>
+      <template is="dom-if" if="[[moreToLoad]]" restamp>
+        <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
+      </template>
+    </div>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
   </template>
 
   <script>
@@ -57,7 +62,8 @@
       is: 'ac-notification-list',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.YpScrollTabBehavior
       ],
 
       properties: {
@@ -71,36 +77,79 @@
           type: Date
         },
 
-        latestProcessedNotficationAt: {
+        latestProcessedNotificationAt: {
           type: Date
         },
 
         url: {
           type: String,
           value: "/api/notifications"
+        },
+
+        user: {
+          type: Object,
+          observer: '_userChanged'
+        }
+      },
+
+      _userChanged: function (user) {
+        if (user) {
+          this.$.loadNotificationsAjax.url = this.url;
+          this.$.loadNotificationsAjax.generateRequest();
         }
       },
 
       _notificationType: function (notification, type) {
-        return notifcation.type == type;
+        return notification.type == type;
       },
 
       _loadNotificationsResponse: function (event, detail) {
-        this.set('notifications', detail.response);
+        var notifications = detail.response.notifications;
+
         if (detail.response.oldestProcessedNotificationAt) {
           this.set('oldestProcessedNotificationAt', detail.response.oldestProcessedNotificationAt);
         }
 
+        if (!this.notifications) {
+          this.set('notifications', []);
+        }
 
+        notifications.forEach(function (notification) {
+          this.push('notifications', notification);
+        }.bind(this));
+
+        this._finalizeAfterResponse(notifications);
       },
 
       _loadNewNotificationsResponse: function (event, detail) {
-        this.set('notifications', detail.response);
-        if (this.loggedInUser) {
+        var notifications = detail.response.notifications;
+
+        notifications.forEach(function (notification) {
+          this.unshift('notifications', notification);
+        }.bind(this));
+
+        this._finalizeAfterResponse(notifications);
+
+        if (this.user) {
           this.async(function () {
             this.loadNewData();
           }.bind(this), this.notificationGetTTL)
         }
+      },
+
+      _finalizeAfterResponse: function (notifications) {
+        if (notifications.length>0) {
+          if (!this.latestProcessedNotificationAt || this.latestProcessedNotificationAt < notifications[0].created_at) {
+            this.set('latestProcessedNotificationAt', notifications[0].created_at);
+          }
+          this.setMoreToLoad();
+        }
+
+        this.$.list.fire('iron-resize');
+
+        this.async(function () {
+          this.$.list.fire('iron-resize');
+        }, 100);
       },
 
       _loadMoreData: function () {
@@ -112,18 +161,12 @@
       },
 
       loadNewData: function () {
-        if (this.latestProcessedNotficationAt) {
-          this.$.loadNewNotificationsAjax.url = this.url + '?afterDate='+this.latestProcessedNotficationAt;
+        if (this.latestProcessedNotificationAt) {
+          this.$.loadNewNotificationsAjax.url = this.url + '?afterDate='+this.latestProcessedNotificationAt;
           this.$.loadNewNotificationsAjax.generateRequest();
-        } else if (!this.latestProcessedNotficationAt) {
+        } else if (!this.latestProcessedNotificationAt) {
           this.$.loadNewNotificationsAjax.url = this.url;
           this.$.loadNewNotificationsAjax.generateRequest();
-        }
-      },
-
-      _loggedInUserChanged: function (newValue) {
-        if (newValue) {
-          this._loadMoreData();
         }
       }
     });

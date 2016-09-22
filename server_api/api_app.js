@@ -26,6 +26,7 @@ var passport = require('passport')
 var index = require('./controllers/index');
 var news_feeds = require('./active-citizen/controllers/news_feeds');
 var activities = require('./active-citizen/controllers/activities');
+var notifications = require('./active-citizen/controllers/notifications');
 
 var posts = require('./controllers/posts');
 var groups = require('./controllers/groups');
@@ -230,6 +231,7 @@ app.use('/api/categories', categories);
 app.use('/api/users', users);
 app.use('/api/news_feeds', news_feeds);
 app.use('/api/activities', activities);
+app.use('/api/notifications', notifications);
 
 app.use('/ideas', legacyPosts);
 app.use('/users', legacyUsers);

@@ -264,7 +264,7 @@
         <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
         <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner on-response="_activityDeletedResponse"></yp-ajax>
         <template is="dom-if" if="[[moreToLoad]]" restamp>
-          <paper-button data-args$="[[activity]]" on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
+          <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
         </template>
       </div>
     </div>

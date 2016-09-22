@@ -15,8 +15,9 @@
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
-<link href="../yp-app-globals/yp-language-selector.html" rel="import">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html">
 
+<link rel="import" href="../ac-notifications/ac-notification-list.html">
 <link rel="import" href="../yp-user/yp-user-info.html">
 
 <dom-module id="yp-app-drawer">
@@ -43,6 +44,7 @@
               <yp-user-info on-open-user-edit="_openEdit" user="{{user}}"></yp-user-info>
             </template>
             <yp-language-selector></yp-language-selector>
+            <ac-notification-list user="[[user]]" id="notificationList"></ac-notification-list>
           </div>
         </app-header>
       </app-header-layout>
