@@ -86,7 +86,7 @@
             </div>
           </paper-tab>
         </template>
-        <paper-tab name="map">[[t('posts.map')]]</paper-tab>
+        <paper-tab name="map" hidden$="[[locationHidden]]">[[t('posts.map')]]</paper-tab>
       </paper-tabs>
 
       <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
@@ -115,7 +115,7 @@
             </div>
           </section>
         </template>
-        <section name="map">
+        <section name="map" hidden$="[[locationHidden]]">
           <template is="dom-if" if="[[mapActive]]" restamp>
             <yp-post-map group-id="[[group.id]]"></yp-post-map>
           </template>
@@ -199,7 +199,7 @@
         hasNonOpenPosts: {
           type: Boolean,
           value: false,
-          observer: '_hasNonOpenPostsChanged'
+          observer: '_refreshTabsAndPages'
         },
 
         mapActive: {
@@ -212,6 +212,11 @@
         },
 
         disableNewPosts: {
+          type: Boolean,
+          value: false
+        },
+
+        locationHidden: {
           type: Boolean,
           value: false
         }
@@ -250,7 +255,7 @@
         }
       },
 
-      _hasNonOpenPostsChanged: function () {
+      _refreshTabsAndPages: function () {
         this.async(function () {
           var pages = this.$$("#tabPages");
           if (pages) {
@@ -308,7 +313,7 @@
           this.set('hasNonOpenPosts', false);
           this._getGroup();
         }
-       },
+      },
 
       _getGroup: function () {
         this.$.ajax.url = '/api/groups/' + this.groupId;
@@ -355,6 +360,18 @@
             this.setTheme(this.group.Community.Domain.theme_id);
           }
 
+          if (this.group.configuration && this.group.configuration.locationHidden) {
+            if (this.group.configuration.locationHidden == true) {
+              this.set('locationHidden', true);
+            } else {
+              this.set('locationHidden', false);
+            }
+          } else {
+            this.set('locationHidden', false);
+          }
+
+          this._refreshTabsAndPages();
+
           if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
             this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages);
           } else {
@@ -362,11 +379,11 @@
           }
 
           this.fire("change-header", { headerTitle: this.group.Community.name,
-                                       headerDescription: this.group.Community.description,
-                                       headerIcon: "social:group",
-                                       documentTitle: this.group.name,
-                                       enableSearch: true,
-                                       backPath: "/community/" + this.group.community_id });
+            headerDescription: this.group.Community.description,
+            headerIcon: "social:group",
+            documentTitle: this.group.name,
+            enableSearch: true,
+            backPath: "/community/" + this.group.community_id });
 
           this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
           this.$.pagesAjax.generateRequest();

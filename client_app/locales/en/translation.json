@@ -1,4 +1,5 @@
 {
+  "notifications": "Notifications",
   "votingDisabled": "Voting is not active",
   "pageNotFound": "The page the app requested is not found",
   "participate": "Participate",

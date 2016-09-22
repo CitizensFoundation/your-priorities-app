@@ -264,10 +264,15 @@
         if (this.group.configuration && this.group.configuration.canVote!=undefined) {
           this.set('canVote', this.group.configuration.canVote);
           this.set('canAddNewPosts', this.group.configuration.canAddNewPosts);
+        } else {
+          this.set('canVote', true);
+          this.set('canAddNewPosts', true);
         }
 
         if (this.group.configuration && this.group.configuration.locationHidden!=undefined) {
           this.set('locationHidden', this.group.configuration.locationHidden);
+        } else {
+          this.set('locationHidden', false);
         }
 
         if (this.community) {

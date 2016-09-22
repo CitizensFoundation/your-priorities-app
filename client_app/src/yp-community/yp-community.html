@@ -60,7 +60,7 @@
       <paper-tabs  id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
         <paper-tab name="groups" class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
         <paper-tab name="news" class="tab">[[t('news')]]</paper-tab>
-        <paper-tab name="map" class="tab">[[t('posts.map')]]</paper-tab>
+        <paper-tab name="map" class="tab" hidden$="[[locationHidden]]">[[t('posts.map')]]</paper-tab>
       </paper-tabs>
 
       <iron-pages class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
@@ -78,7 +78,7 @@
         <section name="news">
           <ac-activities community-id="[[community.id]]"></ac-activities>
         </section>
-        <section name="map">
+        <section name="map" hidden$="[[locationHidden]]">
           <template is="dom-if" if="[[mapActive]]" restamp>
             <yp-post-map community-id="[[community.id]]"></yp-post-map>
           </template>
@@ -150,6 +150,11 @@
         mapActive: {
           type: Boolean,
           value: false
+        },
+
+        locationHidden: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -157,6 +162,21 @@
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
+
+      _refreshTabsAndPages: function () {
+        this.async(function () {
+          var pages = this.$$("#tabPages");
+          if (pages) {
+            pages.forceSynchronousItemUpdate();
+          }
+
+          var paperTabs = this.$$("#paper_tabs");
+          if (paperTabs) {
+            paperTabs.forceSynchronousItemUpdate();
+            paperTabs.notifyResize();
+          }
+        }, 10);
+      },
 
       _routeIdChanged: function (newId) {
         if (newId) {
@@ -240,7 +260,8 @@
 
         var url = this._communityHeaderUrl(this.community);
 
-        this.setupGroups(this.community.Groups)
+        this.setupGroups(this.community.Groups);
+        this._setLocationHidden(this.community.Groups);
 
         Polymer.Base.async(function() {
           var communityCard = this.$$('#communityCard');
@@ -249,7 +270,21 @@
             communityCard.lowerCardLater();
           }
         },20);
+      },
 
+      _setLocationHidden: function (groups) {
+        var locationHidden = true;
+        groups.forEach(function(group) {
+          if (group.configuration && group.configuration.locationHidden) {
+            if (group.configuration.locationHidden != true) {
+              locationHidden = false;
+            }
+          } else {
+            locationHidden = false;
+          }
+        }.bind(this));
+        this.set('locationHidden', locationHidden);
+        this._refreshTabsAndPages();
       },
 
       refresh: function () {
