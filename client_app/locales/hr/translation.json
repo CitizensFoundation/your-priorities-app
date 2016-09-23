@@ -1,4 +1,5 @@
 {
+  "participate": "Uključi se",
   "emojiSearchResults": "Rezultati pretraživanja",
   "recentlyUsedEmoji": "Nedavno korišteno",
   "findAnEmoji": "Pretraži 'smajliće'",
@@ -201,6 +202,9 @@
   },
 
   "point": {
+    "againstAdded": "Dodan argument 'protiv'",
+    "forAdded": "Dodan argument 'za'",
+    "confirmDelete": "Potvrdi da želiš obrisati ovaj argument",
     "theseAreFor": "Argument 'za'",
     "theseAreAgainst": "Komentari",
     "point": "Argument",
@@ -288,7 +292,7 @@
 
   "user": {
     "loginCompleteFor": "Prijava za",
-    "acceptInvite": "Prihvati pozivnicu za sudjelovanjem",
+    "acceptInvite": "Prihvati pozivnicu",
     "hasSentYouAndInvitation": "ti je poslao pozivnicu za sudjelovanjem u",
     "acceptInviteInstructions": "Klikni na donji gumb kako bi prihvatio pozivnicu",
     "setEmail": "Dodaj adresu e-po\u0161te svojem korisni\u010dkom ra\u010dunu",
@@ -308,7 +312,7 @@
     "forgotPassword": "Izradi novu lozinku",
     "forgotPasswordInstructions": "Unesi adresu svoje e-po\u0161te i poslat \u0107emo ti poruku s linkom za izradu nove lozinke.",
     "forgotPasswordEmailHasBeenSent": "Poruka s uputama za promjenu lozinke poslana je e-po\u0161tom.",
-    "resetPassword": "Promjeni lozinku",
+    "resetPassword": "Promijeni lozinku",
     "resetPasswordInstructions": "Izradi novu lozinku koju nije lako pogoditi",
     "login": "Prijava",
     "create": "Izradi",
