@@ -612,7 +612,7 @@ router.post('/createActivityFromApp', function(req, res) {
     userId: req.user ? req.user.id : null,
     domainId: req.ypDomain.id,
     groupId: req.params.groupId,
-    communityId: req.ypCommunity ? req.ypCommunity.id : null,
+//    communityId: req.ypCommunity ? req.ypCommunity.id : null,
     postId: req.body.object ? req.body.object.postId : null
   }, function (error) {
     if (error) {
@@ -665,8 +665,8 @@ router.post('/reset/:token', function(req, res) {
           type: 'activity.password.changed',
           userId: req.user.id,
           domainId: req.ypDomain.id,
-          groupId: req.params.groupId,
-          communityId: req.ypCommunity ?  req.ypCommunity.id : null
+          groupId: req.params.groupId
+//          communityId: req.ypCommunity ?  req.ypCommunity.id : null
         }, function (error) {
           done(error);
         });
