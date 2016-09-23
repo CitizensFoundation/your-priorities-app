@@ -634,7 +634,7 @@ auth.role('image.viewUser', function (image, req, done) {
     ]
   }).then(function (image) {
     var group;
-    if (image.PostUserImages && image.PostUserImages.length>0) {
+    if (image && image.PostUserImages && image.PostUserImages.length>0) {
       group = image.PostUserImages[0].Group;
     }
     if (group) {
@@ -642,7 +642,7 @@ auth.role('image.viewUser', function (image, req, done) {
         done(null, true);
       }  else if (!req.isAuthenticated()) {
         done(null, false);
-      } else if (point.user_id === req.user.id) {
+      } else if (group.user_id === req.user.id) {
         done(null, true);
       } else {
         group.hasGroupUsers(req.user).then(function (result) {
