@@ -8,33 +8,53 @@
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 
+<link rel="import" href="ac-notification-list-post.html">
+<link rel="import" href="ac-notification-list-point.html">
+
 <dom-module id="ac-notification-list">
   <template>
     <style include="iron-flex iron-flex-alignment">
-      :host {
-        display: block;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
+      iron-list {
+        padding-bottom: 4px;
+        --iron-list-items-container: {
+          max-width: 800px;
+          margin: auto;
+          margin-top: 16px;
+          margin-bottom: 54px;
+        };
       }
 
-      iron-list {
-        flex: 1 1 auto;
-      }
       p {
         text-align: left;
+      }
+
+
+      #scrollableRegion {
+        height: 100%;
+        overflow: visible;
+        @apply(--layout-flex);
+      }
+
+      .notificationItem {
+
+        margin-bottom: 8px;
+        padding-bottom: 8px;
       }
     </style>
     <div id="scrollableRegion">
       <iron-list id="list" items="[[notifications]]" as="notification">
         <template>
-          <p>[[notification.type]]</p>
-          <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
-          </template>
-          <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
-          </template>
-          <template is="dom-if" if="[[_notificationType(notification, 'system')]]">
-          </template>
+          <div class="layout vertical notificationItem">
+            <p hidden>[[notification.type]]</p>
+            <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
+              <ac-notification-list-post notification="[[notification]]"></ac-notification-list-post>
+            </template>
+            <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
+              <ac-notification-list-point notification="[[notification]]"></ac-notification-list-point>
+            </template>
+            <template is="dom-if" if="[[_notificationType(notification, 'system')]]">
+            </template>
+          </div>
         </template>
       </iron-list>
     </div>

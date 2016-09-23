@@ -132,7 +132,7 @@
       var postId;
       if (postIdIn && !(postIdIn instanceof Event)) {
         postId = postIdIn;
-      } else if (this.post.id) {
+      } else if (this.post && this.post.id) {
         postId = this.post.id
       } else {
         console.error("Can't find post id for goToPost");
