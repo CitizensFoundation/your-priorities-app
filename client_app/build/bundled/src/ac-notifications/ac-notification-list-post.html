@@ -1,0 +1,165 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.32">
+
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.32">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.32">
+<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.2.32">
+
+</head><body><dom-module id="ac-notification-list-post">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        text-align: left;
+      }
+      .pointerCursor {
+        cursor: pointer;
+      }
+
+      .endorsers {
+        color:  var(--master-point-up-color);
+      }
+
+      .opposers {
+        color: var(--master-point-down-color);
+      }
+
+      .bulb-icon {
+        min-width: 32px;
+        min-height: 32px;
+        margin-bottom: 8px;
+      }
+
+      .bulb-icon[new-post] {
+        color: var(--accent-color);
+      }
+
+      .smallIcons {
+        max-width: 16px;
+        max-height: 16px;
+        min-width: 16px;
+        min-height: 16px;
+        padding-right: 4px;
+        padding-left: 12px;
+      }
+
+      .postName {
+        padding-top: 4px;
+      }
+
+    </style>
+    <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
+      <div class="layout horizontal">
+        <iron-icon icon="lightbulb-outline" new-post$="[[newPostMode]]" class="bulb-icon"></iron-icon>
+        <div class="postName">[[postName]]</div>
+      </div>
+      <div class="layout horizontal" hidden$="[[!endorsementsText]]">
+        <iron-icon icon="favorite" class="smallIcons endorsers"></iron-icon>
+        <div class="endorsers">[[endorsementsText]]</div>
+      </div>
+      <div class="layout horizontal" hidden$="[[!oppositionsText]]">
+        <iron-icon icon="notification:do-not-disturb" class="smallIcons opposers"></iron-icon>
+        <div class="opposers">[[oppositionsText]]</div>
+      </div>
+    </div>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-notification-list-post',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.YpPostBehavior
+      ],
+
+      properties: {
+        notification: {
+          type: Object,
+          observer: '_notificationChanged'
+        },
+
+        endorsementsText: {
+          type: String,
+          value: null
+        },
+
+        oppositionsText: {
+          type: String,
+          value: null
+        },
+
+        newPostMode: Boolean,
+        endorseMode: Boolean
+      },
+
+      goToPost: function () {
+        if (this.post) {
+          var postUrl = '/post/' + this.post.id;
+          window.appGlobals.activity('open', 'post', postUrl);
+          this.async(function () {
+            this.redirectTo(postUrl);
+          });
+        }
+      },
+
+      _notificationChanged: function (notification) {
+        if (notification) {
+          this.set('post', notification.AcActivities[0].Post);
+          if (notification.type=='notification.post.new') {
+            this.set('newPostMode', true);
+          } else if (notification.type=='notification.post.endorsement') {
+            this.set('endorseMode', true);
+            this._createEndorsementStrings();
+          }
+        } else {
+          this.set('endorsementsText', null);
+          this.set('oppositionsText', null);
+          this.set('newPostMode', null);
+          this.set('endorseMode', null);
+        }
+      },
+
+      _createEndorsementStrings: function () {
+        var endorsements;
+        var oppositions;
+
+        this.notification.AcActivities.forEach(function (activity) {
+          if (activity.type=='activity.post.endorsement.new') {
+            if (!endorsements) {
+              endorsements = "";
+            }
+            endorsements = this._addWithComma(endorsements, activity.User.name);
+          } else if (activity.type=='activity.post.opposition.new') {
+            if (!oppositions) {
+              oppositions = "";
+            }
+            oppositions = this._addWithComma(oppositions, activity.User.name);
+          }
+        }.bind(this));
+
+        if (endorsements!="") {
+          this.set('endorsementsText', endorsements);
+        }
+
+        if (oppositions!="") {
+          this.set('oppositionsText', oppositions);
+        }
+
+      },
+
+      _addWithComma: function (text, toAdd) {
+        var returnText = "";
+        if (text!='') {
+          returnText += text+", ";
+        }
+        return returnText+toAdd;
+
+      }
+    });
+  </script>
+</dom-module>
+</body></html>

@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.31"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-delete-dialog" assetpath="../yp-delete-dialog/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.32"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-delete-dialog" assetpath="../yp-delete-dialog/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -359,6 +359,8 @@
                   <span>[[t('image.header.upload')]]</span>
                 </file-upload>
               </div>
+
+              <yp-language-selector name="defaultLocale" selected-locale="{{user.default_locale}}"></yp-language-selector>
 
               <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
               <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">

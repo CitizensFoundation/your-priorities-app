@@ -1,5 +1,5 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.31">
-<link rel="import" href="../../bower_components/lodash-element/lodash.js.html?v=6.2.31">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.32">
+<link rel="import" href="../../bower_components/lodash-element/lodash.js.html?v=6.2.32">
 
 <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
 <script src="../../bower_components/linkifyjs/linkify.js"></script>
@@ -132,7 +132,7 @@
       var postId;
       if (postIdIn && !(postIdIn instanceof Event)) {
         postId = postIdIn;
-      } else if (this.post.id) {
+      } else if (this.post && this.post.id) {
         postId = this.post.id
       } else {
         console.error("Can't find post id for goToPost");

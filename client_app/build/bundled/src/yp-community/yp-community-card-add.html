@@ -1,17 +1,17 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.31">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.32">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.31">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.32">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.31">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.2.31">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.32">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.2.32">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.31">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.32">
 
 </head><body><dom-module id="yp-community-card-add">
 
@@ -20,24 +20,12 @@
       :host {
         display: block;
         @apply(--layout-vertical);
-        height: 460px;
-        width: 316px;
-      }
-
-      @media (max-width: 600px) {
-        :host {
-          width: 285px !important;
-        }
-      }
-
-      .communityCard {
-        height: 460px;
-        background-color: #fff;
+        opacity: 0.75;
       }
 
       paper-icon-button {
-        height: 250px !important;
-        width: 250px !important;
+        height: 150px !important;
+        width: 150px !important;
         color: var(--accent-color)
       }
 
@@ -45,23 +33,40 @@
         padding: 0;
         margin: 0;
         padding-top: 16px;
+        color: #777;
       }
 
       .icon {
-        --iron-icon-height: 220px;
-        --iron-icon-width: 220px;
+        --iron-icon-height: 120px;
+        --iron-icon-width: 120px;
       }
 
-      @media (min-width: 481px) and (max-width: 1024px) {
+      .communityCard {
+        height: 430px;
+        width: 320px;
+        background-color: #fff;
+        padding: 0;
+        margin: 0;
+      }
+
+
+      @media (max-width: 480px) {
         :host {
-          width: 290px;
+          width: 304px;
+        }
+
+        .communityCard {
+          margin-right: 8px;
+          heigth: 430px;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
         }
       }
-
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <paper-card elevation="[[elevation]]" class="layout vertical center communityCard">
+    <paper-card elevation="[[elevation]]" class="layout vertical center-center communityCard">
       <h2 class="header">[[t('community.new')]]</h2>
       <paper-icon-button class="icon" icon="add"></paper-icon-button>
     </paper-card>

@@ -1,24 +1,24 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.31">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.32">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.31">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.32">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.2.31">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.2.32">
 
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-icons/notification-icons.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.31">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-icons/notification-icons.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.32">
 
-<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html?v=6.2.31">
+<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html?v=6.2.32">
 
-<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-facebook.html?v=6.2.31">
-<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-twitter.html?v=6.2.31">
-<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-google.html?v=6.2.31">
+<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-facebook.html?v=6.2.32">
+<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-twitter.html?v=6.2.32">
+<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-google.html?v=6.2.32">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.31">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.32">
 
 </head><body><dom-module id="yp-post-actions">
 
@@ -191,7 +191,7 @@
     <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
 
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
-    <paper-material elevation="[[elevationPlusOne]]" floating$="[[floating]]" animated="" class="action-bar layout horizontal">
+    <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated="" class="action-bar layout horizontal">
       <div id="actionUp" class="action-up">
         <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.up_vote')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">{{formatNumber(post.counter_endorsements_up)}}</div>
@@ -278,6 +278,11 @@
           value: false
         },
 
+        disabledTitle: {
+          type: String,
+          value: null
+        },
+
         showShareButtons: {
           type: Boolean,
           value: false
@@ -286,13 +291,18 @@
         floating: {
           type: Boolean,
           value: false
+        },
+
+        votingDisabled: {
+          type: Boolean,
+          value: false
         }
       },
 
       _goToPostIfNotHeader: function () {
         if (!this.headerMode) {
           this.goToPost();
-         }
+        }
       },
 
       _postUrl: function (post) {
@@ -329,9 +339,16 @@
         return (small || forceSmall)
       },
 
-      _onPostChanged: function (newValue, oldValue) {
-        if (newValue) {
+      _onPostChanged: function (post, oldValue) {
+        if (post) {
           this._updateEndorsements();
+          if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
+            this.set('votingDisabled', true);
+            this.set('allDisabled', true);
+            this.set('disabledTitle', this.t('votingDisabled'));
+          }
+        } else {
+          console.warn("No post found for post actions");
         }
       },
 
@@ -353,8 +370,6 @@
         } else if (endorseMode=='thumbs' && upDown=='down') {
           return 'thumb-down';
         } else if (endorseMode=='love' && upDown=='up') {
-//          return 'favorite';
-//          return 'favorite';
           return 'favorite';
         } else if (endorseMode=='love' && upDown=='down') {
           return 'notification:do-not-disturb';
@@ -381,8 +396,14 @@
         }
       },
 
+      _enableVoting: function () {
+        if (!this.votingDisabled) {
+          this.set('allDisabled', false);
+        }
+      },
+
       _endorseResponse: function (event, detail) {
-        this.set('allDisabled', false);
+        this._enableVoting();
         var endorsement = detail.response.endorsement;
         var oldEndorsementValue = detail.response.oldEndorsementValue;
         this._setEndorsement(endorsement.value);
@@ -416,7 +437,7 @@
           }
           this.$.endorseAjax.generateRequest();
         } else {
-          this.set('allDisabled', false);
+          this._enableVoting();
           window.appUser.loginForEndorse(this, { value: value } );
         }
       },

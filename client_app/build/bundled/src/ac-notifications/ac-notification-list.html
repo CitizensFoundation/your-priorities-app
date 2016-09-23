@@ -1,0 +1,205 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.32">
+
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.32">
+
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.32">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.32">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.2.32">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.32">
+
+<link rel="import" href="ac-notification-list-post.html?v=6.2.32">
+<link rel="import" href="ac-notification-list-point.html?v=6.2.32">
+
+</head><body><dom-module id="ac-notification-list">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      iron-list {
+        padding-bottom: 4px;
+        --iron-list-items-container: {
+          max-width: 800px;
+          margin: auto;
+          margin-top: 16px;
+          margin-bottom: 54px;
+        };
+      }
+
+      p {
+        text-align: left;
+      }
+
+
+      #scrollableRegion {
+        height: 100%;
+        overflow: visible;
+        @apply(--layout-flex);
+      }
+
+      .notificationItem {
+
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+      }
+    </style>
+    <div id="scrollableRegion">
+      <iron-list id="list" items="[[notifications]]" as="notification">
+        <template>
+          <div class="layout vertical notificationItem">
+            <p hidden="">[[notification.type]]</p>
+            <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
+              <ac-notification-list-post notification="[[notification]]"></ac-notification-list-post>
+            </template>
+            <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
+              <ac-notification-list-point notification="[[notification]]"></ac-notification-list-point>
+            </template>
+            <template is="dom-if" if="[[_notificationType(notification, 'system')]]">
+            </template>
+          </div>
+        </template>
+      </iron-list>
+    </div>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax id="loadNotificationsAjax" on-response="_loadNotificationsResponse"></yp-ajax>
+      <yp-ajax id="loadNewNotificationsAjax" on-response="_loadNewNotificationsResponse"></yp-ajax>
+      <template is="dom-if" if="[[moreToLoad]]" restamp="">
+        <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
+      </template>
+    </div>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-notification-list',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.YpScrollTabBehavior
+      ],
+
+      properties: {
+        notifications: Array,
+        notificationGetTTL: {
+          type: Number,
+          value: 30000
+        },
+
+        oldestProcessedNotificationAt: {
+          type: Date
+        },
+
+        latestProcessedNotificationAt: {
+          type: Date
+        },
+
+        url: {
+          type: String,
+          value: "/api/notifications"
+        },
+
+        user: {
+          type: Object,
+          observer: '_userChanged'
+        },
+
+        firstReponse: {
+          type: Boolean,
+          value: true
+        }
+      },
+
+      _userChanged: function (user) {
+        if (user) {
+          this.$.loadNotificationsAjax.url = this.url;
+          this.$.loadNotificationsAjax.generateRequest();
+        }
+      },
+
+      _notificationType: function (notification, type) {
+        if (type=='postNotification') {
+          return (['notification.post.new', 'notification.post.endorsement'].indexOf(notification.type) > -1)
+        } else if (type=='pointNotification') {
+          return (['notification.point.new', 'notification.point.quality'].indexOf(notification.type) > -1)
+        } else if (type=='system') {
+          return false;
+        }
+      },
+
+      _loadNotificationsResponse: function (event, detail) {
+        var notifications = detail.response.notifications;
+
+        if (detail.response.oldestProcessedNotificationAt) {
+          this.set('oldestProcessedNotificationAt', detail.response.oldestProcessedNotificationAt);
+        }
+
+        if (!this.notifications) {
+          this.set('notifications', []);
+        }
+
+        notifications.forEach(function (notification) {
+          this.push('notifications', notification);
+        }.bind(this));
+
+        this._finalizeAfterResponse(notifications);
+
+        if (this.firstReponse) {
+          this.set('firstReponse', false);
+          //this.loadNewData();
+        }
+      },
+
+      _loadNewNotificationsResponse: function (event, detail) {
+        var notifications = detail.response.notifications;
+
+        notifications.forEach(function (notification) {
+          this.unshift('notifications', notification);
+        }.bind(this));
+
+        this._finalizeAfterResponse(notifications);
+
+        if (this.user) {
+          this.async(function () {
+            this.loadNewData();
+          }.bind(this), this.notificationGetTTL)
+        }
+      },
+
+      _finalizeAfterResponse: function (notifications) {
+        if (notifications.length>0) {
+          if (!this.latestProcessedNotificationAt || this.latestProcessedNotificationAt < notifications[0].created_at) {
+            this.set('latestProcessedNotificationAt', notifications[0].created_at);
+          }
+          this.setMoreToLoad();
+        }
+
+        this.$.list.fire('iron-resize');
+
+        this.async(function () {
+          this.$.list.fire('iron-resize');
+        }, 100);
+      },
+
+      _loadMoreData: function () {
+        if (this.oldestProcessedNotificationAt) {
+          this.set('moreToLoad', false);
+          this.$.loadNotificationsAjax.url = this.url + '?beforeDate='+this.oldestProcessedNotificationAt;
+          this.$.loadNotificationsAjax.generateRequest();
+        }
+      },
+
+      loadNewData: function () {
+        if (this.latestProcessedNotificationAt) {
+          this.$.loadNewNotificationsAjax.url = this.url + '?afterDate='+this.latestProcessedNotificationAt;
+          this.$.loadNewNotificationsAjax.generateRequest();
+        } else if (!this.latestProcessedNotificationAt) {
+          this.$.loadNewNotificationsAjax.url = this.url;
+          this.$.loadNewNotificationsAjax.generateRequest();
+        }
+      }
+    });
+  </script>
+</dom-module>
+</body></html>

@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.31"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.32"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -164,22 +164,16 @@
         display: block;
         @apply(--layout-vertical);
         width: 416px;
+        opacity: 0.75;
       }
 
       @media (max-width: 600px) {
-        :host {
-          width: 285px !important;
-        }
-      }
 
-      .groupCard {
-        height: 335px;
-        background-color: #fff;
       }
 
       paper-icon-button {
-        height: 250px !important;
-        width: 250px !important;
+        height: 150px !important;
+        width: 150px !important;
         color: var(--accent-color)
       }
 
@@ -187,15 +181,37 @@
         padding: 0;
         margin: 0;
         padding-top: 16px;
+        color: #777;
       }
 
       .icon {
-        --iron-icon-height: 220px;
-        --iron-icon-width: 220px;
+        --iron-icon-height: 120px;
+        --iron-icon-width: 120px;
       }
+
+      .groupCard {
+        height: 455px;
+        background-color: #fff;
+      }
+
+
+      @media (max-width: 420px) {
+        :host {
+          width: 304px;
+        }
+
+        .groupCard {
+          margin-left: 0;
+          margin-right: 8px;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
+        }
+      }
+
     </style>
 
-    <paper-card elevation="[[elevation]]" class="layout vertical center groupCard">
+    <paper-card elevation="[[elevation]]" class="layout vertical center-center groupCard" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut">
       <h2 class="header">[[t('group.new')]]</h2>
       <paper-icon-button class="icon" icon="add"></paper-icon-button>
     </paper-card>
@@ -261,6 +277,7 @@
         <template is="dom-repeat" class="list" items="[[activeGroups]]" as="group">
           <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
         </template>
+        <yp-group-card-add hidden="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
       </div>
       <div class="layout horizontal center-center">
         <h1 class="archivedText" hidden$="[[!archivedGroups]]">
@@ -286,7 +303,15 @@
       properties: {
         featuredGroups: Array,
         archivedGroups: Array,
-        activeGroups: Array
+        activeGroups: Array,
+        hideAdd: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _newGroup: function () {
+        this.fire('add-new-group');
       }
 
     });
@@ -612,21 +637,20 @@
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
         <paper-tab name="groups" class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
         <paper-tab name="news" class="tab">[[t('news')]]</paper-tab>
-        <paper-tab name="map" class="tab">[[t('posts.map')]]</paper-tab>
+        <paper-tab name="map" class="tab" hidden$="[[locationHidden]]">[[t('posts.map')]]</paper-tab>
       </paper-tabs>
 
       <iron-pages class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section name="groups">
           <div class="layout horizontal center-center wrap">
-            <yp-group-grid featured-groups="[[featuredGroups]]" active-groups="[[activeGroups]]" archived-groups="[[archivedGroups]]">
+            <yp-group-grid featured-groups="[[featuredGroups]]" active-groups="[[activeGroups]]" archived-groups="[[archivedGroups]]" hide-add$="[[!createFabIcon]]" on-add-new-group="_newGroup">
             </yp-group-grid>
-            <yp-group-card-add hidden$="[[!createFabIcon]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
           </div>
         </section>
         <section name="news">
           <ac-activities community-id="[[community.id]]"></ac-activities>
         </section>
-        <section name="map">
+        <section name="map" hidden$="[[locationHidden]]">
           <template is="dom-if" if="[[mapActive]]" restamp="">
             <yp-post-map community-id="[[community.id]]"></yp-post-map>
           </template>
@@ -691,6 +715,11 @@
         mapActive: {
           type: Boolean,
           value: false
+        },
+
+        locationHidden: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -698,6 +727,21 @@
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
+
+      _refreshTabsAndPages: function () {
+        this.async(function () {
+          var pages = this.$$("#tabPages");
+          if (pages) {
+            pages.forceSynchronousItemUpdate();
+          }
+
+          var paperTabs = this.$$("#paper_tabs");
+          if (paperTabs) {
+            paperTabs.forceSynchronousItemUpdate();
+            paperTabs.notifyResize();
+          }
+        }, 10);
+      },
 
       _routeIdChanged: function (newId) {
         if (newId) {
@@ -781,7 +825,8 @@
 
         var url = this._communityHeaderUrl(this.community);
 
-        this.setupGroups(this.community.Groups)
+        this.setupGroups(this.community.Groups);
+        this._setLocationHidden(this.community.Groups);
 
         Polymer.Base.async(function() {
           var communityCard = this.$$('#communityCard');
@@ -790,7 +835,21 @@
             communityCard.lowerCardLater();
           }
         },20);
+      },
 
+      _setLocationHidden: function (groups) {
+        var locationHidden = true;
+        groups.forEach(function(group) {
+          if (group.configuration && group.configuration.locationHidden) {
+            if (group.configuration.locationHidden != true) {
+              locationHidden = false;
+            }
+          } else {
+            locationHidden = false;
+          }
+        }.bind(this));
+        this.set('locationHidden', locationHidden);
+        this._refreshTabsAndPages();
       },
 
       refresh: function () {

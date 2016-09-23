@@ -1,10 +1,11 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.31">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.32">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.31">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.32">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.31">
-<link rel="import" href="yp-group-card.html?v=6.2.31">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.32">
+<link rel="import" href="yp-group-card.html?v=6.2.32">
+<link rel="import" href="yp-group-card-add.html?v=6.2.32">
 
 </head><body><dom-module id="yp-group-grid">
 
@@ -50,6 +51,7 @@
         <template is="dom-repeat" class="list" items="[[activeGroups]]" as="group">
           <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
         </template>
+        <yp-group-card-add hidden="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
       </div>
       <div class="layout horizontal center-center">
         <h1 class="archivedText" hidden$="[[!archivedGroups]]">
@@ -75,7 +77,15 @@
       properties: {
         featuredGroups: Array,
         archivedGroups: Array,
-        activeGroups: Array
+        activeGroups: Array,
+        hideAdd: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _newGroup: function () {
+        this.fire('add-new-group');
       }
 
     });

@@ -1,10 +1,11 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.31">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.32">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.31">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.31">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.32">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.31">
-<link rel="import" href="yp-community-card.html?v=6.2.31">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.32">
+<link rel="import" href="yp-community-card.html?v=6.2.32">
+<link rel="import" href="yp-community-card-add.html?v=6.2.32">
 
 </head><body><dom-module id="yp-community-grid">
 
@@ -61,6 +62,7 @@
         <template is="dom-repeat" class="list" items="[[activeCommunities]]" as="community">
           <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
         </template>
+        <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card-add>
       </div>
       <div class="layout horizontal center-center">
         <div class="archivedBorder">
@@ -88,7 +90,15 @@
       properties: {
         featuredCommunities: Array,
         archivedCommunities: Array,
-        activeCommunities: Array
+        activeCommunities: Array,
+        hideAdd: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _newCommunity: function () {
+        this.fire('add-new-community');
       }
 
     });

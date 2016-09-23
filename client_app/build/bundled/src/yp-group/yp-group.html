@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.31"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.32"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -2391,7 +2391,7 @@ is shown even without no results (check the demo for an example).
             </div>
           </paper-tab>
         </template>
-        <paper-tab name="map">[[t('posts.map')]]</paper-tab>
+        <paper-tab name="map" hidden$="[[locationHidden]]">[[t('posts.map')]]</paper-tab>
       </paper-tabs>
 
       <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
@@ -2420,7 +2420,7 @@ is shown even without no results (check the demo for an example).
             </div>
           </section>
         </template>
-        <section name="map">
+        <section name="map" hidden$="[[locationHidden]]">
           <template is="dom-if" if="[[mapActive]]" restamp="">
             <yp-post-map group-id="[[group.id]]"></yp-post-map>
           </template>
@@ -2429,6 +2429,7 @@ is shown even without no results (check the demo for an example).
     </yp-page>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-yp-refresh-group-posts="_refreshGroupPosts"></iron-signals>
 
     <app-route route="{{idRoute}}" pattern="/:id" data="{{idRouteData}}" tail="{{tabRoute}}">
     </app-route>
@@ -2496,7 +2497,7 @@ is shown even without no results (check the demo for an example).
         hasNonOpenPosts: {
           type: Boolean,
           value: false,
-          observer: '_hasNonOpenPostsChanged'
+          observer: '_refreshTabsAndPages'
         },
 
         mapActive: {
@@ -2511,6 +2512,11 @@ is shown even without no results (check the demo for an example).
         disableNewPosts: {
           type: Boolean,
           value: false
+        },
+
+        locationHidden: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -2518,6 +2524,10 @@ is shown even without no results (check the demo for an example).
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
+
+      _refreshGroupPosts: function () {
+        this.$$("#openPostList")._refreshGroupFromFilter();
+      },
 
       _routeIdChanged: function (newId) {
         if (newId) {
@@ -2547,7 +2557,7 @@ is shown even without no results (check the demo for an example).
         }
       },
 
-      _hasNonOpenPostsChanged: function () {
+      _refreshTabsAndPages: function () {
         this.async(function () {
           var pages = this.$$("#tabPages");
           if (pages) {
@@ -2605,7 +2615,7 @@ is shown even without no results (check the demo for an example).
           this.set('hasNonOpenPosts', false);
           this._getGroup();
         }
-       },
+      },
 
       _getGroup: function () {
         this.$.ajax.url = '/api/groups/' + this.groupId;
@@ -2652,6 +2662,18 @@ is shown even without no results (check the demo for an example).
             this.setTheme(this.group.Community.Domain.theme_id);
           }
 
+          if (this.group.configuration && this.group.configuration.locationHidden) {
+            if (this.group.configuration.locationHidden == true) {
+              this.set('locationHidden', true);
+            } else {
+              this.set('locationHidden', false);
+            }
+          } else {
+            this.set('locationHidden', false);
+          }
+
+          this._refreshTabsAndPages();
+
           if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
             this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages);
           } else {
@@ -2659,11 +2681,11 @@ is shown even without no results (check the demo for an example).
           }
 
           this.fire("change-header", { headerTitle: this.group.Community.name,
-                                       headerDescription: this.group.Community.description,
-                                       headerIcon: "social:group",
-                                       documentTitle: this.group.name,
-                                       enableSearch: true,
-                                       backPath: "/community/" + this.group.community_id });
+            headerDescription: this.group.Community.description,
+            headerIcon: "social:group",
+            documentTitle: this.group.name,
+            enableSearch: true,
+            backPath: "/community/" + this.group.community_id });
 
           this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
           this.$.pagesAjax.generateRequest();

@@ -1,0 +1,182 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.32">
+
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.32">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.32">
+<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.2.32">
+
+</head><body><dom-module id="ac-notification-list-point">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        text-align: left;
+      }
+
+      .pointerCursor {
+        cursor: pointer;
+      }
+
+      .endorsers {
+      }
+
+      .opposers {
+      }
+
+      .chatIcon {
+        min-width: 24px;
+        min-height: 24px;
+        max-width: 24px;
+        max-height: 24px;
+        margin-bottom: 8px;
+        padding-right: 4px;
+        padding-left: 4px;
+      }
+
+
+      .smallIcons {
+        max-width: 16px;
+        max-height: 16px;
+        min-width: 16px;
+        min-height: 16px;
+        padding-right: 4px;
+        padding-left: 12px;
+      }
+
+      .postName {
+        padding-top: 4px;
+        color: var(--master-point-down-color);
+      }
+
+      .postName[point-value-up] {
+        color:  var(--master-point-up-color);
+      }
+
+    </style>
+    <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
+      <div class="layout horizontal">
+        <iron-icon icon="communication:chat-bubble-outline" class="chatIcon"></iron-icon>
+        <div class="postName" point-value-up$="[[pointValueUp]]">[[postName]]</div>
+      </div>
+      <div class="layout horizontal" hidden$="[[!helpfulsText]]">
+        <iron-icon icon="arrow-upward" class="smallIcons endorsers"></iron-icon>
+        <div class="endorsers">[[helpfulsText]]</div>
+      </div>
+      <div class="layout horizontal" hidden$="[[!unhelpfulsText]]">
+        <iron-icon icon="arrow-downward" class="smallIcons opposers"></iron-icon>
+        <div class="opposers">[[unhelpfulsText]]</div>
+      </div>
+    </div>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-notification-list-point',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.YpPostBehavior
+      ],
+
+      properties: {
+        notification: {
+          type: Object,
+          observer: '_notificationChanged'
+        },
+
+        helpfulsText: {
+          type: String,
+          value: null
+        },
+
+        unhelpfulsText: {
+          type: String,
+          value: null
+        },
+
+        pointValueUp: {
+          type: Boolean,
+          computed: '_pointvalueUp(point)'
+        },
+
+        newPointMode: Boolean,
+        qualityMode: Boolean,
+        point: {
+          type: Object
+        }
+      },
+
+      _pointvalueUp: function (point) {
+        return (point && point.value > 0);
+      },
+
+      goToPost: function () {
+        if (this.post) {
+          var postUrl = '/post/' + this.post.id;
+          window.appGlobals.activity('open', 'post', postUrl);
+          this.async(function () {
+            this.redirectTo(postUrl);
+          });
+        }
+      },
+
+      _notificationChanged: function (notification) {
+        if (notification) {
+          this.set('point', notification.AcActivities[0].Point);
+          this.set('post', notification.AcActivities[0].Post);
+          if (notification.type=='notification.point.new') {
+            this.set('newPointMode', true);
+          } else if (notification.type=='notification.point.quality') {
+            this.set('qualityMode', true);
+            this._createQualityStrings();
+          }
+        } else {
+          this.set('helpfulsText', null);
+          this.set('unhelpfulsText', null);
+          this.set('newPointMode', null);
+          this.set('qualityMode', null);
+        }
+      },
+
+      _createQualityStrings: function () {
+        var helpfuls;
+        var unhelpfuls;
+
+        this.notification.AcActivities.forEach(function (activity) {
+          if (activity.type=='activity.point.helpful.new') {
+            if (!helpfuls) {
+              helpfuls = "";
+            }
+            helpfuls = this._addWithComma(helpfuls, activity.User.name);
+          } else if (activity.type=='activity.point.unhelpful.new') {
+            if (!unhelpfuls) {
+              unhelpfuls = "";
+            }
+            unhelpfuls = this._addWithComma(unhelpfuls, activity.User.name);
+          }
+        }.bind(this));
+
+        if (helpfuls!="") {
+          this.set('helpfulsText', helpfuls);
+        }
+
+        if (unhelpfuls!="") {
+          this.set('unhelpfulsText', unhelpfuls);
+        }
+      },
+
+      _addWithComma: function (text, toAdd) {
+        var returnText = "";
+        if (text!='') {
+          returnText += text+", ";
+        }
+        return returnText+toAdd;
+
+      }
+    });
+  </script>
+</dom-module>
+</body></html>

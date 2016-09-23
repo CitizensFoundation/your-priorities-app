@@ -1,10 +1,16 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="yp-app.html?v=6.2.31"></head><body><dom-module id="yp-view-404">
+<html><head><meta charset="UTF-8"><link rel="import" href="yp-app.html?v=6.2.32"></head><body><dom-module id="yp-view-404">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      .errorMesage {
+        padding: 24px;
+        margin-top: 48px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <h1>[[t('pageNotFound')]]</h1>
+    <div class="layout vertical center-center">
+      <h1 class="errorMesage">[[t('pageNotFound')]]</h1>
+    </div>
 
   </template>
 
