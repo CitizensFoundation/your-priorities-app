@@ -229,7 +229,7 @@
       },
 
       _zoomLevel: function (post) {
-        if (post)
+        if (post && post.location)
           return post.location.map_zoom;
         else
           return "10";

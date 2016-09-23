@@ -84,7 +84,7 @@
         notifications: Array,
         notificationGetTTL: {
           type: Number,
-          value: 15000
+          value: 30000
         },
 
         oldestProcessedNotificationAt: {
@@ -103,6 +103,11 @@
         user: {
           type: Object,
           observer: '_userChanged'
+        },
+
+        firstReponse: {
+          type: Boolean,
+          value: true
         }
       },
 
@@ -139,6 +144,11 @@
         }.bind(this));
 
         this._finalizeAfterResponse(notifications);
+
+        if (this.firstReponse) {
+          this.set('firstReponse', false);
+          //this.loadNewData();
+        }
       },
 
       _loadNewNotificationsResponse: function (event, detail) {

@@ -48,7 +48,7 @@
       }
 
     </style>
-    <div class="layout vertical pointerCursor" on-tap="goToPost">
+    <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
       <div class="layout horizontal">
         <iron-icon icon="lightbulb-outline" new-post$="[[newPostMode]]" class="bulb-icon"></iron-icon>
         <div class="postName">[[postName]]</div>

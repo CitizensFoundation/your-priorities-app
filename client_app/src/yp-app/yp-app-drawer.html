@@ -48,11 +48,11 @@
           <div class="currentUser">
             <template is="dom-if" if="[[user]]">
               <yp-user-info on-open-user-edit="_openEdit" user="{{user}}"></yp-user-info>
+              <div class="notificationHeader layout horizontal center-center">
+                [[t('notifications')]]
+              </div>
+              <ac-notification-list user="[[user]]" id="notificationList"></ac-notification-list>
             </template>
-            <div class="notificationHeader layout horizontal center-center">
-              [[t('notifications')]]
-            </div>
-            <ac-notification-list user="[[user]]" id="notificationList"></ac-notification-list>
           </div>
         </app-header>
       </app-header-layout>
