@@ -84,7 +84,7 @@
         notifications: Array,
         notificationGetTTL: {
           type: Number,
-          value: 30000
+          value: 2000
         },
 
         oldestProcessedNotificationAt: {
@@ -147,7 +147,7 @@
 
         if (this.firstReponse) {
           this.set('firstReponse', false);
-          //this.loadNewData();
+          this.loadNewData();
         }
       },
 
@@ -155,6 +155,7 @@
         var notifications = detail.response.notifications;
 
         notifications.forEach(function (notification) {
+          this._removeOldIfExists(notification);
           this.unshift('notifications', notification);
         }.bind(this));
 
@@ -165,6 +166,14 @@
             this.loadNewData();
           }.bind(this), this.notificationGetTTL)
         }
+      },
+
+      _removeOldIfExists: function (notification) {
+        this.notifications.forEach(function (oldNotification, index) {
+          if (oldNotification.id==notification.id) {
+            this.splice('notifications', index, 1);
+          }
+        }.bind(this));
       },
 
       _finalizeAfterResponse: function (notifications) {
