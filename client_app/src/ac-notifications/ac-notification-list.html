@@ -36,7 +36,6 @@
       }
 
       .notificationItem {
-
         margin-bottom: 8px;
         padding-bottom: 8px;
       }
@@ -45,7 +44,7 @@
       <iron-list id="list" items="[[notifications]]" as="notification">
         <template>
           <div class="layout vertical notificationItem">
-            <p hidden>[[notification.type]]</p>
+            <p>[[notification.type]] [[notification.id]] [[notification.AcActivities.length]] pId [[notification.AcActivities.0.Post.id]] v [[notification.AcActivities.0.Point.value]]</p>
             <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
               <ac-notification-list-post notification="[[notification]]"></ac-notification-list-post>
             </template>

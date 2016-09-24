@@ -166,16 +166,21 @@
       },
 
       _transformErrorText: function (errorText) {
-        if (errorText && errorText.indexOf('status code: 404') > -1) {
-          return this.t('errorNotFound');
-        } else if (errorText && errorText.indexOf('status code: 500') > -1) {
-          return this.t('generalError');
-        } else if (errorText && errorText.indexOf('status code: 401') > -1) {
-          return this.t('errorNotAuthorized');
-        } else if (errorText && errorText.indexOf('503') > -1) {
-          return this.t('errorCantConnect');
+        console.log(errorText);
+        if (typeof errorText === 'string') {
+          if (errorText && errorText.indexOf('status code: 404') > -1) {
+            return this.t('errorNotFound');
+          } else if (errorText && errorText.indexOf('status code: 500') > -1) {
+            return this.t('generalError');
+          } else if (errorText && errorText.indexOf('status code: 401') > -1) {
+            return this.t('errorNotAuthorized');
+          } else if (errorText && errorText.indexOf('503') > -1) {
+            return this.t('errorCantConnect');
+          } else {
+            return errorText;
+          }
         } else {
-          return errorText;
+          return this.t('generalError');
         }
       },
 

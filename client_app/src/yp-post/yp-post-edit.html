@@ -390,6 +390,19 @@
       } else {
         this.$$("#editDialog").useNextTabAction = true;
       }
+
+      if (newValue==0) {
+        var nameElement = this.$$("#name");
+        if (nameElement) {
+          nameElement.focus();
+        }
+      }
+      if (newValue==1) {
+        var pointFor = this.$$("#pointFor");
+        if (pointFor) {
+          pointFor.focus();
+        }
+      }
     },
 
     _selectedCategoryChanged: function (newCategoryArrayId, oldValue) {
@@ -489,6 +502,12 @@
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
       this._clear();
+      this.async(function () {
+        var nameElement = this.$$("#name");
+        if (nameElement) {
+          nameElement.focus();
+        }
+      }.bind(this), 250);
     },
 
     _setupTranslation: function () {

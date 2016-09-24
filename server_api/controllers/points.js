@@ -374,7 +374,7 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
     include: [
       {
         model: models.Point,
-        attributes: ['id','group_id'],
+        attributes: ['id','group_id','post_id'],
         include: [
           {
             model: models.Post,
