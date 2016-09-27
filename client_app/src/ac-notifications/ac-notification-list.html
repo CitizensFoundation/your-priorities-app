@@ -7,6 +7,7 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 
 <link rel="import" href="ac-notification-list-post.html">
 <link rel="import" href="ac-notification-list-point.html">
@@ -44,7 +45,7 @@
       <iron-list id="list" items="[[notifications]]" as="notification">
         <template>
           <div class="layout vertical notificationItem">
-            <p>[[notification.type]] [[notification.id]] [[notification.AcActivities.length]] pId [[notification.AcActivities.0.Post.id]] v [[notification.AcActivities.0.Point.value]]</p>
+            <p hidden>[[notification.type]] [[notification.id]] [[notification.AcActivities.length]] pId [[notification.AcActivities.0.Post.id]] v [[notification.AcActivities.0.Point.value]]</p>
             <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
               <ac-notification-list-post notification="[[notification]]"></ac-notification-list-post>
             </template>
@@ -67,6 +68,7 @@
     </div>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
   </template>
 
   <script>
@@ -76,14 +78,17 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpScrollTabBehavior
+        Polymer.YpScrollTabBehavior,
+        Polymer.ypLoggedInUserBehavior
       ],
 
       properties: {
+
         notifications: Array,
+
         notificationGetTTL: {
           type: Number,
-          value: 2000
+          value: 15000
         },
 
         oldestProcessedNotificationAt: {
@@ -107,13 +112,30 @@
         firstReponse: {
           type: Boolean,
           value: true
-        }
+        },
+
+        timer: Object
       },
 
       _userChanged: function (user) {
         if (user) {
           this.$.loadNotificationsAjax.url = this.url;
           this.$.loadNotificationsAjax.generateRequest();
+        } else {
+          this.cancelTimer();
+        }
+      },
+
+      _loggedInUserChanged: function (user) {
+        if (!user) {
+         this.cancelTimer();
+        }
+      },
+
+      cancelTimer: function () {
+        if (this.timer) {
+          clearTimeout(this.timer);
+          this.set('timer', null);
         }
       },
 
@@ -153,15 +175,19 @@
       _loadNewNotificationsResponse: function (event, detail) {
         var notifications = detail.response.notifications;
 
+        console.log("Found "+notifications.length+" new notifications");
         notifications.forEach(function (notification) {
           this._removeOldIfExists(notification);
+        }.bind(this));
+
+        notifications.forEach(function (notification) {
           this.unshift('notifications', notification);
         }.bind(this));
 
         this._finalizeAfterResponse(notifications);
 
         if (this.user) {
-          this.async(function () {
+          this.timer = this.async(function () {
             this.loadNewData();
           }.bind(this), this.notificationGetTTL)
         }
@@ -170,6 +196,7 @@
       _removeOldIfExists: function (notification) {
         this.notifications.forEach(function (oldNotification, index) {
           if (oldNotification.id==notification.id) {
+            console.log("splice: "+index);
             this.splice('notifications', index, 1);
           }
         }.bind(this));
@@ -177,8 +204,8 @@
 
       _finalizeAfterResponse: function (notifications) {
         if (notifications.length>0) {
-          if (!this.latestProcessedNotificationAt || this.latestProcessedNotificationAt < notifications[0].created_at) {
-            this.set('latestProcessedNotificationAt', notifications[0].created_at);
+          if (!this.latestProcessedNotificationAt || this.latestProcessedNotificationAt < notifications[0].updated_at) {
+            this.set('latestProcessedNotificationAt', notifications[0].updated_at);
           }
           this.setMoreToLoad();
         }
