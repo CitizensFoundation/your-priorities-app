@@ -61,7 +61,7 @@
 
     <div class="layout horizontal center-center">
       <yp-ajax id="loadNotificationsAjax" on-response="_loadNotificationsResponse"></yp-ajax>
-      <yp-ajax id="loadNewNotificationsAjax" on-response="_loadNewNotificationsResponse"></yp-ajax>
+      <yp-ajax id="loadNewNotificationsAjax" dispatch-error on-error="_newNotificationsError" on-response="_loadNewNotificationsResponse"></yp-ajax>
       <template is="dom-if" if="[[moreToLoad]]" restamp>
         <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
       </template>
@@ -88,7 +88,7 @@
 
         notificationGetTTL: {
           type: Number,
-          value: 15000
+          value: 2000
         },
 
         oldestProcessedNotificationAt: {
@@ -115,6 +115,14 @@
         },
 
         timer: Object
+      },
+
+      _newNotificationsError: function (event, detail) {
+        console.error("Error in getting new notifications");
+        // Retry starting the time in 15 seconds
+        this.async(function () {
+          this._startTimer();
+        }, 15000);
       },
 
       _userChanged: function (user) {
@@ -172,6 +180,27 @@
         }
       },
 
+      _startTimer: function () {
+        this.cancelTimer();
+        if (this.user) {
+          this.timer = this.async(function () {
+            this.loadNewData();
+          }.bind(this), this.notificationGetTTL)
+        }
+      },
+
+      _sendReloadPointsEvents: function (notifications) {
+        notifications.forEach(function (notification) {
+          if (notification.type=='notification.point.new') {
+            var activityUser = notification.AcActivities[0].User;
+            if (window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) {
+              var event = new CustomEvent("iron-signal", { detail: { name: 'yp-update-points-for-post', data: { postId: notification.AcActivities[0].Post.id } } } );
+              document.dispatchEvent(event);
+            }
+          }
+        }.bind(this));
+      },
+
       _loadNewNotificationsResponse: function (event, detail) {
         var notifications = detail.response.notifications;
 
@@ -189,13 +218,10 @@
 
         this._finalizeAfterResponse(notifications);
 
-        if (this.user) {
-          this.timer = this.async(function () {
-            this.loadNewData();
-          }.bind(this), this.notificationGetTTL)
-        }
+        this._startTimer();
 
         this._displayToast(notifications);
+        this._sendReloadPointsEvents(notifications);
 
       },
 

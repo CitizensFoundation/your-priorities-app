@@ -108,7 +108,7 @@
 
         pointValueUp: {
           type: Boolean,
-          computed: '_pointvalueUp(point)'
+          computed: '_pointValueUp(point)'
         },
 
         newPointMode: Boolean,
@@ -119,7 +119,7 @@
         pointContent: String
       },
 
-      _pointvalueUp: function (point) {
+      _pointValueUp: function (point) {
         return (point && point.value > 0);
       },
 
@@ -137,7 +137,9 @@
         if (notification) {
           this.set('point', notification.AcActivities[0].Point);
           this.set('post', notification.AcActivities[0].Post);
-          this.set('pointContent', this.truncate(this.point.content, 20));
+          if (this.point) {
+            this.set('pointContent', this.truncate(this.point.content, 20));
+          }
           if (notification.type=='notification.point.new') {
             this.set('newPointMode', true);
           } else if (notification.type=='notification.point.quality') {

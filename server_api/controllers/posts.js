@@ -221,6 +221,80 @@ router.get('/:id', auth.can('view post'), function(req, res) {
   });
 });
 
+router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
+  if (req.query.latestPointCreatedAt) {
+    models.Point.findAll({
+      where: {
+        post_id: req.params.id,
+        created_at: {
+          $gt: req.query.latestPointCreatedAt
+        }
+      },
+      order: [
+        ['created_at', 'asc'],
+        [ models.PointRevision, 'created_at', 'asc' ],
+        [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
+        [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+      ],
+      include: [
+        { model: models.User,
+          attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
+          required: false,
+          include: [
+            {
+              model: models.Image, as: 'UserProfileImages',
+              required: false
+            },
+            {
+              model: models.Organization,
+              as: 'OrganizationUsers',
+              required: false,
+              attributes: ['id', 'name'],
+              include: [
+                {
+                  model: models.Image,
+                  as: 'OrganizationLogoImages',
+                  attributes: ['id', 'formats'],
+                  required: false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          model: models.PointRevision,
+          required: false
+        },
+        { model: models.PointQuality,
+          required: false,
+          include: [
+            { model: models.User,
+              attributes: ["id", "name", "email"],
+              required: false
+            }
+          ]
+        },
+        {
+          model: models.Post,
+          required: false
+        }
+      ]
+    }).then(function(points) {
+      if (points) {
+        log.info('Points New Viewed', { postId: req.params.id, context: 'view', user: toJson(req.user) });
+        res.send(points);
+      } else {
+        sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
+      }
+    }).catch(function(error) {
+      sendPostOrError(res, null, 'view', req.user, error);
+    });
+  } else {
+    log.warn('Points New Viewed Empty missing latestPointCreatedAt', { postId: req.params.id, context: 'view', user: toJson(req.user) });
+    res.send([]);
+  }
+});
+
 router.get('/:id/points', auth.can('view post'), function(req, res) {
   models.Point.findAll({
     where: {
