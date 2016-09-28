@@ -88,7 +88,7 @@
 
         notificationGetTTL: {
           type: Number,
-          value: 2000
+          value: 15000
         },
 
         oldestProcessedNotificationAt: {
@@ -178,6 +178,9 @@
         console.log("Found "+notifications.length+" new notifications");
         notifications.forEach(function (notification) {
           this._removeOldIfExists(notification);
+          if (notification.type=='notification.point.new') {
+
+          }
         }.bind(this));
 
         notifications.forEach(function (notification) {
@@ -193,12 +196,12 @@
         }
 
         this._displayToast(notifications);
+
       },
 
       _removeOldIfExists: function (notification) {
         this.notifications.forEach(function (oldNotification, index) {
           if (oldNotification.id==notification.id) {
-            console.log("splice: "+index);
             this.splice('notifications', index, 1);
           }
         }.bind(this));
@@ -207,38 +210,41 @@
       _getNotificationText: function (notification) {
         var ideaName;
         if (notification.AcActivities[0].Post) {
-          ideaName = ": "+this.truncate(notification.AcActivities[0].Post.name, 30);
+          ideaName = this.truncate(notification.AcActivities[0].Post.name, 30) + ": ";
         }
         if (notification.type=='notification.post.new') {
-          return this.t('post.new') + ideaName;
+          return ideaName+this.t('post.new');
         } else if (notification.type=='notification.post.endorsement') {
           if (notification.AcActivities[0].type=='activity.post.endorsement.new') {
-            return this.t('endorsedYourPost') + ideaName;
+            return ideaName+this.t('endorsedYourPost');
           } else {
-            return this.t('opposedYourPost') + ideaName;
+            return ideaName+this.t('opposedYourPost');
           }
         } else if (notification.type=='notification.point.new') {
           if (notification.AcActivities[0].Point.value>0) {
-            return this.t('point.forAdded') + ideaName;
+            return ideaName+this.t('point.forAdded');
           } else {
-            return this.t('point.againstAdded') + ideaName;
+            return ideaName+this.t('point.againstAdded');
           }
         } else if (notification.type=='notification.point.quality') {
           if (notification.AcActivities[0].type=='activity.point.helpful.new') {
-            return this.t('upVotedPoint') + ideaName;
+            return ideaName+this.t('upVotedPoint');
           } else {
-            return this.t('downVotedPoint') + ideaName;
+            return ideaName+this.t('downVotedPoint');
           }
         }
       },
 
       _displayToast: function (notifications) {
-        if (notifications.length>0) {
-          var activityUser = notifications[0].AcActivities[0].User;
-          if (window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) {
-            var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("notificationToast");
-            dialog.open(activityUser, this._getNotificationText(notifications[0]));
-          }
+        var notMyNotifications = _.reject(notifications, function (notification) {
+          var activityUser = notification.AcActivities[0].User;
+          return !(window.appUser.user && activityUser && window.appUser.user.id != activityUser.id);
+        });
+
+        if (notMyNotifications.length>0) {
+          var activityUser = notMyNotifications[0].AcActivities[0].User;
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("notificationToast");
+          dialog.open(activityUser, this._getNotificationText(notMyNotifications[0]));
         }
       },
 
