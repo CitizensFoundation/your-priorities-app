@@ -88,7 +88,7 @@
 
         notificationGetTTL: {
           type: Number,
-          value: 15000
+          value: 2000
         },
 
         oldestProcessedNotificationAt: {
@@ -191,6 +191,8 @@
             this.loadNewData();
           }.bind(this), this.notificationGetTTL)
         }
+
+        this._displayToast(notifications);
       },
 
       _removeOldIfExists: function (notification) {
@@ -200,6 +202,41 @@
             this.splice('notifications', index, 1);
           }
         }.bind(this));
+      },
+
+      _getNotificationText: function (notification) {
+        var ideaName;
+        if (notification.AcActivities[0].Post) {
+          ideaName = " "+this.truncate(notification.AcActivities[0].Post.name, 30);
+        }
+        if (notification.type=='notification.post.new') {
+          return this.t('addedNewPost') + ideaName;
+        } else if (notification.type=='notification.post.endorsement') {
+          if (notification.AcActivities[0].type=='activity.post.endorsement.new') {
+            return this.t('endorsedYourPost') + ideaName;
+          } else {
+            return this.t('opposedYourPost') + ideaName;
+          }
+        } else if (notification.type=='notification.point.new') {
+          if (notification.AcActivities[0].Point.value>0) {
+            return this.t('addedNewPointFor') + ideaName;
+          } else {
+            return this.t('addedNewPointAgainst') + ideaName;
+          }
+        } else if (notification.type=='notification.point.quality') {
+          if (notification.AcActivities[0].type=='activity.point.helpful.new') {
+            return this.t('upvotedPoint') + ideaName;
+          } else {
+            return this.t('downVotedPoint') + ideaName;
+          }
+        }
+      },
+
+      _displayToast: function (notifications) {
+        if (notifications.length>0) {
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("notificationToast");
+          dialog.open(notifications[0].AcActivities[0].User, this._getNotificationText(notifications[0]));
+        }
       },
 
       _finalizeAfterResponse: function (notifications) {
