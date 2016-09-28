@@ -207,10 +207,10 @@
       _getNotificationText: function (notification) {
         var ideaName;
         if (notification.AcActivities[0].Post) {
-          ideaName = " "+this.truncate(notification.AcActivities[0].Post.name, 30);
+          ideaName = ": "+this.truncate(notification.AcActivities[0].Post.name, 30);
         }
         if (notification.type=='notification.post.new') {
-          return this.t('addedNewPost') + ideaName;
+          return this.t('post.new') + ideaName;
         } else if (notification.type=='notification.post.endorsement') {
           if (notification.AcActivities[0].type=='activity.post.endorsement.new') {
             return this.t('endorsedYourPost') + ideaName;
@@ -219,13 +219,13 @@
           }
         } else if (notification.type=='notification.point.new') {
           if (notification.AcActivities[0].Point.value>0) {
-            return this.t('addedNewPointFor') + ideaName;
+            return this.t('point.forAdded') + ideaName;
           } else {
-            return this.t('addedNewPointAgainst') + ideaName;
+            return this.t('point.againstAdded') + ideaName;
           }
         } else if (notification.type=='notification.point.quality') {
           if (notification.AcActivities[0].type=='activity.point.helpful.new') {
-            return this.t('upvotedPoint') + ideaName;
+            return this.t('upVotedPoint') + ideaName;
           } else {
             return this.t('downVotedPoint') + ideaName;
           }
@@ -234,8 +234,11 @@
 
       _displayToast: function (notifications) {
         if (notifications.length>0) {
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("notificationToast");
-          dialog.open(notifications[0].AcActivities[0].User, this._getNotificationText(notifications[0]));
+          var activityUser = notifications[0].AcActivities[0].User;
+          if (window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) {
+            var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("notificationToast");
+            dialog.open(activityUser, this._getNotificationText(notifications[0]));
+          }
         }
       },
 

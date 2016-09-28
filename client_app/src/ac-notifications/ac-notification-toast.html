@@ -11,13 +11,13 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
       .text {
-        padding: 8px;
+        margin: 16px;
       }
     </style>
 
     <paper-toast id="toast" duration="5000">
       <div class="layout vertical">
-        <yp-user-with-organization user="[[user]]" hidden$="[[!user]]"></yp-user-with-organization>
+        <yp-user-with-organization class="layout horizontal self-end" user="[[user]]" hidden$="[[!user]]"></yp-user-with-organization>
         <div class="text">[[notificationText]]</div>
       </div>
     </paper-toast>
