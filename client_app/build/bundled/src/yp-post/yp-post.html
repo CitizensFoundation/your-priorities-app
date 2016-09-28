@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.32"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.51"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="/">
 
   <template>
 
@@ -187,7 +187,6 @@
 
       .main-container {
         @apply(--layout-horizontal);
-        @apply(--layout-flex);
         background-color: var(--primary-background-color);
       }
 
@@ -203,13 +202,6 @@
         margin-bottom: 16px;
         padding: 16px;
         width: 420px;
-      }
-
-      @media only screen and (min-device-width : 768px) and (max-device-width : 1024px)  {
-        .pointText {
-          max-height: 160px;
-          min-height: 160px;
-        }
       }
 
       paper-toast {
@@ -328,6 +320,7 @@
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></iron-signals>
 
     <iron-media-query query="(min-width: 985px)" query-matches="{{largeMode}}"></iron-media-query>
 
@@ -341,7 +334,7 @@
           <div class="main-container">
             <div class="point">
 
-              <div id="pointUpMaterial" elevation="0" class="pointText" animated="">
+              <div id="pointUpMaterial" elevation="0" class="pointText layout vertical" animated="">
                 <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueUp}}" value="[[textValueUp]]" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="3" maxlength="500">
                 </paper-textarea>
                 <div class="horizontal end-justified layout">
@@ -366,7 +359,7 @@
 
             <div class="point">
 
-              <div id="pointDownMaterial" elevation="0" class="pointText" animated="">
+              <div id="pointDownMaterial" elevation="0" class="pointText layout vertical" animated="">
                 <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueDown}}" value="[[textValueDown]]" label="[[t('point.against')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
                 </paper-textarea>
                 <div class="horizontal end-justified layout">
@@ -391,7 +384,7 @@
         </div>
       </template>
       <template is="dom-if" if="[[!largeMode]]">
-        <div id="pointUpOrDownMaterial" elevation="0" class="pointText" animated="">
+        <div id="pointUpOrDownMaterial" elevation="0" class="pointText layout vertical" animated="">
           <paper-textarea id="mobileUpOrDownPoint" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueMobileUpOrDown}}" value="[[textValueMobileUpOrDown]]" label="[[labelMobileUpOrDown]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
           <div class="horizontal end-justified layout">
             <emoji-selector id="pointUpDownEmojiSelector"></emoji-selector>
@@ -404,7 +397,7 @@
           </div>
           <template is="dom-if" if="[[ifLengthIsRight(textValueMobileUpOrDown)]]">
             <div class="addPointFab layout horizontal center-center mobileFab">
-              <paper-fab icon="add" mini="" z="3" on-tap="addMobilePointUpOrDown" title="[[t('point.add_down')]]"></paper-fab>
+              <paper-fab icon="add" z="3" on-tap="addMobilePointUpOrDown" title="[[t('point.add_down')]]"></paper-fab>
             </div>
           </template>
         </div>
@@ -420,6 +413,7 @@
 
     <div hidden="" class="layout horizontal center-center">
       <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+      <yp-ajax id="newPointsAjax" on-response="_newPointsResponse"></yp-ajax>
       <yp-ajax id="newPointAjax" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
     </div>
 
@@ -490,11 +484,34 @@
             type: String,
             observer: '_pointUpOrDownSelectedChanged',
             value: 'pointFor'
+          },
+
+          latestPointCreatedAt: {
+            type: Date,
+            value: null
           }
         },
 
         listeners: {
           'yp-point-deleted': '_pointDeleted'
+        },
+
+        _loadNewPointsIfNeeded: function (event, detail) {
+          if (this.post && this.post.id == detail.postId) {
+            this.$.newPointsAjax.url = '/api/posts/' + this.post.id + '/newPoints';
+            this.$.newPointsAjax.params = { latestPointCreatedAt: this.latestPointCreatedAt };
+            this.$.newPointsAjax.generateRequest();
+          }
+        },
+
+        _newPointsResponse: function (event, detail) {
+          var points = detail.response;
+          points.forEach(function (point) {
+            this._insertNewPoint(point);
+          }.bind(this));
+
+          this._updateCounterInfo();
+          this._setLatestPointAtDate();
         },
 
         _pointDeleted: function () {
@@ -557,14 +574,14 @@
         },
 
         _response: function (event, detail) {
-          this.set('points', detail.response);
+          var points = detail.response;
           this.removeElementsByClass(this, 'inserted-outside-list');
 
-          if (this.points.length > 0) {
-            this.set('upPoints', this.points.filter(function (x) {
+          if (points.length > 0) {
+            this.set('upPoints', points.filter(function (x) {
               return x.value > 0;
             }));
-            this.set('downPoints', this.points.filter(function (x) {
+            this.set('downPoints', points.filter(function (x) {
               return x.value < 0;
             }));
           } else {
@@ -572,16 +589,31 @@
             this.set('downPoints', []);
           }
 
-          this._updateCounterInfo();
-
           this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
+          this._updateCounterInfo();
+          this._setLatestPointAtDate();
+        },
+
+        _setLatestPointAtDate: function () {
+          this.points.forEach(function (point) {
+            if (!this.latestPointCreatedAt || point.created_at > this.latestPointCreatedAt) {
+              this.set('latestPointCreatedAt', point.created_at);
+            }
+          }.bind(this));
         },
 
         _updateCounterInfo: function () {
-          this.fire('yp-debate-info', {
-            count: this.upPoints.length + this.downPoints.length,
-            firstPoint: this.upPoints[0]
-          });
+          if (this.largeMode) {
+            this.fire('yp-debate-info', {
+              count: this.upPoints.length + this.downPoints.length,
+              firstPoint: this.upPoints[0]
+            });
+          } else {
+            this.fire('yp-debate-info', {
+              count: this.points.length,
+              firstPoint: this.points[0]
+            });
+          }
         },
 
         _insertNewPoint: function (point) {
@@ -591,9 +623,8 @@
             } else if (point.value < 0) {
               this.unshift('downPoints', point);
             }
-          } else {
-            this.unshift('points', point);
           }
+          this.unshift('points', point);
         },
 
         _newPointResponse: function (event, detail) {
@@ -610,6 +641,7 @@
           this.set('post.counter_points', this.post.counter_points + 1);
           this.$.newPointToast.show();
           this._updateCounterInfo();
+          this._setLatestPointAtDate();
         },
 
         addPointUp: function () {

@@ -1,4 +1,8 @@
 {
+  "upVotedPoint": "Up voted your point",
+  "downVotedPoint": "Down voted your point",
+  "endorsedYourPost": "Endorsed your idea",
+  "opposedYourPost": "Opposed your idea",
   "notifications": "Notifications",
   "votingDisabled": "Voting is not active",
   "pageNotFound": "The page the app requested is not found",

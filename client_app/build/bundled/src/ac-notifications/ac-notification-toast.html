@@ -1,0 +1,54 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.51">
+
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.51">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.51">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.51">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.2.51">
+
+<link rel="import" href="../yp-user/yp-user-with-organization.html?v=6.2.51">
+
+</head><body><dom-module id="ac-notification-toast">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .text {
+        margin: 16px;
+      }
+    </style>
+
+    <paper-toast id="toast" duration="5000">
+      <div class="layout vertical">
+        <yp-user-with-organization class="layout horizontal self-end" user="[[user]]" hidden$="[[!user]]"></yp-user-with-organization>
+        <div class="text">[[notificationText]]</div>
+      </div>
+    </paper-toast>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-notification-toast',
+
+      properties: {
+        user: {
+          type: Object,
+          value: null
+        },
+
+        notificationText: {
+          type: String,
+          value: null
+        }
+      },
+
+      open: function (user, notificationText) {
+        this.set('user', user);
+        this.set('notificationText', notificationText);
+        this.$.toast.close();
+        this.async(function () {
+          this.$.toast.open();
+        });
+      }
+    });
+  </script>
+</dom-module>
+</body></html>

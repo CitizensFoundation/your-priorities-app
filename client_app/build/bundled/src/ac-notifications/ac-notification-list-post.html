@@ -1,10 +1,10 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.32">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.51">
 
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.32">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.51">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.51">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.32">
-<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.2.32">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.51">
+<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.2.51">
 
 </head><body><dom-module id="ac-notification-list-post">
   <template>
@@ -17,11 +17,11 @@
       }
 
       .endorsers {
-        color:  var(--master-point-up-color);
+
       }
 
       .opposers {
-        color: var(--master-point-down-color);
+
       }
 
       .bulb-icon {
@@ -41,17 +41,24 @@
         min-height: 16px;
         padding-right: 4px;
         padding-left: 12px;
+        color: var(--primary-love-color-up, rgba(50,50,50,0.45));
       }
 
       .postName {
         padding-top: 4px;
       }
 
+      .userName {
+        font-style: italic;
+      }
     </style>
     <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
       <div class="layout horizontal">
         <iron-icon icon="lightbulb-outline" new-post$="[[newPostMode]]" class="bulb-icon"></iron-icon>
-        <div class="postName">[[postName]]</div>
+        <div class="layout vertical">
+          <div class="postName">[[postName]]</div>
+          <div class="userName" hidden="">[[userName]]</div>
+        </div>
       </div>
       <div class="layout horizontal" hidden$="[[!endorsementsText]]">
         <iron-icon icon="favorite" class="smallIcons endorsers"></iron-icon>
@@ -93,7 +100,11 @@
         },
 
         newPostMode: Boolean,
-        endorseMode: Boolean
+        endorseMode: Boolean,
+        userName: {
+          type: String,
+          value: null
+        }
       },
 
       goToPost: function () {
@@ -109,6 +120,7 @@
       _notificationChanged: function (notification) {
         if (notification) {
           this.set('post', notification.AcActivities[0].Post);
+          this.set('userName', notification.AcActivities[0].User.name);
           if (notification.type=='notification.post.new') {
             this.set('newPostMode', true);
           } else if (notification.type=='notification.post.endorsement') {
@@ -120,6 +132,7 @@
           this.set('oppositionsText', null);
           this.set('newPostMode', null);
           this.set('endorseMode', null);
+          this.set('userName', null);
         }
       },
 

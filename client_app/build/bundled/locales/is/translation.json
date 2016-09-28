@@ -1,4 +1,8 @@
 {
+  "upVotedPoint": "Kaus þín rök upp",
+  "downVotedPoint": "Kaus þín rök niður",
+  "endorsedYourPost": "Studdi þína hugmynd",
+  "opposedYourPost": "Var á móti þinni hugmynd",
   "notifications": "Tilkynningar",
   "votingDisabled": "Kosning er ekki virk",
   "pageNotFound": "Þessi síða fannst ekki",

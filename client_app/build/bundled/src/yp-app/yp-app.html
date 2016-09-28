@@ -12959,7 +12959,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.2.32">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.2.51">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -18639,7 +18639,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.2.32">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.2.51">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -18647,7 +18647,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.2.32">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.2.51">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -23958,8 +23958,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.2.32">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.2.32">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.2.51">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.2.51">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -25542,7 +25542,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.32" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.2.51" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -29980,7 +29980,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.32" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.2.51" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -30283,16 +30283,21 @@ Custom property | Description | Default
       },
 
       _transformErrorText: function (errorText) {
-        if (errorText && errorText.indexOf('status code: 404') > -1) {
-          return this.t('errorNotFound');
-        } else if (errorText && errorText.indexOf('status code: 500') > -1) {
-          return this.t('generalError');
-        } else if (errorText && errorText.indexOf('status code: 401') > -1) {
-          return this.t('errorNotAuthorized');
-        } else if (errorText && errorText.indexOf('503') > -1) {
-          return this.t('errorCantConnect');
+        console.log(errorText);
+        if (typeof errorText === 'string') {
+          if (errorText && errorText.indexOf('status code: 404') > -1) {
+            return this.t('errorNotFound');
+          } else if (errorText && errorText.indexOf('status code: 500') > -1) {
+            return this.t('generalError');
+          } else if (errorText && errorText.indexOf('status code: 401') > -1) {
+            return this.t('errorNotAuthorized');
+          } else if (errorText && errorText.indexOf('503') > -1) {
+            return this.t('errorCantConnect');
+          } else {
+            return errorText;
+          }
         } else {
-          return errorText;
+          return this.t('generalError');
         }
       },
 
@@ -36385,12 +36390,14 @@ of a listbox item will also focus it.
       },
 
       _selectedLocaleChanged: function (locale) {
-        this.set('value', locale);
-        if (!this.noUserEvents) {
-          this.changeLocaleIfNeeded(locale, true);
-          localStorage.setItem('yp-user-locale', locale);
-          if (window.appUser && window.appUser.user) {
-            window.appUser.setLocale(locale);
+        if (locale) {
+          this.set('value', locale);
+          if (!this.noUserEvents) {
+            this.changeLocaleIfNeeded(locale, true);
+            localStorage.setItem('yp-user-locale', locale);
+            if (window.appUser && window.appUser.user) {
+              window.appUser.setLocale(locale);
+            }
           }
         }
       }
@@ -37764,7 +37771,8 @@ Example:
       _organizationImageUrl: function (user) {
         if (user && user.OrganizationUsers && user.OrganizationUsers.length > 0 &&
           user.OrganizationUsers[0].OrganizationLogoImages &&
-          user.OrganizationUsers[0].OrganizationLogoImages.length > 0) {
+          user.OrganizationUsers[0].OrganizationLogoImages.length > 0 &&
+          user.OrganizationUsers[0].OrganizationLogoImages[0].formats) {
           return this.getImageFormatUrl(user.OrganizationUsers[0].OrganizationLogoImages, 2);
         } else {
           return null;
@@ -37919,7 +37927,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.2.32">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.2.51">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -44813,6 +44821,14 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
         min-height: 300px;
       }
 
+      .tab-wrapper {
+        min-height: 64px;
+      }
+
+      .largeButtonWrapper {
+        min-height: 120px;
+      }
+
       .middleArea {
         background-color: var(--primary-color-600);
       }
@@ -44900,6 +44916,10 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
         .topArea[is-post] {
           min-height: 530px;
         }
+
+        .largeButtonWrapper {
+          min-height: 80px;
+        }
       }
 
       @media (max-width: 480px) {
@@ -44910,9 +44930,11 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
       <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post$="[[isPost]]">
         <content select=".largeCard"></content>
       </div>
-      <div class="largeButtonWrapper layout horizontal center-center" hidden$="[[!wideWidth]]">
-        <content select=".largeAddButton"></content>
-      </div>
+      <template is="dom-if" if="[[hasLargeButton]]">
+        <div class="largeButtonWrapper layout horizontal center-center" hidden$="[[!wideWidth]]">
+          <content select=".largeAddButton"></content>
+        </div>
+      </template>
       <div class="tab-wrapper layout horizontal center-center">
         <content select=".tabs"></content>
       </div>
@@ -44949,6 +44971,11 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
         },
 
         isPost: {
+          type: Boolean,
+          value: false
+        },
+
+        hasLargeButton: {
           type: Boolean,
           value: false
         }
@@ -47306,6 +47333,19 @@ information on the API.
       } else {
         this.$$("#editDialog").useNextTabAction = true;
       }
+
+      if (newValue==0) {
+        var nameElement = this.$$("#name");
+        if (nameElement) {
+          nameElement.focus();
+        }
+      }
+      if (newValue==1) {
+        var pointFor = this.$$("#pointFor");
+        if (pointFor) {
+          pointFor.focus();
+        }
+      }
     },
 
     _selectedCategoryChanged: function (newCategoryArrayId, oldValue) {
@@ -47405,6 +47445,12 @@ information on the API.
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
       this._clear();
+      this.async(function () {
+        var nameElement = this.$$("#name");
+        if (nameElement) {
+          nameElement.focus();
+        }
+      }.bind(this), 250);
     },
 
     _setupTranslation: function () {
@@ -48719,14 +48765,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.32">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.51">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.2.32">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.2.51">
    * ```
    *
    * ### Consuming effects
@@ -49524,7 +49570,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.32">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.51">
 ```
 
 #### List of effects
@@ -52230,6 +52276,12 @@ value. `setMax` should move the slider to the maximum value.
 
     _onRegisterChanged: function (newValue, oldValue) {
       this._setTexts();
+      if (newValue==1) {
+        var nameElement = this.$$("#name");
+        if (nameElement) {
+          nameElement.focus();
+        }
+      }
     },
 
     ready: function () {
@@ -52954,11 +53006,11 @@ value. `setMax` should move the slider to the maximum value.
       }
 
       .endorsers {
-        color:  var(--master-point-up-color);
+
       }
 
       .opposers {
-        color: var(--master-point-down-color);
+
       }
 
       .bulb-icon {
@@ -52978,17 +53030,24 @@ value. `setMax` should move the slider to the maximum value.
         min-height: 16px;
         padding-right: 4px;
         padding-left: 12px;
+        color: var(--primary-love-color-up, rgba(50,50,50,0.45));
       }
 
       .postName {
         padding-top: 4px;
       }
 
+      .userName {
+        font-style: italic;
+      }
     </style>
     <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
       <div class="layout horizontal">
         <iron-icon icon="lightbulb-outline" new-post$="[[newPostMode]]" class="bulb-icon"></iron-icon>
-        <div class="postName">[[postName]]</div>
+        <div class="layout vertical">
+          <div class="postName">[[postName]]</div>
+          <div class="userName" hidden="">[[userName]]</div>
+        </div>
       </div>
       <div class="layout horizontal" hidden$="[[!endorsementsText]]">
         <iron-icon icon="favorite" class="smallIcons endorsers"></iron-icon>
@@ -53030,7 +53089,11 @@ value. `setMax` should move the slider to the maximum value.
         },
 
         newPostMode: Boolean,
-        endorseMode: Boolean
+        endorseMode: Boolean,
+        userName: {
+          type: String,
+          value: null
+        }
       },
 
       goToPost: function () {
@@ -53046,6 +53109,7 @@ value. `setMax` should move the slider to the maximum value.
       _notificationChanged: function (notification) {
         if (notification) {
           this.set('post', notification.AcActivities[0].Post);
+          this.set('userName', notification.AcActivities[0].User.name);
           if (notification.type=='notification.post.new') {
             this.set('newPostMode', true);
           } else if (notification.type=='notification.post.endorsement') {
@@ -53057,6 +53121,7 @@ value. `setMax` should move the slider to the maximum value.
           this.set('oppositionsText', null);
           this.set('newPostMode', null);
           this.set('endorseMode', null);
+          this.set('userName', null);
         }
       },
 
@@ -53139,17 +53204,26 @@ value. `setMax` should move the slider to the maximum value.
       .postName {
         padding-top: 4px;
         color: var(--master-point-down-color);
+        padding-bottom: 0;
       }
 
       .postName[point-value-up] {
         color:  var(--master-point-up-color);
       }
 
+      .pointContent {
+        color: #777;
+        padding-left: 8px;
+        padding-bottom: 4px;
+      }
     </style>
     <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
       <div class="layout horizontal">
         <iron-icon icon="communication:chat-bubble-outline" class="chatIcon"></iron-icon>
         <div class="postName" point-value-up$="[[pointValueUp]]">[[postName]]</div>
+      </div>
+      <div class="layout horizontal pointContent">
+        [[pointContent]]
       </div>
       <div class="layout horizontal" hidden$="[[!helpfulsText]]">
         <iron-icon icon="arrow-upward" class="smallIcons endorsers"></iron-icon>
@@ -53192,17 +53266,18 @@ value. `setMax` should move the slider to the maximum value.
 
         pointValueUp: {
           type: Boolean,
-          computed: '_pointvalueUp(point)'
+          computed: '_pointValueUp(point)'
         },
 
         newPointMode: Boolean,
         qualityMode: Boolean,
         point: {
           type: Object
-        }
+        },
+        pointContent: String
       },
 
-      _pointvalueUp: function (point) {
+      _pointValueUp: function (point) {
         return (point && point.value > 0);
       },
 
@@ -53220,6 +53295,9 @@ value. `setMax` should move the slider to the maximum value.
         if (notification) {
           this.set('point', notification.AcActivities[0].Point);
           this.set('post', notification.AcActivities[0].Post);
+          if (this.point) {
+            this.set('pointContent', this.truncate(this.point.content, 20));
+          }
           if (notification.type=='notification.point.new') {
             this.set('newPointMode', true);
           } else if (notification.type=='notification.point.quality') {
@@ -53297,7 +53375,6 @@ value. `setMax` should move the slider to the maximum value.
       }
 
       .notificationItem {
-
         margin-bottom: 8px;
         padding-bottom: 8px;
       }
@@ -53306,7 +53383,7 @@ value. `setMax` should move the slider to the maximum value.
       <iron-list id="list" items="[[notifications]]" as="notification">
         <template>
           <div class="layout vertical notificationItem">
-            <p hidden="">[[notification.type]]</p>
+            <p hidden="">[[notification.type]] [[notification.id]] [[notification.AcActivities.length]] pId [[notification.AcActivities.0.Post.id]] v [[notification.AcActivities.0.Point.value]]</p>
             <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
               <ac-notification-list-post notification="[[notification]]"></ac-notification-list-post>
             </template>
@@ -53322,13 +53399,14 @@ value. `setMax` should move the slider to the maximum value.
 
     <div class="layout horizontal center-center">
       <yp-ajax id="loadNotificationsAjax" on-response="_loadNotificationsResponse"></yp-ajax>
-      <yp-ajax id="loadNewNotificationsAjax" on-response="_loadNewNotificationsResponse"></yp-ajax>
+      <yp-ajax id="loadNewNotificationsAjax" dispatch-error="" on-error="_newNotificationsError" on-response="_loadNewNotificationsResponse"></yp-ajax>
       <template is="dom-if" if="[[moreToLoad]]" restamp="">
         <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
       </template>
     </div>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
   </template>
 
   <script>
@@ -53338,14 +53416,17 @@ value. `setMax` should move the slider to the maximum value.
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpScrollTabBehavior
+        Polymer.YpScrollTabBehavior,
+        Polymer.ypLoggedInUserBehavior
       ],
 
       properties: {
+
         notifications: Array,
+
         notificationGetTTL: {
           type: Number,
-          value: 30000
+          value: 2000
         },
 
         oldestProcessedNotificationAt: {
@@ -53369,13 +53450,38 @@ value. `setMax` should move the slider to the maximum value.
         firstReponse: {
           type: Boolean,
           value: true
-        }
+        },
+
+        timer: Object
+      },
+
+      _newNotificationsError: function (event, detail) {
+        console.error("Error in getting new notifications");
+        // Retry starting the time in 15 seconds
+        this.async(function () {
+          this._startTimer();
+        }, 15000);
       },
 
       _userChanged: function (user) {
         if (user) {
           this.$.loadNotificationsAjax.url = this.url;
           this.$.loadNotificationsAjax.generateRequest();
+        } else {
+          this.cancelTimer();
+        }
+      },
+
+      _loggedInUserChanged: function (user) {
+        if (!user) {
+         this.cancelTimer();
+        }
+      },
+
+      cancelTimer: function () {
+        if (this.timer) {
+          clearTimeout(this.timer);
+          this.set('timer', null);
         }
       },
 
@@ -53408,12 +53514,41 @@ value. `setMax` should move the slider to the maximum value.
 
         if (this.firstReponse) {
           this.set('firstReponse', false);
-          //this.loadNewData();
+          this.loadNewData();
         }
+      },
+
+      _startTimer: function () {
+        this.cancelTimer();
+        if (this.user) {
+          this.timer = this.async(function () {
+            this.loadNewData();
+          }.bind(this), this.notificationGetTTL)
+        }
+      },
+
+      _sendReloadPointsEvents: function (notifications) {
+        notifications.forEach(function (notification) {
+          if (notification.type=='notification.point.new') {
+            var activityUser = notification.AcActivities[0].User;
+            if (window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) {
+              var event = new CustomEvent("iron-signal", { detail: { name: 'yp-update-points-for-post', data: { postId: notification.AcActivities[0].Post.id } } } );
+              document.dispatchEvent(event);
+            }
+          }
+        }.bind(this));
       },
 
       _loadNewNotificationsResponse: function (event, detail) {
         var notifications = detail.response.notifications;
+
+        console.log("Found "+notifications.length+" new notifications");
+        notifications.forEach(function (notification) {
+          this._removeOldIfExists(notification);
+          if (notification.type=='notification.point.new') {
+
+          }
+        }.bind(this));
 
         notifications.forEach(function (notification) {
           this.unshift('notifications', notification);
@@ -53421,17 +53556,66 @@ value. `setMax` should move the slider to the maximum value.
 
         this._finalizeAfterResponse(notifications);
 
-        if (this.user) {
-          this.async(function () {
-            this.loadNewData();
-          }.bind(this), this.notificationGetTTL)
+        this._startTimer();
+
+        this._displayToast(notifications);
+        this._sendReloadPointsEvents(notifications);
+
+      },
+
+      _removeOldIfExists: function (notification) {
+        this.notifications.forEach(function (oldNotification, index) {
+          if (oldNotification.id==notification.id) {
+            this.splice('notifications', index, 1);
+          }
+        }.bind(this));
+      },
+
+      _getNotificationText: function (notification) {
+        var ideaName;
+        if (notification.AcActivities[0].Post) {
+          ideaName = this.truncate(notification.AcActivities[0].Post.name, 30) + ": ";
+        }
+        if (notification.type=='notification.post.new') {
+          return ideaName+this.t('post.new');
+        } else if (notification.type=='notification.post.endorsement') {
+          if (notification.AcActivities[0].type=='activity.post.endorsement.new') {
+            return ideaName+this.t('endorsedYourPost');
+          } else {
+            return ideaName+this.t('opposedYourPost');
+          }
+        } else if (notification.type=='notification.point.new') {
+          if (notification.AcActivities[0].Point.value>0) {
+            return ideaName+this.t('point.forAdded');
+          } else {
+            return ideaName+this.t('point.againstAdded');
+          }
+        } else if (notification.type=='notification.point.quality') {
+          if (notification.AcActivities[0].type=='activity.point.helpful.new') {
+            return ideaName+this.t('upVotedPoint');
+          } else {
+            return ideaName+this.t('downVotedPoint');
+          }
+        }
+      },
+
+      _displayToast: function (notifications) {
+        var notMyNotifications = _.reject(notifications, function (notification) {
+          var activityUser = notification.AcActivities[0].User;
+          return !(window.appUser.user && activityUser && window.appUser.user.id != activityUser.id);
+        });
+
+        if (notMyNotifications.length>0) {
+          var activityUser = notMyNotifications[0].AcActivities[0].User;
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("notificationToast");
+          dialog.open(activityUser, this._getNotificationText(notMyNotifications[0]));
         }
       },
 
       _finalizeAfterResponse: function (notifications) {
         if (notifications.length>0) {
-          if (!this.latestProcessedNotificationAt || this.latestProcessedNotificationAt < notifications[0].created_at) {
-            this.set('latestProcessedNotificationAt', notifications[0].created_at);
+          if (!this.latestProcessedNotificationAt || this.latestProcessedNotificationAt < notifications[0].updated_at) {
+            this.set('latestProcessedNotificationAt', notifications[0].updated_at);
           }
           this.setMoreToLoad();
         }
@@ -54203,6 +54387,7 @@ value. `setMax` should move the slider to the maximum value.
         <yp-delete-dialog id="deleteDialog"></yp-delete-dialog>
         <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
         <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
+        <ac-notification-toast id="notificationToast"></ac-notification-toast>
       </template>
 
       <template is="dom-if" if="[[gotAdminRights]]">
@@ -54235,13 +54420,13 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.2.32"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.2.51"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.2.32"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.2.51"), null, null, true);
         }
       },
 
@@ -55585,9 +55770,9 @@ value. `setMax` should move the slider to the maximum value.
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.2.32");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.2.51");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.2.32");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.2.51");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);

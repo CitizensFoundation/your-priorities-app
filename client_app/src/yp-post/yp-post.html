@@ -344,7 +344,7 @@
 
       <iron-pages id="pages" class="tabPages" selected="[[selectedTab]]" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <div name="debate" class="layout horizontal center-center">
-          <yp-post-points id="pointsSection" post="[[post]]"></yp-post-points>
+          <yp-post-points id="pointsSection" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
         </div>
         <section name="news">
           <ac-activities disable-new-posts="[[disableNewPosts]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
@@ -468,6 +468,11 @@
           disableNewPosts: {
             type: Boolean,
             value: false
+          },
+
+          scrollToPointId: {
+            type: String,
+            value: null
           }
         },
 
@@ -483,9 +488,16 @@
         },
 
         _routeTabChanged: function (newTabName) {
-          if (newTabName) {
+          if (newTabName && !this._isNumber(newTabName)) {
             this.set('selectedTab', newTabName);
+          } else if (newTabName && this._isNumber(newTabName)) {
+            this.set('scrollToPointId', newTabName);
+            this.set('selectedTab', 'debate');
           }
+        },
+
+       _isNumber: function(n) {
+          return !isNaN(parseFloat(n)) && isFinite(n);
         },
 
         _selectedTabChanged: function (tabName) {

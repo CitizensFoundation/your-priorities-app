@@ -1,10 +1,10 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.32">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.51">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.32">
-<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.2.32">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.51">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.2.51">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.51">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.32">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.51">
 
 </head><body><dom-module id="yp-page">
   <template>
@@ -29,6 +29,14 @@
 
       .topArea {
         min-height: 300px;
+      }
+
+      .tab-wrapper {
+        min-height: 64px;
+      }
+
+      .largeButtonWrapper {
+        min-height: 120px;
       }
 
       .middleArea {
@@ -118,6 +126,10 @@
         .topArea[is-post] {
           min-height: 530px;
         }
+
+        .largeButtonWrapper {
+          min-height: 80px;
+        }
       }
 
       @media (max-width: 480px) {
@@ -128,9 +140,11 @@
       <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post$="[[isPost]]">
         <content select=".largeCard"></content>
       </div>
-      <div class="largeButtonWrapper layout horizontal center-center" hidden$="[[!wideWidth]]">
-        <content select=".largeAddButton"></content>
-      </div>
+      <template is="dom-if" if="[[hasLargeButton]]">
+        <div class="largeButtonWrapper layout horizontal center-center" hidden$="[[!wideWidth]]">
+          <content select=".largeAddButton"></content>
+        </div>
+      </template>
       <div class="tab-wrapper layout horizontal center-center">
         <content select=".tabs"></content>
       </div>
@@ -167,6 +181,11 @@
         },
 
         isPost: {
+          type: Boolean,
+          value: false
+        },
+
+        hasLargeButton: {
           type: Boolean,
           value: false
         }

@@ -1,10 +1,10 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.32">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.51">
 
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.32">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.51">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.51">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.32">
-<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.2.32">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.51">
+<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.2.51">
 
 </head><body><dom-module id="ac-notification-list-point">
   <template>
@@ -46,17 +46,26 @@
       .postName {
         padding-top: 4px;
         color: var(--master-point-down-color);
+        padding-bottom: 0;
       }
 
       .postName[point-value-up] {
         color:  var(--master-point-up-color);
       }
 
+      .pointContent {
+        color: #777;
+        padding-left: 8px;
+        padding-bottom: 4px;
+      }
     </style>
     <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
       <div class="layout horizontal">
         <iron-icon icon="communication:chat-bubble-outline" class="chatIcon"></iron-icon>
         <div class="postName" point-value-up$="[[pointValueUp]]">[[postName]]</div>
+      </div>
+      <div class="layout horizontal pointContent">
+        [[pointContent]]
       </div>
       <div class="layout horizontal" hidden$="[[!helpfulsText]]">
         <iron-icon icon="arrow-upward" class="smallIcons endorsers"></iron-icon>
@@ -99,17 +108,18 @@
 
         pointValueUp: {
           type: Boolean,
-          computed: '_pointvalueUp(point)'
+          computed: '_pointValueUp(point)'
         },
 
         newPointMode: Boolean,
         qualityMode: Boolean,
         point: {
           type: Object
-        }
+        },
+        pointContent: String
       },
 
-      _pointvalueUp: function (point) {
+      _pointValueUp: function (point) {
         return (point && point.value > 0);
       },
 
@@ -127,6 +137,9 @@
         if (notification) {
           this.set('point', notification.AcActivities[0].Point);
           this.set('post', notification.AcActivities[0].Post);
+          if (this.point) {
+            this.set('pointContent', this.truncate(this.point.content, 20));
+          }
           if (notification.type=='notification.point.new') {
             this.set('newPointMode', true);
           } else if (notification.type=='notification.point.quality') {

@@ -1,15 +1,16 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.32">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.51">
 
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.51">
 
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.32">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.51">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.32">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.2.32">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.32">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.51">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.2.51">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.51">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.2.51">
 
-<link rel="import" href="ac-notification-list-post.html?v=6.2.32">
-<link rel="import" href="ac-notification-list-point.html?v=6.2.32">
+<link rel="import" href="ac-notification-list-post.html?v=6.2.51">
+<link rel="import" href="ac-notification-list-point.html?v=6.2.51">
 
 </head><body><dom-module id="ac-notification-list">
   <template>
@@ -36,7 +37,6 @@
       }
 
       .notificationItem {
-
         margin-bottom: 8px;
         padding-bottom: 8px;
       }
@@ -45,7 +45,7 @@
       <iron-list id="list" items="[[notifications]]" as="notification">
         <template>
           <div class="layout vertical notificationItem">
-            <p hidden="">[[notification.type]]</p>
+            <p hidden="">[[notification.type]] [[notification.id]] [[notification.AcActivities.length]] pId [[notification.AcActivities.0.Post.id]] v [[notification.AcActivities.0.Point.value]]</p>
             <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
               <ac-notification-list-post notification="[[notification]]"></ac-notification-list-post>
             </template>
@@ -61,13 +61,14 @@
 
     <div class="layout horizontal center-center">
       <yp-ajax id="loadNotificationsAjax" on-response="_loadNotificationsResponse"></yp-ajax>
-      <yp-ajax id="loadNewNotificationsAjax" on-response="_loadNewNotificationsResponse"></yp-ajax>
+      <yp-ajax id="loadNewNotificationsAjax" dispatch-error="" on-error="_newNotificationsError" on-response="_loadNewNotificationsResponse"></yp-ajax>
       <template is="dom-if" if="[[moreToLoad]]" restamp="">
         <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
       </template>
     </div>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
   </template>
 
   <script>
@@ -77,14 +78,17 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpScrollTabBehavior
+        Polymer.YpScrollTabBehavior,
+        Polymer.ypLoggedInUserBehavior
       ],
 
       properties: {
+
         notifications: Array,
+
         notificationGetTTL: {
           type: Number,
-          value: 30000
+          value: 2000
         },
 
         oldestProcessedNotificationAt: {
@@ -108,13 +112,38 @@
         firstReponse: {
           type: Boolean,
           value: true
-        }
+        },
+
+        timer: Object
+      },
+
+      _newNotificationsError: function (event, detail) {
+        console.error("Error in getting new notifications");
+        // Retry starting the time in 15 seconds
+        this.async(function () {
+          this._startTimer();
+        }, 15000);
       },
 
       _userChanged: function (user) {
         if (user) {
           this.$.loadNotificationsAjax.url = this.url;
           this.$.loadNotificationsAjax.generateRequest();
+        } else {
+          this.cancelTimer();
+        }
+      },
+
+      _loggedInUserChanged: function (user) {
+        if (!user) {
+         this.cancelTimer();
+        }
+      },
+
+      cancelTimer: function () {
+        if (this.timer) {
+          clearTimeout(this.timer);
+          this.set('timer', null);
         }
       },
 
@@ -147,12 +176,41 @@
 
         if (this.firstReponse) {
           this.set('firstReponse', false);
-          //this.loadNewData();
+          this.loadNewData();
         }
+      },
+
+      _startTimer: function () {
+        this.cancelTimer();
+        if (this.user) {
+          this.timer = this.async(function () {
+            this.loadNewData();
+          }.bind(this), this.notificationGetTTL)
+        }
+      },
+
+      _sendReloadPointsEvents: function (notifications) {
+        notifications.forEach(function (notification) {
+          if (notification.type=='notification.point.new') {
+            var activityUser = notification.AcActivities[0].User;
+            if (window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) {
+              var event = new CustomEvent("iron-signal", { detail: { name: 'yp-update-points-for-post', data: { postId: notification.AcActivities[0].Post.id } } } );
+              document.dispatchEvent(event);
+            }
+          }
+        }.bind(this));
       },
 
       _loadNewNotificationsResponse: function (event, detail) {
         var notifications = detail.response.notifications;
+
+        console.log("Found "+notifications.length+" new notifications");
+        notifications.forEach(function (notification) {
+          this._removeOldIfExists(notification);
+          if (notification.type=='notification.point.new') {
+
+          }
+        }.bind(this));
 
         notifications.forEach(function (notification) {
           this.unshift('notifications', notification);
@@ -160,17 +218,66 @@
 
         this._finalizeAfterResponse(notifications);
 
-        if (this.user) {
-          this.async(function () {
-            this.loadNewData();
-          }.bind(this), this.notificationGetTTL)
+        this._startTimer();
+
+        this._displayToast(notifications);
+        this._sendReloadPointsEvents(notifications);
+
+      },
+
+      _removeOldIfExists: function (notification) {
+        this.notifications.forEach(function (oldNotification, index) {
+          if (oldNotification.id==notification.id) {
+            this.splice('notifications', index, 1);
+          }
+        }.bind(this));
+      },
+
+      _getNotificationText: function (notification) {
+        var ideaName;
+        if (notification.AcActivities[0].Post) {
+          ideaName = this.truncate(notification.AcActivities[0].Post.name, 30) + ": ";
+        }
+        if (notification.type=='notification.post.new') {
+          return ideaName+this.t('post.new');
+        } else if (notification.type=='notification.post.endorsement') {
+          if (notification.AcActivities[0].type=='activity.post.endorsement.new') {
+            return ideaName+this.t('endorsedYourPost');
+          } else {
+            return ideaName+this.t('opposedYourPost');
+          }
+        } else if (notification.type=='notification.point.new') {
+          if (notification.AcActivities[0].Point.value>0) {
+            return ideaName+this.t('point.forAdded');
+          } else {
+            return ideaName+this.t('point.againstAdded');
+          }
+        } else if (notification.type=='notification.point.quality') {
+          if (notification.AcActivities[0].type=='activity.point.helpful.new') {
+            return ideaName+this.t('upVotedPoint');
+          } else {
+            return ideaName+this.t('downVotedPoint');
+          }
+        }
+      },
+
+      _displayToast: function (notifications) {
+        var notMyNotifications = _.reject(notifications, function (notification) {
+          var activityUser = notification.AcActivities[0].User;
+          return !(window.appUser.user && activityUser && window.appUser.user.id != activityUser.id);
+        });
+
+        if (notMyNotifications.length>0) {
+          var activityUser = notMyNotifications[0].AcActivities[0].User;
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("notificationToast");
+          dialog.open(activityUser, this._getNotificationText(notMyNotifications[0]));
         }
       },
 
       _finalizeAfterResponse: function (notifications) {
         if (notifications.length>0) {
-          if (!this.latestProcessedNotificationAt || this.latestProcessedNotificationAt < notifications[0].created_at) {
-            this.set('latestProcessedNotificationAt', notifications[0].created_at);
+          if (!this.latestProcessedNotificationAt || this.latestProcessedNotificationAt < notifications[0].updated_at) {
+            this.set('latestProcessedNotificationAt', notifications[0].updated_at);
           }
           this.setMoreToLoad();
         }
