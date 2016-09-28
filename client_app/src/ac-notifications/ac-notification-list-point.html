@@ -46,17 +46,26 @@
       .postName {
         padding-top: 4px;
         color: var(--master-point-down-color);
+        padding-bottom: 0;
       }
 
       .postName[point-value-up] {
         color:  var(--master-point-up-color);
       }
 
+      .pointContent {
+        color: #777;
+        padding-left: 8px;
+        padding-bottom: 4px;
+      }
     </style>
     <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
       <div class="layout horizontal">
         <iron-icon icon="communication:chat-bubble-outline" class="chatIcon"></iron-icon>
         <div class="postName" point-value-up$="[[pointValueUp]]">[[postName]]</div>
+      </div>
+      <div class="layout horizontal pointContent">
+        [[pointContent]]
       </div>
       <div class="layout horizontal" hidden$="[[!helpfulsText]]">
         <iron-icon icon="arrow-upward" class="smallIcons endorsers"></iron-icon>
@@ -106,7 +115,8 @@
         qualityMode: Boolean,
         point: {
           type: Object
-        }
+        },
+        pointContent: String
       },
 
       _pointvalueUp: function (point) {
@@ -127,6 +137,7 @@
         if (notification) {
           this.set('point', notification.AcActivities[0].Point);
           this.set('post', notification.AcActivities[0].Post);
+          this.set('pointContent', this.truncate(this.point.content, 20));
           if (notification.type=='notification.point.new') {
             this.set('newPointMode', true);
           } else if (notification.type=='notification.point.quality') {
