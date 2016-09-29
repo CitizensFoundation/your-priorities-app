@@ -22,7 +22,7 @@
 <link rel="import" href="../yp-app-globals/yp-app-globals.html">
 <link rel="import" href="../yp-app-globals/yp-app-user.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="yp-app-drawer.html">
+<link rel="import" href="yp-app-user-drawer.html">
 <link rel="import" href="yp-app-nav-drawer.html">
 <link rel="import" href="../yp-dialog-container/yp-dialog-container.html">
 <link rel="import" href="../yp-user/yp-user-image.html">
@@ -152,9 +152,9 @@
 
     <app-drawer-layout drawer-width="360px" responsive-width="16000px">
 
-      <app-drawer id="drawer" align="end" position="right" swipe-open>
+      <app-drawer id="drawer" align="end" position="right" opened="{{userDrawerOpened}}" swipe-open>
         <div style="height: 100%; overflow: auto;">
-          <yp-app-drawer id="ypDrawer" user="[[user]]" route="[[route]]"></yp-app-drawer>
+          <yp-app-user-drawer id="ypDrawer" user="[[user]]" opened="[[userDrawerOpened]]" route="[[route]]"></yp-app-user-drawer>
         </div>
       </app-drawer>
 
@@ -245,6 +245,8 @@
         groupSubRoute: Object,
         postSubRoute: Object,
         userSubRoute: Object,
+
+        userDrawerOpened: Boolean,
 
         homeLink: {
           type: Object

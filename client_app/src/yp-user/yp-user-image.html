@@ -184,11 +184,10 @@
       },
 
       _computeFacebookSrc: function (user) {
-        if (user) {
+        if (user && user.facebook_id) {
           return 'https://graph.facebook.com/' + user.facebook_id + '/picture';
         } else {
-          console.warn("Can't find user for computeFacebookSrc");
-          return "";
+          return null;
         }
       },
 

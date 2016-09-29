@@ -42,11 +42,14 @@
       }
 
       .unViewedCount {
+        padding-top: 8px;
         color: #777;
+        font-size: 14px;
       }
     </style>
-    <div hidden$="[[!unViewedCount]]" class="unViewedCount layout horizontal center-center">
-      [[unViewedCount]] [[t('unread')]]
+    <div hidden$="[[!unViewedCount]]" class="unViewedCount layout vertical center-center">
+      <div>[[unViewedCount]] [[t('unviewed')]]</div>
+      <paper-button on-tap="_markAllAsViewed">[[t('notificationMarkAllViewed')]]</paper-button>
     </div>
     <div id="scrollableRegion">
       <iron-list id="list" items="[[notifications]]" as="notification">
@@ -69,7 +72,9 @@
     <div class="layout horizontal center-center">
       <yp-ajax id="loadNotificationsAjax" on-response="_loadNotificationsResponse"></yp-ajax>
       <yp-ajax id="loadNewNotificationsAjax" dispatch-error on-error="_newNotificationsError" on-response="_loadNewNotificationsResponse"></yp-ajax>
-      <yp-ajax id="setAsViewedAjax" url="/api/notifications/setIdsViewed" on-response="_setAsViewedResponse"></yp-ajax>
+      <yp-ajax id="setAsViewedAjax" method="PUT" url="/api/notifications/setIdsViewed" on-response="_setAsViewedResponse"></yp-ajax>
+      <yp-ajax id="markAllAsViewedAjax" method="PUT" url="/api/notifications/markAllViewed" on-response="_setAsMarkAllViewedResponse"></yp-ajax>
+
       <template is="dom-if" if="[[moreToLoad]]" restamp>
         <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
       </template>
@@ -130,6 +135,16 @@
         }
       },
 
+      _markAllAsViewed: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+        dialog.open(this.t('notificationConfirmMarkAllViewed'), this._reallyMarkAllAsViewed.bind(this));
+      },
+
+      _reallyMarkAllAsViewed: function () {
+        this.$.markAllAsViewedAjax.body = {};
+        this.$.markAllAsViewedAjax.generateRequest();
+      },
+
       _handleUnViewedCount: function (unViewedCount) {
         this.set('unViewedCount', unViewedCount);
         this.fire('yp-set-number-of-un-viewed-notifications', { count: unViewedCount })
@@ -149,14 +164,14 @@
           });
         }
         if (marked.length>0) {
-          this.$.setAsViewedAjax.body = marked;
+          this.$.setAsViewedAjax.body = { viewedIds: marked };
           this.$.setAsViewedAjax.generateRequest();
         }
       },
 
       _setAsViewedResponse: function (event, detail) {
-        this._handleUnViewedCount(detail.unViewedCount);
-        var viewedIds =  detail.viewedIds;
+        this._handleUnViewedCount(detail.response.unViewedCount);
+        var viewedIds =  detail.response.viewedIds;
         if (this.notifications) {
           this.notifications.forEach(function (notification, index, theArray) {
             if (viewedIds.indexOf(notification.id) > -1) {
@@ -167,7 +182,8 @@
       },
 
       _setAsMarkAllViewedResponse: function (event, detail) {
-        this._handleUnViewedCount(detail.unViewedCount);
+        this._handleUnViewedCount(0);
+        this._setAllLocalCurrentAsViewed();
       },
 
       _setAllLocalCurrentAsViewed: function () {
@@ -244,7 +260,7 @@
           }
         }
 
-        this._handleUnViewedCount(detail.unViewedCount);
+        this._handleUnViewedCount(detail.response.unViewedCount);
       },
 
       _startTimer: function () {
@@ -295,7 +311,7 @@
           this._markAsViewed(notifications);
         }
 
-        this._handleUnViewedCount(detail.unViewedCount);
+        this._handleUnViewedCount(detail.response.unViewedCount);
       },
 
       _removeOldIfExists: function (notification) {

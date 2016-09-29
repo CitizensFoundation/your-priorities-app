@@ -1,4 +1,7 @@
 {
+  "unviewed": "ekki skoðað",
+  "notificationMarkAllViewed": "Merkja allt skoðað",
+  "notificationConfirmMarkAllViewed": "Staðfestu að þú viljir merkja allar tilkynningar sem skoðaðar",
   "upVotedPoint": "Kaus þín rök upp",
   "downVotedPoint": "Kaus þín rök niður",
   "endorsedYourPost": "Studdi þína hugmynd",
@@ -17,7 +20,7 @@
   "selectLanguage": "Veldu tungumál",
   "update": "Breyta",
   "errorCantConnect": "Get ekki tengst vefþjóni. Þessi villa gæti verið vegna mikils álags eða uppfærslu á hugbúnaði. Við höfum verið látin vita.",
-  "errorNotFound": "Fannst ekki...",
+  "errorNotFound": "Efni sem reynt var að sækja fannst ekki...",
   "errorNotAuthorized": "Þú hefur ekki aðgang að þessu!",
   "generalError": "Óvænt villa hefur komið upp. Við höfum verið látin vita.",
   "stats": {

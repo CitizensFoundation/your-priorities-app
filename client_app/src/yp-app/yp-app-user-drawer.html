@@ -20,7 +20,7 @@
 <link rel="import" href="../ac-notifications/ac-notification-list.html">
 <link rel="import" href="../yp-user/yp-user-info.html">
 
-<dom-module id="yp-app-drawer">
+<dom-module id="yp-app-user-drawer">
 
   <template>
 
@@ -51,7 +51,7 @@
               <div class="notificationHeader layout horizontal center-center">
                 [[t('notifications')]]
               </div>
-              <ac-notification-list id="notificationsList" opened="opened" user="[[user]]" id="notificationList"></ac-notification-list>
+              <ac-notification-list id="notificationsList" opened$="[[opened]]" user="[[user]]" id="notificationList"></ac-notification-list>
             </template>
           </div>
         </app-header>
@@ -64,7 +64,7 @@
   <script>
     Polymer({
 
-      is: 'yp-app-drawer',
+      is: 'yp-app-user-drawer',
 
       properties: {
 
@@ -89,10 +89,12 @@
 
       _openedChanged: function (open) {
         if (open) {
-          var notificationsList = this.$$("#notificationsList");
-          if (notificationsList) {
-            notificationsList.markCurrentAsViewed();
-          }
+          this.async(function () {
+            var notificationsList = this.$$("#notificationsList");
+            if (notificationsList) {
+              notificationsList.markCurrentAsViewed();
+            }
+          }.bind(this), 25);
         }
       },
 
