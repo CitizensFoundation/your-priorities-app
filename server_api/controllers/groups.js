@@ -466,6 +466,9 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
     user_agent: req.useragent.source,
     ip_address: req.clientIp
   });
+  group.set('configuration.canVote', ((req.body.canVote && req.body.canVote!="") ? true : false));
+  group.set('configuration.canAddNewPosts', ((req.body.canAddNewPosts && req.body.canAddNewPosts!="") ? true : false));
+  group.set('configuration.locationHidden', ((req.body.locationHidden && req.body.locationHidden!="") ? true : false));
 
   group.save().then(function(group) {
     log.info('Group Created', { group: toJson(group), context: 'create', user: toJson(req.user) });
