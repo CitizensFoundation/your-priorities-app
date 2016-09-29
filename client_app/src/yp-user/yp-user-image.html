@@ -74,8 +74,6 @@
         <iron-image sizing="cover" title="[[userTitle]]" preload src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
       </template>
 
-
-
       <template is="dom-if" if="[[!profileImageUrl]]">
         <template is="dom-if" if="[[user.facebook_id]]">
           <iron-image sizing="cover" title="[[userTitle]]" preload src$="[[computeFacebookSrc]]" class$="[[computeClass(small)]]"></iron-image>

@@ -44,13 +44,13 @@
     <div id="scrollableRegion">
       <iron-list id="list" items="[[notifications]]" as="notification">
         <template>
-          <div class="layout vertical notificationItem">
+          <div class="layout vertical">
             <p hidden>[[notification.type]] [[notification.id]] [[notification.AcActivities.length]] pId [[notification.AcActivities.0.Post.id]] v [[notification.AcActivities.0.Point.value]]</p>
             <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
-              <ac-notification-list-post notification="[[notification]]"></ac-notification-list-post>
+              <ac-notification-list-post class="notificationItem" notification="[[notification]]"></ac-notification-list-post>
             </template>
             <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
-              <ac-notification-list-point notification="[[notification]]"></ac-notification-list-point>
+              <ac-notification-list-point class="notificationItem" notification="[[notification]]"></ac-notification-list-point>
             </template>
             <template is="dom-if" if="[[_notificationType(notification, 'system')]]">
             </template>
