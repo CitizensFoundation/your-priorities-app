@@ -1,10 +1,12 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.53">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.54">
 
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.53">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.53">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.54">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.54">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.53">
-<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.2.53">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.54">
+<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.2.54">
+<link rel="import" href="../yp-user/yp-user-image.html?v=6.2.54">
+<link rel="import" href="./ac-notification-truncated-name-list.html?v=6.2.54">
 
 </head><body><dom-module id="ac-notification-list-point">
   <template>
@@ -28,52 +30,74 @@
         min-height: 24px;
         max-width: 24px;
         max-height: 24px;
-        margin-bottom: 8px;
-        padding-right: 4px;
-        padding-left: 4px;
+        margin: 6px;
+        margin-bottom: 0;
+        padding-bottom: 0;
       }
 
+      .thumbsIcon {
+        color: #999;
+        margin-top: 0;
+        padding-top: 0;
+        min-width: 20px;
+        min-height: 20px;
+        max-width: 20px;
+        max-height: 20px;
+      }
 
       .smallIcons {
         max-width: 16px;
         max-height: 16px;
         min-width: 16px;
         min-height: 16px;
-        padding-right: 4px;
-        padding-left: 12px;
+        padding-top: 2px;
+        padding-right: 2px;
       }
 
       .postName {
         padding-top: 4px;
-        color: var(--master-point-down-color);
         padding-bottom: 0;
+        font-style: italic;
+        color: #777;
       }
 
       .postName[point-value-up] {
-        color:  var(--master-point-up-color);
       }
 
       .pointContent {
-        color: #777;
-        padding-left: 8px;
         padding-bottom: 4px;
+        color: #444;
+      }
+
+      .pointContent[point-value-up] {
+      }
+
+      .leftContainer {
+        margin-right: 8px;
       }
     </style>
     <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
       <div class="layout horizontal">
-        <iron-icon icon="communication:chat-bubble-outline" class="chatIcon"></iron-icon>
-        <div class="postName" point-value-up$="[[pointValueUp]]">[[postName]]</div>
-      </div>
-      <div class="layout horizontal pointContent">
-        [[pointContent]]
-      </div>
-      <div class="layout horizontal" hidden$="[[!helpfulsText]]">
-        <iron-icon icon="arrow-upward" class="smallIcons endorsers"></iron-icon>
-        <div class="endorsers">[[helpfulsText]]</div>
-      </div>
-      <div class="layout horizontal" hidden$="[[!unhelpfulsText]]">
-        <iron-icon icon="arrow-downward" class="smallIcons opposers"></iron-icon>
-        <div class="opposers">[[unhelpfulsText]]</div>
+        <div class="layout vertical center-center self-start leftContainer">
+          <yp-user-image small="" user="[[user]]"></yp-user-image>
+          <iron-icon icon="communication:chat-bubble-outline" class="chatIcon"></iron-icon>
+          <iron-icon icon="thumb-up" class="chatIcon thumbsIcon" hidden$="[[!pointValueUp]]"></iron-icon>
+          <iron-icon icon="thumb-down" class="chatIcon thumbsIcon" hidden$="[[pointValueUp]]"></iron-icon>
+        </div>
+        <div class="layout vertical">
+          <div point-value-up$="[[pointValueUp]]" class="layout horizontal pointContent">
+            [[pointContent]]
+          </div>
+          <div class="layout horizontal" hidden$="[[!helpfulsText]]">
+            <iron-icon icon="arrow-upward" class="smallIcons endorsers"></iron-icon>
+            <div class="endorsers">[[helpfulsText]]</div>
+          </div>
+          <div class="layout horizontal" hidden$="[[!unhelpfulsText]]">
+            <iron-icon icon="arrow-downward" class="smallIcons opposers"></iron-icon>
+            <div class="opposers">[[unhelpfulsText]]</div>
+          </div>
+          <div class="postName">[[postNameTruncated]]</div>
+        </div>
       </div>
     </div>
 
@@ -87,7 +111,8 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpPostBehavior
+        Polymer.YpPostBehavior,
+        Polymer.YpTruncatedNameList
       ],
 
       properties: {
@@ -116,7 +141,24 @@
         point: {
           type: Object
         },
-        pointContent: String
+        pointContent: String,
+        user: {
+          type: Object,
+          value: null
+        },
+        postName: String,
+        postNameTruncated: {
+          type: String,
+          computed: '_postNameTruncated(postName)'
+        }
+      },
+
+      _postNameTruncated: function (postName) {
+        if (postName) {
+          return this.truncate(postName, 42);
+        } else {
+          return "";
+        }
       },
 
       _pointValueUp: function (point) {
@@ -140,8 +182,9 @@
         if (notification) {
           this.set('point', notification.AcActivities[0].Point);
           this.set('post', notification.AcActivities[0].Post);
+          this.set('user', notification.AcActivities[0].User);
           if (this.point) {
-            this.set('pointContent', this.truncate(this.point.content, 20));
+            this.set('pointContent', this.truncate(this.point.content, 72));
           }
           if (notification.type=='notification.point.new') {
             this.set('newPointMode', true);
@@ -175,19 +218,19 @@
           }
         }.bind(this));
 
-        if (helpfuls!="") {
-          this.set('helpfulsText', helpfuls);
+        if (helpfuls && helpfuls!="") {
+          this.set('helpfulsText', this.truncateNameList(helpfuls));
         }
 
-        if (unhelpfuls!="") {
-          this.set('unhelpfulsText', unhelpfuls);
+        if (unhelpfuls && unhelpfuls!="") {
+          this.set('unhelpfulsText', this.truncateNameList(unhelpfuls));
         }
       },
 
       _addWithComma: function (text, toAdd) {
         var returnText = "";
         if (text!='') {
-          returnText += text+", ";
+          returnText += text+",";
         }
         return returnText+toAdd;
 

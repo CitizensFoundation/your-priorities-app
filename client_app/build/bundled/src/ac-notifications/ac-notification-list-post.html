@@ -1,10 +1,11 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.53">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.54">
 
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.53">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.53">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.54">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.54">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.53">
-<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.2.53">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.54">
+<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.2.54">
+<link rel="import" href="./ac-notification-truncated-name-list.html?v=6.2.54">
 
 </head><body><dom-module id="ac-notification-list-post">
   <template>
@@ -25,13 +26,19 @@
       }
 
       .bulb-icon {
-        min-width: 32px;
-        min-height: 32px;
-        margin-bottom: 8px;
+        min-width: 26px;
+        min-height: 26px;
+        max-width: 26px;
+        max-height: 26px;
+        margin: 6px;
       }
 
       .bulb-icon[new-post] {
         color: var(--accent-color);
+        min-width: 30px;
+        min-height: 30px;
+        max-width: 30px;
+        max-height: 30px;
       }
 
       .smallIcons {
@@ -39,34 +46,47 @@
         max-height: 16px;
         min-width: 16px;
         min-height: 16px;
+        padding-top: 2px;
         padding-right: 4px;
-        padding-left: 12px;
-        color: var(--primary-love-color-up, rgba(50,50,50,0.45));
+        color: var(--primary-love-color-up, rgba(168,0,0,0.65));
       }
 
       .postName {
         padding-top: 4px;
       }
 
+      .postName {
+        padding-top: 4px;
+        padding-bottom: 0;
+        color: #111;
+      }
+
       .userName {
-        font-style: italic;
+        font-style: bold;
+      }
+
+      .leftContainer {
+        margin-right: 8px;
       }
     </style>
     <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
       <div class="layout horizontal">
-        <iron-icon icon="lightbulb-outline" new-post$="[[newPostMode]]" class="bulb-icon"></iron-icon>
-        <div class="layout vertical">
-          <div class="postName">[[postName]]</div>
-          <div class="userName" hidden="">[[userName]]</div>
+        <div class="layout vertical center-center self-start leftContainer">
+          <yp-user-image small="" user="[[user]]"></yp-user-image>
+          <iron-icon icon="lightbulb-outline" new-post$="[[newPostMode]]" class="bulb-icon"></iron-icon>
         </div>
-      </div>
-      <div class="layout horizontal" hidden$="[[!endorsementsText]]">
-        <iron-icon icon="favorite" class="smallIcons endorsers"></iron-icon>
-        <div class="endorsers">[[endorsementsText]]</div>
-      </div>
-      <div class="layout horizontal" hidden$="[[!oppositionsText]]">
-        <iron-icon icon="notification:do-not-disturb" class="smallIcons opposers"></iron-icon>
-        <div class="opposers">[[oppositionsText]]</div>
+        <div class="layout vertical">
+          <div class="layout horizontal" hidden$="[[!endorsementsText]]">
+            <iron-icon icon="favorite" class="smallIcons endorsers"></iron-icon>
+            <div class="endorsers">[[endorsementsText]]</div>
+          </div>
+          <div class="layout horizontal" hidden$="[[!oppositionsText]]">
+            <iron-icon icon="notification:do-not-disturb" class="smallIcons opposers"></iron-icon>
+            <div class="opposers">[[oppositionsText]]</div>
+          </div>
+          <div class="postName">[[postName]]</div>
+          <div hidden$="[[!newPostMode]]" class="userName">[[userName]]</div>
+        </div>
       </div>
     </div>
 
@@ -80,7 +100,8 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpPostBehavior
+        Polymer.YpPostBehavior,
+        Polymer.YpTruncatedNameList
       ],
 
       properties: {
@@ -104,6 +125,10 @@
         userName: {
           type: String,
           value: null
+        },
+        user: {
+          type: Object,
+          value: null
         }
       },
 
@@ -121,10 +146,12 @@
         if (notification) {
           this.set('post', notification.AcActivities[0].Post);
           this.set('userName', notification.AcActivities[0].User.name);
+          this.set('user', notification.AcActivities[0].User);
           if (notification.type=='notification.post.new') {
             this.set('newPostMode', true);
           } else if (notification.type=='notification.post.endorsement') {
             this.set('endorseMode', true);
+            this.set('newPostMode', false);
             this._createEndorsementStrings();
           }
         } else {
@@ -133,6 +160,7 @@
           this.set('newPostMode', null);
           this.set('endorseMode', null);
           this.set('userName', null);
+          this.set('user', null);
         }
       },
 
@@ -154,12 +182,12 @@
           }
         }.bind(this));
 
-        if (endorsements!="") {
-          this.set('endorsementsText', endorsements);
+        if (endorsements && endorsements!="") {
+          this.set('endorsementsText', this.truncateNameList(endorsements));
         }
 
-        if (oppositions!="") {
-          this.set('oppositionsText', oppositions);
+        if (oppositions && oppositions!="") {
+          this.set('oppositionsText', this.truncateNameList(oppositions));
         }
 
       },
@@ -167,7 +195,7 @@
       _addWithComma: function (text, toAdd) {
         var returnText = "";
         if (text!='') {
-          returnText += text+", ";
+          returnText += text+",";
         }
         return returnText+toAdd;
 

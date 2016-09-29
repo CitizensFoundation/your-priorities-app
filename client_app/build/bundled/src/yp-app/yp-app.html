@@ -12959,7 +12959,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.2.53">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.2.54">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -18639,7 +18639,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.2.53">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.2.54">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -18647,7 +18647,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.2.53">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.2.54">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -23958,8 +23958,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.2.53">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.2.53">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.2.54">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.2.54">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -25542,7 +25542,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.53" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.2.54" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -29980,7 +29980,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.53" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.2.54" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -30393,8 +30393,6 @@ Custom property | Description | Default
       <template is="dom-if" if="[[profileImageUrl]]">
         <iron-image sizing="cover" title="[[userTitle]]" preload="" src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
       </template>
-
-
 
       <template is="dom-if" if="[[!profileImageUrl]]">
         <template is="dom-if" if="[[user.facebook_id]]">
@@ -37927,7 +37925,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.2.53">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.2.54">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -48765,14 +48763,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.53">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.54">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.2.53">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.2.54">
    * ```
    *
    * ### Consuming effects
@@ -49570,7 +49568,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.53">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.54">
 ```
 
 #### List of effects
@@ -52995,6 +52993,36 @@ value. `setMax` should move the slider to the maximum value.
     }());
   </script>
 </dom-module>
+<script>
+  /**
+   * @polymerBehavior YpTruncatedNameList
+   */
+  Polymer.YpTruncatedNameList = {
+    truncateNameList: function (nameString) {
+      if (nameString) {
+        console.log("String in: "+nameString);
+        var array = nameString.split(',');
+        console.log("String array length: "+array.length);
+        var stringOut;
+        if (array.length>2) {
+          console.log("Array too long");
+          var newArray = array.splice(0, 2);
+          console.log("New array length: "+newArray.length);
+          stringOut = newArray.join(', ');
+          var reminderCount = array.length;
+          stringOut += " +";
+          stringOut += reminderCount;
+        } else {
+          stringOut = array.join(', ');
+        }
+        console.log("String out: "+stringOut);
+        return stringOut;
+      } else {
+        return "";
+      }
+    }
+  }
+</script>
 <dom-module id="ac-notification-list-post" assetpath="../ac-notifications/">
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -53014,13 +53042,19 @@ value. `setMax` should move the slider to the maximum value.
       }
 
       .bulb-icon {
-        min-width: 32px;
-        min-height: 32px;
-        margin-bottom: 8px;
+        min-width: 26px;
+        min-height: 26px;
+        max-width: 26px;
+        max-height: 26px;
+        margin: 6px;
       }
 
       .bulb-icon[new-post] {
         color: var(--accent-color);
+        min-width: 30px;
+        min-height: 30px;
+        max-width: 30px;
+        max-height: 30px;
       }
 
       .smallIcons {
@@ -53028,34 +53062,47 @@ value. `setMax` should move the slider to the maximum value.
         max-height: 16px;
         min-width: 16px;
         min-height: 16px;
+        padding-top: 2px;
         padding-right: 4px;
-        padding-left: 12px;
-        color: var(--primary-love-color-up, rgba(50,50,50,0.45));
+        color: var(--primary-love-color-up, rgba(168,0,0,0.65));
       }
 
       .postName {
         padding-top: 4px;
       }
 
+      .postName {
+        padding-top: 4px;
+        padding-bottom: 0;
+        color: #111;
+      }
+
       .userName {
-        font-style: italic;
+        font-style: bold;
+      }
+
+      .leftContainer {
+        margin-right: 8px;
       }
     </style>
     <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
       <div class="layout horizontal">
-        <iron-icon icon="lightbulb-outline" new-post$="[[newPostMode]]" class="bulb-icon"></iron-icon>
-        <div class="layout vertical">
-          <div class="postName">[[postName]]</div>
-          <div class="userName" hidden="">[[userName]]</div>
+        <div class="layout vertical center-center self-start leftContainer">
+          <yp-user-image small="" user="[[user]]"></yp-user-image>
+          <iron-icon icon="lightbulb-outline" new-post$="[[newPostMode]]" class="bulb-icon"></iron-icon>
         </div>
-      </div>
-      <div class="layout horizontal" hidden$="[[!endorsementsText]]">
-        <iron-icon icon="favorite" class="smallIcons endorsers"></iron-icon>
-        <div class="endorsers">[[endorsementsText]]</div>
-      </div>
-      <div class="layout horizontal" hidden$="[[!oppositionsText]]">
-        <iron-icon icon="notification:do-not-disturb" class="smallIcons opposers"></iron-icon>
-        <div class="opposers">[[oppositionsText]]</div>
+        <div class="layout vertical">
+          <div class="layout horizontal" hidden$="[[!endorsementsText]]">
+            <iron-icon icon="favorite" class="smallIcons endorsers"></iron-icon>
+            <div class="endorsers">[[endorsementsText]]</div>
+          </div>
+          <div class="layout horizontal" hidden$="[[!oppositionsText]]">
+            <iron-icon icon="notification:do-not-disturb" class="smallIcons opposers"></iron-icon>
+            <div class="opposers">[[oppositionsText]]</div>
+          </div>
+          <div class="postName">[[postName]]</div>
+          <div hidden$="[[!newPostMode]]" class="userName">[[userName]]</div>
+        </div>
       </div>
     </div>
 
@@ -53069,7 +53116,8 @@ value. `setMax` should move the slider to the maximum value.
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpPostBehavior
+        Polymer.YpPostBehavior,
+        Polymer.YpTruncatedNameList
       ],
 
       properties: {
@@ -53093,6 +53141,10 @@ value. `setMax` should move the slider to the maximum value.
         userName: {
           type: String,
           value: null
+        },
+        user: {
+          type: Object,
+          value: null
         }
       },
 
@@ -53110,10 +53162,12 @@ value. `setMax` should move the slider to the maximum value.
         if (notification) {
           this.set('post', notification.AcActivities[0].Post);
           this.set('userName', notification.AcActivities[0].User.name);
+          this.set('user', notification.AcActivities[0].User);
           if (notification.type=='notification.post.new') {
             this.set('newPostMode', true);
           } else if (notification.type=='notification.post.endorsement') {
             this.set('endorseMode', true);
+            this.set('newPostMode', false);
             this._createEndorsementStrings();
           }
         } else {
@@ -53122,6 +53176,7 @@ value. `setMax` should move the slider to the maximum value.
           this.set('newPostMode', null);
           this.set('endorseMode', null);
           this.set('userName', null);
+          this.set('user', null);
         }
       },
 
@@ -53143,12 +53198,12 @@ value. `setMax` should move the slider to the maximum value.
           }
         }.bind(this));
 
-        if (endorsements!="") {
-          this.set('endorsementsText', endorsements);
+        if (endorsements && endorsements!="") {
+          this.set('endorsementsText', this.truncateNameList(endorsements));
         }
 
-        if (oppositions!="") {
-          this.set('oppositionsText', oppositions);
+        if (oppositions && oppositions!="") {
+          this.set('oppositionsText', this.truncateNameList(oppositions));
         }
 
       },
@@ -53156,7 +53211,7 @@ value. `setMax` should move the slider to the maximum value.
       _addWithComma: function (text, toAdd) {
         var returnText = "";
         if (text!='') {
-          returnText += text+", ";
+          returnText += text+",";
         }
         return returnText+toAdd;
 
@@ -53186,52 +53241,74 @@ value. `setMax` should move the slider to the maximum value.
         min-height: 24px;
         max-width: 24px;
         max-height: 24px;
-        margin-bottom: 8px;
-        padding-right: 4px;
-        padding-left: 4px;
+        margin: 6px;
+        margin-bottom: 0;
+        padding-bottom: 0;
       }
 
+      .thumbsIcon {
+        color: #999;
+        margin-top: 0;
+        padding-top: 0;
+        min-width: 20px;
+        min-height: 20px;
+        max-width: 20px;
+        max-height: 20px;
+      }
 
       .smallIcons {
         max-width: 16px;
         max-height: 16px;
         min-width: 16px;
         min-height: 16px;
-        padding-right: 4px;
-        padding-left: 12px;
+        padding-top: 2px;
+        padding-right: 2px;
       }
 
       .postName {
         padding-top: 4px;
-        color: var(--master-point-down-color);
         padding-bottom: 0;
+        font-style: italic;
+        color: #777;
       }
 
       .postName[point-value-up] {
-        color:  var(--master-point-up-color);
       }
 
       .pointContent {
-        color: #777;
-        padding-left: 8px;
         padding-bottom: 4px;
+        color: #444;
+      }
+
+      .pointContent[point-value-up] {
+      }
+
+      .leftContainer {
+        margin-right: 8px;
       }
     </style>
     <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
       <div class="layout horizontal">
-        <iron-icon icon="communication:chat-bubble-outline" class="chatIcon"></iron-icon>
-        <div class="postName" point-value-up$="[[pointValueUp]]">[[postName]]</div>
-      </div>
-      <div class="layout horizontal pointContent">
-        [[pointContent]]
-      </div>
-      <div class="layout horizontal" hidden$="[[!helpfulsText]]">
-        <iron-icon icon="arrow-upward" class="smallIcons endorsers"></iron-icon>
-        <div class="endorsers">[[helpfulsText]]</div>
-      </div>
-      <div class="layout horizontal" hidden$="[[!unhelpfulsText]]">
-        <iron-icon icon="arrow-downward" class="smallIcons opposers"></iron-icon>
-        <div class="opposers">[[unhelpfulsText]]</div>
+        <div class="layout vertical center-center self-start leftContainer">
+          <yp-user-image small="" user="[[user]]"></yp-user-image>
+          <iron-icon icon="communication:chat-bubble-outline" class="chatIcon"></iron-icon>
+          <iron-icon icon="thumb-up" class="chatIcon thumbsIcon" hidden$="[[!pointValueUp]]"></iron-icon>
+          <iron-icon icon="thumb-down" class="chatIcon thumbsIcon" hidden$="[[pointValueUp]]"></iron-icon>
+        </div>
+        <div class="layout vertical">
+          <div point-value-up$="[[pointValueUp]]" class="layout horizontal pointContent">
+            [[pointContent]]
+          </div>
+          <div class="layout horizontal" hidden$="[[!helpfulsText]]">
+            <iron-icon icon="arrow-upward" class="smallIcons endorsers"></iron-icon>
+            <div class="endorsers">[[helpfulsText]]</div>
+          </div>
+          <div class="layout horizontal" hidden$="[[!unhelpfulsText]]">
+            <iron-icon icon="arrow-downward" class="smallIcons opposers"></iron-icon>
+            <div class="opposers">[[unhelpfulsText]]</div>
+          </div>
+          <div class="postName">[[postNameTruncated]]</div>
+        </div>
       </div>
     </div>
 
@@ -53245,7 +53322,8 @@ value. `setMax` should move the slider to the maximum value.
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpPostBehavior
+        Polymer.YpPostBehavior,
+        Polymer.YpTruncatedNameList
       ],
 
       properties: {
@@ -53274,7 +53352,24 @@ value. `setMax` should move the slider to the maximum value.
         point: {
           type: Object
         },
-        pointContent: String
+        pointContent: String,
+        user: {
+          type: Object,
+          value: null
+        },
+        postName: String,
+        postNameTruncated: {
+          type: String,
+          computed: '_postNameTruncated(postName)'
+        }
+      },
+
+      _postNameTruncated: function (postName) {
+        if (postName) {
+          return this.truncate(postName, 42);
+        } else {
+          return "";
+        }
       },
 
       _pointValueUp: function (point) {
@@ -53298,8 +53393,9 @@ value. `setMax` should move the slider to the maximum value.
         if (notification) {
           this.set('point', notification.AcActivities[0].Point);
           this.set('post', notification.AcActivities[0].Post);
+          this.set('user', notification.AcActivities[0].User);
           if (this.point) {
-            this.set('pointContent', this.truncate(this.point.content, 20));
+            this.set('pointContent', this.truncate(this.point.content, 72));
           }
           if (notification.type=='notification.point.new') {
             this.set('newPointMode', true);
@@ -53333,19 +53429,19 @@ value. `setMax` should move the slider to the maximum value.
           }
         }.bind(this));
 
-        if (helpfuls!="") {
-          this.set('helpfulsText', helpfuls);
+        if (helpfuls && helpfuls!="") {
+          this.set('helpfulsText', this.truncateNameList(helpfuls));
         }
 
-        if (unhelpfuls!="") {
-          this.set('unhelpfulsText', unhelpfuls);
+        if (unhelpfuls && unhelpfuls!="") {
+          this.set('unhelpfulsText', this.truncateNameList(unhelpfuls));
         }
       },
 
       _addWithComma: function (text, toAdd) {
         var returnText = "";
         if (text!='') {
-          returnText += text+", ";
+          returnText += text+",";
         }
         return returnText+toAdd;
 
@@ -53385,13 +53481,13 @@ value. `setMax` should move the slider to the maximum value.
     <div id="scrollableRegion">
       <iron-list id="list" items="[[notifications]]" as="notification">
         <template>
-          <div class="layout vertical notificationItem">
+          <div class="layout vertical">
             <p hidden="">[[notification.type]] [[notification.id]] [[notification.AcActivities.length]] pId [[notification.AcActivities.0.Post.id]] v [[notification.AcActivities.0.Point.value]]</p>
             <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
-              <ac-notification-list-post notification="[[notification]]"></ac-notification-list-post>
+              <ac-notification-list-post class="notificationItem" notification="[[notification]]"></ac-notification-list-post>
             </template>
             <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
-              <ac-notification-list-point notification="[[notification]]"></ac-notification-list-point>
+              <ac-notification-list-point class="notificationItem" notification="[[notification]]"></ac-notification-list-point>
             </template>
             <template is="dom-if" if="[[_notificationType(notification, 'system')]]">
             </template>
@@ -54424,13 +54520,13 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.2.53"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.2.54"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.2.53"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.2.54"), null, null, true);
         }
       },
 
@@ -55774,9 +55870,9 @@ value. `setMax` should move the slider to the maximum value.
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.2.53");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.2.54");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.2.53");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.2.54");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);

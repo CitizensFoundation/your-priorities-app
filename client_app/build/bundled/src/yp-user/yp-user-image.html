@@ -1,5 +1,5 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.53">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.53">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.54">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.54">
 
 </head><body><dom-module id="yp-user-image">
   <template>
@@ -73,8 +73,6 @@
       <template is="dom-if" if="[[profileImageUrl]]">
         <iron-image sizing="cover" title="[[userTitle]]" preload="" src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
       </template>
-
-
 
       <template is="dom-if" if="[[!profileImageUrl]]">
         <template is="dom-if" if="[[user.facebook_id]]">
