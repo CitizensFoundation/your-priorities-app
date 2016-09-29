@@ -1,4 +1,7 @@
 {
+  "unviewed": "not viewed",
+  "notificationMarkAllViewed": "Mark all Viewed",
+  "notificationConfirmMarkAllViewed": "Confirm that you want to mark all your notifications as viewed",
   "upVotedPoint": "Up voted your point",
   "downVotedPoint": "Down voted your point",
   "endorsedYourPost": "Endorsed your idea",

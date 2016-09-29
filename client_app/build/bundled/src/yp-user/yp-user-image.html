@@ -1,5 +1,5 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.54">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.54">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.55">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.55">
 
 </head><body><dom-module id="yp-user-image">
   <template>
@@ -184,11 +184,10 @@
       },
 
       _computeFacebookSrc: function (user) {
-        if (user) {
+        if (user && user.facebook_id) {
           return 'https://graph.facebook.com/' + user.facebook_id + '/picture';
         } else {
-          console.warn("Can't find user for computeFacebookSrc");
-          return "";
+          return null;
         }
       },
 
