@@ -460,6 +460,7 @@
         },
 
         _scrollPointIntoView: function () {
+          //TODO: Find out why this does not work when you are not logged in
           if (this.points && this.points.length > 0 && this.scrollToId) {
             this.async(function () {
               var point = this.$$("#point"+this.scrollToId);
@@ -467,12 +468,13 @@
               if (point) {
                 console.log("Scrolling to point");
                 point.scrollIntoView();
+                this.set('scrollToId', null);
                 point.elevation = 5;
                 this.async(function () {
                   point.elevation = 1;
-                }.bind(this), 2500);
+                }.bind(this), 10000);
               }
-            }.bind(this), 50);
+            }.bind(this), 100);
           }
         },
 
