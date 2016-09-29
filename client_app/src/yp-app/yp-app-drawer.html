@@ -51,7 +51,7 @@
               <div class="notificationHeader layout horizontal center-center">
                 [[t('notifications')]]
               </div>
-              <ac-notification-list user="[[user]]" id="notificationList"></ac-notification-list>
+              <ac-notification-list id="notificationsList" opened="opened" user="[[user]]" id="notificationList"></ac-notification-list>
             </template>
           </div>
         </app-header>
@@ -73,7 +73,8 @@
         },
 
         opened: {
-          type: Boolean
+          type: Boolean,
+          observer: '_openedChanged'
         },
 
         route: {
@@ -85,6 +86,15 @@
       behaviors: [
         Polymer.appHelpers
       ],
+
+      _openedChanged: function (open) {
+        if (open) {
+          var notificationsList = this.$$("#notificationsList");
+          if (notificationsList) {
+            notificationsList.markCurrentAsViewed();
+          }
+        }
+      },
 
       _openEdit: function () {
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userEdit");

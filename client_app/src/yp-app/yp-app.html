@@ -7,6 +7,7 @@
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-badge/paper-badge.html">
 
 <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
@@ -24,6 +25,7 @@
 <link rel="import" href="yp-app-drawer.html">
 <link rel="import" href="yp-app-nav-drawer.html">
 <link rel="import" href="../yp-dialog-container/yp-dialog-container.html">
+<link rel="import" href="../yp-user/yp-user-image.html">
 
 <link rel="import" href="../yp-domain/yp-domain.html">
 
@@ -117,6 +119,7 @@
           margin: 0;
         }
       }
+
       @media (max-width: 340px) {
         div[title] {
           font-size: 17px;
@@ -135,6 +138,14 @@
         }
       }
 
+      .userImageNotificationContainer {
+        cursor: pointer;
+        margin-right: 8px;
+      }
+
+      .activeBadge {
+        --paper-badge-background: var(--accent-color);
+      }
     </style>
 
     <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
@@ -178,7 +189,10 @@
             </paper-menu-button>
 
             <template is="dom-if" if="[[user]]">
-              <paper-icon-button on-tap="_toggleUserDrawer" icon="face"></paper-icon-button>
+              <div class="userImageNotificationContainer">
+                <yp-user-image small user="[[user]]" on-tap="_toggleUserDrawer" ></yp-user-image>
+                <paper-badge class="activeBadge" label="[[numberOfUnViewedNotifications]]" hidden$="[[!numberOfUnViewedNotifications]]"></paper-badge>
+              </div>
             </template>
 
             <template is="dom-if" if="[[!user]]">
@@ -312,6 +326,11 @@
           type: Boolean,
           computed: '_closePostHeader(page, keepOpenForPost)',
           value: null
+        },
+
+        numberOfUnViewedNotifications: {
+          type: String,
+          value: ""
         }
       },
 
@@ -322,7 +341,20 @@
       listeners: {
         'yp-set-pages': '_setPages',
         'yp-set-home-link': '_setHomeLink',
-        'yp-redirect-to': '_redirectTo'
+        'yp-redirect-to': '_redirectTo',
+        'yp-set-number-of-un-viewed-notifications': '_setNumberOfUnViewedNotifications'
+      },
+
+      _setNumberOfUnViewedNotifications: function (event, detail) {
+        if (detail.count) {
+          if (detail.count<10) {
+            this.set('numberOfUnViewedNotifications', detail.count);
+          } else {
+            this.set('numberOfUnViewedNotifications', '9+');
+          }
+        } else {
+          this.set('numberOfUnViewedNotifications', '');
+        }
       },
 
       _redirectTo: function (event, detail) {

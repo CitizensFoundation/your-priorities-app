@@ -40,7 +40,14 @@
         margin-bottom: 8px;
         padding-bottom: 8px;
       }
+
+      .unViewedCount {
+        color: #777;
+      }
     </style>
+    <div hidden$="[[!unViewedCount]]" class="unViewedCount layout horizontal center-center">
+      [[unViewedCount]] [[t('unread')]]
+    </div>
     <div id="scrollableRegion">
       <iron-list id="list" items="[[notifications]]" as="notification">
         <template>
@@ -62,6 +69,7 @@
     <div class="layout horizontal center-center">
       <yp-ajax id="loadNotificationsAjax" on-response="_loadNotificationsResponse"></yp-ajax>
       <yp-ajax id="loadNewNotificationsAjax" dispatch-error on-error="_newNotificationsError" on-response="_loadNewNotificationsResponse"></yp-ajax>
+      <yp-ajax id="setAsViewedAjax" url="/api/notifications/setIdsViewed" on-response="_setAsViewedResponse"></yp-ajax>
       <template is="dom-if" if="[[moreToLoad]]" restamp>
         <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
       </template>
@@ -114,7 +122,60 @@
           value: true
         },
 
-        timer: Object
+        timer: Object,
+        opened: Boolean,
+        unViewedCount:  {
+          type: Number,
+          value: 0
+        }
+      },
+
+      _handleUnViewedCount: function (unViewedCount) {
+        this.set('unViewedCount', unViewedCount);
+        this.fire('yp-set-number-of-un-viewed-notifications', { count: unViewedCount })
+      },
+
+      markCurrentAsViewed: function () {
+        this._markAsViewed(this.notifications);
+      },
+
+      _markAsViewed: function (notifications) {
+        if (notifications) {
+          var marked = [];
+          notifications.forEach(function (notification) {
+            if (!notification.viewed) {
+              marked.push(notification.id);
+            }
+          });
+        }
+        if (marked.length>0) {
+          this.$.setAsViewedAjax.body = marked;
+          this.$.setAsViewedAjax.generateRequest();
+        }
+      },
+
+      _setAsViewedResponse: function (event, detail) {
+        this._handleUnViewedCount(detail.unViewedCount);
+        var viewedIds =  detail.viewedIds;
+        if (this.notifications) {
+          this.notifications.forEach(function (notification, index, theArray) {
+            if (viewedIds.indexOf(notification.id) > -1) {
+              theArray[index].viewed = true;
+            }
+          });
+        }
+      },
+
+      _setAsMarkAllViewedResponse: function (event, detail) {
+        this._handleUnViewedCount(detail.unViewedCount);
+      },
+
+      _setAllLocalCurrentAsViewed: function () {
+        if (this.notifications) {
+          this.notifications.forEach(function (notification, index, theArray) {
+            theArray[index].viewed = true;
+          });
+        }
       },
 
       _newNotificationsError: function (event, detail) {
@@ -136,7 +197,7 @@
 
       _loggedInUserChanged: function (user) {
         if (!user) {
-         this.cancelTimer();
+          this.cancelTimer();
         }
       },
 
@@ -177,7 +238,13 @@
         if (this.firstReponse) {
           this.set('firstReponse', false);
           this.loadNewData();
+        } else {
+          if (this.opened) {
+            this._markAsViewed(notifications);
+          }
         }
+
+        this._handleUnViewedCount(detail.unViewedCount);
       },
 
       _startTimer: function () {
@@ -224,6 +291,11 @@
         this._displayToast(notifications);
         this._sendReloadPointsEvents(notifications);
 
+        if (this.opened) {
+          this._markAsViewed(notifications);
+        }
+
+        this._handleUnViewedCount(detail.unViewedCount);
       },
 
       _removeOldIfExists: function (notification) {
