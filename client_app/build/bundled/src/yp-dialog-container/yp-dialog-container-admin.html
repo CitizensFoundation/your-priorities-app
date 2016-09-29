@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.56"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-category-edit" assetpath="../yp-category/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.58"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-category-edit" assetpath="../yp-category/">
   <template>
 
     <style include="iron-flex iron-flex-alignment">
@@ -3374,6 +3374,10 @@ See the [demo](demo/index.html) for use case examples.
       }
     },
 
+    observers: [
+      '_setupTranslation(language,t)'
+    ],
+
     _updateEmojiBindings: function () {
       this.async(function () {
         var description = this.$$("#description");
@@ -3415,7 +3419,9 @@ See the [demo](demo/index.html) for use case examples.
       if (this.new) {
         this.editHeaderText = this.t('domain.new');
         this.toastText = this.t('domain.toast.created');
+        this.set('saveText', this.t('create'));
       } else {
+        this.set('saveText', this.t('update'));
         this.editHeaderText = this.t('domain.edit');
         this.toastText = this.t('domain.toast.updated');
       }

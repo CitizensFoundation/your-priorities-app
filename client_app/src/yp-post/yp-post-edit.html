@@ -293,7 +293,7 @@
     },
 
     observers: [
-      '_setupTranslation(language)'
+      '_setupTranslation(language,t)'
     ],
 
     customFormResponse: function () {
@@ -516,7 +516,9 @@
           if (this.new) {
             this.editHeaderText = this.t('post.new');
             this.toastText = this.t('post.toast.created');
+            this.set('saveText', this.t('create'));
           } else {
+            this.set('saveText', this.t('update'));
             this.editHeaderText = this.t('post.edit');
             this.toastText = this.t('post.toast.updated');
           }

@@ -215,7 +215,7 @@
     },
 
     observers: [
-      '_setupTranslation(language)'
+      '_setupTranslation(language,t)'
     ],
 
     _updateEmojiBindings: function () {
@@ -323,12 +323,14 @@
       this._setupTranslation();
     },
 
-    _setupTranslation: function () {
-      if (this.t) {
+    _setupTranslation: function (language, t) {
+      if (this.language && this.t) {
         if (this.new) {
           this.editHeaderText = this.t('group.new');
           this.toastText = this.t('group.toast.created');
+          this.set('saveText', this.t('create'));
         } else {
+          this.set('saveText', this.t('update'));
           this.editHeaderText = this.t('group.update');
           this.toastText = this.t('group.toast.updated');
         }

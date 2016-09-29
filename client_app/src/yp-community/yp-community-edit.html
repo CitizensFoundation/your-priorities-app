@@ -207,7 +207,7 @@
     },
 
     observers: [
-      '_setupTranslation(language)'
+      '_setupTranslation(language,t)'
     ],
 
     _updateEmojiBindings: function () {
@@ -287,9 +287,9 @@
           this.set('toastText', this.t('community.toast.created'));
           this.set('saveText', this.t('create'));
         } else {
+          this.set('saveText', this.t('update'));
           this.set('editHeaderText', this.t('Update community info'));
           this.set('toastText', this.t('community.toast.updated'));
-          this.set('saveText', this.t('update'));
         }
       }
     }

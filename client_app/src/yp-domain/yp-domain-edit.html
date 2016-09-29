@@ -243,6 +243,10 @@
       }
     },
 
+    observers: [
+      '_setupTranslation(language,t)'
+    ],
+
     _updateEmojiBindings: function () {
       this.async(function () {
         var description = this.$$("#description");
@@ -284,7 +288,9 @@
       if (this.new) {
         this.editHeaderText = this.t('domain.new');
         this.toastText = this.t('domain.toast.created');
+        this.set('saveText', this.t('create'));
       } else {
+        this.set('saveText', this.t('update'));
         this.editHeaderText = this.t('domain.edit');
         this.toastText = this.t('domain.toast.updated');
       }
