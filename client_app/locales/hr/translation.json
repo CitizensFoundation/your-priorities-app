@@ -1,4 +1,14 @@
 {
+  "unviewed": "nepregledane",
+  "notificationMarkAllViewed": "Označi kao pregledane",
+  "notificationConfirmMarkAllViewed": "Potvrdi da želiš sve obavijesti označiti kao pregledane",
+  "upVotedPoint": "smatra tvoj argument korisnim",
+  "downVotedPoint": "smatra tvoj argument nekorisnim",
+  "endorsedYourPost": "je glasao/la za tvoj prijedlog",
+  "opposedYourPost": "je glasao/la protiv tvog prijedloga",
+  "notifications": "Obavijesti",
+  "votingDisabled": "Glasanje nije otvoreno",
+  "pageNotFound": "Stranica koju je aplikacija zatražila nije pronađena",
   "participate": "Uključi se",
   "emojiSearchResults": "Rezultati pretraživanja",
   "recentlyUsedEmoji": "Nedavno korišteno",
@@ -246,6 +256,7 @@
   },
 
   "group": {
+    "locationHidden": "Disable location",
     "group": "Grupa",
     "admins": "Administratori grupe",
     "users": "Korisnici u grupi",
