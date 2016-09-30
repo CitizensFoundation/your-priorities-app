@@ -6,7 +6,7 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.2.58">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.2.59">
 
 <!--
 
@@ -71,7 +71,7 @@ milliseconds.
           type: String,
           notify: true,
           value: function() {
-            return window.decodeURIComponent(window.location.search.slice(1));
+            return window.location.search.slice(1);
           }
         },
         /**
@@ -170,8 +170,7 @@ milliseconds.
         this._dontUpdateUrl = true;
         this._hashChanged();
         this.path = window.decodeURIComponent(window.location.pathname);
-        this.query = window.decodeURIComponent(
-            window.location.search.substring(1));
+        this.query = window.location.search.substring(1);
         this._dontUpdateUrl = false;
         this._updateUrl();
       },
@@ -180,8 +179,7 @@ milliseconds.
             this.path).replace(/\#/g, '%23').replace(/\?/g, '%3F');
         var partiallyEncodedQuery = '';
         if (this.query) {
-          partiallyEncodedQuery = '?' + window.encodeURI(
-              this.query).replace(/\#/g, '%23');
+          partiallyEncodedQuery = '?' + this.query.replace(/\#/g, '%23');
         }
         var partiallyEncodedHash = '';
         if (this.hash) {
@@ -195,8 +193,7 @@ milliseconds.
           return;
         }
         if (this.path === window.decodeURIComponent(window.location.pathname) &&
-            this.query === window.decodeURIComponent(
-                window.location.search.substring(1)) &&
+            this.query === window.location.search.substring(1) &&
             this.hash === window.decodeURIComponent(
                 window.location.hash.substring(1))) {
           // Nothing to do, the current URL is a representation of our properties.

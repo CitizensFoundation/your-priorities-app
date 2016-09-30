@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.58"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.59"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -806,7 +806,7 @@
         window.appGlobals.activity('open', 'newGroup');
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupEdit");
         dialog.community = this.community;
-        dialog.setup(null, true, null);
+        dialog.setup(null, true, this._refreshAjax.bind(this));
         dialog.open('new', { communityId: this.communityId });
       },
 

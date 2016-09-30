@@ -576,7 +576,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	var NUMBERS = '0123456789'.split('');
 	var ALPHANUM = '0123456789abcdefghijklmnopqrstuvwxyz'.split('');
-	var WHITESPACE = [' ', '\f', '\r', '\t', '\v']; // excluding line breaks
+	var WHITESPACE = [' ', '\f', '\r', '\t', '\v', ' ', ' ', '᠎']; // excluding line breaks
 
 	var domainStates = []; // states that jump to DOMAIN on /[a-z0-9]/
 	var makeState = function makeState(tokenClass) {
@@ -591,7 +591,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var S_WS = makeState(WS);
 
 	// States for special URL symbols
-	S_START.on('@', makeState(AT)).on('.', makeState(DOT)).on('+', makeState(PLUS)).on('#', makeState(POUND)).on('?', makeState(QUERY)).on('/', makeState(SLASH)).on('_', makeState(UNDERSCORE)).on(':', makeState(COLON)).on('{', makeState(OPENBRACE)).on('[', makeState(OPENBRACKET)).on('(', makeState(OPENPAREN)).on('}', makeState(CLOSEBRACE)).on(']', makeState(CLOSEBRACKET)).on(')', makeState(CLOSEPAREN)).on([',', ';', '!', '"'], makeState(PUNCTUATION));
+	S_START.on('@', makeState(AT)).on('.', makeState(DOT)).on('+', makeState(PLUS)).on('#', makeState(POUND)).on('?', makeState(QUERY)).on('/', makeState(SLASH)).on('_', makeState(UNDERSCORE)).on(':', makeState(COLON)).on('{', makeState(OPENBRACE)).on('[', makeState(OPENBRACKET)).on('(', makeState(OPENPAREN)).on('}', makeState(CLOSEBRACE)).on(']', makeState(CLOSEBRACKET)).on(')', makeState(CLOSEPAREN)).on([',', ';', '!', '"', '\''], makeState(PUNCTUATION));
 
 	// Whitespace jumps
 	// Tokens of only non-newline whitespace are arbitrarily long
