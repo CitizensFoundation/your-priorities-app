@@ -1,0 +1,240 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html" >
+<link rel="import" href="../../bower_components/paper-button/paper-button.html" >
+<link rel="import" href="../../bower_components/paper-input/paper-input.html" >
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html" >
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" >
+
+<link rel="import" href="../yp-behaviors/app-helpers.html" >
+<link rel="import" href="../yp-ajax/yp-ajax.html" >
+<link rel="import" href="../yp-behaviors/word-wrap.html" >
+
+<dom-module id="yp-organizations-grid">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      #dialog {
+        width: 90%;
+        max-height: 90%;
+        background-color: #FFF;
+      }
+
+      iron-list {
+        color: #000;
+        height: 500px;
+        width: 100%;
+      }
+
+      .pageItem {
+        padding-right: 16px;
+      }
+
+      .id {
+        width: 60px;
+      }
+
+      .title {
+        width: 200px;
+      }
+
+      .email {
+        width: 240px;
+      }
+
+      #editPageLocale {
+        width: 80%;
+        max-height: 80%;
+        background-color: #FFF;
+      }
+
+      .locale {
+        width: 30px;
+        cursor: pointer;
+      }
+
+      paper-textarea {
+        height: 60%;
+      }
+
+      .localeInput {
+        width: 26px;
+      }
+
+      .pageItem {
+        padding-top: 8px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <paper-dialog id="selectOrganizationDialog" modal>
+      <h2>[[t('users.selectOrganization')]]</h2>
+      <paper-dialog-scrollable>
+        <paper-menu>
+          <template is="dom-repeat" items="[[availableOrganizations]]">
+            <paper-item on-tap="_selectOrganization" id="[[item.id]]">[[item.name]]</paper-item>
+          </template>
+        </paper-menu>
+      </paper-dialog-scrollable>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[t('Close')]]</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="dialog">
+      <h2>[[headerText]]</h2>
+      <paper-dialog-scrollable>
+        <iron-list items="[[availableOrganizations]]" as="organization">
+          <template>
+            <div class="layout horizontal">
+              <div class="pageItem id">
+                [[organization.name]]
+              </div>
+              <div class="pageItem title">
+                [[_organizationImageUrl(organization)]]
+              </div>
+              <paper-button data-args$="[[organization]]" on-tap="_editOrganization">[[t('update')]]</paper-button>
+            </div>
+          </template>
+        </iron-list>
+
+        <iron-list items="[[users]]" as="user">
+          <template>
+            <div class="layout horizontal">
+              <div class="userItem id">
+                [[user.id]]
+              </div>
+              <div class="userItem name">
+                [[user.name]]
+              </div>
+              <div class="userItem email">
+                [[user.email]]
+              </div>
+              <template is="dom-if" if="[[!_userOrganizationName(user)]]">
+                <div class="organization">
+                  <paper-button data-args$="[[user.id]]" on-tap="_addToOrganization">[[t('users.addToOrganization')]]</paper-button>
+                </div>
+              </template>
+              <div class="organization" hidden$="[[!_userOrganizationName(user)]]">
+                <div class="organizationName">
+                  [[_userOrganizationName(user)]]
+                </div>
+                <paper-button data-args$="[[user.id]]" data-args-org$="[[_userOrganizationId(user)]]" on-tap="_removeFromOrganization">[[t('users.removeFromOrganization')]]</paper-button>
+              </div>
+            </div>
+          </template>
+        </iron-list>
+      </paper-dialog-scrollable>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[t('close')]]</paper-button>
+      </div>
+    </paper-dialog>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax method="DELETE" id="removeOrganizationAjax" on-response="_removeOrganizationResponse"></yp-ajax>
+      <yp-ajax method="POST" id="addOrganizationAjax" on-response="_addOrganizationResponse"></yp-ajax>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-organizations-grid',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.WordWrap
+      ],
+
+      properties: {
+        organizations: {
+          type: Array,
+          notify: true
+        },
+
+        availableOrganizations: {
+          type: Array
+        },
+
+        headerText: {
+          type: String
+        },
+
+        selected: {
+          type: Object
+        }
+
+      },
+
+      _newOrganization: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("organizationEdit");
+        dialog.setup(null, true, null);
+        dialog.open('new', {});
+      },
+
+      _editOrganization: function (event) {
+        var organization = JSON.parse(event.target.getAttribute('data-args'));
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("organizationEdit");
+        dialog._clear();
+        dialog.setup(organization, false, null);
+        dialog.open('edit', { organizationId: organization.id });
+      },
+
+      _organizationImageUrl: function (organization) {
+        if (organization.OrganizationLogoImages) {
+          return this.getImageFormatUrl(organization.OrganizationLogoImages, 2);
+        } else {
+          return null;
+        }
+      },
+
+      _availableOrganizations: function () {
+        if (window.appUser.adminRights && window.appUser.adminRights.OrganizationAdmins) {
+          return  window.appUser.adminRights.OrganizationAdmins;
+        } else {
+          return [];
+        }
+      },
+
+      _addToOrganization: function (event) {
+        this.set('userIdForSelectingOrganization', event.target.getAttribute('data-args'));
+        this.$.selectOrganizationDialog.open();
+      },
+
+      _removeFromOrganization: function (event) {
+        var userId = event.target.getAttribute('data-args');
+        var organizationId = event.target.getAttribute('data-args-org');
+        this.$.removeOrganizationAjax.body = {};
+        this.$.removeOrganizationAjax.url = "/api/organizations/" + organizationId + "/" + userId + "/remove_user";
+        this.$.removeOrganizationAjax.generateRequest();
+      },
+
+      _selectOrganization: function (event, detail) {
+        this.$.addOrganizationAjax.body = {};
+        this.$.addOrganizationAjax.url = "/api/organizations/" + event.target.id + "/" + this.userIdForSelectingOrganization + "/add_user";
+        this.$.addOrganizationAjax.generateRequest();
+        this.$.selectOrganizationDialog.close();
+      },
+
+      _addOrganizationResponse: function (event, detail) {
+        window.appGlobals.notifyUserViaToast(this.t('users.organizationUserAdded')+' '+ detail.response.email);
+        this.$.ajax.generateRequest();
+      },
+
+      _removeOrganizationResponse: function (event, detail) {
+        window.appGlobals.notifyUserViaToast(this.t('users.organizationUserRemoved')+' '+ detail.response.email);
+        this.$.ajax.generateRequest();
+      },
+
+      open: function () {
+        this.set('availableOrganizations', this._availableOrganizations());
+        this.$.dialog.open();
+      }
+    });
+  </script>
+</dom-module>

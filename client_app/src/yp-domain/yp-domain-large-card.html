@@ -126,7 +126,7 @@
         }
 
         .imageCard {
-         height: 92px !important;
+          height: 92px !important;
         }
 
         .domain-name {
@@ -165,6 +165,7 @@
                 <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
                 <paper-item id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
                 <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+                <paper-item id="organizationsGridMenuItem">[[t('organizationsAdmin')]]</paper-item>
               </paper-menu>
             </paper-menu-button>
           </div>
@@ -249,7 +250,15 @@
           this._newOrganization();
         else if (detail.item.id=="pagesMenuItem")
           this._openPagesDialog();
+        else if (detail.item.id=="organizationsGridMenuItem")
+          this._openOrganizationsGrid();
         this.set('selectedMenuItem', null);
+      },
+
+      _openOrganizationsGrid: function () {
+        window.appGlobals.activity('open', 'domain.organizationsGrid');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("organizationsGrid");
+        dialog.open();
       },
 
       _openPagesDialog: function () {
