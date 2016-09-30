@@ -591,8 +591,10 @@ auth.role('point.viewUser', function (point, req, done) {
         done(null, false);
       } else if (point.user_id === req.user.id) {
         done(null, true);
-      } else {
+      } else if (group.Community) {
         auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+      } else {
+        done(null, false);
       }
     } else {
       done(null, false);
@@ -617,7 +619,7 @@ auth.role('image.viewUser', function (image, req, done) {
             include: [
               {
                 model: models.Community,
-                required: true,
+                required: false,
                 attributes: ['id','access']
               }
             ]
@@ -637,8 +639,10 @@ auth.role('image.viewUser', function (image, req, done) {
         done(null, false);
       } else if (group.user_id === req.user.id) {
         done(null, true);
-      } else {
+      } else if (group.Community) {
         auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+      } else {
+        done(null, false);
       }
     } else {
       done(null, false);
@@ -656,10 +660,11 @@ auth.role('point.vote', function (point, req, done) {
           {
             model: models.Group,
             attributes: ['id', 'access'],
+            required: false,
             include: [
               {
                 model: models.Community,
-                required: true,
+                required: false,
                 attributes: ['id','access']
               }
             ]
@@ -688,8 +693,10 @@ auth.role('point.vote', function (point, req, done) {
         done(null, true);
       } else if (point.user_id === req.user.id) {
         done(null, true);
-      } else {
+      } else if (group.Community) {
         auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+      } else {
+        done(null, false);
       }
     } else {
       done(null, false);
@@ -751,10 +758,11 @@ auth.role('category.viewUser', function (category, req, done) {
       {
         model: models.Group,
         attributes: ['id', 'access'],
+        required: false,
         include: [
           {
             model: models.Community,
-            required: true,
+            required: false,
             attributes: ['id','access']
           }
         ]
@@ -768,8 +776,10 @@ auth.role('category.viewUser', function (category, req, done) {
       done(null, false);
     } else if (category.user_id === req.user.id) {
       done(null, true);
-    } else {
+    } else if (group.Community) {
       auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+    } else {
+      done(null, false);
     }
   });
 });
