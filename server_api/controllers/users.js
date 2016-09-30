@@ -324,7 +324,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
             {
               model: models.Organization,
               as: 'OrganizationAdmins',
-              attributes: ['id','name'],
+              attributes: ['id','name','description','website','access'],
               required: false
             }
           ]

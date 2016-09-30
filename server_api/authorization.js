@@ -527,13 +527,13 @@ auth.role('point.admin', function (point, req, done) {
   }).then(function (point) {
     var group;
 
-    if (point.Post) {
+    if (point && point.Post) {
       group = point.Post.Group;
     } else {
       group = point.Group;
     }
 
-    if (group) {
+    if (point && group) {
       if (point.user_id === req.user.id) {
         done(null, true);
       } else {
@@ -558,10 +558,11 @@ auth.role('point.viewUser', function (point, req, done) {
         include: [
           {
             model: models.Group,
+            required: false,
             include: [
               {
                 model: models.Community,
-                required: true,
+                required: false,
                 attributes: ['id','access']
               }
             ]
@@ -577,13 +578,13 @@ auth.role('point.viewUser', function (point, req, done) {
   }).then(function (point) {
     var group;
 
-    if (point.Post) {
+    if (point && point.Post) {
       group = point.Post.Group;
     } else {
       group = point.Group;
     }
 
-    if (group) {
+    if (point && group) {
       if (group.access === models.Group.ACCESS_PUBLIC) {
         done(null, true);
       } else if (!req.isAuthenticated()) {

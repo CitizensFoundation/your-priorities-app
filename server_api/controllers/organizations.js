@@ -148,6 +148,7 @@ router.put('/:id', auth.can('edit organization'), function(req, res) {
     if (organization) {
       organization.name = req.body.name;
       organization.description = req.body.description;
+      organization.website = req.body.website;
       organization.access = models.Organization.convertAccessFromRadioButtons(req.body);
       organization.save().then(function () {
         log.info('Organization Updated', { organization: toJson(organization), context: 'update', user: toJson(req.user) });
