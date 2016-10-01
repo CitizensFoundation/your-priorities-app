@@ -88,7 +88,7 @@ auth.isGroupMemberOrOpenToCommunityMember = function (group, req, done) {
     group.hasGroupUsers(req.user).then(function (result) {
       if (result) {
         done(null, true);
-      } else if (group.access === models.Group.ACCESS_OPEN_TO_COMMUNITY) {
+      } else if (group.Community && group.access === models.Group.ACCESS_OPEN_TO_COMMUNITY) {
         group.Community.hasCommunityUsers(req.user).then(function (result) {
           if (result) {
             done(null, true);
