@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.60"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.61"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -1804,7 +1804,11 @@ is shown even without no results (check the demo for an example).
             this.$$("#postsFilter")._updateTitle();
           }, 1000);
         } else {
-          this.set('noPosts', true);
+          if (this.searchingFor && this.searchingFor!="") {
+            this.set('noPosts', false);
+          } else {
+            this.set('noPosts', true);
+          }
         }
 
         this.async(function () {
