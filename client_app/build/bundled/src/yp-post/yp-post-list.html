@@ -1,27 +1,27 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.59">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.60">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.59">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.59">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.59">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.59">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.60">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.60">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.60">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.60">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.2.59">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.59">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.2.59">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.59">
-<link href="../../bower_components/paper-search/paper-search.html?v=6.2.59" rel="import">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.2.60">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.60">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.2.60">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.60">
+<link href="../../bower_components/paper-search/paper-search.html?v=6.2.60" rel="import">
 
-<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.2.59">
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.2.60">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.59">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.2.59">
-<link rel="import" href="../ac-activities/ac-activities.html?v=6.2.59">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.60">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.2.60">
+<link rel="import" href="../ac-activities/ac-activities.html?v=6.2.60">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.59">
-<link rel="import" href="../yp-post/yp-post-card.html?v=6.2.59">
-<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.2.59">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.60">
+<link rel="import" href="../yp-post/yp-post-card.html?v=6.2.60">
+<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.2.60">
 
-<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.2.59">
+<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.2.60">
 
 </head><body><dom-module id="yp-post-list">
   <template>
@@ -143,12 +143,32 @@
           @apply(--layout-center-center);
         }
       }
+
+      .noIdeas {
+        background-color: #FFF;
+        max-width: 200px;
+        padding: 16px;
+        margin: 16px;
+        margin-top: 32px;
+      }
+
+      .noIdeasText {
+        font-weight: bold;
+      }
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout horizontal center-center">
-      <div class="searchContainer layout horizontal wrap">
+      <template is="dom-if" if="[[noPosts]]" restamp="">
+        <div class="layout horiztonal center-center">
+          <paper-material class="noIdeas layout horizontal center-center" elevation="2">
+            <div class="noIdeasText">[[t('noIdeasHere')]]</div>
+          </paper-material>
+        </div>
+      </template>
+
+      <div class="searchContainer layout horizontal wrap" hidden$="[[noPosts]]">
         <div class="layout horizontal center-center">
           <paper-search-bar hide-clear-button="" hide-filter-button="" query="{{searchingFor}}" placeholder="[[t('searchFor')]]" on-paper-search-search="_search"></paper-search-bar>
         </div>
@@ -261,8 +281,15 @@
 
         oldestPostAt: {
           type: Date
+        },
+
+        noPosts: {
+          type: Boolean,
+          value: false
+
         }
       },
+
 
       _search: function () {
         window.appGlobals.activity('click', 'search');
@@ -336,9 +363,6 @@
       },
 
       _postsResponse: function (event, detail, sender) {
-        if (!this.posts) {
-          this.set('posts', []);
-        }
         var posts = detail.response.posts;
         this.set('postsCount', detail.response.totalPostsCount);
         this.fire('yp-post-count', {
@@ -346,10 +370,21 @@
           count: this.postsCount
         } );
 
-        this.$$("#postsFilter")._updateTitle();
+        if (!this.posts) {
+          this.set('posts', []);
+        }
         posts.forEach(function(post) {
           this.push('posts', post);
         }.bind(this));
+
+        if (posts.length>0) {
+          this.set('noPosts', false);
+          this.async(function () {
+            this.$$("#postsFilter")._updateTitle();
+          }, 1000);
+        } else {
+          this.set('noPosts', true);
+        }
 
         this.async(function () {
           this.$$("#list").fire('iron-resize');
