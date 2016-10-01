@@ -385,7 +385,11 @@
             this.$$("#postsFilter")._updateTitle();
           }, 1000);
         } else {
-          this.set('noPosts', true);
+          if (this.searchingFor && this.searchingFor!="") {
+            this.set('noPosts', false);
+          } else {
+            this.set('noPosts', true);
+          }
         }
 
         this.async(function () {
