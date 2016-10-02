@@ -1,5 +1,5 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.61">
-<link rel="import" href="../../bower_components/lodash-element/lodash.js.html?v=6.2.61">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.62">
+<link rel="import" href="../../bower_components/lodash-element/lodash.js.html?v=6.2.62">
 
 <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
 <script src="../../bower_components/linkifyjs/linkify.js"></script>
@@ -57,9 +57,14 @@
     },
 
     changeLocaleIfNeeded: function (locale, force) {
+      console.log("changeLocaleIfNeeded "+locale);
       if (locale && this.language!=locale) {
         if (force || !localStorage.getItem('yp-user-locale')) {
           i18n.init({ lng: locale, resGetPath: '/locales/__lng__/__ns__.json' }, function(loaded) {
+            if (!window.i18nTranslation) {
+              window.i18nTranslation = i18n;
+            }
+            console.log("i18n init loaded "+loaded);
             moment.locale(locale);
             console.log("Changed language to "+locale);
             var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale } } } );
@@ -84,6 +89,7 @@
             translation = key;
           return translation;
         } else {
+          return key;
           //console.warn("Translation system i18n not initialized for "+key);
         }
       };
