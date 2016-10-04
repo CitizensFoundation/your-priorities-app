@@ -134,12 +134,20 @@
     var loadContainer = document.getElementById('splashCore');
     if (loadContainer) {
       loadContainer.parentNode.removeChild(loadContainer);
+    } else {
+      Polymer.Base.async(function () {
+        console.log("Remove splash with delay");
+        loadContainer = document.getElementById('splashCore');
+        if (loadContainer) {
+          loadContainer.parentNode.removeChild(loadContainer);
+        }
+      }, 250);
     }
     document.body.classList.remove('loading');
   }
 
   window.addEventListener('WebComponentsReady', function(e) {
     console.log("WebComponentsReady");
+    onSplashClick();
   });
-
 })(document);

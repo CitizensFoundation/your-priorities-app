@@ -93,14 +93,34 @@
         },
 
         _removeSplashNode: function (splash) {
-          if (splash) {
-            splash.parentNode.removeChild(splash);
-            document.body.classList.remove('loading');
-          }
+          console.log("Found splash");
+          splash.parentNode.removeChild(splash);
+          document.body.classList.remove('loading');
         },
 
         _removeSplash: function () {
-          this._removeSplashNode(document.getElementById('splashCore'));
+          var splash = document.getElementById('splashCore');
+          console.log("_removeSplashNode");
+          if (splash) {
+            this._removeSplashNode(splash);
+          } else {
+            this.async(function () {
+              splash = document.getElementById('splashCore');
+              if (splash) {
+                this._removeSplashNode(splash);
+              } else {
+                this.async(function () {
+                  splash = document.getElementById('splashCore');
+                  if (splash) {
+                    this._removeSplashNode(splash);
+                  } else {
+
+                  }
+                }, 1500);
+              }
+            }, 100);
+          }
+          console.log("Removing splash");
         },
 
         _removeSplashWithDelay: function () {
@@ -143,7 +163,7 @@
                 headerDescription: this.domain.description});
             }
           }
-          this._removeSplashWithDelay();
+          this._removeSplash();
         },
 
         activity: function (type, object, context) {
