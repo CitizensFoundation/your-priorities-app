@@ -20,5 +20,7 @@ models.Domain.find({
   async.eachSeries(domain.DomainUsers, function (user, seriesCallback) {
     console.log('"'+user.email+'","'+user.name+'"');
     seriesCallback();
+  }, function () {
+    process.exit();
   });
 });

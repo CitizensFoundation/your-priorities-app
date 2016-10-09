@@ -334,7 +334,11 @@
     },
 
     _formInvalid: function () {
-      this.set('selected', 0);
+      if (this.new && this.$$('#name').validate() && this.$$('#description').validate()) {
+        this.set('selected', 1);
+      } else {
+        this.set('selected', 0);
+      }
       this.$$('#name').autoValidate = true;
       this.$$('#description').autoValidate = true;
       if (this.new) {
