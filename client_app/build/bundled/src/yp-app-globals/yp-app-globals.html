@@ -1,15 +1,15 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.64">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.65">
 
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.2.64">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.2.65">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.64">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.64">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.2.64">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.65">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.65">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.2.65">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.64">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.65">
 
-<link rel="import" href="../yp-session/yp-session.html?v=6.2.64">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.64">
+<link rel="import" href="../yp-session/yp-session.html?v=6.2.65">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.65">
 
 </head><body><dom-module id="yp-app-globals">
 
@@ -66,7 +66,8 @@
           },
 
           domain: {
-            type: Object
+            type: Object,
+            observer: '_domainChanged'
           },
 
           minSplashMs: {
@@ -77,6 +78,13 @@
           requestInProgress: {
            type: Boolean,
            value: false
+          }
+        },
+
+        _domainChanged: function (domain) {
+          if (domain) {
+            var event = new CustomEvent("iron-signal", { detail: { name: 'yp-domain-changed', data: { domain: domain } } } );
+            document.dispatchEvent(event);
           }
         },
 
@@ -105,11 +113,13 @@
             this._removeSplashNode(splash);
           } else {
             this.async(function () {
+              console.log("_removeSplashNode 2");
               splash = document.getElementById('splashCore');
               if (splash) {
                 this._removeSplashNode(splash);
               } else {
                 this.async(function () {
+                  console.log("_removeSplashNode 3");
                   splash = document.getElementById('splashCore');
                   if (splash) {
                     this._removeSplashNode(splash);
