@@ -384,8 +384,9 @@
         width = 1000,
         height = 650,
         top = (window.outerHeight - height) / 2,
-        left = (window.outerWidth - width) / 2;
-      window.open(url, '_blank', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+        left = (window.outerWidth - width) / 2,
+        name = '_blank';
+      window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
     },
 
     _islandIsLogin: function () {
@@ -393,8 +394,9 @@
         width = 1200,
         height = 650,
         top = (window.outerHeight - height) / 2,
-        left = (window.outerWidth - width) / 2;
-      window.open(url, '_blank', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+        left = (window.outerWidth - width) / 2,
+        name = '_blank';
+      window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
     },
 
     _domainEvent: function (event, detail) {
