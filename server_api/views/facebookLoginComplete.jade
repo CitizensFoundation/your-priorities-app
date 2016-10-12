@@ -11,6 +11,7 @@ html(lang='en')
                     window.opener.focus();
                     if (window.opener.appUser) {
                         window.opener.appUser.loginFromFacebook();
+                        window.close();
                     } else {
                         window.close();
                     }
