@@ -5,10 +5,12 @@ html(lang='en')
         meta(charset='utf-8')
         meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
     body
+        p
+            button.close(onclick='window.close()') Lokaðu glugga til að halda áfram / Close window to continue
         script(type='text/javascript').
             var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
             if (iOS) {
-               alert("Hallo iPhone");
+               alert("Hallo Maren");
             } else {
                 try {
                     if (window && window.opener) {
