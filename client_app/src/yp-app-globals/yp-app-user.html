@@ -23,6 +23,7 @@
     <yp-session id="session"></yp-session>
 
     <div class="layout horizontal center-center">
+      <yp-ajax id="pollForLoginAjax" url="/api/users/loggedInUser/isloggedin" on-response="_pollForLoginResponse"></yp-ajax>
       <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/loggedInUser/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
       <yp-ajax id="adminRightsAjax" method="GET" url="/api/users/loggedInUser/adminRights" on-response="_adminRightsResponse"></yp-ajax>
       <yp-ajax id="membershipsAjax" method="GET" url="/api/users/loggedInUser/memberships" on-response="_membershipsResponse"></yp-ajax>
@@ -114,7 +115,16 @@
           completeExternalLoginText: {
             type: String,
             value: null
-          }
+          },
+
+          isPollingForLogin: {
+            type: Boolean,
+            value: false
+          },
+
+          facebookPopupWindow: Object,
+          samlPopupWindow: Object,
+          pollingStartedAt: Date
         },
 
         loginForAcceptInvite: function(editDialog,token) {
@@ -253,11 +263,82 @@
           this.checkLogin();
         },
 
+        _pollForLoginAjax: function () {
+          if (this.isPollingForLogin===true) {
+            this.$.pollForLoginAjax.generateRequest();
+          }
+        },
+
+        cancelLoginPolling: function () {
+          console.log("Cancel polling");
+          this.set('isPollingForLogin', false);
+        },
+
+        _closeAllPopups: function () {
+          if (this.facebookPopupWindow) {
+            try {
+              this.facebookPopupWindow.close();
+              this.facebookPopupWindow = null;
+            } catch (error) {
+              console.error(error);
+              this.facebookPopupWindow = null;
+            }
+          }
+          if (this.samlPopupWindow) {
+            try {
+              this.samlPopupWindow.close();
+              this.samlPopupWindow = null;
+            } catch (error) {
+              console.error(error);
+              this.samlPopupWindow = null;
+            }
+          }
+        },
+
+        _pollForLoginResponse: function (event, detail) {
+          console.log("Got polling for login response");
+          if (this.isPollingForLogin===true) {
+            if (detail.response===0 && this.isPollingForLogin===true && this.pollingStartedAt) {
+              var timeSpent = (new Date() - this.pollingStartedAt);
+              if (timeSpent<1*60*1000) {
+                this.async(function () {
+                  this._pollForLoginAjax();
+                }.bind(this), 1900)
+              } else {
+                console.log("Timeout in polling");
+              }
+            } else if (detail.response.name) {
+              this.cancelLoginPolling();
+              if (this.facebookPopupWindow) {
+                this.loginFromFacebook();
+              } else if (this.samlPopupWindow) {
+                this.loginFromSaml();
+              }
+              this._closeAllPopups();
+            }
+          } else {
+            console.error("Unkown state in polling...");
+            this._closeAllPopups();
+            this.cancelLoginPolling();
+          }
+        },
+
+        startPollingForLoginIfNeeded: function () {
+          var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+          if (iOS) {
+            this.set('isPollingForLogin', true);
+            this.pollingStartedAt = Date.now();
+            this._pollForLoginAjax();
+          }
+        },
+
         loginFromFacebook: function () {
+          this.cancelLoginPolling();
           this._completeExternalLogin(this.t('user.loggedInWithFacebook'));
         },
 
         loginFromSaml: function () {
+          this.cancelLoginPolling();
           this._completeExternalLogin(this.t('user.loggedInWithSaml'));
         },
 

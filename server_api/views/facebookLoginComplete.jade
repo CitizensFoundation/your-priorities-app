@@ -8,17 +8,17 @@ html(lang='en')
         script(type='text/javascript').
             try {
                 if (window && window.opener) {
-                    //window.opener.focus();
+                    window.opener.focus();
                     if (window.opener.appUser) {
                         window.opener.appUser.loginFromFacebook();
-                        setTimeout(window.close, 420);
+                        window.close();
                     } else {
-                        setTimeout(window.close, 420);
+                        window.close();
                     }
                 } else {
-                    setTimeout(window.close, 420);
+                    window.close();
                 }
             }
             catch (err) {
-                setTimeout(window.close, 420);
+                window.close();
             }
