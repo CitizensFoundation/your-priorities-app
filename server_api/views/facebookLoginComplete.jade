@@ -6,11 +6,12 @@ html(lang='en')
         meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
     body
         p
-            button.close(onclick='window.close()') Lokaðu glugga til að halda áfram / Close window to continue
+            button.close(onclick='self.close()') Smelltu hér til að halda áfram / Press here to continue
         script(type='text/javascript').
             var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
             if (iOS) {
-               alert("Hallo Maren");
+               console.log("iOS");
+               setTimeout(self.close, 400);
             } else {
                 try {
                     if (window && window.opener) {
