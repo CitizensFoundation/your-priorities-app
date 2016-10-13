@@ -7,18 +7,18 @@ html(lang='en')
     body
         script(type='text/javascript').
             try {
-                if (window.opener) {
-                    window.opener.focus();
+                if (window && window.opener) {
+                    //window.opener.focus();
                     if (window.opener.appUser) {
                         window.opener.appUser.loginFromFacebook();
-                        window.close();
+                        setTimeout(window.close, 420);
                     } else {
-                        window.close();
+                        setTimeout(window.close, 420);
                     }
                 } else {
-                    window.close();
+                    setTimeout(window.close, 420);
                 }
             }
             catch (err) {
-                window.close();
+                setTimeout(window.close, 420);
             }
