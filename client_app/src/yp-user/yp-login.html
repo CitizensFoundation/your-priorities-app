@@ -385,7 +385,7 @@
         height = 650,
         top = (window.outerHeight - height) / 2,
         left = (window.outerWidth - width) / 2,
-        name = 'facebookPopup';
+        name = '_self';
       window.appUser.facebookPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
       window.appUser.startPollingForLoginIfNeeded();
     },
