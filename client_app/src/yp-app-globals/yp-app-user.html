@@ -325,7 +325,7 @@
 
         startPollingForLoginIfNeeded: function () {
           var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-          if (iOS) {
+          if (true || iOS) {
             this.set('isPollingForLogin', true);
             this.pollingStartedAt = Date.now();
             this._pollForLoginAjax();
