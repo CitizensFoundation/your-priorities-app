@@ -45854,7 +45854,7 @@ value. `setMax` should move the slider to the maximum value.
         height = 650,
         top = (window.outerHeight - height) / 2,
         left = (window.outerWidth - width) / 2,
-        name = '_self';
+        name = '_blank';
       window.appUser.facebookPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
       window.appUser.startPollingForLoginIfNeeded();
     },
@@ -46558,7 +46558,7 @@ value. `setMax` should move the slider to the maximum value.
 
         startPollingForLoginIfNeeded: function () {
           var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-          if (true || iOS) {
+          if (iOS) {
             this.set('isPollingForLogin', true);
             this.pollingStartedAt = Date.now();
             this._pollForLoginAjax();
