@@ -58,9 +58,11 @@
 
       <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-card-large>
 
-      <div class="largeAddButton" hidden$="[[!createFabIcon]]">
-        <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
-      </div>
+      <template is="dom-if" if="[[createFabIcon]]">
+        <div class="largeAddButton">
+          <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
+        </div>
+      </template>
 
       <paper-tabs id="paperTabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
         <paper-tab id="tab1" name="open">
