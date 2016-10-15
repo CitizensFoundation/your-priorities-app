@@ -8,24 +8,25 @@ html(lang='en')
         p
             button.close(onclick='window.close()') Smelltu hér til að halda áfram / Press here to continue
         script(type='text/javascript').
-            var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            if (iOS) {
-               console.log("iOS");
-               setTimeout(self.close, 400);
-            }
-            try {
-                if (window && window.opener) {
-                    window.opener.focus();
-                    if (window.opener.appUser) {
-                        window.opener.appUser.loginFromFacebook();
-                        window.close();
-                    } else {
-                       window.close();
-                }
+            var iOSInApp = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream && /FBAN/.test(navigator.userAgent);
+            if (iOSInApp) {
+                window.history.go(-2);
             } else {
-                window.close();
+                try {
+                    if (window && window.opener) {
+                        window.opener.focus();
+                        if (window.opener.appUser) {
+                            window.opener.appUser.loginFromFacebook();
+                            window.close();
+                        } else {
+                            window.close();
+                        }
+                    } else {
+                        window.close();
+                    }
                 }
-            }
-            catch (err) {
-                window.close();
+                catch (err) {
+                    window.close();
+                }
+
             }

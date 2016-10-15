@@ -6,11 +6,16 @@ html(lang='en')
         meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
     body
         script(type='text/javascript').
-            try {
-                window.opener.postMessage("samlLogin","*");
-                window.close();
-            } catch (err) {
-                window.close();
+            var iOSInApp = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream && /FBAN/.test(navigator.userAgent);
+            if (iOSInApp) {
+                window.history.go(-3);
+            } else {
+                try {
+                    window.opener.postMessage("samlLogin","*");
+                    window.close();
+                } catch (err) {
+                   window.close();
+                }
             }
 
 
