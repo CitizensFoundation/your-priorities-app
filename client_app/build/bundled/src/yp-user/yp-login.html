@@ -1,21 +1,21 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.74">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.75">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.2.74">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.74">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.2.75">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.75">
 
-<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.2.74">
-<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.2.74">
+<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.2.75">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.2.75">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.74">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.2.74">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.74">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.2.74">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.74">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.2.74">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.75">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.2.75">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.75">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.2.75">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.75">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.2.75">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.74">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.75">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.74">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.75">
 
 </head><body><dom-module id="yp-login">
 
@@ -362,6 +362,10 @@
       this.set('userSpinner', value)
     },
 
+    _isiOsInApp: function () {
+      return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream && /FBAN/.test(navigator.userAgent);
+    },
+
     _facebookLogin: function () {
       var url = '/api/users/auth/facebook',
         width = 1000,
@@ -369,8 +373,11 @@
         top = (window.outerHeight - height) / 2,
         left = (window.outerWidth - width) / 2,
         name = '_blank';
-      window.appUser.facebookPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
-      window.appUser.startPollingForLoginIfNeeded();
+      if (this._isiOsInApp()) {
+        window.location = url;
+      } else {
+        window.appUser.facebookPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+      }
     },
 
     _islandIsLogin: function () {
@@ -380,8 +387,11 @@
         top = (window.outerHeight - height) / 2,
         left = (window.outerWidth - width) / 2,
         name = '_blank';
-      window.appUser.samlPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
-      window.appUser.startPollingForLoginIfNeeded();
+      if (this._isiOsInApp()) {
+        window.location = url;
+      } else {
+        window.appUser.samlPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+      }
     },
 
     _domainEvent: function (event, detail) {
