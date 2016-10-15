@@ -118,8 +118,13 @@
       _updateQualities: function () {
         if (window.appUser.loggedIn() && window.appUser.user && window.appUser.user.PointQualities) {
           var thisPointQuality = window.appUser.pointQualitiesIndex[this.point.id];
-          if (thisPointQuality)
+          if (thisPointQuality) {
             this._setPointQuality(thisPointQuality.value);
+          } else {
+            this._setPointQuality(null);
+          }
+        } else {
+          this._setPointQuality(null);
         }
       },
 
@@ -129,10 +134,10 @@
       },
 
       _resetClasses: function () {
-        if (this.pointQualityValue > 0) {
+        if (this.pointQualityValue && this.pointQualityValue > 0) {
           this.$.actionUp.className += " " + "up-selected";
           this.removeClass(this.$.actionDown, "down-selected");
-        } else if (this.pointQualityValue < 0) {
+        } else if (this.pointQualityValue && this.pointQualityValue < 0) {
           this.$.actionDown.className += " " + "down-selected";
           this.removeClass(this.$.actionUp,"up-selected");
         } else {
