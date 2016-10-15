@@ -10,7 +10,7 @@ html(lang='en')
         script(type='text/javascript').
             var iOSInApp = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream && /FBAN/.test(navigator.userAgent);
             if (iOSInApp) {
-                window.history.go(-2);
+                window.location = "/";
             } else {
                 try {
                     if (window && window.opener) {
