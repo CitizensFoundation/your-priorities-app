@@ -63,6 +63,26 @@ auth.authNeedsGroupAdminForCreate = function (group, req, done) {
   });
 };
 
+auth.authNeedsCommunnityAdminForCreate = function (community, req, done) {
+  models.Community.findOne({
+    where: { id: community.id }
+  }).then(function (community) {
+    if (!req.isAuthenticated()) {
+      done(null, false);
+    } else if (community.user_id === req.user.id) {
+      done(null, true);
+    } else {
+      community.hasCommunityAdmins(req.user).then(function (result) {
+        if (result) {
+          done(null, true);
+        } else {
+          done(null, false);
+        }
+      });
+    }
+  });
+};
+
 auth.hasDomainAdmin = function (domainId, req, done) {
   models.Domain.findOne({
     where: { id: domainId }
@@ -796,6 +816,22 @@ auth.entity('category', function(req, done) {
 
 // CREATE
 
+// Create bulkStatusUpdate
+
+auth.role('createCommunityBulkStatusUpdate.createBulkStatusUpdate', function (community, req, done) {
+  auth.authNeedsCommunnityAdminForCreate(community, req, done);
+});
+
+auth.entity('createBulkStatusUpdate', function(req, done) {
+  var match = req.originalUrl.match(/bulk_status_updates\/(\w+)/);
+  if (!match) {
+    done(new Error('Expected url like /bulk_status_update/:communityId'));
+  } else {
+    var community = { id: match[1] };
+    done(null, community)
+  }
+});
+
 // Create category
 
 auth.role('createGroupCategory.createCategory', function (group, req, done) {
@@ -987,6 +1023,7 @@ auth.action('send status change', ['post.statusChange']);
 auth.action('edit user', ['user.admin']);
 auth.action('edit category', ['category.admin']);
 auth.action('edit point', ['point.admin']);
+auth.action('edit bulkStatusUpdate', ['community.admin']);
 
 auth.action('view organization', ['organization.viewUser']);
 auth.action('view domain', ['domain.viewUser']);
@@ -1010,5 +1047,6 @@ auth.action('create group', ['createCommunityGroup.createGroup']);
 auth.action('create post', ['createGroupPost.createPost']);
 auth.action('create category', ['createGroupCategory.createCategory']);
 auth.action('create point', ['createGroupPoint.createPoint']);
+auth.action('create bulkStatusUpdate', ['createCommunityBulkStatusUpdate.createBulkStatusUpdate']);
 
 module.exports = auth;

@@ -26,7 +26,6 @@ var sendBulkStatusUpdateOrError = function (res, bulkStatusUpdate, context, user
   }
 };
 
-
 var getBulkStatusUpdateAndUser = function (bulkStatusUpdateId, userId, callback) {
   var user, bulkStatusUpdate;
 
@@ -111,12 +110,14 @@ router.get('/:id', auth.can('view bulkStatusUpdate'), function(req, res) {
 router.post('/:communityId', auth.can('create domainBulkStatusUpdate'), function(req, res) {
   var bulkStatusUpdate = models.BulkStatusUpdate.build({
     name: req.body.name,
-    domain_id: req.params.communityId,
+    community_id: req.params.communityId,
     user_id: req.user.id
   });
   bulkStatusUpdate.save().then(function() {
     log.info('BulkStatusUpdate Created', { bulkStatusUpdate: toJson(bulkStatusUpdate), context: 'create', user: toJson(req.user) });
-    sendBulkStatusUpdateOrError(res, bulkStatusUpdate, 'setupImages', req.user, error);
+    bulkStatusUpdate.initializeConfig(req.body.emailHeader, req.body.emailFooter, function (error) {
+      sendBulkStatusUpdateOrError(res, bulkStatusUpdate, 'setupImages', req.user, error);
+    });
   }).catch(function(error) {
     sendBulkStatusUpdateOrError(res, null, 'create', req.user, error);
   });
@@ -141,11 +142,10 @@ router.put('/:id', auth.can('edit bulkStatusUpdate'), function(req, res) {
 });
 
 router.put('/:id/sendTest', auth.can('edit bulkStatusUpdate'), function(req, res) {
-  models.BulkStatusUpdate.find({git st
+  models.BulkStatusUpdate.find({
     where: { id: req.params.id }
   }).then(function(bulkStatusUpdate) {
     if (bulkStatusUpdate) {
-
       bulkStatusUpdate.save().then(function () {
         log.info('BulkStatusUpdate Updated', { bulkStatusUpdate: toJson(bulkStatusUpdate), context: 'update', user: toJson(req.user) });
         sendBulkStatusUpdateOrError(res, bulkStatusUpdate, 'setupImages', req.user, error);
@@ -158,9 +158,9 @@ router.put('/:id/sendTest', auth.can('edit bulkStatusUpdate'), function(req, res
   });
 });
 
-router.put('/:id/updateConfig', auth.can('edit bulkStatusUpdate'), function(req, res) {
+router.put('/:communityId/:id/updateConfig', auth.can('edit bulkStatusUpdate'), function(req, res) {
   models.BulkStatusUpdate.find({
-    where: { id: req.params.id }
+    where: { id: req.params.id, community_id: req.params.communityId }
   }).then(function(bulkStatusUpdate) {
     if (bulkStatusUpdate) {
       bulkStatusUpdate.set(req.body.configName, req.body.configValue);
@@ -176,9 +176,9 @@ router.put('/:id/updateConfig', auth.can('edit bulkStatusUpdate'), function(req,
   });
 });
 
-router.delete('/:id', auth.can('edit bulkStatusUpdate'), function(req, res) {
+router.delete('/:communityId/:id', auth.can('edit bulkStatusUpdate'), function(req, res) {
   models.BulkStatusUpdate.find({
-    where: {id: req.params.id, user_id: req.user.id }
+    where: {id: req.params.id, community_id: req.params.communityId }
   }).then(function (bulkStatusUpdate) {
     if (bulkStatusUpdate) {
       bulkStatusUpdate.deleted = true;
