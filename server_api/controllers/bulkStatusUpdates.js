@@ -72,27 +72,12 @@ var getBulkStatusUpdateAndUser = function (bulkStatusUpdateId, userId, callback)
   });
 };
 
-router.get('/:id', auth.can('view bulkStatusUpdate'), function(req, res) {
+router.get('/:id', auth.can('edit bulkStatusUpdate'), function(req, res) {
   models.BulkStatusUpdate.find({
     where: { id: req.params.id },
-    order: [
-      [ { model: models.Group }, 'counter_users', 'desc' ],
-      [ { model: models.Image, as: 'BulkStatusUpdateLogoImages' } , 'created_at', 'asc' ],
-      [ { model: models.Image, as: 'BulkStatusUpdateHeaderImages' } , 'created_at', 'asc' ],
-      [ models.Group, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
-    ],
     include: [
       {
-        model: models.Domain,
-        attributes: models.Domain.defaultAttributesPublic
-      },
-      {
-        model: models.Image, as: 'BulkStatusUpdateLogoImages',
-        required: false
-      },
-      {
-        model: models.Image, as: 'BulkStatusUpdateHeaderImages',
-        required: false
+        model: models.Community
       }
     ]
   }).then(function(bulkStatusUpdate) {
