@@ -72,9 +72,9 @@ var getBulkStatusUpdateAndUser = function (bulkStatusUpdateId, userId, callback)
   });
 };
 
-router.get('/:id', auth.can('edit bulkStatusUpdate'), function(req, res) {
+router.get('/:communityId', auth.can('edit bulkStatusUpdate'), function(req, res) {
   models.BulkStatusUpdate.find({
-    where: { id: req.params.id },
+    where: { community_id: req.params.getBulkStatusUpdatesAjax },
     include: [
       {
         model: models.Community

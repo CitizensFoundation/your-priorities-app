@@ -17,6 +17,8 @@
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 
+<link rel="import" href="yp-post-move-behavior.html">
+
 <dom-module id="yp-post-move">
   <template>
 
@@ -60,7 +62,8 @@
     behaviors: [
       Polymer.appHelpers,
       Polymer.ypEditDialogBehavior,
-      Polymer.AccessHelpers
+      Polymer.AccessHelpers,
+      Polymer.ypPostMoveBehavior
     ],
 
     properties: {
@@ -72,11 +75,6 @@
 
       post: {
         type: Object
-      },
-
-      availableGroups: {
-        type: Array,
-        value: null
       },
 
       selectedGroupId: Number
@@ -97,36 +95,6 @@
 
     _movePostResponse: function () {
       location.reload();
-    },
-
-    _getGroupsResponse: function (event, detail) {
-      if (detail.response) {
-        var groups = [];
-        groups = groups.concat(window.appUser.adminRights.GroupAdmins, window.appUser.memberships.GroupUsers);
-        groups = groups.concat(detail.response.groups);
-        groups = this._uniqueInDomain(groups, detail.response.domainId);
-        this.set("availableGroups", groups);
-      }
-    },
-
-    _uniqueInDomain: function (array, domainId) {
-      var newArray = [];
-      var ids = {};
-      _.each(array, function (item) {
-        if (!ids[item.id]) {
-          ids[item.id] = item.id;
-          if (!item.configuration) {
-            item.configuration = {canAddNewPosts: true}
-          }
-          if (item.Community && item.Community.domain_id==domainId &&
-             (item.configuration.canAddNewPosts || this._hasAdminRights(item.id, window.appUser.adminRights.GroupAdmins))) {
-            newArray.push(item);
-          } else {
-            console.log("Ignoring group:"+item.name);
-          }
-        }
-      }.bind(this));
-      return newArray;
     },
 
     _clear: function () {

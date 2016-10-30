@@ -37,7 +37,7 @@ module.exports = function(sequelize, DataTypes) {
               async.eachSeries(posts, function (post, innerSeriesCallback) {
                 posts.push({id: post.id, name: post.name, location: post.location,
                             currentOfficialStatus: post.official_status, newOfficialStatus: null,
-                            selectedTemplateName: null, uniqueStatusMessage: null, moveToGroupId: null });
+                            selectedTemplateTitle: null, uniqueStatusMessage: null, moveToGroupId: null });
                 innerSeriesCallback();
               }, function (error) {
                 config.groups.push({ id: group.id, name: group.name, posts: posts });
@@ -53,9 +53,9 @@ module.exports = function(sequelize, DataTypes) {
 
     classMethods: {
       associate: function(models) {
-        Promotion.belongsTo(models.Group);
-        Promotion.belongsTo(models.Community);
-        Promotion.belongsTo(models.User);
+        BulkStatusUpdate.belongsTo(models.Group);
+        BulkStatusUpdate.belongsTo(models.Community);
+        BulkStatusUpdate.belongsTo(models.User);
       }
     }
   });

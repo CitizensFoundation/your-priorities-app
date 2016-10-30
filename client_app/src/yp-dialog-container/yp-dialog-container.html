@@ -27,6 +27,7 @@
 
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
     <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+    <iron-signals on-iron-signal-open-bulk-status-updates="_openBulkStatusUpdates"></iron-signals>
 
     <div id="dialogs">
       <paper-toast id="masterToast"></paper-toast>
@@ -61,6 +62,12 @@
         <yp-post-status-change-edit id="postStatusChangeEdit"></yp-post-status-change-edit>
         <yp-post-move id="postMove"></yp-post-move>
       </template>
+
+      <template is="dom-if" if="[[bulkStatusUpdates]]">
+        <yp-bulk-status-update-grid id="bulkStatusUpdateGrid"></yp-bulk-status-update-grid>
+        <yp-bulk-status-update-edit id="bulkStatusUpdateEdit"></yp-bulk-status-update-edit>
+      </template>
+
     </div>
   </template>
 
@@ -77,6 +84,11 @@
         waitForUpgradeCounter: {
           type: Number,
           value: 0
+        },
+
+        bulkStatusUpdates: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -90,6 +102,11 @@
         if (newValue===true) {
           this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), null, null, true);
         }
+      },
+
+      _openBulkStatusUpdates: function () {
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html"), null, null, true);
+        this.set('bulkStatusUpdates', true);
       },
 
       getDialog: function (idName) {

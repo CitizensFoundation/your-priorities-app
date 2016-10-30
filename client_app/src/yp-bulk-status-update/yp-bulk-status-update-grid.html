@@ -141,7 +141,8 @@
         this.set('bulkStatusUpdates', detail);
       },
 
-      open: function () {
+      open: function (communityId) {
+        this.$.getBulkStatusUpdatesAjax.url="/api/bulk_status_updates/"+communityId;
         this.$.getBulkStatusUpdatesAjax.generateRequest();
         this.$.dialog.open();
       }

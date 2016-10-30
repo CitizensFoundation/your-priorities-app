@@ -1,0 +1,38 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /**
+   * @polymerBehavior appHelpers
+   */
+  Polymer.ypOfficialStatusOptions = {
+
+    properties: {
+      officialStatusOptions: {
+        type: Object,
+        computed: '_officialStatusOptions(language)'
+      }
+    },
+
+    _officialStatusOptions: function(language) {
+      if (this.t) {
+        return [
+          {name: 'published', official_value: 0, translatedName: this.t('status.published')},
+          {name: 'successful', official_value: 2, translatedName: this.t('status.successful')},
+          {name: 'failed', official_value: -2, translatedName: this.t('status.failed')},
+          {name: 'in_progress', official_value: -1, translatedName: this.t('status.inProgress')}
+        ]
+      } else {
+        return [];
+      }
+    },
+
+    _officialStatusOptionsName: function (official_status) {
+      var statues = this._officialStatusOptions(this.language);
+      statues.forEach(function (status) {
+        if (status.official_value==official_status) {
+          return status.translatedName;
+        }
+      });
+    }
+  };
+</script>
