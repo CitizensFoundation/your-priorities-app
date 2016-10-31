@@ -1,29 +1,29 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.75">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.76">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.75">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.75">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.75">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.75">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.75">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.75">
-<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.2.75">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.75">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.76">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.76">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.76">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.76">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.76">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.76">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.2.76">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.76">
 
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.2.75">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html?v=6.2.75">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.75">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.75">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.2.76">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html?v=6.2.76">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.76">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.76">
 
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.2.75">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.2.76">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.75">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.75">
-<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.2.75">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.76">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.76">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.2.76">
 
-<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html?v=6.2.75">
+<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html?v=6.2.76">
 
-<link rel="import" href="yp-community-behaviors.html?v=6.2.75">
-<link rel="import" href="yp-community-stats.html?v=6.2.75">
+<link rel="import" href="yp-community-behaviors.html?v=6.2.76">
+<link rel="import" href="yp-community-stats.html?v=6.2.76">
 
 </head><body><dom-module id="yp-community-large-card">
 
@@ -190,6 +190,7 @@
                 <paper-item id="adminsMenuItem">[[t('community.admins')]]</paper-item>
                 <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
                 <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+                <paper-item id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
               </paper-menu>
             </paper-menu-button>
           </div>
@@ -264,7 +265,18 @@
           this._openAdminsDialog();
         else if (detail.item.id=="pagesMenuItem")
           this._openPagesDialog();
+        else if (detail.item.id="bulkStatusUpdateMenuItem")
+          this._openBulkStatusUpdates();
         this.set('selectedMenuItem', null);
+      },
+
+      _openBulkStatusUpdates: function () {
+        window.appGlobals.activity('open', 'community.bulkStatusUpdates');
+        this.fire('iron-signal', {name: 'open-bulk-status-updates', data: null });
+        this.async(function () {
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateGrid");
+          dialog.open(this.community.id);
+        }, 1500);
       },
 
       _openUsersDialog: function () {
@@ -291,8 +303,8 @@
       _openDelete: function () {
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
         dialog.setup('/api/communities/', this.community.id,
-                     this.t('community.deleteConfirmation'),
-                     this._onDeleted.bind(this));
+          this.t('community.deleteConfirmation'),
+          this._onDeleted.bind(this));
         dialog.open();
       },
 

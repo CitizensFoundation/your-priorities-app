@@ -70,13 +70,13 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <paper-dialog id="editTemplateLocale" modal class="layout vertical">
-      <h2>[[t('template.editTemplateLocale')]]</h2>
+      <h2>[[t('editTemplate')]]</h2>
 
       <paper-dialog-scrollable>
         <paper-input id="title"
                      name="title"
                      type="text"
-                     label="[[t('templates.title')]]"
+                     label="[[t('title')]]"
                      value="{{currentlyEditingTitle}}"
                      maxlength="60"
                      char-counter class="mainInput">
@@ -85,7 +85,7 @@
         <paper-textarea id="content"
                         name="content"
                         value="{{currentlyEditingContent}}"
-                        label="[[t('templates.content')]]"
+                        label="[[t('templateContent')]]"
                         rows="7"
                         max-rows="10">
         </paper-textarea>
