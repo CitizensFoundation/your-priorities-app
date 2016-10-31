@@ -1,8 +1,11 @@
 "use strict";
 
+var async = require('async');
+
 module.exports = function(sequelize, DataTypes) {
   var BulkStatusUpdate = sequelize.define("BulkStatusUpdate", {
     config: { type: DataTypes.JSONB, allowNull: true },
+    templates: { type: DataTypes.JSONB, allowNull: true },
     name: { type: DataTypes.STRING, allowNull: false },
     sent_at: { type: DataTypes.DATE },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
@@ -19,7 +22,9 @@ module.exports = function(sequelize, DataTypes) {
     instanceMethods: {
 
       initializeConfig: function(emailHeader, emailFooter, done) {
-        var config = { groups: [], emailHeader: "", emailFooter: "" };
+        var config = { groups: [], emailHeader: emailHeader, emailFooter: emailFooter };
+
+        var self = this;
 
         sequelize.models.Group.findAll({
           where: {
@@ -27,7 +32,7 @@ module.exports = function(sequelize, DataTypes) {
           }
         }).then(function (groups) {
           async.eachSeries(groups, function (group, seriesCallback) {
-            var posts = [];
+            var configPosts = [];
 
             sequelize.models.Post.findAll({
               where: {
@@ -35,21 +40,21 @@ module.exports = function(sequelize, DataTypes) {
               }
             }).then(function (posts) {
               async.eachSeries(posts, function (post, innerSeriesCallback) {
-                posts.push({id: post.id, name: post.name, location: post.location,
+                configPosts.push({id: post.id, name: post.name, location: post.location,
                             currentOfficialStatus: post.official_status, newOfficialStatus: null,
                             selectedTemplateTitle: null, uniqueStatusMessage: null, moveToGroupId: null });
                 innerSeriesCallback();
               }, function (error) {
-                config.groups.push({ id: group.id, name: group.name, posts: posts });
+                config.groups.push({ id: group.id, name: group.name, posts: configPosts });
                 seriesCallback();
               });
             });
+          }, function (error) {
+            done(error, config);
           });
         });
-        this.set('config', config);
       }
     },
-
 
     classMethods: {
       associate: function(models) {

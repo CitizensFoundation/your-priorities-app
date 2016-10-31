@@ -277,6 +277,39 @@ auth.entity('organization', function(req, done) {
   }
 });
 
+// Bulk Status Updates Admin
+auth.role('bulkStatusUpdates.admin', function (community, req, done) {
+  if (!req.isAuthenticated()) {
+    done();
+  } else {
+    models.Community.findOne({
+      where: { id: community.id }
+    }).then(function (community) {
+      if (community.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        community.hasCommunityAdmins(req.user).then(function (result) {
+          if (result) {
+            done(null, true);
+          } else {
+            done(null, false);
+          }
+        });
+      }
+    });
+  }
+});
+
+auth.entity('bulkStatusUpdates', function(req, done) {
+  var match = req.originalUrl.match(/bulk_status_updates\/(\w+)/);
+  if (!match) {
+    done(new Error('Expected url like /bulk_status_updates/:communityId'));
+  } else {
+    var community = { id: match[1] };
+    done(null, community)
+  }
+});
+
 // Community admin and view
 auth.role('community.admin', function (community, req, done) {
   if (!req.isAuthenticated()) {
@@ -822,7 +855,7 @@ auth.role('createCommunityBulkStatusUpdate.createBulkStatusUpdate', function (co
   auth.authNeedsCommunnityAdminForCreate(community, req, done);
 });
 
-auth.entity('createBulkStatusUpdate', function(req, done) {
+auth.entity('createCommunityBulkStatusUpdate', function(req, done) {
   var match = req.originalUrl.match(/bulk_status_updates\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /bulk_status_update/:communityId'));
@@ -1023,7 +1056,7 @@ auth.action('send status change', ['post.statusChange']);
 auth.action('edit user', ['user.admin']);
 auth.action('edit category', ['category.admin']);
 auth.action('edit point', ['point.admin']);
-auth.action('edit bulkStatusUpdate', ['community.admin']);
+auth.action('edit bulkStatusUpdate', ['bulkStatusUpdates.admin']);
 
 auth.action('view organization', ['organization.viewUser']);
 auth.action('view domain', ['domain.viewUser']);

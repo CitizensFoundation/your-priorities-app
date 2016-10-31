@@ -273,8 +273,10 @@
       _openBulkStatusUpdates: function () {
         window.appGlobals.activity('open', 'community.bulkStatusUpdates');
         this.fire('iron-signal', {name: 'open-bulk-status-updates', data: null });
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateGrid");
-        dialog.open(this.community.id);
+        this.async(function () {
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateGrid");
+          dialog.open(this.community.id);
+        }, 1500);
       },
 
       _openUsersDialog: function () {
@@ -301,8 +303,8 @@
       _openDelete: function () {
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
         dialog.setup('/api/communities/', this.community.id,
-                     this.t('community.deleteConfirmation'),
-                     this._onDeleted.bind(this));
+          this.t('community.deleteConfirmation'),
+          this._onDeleted.bind(this));
         dialog.open();
       },
 

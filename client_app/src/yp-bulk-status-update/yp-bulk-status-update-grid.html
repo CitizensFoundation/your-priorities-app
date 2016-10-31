@@ -17,8 +17,8 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
       #dialog {
-        width: 90%;
-        max-height: 90%;
+        width: 100%;
+        max-height: 100%;
         background-color: #FFF;
       }
 
@@ -70,7 +70,7 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <paper-dialog id="dialog">
-      <h2>[[headerText]]</h2>
+      <h2>[[t('bulkStatusUpdate')]]</h2>
       <paper-dialog-scrollable>
         <iron-list items="[[bulkStatusUpdates]]" as="bulkStatusUpdate">
           <template>
@@ -79,6 +79,7 @@
                 [[bulkStatusUpdate.name]]
               </div>
               <paper-button data-args$="[[bulkStatusUpdate]]" on-tap="_editBulkStatusUpdate">[[t('update')]]</paper-button>
+              <paper-button data-args$="[[bulkStatusUpdate]]" on-tap="_editConfig">[[t('config')]]</paper-button>
             </div>
           </template>
         </iron-list>
@@ -113,20 +114,33 @@
           notify: true
         },
 
+        selectedUpdate: {
+          type: Object
+        },
+
         headerText: {
           type: String
         },
 
         selected: {
           type: Object
-        }
+        },
+
+        communityId: Number
 
       },
 
       _newBulkStatusUpdate: function () {
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateEdit");
         dialog.setup(null, true, null);
-        dialog.open('new', {});
+        dialog.open('new', { communityId: this.communityId});
+      },
+
+      _editConfig: function (event) {
+        var bulkStatusUpdate = JSON.parse(event.target.getAttribute('data-args'));
+        this.set('selectedUpdate', bulkStatusUpdate);
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateConfig");
+        dialog.open(this.selectedUpdate);
       },
 
       _editBulkStatusUpdate: function (event) {
@@ -134,14 +148,15 @@
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateEdit");
         dialog._clear();
         dialog.setup(bulkStatusUpdate, false, null);
-        dialog.open('edit', { bulkStatusUpdateId: bulkStatusUpdate.id });
+        dialog.open('edit', { communityId: this.communityId, bulkStatusUpdateId: bulkStatusUpdate.id });
       },
 
       _bulkStatusUpdateResponse: function (event, detail) {
-        this.set('bulkStatusUpdates', detail);
+        this.set('bulkStatusUpdates', detail.response);
       },
 
       open: function (communityId) {
+        this.set('communityId', communityId);
         this.$.getBulkStatusUpdatesAjax.url="/api/bulk_status_updates/"+communityId;
         this.$.getBulkStatusUpdatesAjax.generateRequest();
         this.$.dialog.open();

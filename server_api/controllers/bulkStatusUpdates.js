@@ -73,8 +73,8 @@ var getBulkStatusUpdateAndUser = function (bulkStatusUpdateId, userId, callback)
 };
 
 router.get('/:communityId', auth.can('edit bulkStatusUpdate'), function(req, res) {
-  models.BulkStatusUpdate.find({
-    where: { community_id: req.params.getBulkStatusUpdatesAjax },
+  models.BulkStatusUpdate.findAll({
+    where: { community_id: req.params.communityId },
     include: [
       {
         model: models.Community
@@ -92,16 +92,20 @@ router.get('/:communityId', auth.can('edit bulkStatusUpdate'), function(req, res
   });
 });
 
-router.post('/:communityId', auth.can('create domainBulkStatusUpdate'), function(req, res) {
+router.post('/:communityId', auth.can('create bulkStatusUpdate'), function(req, res) {
   var bulkStatusUpdate = models.BulkStatusUpdate.build({
     name: req.body.name,
     community_id: req.params.communityId,
     user_id: req.user.id
   });
   bulkStatusUpdate.save().then(function() {
-    log.info('BulkStatusUpdate Created', { bulkStatusUpdate: toJson(bulkStatusUpdate), context: 'create', user: toJson(req.user) });
-    bulkStatusUpdate.initializeConfig(req.body.emailHeader, req.body.emailFooter, function (error) {
-      sendBulkStatusUpdateOrError(res, bulkStatusUpdate, 'setupImages', req.user, error);
+    log.info('BulkStatusUpdate Created', { bulkStatusUpdate: toJson(bulkStatusUpdate), context: 'bulkStatusUpdate create', user: toJson(req.user) });
+    bulkStatusUpdate.initializeConfig(req.body.emailHeader, req.body.emailFooter, function (error, config) {
+      bulkStatusUpdate.set('config', config);
+      bulkStatusUpdate.set('templates', []);
+      bulkStatusUpdate.save().then(function () {
+        sendBulkStatusUpdateOrError(res, bulkStatusUpdate, 'bulkStatusUpdate', req.user, error);
+      });
     });
   }).catch(function(error) {
     sendBulkStatusUpdateOrError(res, null, 'create', req.user, error);
@@ -151,7 +155,7 @@ router.put('/:communityId/:id/updateConfig', auth.can('edit bulkStatusUpdate'), 
       bulkStatusUpdate.set(req.body.configName, req.body.configValue);
       bulkStatusUpdate.save().then(function () {
         log.info('BulkStatusUpdate Updated Config', { bulkStatusUpdate: toJson(bulkStatusUpdate), context: 'update_config', user: toJson(req.user) });
-        sendBulkStatusUpdateOrError(res, bulkStatusUpdate, 'setupImages', req.user, error);
+        sendBulkStatusUpdateOrError(res, bulkStatusUpdate, 'setupImages', req.user, null);
       });
     } else {
       sendBulkStatusUpdateOrError(res, req.params.id, 'update', req.user, 'Not found', 404);

@@ -37,6 +37,7 @@ var points = require('./controllers/points');
 var users = require('./controllers/users');
 var categories = require('./controllers/categories');
 var images = require('./controllers/images');
+var bulkStatusUpdates = require('./controllers/bulkStatusUpdates');
 
 var legacyPosts = require('./controllers/legacyPosts');
 var legacyUsers = require('./controllers/legacyUsers');
@@ -78,8 +79,8 @@ app.set('view engine', 'jade');
 app.use(morgan('combined'));
 app.use(useragent.express());
 app.use(requestIp.mw());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({limit: '5mb'}));
+app.use(bodyParser.urlencoded({limit: '5mb', extended: true }));
 
 var sessionConfig = {
   store: new RedisStore({url: process.env.REDIS_URL}),
@@ -232,6 +233,7 @@ app.use('/api/users', users);
 app.use('/api/news_feeds', news_feeds);
 app.use('/api/activities', activities);
 app.use('/api/notifications', notifications);
+app.use('/api/bulk_status_updates', bulkStatusUpdates);
 
 app.use('/ideas', legacyPosts);
 app.use('/users', legacyUsers);

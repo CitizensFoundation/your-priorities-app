@@ -10,10 +10,10 @@ module.exports = {
             primaryKey: true,
             autoIncrement: true
           },
-          createdAt: {
+          created_at: {
             type: Sequelize.DATE
           },
-          updatedAt: {
+          updated_at: {
             type: Sequelize.DATE
           },
           config: {
@@ -29,7 +29,7 @@ module.exports = {
             allowNull: false
           },
           deleted: {
-            type: Sequelize.STRING,
+            type: Sequelize.BOOLEAN,
             defaultValue: false,
             allowNull: false
           },

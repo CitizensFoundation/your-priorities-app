@@ -8,6 +8,8 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html" >
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html" >
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" >
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html" >
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html" >
 
 <link rel="import" href="../yp-behaviors/app-helpers.html" >
 <link rel="import" href="../yp-behaviors/access-helpers.html" >
@@ -16,14 +18,20 @@
 <link rel="import" href="../yp-ajax/yp-ajax.html" >
 <link rel="import" href="../yp-behaviors/word-wrap.html" >
 <link rel="import" href="../yp-post/yp-post-move-behavior.html" >
+<link rel="import" href="yp-bulk-status-update-templates.html" >
 
-<dom-module id="yp-bulk-status-update-grid">
+<dom-module id="yp-bulk-status-update-config">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      #dialog {
+        width: 100%;
+        max-height: 100%;
+        background-color: #f0f0f0;
+      }
 
       iron-list {
         color: #000;
-        height: 500px;
+        height: 800px;
         width: 100%;
       }
 
@@ -31,16 +39,29 @@
         padding-right: 16px;
       }
 
-      .id {
-        width: 60px;
+      .postOfficialStatus {
+        width: 100px;
       }
 
-      .title {
+      .postName {
         width: 200px;
+        font-size: 19px;
       }
 
-      .email {
-        width: 240px;
+      .groupName {
+        width: 100%;
+        border-bottom: 1px dashed;
+        margin-bottom: 16px;
+        font-size: 22px;
+      }
+
+      .postIgnore {
+        width: 90px;
+      }
+
+      .postDropdown {
+        width: 150px;
+        margin: 16px;
       }
 
       #editPageLocale {
@@ -55,7 +76,7 @@
       }
 
       paper-textarea {
-        height: 60%;
+        height: 200px;
       }
 
       .localeInput {
@@ -65,87 +86,123 @@
       .pageItem {
         padding-top: 8px;
       }
+
+      paper-menu {
+        z-index: 100;
+      }
+
+      .dropdown-content {
+        z-index: 1000;
+      }
+
+      paper-item {
+        z-index: 10000;
+      }
+
+      .postUniqueMessage {
+        width: 300px;
+      }
+
+      a {
+        color: #333;
+      }
+
+      paper-material {
+        margin: 16px;
+        padding: 24px;
+        background-color: #FFF;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-bulk-status-updates-templates="_updatedTemplates"></iron-signals>
 
-    <yp-bulk-status-update-templates id="templates" templates="{{templates}}"></yp-bulk-status-update-templates>
-    <iron-list items="[[config.groups]]" as="group">
-      <template>
-        <div class="layout horizontal">
-          <div class="groupName">
-            [[group.name]]
-          </div>
-          <iron-list items="group.posts]]" as="post">
-            <template>
-              <div class="layout horizontal">
-                <div class="postName">
-                  [[post.name]]
-                </div>
-                <div class="postName">
-                  [[_officialStatusOptionsName(post.official_status)]]
-                </div>
-                <div>
-                  <paper-button data-args$="[[post]]" on-tap="_setIgnorePost">[[t('ignore')]]</paper-button>
-                </div>
-                <div>
-                  <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
-                    <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{post.newOfficialStatus}}" on-iron-select="_selectNewOfficialStatus">
-                      <template is="dom-repeat" items="[[officialStatusOptions]]" as="statusOption">
-                        <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
-                      </template>
-                    </paper-menu>
-                  </paper-dropdown-menu>
-                </div>
-                <div>
-                  <paper-dropdown-menu label="[[t('selectStatusTemplate')]]">
-                    <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{post.selectedTemplateName}}" on-iron-select="_selectTemplate">
-                      <template is="dom-repeat" items="[[templateOptions]]" as="templateOption">
-                        <paper-item name="[[templateOption.name]]">[[templateOption.name]]</paper-item>
-                      </template>
-                    </paper-menu>
-                  </paper-dropdown-menu>
-                </div>
-                <div>
-                  <paper-dropdown-menu label="[[t('moveToGroup')]]">
-                    <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{post.moveToGroupId}}" on-iron-select="_selectMoveGroup">
-                      <template is="dom-repeat" items="[[availableGroups]]" as="group">
-                        <paper-item name="[[group.id]]">[[group.name]]</paper-item>
-                      </template>
-                    </paper-menu>
-                  </paper-dropdown-menu>
-                </div>
-                <div>
-                  <paper-textarea id="emailFooter"
-                                  name="emailFooter"
-                                  value="{{post.uniqueStatusMessage}}"
-                                  label="[[t('uniqueStatusMessage')]]"
-                                  char-counter
-                                  rows="2"
-                                  max-rows="3"
-                                  maxlength="30000" class="mainInput">
-                  </paper-textarea>
-                </div>
+    <paper-dialog id="dialog" modal>
+      <h2>[[t('bulkStatusUdateConfig')]]</h2>
+      <paper-dialog-scrollable>
+        <iron-list items="[[config.groups]]" as="group">
+          <template>
+            <div class="layout vertical">
+              <div class="groupName">
+                <b>[[group.name]]</b>
               </div>
-            </template>
-          </iron-list>
+              <iron-list items="[[group.posts]]" as="post">
+                <template>
+                  <div class="layout horizontal">
+                    <paper-material elevation="2" class="layout horizontal">
+                      <div class="postName">
+                        <a target="_blank" href="/post/[[post.id]]">[[post.name]]</a>
+                      </div>
+                      <div class="postOfficialStatus">
+                        [[_officialStatusOptionsName(post.currentOfficialStatus)]]
+                      </div>
+                      <div class="postDropdown">
+                        <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
+                          <paper-menu class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.newOfficialStatus}}" on-iron-select="_selectNewOfficialStatus">
+                            <template is="dom-repeat" items="[[officialStatusOptions]]" as="statusOption">
+                              <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
+                            </template>
+                          </paper-menu>
+                        </paper-dropdown-menu>
+                      </div>
+                      <div class="postDropdown">
+                        <paper-dropdown-menu label="[[t('selectStatusTemplate')]]">
+                          <paper-menu class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.selectedTemplateName}}">
+                            <template is="dom-repeat" items="[[templates]]" as="templateOption">
+                              <paper-item name="[[templateOption.title]]">[[templateOption.title]]</paper-item>
+                            </template>
+                          </paper-menu>
+                        </paper-dropdown-menu>
+                      </div>
+                      <div class="postDropdown">
+                        <paper-dropdown-menu label="[[t('moveToGroup')]]">
+                          <paper-menu class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.moveToGroupId}}">
+                            <template is="dom-repeat" items="[[availableGroups]]" as="group">
+                              <paper-item name="[[group.id]]">[[group.name]]</paper-item>
+                            </template>
+                          </paper-menu>
+                        </paper-dropdown-menu>
+                      </div>
+                      <div class="postUniqueMessage">
+                        <paper-textarea id="emailFooter"
+                                        name="emailFooter"
+                                        value="{{post.uniqueStatusMessage}}"
+                                        label="[[t('uniqueStatusMessage')]]"
+                                        rows="5"
+                                        max-rows="5"
+                                        maxlength="30000" class="mainInput">
+                        </paper-textarea>
+                      </div>
+                    </paper-material>
+                  </div>
+                </template>
+              </iron-list>
+            </div>
 
-          <paper-button data-args$="[[bulkStatusUpdate]]" on-tap="_editBulkStatusUpdate">[[t('update')]]</paper-button>
+          </template>
+        </iron-list>
+
+        <div class="layout horizontal center-center">
+          <yp-ajax method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" on-response="_getGroupsResponse"></yp-ajax>
+          <yp-ajax method="PUT" id="updateConfigAjax" url="/api/bulk_status_updates/[[bulkStatusUpdate.community_id]]/[[bulkStatusUpdate.id]]/updateConfig" on-response="_updateConfigResponse"></yp-ajax>
+
+          <yp-ajax method="GET" id="getBulkStatusUpdatesAjax" on-response="_bulkStatusUpdateResponse"></yp-ajax>
         </div>
-      </template>
-    </iron-list>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss on-tap="_save">[[t('close')]]</paper-button>
+        <paper-button on-tap="_editTemplates">[[t('editTemplates')]]</paper-button>
+        <paper-button on-tap="_save">[[t('save')]]</paper-button>
+      </div>
 
-    <div class="layout horizontal center-center">
-      <yp-ajax method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" on-response="_getGroupsResponse"></yp-ajax>
+    </paper-dialog>
 
-      <yp-ajax method="GET" id="getBulkStatusUpdatesAjax" on-response="_bulkStatusUpdateResponse"></yp-ajax>
-    </div>
 
   </template>
 
   <script>
     Polymer({
 
-      is: 'yp-bulk-status-update-grid',
+      is: 'yp-bulk-status-update-config',
 
       behaviors: [
         Polymer.appHelpers,
@@ -166,6 +223,8 @@
           notify: true
         },
 
+        communityId: Number,
+
         headerText: {
           type: String
         },
@@ -177,30 +236,61 @@
         config: {
           type: Object,
           observer: '_configChanged'
+        },
+
+        haveGotMoveGroups: {
+          type: Boolean,
+          value: false
         }
       },
 
       observers: [
         '_templatesChanged(templates.*)',
-        '_groupsChanged(groups.*)'
+        '_groupsChanged(config.*)'
       ],
 
-      _templatesChanged: function (change) {
+      _updatedTemplates: function (event, detail) {
+        this.set('templates', detail);
         debugger;
+        this.$.updateConfigAjax.body = { configValue: this.templates, configName: 'templates' };
+        this.$.updateConfigAjax.generateRequest();
+      },
+
+      _templatesChanged: function (change) {
       },
 
       _groupsChanged: function (change) {
-        debugger;
+      },
+
+      _save: function () {
+        this.$.updateConfigAjax.body = { configValue: this.config, configName: 'config' };
+        this.$.updateConfigAjax.generateRequest();
       },
 
       _selectNewOfficialStatus: function (event, detail) {
-        debugger;
+        var newOfficialStatus = detail.item.name;
+        var post = JSON.parse(event.target.getAttribute('data-args'));
+        var configCopy = JSON.parse(JSON.stringify(this.config));
+        this.config.groups.forEach(function (group, groupIndex) {
+          group.posts.forEach(function (inPost, postIndex) {
+            if (post.id == inPost.id) {
+              configCopy.groups[groupIndex].posts[postIndex].newOfficialStatus = newOfficialStatus;
+            }
+          }.bind(this));
+        }.bind(this));
+        this.set('config', configCopy);
       },
 
       _configChanged: function (config) {
-        if (config) {
+        if (config && !this.haveGotMoveGroups) {
           this.$.getAvailableGroupsAjax.generateRequest();
+          this.set('haveGotMoveGroups', true);
         }
+      },
+
+      _updateConfigResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('saved'));
+
       },
 
       _newBulkStatusUpdate: function () {
@@ -217,12 +307,15 @@
         dialog.open('edit', { bulkStatusUpdateId: bulkStatusUpdate.id });
       },
 
-      _bulkStatusUpdateResponse: function (event, detail) {
-        this.set('bulkStatusUpdates', detail);
+      _editTemplates: function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateEditTemplates");
+        dialog.open(this.templates);
       },
 
-      open: function () {
-        this.$.getBulkStatusUpdatesAjax.generateRequest();
+      open: function (bulkStatusUpdate) {
+        this.set('config', bulkStatusUpdate.config);
+        this.set('templates', bulkStatusUpdate.templates);
+        this.set('bulkStatusUpdate', bulkStatusUpdate);
         this.$.dialog.open();
       }
     });

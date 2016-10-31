@@ -28,11 +28,13 @@
 
     _officialStatusOptionsName: function (official_status) {
       var statues = this._officialStatusOptions(this.language);
+      var foundName = "Not found";
       statues.forEach(function (status) {
         if (status.official_value==official_status) {
-          return status.translatedName;
+          foundName = status.translatedName;
         }
       });
+      return foundName;
     }
   };
 </script>

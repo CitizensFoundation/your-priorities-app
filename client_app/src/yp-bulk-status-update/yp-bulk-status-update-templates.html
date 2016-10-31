@@ -98,7 +98,7 @@
       </div>
     </paper-dialog>
 
-    <paper-dialog id="dialog">
+    <paper-dialog id="dialog" modal>
       <h2>[[headerText]]</h2>
       <iron-list items="[[templates]]" as="template">
         <template>
@@ -106,12 +106,13 @@
             <div class="templateItem title">
               [[template.title]]
             </div>
-            <paper-button data-args$="[[template.name]]" on-tap="_deleteTemplate">[[t('templates.deleteTemplate')]]</paper-button>
+            <paper-button data-args$="[[index]]" on-tap="_editTemplate">[[t('editTemplate')]]</paper-button>
+            <paper-button data-args$="[[template.title]]" on-tap="_deleteTemplate">[[t('deleteTemplate')]]</paper-button>
           </div>
         </template>
       </iron-list>
       <div class="layout horizontal">
-        <paper-button id="addTemplateButton" on-tap="_addTemplate">[[t('templates.addTemplate')]]</paper-button>
+        <paper-button id="addTemplateButton" on-tap="_addTemplate">[[t('addTemplate')]]</paper-button>
       </div>
 
       <div class="buttons">
@@ -134,7 +135,8 @@
       properties: {
         templates: {
           type: Array,
-          notify: true
+          notify: true,
+          observer: '_templatesChanged'
         },
 
         headerText: {
@@ -158,10 +160,16 @@
         }
       },
 
+      _templatesChanged: function (templates) {
+        if (templates) {
+          this.fire('iron-signal', {name: 'bulk-status-updates-templates', data: this.templates });
+        }
+      },
+
       _editTemplate: function (event) {
-        this.set('currentlyEditingTemplate', JSON.parse(event.target.getAttribute('data-args-template')));
-        this.set('currentlyEditingContent',this.wordwrap(120)(this.currentlyEditingTemplate["content"]));
-        this.set('currentlyEditingTitle',this.currentlyEditingTemplate["title"]);
+        this.set('currentlyEditingTemplate', JSON.parse(event.target.getAttribute('data-args')));
+        this.set('currentlyEditingContent',this.wordwrap(120)(this.templates[this.currentlyEditingTemplate]["content"]));
+        this.set('currentlyEditingTitle',this.templates[this.currentlyEditingTemplate]["title"]);
         this.$.editTemplateLocale.open();
       },
 
@@ -172,9 +180,9 @@
       },
 
       _updateTemplate: function () {
-        var templatesCopy = this.templates;
+        var templatesCopy = JSON.parse(JSON.stringify(this.templates));
         this.templates.forEach(function (template, index) {
-          if (template.title == this.currentlyEditingTemplate) {
+          if (index == this.currentlyEditingTemplate) {
             templatesCopy[index] = { title: this.currentlyEditingTitle, content: this.currentlyEditingContent };
           }
         }.bind(this));
@@ -200,7 +208,8 @@
         this.push('templates', { title: '', content: ''});
       },
 
-      open: function () {
+      open: function (templates) {
+        this.set('templates', templates);
         this.$.dialog.open();
       },
 

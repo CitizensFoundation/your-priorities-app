@@ -27,7 +27,7 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <yp-edit-dialog id="editDialog" icon="language" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" double-width icon="language" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
       <div class="layout vertical">
@@ -42,7 +42,7 @@
 
         <paper-textarea id="emailHeader"
                         name="emailHeader"
-                        value="{{bulkStatusUpdate.emailHeader}}"
+                        value="{{bulkStatusUpdate.config.emailHeader}}"
                         label="[[t('emailHeader')]]"
                         char-counter
                         rows="4"
@@ -52,7 +52,7 @@
 
         <paper-textarea id="emailFooter"
                         name="emailFooter"
-                        value="{{bulkStatusUpdate.emailFooter}}"
+                        value="{{bulkStatusUpdate.config.emailFooter}}"
                         label="[[t('emailFooter')]]"
                         char-counter
                         rows="4"
@@ -60,9 +60,6 @@
                         maxlength="30000" class="mainInput">
         </paper-textarea>
 
-        <template is="dom-if" if="[[bulkStatusUpdate.config]]">
-          <yp-bulk-status-update-config config="{{bulkStatusUpdate.config}}"></yp-bulk-status-update-config>
-        </template>
       </div>
 
    </yp-edit-dialog>
@@ -123,6 +120,7 @@
       } else {
         this.set('bulkStatusUpdate', bulkStatusUpdate);
       }
+      debugger;
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
@@ -130,11 +128,11 @@
 
     _setupTranslation: function () {
       if (this.new) {
-        this.set('editHeaderText', this.t('bulkStatusUpdate.new'));
+        this.set('editHeaderText', this.t('newBulkStatusUpdate'));
         this.set('toastText', this.t('bulkStatusUpdate.toast.created'));
         this.set('saveText', this.t('create'));
       } else {
-        this.set('editHeaderText', this.t('Update bulkStatusUpdate info'));
+        this.set('editHeaderText', this.t('editBulkStatusUpdate'));
         this.set('toastText', this.t('bulkStatusUpdate.toast.updated'));
         this.set('saveText', this.t('update'));
       }
