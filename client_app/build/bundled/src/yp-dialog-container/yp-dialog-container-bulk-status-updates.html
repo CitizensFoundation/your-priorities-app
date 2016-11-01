@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.78"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-update-templates" assetpath="../yp-bulk-status-update/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.79"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-update-templates" assetpath="../yp-bulk-status-update/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       #dialog {
@@ -305,7 +305,7 @@
         <div class="layout horizontal wrap">
           <paper-tabs selected="{{selectedGroup}}" attr-for-selected="name">
             <template is="dom-repeat" items="[[config.groups]]" as="group">
-              <paper-tab name="[[group.name]]">[[group.name]]</paper-tab>
+              <paper-tab name="[[group.name]]">[[_getHeadGroupName(group.name)]]</paper-tab>
             </template>
           </paper-tabs>
         </div>
@@ -438,6 +438,13 @@
           type: Boolean,
           value: false
         }
+      },
+
+      _getHeadGroupName: function (name) {
+        if (name)
+          return name.split(' ')[0];
+        else
+          return "";
       },
 
       reset: function () {

@@ -1,27 +1,27 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.78">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.78">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.78">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.78">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html?v=6.2.78">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.79">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.79">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.79">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.79">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html?v=6.2.79">
 
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.78">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.78">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.2.78">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.78">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.78">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.2.78">
-<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.2.78">
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.2.78">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.78">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.79">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.79">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.2.79">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.79">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.79">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.2.79">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.2.79">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.2.79">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.79">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.78">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.78">
-<link rel="import" href="../yp-behaviors/yp-official-status-options.html?v=6.2.78">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.79">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.79">
+<link rel="import" href="../yp-behaviors/yp-official-status-options.html?v=6.2.79">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.78">
-<link rel="import" href="../yp-behaviors/word-wrap.html?v=6.2.78">
-<link rel="import" href="../yp-post/yp-post-move-behavior.html?v=6.2.78">
-<link rel="import" href="yp-bulk-status-update-templates.html?v=6.2.78">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.79">
+<link rel="import" href="../yp-behaviors/word-wrap.html?v=6.2.79">
+<link rel="import" href="../yp-post/yp-post-move-behavior.html?v=6.2.79">
+<link rel="import" href="yp-bulk-status-update-templates.html?v=6.2.79">
 
 </head><body><dom-module id="yp-bulk-status-update-config">
   <template>
@@ -135,7 +135,7 @@
         <div class="layout horizontal wrap">
           <paper-tabs selected="{{selectedGroup}}" attr-for-selected="name">
             <template is="dom-repeat" items="[[config.groups]]" as="group">
-              <paper-tab name="[[group.name]]">[[group.name]]</paper-tab>
+              <paper-tab name="[[group.name]]">[[_getHeadGroupName(group.name)]]</paper-tab>
             </template>
           </paper-tabs>
         </div>
@@ -268,6 +268,13 @@
           type: Boolean,
           value: false
         }
+      },
+
+      _getHeadGroupName: function (name) {
+        if (name)
+          return name.split(' ')[0];
+        else
+          return "";
       },
 
       reset: function () {

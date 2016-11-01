@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.78"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.79"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -832,7 +832,7 @@
         this.refresh();
 
         if (!this.community.only_admins_can_create_groups || this.checkCommunityAccess(this.community)) {
-          this.set('createFabIcon', 'social:group');
+          this.set('createFabIcon', 'add');
         }
 
         var url = this._communityHeaderUrl(this.community);
