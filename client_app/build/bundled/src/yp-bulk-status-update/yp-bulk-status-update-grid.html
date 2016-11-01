@@ -1,17 +1,17 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.77">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.77">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.77">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.77">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.78">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.78">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.78">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.78">
 
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.77">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.77">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.77">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.2.77">
-<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.2.77">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.78">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.78">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.78">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.2.78">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.2.78">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.77">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.77">
-<link rel="import" href="../yp-behaviors/word-wrap.html?v=6.2.77">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.78">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.78">
+<link rel="import" href="../yp-behaviors/word-wrap.html?v=6.2.78">
 
 </head><body><dom-module id="yp-bulk-status-update-grid">
   <template>
@@ -140,7 +140,9 @@
         var bulkStatusUpdate = JSON.parse(event.target.getAttribute('data-args'));
         this.set('selectedUpdate', bulkStatusUpdate);
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateConfig");
+        dialog.reset();
         dialog.open(this.selectedUpdate);
+        this.$.dialog.close();
       },
 
       _editBulkStatusUpdate: function (event) {
@@ -157,6 +159,10 @@
 
       open: function (communityId) {
         this.set('communityId', communityId);
+        this.set('bulkStatusUpdates', null);
+        this.set('selectedUpdate', null);
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateConfig");
+        dialog.reset();
         this.$.getBulkStatusUpdatesAjax.url="/api/bulk_status_updates/"+communityId;
         this.$.getBulkStatusUpdatesAjax.generateRequest();
         this.$.dialog.open();
