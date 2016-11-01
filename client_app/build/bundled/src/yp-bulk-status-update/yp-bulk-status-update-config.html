@@ -1,24 +1,27 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.76">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.76">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.76">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.76">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.77">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.77">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.77">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.77">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html?v=6.2.77">
 
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.76">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.76">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.76">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.2.76">
-<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.2.76">
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.2.76">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.76">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.77">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.77">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.2.77">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.77">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.77">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.2.77">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.2.77">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.2.77">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.77">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.76">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.76">
-<link rel="import" href="../yp-behaviors/yp-official-status-options.html?v=6.2.76">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.77">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.77">
+<link rel="import" href="../yp-behaviors/yp-official-status-options.html?v=6.2.77">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.76">
-<link rel="import" href="../yp-behaviors/word-wrap.html?v=6.2.76">
-<link rel="import" href="../yp-post/yp-post-move-behavior.html?v=6.2.76">
-<link rel="import" href="yp-bulk-status-update-templates.html?v=6.2.76">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.77">
+<link rel="import" href="../yp-behaviors/word-wrap.html?v=6.2.77">
+<link rel="import" href="../yp-post/yp-post-move-behavior.html?v=6.2.77">
+<link rel="import" href="yp-bulk-status-update-templates.html?v=6.2.77">
 
 </head><body><dom-module id="yp-bulk-status-update-config">
   <template>
@@ -44,8 +47,9 @@
       }
 
       .postName {
-        width: 200px;
-        font-size: 19px;
+        max-width: 600px;
+        font-size: 18px;
+        padding-right: 8px;
       }
 
       .groupName {
@@ -112,6 +116,15 @@
         padding: 24px;
         background-color: #FFF;
       }
+
+      paper-tab {
+        font-size: 14px;
+      }
+
+      .id {
+        width: 60px;
+        font-size: 18px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-signals on-iron-signal-bulk-status-updates-templates="_updatedTemplates"></iron-signals>
@@ -119,61 +132,75 @@
     <paper-dialog id="dialog" modal="">
       <h2>[[t('bulkStatusUdateConfig')]]</h2>
       <paper-dialog-scrollable>
-        <iron-list items="[[config.groups]]" as="group">
-          <template>
-            <div class="layout vertical">
-              <div class="groupName">
-                <b>[[group.name]]</b>
+        <div class="layout horizontal wrap">
+          <paper-tabs selected="{{selectedGroup}}" attr-for-selected="name">
+            <template is="dom-repeat" items="[[config.groups]]" as="group">
+              <paper-tab name="[[group.name]]">[[group.name]]</paper-tab>
+            </template>
+          </paper-tabs>
+        </div>
+        <iron-pages attr-for-selected="name" selected="{{selectedGroup}}">
+          <template is="dom-repeat" items="[[config.groups]]" as="group">
+            <section name="[[group.name]]">
+              <div class="layout vertical">
+                <iron-list items="[[group.posts]]" as="post">
+                  <template>
+                    <div class="layout horizontal">
+                      <paper-material elevation="2" class="layout horizontal">
+                        <div class="layout vertical">
+                          <div class="layout horizontal">
+                            <div class="id">[[post.id]]</div>
+                            <div class="postName">
+                              <a target="_blank" href="/post/[[post.id]]">[[post.name]]</a>
+                            </div>
+                            <div class="postOfficialStatus">
+                              [[_officialStatusOptionsName(post.currentOfficialStatus)]]
+                            </div>
+                          </div>
+                          <div class="layout horizontal">
+                            <div class="postDropdown">
+                              <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
+                                <paper-menu class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.newOfficialStatus}}" on-iron-select="_selectNewOfficialStatus">
+                                  <template is="dom-repeat" items="[[officialStatusOptions]]" as="statusOption">
+                                    <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
+                                  </template>
+                                </paper-menu>
+                              </paper-dropdown-menu>
+                            </div>
+                            <div class="postDropdown">
+                              <paper-dropdown-menu label="[[t('selectStatusTemplate')]]">
+                                <paper-menu class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.selectedTemplateName}}">
+                                  <template is="dom-repeat" items="[[templates]]" as="templateOption">
+                                    <paper-item name="[[templateOption.title]]">[[templateOption.title]]</paper-item>
+                                  </template>
+                                </paper-menu>
+                              </paper-dropdown-menu>
+                            </div>
+                            <div class="postDropdown">
+                              <paper-dropdown-menu label="[[t('moveToGroup')]]">
+                                <paper-menu class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.moveToGroupId}}">
+                                  <template is="dom-repeat" items="[[availableGroups]]" as="group">
+                                    <paper-item name="[[group.id]]">[[group.name]]</paper-item>
+                                  </template>
+                                </paper-menu>
+                              </paper-dropdown-menu>
+                            </div>
+                          </div>
+                          <div class="layout horizontal center-center">
+                            <div class="postUniqueMessage">
+                              <paper-textarea id="emailFooter" name="emailFooter" value="{{post.uniqueStatusMessage}}" label="[[t('uniqueStatusMessage')]]" rows="5" max-rows="5" maxlength="30000" class="mainInput">
+                              </paper-textarea>
+                            </div>
+                          </div>
+                        </div>
+                      </paper-material>
+                    </div>
+                  </template>
+                </iron-list>
               </div>
-              <iron-list items="[[group.posts]]" as="post">
-                <template>
-                  <div class="layout horizontal">
-                    <paper-material elevation="2" class="layout horizontal">
-                      <div class="postName">
-                        <a target="_blank" href="/post/[[post.id]]">[[post.name]]</a>
-                      </div>
-                      <div class="postOfficialStatus">
-                        [[_officialStatusOptionsName(post.currentOfficialStatus)]]
-                      </div>
-                      <div class="postDropdown">
-                        <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
-                          <paper-menu class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.newOfficialStatus}}" on-iron-select="_selectNewOfficialStatus">
-                            <template is="dom-repeat" items="[[officialStatusOptions]]" as="statusOption">
-                              <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
-                            </template>
-                          </paper-menu>
-                        </paper-dropdown-menu>
-                      </div>
-                      <div class="postDropdown">
-                        <paper-dropdown-menu label="[[t('selectStatusTemplate')]]">
-                          <paper-menu class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.selectedTemplateName}}">
-                            <template is="dom-repeat" items="[[templates]]" as="templateOption">
-                              <paper-item name="[[templateOption.title]]">[[templateOption.title]]</paper-item>
-                            </template>
-                          </paper-menu>
-                        </paper-dropdown-menu>
-                      </div>
-                      <div class="postDropdown">
-                        <paper-dropdown-menu label="[[t('moveToGroup')]]">
-                          <paper-menu class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.moveToGroupId}}">
-                            <template is="dom-repeat" items="[[availableGroups]]" as="group">
-                              <paper-item name="[[group.id]]">[[group.name]]</paper-item>
-                            </template>
-                          </paper-menu>
-                        </paper-dropdown-menu>
-                      </div>
-                      <div class="postUniqueMessage">
-                        <paper-textarea id="emailFooter" name="emailFooter" value="{{post.uniqueStatusMessage}}" label="[[t('uniqueStatusMessage')]]" rows="5" max-rows="5" maxlength="30000" class="mainInput">
-                        </paper-textarea>
-                      </div>
-                    </paper-material>
-                  </div>
-                </template>
-              </iron-list>
-            </div>
-
+            </section>
           </template>
-        </iron-list>
+        </iron-pages>
 
         <div class="layout horizontal center-center">
           <yp-ajax method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" on-response="_getGroupsResponse"></yp-ajax>
@@ -235,7 +262,9 @@
         haveGotMoveGroups: {
           type: Boolean,
           value: false
-        }
+        },
+
+        selectedGroup: String
       },
 
       observers: [
