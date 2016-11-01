@@ -118,7 +118,7 @@
       }
 
       paper-tab {
-        font-size: 14px;
+        font-size: 12px;
       }
 
       .id {
@@ -135,7 +135,7 @@
         <div class="layout horizontal wrap">
           <paper-tabs selected="{{selectedGroup}}" attr-for-selected="name">
             <template is="dom-repeat" items="[[config.groups]]" as="group">
-              <paper-tab name="[[group.name]]">[[group.name]]</paper-tab>
+              <paper-tab name="[[group.name]]">[[_getHeadGroupName(group.name)]]</paper-tab>
             </template>
           </paper-tabs>
         </div>
@@ -274,6 +274,13 @@
           type: Boolean,
           value: false
         }
+      },
+
+      _getHeadGroupName: function (name) {
+        if (name)
+          return name.split(' ')[0];
+        else
+          return "";
       },
 
       reset: function () {
