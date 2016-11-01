@@ -143,7 +143,7 @@
           <template is="dom-repeat" items="[[config.groups]]" as="group">
             <section name="[[group.name]]">
               <div class="layout vertical">
-                <iron-list items="[[group.posts]]" as="post">
+                <iron-list items="[[_orderPosts(group.posts)]]" as="post">
                   <template>
                     <div class="layout horizontal">
                       <paper-material elevation="2" class="layout horizontal">
@@ -214,7 +214,7 @@
         </div>
       </paper-dialog-scrollable>
       <div class="buttons">
-        <paper-button dialog-dismiss on-tap="_save">[[t('close')]]</paper-button>
+        <paper-button on-tap="_saveAndClose">[[t('close')]]</paper-button>
         <paper-button on-tap="_editTemplates">[[t('editTemplates')]]</paper-button>
         <paper-button on-tap="_save">[[t('save')]]</paper-button>
       </div>
@@ -268,7 +268,18 @@
           value: false
         },
 
-        selectedGroup: String
+        selectedGroup: String,
+
+        closeAfterSave: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      reset: function () {
+        this.set('config', null);
+        this.set('templates', null);
+        this.set('bulkStatusUpdates', null);
       },
 
       observers: [
@@ -276,9 +287,19 @@
         '_groupsChanged(config.*)'
       ],
 
+      _saveAndClose: function () {
+        this.set('closeAfterSave', true);
+        this._save();
+      },
+
+      _orderPosts: function (posts) {
+        return posts.sort(function (a, b) {
+          return a.id-b.id;
+        });
+      },
+
       _updatedTemplates: function (event, detail) {
         this.set('templates', detail);
-        debugger;
         this.$.updateConfigAjax.body = { configValue: this.templates, configName: 'templates' };
         this.$.updateConfigAjax.generateRequest();
       },
@@ -317,7 +338,10 @@
 
       _updateConfigResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('saved'));
-
+        if (this.closeAfterSave) {
+          this.set('closeAfterSave', false);
+          this.$.dialog.close();
+        }
       },
 
       _newBulkStatusUpdate: function () {

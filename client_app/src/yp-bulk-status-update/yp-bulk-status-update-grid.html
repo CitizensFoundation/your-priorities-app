@@ -140,7 +140,9 @@
         var bulkStatusUpdate = JSON.parse(event.target.getAttribute('data-args'));
         this.set('selectedUpdate', bulkStatusUpdate);
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateConfig");
+        dialog.reset();
         dialog.open(this.selectedUpdate);
+        this.$.dialog.close();
       },
 
       _editBulkStatusUpdate: function (event) {
@@ -157,6 +159,10 @@
 
       open: function (communityId) {
         this.set('communityId', communityId);
+        this.set('bulkStatusUpdates', null);
+        this.set('selectedUpdate', null);
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateConfig");
+        dialog.reset();
         this.$.getBulkStatusUpdatesAjax.url="/api/bulk_status_updates/"+communityId;
         this.$.getBulkStatusUpdatesAjax.generateRequest();
         this.$.dialog.open();
