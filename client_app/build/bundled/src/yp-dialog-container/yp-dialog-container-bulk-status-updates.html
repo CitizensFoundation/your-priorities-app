@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.79"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-update-templates" assetpath="../yp-bulk-status-update/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.80"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-update-templates" assetpath="../yp-bulk-status-update/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       #dialog {
@@ -74,24 +74,26 @@
 
     <paper-dialog id="dialog" modal="">
       <h2>[[t('editTemplates')]]</h2>
-      <iron-list items="[[templates]]" as="template">
-        <template>
-          <div class="layout horizontal">
-            <div class="templateItem title">
-              [[template.title]]
+      <paper-dialog-scrollable>
+        <iron-list items="[[templates]]" as="template">
+          <template>
+            <div class="layout horizontal">
+              <div class="templateItem title">
+                [[template.title]]
+              </div>
+              <paper-button data-args$="[[index]]" on-tap="_editTemplate">[[t('editTemplate')]]</paper-button>
+              <paper-button data-args$="[[template.title]]" on-tap="_deleteTemplate">[[t('deleteTemplate')]]</paper-button>
             </div>
-            <paper-button data-args$="[[index]]" on-tap="_editTemplate">[[t('editTemplate')]]</paper-button>
-            <paper-button data-args$="[[template.title]]" on-tap="_deleteTemplate">[[t('deleteTemplate')]]</paper-button>
-          </div>
-        </template>
-      </iron-list>
-      <div class="layout horizontal">
-        <paper-button id="addTemplateButton" on-tap="_addTemplate">[[t('addTemplate')]]</paper-button>
-      </div>
+          </template>
+        </iron-list>
+        <div class="layout horizontal">
+          <paper-button id="addTemplateButton" on-tap="_addTemplate">[[t('addTemplate')]]</paper-button>
+        </div>
 
-      <div class="buttons">
-        <paper-button dialog-dismiss="">[[t('close')]]</paper-button>
-      </div>
+        <div class="buttons">
+          <paper-button dialog-dismiss="">[[t('close')]]</paper-button>
+        </div>
+      </paper-dialog-scrollable>
     </paper-dialog>
 
   </template>

@@ -1,17 +1,17 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.79">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.79">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.79">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.79">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.80">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.80">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.80">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.80">
 
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.79">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.79">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.79">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.2.79">
-<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.2.79">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.80">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.80">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.80">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.2.80">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.2.80">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.79">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.79">
-<link rel="import" href="../yp-behaviors/word-wrap.html?v=6.2.79">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.80">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.80">
+<link rel="import" href="../yp-behaviors/word-wrap.html?v=6.2.80">
 
 </head><body><dom-module id="yp-bulk-status-update-templates">
   <template>
@@ -89,24 +89,26 @@
 
     <paper-dialog id="dialog" modal="">
       <h2>[[t('editTemplates')]]</h2>
-      <iron-list items="[[templates]]" as="template">
-        <template>
-          <div class="layout horizontal">
-            <div class="templateItem title">
-              [[template.title]]
+      <paper-dialog-scrollable>
+        <iron-list items="[[templates]]" as="template">
+          <template>
+            <div class="layout horizontal">
+              <div class="templateItem title">
+                [[template.title]]
+              </div>
+              <paper-button data-args$="[[index]]" on-tap="_editTemplate">[[t('editTemplate')]]</paper-button>
+              <paper-button data-args$="[[template.title]]" on-tap="_deleteTemplate">[[t('deleteTemplate')]]</paper-button>
             </div>
-            <paper-button data-args$="[[index]]" on-tap="_editTemplate">[[t('editTemplate')]]</paper-button>
-            <paper-button data-args$="[[template.title]]" on-tap="_deleteTemplate">[[t('deleteTemplate')]]</paper-button>
-          </div>
-        </template>
-      </iron-list>
-      <div class="layout horizontal">
-        <paper-button id="addTemplateButton" on-tap="_addTemplate">[[t('addTemplate')]]</paper-button>
-      </div>
+          </template>
+        </iron-list>
+        <div class="layout horizontal">
+          <paper-button id="addTemplateButton" on-tap="_addTemplate">[[t('addTemplate')]]</paper-button>
+        </div>
 
-      <div class="buttons">
-        <paper-button dialog-dismiss="">[[t('close')]]</paper-button>
-      </div>
+        <div class="buttons">
+          <paper-button dialog-dismiss="">[[t('close')]]</paper-button>
+        </div>
+      </paper-dialog-scrollable>
     </paper-dialog>
 
   </template>
