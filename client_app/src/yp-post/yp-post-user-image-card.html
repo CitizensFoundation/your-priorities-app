@@ -123,8 +123,8 @@
 
         _openDelete: function () {
           window.appGlobals.activity('open', 'userImage.delete');
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
-          dialog.setup('/api/images/', this.post.id+'/'+this.image.id+'/user_images',
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
+          dialog.setup('/api/images/'+this.post.id+'/'+this.image.id+'/user_images',
             this.t('userImage.deleteConfirmation'),
             this._refresh.bind(this));
           dialog.open();

@@ -221,6 +221,60 @@ router.get('/:id', auth.can('view post'), function(req, res) {
   });
 });
 
+router.put('/:id/report', auth.can('view post'), function (req, res) {
+  models.Post.find({
+    where: {
+      id: req.params.id
+    },
+    include: [
+      {
+        model: models.Group,
+        required: true,
+        attributes: ['id'],
+        include: [
+          {
+            model: models.Community,
+            required: true,
+            attributes: ['id'],
+            include: [
+              {
+                model: models.Domain,
+                required: true,
+                attributes: ['id']
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }).then(function (post) {
+    if (post) {
+      models.AcActivity.createActivity({
+        type: 'activity.report.content',
+        userId: req.user.id,
+        postId: req.params.id,
+        groupId: post.Group.id,
+        communityId: post.Group.Community.id,
+        domainId: post.Group.Community.Domain.id
+      }, function (error) {
+        if (error) {
+          log.error("Post Report Error", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
+          res.sendStatus(500);
+        } else {
+          log.info('Post Report Created', { post: toJson(post), context: 'report', user: toJson(req.user) });
+          res.sendStatus(200);
+        }
+      });
+    } else {
+      log.error("Post Report", { context: 'report', post: toJson(post), user: toJson(req.user), err: "Could not created post" });
+      res.sendStatus(500);
+    }
+  }).catch(function (error) {
+    log.error("Post Report", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
+    res.sendStatus(500);
+  });
+});
+
 router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
   if (req.query.latestPointCreatedAt) {
     models.Point.findAll({

@@ -46,7 +46,7 @@
       <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
 
       <template is="dom-if" if="[[loggedInUser]]">
-        <yp-delete-dialog id="deleteDialog"></yp-delete-dialog>
+        <yp-api-action-dialog id="apiActionDialog"></yp-api-action-dialog>
         <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
         <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
         <ac-notification-toast id="notificationToast"></ac-notification-toast>
