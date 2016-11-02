@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.80"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-update-templates" assetpath="../yp-bulk-status-update/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.81"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-update-templates" assetpath="../yp-bulk-status-update/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       #dialog {
@@ -86,14 +86,14 @@
             </div>
           </template>
         </iron-list>
-        <div class="layout horizontal">
-          <paper-button id="addTemplateButton" on-tap="_addTemplate">[[t('addTemplate')]]</paper-button>
-        </div>
-
-        <div class="buttons">
-          <paper-button dialog-dismiss="">[[t('close')]]</paper-button>
-        </div>
       </paper-dialog-scrollable>
+      <div class="layout horizontal">
+        <paper-button id="addTemplateButton" on-tap="_addTemplate">[[t('addTemplate')]]</paper-button>
+      </div>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss="">[[t('close')]]</paper-button>
+      </div>
     </paper-dialog>
 
   </template>
@@ -296,6 +296,10 @@
       .id {
         width: 60px;
         font-size: 18px;
+      }
+
+      paper-menu {
+        max-height: 220px;
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
