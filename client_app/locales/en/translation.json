@@ -161,6 +161,7 @@
   },
 
   "post": {
+    "deleteConfirmation": "Are you sure you want to delete this idea?",
     "move": "Move idea",
     "confirmMove": "Confirm that you want to move",
     "statusChangeConfirmText": "Are you sure you want to send everybody that supports or opposes this idea an email?",
@@ -232,6 +233,7 @@
   },
 
   "point": {
+    "report": "Report Point",
     "againstAdded": "Added point against",
     "forAdded": "Added point for",
     "confirmDelete": "Confirm that you want to delete this point",

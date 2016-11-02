@@ -221,7 +221,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
   });
 });
 
-router.put('/:id/report', auth.can('view post'), function (req, res) {
+router.put('/:id/report', auth.can('vote on post'), function (req, res) {
   models.Post.find({
     where: {
       id: req.params.id

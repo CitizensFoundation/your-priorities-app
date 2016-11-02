@@ -280,6 +280,7 @@
     "the_all": "Allir flokkar"
   },
   "point": {
+    "report": "Tilkynna rök",
     "confirmDelete": "Staðfestu að þú viljir eyða þessum rökum",
     "theseAreFor": "Rök með",
     "theseAreAgainst": "Rök á móti",

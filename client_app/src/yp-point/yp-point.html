@@ -63,6 +63,10 @@
       paper-icon-button {
         color: #ccc;
       }
+
+      #reportPointIconButton {
+        color: #ccc;
+      }
     </style>
 
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
@@ -104,6 +108,7 @@
                 <paper-icon-button icon="clear" on-tap="_deletePoint"></paper-icon-button>
               </div>
             </template>
+            <paper-icon-button hidden$="[[!loggedInUser]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
           </div>
         </div>
       </div>
@@ -213,6 +218,21 @@
       _deleteResponse: function () {
         this.fire("yp-point-deleted", { pointId: this.point.id });
         this.set('point', null);
+      },
+
+      _reportPoint: function () {
+        window.appGlobals.activity('open', 'point.report');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
+        dialog.setup('/api/points/'+this.point.id+'/report',
+          this.t('reportConfirmation'),
+          this._onReport.bind(this),
+          this.t('point.report'),
+          'PUT');
+        dialog.open();
+      },
+
+      _onReport: function () {
+        window.appGlobals.notifyUserViaToast(this.t('point.report')+': '+this.point.content);
       },
 
       _editPoint: function () {
