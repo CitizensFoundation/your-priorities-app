@@ -292,7 +292,6 @@
         }
       },
 
-
       _search: function () {
         window.appGlobals.activity('click', 'search');
         this._refreshGroupFromFilter();
@@ -325,6 +324,7 @@
 
       _groupIdChanged: function (newValue, oldValue) {
         this.set("posts", null);
+        this.set('noPosts', false);
         if (newValue) {
           this._loadMoreData();
         }
@@ -337,6 +337,7 @@
 
       _loadMoreData: function () {
         this.set('moreToLoad', false);
+        this.set('noPosts', false);
         var objectId, objectType;
 
         if (this.userId) {
@@ -379,6 +380,10 @@
           this.push('posts', post);
         }.bind(this));
 
+        if (posts.length==0) {
+          this.set('noPosts', true);
+        }
+
         if (posts.length>0) {
           this.set('noPosts', false);
           this.async(function () {
@@ -387,8 +392,6 @@
         } else {
           if (this.searchingFor && this.searchingFor!="") {
             this.set('noPosts', false);
-          } else {
-            this.set('noPosts', true);
           }
         }
 
