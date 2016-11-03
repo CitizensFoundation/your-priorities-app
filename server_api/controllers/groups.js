@@ -736,4 +736,112 @@ router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
   });
 });
 
+router.put('/:id/:groupId/mergeWithGroup', auth.can('edit post'), function(req, res) {
+  auth.authNeedsGroupAdminForCreate({id: req.params.groupId }, req, function (error, isAuthorized) {
+    if (isAuthorized) {
+      var inGroup, outGroup, post, outCommunityId, outDomainId;
+      async.series([
+        function (callback) {
+          models.Group.find({
+            where: {
+              id: req.params.id
+            },
+            include: [
+              {
+                model: models.Community,
+                required: true,
+                include: [
+                  {
+                    model: models.Domain,
+                    required: true
+                  }
+                ]
+              }
+            ]
+          }).then(function (group) {
+            inGroup = groupIn;
+            callback();
+          }).catch(function (error) {
+            callback(error);
+          });
+        },
+        function (callback) {
+          models.Group.find({
+            where: {
+              id: req.params.groupId
+            },
+            include: [
+              {
+                model: models.Community,
+                required: true,
+                include: [
+                  {
+                    model: models.Domain,
+                    required: true
+                  }
+                ]
+              }
+            ]
+          }).then(function (group) {
+            outGroup = group;
+            outCommunityId = group.Community.id;
+            outDomainId = group.Community.Domain.id;
+            callback();
+          }).catch(function (error) {
+            callback(error);
+          });
+        },
+        function (callback) {
+          models.Post.findAll({
+            where: {
+              group_id: inGroup.id
+            }
+          }).then(function (posts) {
+            async.eachSeries(posts, function (post, seriesCallback) {
+              post.set('group_id', outGroup.id);
+              post.save().then(function (results) {
+                console.log("Have changed group id");
+                models.AcActivity.findAll({
+                  where: {
+                    post_id: post.id
+                  }
+                }).then(function (activities) {
+                  async.eachSeries(activities, function (activity, innerSeriesCallback) {
+                    activity.set('group_id', outGroup.id);
+                    activity.set('community_id', outCommunityId);
+                    activity.set('domain_id', outDomainId);
+                    activity.save().then(function (results) {
+                      console.log("Have changed group and all: "+activity.id);
+                      innerSeriesCallback();
+                    });
+                  }, function (error) {
+                    seriesCallback(error);
+                  })
+                }).catch(function (error) {
+                  seriesCallback(error);
+                });
+              }, function (error) {
+                callback(error);
+              });
+            });
+          }).catch(function (error) {
+            callback(error);
+          });
+        }
+      ], function (error) {
+        if (error) {
+          log.error("Merge with group", {  groupId: req.params.id, groupToId: req.params.groupId });
+          res.sendStatus(500);
+        } else {
+          log.info("Merge with group", {  groupId: req.params.id, groupToId: req.params.groupId });
+          res.sendStatus(200);
+        }
+      });
+    } else {
+      log.error("Merge with group", { groupId: req.params.id, groupToId: req.params.groupId });
+      res.sendStatus(401);
+    }
+  });
+});
+
 module.exports = router;
