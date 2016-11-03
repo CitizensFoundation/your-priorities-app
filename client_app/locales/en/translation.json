@@ -1,4 +1,5 @@
 {
+  "inviteNotFoundOrAlreadyUsed": "Invite not found or already used",
   "reportConfirmation": "Are you sure you want to report this content for having broken the rules of this website?",
   "uniqueStatusMessage": "Unique Status Message",
   "templateContent": "Template content",

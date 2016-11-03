@@ -49,7 +49,7 @@
       <p>[[t('user.acceptInviteInstructions')]]</p>
 
       <div class="buttons">
-        <yp-ajax id="acceptInviteAjax" method="POST" on-response="_acceptInviteResponse"></yp-ajax>
+        <yp-ajax id="acceptInviteAjax" method="POST" dispatch-error on-error="_inviteError" iron-response="_acceptInviteResponse"></yp-ajax>
         <yp-ajax id="getInviteSenderAjax" method="GET" on-response="_getInviteSenderResponse"></yp-ajax>
         <paper-button on-tap="_cancel" dialog-dismiss>[[t('cancel')]]</paper-button>
         <paper-button autofocus on-tap="_acceptInvite">[[t('user.acceptInvite')]]</paper-button>
@@ -84,6 +84,10 @@
       },
 
       targetName: String
+    },
+
+    _inviteError: function (event, detail) {
+      this.$.acceptInviteAjax.showErrorDialog(this.t('inviteNotFoundOrAlreadyUsed'));
     },
 
     _checkInviteSender: function(e) {
