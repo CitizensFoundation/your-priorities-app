@@ -159,16 +159,9 @@
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <div class="layout horizontal center-center">
-      <template is="dom-if" if="[[noPosts]]" restamp>
-        <div class="layout horiztonal center-center">
-          <paper-material class="noIdeas layout horizontal center-center" elevation="2">
-            <div class="noIdeasText">[[t('noIdeasHere')]]</div>
-          </paper-material>
-        </div>
-      </template>
+    <div class="layout vertical center-center">
 
-      <div class="searchContainer layout horizontal wrap" hidden$="[[noPosts]]">
+      <div class="searchContainer layout horizontal wrap">
         <div class="layout horizontal center-center">
           <paper-search-bar hide-clear-button hide-filter-button query="{{searchingFor}}" placeholder="[[t('searchFor')]]" on-paper-search-search="_search"></paper-search-bar>
         </div>
@@ -179,6 +172,14 @@
           </yp-posts-filter>
         </div>
       </div>
+
+      <template is="dom-if" if="[[noPosts]]" restamp>
+        <div class="layout horiztonal center-center">
+          <paper-material class="noIdeas layout horizontal center-center" elevation="2">
+            <div class="noIdeasText">[[t('noIdeasHere')]]</div>
+          </paper-material>
+        </div>
+      </template>
     </div>
 
     <div id="scrollableRegion">
@@ -380,20 +381,20 @@
           this.push('posts', post);
         }.bind(this));
 
-        if (posts.length==0) {
+        if (posts.length==0 && (this.posts==null || this.posts.length==0)) {
           this.set('noPosts', true);
         }
 
         if (posts.length>0) {
           this.set('noPosts', false);
-          this.async(function () {
-            this.$$("#postsFilter")._updateTitle();
-          }, 1000);
         } else {
           if (this.searchingFor && this.searchingFor!="") {
             this.set('noPosts', false);
           }
         }
+        this.async(function () {
+          this.$$("#postsFilter")._updateTitle();
+        }, 20);
 
         this.async(function () {
           this.$$("#list").fire('iron-resize');
