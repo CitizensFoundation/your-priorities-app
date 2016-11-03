@@ -10448,11 +10448,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return;
       }
       var postUrl = '/post/' + postId;
-      window.appGlobals.activity('open', 'post', postUrl);
-      window.app.setKeepOpenForPostsOn(window.location.pathname);
-      this.async(function () {
-        this.redirectTo(postUrl);
-      });
+      var windowLocation = window.location.href;
+      console.log(postUrl);
+      console.log(windowLocation);
+      if (windowLocation.indexOf(postUrl) == -1) {
+        window.appGlobals.activity('open', 'post', postUrl);
+        window.app.setKeepOpenForPostsOn(window.location.pathname);
+        this.async(function () {
+          this.redirectTo(postUrl);
+        });
+      }
     },
 
     cardMouseOver: function (event) {
@@ -10907,7 +10912,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.2.81">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.2.82">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -11312,7 +11317,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.2.81">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.2.82">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -11320,7 +11325,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.2.81">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.2.82">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19359,8 +19364,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.2.81">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.2.81">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.2.82">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.2.82">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -22700,7 +22705,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.81" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.2.82" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -27719,7 +27724,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.81" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.2.82" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -38254,7 +38259,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.2.81">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.2.82">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -41688,21 +41693,30 @@ If you're seeing the message "You have included the Google Maps API multiple tim
           height: 160px;
         }
       }
+
+      .pointer {
+        cursor: pointer;
+      }
+
+      .pointer[header-mode] {
+        cursor: default;
+      }
+
     </style>
 
       <div class="mapCanvas">
         <template is="dom-if" if="[[noneActive]]">
-          <iron-image sizing="cover" class="main-image" src="https://i.imgur.com/sdsFAoT.png"></iron-image>
+          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
         </template>
 
         <template is="dom-if" if="[[categoryActive]]">
           <div class="layout horizontal center-center">
-            <iron-image class="category-icon" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
+            <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
           </div>
         </template>
 
         <template is="dom-if" if="[[imageActive]]">
-          <iron-image sizing="cover" class="main-image" src$="[[postImagePath]]"></iron-image>
+          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
         </template>
 
         <template is="dom-if" if="[[streetViewActive]]" restamp="">
@@ -41784,8 +41798,12 @@ If you're seeing the message "You have included the Google Maps API multiple tim
         postImagePath: {
           type: String,
           computed: '_postImagePath(post)'
-        }
+        },
 
+        headerMode: {
+          type: Boolean,
+          value: false
+        }
       },
 
       _getLatitute: function (latitude) {
@@ -42667,6 +42685,28 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
       paper-icon-button {
         color: #ccc;
       }
+
+      #reportPointIconButton {
+        color: #ccc;
+      }
+
+      .thumbsIcon {
+        padding-left: 16px;
+      }
+
+      @media (min-width: 985px) {
+        .thumbsIcon {
+          display: none;
+        }
+      }
+
+      iron-icon.thumbsIconUp {
+        color: var(--master-point-up-color);
+      }
+
+      iron-icon.thumbsIconDown {
+        color: var(--master-point-down-color);
+      }
     </style>
 
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
@@ -42676,8 +42716,13 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
 
       <div class="layout vertical">
 
-        <div class="userInfoContainer layout horizontal end-justified" up-vote$="[[upVote(point)]]" down-vote$="[[downVote(point)]]" hidden$="[[hideUser]]">
-          <yp-user-with-organization title-date="[[point.created_at]]" inverted="" user="[[user]]"></yp-user-with-organization>
+        <div class="userInfoContainer layout horizontal" up-vote$="[[upVote(point)]]" down-vote$="[[downVote(point)]]" hidden$="[[hideUser]]">
+          <iron-icon icon="thumb-up" class="thumbsIcon thumbsIconUp" hidden$="[[!pointValueUp]]"></iron-icon>
+          <iron-icon icon="thumb-down" class="thumbsIcon thumbsIconDown" hidden$="[[pointValueUp]]"></iron-icon>
+          <div class="flex"></div>
+          <div class="layout horizontal end-justified">
+            <yp-user-with-organization title-date="[[point.created_at]]" inverted="" user="[[user]]"></yp-user-with-organization>
+          </div>
         </div>
 
         <div class="point-content">
@@ -42708,6 +42753,7 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
                 <paper-icon-button icon="clear" on-tap="_deletePoint"></paper-icon-button>
               </div>
             </template>
+            <paper-icon-button hidden$="[[!loggedInUser]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
           </div>
         </div>
       </div>
@@ -42760,6 +42806,11 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
         maxNumberOfPointsBeforeEditFrozen: {
           type: Number,
           value: 5
+        },
+
+        pointValueUp: {
+          type: Boolean,
+          computed: 'upVote(point)'
         }
       },
 
@@ -42817,6 +42868,21 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
       _deleteResponse: function () {
         this.fire("yp-point-deleted", { pointId: this.point.id });
         this.set('point', null);
+      },
+
+      _reportPoint: function () {
+        window.appGlobals.activity('open', 'point.report');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
+        dialog.setup('/api/points/'+this.point.id+'/report',
+          this.t('reportConfirmation'),
+          this._onReport.bind(this),
+          this.t('point.report'),
+          'PUT');
+        dialog.open();
+      },
+
+      _onReport: function () {
+        window.appGlobals.notifyUserViaToast(this.t('point.report')+': '+this.point.content);
       },
 
       _editPoint: function () {
@@ -46864,13 +46930,13 @@ information on the API.
         }
       }
 
-        @media (max-width: 800px) {
-          .post-name {
-            font-size: 22px;
-          }
+      @media (max-width: 800px) {
+        .post-name {
+          font-size: 22px;
         }
+      }
 
-        @media (max-width: 420px) {
+      @media (max-width: 420px) {
         :host {
           width: 304px;
         }
@@ -46900,6 +46966,7 @@ information on the API.
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
 
     <template is="dom-if" if="[[post]]" restamp="">
       <div class="layout horizontal center-center">
@@ -46907,7 +46974,7 @@ information on the API.
           <div class="layout vertical wrap">
             <h1 class="post-name" on-tap="goToPostIfNotHeader">[[postName]]</h1>
             <div class="layout horizontal wrap mediaAndInfoContainer">
-              <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
+              <yp-post-cover-media header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
               <div class="layout vertical">
                 <div class="infoContainer">
                   <div id="description" class="description"></div>
@@ -46917,14 +46984,17 @@ information on the API.
                 </div>
               </div>
               <template is="dom-if" if="[[headerMode]]">
-                <template is="dom-if" if="[[hasPostAccess]]">
+                <template is="dom-if" if="[[loggedInUser]]">
                   <paper-menu-button vertical-align="top" horizontal-align="right" class="edit">
                     <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
                     <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-                      <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                      <paper-item id="moveMenuItem">[[t('post.move')]]</paper-item>
-                      <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
-                      <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+                      <template is="dom-if" if="[[hasPostAccess]]">
+                        <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+                        <paper-item id="moveMenuItem">[[t('post.move')]]</paper-item>
+                        <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
+                        <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+                      </template>
+                      <paper-item id="reportMenuItem">[[t('post.report')]]</paper-item>
                     </paper-menu>
                   </paper-menu-button>
                 </template>
@@ -46948,7 +47018,8 @@ information on the API.
         Polymer.YpPostBehavior,
         Polymer.AccessHelpers,
         Polymer.ypGotAdminRightsBehavior,
-        Polymer.YpLinkifyAndEmjoi
+        Polymer.YpLinkifyAndEmjoi,
+        Polymer.ypLoggedInUserBehavior
       ],
 
       properties: {
@@ -47032,6 +47103,8 @@ information on the API.
           this._openPostStatusChange();
         else if (detail.item.id=="moveMenuItem")
           this._openMovePost();
+        else if (detail.item.id=="reportMenuItem")
+          this._openReport();
         this.selectedMenuItem = null;
       },
 
@@ -47053,13 +47126,28 @@ information on the API.
         dialog.open('edit', { postId: this.post.id });
       },
 
+      _openReport: function () {
+        window.appGlobals.activity('open', 'post.report');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
+        dialog.setup('/api/posts/'+this.post.id+'/report',
+          this.t('reportConfirmation'),
+          this._onReport.bind(this),
+          this.t('post.report'),
+          'PUT');
+        dialog.open();
+      },
+
       _openDelete: function () {
         window.appGlobals.activity('open', 'post.delete');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
-        dialog.setup('/api/posts/', this.post.id,
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
+        dialog.setup('/api/posts/'+this.post.id,
           this.t('post.deleteConfirmation'),
           this._onDeleted.bind(this));
         dialog.open();
+      },
+
+      _onReport: function () {
+        window.appGlobals.notifyUserViaToast(this.t('post.report')+': '+this.post.name);
       },
 
       _onDeleted: function () {
@@ -49353,14 +49441,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.81">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.82">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.2.81">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.2.82">
    * ```
    *
    * ### Consuming effects
@@ -50158,7 +50246,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.81">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.82">
 ```
 
 #### List of effects
@@ -55219,7 +55307,7 @@ value. `setMax` should move the slider to the maximum value.
       <p>[[t('user.acceptInviteInstructions')]]</p>
 
       <div class="buttons">
-        <yp-ajax id="acceptInviteAjax" method="POST" on-response="_acceptInviteResponse"></yp-ajax>
+        <yp-ajax id="acceptInviteAjax" method="POST" dispatch-error="" on-error="_inviteError" iron-response="_acceptInviteResponse"></yp-ajax>
         <yp-ajax id="getInviteSenderAjax" method="GET" on-response="_getInviteSenderResponse"></yp-ajax>
         <paper-button on-tap="_cancel" dialog-dismiss="">[[t('cancel')]]</paper-button>
         <paper-button autofocus="" on-tap="_acceptInvite">[[t('user.acceptInvite')]]</paper-button>
@@ -55254,6 +55342,10 @@ value. `setMax` should move the slider to the maximum value.
       },
 
       targetName: String
+    },
+
+    _inviteError: function (event, detail) {
+      this.$.acceptInviteAjax.showErrorDialog(this.t('inviteNotFoundOrAlreadyUsed'));
     },
 
     _checkInviteSender: function(e) {
@@ -55333,7 +55425,7 @@ value. `setMax` should move the slider to the maximum value.
       <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
 
       <template is="dom-if" if="[[loggedInUser]]">
-        <yp-delete-dialog id="deleteDialog"></yp-delete-dialog>
+        <yp-api-action-dialog id="apiActionDialog"></yp-api-action-dialog>
         <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
         <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
         <ac-notification-toast id="notificationToast"></ac-notification-toast>
@@ -55383,18 +55475,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.2.81"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.2.82"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.2.81"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.2.82"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.2.81"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.2.82"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -56779,9 +56871,9 @@ value. `setMax` should move the slider to the maximum value.
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.2.81");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.2.82");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.2.81");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.2.82");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);

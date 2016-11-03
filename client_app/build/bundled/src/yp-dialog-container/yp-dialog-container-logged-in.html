@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.81"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-delete-dialog" assetpath="../yp-delete-dialog/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.82"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-api-action-dialog" assetpath="../yp-api-action-dialog/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -12,12 +12,12 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <yp-ajax method="DELETE" id="deleteAjax" on-response="_deleteResponse"></yp-ajax>
-    <paper-dialog id="deleteConfirmationDialog">
+    <yp-ajax method$="[[method]]" id="apiAjax" on-response="_response"></yp-ajax>
+    <paper-dialog id="confirmationDialog">
       <div>[[confirmationText]]</div>
       <div class="buttons">
         <paper-button dialog-dismiss="">[[t('cancel')]]</paper-button>
-        <paper-button dialog-confirm="" on-tap="_delete">[[t('delete')]]</paper-button>
+        <paper-button dialog-confirm="" on-tap="_delete">[[confirmButtonText]]</paper-button>
       </div>
     </paper-dialog>
   </template>
@@ -25,7 +25,7 @@
   <script>
     Polymer({
 
-      is: 'yp-delete-dialog',
+      is: 'yp-api-action-dialog',
 
       behaviors: [
         Polymer.appHelpers
@@ -41,37 +41,46 @@
           type: String
         },
 
-        actionId: {
-          type: String
-        },
-
-        onDeletedFunction: {
+        onFinishedFunction: {
           type: Function,
           value: null
+        },
+
+        confirmButtonText: {
+          type: String
         }
       },
 
-      setup: function (action, actionId, confirmationText, onDeletedFunction) {
+      setup: function (action, confirmationText, onFinishedFunction, confirmButtonText, method) {
         this.set('action', action);
-        this.set('actionId', actionId);
         this.set('confirmationText', confirmationText);
-        this.set('onDeletedFunction', onDeletedFunction);
+        this.set('onFinishedFunction', onFinishedFunction);
+        if (confirmButtonText) {
+          this.set('confirmButtonText', confirmButtonText);
+        } else {
+          this.set('confirmButtonText', this.t('delete'));
+        }
+        if (method) {
+          this.set('method', method);
+        } else {
+          this.set('method', 'DELETE');
+        }
       },
 
       open: function () {
-        this.$$("#deleteConfirmationDialog").open();
+        this.$$("#confirmationDialog").open();
       },
 
       _delete: function () {
-        this.$$("#deleteAjax").url = this.action + this.actionId;
-        this.$$("#deleteAjax").setBody({deleteConfirmed: true});
-        this.$$("#deleteAjax").generateRequest();
+        this.$$("#apiAjax").url = this.action;
+        this.$$("#apiAjax").setBody({deleteConfirmed: true});
+        this.$$("#apiAjax").generateRequest();
       },
 
-      _deleteResponse: function () {
-        this.fire("deleted");
-        if (this.onDeletedFunction) {
-          this.onDeletedFunction();
+      _response: function () {
+        this.fire("api-action-finished");
+        if (this.onFinishedFunction) {
+          this.onFinishedFunction();
         }
       }
     });

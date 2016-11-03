@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.81"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.82"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -593,8 +593,8 @@
       },
 
       _openDelete: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
-        dialog.setup('/api/communities/', this.community.id,
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
+        dialog.setup('/api/communities/'+this.community.id,
           this.t('community.deleteConfirmation'),
           this._onDeleted.bind(this));
         dialog.open();

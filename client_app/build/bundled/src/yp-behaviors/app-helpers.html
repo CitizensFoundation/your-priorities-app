@@ -1,5 +1,5 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.81">
-<link rel="import" href="../../bower_components/lodash-element/lodash.js.html?v=6.2.81">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.82">
+<link rel="import" href="../../bower_components/lodash-element/lodash.js.html?v=6.2.82">
 
 <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
 <script src="../../bower_components/linkifyjs/linkify.js"></script>
@@ -145,11 +145,16 @@
         return;
       }
       var postUrl = '/post/' + postId;
-      window.appGlobals.activity('open', 'post', postUrl);
-      window.app.setKeepOpenForPostsOn(window.location.pathname);
-      this.async(function () {
-        this.redirectTo(postUrl);
-      });
+      var windowLocation = window.location.href;
+      console.log(postUrl);
+      console.log(windowLocation);
+      if (windowLocation.indexOf(postUrl) == -1) {
+        window.appGlobals.activity('open', 'post', postUrl);
+        window.app.setKeepOpenForPostsOn(window.location.pathname);
+        this.async(function () {
+          this.redirectTo(postUrl);
+        });
+      }
     },
 
     cardMouseOver: function (event) {

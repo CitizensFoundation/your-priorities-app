@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.81"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.82"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -1711,7 +1711,6 @@ is shown even without no results (check the demo for an example).
         }
       },
 
-
       _search: function () {
         window.appGlobals.activity('click', 'search');
         this._refreshGroupFromFilter();
@@ -1744,6 +1743,7 @@ is shown even without no results (check the demo for an example).
 
       _groupIdChanged: function (newValue, oldValue) {
         this.set("posts", null);
+        this.set('noPosts', false);
         if (newValue) {
           this._loadMoreData();
         }
@@ -1756,6 +1756,7 @@ is shown even without no results (check the demo for an example).
 
       _loadMoreData: function () {
         this.set('moreToLoad', false);
+        this.set('noPosts', false);
         var objectId, objectType;
 
         if (this.userId) {
@@ -1798,6 +1799,10 @@ is shown even without no results (check the demo for an example).
           this.push('posts', post);
         }.bind(this));
 
+        if (posts.length==0) {
+          this.set('noPosts', true);
+        }
+
         if (posts.length>0) {
           this.set('noPosts', false);
           this.async(function () {
@@ -1806,8 +1811,6 @@ is shown even without no results (check the demo for an example).
         } else {
           if (this.searchingFor && this.searchingFor!="") {
             this.set('noPosts', false);
-          } else {
-            this.set('noPosts', true);
           }
         }
 
@@ -2110,8 +2113,8 @@ is shown even without no results (check the demo for an example).
 
       _openDelete: function () {
         window.appGlobals.activity('open', 'group.delete');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
-        dialog.setup('/api/groups/', this.group.id,
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
+        dialog.setup('/api/groups/'+this.group.id,
           this.t('group.deleteConfirmation'),
           this._onDeleted.bind(this));
         dialog.open();

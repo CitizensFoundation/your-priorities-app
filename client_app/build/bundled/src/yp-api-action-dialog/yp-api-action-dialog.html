@@ -1,0 +1,100 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.82">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.82">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.82">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.82">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.82">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.82">
+
+</head><body><dom-module id="yp-api-action-dialog">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        height: 0;
+      }
+
+      paper-dialog {
+        background-color: #FFF;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <yp-ajax method$="[[method]]" id="apiAjax" on-response="_response"></yp-ajax>
+    <paper-dialog id="confirmationDialog">
+      <div>[[confirmationText]]</div>
+      <div class="buttons">
+        <paper-button dialog-dismiss="">[[t('cancel')]]</paper-button>
+        <paper-button dialog-confirm="" on-tap="_delete">[[confirmButtonText]]</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-api-action-dialog',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+
+        confirmationText: {
+          type: String
+        },
+
+        action: {
+          type: String
+        },
+
+        onFinishedFunction: {
+          type: Function,
+          value: null
+        },
+
+        confirmButtonText: {
+          type: String
+        }
+      },
+
+      setup: function (action, confirmationText, onFinishedFunction, confirmButtonText, method) {
+        this.set('action', action);
+        this.set('confirmationText', confirmationText);
+        this.set('onFinishedFunction', onFinishedFunction);
+        if (confirmButtonText) {
+          this.set('confirmButtonText', confirmButtonText);
+        } else {
+          this.set('confirmButtonText', this.t('delete'));
+        }
+        if (method) {
+          this.set('method', method);
+        } else {
+          this.set('method', 'DELETE');
+        }
+      },
+
+      open: function () {
+        this.$$("#confirmationDialog").open();
+      },
+
+      _delete: function () {
+        this.$$("#apiAjax").url = this.action;
+        this.$$("#apiAjax").setBody({deleteConfirmed: true});
+        this.$$("#apiAjax").generateRequest();
+      },
+
+      _response: function () {
+        this.fire("api-action-finished");
+        if (this.onFinishedFunction) {
+          this.onFinishedFunction();
+        }
+      }
+    });
+  </script>
+</dom-module>
+</body></html>

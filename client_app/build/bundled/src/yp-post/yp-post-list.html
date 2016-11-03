@@ -1,27 +1,27 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.81">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.82">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.81">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.82">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.2.81">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.81">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.2.81">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.81">
-<link href="../../bower_components/paper-search/paper-search.html?v=6.2.81" rel="import">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.2.82">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.82">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.2.82">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.82">
+<link href="../../bower_components/paper-search/paper-search.html?v=6.2.82" rel="import">
 
-<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.2.81">
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.2.82">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.81">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.2.81">
-<link rel="import" href="../ac-activities/ac-activities.html?v=6.2.81">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.82">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.2.82">
+<link rel="import" href="../ac-activities/ac-activities.html?v=6.2.82">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.81">
-<link rel="import" href="../yp-post/yp-post-card.html?v=6.2.81">
-<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.2.81">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.82">
+<link rel="import" href="../yp-post/yp-post-card.html?v=6.2.82">
+<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.2.82">
 
-<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.2.81">
+<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.2.82">
 
 </head><body><dom-module id="yp-post-list">
   <template>
@@ -290,7 +290,6 @@
         }
       },
 
-
       _search: function () {
         window.appGlobals.activity('click', 'search');
         this._refreshGroupFromFilter();
@@ -323,6 +322,7 @@
 
       _groupIdChanged: function (newValue, oldValue) {
         this.set("posts", null);
+        this.set('noPosts', false);
         if (newValue) {
           this._loadMoreData();
         }
@@ -335,6 +335,7 @@
 
       _loadMoreData: function () {
         this.set('moreToLoad', false);
+        this.set('noPosts', false);
         var objectId, objectType;
 
         if (this.userId) {
@@ -377,6 +378,10 @@
           this.push('posts', post);
         }.bind(this));
 
+        if (posts.length==0) {
+          this.set('noPosts', true);
+        }
+
         if (posts.length>0) {
           this.set('noPosts', false);
           this.async(function () {
@@ -385,8 +390,6 @@
         } else {
           if (this.searchingFor && this.searchingFor!="") {
             this.set('noPosts', false);
-          } else {
-            this.set('noPosts', true);
           }
         }
 

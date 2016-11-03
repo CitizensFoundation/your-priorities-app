@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.81"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.82"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="/">
 
   <template>
 
@@ -91,7 +91,7 @@
 
       <div class="top-container">
 
-       <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
+       <yp-post-cover-media post="[[post]]" header-mode=""></yp-post-cover-media>
 
         <template is="dom-if" if="[[post]]">
           <div class="container">
@@ -317,6 +317,13 @@
         .main-container {
           width: 310px;
         }
+
+      }
+
+      .mobilePaperTextArea {
+        --paper-input-container-label: {
+          font-size: 23px;
+        };
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -385,7 +392,7 @@
       </template>
       <template is="dom-if" if="[[!largeMode]]">
         <div id="pointUpOrDownMaterial" elevation="0" class="pointText layout vertical" animated="">
-          <paper-textarea id="mobileUpOrDownPoint" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueMobileUpOrDown}}" value="[[textValueMobileUpOrDown]]" label="[[labelMobileUpOrDown]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
+          <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueMobileUpOrDown}}" value="[[textValueMobileUpOrDown]]" label="[[labelMobileUpOrDown]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
           <div class="horizontal end-justified layout">
             <emoji-selector id="pointUpDownEmojiSelector"></emoji-selector>
           </div>
@@ -844,8 +851,8 @@
 
         _openDelete: function () {
           window.appGlobals.activity('open', 'userImage.delete');
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
-          dialog.setup('/api/images/', this.post.id+'/'+this.image.id+'/user_images',
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
+          dialog.setup('/api/images/'+this.post.id+'/'+this.image.id+'/user_images',
             this.t('userImage.deleteConfirmation'),
             this._refresh.bind(this));
           dialog.open();

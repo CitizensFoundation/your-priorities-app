@@ -1,20 +1,20 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.81">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.82">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.81">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.82">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.81">
-<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.2.81">
-<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.2.81">
-<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.2.81">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.82">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.2.82">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.2.82">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.2.82">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.81">
-<link rel="import" href="yp-post-actions.html?v=6.2.81">
-<link rel="import" href="yp-post-users.html?v=6.2.81">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.82">
+<link rel="import" href="yp-post-actions.html?v=6.2.82">
+<link rel="import" href="yp-post-users.html?v=6.2.82">
 
 </head><body><dom-module id="yp-post-cover-media">
 
@@ -64,21 +64,30 @@
           height: 160px;
         }
       }
+
+      .pointer {
+        cursor: pointer;
+      }
+
+      .pointer[header-mode] {
+        cursor: default;
+      }
+
     </style>
 
       <div class="mapCanvas">
         <template is="dom-if" if="[[noneActive]]">
-          <iron-image sizing="cover" class="main-image" src="https://i.imgur.com/sdsFAoT.png"></iron-image>
+          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
         </template>
 
         <template is="dom-if" if="[[categoryActive]]">
           <div class="layout horizontal center-center">
-            <iron-image class="category-icon" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
+            <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
           </div>
         </template>
 
         <template is="dom-if" if="[[imageActive]]">
-          <iron-image sizing="cover" class="main-image" src$="[[postImagePath]]"></iron-image>
+          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
         </template>
 
         <template is="dom-if" if="[[streetViewActive]]" restamp="">
@@ -160,8 +169,12 @@
         postImagePath: {
           type: String,
           computed: '_postImagePath(post)'
-        }
+        },
 
+        headerMode: {
+          type: Boolean,
+          value: false
+        }
       },
 
       _getLatitute: function (latitude) {

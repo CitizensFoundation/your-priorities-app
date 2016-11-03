@@ -1,26 +1,27 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.81">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.82">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.81">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.81">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.82">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.82">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.81">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.2.81">
-<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.2.81">
-<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.2.81">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.82">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.2.82">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.2.82">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.2.82">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.81">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.81">
-<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.2.81">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.2.81">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.82">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.82">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.2.82">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.2.82">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.2.82">
 
-<link rel="import" href="yp-post-actions.html?v=6.2.81">
-<link rel="import" href="yp-post-cover-media.html?v=6.2.81">
-<link rel="import" href="yp-post-behaviors.html?v=6.2.81">
+<link rel="import" href="yp-post-actions.html?v=6.2.82">
+<link rel="import" href="yp-post-cover-media.html?v=6.2.82">
+<link rel="import" href="yp-post-behaviors.html?v=6.2.82">
 
 </head><body><dom-module id="yp-post-card">
 
@@ -155,13 +156,13 @@
         }
       }
 
-        @media (max-width: 800px) {
-          .post-name {
-            font-size: 22px;
-          }
+      @media (max-width: 800px) {
+        .post-name {
+          font-size: 22px;
         }
+      }
 
-        @media (max-width: 420px) {
+      @media (max-width: 420px) {
         :host {
           width: 304px;
         }
@@ -191,6 +192,7 @@
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
 
     <template is="dom-if" if="[[post]]" restamp="">
       <div class="layout horizontal center-center">
@@ -198,7 +200,7 @@
           <div class="layout vertical wrap">
             <h1 class="post-name" on-tap="goToPostIfNotHeader">[[postName]]</h1>
             <div class="layout horizontal wrap mediaAndInfoContainer">
-              <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
+              <yp-post-cover-media header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
               <div class="layout vertical">
                 <div class="infoContainer">
                   <div id="description" class="description"></div>
@@ -208,14 +210,17 @@
                 </div>
               </div>
               <template is="dom-if" if="[[headerMode]]">
-                <template is="dom-if" if="[[hasPostAccess]]">
+                <template is="dom-if" if="[[loggedInUser]]">
                   <paper-menu-button vertical-align="top" horizontal-align="right" class="edit">
                     <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
                     <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-                      <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                      <paper-item id="moveMenuItem">[[t('post.move')]]</paper-item>
-                      <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
-                      <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+                      <template is="dom-if" if="[[hasPostAccess]]">
+                        <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+                        <paper-item id="moveMenuItem">[[t('post.move')]]</paper-item>
+                        <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
+                        <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+                      </template>
+                      <paper-item id="reportMenuItem">[[t('post.report')]]</paper-item>
                     </paper-menu>
                   </paper-menu-button>
                 </template>
@@ -239,7 +244,8 @@
         Polymer.YpPostBehavior,
         Polymer.AccessHelpers,
         Polymer.ypGotAdminRightsBehavior,
-        Polymer.YpLinkifyAndEmjoi
+        Polymer.YpLinkifyAndEmjoi,
+        Polymer.ypLoggedInUserBehavior
       ],
 
       properties: {
@@ -323,6 +329,8 @@
           this._openPostStatusChange();
         else if (detail.item.id=="moveMenuItem")
           this._openMovePost();
+        else if (detail.item.id=="reportMenuItem")
+          this._openReport();
         this.selectedMenuItem = null;
       },
 
@@ -344,13 +352,28 @@
         dialog.open('edit', { postId: this.post.id });
       },
 
+      _openReport: function () {
+        window.appGlobals.activity('open', 'post.report');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
+        dialog.setup('/api/posts/'+this.post.id+'/report',
+          this.t('reportConfirmation'),
+          this._onReport.bind(this),
+          this.t('post.report'),
+          'PUT');
+        dialog.open();
+      },
+
       _openDelete: function () {
         window.appGlobals.activity('open', 'post.delete');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("deleteDialog");
-        dialog.setup('/api/posts/', this.post.id,
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
+        dialog.setup('/api/posts/'+this.post.id,
           this.t('post.deleteConfirmation'),
           this._onDeleted.bind(this));
         dialog.open();
+      },
+
+      _onReport: function () {
+        window.appGlobals.notifyUserViaToast(this.t('post.report')+': '+this.post.name);
       },
 
       _onDeleted: function () {
