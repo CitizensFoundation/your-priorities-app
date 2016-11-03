@@ -157,6 +157,13 @@
         .main-container {
           width: 310px;
         }
+
+      }
+
+      .mobilePaperTextArea {
+        --paper-input-container-label: {
+          font-size: 23px;
+        };
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -233,7 +240,7 @@
       </template>
       <template is="dom-if" if="[[!largeMode]]">
         <div id="pointUpOrDownMaterial" elevation="0" class="pointText layout vertical" animated>
-          <paper-textarea id="mobileUpOrDownPoint" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
+          <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                           bind-value="{{textValueMobileUpOrDown}}" value=[[textValueMobileUpOrDown]] label="[[labelMobileUpOrDown]]"
                           char-counter rows="2"
                           max-rows="3" maxlength="500"></paper-textarea>

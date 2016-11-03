@@ -67,6 +67,24 @@
       #reportPointIconButton {
         color: #ccc;
       }
+
+      .thumbsIcon {
+        padding-left: 16px;
+      }
+
+      @media (min-width: 985px) {
+        .thumbsIcon {
+          display: none;
+        }
+      }
+
+      iron-icon.thumbsIconUp {
+        color: var(--master-point-up-color);
+      }
+
+      iron-icon.thumbsIconDown {
+        color: var(--master-point-down-color);
+      }
     </style>
 
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
@@ -76,8 +94,13 @@
 
       <div class="layout vertical">
 
-        <div class="userInfoContainer layout horizontal end-justified" up-vote$="[[upVote(point)]]"  down-vote$="[[downVote(point)]]" hidden$="[[hideUser]]">
-          <yp-user-with-organization title-date="[[point.created_at]]" inverted user="[[user]]"></yp-user-with-organization>
+        <div class="userInfoContainer layout horizontal" up-vote$="[[upVote(point)]]" down-vote$="[[downVote(point)]]" hidden$="[[hideUser]]">
+          <iron-icon icon="thumb-up" class="thumbsIcon thumbsIconUp" hidden$="[[!pointValueUp]]"></iron-icon>
+          <iron-icon icon="thumb-down" class="thumbsIcon thumbsIconDown" hidden$="[[pointValueUp]]"></iron-icon>
+          <div class="flex"></div>
+          <div class="layout horizontal end-justified">
+            <yp-user-with-organization title-date="[[point.created_at]]" inverted user="[[user]]"></yp-user-with-organization>
+          </div>
         </div>
 
         <div class="point-content">
@@ -161,6 +184,11 @@
         maxNumberOfPointsBeforeEditFrozen: {
           type: Number,
           value: 5
+        },
+
+        pointValueUp: {
+          type: Boolean,
+          computed: 'upVote(point)'
         }
       },
 
