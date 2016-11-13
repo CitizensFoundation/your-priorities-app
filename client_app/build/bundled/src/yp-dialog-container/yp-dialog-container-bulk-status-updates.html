@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.83"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-update-templates" assetpath="../yp-bulk-status-update/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.84"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-update-templates" assetpath="../yp-bulk-status-update/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       #dialog {
@@ -204,10 +204,11 @@
         background-color: #f0f0f0;
       }
 
-      iron-list {
+      .postsList {
         color: #000;
         height: 800px;
         width: 100%;
+        overflow: auto;
       }
 
       .pageItem {
@@ -253,6 +254,8 @@
 
       paper-textarea {
         height: 200px;
+        max-height: 220px;
+        overflow: auto;
       }
 
       .localeInput {
@@ -289,6 +292,11 @@
         background-color: #FFF;
       }
 
+      .postItem {
+        height: 300px;
+        min-height: 300px;
+      }
+
       paper-tab {
         font-size: 14px;
       }
@@ -318,10 +326,10 @@
         <iron-pages attr-for-selected="name" selected="{{selectedGroup}}">
           <template is="dom-repeat" items="[[config.groups]]" as="group">
             <section name="[[group.name]]">
-              <div class="layout vertical">
-                <iron-list items="[[_orderPosts(group.posts)]]" as="post">
-                  <template>
-                    <div class="layout horizontal">
+              <div class="layout vertical postsList">
+                <template is="dom-if" if="[[_selectedGroup(selectedGroup, group.name)]]">
+                  <template is="dom-repeat" items="[[_orderPosts(group.posts)]]" as="post">
+                    <div class="layout horizontal postItem">
                       <paper-material elevation="2" class="layout horizontal">
                         <div class="layout vertical">
                           <div class="layout horizontal">
@@ -346,7 +354,7 @@
                             <div class="postDropdown">
                               <paper-dropdown-menu label="[[t('selectStatusTemplate')]]">
                                 <paper-menu class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.selectedTemplateName}}">
-                                  <template is="dom-repeat" items="[[templates]]" as="templateOption">
+                                  <template is="dom-repeat" items="[[templatesWithNone]]" as="templateOption">
                                     <paper-item name="[[templateOption.title]]">[[templateOption.title]]</paper-item>
                                   </template>
                                 </paper-menu>
@@ -362,7 +370,7 @@
                               </paper-dropdown-menu>
                             </div>
                             <div class="postUniqueMessage">
-                              <paper-textarea id="emailFooter" name="emailFooter" value="{{post.uniqueStatusMessage}}" label="[[t('uniqueStatusMessage')]]" rows="5" max-rows="5" maxlength="30000" class="mainInput">
+                              <paper-textarea id="emailFooter" name="emailFooter" value="{{post.uniqueStatusMessage}}" label="[[t('uniqueStatusMessage')]]" rows="4" max-rows="4" maxlength="30000" class="mainInput">
                               </paper-textarea>
                             </div>
                           </div>
@@ -370,7 +378,7 @@
                       </paper-material>
                     </div>
                   </template>
-                </iron-list>
+                </template>
               </div>
             </section>
           </template>
@@ -379,7 +387,6 @@
         <div class="layout horizontal center-center">
           <yp-ajax method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" on-response="_getGroupsResponse"></yp-ajax>
           <yp-ajax method="PUT" id="updateConfigAjax" url="/api/bulk_status_updates/[[bulkStatusUpdate.community_id]]/[[bulkStatusUpdate.id]]/updateConfig" on-response="_updateConfigResponse"></yp-ajax>
-
           <yp-ajax method="GET" id="getBulkStatusUpdatesAjax" on-response="_bulkStatusUpdateResponse"></yp-ajax>
         </div>
       </paper-dialog-scrollable>
@@ -443,7 +450,24 @@
         closeAfterSave: {
           type: Boolean,
           value: false
+        },
+
+        templatesWithNone: {
+          type: Array,
+          computed: '_templatesWithNone(templates)'
         }
+      },
+
+      _templatesWithNone: function (templates) {
+        if (templates) {
+          return this.templates.concat(['None']);
+        } else {
+          return ['None'];
+        }
+      },
+
+      _onIronResize: function(e) {
+        e.stopImmediatePropagation();
       },
 
       _getHeadGroupName: function (name) {
@@ -451,6 +475,11 @@
           return name.split(' ')[0];
         else
           return "";
+      },
+
+      _selectedGroup: function (selectedGroup, currentGroup) {
+        console.log(selectedGroup+" - "+currentGroup);
+        return selectedGroup == currentGroup;
       },
 
       reset: function () {
