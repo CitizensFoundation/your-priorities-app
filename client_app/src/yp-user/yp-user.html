@@ -85,39 +85,36 @@
       data="{{tabRouteData}}">
     </app-route>
 
-    <yp-page id="page" hidden>
 
-      <yp-user-large-card id="userCard" class="largeCard card" user="[[user]]" on-update-domain="_refresh"></yp-user-large-card>
+    <yp-user-large-card hidden id="userCard" class="largeCard card" user="[[user]]" on-update-domain="_refresh"></yp-user-large-card>
 
-      <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused>
-        <paper-tab class="tab">[[t('news')]]</paper-tab>
-        <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
-        <paper-tab class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
-        <paper-tab class="tab">
-          <div class="layout vertical center-center tabCounterContainer">
-            <span>[[t('posts.posts')]]</span><div class="counterInfo" id="tabCount"></div>
+    <paper-tabs hidden id="paper_tabs" class="tabs" selected="{{selected}}" focused>
+      <paper-tab class="tab">[[t('news')]]</paper-tab>
+      <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
+      <paper-tab class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
+      <paper-tab class="tab">
+        <div class="layout vertical center-center tabCounterContainer">
+          <span>[[t('posts.posts')]]</span><div class="counterInfo" id="tabCount"></div>
+        </div>
+      </paper-tab>
+    </paper-tabs>
+
+    <iron-pages class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+      <section name="status_update">
+        <yp-
+      </section>
+      <section>
+        <ac-activities user-id="[[user.id]]"></ac-activities>
+      </section>
+      <section>
+        <template>
+          <div class="layout horizontal center-center">
+            <yp-post-list id="postList" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCount" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
           </div>
-        </paper-tab>
-      </paper-tabs>
 
-      <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <section>
-          <div class="card-container layout center-center wrap">
-          </div>
-        </section>
-        <section>
-          <ac-activities user-id="[[user.id]]"></ac-activities>
-        </section>
-        <section>
-          <template>
-            <div class="layout horizontal center-center">
-              <yp-post-list id="postList" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCount" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-            </div>
-
-          </template>
-        </section>
-      </iron-pages>
-    </yp-page>
+        </template>
+      </section>
+    </iron-pages>
 
     <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
     <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
@@ -162,6 +159,12 @@
           value: false
         },
 
+        selectedTab: {
+          type: String,
+          value: null,
+          observer: '_selectedTabChanged'
+        },
+
         user: {
           type: Object
         },
@@ -179,6 +182,25 @@
         }
       },
 
+      observers: [
+        '_routeIdChanged(idRouteData.id)',
+        '_routeTabChanged(tabRouteData.tabName)'
+      ],
+
+      _routeIdChanged: function (newId) {
+        if (newId) {
+          this.set('postId', newId);
+        }
+      },
+
+      _routeTabChanged: function (newTabName) {
+        if (newTabName && !this._isNumber(newTabName)) {
+          this.set('selectedTab', newTabName);
+        } else if (newTabName && this._isNumber(newTabName)) {
+          this.set('scrollToPointId', newTabName);
+          this.set('selectedTab', 'debate');
+        }
+      },
 
       _tabNameChanged: function (newValue) {
         if (newValue) {
