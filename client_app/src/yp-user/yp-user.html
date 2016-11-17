@@ -28,6 +28,7 @@
 <link rel="import" href="../yp-page/yp-page.html">
 <link rel="import" href="../yp-other-social-media/yp-other-social-media.html">
 <link rel="import" href="../yp-user/yp-user-large-card.html">
+<link rel="import" href="../yp-bulk-status-update/yp-bulk-status-display.html">
 
 <dom-module id="yp-user">
   <template>
@@ -82,9 +83,15 @@
     <app-route
       route="{{tabRoute}}"
       pattern="/:tabName"
-      data="{{tabRouteData}}">
+      data="{{tabRouteData}}"
+      tail="{{statusUpdateRoute}}">
     </app-route>
 
+    <app-route
+      route="{{statusUpdateRoute}}"
+      pattern="/:statusUpdateId"
+      data="{{statusUpdateRouteData}}">
+    </app-route>
 
     <yp-user-large-card hidden id="userCard" class="largeCard card" user="[[user]]" on-update-domain="_refresh"></yp-user-large-card>
 
@@ -100,8 +107,8 @@
     </paper-tabs>
 
     <iron-pages class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-      <section name="status_update">
-        <yp-
+      <section name="status_updates">
+        <yp-bulk-status-display user-id$="[[userId]]" status-update-id$="[[statusUpdateId]]"></yp-bulk-status-display>
       </section>
       <section>
         <ac-activities user-id="[[user.id]]"></ac-activities>
@@ -141,8 +148,10 @@
         },
 
         tabRoute: Object,
+        statusUpdateRoute: Object,
         idRouteData: Object,
         tabRouteData: Object,
+        statusUpdateRouteData: Object,
 
         userId: {
           type: Number,
@@ -169,6 +178,8 @@
           type: Object
         },
 
+        statusUpdateId: String,
+
         selected: {
           type: Number,
           value: 0,
@@ -184,21 +195,28 @@
 
       observers: [
         '_routeIdChanged(idRouteData.id)',
-        '_routeTabChanged(tabRouteData.tabName)'
+        '_routeTabChanged(tabRouteData.tabName)',
+        '_routeStatusUpdateChanged(statusUpdateRouteData.statusUpdateId)'
       ],
 
       _routeIdChanged: function (newId) {
         if (newId) {
-          this.set('postId', newId);
+          this.set('userId', newId);
         }
       },
 
       _routeTabChanged: function (newTabName) {
-        if (newTabName && !this._isNumber(newTabName)) {
+        if (newTabName) {
           this.set('selectedTab', newTabName);
         } else if (newTabName && this._isNumber(newTabName)) {
           this.set('scrollToPointId', newTabName);
           this.set('selectedTab', 'debate');
+        }
+      },
+
+      _routeStatusUpdateChanged: function (statusUpdateId) {
+        if (statusUpdateId) {
+          this.set('statusUpdateId', statusUpdateId);
         }
       },
 

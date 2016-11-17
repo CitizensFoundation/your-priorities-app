@@ -931,6 +931,7 @@ router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
       }).then(function(statusUpdateIn) {
         if (statusUpdateIn) {
           statusUpdate = statusUpdateIn;
+          seriesCallback();
         } else {
           seriesCallback("Bulk status update not found");
         }
@@ -947,8 +948,8 @@ router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
       }).then(function (endorsements) {
         _.each(endorsements, function (endorsement) {
           allUserEndorsementsPostId.push(endorsement.post_id);
-          seriesCallback();
         });
+        seriesCallback();
       }).catch(function (error) {
         seriesCallback(error);
       });
@@ -957,32 +958,35 @@ router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
        config = JSON.parse(JSON.stringify(statusUpdate.config));
       _.each(config.groups, function (group, groupsIndex) {
         log.info("Before posts reject count "+config.groups[groupsIndex].posts.length);
-        config.groups[groupsIndex].posts = _.reject(config.groups[groupsIndex].posts, function (post) {
-          return !_.contains(allUserEndorsementsPostId, post.id)
-        });
+        /*config.groups[groupsIndex].posts = _.reject(config.groups[groupsIndex].posts, function (post) {
+          return !_.includes(allUserEndorsementsPostId, post.id)
+        });*/
         log.info("After posts reject count "+config.groups[groupsIndex].posts.length);
         config.groups[groupsIndex]["statuses"] = [];
         var gotStatus = {};
         _.each(config.groups[groupsIndex].posts, function (post) {
-          if (!gotStatus[post.official_status]) {
-            gotStatus[post.official_status] = true;
-            config.groups[groupsIndex]["statuses"].push({official_status: post.official_status, posts: []});
+          if (!post.newOfficialStatus)
+            post.newOfficialStatus = 0;
+          if (!gotStatus[post.newOfficialStatus]) {
+            gotStatus[post.newOfficialStatus] = true;
+            config.groups[groupsIndex]["statuses"].push({official_status: post.newOfficialStatus, posts: []});
           }
           _.each(config.groups[groupsIndex]["statuses"], function (status, index) {
-            if (status.official_status == post.official_status) {
+            if (status.official_status == post.newOfficialStatus) {
               config.groups[groupsIndex]["statuses"][index].posts.push(post);
             }
           });
-          config.groups = _.reject(config.groups, function (group) {
-            var totalCount = 0;
-            _.each(group.statuses, function (status) {
-              totalCount += status.posts.length;
-            });
-            return totalCount == 0;
-          });
-          seriesCallback();
+          config.groups[groupsIndex].posts = null;
         });
       });
+      config.groups = _.reject(config.groups, function (group) {
+        var totalCount = 0;
+        _.each(group.statuses, function (status) {
+          totalCount += status.posts.length;
+        });
+        return totalCount == 0;
+      });
+      seriesCallback();
     }
   ], function (error) {
     if (error) {

@@ -1,4 +1,7 @@
 {
+  "bulkStatusUdateForInfo": "Smelltu á hugmyndir fyrir nánari upplýsingar.",
+  "urlLink": "Hlekkur í hugmynd",
+  "bulkStatusUdateFor": "Stöðubreytingar á hugmyndum fyrir",
   "inviteNotFoundOrAlreadyUsed": "Boð fannst ekki eða það hefur verið notað áður",
   "reportConfirmation": "Ertu viss um að þú viljir tilkynna þetta efni fyrir brot á reglum?",
   "uniqueStatusMessage": "Sér svar fyrir þessa hugmynd",
@@ -82,6 +85,15 @@
     "successful": "Samþykkt",
     "failed": "Hafnað",
     "inProgress": "Í ferli"
+  },
+
+  "pluralStatus": {
+    "active": "Virkar",
+    "published": "Opnar hugmyndir",
+    "successful": "Samþykktar hugmyndir",
+    "failed": "Hugmyndum hafnað",
+    "inProgress": "Hugmyndir í ferli",
+    "inVoting": "Hugmyndir í kosningu"
   },
 
   "activity": {

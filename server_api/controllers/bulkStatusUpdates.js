@@ -6,6 +6,7 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var async = require('async');
+var queue = require('../active-citizen/workers/queue');
 
 var sendBulkStatusUpdateOrError = function (res, bulkStatusUpdate, context, user, error, errorStatus) {
   if (error || !bulkStatusUpdate) {
@@ -109,6 +110,20 @@ router.post('/:communityId', auth.can('create bulkStatusUpdate'), function(req, 
     });
   }).catch(function(error) {
     sendBulkStatusUpdateOrError(res, null, 'create', req.user, error);
+  });
+});
+
+router.put('/:communityId/:id/perform_bulk_status_update', auth.can('edit bulkStatusUpdate'), function(req, res) {
+  models.BulkStatusUpdate.find({
+    where: { id: req.params.id }
+  }).then(function(bulkStatusUpdate) {
+    if (bulkStatusUpdate) {
+      queue.create('process-notification-delivery', { bulkStatusUpdateId: bulkStatusUpdate.id }).priority(queuePriority).removeOnComplete(true).save();
+    } else {
+      sendBulkStatusUpdateOrError(res, req.params.id, 'perform', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendBulkStatusUpdateOrError(res, null, 'perform', req.user, error);
   });
 });
 
