@@ -1,20 +1,20 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.87">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.88">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.87">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.87">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.87">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.87">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.87">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.87">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.88">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.88">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.88">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.88">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.88">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.88">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.87">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.2.87">
-<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.2.87">
-<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.2.87">
-<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.2.87">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.88">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.2.88">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.2.88">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.2.88">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.2.88">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.87">
-<link rel="import" href="../yp-behaviors/yp-official-status-options.html?v=6.2.87">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.88">
+<link rel="import" href="../yp-behaviors/yp-official-status-options.html?v=6.2.88">
 
 </head><body><dom-module id="yp-bulk-status-display">
 
@@ -64,12 +64,18 @@
       .infoText {
         padding-top: 8px;
       }
+
+      .voteText {
+        font-size: 19px;
+      }
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical center-center">
-      <h2 class="mainHeader">[[t('bulkStatusUdateFor')]] [[communityName]]</h2>
+      <h2 class="mainHeader">[[t('bulkStatusUdateFor')]] [[community.name]]</h2>
+      <div class="infoText">Kosningu fyrir Hverfið mitt 2016 lýkur á miðnætti í kvöld. Taktu þátt hér</div>
+       <div class="infoText voteText"><a href="https://kosning.reykjavik.is/" target="_blank">kosning.reykjavik.is</a></div>
       <div class="infoText">[[t('bulkStatusUdateForInfo')]]</div>
     </div>
 
@@ -99,13 +105,13 @@
                   </div>
                 </div>
               </div>
-            
           
-        </template>
-      </div></template>
-    </paper-material></template>
+      
+    </template>
+  </div></template>
+  </paper-material></template>
 
-    <yp-ajax id="ajax" url="/api/users/[[userId]]/status_update/[[statusUpdateId]]" on-response="_response"></yp-ajax>
+  <yp-ajax id="ajax" url="/api/users/[[userId]]/status_update/[[statusUpdateId]]" on-response="_response"></yp-ajax>
 
   </template>
 
@@ -128,7 +134,7 @@
           type: Object
         },
 
-        communityName: {
+        community: {
           type: Object
         },
 
@@ -196,7 +202,11 @@
           templates[template.title] = template;
         });
         this.set('templates', templates);
-        this.set('communityName', detail.response.communityName);
+        this.set('community', detail.response.community);
+        this.fire("change-header", { headerTitle: this.truncate(this.community.name,80),
+          documentTitle: this.t('bulkStatusUdateFor')+' '+this.truncate(this.community.name,80),
+          headerDescription: '',//this.truncate(this.post.Group.objectives,45),
+          backPath: "/community/" + this.community.id });
       }
     });
   </script>
