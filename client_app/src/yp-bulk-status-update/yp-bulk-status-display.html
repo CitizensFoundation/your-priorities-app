@@ -37,7 +37,7 @@
       }
 
       .detail {
-        max-width: 600px;
+        max-width: 400px;
         margin: 8px;
         padding: 8px;
       }
@@ -77,7 +77,7 @@
     <div class="layout vertical center-center">
       <h2 class="mainHeader">[[t('bulkStatusUdateFor')]] [[community.name]]</h2>
       <div class="infoText">Kosningu fyrir Hverfið mitt 2016 lýkur á miðnætti í kvöld. Taktu þátt hér:</div>
-       <div class="infoText voteText"><a href="https://kosning.reykjavik.is/" target="_blank">kosning.reykjavik.is</a></div>
+      <div class="infoText voteText"><a href="https://kosning.reykjavik.is/" target="_blank">kosning.reykjavik.is</a></div>
       <div class="infoText">[[t('bulkStatusUdateForInfo')]]</div>
     </div>
 
@@ -107,13 +107,13 @@
                   </div>
                 </div>
               </div>
+            </template>
           </div>
+        </template>
       </paper-material>
     </template>
-  </template>
-  </template>
 
-  <yp-ajax id="ajax" url="/api/users/[[userId]]/status_update/[[statusUpdateId]]" on-response="_response"></yp-ajax>
+    <yp-ajax id="ajax" url="/api/users/[[userId]]/status_update/[[statusUpdateId]]" on-response="_response"></yp-ajax>
 
   </template>
 
