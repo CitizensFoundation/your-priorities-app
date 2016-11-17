@@ -993,7 +993,7 @@ router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
       log.error("Error from status_update", { err: error });
       res.sendStatus(500);
     } else {
-     res.send({ config: config, templates: statusUpdate.templates, communityName: statusUpdate.Community.name });
+     res.send({ config: config, templates: statusUpdate.templates, community: statusUpdate.Community });
     }
   });
 });
