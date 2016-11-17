@@ -1,4 +1,189 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.86"></head><body><dom-module id="yp-user">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.87"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-display" assetpath="../yp-bulk-status-update/">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        padding: 16px;
+        margin: 16px;
+      }
+
+      .statusMaterial {
+        background-color: #FFF;
+        padding: 16px;
+        margin: 16px;
+      }
+
+      a {
+        color: #000;
+      }
+
+      .detail {
+        max-width: 600px;
+        margin: 8px;
+        padding: 8px;
+      }
+
+      .openCloseButton {
+        cursor: pointer;
+        margin-top: 8px;
+      }
+
+      .ideaLink {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      .postName {
+        margin-top: 8px;
+      }
+
+      .mainHeader {
+        margin: 16px;
+        margin-bottom: 0;
+      }
+
+      .infoText {
+        padding-top: 8px;
+      }
+    </style>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div class="layout vertical center-center">
+      <h2 class="mainHeader">[[t('bulkStatusUdateFor')]] [[communityName]]</h2>
+      <div class="infoText">[[t('bulkStatusUdateForInfo')]]</div>
+    </div>
+
+    <template is="dom-repeat" items="[[config.groups]]" as="group">
+      <paper-material elevation="2" class="statusMaterial layout horizontal wrap">
+        <template is="dom-repeat" items="[[_orderGroupStatuses(group.statuses)]]" as="status">
+          <div class="layout vertical">
+            <h1>[[group.name]]</h1>
+            <h2>[[_officialStatusOptionsNamePlural(status.official_status)]]</h2>
+            <template is="dom-repeat" items="[[status.posts]]" as="post">
+              <div class="layout vertical">
+                <div class="layout horizontal">
+                  <iron-icon class="openCloseButton" data-args$="[[post.id]]" icon="hardware:keyboard-arrow-right" on-tap="_setOpen"></iron-icon>
+                  <div class="postName">
+                    <div class="ideaLink" data-args$="[[post.id]]" on-tap="_setOpen">[[post.name]]</div>
+                  </div>
+                </div>
+                <div id="detail_[[post.id]]" class="detail" hidden="">
+                  <div class="reason" hidden$="[[post.uniqueStatusMessage]]">
+                    [[_getTemplate(post.selectedTemplateName)]]
+                  </div>
+                  <div class="reason" hidden$="[[!post.uniqueStatusMessage]]">
+                    [[post.uniqueStatusMessage]]
+                  </div>
+                  <div class="postName">
+                    [[t('urlLink')]]: <a target="_blank" href="/post/[[post.id]]">[[post.name]]</a>
+                  </div>
+                </div>
+              </div>
+            
+          
+        </template>
+      </div></template>
+    </paper-material></template>
+
+    <yp-ajax id="ajax" url="/api/users/[[userId]]/status_update/[[statusUpdateId]]" on-response="_response"></yp-ajax>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-bulk-status-display',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.ypOfficialStatusOptions
+      ],
+
+      properties: {
+
+        config: {
+          type: Object
+        },
+
+        templates: {
+          type: Object
+        },
+
+        communityName: {
+          type: Object
+        },
+
+        statusUpdateId: {
+          type: Number,
+          observer: '_statusUpdateIdChanged'
+        },
+
+        readToLoad: {
+          type: Boolean,
+          computed: '_readyToLoad(userId, statusUpdateId)'
+        },
+
+        userId: Number
+      },
+
+      _orderGroupStatuses: function (statuses) {
+        var order = {
+          "-1": 0,
+          "0": 1,
+          "-2": 2,
+          "2": 3
+        };
+
+        return statuses.sort(function (a, b) {
+          return order[a.official_status.toString()]-order[b.official_status.toString()];
+        });
+      },
+
+      _getTemplate: function (templateName) {
+        if (templateName && this.templates[templateName]) {
+          return this.templates[templateName].content.replace("www.kosning.reykjavik.is", "kosning.reykjavik.is");
+        } else {
+          return "Vantar upplýsingar";
+        }
+      },
+
+      _readyToLoad: function (userId, statusUpdateId) {
+        if (userId && statusUpdateId) {
+          this.async(function () {
+            this.$.ajax.generateRequest();
+          }, 20);
+        }
+      },
+
+      _statusUpdateIdChanged: function (id) {
+      },
+
+      _setOpen: function (event, detail) {
+        event = event || window.event;
+        event = event.target || event.srcElement;
+        var postId = event.getAttribute('data-args');
+        this.$$("#detail_"+postId).hidden = !this.$$("#detail_"+postId).hidden;
+      },
+
+      _setClosed: function () {
+        var postId = event.target.getAttribute('data-args');
+        this.$$("#detail_"+postId).hidden = true;
+      },
+
+      _response: function (event, detail) {
+        this.set('config', detail.response.config);
+        var templates = {};
+        detail.response.templates.forEach(function (template) {
+          templates[template.title] = template;
+        });
+        this.set('templates', templates);
+        this.set('communityName', detail.response.communityName);
+      }
+    });
+  </script>
+</dom-module>
+</div><dom-module id="yp-user">
   <template>
     <style include="iron-flex iron-flex-alignment">
 
@@ -44,42 +229,41 @@
     <app-route route="{{idRoute}}" pattern="/:id" data="{{idRouteData}}" tail="{{tabRoute}}">
     </app-route>
 
-    <app-route route="{{tabRoute}}" pattern="/:tabName" data="{{tabRouteData}}">
+    <app-route route="{{tabRoute}}" pattern="/:tabName" data="{{tabRouteData}}" tail="{{statusUpdateRoute}}">
     </app-route>
 
-    <yp-page id="page" hidden="">
+    <app-route route="{{statusUpdateRoute}}" pattern="/:statusUpdateId" data="{{statusUpdateRouteData}}">
+    </app-route>
 
-      <yp-user-large-card id="userCard" class="largeCard card" user="[[user]]" on-update-domain="_refresh"></yp-user-large-card>
+    <yp-user-large-card hidden="" id="userCard" class="largeCard card" user="[[user]]" on-update-domain="_refresh"></yp-user-large-card>
 
-      <paper-tabs id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
-        <paper-tab class="tab">[[t('news')]]</paper-tab>
-        <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
-        <paper-tab class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
-        <paper-tab class="tab">
-          <div class="layout vertical center-center tabCounterContainer">
-            <span>[[t('posts.posts')]]</span><div class="counterInfo" id="tabCount"></div>
+    <paper-tabs hidden="" id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
+      <paper-tab class="tab">[[t('news')]]</paper-tab>
+      <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
+      <paper-tab class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
+      <paper-tab class="tab">
+        <div class="layout vertical center-center tabCounterContainer">
+          <span>[[t('posts.posts')]]</span><div class="counterInfo" id="tabCount"></div>
+        </div>
+      </paper-tab>
+    </paper-tabs>
+
+    <iron-pages class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+      <section name="status_updates">
+        <yp-bulk-status-display user-id$="[[userId]]" status-update-id$="[[statusUpdateId]]"></yp-bulk-status-display>
+      </section>
+      <section>
+        <ac-activities user-id="[[user.id]]"></ac-activities>
+      </section>
+      <section>
+        <template>
+          <div class="layout horizontal center-center">
+            <yp-post-list id="postList" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCount" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
           </div>
-        </paper-tab>
-      </paper-tabs>
 
-      <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <section>
-          <div class="card-container layout center-center wrap">
-          </div>
-        </section>
-        <section>
-          <ac-activities user-id="[[user.id]]"></ac-activities>
-        </section>
-        <section>
-          <template>
-            <div class="layout horizontal center-center">
-              <yp-post-list id="postList" selected-tab="[[selected]]" status-filter="open" tab-counter-id="tabCount" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[groupId]]"></yp-post-list>
-            </div>
-
-          </template>
-        </section>
-      </iron-pages>
-    </yp-page>
+        </template>
+      </section>
+    </iron-pages>
 
     <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
     <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
@@ -106,8 +290,10 @@
         },
 
         tabRoute: Object,
+        statusUpdateRoute: Object,
         idRouteData: Object,
         tabRouteData: Object,
+        statusUpdateRouteData: Object,
 
         userId: {
           type: Number,
@@ -124,9 +310,17 @@
           value: false
         },
 
+        selectedTab: {
+          type: String,
+          value: null,
+          observer: '_selectedTabChanged'
+        },
+
         user: {
           type: Object
         },
+
+        statusUpdateId: String,
 
         selected: {
           type: Number,
@@ -141,6 +335,32 @@
         }
       },
 
+      observers: [
+        '_routeIdChanged(idRouteData.id)',
+        '_routeTabChanged(tabRouteData.tabName)',
+        '_routeStatusUpdateChanged(statusUpdateRouteData.statusUpdateId)'
+      ],
+
+      _routeIdChanged: function (newId) {
+        if (newId) {
+          this.set('userId', newId);
+        }
+      },
+
+      _routeTabChanged: function (newTabName) {
+        if (newTabName) {
+          this.set('selectedTab', newTabName);
+        } else if (newTabName && this._isNumber(newTabName)) {
+          this.set('scrollToPointId', newTabName);
+          this.set('selectedTab', 'debate');
+        }
+      },
+
+      _routeStatusUpdateChanged: function (statusUpdateId) {
+        if (statusUpdateId) {
+          this.set('statusUpdateId', statusUpdateId);
+        }
+      },
 
       _tabNameChanged: function (newValue) {
         if (newValue) {

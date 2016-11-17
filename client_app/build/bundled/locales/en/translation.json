@@ -1,4 +1,7 @@
 {
+  "bulkStatusUdateForInfo": "Click on the ideas for more information",
+  "urlLink": "Link",
+  "bulkStatusUdateFor": "Status updates for ideas on",
   "inviteNotFoundOrAlreadyUsed": "Invite not found or already used",
   "reportConfirmation": "Are you sure you want to report this content for having broken the rules of this website?",
   "uniqueStatusMessage": "Unique Status Message",
@@ -91,10 +94,17 @@
     "active": "Active",
     "featured": "Featured",
     "archived": "Archived",
-    "published": "Opin",
-    "successful": "Samþykkt",
-    "failed": "Hafnað",
-    "inProgress": "Í ferli"
+    "published": "Open",
+    "successful": "Successful",
+    "failed": "Failed",
+    "inProgress": "In progress"
+  },
+
+  "pluralStatus": {
+    "published": "Open ideas",
+    "successful": "Successful ideas",
+    "failed": "Failed ideas",
+    "inProgress": "Ideas in progress"
   },
 
   "activity": {

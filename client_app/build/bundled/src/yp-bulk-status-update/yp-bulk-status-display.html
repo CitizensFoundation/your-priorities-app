@@ -1,0 +1,204 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.87">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.87">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.87">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.87">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.87">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.87">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.87">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.87">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.2.87">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.2.87">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.2.87">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.2.87">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.87">
+<link rel="import" href="../yp-behaviors/yp-official-status-options.html?v=6.2.87">
+
+</head><body><dom-module id="yp-bulk-status-display">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        padding: 16px;
+        margin: 16px;
+      }
+
+      .statusMaterial {
+        background-color: #FFF;
+        padding: 16px;
+        margin: 16px;
+      }
+
+      a {
+        color: #000;
+      }
+
+      .detail {
+        max-width: 600px;
+        margin: 8px;
+        padding: 8px;
+      }
+
+      .openCloseButton {
+        cursor: pointer;
+        margin-top: 8px;
+      }
+
+      .ideaLink {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      .postName {
+        margin-top: 8px;
+      }
+
+      .mainHeader {
+        margin: 16px;
+        margin-bottom: 0;
+      }
+
+      .infoText {
+        padding-top: 8px;
+      }
+    </style>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div class="layout vertical center-center">
+      <h2 class="mainHeader">[[t('bulkStatusUdateFor')]] [[communityName]]</h2>
+      <div class="infoText">[[t('bulkStatusUdateForInfo')]]</div>
+    </div>
+
+    <template is="dom-repeat" items="[[config.groups]]" as="group">
+      <paper-material elevation="2" class="statusMaterial layout horizontal wrap">
+        <template is="dom-repeat" items="[[_orderGroupStatuses(group.statuses)]]" as="status">
+          <div class="layout vertical">
+            <h1>[[group.name]]</h1>
+            <h2>[[_officialStatusOptionsNamePlural(status.official_status)]]</h2>
+            <template is="dom-repeat" items="[[status.posts]]" as="post">
+              <div class="layout vertical">
+                <div class="layout horizontal">
+                  <iron-icon class="openCloseButton" data-args$="[[post.id]]" icon="hardware:keyboard-arrow-right" on-tap="_setOpen"></iron-icon>
+                  <div class="postName">
+                    <div class="ideaLink" data-args$="[[post.id]]" on-tap="_setOpen">[[post.name]]</div>
+                  </div>
+                </div>
+                <div id="detail_[[post.id]]" class="detail" hidden="">
+                  <div class="reason" hidden$="[[post.uniqueStatusMessage]]">
+                    [[_getTemplate(post.selectedTemplateName)]]
+                  </div>
+                  <div class="reason" hidden$="[[!post.uniqueStatusMessage]]">
+                    [[post.uniqueStatusMessage]]
+                  </div>
+                  <div class="postName">
+                    [[t('urlLink')]]: <a target="_blank" href="/post/[[post.id]]">[[post.name]]</a>
+                  </div>
+                </div>
+              </div>
+            
+          
+        </template>
+      </div></template>
+    </paper-material></template>
+
+    <yp-ajax id="ajax" url="/api/users/[[userId]]/status_update/[[statusUpdateId]]" on-response="_response"></yp-ajax>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-bulk-status-display',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.ypOfficialStatusOptions
+      ],
+
+      properties: {
+
+        config: {
+          type: Object
+        },
+
+        templates: {
+          type: Object
+        },
+
+        communityName: {
+          type: Object
+        },
+
+        statusUpdateId: {
+          type: Number,
+          observer: '_statusUpdateIdChanged'
+        },
+
+        readToLoad: {
+          type: Boolean,
+          computed: '_readyToLoad(userId, statusUpdateId)'
+        },
+
+        userId: Number
+      },
+
+      _orderGroupStatuses: function (statuses) {
+        var order = {
+          "-1": 0,
+          "0": 1,
+          "-2": 2,
+          "2": 3
+        };
+
+        return statuses.sort(function (a, b) {
+          return order[a.official_status.toString()]-order[b.official_status.toString()];
+        });
+      },
+
+      _getTemplate: function (templateName) {
+        if (templateName && this.templates[templateName]) {
+          return this.templates[templateName].content.replace("www.kosning.reykjavik.is", "kosning.reykjavik.is");
+        } else {
+          return "Vantar upplýsingar";
+        }
+      },
+
+      _readyToLoad: function (userId, statusUpdateId) {
+        if (userId && statusUpdateId) {
+          this.async(function () {
+            this.$.ajax.generateRequest();
+          }, 20);
+        }
+      },
+
+      _statusUpdateIdChanged: function (id) {
+      },
+
+      _setOpen: function (event, detail) {
+        event = event || window.event;
+        event = event.target || event.srcElement;
+        var postId = event.getAttribute('data-args');
+        this.$$("#detail_"+postId).hidden = !this.$$("#detail_"+postId).hidden;
+      },
+
+      _setClosed: function () {
+        var postId = event.target.getAttribute('data-args');
+        this.$$("#detail_"+postId).hidden = true;
+      },
+
+      _response: function (event, detail) {
+        this.set('config', detail.response.config);
+        var templates = {};
+        detail.response.templates.forEach(function (template) {
+          templates[template.title] = template;
+        });
+        this.set('templates', templates);
+        this.set('communityName', detail.response.communityName);
+      }
+    });
+  </script>
+</dom-module>
+</body></html>
