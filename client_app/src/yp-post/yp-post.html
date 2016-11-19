@@ -333,7 +333,7 @@
             </div>
           </paper-tab>
           <paper-tab name="news">[[t('post.tabs.news')]]</paper-tab>
-          <paper-tab name="location">[[t('post.tabs.location')]]</paper-tab>
+          <paper-tab name="location" hidden$="[[locationHidden]]">[[t('post.tabs.location')]]</paper-tab>
           <paper-tab name="photos">
             <div class="layout vertical center-center tabCounterContainer">
               <span>[[t('post.tabs.photos')]]</span><div class="counterInfo" id="tabCountPhotos"></div>
@@ -473,6 +473,11 @@
           scrollToPointId: {
             type: String,
             value: null
+          },
+
+          locationHidden: {
+            type: Boolean,
+            value: false
           }
         },
 
@@ -631,6 +636,12 @@
 
             if (this.post.Group.configuration && this.post.Group.configuration.defaultLocale!=null) {
               this.changeLocaleIfNeeded(this.post.Group.configuration.defaultLocale);
+            }
+
+            if (this.post.Group.configuration && this.post.Group.configuration.locationHidden!=undefined) {
+              this.set('locationHidden', this.post.Group.configuration.locationHidden);
+            } else {
+              this.set('locationHidden', false);
             }
 
             /*

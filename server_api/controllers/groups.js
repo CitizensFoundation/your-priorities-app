@@ -469,6 +469,7 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
   group.set('configuration.canVote', ((req.body.canVote && req.body.canVote!="") ? true : false));
   group.set('configuration.canAddNewPosts', ((req.body.canAddNewPosts && req.body.canAddNewPosts!="") ? true : false));
   group.set('configuration.locationHidden', ((req.body.locationHidden && req.body.locationHidden!="") ? true : false));
+  group.set('configuration.endorsementButtons', ((req.body.endorsementButtons && req.body.endorsementButtons!="") ? req.body.endorsementButtons : "hearts" ));
 
   group.save().then(function(group) {
     log.info('Group Created', { group: toJson(group), context: 'create', user: toJson(req.user) });
@@ -508,6 +509,8 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       group.set('configuration.canVote', ((req.body.canVote && req.body.canVote!="") ? true : false));
       group.set('configuration.canAddNewPosts', ((req.body.canAddNewPosts && req.body.canAddNewPosts!="") ? true : false));
       group.set('configuration.locationHidden', ((req.body.locationHidden && req.body.locationHidden!="") ? true : false));
+      group.set('configuration.endorsementButtons', ((req.body.endorsementButtons && req.body.endorsementButtons!="") ? req.body.endorsementButtons : "hearts" ));
+
       if (req.body.status && req.body.status!="") {
         group.status = req.body.status;
       }

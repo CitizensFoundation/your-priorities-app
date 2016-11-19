@@ -129,8 +129,8 @@
       }
 
       paper-icon-button[smaller-icons] {
-        height: 50px;
-        width: 50px;
+        height: 48px;
+        width: 48px;
       }
 
       .debate-icon::shadow #icon {
@@ -355,12 +355,20 @@
 
       _onPostChanged: function (post, oldValue) {
         if (post) {
-          this._updateEndorsements();
           if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
             this.set('votingDisabled', true);
             this.set('allDisabled', true);
             this.set('disabledTitle', this.t('votingDisabled'));
+          } else {
+            this.set('votingDisabled', false);
+            this.set('allDisabled', false);
           }
+          if (post.Group.configuration && post.Group.configuration.endorsementButtons!=undefined) {
+            this.set('endorsementButtons', post.Group.configuration.endorsementButtons);
+          } else {
+            this.set('endorsementButtons', "hearts");
+          }
+          this._updateEndorsements();
         } else {
           console.warn("No post found for post actions");
         }
