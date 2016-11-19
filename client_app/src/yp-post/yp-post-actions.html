@@ -77,20 +77,24 @@
         color: var(--primary-down-color-lighter, rgba(153,0,0,0.55));
       }
 
-      .love-up {
-        color: var(--primary-love-color-up, rgba(50,50,50,0.45));
+      .default-buttons-color {
+        color: var(--default-endorsement-buttons-color, rgba(50,50,50,0.45));
       }
 
-      .love-down {
-        color: var(--primary-love-color-up, rgba(50,50,50,0.45));
+      .default-buttons-up-selected {
+        color: var(--default-endorsement-buttons-up-color, rgba(0,0,0,1.0));
       }
 
-      .love-up-selected {
-        color: var(--primary-love-color-up, rgba(168,0,0,0.65));
+      .default-buttons-down-selected {
+        color: var(--default-endorsement-buttons-down-color, rgba(0,0,0,1.0));
       }
 
-      .love-down-selected {
-        color: var(--primary-love-color-up, rgba(0,0,0,0.70));
+      .hearts-up-selected {
+        color: var(--primary-hearts-color-up, rgba(168,0,0,0.65));
+      }
+
+      .hearts-down-selected {
+        color: var(--primary-hearts-color-up, rgba(0,0,0,0.70));
       }
 
       .action-debate {
@@ -122,6 +126,11 @@
       paper-icon-button.largeButton {
         width: 52px;
         height: 52px;
+      }
+
+      paper-icon-button[smaller-icons] {
+        height: 50px;
+        width: 50px;
       }
 
       .debate-icon::shadow #icon {
@@ -193,7 +202,7 @@
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
       <div id="actionUp" class="action-up">
-        <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.up_vote')]]" icon$="[[endorseModeIcon(endorseMode,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
+        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.up_vote')]]" icon$="[[endorseModeIcon(endorsementButtons,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">{{formatNumber(post.counter_endorsements_up)}}</div>
       </div>
 
@@ -205,7 +214,7 @@
       <div class="" hidden$="[[!_hideDebate(small,forceSmall)]]"></div>
 
       <div id="actionDown" class="action-down">
-        <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.down_vote')]]" icon$="[[endorseModeIcon(endorseMode,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
+        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.down_vote')]]" icon$="[[endorseModeIcon(endorsementButtons,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
         <div class="action-text down-text">{{formatNumber(post.counter_endorsements_down)}}</div>
       </div>
       <div class="share" >
@@ -253,9 +262,9 @@
           value: false
         },
 
-        endorseMode: {
+        endorsementButtons: {
           type: String,
-          value: 'love'
+          value: 'hearts'
         },
 
         endorseValue: {
@@ -294,6 +303,11 @@
         },
 
         votingDisabled: {
+          type: Boolean,
+          value: false
+        },
+
+        smallerIcons: {
           type: Boolean,
           value: false
         }
@@ -364,34 +378,54 @@
         }
       },
 
-      endorseModeIcon: function (endorseMode, upDown) {
-        if (endorseMode=='thumbs' && upDown=='up') {
+      endorseModeIcon: function (endorsementButtons, upDown) {
+        if (endorsementButtons!="hearts" && endorsementButtons!="hats") {
+          this.set('smallerIcons', true);
+        } else {
+          this.set('smallerIcons', false);
+        }
+        if (endorsementButtons=='thumbs' && upDown=='up') {
           return 'thumb-up';
-        } else if (endorseMode=='thumbs' && upDown=='down') {
+        } else if (endorsementButtons=='thumbs' && upDown=='down') {
           return 'thumb-down';
-        } else if (endorseMode=='love' && upDown=='up') {
+        } else if (endorsementButtons=='hearts' && upDown=='up') {
           return 'favorite';
-        } else if (endorseMode=='love' && upDown=='down') {
+        } else if (endorsementButtons=='hearts' && upDown=='down') {
           return 'notification:do-not-disturb';
-        } else if (endorseMode=='arrow' && upDown=='up') {
-          return 'hardware:keyboard-arrow-down';
-        } else if (endorseMode=='arrow' && upDown=='down') {
+        } else if (endorsementButtons=='hats' && upDown=='up') {
           return 'hardware:keyboard-arrow-up';
+        } else if (endorsementButtons=='hats' && upDown=='down') {
+          return 'hardware:keyboard-arrow-down';
+        } else if (endorsementButtons=='arrows' && upDown=='up') {
+          return 'arrow-upward';
+        } else if (endorsementButtons=='arrows' && upDown=='down') {
+          return 'arrow-downward';
         }
       },
 
       _setEndorsement: function (value) {
         this.endorseValue = value;
-        if (this.endorseMode=='love') {
+        if (this.endorsementButtons=='hearts') {
           if (value > 0) {
-            this.$.actionUp.className += ' ' + 'love-up-selected';
-            this.removeClass(this.$.actionDown, 'love-up-selected');
+            this.$.actionUp.className += ' ' + 'hearts-up-selected';
+            this.removeClass(this.$.actionDown, 'hearts-down-selected');
           } else if (value < 0) {
-            this.$.actionDown.className += ' ' + 'love-up-selected';
-            this.removeClass(this.$.actionUp,'love-up-selected');
+            this.$.actionDown.className += ' ' + 'hearts-down-selected';
+            this.removeClass(this.$.actionUp,'hearts-up-selected');
           } else {
-            this.removeClass(this.$.actionUp,'love-up-selected');
-            this.removeClass(this.$.actionDown, 'love-up-selected');
+            this.removeClass(this.$.actionUp,'hearts-up-selected');
+            this.removeClass(this.$.actionDown, 'hearts-down-selected');
+          }
+        } else {
+          if (value > 0) {
+            this.$.actionUp.className += ' ' + 'default-buttons-up-selected';
+            this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+          } else if (value < 0) {
+            this.$.actionDown.className += ' ' + 'default-buttons-down-selected';
+            this.removeClass(this.$.actionUp,'default-buttons-up-selected');
+          } else {
+            this.removeClass(this.$.actionUp,'default-buttons-up-selected');
+            this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
           }
         }
       },
@@ -459,9 +493,9 @@
       },
 
       ready: function() {
-        if (this.endorseMode) {
-          this.$.actionDown.className += ' ' + 'love-down';
-          this.$.actionUp.className += ' ' + 'love-up';
+        if (this.endorsementButtons) {
+          this.$.actionDown.className += ' ' + 'default-buttons-color';
+          this.$.actionUp.className += ' ' + 'default-buttons-color';
         }
       }
     });

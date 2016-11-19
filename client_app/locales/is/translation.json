@@ -1,4 +1,9 @@
 {
+  "endorsementButtonsHeart":"Hjörtu",
+  "endorsementArrows":"Örvar",
+  "endorsementThumbs":"Þumlar",
+  "endorsementHats":"Hattar",
+  "endorsementButtons": "Kosningahnappar",
   "bulkStatusUdateForInfo": "Smelltu á hugmyndir fyrir nánari upplýsingar.",
   "urlLink": "Hlekkur í hugmynd",
   "bulkStatusUdateFor": "Stöðubreytingar á hugmyndum fyrir",
