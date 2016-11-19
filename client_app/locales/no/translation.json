@@ -1,4 +1,52 @@
 {
+  "endorsementButtonsHeart":"Hearts",
+  "endorsementArrows":"Arrows",
+  "endorsementThumbs":"Thumbs",
+  "endorsementHats":"Hats",
+  "endorsementButtons": "Endorsement buttons",
+  "bulkStatusUdateForInfo": "Click on the ideas for more information",
+  "urlLink": "Link",
+  "bulkStatusUdateFor": "Status updates for ideas on",
+  "inviteNotFoundOrAlreadyUsed": "Invite not found or already used",
+  "reportConfirmation": "Er du sikker på at du vil rapportere dette innspillet som upassende?",
+  "uniqueStatusMessage": "Unique Status Message",
+  "templateContent": "Template content",
+  "bulkStatusUpdate": "Bulk Status Updates",
+  "close": "Close",
+  "editTemplates": "Edit Templates",
+  "editTemplate": "Edit Template",
+  "deleteTemplate": "Delete Template",
+  "addTemplate": "Add Template",
+  "save": "Save",
+  "saved": "Saved",
+  "config": "Config",
+  "newBulkStatusUpdate": "New Bulk Status Update",
+  "editBulkStatusUpdate": "Edit Bulk Status Update",
+  "bulkStatusUdateConfig": "Bulk Status Update Config",
+  "bulkStatusUpdatesTemplates": "Bulk Status Updates Templates",
+  "selectStatusTemplate": "Template",
+  "moveToGroup": "Move",
+  "noIdeasHere": "There are no ideas here.",
+  "organizationsAdmin": "Organizations Admin",
+  "unviewed": "not viewed",
+  "notificationMarkAllViewed": "Mark all Viewed",
+  "notificationConfirmMarkAllViewed": "Confirm that you want to mark all your notifications as viewed",
+  "upVotedPoint": "Up voted your point",
+  "downVotedPoint": "Down voted your point",
+  "endorsedYourPost": "Endorsed your idea",
+  "opposedYourPost": "Opposed your idea",
+  "notifications": "Notifications",
+  "votingDisabled": "Voting is not active",
+  "pageNotFound": "The page the app requested is not found",
+  "participate": "Participate",
+  "emojiSearchResults": "Search results",
+  "recentlyUsedEmoji": "Recently used",
+  "findAnEmoji": "Find emoji",
+  "cancel": "Avbryt",
+  "ok": "Ok",
+  "next": "Neste",
+  "create": "Lag",
+  "confirm": "Bekreft",
   "access": "Adgang",
   "searchFor": "Søk etter...",
   "title": "Tittel",
@@ -10,17 +58,17 @@
   "generalError": "Det har oppstått en uforventet feil. Vi har fått beskjed om det.",
   "stats": {
     "posts": "Antall innlegg",
-    "discussions": "Antall diskusjoner",
-    "communities": "Antall samfunn",
-    "groups": "Antall grupper",
+    "discussions": "Antall debatter",
+    "communities": "Number of communities",
+    "groups": "Antall tema",
     "users": "Antall brukere"
   },
   "notification": {
     "passwordResetAndLoggedIn": "Ditt passord er blitt endret og du er nå logget på.",
     "method": "Metode",
     "frequency": "Hyppighet",
-    "myPosts": "Mine innlegg",
-    "muted": "Dempet",
+    "myPosts": "Mine idéer",
+    "muted": "Slå av",
     "browser": "Nettleser",
     "email": "E-postadresse",
     "asItHappens": "Sanntid",
@@ -28,11 +76,12 @@
     "hourly": "Hver time",
     "weekly": "Ukentlig",
     "monthly": "Månedlig",
-    "myPostsEndorsements": "Innlegg jeg liker",
-    "myPoints": "Mine poeng",
-    "myPointEndorsements": "Poeng jeg liker",
-    "allCommunity": "Alle meldinger fra mine fellesskap",
-    "allGroup": "Alle meldinger fra mine grupper"
+    "myPostsEndorsements": "Idéer jeg liker",
+    "myPoints": "Mine argumenter",
+    "myPointEndorsements": "Argumenter jeg liker",
+    "allCommunity": "All notifications from my communities",
+    "allGroup": "Varsler fra alle sakene jeg følger",
+    "invite_accepted_for": "Deltar i "
   },
 
   "pages": {
@@ -50,10 +99,18 @@
     "active": "Aktiv",
     "featured": "Utvalgt",
     "archived": "Arkivert",
-    "published": "Åpen",
-    "successful": "Vellykket",
-    "failed": "Mislykket",
-    "inProgress": "Behandles"
+    "published": "Open",
+    "successful": "Successful",
+    "failed": "Failed",
+    "inProgress": "In progress"
+  },
+
+  "pluralStatus": {
+    "published": "Open ideas",
+    "successful": "Successful ideas",
+    "failed": "Failed ideas",
+    "inProgress": "Ideas in progress",
+    "inVoting": "Ideas in voting"
   },
 
   "activity": {
@@ -64,11 +121,11 @@
       }
     },
     "point": {
-      "forAdded": "Lagt poeng for",
-      "againstAdded": "Lagt poeng mot",
-      "new": "Poeng",
-      "newFor": "Poeng for",
-      "newAgainst": "Poeng mot",
+      "forAdded": "Lagt til argument for",
+      "againstAdded": "Lagt til argument mot",
+      "new": "Argument",
+      "newFor": "Argument for",
+      "newAgainst": "Argument mot",
       "newComment": "Kommentar",
       "newsStory": {
         "new": "Brukernyheter"
@@ -83,34 +140,36 @@
 
   "domains": "Domener",
   "communities": "Fellesskap",
-  "groups": "Grupper",
+  "groups": "Alle saker",
 
   "myDomains": "Mine domener",
   "myCommunities": "Mine fellesskap",
-  "myGroups": "Mine grupper",
-  "myAdminCommunities": "Administrator felleskap",
-  "myAdminGroups": "Administrator grupper",
+  "myGroups": "Saker jeg følger",
+  "myAdminCommunities": "Administrator",
+  "myAdminGroups": "Gruppeadministrator",
 
   "community": {
     "edit": "Rediger fellesskap",
-    "admins": "Administratorer felleskap",
-    "users": "Brukere fellesskap ",
+    "hostname": "Hostname",
+    "admins": "Administratorer",
+    "users": "Brukere",
     "delete": "Slett fellesskap",
     "new": "Opprett fellesskap",
     "public": "Offentlig fellesskap",
     "closed": "Lukket fellesskap",
     "secret": "Hemmelig fellesskap",
-    "pages":"Fellesskap sider"
+    "pages":"Fellesskap sider",
+    "onlyAdminsCanCreateGroups": "Du har ikke rettigheter til å gjøre dette"
   },
 
   "posts": {
     "posts": "Idéer",
-    "open": "Åpen",
+    "open": "Alle innlegg",
     "inProgress": "Behandles",
     "successful": "Vellykket",
     "failed": "Mislykket",
     "map": "Kart",
-    "noMapPosts": "Ingen innlegg med plassering",
+    "noMapPosts": "Ingen idéer med plassering ",
     "newUserImage": "Legg til bilde"
   },
 
@@ -119,33 +178,36 @@
   },
 
   "post": {
-    "statusChangeConfirmText": "Er du sikker på at du vil sende en e-post til alle støttespillere og motstandere av dette innlegget?",
-    "statusChangeSelectNewStatus": "Velg status for innlegget",
+    "deleteConfirmation": "Er du sikker på at du vil rapportere dette innspillet som upassende?",
+    "move": "Flytt idé",
+    "confirmMove": "Bekreft at du vil flytte",
+    "statusChangeConfirmText": "Er du sikker på at du vil sende en e-post til alle som støtter eller motsetter seg denne idéen?",
+    "statusChangeSelectNewStatus": "Ny status ",
     "statusChangeContent": "Statusendring innhold som skal sendes til alle støttespillere og motstandere",
     "statusChange": "Send e-poster om statusendring",
     "statusChangeSent": "Sendte e-poster om statusendring",
     "noLocation": "Ingen plassering",
-    "shareInfo": "Del innlegget",
+    "shareInfo": "Del innlegg",
     "description": "Beskrivelse",
-    "debate": "Debatt",
+    "debate": "Kommentar",
     "formInvalid": "Fullfør utfylling av skjemaet",
-    "status": "Status for dette innlegget",
-    "new": "Nytt innlegg",
-    "searchingFor": "Leter etter",
-    "top": "Topp innlegg",
+    "status": "Status til idéen",
+    "new": "Ny idé",
+    "searchingFor": "Søk etter…",
+    "top": "Beste innlegg",
     "newest": "Siste innlegg",
-    "random": "Tilfeldige innlegg",
-    "inProgress": "Innlegg i fremgang",
+    "random": "Tilfeldig innlegg",
+    "inProgress": "Ideas in progress",
     "groups": "Innleggrupper",
-    "search": "Søk etter innlegg",
+    "search": "Søk etter idéer",
     "add_new":"Legg til nytt innlegg",
-    "up_vote":"Stem opp innlegget",
-    "down_vote":"Stem ned innlegget",
-    "report": "Rapporter innlegget",
-    "notify": "Gi meg beskjed om dette innlegget",
-    "share": "Del dette innlegget",
+    "up_vote":"Stem opp innlegg",
+    "down_vote":"Stem ned innlegg",
+    "report": "Rapporter ",
+    "notify": "Varsle meg om idéen",
+    "share": "Del idéen",
     "yourPost": "Idé",
-    "yourPoint": "Poeng for",
+    "yourPoint": "Argument for",
     "location": "Plassering",
     "photo": "Bilde",
     "photographerName": "Fotograf",
@@ -153,10 +215,10 @@
     "photoUpdate": "Oppdater bilde",
     "photoDeleteConfirmation": "Er du sikker på at du vil slette dette bildet?",
     "tabs": {
-      "debate": "Debatt",
-      "news": "Nyheter",
-      "location": "Plassering",
-      "photos": "Bilder",
+      "debate": "Kommenter",
+      "news": "Sist lagt til",
+      "location": "Location",
+      "photos": "Photos",
       "solutions": "Solutions",
       "not_implemented": "Ingen implementert ennå"
     },
@@ -168,13 +230,13 @@
       "image": "Bilde",
       "none": "Ingen"
     },
-    "edit": "Rediger innlegget",
-    "delete": "Slett innlegget",
+    "edit": "Rediger idé",
+    "delete": "Slett idé ",
     "addNewIntroBoxText": "Bruk 'lyspære'-knappen for å legge til nye idéer"
   },
 
   "short_word": {
-    "in": "i"
+    "in": "i "
   },
 
   "category": {
@@ -188,28 +250,32 @@
   },
 
   "point": {
-    "theseAreFor": "Poeng for",
-    "theseAreAgainst": "Poeng mot",
-    "point": "Poeng",
-    "for": "Ditt poeng for ...",
-    "against": "Ditt poeng mot ...",
-    "add_up": "Legg til poeng for",
-    "add_down": "Legg til poeng mot",
-    "helpful": "Stem opp poenget som 'nyttig'",
-    "not_helpful": "Stem ned poenget som 'ikke nyttig'",
-    "addNewsStory": "Legg til en nyhetsartikkel",
-    "postNewsStory": "Legg til nyhetsartikkel",
+    "report": "Rapporter",
+    "againstAdded": "Lagt til argument mot",
+    "forAdded": "Lagt til argument for",
+    "confirmDelete": "Bekreft at du vil fjerne argumentet",
+    "theseAreFor": "Argument for",
+    "theseAreAgainst": "Argument mot",
+    "point": "Argument ",
+    "for": "Dette er en god idé fordi…",
+    "against": "Dette er ikke en god idé fordi…",
+    "add_up": "Legg til argument for",
+    "add_down": "Legg til argument mot",
+    "helpful": "Stem opp argument som 'nyttig'",
+    "not_helpful": "Stem ned argument som 'ikke nyttig'",
+    "addNewsStory": "Legg til",
+    "postNewsStory": "Legg til",
     "addComment": "Din kommentar...",
     "postComment": "Legg til kommentar",
     "comments": "Kommentarer",
-    "howToWrite": "La oss brainstorme de beste poengene for og mot og tenke på løsninger ...",
+    "howToWrite": "La oss diskuttere om de beste argumentene for og mot og tenke på løsninger …",
     "commentToShort": "Teksten er for kort!"
   },
 
-  "news": "Nyheter",
+  "news": "Sist lagt til",
 
   "uploading": {
-    "inProgress": "Laster opp ..."
+    "inProgress": "Laster opp…"
   },
 
   "notice": {
@@ -229,6 +295,7 @@
   },
 
   "group": {
+    "locationHidden": "Disable location",
     "group": "Gruppen",
     "admins": "Gruppeadministrator",
     "users": "Gruppebrukere",
@@ -244,7 +311,7 @@
     "secret": "Hemmelig gruppe",
     "openToCommunity": "Åpen for felleskap",
     "canVote": "Avstemning tillatt",
-    "canAddNewPosts": "Nye innlegg tillatt",
+    "canAddNewPosts": "New ideas allowed",
     "config": "Konfigurasjon",
     "update": "Oppdater gruppe"
   },
@@ -274,6 +341,10 @@
   },
 
   "user": {
+    "loginCompleteFor": "Login for",
+    "acceptInvite": "Accept invite participate",
+    "hasSentYouAndInvitation": "has sent you an invitation to participate in",
+    "acceptInviteInstructions": "Click on the button below to accept the invitation",
     "setEmail": "Legg til e-postadresse til kontoen",
     "linkAccount": "Koble til kontoen",
     "setEmailInfo": "Legg til e-postadresse til kontoen",
@@ -295,7 +366,7 @@
     "resetPasswordInstructions": "Opprett et nytt passord som ikke er lett å gjette",
     "login": "Logg på",
     "create": "Skape",
-    "cancel": "Kansellere",
+    "cancel": "Avbryt",
     "logout": "Logg av",
     "newPassword": "Nytt passord",
     "register": "Ny bruker",
@@ -306,7 +377,7 @@
     "loginNotAuthorized": "E-postadresse eller passord feil"
   },
 
-  "other": "Annen",
+  "other": "Andre",
 
   "socialMedia": "Sosiale medier",
 
