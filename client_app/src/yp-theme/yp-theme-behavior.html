@@ -237,14 +237,13 @@
       var randomNumber = Math.floor((Math.random() * 100000000) + 1);
 
       fontHtmlImport += "?random="+randomNumber;
-
       this.importHref(fontHtmlImport, function(e) {
         this.async(function () {
           console.log("I have loaded font");
         })
       }, function(e) {
         console.error("Could not load font file "+this.fonts[number]);
-      });
+      }, true);
     }
   }
 </script>
