@@ -4,7 +4,7 @@ Your Priorities 6.0 - Citizens participation application
 
 Everything in this repo is BSD style license unless otherwise specified.
 
-Copyright (c) 2008-2015 Citizens Foundation Iceland. All rights reserved.
+Copyright (c) 2008-2016 Citizens Foundation Iceland. All rights reserved.
 
 Written in 2008-2016 by
 Robert Bjarnason, robert@citizens.is
@@ -26,6 +26,8 @@ notice, this list of conditions and the following disclaimer.
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
+* When using this software running an internet based service the service must reproduce the above
+copyright notice, this list of conditions and the following disclaimer clearly in the user interface
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
 INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE

@@ -13,6 +13,11 @@
         value: function () { return [] }
       },
 
+      fonts: {
+        type: Array,
+        value: function () { return [] }
+      },
+
       selectedTheme: {
         type: Number,
         value: false
@@ -41,6 +46,7 @@
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
+      this.push('fonts', {});
 
       this.push('themes', {
         name: 'Basalt Gray',
@@ -63,6 +69,7 @@
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
       });
+      this.push('fonts', {});
 
       this.push('themes', {
         name: 'Green Moss',
@@ -85,6 +92,7 @@
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
       });
+      this.push('fonts', {});
 
       this.push('themes', {
         name: 'Google Blue',
@@ -106,6 +114,7 @@
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
       });
+      this.push('fonts', {});
 
       this.push('themes', {
         name: 'Red Rhubarb',
@@ -127,6 +136,7 @@
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
       });
+      this.push('fonts', {});
 
       this.push('themes', {
         name: 'Mountain Roses',
@@ -147,6 +157,8 @@
         '--middle-color': 'var(--primary-background-color)',
         '--icon-general-color': '#fff'
       });
+      this.push('fonts', {});
+
 
       this.push('themes', {
         name: 'Purple Wizards',
@@ -167,6 +179,7 @@
         '--middle-color': 'var(--primary-background-color)',
         '--icon-general-color': '#fff'
       });
+      this.push('fonts', {});
 
       this.push('themes', {
         name: 'Kópavogur',
@@ -187,6 +200,7 @@
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
+      this.push('fonts', {});
 
       this.push('themes', {
         name: 'Forbrukerrådet',
@@ -207,13 +221,30 @@
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html", fontName: 'FFClanWebBook' });
     },
 
     setTheme: function (number) {
       if (this.themes[number]) {
         Polymer.updateStyles(this.themes[number]);
       }
-    }
+      var fontHtmlImport = this.fonts[number].htmlImport;
 
+      if (!this.fonts[number].htmlImport) {
+        fontHtmlImport = "/styles/fonts/default-font.html";
+      }
+
+      var randomNumber = Math.floor((Math.random() * 100000000) + 1);
+
+      fontHtmlImport += "?random="+randomNumber;
+
+      this.importHref(fontHtmlImport, function(e) {
+        this.async(function () {
+          console.log("I have loaded font");
+        })
+      }, function(e) {
+        console.error("Could not load font file "+this.fonts[number]);
+      });
+    }
   }
 </script>
