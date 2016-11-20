@@ -107,12 +107,14 @@
       @media (max-width: 945px) {
         :host {
           width: 306px;
-          margin-top: 40px;
         }
 
         .large-card {
           width: 306px;
-          height: 180px;
+          height: 100%;
+        }
+
+        .top-card {
           margin-bottom: 16px;
         }
 
@@ -122,15 +124,19 @@
 
         iron-image {
           width: 306px;
-          height: 92px !important;
+          height: 172px !important;
         }
 
         .imageCard {
-          height: 92px !important;
+          height: 172px !important;
         }
 
         .domain-name {
           font-size: 22px;
+        }
+
+        .description {
+          padding-bottom: 42px;
         }
 
         .stats {
@@ -146,7 +152,7 @@
 
     <template is="dom-if" if="[[domain]]">
       <div class="layout horizontal wrap">
-        <paper-material id="card" elevation="5" animated class="large-card textBox">
+        <paper-material id="card" elevation="5" animated class="large-card top-card textBox">
           <div class="layout vertical">
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">

@@ -114,13 +114,16 @@
       @media (max-width: 945px) {
         :host {
           width: 306px;
-          margin-top: 40px;
         }
 
         .groupCard {
-          width: 306px;
-          height: 180px;
           margin-bottom: 16px;
+          width: 306px;
+          height: 100%;
+        }
+
+        .top-card {
+          margin-top: 16px !important;
         }
 
         .edit {
@@ -129,11 +132,11 @@
 
         iron-image {
           width: 306px;
-          height: 92px !important;
+          height: 172px !important;
         }
 
         .imageCard {
-          height: 92px !important;
+          height: 172px !important;
         }
 
         .group-name {
@@ -141,8 +144,8 @@
         }
 
         .groupDescription {
-          font-size: 13px;
           padding-top: 6px;
+          padding-bottom: 42px;
         }
 
         .stats {
@@ -157,7 +160,7 @@
 
     <template is="dom-if" if="[[group]]" restamp>
       <div class="layout horizontal center-center wrap">
-        <paper-material id="card" elevation="[[elevation]]" animated-shadow class="groupCard textBox">
+        <paper-material id="card" elevation="[[elevation]]" animated-shadow class="groupCard top-card textBox">
           <div class="layout vertical">
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">
