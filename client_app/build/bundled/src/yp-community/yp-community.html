@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.90"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.91"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -412,12 +412,14 @@
       @media (max-width: 945px) {
         :host {
           width: 306px;
-          margin-top: 40px;
         }
 
         .large-card {
           width: 306px;
-          height: 180px;
+          height: 100%;
+        }
+
+        .top-card {
           margin-bottom: 16px;
         }
 
@@ -427,17 +429,16 @@
 
         iron-image {
           width: 306px;
-          height: 92px !important;
+          height: 172px !important;
         }
-
 
         .image {
           width: 306px;
-          height: 92px !important;
+          height: 172px !important;
         }
 
         .imageCard {
-          height: 92px !important;
+          height: 172px !important;
         }
 
         .community-name {
@@ -445,8 +446,8 @@
         }
 
         .communityDescription {
-          font-size: 13px;
           padding-top: 6px;
+          padding-bottom: 4px;
         }
 
         .stats {
@@ -456,13 +457,13 @@
           margin-right: 0;
         }
       }
-
     </style>
+
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <template is="dom-if" if="[[community]]">
       <div class="layout horizontal wrap">
-        <paper-material id="card" elevation="5" animated="" class="large-card textBox">
+        <paper-material id="card" elevation="5" animated="" class="large-card top-card textBox">
           <div class="layout vertical">
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">

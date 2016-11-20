@@ -1,23 +1,23 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.90">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.91">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.90">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.90">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.91">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.91">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.90">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.2.90">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.2.90">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.2.90">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.91">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.2.91">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.2.91">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.2.91">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.2.90">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.2.91">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.90">
-<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.2.90">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.2.90">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.91">
+<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.2.91">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.2.91">
 
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.2.90">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.2.90">
-<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.2.90">
-<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.2.90">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.2.91">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.2.91">
+<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.2.91">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.2.91">
 
 </head><body><dom-module id="yp-group-edit">
   <template>
@@ -93,7 +93,7 @@
       </div>
 
       <div class="layout horizontal wrap config">
-        <div class="layout vertica configl">
+        <div class="layout vertica config">
           <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
           <div class="layout horizontal center-center">
             <paper-dropdown-menu label="[[t('status.select')]]">
@@ -104,6 +104,16 @@
               </paper-menu>
             </paper-dropdown-menu>
             <input type="hidden" name="status" value="[[status]]">
+            <div class="layout horizontal center-center">
+              <paper-dropdown-menu label="[[t('endorsementButtons')]]">
+                <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{endorsementButtons}}">
+                  <template is="dom-repeat" items="[[endorsementButtonsOptions]]" as="buttonsSelection">
+                    <paper-item name="[[buttonsSelection.name]]">[[buttonsSelection.translatedName]]</paper-item>
+                  </template>
+                </paper-menu>
+              </paper-dropdown-menu>
+              <input type="hidden" name="endorsementButtons" value="[[endorsementButtons]]">
+            </div>
           </div>
         </div>
         <div class="layout vertical config">
@@ -198,12 +208,32 @@
         value: null
       },
 
-      locationHidden: Boolean
+      locationHidden: Boolean,
+
+      endorsementButtonsOptions: {
+        type: Object,
+        computed: '_endorsementButtonsOptions(language)'
+      },
+
+      endorsementButtons: String
     },
 
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _endorsementButtonsOptions: function(language) {
+      if (this.t) {
+        return [
+          {name: 'hearts', translatedName: this.t('endorsementButtonsHeart')},
+          {name: 'arrows', translatedName: this.t('endorsementArrows') },
+          {name: 'thumbs', translatedName: this.t('endorsementThumbs') },
+          {name: 'hats', translatedName: this.t('endorsementHats') }
+        ]
+      } else {
+        return [];
+      }
+    },
 
     _updateEmojiBindings: function () {
       this.async(function () {
@@ -254,6 +284,12 @@
         } else {
           this.set('canVote', true);
           this.set('canAddNewPosts', true);
+        }
+
+        if (this.group.configuration && this.group.configuration.endorsementButtons!=undefined) {
+          this.set('endorsementButtons', this.group.configuration.endorsementButtons);
+        } else {
+          this.set('endorsementButtons', "hearts");
         }
 
         if (this.group.configuration && this.group.configuration.locationHidden!=undefined) {

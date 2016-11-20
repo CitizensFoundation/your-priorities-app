@@ -1,4 +1,9 @@
 {
+  "endorsementButtonsHeart":"Hearts",
+  "endorsementArrows":"Arrows",
+  "endorsementThumbs":"Thumbs",
+  "endorsementHats":"Hats",
+  "endorsementButtons": "Endorsement buttons",
   "bulkStatusUdateForInfo": "Click on the ideas for more information",
   "urlLink": "Link",
   "bulkStatusUdateFor": "Status updates for ideas on",
@@ -104,7 +109,8 @@
     "published": "Open ideas",
     "successful": "Successful ideas",
     "failed": "Failed ideas",
-    "inProgress": "Ideas in progress"
+    "inProgress": "Ideas in progress",
+    "inVoting": "Ideas in voting"
   },
 
   "activity": {

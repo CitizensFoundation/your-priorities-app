@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.90">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.91">
 
 <script src="twemoji.min-2.1.2.js"></script>
 <script type="text/javascript" src="sanitize-html.min.js"></script>
@@ -25,7 +25,7 @@
           'strong'
         ]
       });
-      return twemoji.parse(sanitizedText);
+      return twemoji.parse(sanitizedText).replace(/&amp\;quot\;/g,"\"");
     }
   }
 </script>

@@ -1,29 +1,29 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.90">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.91">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.90">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.90">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.90">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.90">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.90">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.90">
-<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.2.90">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.90">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.91">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.2.91">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.2.91">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.2.91">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.2.91">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.91">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.2.91">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.91">
 
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.2.90">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html?v=6.2.90">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.90">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.90">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.2.91">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html?v=6.2.91">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.91">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.2.91">
 
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.2.90">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.2.91">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.90">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.90">
-<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.2.90">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.91">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.91">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.2.91">
 
-<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html?v=6.2.90">
+<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html?v=6.2.91">
 
-<link rel="import" href="yp-community-behaviors.html?v=6.2.90">
-<link rel="import" href="yp-community-stats.html?v=6.2.90">
+<link rel="import" href="yp-community-behaviors.html?v=6.2.91">
+<link rel="import" href="yp-community-stats.html?v=6.2.91">
 
 </head><body><dom-module id="yp-community-large-card">
 
@@ -120,12 +120,14 @@
       @media (max-width: 945px) {
         :host {
           width: 306px;
-          margin-top: 40px;
         }
 
         .large-card {
           width: 306px;
-          height: 180px;
+          height: 100%;
+        }
+
+        .top-card {
           margin-bottom: 16px;
         }
 
@@ -135,17 +137,16 @@
 
         iron-image {
           width: 306px;
-          height: 92px !important;
+          height: 172px !important;
         }
-
 
         .image {
           width: 306px;
-          height: 92px !important;
+          height: 172px !important;
         }
 
         .imageCard {
-          height: 92px !important;
+          height: 172px !important;
         }
 
         .community-name {
@@ -153,8 +154,8 @@
         }
 
         .communityDescription {
-          font-size: 13px;
           padding-top: 6px;
+          padding-bottom: 4px;
         }
 
         .stats {
@@ -164,13 +165,13 @@
           margin-right: 0;
         }
       }
-
     </style>
+
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <template is="dom-if" if="[[community]]">
       <div class="layout horizontal wrap">
-        <paper-material id="card" elevation="5" animated="" class="large-card textBox">
+        <paper-material id="card" elevation="5" animated="" class="large-card top-card textBox">
           <div class="layout vertical">
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">
