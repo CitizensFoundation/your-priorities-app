@@ -6,7 +6,7 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.2.91">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.2.92">
 
 <script>
   (function() {
@@ -308,12 +308,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       /**
        * Returns scroll `deltaX` and `deltaY`.
        * @param {!Event} event The scroll event
-       * @return {{
-       *  deltaX: number The x-axis scroll delta (positive: scroll right,
-       *                 negative: scroll left, 0: no scroll),
-       *  deltaY: number The y-axis scroll delta (positive: scroll down,
-       *                 negative: scroll up, 0: no scroll)
-       * }} info
+       * @return {{deltaX: number, deltaY: number}} Object containing the
+       * x-axis scroll delta (positive: scroll right, negative: scroll left,
+       * 0: no scroll), and the y-axis scroll delta (positive: scroll down,
+       * negative: scroll up, 0: no scroll).
        * @private
        */
       _getScrollInfo: function(event) {

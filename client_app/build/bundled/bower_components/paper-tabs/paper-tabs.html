@@ -6,15 +6,15 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.2.91">
-<link rel="import" href="../iron-flex-layout/iron-flex-layout.html?v=6.2.91">
-<link rel="import" href="../iron-icon/iron-icon.html?v=6.2.91">
-<link rel="import" href="../iron-menu-behavior/iron-menubar-behavior.html?v=6.2.91">
-<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html?v=6.2.91">
-<link rel="import" href="../paper-icon-button/paper-icon-button.html?v=6.2.91">
-<link rel="import" href="../paper-styles/color.html?v=6.2.91">
-<link rel="import" href="paper-tabs-icons.html?v=6.2.91">
-<link rel="import" href="paper-tab.html?v=6.2.91">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.2.92">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html?v=6.2.92">
+<link rel="import" href="../iron-icon/iron-icon.html?v=6.2.92">
+<link rel="import" href="../iron-menu-behavior/iron-menubar-behavior.html?v=6.2.92">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html?v=6.2.92">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html?v=6.2.92">
+<link rel="import" href="../paper-styles/color.html?v=6.2.92">
+<link rel="import" href="paper-tabs-icons.html?v=6.2.92">
+<link rel="import" href="paper-tab.html?v=6.2.92">
 
 <!--
 Material design: [Tabs](https://www.google.com/design/spec/components/tabs.html)
@@ -86,6 +86,8 @@ Custom property | Description | Default
 `--paper-tabs-selection-bar-color` | Color for the selection bar | `--paper-yellow-a100`
 `--paper-tabs-selection-bar` | Mixin applied to the selection bar | `{}`
 `--paper-tabs` | Mixin applied to the tabs | `{}`
+`--paper-tabs-content` | Mixin applied to the content container of tabs | `{}`
+`--paper-tabs-container` | Mixin applied to the layout container of tabs | `{}`
 
 @hero hero.svg
 @demo demo/index.html
@@ -124,6 +126,7 @@ Custom property | Description | Default
         white-space: nowrap;
         overflow: hidden;
         @apply(--layout-flex-auto);
+        @apply(--paper-tabs-container);
       }
 
       #tabsContent {
@@ -131,6 +134,7 @@ Custom property | Description | Default
         -moz-flex-basis: auto;
         -ms-flex-basis: auto;
         flex-basis: auto;
+        @apply(--paper-tabs-content);
       }
 
       #tabsContent.scrollable {

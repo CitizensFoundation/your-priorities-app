@@ -6,10 +6,10 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../../polymer/polymer.html?v=6.2.91">
-<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html?v=6.2.91">
-<link rel="import" href="../../iron-resizable-behavior/iron-resizable-behavior.html?v=6.2.91">
-<link rel="import" href="../app-scroll-effects/app-scroll-effects-behavior.html?v=6.2.91">
+--><html><head><link rel="import" href="../../polymer/polymer.html?v=6.2.92">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html?v=6.2.92">
+<link rel="import" href="../../iron-resizable-behavior/iron-resizable-behavior.html?v=6.2.92">
+<link rel="import" href="../app-scroll-effects/app-scroll-effects-behavior.html?v=6.2.92">
 
 <!--
 app-header is container element for app-toolbars at the top of the screen that can have scroll
@@ -101,7 +101,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.91">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.92">
 ```
 
 #### List of effects
@@ -218,7 +218,8 @@ Mixin | Description | Default
 @demo app-header/demo/music.html Reveals Demo
 @demo app-header/demo/no-effects.html Condenses and Reveals Demo
 @demo app-header/demo/notes.html Fixed with Dynamic Shadow Demo
-@demo app-header/demo/custom-sticky-element.html Custom Sticky Element Demo
+@demo app-header/demo/custom-sticky-element-1.html Custom Sticky Element Demo 1
+@demo app-header/demo/custom-sticky-element-2.html Custom Sticky Element Demo 2
 -->
 
 </head><body><dom-module id="app-header">
@@ -479,8 +480,6 @@ Mixin | Description | Default
        * @method resetLayout
        */
       resetLayout: function() {
-        this.fire('app-header-reset-layout');
-
         this.debounce('_resetLayout', function() {
           // noop if the header isn't visible
           if (this.offsetWidth === 0 && this.offsetHeight === 0) {
@@ -499,7 +498,6 @@ Mixin | Description | Default
           if  (!firstSetup) {
             this._updateScrollState(0, true);
           }
-
           if (this._mayMove()) {
             this._dHeight = this._stickyEl ? this._height - this._stickyEl.offsetHeight : 0;
           } else {
@@ -517,6 +515,7 @@ Mixin | Description | Default
           }
           // restore no transition
           this.disabled = currentDisabled;
+          this.fire('app-header-reset-layout');
         });
       },
 
@@ -643,9 +642,9 @@ Mixin | Description | Default
        */
       _transformHeader: function(y) {
         this.translate3d(0, (-y) + 'px', 0);
-        if (this._stickyEl && this.condenses && y >= this._stickyElTop) {
-          this.translate3d(0, (Math.min(y, this._dHeight) - this._stickyElTop) + 'px', 0,
-              this._stickyEl);
+        if (this._stickyEl) {
+          this.translate3d(0, this.condenses && y >= this._stickyElTop ?
+              (Math.min(y, this._dHeight) - this._stickyElTop) + 'px' : 0,  0, this._stickyEl);
         }
       },
 

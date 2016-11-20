@@ -9514,9 +9514,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	var OPENBRACE = inheritsToken('{');
 	var OPENBRACKET = inheritsToken('[');
+	var OPENANGLEBRACKET = inheritsToken('<');
 	var OPENPAREN = inheritsToken('(');
 	var CLOSEBRACE = inheritsToken('}');
 	var CLOSEBRACKET = inheritsToken(']');
+	var CLOSEANGLEBRACKET = inheritsToken('>');
 	var CLOSEPAREN = inheritsToken(')');
 
 	var TOKENS = Object.freeze({
@@ -9540,9 +9542,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		WS: WS,
 		OPENBRACE: OPENBRACE,
 		OPENBRACKET: OPENBRACKET,
+		OPENANGLEBRACKET: OPENANGLEBRACKET,
 		OPENPAREN: OPENPAREN,
 		CLOSEBRACE: CLOSEBRACE,
 		CLOSEBRACKET: CLOSEBRACKET,
+		CLOSEANGLEBRACKET: CLOSEANGLEBRACKET,
 		CLOSEPAREN: CLOSEPAREN
 	});
 
@@ -9574,7 +9578,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var S_WS = makeState(WS);
 
 	// States for special URL symbols
-	S_START.on('@', makeState(AT)).on('.', makeState(DOT)).on('+', makeState(PLUS)).on('#', makeState(POUND)).on('?', makeState(QUERY)).on('/', makeState(SLASH)).on('_', makeState(UNDERSCORE)).on(':', makeState(COLON)).on('{', makeState(OPENBRACE)).on('[', makeState(OPENBRACKET)).on('(', makeState(OPENPAREN)).on('}', makeState(CLOSEBRACE)).on(']', makeState(CLOSEBRACKET)).on(')', makeState(CLOSEPAREN)).on([',', ';', '!', '"', '\''], makeState(PUNCTUATION));
+	S_START.on('@', makeState(AT)).on('.', makeState(DOT)).on('+', makeState(PLUS)).on('#', makeState(POUND)).on('?', makeState(QUERY)).on('/', makeState(SLASH)).on('_', makeState(UNDERSCORE)).on(':', makeState(COLON)).on('{', makeState(OPENBRACE)).on('[', makeState(OPENBRACKET)).on('<', makeState(OPENANGLEBRACKET)).on('(', makeState(OPENPAREN)).on('}', makeState(CLOSEBRACE)).on(']', makeState(CLOSEBRACKET)).on('>', makeState(CLOSEANGLEBRACKET)).on(')', makeState(CLOSEPAREN)).on([',', ';', '!', '"', '\''], makeState(PUNCTUATION));
 
 	// Whitespace jumps
 	// Tokens of only non-newline whitespace are arbitrarily long
@@ -9935,12 +9939,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var S_URL_NON_ACCEPTING = makeState$1(); // URL followed by some symbols (will not be part of the final URL)
 	var S_URL_OPENBRACE = makeState$1(); // URL followed by {
 	var S_URL_OPENBRACKET = makeState$1(); // URL followed by [
+	var S_URL_OPENANGLEBRACKET = makeState$1(); // URL followed by <
 	var S_URL_OPENPAREN = makeState$1(); // URL followed by (
 	var S_URL_OPENBRACE_Q = makeState$1(URL); // URL followed by { and some symbols that the URL can end it
 	var S_URL_OPENBRACKET_Q = makeState$1(URL); // URL followed by [ and some symbols that the URL can end it
+	var S_URL_OPENANGLEBRACKET_Q = makeState$1(URL); // URL followed by < and some symbols that the URL can end it
 	var S_URL_OPENPAREN_Q = makeState$1(URL); // URL followed by ( and some symbols that the URL can end it
 	var S_URL_OPENBRACE_SYMS = makeState$1(); // S_URL_OPENBRACE_Q followed by some symbols it cannot end it
 	var S_URL_OPENBRACKET_SYMS = makeState$1(); // S_URL_OPENBRACKET_Q followed by some symbols it cannot end it
+	var S_URL_OPENANGLEBRACKET_SYMS = makeState$1(); // S_URL_OPENANGLEBRACKET_Q followed by some symbols it cannot end it
 	var S_URL_OPENPAREN_SYMS = makeState$1(); // S_URL_OPENPAREN_Q followed by some symbols it cannot end it
 	var S_EMAIL_DOMAIN = makeState$1(); // parsed string starts with local email info + @ with a potential domain name (C)
 	var S_EMAIL_DOMAIN_DOT = makeState$1(); // (C) domain followed by DOT
@@ -9995,26 +10002,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Types of tokens that can follow a URL and be part of the query string
 	// but cannot be the very last characters
 	// Characters that cannot appear in the URL at all should be excluded
-	var qsNonAccepting = [COLON, DOT, QUERY, PUNCTUATION, CLOSEBRACE, CLOSEBRACKET, CLOSEPAREN, OPENBRACE, OPENBRACKET, OPENPAREN];
+	var qsNonAccepting = [COLON, DOT, QUERY, PUNCTUATION, CLOSEBRACE, CLOSEBRACKET, CLOSEANGLEBRACKET, CLOSEPAREN, OPENBRACE, OPENBRACKET, OPENANGLEBRACKET, OPENPAREN];
 
 	// These states are responsible primarily for determining whether or not to
 	// include the final round bracket.
 
 	// URL, followed by an opening bracket
-	S_URL.on(OPENBRACE, S_URL_OPENBRACE).on(OPENBRACKET, S_URL_OPENBRACKET).on(OPENPAREN, S_URL_OPENPAREN);
+	S_URL.on(OPENBRACE, S_URL_OPENBRACE).on(OPENBRACKET, S_URL_OPENBRACKET).on(OPENANGLEBRACKET, S_URL_OPENANGLEBRACKET).on(OPENPAREN, S_URL_OPENPAREN);
 
 	// URL with extra symbols at the end, followed by an opening bracket
-	S_URL_NON_ACCEPTING.on(OPENBRACE, S_URL_OPENBRACE).on(OPENBRACKET, S_URL_OPENBRACKET).on(OPENPAREN, S_URL_OPENPAREN);
+	S_URL_NON_ACCEPTING.on(OPENBRACE, S_URL_OPENBRACE).on(OPENBRACKET, S_URL_OPENBRACKET).on(OPENANGLEBRACKET, S_URL_OPENANGLEBRACKET).on(OPENPAREN, S_URL_OPENPAREN);
 
 	// Closing bracket component. This character WILL be included in the URL
 	S_URL_OPENBRACE.on(CLOSEBRACE, S_URL);
 	S_URL_OPENBRACKET.on(CLOSEBRACKET, S_URL);
+	S_URL_OPENANGLEBRACKET.on(CLOSEANGLEBRACKET, S_URL);
 	S_URL_OPENPAREN.on(CLOSEPAREN, S_URL);
 	S_URL_OPENBRACE_Q.on(CLOSEBRACE, S_URL);
 	S_URL_OPENBRACKET_Q.on(CLOSEBRACKET, S_URL);
+	S_URL_OPENANGLEBRACKET_Q.on(CLOSEANGLEBRACKET, S_URL);
 	S_URL_OPENPAREN_Q.on(CLOSEPAREN, S_URL);
 	S_URL_OPENBRACE_SYMS.on(CLOSEBRACE, S_URL);
 	S_URL_OPENBRACKET_SYMS.on(CLOSEBRACKET, S_URL);
+	S_URL_OPENANGLEBRACKET_SYMS.on(CLOSEANGLEBRACKET, S_URL);
 	S_URL_OPENPAREN_SYMS.on(CLOSEPAREN, S_URL);
 
 	// URL that beings with an opening bracket, followed by a symbols.
@@ -10022,24 +10032,30 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// has a single opening bracket for some reason).
 	S_URL_OPENBRACE.on(qsAccepting, S_URL_OPENBRACE_Q);
 	S_URL_OPENBRACKET.on(qsAccepting, S_URL_OPENBRACKET_Q);
+	S_URL_OPENANGLEBRACKET.on(qsAccepting, S_URL_OPENANGLEBRACKET_Q);
 	S_URL_OPENPAREN.on(qsAccepting, S_URL_OPENPAREN_Q);
 	S_URL_OPENBRACE.on(qsNonAccepting, S_URL_OPENBRACE_SYMS);
 	S_URL_OPENBRACKET.on(qsNonAccepting, S_URL_OPENBRACKET_SYMS);
+	S_URL_OPENANGLEBRACKET.on(qsNonAccepting, S_URL_OPENANGLEBRACKET_SYMS);
 	S_URL_OPENPAREN.on(qsNonAccepting, S_URL_OPENPAREN_SYMS);
 
 	// URL that begins with an opening bracket, followed by some symbols
 	S_URL_OPENBRACE_Q.on(qsAccepting, S_URL_OPENBRACE_Q);
 	S_URL_OPENBRACKET_Q.on(qsAccepting, S_URL_OPENBRACKET_Q);
+	S_URL_OPENANGLEBRACKET_Q.on(qsAccepting, S_URL_OPENANGLEBRACKET_Q);
 	S_URL_OPENPAREN_Q.on(qsAccepting, S_URL_OPENPAREN_Q);
 	S_URL_OPENBRACE_Q.on(qsNonAccepting, S_URL_OPENBRACE_Q);
 	S_URL_OPENBRACKET_Q.on(qsNonAccepting, S_URL_OPENBRACKET_Q);
+	S_URL_OPENANGLEBRACKET_Q.on(qsNonAccepting, S_URL_OPENANGLEBRACKET_Q);
 	S_URL_OPENPAREN_Q.on(qsNonAccepting, S_URL_OPENPAREN_Q);
 
 	S_URL_OPENBRACE_SYMS.on(qsAccepting, S_URL_OPENBRACE_Q);
 	S_URL_OPENBRACKET_SYMS.on(qsAccepting, S_URL_OPENBRACKET_Q);
+	S_URL_OPENANGLEBRACKET_SYMS.on(qsAccepting, S_URL_OPENANGLEBRACKET_Q);
 	S_URL_OPENPAREN_SYMS.on(qsAccepting, S_URL_OPENPAREN_Q);
 	S_URL_OPENBRACE_SYMS.on(qsNonAccepting, S_URL_OPENBRACE_SYMS);
 	S_URL_OPENBRACKET_SYMS.on(qsNonAccepting, S_URL_OPENBRACKET_SYMS);
+	S_URL_OPENANGLEBRACKET_SYMS.on(qsNonAccepting, S_URL_OPENANGLEBRACKET_SYMS);
 	S_URL_OPENPAREN_SYMS.on(qsNonAccepting, S_URL_OPENPAREN_SYMS);
 
 	// Account for the query string
@@ -10912,7 +10928,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.2.91">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.2.92">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -11317,7 +11333,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.2.91">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.2.92">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -11325,7 +11341,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.2.91">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.2.92">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -11626,6 +11642,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      */
     removeIcon: function(element) {
       // Remove old svg element
+      element = element.root || element;
       if (element._svgIcon) {
         Polymer.dom(element).removeChild(element._svgIcon);
         element._svgIcon = null;
@@ -11706,7 +11723,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   });
 
 </script>
-<iron-iconset-svg name="places" size="24">
+<!--
+@license
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><iron-iconset-svg name="places" size="24">
 <svg><defs>
 <g id="ac-unit"><path d="M22 11h-4.17l3.24-3.24-1.41-1.42L15 11h-2V9l4.66-4.66-1.42-1.41L13 6.17V2h-2v4.17L7.76 2.93 6.34 4.34 11 9v2H9L4.34 6.34 2.93 7.76 6.17 11H2v2h4.17l-3.24 3.24 1.41 1.42L9 13h2v2l-4.66 4.66 1.42 1.41L11 17.83V22h2v-4.17l3.24 3.24 1.42-1.41L13 15v-2h2l4.66 4.66 1.41-1.42L17.83 13H22z"></path></g>
 <g id="airport-shuttle"><path d="M17 5H3c-1.1 0-2 .89-2 2v9h2c0 1.65 1.34 3 3 3s3-1.35 3-3h5.5c0 1.65 1.34 3 3 3s3-1.35 3-3H23v-5l-6-6zM3 11V7h4v4H3zm3 6.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7-6.5H9V7h4v4zm4.5 6.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM15 11V7h1l4 4h-5z"></path></g>
@@ -11723,6 +11748,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <g id="kitchen"><path d="M18 2.01L6 2c-1.1 0-2 .89-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.11-.9-1.99-2-1.99zM18 20H6v-9.02h12V20zm0-11H6V4h12v5zM8 5h2v3H8zm0 7h2v5H8z"></path></g>
 <g id="pool"><path d="M22 21c-1.11 0-1.73-.37-2.18-.64-.37-.22-.6-.36-1.15-.36-.56 0-.78.13-1.15.36-.46.27-1.07.64-2.18.64s-1.73-.37-2.18-.64c-.37-.22-.6-.36-1.15-.36-.56 0-.78.13-1.15.36-.46.27-1.08.64-2.19.64-1.11 0-1.73-.37-2.18-.64-.37-.23-.6-.36-1.15-.36s-.78.13-1.15.36c-.46.27-1.08.64-2.19.64v-2c.56 0 .78-.13 1.15-.36.46-.27 1.08-.64 2.19-.64s1.73.37 2.18.64c.37.23.59.36 1.15.36.56 0 .78-.13 1.15-.36.46-.27 1.08-.64 2.19-.64 1.11 0 1.73.37 2.18.64.37.22.6.36 1.15.36s.78-.13 1.15-.36c.45-.27 1.07-.64 2.18-.64s1.73.37 2.18.64c.37.23.59.36 1.15.36v2zm0-4.5c-1.11 0-1.73-.37-2.18-.64-.37-.22-.6-.36-1.15-.36-.56 0-.78.13-1.15.36-.45.27-1.07.64-2.18.64s-1.73-.37-2.18-.64c-.37-.22-.6-.36-1.15-.36-.56 0-.78.13-1.15.36-.45.27-1.07.64-2.18.64s-1.73-.37-2.18-.64c-.37-.22-.6-.36-1.15-.36s-.78.13-1.15.36c-.47.27-1.09.64-2.2.64v-2c.56 0 .78-.13 1.15-.36.45-.27 1.07-.64 2.18-.64s1.73.37 2.18.64c.37.22.6.36 1.15.36.56 0 .78-.13 1.15-.36.45-.27 1.07-.64 2.18-.64s1.73.37 2.18.64c.37.22.6.36 1.15.36s.78-.13 1.15-.36c.45-.27 1.07-.64 2.18-.64s1.73.37 2.18.64c.37.22.6.36 1.15.36v2zM8.67 12c.56 0 .78-.13 1.15-.36.46-.27 1.08-.64 2.19-.64 1.11 0 1.73.37 2.18.64.37.22.6.36 1.15.36s.78-.13 1.15-.36c.12-.07.26-.15.41-.23L10.48 5C8.93 3.45 7.5 2.99 5 3v2.5c1.82-.01 2.89.39 4 1.5l1 1-3.25 3.25c.31.12.56.27.77.39.37.23.59.36 1.15.36z"></path><circle cx="16.5" cy="5.5" r="2.5"></circle></g>
 <g id="room-service"><path d="M2 17h20v2H2zm11.84-9.21c.1-.24.16-.51.16-.79 0-1.1-.9-2-2-2s-2 .9-2 2c0 .28.06.55.16.79C6.25 8.6 3.27 11.93 3 16h18c-.27-4.07-3.25-7.4-7.16-8.21z"></path></g>
+<g id="rv-hookup"><path d="M20 17v-6c0-1.1-.9-2-2-2H7V7l-3 3 3 3v-2h4v3H4v3c0 1.1.9 2 2 2h2c0 1.66 1.34 3 3 3s3-1.34 3-3h8v-2h-2zm-9 3c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm7-6h-4v-3h4v3zM17 2v2H9v2h8v2l3-3z"></path></g>
 <g id="smoke-free"><path d="M2 6l6.99 7H2v3h9.99l7 7 1.26-1.25-17-17zm18.5 7H22v3h-1.5zM18 13h1.5v3H18zm.85-8.12c.62-.61 1-1.45 1-2.38h-1.5c0 1.02-.83 1.85-1.85 1.85v1.5c2.24 0 4 1.83 4 4.07V12H22V9.92c0-2.23-1.28-4.15-3.15-5.04zM14.5 8.7h1.53c1.05 0 1.97.74 1.97 2.05V12h1.5v-1.59c0-1.8-1.6-3.16-3.47-3.16H14.5c-1.02 0-1.85-.98-1.85-2s.83-1.75 1.85-1.75V2c-1.85 0-3.35 1.5-3.35 3.35s1.5 3.35 3.35 3.35zm2.5 7.23V13h-2.93z"></path></g>
 <g id="smoking-rooms"><path d="M2 16h15v3H2zm18.5 0H22v3h-1.5zM18 16h1.5v3H18zm.85-8.27c.62-.61 1-1.45 1-2.38C19.85 3.5 18.35 2 16.5 2v1.5c1.02 0 1.85.83 1.85 1.85S17.52 7.2 16.5 7.2v1.5c2.24 0 4 1.83 4 4.07V15H22v-2.24c0-2.22-1.28-4.14-3.15-5.03zm-2.82 2.47H14.5c-1.02 0-1.85-.98-1.85-2s.83-1.75 1.85-1.75v-1.5c-1.85 0-3.35 1.5-3.35 3.35s1.5 3.35 3.35 3.35h1.53c1.05 0 1.97.74 1.97 2.05V15h1.5v-1.64c0-1.81-1.6-3.16-3.47-3.16z"></path></g>
 <g id="spa"><path d="M8.55 12c-1.07-.71-2.25-1.27-3.53-1.61 1.28.34 2.46.9 3.53 1.61zm10.43-1.61c-1.29.34-2.49.91-3.57 1.64 1.08-.73 2.28-1.3 3.57-1.64z"></path><path d="M15.49 9.63c-.18-2.79-1.31-5.51-3.43-7.63-2.14 2.14-3.32 4.86-3.55 7.63 1.28.68 2.46 1.56 3.49 2.63 1.03-1.06 2.21-1.94 3.49-2.63zm-6.5 2.65c-.14-.1-.3-.19-.45-.29.15.11.31.19.45.29zm6.42-.25c-.13.09-.27.16-.4.26.13-.1.27-.17.4-.26zM12 15.45C9.85 12.17 6.18 10 2 10c0 5.32 3.36 9.82 8.03 11.49.63.23 1.29.4 1.97.51.68-.12 1.33-.29 1.97-.51C18.64 19.82 22 15.32 22 10c-4.18 0-7.85 2.17-10 5.45z"></path></g>
@@ -14326,6 +14352,7 @@ Custom property | Description | Default
 `--paper-input-container-label-focus` | Mixin applied to the label when the input is focused | `{}`
 `--paper-input-container-label-floating` | Mixin applied to the label when floating | `{}`
 `--paper-input-container-input` | Mixin applied to the input | `{}`
+`--paper-input-container-input-webkit-spinner` | Mixin applied to the webkit spinner | `{}`
 `--paper-input-container-underline` | Mixin applied to the underline | `{}`
 `--paper-input-container-underline-focus` | Mixin applied to the underline when the input is focused | `{}`
 `--paper-input-container-underline-disabled` | Mixin applied to the underline when the input is disabled | `{}`
@@ -14366,14 +14393,14 @@ This element is `display:block` by default, but you can set the `inline` attribu
       }
 
       .underline {
+        height: 2px;
         position: relative;
       }
 
       .focused-line {
         @apply(--layout-fit);
 
-        background: var(--paper-input-container-focus-color, --primary-color);
-        height: 2px;
+        border-bottom: 2px solid var(--paper-input-container-focus-color, --primary-color);
 
         -webkit-transform-origin: center center;
         transform-origin: center center;
@@ -14393,7 +14420,7 @@ This element is `display:block` by default, but you can set the `inline` attribu
       }
 
       .underline.is-invalid .focused-line {
-        background: var(--paper-input-container-invalid-color, --error-color);
+        border-color: var(--paper-input-container-invalid-color, --error-color);
         -webkit-transform: none;
         transform: none;
         -webkit-transition: -webkit-transform 0.25s;
@@ -14405,8 +14432,7 @@ This element is `display:block` by default, but you can set the `inline` attribu
       .unfocused-line {
         @apply(--layout-fit);
 
-        background: var(--paper-input-container-color, --secondary-text-color);
-        height: 1px;
+        border-bottom: 1px solid var(--paper-input-container-color, --secondary-text-color);
 
         @apply(--paper-input-container-underline);
       }
@@ -14414,7 +14440,6 @@ This element is `display:block` by default, but you can set the `inline` attribu
       :host([disabled]) .unfocused-line {
         border-bottom: 1px dashed;
         border-color: var(--paper-input-container-color, --secondary-text-color);
-        background: transparent;
 
         @apply(--paper-input-container-underline-disabled);
       }
@@ -14512,6 +14537,11 @@ This element is `display:block` by default, but you can set the `inline` attribu
 
         @apply(--paper-font-subhead);
         @apply(--paper-input-container-input);
+      }
+
+      .input-content ::content input::-webkit-outer-spin-button,
+      .input-content ::content input::-webkit-inner-spin-button {
+        @apply(--paper-input-container-input-webkit-spinner);
       }
 
       ::content [prefix] {
@@ -18388,6 +18418,222 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><script>
+  (function() {
+    'use strict';
+
+    var p = Element.prototype;
+    var matches = p.matches || p.matchesSelector || p.mozMatchesSelector ||
+      p.msMatchesSelector || p.oMatchesSelector || p.webkitMatchesSelector;
+
+    Polymer.IronFocusablesHelper = {
+
+      /**
+       * Returns a sorted array of tabbable nodes, including the root node.
+       * It searches the tabbable nodes in the light and shadow dom of the chidren,
+       * sorting the result by tabindex.
+       * @param {!Node} node
+       * @return {Array<HTMLElement>}
+       */
+      getTabbableNodes: function(node) {
+        var result = [];
+        // If there is at least one element with tabindex > 0, we need to sort
+        // the final array by tabindex.
+        var needsSortByTabIndex = this._collectTabbableNodes(node, result);
+        if (needsSortByTabIndex) {
+          return this._sortByTabIndex(result);
+        }
+        return result;
+      },
+
+      /**
+       * Returns if a element is focusable.
+       * @param {!HTMLElement} element
+       * @return {boolean}
+       */
+      isFocusable: function(element) {
+        // From http://stackoverflow.com/a/1600194/4228703:
+        // There isn't a definite list, it's up to the browser. The only
+        // standard we have is DOM Level 2 HTML https://www.w3.org/TR/DOM-Level-2-HTML/html.html,
+        // according to which the only elements that have a focus() method are
+        // HTMLInputElement,  HTMLSelectElement, HTMLTextAreaElement and
+        // HTMLAnchorElement. This notably omits HTMLButtonElement and
+        // HTMLAreaElement.
+        // Referring to these tests with tabbables in different browsers
+        // http://allyjs.io/data-tables/focusable.html
+
+        // Elements that cannot be focused if they have [disabled] attribute.
+        if (matches.call(element, 'input, select, textarea, button, object')) {
+          return matches.call(element, ':not([disabled])');
+        }
+        // Elements that can be focused even if they have [disabled] attribute.
+        return matches.call(element,
+          'a[href], area[href], iframe, [tabindex], [contentEditable]');
+      },
+
+      /**
+       * Returns if a element is tabbable. To be tabbable, a element must be
+       * focusable, visible, and with a tabindex !== -1.
+       * @param {!HTMLElement} element
+       * @return {boolean}
+       */
+      isTabbable: function(element) {
+        return this.isFocusable(element) &&
+          matches.call(element, ':not([tabindex="-1"])') &&
+          this._isVisible(element);
+      },
+
+      /**
+       * Returns the normalized element tabindex. If not focusable, returns -1.
+       * It checks for the attribute "tabindex" instead of the element property
+       * `tabIndex` since browsers assign different values to it.
+       * e.g. in Firefox `<div contenteditable>` has `tabIndex = -1`
+       * @param {!HTMLElement} element
+       * @return {!number}
+       * @private
+       */
+      _normalizedTabIndex: function(element) {
+        if (this.isFocusable(element)) {
+          var tabIndex = element.getAttribute('tabindex') || 0;
+          return Number(tabIndex);
+        }
+        return -1;
+      },
+
+      /**
+       * Searches for nodes that are tabbable and adds them to the `result` array.
+       * Returns if the `result` array needs to be sorted by tabindex.
+       * @param {!Node} node The starting point for the search; added to `result`
+       * if tabbable.
+       * @param {!Array<HTMLElement>} result
+       * @return {boolean}
+       * @private
+       */
+      _collectTabbableNodes: function(node, result) {
+        // If not an element or not visible, no need to explore children.
+        if (node.nodeType !== Node.ELEMENT_NODE || !this._isVisible(node)) {
+          return false;
+        }
+        var element = /** @type {HTMLElement} */ (node);
+        var tabIndex = this._normalizedTabIndex(element);
+        var needsSortByTabIndex = tabIndex > 0;
+        if (tabIndex >= 0) {
+          result.push(element);
+        }
+
+        // In ShadowDOM v1, tab order is affected by the order of distrubution.
+        // E.g. getTabbableNodes(#root) in ShadowDOM v1 should return [#A, #B];
+        // in ShadowDOM v0 tab order is not affected by the distrubution order,
+        // in fact getTabbableNodes(#root) returns [#B, #A].
+        //  <div id="root">
+        //   <!-- shadow -->
+        //     <slot name="a">
+        //     <slot name="b">
+        //   <!-- /shadow -->
+        //   <input id="A" slot="a">
+        //   <input id="B" slot="b" tabindex="1">
+        //  </div>
+        // TODO(valdrin) support ShadowDOM v1 when upgrading to Polymer v2.0.
+        var children;
+        if (element.localName === 'content') {
+          children = Polymer.dom(element).getDistributedNodes();
+        } else {
+          // Use shadow root if possible, will check for distributed nodes.
+          children = Polymer.dom(element.root || element).children;
+        }
+        for (var i = 0; i < children.length; i++) {
+          // Ensure method is always invoked to collect tabbable children.
+          var needsSort = this._collectTabbableNodes(children[i], result);
+          needsSortByTabIndex = needsSortByTabIndex || needsSort;
+        }
+        return needsSortByTabIndex;
+      },
+
+      /**
+       * Returns false if the element has `visibility: hidden` or `display: none`
+       * @param {!HTMLElement} element
+       * @return {boolean}
+       * @private
+       */
+      _isVisible: function(element) {
+        // Check inline style first to save a re-flow. If looks good, check also
+        // computed style.
+        var style = element.style;
+        if (style.visibility !== 'hidden' && style.display !== 'none') {
+          style = window.getComputedStyle(element);
+          return (style.visibility !== 'hidden' && style.display !== 'none');
+        }
+        return false;
+      },
+
+      /**
+       * Sorts an array of tabbable elements by tabindex. Returns a new array.
+       * @param {!Array<HTMLElement>} tabbables
+       * @return {Array<HTMLElement>}
+       * @private
+       */
+      _sortByTabIndex: function(tabbables) {
+        // Implement a merge sort as Array.prototype.sort does a non-stable sort
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+        var len = tabbables.length;
+        if (len < 2) {
+          return tabbables;
+        }
+        var pivot = Math.ceil(len / 2);
+        var left = this._sortByTabIndex(tabbables.slice(0, pivot));
+        var right = this._sortByTabIndex(tabbables.slice(pivot));
+        return this._mergeSortByTabIndex(left, right);
+      },
+
+      /**
+       * Merge sort iterator, merges the two arrays into one, sorted by tab index.
+       * @param {!Array<HTMLElement>} left
+       * @param {!Array<HTMLElement>} right
+       * @return {Array<HTMLElement>}
+       * @private
+       */
+      _mergeSortByTabIndex: function(left, right) {
+        var result = [];
+        while ((left.length > 0) && (right.length > 0)) {
+          if (this._hasLowerTabOrder(left[0], right[0])) {
+            result.push(right.shift());
+          } else {
+            result.push(left.shift());
+          }
+        }
+
+        return result.concat(left, right);
+      },
+
+      /**
+       * Returns if element `a` has lower tab order compared to element `b`
+       * (both elements are assumed to be focusable and tabbable).
+       * Elements with tabindex = 0 have lower tab order compared to elements
+       * with tabindex > 0.
+       * If both have same tabindex, it returns false.
+       * @param {!HTMLElement} a
+       * @param {!HTMLElement} b
+       * @return {boolean}
+       * @private
+       */
+      _hasLowerTabOrder: function(a, b) {
+        // Normalize tabIndexes
+        // e.g. in Firefox `<div contenteditable>` has `tabIndex = -1`
+        var ati = Math.max(a.tabIndex, 0);
+        var bti = Math.max(b.tabIndex, 0);
+        return (ati === 0 || bti === 0) ? bti > ati : ati > bti;
+      }
+    };
+  })();
+</script>
 <script>
 (function() {
 'use strict';
@@ -18570,45 +18816,7 @@ context. You should place this element as a child of `<body>` whenever possible.
      * @protected
      */
     get _focusableNodes() {
-      // Elements that can be focused even if they have [disabled] attribute.
-      var FOCUSABLE_WITH_DISABLED = [
-        'a[href]',
-        'area[href]',
-        'iframe',
-        '[tabindex]',
-        '[contentEditable=true]'
-      ];
-
-      // Elements that cannot be focused if they have [disabled] attribute.
-      var FOCUSABLE_WITHOUT_DISABLED = [
-        'input',
-        'select',
-        'textarea',
-        'button'
-      ];
-
-      // Discard elements with tabindex=-1 (makes them not focusable).
-      var selector = FOCUSABLE_WITH_DISABLED.join(':not([tabindex="-1"]),') +
-        ':not([tabindex="-1"]),' +
-        FOCUSABLE_WITHOUT_DISABLED.join(':not([disabled]):not([tabindex="-1"]),') +
-        ':not([disabled]):not([tabindex="-1"])';
-
-      var focusables = Polymer.dom(this).querySelectorAll(selector);
-      if (this.tabIndex >= 0) {
-        // Insert at the beginning because we might have all elements with tabIndex = 0,
-        // and the overlay should be the first of the list.
-        focusables.splice(0, 0, this);
-      }
-      // Sort by tabindex.
-      return focusables.sort(function (a, b) {
-        if (a.tabIndex === b.tabIndex) {
-          return 0;
-        }
-        if (a.tabIndex === 0 || a.tabIndex > b.tabIndex) {
-          return 1;
-        }
-        return -1;
-      });
+      return Polymer.IronFocusablesHelper.getTabbableNodes(this);
     },
 
     ready: function() {
@@ -18680,6 +18888,14 @@ context. You should place this element as a child of `<body>` whenever possible.
 
       this._setCanceled(true);
       this.opened = false;
+    },
+
+    /**
+     * Invalidates the cached tabbable nodes. To be called when any of the focusable
+     * content changes (e.g. a button is disabled).
+     */
+    invalidateTabbables: function() {
+      this.__firstFocusableNode = this.__lastFocusableNode = null;
     },
 
     _ensureSetup: function() {
@@ -18779,11 +18995,6 @@ context. You should place this element as a child of `<body>` whenever possible.
     _finishRenderOpened: function() {
       this.notifyResize();
       this.__isAnimating = false;
-
-      // Store it so we don't query too much.
-      var focusableNodes = this._focusableNodes;
-      this.__firstFocusableNode = focusableNodes[0];
-      this.__lastFocusableNode = focusableNodes[focusableNodes.length - 1];
 
       this.fire('iron-overlay-opened');
     },
@@ -18901,6 +19112,7 @@ context. You should place this element as a child of `<body>` whenever possible.
       if (!this.withBackdrop) {
         return;
       }
+      this.__ensureFirstLastFocusables();
       // TAB wraps from last to first focusable.
       // Shift + TAB wraps from first to last focusable.
       var shift = event.shiftKey;
@@ -18957,7 +19169,21 @@ context. You should place this element as a child of `<body>` whenever possible.
      */
     _onNodesChange: function() {
       if (this.opened && !this.__isAnimating) {
+        // It might have added focusable nodes, so invalidate cached values.
+        this.invalidateTabbables();
         this.notifyResize();
+      }
+    },
+
+    /**
+     * Will set first and last focusable nodes if any of them is not set.
+     * @private
+     */
+    __ensureFirstLastFocusables: function() {
+      if (!this.__firstFocusableNode || !this.__lastFocusableNode) {
+        var focusableNodes = this._focusableNodes;
+        this.__firstFocusableNode = focusableNodes[0];
+        this.__lastFocusableNode = focusableNodes[focusableNodes.length - 1];
       }
     },
 
@@ -19364,8 +19590,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.2.91">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.2.91">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.2.92">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.2.92">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -21838,7 +22064,15 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
     })();
   </script>
 </dom-module>
-<iron-iconset-svg name="icons" size="24">
+<!--
+@license
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><iron-iconset-svg name="icons" size="24">
 <svg><defs>
 <g id="3d-rotation"><path d="M7.52 21.48C4.25 19.94 1.91 16.76 1.55 13H.05C.56 19.16 5.71 24 12 24l.66-.03-3.81-3.81-1.33 1.32zm.89-6.52c-.19 0-.37-.03-.52-.08-.16-.06-.29-.13-.4-.24-.11-.1-.2-.22-.26-.37-.06-.14-.09-.3-.09-.47h-1.3c0 .36.07.68.21.95.14.27.33.5.56.69.24.18.51.32.82.41.3.1.62.15.96.15.37 0 .72-.05 1.03-.15.32-.1.6-.25.83-.44s.42-.43.55-.72c.13-.29.2-.61.2-.97 0-.19-.02-.38-.07-.56-.05-.18-.12-.35-.23-.51-.1-.16-.24-.3-.4-.43-.17-.13-.37-.23-.61-.31.2-.09.37-.2.52-.33.15-.13.27-.27.37-.42.1-.15.17-.3.22-.46.05-.16.07-.32.07-.48 0-.36-.06-.68-.18-.96-.12-.28-.29-.51-.51-.69-.2-.19-.47-.33-.77-.43C9.1 8.05 8.76 8 8.39 8c-.36 0-.69.05-1 .16-.3.11-.57.26-.79.45-.21.19-.38.41-.51.67-.12.26-.18.54-.18.85h1.3c0-.17.03-.32.09-.45s.14-.25.25-.34c.11-.09.23-.17.38-.22.15-.05.3-.08.48-.08.4 0 .7.1.89.31.19.2.29.49.29.86 0 .18-.03.34-.08.49-.05.15-.14.27-.25.37-.11.1-.25.18-.41.24-.16.06-.36.09-.58.09H7.5v1.03h.77c.22 0 .42.02.6.07s.33.13.45.23c.12.11.22.24.29.4.07.16.1.35.1.57 0 .41-.12.72-.35.93-.23.23-.55.33-.95.33zm8.55-5.92c-.32-.33-.7-.59-1.14-.77-.43-.18-.92-.27-1.46-.27H12v8h2.3c.55 0 1.06-.09 1.51-.27.45-.18.84-.43 1.16-.76.32-.33.57-.73.74-1.19.17-.47.26-.99.26-1.57v-.4c0-.58-.09-1.1-.26-1.57-.18-.47-.43-.87-.75-1.2zm-.39 3.16c0 .42-.05.79-.14 1.13-.1.33-.24.62-.43.85-.19.23-.43.41-.71.53-.29.12-.62.18-.99.18h-.91V9.12h.97c.72 0 1.27.23 1.64.69.38.46.57 1.12.57 1.99v.4zM12 0l-.66.03 3.81 3.81 1.33-1.33c3.27 1.55 5.61 4.72 5.96 8.48h1.5C23.44 4.84 18.29 0 12 0z"></path></g>
 <g id="accessibility"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"></path></g>
@@ -21923,6 +22157,8 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
 <g id="dashboard"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></g>
 <g id="date-range"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"></path></g>
 <g id="delete"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></g>
+<g id="delete-forever"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"></path></g>
+<g id="delete-sweep"><path d="M15 16h4v2h-4zm0-8h7v2h-7zm0 4h6v2h-6zM3 18c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2V8H3v10zM14 5h-3l-1-1H6L5 5H2v2h12z"></path></g>
 <g id="description"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"></path></g>
 <g id="dns"><path d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zM7 19c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM20 3H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zM7 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"></path></g>
 <g id="done"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"></path></g>
@@ -21933,6 +22169,7 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
 <g id="eject"><path d="M5 17h14v2H5zm7-12L5.33 15h13.34z"></path></g>
 <g id="error"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></g>
 <g id="error-outline"><path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"></path></g>
+<g id="euro-symbol"><path d="M15 18.5c-2.51 0-4.68-1.42-5.76-3.5H15v-2H8.58c-.05-.33-.08-.66-.08-1s.03-.67.08-1H15V9H9.24C10.32 6.92 12.5 5.5 15 5.5c1.61 0 3.09.59 4.23 1.57L21 5.3C19.41 3.87 17.3 3 15 3c-3.92 0-7.24 2.51-8.48 6H3v2h3.06c-.04.33-.06.66-.06 1 0 .34.02.67.06 1H3v2h3.52c1.24 3.49 4.56 6 8.48 6 2.31 0 4.41-.87 6-2.3l-1.78-1.77c-1.13.98-2.6 1.57-4.22 1.57z"></path></g>
 <g id="event"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"></path></g>
 <g id="event-seat"><path d="M4 18v3h3v-3h10v3h3v-6H4zm15-8h3v3h-3zM2 10h3v3H2zm15 3H7V5c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2v8z"></path></g>
 <g id="exit-to-app"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path></g>
@@ -21950,6 +22187,7 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
 <g id="find-in-page"><path d="M20 19.59V8l-6-6H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c.45 0 .85-.15 1.19-.4l-4.43-4.43c-.8.52-1.74.83-2.76.83-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5c0 1.02-.31 1.96-.83 2.75L20 19.59zM9 13c0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3-3 1.34-3 3z"></path></g>
 <g id="find-replace"><path d="M11 6c1.38 0 2.63.56 3.54 1.46L12 10h6V4l-2.05 2.05C14.68 4.78 12.93 4 11 4c-3.53 0-6.43 2.61-6.92 6H6.1c.46-2.28 2.48-4 4.9-4zm5.64 9.14c.66-.9 1.12-1.97 1.28-3.14H15.9c-.46 2.28-2.48 4-4.9 4-1.38 0-2.63-.56-3.54-1.46L10 12H4v6l2.05-2.05C7.32 17.22 9.07 18 11 18c1.55 0 2.98-.51 4.14-1.36L20 21.49 21.49 20l-4.85-4.86z"></path></g>
 <g id="fingerprint"><path d="M17.81 4.47c-.08 0-.16-.02-.23-.06C15.66 3.42 14 3 12.01 3c-1.98 0-3.86.47-5.57 1.41-.24.13-.54.04-.68-.2-.13-.24-.04-.55.2-.68C7.82 2.52 9.86 2 12.01 2c2.13 0 3.99.47 6.03 1.52.25.13.34.43.21.67-.09.18-.26.28-.44.28zM3.5 9.72c-.1 0-.2-.03-.29-.09-.23-.16-.28-.47-.12-.7.99-1.4 2.25-2.5 3.75-3.27C9.98 4.04 14 4.03 17.15 5.65c1.5.77 2.76 1.86 3.75 3.25.16.22.11.54-.12.7-.23.16-.54.11-.7-.12-.9-1.26-2.04-2.25-3.39-2.94-2.87-1.47-6.54-1.47-9.4.01-1.36.7-2.5 1.7-3.4 2.96-.08.14-.23.21-.39.21zm6.25 12.07c-.13 0-.26-.05-.35-.15-.87-.87-1.34-1.43-2.01-2.64-.69-1.23-1.05-2.73-1.05-4.34 0-2.97 2.54-5.39 5.66-5.39s5.66 2.42 5.66 5.39c0 .28-.22.5-.5.5s-.5-.22-.5-.5c0-2.42-2.09-4.39-4.66-4.39-2.57 0-4.66 1.97-4.66 4.39 0 1.44.32 2.77.93 3.85.64 1.15 1.08 1.64 1.85 2.42.19.2.19.51 0 .71-.11.1-.24.15-.37.15zm7.17-1.85c-1.19 0-2.24-.3-3.1-.89-1.49-1.01-2.38-2.65-2.38-4.39 0-.28.22-.5.5-.5s.5.22.5.5c0 1.41.72 2.74 1.94 3.56.71.48 1.54.71 2.54.71.24 0 .64-.03 1.04-.1.27-.05.53.13.58.41.05.27-.13.53-.41.58-.57.11-1.07.12-1.21.12zM14.91 22c-.04 0-.09-.01-.13-.02-1.59-.44-2.63-1.03-3.72-2.1-1.4-1.39-2.17-3.24-2.17-5.22 0-1.62 1.38-2.94 3.08-2.94 1.7 0 3.08 1.32 3.08 2.94 0 1.07.93 1.94 2.08 1.94s2.08-.87 2.08-1.94c0-3.77-3.25-6.83-7.25-6.83-2.84 0-5.44 1.58-6.61 4.03-.39.81-.59 1.76-.59 2.8 0 .78.07 2.01.67 3.61.1.26-.03.55-.29.64-.26.1-.55-.04-.64-.29-.49-1.31-.73-2.61-.73-3.96 0-1.2.23-2.29.68-3.24 1.33-2.79 4.28-4.6 7.51-4.6 4.55 0 8.25 3.51 8.25 7.83 0 1.62-1.38 2.94-3.08 2.94s-3.08-1.32-3.08-2.94c0-1.07-.93-1.94-2.08-1.94s-2.08.87-2.08 1.94c0 1.71.66 3.31 1.87 4.51.95.94 1.86 1.46 3.27 1.85.27.07.42.35.35.61-.05.23-.26.38-.47.38z"></path></g>
+<g id="first-page"><path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"></path></g>
 <g id="flag"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"></path></g>
 <g id="flight-land"><path d="M2.5 19h19v2h-19zm7.18-5.73l4.35 1.16 5.31 1.42c.8.21 1.62-.26 1.84-1.06.21-.8-.26-1.62-1.06-1.84l-5.31-1.42-2.76-9.02L10.12 2v8.28L5.15 8.95l-.93-2.32-1.45-.39v5.17l1.6.43 5.31 1.43z"></path></g>
 <g id="flight-takeoff"><path d="M2.5 19h19v2h-19zm19.57-9.36c-.21-.8-1.04-1.28-1.84-1.06L14.92 10l-6.9-6.43-1.93.51 4.14 7.17-4.97 1.33-1.97-1.54-1.45.39 1.82 3.16.77 1.33 1.6-.43 5.31-1.42 4.35-1.16L21 11.49c.81-.23 1.28-1.05 1.07-1.85z"></path></g>
@@ -21962,6 +22200,7 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
 <g id="forward"><path d="M12 8V4l8 8-8 8v-4H4V8z"></path></g>
 <g id="fullscreen"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></g>
 <g id="fullscreen-exit"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"></path></g>
+<g id="g-translate"><path d="M20 5h-9.12L10 2H4c-1.1 0-2 .9-2 2v13c0 1.1.9 2 2 2h7l1 3h8c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zM7.17 14.59c-2.25 0-4.09-1.83-4.09-4.09s1.83-4.09 4.09-4.09c1.04 0 1.99.37 2.74 1.07l.07.06-1.23 1.18-.06-.05c-.29-.27-.78-.59-1.52-.59-1.31 0-2.38 1.09-2.38 2.42s1.07 2.42 2.38 2.42c1.37 0 1.96-.87 2.12-1.46H7.08V9.91h3.95l.01.07c.04.21.05.4.05.61 0 2.35-1.61 4-3.92 4zm6.03-1.71c.33.6.74 1.18 1.19 1.7l-.54.53-.65-2.23zm.77-.76h-.99l-.31-1.04h3.99s-.34 1.31-1.56 2.74c-.52-.62-.89-1.23-1.13-1.7zM21 20c0 .55-.45 1-1 1h-7l2-2-.81-2.77.92-.92L17.79 18l.73-.73-2.71-2.68c.9-1.03 1.6-2.25 1.92-3.51H19v-1.04h-3.64V9h-1.04v1.04h-1.96L11.18 6H20c.55 0 1 .45 1 1v13z"></path></g>
 <g id="gavel"><path d="M1 21h12v2H1zM5.245 8.07l2.83-2.827 14.14 14.142-2.828 2.828zM12.317 1l5.657 5.656-2.83 2.83-5.654-5.66zM3.825 9.485l5.657 5.657-2.828 2.828-5.657-5.657z"></path></g>
 <g id="gesture"><path d="M4.59 6.89c.7-.71 1.4-1.35 1.71-1.22.5.2 0 1.03-.3 1.52-.25.42-2.86 3.89-2.86 6.31 0 1.28.48 2.34 1.34 2.98.75.56 1.74.73 2.64.46 1.07-.31 1.95-1.4 3.06-2.77 1.21-1.49 2.83-3.44 4.08-3.44 1.63 0 1.65 1.01 1.76 1.79-3.78.64-5.38 3.67-5.38 5.37 0 1.7 1.44 3.09 3.21 3.09 1.63 0 4.29-1.33 4.69-6.1H21v-2.5h-2.47c-.15-1.65-1.09-4.2-4.03-4.2-2.25 0-4.18 1.91-4.94 2.84-.58.73-2.06 2.48-2.29 2.72-.25.3-.68.84-1.11.84-.45 0-.72-.83-.36-1.92.35-1.09 1.4-2.86 1.85-3.52.78-1.14 1.3-1.92 1.3-3.28C8.95 3.69 7.31 3 6.44 3 5.12 3 3.97 4 3.72 4.25c-.36.36-.66.66-.88.93l1.75 1.71zm9.29 11.66c-.31 0-.74-.26-.74-.72 0-.6.73-2.2 2.87-2.76-.3 2.69-1.43 3.48-2.13 3.48z"></path></g>
 <g id="get-app"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></g>
@@ -21987,6 +22226,7 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
 <g id="label"><path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"></path></g>
 <g id="label-outline"><path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16zM16 17H5V7h11l3.55 5L16 17z"></path></g>
 <g id="language"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"></path></g>
+<g id="last-page"><path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"></path></g>
 <g id="launch"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"></path></g>
 <g id="lightbulb-outline"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"></path></g>
 <g id="line-style"><path d="M3 16h5v-2H3v2zm6.5 0h5v-2h-5v2zm6.5 0h5v-2h-5v2zM3 20h2v-2H3v2zm4 0h2v-2H7v2zm4 0h2v-2h-2v2zm4 0h2v-2h-2v2zm4 0h2v-2h-2v2zM3 12h8v-2H3v2zm10 0h8v-2h-8v2zM3 4v4h18V4H3z"></path></g>
@@ -21996,6 +22236,7 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
 <g id="lock"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path></g>
 <g id="lock-open"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"></path></g>
 <g id="lock-outline"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H8.9V6zM18 20H6V10h12v10z"></path></g>
+<g id="low-priority"><path d="M14 5h8v2h-8zm0 5.5h8v2h-8zm0 5.5h8v2h-8zM2 11.5C2 15.08 4.92 18 8.5 18H9v2l3-3-3-3v2h-.5C6.02 16 4 13.98 4 11.5S6.02 7 8.5 7H12V5H8.5C4.92 5 2 7.92 2 11.5z"></path></g>
 <g id="loyalty"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7zm11.77 8.27L13 19.54l-4.27-4.27C8.28 14.81 8 14.19 8 13.5c0-1.38 1.12-2.5 2.5-2.5.69 0 1.32.28 1.77.74l.73.72.73-.73c.45-.45 1.08-.73 1.77-.73 1.38 0 2.5 1.12 2.5 2.5 0 .69-.28 1.32-.73 1.77z"></path></g>
 <g id="mail"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path></g>
 <g id="markunread"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path></g>
@@ -22043,12 +22284,14 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
 <g id="remove"><path d="M19 13H5v-2h14v2z"></path></g>
 <g id="remove-circle"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"></path></g>
 <g id="remove-circle-outline"><path d="M7 11v2h10v-2H7zm5-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path></g>
+<g id="remove-shopping-cart"><path d="M22.73 22.73L2.77 2.77 2 2l-.73-.73L0 2.54l4.39 4.39 2.21 4.66-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h7.46l1.38 1.38c-.5.36-.83.95-.83 1.62 0 1.1.89 2 1.99 2 .67 0 1.26-.33 1.62-.84L21.46 24l1.27-1.27zM7.42 15c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h2.36l2 2H7.42zm8.13-2c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H6.54l9.01 9zM7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2z"></path></g>
 <g id="reorder"><path d="M3 15h18v-2H3v2zm0 4h18v-2H3v2zm0-8h18V9H3v2zm0-6v2h18V5H3z"></path></g>
 <g id="reply"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"></path></g>
 <g id="reply-all"><path d="M7 8V5l-7 7 7 7v-3l-4-4 4-4zm6 1V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"></path></g>
 <g id="report"><path d="M15.73 3H8.27L3 8.27v7.46L8.27 21h7.46L21 15.73V8.27L15.73 3zM12 17.3c-.72 0-1.3-.58-1.3-1.3 0-.72.58-1.3 1.3-1.3.72 0 1.3.58 1.3 1.3 0 .72-.58 1.3-1.3 1.3zm1-4.3h-2V7h2v6z"></path></g>
 <g id="report-problem"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"></path></g>
 <g id="restore"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"></path></g>
+<g id="restore-page"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm-2 16c-2.05 0-3.81-1.24-4.58-3h1.71c.63.9 1.68 1.5 2.87 1.5 1.93 0 3.5-1.57 3.5-3.5S13.93 9.5 12 9.5c-1.35 0-2.52.78-3.1 1.9l1.6 1.6h-4V9l1.3 1.3C8.69 8.92 10.23 8 12 8c2.76 0 5 2.24 5 5s-2.24 5-5 5z"></path></g>
 <g id="room"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></g>
 <g id="rounded-corner"><path d="M19 19h2v2h-2v-2zm0-2h2v-2h-2v2zM3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm0-4h2V3H3v2zm4 0h2V3H7v2zm8 16h2v-2h-2v2zm-4 0h2v-2h-2v2zm4 0h2v-2h-2v2zm-8 0h2v-2H7v2zm-4 0h2v-2H3v2zM21 8c0-2.76-2.24-5-5-5h-5v2h5c1.65 0 3 1.35 3 3v5h2V8z"></path></g>
 <g id="rowing"><path d="M8.5 14.5L4 19l1.5 1.5L9 17h2l-2.5-2.5zM15 1c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 20.01L18 24l-2.99-3.01V19.5l-7.1-7.09c-.31.05-.61.07-.91.07v-2.16c1.66.03 3.61-.87 4.67-2.04l1.4-1.55c.19-.21.43-.38.69-.5.29-.14.62-.23.96-.23h.03C15.99 6.01 17 7.02 17 8.26v5.75c0 .84-.35 1.61-.92 2.16l-3.58-3.58v-2.27c-.63.52-1.43 1.02-2.29 1.39L16.5 18H18l3 3.01z"></path></g>
@@ -22080,6 +22323,7 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
 <g id="shopping-cart"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"></path></g>
 <g id="sort"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"></path></g>
 <g id="speaker-notes"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 14H6v-2h2v2zm0-3H6V9h2v2zm0-3H6V6h2v2zm7 6h-5v-2h5v2zm3-3h-8V9h8v2zm0-3h-8V6h8v2z"></path></g>
+<g id="speaker-notes-off"><path d="M10.54 11l-.54-.54L7.54 8 6 6.46 2.38 2.84 1.27 1.73 0 3l2.01 2.01L2 22l4-4h9l5.73 5.73L22 22.46 17.54 18l-7-7zM8 14H6v-2h2v2zm-2-3V9l2 2H6zm14-9H4.08L10 7.92V6h8v2h-7.92l1 1H18v2h-4.92l6.99 6.99C21.14 17.95 22 17.08 22 16V4c0-1.1-.9-2-2-2z"></path></g>
 <g id="spellcheck"><path d="M12.45 16h2.09L9.43 3H7.57L2.46 16h2.09l1.12-3h5.64l1.14 3zm-6.02-5L8.5 5.48 10.57 11H6.43zm15.16.59l-8.09 8.09L9.83 16l-1.41 1.41 5.09 5.09L23 13l-1.41-1.41z"></path></g>
 <g id="star"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></g>
 <g id="star-border"><path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path></g>
@@ -22225,6 +22469,13 @@ To change the shadow that shows up underneath the header:
       };
     }
 
+To change the panel container:
+
+    paper-header-panel {
+      --paper-header-panel-container: {
+        border: 1px solid gray;
+      };
+
 To change the panel container in different modes:
 
     paper-header-panel {
@@ -22259,6 +22510,7 @@ Custom property | Description | Default
 ----------------|-------------|----------
 `--paper-header-panel` | Mixin applied to the element | `{}`
 `--paper-header-panel-body` | Mixin applied to the element's body (i.e. everything below the toolbar) | `{}`
+`--paper-header-panel-container` | Mixin applied to the container in any mode | `{}`
 `--paper-header-panel-scroll-container` | Mixin applied to the container when in scroll mode | `{}`
 `--paper-header-panel-cover-container` | Mixin applied to the container when in cover mode | `{}`
 `--paper-header-panel-standard-container` | Mixin applied to the container when in standard mode | `{}`
@@ -22302,6 +22554,10 @@ Custom property | Description | Default
         min-height: 0;
 
         @apply(--paper-header-panel-body);
+      }
+
+      #mainContainer {
+        @apply(--paper-header-panel-container);
       }
 
       /*
@@ -22705,7 +22961,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.91" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.2.92" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -22919,8 +23175,8 @@ with `bottom`.
 </paper-toolbar>
 ```
 
-When inside a `paper-header-panel` element, the class `.animate` is toggled to animate
-the height change in the toolbar.
+When inside a `paper-header-panel` element with `mode="waterfall-tall"`, 
+the class `.animate` is toggled to animate the height change in the toolbar. 
 
 ### Styling
 
@@ -25559,7 +25815,8 @@ will only render 20.
   var IOS_TOUCH_SCROLLING = IOS && IOS[1] >= 8;
   var DEFAULT_PHYSICAL_COUNT = 3;
   var HIDDEN_Y = '-10000px';
-  var DEFAULT_GRID_SIZE = 200;
+  var ITEM_WIDTH = 0;
+  var ITEM_HEIGHT = 1;
   var SECRET_TABINDEX = -100;
 
   Polymer({
@@ -25791,7 +26048,7 @@ will only render 20.
     /**
      * The max number of pages to render. One page is equivalent to the height of the list.
      */
-    _maxPages: 3,
+    _maxPages: 2,
 
     /**
      * The currently focused physical item.
@@ -25943,11 +26200,7 @@ will only render 20.
       if (this.grid) {
         return this._estRowsInView * this._rowHeight * this._maxPages;
       }
-      return this._viewportHeight * this._maxPages;
-    },
-
-    get _optPhysicalCount() {
-      return this._estRowsInView * this._itemsPerRow * this._maxPages;
+      return this._viewportHeight === 0 ? Infinity : this._viewportHeight * this._maxPages;
     },
 
    /**
@@ -26029,7 +26282,6 @@ will only render 20.
     },
 
     attached: function() {
-      this.updateViewportBoundaries();
       if (this._physicalCount === 0) {
         this._debounceTemplate(this._render);
       }
@@ -26059,119 +26311,108 @@ will only render 20.
     updateViewportBoundaries: function() {
       this._scrollerPaddingTop = this.scrollTarget === this ? 0 :
           parseInt(window.getComputedStyle(this)['padding-top'], 10);
-
+      this._viewportWidth = this.$.items.offsetWidth;
       this._viewportHeight = this._scrollTargetHeight;
-      if (this.grid) {
-        this._updateGridMetrics();
+      this.grid && this._updateGridMetrics();
+    },
+
+    /**
+     * Recycles the physical items when needed.
+     */
+    _scrollHandler: function() {
+      var scrollTop = Math.max(0, Math.min(this._maxScrollTop, this._scrollTop));
+      var delta = scrollTop - this._scrollPosition;
+      var isScrollingDown = delta >= 0;
+      // Track the current scroll position.
+      this._scrollPosition = scrollTop;
+      // Clear indexes.
+      this._firstVisibleIndexVal = null;
+      this._lastVisibleIndexVal = null;
+
+      // Random access.
+      if (Math.abs(delta) > this._physicalSize) {
+        var idxAdjustment =  Math.round(delta / this._physicalAverage) * this._itemsPerRow
+        this._physicalTop = this._physicalTop + delta;
+        this._virtualStart = this._virtualStart + idxAdjustment;
+        this._physicalStart = this._physicalStart + idxAdjustment;
+        this._update();
+      } else {
+        var reusables = this._getReusables(isScrollingDown);
+        if (isScrollingDown) {
+          this._physicalTop = reusables.physicalTop;
+          this._virtualStart = this._virtualStart + reusables.indexes.length;
+          this._physicalStart = this._physicalStart + reusables.indexes.length;
+        } else {
+          this._virtualStart = this._virtualStart - reusables.indexes.length;
+          this._physicalStart = this._physicalStart - reusables.indexes.length;
+        }
+        if (reusables.indexes.length === 0) {
+          this._increasePoolIfNeeded();
+        } else {
+          this._update(reusables.indexes, isScrollingDown ? null : reusables.indexes);
+        }
       }
     },
 
     /**
-     * Update the models, the position of the
-     * items in the viewport and recycle tiles as needed.
+     * Returns an object that contains the indexes of the physical items
+     * that might be reused and the physicalTop.
+     *
+     * @param {boolean} fromTop If the potential reusable items are above the scrolling region.
      */
-    _scrollHandler: function() {
-      // clamp the `scrollTop` value
-      var scrollTop = Math.max(0, Math.min(this._maxScrollTop, this._scrollTop));
-      var delta = scrollTop - this._scrollPosition;
-      var tileHeight, tileTop, kth, recycledTileSet, scrollBottom, physicalBottom;
-      var ratio = this._ratio;
-      var recycledTiles = 0;
-      var hiddenContentSize = this._hiddenContentSize;
-      var currentRatio = ratio;
-      var movingUp = [];
+    _getReusables: function(fromTop) {
+      var ith, lastIth, offsetContent, physicalItemHeight;
+      var idxs = [];
+      var protectedOffsetContent = this._hiddenContentSize * this._ratio;
+      var virtualStart = this._virtualStart;
+      var virtualEnd = this._virtualEnd;
+      var physicalCount = this._physicalCount;
+      var physicalTop = this._physicalTop + this._scrollerPaddingTop;
+      var scrollTop = this._scrollTop;
+      var scrollBottom = this._scrollBottom;
 
-      // track the last `scrollTop`
-      this._scrollPosition = scrollTop;
-
-      // clear cached visible indexes
-      this._firstVisibleIndexVal = null;
-      this._lastVisibleIndexVal = null;
-
-      scrollBottom = this._scrollBottom;
-      physicalBottom = this._physicalBottom;
-
-      // random access
-      if (Math.abs(delta) > this._physicalSize) {
-        this._physicalTop += delta;
-        recycledTiles =  Math.round(delta / this._physicalAverage);
-      }
-      // scroll up
-      else if (delta < 0) {
-        var topSpace = scrollTop - this._physicalTop;
-        var virtualStart = this._virtualStart;
-
-        recycledTileSet = [];
-
-        kth = this._physicalEnd;
-        currentRatio = topSpace / hiddenContentSize;
-
-        // move tiles from bottom to top
-        while (
-            // approximate `currentRatio` to `ratio`
-            currentRatio < ratio &&
-            // recycle less physical items than the total
-            recycledTiles < this._physicalCount &&
-            // ensure that these recycled tiles are needed
-            virtualStart - recycledTiles > 0 &&
-            // ensure that the tile is not visible
-            physicalBottom - this._getPhysicalSizeIncrement(kth) > scrollBottom
-        ) {
-
-          tileHeight = this._getPhysicalSizeIncrement(kth);
-          currentRatio += tileHeight / hiddenContentSize;
-          physicalBottom -= tileHeight;
-          recycledTileSet.push(kth);
-          recycledTiles++;
-          kth = (kth === 0) ? this._physicalCount - 1 : kth - 1;
-        }
-
-        movingUp = recycledTileSet;
-        recycledTiles = -recycledTiles;
-      }
-      // scroll down
-      else if (delta > 0) {
-        var bottomSpace = physicalBottom - scrollBottom;
-        var virtualEnd = this._virtualEnd;
-        var lastVirtualItemIndex = this._virtualCount-1;
-
-        recycledTileSet = [];
-
-        kth = this._physicalStart;
-        currentRatio = bottomSpace / hiddenContentSize;
-
-        // move tiles from top to bottom
-        while (
-            // approximate `currentRatio` to `ratio`
-            currentRatio < ratio &&
-            // recycle less physical items than the total
-            recycledTiles < this._physicalCount &&
-            // ensure that these recycled tiles are needed
-            virtualEnd + recycledTiles < lastVirtualItemIndex &&
-            // ensure that the tile is not visible
-            this._physicalTop + this._getPhysicalSizeIncrement(kth) < scrollTop
-          ) {
-
-          tileHeight = this._getPhysicalSizeIncrement(kth);
-          currentRatio += tileHeight / hiddenContentSize;
-
-          this._physicalTop += tileHeight;
-          recycledTileSet.push(kth);
-          recycledTiles++;
-          kth = (kth + 1) % this._physicalCount;
-        }
-      }
-
-      if (recycledTiles === 0) {
-        // Try to increase the pool if the list's client isn't filled up with physical items
-        if (physicalBottom < scrollBottom || this._physicalTop > scrollTop) {
-          this._increasePoolIfNeeded();
-        }
+      if (fromTop) {
+        ith = this._physicalStart;
+        lastIth = this._physicalEnd;
+        offsetContent = scrollTop - physicalTop;
       } else {
-        this._virtualStart = this._virtualStart + recycledTiles;
-        this._physicalStart = this._physicalStart + recycledTiles;
-        this._update(recycledTileSet, movingUp);
+        ith = this._physicalEnd;
+        lastIth = this._physicalStart;
+        offsetContent = this._physicalBottom - scrollBottom;
       }
+      while (true) {
+        physicalItemHeight = this._getPhysicalSizeIncrement(ith);
+        offsetContent = offsetContent - physicalItemHeight;
+        if (idxs.length >= physicalCount || offsetContent <= protectedOffsetContent) {
+          break;
+        }
+        if (fromTop) {
+          // Check that index is within the valid range.
+          if (virtualEnd + idxs.length + 1 >= this._virtualCount) {
+            break;
+          }
+          // Check that the index is not visible.
+          if (physicalTop + physicalItemHeight >= scrollTop) {
+            break;
+          }
+          idxs.push(ith);
+          physicalTop = physicalTop + physicalItemHeight;
+          ith = (ith + 1) % physicalCount;
+        } else {
+          // Check that index is within the valid range.
+          if (virtualStart - idxs.length <= 0) {
+            break;
+          }
+          // Check that the index is not visible.
+          if (physicalTop + this._physicalSize - physicalItemHeight <= scrollBottom) {
+            break;
+          }
+          idxs.push(ith);
+          physicalTop = physicalTop - physicalItemHeight;
+          ith = (ith === 0) ? physicalCount - 1 : ith - 1;
+        }
+      }
+      return { indexes: idxs, physicalTop: physicalTop - this._scrollerPaddingTop };
     },
 
     /**
@@ -26180,6 +26421,9 @@ will only render 20.
      * @param {!Array<number>=} movingUp
      */
     _update: function(itemSet, movingUp) {
+      if (itemSet && itemSet.length === 0) {
+        return;
+      }
       this._manageFocus();
       this._assignModels(itemSet);
       this._updateMetrics(itemSet);
@@ -26221,10 +26465,6 @@ will only render 20.
      * @return {boolean} True if the pool was increased.
      */
     _increasePoolIfNeeded: function() {
-      // Base case 1: the list has no height.
-      if (this._viewportHeight === 0) {
-        return false;
-      }
       var self = this;
       var isClientFull = this._physicalBottom >= this._scrollBottom &&
           this._physicalTop <= this._scrollPosition;
@@ -26291,13 +26531,20 @@ will only render 20.
     },
 
     /**
-     * Render a new list of items.
+     * Renders the a new list.
      */
     _render: function() {
       if (this.isAttached && this._isVisible) {
         if (this._physicalCount === 0) {
+          this.updateViewportBoundaries();
           this._increasePool(DEFAULT_PHYSICAL_COUNT);
         } else {
+          // Try to recycle nodes
+          var reusables = this._getReusables(true);
+          this._physicalTop = reusables.physicalTop;
+          this._virtualStart = this._virtualStart + reusables.indexes.length;
+          this._physicalStart = this._physicalStart + reusables.indexes.length;
+          this._update(reusables.indexes);
           this._update();
         }
       }
@@ -26426,13 +26673,16 @@ will only render 20.
         this._physicalItems = this._physicalItems || [];
         this._physicalSizes = this._physicalSizes || [];
         this._physicalStart = 0;
-        this._resetScrollPosition(0);
+        if (this._scrollTop > this._scrollerPaddingTop) {
+          this._resetScrollPosition(0);
+        }
         this._removeFocusedItem();
         this._debounceTemplate(this._render);
 
       } else if (change.path === 'items.splices') {
         this._adjustVirtualIndex(change.value.indexSplices);
         this._virtualCount = this.items ? this.items.length : 0;
+
         this._debounceTemplate(this._render);
 
       } else {
@@ -26527,7 +26777,6 @@ will only render 20.
         var el = this._physicalItems[pidx];
         var inst = el._templateInstance;
         var item = this.items && this.items[vidx];
-
         if (item != null) {
           inst[this.as] = item;
           inst.__key__ = this._collection.getKey(item);
@@ -26559,22 +26808,18 @@ will only render 20.
       var prevPhysicalAvg = this._physicalAverage;
 
       this._iterateItems(function(pidx, vidx) {
-
         oldPhysicalSize += this._physicalSizes[pidx] || 0;
         this._physicalSizes[pidx] = this._physicalItems[pidx].offsetHeight;
         newPhysicalSize += this._physicalSizes[pidx];
         this._physicalAverageCount += this._physicalSizes[pidx] ? 1 : 0;
-
       }, itemSet);
 
-      this._viewportHeight = this._scrollTargetHeight;
       if (this.grid) {
         this._updateGridMetrics();
         this._physicalSize = Math.ceil(this._physicalCount / this._itemsPerRow) * this._rowHeight;
       } else {
         this._physicalSize = this._physicalSize + newPhysicalSize - oldPhysicalSize;
       }
-
       // Update the average if it measured something.
       if (this._physicalAverageCount !== prevAvgCount) {
         this._physicalAverage = Math.round(
@@ -26584,12 +26829,8 @@ will only render 20.
     },
 
     _updateGridMetrics: function() {
-      this._viewportWidth = this.$.items.offsetWidth;
-      // Set item width to the value of the _physicalItems offsetWidth
-      this._itemWidth = this._physicalCount > 0 ? this._physicalItems[0].getBoundingClientRect().width : DEFAULT_GRID_SIZE;
-      // Set row height to the value of the _physicalItems offsetHeight
-      this._rowHeight = this._physicalCount > 0 ? this._physicalItems[0].offsetHeight : DEFAULT_GRID_SIZE;
-      // If in grid mode compute how many items with exist in each row
+      this._itemWidth = this._physicalCount > 0 ? this._physicalItems[0].getBoundingClientRect().width : 200;
+      this._rowHeight = this._physicalCount > 0 ? this._physicalItems[0].offsetHeight : 200;
       this._itemsPerRow = this._itemWidth ? Math.floor(this._viewportWidth / this._itemWidth) : this._itemsPerRow;
     },
 
@@ -26715,7 +26956,6 @@ will only render 20.
       if (typeof idx !== 'number' || idx < 0 || idx > this.items.length - 1) {
         return;
       }
-
       Polymer.dom.flush();
       // Items should have been rendered prior scrolling to an index.
       if (this._physicalCount === 0) {
@@ -26764,22 +27004,23 @@ will only render 20.
      * when the element is resized.
      */
     _resizeHandler: function() {
-      // iOS fires the resize event when the address bar slides up
-      if (IOS && Math.abs(this._viewportHeight - this._scrollTargetHeight) < 100) {
-        return;
-      }
-      // In Desktop Safari 9.0.3, if the scroll bars are always shown,
-      // changing the scroll position from a resize handler would result in
-      // the scroll position being reset. Waiting 1ms fixes the issue.
-      Polymer.dom.addDebouncer(this.debounce('_debounceTemplate', function() {
+      this._debounceTemplate(function() {
+        // Skip the resize event on touch devices when the address bar slides up.
+        var delta = Math.abs(this._viewportHeight - this._scrollTargetHeight);
         this.updateViewportBoundaries();
-        this._render();
-
-        if (this._physicalCount > 0 && this._isVisible) {
-          this._resetAverage();
-          this.scrollToIndex(this.firstVisibleIndex);
+        if (('ontouchstart' in window || navigator.maxTouchPoints > 0) && delta > 0 && delta < 100) {
+          return;
         }
-      }.bind(this), 1));
+        if (this._isVisible) {
+          // Reinstall the scroll event listener.
+          this.toggleScrollListener(true);
+          this._resetAverage();
+          this._render();
+        } else {
+          // Uninstall the scroll event listener.
+          this.toggleScrollListener(false);
+        }
+      }.bind(this));
     },
 
     _getModelFromItem: function(item) {
@@ -26920,7 +27161,6 @@ will only render 20.
       model.tabIndex = SECRET_TABINDEX;
       activeElTabIndex = activeEl ? activeEl.tabIndex : -1;
       model.tabIndex = modelTabIndex;
-
       // Only select the item if the tap wasn't on a focusable child
       // or the element bound to `tabIndex`
       if (activeEl && physicalItem !== activeEl && physicalItem.contains(activeEl) && activeElTabIndex !== SECRET_TABINDEX) {
@@ -27001,7 +27241,6 @@ will only render 20.
       var physicalItem = this._physicalItems[this._getPhysicalIndex(idx)];
       var model = physicalItem._templateInstance;
       var focusable;
-
       // set a secret tab index
       model.tabIndex = SECRET_TABINDEX;
       // check if focusable element is the physical item
@@ -27030,27 +27269,24 @@ will only render 20.
     },
 
     _createFocusBackfillItem: function() {
-      var pidx, fidx = this._focusedIndex;
-      if (this._offscreenFocusedItem || fidx < 0) {
+      var fidx = this._focusedIndex;
+      var pidx = this._getPhysicalIndex(fidx);
+
+      if (this._offscreenFocusedItem || pidx == null || fidx < 0) {
         return;
       }
       if (!this._focusBackfillItem) {
-        // create a physical item, so that it backfills the focused item.
+        // Create a physical item.
         var stampedTemplate = this.stamp(null);
         this._focusBackfillItem = stampedTemplate.root.querySelector('*');
         Polymer.dom(this).appendChild(stampedTemplate.root);
       }
-      // get the physical index for the focused index
-      pidx = this._getPhysicalIndex(fidx);
-
-      if (pidx != null) {
-        // set the offcreen focused physical item
-        this._offscreenFocusedItem = this._physicalItems[pidx];
-        // backfill the focused physical item
-        this._physicalItems[pidx] = this._focusBackfillItem;
-        // hide the focused physical
-        this.translate3d(0, HIDDEN_Y, 0, this._offscreenFocusedItem);
-      }
+      // Set the offcreen focused physical item.
+      this._offscreenFocusedItem = this._physicalItems[pidx];
+      this._offscreenFocusedItem._templateInstance.tabIndex = 0;
+      this._physicalItems[pidx] = this._focusBackfillItem;
+      // Hide the focused physical.
+      this.translate3d(0, HIDDEN_Y, 0, this._offscreenFocusedItem);
     },
 
     _restoreFocusedItem: function() {
@@ -27059,19 +27295,20 @@ will only render 20.
       if (!this._offscreenFocusedItem || this._focusedIndex < 0) {
         return;
       }
-      // assign models to the focused index
+      // Assign models to the focused index.
       this._assignModels();
-      // get the new physical index for the focused index
+      // Get the new physical index for the focused index.
       pidx = this._getPhysicalIndex(fidx);
 
       if (pidx != null) {
-        // flip the focus backfill
+        // Flip the focus backfill.
         this._focusBackfillItem = this._physicalItems[pidx];
-        // restore the focused physical item
+        this._focusBackfillItem._templateInstance.tabIndex = -1;
+        // Restore the focused physical item.
         this._physicalItems[pidx] = this._offscreenFocusedItem;
-        // reset the offscreen focused item
+        // Reset the offscreen focused item.
         this._offscreenFocusedItem = null;
-        // hide the physical item that backfills
+        // Hide the physical item that backfills.
         this.translate3d(0, HIDDEN_Y, 0, this._focusBackfillItem);
       }
     },
@@ -27099,7 +27336,6 @@ will only render 20.
         fidx = targetModel[this.indexAs];
         this._focusedIndex = fidx;
         this._focusedItem = this._physicalItems[this._getPhysicalIndex(fidx)];
-
         if (hasOffscreenFocusedItem && !this._offscreenFocusedItem) {
           this._update();
         }
@@ -27724,7 +27960,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.91" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.2.92" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -27745,6 +27981,7 @@ Custom property | Description | Default
 `--paper-fab-mini` | Mixin applied to a mini button | `{}`
 `--paper-fab-disabled` | Mixin applied to a disabled button | `{}`
 `--paper-fab-iron-icon` | Mixin applied to the iron-icon within the button | `{}`
+`--paper-fab-label` | Mixin applied to the label within the button | `{}`
 
 @group Paper Elements
 @demo demo/index.html
@@ -27810,6 +28047,8 @@ Custom property | Description | Default
         overflow: hidden;
         text-overflow: ellipsis;
         text-align: center;
+
+        @apply(--paper-fab-label);
       }
 
       :host(.keyboard-focus) {
@@ -28733,6 +28972,8 @@ Custom property | Description | Default
 `--paper-tabs-selection-bar-color` | Color for the selection bar | `--paper-yellow-a100`
 `--paper-tabs-selection-bar` | Mixin applied to the selection bar | `{}`
 `--paper-tabs` | Mixin applied to the tabs | `{}`
+`--paper-tabs-content` | Mixin applied to the content container of tabs | `{}`
+`--paper-tabs-container` | Mixin applied to the layout container of tabs | `{}`
 
 @hero hero.svg
 @demo demo/index.html
@@ -28771,6 +29012,7 @@ Custom property | Description | Default
         white-space: nowrap;
         overflow: hidden;
         @apply(--layout-flex-auto);
+        @apply(--paper-tabs-container);
       }
 
       #tabsContent {
@@ -28778,6 +29020,7 @@ Custom property | Description | Default
         -moz-flex-basis: auto;
         -ms-flex-basis: auto;
         flex-basis: auto;
+        @apply(--paper-tabs-content);
       }
 
       #tabsContent.scrollable {
@@ -30213,12 +30456,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       /**
        * Returns scroll `deltaX` and `deltaY`.
        * @param {!Event} event The scroll event
-       * @return {{
-       *  deltaX: number The x-axis scroll delta (positive: scroll right,
-       *                 negative: scroll left, 0: no scroll),
-       *  deltaY: number The y-axis scroll delta (positive: scroll down,
-       *                 negative: scroll up, 0: no scroll)
-       * }} info
+       * @return {{deltaX: number, deltaY: number}} Object containing the
+       * x-axis scroll delta (positive: scroll right, negative: scroll left,
+       * 0: no scroll), and the y-axis scroll delta (positive: scroll down,
+       * negative: scroll up, 0: no scroll).
        * @private
        */
       _getScrollInfo: function(event) {
@@ -33925,7 +34166,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.2.91", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.2.92", fontName: 'FFClanWebBook' });
     },
 
     setTheme: function (number) {
@@ -33935,20 +34176,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.2.91";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.2.92";
       }
 
       var randomNumber = Math.floor((Math.random() * 100000000) + 1);
 
       fontHtmlImport += "?random="+randomNumber;
-
       this.importHref(fontHtmlImport, function(e) {
         this.async(function () {
           console.log("I have loaded font");
         })
       }, function(e) {
         console.error("Could not load font file "+this.fonts[number]);
-      });
+      }, true);
     }
   }
 </script>
@@ -34108,6 +34348,7 @@ triggered property.
 
     _setOverflow: function(scrollTarget) {
       this.style.overflow = scrollTarget === this ? 'auto' : '';
+      this.style.webkitOverflowScrolling = scrollTarget === this ? 'touch' : '';
     },
 
     _scrollHandler: function() {
@@ -34115,7 +34356,7 @@ triggered property.
       var THROTTLE_THRESHOLD = 200;
       if (!this.isDebouncerActive('_checkTheshold')) {
         this.debounce('_checkTheshold', function() {
-          this.checkScrollThesholds();
+          this.checkScrollThresholds();
         }, THROTTLE_THRESHOLD);
       }
     },
@@ -34124,7 +34365,7 @@ triggered property.
       if (isAttached) {
         this.debounce('_init', function() {
           this.clearTriggers();
-          this.checkScrollThesholds();
+          this.checkScrollThresholds();
         });
       }
     },
@@ -34133,9 +34374,9 @@ triggered property.
      * Checks the scroll thresholds.
      * This method is automatically called by iron-scroll-threshold.
      *
-     * @method checkScrollThesholds
+     * @method checkScrollThresholds
      */
-    checkScrollThesholds: function() {
+    checkScrollThresholds: function() {
       if (!this.scrollTarget || (this.lowerTriggered && this.upperTriggered)) {
         return;
       }
@@ -34154,6 +34395,11 @@ triggered property.
         this._setLowerTriggered(true);
         this.fire('lower-threshold');
       }
+    },
+
+    checkScrollThesholds: function() {
+      // iron-scroll-threshold/issues/16
+      this.checkScrollThresholds();
     },
 
     /**
@@ -34480,7 +34726,15 @@ Example:
     }
   }
 </script>
-<iron-iconset-svg name="communication" size="24">
+<!--
+@license
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><iron-iconset-svg name="communication" size="24">
 <svg><defs>
 <g id="business"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"></path></g>
 <g id="call"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path></g>
@@ -34520,6 +34774,7 @@ Example:
 <g id="portable-wifi-off"><path d="M17.56 14.24c.28-.69.44-1.45.44-2.24 0-3.31-2.69-6-6-6-.79 0-1.55.16-2.24.44l1.62 1.62c.2-.03.41-.06.62-.06 2.21 0 4 1.79 4 4 0 .21-.02.42-.05.63l1.61 1.61zM12 4c4.42 0 8 3.58 8 8 0 1.35-.35 2.62-.95 3.74l1.47 1.47C21.46 15.69 22 13.91 22 12c0-5.52-4.48-10-10-10-1.91 0-3.69.55-5.21 1.47l1.46 1.46C9.37 4.34 10.65 4 12 4zM3.27 2.5L2 3.77l2.1 2.1C2.79 7.57 2 9.69 2 12c0 3.7 2.01 6.92 4.99 8.65l1-1.73C5.61 17.53 4 14.96 4 12c0-1.76.57-3.38 1.53-4.69l1.43 1.44C6.36 9.68 6 10.8 6 12c0 2.22 1.21 4.15 3 5.19l1-1.74c-1.19-.7-2-1.97-2-3.45 0-.65.17-1.25.44-1.79l1.58 1.58L10 12c0 1.1.9 2 2 2l.21-.02.01.01 7.51 7.51L21 20.23 4.27 3.5l-1-1z"></path></g>
 <g id="present-to-all"><path d="M21 3H3c-1.11 0-2 .89-2 2v14c0 1.11.89 2 2 2h18c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 16.02H3V4.98h18v14.04zM10 12H8l4-4 4 4h-2v4h-4v-4z"></path></g>
 <g id="ring-volume"><path d="M23.71 16.67C20.66 13.78 16.54 12 12 12 7.46 12 3.34 13.78.29 16.67c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l2.48 2.48c.18.18.43.29.71.29.27 0 .52-.11.7-.28.79-.74 1.69-1.36 2.66-1.85.33-.16.56-.5.56-.9v-3.1c1.45-.48 3-.73 4.6-.73s3.15.25 4.6.72v3.1c0 .39.23.74.56.9.98.49 1.87 1.12 2.66 1.85.18.18.43.28.7.28.28 0 .53-.11.71-.29l2.48-2.48c.18-.18.29-.43.29-.71 0-.27-.11-.52-.29-.7zM21.16 6.26l-1.41-1.41-3.56 3.55 1.41 1.41s3.45-3.52 3.56-3.55zM13 2h-2v5h2V2zM6.4 9.81L7.81 8.4 4.26 4.84 2.84 6.26c.11.03 3.56 3.55 3.56 3.55z"></path></g>
+<g id="rss-feed"><circle cx="6.18" cy="17.82" r="2.18"></circle><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"></path></g>
 <g id="screen-share"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.11-.9-2-2-2H4c-1.11 0-2 .89-2 2v10c0 1.1.89 2 2 2H0v2h24v-2h-4zm-7-3.53v-2.19c-2.78 0-4.61.85-6 2.72.56-2.67 2.11-5.33 6-5.87V7l4 3.73-4 3.74z"></path></g>
 <g id="speaker-phone"><path d="M7 7.07L8.43 8.5c.91-.91 2.18-1.48 3.57-1.48s2.66.57 3.57 1.48L17 7.07C15.72 5.79 13.95 5 12 5s-3.72.79-5 2.07zM12 1C8.98 1 6.24 2.23 4.25 4.21l1.41 1.41C7.28 4 9.53 3 12 3s4.72 1 6.34 2.62l1.41-1.41C17.76 2.23 15.02 1 12 1zm2.86 9.01L9.14 10C8.51 10 8 10.51 8 11.14v9.71c0 .63.51 1.14 1.14 1.14h5.71c.63 0 1.14-.51 1.14-1.14v-9.71c.01-.63-.5-1.13-1.13-1.13zM15 20H9v-8h6v8z"></path></g>
 <g id="stay-current-landscape"><path d="M1.01 7L1 17c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2H3c-1.1 0-1.99.9-1.99 2zM19 7v10H5V7h14z"></path></g>
@@ -34533,7 +34788,15 @@ Example:
 <g id="vpn-key"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"></path></g>
 </defs></svg>
 </iron-iconset-svg>
-<iron-iconset-svg name="image" size="24">
+<!--
+@license
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><iron-iconset-svg name="image" size="24">
 <svg><defs>
 <g id="add-a-photo"><path d="M3 4V1h2v3h3v2H5v3H3V6H0V4h3zm3 6V7h3V4h7l1.83 2H21c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V10h3zm7 9c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-3.2-5c0 1.77 1.43 3.2 3.2 3.2s3.2-1.43 3.2-3.2-1.43-3.2-3.2-3.2-3.2 1.43-3.2 3.2z"></path></g>
 <g id="add-to-photos"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"></path></g>
@@ -34554,6 +34817,7 @@ Example:
 <g id="brightness-7"><path d="M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"></path></g>
 <g id="broken-image"><path d="M21 5v6.59l-3-3.01-4 4.01-4-4-4 4-3-3.01V5c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2zm-3 6.42l3 3.01V19c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2v-6.58l3 2.99 4-4 4 4 4-3.99z"></path></g>
 <g id="brush"><path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z"></path></g>
+<g id="burst-mode"><path d="M1 5h2v14H1zm4 0h2v14H5zm17 0H10c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V6c0-.55-.45-1-1-1zM11 17l2.5-3.15L15.29 16l2.5-3.22L21 17H11z"></path></g>
 <g id="camera"><path d="M9.4 10.5l4.77-8.26C13.47 2.09 12.75 2 12 2c-2.4 0-4.6.85-6.32 2.25l3.66 6.35.06-.1zM21.54 9c-.92-2.92-3.15-5.26-6-6.34L11.88 9h9.66zm.26 1h-7.49l.29.5 4.76 8.25C21 16.97 22 14.61 22 12c0-.69-.07-1.35-.2-2zM8.54 12l-3.9-6.75C3.01 7.03 2 9.39 2 12c0 .69.07 1.35.2 2h7.49l-1.15-2zm-6.08 3c.92 2.92 3.15 5.26 6 6.34L12.12 15H2.46zm11.27 0l-3.9 6.76c.7.15 1.42.24 2.17.24 2.4 0 4.6-.85 6.32-2.25l-3.66-6.35-.93 1.6z"></path></g>
 <g id="camera-alt"><circle cx="12" cy="12" r="3.2"></circle><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"></path></g>
 <g id="camera-front"><path d="M10 20H5v2h5v2l3-3-3-3v2zm4 0v2h5v-2h-5zM12 8c1.1 0 2-.9 2-2s-.9-2-2-2-1.99.9-1.99 2S10.9 8 12 8zm5-8H7C5.9 0 5 .9 5 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V2c0-1.1-.9-2-2-2zM7 2h10v10.5c0-1.67-3.33-2.5-5-2.5s-5 .83-5 2.5V2z"></path></g>
@@ -34640,7 +34904,7 @@ Example:
 <g id="loupe"><path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.49 2 2 6.49 2 12s4.49 10 10 10h8c1.1 0 2-.9 2-2v-8c0-5.51-4.49-10-10-10zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path></g>
 <g id="monochrome-photos"><path d="M20 5h-3.2L15 3H9L7.2 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 14h-8v-1c-2.8 0-5-2.2-5-5s2.2-5 5-5V7h8v12zm-3-6c0-2.8-2.2-5-5-5v1.8c1.8 0 3.2 1.4 3.2 3.2s-1.4 3.2-3.2 3.2V18c2.8 0 5-2.2 5-5zm-8.2 0c0 1.8 1.4 3.2 3.2 3.2V9.8c-1.8 0-3.2 1.4-3.2 3.2z"></path></g>
 <g id="movie-creation"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"></path></g>
-<g id="movie-filter"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4zm-6.58 11.68L10.37 18l-1.05-2.32L7 14.63l2.32-1.05 1.05-2.32 1.05 2.32 2.32 1.05-2.32 1.05zm3.69-3.47l-.53 1.16-.53-1.16-1.16-.53 1.16-.53.53-1.15.53 1.16 1.16.53-1.16.52z"></path></g>
+<g id="movie-filter"><path d="M18 4l2 3h-3l-2-3h-2l2 3h-3l-2-3H8l2 3H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4zm-6.75 11.25L10 18l-1.25-2.75L6 14l2.75-1.25L10 10l1.25 2.75L14 14l-2.75 1.25zm5.69-3.31L16 14l-.94-2.06L13 11l2.06-.94L16 8l.94 2.06L19 11l-2.06.94z"></path></g>
 <g id="music-note"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></g>
 <g id="nature"><path d="M13 16.12c3.47-.41 6.17-3.36 6.17-6.95 0-3.87-3.13-7-7-7s-7 3.13-7 7c0 3.47 2.52 6.34 5.83 6.89V20H5v2h14v-2h-6v-3.88z"></path></g>
 <g id="nature-people"><path d="M22.17 9.17c0-3.87-3.13-7-7-7s-7 3.13-7 7c0 3.47 2.52 6.34 5.83 6.89V20H6v-3h1v-4c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v4h1v5h16v-2h-3v-3.88c3.47-.41 6.17-3.36 6.17-6.95zM4.5 11c.83 0 1.5-.67 1.5-1.5S5.33 8 4.5 8 3 8.67 3 9.5 3.67 11 4.5 11z"></path></g>
@@ -34655,7 +34919,7 @@ Example:
 <g id="photo"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"></path></g>
 <g id="photo-album"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4zm0 15l3-3.86 2.14 2.58 3-3.86L18 19H6z"></path></g>
 <g id="photo-camera"><circle cx="12" cy="12" r="3.2"></circle><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"></path></g>
-<g id="photo-filter"><path d="M17.13 8.9l.59-1.3 1.3-.6-1.3-.59-.59-1.3-.59 1.3-1.31.59 1.31.6zm-4.74-2.37l-1.18 2.61-2.61 1.18 2.61 1.18 1.18 2.61 1.19-2.61 2.6-1.18-2.6-1.18zM19.02 10v9H5V5h9V3H5.02c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9h-2z"></path></g>
+<g id="photo-filter"><path d="M19.02 10v9H5V5h9V3H5.02c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9h-2zM17 10l.94-2.06L20 7l-2.06-.94L17 4l-.94 2.06L14 7l2.06.94zm-3.75.75L12 8l-1.25 2.75L8 12l2.75 1.25L12 16l1.25-2.75L16 12z"></path></g>
 <g id="photo-library"><path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"></path></g>
 <g id="photo-size-select-actual"><path d="M21 3H3C2 3 1 4 1 5v14c0 1.1.9 2 2 2h18c1 0 2-1 2-2V5c0-1-1-2-2-2zM5 17l3.5-4.5 2.5 3.01L14.5 11l4.5 6H5z"></path></g>
 <g id="photo-size-select-large"><path d="M21 15h2v2h-2v-2zm0-4h2v2h-2v-2zm2 8h-2v2c1 0 2-1 2-2zM13 3h2v2h-2V3zm8 4h2v2h-2V7zm0-4v2h2c0-1-1-2-2-2zM1 7h2v2H1V7zm16-4h2v2h-2V3zm0 16h2v2h-2v-2zM3 3C2 3 1 4 1 5h2V3zm6 0h2v2H9V3zM5 3h2v2H5V3zm-4 8v8c0 1.1.9 2 2 2h12V11H1zm2 8l2.5-3.21 1.79 2.15 2.5-3.22L13 19H3z"></path></g>
@@ -34691,7 +34955,15 @@ Example:
 <g id="wb-sunny"><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"></path></g>
 </defs></svg>
 </iron-iconset-svg>
-<iron-iconset-svg name="social" size="24">
+<!--
+@license
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><iron-iconset-svg name="social" size="24">
 <svg><defs>
 <g id="cake"><path d="M12 6c1.11 0 2-.9 2-2 0-.38-.1-.73-.29-1.03L12 0l-1.71 2.97c-.19.3-.29.65-.29 1.03 0 1.1.9 2 2 2zm4.6 9.99l-1.07-1.07-1.08 1.07c-1.3 1.3-3.58 1.31-4.89 0l-1.07-1.07-1.09 1.07C6.75 16.64 5.88 17 4.96 17c-.73 0-1.4-.23-1.96-.61V21c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-4.61c-.56.38-1.23.61-1.96.61-.92 0-1.79-.36-2.44-1.01zM18 9h-5V7h-2v2H6c-1.66 0-3 1.34-3 3v1.54c0 1.08.88 1.96 1.96 1.96.52 0 1.02-.2 1.38-.57l2.14-2.13 2.13 2.13c.74.74 2.03.74 2.77 0l2.14-2.13 2.13 2.13c.37.37.86.57 1.38.57 1.08 0 1.96-.88 1.96-1.96V12C21 10.34 19.66 9 18 9z"></path></g>
 <g id="domain"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"></path></g>
@@ -34716,6 +34988,11 @@ Example:
 <g id="poll"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"></path></g>
 <g id="public"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></g>
 <g id="school"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"></path></g>
+<g id="sentiment-dissatisfied"><circle cx="15.5" cy="9.5" r="1.5"></circle><circle cx="8.5" cy="9.5" r="1.5"></circle><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-6c-2.33 0-4.32 1.45-5.12 3.5h1.67c.69-1.19 1.97-2 3.45-2s2.75.81 3.45 2h1.67c-.8-2.05-2.79-3.5-5.12-3.5z"></path></g>
+<g id="sentiment-neutral"><path d="M9 14h6v1.5H9z"></path><circle cx="15.5" cy="9.5" r="1.5"></circle><circle cx="8.5" cy="9.5" r="1.5"></circle><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"></path></g>
+<g id="sentiment-satisfied"><circle cx="15.5" cy="9.5" r="1.5"></circle><circle cx="8.5" cy="9.5" r="1.5"></circle><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-4c-1.48 0-2.75-.81-3.45-2H6.88c.8 2.05 2.79 3.5 5.12 3.5s4.32-1.45 5.12-3.5h-1.67c-.7 1.19-1.97 2-3.45 2z"></path></g>
+<g id="sentiment-very-dissatisfied"><path d="M11.99 2C6.47 2 2 6.47 2 12s4.47 10 9.99 10S22 17.53 22 12 17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm4.18-12.24l-1.06 1.06-1.06-1.06L13 8.82l1.06 1.06L13 10.94 14.06 12l1.06-1.06L16.18 12l1.06-1.06-1.06-1.06 1.06-1.06zM7.82 12l1.06-1.06L9.94 12 11 10.94 9.94 9.88 11 8.82 9.94 7.76 8.88 8.82 7.82 7.76 6.76 8.82l1.06 1.06-1.06 1.06zM12 14c-2.33 0-4.31 1.46-5.11 3.5h10.22c-.8-2.04-2.78-3.5-5.11-3.5z"></path></g>
+<g id="sentiment-very-satisfied"><path d="M11.99 2C6.47 2 2 6.47 2 12s4.47 10 9.99 10S22 17.53 22 12 17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm1-10.06L14.06 11l1.06-1.06L16.18 11l1.06-1.06-2.12-2.12zm-4.12 0L9.94 11 11 9.94 8.88 7.82 6.76 9.94 7.82 11zM12 17.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"></path></g>
 <g id="share"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"></path></g>
 <g id="whatshot"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"></path></g>
 </defs></svg>
@@ -35396,7 +35673,15 @@ Example:
     });
   </script>
 </dom-module>
-<iron-iconset-svg name="hardware" size="24">
+<!--
+@license
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><iron-iconset-svg name="hardware" size="24">
 <svg><defs>
 <g id="cast"><path d="M21 3H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11z"></path></g>
 <g id="cast-connected"><path d="M1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm18-7H5v1.63c3.96 1.28 7.09 4.41 8.37 8.37H19V7zM1 10v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11zm20-7H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path></g>
@@ -35448,7 +35733,15 @@ Example:
 <g id="watch"><path d="M20 12c0-2.54-1.19-4.81-3.04-6.27L16 0H8l-.95 5.73C5.19 7.19 4 9.45 4 12s1.19 4.81 3.05 6.27L8 24h8l.96-5.73C18.81 16.81 20 14.54 20 12zM6 12c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6-6-2.69-6-6z"></path></g>
 </defs></svg>
 </iron-iconset-svg>
-<iron-iconset-svg name="notification" size="24">
+<!--
+@license
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><iron-iconset-svg name="notification" size="24">
 <svg><defs>
 <g id="adb"><path d="M5 16c0 3.87 3.13 7 7 7s7-3.13 7-7v-4H5v4zM16.12 4.37l2.1-2.1-.82-.83-2.3 2.31C14.16 3.28 13.12 3 12 3s-2.16.28-3.09.75L6.6 1.44l-.82.83 2.1 2.1C6.14 5.64 5 7.68 5 10v1h14v-1c0-2.32-1.14-4.36-2.88-5.63zM9 9c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"></path></g>
 <g id="airline-seat-flat"><path d="M22 11v2H9V7h9c2.21 0 4 1.79 4 4zM2 14v2h6v2h8v-2h6v-2H2zm5.14-1.9c1.16-1.19 1.14-3.08-.04-4.24-1.19-1.16-3.08-1.14-4.24.04-1.16 1.19-1.14 3.08.04 4.24 1.19 1.16 3.08 1.14 4.24-.04z"></path></g>
@@ -35464,6 +35757,8 @@ Example:
 <g id="disc-full"><path d="M20 16h2v-2h-2v2zm0-9v5h2V7h-2zM10 4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"></path></g>
 <g id="do-not-disturb"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"></path></g>
 <g id="do-not-disturb-alt"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zM4 12c0-4.4 3.6-8 8-8 1.8 0 3.5.6 4.9 1.7L5.7 16.9C4.6 15.5 4 13.8 4 12zm8 8c-1.8 0-3.5-.6-4.9-1.7L18.3 7.1C19.4 8.5 20 10.2 20 12c0 4.4-3.6 8-8 8z"></path></g>
+<g id="do-not-disturb-off"><path d="M17 11v2h-1.46l4.68 4.68C21.34 16.07 22 14.11 22 12c0-5.52-4.48-10-10-10-2.11 0-4.07.66-5.68 1.78L13.54 11H17zM2.27 2.27L1 3.54l2.78 2.78C2.66 7.93 2 9.89 2 12c0 5.52 4.48 10 10 10 2.11 0 4.07-.66 5.68-1.78L20.46 23l1.27-1.27L11 11 2.27 2.27zM7 13v-2h1.46l2 2H7z"></path></g>
+<g id="do-not-disturb-on"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"></path></g>
 <g id="drive-eta"><path d="M18.92 5.01C18.72 4.42 18.16 4 17.5 4h-11c-.66 0-1.21.42-1.42 1.01L3 11v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 15c-.83 0-1.5-.67-1.5-1.5S5.67 12 6.5 12s1.5.67 1.5 1.5S7.33 15 6.5 15zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 10l1.5-4.5h11L19 10H5z"></path></g>
 <g id="enhanced-encryption"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H8.9V6zM16 16h-3v3h-2v-3H8v-2h3v-3h2v3h3v2z"></path></g>
 <g id="event-available"><path d="M16.53 11.06L15.47 10l-4.88 4.88-2.12-2.12-1.06 1.06L10.59 17l5.94-5.94zM19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"></path></g>
@@ -35485,6 +35780,7 @@ Example:
 <g id="phone-missed"><path d="M6.5 5.5L12 11l7-7-1-1-6 6-4.5-4.5H11V3H5v6h1.5V5.5zm17.21 11.17C20.66 13.78 16.54 12 12 12 7.46 12 3.34 13.78.29 16.67c-.18.18-.29.43-.29.71s.11.53.29.71l2.48 2.48c.18.18.43.29.71.29.27 0 .52-.11.7-.28.79-.74 1.69-1.36 2.66-1.85.33-.16.56-.5.56-.9v-3.1c1.45-.48 3-.73 4.6-.73 1.6 0 3.15.25 4.6.72v3.1c0 .39.23.74.56.9.98.49 1.87 1.12 2.67 1.85.18.18.43.28.7.28.28 0 .53-.11.71-.29l2.48-2.48c.18-.18.29-.43.29-.71s-.12-.52-.3-.7z"></path></g>
 <g id="phone-paused"><path d="M17 3h-2v7h2V3zm3 12.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.59l2.2-2.21c.28-.26.36-.65.25-1C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1zM19 3v7h2V3h-2z"></path></g>
 <g id="power"><path d="M16.01 7L16 3h-2v4h-4V3H8v4h-.01C7 6.99 6 7.99 6 8.99v5.49L9.5 18v3h5v-3l3.5-3.51v-5.5c0-1-1-2-1.99-1.99z"></path></g>
+<g id="priority-high"><circle cx="12" cy="19" r="2"></circle><path d="M10 3h4v12h-4z"></path></g>
 <g id="rv-hookup"><path d="M20 17v-6c0-1.1-.9-2-2-2H7V7l-3 3 3 3v-2h4v3H4v3c0 1.1.9 2 2 2h2c0 1.66 1.34 3 3 3s3-1.34 3-3h8v-2h-2zm-9 3c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm7-6h-4v-3h4v3zM17 2v2H9v2h8v2l3-3z"></path></g>
 <g id="sd-card"><path d="M18 2h-8L4.02 8 4 20c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 6h-2V4h2v4zm3 0h-2V4h2v4zm3 0h-2V4h2v4z"></path></g>
 <g id="sim-card-alert"><path d="M18 2h-8L4.02 8 4 20c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 15h-2v-2h2v2zm0-4h-2V8h2v5z"></path></g>
@@ -35514,7 +35810,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.2.91">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.2.92">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -39562,8 +39858,8 @@ Custom property | Description | Default
     </style>
 
     <div class="header">
-      <iron-image hidden$="[[!image]]" src="[[image]]" alt="[[alt]]" placeholder="[[placeholderImage]]" preload="[[preloadImage]]" fade="[[fadeImage]]"></iron-image>
-      <div hidden$="[[!heading]]" class$="[[_computeHeadingClass(image)]]">[[heading]]</div>
+      <iron-image hidden$="[[!image]]" aria-hidden$="[[_isHidden(image)]]" src="[[image]]" alt="[[alt]]" placeholder="[[placeholderImage]]" preload="[[preloadImage]]" fade="[[fadeImage]]"></iron-image>
+      <div hidden$="[[!heading]]" class$="title-text [[_computeHeadingClass(image)]]">[[heading]]</div>
     </div>
 
     <content></content>
@@ -39654,6 +39950,14 @@ Custom property | Description | Default
           computed: '_computeAnimated(animatedShadow)'
         }
       },
+      
+      /**
+       * Format function for aria-hidden. Use the ! operator results in the
+       * empty string when given a falsy value.
+       */
+      _isHidden: function(image) {
+        return image ? 'false' : 'true';
+      },
 
       _headingChanged: function(heading) {
         var label = this.getAttribute('aria-label');
@@ -39661,10 +39965,7 @@ Custom property | Description | Default
       },
 
       _computeHeadingClass: function(image) {
-        var cls = 'title-text';
-        if (image)
-          cls += ' over-image';
-        return cls;
+        return image ? ' over-image' : '';
       },
 
       _computeAnimated: function(animatedShadow) {
@@ -39710,7 +40011,15 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
     }
   }
 </script>
-<iron-iconset-svg name="maps" size="24">
+<!--
+@license
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><iron-iconset-svg name="maps" size="24">
 <svg><defs>
 <g id="add-location"><path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7zm4 8h-3v3h-2v-3H8V8h3V5h2v3h3v2z"></path></g>
 <g id="beenhere"><path d="M19 1H5c-1.1 0-1.99.9-1.99 2L3 15.93c0 .69.35 1.3.88 1.66L12 23l8.11-5.41c.53-.36.88-.97.88-1.66L21 3c0-1.1-.9-2-2-2zm-9 15l-5-5 1.41-1.41L10 13.17l7.59-7.59L19 7l-9 9z"></path></g>
@@ -39725,6 +40034,7 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
 <g id="directions-transit"><path d="M12 2c-4.42 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h12v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-3.58-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm3.5-6H6V6h5v5zm5.5 6c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6h-5V6h5v5z"></path></g>
 <g id="directions-walk"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"></path></g>
 <g id="edit-location"><path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7zm-1.56 10H9v-1.44l3.35-3.34 1.43 1.43L10.44 12zm4.45-4.45l-.7.7-1.44-1.44.7-.7c.15-.15.39-.15.54 0l.9.9c.15.15.15.39 0 .54z"></path></g>
+<g id="ev-station"><path d="M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM18 10c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zM8 18v-4.5H6L10 6v5h2l-4 7z"></path></g>
 <g id="flight"><path d="M10.18 9"></path><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"></path></g>
 <g id="hotel"><path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"></path></g>
 <g id="layers"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"></path></g>
@@ -39767,11 +40077,17 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
 <g id="pin-drop"><path d="M18 8c0-3.31-2.69-6-6-6S6 4.69 6 8c0 4.5 6 11 6 11s6-6.5 6-11zm-8 0c0-1.1.9-2 2-2s2 .9 2 2-.89 2-2 2c-1.1 0-2-.9-2-2zM5 20v2h14v-2H5z"></path></g>
 <g id="place"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></g>
 <g id="rate-review"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 14v-2.47l6.88-6.88c.2-.2.51-.2.71 0l1.77 1.77c.2.2.2.51 0 .71L8.47 14H6zm12 0h-7.5l2-2H18v2z"></path></g>
+<g id="restaurant"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"></path></g>
 <g id="restaurant-menu"><path d="M8.1 13.34l2.83-2.83L3.91 3.5c-1.56 1.56-1.56 4.09 0 5.66l4.19 4.18zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.2-1.1-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z"></path></g>
 <g id="satellite"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM5 4.99h3C8 6.65 6.66 8 5 8V4.99zM5 12v-2c2.76 0 5-2.25 5-5.01h2C12 8.86 8.87 12 5 12zm0 6l3.5-4.5 2.5 3.01L14.5 12l4.5 6H5z"></path></g>
 <g id="store-mall-directory"><path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"></path></g>
+<g id="streetview"><path d="M12.56 14.33c-.34.27-.56.7-.56 1.17V21h7c1.1 0 2-.9 2-2v-5.98c-.94-.33-1.95-.52-3-.52-2.03 0-3.93.7-5.44 1.83z"></path><circle cx="18" cy="6" r="5"></circle><path d="M11.5 6c0-1.08.27-2.1.74-3H5c-1.1 0-2 .9-2 2v14c0 .55.23 1.05.59 1.41l9.82-9.82C12.23 9.42 11.5 7.8 11.5 6z"></path></g>
+<g id="subway"><circle cx="15.5" cy="16" r="1"></circle><circle cx="8.5" cy="16" r="1"></circle><path d="M7.01 9h10v5h-10zM17.8 2.8C16 2.09 13.86 2 12 2c-1.86 0-4 .09-5.8.8C3.53 3.84 2 6.05 2 8.86V22h20V8.86c0-2.81-1.53-5.02-4.2-6.06zm.2 13.08c0 1.45-1.18 2.62-2.63 2.62l1.13 1.12V20H15l-1.5-1.5h-2.83L9.17 20H7.5v-.38l1.12-1.12C7.18 18.5 6 17.32 6 15.88V9c0-2.63 3-3 6-3 3.32 0 6 .38 6 3v6.88z"></path></g>
 <g id="terrain"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"></path></g>
 <g id="traffic"><path d="M20 10h-3V8.86c1.72-.45 3-2 3-3.86h-3V4c0-.55-.45-1-1-1H8c-.55 0-1 .45-1 1v1H4c0 1.86 1.28 3.41 3 3.86V10H4c0 1.86 1.28 3.41 3 3.86V15H4c0 1.86 1.28 3.41 3 3.86V20c0 .55.45 1 1 1h8c.55 0 1-.45 1-1v-1.14c1.72-.45 3-2 3-3.86h-3v-1.14c1.72-.45 3-2 3-3.86zm-8 9c-1.11 0-2-.9-2-2s.89-2 2-2c1.1 0 2 .9 2 2s-.89 2-2 2zm0-5c-1.11 0-2-.9-2-2s.89-2 2-2c1.1 0 2 .9 2 2s-.89 2-2 2zm0-5c-1.11 0-2-.9-2-2 0-1.11.89-2 2-2 1.1 0 2 .89 2 2 0 1.1-.89 2-2 2z"></path></g>
+<g id="train"><path d="M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h2.23l2-2H14l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-3.58-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm3.5-7H6V6h5v4zm2 0V6h5v4h-5zm3.5 7c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path></g>
+<g id="tram"><path d="M19 16.94V8.5c0-2.79-2.61-3.4-6.01-3.49l.76-1.51H17V2H7v1.5h4.75l-.76 1.52C7.86 5.11 5 5.73 5 8.5v8.44c0 1.45 1.19 2.66 2.59 2.97L6 21.5v.5h2.23l2-2H14l2 2h2v-.5L16.5 20h-.08c1.69 0 2.58-1.37 2.58-3.06zm-7 1.56c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm5-4.5H7V9h10v5z"></path></g>
+<g id="transfer-within-a-station"><path d="M16.49 15.5v-1.75L14 16.25l2.49 2.5V17H22v-1.5zm3.02 4.25H14v1.5h5.51V23L22 20.5 19.51 18zM9.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM5.75 8.9L3 23h2.1l1.75-8L9 17v6h2v-7.55L8.95 13.4l.6-3C10.85 12 12.8 13 15 13v-2c-1.85 0-3.45-1-4.35-2.45l-.95-1.6C9.35 6.35 8.7 6 8 6c-.25 0-.5.05-.75.15L2 8.3V13h2V9.65l1.75-.75"></path></g>
 <g id="zoom-out-map"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6z"></path></g>
 </defs></svg>
 </iron-iconset-svg>
@@ -44146,6 +44462,14 @@ Custom property                  | Description                            | Defa
         noFocusTrap: {
           type: Boolean,
           value: false
+        },
+
+        /**
+         * Disables swiping on the drawer.
+         */
+        disableSwipe: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -44263,7 +44587,7 @@ Custom property                  | Description                            | Defa
       },
 
       _track: function(event) {
-        if (this.persistent) {
+        if (this.persistent || this.disableSwipe) {
           return;
         }
 
@@ -44998,7 +45322,7 @@ Add the `fullbleed` attribute to app-header-layout to make it fit the size of it
 
       listeners: {
         'iron-resize': '_resizeHandler',
-        'app-header-reset-layout': 'resetLayout'
+        'app-header-reset-layout': '_resetLayoutHandler'
       },
 
       observers: [
@@ -45070,7 +45394,13 @@ Add the `fullbleed` attribute to app-header-layout to make it fit the size of it
 
       _resizeHandler: function() {
         this.resetLayout();
+      },
+
+      _resetLayoutHandler: function(e) {
+        this.resetLayout();
+        e.stopPropagation();
       }
+
     });
   </script>
 </dom-module>
@@ -45210,14 +45540,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.91">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.92">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.2.91">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.2.92">
    * ```
    *
    * ### Consuming effects
@@ -45465,7 +45795,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           if ((effectDef = Polymer.AppLayout._scrollEffects[effectName])) {
             this._effects.push(this._boundEffect(effectDef, effectsConfig[effectName]));
           } else {
-            this._warn(this._logf('_effectsChanged', this._getUndefinedMsg(effectName)));
+            console.warn(this._getUndefinedMsg(effectName));
           }
         }
       }, this);
@@ -45567,7 +45897,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @param {string} id The id for the node.
      */
     _getDOMRef: function(id) {
-      this._warn(this._logf('_getDOMRef', '`'+ id +'` is undefined'));
+      console.warn('_getDOMRef', '`'+ id +'` is undefined');
     },
 
     _getUndefinedMsg: function(effectName) {
@@ -45722,11 +46052,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var condensedTitle = this._getDOMRef('condensedTitle');
 
         if (!condensedTitle) {
-          this._warn(this._logf('effects[resize-title]', 'undefined `condensed-title`'));
+          console.warn('Scroll effect `resize-title`: undefined `condensed-title`');
           return false;
         }
         if (!title) {
-          this._warn(this._logf('effects[resize-title]', 'undefined `main-title`'));
+          console.warn('Scroll effect `resize-title`: undefined `main-title`');
           return false;
         }
 
@@ -45873,11 +46203,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fx = {};
 
       if (!condensedTitle) {
-        this._warn(this._logf('effects[resize-snapped-title]', 'undefined `condensed-title`'));
+        console.warn('Scroll effect `resize-snapped-title`: undefined `condensed-title`');
         return false;
       }
       if (!title) {
-        this._warn(this._logf('effects[resize-snapped-title]', 'undefined `main-title`'));
+        console.warn('Scroll effect `resize-snapped-title`: undefined `main-title`');
         return false;
       }
 
@@ -46015,7 +46345,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.91">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.92">
 ```
 
 #### List of effects
@@ -46132,7 +46462,8 @@ Mixin | Description | Default
 @demo app-header/demo/music.html Reveals Demo
 @demo app-header/demo/no-effects.html Condenses and Reveals Demo
 @demo app-header/demo/notes.html Fixed with Dynamic Shadow Demo
-@demo app-header/demo/custom-sticky-element.html Custom Sticky Element Demo
+@demo app-header/demo/custom-sticky-element-1.html Custom Sticky Element Demo 1
+@demo app-header/demo/custom-sticky-element-2.html Custom Sticky Element Demo 2
 -->
 
 <dom-module id="app-header" assetpath="../../bower_components/app-layout/app-header/">
@@ -46393,8 +46724,6 @@ Mixin | Description | Default
        * @method resetLayout
        */
       resetLayout: function() {
-        this.fire('app-header-reset-layout');
-
         this.debounce('_resetLayout', function() {
           // noop if the header isn't visible
           if (this.offsetWidth === 0 && this.offsetHeight === 0) {
@@ -46413,7 +46742,6 @@ Mixin | Description | Default
           if  (!firstSetup) {
             this._updateScrollState(0, true);
           }
-
           if (this._mayMove()) {
             this._dHeight = this._stickyEl ? this._height - this._stickyEl.offsetHeight : 0;
           } else {
@@ -46431,6 +46759,7 @@ Mixin | Description | Default
           }
           // restore no transition
           this.disabled = currentDisabled;
+          this.fire('app-header-reset-layout');
         });
       },
 
@@ -46557,9 +46886,9 @@ Mixin | Description | Default
        */
       _transformHeader: function(y) {
         this.translate3d(0, (-y) + 'px', 0);
-        if (this._stickyEl && this.condenses && y >= this._stickyElTop) {
-          this.translate3d(0, (Math.min(y, this._dHeight) - this._stickyElTop) + 'px', 0,
-              this._stickyEl);
+        if (this._stickyEl) {
+          this.translate3d(0, this.condenses && y >= this._stickyElTop ?
+              (Math.min(y, this._dHeight) - this._stickyElTop) + 'px' : 0,  0, this._stickyEl);
         }
       },
 
@@ -47262,105 +47591,107 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><script>
-  'use strict';
-
-  /**
-   * Provides bidirectional mapping between `path` and `queryParams` and a
-   * app-route compatible `route` object.
-   *
-   * For more information, see the docs for `app-route-converter`.
-   *
-   * @polymerBehavior
-   */
-  Polymer.AppRouteConverterBehavior = {
-    properties: {
-      /**
-       * A model representing the deserialized path through the route tree, as
-       * well as the current queryParams.
-       *
-       * A route object is the kernel of the routing system. It is intended to
-       * be fed into consuming elements such as `app-route`.
-       *
-       * @type {?Object}
-       */
-      route: {
-        type: Object,
-        notify: true
-      },
-
-      /**
-       * A set of key/value pairs that are universally accessible to branches of
-       * the route tree.
-       *
-       * @type {?Object}
-       */
-      queryParams: {
-        type: Object,
-        notify: true
-      },
-
-      /**
-       * The serialized path through the route tree. This corresponds to the
-       * `window.location.pathname` value, and will update to reflect changes
-       * to that value.
-       */
-      path: {
-        type: String,
-        notify: true,
-      }
-    },
-
-    observers: [
-      '_locationChanged(path, queryParams)',
-      '_routeChanged(route.prefix, route.path)',
-      '_routeQueryParamsChanged(route.__queryParams)'
-    ],
-
-    created: function() {
-      this.linkPaths('route.__queryParams', 'queryParams');
-      this.linkPaths('queryParams', 'route.__queryParams');
-    },
+  (function() {
+    'use strict';
 
     /**
-     * Handler called when the path or queryParams change.
-     */
-    _locationChanged: function() {
-      if (this.route &&
-          this.route.path === this.path &&
-          this.queryParams === this.route.__queryParams) {
-        return;
-      }
-      this.route = {
-        prefix: '',
-        path: this.path,
-        __queryParams: this.queryParams
-      };
-    },
-
-    /**
-     * Handler called when the route prefix and route path change.
-     */
-    _routeChanged: function() {
-      if (!this.route) {
-        return;
-      }
-
-      this.path = this.route.prefix + this.route.path;
-    },
-
-    /**
-     * Handler called when the route queryParams change.
+     * Provides bidirectional mapping between `path` and `queryParams` and a
+     * app-route compatible `route` object.
      *
-     * @param  {Object} queryParams A set of key/value pairs that are
-     * universally accessible to branches of the route tree.
+     * For more information, see the docs for `app-route-converter`.
+     *
+     * @polymerBehavior
      */
-    _routeQueryParamsChanged: function(queryParams) {
-      if (!this.route) {
-        return;
+    Polymer.AppRouteConverterBehavior = {
+      properties: {
+        /**
+         * A model representing the deserialized path through the route tree, as
+         * well as the current queryParams.
+         *
+         * A route object is the kernel of the routing system. It is intended to
+         * be fed into consuming elements such as `app-route`.
+         *
+         * @type {?Object}
+         */
+        route: {
+          type: Object,
+          notify: true
+        },
+
+        /**
+         * A set of key/value pairs that are universally accessible to branches of
+         * the route tree.
+         *
+         * @type {?Object}
+         */
+        queryParams: {
+          type: Object,
+          notify: true
+        },
+
+        /**
+         * The serialized path through the route tree. This corresponds to the
+         * `window.location.pathname` value, and will update to reflect changes
+         * to that value.
+         */
+        path: {
+          type: String,
+          notify: true,
+        }
+      },
+
+      observers: [
+        '_locationChanged(path, queryParams)',
+        '_routeChanged(route.prefix, route.path)',
+        '_routeQueryParamsChanged(route.__queryParams)'
+      ],
+
+      created: function() {
+        this.linkPaths('route.__queryParams', 'queryParams');
+        this.linkPaths('queryParams', 'route.__queryParams');
+      },
+
+      /**
+       * Handler called when the path or queryParams change.
+       */
+      _locationChanged: function() {
+        if (this.route &&
+            this.route.path === this.path &&
+            this.queryParams === this.route.__queryParams) {
+          return;
+        }
+        this.route = {
+          prefix: '',
+          path: this.path,
+          __queryParams: this.queryParams
+        };
+      },
+
+      /**
+       * Handler called when the route prefix and route path change.
+       */
+      _routeChanged: function() {
+        if (!this.route) {
+          return;
+        }
+
+        this.path = this.route.prefix + this.route.path;
+      },
+
+      /**
+       * Handler called when the route queryParams change.
+       *
+       * @param  {Object} queryParams A set of key/value pairs that are
+       * universally accessible to branches of the route tree.
+       */
+      _routeQueryParamsChanged: function(queryParams) {
+        if (!this.route) {
+          return;
+        }
+        this.queryParams = queryParams;
       }
-      this.queryParams = queryParams;
-    }
-  };
+    };
+  })();
 </script>
 <!--
 @license
@@ -47379,11 +47710,11 @@ occur, `app-location` produces and updates an object called `route`. This
 elements.
 
 An example of the public API of a route object that describes the URL
-`https://elements.polymer-project.org/elements/app-route-converter?foo=bar&baz=qux`:
+`https://elements.polymer-project.org/elements/app-location`:
 
     {
       prefix: '',
-      path: '/elements/app-route-converter'
+      path: '/elements/app-location'
     }
 
 Example Usage:
@@ -47412,6 +47743,13 @@ There is no standard event that is fired when window.location is modified.
 location. It also listens for that same event, and re-reads the URL when it's
 fired. This makes it very easy to interop with other routing code.
 
+So for example if you want to navigate to `/new_path` imperatively you could
+call `window.location.pushState` or `window.location.replaceState` followed by
+firing a `location-changed` event on `window`. i.e.
+
+    window.history.pushState({}, null, '/new_path');
+    window.dispatchEvent(new CustomEvent('location-changed'));
+
 @element app-location
 @demo demo/index.html
 -->
@@ -47423,116 +47761,118 @@ fired. This makes it very easy to interop with other routing code.
     </iron-query-params>
   </template>
   <script>
-    'use strict';
+    (function() {
+      'use strict';
 
-    Polymer({
-      is: 'app-location',
+      Polymer({
+        is: 'app-location',
 
-      properties: {
-        /**
-         * A model representing the deserialized path through the route tree, as
-         * well as the current queryParams.
-         */
-        route: {
-          type: Object,
-          notify: true
+        properties: {
+          /**
+           * A model representing the deserialized path through the route tree, as
+           * well as the current queryParams.
+           */
+          route: {
+            type: Object,
+            notify: true
+          },
+
+          /**
+           * In many scenarios, it is convenient to treat the `hash` as a stand-in
+           * alternative to the `path`. For example, if deploying an app to a static
+           * web server (e.g., Github Pages) - where one does not have control over
+           * server-side routing - it is usually a better experience to use the hash
+           * to represent paths through one's app.
+           *
+           * When this property is set to true, the `hash` will be used in place of
+
+           * the `path` for generating a `route`.
+           */
+          useHashAsPath: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * A regexp that defines the set of URLs that should be considered part
+           * of this web app.
+           *
+           * Clicking on a link that matches this regex won't result in a full page
+           * navigation, but will instead just update the URL state in place.
+           *
+           * This regexp is given everything after the origin in an absolute
+           * URL. So to match just URLs that start with /search/ do:
+           *     url-space-regex="^/search/"
+           *
+           * @type {string|RegExp}
+           */
+          urlSpaceRegex: {
+            type: String,
+            notify: true
+          },
+
+          /**
+           * A set of key/value pairs that are universally accessible to branches
+           * of the route tree.
+           */
+          __queryParams: {
+            type: Object
+          },
+
+          /**
+           * The pathname component of the current URL.
+           */
+          __path: {
+            type: String
+          },
+
+          /**
+           * The query string portion of the current URL.
+           */
+          __query: {
+            type: String
+          },
+
+          /**
+           * The hash portion of the current URL.
+           */
+          __hash: {
+            type: String
+          },
+
+          /**
+           * The route path, which will be either the hash or the path, depending
+           * on useHashAsPath.
+           */
+          path: {
+            type: String,
+            observer: '__onPathChanged'
+          }
         },
 
-        /**
-         * In many scenarios, it is convenient to treat the `hash` as a stand-in
-         * alternative to the `path`. For example, if deploying an app to a static
-         * web server (e.g., Github Pages) - where one does not have control over
-         * server-side routing - it is usually a better experience to use the hash
-         * to represent paths through one's app.
-         *
-         * When this property is set to true, the `hash` will be used in place of
+        behaviors: [Polymer.AppRouteConverterBehavior],
 
-         * the `path` for generating a `route`.
-         */
-        useHashAsPath: {
-          type: Boolean,
-          value: false
+        observers: [
+          '__computeRoutePath(useHashAsPath, __hash, __path)'
+        ],
+
+        __computeRoutePath: function() {
+          this.path = this.useHashAsPath ? this.__hash : this.__path;
         },
 
-        /**
-         * A regexp that defines the set of URLs that should be considered part
-         * of this web app.
-         *
-         * Clicking on a link that matches this regex won't result in a full page
-         * navigation, but will instead just update the URL state in place.
-         *
-         * This regexp is given everything after the origin in an absolute
-         * URL. So to match just URLs that start with /search/ do:
-         *     url-space-regex="^/search/"
-         *
-         * @type {string|RegExp}
-         */
-        urlSpaceRegex: {
-          type: String,
-          notify: true
-        },
+        __onPathChanged: function() {
+          if (!this._readied) {
+            return;
+          }
 
-        /**
-         * A set of key/value pairs that are universally accessible to branches
-         * of the route tree.
-         */
-        __queryParams: {
-          type: Object
-        },
-
-        /**
-         * The pathname component of the current URL.
-         */
-        __path: {
-          type: String
-        },
-
-        /**
-         * The query string portion of the current URL.
-         */
-        __query: {
-          type: String
-        },
-
-        /**
-         * The hash portion of the current URL.
-         */
-        __hash: {
-          type: String
-        },
-
-        /**
-         * The route path, which will be either the hash or the path, depending
-         * on useHashAsPath.
-         */
-        path: {
-          type: String,
-          observer: '__onPathChanged'
+          if (this.useHashAsPath) {
+            this.__hash = this.path;
+          } else {
+            this.__path = this.path;
+          }
         }
-      },
-
-      behaviors: [Polymer.AppRouteConverterBehavior],
-
-      observers: [
-        '__computeRoutePath(useHashAsPath, __hash, __path)'
-      ],
-
-      __computeRoutePath: function() {
-        this.path = this.useHashAsPath ? this.__hash : this.__path;
-      },
-
-      __onPathChanged: function() {
-        if (!this._readied) {
-          return;
-        }
-
-        if (this.useHashAsPath) {
-          this.__hash = this.path;
-        } else {
-          this.__path = this.path;
-        }
-      }
-    });
+      });
+    })();
   </script>
 </dom-module>
 <!--
@@ -47613,328 +47953,340 @@ the `app-route` will update `route.path`. This in-turn will update the
 @element app-route
 @demo demo/index.html
 @demo demo/data-loading-demo.html
+@demo demo/simple-demo.html
 -->
 
 <script>
-  'use strict';
+  (function() {
+    'use strict';
 
-  Polymer({
-    is: 'app-route',
+    Polymer({
+      is: 'app-route',
 
-    properties: {
-      /**
-       * The URL component managed by this element.
-       */
-      route: {
-        type: Object,
-        notify: true
-      },
-
-      /**
-       * The pattern of slash-separated segments to match `path` against.
-       *
-       * For example the pattern "/foo" will match "/foo" or "/foo/bar"
-       * but not "/foobar".
-       *
-       * Path segments like `/:named` are mapped to properties on the `data` object.
-       */
-      pattern: {
-        type: String
-      },
-
-      /**
-       * The parameterized values that are extracted from the route as
-       * described by `pattern`.
-       */
-      data: {
-        type: Object,
-        value: function() {return {};},
-        notify: true
-      },
-
-      /**
-       * @type {?Object}
-       */
-      queryParams: {
-        type: Object,
-        value: function() {
-          return {};
+      properties: {
+        /**
+         * The URL component managed by this element.
+         */
+        route: {
+          type: Object,
+          notify: true
         },
-        notify: true
+
+        /**
+         * The pattern of slash-separated segments to match `path` against.
+         *
+         * For example the pattern "/foo" will match "/foo" or "/foo/bar"
+         * but not "/foobar".
+         *
+         * Path segments like `/:named` are mapped to properties on the `data` object.
+         */
+        pattern: {
+          type: String
+        },
+
+        /**
+         * The parameterized values that are extracted from the route as
+         * described by `pattern`.
+         */
+        data: {
+          type: Object,
+          value: function() {return {};},
+          notify: true
+        },
+
+        /**
+         * @type {?Object}
+         */
+        queryParams: {
+          type: Object,
+          value: function() {
+            return {};
+          },
+          notify: true
+        },
+
+        /**
+         * The part of `path` NOT consumed by `pattern`.
+         */
+        tail: {
+          type: Object,
+          value: function() {return {path: null, prefix: null, __queryParams: null};},
+          notify: true
+        },
+
+        active: {
+          type: Boolean,
+          notify: true,
+          readOnly: true
+        },
+
+        _queryParamsUpdating: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * @type {?string}
+         */
+        _matched: {
+          type: String,
+          value: ''
+        }
+      },
+
+      observers: [
+        '__tryToMatch(route.path, pattern)',
+        '__updatePathOnDataChange(data.*)',
+        '__tailPathChanged(tail.path)',
+        '__routeQueryParamsChanged(route.__queryParams)',
+        '__tailQueryParamsChanged(tail.__queryParams)',
+        '__queryParamsChanged(queryParams.*)'
+      ],
+
+      created: function() {
+        this.linkPaths('route.__queryParams', 'tail.__queryParams');
+        this.linkPaths('tail.__queryParams', 'route.__queryParams');
       },
 
       /**
-       * The part of `path` NOT consumed by `pattern`.
+       * Deal with the query params object being assigned to wholesale.
+       * @export
        */
-      tail: {
-        type: Object,
-        value: function() {return {path: null, prefix: null, __queryParams: null};},
-        notify: true
+      __routeQueryParamsChanged: function(queryParams) {
+        if (queryParams && this.tail) {
+          this.set('tail.__queryParams', queryParams);
+
+          if (!this.active || this._queryParamsUpdating) {
+            return;
+          }
+
+          // Copy queryParams and track whether there are any differences compared
+          // to the existing query params.
+          var copyOfQueryParams = {};
+          var anythingChanged = false;
+          for (var key in queryParams) {
+            copyOfQueryParams[key] = queryParams[key];
+            if (anythingChanged ||
+                !this.queryParams ||
+                queryParams[key] !== this.queryParams[key]) {
+              anythingChanged = true;
+            }
+          }
+          // Need to check whether any keys were deleted
+          for (var key in this.queryParams) {
+            if (anythingChanged || !(key in queryParams)) {
+              anythingChanged = true;
+              break;
+            }
+          }
+
+          if (!anythingChanged) {
+            return;
+          }
+          this._queryParamsUpdating = true;
+          this.set('queryParams', copyOfQueryParams);
+          this._queryParamsUpdating = false;
+        }
       },
 
-      active: {
-        type: Boolean,
-        notify: true,
-        readOnly: true
-      },
-
-      _queryParamsUpdating: {
-        type: Boolean,
-        value: false
-      },
       /**
-       * @type {?string}
+       * @export
        */
-      _matched: {
-        type: String,
-        value: ''
-      }
-    },
+      __tailQueryParamsChanged: function(queryParams) {
+        if (queryParams && this.route) {
+          this.set('route.__queryParams', queryParams);
+        }
+      },
 
-    observers: [
-      '__tryToMatch(route.path, pattern)',
-      '__updatePathOnDataChange(data.*)',
-      '__tailPathChanged(tail.path)',
-      '__routeQueryParamsChanged(route.__queryParams)',
-      '__tailQueryParamsChanged(tail.__queryParams)',
-      '__queryParamsChanged(queryParams.*)'
-    ],
-
-    created: function() {
-      this.linkPaths('route.__queryParams', 'tail.__queryParams');
-      this.linkPaths('tail.__queryParams', 'route.__queryParams');
-    },
-
-    /**
-     * Deal with the query params object being assigned to wholesale.
-     * @export
-     */
-    __routeQueryParamsChanged: function(queryParams) {
-      if (queryParams && this.tail) {
-        this.set('tail.__queryParams', queryParams);
-
+      /**
+       * @export
+       */
+      __queryParamsChanged: function(changes) {
         if (!this.active || this._queryParamsUpdating) {
           return;
         }
 
-        // Copy queryParams and track whether there are any differences compared
-        // to the existing query params.
-        var copyOfQueryParams = {};
-        var anythingChanged = false;
-        for (var key in queryParams) {
-          copyOfQueryParams[key] = queryParams[key];
-          if (anythingChanged ||
-              !this.queryParams ||
-              queryParams[key] !== this.queryParams[key]) {
-            anythingChanged = true;
-          }
+        this.set('route.__' + changes.path, changes.value);
+      },
+
+      __resetProperties: function() {
+        this._setActive(false);
+        this._matched = null;
+        //this.tail = { path: null, prefix: null, queryParams: null };
+        //this.data = {};
+      },
+
+      /**
+       * @export
+       */
+      __tryToMatch: function() {
+        if (!this.route) {
+          return;
         }
-        // Need to check whether any keys were deleted
-        for (var key in this.queryParams) {
-          if (anythingChanged || !(key in queryParams)) {
-            anythingChanged = true;
+        var path = this.route.path;
+        var pattern = this.pattern;
+        if (!pattern) {
+          return;
+        }
+
+        if (!path) {
+          this.__resetProperties();
+          return;
+        }
+
+        var remainingPieces = path.split('/');
+        var patternPieces = pattern.split('/');
+
+        var matched = [];
+        var namedMatches = {};
+
+        for (var i=0; i < patternPieces.length; i++) {
+          var patternPiece = patternPieces[i];
+          if (!patternPiece && patternPiece !== '') {
             break;
           }
+          var pathPiece = remainingPieces.shift();
+
+          // We don't match this path.
+          if (!pathPiece && pathPiece !== '') {
+            this.__resetProperties();
+            return;
+          }
+          matched.push(pathPiece);
+
+          if (patternPiece.charAt(0) == ':') {
+            namedMatches[patternPiece.slice(1)] = pathPiece;
+          } else if (patternPiece !== pathPiece) {
+            this.__resetProperties();
+            return;
+          }
         }
 
-        if (!anythingChanged) {
-          return;
+        this._matched = matched.join('/');
+
+        // Properties that must be updated atomically.
+        var propertyUpdates = {};
+
+        //this.active
+        if (!this.active) {
+          propertyUpdates.active = true;
         }
-        this._queryParamsUpdating = true;
-        this.set('queryParams', copyOfQueryParams);
-        this._queryParamsUpdating = false;
-      }
-    },
 
-    /**
-     * @export
-     */
-    __tailQueryParamsChanged: function(queryParams) {
-      if (queryParams && this.route) {
-        this.set('route.__queryParams', queryParams);
-      }
-    },
-
-    /**
-     * @export
-     */
-    __queryParamsChanged: function(changes) {
-      if (!this.active || this._queryParamsUpdating) {
-        return;
-      }
-
-      this.set('route.__' + changes.path, changes.value);
-    },
-
-    __resetProperties: function() {
-      this._setActive(false);
-      this._matched = null;
-      //this.tail = { path: null, prefix: null, queryParams: null };
-      //this.data = {};
-    },
-
-    /**
-     * @export
-     */
-    __tryToMatch: function() {
-      if (!this.route) {
-        return;
-      }
-      var path = this.route.path;
-      var pattern = this.pattern;
-      if (!pattern) {
-        return;
-      }
-
-      if (!path) {
-        this.__resetProperties();
-        return;
-      }
-
-      var remainingPieces = path.split('/');
-      var patternPieces = pattern.split('/');
-
-      var matched = [];
-      var namedMatches = {};
-
-      for (var i=0; i < patternPieces.length; i++) {
-        var patternPiece = patternPieces[i];
-        if (!patternPiece && patternPiece !== '') {
-          break;
-        }
-        var pathPiece = remainingPieces.shift();
-
-        // We don't match this path.
-        if (!pathPiece && pathPiece !== '') {
-          this.__resetProperties();
-          return;
-        }
-        matched.push(pathPiece);
-
-        if (patternPiece.charAt(0) == ':') {
-          namedMatches[patternPiece.slice(1)] = pathPiece;
-        } else if (patternPiece !== pathPiece) {
-          this.__resetProperties();
-          return;
-        }
-      }
-
-      this._matched = matched.join('/');
-
-      // Properties that must be updated atomically.
-      var propertyUpdates = {};
-
-      //this.active
-      if (!this.active) {
-        propertyUpdates.active = true;
-      }
-
-      // this.tail
-      var tailPrefix = this.route.prefix + this._matched;
-      var tailPath = remainingPieces.join('/');
-      if (remainingPieces.length > 0) {
-        tailPath = '/' + tailPath;
-      }
-      if (!this.tail ||
-          this.tail.prefix !== tailPrefix ||
-          this.tail.path !== tailPath) {
-        propertyUpdates.tail = {
-          prefix: tailPrefix,
-          path: tailPath,
-          __queryParams: this.route.__queryParams
-        };
-      }
-
-      // this.data
-      propertyUpdates.data = namedMatches;
-      this._dataInUrl = {};
-      for (var key in namedMatches) {
-        this._dataInUrl[key] = namedMatches[key];
-      }
-
-      this.__setMulti(propertyUpdates);
-    },
-
-    /**
-     * @export
-     */
-    __tailPathChanged: function() {
-      if (!this.active) {
-        return;
-      }
-      var tailPath = this.tail.path;
-      var newPath = this._matched;
-      if (tailPath) {
-        if (tailPath.charAt(0) !== '/') {
+        // this.tail
+        var tailPrefix = this.route.prefix + this._matched;
+        var tailPath = remainingPieces.join('/');
+        if (remainingPieces.length > 0) {
           tailPath = '/' + tailPath;
         }
-        newPath += tailPath;
-      }
-      this.set('route.path', newPath);
-    },
-
-    /**
-     * @export
-     */
-    __updatePathOnDataChange: function() {
-      if (!this.route || !this.active) {
-        return;
-      }
-      var newPath = this.__getLink({});
-      var oldPath = this.__getLink(this._dataInUrl);
-      if (newPath === oldPath) {
-        return;
-      }
-      this.set('route.path', newPath);
-    },
-
-    __getLink: function(overrideValues) {
-      var values = {tail: null};
-      for (var key in this.data) {
-        values[key] = this.data[key];
-      }
-      for (var key in overrideValues) {
-        values[key] = overrideValues[key];
-      }
-      var patternPieces = this.pattern.split('/');
-      var interp = patternPieces.map(function(value) {
-        if (value[0] == ':') {
-          value = values[value.slice(1)];
+        if (!this.tail ||
+            this.tail.prefix !== tailPrefix ||
+            this.tail.path !== tailPath) {
+          propertyUpdates.tail = {
+            prefix: tailPrefix,
+            path: tailPath,
+            __queryParams: this.route.__queryParams
+          };
         }
-        return value;
-      }, this);
-      if (values.tail && values.tail.path) {
-        if (interp.length > 0 && values.tail.path.charAt(0) === '/') {
-          interp.push(values.tail.path.slice(1));
-        } else {
-          interp.push(values.tail.path);
+
+        // this.data
+        propertyUpdates.data = namedMatches;
+        this._dataInUrl = {};
+        for (var key in namedMatches) {
+          this._dataInUrl[key] = namedMatches[key];
         }
-      }
-      return interp.join('/');
-    },
 
-    __setMulti: function(setObj) {
-      // HACK(rictic): skirting around 1.0's lack of a setMulti by poking at
-      //     internal data structures. I would not advise that you copy this
-      //     example.
-      //
-      //     In the future this will be a feature of Polymer itself.
-      //     See: https://github.com/Polymer/polymer/issues/3640
-      //
-      //     Hacking around with private methods like this is juggling footguns,
-      //     and is likely to have unexpected and unsupported rough edges.
-      //
-      //     Be ye so warned.
-      for (var property in setObj) {
-        this._propertySetter(property, setObj[property]);
-      }
+        this.__setMulti(propertyUpdates);
+      },
 
-      for (var property in setObj) {
-        this._pathEffector(property, this[property]);
-        this._notifyPathUp(property, this[property]);
+      /**
+       * @export
+       */
+      __tailPathChanged: function(path) {
+        if (!this.active) {
+          return;
+        }
+        var tailPath = path;
+        var newPath = this._matched;
+        if (tailPath) {
+          if (tailPath.charAt(0) !== '/') {
+            tailPath = '/' + tailPath;
+          }
+          newPath += tailPath;
+        }
+        this.set('route.path', newPath);
+      },
+
+      /**
+       * @export
+       */
+      __updatePathOnDataChange: function() {
+        if (!this.route || !this.active) {
+          return;
+        }
+        var newPath = this.__getLink({});
+        var oldPath = this.__getLink(this._dataInUrl);
+        if (newPath === oldPath) {
+          return;
+        }
+        this.set('route.path', newPath);
+      },
+
+      __getLink: function(overrideValues) {
+        var values = {tail: null};
+        for (var key in this.data) {
+          values[key] = this.data[key];
+        }
+        for (var key in overrideValues) {
+          values[key] = overrideValues[key];
+        }
+        var patternPieces = this.pattern.split('/');
+        var interp = patternPieces.map(function(value) {
+          if (value[0] == ':') {
+            value = values[value.slice(1)];
+          }
+          return value;
+        }, this);
+        if (values.tail && values.tail.path) {
+          if (interp.length > 0 && values.tail.path.charAt(0) === '/') {
+            interp.push(values.tail.path.slice(1));
+          } else {
+            interp.push(values.tail.path);
+          }
+        }
+        return interp.join('/');
+      },
+
+      __setMulti: function(setObj) {
+        // HACK(rictic): skirting around 1.0's lack of a setMulti by poking at
+        //     internal data structures. I would not advise that you copy this
+        //     example.
+        //
+        //     In the future this will be a feature of Polymer itself.
+        //     See: https://github.com/Polymer/polymer/issues/3640
+        //
+        //     Hacking around with private methods like this is juggling footguns,
+        //     and is likely to have unexpected and unsupported rough edges.
+        //
+        //     Be ye so warned.
+        for (var property in setObj) {
+          this._propertySetter(property, setObj[property]);
+        }
+        //notify in a specific order
+        if (setObj.data !== undefined) {
+          this._pathEffector('data', this.data);
+          this._notifyChange('data');
+        }
+        if (setObj.active !== undefined) {
+          this._pathEffector('active', this.active);
+          this._notifyChange('active');
+        }
+        if (setObj.tail !== undefined) {
+          this._pathEffector('tail', this.tail);
+          this._notifyChange('tail');
+        }
+
       }
-    }
-  });
+    });
+  })();
 </script>
 <!-- From https://raw.githubusercontent.com/x-element/app-session/ -->
 <dom-module id="yp-session" assetpath="../yp-session/">
@@ -51821,18 +52173,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.2.91"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.2.92"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.2.91"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.2.92"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.2.91"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.2.92"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -56999,9 +57351,9 @@ information on the API.
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.2.91");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.2.92");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.2.91");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.2.92");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);

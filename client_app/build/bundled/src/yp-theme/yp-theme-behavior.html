@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.91">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.92">
 
 <script>
   /**
@@ -221,7 +221,7 @@
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.2.91", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.2.92", fontName: 'FFClanWebBook' });
     },
 
     setTheme: function (number) {
@@ -231,20 +231,19 @@
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.2.91";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.2.92";
       }
 
       var randomNumber = Math.floor((Math.random() * 100000000) + 1);
 
       fontHtmlImport += "?random="+randomNumber;
-
       this.importHref(fontHtmlImport, function(e) {
         this.async(function () {
           console.log("I have loaded font");
         })
       }, function(e) {
         console.error("Could not load font file "+this.fonts[number]);
-      });
+      }, true);
     }
   }
 </script>

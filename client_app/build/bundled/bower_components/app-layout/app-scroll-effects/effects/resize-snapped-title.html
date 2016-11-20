@@ -6,7 +6,7 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../app-scroll-effects-behavior.html?v=6.2.91">
+--><html><head><link rel="import" href="../app-scroll-effects-behavior.html?v=6.2.92">
 
 <script>
   /**
@@ -24,11 +24,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fx = {};
 
       if (!condensedTitle) {
-        this._warn(this._logf('effects[resize-snapped-title]', 'undefined `condensed-title`'));
+        console.warn('Scroll effect `resize-snapped-title`: undefined `condensed-title`');
         return false;
       }
       if (!title) {
-        this._warn(this._logf('effects[resize-snapped-title]', 'undefined `main-title`'));
+        console.warn('Scroll effect `resize-snapped-title`: undefined `main-title`');
         return false;
       }
 

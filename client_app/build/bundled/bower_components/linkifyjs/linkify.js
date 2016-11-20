@@ -531,9 +531,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	var OPENBRACE = inheritsToken('{');
 	var OPENBRACKET = inheritsToken('[');
+	var OPENANGLEBRACKET = inheritsToken('<');
 	var OPENPAREN = inheritsToken('(');
 	var CLOSEBRACE = inheritsToken('}');
 	var CLOSEBRACKET = inheritsToken(']');
+	var CLOSEANGLEBRACKET = inheritsToken('>');
 	var CLOSEPAREN = inheritsToken(')');
 
 	var TOKENS = Object.freeze({
@@ -557,9 +559,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		WS: WS,
 		OPENBRACE: OPENBRACE,
 		OPENBRACKET: OPENBRACKET,
+		OPENANGLEBRACKET: OPENANGLEBRACKET,
 		OPENPAREN: OPENPAREN,
 		CLOSEBRACE: CLOSEBRACE,
 		CLOSEBRACKET: CLOSEBRACKET,
+		CLOSEANGLEBRACKET: CLOSEANGLEBRACKET,
 		CLOSEPAREN: CLOSEPAREN
 	});
 
@@ -591,7 +595,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var S_WS = makeState(WS);
 
 	// States for special URL symbols
-	S_START.on('@', makeState(AT)).on('.', makeState(DOT)).on('+', makeState(PLUS)).on('#', makeState(POUND)).on('?', makeState(QUERY)).on('/', makeState(SLASH)).on('_', makeState(UNDERSCORE)).on(':', makeState(COLON)).on('{', makeState(OPENBRACE)).on('[', makeState(OPENBRACKET)).on('(', makeState(OPENPAREN)).on('}', makeState(CLOSEBRACE)).on(']', makeState(CLOSEBRACKET)).on(')', makeState(CLOSEPAREN)).on([',', ';', '!', '"', '\''], makeState(PUNCTUATION));
+	S_START.on('@', makeState(AT)).on('.', makeState(DOT)).on('+', makeState(PLUS)).on('#', makeState(POUND)).on('?', makeState(QUERY)).on('/', makeState(SLASH)).on('_', makeState(UNDERSCORE)).on(':', makeState(COLON)).on('{', makeState(OPENBRACE)).on('[', makeState(OPENBRACKET)).on('<', makeState(OPENANGLEBRACKET)).on('(', makeState(OPENPAREN)).on('}', makeState(CLOSEBRACE)).on(']', makeState(CLOSEBRACKET)).on('>', makeState(CLOSEANGLEBRACKET)).on(')', makeState(CLOSEPAREN)).on([',', ';', '!', '"', '\''], makeState(PUNCTUATION));
 
 	// Whitespace jumps
 	// Tokens of only non-newline whitespace are arbitrarily long
@@ -952,12 +956,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var S_URL_NON_ACCEPTING = makeState$1(); // URL followed by some symbols (will not be part of the final URL)
 	var S_URL_OPENBRACE = makeState$1(); // URL followed by {
 	var S_URL_OPENBRACKET = makeState$1(); // URL followed by [
+	var S_URL_OPENANGLEBRACKET = makeState$1(); // URL followed by <
 	var S_URL_OPENPAREN = makeState$1(); // URL followed by (
 	var S_URL_OPENBRACE_Q = makeState$1(URL); // URL followed by { and some symbols that the URL can end it
 	var S_URL_OPENBRACKET_Q = makeState$1(URL); // URL followed by [ and some symbols that the URL can end it
+	var S_URL_OPENANGLEBRACKET_Q = makeState$1(URL); // URL followed by < and some symbols that the URL can end it
 	var S_URL_OPENPAREN_Q = makeState$1(URL); // URL followed by ( and some symbols that the URL can end it
 	var S_URL_OPENBRACE_SYMS = makeState$1(); // S_URL_OPENBRACE_Q followed by some symbols it cannot end it
 	var S_URL_OPENBRACKET_SYMS = makeState$1(); // S_URL_OPENBRACKET_Q followed by some symbols it cannot end it
+	var S_URL_OPENANGLEBRACKET_SYMS = makeState$1(); // S_URL_OPENANGLEBRACKET_Q followed by some symbols it cannot end it
 	var S_URL_OPENPAREN_SYMS = makeState$1(); // S_URL_OPENPAREN_Q followed by some symbols it cannot end it
 	var S_EMAIL_DOMAIN = makeState$1(); // parsed string starts with local email info + @ with a potential domain name (C)
 	var S_EMAIL_DOMAIN_DOT = makeState$1(); // (C) domain followed by DOT
@@ -1012,26 +1019,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Types of tokens that can follow a URL and be part of the query string
 	// but cannot be the very last characters
 	// Characters that cannot appear in the URL at all should be excluded
-	var qsNonAccepting = [COLON, DOT, QUERY, PUNCTUATION, CLOSEBRACE, CLOSEBRACKET, CLOSEPAREN, OPENBRACE, OPENBRACKET, OPENPAREN];
+	var qsNonAccepting = [COLON, DOT, QUERY, PUNCTUATION, CLOSEBRACE, CLOSEBRACKET, CLOSEANGLEBRACKET, CLOSEPAREN, OPENBRACE, OPENBRACKET, OPENANGLEBRACKET, OPENPAREN];
 
 	// These states are responsible primarily for determining whether or not to
 	// include the final round bracket.
 
 	// URL, followed by an opening bracket
-	S_URL.on(OPENBRACE, S_URL_OPENBRACE).on(OPENBRACKET, S_URL_OPENBRACKET).on(OPENPAREN, S_URL_OPENPAREN);
+	S_URL.on(OPENBRACE, S_URL_OPENBRACE).on(OPENBRACKET, S_URL_OPENBRACKET).on(OPENANGLEBRACKET, S_URL_OPENANGLEBRACKET).on(OPENPAREN, S_URL_OPENPAREN);
 
 	// URL with extra symbols at the end, followed by an opening bracket
-	S_URL_NON_ACCEPTING.on(OPENBRACE, S_URL_OPENBRACE).on(OPENBRACKET, S_URL_OPENBRACKET).on(OPENPAREN, S_URL_OPENPAREN);
+	S_URL_NON_ACCEPTING.on(OPENBRACE, S_URL_OPENBRACE).on(OPENBRACKET, S_URL_OPENBRACKET).on(OPENANGLEBRACKET, S_URL_OPENANGLEBRACKET).on(OPENPAREN, S_URL_OPENPAREN);
 
 	// Closing bracket component. This character WILL be included in the URL
 	S_URL_OPENBRACE.on(CLOSEBRACE, S_URL);
 	S_URL_OPENBRACKET.on(CLOSEBRACKET, S_URL);
+	S_URL_OPENANGLEBRACKET.on(CLOSEANGLEBRACKET, S_URL);
 	S_URL_OPENPAREN.on(CLOSEPAREN, S_URL);
 	S_URL_OPENBRACE_Q.on(CLOSEBRACE, S_URL);
 	S_URL_OPENBRACKET_Q.on(CLOSEBRACKET, S_URL);
+	S_URL_OPENANGLEBRACKET_Q.on(CLOSEANGLEBRACKET, S_URL);
 	S_URL_OPENPAREN_Q.on(CLOSEPAREN, S_URL);
 	S_URL_OPENBRACE_SYMS.on(CLOSEBRACE, S_URL);
 	S_URL_OPENBRACKET_SYMS.on(CLOSEBRACKET, S_URL);
+	S_URL_OPENANGLEBRACKET_SYMS.on(CLOSEANGLEBRACKET, S_URL);
 	S_URL_OPENPAREN_SYMS.on(CLOSEPAREN, S_URL);
 
 	// URL that beings with an opening bracket, followed by a symbols.
@@ -1039,24 +1049,30 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// has a single opening bracket for some reason).
 	S_URL_OPENBRACE.on(qsAccepting, S_URL_OPENBRACE_Q);
 	S_URL_OPENBRACKET.on(qsAccepting, S_URL_OPENBRACKET_Q);
+	S_URL_OPENANGLEBRACKET.on(qsAccepting, S_URL_OPENANGLEBRACKET_Q);
 	S_URL_OPENPAREN.on(qsAccepting, S_URL_OPENPAREN_Q);
 	S_URL_OPENBRACE.on(qsNonAccepting, S_URL_OPENBRACE_SYMS);
 	S_URL_OPENBRACKET.on(qsNonAccepting, S_URL_OPENBRACKET_SYMS);
+	S_URL_OPENANGLEBRACKET.on(qsNonAccepting, S_URL_OPENANGLEBRACKET_SYMS);
 	S_URL_OPENPAREN.on(qsNonAccepting, S_URL_OPENPAREN_SYMS);
 
 	// URL that begins with an opening bracket, followed by some symbols
 	S_URL_OPENBRACE_Q.on(qsAccepting, S_URL_OPENBRACE_Q);
 	S_URL_OPENBRACKET_Q.on(qsAccepting, S_URL_OPENBRACKET_Q);
+	S_URL_OPENANGLEBRACKET_Q.on(qsAccepting, S_URL_OPENANGLEBRACKET_Q);
 	S_URL_OPENPAREN_Q.on(qsAccepting, S_URL_OPENPAREN_Q);
 	S_URL_OPENBRACE_Q.on(qsNonAccepting, S_URL_OPENBRACE_Q);
 	S_URL_OPENBRACKET_Q.on(qsNonAccepting, S_URL_OPENBRACKET_Q);
+	S_URL_OPENANGLEBRACKET_Q.on(qsNonAccepting, S_URL_OPENANGLEBRACKET_Q);
 	S_URL_OPENPAREN_Q.on(qsNonAccepting, S_URL_OPENPAREN_Q);
 
 	S_URL_OPENBRACE_SYMS.on(qsAccepting, S_URL_OPENBRACE_Q);
 	S_URL_OPENBRACKET_SYMS.on(qsAccepting, S_URL_OPENBRACKET_Q);
+	S_URL_OPENANGLEBRACKET_SYMS.on(qsAccepting, S_URL_OPENANGLEBRACKET_Q);
 	S_URL_OPENPAREN_SYMS.on(qsAccepting, S_URL_OPENPAREN_Q);
 	S_URL_OPENBRACE_SYMS.on(qsNonAccepting, S_URL_OPENBRACE_SYMS);
 	S_URL_OPENBRACKET_SYMS.on(qsNonAccepting, S_URL_OPENBRACKET_SYMS);
+	S_URL_OPENANGLEBRACKET_SYMS.on(qsNonAccepting, S_URL_OPENANGLEBRACKET_SYMS);
 	S_URL_OPENPAREN_SYMS.on(qsNonAccepting, S_URL_OPENPAREN_SYMS);
 
 	// Account for the query string

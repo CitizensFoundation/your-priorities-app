@@ -6,9 +6,9 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../../polymer/polymer.html?v=6.2.91">
-<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html?v=6.2.91">
-<link rel="import" href="../../iron-resizable-behavior/iron-resizable-behavior.html?v=6.2.91">
+--><html><head><link rel="import" href="../../polymer/polymer.html?v=6.2.92">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html?v=6.2.92">
+<link rel="import" href="../../iron-resizable-behavior/iron-resizable-behavior.html?v=6.2.92">
 
 <!--
 app-header-layout is a wrapper element that positions an app-header and other content. This
@@ -142,7 +142,7 @@ Add the `fullbleed` attribute to app-header-layout to make it fit the size of it
 
       listeners: {
         'iron-resize': '_resizeHandler',
-        'app-header-reset-layout': 'resetLayout'
+        'app-header-reset-layout': '_resetLayoutHandler'
       },
 
       observers: [
@@ -214,7 +214,13 @@ Add the `fullbleed` attribute to app-header-layout to make it fit the size of it
 
       _resizeHandler: function() {
         this.resetLayout();
+      },
+
+      _resetLayoutHandler: function(e) {
+        this.resetLayout();
+        e.stopPropagation();
       }
+
     });
   </script>
 </dom-module>
