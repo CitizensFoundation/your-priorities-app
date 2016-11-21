@@ -221,7 +221,29 @@
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
+      this.push('fonts', {});
+
+      this.push('themes', {
+        name: 'Forbrukerrådet Fonts',
+        '--primary-background-color': '#f5f5f5',
+        '--primary-color': '#7dbdc9',
+        '--primary-color-200': '#7dbdc9',
+        '--primary-color-300': '#7dbdc9',
+        '--primary-color-400': '#7dbdc9',
+        '--primary-color-600': '#6497a1',
+        '--primary-color-700': '#6497a1',
+        '--primary-color-800': '#4b7179',
+        '--primary-color-900': '#324c50',
+        '--accent-color': '#d0672f',
+        '--accent-color-100': 'var(--paper-orange-a100)',
+        '--accent-color-200': 'var(--paper-orange-a200)',
+        '--accent-color-300': 'var(--paper-orange-a300)',
+        '--accent-color-400': 'var(--paper-orange-a400)',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff'
+      });
       this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html", fontName: 'FFClanWebBook' });
+
     },
 
     setTheme: function (number) {
