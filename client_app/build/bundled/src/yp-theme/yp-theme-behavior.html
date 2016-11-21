@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.94">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.95">
 
 <script>
   /**
@@ -221,7 +221,7 @@
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.2.94", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.2.95", fontName: 'FFClanWebBook' });
     },
 
     setTheme: function (number) {
@@ -231,19 +231,22 @@
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.2.94";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.2.95";
       }
 
-      var randomNumber = Math.floor((Math.random() * 100000000) + 1);
-
-      fontHtmlImport += "?random="+randomNumber;
-      this.importHref(fontHtmlImport, function(e) {
-        this.async(function () {
-          console.log("I have loaded font");
-        })
-      }, function(e) {
-        console.error("Could not load font file "+this.fonts[number]);
-      }, true);
+      if (window.lastLoadedFont!=fontHtmlImport) {
+        var randomNumber = Math.floor((Math.random() * 100000000) + 1);
+        this.importHref(fontHtmlImport+ "?random="+randomNumber, function(e) {
+          this.async(function () {
+            window.lastLoadedFont = fontHtmlImport;
+            console.log("I have loaded font");
+          })
+        }, function(e) {
+          console.error("Could not load font file "+this.fonts[number]);
+        }, true);
+      } else {
+        console.log("Not loading the same font "+window.lastLoadedFont);
+      }
     }
   }
 </script>
