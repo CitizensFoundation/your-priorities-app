@@ -234,16 +234,19 @@
         fontHtmlImport = "/styles/fonts/default-font.html";
       }
 
-      var randomNumber = Math.floor((Math.random() * 100000000) + 1);
-
-      fontHtmlImport += "?random="+randomNumber;
-      this.importHref(fontHtmlImport, function(e) {
-        this.async(function () {
-          console.log("I have loaded font");
-        })
-      }, function(e) {
-        console.error("Could not load font file "+this.fonts[number]);
-      }, true);
+      if (window.lastLoadedFont!=fontHtmlImport) {
+        var randomNumber = Math.floor((Math.random() * 100000000) + 1);
+        this.importHref(fontHtmlImport+ "?random="+randomNumber, function(e) {
+          this.async(function () {
+            window.lastLoadedFont = fontHtmlImport;
+            console.log("I have loaded font");
+          })
+        }, function(e) {
+          console.error("Could not load font file "+this.fonts[number]);
+        }, true);
+      } else {
+        console.log("Not loading the same font "+window.lastLoadedFont);
+      }
     }
   }
 </script>
