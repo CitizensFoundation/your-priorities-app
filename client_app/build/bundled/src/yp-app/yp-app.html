@@ -10928,7 +10928,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.2.96">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.2.97">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -11333,7 +11333,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.2.96">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.2.97">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -11341,7 +11341,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.2.96">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.2.97">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19590,8 +19590,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.2.96">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.2.96">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.2.97">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.2.97">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -22961,7 +22961,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.96" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.2.97" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -27960,7 +27960,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.96" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.2.97" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -34166,7 +34166,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.2.96", fontName: 'FFClanWebBook' });
+      this.push('fonts', {});
+
+      this.push('themes', {
+        name: 'Forbrukerrådet Fonts',
+        '--primary-background-color': '#f5f5f5',
+        '--primary-color': '#7dbdc9',
+        '--primary-color-200': '#7dbdc9',
+        '--primary-color-300': '#7dbdc9',
+        '--primary-color-400': '#7dbdc9',
+        '--primary-color-600': '#6497a1',
+        '--primary-color-700': '#6497a1',
+        '--primary-color-800': '#4b7179',
+        '--primary-color-900': '#324c50',
+        '--accent-color': '#d0672f',
+        '--accent-color-100': 'var(--paper-orange-a100)',
+        '--accent-color-200': 'var(--paper-orange-a200)',
+        '--accent-color-300': 'var(--paper-orange-a300)',
+        '--accent-color-400': 'var(--paper-orange-a400)',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff'
+      });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.2.97", fontName: 'FFClanWebBook' });
+
     },
 
     setTheme: function (number) {
@@ -34176,7 +34198,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.2.96";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.2.97";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -35813,7 +35835,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.2.96">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.2.97">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -45369,635 +45391,6 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><!--
-Material design: [Checkbox](https://www.google.com/design/spec/components/selection-controls.html#selection-controls-checkbox)
-
-`paper-checkbox` is a button that can be either checked or unchecked.  User
-can tap the checkbox to check or uncheck it.  Usually you use checkboxes
-to allow user to select multiple options from a set.  If you have a single
-ON/OFF option, avoid using a single checkbox and use `paper-toggle-button`
-instead.
-
-Example:
-
-    <paper-checkbox>label</paper-checkbox>
-
-    <paper-checkbox checked> label</paper-checkbox>
-
-### Styling
-
-The following custom properties and mixins are available for styling:
-
-Custom property | Description | Default
-----------------|-------------|----------
-`--paper-checkbox-unchecked-background-color` | Checkbox background color when the input is not checked | `transparent`
-`--paper-checkbox-unchecked-color` | Checkbox border color when the input is not checked | `--primary-text-color`
-`--paper-checkbox-unchecked-ink-color` | Selected/focus ripple color when the input is not checked | `--primary-text-color`
-`--paper-checkbox-checked-color` | Checkbox color when the input is checked | `--primary-color`
-`--paper-checkbox-checked-ink-color` | Selected/focus ripple color when the input is checked | `--primary-color`
-`--paper-checkbox-checkmark-color` | Checkmark color | `white`
-`--paper-checkbox-label-color` | Label color | `--primary-text-color`
-`--paper-checkbox-label-checked-color` | Label color when the input is checked | `--paper-checkbox-label-color`
-`--paper-checkbox-label-spacing` | Spacing between the label and the checkbox | `8px`
-`--paper-checkbox-label` | Mixin applied to the label | `{}`
-`--paper-checkbox-label-checked` | Mixin applied to the label when the input is checked | `{}`
-`--paper-checkbox-error-color` | Checkbox color when invalid | `--error-color`
-`--paper-checkbox-size` | Size of the checkbox | `18px`
-`--paper-checkbox-ink-size` | Size of the ripple | `48px`
-`--paper-checkbox-margin` | Margin around the checkbox container | `initial`
-`--paper-checkbox-vertical-align` | Vertical alignment of the checkbox container | `middle`
-
-This element applies the mixin `--paper-font-common-base` but does not import `paper-styles/typography.html`.
-In order to apply the `Roboto` font to this element, make sure you've imported `paper-styles/typography.html`.
-
-@demo demo/index.html
--->
-
-<dom-module id="paper-checkbox" assetpath="../../bower_components/paper-checkbox/">
-  <template strip-whitespace="">
-    <style>
-      :host {
-        display: inline-block;
-        white-space: nowrap;
-        cursor: pointer;
-        --calculated-paper-checkbox-size: var(--paper-checkbox-size, 18px);
-        /* -1px is a sentinel for the default and is replaced in `attached`. */
-        --calculated-paper-checkbox-ink-size: var(--paper-checkbox-ink-size, -1px);
-        @apply(--paper-font-common-base);
-        line-height: 0;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      :host([hidden]) {
-        display: none !important;
-      }
-
-      :host(:focus) {
-        outline: none;
-      }
-
-      .hidden {
-        display: none;
-      }
-
-      #checkboxContainer {
-        display: inline-block;
-        position: relative;
-        width: var(--calculated-paper-checkbox-size);
-        height: var(--calculated-paper-checkbox-size);
-        min-width: var(--calculated-paper-checkbox-size);
-        margin: var(--paper-checkbox-margin, initial);
-        vertical-align: var(--paper-checkbox-vertical-align, middle);
-        background-color: var(--paper-checkbox-unchecked-background-color, transparent);
-      }
-
-      #ink {
-        position: absolute;
-
-        /* Center the ripple in the checkbox by negative offsetting it by
-         * (inkWidth - rippleWidth) / 2 */
-        top: calc(0px - (var(--calculated-paper-checkbox-ink-size) - var(--calculated-paper-checkbox-size)) / 2);
-        left: calc(0px - (var(--calculated-paper-checkbox-ink-size) - var(--calculated-paper-checkbox-size)) / 2);
-        width: var(--calculated-paper-checkbox-ink-size);
-        height: var(--calculated-paper-checkbox-ink-size);
-        color: var(--paper-checkbox-unchecked-ink-color, var(--primary-text-color));
-        opacity: 0.6;
-        pointer-events: none;
-      }
-
-      :host-context([dir="rtl"]) #ink {
-        right: calc(0px - (var(--calculated-paper-checkbox-ink-size) - var(--calculated-paper-checkbox-size)) / 2);
-        left: auto;
-      }
-
-      #ink[checked] {
-        color: var(--paper-checkbox-checked-ink-color, var(--primary-color));
-      }
-
-      #checkbox {
-        position: relative;
-        box-sizing: border-box;
-        height: 100%;
-        border: solid 2px;
-        border-color: var(--paper-checkbox-unchecked-color, var(--primary-text-color));
-        border-radius: 2px;
-        pointer-events: none;
-        -webkit-transition: background-color 140ms, border-color 140ms;
-        transition: background-color 140ms, border-color 140ms;
-      }
-
-      /* checkbox checked animations */
-      #checkbox.checked #checkmark {
-        -webkit-animation: checkmark-expand 140ms ease-out forwards;
-        animation: checkmark-expand 140ms ease-out forwards;
-      }
-
-      @-webkit-keyframes checkmark-expand {
-        0% {
-          -webkit-transform: scale(0, 0) rotate(45deg);
-        }
-        100% {
-          -webkit-transform: scale(1, 1) rotate(45deg);
-        }
-      }
-
-      @keyframes checkmark-expand {
-        0% {
-          transform: scale(0, 0) rotate(45deg);
-        }
-        100% {
-          transform: scale(1, 1) rotate(45deg);
-        }
-      }
-
-      #checkbox.checked {
-        background-color: var(--paper-checkbox-checked-color, var(--primary-color));
-        border-color: var(--paper-checkbox-checked-color, var(--primary-color));
-      }
-
-      #checkmark {
-        position: absolute;
-        width: 36%;
-        height: 70%;
-        border-style: solid;
-        border-top: none;
-        border-left: none;
-        border-right-width: calc(2/15 * var(--calculated-paper-checkbox-size));
-        border-bottom-width: calc(2/15 * var(--calculated-paper-checkbox-size));
-        border-color: var(--paper-checkbox-checkmark-color, white);
-        -webkit-transform-origin: 97% 86%;
-        transform-origin: 97% 86%;
-        box-sizing: content-box; /* protect against page-level box-sizing */
-      }
-
-      :host-context([dir="rtl"]) #checkmark {
-        -webkit-transform-origin: 50% 14%;
-        transform-origin: 50% 14%;
-      }
-
-      /* label */
-      #checkboxLabel {
-        position: relative;
-        display: inline-block;
-        vertical-align: middle;
-        padding-left: var(--paper-checkbox-label-spacing, 8px);
-        white-space: normal;
-        line-height: normal;
-        color: var(--paper-checkbox-label-color, var(--primary-text-color));
-        @apply(--paper-checkbox-label);
-      }
-
-      :host([checked]) #checkboxLabel {
-        color: var(--paper-checkbox-label-checked-color, var(--paper-checkbox-label-color, var(--primary-text-color)));
-        @apply(--paper-checkbox-label-checked);
-      }
-
-      :host-context([dir="rtl"]) #checkboxLabel {
-        padding-right: var(--paper-checkbox-label-spacing, 8px);
-        padding-left: 0;
-      }
-
-      #checkboxLabel[hidden] {
-        display: none;
-      }
-
-      /* disabled state */
-
-      :host([disabled]) #checkbox {
-        opacity: 0.5;
-        border-color: var(--paper-checkbox-unchecked-color, var(--primary-text-color));
-      }
-
-      :host([disabled][checked]) #checkbox {
-        background-color: var(--paper-checkbox-unchecked-color, var(--primary-text-color));
-        opacity: 0.5;
-      }
-
-      :host([disabled]) #checkboxLabel  {
-        opacity: 0.65;
-      }
-
-      /* invalid state */
-      #checkbox.invalid:not(.checked) {
-        border-color: var(--paper-checkbox-error-color, var(--error-color));
-      }
-    </style>
-
-    <div id="checkboxContainer">
-      <div id="checkbox" class$="[[_computeCheckboxClass(checked, invalid)]]">
-        <div id="checkmark" class$="[[_computeCheckmarkClass(checked)]]"></div>
-      </div>
-    </div>
-
-    <div id="checkboxLabel"><content></content></div>
-  </template>
-
-  <script>
-    Polymer({
-      is: 'paper-checkbox',
-
-      behaviors: [
-        Polymer.PaperCheckedElementBehavior
-      ],
-
-      hostAttributes: {
-        role: 'checkbox',
-        'aria-checked': false,
-        tabindex: 0
-      },
-
-      properties: {
-        /**
-         * Fired when the checked state changes due to user interaction.
-         *
-         * @event change
-         */
-
-        /**
-         * Fired when the checked state changes.
-         *
-         * @event iron-change
-         */
-        ariaActiveAttribute: {
-          type: String,
-          value: 'aria-checked'
-        }
-      },
-
-      attached: function() {
-        var inkSize = this.getComputedStyleValue('--calculated-paper-checkbox-ink-size');
-        // If unset, compute and set the default `--paper-checkbox-ink-size`.
-        if (inkSize === '-1px') {
-          var checkboxSize = parseFloat(this.getComputedStyleValue('--calculated-paper-checkbox-size'));
-          var defaultInkSize = Math.floor((8 / 3) * checkboxSize);
-
-          // The checkbox and ripple need to have the same parity so that their
-          // centers align.
-          if (defaultInkSize % 2 !== checkboxSize % 2) {
-            defaultInkSize++;
-          }
-
-          this.customStyle['--paper-checkbox-ink-size'] = defaultInkSize + 'px';
-          this.updateStyles();
-        }
-      },
-
-      _computeCheckboxClass: function(checked, invalid) {
-        var className = '';
-        if (checked) {
-          className += 'checked ';
-        }
-        if (invalid) {
-          className += 'invalid';
-        }
-        return className;
-      },
-
-      _computeCheckmarkClass: function(checked) {
-        return checked ? '' : 'hidden';
-      },
-
-      // create ripple inside the checkboxContainer
-      _createRipple: function() {
-        this._rippleContainer = this.$.checkboxContainer;
-        return Polymer.PaperInkyFocusBehaviorImpl._createRipple.call(this);
-      }
-
-    });
-  </script>
-</dom-module>
-<dom-module id="yp-theme-selector" assetpath="../yp-theme/">
-  <template>
-    <style include="iron-flex iron-flex-alignment">
-    </style>
-
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-
-    <paper-dropdown-menu label="[[t('theme.choose')]]">
-      <paper-menu class="dropdown-content" selected="{{selectedTheme}}">
-        <template is="dom-repeat" items="[[themes]]" as="theme">
-          <paper-item name="[[index]]">[[theme.name]]</paper-item>
-        </template>
-      </paper-menu>
-    </paper-dropdown-menu>
-
-  </template>
-
-  <script>
-    Polymer({
-
-      is: 'yp-theme-selector',
-
-      behaviors: [
-        Polymer.appHelpers,
-        Polymer.ypThemeBehavior
-      ],
-
-      properties: {
-
-        selectedTheme: {
-          type: Number,
-          value: null,
-          notify: true,
-          observer: '_selectedThemeChanged'
-        },
-
-        object: {
-          type: Object,
-          observer: '_objectChanged'
-        }
-
-      },
-
-      _objectChanged: function (newObject) {
-        if (newObject && newObject.theme_id!=null) {
-          this.set('selectedTheme', newObject.theme_id);
-        }
-      },
-
-      _selectedThemeChanged: function (newTheme) {
-        if (newTheme) {
-          this.setTheme(newTheme);
-        }
-      }
-
-    });
-  </script>
-</dom-module>
-<!--
-@license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><!--
-Material design: [Menus](https://www.google.com/design/spec/components/menus.html)
-
-`<paper-listbox>` implements an accessible listbox control with Material Design styling. The focused item
-is highlighted, and the selected item has bolded text.
-
-    <paper-listbox>
-      <paper-item>Item 1</paper-item>
-      <paper-item>Item 2</paper-item>
-    </paper-listbox>
-
-An initial selection can be specified with the `selected` attribute.
-
-    <paper-listbox selected="0">
-      <paper-item>Item 1</paper-item>
-      <paper-item>Item 2</paper-item>
-    </paper-listbox>
-
-Make a multi-select listbox with the `multi` attribute. Items in a multi-select listbox can be deselected,
-and multiple item can be selected.
-
-    <paper-listbox multi>
-      <paper-item>Item 1</paper-item>
-      <paper-item>Item 2</paper-item>
-    </paper-listbox>
-
-### Styling
-
-The following custom properties and mixins are available for styling:
-
-Custom property | Description | Default
-----------------|-------------|----------
-`--paper-listbox-background-color`   | Menu background color                                            | `--primary-background-color`
-`--paper-listbox-color`              | Menu foreground color                                            | `--primary-text-color`
-`--paper-listbox`                    | Mixin applied to the listbox                                        | `{}`
-
-### Accessibility
-
-`<paper-listbox>` has `role="listbox"` by default. A multi-select listbox will also have
-`aria-multiselectable` set. It implements key bindings to navigate through the listbox with the up and
-down arrow keys, esc to exit the listbox, and enter to activate a listbox item. Typing the first letter
-of a listbox item will also focus it.
-
-@group Paper Elements
-@element paper-listbox
-@hero hero.svg
-@demo demo/index.html
--->
-
-<dom-module id="paper-listbox" assetpath="../../bower_components/paper-listbox/">
-  <template>
-    <style>
-      :host {
-        display: block;
-        padding: 8px 0;
-
-        background: var(--paper-listbox-background-color, --primary-background-color);
-        color: var(--paper-listbox-color, --primary-text-color);
-
-        @apply(--paper-listbox);
-      }
-    </style>
-
-    <content></content>
-  </template>
-
-  <script>
-    (function() {
-      Polymer({
-        is: 'paper-listbox',
-
-        behaviors: [
-          Polymer.IronMenuBehavior
-        ],
-
-        hostAttributes: {
-          role: 'listbox'
-        }
-      });
-    })();
-  </script>
-</dom-module>
-<dom-module id="yp-user-info" assetpath="../yp-user/">
-  <template>
-    <style include="iron-flex iron-flex-alignment">
-      :host {
-        display: block;
-      }
-
-      .avatar-container {
-        position: relative;
-        border: 2px solid #FF9800;
-        border-radius: 50%;
-        height: 90px;
-        padding: 2px;
-        width: 90px;
-        margin: 20px auto;
-      }
-
-      .contact-info {
-        margin: 0 20px;
-        padding-bottom: 4px;
-        text-align: center;
-      }
-
-      .contact-info .name {
-        font-weight: bold;
-      }
-
-      .contact-info .email {
-        color: #999;
-      }
-    </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-
-    <template restamp="" is="dom-if" if="[[user]]">
-      <div class="mainContainer">
-        <div class="avatar-container">
-          <yp-user-image large="" user="[[user]]"></yp-user-image>
-        </div>
-        <div class="contact-info">
-          <div class="name">[[user.name]]</div>
-          <div class="email">[[user.email]]</div>
-          <div class="layout horizontal center-justified">
-            <paper-icon-button icon="create" title$="[[t('user.edit')]]" on-tap="_openEdit"></paper-icon-button>
-            <paper-icon-button icon="input" title$="[[t('user.logout')]]" on-tap="onLogout"></paper-icon-button>
-          </div>
-        </div>
-      </div>
-    </template>
-  </template>
-
-  <script>
-    Polymer({
-
-      is: 'yp-user-info',
-
-      behaviors: [
-        Polymer.appHelpers
-      ],
-
-      properties: {
-        user: {
-          type: Object,
-          value: null,
-          notify: true
-        }
-      },
-
-      _openEdit: function () {
-        this.fire('open-user-edit');
-      },
-
-      onLogout: function() {
-        document.querySelector('#appUser').logout();
-      }
-    });
-  </script>
-</dom-module>
-<dom-module id="yp-language-selector" assetpath="../yp-app-globals/">
-
-  <template>
-
-    <style include="iron-flex iron-flex-alignment">
-    :host {
-      margin: 4px;
-    }
-
-    </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-
-    <div class="layout vertical center-center">
-
-    <paper-dropdown-menu label="[[t('selectLanguage')]]" selected="{{selectedLocale}}" attr-for-selected="name">
-      <paper-listbox class="dropdown-content" selected="{{selectedLocale}}" attr-for-selected="name">
-        <template is="dom-repeat" items="[[languages]]">
-          <paper-item name="[[item.language]]">[[item.name]]</paper-item>
-        </template>
-      </paper-listbox>
-    </paper-dropdown-menu>
-  </div></template>
-
-  <script>
-    Polymer({
-
-      is: 'yp-language-selector',
-
-      behaviors: [
-        Polymer.appHelpers,
-        Polymer.IronFormElementBehavior
-      ],
-
-      properties: {
-        supportedLanguages: {
-          type: Object,
-          value: {
-            en: 'English',
-            is: 'Íslenska',
-            no: 'Norwegian',
-            sr: 'Serbian',
-            sr_latin: 'Serbian (latin)',
-            hr: 'Croatian',
-            sl: 'Slovenian',
-            pt: 'Portuguese',
-            pl: 'Polish'
-          }
-        },
-
-        languages: {
-          type: Array,
-          computed: '_languages(supportedLanguages)'
-        },
-
-        selectedLocale: {
-          type: String,
-          observer: '_selectedLocaleChanged'
-        },
-
-        noUserEvents: {
-          type: Boolean,
-          value: false
-        },
-
-        value: {
-          type: String,
-          value: ""
-        }
-      },
-
-      _languages: function (supportedLanguages) {
-        if (supportedLanguages) {
-          var arr = [];
-          for (var key in supportedLanguages) {
-            if (supportedLanguages.hasOwnProperty(key)) {
-              arr.push({ language: key, name: supportedLanguages[key] });
-            }
-          }
-          return arr;
-        } else {
-          return [];
-        }
-      },
-
-      _selectedLocaleChanged: function (locale) {
-        if (locale) {
-          this.set('value', locale);
-          if (!this.noUserEvents) {
-            this.changeLocaleIfNeeded(locale, true);
-            localStorage.setItem('yp-user-locale', locale);
-            if (window.appUser && window.appUser.user) {
-              window.appUser.setLocale(locale);
-            }
-          }
-        }
-      }
-    });
-  </script>
-</dom-module>
-<!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><!--
 `app-route` is an element that enables declarative, self-describing routing
 for a web app.
 
@@ -46631,6 +46024,311 @@ the `app-route` will update `route.path`. This in-turn will update the
     });
   </script>
 </dom-module>
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><!--
+Material design: [Checkbox](https://www.google.com/design/spec/components/selection-controls.html#selection-controls-checkbox)
+
+`paper-checkbox` is a button that can be either checked or unchecked.  User
+can tap the checkbox to check or uncheck it.  Usually you use checkboxes
+to allow user to select multiple options from a set.  If you have a single
+ON/OFF option, avoid using a single checkbox and use `paper-toggle-button`
+instead.
+
+Example:
+
+    <paper-checkbox>label</paper-checkbox>
+
+    <paper-checkbox checked> label</paper-checkbox>
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-checkbox-unchecked-background-color` | Checkbox background color when the input is not checked | `transparent`
+`--paper-checkbox-unchecked-color` | Checkbox border color when the input is not checked | `--primary-text-color`
+`--paper-checkbox-unchecked-ink-color` | Selected/focus ripple color when the input is not checked | `--primary-text-color`
+`--paper-checkbox-checked-color` | Checkbox color when the input is checked | `--primary-color`
+`--paper-checkbox-checked-ink-color` | Selected/focus ripple color when the input is checked | `--primary-color`
+`--paper-checkbox-checkmark-color` | Checkmark color | `white`
+`--paper-checkbox-label-color` | Label color | `--primary-text-color`
+`--paper-checkbox-label-checked-color` | Label color when the input is checked | `--paper-checkbox-label-color`
+`--paper-checkbox-label-spacing` | Spacing between the label and the checkbox | `8px`
+`--paper-checkbox-label` | Mixin applied to the label | `{}`
+`--paper-checkbox-label-checked` | Mixin applied to the label when the input is checked | `{}`
+`--paper-checkbox-error-color` | Checkbox color when invalid | `--error-color`
+`--paper-checkbox-size` | Size of the checkbox | `18px`
+`--paper-checkbox-ink-size` | Size of the ripple | `48px`
+`--paper-checkbox-margin` | Margin around the checkbox container | `initial`
+`--paper-checkbox-vertical-align` | Vertical alignment of the checkbox container | `middle`
+
+This element applies the mixin `--paper-font-common-base` but does not import `paper-styles/typography.html`.
+In order to apply the `Roboto` font to this element, make sure you've imported `paper-styles/typography.html`.
+
+@demo demo/index.html
+-->
+
+<dom-module id="paper-checkbox" assetpath="../../bower_components/paper-checkbox/">
+  <template strip-whitespace="">
+    <style>
+      :host {
+        display: inline-block;
+        white-space: nowrap;
+        cursor: pointer;
+        --calculated-paper-checkbox-size: var(--paper-checkbox-size, 18px);
+        /* -1px is a sentinel for the default and is replaced in `attached`. */
+        --calculated-paper-checkbox-ink-size: var(--paper-checkbox-ink-size, -1px);
+        @apply(--paper-font-common-base);
+        line-height: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :host([hidden]) {
+        display: none !important;
+      }
+
+      :host(:focus) {
+        outline: none;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      #checkboxContainer {
+        display: inline-block;
+        position: relative;
+        width: var(--calculated-paper-checkbox-size);
+        height: var(--calculated-paper-checkbox-size);
+        min-width: var(--calculated-paper-checkbox-size);
+        margin: var(--paper-checkbox-margin, initial);
+        vertical-align: var(--paper-checkbox-vertical-align, middle);
+        background-color: var(--paper-checkbox-unchecked-background-color, transparent);
+      }
+
+      #ink {
+        position: absolute;
+
+        /* Center the ripple in the checkbox by negative offsetting it by
+         * (inkWidth - rippleWidth) / 2 */
+        top: calc(0px - (var(--calculated-paper-checkbox-ink-size) - var(--calculated-paper-checkbox-size)) / 2);
+        left: calc(0px - (var(--calculated-paper-checkbox-ink-size) - var(--calculated-paper-checkbox-size)) / 2);
+        width: var(--calculated-paper-checkbox-ink-size);
+        height: var(--calculated-paper-checkbox-ink-size);
+        color: var(--paper-checkbox-unchecked-ink-color, var(--primary-text-color));
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      :host-context([dir="rtl"]) #ink {
+        right: calc(0px - (var(--calculated-paper-checkbox-ink-size) - var(--calculated-paper-checkbox-size)) / 2);
+        left: auto;
+      }
+
+      #ink[checked] {
+        color: var(--paper-checkbox-checked-ink-color, var(--primary-color));
+      }
+
+      #checkbox {
+        position: relative;
+        box-sizing: border-box;
+        height: 100%;
+        border: solid 2px;
+        border-color: var(--paper-checkbox-unchecked-color, var(--primary-text-color));
+        border-radius: 2px;
+        pointer-events: none;
+        -webkit-transition: background-color 140ms, border-color 140ms;
+        transition: background-color 140ms, border-color 140ms;
+      }
+
+      /* checkbox checked animations */
+      #checkbox.checked #checkmark {
+        -webkit-animation: checkmark-expand 140ms ease-out forwards;
+        animation: checkmark-expand 140ms ease-out forwards;
+      }
+
+      @-webkit-keyframes checkmark-expand {
+        0% {
+          -webkit-transform: scale(0, 0) rotate(45deg);
+        }
+        100% {
+          -webkit-transform: scale(1, 1) rotate(45deg);
+        }
+      }
+
+      @keyframes checkmark-expand {
+        0% {
+          transform: scale(0, 0) rotate(45deg);
+        }
+        100% {
+          transform: scale(1, 1) rotate(45deg);
+        }
+      }
+
+      #checkbox.checked {
+        background-color: var(--paper-checkbox-checked-color, var(--primary-color));
+        border-color: var(--paper-checkbox-checked-color, var(--primary-color));
+      }
+
+      #checkmark {
+        position: absolute;
+        width: 36%;
+        height: 70%;
+        border-style: solid;
+        border-top: none;
+        border-left: none;
+        border-right-width: calc(2/15 * var(--calculated-paper-checkbox-size));
+        border-bottom-width: calc(2/15 * var(--calculated-paper-checkbox-size));
+        border-color: var(--paper-checkbox-checkmark-color, white);
+        -webkit-transform-origin: 97% 86%;
+        transform-origin: 97% 86%;
+        box-sizing: content-box; /* protect against page-level box-sizing */
+      }
+
+      :host-context([dir="rtl"]) #checkmark {
+        -webkit-transform-origin: 50% 14%;
+        transform-origin: 50% 14%;
+      }
+
+      /* label */
+      #checkboxLabel {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        padding-left: var(--paper-checkbox-label-spacing, 8px);
+        white-space: normal;
+        line-height: normal;
+        color: var(--paper-checkbox-label-color, var(--primary-text-color));
+        @apply(--paper-checkbox-label);
+      }
+
+      :host([checked]) #checkboxLabel {
+        color: var(--paper-checkbox-label-checked-color, var(--paper-checkbox-label-color, var(--primary-text-color)));
+        @apply(--paper-checkbox-label-checked);
+      }
+
+      :host-context([dir="rtl"]) #checkboxLabel {
+        padding-right: var(--paper-checkbox-label-spacing, 8px);
+        padding-left: 0;
+      }
+
+      #checkboxLabel[hidden] {
+        display: none;
+      }
+
+      /* disabled state */
+
+      :host([disabled]) #checkbox {
+        opacity: 0.5;
+        border-color: var(--paper-checkbox-unchecked-color, var(--primary-text-color));
+      }
+
+      :host([disabled][checked]) #checkbox {
+        background-color: var(--paper-checkbox-unchecked-color, var(--primary-text-color));
+        opacity: 0.5;
+      }
+
+      :host([disabled]) #checkboxLabel  {
+        opacity: 0.65;
+      }
+
+      /* invalid state */
+      #checkbox.invalid:not(.checked) {
+        border-color: var(--paper-checkbox-error-color, var(--error-color));
+      }
+    </style>
+
+    <div id="checkboxContainer">
+      <div id="checkbox" class$="[[_computeCheckboxClass(checked, invalid)]]">
+        <div id="checkmark" class$="[[_computeCheckmarkClass(checked)]]"></div>
+      </div>
+    </div>
+
+    <div id="checkboxLabel"><content></content></div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'paper-checkbox',
+
+      behaviors: [
+        Polymer.PaperCheckedElementBehavior
+      ],
+
+      hostAttributes: {
+        role: 'checkbox',
+        'aria-checked': false,
+        tabindex: 0
+      },
+
+      properties: {
+        /**
+         * Fired when the checked state changes due to user interaction.
+         *
+         * @event change
+         */
+
+        /**
+         * Fired when the checked state changes.
+         *
+         * @event iron-change
+         */
+        ariaActiveAttribute: {
+          type: String,
+          value: 'aria-checked'
+        }
+      },
+
+      attached: function() {
+        var inkSize = this.getComputedStyleValue('--calculated-paper-checkbox-ink-size');
+        // If unset, compute and set the default `--paper-checkbox-ink-size`.
+        if (inkSize === '-1px') {
+          var checkboxSize = parseFloat(this.getComputedStyleValue('--calculated-paper-checkbox-size'));
+          var defaultInkSize = Math.floor((8 / 3) * checkboxSize);
+
+          // The checkbox and ripple need to have the same parity so that their
+          // centers align.
+          if (defaultInkSize % 2 !== checkboxSize % 2) {
+            defaultInkSize++;
+          }
+
+          this.customStyle['--paper-checkbox-ink-size'] = defaultInkSize + 'px';
+          this.updateStyles();
+        }
+      },
+
+      _computeCheckboxClass: function(checked, invalid) {
+        var className = '';
+        if (checked) {
+          className += 'checked ';
+        }
+        if (invalid) {
+          className += 'invalid';
+        }
+        return className;
+      },
+
+      _computeCheckmarkClass: function(checked) {
+        return checked ? '' : 'hidden';
+      },
+
+      // create ripple inside the checkboxContainer
+      _createRipple: function() {
+        this._rippleContainer = this.$.checkboxContainer;
+        return Polymer.PaperInkyFocusBehaviorImpl._createRipple.call(this);
+      }
+
+    });
+  </script>
+</dom-module>
 <script>
   /**
    * @polymerBehavior appHelpers
@@ -46657,6 +46355,330 @@ the `app-route` will update `route.path`. This in-turn will update the
     }
   };
 </script>
+<dom-module id="yp-theme-selector" assetpath="../yp-theme/">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+    </style>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <paper-dropdown-menu label="[[t('theme.choose')]]">
+      <paper-menu class="dropdown-content" selected="{{selectedTheme}}">
+        <template is="dom-repeat" items="[[themes]]" as="theme">
+          <paper-item name="[[index]]">[[theme.name]]</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-theme-selector',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.ypThemeBehavior
+      ],
+
+      properties: {
+
+        selectedTheme: {
+          type: Number,
+          value: null,
+          notify: true,
+          observer: '_selectedThemeChanged'
+        },
+
+        object: {
+          type: Object,
+          observer: '_objectChanged'
+        }
+
+      },
+
+      _objectChanged: function (newObject) {
+        if (newObject && newObject.theme_id!=null) {
+          this.set('selectedTheme', newObject.theme_id);
+        }
+      },
+
+      _selectedThemeChanged: function (newTheme) {
+        if (newTheme) {
+          this.setTheme(newTheme);
+        }
+      }
+
+    });
+  </script>
+</dom-module>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><!--
+Material design: [Menus](https://www.google.com/design/spec/components/menus.html)
+
+`<paper-listbox>` implements an accessible listbox control with Material Design styling. The focused item
+is highlighted, and the selected item has bolded text.
+
+    <paper-listbox>
+      <paper-item>Item 1</paper-item>
+      <paper-item>Item 2</paper-item>
+    </paper-listbox>
+
+An initial selection can be specified with the `selected` attribute.
+
+    <paper-listbox selected="0">
+      <paper-item>Item 1</paper-item>
+      <paper-item>Item 2</paper-item>
+    </paper-listbox>
+
+Make a multi-select listbox with the `multi` attribute. Items in a multi-select listbox can be deselected,
+and multiple item can be selected.
+
+    <paper-listbox multi>
+      <paper-item>Item 1</paper-item>
+      <paper-item>Item 2</paper-item>
+    </paper-listbox>
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-listbox-background-color`   | Menu background color                                            | `--primary-background-color`
+`--paper-listbox-color`              | Menu foreground color                                            | `--primary-text-color`
+`--paper-listbox`                    | Mixin applied to the listbox                                        | `{}`
+
+### Accessibility
+
+`<paper-listbox>` has `role="listbox"` by default. A multi-select listbox will also have
+`aria-multiselectable` set. It implements key bindings to navigate through the listbox with the up and
+down arrow keys, esc to exit the listbox, and enter to activate a listbox item. Typing the first letter
+of a listbox item will also focus it.
+
+@group Paper Elements
+@element paper-listbox
+@hero hero.svg
+@demo demo/index.html
+-->
+
+<dom-module id="paper-listbox" assetpath="../../bower_components/paper-listbox/">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 8px 0;
+
+        background: var(--paper-listbox-background-color, --primary-background-color);
+        color: var(--paper-listbox-color, --primary-text-color);
+
+        @apply(--paper-listbox);
+      }
+    </style>
+
+    <content></content>
+  </template>
+
+  <script>
+    (function() {
+      Polymer({
+        is: 'paper-listbox',
+
+        behaviors: [
+          Polymer.IronMenuBehavior
+        ],
+
+        hostAttributes: {
+          role: 'listbox'
+        }
+      });
+    })();
+  </script>
+</dom-module>
+<dom-module id="yp-user-info" assetpath="../yp-user/">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+
+      .avatar-container {
+        position: relative;
+        border: 2px solid #FF9800;
+        border-radius: 50%;
+        height: 90px;
+        padding: 2px;
+        width: 90px;
+        margin: 20px auto;
+      }
+
+      .contact-info {
+        margin: 0 20px;
+        padding-bottom: 4px;
+        text-align: center;
+      }
+
+      .contact-info .name {
+        font-weight: bold;
+      }
+
+      .contact-info .email {
+        color: #999;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <template restamp="" is="dom-if" if="[[user]]">
+      <div class="mainContainer">
+        <div class="avatar-container">
+          <yp-user-image large="" user="[[user]]"></yp-user-image>
+        </div>
+        <div class="contact-info">
+          <div class="name">[[user.name]]</div>
+          <div class="email">[[user.email]]</div>
+          <div class="layout horizontal center-justified">
+            <paper-icon-button icon="create" title$="[[t('user.edit')]]" on-tap="_openEdit"></paper-icon-button>
+            <paper-icon-button icon="input" title$="[[t('user.logout')]]" on-tap="onLogout"></paper-icon-button>
+          </div>
+        </div>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-user-info',
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      properties: {
+        user: {
+          type: Object,
+          value: null,
+          notify: true
+        }
+      },
+
+      _openEdit: function () {
+        this.fire('open-user-edit');
+      },
+
+      onLogout: function() {
+        document.querySelector('#appUser').logout();
+      }
+    });
+  </script>
+</dom-module>
+<dom-module id="yp-language-selector" assetpath="../yp-app-globals/">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+    :host {
+      margin: 4px;
+    }
+
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div class="layout vertical center-center">
+
+    <paper-dropdown-menu label="[[t('selectLanguage')]]" selected="{{selectedLocale}}" attr-for-selected="name">
+      <paper-listbox class="dropdown-content" selected="{{selectedLocale}}" attr-for-selected="name">
+        <template is="dom-repeat" items="[[languages]]">
+          <paper-item name="[[item.language]]">[[item.name]]</paper-item>
+        </template>
+      </paper-listbox>
+    </paper-dropdown-menu>
+  </div></template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-language-selector',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.IronFormElementBehavior
+      ],
+
+      properties: {
+        supportedLanguages: {
+          type: Object,
+          value: {
+            en: 'English',
+            is: 'Íslenska',
+            no: 'Norwegian',
+            sr: 'Serbian',
+            sr_latin: 'Serbian (latin)',
+            hr: 'Croatian',
+            sl: 'Slovenian',
+            pt: 'Portuguese',
+            pl: 'Polish'
+          }
+        },
+
+        languages: {
+          type: Array,
+          computed: '_languages(supportedLanguages)'
+        },
+
+        selectedLocale: {
+          type: String,
+          observer: '_selectedLocaleChanged'
+        },
+
+        noUserEvents: {
+          type: Boolean,
+          value: false
+        },
+
+        value: {
+          type: String,
+          value: ""
+        }
+      },
+
+      _languages: function (supportedLanguages) {
+        if (supportedLanguages) {
+          var arr = [];
+          for (var key in supportedLanguages) {
+            if (supportedLanguages.hasOwnProperty(key)) {
+              arr.push({ language: key, name: supportedLanguages[key] });
+            }
+          }
+          return arr;
+        } else {
+          return [];
+        }
+      },
+
+      _selectedLocaleChanged: function (locale) {
+        if (locale) {
+          this.set('value', locale);
+          if (!this.noUserEvents) {
+            this.changeLocaleIfNeeded(locale, true);
+            localStorage.setItem('yp-user-locale', locale);
+            if (window.appUser && window.appUser.user) {
+              window.appUser.setLocale(locale);
+            }
+          }
+        }
+      }
+    });
+  </script>
+</dom-module>
 <dom-module id="yp-group-edit" assetpath="../yp-group/">
   <template>
 
@@ -49908,14 +49930,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.96">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.97">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.2.96">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.2.97">
    * ```
    *
    * ### Consuming effects
@@ -50713,7 +50735,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.96">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.97">
 ```
 
 #### List of effects
@@ -55952,18 +55974,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.2.96"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.2.97"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.2.96"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.2.97"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.2.96"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.2.97"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -57354,9 +57376,9 @@ value. `setMax` should move the slider to the maximum value.
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.2.96");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.2.97");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.2.96");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.2.97");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
