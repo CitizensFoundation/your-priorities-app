@@ -76,7 +76,7 @@
           </div>
         </section>
         <section name="news">
-          <ac-activities community-id="[[community.id]]"></ac-activities>
+          <ac-activities id="communityNews" community-id="[[community.id]]"></ac-activities>
         </section>
         <section name="map" hidden$="[[locationHidden]]">
           <template is="dom-if" if="[[mapActive]]" restamp>
@@ -204,6 +204,13 @@
         if (tabName && window.appGlobals) {
           window.appGlobals.activity('open', 'community_tab_' + tabName);
         }
+
+        this.async(function () {
+          var news = this.$$("#communityNews");
+          if (news) {
+            news.fireResize();
+          }
+        }, 300);
       },
 
       _hideEdit: function () {

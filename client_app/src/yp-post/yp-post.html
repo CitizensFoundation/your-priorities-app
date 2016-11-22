@@ -347,7 +347,7 @@
           <yp-post-points id="pointsSection" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
         </div>
         <section name="news">
-          <ac-activities disable-new-posts="[[disableNewPosts]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
+          <ac-activities id="postNews" disable-new-posts="[[disableNewPosts]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
         </section>
         <section name="location">
           <div class="layout horizontal center-center">
@@ -519,6 +519,13 @@
           if (tabName && window.appGlobals) {
             window.appGlobals.activity('open', 'post_tab_' + tabName);
           }
+
+          this.async(function () {
+            var news = this.$$("#postNews");
+            if (news) {
+              news.fireResize();
+            }
+          }, 300);
         },
 
         _newPost: function () {

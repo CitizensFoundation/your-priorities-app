@@ -108,7 +108,7 @@
           </div>
         </section>
         <section name="news">
-          <ac-activities domain-id="[[domain.id]]"></ac-activities>
+          <ac-activities id="domainNews" domain-id="[[domain.id]]"></ac-activities>
         </section>
         <section name="other_social_media" class="layout vertical">
           <yp-other-social-media active$="[[otherSocialMediaActive]]"></yp-other-social-media>
@@ -226,6 +226,13 @@
         if (tabName && window.appGlobals) {
           window.appGlobals.activity('open', 'domain_tab_'+tabName);
         }
+
+        this.async(function () {
+          var news = this.$$("#domainNews");
+          if (news) {
+            news.fireResize();
+          }
+        }, 300);
       },
 
       _domainIdChanged: function (newValue, oldValue) {

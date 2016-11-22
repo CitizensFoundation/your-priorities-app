@@ -260,6 +260,13 @@
         if (tabName && window.appGlobals) {
           window.appGlobals.activity('open', 'group_tab_' + tabName);
         }
+
+        this.async(function () {
+          var news = this.$$("#groupActivities");
+          if (news) {
+            news.fireResize();
+          }
+        }, 300);
       },
 
       _refreshTabsAndPages: function () {

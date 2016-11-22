@@ -552,6 +552,11 @@
         this.async(function () {
           this.$.list.fire('iron-resize');
         }, 100);
+      },
+
+      fireResize: function () {
+        console.log("fireResize");
+        this.$.list.fire('iron-resize');
       }
     });
   </script>
