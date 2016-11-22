@@ -49,6 +49,9 @@
       console.log("Changed language to "+language);
       var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-loaded', language: language } } } );
       document.dispatchEvent(event);
+      setTimeout(function(){
+        onSplashClick();
+      }, 50);
     });
   };
 
@@ -131,6 +134,7 @@
   }
 
   function onSplashClick() {
+    console.log("removing splash screen");
     var loadContainer = document.getElementById('splashCore');
     if (loadContainer) {
       loadContainer.parentNode.removeChild(loadContainer);

@@ -1,15 +1,15 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.97">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.98">
 
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.2.97">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.2.98">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.97">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.97">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.2.97">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.98">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.98">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.2.98">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.97">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.98">
 
-<link rel="import" href="../yp-session/yp-session.html?v=6.2.97">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.97">
+<link rel="import" href="../yp-session/yp-session.html?v=6.2.98">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.98">
 
 </head><body><dom-module id="yp-app-globals">
 
@@ -133,20 +133,6 @@
           console.log("Removing splash");
         },
 
-        _removeSplashWithDelay: function () {
-          var difference = (new Date() - window.appStartTime);
-          console.log("Difference: "+difference);
-          if (difference<this.minSplashMs) {
-            difference = (this.minSplashMs-difference);
-            console.log("Wait: "+difference);
-            Polymer.Base.async(function() {
-              this._removeSplash();
-            }.bind(this), difference);
-          } else {
-            this._removeSplash();
-          }
-        },
-
         setupGoogleAnalytics: function(domain) {
           if (domain.public_api_keys && domain.public_api_keys && domain.public_api_keys.google && domain.public_api_keys.google.analytics_tracking_id) {
             ga('create', domain.public_api_keys.google.analytics_tracking_id, 'auto');
@@ -160,6 +146,7 @@
         },
 
         _bootResponse: function (event, detail) {
+          this._removeSplash();
           this.set('requestInProgress', false);
           this.set('domain', detail.response.domain);
 
@@ -173,7 +160,6 @@
                 headerDescription: this.domain.description});
             }
           }
-          this._removeSplash();
         },
 
         activity: function (type, object, context) {
