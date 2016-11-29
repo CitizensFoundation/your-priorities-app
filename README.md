@@ -13,7 +13,9 @@ git submodule init
 git submodule update
 
 # In app root folder
-npm install & bower install
+npm install
+cd client_app
+bower install
 
 cp server_api/config/config.json.dist server_api/config/config.json
 vi server_api/config/config.json # Add information about an empty postgres database
