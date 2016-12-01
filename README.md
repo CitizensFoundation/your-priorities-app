@@ -25,6 +25,10 @@ vi server_api/config/config.json # Add information about an empty postgres datab
 Go to localhost:4242 in your browser
 ```
 
+Then create a use and give it admin priviledges by running the following command in the root of the app
+```bash
+node server_api/scripts/setAdminOnAll.js your@email.com
+```
 
 ## For S3 Image Upload
 ```
@@ -72,8 +76,7 @@ active-citizen/exporters/datasets/better_reyjkavik
 ## Developed by the non-profit Citizens Foundation Iceland
 ```
 Our mission is to bring people together to debate and prioritize innovative ideas 
-to improve their communities. We believe that without participation 
-there is no democracy.
+to improve their communities.
 ```
 [http://www.citizens.is/](http://www.citizens.is/)
 
