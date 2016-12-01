@@ -25,7 +25,7 @@ vi server_api/config/config.json # Add information about an empty postgres datab
 Go to localhost:4242 in your browser
 ```
 
-Then create a use and give it admin priviledges by running the following command in the root of the app
+Create an user and give it admin privileges by running the following command in the root of the app
 ```bash
 node server_api/scripts/setAdminOnAll.js your@email.com
 ```
