@@ -301,6 +301,10 @@
             var description = this.$$("#description");
             if (description) {
               description.innerHTML = this.addLinksAndEmjois(post.description);
+              // Special case for law Issue from a parliement
+              if (post.data && post.data.dataType=='lawIssue' && post.data.issueStatus) {
+                description.innerHTML += " - "+post.data.issueStatus;
+              }
             } else {
               console.error("Can't find description element");
             }

@@ -347,8 +347,10 @@
       this.group = { name: '', objectives: '', access: 0, status: 'active' };
       this.uploadedLogoImageId = null;
       this.uploadedHeaderImageId = null;
+      this.uploadedDefaultDataImageId = null;
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
+      this.$.defaultDataImageUpload.clear();
     },
 
     setup: function (group, newNotEdit, refreshFunction) {

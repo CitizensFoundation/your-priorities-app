@@ -6,13 +6,16 @@ var http = require('http');
 var parseString = require('xml2js').parseString;
 var concat = require('concat-stream');
 
-var althingiSessionId = 145; //process.argv[2];
-var groupsConfigString = "1=23:2=24:3=25:4=26:5=27:6=28:7=29:8=29:9=30:10=31:11=32"; process.argv[3];
+var SESSION_ID = 145; //process.argv[2];
+var DOMAIN_ID = 2; // process.argv[3];
+var CRAWLER_USER_ID = 820; // process.argv[4];
+var groupsConfigString = "1=901:2=902:3=903:4=904:5=905:6=906:7=907:8=908:9=909:10=910:11=911"; process.argv[5];
 var baseIssueListURL = "http://www.althingi.is/altext/xml/thingmalalisti/?lthing=";
 var baseIssueURL = "http://www.althingi.is/altext/xml/thingmalalisti/thingmal/?lthing=";
 
+var USER_AGENT =  'Betra Ísland - Kæra Alþingi - Íbúar ses';
 
-var althingiTopCategories = {
+var lawTopCategories = {
   'Atvinnuvegir': 1,
   'Erlend samskipti': 2,
   'Hagstjórn': 3,
@@ -29,14 +32,12 @@ var althingiTopCategories = {
 var getJsonFromXml = function(url, callback) {
   var opts = require('url').parse(url);
   opts.headers = {
-    'User-Agent': 'Betra Ísland - Kæra Alþingi - Íbúar ses kt. 601210-1260'
+    'User-Agent': USER_AGENT
   };
   http.get(opts, function(res) {
     res.setEncoding('utf8');
 
     res.pipe(concat(function(data) {
-      console.log(data.length);
-      console.log(data);
       parseString(data, function (err, result) {
         callback(null, JSON.parse(JSON.stringify(result)));
       });
@@ -45,7 +46,7 @@ var getJsonFromXml = function(url, callback) {
 };
 
 var getIssueList = function (callback) {
-  getJsonFromXml(baseIssueListURL+althingiSessionId, function (error, jsonResults) {
+  getJsonFromXml(baseIssueListURL+SESSION_ID, function (error, jsonResults) {
     callback(error, jsonResults);
   });
 };
@@ -63,6 +64,130 @@ var capitalize = function (string){
   return string
 };
 
+var setPostOfficialStatus = function(post, dbIssue) {
+  if (dbIssue.issueStatus) {
+    if (dbIssue.issueStatus.indexOf("Samþykkt") > -1) {
+      post.set('official_status', 2);
+    } else {
+      post.set('official_status', -1);
+    }
+  }
+};
+
+var addPost = function(dbIssue, userId, groupImageId, domain, callback) {
+  var post = models.Post.build({
+    name: dbIssue.name,
+    description: dbIssue.description,
+    group_id: dbIssue.groupId,
+    cover_media_type: groupImageId ? 'image' : 'none',
+    user_id: userId,
+    status: 'published',
+    counter_endorsements_up: 0,
+    content_type: models.Post.CONTENT_IDEA,
+    user_agent: USER_AGENT,
+    ip_address: '127.0.0.1'
+  });
+
+  post.set('data', dbIssue);
+
+  setPostOfficialStatus(post, dbIssue);
+
+  post.save().then(function(post) {
+    models.PostRevision.build({
+      name: post.name,
+      description: post.description,
+      group_id: post.group_id,
+      user_id: userId,
+      this_id: post.id,
+      status: post.status,
+      user_agent: post.user_agent,
+      ip_address: post.ip_address
+    }).save().then(function () {
+      post.updateAllExternalCounters( {ypDomain: domain }, 'up', 'counter_posts', function () {
+        models.AcActivity.createActivity({
+          type: 'activity.post.new',
+          userId: post.user_id,
+          domainId: domain.id,
+          groupId: post.group_id,
+//                communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+          postId : post.id,
+          access: models.AcActivity.ACCESS_PUBLIC
+        }, function (error) {
+          if (!error && post) {
+            if (groupImageId) {
+              models.Image.find({
+                where: {id: groupImageId}
+              }).then(function (image) {
+                if (image)
+                  post.addPostHeaderImage(image);
+                callback();
+              });
+            } else {
+              callback();
+            }
+          } else {
+            callback(error);
+          }
+        });
+      })
+    })
+  }).catch(function(error) {
+    callback(error);
+  });
+};
+
+var saveIssueIfNeeded = function (dbIssue, userId, callback) {
+  models.Post.find({ where: {
+    $and: [
+      {
+        "data.sessionId": SESSION_ID
+      },
+      {
+        "data.issueId": dbIssue.issueId
+      }
+    ]
+  }
+}).then(function (post) {
+  if (!post) {
+    models.Domain.find({
+      where: {
+        id: DOMAIN_ID
+      }
+    }).then(function (domain) {
+      models.Group.find({
+        where: {
+          id: dbIssue.groupId
+        }
+      }).then(function (group) {
+        if (group) {
+          var defaultImageId = null;
+          if (group.configuration.defaultDataImageId) {
+            defaultImageId = group.configuration.defaultDataImageId;
+          }
+          addPost(dbIssue, userId, defaultImageId, domain, callback);
+        } else {
+          console.error("Cant find group id: "+dbIssue.groupId);
+          callback('Cant find group');
+        }
+      });
+    });
+  } else {
+    console.log("Already saved issue id: "+dbIssue.issueId);
+    if (post.data.issueStatus!=dbIssue.issueStatus) {
+      post.set('data.issueStatus', dbIssue.issueStatus);
+      setPostOfficialStatus(post, dbIssue);
+      post.save().then(function (post) {
+        callback();
+      });
+    } else {
+      callback();
+    }
+  }
+  }).catch(function (error) {
+    callback(error);
+  });
+};
+
 groupsConfigString.split(":").forEach(function (pair) {
   var splitPair = pair.split("=");
   topCategoryIdToGroup[splitPair[0]]=splitPair[1];
@@ -76,24 +201,38 @@ getIssueList(function (error, issueList) {
     var issues = [];
     async.eachSeries(issueList['málaskrá']['mál'], function (issue, callback) {
       getJsonFromXml(issue['xml'][0], function (error, issueDetail) {
-        var dbIssue = { althingiSessionId: althingiSessionId, id: issue.$['málsnúmer'], name: capitalize(issue['málsheiti'][0]),
+        var dbIssue = { dataType: 'lawIssue', sessionId: SESSION_ID, issueId: issue.$['málsnúmer'], name: capitalize(issue['málsheiti'][0]),
                         externalHtmlLink: issue['html'][0], xmlLink: issue['xml'][0], issueType: issue['málstegund'][0]['heiti'][0] };
         if (error) {
           console.error(error);
           callback(error);
         } else {
-          var a = issueDetail;
-          dbIssue = _.merge(dbIssue, {
-                              topCategory: issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'][0]['heiti'][0],
-                              subCategory: issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'][0]['efnisflokkur'][0]['heiti'][0] });
-          dbIssue = _.merge(dbIssue, { topCategoryId: althingiTopCategories[dbIssue.topCategory] });
+          var topCategory, subCategory;
+          if (issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'][1]) {
+            topCategory = issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'][1]['heiti'][0];
+            subCategory = issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'][1]['efnisflokkur'][0]['heiti'][0]
+          } else {
+            topCategory = issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'][0]['heiti'][0];
+            subCategory = issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'][0]['efnisflokkur'][0]['heiti'][0]
+          }
+          var issueStatus = null;
 
-          var description = dbIssue.name+". "+dbIssue.issueType+". "+dbIssue.topCategory+". "+dbIssue.subCategory+
+          if (issueDetail['þingmál']['mál'][0]['staðamáls']) {
+            issueStatus = issueDetail['þingmál']['mál'][0]['staðamáls'][0];
+          }
+          dbIssue = _.merge(dbIssue, { topCategory: topCategory,subCategory: subCategory, issueStatus: issueStatus });
+          dbIssue = _.merge(dbIssue, { topCategoryId: lawTopCategories[dbIssue.topCategory] });
+
+          var description = capitalize(dbIssue.issueType)+". "+dbIssue.name+". "+dbIssue.topCategory+". "+dbIssue.subCategory+
                             ". Málið á Alþingi: "+dbIssue.externalHtmlLink;
 
           dbIssue = _.merge(dbIssue, { groupId: topCategoryIdToGroup[dbIssue.topCategoryId], description: description});
-          issues.push(dbIssue);
-          callback();
+          if (capitalize(dbIssue.issueType).indexOf("Fyrirspurn") > -1) {
+            console.log("Not doing questions for now for "+dbIssue.issueId);
+            callback()
+          } else {
+            saveIssueIfNeeded(dbIssue, CRAWLER_USER_ID, callback);
+          }
         }
       });
 
