@@ -153,6 +153,17 @@
         <paper-radio-button name="secret">[[t('group.secret')]]</paper-radio-button>
       </paper-radio-group>
 
+      <div class="layout horizontal">
+        <div class="layout vertical additionalSettings">
+          <file-upload id="defaultDataImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('defaultDataImage')]]</span>
+          </file-upload>
+        </div>
+
+        <input type="hidden" name="uploadedDefaultDataImageId" value="[[uploadedDefaultDataImageId]]">
+      </div>
+
     </yp-edit-dialog>
   </template>
 
@@ -206,6 +217,10 @@
       },
 
       uploadedHeaderImageId: {
+        type: String
+      },
+
+      uploadedDefaultDataImageId: {
         type: String
       },
 

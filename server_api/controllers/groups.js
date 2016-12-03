@@ -471,6 +471,14 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
   group.set('configuration.locationHidden', ((req.body.locationHidden && req.body.locationHidden!="") ? true : false));
   group.set('configuration.endorsementButtons', ((req.body.endorsementButtons && req.body.endorsementButtons!="") ? req.body.endorsementButtons : "hearts" ));
 
+  if (req.body.defaultLocale && req.body.defaultLocale!="") {
+    group.set('configuration.defaultLocale', req.body.defaultLocale);
+  }
+
+  if (req.body.uploadedDefaultDataImageId && req.body.uploadedDefaultDataImageId!="") {
+    group.set('configuration.defaultDataImageId', req.body.uploadedDefaultDataImageId);
+  }
+
   group.save().then(function(group) {
     log.info('Group Created', { group: toJson(group), context: 'create', user: toJson(req.user) });
     group.updateAllExternalCounters(req, 'up', 'counter_groups', function () {
@@ -514,9 +522,15 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       if (req.body.status && req.body.status!="") {
         group.status = req.body.status;
       }
+
       if (req.body.defaultLocale && req.body.defaultLocale!="") {
         group.set('configuration.defaultLocale', req.body.defaultLocale);
       }
+
+      if (req.body.uploadedDefaultDataImageId && req.body.uploadedDefaultDataImageId!="") {
+        group.set('configuration.defaultDataImageId', req.body.uploadedDefaultDataImageId);
+      }
+
       group.save().then(function () {
         log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
         group.setupImages(req.body, function(error) {
