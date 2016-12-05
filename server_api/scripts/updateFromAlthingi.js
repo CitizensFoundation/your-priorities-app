@@ -68,6 +68,8 @@ var setPostOfficialStatus = function(post, dbIssue) {
   if (dbIssue.issueStatus) {
     if (dbIssue.issueStatus.indexOf("Samþykkt") > -1) {
       post.set('official_status', 2);
+    } else if (dbIssue.issueStatus.indexOf("Fellt") > -1) {
+      post.set('official_status', -2);
     } else {
       post.set('official_status', -1);
     }
@@ -188,6 +190,30 @@ var saveIssueIfNeeded = function (dbIssue, userId, callback) {
   });
 };
 
+var getIssueStatusFromVotes = function(votingSessions) {
+  if (!votingSessions || (votingSessions.length==0 || votingSessions[0]=="")) {
+    return "Lagt fram";
+  } else {
+    var statusValue = "";
+    if (votingSessions[0]['atkvæðagreiðsla'] && votingSessions[0]['atkvæðagreiðsla'].length>0) {
+      _.each(votingSessions[0]['atkvæðagreiðsla'], function (votingSession) {
+        var tegund = votingSession['tegund'][0];
+        if (tegund=="Till.") {
+          var resolution = votingSession['samantekt'][0]['afgreiðsla'][0];
+          if (resolution=="samþykkt") {
+            statusValue = "Samþykkt";
+          } else {
+            statusValue = "Fellt";
+          }
+        }
+      }) ;
+    } else {
+      statusValue = "Í ferli";
+    }
+  }
+  return statusValue;
+};
+
 groupsConfigString.split(":").forEach(function (pair) {
   var splitPair = pair.split("=");
   topCategoryIdToGroup[splitPair[0]]=splitPair[1];
@@ -220,6 +246,11 @@ getIssueList(function (error, issueList) {
           if (issueDetail['þingmál']['mál'][0]['staðamáls']) {
             issueStatus = issueDetail['þingmál']['mál'][0]['staðamáls'][0];
           }
+
+          if (!issueStatus) {
+            issueStatus = getIssueStatusFromVotes(issueDetail['þingmál']['atkvæðagreiðslur']);
+          }
+
           dbIssue = _.merge(dbIssue, { topCategory: topCategory,subCategory: subCategory, issueStatus: issueStatus });
           dbIssue = _.merge(dbIssue, { topCategoryId: lawTopCategories[dbIssue.topCategory] });
 
