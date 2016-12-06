@@ -1,29 +1,29 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.100">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.101">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.100">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.100">
-<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.2.100">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.100">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.101">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.2.101">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.2.101">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.101">
 
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.2.100">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.2.100">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.2.101">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.2.101">
 
-<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.2.100">
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.2.101">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.100">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.2.100">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.2.100">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.100">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.101">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.2.101">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.2.101">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.2.101">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.100">
-<link rel="import" href="../yp-point/yp-point-news-story-edit.html?v=6.2.100">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.101">
+<link rel="import" href="../yp-point/yp-point-news-story-edit.html?v=6.2.101">
 
-<link rel="import" href="./ac-activity-header.html?v=6.2.100">
-<link rel="import" href="./ac-activity-post.html?v=6.2.100">
-<link rel="import" href="./ac-activity-point.html?v=6.2.100">
-<link rel="import" href="./ac-activity-point-news-story.html?v=6.2.100">
-<link rel="import" href="./ac-activity-post-status-update.html?v=6.2.100">
-<link rel="import" href="./ac-activity-group.html?v=6.2.100">
+<link rel="import" href="./ac-activity-header.html?v=6.2.101">
+<link rel="import" href="./ac-activity-post.html?v=6.2.101">
+<link rel="import" href="./ac-activity-point.html?v=6.2.101">
+<link rel="import" href="./ac-activity-point-news-story.html?v=6.2.101">
+<link rel="import" href="./ac-activity-post-status-update.html?v=6.2.101">
+<link rel="import" href="./ac-activity-group.html?v=6.2.101">
 
 </head><body><dom-module id="ac-activities">
   <template>
@@ -157,6 +157,10 @@
         color: #eee;
       }
 
+      .withCursor {
+        cursor: pointer;
+      }
+
       @media (max-width: 480px) {
         .typeName {
           font-size: 22px;
@@ -189,7 +193,7 @@
           <div>
             <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
               <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
-              <div class="layout horizontal topHeader" newpost$="[[_isActivityType(activity,'activity.post.new')]]">
+              <div class="layout horizontal topHeader withCursor" newpost$="[[_isActivityType(activity,'activity.post.new')]]" on-tap="_joinPost">
                 <div class="layout horizontal flex wrap">
                   <div class="layout horizontal">
                     <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">

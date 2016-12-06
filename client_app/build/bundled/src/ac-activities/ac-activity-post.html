@@ -1,12 +1,13 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.100">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.101">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.100">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.101">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.100">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.101">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.2.101">
 
-<link rel="import" href="../yp-post/yp-post-actions.html?v=6.2.100">
-<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.2.100">
-<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.2.100">
+<link rel="import" href="../yp-post/yp-post-actions.html?v=6.2.101">
+<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.2.101">
+<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.2.101">
 
 </head><body><dom-module id="ac-activity-post">
   <template>
@@ -135,7 +136,7 @@
     <div class="layout horizontal wrap">
       <div class="layout vertical descriptionOuter">
         <h3 class="post-name postCardCursor" on-tap="goToPost">[[postNameFunc(activity.Post)]]</h3>
-        <div class="description">[[postDescriptionFunc(activity.Post)]]</div>
+        <div id="description" class="description"></div>
       </div>
       <div class="layout horizontal">
         <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
@@ -155,13 +156,28 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpPostBehavior
+        Polymer.YpPostBehavior,
+        Polymer.YpLinkifyAndEmjoi
       ],
 
       properties: {
 
         activity: {
-          type: Object
+          type: Object,
+          observer: '_postChanged'
+        }
+      },
+
+      _postChanged: function (activity) {
+        var post = activity.Post;
+        if (post && post.description) { this.async(function () {
+            var description = this.$$("#description");
+            if (description) {
+              description.innerHTML = this.addLinksAndEmjois(post.description);
+            } else {
+              console.error("Can't find community description element");
+            }
+          });
         }
       }
 
