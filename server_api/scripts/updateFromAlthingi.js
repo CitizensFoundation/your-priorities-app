@@ -6,10 +6,13 @@ var http = require('http');
 var parseString = require('xml2js').parseString;
 var concat = require('concat-stream');
 
-var SESSION_ID = 145; //process.argv[2];
-var DOMAIN_ID = 2; // process.argv[3];
-var CRAWLER_USER_ID = 820; // process.argv[4];
-var groupsConfigString = "1=901:2=902:3=903:4=904:5=905:6=906:7=907:8=908:9=909:10=910:11=911"; process.argv[5];
+var SESSION_ID = process.argv[2]; // 145;
+var DOMAIN_ID = process.argv[3]; // 2
+var CRAWLER_USER_ID = process.argv[4]; // 820
+var groupsConfigString = process.argv[5]; // "1=911:2=908:3=905:4=910:5=912:6=907:7=903:8=902:9=904:10=909:11=906"; //
+
+var createActivityEnabled = process.argv[6] && process.argv[6]=="activityEnabled";
+
 var baseIssueListURL = "http://www.althingi.is/altext/xml/thingmalalisti/?lthing=";
 var baseIssueURL = "http://www.althingi.is/altext/xml/thingmalalisti/thingmal/?lthing=";
 
@@ -95,44 +98,58 @@ var addPost = function(dbIssue, userId, groupImageId, domain, callback) {
   setPostOfficialStatus(post, dbIssue);
 
   post.save().then(function(post) {
-    models.PostRevision.build({
-      name: post.name,
-      description: post.description,
-      group_id: post.group_id,
-      user_id: userId,
-      this_id: post.id,
-      status: post.status,
-      user_agent: post.user_agent,
-      ip_address: post.ip_address
-    }).save().then(function () {
-      post.updateAllExternalCounters( {ypDomain: domain }, 'up', 'counter_posts', function () {
-        models.AcActivity.createActivity({
-          type: 'activity.post.new',
-          userId: post.user_id,
-          domainId: domain.id,
-          groupId: post.group_id,
-//                communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-          postId : post.id,
-          access: models.AcActivity.ACCESS_PUBLIC
-        }, function (error) {
-          if (!error && post) {
-            if (groupImageId) {
-              models.Image.find({
-                where: {id: groupImageId}
-              }).then(function (image) {
-                if (image)
-                  post.addPostHeaderImage(image);
-                callback();
-              });
-            } else {
-              callback();
-            }
-          } else {
-            callback(error);
-          }
+    async.series([
+      function (seriesCallback) {
+        models.PostRevision.build({
+          name: post.name,
+          description: post.description,
+          group_id: post.group_id,
+          user_id: userId,
+          this_id: post.id,
+          status: post.status,
+          user_agent: post.user_agent,
+          ip_address: post.ip_address
+        }).save().then(function () {
+          post.updateAllExternalCounters({ypDomain: domain}, 'up', 'counter_posts', function () {
+            seriesCallback();
+          })
+        }).catch(function (error) {
+          seriesCallback(error);
         });
-      })
-    })
+      },
+      function (seriesCallback) {
+        if (createActivityEnabled) {
+          models.AcActivity.createActivity({
+            type: 'activity.post.new',
+            userId: post.user_id,
+            domainId: domain.id,
+            groupId: post.group_id,
+//                communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+            postId : post.id,
+            access: models.AcActivity.ACCESS_PUBLIC
+          }, function (error) {
+            seriesCallback(error);
+          });
+        } else {
+          seriesCallback();
+        }
+      },
+      function (seriesCallback) {
+        if (groupImageId) {
+          models.Image.find({
+            where: {id: groupImageId}
+          }).then(function (image) {
+            if (image)
+              post.addPostHeaderImage(image);
+            seriesCallback();
+          });
+        } else {
+          seriesCallback();
+        }
+      }
+    ], function (error) {
+      callback(error);
+    });
   }).catch(function(error) {
     callback(error);
   });
@@ -258,8 +275,8 @@ getIssueList(function (error, issueList) {
                             ". Málið á Alþingi: "+dbIssue.externalHtmlLink;
 
           dbIssue = _.merge(dbIssue, { groupId: topCategoryIdToGroup[dbIssue.topCategoryId], description: description});
-          if (capitalize(dbIssue.issueType).indexOf("Fyrirspurn") > -1) {
-            console.log("Not doing questions for now for "+dbIssue.issueId);
+          if (capitalize(dbIssue.issueType).indexOf("Fyrirspurn") > -1 || capitalize(dbIssue.issueType).indexOf("Beiðni um skýrslu") > -1) {
+            console.log("Not doing questions or reports for now for "+dbIssue.issueId);
             callback()
           } else {
             saveIssueIfNeeded(dbIssue, CRAWLER_USER_ID, callback);
