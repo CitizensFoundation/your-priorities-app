@@ -157,6 +157,10 @@
         color: #eee;
       }
 
+      .withCursor {
+        cursor: pointer;
+      }
+
       @media (max-width: 480px) {
         .typeName {
           font-size: 22px;
@@ -194,7 +198,7 @@
           <div>
             <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
               <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
-              <div class="layout horizontal topHeader" newpost$="[[_isActivityType(activity,'activity.post.new')]]">
+              <div class="layout horizontal topHeader withCursor" newpost$="[[_isActivityType(activity,'activity.post.new')]]" on-tap="_joinPost">
                 <div class="layout horizontal flex wrap">
                   <div class="layout horizontal">
                     <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">

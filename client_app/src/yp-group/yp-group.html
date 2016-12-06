@@ -70,7 +70,6 @@
             <span>[[t('posts.open')]]</span><div class="counterInfo" id="tabCountOpen"></div>
           </div>
         </paper-tab>
-        <paper-tab name="news">[[t('news')]]</paper-tab>
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <paper-tab name="in_progress">
             <div class="layout vertical center-center tabCounterContainer">
@@ -88,6 +87,7 @@
             </div>
           </paper-tab>
         </template>
+        <paper-tab name="news">[[t('news')]]</paper-tab>
         <paper-tab name="map" hidden$="[[locationHidden]]">[[t('posts.map')]]</paper-tab>
       </paper-tabs>
 
