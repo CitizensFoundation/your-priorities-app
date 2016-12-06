@@ -6,9 +6,9 @@ var http = require('http');
 var parseString = require('xml2js').parseString;
 var concat = require('concat-stream');
 
-var SESSION_ID = process.argv[2]; // 145;
+var SESSION_ID = process.argv[2]; // 146;
 var DOMAIN_ID = process.argv[3]; // 2
-var CRAWLER_USER_ID = process.argv[4]; // 820
+var CRAWLER_USER_ID = process.argv[4]; // 29887
 var groupsConfigString = process.argv[5]; // "1=911:2=908:3=905:4=910:5=912:6=907:7=903:8=902:9=904:10=909:11=906"; //
 
 var createActivityEnabled = process.argv[6] && process.argv[6]=="activityEnabled";
@@ -139,9 +139,13 @@ var addPost = function(dbIssue, userId, groupImageId, domain, callback) {
           models.Image.find({
             where: {id: groupImageId}
           }).then(function (image) {
-            if (image)
-              post.addPostHeaderImage(image);
-            seriesCallback();
+            if (image) {
+              post.addPostHeaderImage(image).then(function (error) {
+                seriesCallback();
+              });
+            } else {
+              seriesCallback();
+            }
           });
         } else {
           seriesCallback();
@@ -251,35 +255,44 @@ getIssueList(function (error, issueList) {
           callback(error);
         } else {
           var topCategory, subCategory;
-          if (issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'][1]) {
+          if (issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'] && issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'][1]) {
             topCategory = issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'][1]['heiti'][0];
             subCategory = issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'][1]['efnisflokkur'][0]['heiti'][0]
-          } else {
+          } else if (issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur']) {
             topCategory = issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'][0]['heiti'][0];
             subCategory = issueDetail['þingmál']['efnisflokkar'][0]['yfirflokkur'][0]['efnisflokkur'][0]['heiti'][0]
-          }
-          var issueStatus = null;
-
-          if (issueDetail['þingmál']['mál'][0]['staðamáls']) {
-            issueStatus = issueDetail['þingmál']['mál'][0]['staðamáls'][0];
+          } else if (SESSION_ID==146 && (dbIssue.issueId == 1 || dbIssue.issueId == 2)) {
+            topCategory = "Hagstjórn";
+            subCategory = "Fjárreiður ríkisins";
           }
 
-          if (!issueStatus) {
-            issueStatus = getIssueStatusFromVotes(issueDetail['þingmál']['atkvæðagreiðslur']);
-          }
+          if (topCategory) {
+            var issueStatus = null;
 
-          dbIssue = _.merge(dbIssue, { topCategory: topCategory,subCategory: subCategory, issueStatus: issueStatus });
-          dbIssue = _.merge(dbIssue, { topCategoryId: lawTopCategories[dbIssue.topCategory] });
+            if (issueDetail['þingmál']['mál'][0]['staðamáls']) {
+              issueStatus = issueDetail['þingmál']['mál'][0]['staðamáls'][0];
+            }
 
-          var description = capitalize(dbIssue.issueType)+". "+dbIssue.name+". "+dbIssue.topCategory+". "+dbIssue.subCategory+
-                            ". Málið á Alþingi: "+dbIssue.externalHtmlLink;
+            if (!issueStatus) {
+              issueStatus = getIssueStatusFromVotes(issueDetail['þingmál']['atkvæðagreiðslur']);
+            }
 
-          dbIssue = _.merge(dbIssue, { groupId: topCategoryIdToGroup[dbIssue.topCategoryId], description: description});
-          if (capitalize(dbIssue.issueType).indexOf("Fyrirspurn") > -1 || capitalize(dbIssue.issueType).indexOf("Beiðni um skýrslu") > -1) {
-            console.log("Not doing questions or reports for now for "+dbIssue.issueId);
-            callback()
+            dbIssue = _.merge(dbIssue, { topCategory: topCategory,subCategory: subCategory, issueStatus: issueStatus });
+            dbIssue = _.merge(dbIssue, { topCategoryId: lawTopCategories[dbIssue.topCategory] });
+
+            var description = capitalize(dbIssue.issueType)+". "+dbIssue.name+". "+dbIssue.topCategory+". "+dbIssue.subCategory+
+              ". Málið á Alþingi: "+dbIssue.externalHtmlLink;
+
+            dbIssue = _.merge(dbIssue, { groupId: topCategoryIdToGroup[dbIssue.topCategoryId], description: description});
+            if (capitalize(dbIssue.issueType).indexOf("Fyrirspurn") > -1 || capitalize(dbIssue.issueType).indexOf("Beiðni um skýrslu") > -1) {
+              console.log("Not doing questions or reports for now for "+dbIssue.issueId);
+              callback()
+            } else {
+              saveIssueIfNeeded(dbIssue, CRAWLER_USER_ID, callback);
+            }
           } else {
-            saveIssueIfNeeded(dbIssue, CRAWLER_USER_ID, callback);
+            console.error("No topCategory");
+            callback();
           }
         }
       });
