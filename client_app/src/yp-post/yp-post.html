@@ -118,7 +118,6 @@
         }
       }
 
-
       .createFab {
         background-color: var(--accent-color);
         color: var(--icon-general-color, #FFF);
@@ -325,7 +324,7 @@
 
       <yp-post-card id="postCard" class="largeCard" post="[[post]]" on-refresh="_refreshAjax" header-mode></yp-post-card>
 
-      <div class="layout horizontal center-center">
+      <div class="layout horizontal center-center" hidden$="[[post.Group.configuration.hideAllTabs]]">
         <paper-tabs id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
           <paper-tab name="debate">
             <div class="layout vertical center-center tabCounterContainer">
@@ -394,7 +393,7 @@
 
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
 
-    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer">
+    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden$="[[post.Group.configuration.hideNewPostOnPostPage]]">
       <template is="dom-if" if="[[createFabIcon]]">
         <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
       </template>

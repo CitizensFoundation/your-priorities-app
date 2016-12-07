@@ -52,44 +52,126 @@
       .counterInfo {
         font-size: 11px;
       }
+
+      .topContainer {
+        margin-top: 16px;
+      }
+
+      .createFab {
+        background-color: var(--accent-color);
+        color: var(--icon-general-color, #FFF);
+        position: fixed;
+        bottom: 24px;
+        right: 28px;
+      }
+
+      .createFab[wide-layout] {
+        width: 72px;
+        height: 72px;
+      }
+
+      .createFabContainer[wide-layout] .createFab {
+      }
+
+      paper-fab[wide-layout]::shadow #icon {
+        width: 40px;
+        height: 40px;
+      }
+
+      .topArea {
+        background-color: var(--primary-background-color);
+        background-image: var(--top-area-background-image, none);
+        height: 300px;
+      }
+
+
+
+      .tabs {
+        width: 1100px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      .tabs .tab {
+        width: 250px;
+      }
+
+      @media (max-width: 1024px) {
+        .tabs {
+          max-width: 920px;
+        }
+
+        .tabs .tab {
+          width: 200px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .tabs {
+          max-width: 450px;
+          font-size: 13px !important;
+          word-wrap: break-word !important;
+        }
+
+        .tabs .tab {
+          width: 120px;
+          word-wrap: break-word !important;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .tabs {
+          max-width: 330px;
+          font-size: 10px !important;
+        }
+
+        paper-tab {
+          width: 100px;
+          font-size: 10px !important;
+        }
+      }
     </style>
 
-    <yp-page id="page" has-large-button$="[[createFabIcon]]" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('post.add_new')]]" on-yp-create-fab-tap="_newPost">
+    <div id="topContainer">
 
-      <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-card-large>
+      <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" hidden$="[[group.configuration.hideGroupHeader]]">
+        <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-card-large>
+      </div>
 
       <template is="dom-if" if="[[createFabIcon]]">
-        <div class="largeAddButton">
+        <div class="largeAddButton layout horizontal center-center">
           <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
         </div>
       </template>
 
-      <paper-tabs id="paperTabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
-        <paper-tab id="tab1" name="open">
-          <div class="layout vertical center-center tabCounterContainer">
-            <span>[[t('posts.open')]]</span><div class="counterInfo" id="tabCountOpen"></div>
-          </div>
-        </paper-tab>
-        <template is="dom-if" if="[[hasNonOpenPosts]]">
-          <paper-tab name="in_progress">
+      <div class="layout horizontal center-center" hidden$="[[group.configuration.hideAllTabs]]">
+        <paper-tabs id="paperTabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
+          <paper-tab id="tab1" name="open">
             <div class="layout vertical center-center tabCounterContainer">
-              <span>[[t('posts.inProgress')]]</span><div class="counterInfo" id="tabCountInProgress"></div>
+              <span>[[t('posts.open')]]</span><div class="counterInfo" id="tabCountOpen"></div>
             </div>
           </paper-tab>
-          <paper-tab name="successful">
-            <div class="layout vertical center-center tabCounterContainer">
-              <span>[[t('posts.successful')]]</span><div class="counterInfo" id="tabCountSuccessful"></div>
-            </div>
-          </paper-tab>
-          <paper-tab name="failed">
-            <div class="layout vertical center-center tabCounterContainer">
-              <span>[[t('posts.failed')]]</span><div class="counterInfo" id="tabCountFailed"></div>
-            </div>
-          </paper-tab>
-        </template>
-        <paper-tab name="news">[[t('news')]]</paper-tab>
-        <paper-tab name="map" hidden$="[[locationHidden]]">[[t('posts.map')]]</paper-tab>
-      </paper-tabs>
+          <template is="dom-if" if="[[hasNonOpenPosts]]">
+            <paper-tab name="in_progress">
+              <div class="layout vertical center-center tabCounterContainer">
+                <span>[[t('posts.inProgress')]]</span><div class="counterInfo" id="tabCountInProgress"></div>
+              </div>
+            </paper-tab>
+            <paper-tab name="successful">
+              <div class="layout vertical center-center tabCounterContainer">
+                <span>[[t('posts.successful')]]</span><div class="counterInfo" id="tabCountSuccessful"></div>
+              </div>
+            </paper-tab>
+            <paper-tab name="failed">
+              <div class="layout vertical center-center tabCounterContainer">
+                <span>[[t('posts.failed')]]</span><div class="counterInfo" id="tabCountFailed"></div>
+              </div>
+            </paper-tab>
+          </template>
+          <paper-tab name="news">[[t('news')]]</paper-tab>
+          <paper-tab name="map" hidden$="[[locationHidden]]">[[t('posts.map')]]</paper-tab>
+        </paper-tabs>
+      </div>
 
       <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section name="open">
@@ -123,10 +205,18 @@
           </template>
         </section>
       </iron-pages>
-    </yp-page>
+    </div>
+
+    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden$="[[post.Group.configuration.hideNewPostOnPostPage]]">
+      <template is="dom-if" if="[[createFabIcon]]">
+        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
+      </template>
+    </div>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-signals on-iron-signal-yp-refresh-group-posts="_refreshGroupPosts"></iron-signals>
+
+    <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
 
     <app-route
       route="{{idRoute}}"
@@ -356,6 +446,22 @@
         }
 
         this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
+
+        if (this.selectedTab=='edit') {
+          this.set('tabName', 'open');
+          this.$$("#groupCard")._openEdit();
+        }
+      },
+
+      setupTopHeaderImage: function (image) {
+        var path;
+        if (image) {
+          path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+        } else {
+          path = 'none';
+        }
+        this.customStyle['--top-area-background-image'] = path;
+        this.updateStyles();
       },
 
       refresh: function () {
@@ -387,9 +493,9 @@
           this._refreshTabsAndPages();
 
           if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
-            this.$.page.setupTopHeaderImage(this.group.GroupHeaderImages);
+            this.setupTopHeaderImage(this.group.GroupHeaderImages);
           } else {
-            this.$.page.setupTopHeaderImage(null);
+            this.setupTopHeaderImage(null);
           }
 
           this.fire("change-header", { headerTitle: this.group.Community.name,

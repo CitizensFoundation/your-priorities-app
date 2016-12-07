@@ -361,11 +361,13 @@
           this.set('endorsementButtons', "hearts");
         }
 
-        if (this.group.configuration && this.group.configuration.locationHidden!=undefined) {
-          this.set('locationHidden', this.group.configuration.locationHidden);
-        } else {
-          this.set('locationHidden', false);
-        }
+        this._setFromConfiguration('locationHidden');
+        this._setFromConfiguration('hideAllTabs');
+        this._setFromConfiguration('hideNewPostOnPostPage');
+        this._setFromConfiguration('newPointOptional');
+        this._setFromConfiguration('hideHelpIcon');
+        this._setFromConfiguration('hideEmoji');
+        this._setFromConfiguration('hideGroupHeader');
 
         if (this.community) {
           if (this.community.access==0) {
@@ -382,6 +384,15 @@
         }
       }
       this._updateEmojiBindings();
+    },
+
+    _setFromConfiguration: function (propertyName) {
+      debugger;
+      if (this.group.configuration && this.group.configuration[propertyName]!=undefined && this.group.configuration[propertyName]!="") {
+        this.set(propertyName, this.group.configuration[propertyName]);
+      } else {
+        this.set(propertyName, false);
+      }
     },
 
     _clear: function () {

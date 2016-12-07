@@ -455,10 +455,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
               }, function (error) {
                 if (!error && post) {
                   post.setDataValue('newEndorsement', endorsement);
-                  post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
-                    post.increment('counter_points');
-                    sendPostOrError(res, post, 'setupImages', req.user, error);
-                  });
+                  sendPostOrError(res, post, 'setupImages', req.user, error);
                 } else {
                   sendPostOrError(res, post, 'setupImages', req.user, error);
                 }

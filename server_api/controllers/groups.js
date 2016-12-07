@@ -93,7 +93,11 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
 };
 
 var truthValueFromBody = function(bodyParameter) {
-  return bodyParameter && bodyParameter!="";
+  if (bodyParameter && bodyParameter!="") {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 var updateGroupConfigParamters = function (req, group) {
