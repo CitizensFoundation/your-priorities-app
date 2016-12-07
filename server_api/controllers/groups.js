@@ -92,6 +92,44 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
   });
 };
 
+var truthValueFromBody = function(bodyParameter) {
+  return bodyParameter && bodyParameter!="";
+};
+
+var updateGroupConfigParamters = function (req, group) {
+  if (!group.configuration) {
+    group.set('configuration', {});
+  }
+  group.set('configuration.canVote', truthValueFromBody(req.body.canVote));
+  group.set('configuration.canAddNewPosts', truthValueFromBody(req.body.canAddNewPosts));
+  group.set('configuration.locationHidden', truthValueFromBody(req.body.locationHidden));
+
+  group.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
+  group.set('configuration.hideNewPostOnPostPage', truthValueFromBody(req.body.hideNewPostOnPostPage));
+  group.set('configuration.newPointOptional', truthValueFromBody(req.body.newPointOptional));
+  group.set('configuration.hideHelpIcon', truthValueFromBody(req.body.hideHelpIcon));
+  group.set('configuration.hideEmoji', truthValueFromBody(req.body.hideEmoji));
+  group.set('configuration.hideGroupHeader', truthValueFromBody(req.body.hideGroupHeader));
+
+  group.set('configuration.endorsementButtons', (req.body.endorsementButtons && req.body.endorsementButtons!="") ? req.body.endorsementButtons : "hearts");
+
+  if (truthValueFromBody(req.body.status)) {
+    group.status = req.body.status;
+  }
+
+  if (truthValueFromBody(req.body.defaultLocale)) {
+    group.set('configuration.defaultLocale', req.body.defaultLocale);
+  }
+
+  if (truthValueFromBody(req.body.uploadedDefaultDataImageId)) {
+    group.set('configuration.defaultDataImageId', req.body.uploadedDefaultDataImageId);
+  }
+
+  if (truthValueFromBody(req.body.uploadedDefaulPostImageId)) {
+    group.set('configuration.uploadedDefaulPostImageId', req.body.uploadedDefaulPostImageId);
+  }
+};
+
 router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), function(req, res) {
   models.AcActivity.find({
     where: {
@@ -466,18 +504,8 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
     user_agent: req.useragent.source,
     ip_address: req.clientIp
   });
-  group.set('configuration.canVote', ((req.body.canVote && req.body.canVote!="") ? true : false));
-  group.set('configuration.canAddNewPosts', ((req.body.canAddNewPosts && req.body.canAddNewPosts!="") ? true : false));
-  group.set('configuration.locationHidden', ((req.body.locationHidden && req.body.locationHidden!="") ? true : false));
-  group.set('configuration.endorsementButtons', ((req.body.endorsementButtons && req.body.endorsementButtons!="") ? req.body.endorsementButtons : "hearts" ));
 
-  if (req.body.defaultLocale && req.body.defaultLocale!="") {
-    group.set('configuration.defaultLocale', req.body.defaultLocale);
-  }
-
-  if (req.body.uploadedDefaultDataImageId && req.body.uploadedDefaultDataImageId!="") {
-    group.set('configuration.defaultDataImageId', req.body.uploadedDefaultDataImageId);
-  }
+  updateGroupConfigParamters(req, group);
 
   group.save().then(function(group) {
     log.info('Group Created', { group: toJson(group), context: 'create', user: toJson(req.user) });
@@ -511,26 +539,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       group.objectives = req.body.objectives;
       group.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
       group.access = models.Group.convertAccessFromRadioButtons(req.body);
-      if (!group.configuration) {
-        group.set('configuration', {});
-      }
-      group.set('configuration.canVote', ((req.body.canVote && req.body.canVote!="") ? true : false));
-      group.set('configuration.canAddNewPosts', ((req.body.canAddNewPosts && req.body.canAddNewPosts!="") ? true : false));
-      group.set('configuration.locationHidden', ((req.body.locationHidden && req.body.locationHidden!="") ? true : false));
-      group.set('configuration.endorsementButtons', ((req.body.endorsementButtons && req.body.endorsementButtons!="") ? req.body.endorsementButtons : "hearts" ));
-
-      if (req.body.status && req.body.status!="") {
-        group.status = req.body.status;
-      }
-
-      if (req.body.defaultLocale && req.body.defaultLocale!="") {
-        group.set('configuration.defaultLocale', req.body.defaultLocale);
-      }
-
-      if (req.body.uploadedDefaultDataImageId && req.body.uploadedDefaultDataImageId!="") {
-        group.set('configuration.defaultDataImageId', req.body.uploadedDefaultDataImageId);
-      }
-
+      updateGroupConfigParamters(req, group);
       group.save().then(function () {
         log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
         group.setupImages(req.body, function(error) {

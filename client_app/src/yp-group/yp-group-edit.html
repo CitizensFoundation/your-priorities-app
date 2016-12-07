@@ -153,6 +153,36 @@
         <paper-radio-button name="secret">[[t('group.secret')]]</paper-radio-button>
       </paper-radio-group>
 
+      <hr>
+
+      <div class="layout horizontal">
+        <div class="layout vertical additionalSettings">
+          <file-upload id="defaultPostImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
+            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <span>[[t('defaultPostImage')]]</span>
+          </file-upload>
+        </div>
+
+        <input type="hidden" name="uploadedDefaulPostImageId" value="[[uploadedDefaultPostImageId]]">
+      </div>
+
+      <div class="layout vertical config">
+        <h2>[[t('additionalGroupConfig')]]</h2>
+        <paper-checkbox name="hideAllTabs" checked$="{{hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
+        <paper-checkbox name="hideNewPostOnPostPage" checked$="{{hideNewPostOnPostPage}}">[[t('hideNewPostOnPostPage')]]</paper-checkbox>
+        <paper-checkbox name="newPointOptional" checked$="{{newPointOptional}}">[[t('newPointOptional')]]</paper-checkbox>
+        <paper-checkbox name="hideHelpIcon" checked$="{{hideHelpIcon}}">[[t('hideHelpIcon')]]</paper-checkbox>
+        <paper-checkbox name="hideEmoji" checked$="{{hideEmoji}}">[[t('hideEmoji')]]</paper-checkbox>
+        <paper-checkbox name="hideGroupHeader" checked$="{{hideGroupHeader}}">[[t('hideGroupHeader')]]</paper-checkbox>
+      </div>
+
+      <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
+      <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
+      <input type="hidden" name="newPointOptional" value$="[[newPointOptional]]">
+      <input type="hidden" name="hideHelpIcon" value$="[[hideHelpIcon]]">
+      <input type="hidden" name="hideEmoji" value$="[[hideEmoji]]">
+      <input type="hidden" name="hideGroupHeader" value$="[[hideGroupHeader]]">
+
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
           <file-upload id="defaultDataImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
@@ -193,6 +223,13 @@
         value: true
       },
 
+      hideAllTabs: Boolean,
+      hideNewPostOnPostPage: Boolean,
+      newPointOptional: Boolean,
+      hideHelpIcon: Boolean,
+      hideEmoji: Boolean,
+      hideGroupHeader: Boolean,
+
       action: {
         type: String,
         value: "/api/groups"
@@ -221,6 +258,10 @@
       },
 
       uploadedDefaultDataImageId: {
+        type: String
+      },
+
+      uploadedDefaultPostImageId: {
         type: String
       },
 
