@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.101"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.2.102"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="/">
 
   <template>
 
@@ -344,7 +344,7 @@
               <div id="pointUpMaterial" elevation="0" class="pointText layout vertical" animated="">
                 <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueUp}}" value="[[textValueUp]]" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="3" maxlength="500">
                 </paper-textarea>
-                <div class="horizontal end-justified layout">
+                <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
                   <emoji-selector id="pointUpEmojiSelector"></emoji-selector>
                 </div>
 
@@ -369,7 +369,7 @@
               <div id="pointDownMaterial" elevation="0" class="pointText layout vertical" animated="">
                 <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueDown}}" value="[[textValueDown]]" label="[[t('point.against')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
                 </paper-textarea>
-                <div class="horizontal end-justified layout">
+                <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
                   <emoji-selector id="pointDownEmojiSelector"></emoji-selector>
                 </div>
                 <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
@@ -393,7 +393,7 @@
       <template is="dom-if" if="[[!largeMode]]">
         <div id="pointUpOrDownMaterial" elevation="0" class="pointText layout vertical" animated="">
           <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueMobileUpOrDown}}" value="[[textValueMobileUpOrDown]]" label="[[labelMobileUpOrDown]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
-          <div class="horizontal end-justified layout">
+          <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
             <emoji-selector id="pointUpDownEmojiSelector"></emoji-selector>
           </div>
           <div class="layout horizontal center-center">
@@ -1181,7 +1181,6 @@
         }
       }
 
-
       .createFab {
         background-color: var(--accent-color);
         color: var(--icon-general-color, #FFF);
@@ -1388,7 +1387,7 @@
 
       <yp-post-card id="postCard" class="largeCard" post="[[post]]" on-refresh="_refreshAjax" header-mode=""></yp-post-card>
 
-      <div class="layout horizontal center-center">
+      <div class="layout horizontal center-center" hidden$="[[post.Group.configuration.hideAllTabs]]">
         <paper-tabs id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
           <paper-tab name="debate">
             <div class="layout vertical center-center tabCounterContainer">
@@ -1450,7 +1449,7 @@
 
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
 
-    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer">
+    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden$="[[post.Group.configuration.hideNewPostOnPostPage]]">
       <template is="dom-if" if="[[createFabIcon]]">
         <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
       </template>

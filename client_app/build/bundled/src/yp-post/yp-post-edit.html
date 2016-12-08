@@ -1,28 +1,28 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.101">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.102">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.101">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.101">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.2.102">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.102">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.101">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.2.101">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.2.101">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.2.101">
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.2.101">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.101">
-<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.2.101">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.2.101">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.101">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.2.101">
-<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html?v=6.2.101">
-<link rel="import" href="../../bower_components/neon-animation/neon-animation.html?v=6.2.101">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.102">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.2.102">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.2.102">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.2.102">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.2.102">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.2.102">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.2.102">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.2.102">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.2.102">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.2.102">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html?v=6.2.102">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html?v=6.2.102">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.2.101">
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.101">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.2.101">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.2.101">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.2.101">
-<link rel="import" href="../yp-image-uploader/yp-image-uploader.html?v=6.2.101">
-<link rel="import" href="yp-post-location.html?v=6.2.101">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.2.102">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.102">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.2.102">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.2.102">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.2.102">
+<link rel="import" href="../yp-image-uploader/yp-image-uploader.html?v=6.2.102">
+<link rel="import" href="yp-post-location.html?v=6.2.102">
 
 </head><body><dom-module id="yp-post-edit">
   <template>
@@ -87,6 +87,10 @@
       paper-dropdown-menu {
         max-width: 250px;
       }
+
+      .optional {
+        font-size: 12px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -95,7 +99,16 @@
       <paper-tabs selected="{{selected}}" id="paperTabs" focused="">
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
         <template is="dom-if" restamp="" if="[[new]]">
-          <paper-tab>[[t('post.yourPoint')]]</paper-tab>
+          <paper-tab>
+            <div class="layout vertical center-center">
+              <div>
+                [[t('post.yourPoint')]]
+              </div>
+              <div class="optional" hidden$="[[!group.configuration.newPointOptional]]">
+                [[t('optional')]]
+              </div>
+            </div>
+          </paper-tab>
         </template>
         <template is="dom-if" if="[[!locationHidden]]" restamp="">
           <paper-tab>[[t('post.location')]]</paper-tab>
@@ -124,7 +137,7 @@
 
               <paper-textarea id="description" required="" minlength="10" name="description" value="{{post.description}}" label="[[t('post.description')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
               </paper-textarea>
-              <div class="horizontal end-justified layout">
+              <div class="horizontal end-justified layout" hidden$="[[group.configuration.hideEmoji]]">
                 <emoji-selector id="emojiSelectorDescription"></emoji-selector>
               </div>
             </div>
@@ -132,9 +145,9 @@
 
           <template is="dom-if" restamp="" if="[[new]]">
             <section class="subContainer">
-              <paper-textarea id="pointFor" required="" minlength="5" name="pointFor" value="{{post.pointFor}}" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
+              <paper-textarea id="pointFor" required$="[[!group.configuration.newPointOptional]]" minlength="5" name="pointFor" value="{{post.pointFor}}" label="[[t('point.for')]]" char-counter="" rows="2" max-rows="5" maxlength="500">
               </paper-textarea>
-              <div class="horizontal end-justified layout">
+              <div class="horizontal end-justified layout" hidden$="[[group.configuration.hideEmoji]]">
                 <emoji-selector id="emojiSelectorPointFor"></emoji-selector>
               </div>
             </section>

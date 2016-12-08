@@ -1,4 +1,13 @@
 {
+  "optional": "Optional",
+  "additionalGroupConfig":"Additional Group Config",
+  "defaultDataImage":"Default Data Image",
+  "defaultPostImage":"Default Post Image",
+  "hideAllTabs":"Hide All Tabs",
+  "hideNewPostOnPostPage":"Hide New Post on Post Page",
+  "newPointOptional":"Make New Point Optional",
+  "hideHelpIcon":"Hide Help Icon",
+  "hideEmoji":"Hide Emojis",
   "endorsementButtonsHeart":"Hearts",
   "endorsementArrows":"Arrows",
   "endorsementThumbs":"Thumbs",

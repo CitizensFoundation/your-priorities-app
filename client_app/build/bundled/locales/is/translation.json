@@ -1,4 +1,13 @@
 {
+  "optional": "Valkvæmt",
+  "additionalGroupConfig":"Viðbótastillingar",
+  "defaultDataImage":"Sjálfgefin Data Mynd",
+  "defaultPostImage":"Sjálfgefin Mynd fyrir hugmynd",
+  "hideAllTabs":"Fela tabs",
+  "hideNewPostOnPostPage":"Fel nýja hugmynd á hugmyndasíðu",
+  "newPointOptional":"Rök valkvæm á nýrri hugmynd",
+  "hideHelpIcon":"Fela hjálp",
+  "hideEmoji":"Fela Emjois",
   "endorsementButtonsHeart":"Hjörtu",
   "endorsementArrows":"Örvar",
   "endorsementThumbs":"Þumlar",
