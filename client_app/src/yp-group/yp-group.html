@@ -84,8 +84,6 @@
         height: 300px;
       }
 
-
-
       .tabs {
         width: 1100px;
         padding-top: 8px;
@@ -94,6 +92,10 @@
 
       .tabs .tab {
         width: 250px;
+      }
+
+      .largeAddButton {
+        margin-bottom: 8px;
       }
 
       @media (max-width: 1024px) {
@@ -116,6 +118,10 @@
         .tabs .tab {
           width: 120px;
           word-wrap: break-word !important;
+        }
+
+        .topArea {
+          height: auto;
         }
       }
 
@@ -337,26 +343,37 @@
       },
 
       _selectedTabChanged: function (tabName) {
-        if (this.group) {
-          this.redirectTo("/group/" + this.group.id + '/' + tabName);
-        }
-
-        if (tabName == "map") {
-          this.set('mapActive', true);
+        if (tabName=='config') {
+          this.async(function () {
+            var configRoute = this.listRoute.path;
+            var groupId = this.idRoute.path.split("/")[1];
+            var configOverride= configRoute.substring(1, configRoute.length);
+            if (groupId && configOverride && configOverride!="")
+            window.appGlobals.setupGroupConfigOverride(groupId, configOverride);
+            this.redirectTo("/group/" + groupId+'/open');
+          });
         } else {
-          this.set('mapActive', false);
-        }
-
-        if (tabName && window.appGlobals) {
-          window.appGlobals.activity('open', 'group_tab_' + tabName);
-        }
-
-        this.async(function () {
-          var news = this.$$("#groupActivities");
-          if (news) {
-            news.fireResize();
+          if (this.group) {
+            this.redirectTo("/group/" + this.group.id + '/' + tabName);
           }
-        }, 300);
+
+          if (tabName == "map") {
+            this.set('mapActive', true);
+          } else {
+            this.set('mapActive', false);
+          }
+
+          if (tabName && window.appGlobals) {
+            window.appGlobals.activity('open', 'group_tab_' + tabName);
+          }
+
+          this.async(function () {
+            var news = this.$$("#groupActivities");
+            if (news) {
+              news.fireResize();
+            }
+          }, 300);
+        }
       },
 
       _refreshTabsAndPages: function () {
@@ -431,6 +448,8 @@
 
       _groupsResponse: function (event, detail, sender) {
         this.set('group', detail.response.group);
+
+        this.set('group.configuration', window.appGlobals.overrideGroupConfigIfNeeded(this.group.id, this.group.configuration));
 
         this.refresh();
 

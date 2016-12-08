@@ -78,6 +78,11 @@
           requestInProgress: {
            type: Boolean,
            value: false
+          },
+
+          groupConfigOverrides: {
+            type: Object,
+            value: {}
           }
         },
 
@@ -159,6 +164,39 @@
               this.fire("change-header", { headerTitle: this.domain.domain_name,
                 headerDescription: this.domain.description});
             }
+          }
+        },
+
+        setupGroupConfigOverride: function(groupId, configOverride) {
+          var configOverrideHash = {};
+          configOverride.split(";").forEach(function (configItem) {
+            var splitItem = configItem.split("=");
+            configOverrideHash[splitItem[0]] = splitItem[1];
+          });
+          this.groupConfigOverrides[groupId]=configOverrideHash;
+        },
+
+        overrideGroupConfigIfNeeded(groupId, configuration) {
+          var override = this.groupConfigOverrides[groupId];
+          if (!configuration || !override) {
+            return configuration;
+          } else {
+            if (override["hg"]) {
+              configuration["hideGroupHeader"]=Boolean(override["hg"]);
+            }
+            if (override["ht"]) {
+              configuration["hideAllTabs"]=Boolean(override["ht"]);
+            }
+            if (override["hh"]) {
+              configuration["hideHelpIcon"]=Boolean(override["hh"]);
+            }
+            if (override["rn"]) {
+              configuration["fixedReturnUrlName"]=override["rn"];
+            }
+            if (override["ru"]) {
+              configuration["fixedReturnUrl"] = override["ru"];
+            }
+            return configuration;
           }
         },
 
