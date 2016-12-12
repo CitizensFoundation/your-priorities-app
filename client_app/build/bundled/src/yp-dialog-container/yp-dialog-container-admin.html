@@ -124,7 +124,66 @@
 @license
 Copyright (c) 2015 Vaadin Ltd.
 This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
---><script>function VaadinGridImport(){var Pb='',Qb=0,Rb='gwt.codesvr=',Sb='gwt.hosted=',Tb='gwt.hybrid',Ub='VaadinGridImport',Vb='meta',Wb='name',Xb='gwt:property',Yb='content',Zb='=',$b=1,_b='gwt:onPropertyErrorFn',ac='Bad handler "',bc='" for "gwt:onPropertyErrorFn"',cc='gwt:onLoadErrorFn',dc='" for "gwt:onLoadErrorFn"',ec='modernie',fc='MSIE',gc='Trident',hc='yes',ic='none',jc='observeCapability',kc='observe',lc='native',mc='js',nc='selectorCapability',oc='function',pc='user.agent',qc='webkit',rc='safari',sc='msie',tc=10,uc=11,vc='ie10',wc=9,xc='ie9',yc=8,zc='ie8',Ac='gecko',Bc='gecko1_8',Cc=2,Dc=3,Ec=4,Fc='Single-script hosted mode not yet implemented. See issue ',Gc='http://code.google.com/p/google-web-toolkit/issues/detail?id=2079',Hc='E144F75B4E3ABB0A433072D72B32E4C8',Ic=':1',Jc=':10',Kc=':11',Lc=':2',Mc=':3',Nc=':4',Oc=':5',Pc=':6',Qc=':7',Rc=':8',Sc=':9',Tc=':',Uc='DOMContentLoaded',Vc=50;var j=Pb,k=Qb,l=Rb,m=Sb,n=Tb,o=Ub,p=Vb,q=Wb,r=Xb,s=Yb,t=Zb,u=$b,v=_b,w=ac,A=bc,B=cc,C=dc,D=ec,F=fc,G=gc,H=hc,I=ic,J=jc,K=kc,L=lc,M=mc,N=nc,O=oc,P=pc,Q=qc,R=rc,S=sc,T=tc,U=uc,V=vc,W=wc,X=xc,Y=yc,Z=zc,$=Ac,_=Bc,ab=Cc,bb=Dc,cb=Ec,db=Fc,eb=Gc,fb=Hc,gb=Ic,hb=Jc,ib=Kc,jb=Lc,kb=Mc,lb=Nc,mb=Oc,nb=Pc,ob=Qc,pb=Rc,qb=Sc,rb=Tc,sb=Uc,tb=Vc;var ub=window,vb=document,wb,xb,yb=j,zb={},Ab=[],Bb=[],Cb=[],Db=k,Eb,Fb;if(!ub.__gwt_stylesLoaded){ub.__gwt_stylesLoaded={}}if(!ub.__gwt_scriptsLoaded){ub.__gwt_scriptsLoaded={}}function Gb(){var b=false;try{var c=ub.location.search;return (c.indexOf(l)!=-1||(c.indexOf(m)!=-1||ub.external&&ub.external.gwtOnLoad))&&c.indexOf(n)==-1}catch(a){}Gb=function(){return b};return b}
+--><!--
+High quality data grid for showing large amounts of tabular data.
+
+Simple usage (static HTML data source):
+```html
+<vaadin-grid>
+  <table>
+    <colgroup>
+      <col name="firstName">
+      <col name="lastName">
+      <col name="email">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Value</th>
+        <th>Progress</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Jonathan</td>
+        <td>Doe</td>
+        <td>jonathan.doe@example.com</td>
+      </tr>
+      <tr>
+        <td>Jane</td>
+        <td>Smith</td>
+        <td>jane.smith@example.com</td>
+      </tr>
+    </tbody>
+  </table>
+</vaadin-grid>
+```
+
+### Styling
+
+The grid uses `--default-primary-color` from [paper-styles](https://github.com/PolymerElements/paper-styles) as a highlight color. You can customize the color by defining your own primary default color.
+
+```html
+<style is="custom-style">
+  vaadin-grid {
+    --default-primary-color: red;
+  }
+</style>
+```
+The following custom properties are available for styling:
+
+Custom property | Description | Default
+:----------------|:-------------|----------:
+`--vaadin-grid-row-height` | Data row height | `48px`
+`--vaadin-grid-header-row-height` | Header row height | `56px`
+`--vaadin-grid-footer-row-height` | Footer row height | `56px`
+
+See the [demo](demo/index.html) for use case examples.
+
+@element vaadin-grid
+@demo demo/index.html
+-->
+<script>function VaadinGridImport(){var Pb='',Qb=0,Rb='gwt.codesvr=',Sb='gwt.hosted=',Tb='gwt.hybrid',Ub='VaadinGridImport',Vb='meta',Wb='name',Xb='gwt:property',Yb='content',Zb='=',$b=1,_b='gwt:onPropertyErrorFn',ac='Bad handler "',bc='" for "gwt:onPropertyErrorFn"',cc='gwt:onLoadErrorFn',dc='" for "gwt:onLoadErrorFn"',ec='modernie',fc='MSIE',gc='Trident',hc='yes',ic='none',jc='observeCapability',kc='observe',lc='native',mc='js',nc='selectorCapability',oc='function',pc='user.agent',qc='webkit',rc='safari',sc='msie',tc=10,uc=11,vc='ie10',wc=9,xc='ie9',yc=8,zc='ie8',Ac='gecko',Bc='gecko1_8',Cc=2,Dc=3,Ec=4,Fc='Single-script hosted mode not yet implemented. See issue ',Gc='http://code.google.com/p/google-web-toolkit/issues/detail?id=2079',Hc='E144F75B4E3ABB0A433072D72B32E4C8',Ic=':1',Jc=':10',Kc=':11',Lc=':2',Mc=':3',Nc=':4',Oc=':5',Pc=':6',Qc=':7',Rc=':8',Sc=':9',Tc=':',Uc='DOMContentLoaded',Vc=50;var j=Pb,k=Qb,l=Rb,m=Sb,n=Tb,o=Ub,p=Vb,q=Wb,r=Xb,s=Yb,t=Zb,u=$b,v=_b,w=ac,A=bc,B=cc,C=dc,D=ec,F=fc,G=gc,H=hc,I=ic,J=jc,K=kc,L=lc,M=mc,N=nc,O=oc,P=pc,Q=qc,R=rc,S=sc,T=tc,U=uc,V=vc,W=wc,X=xc,Y=yc,Z=zc,$=Ac,_=Bc,ab=Cc,bb=Dc,cb=Ec,db=Fc,eb=Gc,fb=Hc,gb=Ic,hb=Jc,ib=Kc,jb=Lc,kb=Mc,lb=Nc,mb=Oc,nb=Pc,ob=Qc,pb=Rc,qb=Sc,rb=Tc,sb=Uc,tb=Vc;var ub=window,vb=document,wb,xb,yb=j,zb={},Ab=[],Bb=[],Cb=[],Db=k,Eb,Fb;if(!ub.__gwt_stylesLoaded){ub.__gwt_stylesLoaded={}}if(!ub.__gwt_scriptsLoaded){ub.__gwt_scriptsLoaded={}}function Gb(){var b=false;try{var c=ub.location.search;return (c.indexOf(l)!=-1||(c.indexOf(m)!=-1||ub.external&&ub.external.gwtOnLoad))&&c.indexOf(n)==-1}catch(a){}Gb=function(){return b};return b}
 function Hb(){if(wb&&xb){wb(Eb,o,yb,Db)}}
 function Ib(){var b=document.getElementsByTagName(p);for(var c=k,d=b.length;c<d;++c){var e=b[c],f=e.getAttribute(q),g;if(f){if(f==r){g=e.getAttribute(s);if(g){var h,i=g.indexOf(t);if(i>=k){f=g.substring(k,i);h=g.substring(i+u)}else{f=g;h=j}zb[f]=h}}else if(f==v){g=e.getAttribute(s);if(g){try{Fb=eval(g)}catch(a){alert(w+g+A)}}}else if(f==B){g=e.getAttribute(s);if(g){try{Eb=eval(g)}catch(a){alert(w+g+C)}}}}}}
 __gwt_isKnownPropertyValue=function(a,b){return b in Ab[a]};__gwt_getMetaProperty=function(a){var b=zb[a];return b==null?null:b};function Jb(a,b){var c=Cb;for(var d=k,e=a.length-u;d<e;++d){c=c[a[d]]||(c[a[d]]=[])}c[a[e]]=b}
@@ -769,74 +828,11 @@ function An(){return Ke(this.a)}function Bn(){return this}function At(){}functio
 function Us(){null.zf()}function cz(){Vy()}function bn(){return null}function fB(){pA(this.a)}function zi(){return this.f}function Sz(){return this.k}function uC(){return"td"}function Tz(){return!1}function yF(){mt();Ye(lE);Ye(Ey)}function AF(){this.a.q=this.b}function iG(){return-1}function xH(){return this.e}function vJ(){return DE(Je)}function hG(){return 0}function CJ(){this.e=-1}function tK(a){return this.a-a.a}function BK(){return 0==this._c()}function DI(){return this.b}
 function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){this.a.Rc()}function EI(){return this.d}function mL(){return this.a.length}function qL(){return S(),rL(),sL}function uL(){throw new Lt;}function Dy(){return null}function jL(){return this.b._c()}function zL(){throw new zK;}function fL(){throw new zK;}function vL(a){return this.b.Re(a)}function st(){throw new zK;}function wL(a){return this.a.bb(a)}function xL(){return this.a.db()}function Sl(){return this.c};window.gwtOnLoad=gwtOnLoad;if (VaadinGridImport) VaadinGridImport.onScriptLoad(gwtOnLoad);})();
 // vaadin.elements.grid.hash = 'a535bbd00ab264ac28d02fd8926ea7412084cf2d';
-</script>
-
-<style>
+</script><style>
   vaadin-grid > table {
     display: none;
   }
-</style>
-
-<!--
-High quality data grid for showing large amounts of tabular data.
-
-Simple usage (static HTML data source):
-```html
-<vaadin-grid>
-  <table>
-    <colgroup>
-      <col name="firstName">
-      <col name="lastName">
-      <col name="email">
-    </colgroup>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Value</th>
-        <th>Progress</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Jonathan</td>
-        <td>Doe</td>
-        <td>jonathan.doe@example.com</td>
-      </tr>
-      <tr>
-        <td>Jane</td>
-        <td>Smith</td>
-        <td>jane.smith@example.com</td>
-      </tr>
-    </tbody>
-  </table>
-</vaadin-grid>
-```
-
-### Styling
-
-The grid uses `--default-primary-color` from [paper-styles](https://github.com/PolymerElements/paper-styles) as a highlight color. You can customize the color by defining your own primary default color.
-
-```html
-<style is="custom-style">
-  vaadin-grid {
-    --default-primary-color: red;
-  }
-</style>
-```
-The following custom properties are available for styling:
-
-Custom property | Description | Default
-:----------------|:-------------|----------:
-`--vaadin-grid-row-height` | Data row height | `48px`
-`--vaadin-grid-header-row-height` | Header row height | `56px`
-`--vaadin-grid-footer-row-height` | Footer row height | `56px`
-
-See the [demo](demo/index.html) for use case examples.
-
-@element vaadin-grid
-@demo demo/index.html
--->
-<dom-module id="vaadin-grid" assetpath="../../bower_components/vaadin-grid/">
+</style><dom-module id="vaadin-grid" assetpath="../../bower_components/vaadin-grid/">
   <style>
  /* Host styles */
   :host {

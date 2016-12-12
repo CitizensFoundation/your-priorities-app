@@ -16,7 +16,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       pageX: 0,
       pageY: 0
     };
-    // Used to avoid computing event.path and filter scrollable nodes (better perf).
+    /**
+     * Used to avoid computing event.path and filter scrollable nodes (better perf).
+     * @type {?EventTarget}
+     */
     var ROOT_TARGET = null;
     var SCROLLABLE_NODES = [];
 
@@ -253,11 +256,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var lockingIndex = nodes.indexOf(this.currentLockingElement);
         // Loop from root target to locking element (included).
         for (var i = 0; i <= lockingIndex; i++) {
-          var node = nodes[i];
-          // Skip document fragments.
-          if (node.nodeType === 11) {
+          // Skip non-Element nodes.
+          if (nodes[i].nodeType !== Node.ELEMENT_NODE) {
             continue;
           }
+          var node = /** @type {!Element} */ (nodes[i]);
           // Check inline style before checking computed style.
           var style = node.style;
           if (style.overflow !== 'scroll' && style.overflow !== 'auto') {
