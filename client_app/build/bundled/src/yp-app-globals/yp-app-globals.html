@@ -1,15 +1,15 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.104">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.105">
 
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.2.104">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.2.105">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.104">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.104">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.2.104">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.105">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.105">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.2.105">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.104">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.2.105">
 
-<link rel="import" href="../yp-session/yp-session.html?v=6.2.104">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.104">
+<link rel="import" href="../yp-session/yp-session.html?v=6.2.105">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.2.105">
 
 </head><body><dom-module id="yp-app-globals">
 
@@ -176,7 +176,7 @@
           this.groupConfigOverrides[groupId]=configOverrideHash;
         },
 
-        overrideGroupConfigIfNeeded(groupId, configuration) {
+        overrideGroupConfigIfNeeded: function(groupId, configuration) {
           var override = this.groupConfigOverrides[groupId];
           if (!configuration || !override) {
             return configuration;
