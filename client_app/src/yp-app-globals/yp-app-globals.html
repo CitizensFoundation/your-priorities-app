@@ -176,7 +176,7 @@
           this.groupConfigOverrides[groupId]=configOverrideHash;
         },
 
-        overrideGroupConfigIfNeeded(groupId, configuration) {
+        overrideGroupConfigIfNeeded: function(groupId, configuration) {
           var override = this.groupConfigOverrides[groupId];
           if (!configuration || !override) {
             return configuration;
