@@ -148,6 +148,8 @@
       }
     </style>
 
+    <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
+
     <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
 
     <app-drawer-layout drawer-width="360px" responsive-width="16000px">
@@ -226,7 +228,6 @@
 
     <yp-dialog-container id="dialogContainer"></yp-dialog-container>
     <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
-    <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
   </template>
 
   <script>
