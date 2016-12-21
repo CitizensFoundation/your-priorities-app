@@ -1,5 +1,5 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.105">
-<link rel="import" href="../../bower_components/lodash-element/lodash.js.html?v=6.2.105">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.106">
+<link rel="import" href="../../bower_components/lodash-element/lodash.js.html?v=6.2.106">
 
 <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
 <script src="../../bower_components/linkifyjs/linkify.js"></script>
@@ -53,6 +53,7 @@
       if (detail.type == 'language-loaded') {
         this.set('loadedLanguage', detail.language);
         this.set('language', detail.language);
+        window.locale = detail.language;
       }
     },
 

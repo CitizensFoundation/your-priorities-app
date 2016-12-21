@@ -1,12 +1,12 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.105">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.105">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.105">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.106">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.2.106">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.2.106">
 
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.105">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.105">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.105">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.105">
-<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.2.105">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.2.106">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.2.106">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.2.106">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.2.106">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.2.106">
 
 </head><body><dom-module id="yp-page-dialog">
   <template>
@@ -25,7 +25,7 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <paper-dialog id="dialog">
-      <h2>[[page.title]]</h2>
+      <h2>[[pageTitle]]</h2>
       <paper-dialog-scrollable>
         <div id="content"></div>
       </paper-dialog-scrollable>
@@ -48,7 +48,19 @@
         title: {
           type: String
         },
-        page: Object
+        page: Object,
+        pageTitle: {
+          type: String,
+          computed: '_pageTitle(page, language)'
+        }
+      },
+
+      _pageTitle: function (page, language) {
+        if (page) {
+          return page.title;
+        } else {
+          return "";
+        }
       },
 
       open: function (title, content) {
