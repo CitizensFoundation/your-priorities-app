@@ -53,6 +53,7 @@
       if (detail.type == 'language-loaded') {
         this.set('loadedLanguage', detail.language);
         this.set('language', detail.language);
+        window.locale = detail.language;
       }
     },
 

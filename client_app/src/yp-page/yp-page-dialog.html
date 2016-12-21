@@ -25,7 +25,7 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <paper-dialog id="dialog">
-      <h2>[[page.title]]</h2>
+      <h2>[[pageTitle]]</h2>
       <paper-dialog-scrollable>
         <div id="content"></div>
       </paper-dialog-scrollable>
@@ -48,7 +48,19 @@
         title: {
           type: String
         },
-        page: Object
+        page: Object,
+        pageTitle: {
+          type: String,
+          computed: '_pageTitle(page, language)'
+        }
+      },
+
+      _pageTitle: function (page, language) {
+        if (page) {
+          return page.title;
+        } else {
+          return "";
+        }
       },
 
       open: function (title, content) {
