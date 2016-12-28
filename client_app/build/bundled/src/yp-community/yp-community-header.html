@@ -26,7 +26,7 @@
 <link rel="import" href="yp-community-behaviors.html?v=6.3.4">
 <link rel="import" href="yp-community-stats.html?v=6.3.4">
 
-</head><body><dom-module id="yp-community-large-card">
+</head><body><dom-module id="yp-community-header">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -39,20 +39,20 @@
 
       .description {
         line-height: var(--description-line-height, 1.3);
+        background-color: rgba(250,250,250,0.0);
+        color: #111;
+        font-size: 18px;
+        text-align: center;
+        max-width: 750px;
+        padding-left: 16px;
+        padding-right: 16px;
       }
 
       .stats {
-        position: absolute;
-        bottom: 0;
-        right: 8px;
+        background-color: rgba(250,250,250,0.0);
+        --main-stats-color-on-white: #000;
       }
 
-      .community-name {
-        padding: 0;
-        padding-bottom: 4px;
-        padding-right: 1px;
-        margin: 0;
-      }
 
       iron-image {
         width: 432px;
@@ -69,19 +69,13 @@
       }
 
       .image {
-        width: 432px;
-        height: 243px;
-      }
-
-      .description-and-stats {
-        width: 100%;
+        width: 100px;
+        height: 100px;
+        margin-top: 8px;
       }
 
       .edit {
         color: #FFF;
-        position: absolute;
-        top: 0px;
-        left: 390px;
         padding-right: 0;
         margin-right: 0;
       }
@@ -90,32 +84,26 @@
         @apply(--layout-horizontal);
       }
 
-      .description-and-stats {
-        padding-bottom: 32px;
-      }
-
-
-      .description {
-        padding: 0;
-        margin: 0;
-      }
-
-      .communityDescription {
-        padding-left: 16px;
-        padding-right: 16px;
-        padding-top: 16px;
+      .textBox {
+        margin-right: 32px;
       }
 
       .community-name {
-        background-color: var(--primary-color-800, #000);
-        color: #fafafa;
+        background-color: rgba(250,250,250,0.0);
+        color: #222;
+        font-weight: bold;
+        font-size: 58px;
+        padding-top: 8px;
         padding-left: 16px;
-        padding-top: 16px;
-        padding-bottom: 16px;
+        padding-right: 16px;
       }
 
-      .textBox {
-        margin-right: 32px;
+      .nameBorder {
+        border-bottom: 2px solid;
+        margin-bottom: 8px;
+        margin-top: 8px;
+        margin-left: 180px;
+        margin-right: 180px;
       }
 
       @media (max-width: 945px) {
@@ -133,25 +121,17 @@
         }
 
         .edit {
-          left: 265px;
-        }
-
-        iron-image {
-          width: 306px;
-          height: 172px !important;
-        }
-
-        .image {
-          width: 306px;
-          height: 172px !important;
-        }
-
-        .imageCard {
-          height: 172px !important;
         }
 
         .community-name {
-          font-size: 20px;
+          font-size: 28px;
+          text-align: center;
+          padding-top: 4px;
+          padding-bottom: 4px;
+        }
+
+        .description {
+          font-size: 17px;
         }
 
         .communityDescription {
@@ -166,44 +146,48 @@
           margin-right: 0;
         }
       }
+
+      .rounded-even-more {
+        -webkit-border-radius: 90px;
+        -moz-border-radius: 90px;
+        border-radius: 90px;
+        display: block;
+        vertical-align: top;
+        align: center;
+        -webkit-transform-style: preserve-3d;
+      }
+
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <template is="dom-if" if="[[community]]">
-      <div class="layout horizontal wrap">
-        <paper-material id="card" elevation="5" animated="" class="large-card top-card textBox">
-          <div class="layout vertical">
-            <div class="layout horizontal wrap">
-              <div class="layout vertical description-and-stats">
-                <div class="description">
-                  <h2 class="community-name">[[communityNameFull]]</h2>
-                  <div hidden="" class="communityAccess">[[_communityAccessText(community.access)]]</div>
-
-                  <div id="description" class="communityDescription">
-                  </div>
-
-                  <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
-                </div>
-              </div>
-            </div>
-            <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasCommunityAccess]]">
-              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-                <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
-                <paper-item id="usersMenuItem">[[t('community.users')]]</paper-item>
-                <paper-item id="adminsMenuItem">[[t('community.admins')]]</paper-item>
-                <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
-                <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-                <paper-item id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
-              </paper-menu>
-            </paper-menu-button>
+        <div class="layout vertical center-center">
+          <iron-image class="image rounded-even-more" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
+          <div class="community-name rounded-even-more">
+            [[communityNameFull]]
           </div>
-        </paper-material>
-        <paper-material id="cardImage" elevation="2" animated="" class="large-card imageCard">
-          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
-        </paper-material>
-      </div>
+          <div class="layout horizontal center-center">
+            <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+          </div>
+          <div class="description layout horizontal center-center rounded-even-more ">
+            <div id="description" class="communityDescription">
+            </div>
+            <div>
+              <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasCommunityAccess]]">
+                <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                  <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
+                  <paper-item id="usersMenuItem">[[t('community.users')]]</paper-item>
+                  <paper-item id="adminsMenuItem">[[t('community.admins')]]</paper-item>
+                  <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
+                  <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+                  <paper-item id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
+                </paper-menu>
+              </paper-menu-button>
+            </div>
+          </div>
+        </div>
     </template>
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
@@ -211,7 +195,7 @@
 
   <script>
     Polymer({
-      is: 'yp-community-large-card',
+      is: 'yp-community-header',
 
       behaviors: [
         Polymer.appHelpers,

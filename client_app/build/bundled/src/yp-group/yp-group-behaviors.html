@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.3">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.4">
 
 <script>
   /**
@@ -9,7 +9,8 @@
     properties: {
       group: {
         type: Object,
-        notify: true
+        notify: true,
+        observer: '_groupChanged'
       },
 
       elevation: {
@@ -34,7 +35,46 @@
       groupObjectives: {
         type: String,
         computed: '_groupObjectives(group)'
+      },
+
+      noImage: {
+        type: Boolean,
+        value: true
+      },
+
+      featured: {
+        type: Boolean,
+        value: false
+      },
+
+      archived: {
+        type: Boolean,
+        value: false
       }
+    },
+
+    _groupChanged: function (group) {
+      if (group) {
+        if (group.GroupLogoImages && group.GroupLogoImages.length>0)
+        {
+          this.set('noImage', false);
+        } else {
+          this.set('noImage', true);
+        }
+
+        if (group.status=='featured') {
+          this.set('featured', true);
+        } else if (group.status=='archived') {
+          this.set('archived', true);
+        } else {
+          this.set('featured', false);
+          this.set('archived', false);
+        }
+      } else {
+        this.set('featured', false);
+        this.set('archived', false);
+      }
+
     },
 
     _goToGroup: function (e) {

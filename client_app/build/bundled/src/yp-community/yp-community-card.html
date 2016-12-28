@@ -1,21 +1,21 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.3">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.4">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.3">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.4">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.3">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.3">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.4">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.4">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.3">
-<link rel="import" href="yp-community-stats.html?v=6.3.3">
-<link rel="import" href="yp-community-behaviors.html?v=6.3.3">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.3">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.4">
+<link rel="import" href="yp-community-stats.html?v=6.3.4">
+<link rel="import" href="yp-community-behaviors.html?v=6.3.4">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.4">
 
-<link rel="import" href="../yp-membership-button/yp-membership-button.html?v=6.3.3">
+<link rel="import" href="../yp-membership-button/yp-membership-button.html?v=6.3.4">
 
 </head><body><dom-module id="yp-community-card">
 
@@ -102,8 +102,8 @@
       }
 
       iron-image[archived] {
-        opacity: 0.7;
-        filter: alpha(opacity=70);
+        opacity: 0.85;
+        filter: alpha(opacity=85);
       }
 
       yp-membership-button {
@@ -196,15 +196,10 @@
         </div>
         <div class="informationText">
           <div class="community-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToCommunity">
-            <span hidden$="[[!archived]]">[[t('archived')]] -</span>
             [[communityName]]
+            <span hidden$="[[!archived]]">- [[t('archived')]]</span>
           </div>
-          <template is="dom-if" if="[[featured]]">
-            <div class="description" featured$="[[featured]]">[[communityDescriptionFull]]</div>
-          </template>
-          <template is="dom-if" if="[[!featured]]">
-            <div class="description">[[communityDescription]]</div>
-          </template>
+          <div id="description" class="description" featured$="[[featured]]"></div>
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
         <yp-membership-button archived$="[[archived]]" featured$="[[featured]]" community="[[community]]"></yp-membership-button>

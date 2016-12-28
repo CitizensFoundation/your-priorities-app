@@ -1,30 +1,30 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.3">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.4">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.3">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.4">
 
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.3">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.4">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.3">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.3">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.3">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.3">
-<link href="../../bower_components/paper-search/paper-search.html?v=6.3.3" rel="import">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.4">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.4">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.4">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.4">
+<link href="../../bower_components/paper-search/paper-search.html?v=6.3.4" rel="import">
 
-<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.3">
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.4">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.3">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.3">
-<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.3">
-<link rel="import" href="../ac-activities/ac-activities.html?v=6.3.3">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.4">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.4">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.4">
+<link rel="import" href="../ac-activities/ac-activities.html?v=6.3.4">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.3">
-<link rel="import" href="../yp-post/yp-post-card.html?v=6.3.3">
-<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.3.3">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.4">
+<link rel="import" href="../yp-post/yp-post-card.html?v=6.3.4">
+<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.3.4">
 
-<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.3.3">
+<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.3.4">
 
 </head><body><dom-module id="yp-post-list">
   <template>
@@ -82,8 +82,6 @@
       }
 
       #ironList {
-        padding-top: 500px;
-        margin-top: -500px;
       }
 
       .searchButton {
@@ -164,13 +162,15 @@
         </div>
       </template>
     </div>
-    <iron-list id="ironList" items="[[posts]]" as="post" scroll-target="document" grid="">
-      <template>
-        <div wide-padding$="[[wide]]" class="card layout vertical center-center">
-          <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
-        </div>
-      </template>
-    </iron-list>
+    <div class="layout horizontal center-center">
+      <iron-list id="ironList" override-padding-top="550" items="[[posts]]" as="post" scroll-target="document" grid="">
+        <template>
+          <div wide-padding$="[[wide]]" class="card layout vertical center-center">
+            <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+          </div>
+        </template>
+      </iron-list>
+    </div>
 
     <iron-scroll-threshold id="scrollTheshold" lower-threshold="150" on-lower-threshold="_loadMoreData" scroll-target="document">
     </iron-scroll-threshold>

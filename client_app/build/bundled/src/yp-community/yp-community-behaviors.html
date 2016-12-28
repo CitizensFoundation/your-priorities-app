@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.3">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.4">
 
 <script>
   /**
@@ -86,11 +86,15 @@
         this.set('archived', false);
       }
 
-      if (false && community && community.description) {
+      if (community && community.description) {
         this.async(function () {
           var description = this.$$("#description");
           if (description) {
-            description.innerHTML = this.addLinksAndEmjois(community.description);
+            if (community.description.length>150) {
+              description.innerHTML = this.truncate(this.trim(community.description), 150);
+            } else {
+              description.innerHTML = this.addLinksAndEmjois(community.description);
+            }
           } else {
             console.error("Can't find community description element");
           }

@@ -1,12 +1,12 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.3">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.4">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.3">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.4">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.3">
-<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.3">
-<link rel="import" href="yp-community-card.html?v=6.3.3">
-<link rel="import" href="yp-community-card-add.html?v=6.3.3">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.4">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.4">
+<link rel="import" href="yp-community-card.html?v=6.3.4">
+<link rel="import" href="yp-community-card-add.html?v=6.3.4">
 
 </head><body><dom-module id="yp-community-grid">
 
@@ -38,31 +38,17 @@
       }
 
       #ironList {
-        padding-top: 350px;
-        margin-top: -350px;
       }
 
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <iron-list id="ironList" items="[[activeCommunities]]" as="community" scroll-target="document" grid="">
+    <iron-list id="ironList" override-padding-top="350" items="[[activeCommunities]]" as="community" scroll-target="document" grid="">
       <template>
         <yp-community-card wide$="[[wide]]" class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
       </template>
     </iron-list>
-    <div class="layout horizontal center-center" hidden="">
-      <div class="archivedBorder">
-        <h1 class="archivedText layout horizontal center-center" hidden$="[[!archivedCommunities]]">
-          [[t('archived')]]
-        </h1>
-      </div>
-    </div>
-    <div class="layout horizontal center-center wrap" hidden="">
-      <template is="dom-repeat" class="list" items="[[archivedCommunities]]" as="community">
-        <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-      </template>
-    </div>
   </template>
 
   <script>

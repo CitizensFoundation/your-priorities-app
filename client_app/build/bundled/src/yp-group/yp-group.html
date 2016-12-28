@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.3"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.4"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -1515,8 +1515,6 @@ is shown even without no results (check the demo for an example).
       }
 
       #ironList {
-        padding-top: 500px;
-        margin-top: -500px;
       }
 
       .searchButton {
@@ -1597,13 +1595,15 @@ is shown even without no results (check the demo for an example).
         </div>
       </template>
     </div>
-    <iron-list id="ironList" items="[[posts]]" as="post" scroll-target="document" grid="">
-      <template>
-        <div wide-padding$="[[wide]]" class="card layout vertical center-center">
-          <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
-        </div>
-      </template>
-    </iron-list>
+    <div class="layout horizontal center-center">
+      <iron-list id="ironList" override-padding-top="550" items="[[posts]]" as="post" scroll-target="document" grid="">
+        <template>
+          <div wide-padding$="[[wide]]" class="card layout vertical center-center">
+            <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+          </div>
+        </template>
+      </iron-list>
+    </div>
 
     <iron-scroll-threshold id="scrollTheshold" lower-threshold="150" on-lower-threshold="_loadMoreData" scroll-target="document">
     </iron-scroll-threshold>

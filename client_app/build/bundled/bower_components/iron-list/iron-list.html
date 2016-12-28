@@ -6,10 +6,10 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.3">
-<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html?v=6.3.3">
-<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html?v=6.3.3">
-<link rel="import" href="../iron-scroll-target-behavior/iron-scroll-target-behavior.html?v=6.3.3">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.4">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html?v=6.3.4">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html?v=6.3.4">
+<link rel="import" href="../iron-scroll-target-behavior/iron-scroll-target-behavior.html?v=6.3.4">
 
 <!--
 
@@ -383,6 +383,11 @@ will only render 20.
       multiSelection: {
         type: Boolean,
         value: false
+      },
+
+      overridePaddingTop: {
+        type: Number,
+        value: null
       }
     },
 
@@ -772,6 +777,13 @@ will only render 20.
       var styles = window.getComputedStyle(this);
       this._scrollerPaddingTop =
           this.scrollTarget === this ? 0 : parseInt(styles['padding-top'], 10);
+
+      if (this.overridePaddingTop) {
+        this._scrollerPaddingTop = this.overridePaddingTop;
+      }
+
+      console.warn(this._scrollerPaddingTop);
+
       this._isRTL = Boolean(styles.direction === 'rtl');
       this._viewportWidth = this.$.items.offsetWidth;
       this._viewportHeight = this._scrollTargetHeight;

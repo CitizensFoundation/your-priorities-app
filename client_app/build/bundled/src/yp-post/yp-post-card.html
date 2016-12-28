@@ -1,27 +1,27 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.3">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.4">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.3">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.3">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.4">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.4">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.3">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.3">
-<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.3">
-<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.3">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.4">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.4">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.4">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.4">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.3">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.3">
-<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.3">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.3">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.3">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.4">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.4">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.4">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.4">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.4">
 
-<link rel="import" href="yp-post-actions.html?v=6.3.3">
-<link rel="import" href="yp-post-cover-media.html?v=6.3.3">
-<link rel="import" href="yp-post-behaviors.html?v=6.3.3">
+<link rel="import" href="yp-post-actions.html?v=6.3.4">
+<link rel="import" href="yp-post-cover-media.html?v=6.3.4">
+<link rel="import" href="yp-post-behaviors.html?v=6.3.4">
 
 </head><body><dom-module id="yp-post-card">
 
@@ -68,8 +68,8 @@
       }
 
       .postCard {
-        height: 450px !important;
-        width: 416px !important;
+        height: 450px;
+        width: 416px;
       }
 
       yp-post-cover-media {
@@ -95,14 +95,24 @@
 
       @media (max-width: 420px) {
         :host {
-          width: 304px;
+          width: 304px !important;
         }
 
         .postCard {
           margin-left: 0;
+          margin-right: 0;
           padding-left: 0;
           padding-right: 0;
           width: 304px;
+        }
+
+        .card {
+          margin-left: 0;
+          margin-right: 0;
+          padding-left: 0;
+          padding-right: 0;
+          width: 304px;
+          height: 400px;
         }
 
         yp-post-cover-media {
@@ -118,7 +128,7 @@
     <paper-material class="card postCard layout vertical" elevation="[[elevation]]" animated="">
       <div class="layout vertical">
         <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
-        <h1 class="post-name" on-tap="goToPostIfNotHeader">[[postName]]</h1>
+        <h1 class="post-name" id="postName" on-tap="goToPostIfNotHeader">[[postName]]</h1>
         <div class="description layout horizontal center-center">
           [[shortDescription]]
         </div>
@@ -200,6 +210,26 @@
               }
             } else {
               console.error("Can't find description element");
+            }
+          });
+        }
+
+        if (post) {
+          this.async(function () {
+            var postName = this.$$("#postName");
+            if (postName) {
+              console.log("PostName length = "+post.name.length);
+              if (post.name.length>200) {
+                postName.style.fontSize = "15px";
+              } else if (post.name.length>100) {
+                postName.style.fontSize = "17px";
+              } else if (post.name.length>40) {
+                postName.style.fontSize="18px";
+              } else if (post.name.length>20) {
+                postName.style.fontSize="24px";
+              } else {
+                postName.style.fontSize="28px";
+              }
             }
           });
         }
