@@ -219,7 +219,6 @@
           this.async(function () {
             var postName = this.$$("#postName");
             if (postName) {
-              console.log("PostName length = "+post.name.length);
               if (post.name.length>200) {
                 postName.style.fontSize = "15px";
               } else if (post.name.length>100) {
