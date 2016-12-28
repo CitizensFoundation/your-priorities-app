@@ -24,14 +24,12 @@
       }
 
       #ironList {
-        padding-top: 358px;
-        margin-top: -350px;
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <iron-list id="ironList" items="[[activeGroups]]" as="group" scroll-target="document" grid>
+    <iron-list id="ironList" override-padding-top="350" items="[[activeGroups]]" as="group" scroll-target="document" grid>
       <template>
         <div class="groupCard" wide-padding$="[[wide]]">
           <yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>

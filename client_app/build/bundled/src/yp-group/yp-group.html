@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.2"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.3"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -1497,45 +1497,16 @@ is shown even without no results (check the demo for an example).
       }
 
       #scrollableRegion {
-        height: 100%;
-        @apply(--layout-flex);
       }
 
       iron-list {
       }
 
-      .searchContainer {
-        width: 1024px;
-      }
 
       yp-ajax {
         padding-top: 48px;
       }
 
-
-      @media (max-width: 1024px) {
-        .searchContainer {
-          width: 960px;
-        }
-      }
-
-      @media (max-width: 900px) {
-        .searchContainer {
-          width: 600px;
-        }
-      }
-
-      @media (max-width: 640px) {
-        .searchContainer {
-          width: 420px;
-        }
-      }
-
-      @media (max-width: 420px) {
-        .searchContainer {
-          width: 360px;
-        }
-      }
 
       yp-posts-filter {
         margin-bottom: 8px;
@@ -1544,7 +1515,8 @@ is shown even without no results (check the demo for an example).
       }
 
       #ironList {
-        margin-top: 16px;
+        padding-top: 500px;
+        margin-top: -500px;
       }
 
       .searchButton {
@@ -1589,9 +1561,21 @@ is shown even without no results (check the demo for an example).
       .noIdeasText {
         font-weight: bold;
       }
+
+      .card {
+        padding: 0;
+        padding-top: 8px;
+      }
+
+      .card[wide-padding] {
+        padding: 16px !important;
+      }
+
+
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
     <div class="layout vertical center-center">
 
@@ -1613,23 +1597,19 @@ is shown even without no results (check the demo for an example).
         </div>
       </template>
     </div>
-
-    <div id="scrollableRegion">
-      <template is="dom-if" if="[[posts]]" restamp="">
-        <iron-list id="ironList" items="[[posts]]" as="post" scroll-target="document">
-          <template>
-            <div class="layout vertical center-center">
-              <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
-            </div>
-          </template>
-        </iron-list>
+    <iron-list id="ironList" items="[[posts]]" as="post" scroll-target="document" grid="">
+      <template>
+        <div wide-padding$="[[wide]]" class="card layout vertical center-center">
+          <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+        </div>
       </template>
-      <div class="layout horizontal center-center">
-        <yp-ajax id="ajax" large-spinner="" on-response="_postsResponse"></yp-ajax>
-        <template is="dom-if" if="[[moreToLoad]]" restamp="">
-          <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
-        </template>
-      </div>
+    </iron-list>
+
+    <iron-scroll-threshold id="scrollTheshold" lower-threshold="150" on-lower-threshold="_loadMoreData" scroll-target="document">
+    </iron-scroll-threshold>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax id="ajax" large-spinner="" on-response="_postsResponse"></yp-ajax>
     </div>
   </template>
 
@@ -1723,6 +1703,16 @@ is shown even without no results (check the demo for an example).
           type: Boolean,
           value: false
 
+        },
+
+        wideListOffset: {
+          type: String,
+          value: "500px"
+        },
+
+        listOffset: {
+          type: String,
+          value: "500px"
         }
       },
 
@@ -1744,12 +1734,15 @@ is shown even without no results (check the demo for an example).
       },
 
       _searchingForChanged: function (newValue, oldValue) {
+        this.set('moreToLoad', true);
       },
 
       _filterChanged: function (newValue, oldValue) {
+        this.set('moreToLoad', true);
       },
 
       _categoryIdChanged: function (newValue, oldValue) {
+        this.set('moreToLoad', true);
       },
 
       ready: function () {
@@ -1759,6 +1752,7 @@ is shown even without no results (check the demo for an example).
       _groupIdChanged: function (newValue, oldValue) {
         this.set("posts", null);
         this.set('noPosts', false);
+        this.set('moreToLoad', true);
         if (newValue) {
           this._loadMoreData();
         }
@@ -1770,33 +1764,36 @@ is shown even without no results (check the demo for an example).
       },
 
       _loadMoreData: function () {
-        this.set('moreToLoad', false);
-        this.set('noPosts', false);
-        var objectId, objectType;
+        console.log("_loadMoreData");
+        if (this.moreToLoad) {
+          this.set('moreToLoad', false);
+          this.set('noPosts', false);
+          var objectId, objectType;
 
-        if (this.userId) {
-          objectId = this.userId + '/posts';
-          objectType = 'users';
-        } else {
-          objectId = this.groupId;
-          objectType = 'groups';
-        }
-
-        if (!this.filter)
-          this.set('filter','newest');
-        if (this.searchingFor) {
-          this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
-        } else {
-          this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
-          if (this.categoryId) {
-            this.$$('#ajax').url += '/' + this.categoryId;
+          if (this.userId) {
+            objectId = this.userId + '/posts';
+            objectType = 'users';
           } else {
-            this.$$('#ajax').url += '/null';
+            objectId = this.groupId;
+            objectType = 'groups';
           }
-          this.$$('#ajax').url += '/'+this.statusFilter;
+
+          if (!this.filter)
+            this.set('filter','newest');
+          if (this.searchingFor) {
+            this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
+          } else {
+            this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
+            if (this.categoryId) {
+              this.$$('#ajax').url += '/' + this.categoryId;
+            } else {
+              this.$$('#ajax').url += '/null';
+            }
+            this.$$('#ajax').url += '/'+this.statusFilter;
+          }
+          this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
+          this.$$('#ajax').generateRequest();
         }
-        this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
-        this.$$('#ajax').generateRequest();
       },
 
       _postsResponse: function (event, detail, sender) {
@@ -1835,6 +1832,7 @@ is shown even without no results (check the demo for an example).
         });
 
         if (posts.length>0 && posts.length!=this.postsCount) {
+          this.$$("#scrollTheshold").clearTriggers();
           this.setMoreToLoad();
         }
 

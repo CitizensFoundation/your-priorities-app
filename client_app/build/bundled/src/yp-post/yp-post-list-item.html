@@ -23,7 +23,7 @@
 <link rel="import" href="yp-post-cover-media.html?v=6.3.3">
 <link rel="import" href="yp-post-behaviors.html?v=6.3.3">
 
-</head><body><dom-module id="yp-post-header">
+</head><body><dom-module id="yp-post-list-item">
 
   <template>
 
@@ -50,12 +50,10 @@
       }
 
       .card-actions {
-      }
-
-      yp-post-actions {
         position: absolute;
-        right: 8px;
-        bottom: 0px;
+        bottom: 0;
+        right: 42px;
+        width: 420px;
       }
 
       .edit {
@@ -208,7 +206,7 @@
                   <div id="description" class="description"></div>
                 </div>
                 <div class="card-actions">
-                  <yp-post-actions floating="" header-mode="[[headerMode]]" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+                  <yp-post-actions header-mode="[[headerMode]]" elevation="[[elevation]]" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
                 </div>
               </div>
               <template is="dom-if" if="[[headerMode]]">
@@ -239,7 +237,7 @@
 
   <script>
     Polymer({
-      is: 'yp-post-header',
+      is: 'yp-post-list-item',
 
       behaviors: [
         Polymer.appHelpers,

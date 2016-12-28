@@ -82,8 +82,6 @@
       }
 
       #ironList {
-        padding-top: 500px;
-        margin-top: -500px;
       }
 
       .searchButton {
@@ -166,7 +164,7 @@
         </div>
       </template>
     </div>
-    <iron-list id="ironList" items="[[posts]]" as="post" scroll-target="document" grid>
+    <iron-list id="ironList" override-padding-top="550" items="[[posts]]" as="post" scroll-target="document" grid>
       <template>
         <div wide-padding$="[[wide]]" class="card layout vertical center-center">
           <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>

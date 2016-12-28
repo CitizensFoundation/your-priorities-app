@@ -65,6 +65,15 @@
         margin: 0;
       }
 
+      .group-name[archived] {
+        background-color: #aaa;
+      }
+
+      iron-image[archived] {
+        opacity: 0.85;
+        filter: alpha(opacity=85);  }
+
+
       .post-image {
       }
 
@@ -76,6 +85,7 @@
         width: 416px;
         height: 234px;
       }
+
 
       yp-group-stats {
         color: var(--primary-color-more-darker, #424242);
@@ -101,7 +111,12 @@
       }
 
       .group-name[featured] {
-        font-size: 42px;
+        font-size: 25px;
+        background-color: var(--accent-color);
+      }
+
+      yp-membership-button[archived] {
+        display: none;
       }
 
       yp-membership-button {
@@ -148,16 +163,22 @@
     <template is="dom-if" if="[[group]]">
       <paper-card class="groupCard" animated elevation="[[elevation]]" class="groupCard">
         <div class="card-content">
-          <div class="layout">
-            <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
-          </div>
+          <template is="dom-if" if="[[noImage]]">
+            <iron-image header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+          </template>
+          <template is="dom-if" if="[[!noImage]]">
+            <iron-image archived$="[[archived]]" class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
+          </template>
           <div class="description">
-            <h2 class="group-name" on-tap="_goToGroup">[[groupName]]</h2>
+            <h2 class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
+              [[groupName]]
+              <span hidden$="[[!archived]]">- [[t('archived')]]</span>
+            </h2>
             <div class="objectives">[[groupObjectives]]</div>
           </div>
         </div>
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-        <yp-membership-button group="[[group]]"></yp-membership-button>
+        <yp-membership-button archived$="[[archived]]" group="[[group]]"></yp-membership-button>
       </paper-card>
     </template>
   </template>

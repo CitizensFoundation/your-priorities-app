@@ -1,24 +1,24 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.2">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.3">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.2">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.3">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.2">
-<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.2">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.3">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.3">
 
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.2">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.2">
-<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html?v=6.3.2">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.2">
-<link rel="import" href="../../bower_components/iron-icons/notification-icons.html?v=6.3.2">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.2">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.3">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.3">
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html?v=6.3.3">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.3">
+<link rel="import" href="../../bower_components/iron-icons/notification-icons.html?v=6.3.3">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.3">
 
-<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html?v=6.3.2">
+<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html?v=6.3.3">
 
-<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-facebook.html?v=6.3.2">
-<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-twitter.html?v=6.3.2">
-<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-google.html?v=6.3.2">
+<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-facebook.html?v=6.3.3">
+<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-twitter.html?v=6.3.3">
+<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-google.html?v=6.3.3">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.2">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.3">
 
 </head><body><dom-module id="yp-post-actions">
 
@@ -32,11 +32,7 @@
       .action-bar {
         @apply(--layout-horizontal);
         position: absolute;
-        bottom: -36px;
-        right: 0;
-        padding-right: 28px;
         background-color: #FFF;
-        margin-bottom: 16px;
       }
 
       .action-bar[floating] {
@@ -203,19 +199,19 @@
     <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated="" class="action-bar layout horizontal">
       <div id="actionUp" class="action-up">
         <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.up_vote')]]" icon$="[[endorseModeIcon(endorsementButtons,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
-        <div class="action-text up-text">{{formatNumber(post.counter_endorsements_up)}}</div>
+        <div class="action-text up-text">[[formattedUpCount]]</div>
       </div>
 
       <div class="action-debate" hidden$="[[_hideDebate(small,forceSmall)]]">
         <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="communication:chat-bubble-outline" class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
-        <div class="action-text debate-text">{{formatNumber(post.counter_points)}}</div>
+        <div class="action-text debate-text">[[formattedPointCount]]</div>
       </div>
 
       <div class="" hidden$="[[!_hideDebate(small,forceSmall)]]"></div>
 
       <div id="actionDown" class="action-down">
         <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.down_vote')]]" icon$="[[endorseModeIcon(endorsementButtons,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
-        <div class="action-text down-text">{{formatNumber(post.counter_endorsements_down)}}</div>
+        <div class="action-text down-text">[[formattedDownCount]]</div>
       </div>
       <div class="share">
         <paper-icon-button title$="[[t('post.shareInfo')]]" icon="social:share" on-tap="_toggleShare" class="shareIcon" id="shareButton"></paper-icon-button>
@@ -223,9 +219,9 @@
       <template is="dom-if" if="[[showShareButtons]]">
         <div class="layout horizontal shareButtonContainer">
           <paper-material elevation="5" class="shareShare">
-            <paper-share-facebook link$="[[_postUrl(post)]]" class="shareButton"></paper-share-facebook>
-            <paper-share-google link$="[[_postUrl(post)]]" class="shareButton"></paper-share-google>
-            <paper-share-twitter link$="[[_postUrl(post)]]" class="shareButton"></paper-share-twitter>
+            <paper-share-facebook link$="[[postUrl]]" class="shareButton"></paper-share-facebook>
+            <paper-share-google link$="[[postUrl]]" class="shareButton"></paper-share-google>
+            <paper-share-twitter link$="[[postUrl]]" class="shareButton"></paper-share-twitter>
           </paper-material>
         </div>
       </template>
@@ -310,6 +306,51 @@
         smallerIcons: {
           type: Boolean,
           value: false
+        },
+
+        formattedPointCount: {
+          type: String,
+          computed: '_formattedPointCount(post.counter_points)'
+        },
+
+        formattedDownCount: {
+          type: String,
+          computed: '_formattedDownCount(post.counter_endorsements_down)'
+        },
+
+        formattedUpCount: {
+          type: String,
+          computed: '_formattedUpCount(post.counter_endorsements_up)'
+        },
+
+        postUrl: {
+          type: String,
+          computed: '_postUrl(post)'
+        }
+
+      },
+
+      _formattedUpCount: function (number) {
+        if (number) {
+          return this.formatNumber(number);
+        } else {
+          return "0";
+        }
+      },
+
+      _formattedPointCount: function (number) {
+        if (number) {
+          return this.formatNumber(number);
+        } else {
+          return "0";
+        }
+      },
+
+      _formattedDownCount: function (number) {
+        if (number) {
+          return this.formatNumber(number);
+        } else {
+          return "0";
         }
       },
 
@@ -324,6 +365,7 @@
           return encodeURIComponent("https://"+window.location.host+"/post/"+post.id);
         } else {
           console.warn("Can't find post for action");
+          return "";
         }
       },
 
@@ -355,6 +397,12 @@
 
       _onPostChanged: function (post, oldValue) {
         if (post) {
+          this.removeClass(this.$.actionUp,'hearts-up-selected');
+          this.removeClass(this.$.actionDown, 'hearts-down-selected');
+          this.removeClass(this.$.actionUp,'default-buttons-up-selected');
+          this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+          this.set('endorseValue', 0);
+
           if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
             this.set('votingDisabled', true);
             this.set('allDisabled', true);
@@ -368,19 +416,19 @@
           } else {
             this.set('endorsementButtons', "hearts");
           }
-          this._updateEndorsements();
+          this._updateEndorsements(post);
         } else {
           console.warn("No post found for post actions");
         }
       },
 
       _updateEndorsementsFromSignal: function () {
-        this._updateEndorsements();
+        this._updateEndorsements(this.post);
       },
 
-      _updateEndorsements: function () {
+      _updateEndorsements: function (post) {
         if (window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
-          var thisPostsEndorsement = window.appUser.endorsementPostsIndex[this.post.id];
+          var thisPostsEndorsement = window.appUser.endorsementPostsIndex[post.id];
           if (thisPostsEndorsement)
             this._setEndorsement(thisPostsEndorsement.value);
         }
