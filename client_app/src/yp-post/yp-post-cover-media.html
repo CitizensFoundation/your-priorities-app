@@ -76,41 +76,32 @@
     </style>
 
       <div class="mapCanvas">
-        <template is="dom-if" if="[[noneActive]]">
-          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
-        </template>
+        <iron-image hidden$="[[!noneActive]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
 
-        <template is="dom-if" if="[[categoryActive]]">
-          <div class="layout horizontal center-center">
-            <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
-          </div>
-        </template>
+        <div class="layout horizontal center-center" hidden$="[[!categoryActive]]">
+          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
+        </div>
 
-        <template is="dom-if" if="[[imageActive]]">
-          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
-        </template>
+        <iron-image hidden$="[[!imageActive]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
 
-        <template is="dom-if" if="[[streetViewActive]]" restamp>
-          <google-streetview-pano
-            position="[[mapPosition]]"
-            heading="330"
-            api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
-            pitch="2"
-            zoom="0.8"
-            disable-default-ui>
-          </google-streetview-pano>
-        </template>
+        <google-streetview-pano
+          hidden$="[[!streetViewActive]]"
+          position="[[mapPosition]]"
+          heading="330"
+          api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
+          pitch="2"
+          zoom="0.8"
+          disable-default-ui>
+        </google-streetview-pano>
 
-        <template is="dom-if" if="[[mapActive]]" restamp>
-          <google-map id="coverMediaMap" class="map"
-                      libraries="places"
-                      fit-to-markers
-                      zoom="[[_zoomLevel(post)]]"
-                      map-type="[[_mapType(post)]]"
-                      api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-            <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
-          </google-map>
-        </template>
+        <google-map hidden$="[[!mapActive]]" id="coverMediaMap" class="map"
+                    libraries="places"
+                    fit-to-markers
+                    zoom="[[zoomLevel]]"
+                    map-type="[[mapType]]"
+                    api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+          <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
+        </google-map>
       </div>
     </template>
 
@@ -131,30 +122,44 @@
           observer: "_postChanged"
         },
 
-
         noneActive: {
           type: Boolean,
+          value: false,
           computed: '_isNoneActive(post)'
         },
 
         categoryActive: {
           type: Boolean,
+          value: false,
           computed: '_isCategoryActive(post)'
         },
 
         imageActive: {
           type: Boolean,
+          value: false,
           computed: '_isImageActive(post)'
         },
 
         mapActive: {
           type: Boolean,
+          value: false,
           computed: '_isMapActive(post, post.location, post.location.latitude)'
         },
 
         streetViewActive: {
           type: Boolean,
+          value: false,
           computed: '_isStreetViewActive(post, post.location, post.location.latitude)'
+        },
+
+        mapType: {
+          type: String,
+          computed: '_mapType(post.location)'
+        },
+
+        zoomLevel: {
+          type: String,
+          computed: '_zoomLevel(post.location)'
         },
 
         latitude: {
@@ -192,14 +197,14 @@
         if (latitude)
           return latitude;
         else
-          return 0
+          return 0.0;
       },
 
       _getLongitude: function (longitude) {
         if (longitude)
           return longitude;
         else
-          return 0
+          return 0.0;
       },
 
       _isNoneActive: function (post) {
@@ -224,46 +229,51 @@
       },
 
       _isMapActive: function (post, postLocation, lat) {
-        if (lat && postLocation && this._withCoverMediaType(post,'map'))
+        if (post && lat && postLocation && this._withCoverMediaType(post,'map'))
           return true
         else
           return false
       },
 
       _isStreetViewActive: function (post, postLocation, lat) {
-        if (lat && postLocation && this._withCoverMediaType(post,'streetView'))
-          return true
+        if (post && lat && postLocation && this._withCoverMediaType(post,'streetView')) {
+          debugger;
+          return true;
+        }
         else
-          return false
+          return false;
       },
 
       _postChanged: function(newValue, oldValue) {
         //debugger;
       },
 
-      _zoomLevel: function (post) {
-        if (post && post.location)
-          return post.location.map_zoom;
+      _zoomLevel: function (location) {
+        if (location && location.map_zoom)
+          return location.map_zoom;
         else
           return "10";
       },
 
-      _mapType: function (post) {
-        if (post && post.location)
-          return post.location.mapType;
+      _mapType: function (location) {
+        if (location)
+          return location.mapType;
         else
-          return null;
+          return "roadmap";
       },
 
       _withCoverMediaType: function (post, mediaType) {
-        if (!post)
+        if (!post) {
+          console.error("No post for "+mediaType);
           return false;
-        if (mediaType == 'none') {
-          return (!this.post.Category && (!this.post.cover_media_type || this.post.cover_media_type == 'none'));
-        } else  if ((mediaType=='category' && this.post.Category) && (!this.post.cover_media_type || this.post.cover_media_type == 'none')) {
-          return true;
         } else {
-          return (this.post && this.post.cover_media_type == mediaType);
+          if (mediaType == 'none') {
+            return (!post.Category && (!post.cover_media_type || post.cover_media_type == 'none'));
+          } else  if ((mediaType=='category' && post.Category) && (!post.cover_media_type || post.cover_media_type == 'none')) {
+            return true;
+          } else {
+            return (post && post.cover_media_type == mediaType);
+          }
         }
       },
 
