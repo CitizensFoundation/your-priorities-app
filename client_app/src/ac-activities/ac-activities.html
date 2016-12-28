@@ -14,6 +14,7 @@
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html">
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-point/yp-point-news-story-edit.html">
@@ -49,12 +50,6 @@
         position: relative;
       }
 
-      #scrollableRegion {
-        height: 100%;
-        overflow: visible;
-        padding-top: 24px;
-        @apply(--layout-flex);
-      }
 
       .topHeader {
         background-color: var(--primary-color);
@@ -192,89 +187,91 @@
         </yp-point-news-story-edit>
       </div>
     </template>
-    <div id="scrollableRegion">
-      <iron-list id="list" items="[[activities]]" as="activity" class="flex">
-        <template>
-          <div>
-            <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
-              <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
-              <div class="layout horizontal topHeader withCursor" newpost$="[[_isActivityType(activity,'activity.post.new')]]" on-tap="_joinPost">
-                <div class="layout horizontal flex wrap">
-                  <div class="layout horizontal">
-                    <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-                      <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
-                    </template>
-                    <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
-                      <iron-icon icon="communication:chat-bubble-outline" class="stats-icon"></iron-icon>
-                    </template>
-                    <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
-                      <iron-icon icon="face" class="stats-icon"></iron-icon>
-                    </template>
-                    <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
-                      <iron-icon icon="icons:language" class="stats-icon"></iron-icon>
-                    </template>
-                    <div class="layout vertical flex headerText">
-                      <div class="layout horizontal typeName">
-                        <div class="layout vertical">
-                          <div style="cursor: pointer" data-args$="[[activity]]" on-tap="_joinPost">[[_getActivityTypeName(activity)]]</div>
-                          <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
-                            [[fromTime(activity.created_at)]]
-                          </div>
+    <iron-list id="ironList" override-padding-top="550" scroll-target="document" items="[[activities]]" as="activity">
+      <template>
+        <div>
+          <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
+            <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
+            <div class="layout horizontal topHeader withCursor" newpost$="[[_isActivityType(activity,'activity.post.new')]]" on-tap="_joinPost">
+              <div class="layout horizontal flex wrap">
+                <div class="layout horizontal">
+                  <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
+                    <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
+                  </template>
+                  <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
+                    <iron-icon icon="communication:chat-bubble-outline" class="stats-icon"></iron-icon>
+                  </template>
+                  <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
+                    <iron-icon icon="face" class="stats-icon"></iron-icon>
+                  </template>
+                  <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
+                    <iron-icon icon="icons:language" class="stats-icon"></iron-icon>
+                  </template>
+                  <div class="layout vertical flex headerText">
+                    <div class="layout horizontal typeName">
+                      <div class="layout vertical">
+                        <div style="cursor: pointer" data-args$="[[activity]]" on-tap="_joinPost">[[_getActivityTypeName(activity)]]</div>
+                        <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
+                          [[fromTime(activity.created_at)]]
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div class="flex"></div>
-                  <div class="layout horiztonal end-justified userInfoContainer">
-                    <ac-activity-header class="layout end-justified headerUserImage" activity="[[activity]]"></ac-activity-header>
-                  </div>
+                </div>
+                <div class="flex"></div>
+                <div class="layout horizontal end-justified userInfoContainer">
+                  <ac-activity-header class="layout end-justified headerUserImage" activity="[[activity]]"></ac-activity-header>
                 </div>
               </div>
+            </div>
 
-              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-                <ac-activity-post activity="[[activity]]"></ac-activity-post>
-              </template>
+            <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
+              <ac-activity-post activity="[[activity]]"></ac-activity-post>
+            </template>
 
-              <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
-                <ac-activity-point activity="[[activity]]"></ac-activity-point>
-              </template>
+            <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
+              <ac-activity-point activity="[[activity]]"></ac-activity-point>
+            </template>
 
-              <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
-                <ac-activity-point-news-story activity="[[activity]]"></ac-activity-point-news-story>
-              </template>
+            <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
+              <ac-activity-point-news-story activity="[[activity]]"></ac-activity-point-news-story>
+            </template>
 
-              <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
-                <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
-              </template>
+            <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
+              <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
+            </template>
 
-              <div class="postPadding" hidden$="[[_hidePostListPadding()]]"> </div>
-              <div class="layout horizontal" hidden$="[[postId]]">
-                <div hidden$="[[groupId]]">
-                  <template is="dom-if" if="[[_showGroup(activity)]]">
-                    <ac-activity-group group="[[activity.Group]]"></ac-activity-group>
-                  </template>
-                </div>
-                <template is="dom-if" if="[[activity.Post]]">
-                  <div class="layout horizontal flex end-justified participateButton">
-                    <paper-button data-args$="[[activity]]" on-tap="_joinPost">[[t('participate')]]</paper-button>
-                  </div>
+            <div class="postPadding" hidden$="[[_hidePostListPadding()]]"> </div>
+            <div class="layout horizontal" hidden$="[[postId]]">
+              <div hidden$="[[groupId]]">
+                <template is="dom-if" if="[[_showGroup(activity)]]">
+                  <ac-activity-group group="[[activity.Group]]"></ac-activity-group>
                 </template>
               </div>
-            </paper-material>
-          </div>
-        </template>
-      </iron-list>
-      <div class="layout horizontal center-center">
-        <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
-        <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner on-response="_activityDeletedResponse"></yp-ajax>
-        <template is="dom-if" if="[[moreToLoad]]" restamp>
-          <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
-        </template>
-      </div>
+              <template is="dom-if" if="[[activity.Post]]">
+                <div class="layout horizontal flex end-justified participateButton">
+                  <paper-button data-args$="[[activity]]" on-tap="_joinPost">[[t('participate')]]</paper-button>
+                </div>
+              </template>
+            </div>
+          </paper-material>
+        </div>
+      </template>
+    </iron-list>
+    <div class="layout horizontal center-center">
+      <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
+      <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner on-response="_activityDeletedResponse"></yp-ajax>
     </div>
+
+    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
     <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-scroll-threshold id="scrollTheshold"
+                           lower-threshold="200"
+                           on-lower-threshold="_loadMoreData"
+                           scroll-target="document">
+    </iron-scroll-threshold>
   </template>
 
   <script>
@@ -286,7 +283,8 @@
         Polymer.appHelpers,
         Polymer.YpScrollTabBehavior,
         Polymer.ypLoggedInUserBehavior,
-        Polymer.AccessHelpers
+        Polymer.AccessHelpers,
+        Polymer.ypIronListBehavior
       ],
 
       properties: {
@@ -345,7 +343,9 @@
 
         activityIdToDelete: {
           type: Number
-        }
+        },
+
+        wide: Boolean
       },
 
       _getActivityTypeName: function (activity) {
@@ -492,8 +492,9 @@
       },
 
       _loadMoreData: function () {
-        if (this.url!='' && this.oldestProcessedActivityAt) {
+        if (this.url!='' && this.moreToLoad && this.oldestProcessedActivityAt) {
           this.set('moreToLoad', false);
+          console.log("_loadMoreData");
           this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
           this.$.ajax.generateRequest();
         }
@@ -548,19 +549,24 @@
           if (!this.latestProcessedActivityAt || this.latestProcessedActivityAt < activities[0].created_at) {
             this.set('latestProcessedActivityAt', activities[0].created_at);
           }
+          this.$$("#scrollTheshold").clearTriggers();
           this.setMoreToLoad();
         }
 
-        this.$.list.fire('iron-resize');
+        this.$.ironList.fire('iron-resize');
 
         this.async(function () {
-          this.$.list.fire('iron-resize');
-        }, 100);
+          this.$.ironList.fire('iron-resize');
+        }, 200);
+
+        this.async(function () {
+          this.$.ironList.fire('iron-resize');
+        }, 2000);
       },
 
       fireResize: function () {
         console.log("fireResize");
-        this.$.list.fire('iron-resize');
+        this.$.ironList.fire('iron-resize');
       }
     });
   </script>
