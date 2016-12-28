@@ -543,6 +543,7 @@
           } else {
             this.push('activities', activity);
           }
+          this.$.ironList.updateSizeForItem(activity);
         }.bind(this));
 
         if (activities.length>0) {
