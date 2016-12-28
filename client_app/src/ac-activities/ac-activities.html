@@ -18,6 +18,7 @@
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-point/yp-point-news-story-edit.html">
+<link rel="import" href="../yp-post/yp-post-cover-media.html">
 
 <link rel="import" href="./ac-activity-header.html">
 <link rel="import" href="./ac-activity-post.html">
@@ -54,7 +55,6 @@
       .mainActivityContent {
         height: 350px !important;
         max-height: 350px !important;
-        padding-top: 8px;
       }
 
       .topHeader[newpost] {
@@ -109,12 +109,17 @@
       }
 
       .postNameInHeader {
-        font-size: 25px;
+        font-size: 24px;
         padding: 8px;
       }
 
       .postNameInHeader[long-text] {
-        font-size: 22px;
+        font-size: 20px;
+        padding: 8px;
+      }
+
+      .postNameInHeader[very-long-text] {
+        font-size: 15px;
         padding: 8px;
       }
 
@@ -124,6 +129,20 @@
         padding-top: 10px;
         padding-left: 0;
         padding-right: 0;
+      }
+
+      .postCoverMedia {
+        width:  100px;
+        min-width: 100px !important;
+        height: 56px;
+        padding-top: 8px;
+      }
+
+      .groupCover {
+        width: 100px;
+        height: 56px;
+        padding-top: 12px;
+        padding-right: 12px;
       }
 
       .grayLine {
@@ -232,9 +251,19 @@
                     </div>
                   </div>
                 </div>
+                <div class="flex"></div>
+                <template is="dom-if" if="[[_showGroup(activity)]]">
+                  <ac-activity-group class="groupCover" minimal group="[[activity.Group]]"></ac-activity-group>
+                </template>
               </div>
-              <div class="postNameInHeader" long-text$="[[_longPostNameFor(activity)]]">
-                [[_postNameFor(activity)]]
+              <div class="postNameInHeader layout horizontal" long-text$="[[_longPostNameFor(activity)]]" very-long-text$="[[_veryLongPostNameFor(activity)]]">
+                <div>
+                  [[_postNameFor(activity)]]
+                </div>
+                <div class="flex"></div>
+                <template is="dom-if" if="[[_hasPostImage(activity.Post)]]">
+                  <yp-post-cover-media disable-maps class="postCoverMedia" post$="[[activity.Post]]"></yp-post-cover-media>
+                </template>
               </div>
               <div class="layout horizontal" hidden$="[[postId]]">
                 <div hidden$="[[groupId]]">
@@ -251,6 +280,10 @@
             </div>
 
             <div class="mainActivityContent">
+              <div class="layout horizontal end-justified">
+                <ac-activity-header class="layout horizontal headerUserImage" activity="[[activity]]"></ac-activity-header>
+              </div>
+
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                 <ac-activity-post activity="[[activity]]"></ac-activity-post>
               </template>
@@ -266,10 +299,6 @@
               <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
                 <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
               </template>
-
-              <div class="layout horizontal userHeaderContainer">
-                <ac-activity-header class="layout horizontal headerUserImage" activity="[[activity]]"></ac-activity-header>
-              </div>
             </div>
           </paper-material>
         </div>
@@ -365,6 +394,10 @@
         wide: Boolean
       },
 
+      _hasPostImage: function (post) {
+        return post && post.cover_media_type=="image";
+      },
+
       _getActivityTypeName: function (activity) {
         if (activity.type=='activity.point.new' && activity.Point) {
           if (activity.Point.value>0) {
@@ -402,6 +435,16 @@
           return activity.Post.name.length>50;
         } else if (activity.Point && activity.Point.Post) {
           return activity.Point.Post.name.length>50;
+        } else {
+          return false;
+        }
+      },
+
+      _veryLongPostNameFor: function (activity) {
+        if (activity.Post) {
+          return activity.Post.name.length>70;
+        } else if (activity.Point && activity.Point.Post) {
+          return activity.Point.Post.name.length>70;
         } else {
           return false;
         }
