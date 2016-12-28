@@ -16,11 +16,13 @@
       }
 
       .statusChange {
-        width: 92%;
         padding-left: 32px;
         padding-right: 32px;
         padding-top: 8px;
-        font-size: 19px;
+        margin-bottom: 64px;
+        font-size: 16px;
+        overflow-y: scroll;
+        max-height: 220px;
       }
 
       .postName {
@@ -38,9 +40,6 @@
     </style>
 
     <div class="layout vertical">
-      <div class="postName">
-        [[activity.Post.name]]
-      </div>
       <div class="groupName">
         [[activity.Group.name]]
       </div>

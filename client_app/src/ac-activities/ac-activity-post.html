@@ -14,7 +14,6 @@
     <style include="iron-flex iron-flex-alignment">
       :host {
         display: block;
-        width: 96%;
       }
 
       .descriptionOuter {
@@ -83,12 +82,12 @@
 
       @media (max-width: 960px) {
         :host {
-          width: 600px;
+          width: 420px;
         }
 
         .postCard {
           height: 100%;
-          width: 600px;
+          width: 420px;
           @apply(--layout-wrap);
         }
 
@@ -107,7 +106,7 @@
         }
 
         .card-content {
-          width: 600px !important;
+          width: 420px !important;
           padding-bottom: 74px;
         }
 
@@ -116,7 +115,7 @@
         }
       }
 
-      @media (max-width: 360px) {
+      @media (max-width: 3600px) {
         :host {
           width: 304px;
         }
@@ -135,10 +134,9 @@
 
     <div class="layout horizontal wrap">
       <div class="layout vertical descriptionOuter">
-        <h3 class="post-name postCardCursor" on-tap="goToPost">[[postNameFunc(activity.Post)]]</h3>
         <div id="description" class="description"></div>
       </div>
-      <div class="layout horizontal">
+      <div hidden class="layout horizontal">
         <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
       </div>
       <div class="layout horizontal center-center">
