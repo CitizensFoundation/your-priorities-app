@@ -30,7 +30,7 @@
       if (list) {
         var height;
         if (this.wide) {
-          height = windowHeight - 360;
+          height = windowHeight - this.wideListOffset ? this.wideListOffset : 360;
         } else {
           height = windowHeight - 300;
           windowWidth = windowWidth - 16;
@@ -38,17 +38,13 @@
         list.style.height = height + 'px';
         list.style.width = windowWidth + 'px';
         this.async(function () {
-          list.notifyResize();
+          list.updateViewportBoundaries();
           this.async(function () {
-            if (this.wide) {
-              list.style.paddingTop = "300px";
-            } else {
-              list.style.paddingTop = "300px";
-            }
-            list.updateViewportBoundaries();
-            list.style.paddingTop = "0";
-          });
+            list.notifyResize();
+          })
         });
+      } else {
+        console.error("Can't find iron list");
       }
     }
   };

@@ -714,7 +714,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
   }).then(function(posts) {
     var rows = [];
     if (offset<posts.rows.length) {
-      var toValue = offset+7;
+      var toValue = offset+20;
       rows = _.slice(posts.rows, offset, toValue);
     }
     res.send({

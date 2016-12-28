@@ -86,7 +86,7 @@
 
         <google-streetview-pano
           hidden$="[[!streetViewActive]]"
-          position="[[mapPosition]]"
+          position$="[[mapPosition]]"
           heading="330"
           api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
           pitch="2"
@@ -97,8 +97,8 @@
         <google-map hidden$="[[!mapActive]]" id="coverMediaMap" class="map"
                     libraries="places"
                     fit-to-markers
-                    zoom="[[zoomLevel]]"
-                    map-type="[[mapType]]"
+                    zoom$="[[zoomLevel]]"
+                    map-type$="[[mapType]]"
                     api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
           <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
         </google-map>
@@ -237,7 +237,7 @@
 
       _isStreetViewActive: function (post) {
         if (post && post.location && post.location.latitude && this._withCoverMediaType(post,'streetView')) {
-          debugger;
+          //debugger;
           return true;
         }
         else
@@ -249,14 +249,15 @@
       },
 
       _zoomLevel: function (location) {
-        if (location && location.map_zoom)
+        if (location && location.map_zoom && location.map_zoom!="") {
           return location.map_zoom;
+        }
         else
           return "10";
       },
 
       _mapType: function (location) {
-        if (location)
+        if (location && location.mapType && location.mapType != "")
           return location.mapType;
         else
           return "roadmap";
