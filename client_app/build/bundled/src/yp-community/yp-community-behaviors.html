@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.1">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.2">
 
 <script>
   /**
@@ -77,7 +77,13 @@
           this.set('featured', true);
         } else if (community.status=='archived') {
           this.set('archived', true);
+        } else {
+          this.set('featured', false);
+          this.set('archived', false);
         }
+      } else {
+        this.set('featured', false);
+        this.set('archived', false);
       }
 
       if (false && community && community.description) {

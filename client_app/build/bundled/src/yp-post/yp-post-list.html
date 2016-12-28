@@ -1,27 +1,28 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.1">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.2">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.1">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.1">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.1">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.1">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.2">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.2">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.2">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.2">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.1">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.1">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.1">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.1">
-<link href="../../bower_components/paper-search/paper-search.html?v=6.3.1" rel="import">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.2">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.2">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.2">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.2">
+<link href="../../bower_components/paper-search/paper-search.html?v=6.3.2" rel="import">
 
-<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.1">
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.2">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.1">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.1">
-<link rel="import" href="../ac-activities/ac-activities.html?v=6.3.1">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.2">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.2">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.2">
+<link rel="import" href="../ac-activities/ac-activities.html?v=6.3.2">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.1">
-<link rel="import" href="../yp-post/yp-post-card.html?v=6.3.1">
-<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.3.1">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.2">
+<link rel="import" href="../yp-post/yp-post-card.html?v=6.3.2">
+<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.3.2">
 
-<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.3.1">
+<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.3.2">
 
 </head><body><dom-module id="yp-post-list">
   <template>
@@ -66,8 +67,6 @@
       }
 
       iron-list {
-        width: 960px;
-        height: 100%;
       }
 
       .searchContainer {
@@ -80,25 +79,25 @@
 
 
       @media (max-width: 1024px) {
-        iron-list, .searchContainer {
+        .searchContainer {
           width: 960px;
         }
       }
 
       @media (max-width: 900px) {
-        iron-list, .searchContainer {
+        .searchContainer {
           width: 600px;
         }
       }
 
       @media (max-width: 640px) {
-        iron-list, .searchContainer {
+        .searchContainer {
           width: 420px;
         }
       }
 
       @media (max-width: 420px) {
-        iron-list, .searchContainer {
+        .searchContainer {
           width: 360px;
         }
       }
@@ -109,7 +108,7 @@
         margin-top: 16px;
       }
 
-      #list {
+      #ironList {
         margin-top: 16px;
       }
 
@@ -182,7 +181,7 @@
 
     <div id="scrollableRegion">
       <template is="dom-if" if="[[posts]]" restamp="">
-        <iron-list id="list" items="[[posts]]" as="post">
+        <iron-list id="ironList" items="[[posts]]" as="post" scroll-target="document">
           <template>
             <div class="layout vertical center-center">
               <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
@@ -206,7 +205,8 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpScrollTabBehavior
+        Polymer.YpScrollTabBehavior,
+        Polymer.ypIronListBehavior
       ],
 
       properties: {
@@ -390,13 +390,14 @@
             this.set('noPosts', false);
           }
         }
+
         this.async(function () {
           this.$$("#postsFilter")._updateTitle();
         }, 20);
 
         this.async(function () {
-          this.$$("#list").fire('iron-resize');
-        },10);
+          this.$$("#ironList").fire('iron-resize');
+        });
 
         if (posts.length>0 && posts.length!=this.postsCount) {
           this.setMoreToLoad();

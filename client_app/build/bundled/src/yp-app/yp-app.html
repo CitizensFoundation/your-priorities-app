@@ -10919,7 +10919,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.1">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.2">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -11324,7 +11324,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.1">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.2">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -11332,7 +11332,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.1">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.2">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19581,8 +19581,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.1">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.1">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.2">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.2">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -22952,7 +22952,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.1" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.2" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -27961,7 +27961,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.1" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.2" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -34197,7 +34197,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.1", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.2", fontName: 'FFClanWebBook' });
 
     },
 
@@ -34208,7 +34208,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.1";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.2";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -35882,7 +35882,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.1">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.2">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -39370,30 +39370,20 @@ If you're seeing the message "You have included the Google Maps API multiple tim
     </style>
 
       <div class="mapCanvas">
-        <template is="dom-if" if="[[noneActive]]">
-          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
-        </template>
+        <iron-image hidden$="[[!noneActive]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
 
-        <template is="dom-if" if="[[categoryActive]]">
-          <div class="layout horizontal center-center">
-            <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
-          </div>
-        </template>
+        <div class="layout horizontal center-center" hidden$="[[!categoryActive]]">
+          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
+        </div>
 
-        <template is="dom-if" if="[[imageActive]]">
-          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
-        </template>
+        <iron-image hidden$="[[!imageActive]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
 
-        <template is="dom-if" if="[[streetViewActive]]" restamp="">
-          <google-streetview-pano position="[[mapPosition]]" heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" pitch="2" zoom="0.8" disable-default-ui="">
-          </google-streetview-pano>
-        </template>
+        <google-streetview-pano hidden$="[[!streetViewActive]]" position="[[mapPosition]]" heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" pitch="2" zoom="0.8" disable-default-ui="">
+        </google-streetview-pano>
 
-        <template is="dom-if" if="[[mapActive]]" restamp="">
-          <google-map id="coverMediaMap" class="map" libraries="places" fit-to-markers="" zoom="[[_zoomLevel(post)]]" map-type="[[_mapType(post)]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-            <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
-          </google-map>
-        </template>
+        <google-map hidden$="[[!mapActive]]" id="coverMediaMap" class="map" libraries="places" fit-to-markers="" zoom="[[zoomLevel]]" map-type="[[mapType]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+          <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
+        </google-map>
       </div>
     </template>
 
@@ -39414,30 +39404,44 @@ If you're seeing the message "You have included the Google Maps API multiple tim
           observer: "_postChanged"
         },
 
-
         noneActive: {
           type: Boolean,
+          value: false,
           computed: '_isNoneActive(post)'
         },
 
         categoryActive: {
           type: Boolean,
+          value: false,
           computed: '_isCategoryActive(post)'
         },
 
         imageActive: {
           type: Boolean,
+          value: false,
           computed: '_isImageActive(post)'
         },
 
         mapActive: {
           type: Boolean,
-          computed: '_isMapActive(post, post.location, post.location.latitude)'
+          value: false,
+          computed: '_isMapActive(post)'
         },
 
         streetViewActive: {
           type: Boolean,
-          computed: '_isStreetViewActive(post, post.location, post.location.latitude)'
+          value: false,
+          computed: '_isStreetViewActive(post)'
+        },
+
+        mapType: {
+          type: String,
+          computed: '_mapType(post.location)'
+        },
+
+        zoomLevel: {
+          type: String,
+          computed: '_zoomLevel(post.location)'
         },
 
         latitude: {
@@ -39475,14 +39479,14 @@ If you're seeing the message "You have included the Google Maps API multiple tim
         if (latitude)
           return latitude;
         else
-          return 0
+          return 0.0;
       },
 
       _getLongitude: function (longitude) {
         if (longitude)
           return longitude;
         else
-          return 0
+          return 0.0;
       },
 
       _isNoneActive: function (post) {
@@ -39506,47 +39510,52 @@ If you're seeing the message "You have included the Google Maps API multiple tim
           return false
       },
 
-      _isMapActive: function (post, postLocation, lat) {
-        if (lat && postLocation && this._withCoverMediaType(post,'map'))
+      _isMapActive: function (post) {
+        if (post && post.location && post.location.latitude && this._withCoverMediaType(post,'map'))
           return true
         else
           return false
       },
 
-      _isStreetViewActive: function (post, postLocation, lat) {
-        if (lat && postLocation && this._withCoverMediaType(post,'streetView'))
-          return true
+      _isStreetViewActive: function (post) {
+        if (post && post.location && post.location.latitude && this._withCoverMediaType(post,'streetView')) {
+          debugger;
+          return true;
+        }
         else
-          return false
+          return false;
       },
 
       _postChanged: function(newValue, oldValue) {
         //debugger;
       },
 
-      _zoomLevel: function (post) {
-        if (post && post.location)
-          return post.location.map_zoom;
+      _zoomLevel: function (location) {
+        if (location && location.map_zoom)
+          return location.map_zoom;
         else
           return "10";
       },
 
-      _mapType: function (post) {
-        if (post && post.location)
-          return post.location.mapType;
+      _mapType: function (location) {
+        if (location)
+          return location.mapType;
         else
-          return null;
+          return "roadmap";
       },
 
       _withCoverMediaType: function (post, mediaType) {
-        if (!post)
+        if (!post) {
+          console.error("No post for "+mediaType);
           return false;
-        if (mediaType == 'none') {
-          return (!this.post.Category && (!this.post.cover_media_type || this.post.cover_media_type == 'none'));
-        } else  if ((mediaType=='category' && this.post.Category) && (!this.post.cover_media_type || this.post.cover_media_type == 'none')) {
-          return true;
         } else {
-          return (this.post && this.post.cover_media_type == mediaType);
+          if (mediaType == 'none') {
+            return (!post.Category && (!post.cover_media_type || post.cover_media_type == 'none'));
+          } else  if ((mediaType=='category' && post.Category) && (!post.cover_media_type || post.cover_media_type == 'none')) {
+            return true;
+          } else {
+            return (post && post.cover_media_type == mediaType);
+          }
         }
       },
 
@@ -42817,7 +42826,13 @@ the category tabs.
           this.set('featured', true);
         } else if (community.status=='archived') {
           this.set('archived', true);
+        } else {
+          this.set('featured', false);
+          this.set('archived', false);
         }
+      } else {
+        this.set('featured', false);
+        this.set('archived', false);
       }
 
       if (false && community && community.description) {
@@ -43173,12 +43188,6 @@ the category tabs.
         color: var(--icon-general-color, #FFF);
       }
 
-      yp-membership-button[featured] {
-        position: absolute;
-        top: 146px;
-        right: 55px;
-      }
-
       .community-name[featured] {
         background-color: var(--accent-color);
       }
@@ -43234,11 +43243,6 @@ the category tabs.
           width: 304px;
         }
 
-        yp-membership-button[featured] {
-          top: 157px;
-          right: 16px;
-        }
-
         .secondImage {
           display: none;
         }
@@ -43251,6 +43255,8 @@ the category tabs.
       }
     </style>
 
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
     <template is="dom-if" if="[[community]]">
       <paper-card featured$="[[featured]]" class="communityCard" animated="" elevation="[[elevation]]">
         <div class="layout horizontal">
@@ -43262,7 +43268,10 @@ the category tabs.
           </template>
         </div>
         <div class="informationText">
-          <div class="community-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToCommunity">[[communityName]]</div>
+          <div class="community-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToCommunity">
+            <span hidden$="[[!archived]]">[[t('archived')]] -</span>
+            [[communityName]]
+          </div>
           <template is="dom-if" if="[[featured]]">
             <div class="description" featured$="[[featured]]">[[communityDescriptionFull]]</div>
           </template>
@@ -43271,7 +43280,7 @@ the category tabs.
           </template>
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
-        <yp-membership-button archived$="[[archived]]" featured$="[[featured]]" large$="[[featured]]" community="[[community]]"></yp-membership-button>
+        <yp-membership-button archived$="[[archived]]" featured$="[[featured]]" community="[[community]]"></yp-membership-button>
       </paper-card>
     </template>
   </template>
@@ -43428,11 +43437,7 @@ the category tabs.
     setupGroups: function (groups) {
       this.set('groupsLength', groups.length);
       var splitGroups = this.splitByStatus(groups);
-      if (splitGroups.archived.length>0) {
-        this.set('archivedGroups', splitGroups.archived);
-      }
-      this.set('featuredGroups', splitGroups.featured);
-      this.set('activeGroups', splitGroups.active);
+      this.set('activeGroups', splitGroups.featured.concat(splitGroups.active.concat(splitGroups.archived)));
     }
   };
 </script>
@@ -45638,14 +45643,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.1">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.2">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.1">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.2">
    * ```
    *
    * ### Consuming effects
@@ -46443,7 +46448,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.1">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.2">
 ```
 
 #### List of effects
@@ -52308,18 +52313,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.1"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.2"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.1"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.2"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.1"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.2"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -52377,7 +52382,7 @@ value. `setMax` should move the slider to the maximum value.
       if (list) {
         var height;
         if (this.wide) {
-          height = windowHeight - 300;
+          height = windowHeight - 360;
         } else {
           height = windowHeight - 300;
           windowWidth = windowWidth - 16;
@@ -52385,8 +52390,16 @@ value. `setMax` should move the slider to the maximum value.
         list.style.height = height + 'px';
         list.style.width = windowWidth + 'px';
         this.async(function () {
-          list.updateViewportBoundaries();
           list.notifyResize();
+          this.async(function () {
+            if (this.wide) {
+              list.style.paddingTop = "300px";
+            } else {
+              list.style.paddingTop = "300px";
+            }
+            list.updateViewportBoundaries();
+            list.style.paddingTop = "0";
+          });
         });
       }
     }
@@ -57644,9 +57657,9 @@ information on the API.
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.1");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.2");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.1");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.2");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);

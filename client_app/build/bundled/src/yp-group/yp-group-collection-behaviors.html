@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.1">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.2">
 
 <script>
   /**
@@ -28,11 +28,7 @@
     setupGroups: function (groups) {
       this.set('groupsLength', groups.length);
       var splitGroups = this.splitByStatus(groups);
-      if (splitGroups.archived.length>0) {
-        this.set('archivedGroups', splitGroups.archived);
-      }
-      this.set('featuredGroups', splitGroups.featured);
-      this.set('activeGroups', splitGroups.active);
+      this.set('activeGroups', splitGroups.featured.concat(splitGroups.active.concat(splitGroups.archived)));
     }
   };
 </script>

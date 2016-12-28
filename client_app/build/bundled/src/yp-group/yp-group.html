@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.1"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.2"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -1502,8 +1502,6 @@ is shown even without no results (check the demo for an example).
       }
 
       iron-list {
-        width: 960px;
-        height: 100%;
       }
 
       .searchContainer {
@@ -1516,25 +1514,25 @@ is shown even without no results (check the demo for an example).
 
 
       @media (max-width: 1024px) {
-        iron-list, .searchContainer {
+        .searchContainer {
           width: 960px;
         }
       }
 
       @media (max-width: 900px) {
-        iron-list, .searchContainer {
+        .searchContainer {
           width: 600px;
         }
       }
 
       @media (max-width: 640px) {
-        iron-list, .searchContainer {
+        .searchContainer {
           width: 420px;
         }
       }
 
       @media (max-width: 420px) {
-        iron-list, .searchContainer {
+        .searchContainer {
           width: 360px;
         }
       }
@@ -1545,7 +1543,7 @@ is shown even without no results (check the demo for an example).
         margin-top: 16px;
       }
 
-      #list {
+      #ironList {
         margin-top: 16px;
       }
 
@@ -1618,7 +1616,7 @@ is shown even without no results (check the demo for an example).
 
     <div id="scrollableRegion">
       <template is="dom-if" if="[[posts]]" restamp="">
-        <iron-list id="list" items="[[posts]]" as="post">
+        <iron-list id="ironList" items="[[posts]]" as="post" scroll-target="document">
           <template>
             <div class="layout vertical center-center">
               <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
@@ -1642,7 +1640,8 @@ is shown even without no results (check the demo for an example).
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpScrollTabBehavior
+        Polymer.YpScrollTabBehavior,
+        Polymer.ypIronListBehavior
       ],
 
       properties: {
@@ -1826,13 +1825,14 @@ is shown even without no results (check the demo for an example).
             this.set('noPosts', false);
           }
         }
+
         this.async(function () {
           this.$$("#postsFilter")._updateTitle();
         }, 20);
 
         this.async(function () {
-          this.$$("#list").fire('iron-resize');
-        },10);
+          this.$$("#ironList").fire('iron-resize');
+        });
 
         if (posts.length>0 && posts.length!=this.postsCount) {
           this.setMoreToLoad();

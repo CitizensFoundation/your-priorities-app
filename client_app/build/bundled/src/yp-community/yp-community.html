@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.1"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.2"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -238,58 +238,27 @@
   <template>
 
     <style include="iron-flex iron-flex-alignment">
-      .card {
-        padding: 16px;
+
+      .groupCard {
+        padding: 0;
+        padding-top: 16px;
       }
 
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1800px) {
-        .mainContainer {
-          width: 1800px !important;
-        }
-      }
-
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1600px) {
-        .mainContainer {
-          width: 1600px !important;;
-        }
-      }
-
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1200px) {
-        .mainContainer {
-          width: 1200px !important;;
-        }
-      }
-
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 800px) {
-        .mainContainer {
-          width: 800px;
-        }
+      .groupCard[wide-padding] {
+        padding: 16px !important;
       }
 
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <div class="layout vertical wrap mainContainer">
-      <div class="layout horizontal center-center wrap">
-        <template is="dom-repeat" class="list" items="[[featuredGroups]]" as="group">
-          <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
-        </template>
-        <template is="dom-repeat" class="list" items="[[activeGroups]]" as="group">
-          <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
-        </template>
-        <yp-group-card-add hidden="[[hideAdd]]" class="card" on-tap="_newGroup" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-add>
-      </div>
-      <div class="layout horizontal center-center">
-        <h1 class="archivedText" hidden$="[[!archivedGroups]]">
-          [[t('archived')]]
-        </h1>
-      </div>
-      <div class="layout horizontal center-center wrap">
-        <template is="dom-repeat" class="list" items="[[archivedGroups]]" as="group">
-          <yp-group-card class="card" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
-        </template>
-      </div>
-    </div>
+    <iron-list id="ironList" items="[[activeGroups]]" as="group" scroll-target="document" grid="">
+      <template>
+        <div class="groupCard" wide-padding$="[[wide]]">
+          <yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+        </div>
+      </template>
+    </iron-list>
   </template>
 
   <script>
@@ -297,7 +266,8 @@
       is: 'yp-group-grid',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.ypIronListBehavior
       ],
 
       properties: {
@@ -305,6 +275,10 @@
         archivedGroups: Array,
         activeGroups: Array,
         hideAdd: {
+          type: Boolean,
+          value: false
+        },
+        wide: {
           type: Boolean,
           value: false
         }
