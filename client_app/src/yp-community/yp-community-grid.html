@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html">
 <link rel="import" href="yp-community-card.html">
 <link rel="import" href="yp-community-card-add.html">
 
@@ -12,32 +13,13 @@
   <template>
 
     <style include="iron-flex iron-flex-alignment">
-      .card {
+      .card[wide] {
         padding: 16px;
       }
 
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1800px) {
-        .mainContainer {
-          width: 1800px !important;
-        }
-      }
-
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1600px) {
-        .mainContainer {
-          width: 1600px !important;;
-        }
-      }
-
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1200px) {
-        .mainContainer {
-          width: 1200px !important;;
-        }
-      }
-
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 800px) {
-        .mainContainer {
-          width: 800px;
-        }
+      .card {
+        padding: 0;
+        padding-top: 16px;
       }
 
       .archivedText {
@@ -51,31 +33,29 @@
         margin-bottom: 12px;
         border-color: #444;
       }
+
+      iron-list {
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <div class="layout vertical wrap mainContainer">
-      <div class="layout horizontal center-center wrap">
-        <template is="dom-repeat" class="list" items="[[featuredCommunities]]" as="community">
-          <yp-community-card class="card" featured community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-        </template>
-        <template is="dom-repeat" class="list" items="[[activeCommunities]]" as="community">
-          <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-        </template>
-        <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card-add>
+    <iron-list id="ironList" items="[[activeCommunities]]" as="community" scroll-target="document" grid>
+      <template>
+        <yp-community-card wide$="[[wide]]" class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+      </template>
+    </iron-list>
+    <div class="layout horizontal center-center" hidden>
+      <div class="archivedBorder">
+        <h1 class="archivedText layout horizontal center-center" hidden$="[[!archivedCommunities]]">
+          [[t('archived')]]
+        </h1>
       </div>
-      <div class="layout horizontal center-center">
-        <div class="archivedBorder">
-          <h1 class="archivedText layout horizontal center-center" hidden$="[[!archivedCommunities]]">
-            [[t('archived')]]
-          </h1>
-        </div>
-      </div>
-      <div class="layout horizontal center-center wrap">
-        <template is="dom-repeat" class="list" items="[[archivedCommunities]]" as="community">
-          <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-        </template>
-      </div>
+    </div>
+    <div class="layout horizontal center-center wrap" hidden>
+      <template is="dom-repeat" class="list" items="[[archivedCommunities]]" as="community">
+        <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+      </template>
     </div>
   </template>
 
@@ -84,7 +64,8 @@
       is: 'yp-community-grid',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.ypIronListBehavior
       ],
 
       properties: {

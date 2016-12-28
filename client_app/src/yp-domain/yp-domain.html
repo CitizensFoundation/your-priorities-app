@@ -78,7 +78,12 @@
         @apply(--layout-horizontal);
         @apply(--layout-center-center);
       }
+
+      :host {
+        display: block;
+      }
     </style>
+
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
 
@@ -274,7 +279,7 @@
         window.appGlobals.setupGoogleAnalytics(this.domain);
 
         if (this.domain.Communities) {
-          this.setupCommunities(_.dropRight(this.domain.Communities, this.domain.Communities.length-15));
+          this.setupCommunities(_.dropRight(this.domain.Communities, this.domain.Communities.length-500));
         }
 
         this.$.domainCard.setElevation(5);

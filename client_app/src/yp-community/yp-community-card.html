@@ -57,7 +57,6 @@
       }
 
       .communityCard[featured] {
-        width: 672px;
       }
 
       iron-image {
@@ -66,8 +65,6 @@
       }
 
       iron-image[featured] {
-        width: 336px;
-        height: 180px;
       }
 
       .card-content {
@@ -104,6 +101,11 @@
         cursor: pointer;
       }
 
+      iron-image[archived] {
+        opacity: 0.7;
+        filter: alpha(opacity=70);
+      }
+
       yp-membership-button {
         position: absolute;
         top: 157px;
@@ -117,6 +119,18 @@
         position: absolute;
         top: 146px;
         right: 55px;
+      }
+
+      .community-name[featured] {
+        background-color: var(--accent-color);
+      }
+
+      .community-name[archived] {
+        background-color: #aaa;
+      }
+
+      yp-membership-button[archived] {
+        display: none;
       }
 
       @media (max-width: 480px) {
@@ -138,8 +152,6 @@
         }
 
         iron-image[featured] {
-          width: 304px;
-          height: 165px;
         }
 
         yp-membership-button {
@@ -184,11 +196,15 @@
     <template is="dom-if" if="[[community]]">
       <paper-card featured$="[[featured]]" class="communityCard" animated elevation="[[elevation]]" class="layout vertical flex">
         <div class="layout horizontal">
-          <iron-image sizing="cover" featured$="[[featured]]" preload src="[[communityLogoImagePath]]" class="post-image"></iron-image>
-          <iron-image sizing="cover" hidden$="[[!featured]]" featured$="[[featured]]" preload src="[[communityLogoImageNextPath]]" class="post-image secondImage"></iron-image>
+          <template is="dom-if" if="[[noImage]]">
+            <iron-image header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+          </template>
+          <template is="dom-if" if="[[!noImage]]">
+            <iron-image sizing="cover"  archived$="[[archived]]" featured$="[[featured]]" preload src="[[communityLogoImagePath]]" class="post-image"></iron-image>
+          </template>
         </div>
         <div class="informationText">
-          <div class="community-name" featured$="[[featured]]" on-tap="_goToCommunity">[[communityName]]</div>
+          <div class="community-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToCommunity">[[communityName]]</div>
           <template is="dom-if" if="[[featured]]">
             <div class="description" featured$="[[featured]]">[[communityDescriptionFull]]</div>
           </template>
@@ -197,7 +213,7 @@
           </template>
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
-        <yp-membership-button featured$="[[featured]]" large$="[[featured]]" community="[[community]]"></yp-membership-button>
+        <yp-membership-button archived$="[[archived]]" featured$="[[featured]]" large$="[[featured]]" community="[[community]]"></yp-membership-button>
       </paper-card>
     </template>
   </template>
@@ -213,10 +229,6 @@
       ],
 
       properties: {
-        featured: {
-          type: Boolean,
-          value: false
-        }
       }
 
     });
