@@ -143,13 +143,13 @@
         mapActive: {
           type: Boolean,
           value: false,
-          computed: '_isMapActive(post, post.location, post.location.latitude)'
+          computed: '_isMapActive(post)'
         },
 
         streetViewActive: {
           type: Boolean,
           value: false,
-          computed: '_isStreetViewActive(post, post.location, post.location.latitude)'
+          computed: '_isStreetViewActive(post)'
         },
 
         mapType: {
@@ -228,15 +228,15 @@
           return false
       },
 
-      _isMapActive: function (post, postLocation, lat) {
-        if (post && lat && postLocation && this._withCoverMediaType(post,'map'))
+      _isMapActive: function (post) {
+        if (post && post.location && post.location.latitude && this._withCoverMediaType(post,'map'))
           return true
         else
           return false
       },
 
-      _isStreetViewActive: function (post, postLocation, lat) {
-        if (post && lat && postLocation && this._withCoverMediaType(post,'streetView')) {
+      _isStreetViewActive: function (post) {
+        if (post && post.location && post.location.latitude && this._withCoverMediaType(post,'streetView')) {
           debugger;
           return true;
         }
