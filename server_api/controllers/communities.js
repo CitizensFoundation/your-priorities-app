@@ -92,6 +92,13 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
   });
 };
 
+var updateCommunityConfigParameters = function (req, community) {
+  if (!community.configuration) {
+    community.set('configuration', {});
+  }
+  community.set('configuration.alternativeHeader', (req.body.alternativeHeader && req.body.alternativeHeader!="") ? req.body.alternativeHeader : null);
+};
+
 router.delete('/:communityId/:activityId/delete_activity', auth.can('edit community'), function(req, res) {
   models.AcActivity.find({
     where: {
@@ -505,6 +512,7 @@ router.post('/:domainId', auth.can('create community'), function(req, res) {
         user_agent: req.useragent.source,
         ip_address: req.clientIp
       });
+      updateCommunityConfigParameters(req, community);
       community.save().then(function() {
         log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
         community.updateAllExternalCounters(req, 'up', 'counter_communities', function () {
@@ -537,6 +545,7 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
         community.status = req.body.status;
       }
       community.access = models.Community.convertAccessFromRadioButtons(req.body);
+      updateCommunityConfigParameters(req, community);
       community.save().then(function () {
         log.info('Community Updated', { community: toJson(community), context: 'update', user: toJson(req.user) });
         community.setupImages(req.body, function(error) {

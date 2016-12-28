@@ -116,6 +116,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hideGroupHeader', truthValueFromBody(req.body.hideGroupHeader));
 
   group.set('configuration.endorsementButtons', (req.body.endorsementButtons && req.body.endorsementButtons!="") ? req.body.endorsementButtons : "hearts");
+  group.set('configuration.alternativeHeader', (req.body.alternativeHeader && req.body.alternativeHeader!="") ? req.body.alternativeHeader : null);
 
   if (truthValueFromBody(req.body.status)) {
     group.status = req.body.status;

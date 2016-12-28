@@ -116,7 +116,11 @@
 
       <yp-theme-selector object="[[community]]"  selected-theme="{{themeId}}"></yp-theme-selector>
 
-      <paper-checkbox name="onlyAdminsCanCreateGroups" checked$="{{community.only_admins_can_create_groups}}">[[t('community.onlyAdminsCanCreateGroups')]]</paper-checkbox>
+      <div class="layout vertical config">
+        <h2>[[t('community.config')]]</h2>
+        <paper-checkbox name="onlyAdminsCanCreateGroups" checked$="{{community.only_admins_can_create_groups}}">[[t('community.onlyAdminsCanCreateGroups')]]</paper-checkbox>
+        <paper-checkbox name="alternativeHeader" checked$="{{community.configuration.alternativeHeader}}">[[t('community.alternativeHeader')]]</paper-checkbox>
+      </div>
 
       <input type="hidden" name="themeId" value="[[themeId]]">
 
