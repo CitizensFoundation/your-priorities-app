@@ -37,7 +37,7 @@
         margin: 16px !important;
         background-color: #FFF;
         width: 420px !important;
-        height: 500px !important;
+        height: 570px !important;
       }
 
       .container {
@@ -48,13 +48,18 @@
         background-color: var(--primary-color);
         color: #fff;
         padding-left: 16px;
-        height: 150px !important;
-        max-height: 150px !important;
+        height: 236px !important;
+        max-height: 236px !important;
+        z-index: 100;
+      }
+
+      .shadow {
+        text-shadow: 2px 2px 4px #333;
       }
 
       .mainActivityContent {
-        height: 350px !important;
-        max-height: 350px !important;
+        height: 314px !important;
+        max-height: 314px !important;
       }
 
       .topHeader[newpost] {
@@ -132,10 +137,30 @@
       }
 
       .postCoverMedia {
-        width:  100px;
-        min-width: 100px !important;
-        height: 56px;
-        padding-top: 8px;
+        width:  420px;
+        min-width: 420px !important;
+        height: 236px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1000;
+      }
+
+      .textGradient {
+        width:  420px;
+        min-width: 420px !important;
+        height: 236px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -100;
+        opacity: 0.5;
+        filter: alpha(opacity=50);
+        background: linear-gradient(
+          to bottom,
+          rgba(50,50,50, 100),
+          rgba(50,50,50, 0)
+        )
       }
 
       .groupCover {
@@ -230,22 +255,22 @@
             <div class="layout vertical topHeader withCursor" newpost$="[[_isActivityType(activity,'activity.post.new')]]" on-tap="_joinPost">
               <div class="layout horizontal">
                 <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-                  <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
+                  <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb shadow"></iron-icon>
                 </template>
                 <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
-                  <iron-icon icon="communication:chat-bubble-outline" class="stats-icon"></iron-icon>
+                  <iron-icon icon="communication:chat-bubble-outline" class="stats-icon shadow"></iron-icon>
                 </template>
                 <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
-                  <iron-icon icon="face" class="stats-icon"></iron-icon>
+                  <iron-icon icon="face" class="stats-icon shadow"></iron-icon>
                 </template>
                 <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
-                  <iron-icon icon="icons:language" class="stats-icon"></iron-icon>
+                  <iron-icon icon="icons:language" class="stats-icon shadow"></iron-icon>
                 </template>
                 <div class="layout vertical headerText">
                   <div class="layout horizontal typeName">
                     <div class="layout vertical">
-                      <div style="cursor: pointer" data-args$="[[activity]]" on-tap="_joinPost">[[_getActivityTypeName(activity)]]</div>
-                      <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
+                      <div style="cursor: pointer" class="shadow" data-args$="[[activity]]" on-tap="_joinPost">[[_getActivityTypeName(activity)]]</div>
+                      <div class="createdAt shadow" title="[[fromLongTime(activity.created_at)]]">
                         [[fromTime(activity.created_at)]]
                       </div>
                     </div>
@@ -257,12 +282,13 @@
                 </template>
               </div>
               <div class="postNameInHeader layout horizontal" long-text$="[[_longPostNameFor(activity)]]" very-long-text$="[[_veryLongPostNameFor(activity)]]">
-                <div>
+                <div class="shadow">
                   [[_postNameFor(activity)]]
                 </div>
                 <div class="flex"></div>
                 <template is="dom-if" if="[[_hasPostImage(activity.Post)]]">
                   <yp-post-cover-media disable-maps class="postCoverMedia" post$="[[activity.Post]]"></yp-post-cover-media>
+                  <div class="textGradient"></div>
                 </template>
               </div>
               <div class="layout horizontal" hidden$="[[postId]]">
