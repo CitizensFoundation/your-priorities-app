@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.106">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.1">
 
 <script>
   /**
@@ -28,11 +28,8 @@
     setupCommunities: function (communities) {
       this.set('communitiesLength', communities.length);
       var splitCommunities = this.splitByStatus(communities);
-      if (splitCommunities.archived.length>0) {
-        this.set('archivedCommunities', splitCommunities.archived);
-      }
-      this.set('featuredCommunities', splitCommunities.featured);
-      this.set('activeCommunities', splitCommunities.active);
+//      this.set('featuredCommunities', splitCommunities.featured);
+      this.set('activeCommunities', splitCommunities.featured.concat(splitCommunities.active.concat(splitCommunities.archived)));
     }
   };
 </script>

@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.2.106">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.1">
 
 <script>
   /**
@@ -46,10 +46,40 @@
       communityDescriptionFull: {
         type: String,
         computed: '_communityDescription(community,1)'
+      },
+
+      noImage: {
+        type: Boolean,
+        value: true
+      },
+
+      featured: {
+        type: Boolean,
+        value: false
+      },
+
+      archived: {
+        type: Boolean,
+        value: false
       }
     },
 
     _communityChanged: function (community) {
+      if (community) {
+        if (community.CommunityLogoImages && community.CommunityLogoImages.length>0)
+        {
+          this.set('noImage', false);
+        } else {
+          this.set('noImage', true);
+        }
+
+        if (community.status=='featured') {
+          this.set('featured', true);
+        } else if (community.status=='archived') {
+          this.set('archived', true);
+        }
+      }
+
       if (false && community && community.description) {
         this.async(function () {
           var description = this.$$("#description");

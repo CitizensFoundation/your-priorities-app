@@ -77,7 +77,13 @@
           this.set('featured', true);
         } else if (community.status=='archived') {
           this.set('archived', true);
+        } else {
+          this.set('featured', false);
+          this.set('archived', false);
         }
+      } else {
+        this.set('featured', false);
+        this.set('archived', false);
       }
 
       if (false && community && community.description) {

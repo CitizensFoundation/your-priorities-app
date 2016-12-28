@@ -10919,7 +10919,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.2.106">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.1">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -11324,7 +11324,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.2.106">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.1">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -11332,7 +11332,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.2.106">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.1">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19581,8 +19581,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.2.106">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.2.106">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.1">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.1">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -22952,7 +22952,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.106" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.1" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -27961,7 +27961,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.2.106" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.1" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -34197,7 +34197,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.2.106", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.1", fontName: 'FFClanWebBook' });
 
     },
 
@@ -34208,7 +34208,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.2.106";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.1";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -35882,7 +35882,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.2.106">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.1">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -42786,10 +42786,40 @@ the category tabs.
       communityDescriptionFull: {
         type: String,
         computed: '_communityDescription(community,1)'
+      },
+
+      noImage: {
+        type: Boolean,
+        value: true
+      },
+
+      featured: {
+        type: Boolean,
+        value: false
+      },
+
+      archived: {
+        type: Boolean,
+        value: false
       }
     },
 
     _communityChanged: function (community) {
+      if (community) {
+        if (community.CommunityLogoImages && community.CommunityLogoImages.length>0)
+        {
+          this.set('noImage', false);
+        } else {
+          this.set('noImage', true);
+        }
+
+        if (community.status=='featured') {
+          this.set('featured', true);
+        } else if (community.status=='archived') {
+          this.set('archived', true);
+        }
+      }
+
       if (false && community && community.description) {
         this.async(function () {
           var description = this.$$("#description");
@@ -43085,7 +43115,6 @@ the category tabs.
       }
 
       .communityCard[featured] {
-        width: 672px;
       }
 
       iron-image {
@@ -43094,8 +43123,6 @@ the category tabs.
       }
 
       iron-image[featured] {
-        width: 336px;
-        height: 180px;
       }
 
       .card-content {
@@ -43132,6 +43159,11 @@ the category tabs.
         cursor: pointer;
       }
 
+      iron-image[archived] {
+        opacity: 0.7;
+        filter: alpha(opacity=70);
+      }
+
       yp-membership-button {
         position: absolute;
         top: 157px;
@@ -43145,6 +43177,18 @@ the category tabs.
         position: absolute;
         top: 146px;
         right: 55px;
+      }
+
+      .community-name[featured] {
+        background-color: var(--accent-color);
+      }
+
+      .community-name[archived] {
+        background-color: #aaa;
+      }
+
+      yp-membership-button[archived] {
+        display: none;
       }
 
       @media (max-width: 480px) {
@@ -43166,8 +43210,6 @@ the category tabs.
         }
 
         iron-image[featured] {
-          width: 304px;
-          height: 165px;
         }
 
         yp-membership-button {
@@ -43212,11 +43254,15 @@ the category tabs.
     <template is="dom-if" if="[[community]]">
       <paper-card featured$="[[featured]]" class="communityCard" animated="" elevation="[[elevation]]">
         <div class="layout horizontal">
-          <iron-image sizing="cover" featured$="[[featured]]" preload="" src="[[communityLogoImagePath]]" class="post-image"></iron-image>
-          <iron-image sizing="cover" hidden$="[[!featured]]" featured$="[[featured]]" preload="" src="[[communityLogoImageNextPath]]" class="post-image secondImage"></iron-image>
+          <template is="dom-if" if="[[noImage]]">
+            <iron-image header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+          </template>
+          <template is="dom-if" if="[[!noImage]]">
+            <iron-image sizing="cover" archived$="[[archived]]" featured$="[[featured]]" preload="" src="[[communityLogoImagePath]]" class="post-image"></iron-image>
+          </template>
         </div>
         <div class="informationText">
-          <div class="community-name" featured$="[[featured]]" on-tap="_goToCommunity">[[communityName]]</div>
+          <div class="community-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToCommunity">[[communityName]]</div>
           <template is="dom-if" if="[[featured]]">
             <div class="description" featured$="[[featured]]">[[communityDescriptionFull]]</div>
           </template>
@@ -43225,7 +43271,7 @@ the category tabs.
           </template>
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
-        <yp-membership-button featured$="[[featured]]" large$="[[featured]]" community="[[community]]"></yp-membership-button>
+        <yp-membership-button archived$="[[archived]]" featured$="[[featured]]" large$="[[featured]]" community="[[community]]"></yp-membership-button>
       </paper-card>
     </template>
   </template>
@@ -43241,10 +43287,6 @@ the category tabs.
       ],
 
       properties: {
-        featured: {
-          type: Boolean,
-          value: false
-        }
       }
 
     });
@@ -43353,11 +43395,8 @@ the category tabs.
     setupCommunities: function (communities) {
       this.set('communitiesLength', communities.length);
       var splitCommunities = this.splitByStatus(communities);
-      if (splitCommunities.archived.length>0) {
-        this.set('archivedCommunities', splitCommunities.archived);
-      }
-      this.set('featuredCommunities', splitCommunities.featured);
-      this.set('activeCommunities', splitCommunities.active);
+//      this.set('featuredCommunities', splitCommunities.featured);
+      this.set('activeCommunities', splitCommunities.featured.concat(splitCommunities.active.concat(splitCommunities.archived)));
     }
   };
 </script>
@@ -45599,14 +45638,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.106">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.1">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.2.106">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.1">
    * ```
    *
    * ### Consuming effects
@@ -46404,7 +46443,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.2.106">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.1">
 ```
 
 #### List of effects
@@ -52269,18 +52308,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.2.106"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.1"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.2.106"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.1"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.2.106"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.1"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -52308,37 +52347,63 @@ value. `setMax` should move the slider to the maximum value.
     });
   </script>
 </dom-module>
+<script>
+  /**
+   * @polymerBehavior appHelpers
+   */
+  Polymer.ypIronListBehavior = {
+
+    properties: {
+      wide: {
+        type: Boolean,
+        observer: '_wideChanged'
+      }
+    },
+
+    attached: function () {
+      this.async(function () {
+        this.resetSize();
+      }.bind(this));
+    },
+
+    _wideChanged: function () {
+      this.resetSize();
+    },
+
+    resetSize: function () {
+      var list = this.$$("#ironList");
+      var windowHeight = window.innerHeight;
+      var windowWidth = window.innerWidth;
+      if (list) {
+        var height;
+        if (this.wide) {
+          height = windowHeight - 300;
+        } else {
+          height = windowHeight - 300;
+          windowWidth = windowWidth - 16;
+        }
+        list.style.height = height + 'px';
+        list.style.width = windowWidth + 'px';
+        this.async(function () {
+          list.updateViewportBoundaries();
+          list.notifyResize();
+        });
+      }
+    }
+  };
+</script>
 <dom-module id="yp-community-grid" assetpath="../yp-community/">
 
   <template>
 
     <style include="iron-flex iron-flex-alignment">
-      .card {
+      .card[wide] {
         padding: 16px;
       }
 
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1800px) {
-        .mainContainer {
-          width: 1800px !important;
-        }
-      }
-
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1600px) {
-        .mainContainer {
-          width: 1600px !important;;
-        }
-      }
-
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 1200px) {
-        .mainContainer {
-          width: 1200px !important;;
-        }
-      }
-
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) and (max-width: 800px) {
-        .mainContainer {
-          width: 800px;
-        }
+      .card {
+        padding: 0;
+        padding-top: 16px;
       }
 
       .archivedText {
@@ -52352,31 +52417,29 @@ value. `setMax` should move the slider to the maximum value.
         margin-bottom: 12px;
         border-color: #444;
       }
+
+      iron-list {
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <div class="layout vertical wrap mainContainer">
-      <div class="layout horizontal center-center wrap">
-        <template is="dom-repeat" class="list" items="[[featuredCommunities]]" as="community">
-          <yp-community-card class="card" featured="" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-        </template>
-        <template is="dom-repeat" class="list" items="[[activeCommunities]]" as="community">
-          <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-        </template>
-        <yp-community-card-add hidden$="[[hideAdd]]" class="card" on-tap="_newCommunity" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card-add>
+    <iron-list id="ironList" items="[[activeCommunities]]" as="community" scroll-target="document" grid="">
+      <template>
+        <yp-community-card wide$="[[wide]]" class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+      </template>
+    </iron-list>
+    <div class="layout horizontal center-center" hidden="">
+      <div class="archivedBorder">
+        <h1 class="archivedText layout horizontal center-center" hidden$="[[!archivedCommunities]]">
+          [[t('archived')]]
+        </h1>
       </div>
-      <div class="layout horizontal center-center">
-        <div class="archivedBorder">
-          <h1 class="archivedText layout horizontal center-center" hidden$="[[!archivedCommunities]]">
-            [[t('archived')]]
-          </h1>
-        </div>
-      </div>
-      <div class="layout horizontal center-center wrap">
-        <template is="dom-repeat" class="list" items="[[archivedCommunities]]" as="community">
-          <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
-        </template>
-      </div>
+    </div>
+    <div class="layout horizontal center-center wrap" hidden="">
+      <template is="dom-repeat" class="list" items="[[archivedCommunities]]" as="community">
+        <yp-community-card class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+      </template>
     </div>
   </template>
 
@@ -52385,7 +52448,8 @@ value. `setMax` should move the slider to the maximum value.
       is: 'yp-community-grid',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.ypIronListBehavior
       ],
 
       properties: {
@@ -54977,7 +55041,12 @@ Example:
         @apply(--layout-horizontal);
         @apply(--layout-center-center);
       }
+
+      :host {
+        display: block;
+      }
     </style>
+
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
 
@@ -55161,7 +55230,7 @@ Example:
         window.appGlobals.setupGoogleAnalytics(this.domain);
 
         if (this.domain.Communities) {
-          this.setupCommunities(_.dropRight(this.domain.Communities, this.domain.Communities.length-15));
+          this.setupCommunities(_.dropRight(this.domain.Communities, this.domain.Communities.length-500));
         }
 
         this.$.domainCard.setElevation(5);
@@ -57575,9 +57644,9 @@ information on the API.
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.2.106");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.1");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.2.106");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.1");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);

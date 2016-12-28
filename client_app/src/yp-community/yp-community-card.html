@@ -115,12 +115,6 @@
         color: var(--icon-general-color, #FFF);
       }
 
-      yp-membership-button[featured] {
-        position: absolute;
-        top: 146px;
-        right: 55px;
-      }
-
       .community-name[featured] {
         background-color: var(--accent-color);
       }
@@ -176,11 +170,6 @@
           width: 304px;
         }
 
-        yp-membership-button[featured] {
-          top: 157px;
-          right: 16px;
-        }
-
         .secondImage {
           display: none;
         }
@@ -193,6 +182,8 @@
       }
     </style>
 
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
     <template is="dom-if" if="[[community]]">
       <paper-card featured$="[[featured]]" class="communityCard" animated elevation="[[elevation]]" class="layout vertical flex">
         <div class="layout horizontal">
@@ -204,7 +195,10 @@
           </template>
         </div>
         <div class="informationText">
-          <div class="community-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToCommunity">[[communityName]]</div>
+          <div class="community-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToCommunity">
+            <span hidden$="[[!archived]]">[[t('archived')]] -</span>
+            [[communityName]]
+          </div>
           <template is="dom-if" if="[[featured]]">
             <div class="description" featured$="[[featured]]">[[communityDescriptionFull]]</div>
           </template>
@@ -213,7 +207,7 @@
           </template>
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
-        <yp-membership-button archived$="[[archived]]" featured$="[[featured]]" large$="[[featured]]" community="[[community]]"></yp-membership-button>
+        <yp-membership-button archived$="[[archived]]" featured$="[[featured]]" community="[[community]]"></yp-membership-button>
       </paper-card>
     </template>
   </template>

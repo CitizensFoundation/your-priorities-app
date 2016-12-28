@@ -1,4 +1,4 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.1">
 
 <script>
   /**
@@ -30,7 +30,7 @@
       if (list) {
         var height;
         if (this.wide) {
-          height = windowHeight - 360;
+          height = windowHeight - 300;
         } else {
           height = windowHeight - 300;
           windowWidth = windowWidth - 16;
@@ -38,18 +38,11 @@
         list.style.height = height + 'px';
         list.style.width = windowWidth + 'px';
         this.async(function () {
+          list.updateViewportBoundaries();
           list.notifyResize();
-          this.async(function () {
-            if (this.wide) {
-              list.style.paddingTop = "300px";
-            } else {
-              list.style.paddingTop = "300px";
-            }
-            list.updateViewportBoundaries();
-            list.style.paddingTop = "0";
-          });
         });
       }
     }
   };
 </script>
+</head><body></body></html>
