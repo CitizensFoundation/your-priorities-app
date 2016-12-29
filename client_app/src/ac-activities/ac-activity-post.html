@@ -110,15 +110,20 @@
         }
       }
 
-      @media (max-width: 3600px) {
-        :host {
-          width: 304px;
+      :host {
+        width: 304px;
+      }
+
+      .postCard {
+        height: 100% !important;
+        width: 304px !important;
+      }
+
+      @media (max-width: 420px) {
+        .description {
+          width: 290px;
         }
 
-        .postCard {
-          height: 100% !important;
-          width: 304px !important;
-        }
 
         yp-post-cover-media {
           width: 304px !important;
