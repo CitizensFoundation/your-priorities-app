@@ -229,7 +229,8 @@
           margin: 0 !important;
           margin-top: 24px !important;
           width: 307px !important;
-          height: 100% !important;
+/*          height: 100% !important; */
+          height: 570px !important;
         }
 
         .postCoverMedia {
@@ -251,9 +252,12 @@
         }
 
         .mainActivityContent {
-          height: 100% !important;
+/*          height: 100% !important;
           max-height: 100% !important;
           padding-bottom: 64px;
+          */
+            height: 390px !important;
+            max-height: 390% !important;
         }
 
         .postNameInHeader {
@@ -641,7 +645,7 @@
           this.set('oldestProcessedActivityAt', null);
 
           //TODO: Test personalized news feeds better
-          if (false && window.appUser && window.appUser.user) {
+          if (window.appUser && window.appUser.user) {
             this.mode = 'news_feeds';
           }
           this.set('url', '/api/'+this.mode+'/' + type + '/'+typeId);
