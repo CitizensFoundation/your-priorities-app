@@ -229,7 +229,7 @@
           margin: 0 !important;
           margin-top: 24px !important;
           width: 307px !important;
-          height: 600px !important;
+          height: 100% !important;
         }
 
         .postCoverMedia {
@@ -251,8 +251,9 @@
         }
 
         .mainActivityContent {
-          height: 397px !important;
-          max-height: 397px !important;
+          height: 100% !important;
+          max-height: 100% !important;
+          padding-bottom: 42px;
         }
 
         .postNameInHeader {
@@ -468,7 +469,10 @@
           type: Number
         },
 
-        wide: Boolean
+        wide: {
+          type: Boolean,
+          value: false
+        }
       },
 
       _hasPostImage: function (post) {
@@ -704,7 +708,9 @@
               this.push('activities', activity);
             }
           }
-          //this.$.ironList.updateSizeForItem(activity);
+          if (!this.wide) {
+            this.$.ironList.updateSizeForItem(activity);
+          }
         }.bind(this));
 
         if (activities.length>0) {
