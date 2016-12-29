@@ -1,31 +1,31 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.15">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.16">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.15">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.15">
-<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.15">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.15">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.16">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.16">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.16">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.16">
 
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.15">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.15">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.16">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.16">
 
-<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.15">
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.16">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.15">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.15">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.15">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.15">
-<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.15">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.16">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.16">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.16">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.16">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.16">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.15">
-<link rel="import" href="../yp-point/yp-point-news-story-edit.html?v=6.3.15">
-<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.15">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.16">
+<link rel="import" href="../yp-point/yp-point-news-story-edit.html?v=6.3.16">
+<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.16">
 
-<link rel="import" href="./ac-activity-header.html?v=6.3.15">
-<link rel="import" href="./ac-activity-post.html?v=6.3.15">
-<link rel="import" href="./ac-activity-point.html?v=6.3.15">
-<link rel="import" href="./ac-activity-point-news-story.html?v=6.3.15">
-<link rel="import" href="./ac-activity-post-status-update.html?v=6.3.15">
-<link rel="import" href="./ac-activity-group.html?v=6.3.15">
+<link rel="import" href="./ac-activity-header.html?v=6.3.16">
+<link rel="import" href="./ac-activity-post.html?v=6.3.16">
+<link rel="import" href="./ac-activity-point.html?v=6.3.16">
+<link rel="import" href="./ac-activity-point-news-story.html?v=6.3.16">
+<link rel="import" href="./ac-activity-post-status-update.html?v=6.3.16">
+<link rel="import" href="./ac-activity-group.html?v=6.3.16">
 
 </head><body><dom-module id="ac-activities">
   <template>
@@ -138,15 +138,11 @@
         padding-right: 0;
       }
 
-      .coverMediaOuter {
-        position: relative;
-      }
-
       .postCoverMedia {
         width:  420px;
         min-width: 420px !important;
         height: 236px;
-        position: abs;
+        position: absolute;
         top: 0;
         left: 0;
         z-index: -1000;
@@ -339,10 +335,8 @@
                   </div>
                   <div class="flex"></div>
                   <template is="dom-if" if="[[_hasPostImage(activity.Post)]]">
-                    <div class="coverMediaOuter">
-                      <yp-post-cover-media disable-maps="" class="postCoverMedia" post$="[[activity.Post]]"></yp-post-cover-media>
-                      <div class="textGradient"></div>
-                    </div>
+                    <yp-post-cover-media disable-maps="" class="postCoverMedia" post$="[[activity.Post]]"></yp-post-cover-media>
+                    <div class="textGradient"></div>
                   </template>
                 </div>
                 <div class="layout horizontal" hidden$="[[postId]]">
