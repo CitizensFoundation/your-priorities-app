@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.11"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.12"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -1605,9 +1605,6 @@ Custom property | Description | Default
       </iron-list>
     </div>
 
-    <iron-scroll-threshold id="scrollTheshold" lower-threshold="150" on-lower-threshold="_loadMoreData" scroll-target="document">
-    </iron-scroll-threshold>
-
     <div class="layout horizontal center-center">
       <yp-ajax id="ajax" large-spinner="" on-response="_postsResponse"></yp-ajax>
     </div>
@@ -1691,6 +1688,11 @@ Custom property | Description | Default
           type: String
         },
 
+        selectedTab: {
+          type: String,
+          observer: '_selectedTabChanged'
+        },
+
         tabCounterId: {
           type: String
         },
@@ -1713,6 +1715,12 @@ Custom property | Description | Default
         listOffset: {
           type: String,
           value: "500px"
+        }
+      },
+
+      _selectedTabChanged: function (selectedTab) {
+        if (this.statusFilter==selectedTab) {
+          //this._loadMoreData();
         }
       },
 
@@ -1764,36 +1772,35 @@ Custom property | Description | Default
       },
 
       _loadMoreData: function () {
-        console.log("_loadMoreData");
-        if (this.moreToLoad) {
-          this.set('moreToLoad', false);
-          this.set('noPosts', false);
-          var objectId, objectType;
+          if (this.moreToLoad) {
+            this.set('moreToLoad', false);
+            this.set('noPosts', false);
+            var objectId, objectType;
 
-          if (this.userId) {
-            objectId = this.userId + '/posts';
-            objectType = 'users';
-          } else {
-            objectId = this.groupId;
-            objectType = 'groups';
-          }
-
-          if (!this.filter)
-            this.set('filter','newest');
-          if (this.searchingFor) {
-            this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
-          } else {
-            this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
-            if (this.categoryId) {
-              this.$$('#ajax').url += '/' + this.categoryId;
+            if (this.userId) {
+              objectId = this.userId + '/posts';
+              objectType = 'users';
             } else {
-              this.$$('#ajax').url += '/null';
+              objectId = this.groupId;
+              objectType = 'groups';
             }
-            this.$$('#ajax').url += '/'+this.statusFilter;
+
+            if (!this.filter)
+              this.set('filter','newest');
+            if (this.searchingFor) {
+              this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
+            } else {
+              this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
+              if (this.categoryId) {
+                this.$$('#ajax').url += '/' + this.categoryId;
+              } else {
+                this.$$('#ajax').url += '/null';
+              }
+              this.$$('#ajax').url += '/'+this.statusFilter;
+            }
+            this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
+            this.$$('#ajax').generateRequest();
           }
-          this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
-          this.$$('#ajax').generateRequest();
-        }
       },
 
       _postsResponse: function (event, detail, sender) {
@@ -1832,7 +1839,7 @@ Custom property | Description | Default
         });
 
         if (posts.length>0 && posts.length!=this.postsCount) {
-          this.$$("#scrollTheshold").clearTriggers();
+          this.fire('yp-clear-scroll-threshold');
           this.setMoreToLoad();
         }
 
@@ -2316,7 +2323,7 @@ Custom property | Description | Default
       <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section name="open">
           <div class="layout horizontal center-center">
-            <yp-post-list id="openPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+            <yp-post-list on-yp-clear-scroll-threshold="_clearScrollThreshold" id="openPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
           </div>
         </section>
         <section name="news">
@@ -2325,17 +2332,17 @@ Custom property | Description | Default
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section name="in_progress">
             <div class="layout horizontal center-center">
-              <yp-post-list id="inProgressPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list on-yp-clear-scroll-threshold="_clearScrollThreshold" id="inProgressPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section name="successful">
             <div class="layout horizontal center-center">
-              <yp-post-list id="successfulPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list on-yp-clear-scroll-threshold="_clearScrollThreshold" id="successfulPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section name="failed">
             <div class="layout horizontal center-center">
-              <yp-post-list id="failedPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list on-yp-clear-scroll-threshold="_clearScrollThreshold" id="failedPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
         </template>
@@ -2352,6 +2359,9 @@ Custom property | Description | Default
         <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
       </template>
     </div>
+
+    <iron-scroll-threshold id="scrollTheshold" lower-threshold="150" on-lower-threshold="_loadMoreData" scroll-target="document">
+    </iron-scroll-threshold>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-signals on-iron-signal-yp-refresh-group-posts="_refreshGroupPosts"></iron-signals>
@@ -2451,6 +2461,31 @@ Custom property | Description | Default
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
+
+      _clearScrollThreshold: function () {
+        this.$$("#scrollTheshold").clearTriggers();
+      },
+
+      _loadDataOnTab: function (tabId) {
+        var tab = this.$$("#"+tabId);
+        if (tab) {
+          tab._loadMoreData();
+        } else {
+          console.error("Cant find tab "+tabId);
+        }
+      },
+
+      _loadMoreData: function () {
+        if (this.selectedTab=="open") {
+          this._loadDataOnTab("openPostList");
+        } else if (this.selectedTab=="in_progress") {
+          this._loadDataOnTab("inProgressPostList");
+        } else if (this.selectedTab=="successful") {
+          this._loadDataOnTab("successfulPostList");
+        } else if (this.selectedTab=="failed") {
+          this._loadDataOnTab("failedPostList");
+        }
+      },
 
       _refreshGroupPosts: function () {
         this.$$("#openPostList")._refreshGroupFromFilter();

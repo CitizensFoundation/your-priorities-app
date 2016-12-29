@@ -1,30 +1,29 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.11">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.12">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.11">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.11">
-<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.11">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.12">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.12">
 
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.11">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.11">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.12">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.12">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.11">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.11">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.11">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.11">
-<link href="../../bower_components/paper-search/paper-search.html?v=6.3.11" rel="import">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.12">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.12">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.12">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.12">
+<link href="../../bower_components/paper-search/paper-search.html?v=6.3.12" rel="import">
 
-<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.11">
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.12">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.11">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.11">
-<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.11">
-<link rel="import" href="../ac-activities/ac-activities.html?v=6.3.11">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.12">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.12">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.12">
+<link rel="import" href="../ac-activities/ac-activities.html?v=6.3.12">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.11">
-<link rel="import" href="../yp-post/yp-post-card.html?v=6.3.11">
-<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.3.11">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.12">
+<link rel="import" href="../yp-post/yp-post-card.html?v=6.3.12">
+<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.3.12">
 
-<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.3.11">
+<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.3.12">
 
 </head><body><dom-module id="yp-post-list">
   <template>
@@ -172,9 +171,6 @@
       </iron-list>
     </div>
 
-    <iron-scroll-threshold id="scrollTheshold" lower-threshold="150" on-lower-threshold="_loadMoreData" scroll-target="document">
-    </iron-scroll-threshold>
-
     <div class="layout horizontal center-center">
       <yp-ajax id="ajax" large-spinner="" on-response="_postsResponse"></yp-ajax>
     </div>
@@ -258,6 +254,11 @@
           type: String
         },
 
+        selectedTab: {
+          type: String,
+          observer: '_selectedTabChanged'
+        },
+
         tabCounterId: {
           type: String
         },
@@ -280,6 +281,12 @@
         listOffset: {
           type: String,
           value: "500px"
+        }
+      },
+
+      _selectedTabChanged: function (selectedTab) {
+        if (this.statusFilter==selectedTab) {
+          //this._loadMoreData();
         }
       },
 
@@ -331,36 +338,35 @@
       },
 
       _loadMoreData: function () {
-        console.log("_loadMoreData");
-        if (this.moreToLoad) {
-          this.set('moreToLoad', false);
-          this.set('noPosts', false);
-          var objectId, objectType;
+          if (this.moreToLoad) {
+            this.set('moreToLoad', false);
+            this.set('noPosts', false);
+            var objectId, objectType;
 
-          if (this.userId) {
-            objectId = this.userId + '/posts';
-            objectType = 'users';
-          } else {
-            objectId = this.groupId;
-            objectType = 'groups';
-          }
-
-          if (!this.filter)
-            this.set('filter','newest');
-          if (this.searchingFor) {
-            this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
-          } else {
-            this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
-            if (this.categoryId) {
-              this.$$('#ajax').url += '/' + this.categoryId;
+            if (this.userId) {
+              objectId = this.userId + '/posts';
+              objectType = 'users';
             } else {
-              this.$$('#ajax').url += '/null';
+              objectId = this.groupId;
+              objectType = 'groups';
             }
-            this.$$('#ajax').url += '/'+this.statusFilter;
+
+            if (!this.filter)
+              this.set('filter','newest');
+            if (this.searchingFor) {
+              this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
+            } else {
+              this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
+              if (this.categoryId) {
+                this.$$('#ajax').url += '/' + this.categoryId;
+              } else {
+                this.$$('#ajax').url += '/null';
+              }
+              this.$$('#ajax').url += '/'+this.statusFilter;
+            }
+            this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
+            this.$$('#ajax').generateRequest();
           }
-          this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
-          this.$$('#ajax').generateRequest();
-        }
       },
 
       _postsResponse: function (event, detail, sender) {
@@ -399,7 +405,7 @@
         });
 
         if (posts.length>0 && posts.length!=this.postsCount) {
-          this.$$("#scrollTheshold").clearTriggers();
+          this.fire('yp-clear-scroll-threshold');
           this.setMoreToLoad();
         }
 

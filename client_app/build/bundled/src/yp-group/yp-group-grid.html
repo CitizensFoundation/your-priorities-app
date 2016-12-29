@@ -1,12 +1,12 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.11">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.12">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.11">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.11">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.12">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.12">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.11">
-<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.11">
-<link rel="import" href="yp-group-card.html?v=6.3.11">
-<link rel="import" href="yp-group-card-add.html?v=6.3.11">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.12">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.12">
+<link rel="import" href="yp-group-card.html?v=6.3.12">
+<link rel="import" href="yp-group-card-add.html?v=6.3.12">
 
 </head><body><dom-module id="yp-group-grid">
 
@@ -29,13 +29,15 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <iron-list id="ironList" override-padding-top="350" items="[[activeGroups]]" as="group" scroll-target="document" grid="">
-      <template>
-        <div class="groupCard" wide-padding$="[[wide]]">
-          <yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
-        </div>
-      </template>
-    </iron-list>
+    <div class="layout vertical center-center">
+      <iron-list id="ironList" override-padding-top="350" items="[[activeGroups]]" as="group" scroll-target="document" grid="">
+        <template>
+          <div class="groupCard" wide-padding$="[[wide]]">
+            <yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+          </div>
+        </template>
+      </iron-list>
+    </div>
   </template>
 
   <script>
