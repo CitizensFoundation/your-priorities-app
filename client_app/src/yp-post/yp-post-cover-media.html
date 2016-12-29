@@ -75,38 +75,51 @@
 
     </style>
 
-      <div class="mapCanvas">
-        <iron-image hidden$="[[!noneActive]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+    <div class="mapCanvas">
+      <iron-image hidden$="[[!noneActive]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
 
-        <div class="layout horizontal center-center" hidden$="[[!categoryActive]]">
-          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
-        </div>
-
-        <iron-image hidden$="[[!imageActive]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
-
-        <template is="dom-if" if="[[!disableMaps]]">
-          <google-streetview-pano
-            hidden$="[[!streetViewActive]]"
-            position$="[[mapPosition]]"
-            heading="330"
-            api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
-            pitch="2"
-            zoom="0.8"
-            disable-default-ui>
-          </google-streetview-pano>
-
-          <google-map hidden$="[[!mapActive]]" id="coverMediaMap" class="map"
-                      libraries="places"
-                      fit-to-markers
-                      zoom$="[[zoomLevel]]"
-                      map-type$="[[mapType]]"
-                      api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-            <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
-          </google-map>
-        </template>
+      <div class="layout horizontal center-center" hidden$="[[!categoryActive]]">
+        <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
       </div>
-    </template>
 
+      <iron-image hidden$="[[!imageActive]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
+
+      <template is="dom-if" if="[[!disableMaps]]">
+
+        <template is="dom-if" if="[[streetViewActive]]">
+          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&zoom=[[zoomLevel]]&size=432x243&maptype=hybrid&key=[[staticMapsApiKey]]" hidden$="[[streetViewActivated]]"></iron-image>
+
+          <template is="dom-if" if="[[streetViewActivated]]">
+            <google-streetview-pano
+              position$="[[mapPosition]]"
+              heading="330"
+              api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
+              pitch="2"
+              zoom="0.8"
+              disable-default-ui>
+            </google-streetview-pano>
+          </template>
+
+        </template>
+
+        <template is="dom-if" if="[[mapActive]]">
+          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&size=432x243&zoom=[[zoomLevel]]&maptype=[[mapType]]&key=[[staticMapsApiKey]]" hidden$="[[mapActivated]]"></iron-image>
+
+          <template is="dom-if" if="[[mapActivated]]">
+            <google-map id="coverMediaMap" class="map"
+                        libraries="places"
+                        fit-to-markers
+                        zoom$="[[zoomLevel]]"
+                        map-type$="[[mapType]]"
+                        api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+              <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
+            </google-map>
+          </template>
+        </template>
+      </template>
+    </div>
+
+  </template>
 
   <script>
     Polymer({
@@ -117,6 +130,7 @@
       ],
 
       properties: {
+
 
         post: {
           type: Object,
@@ -191,12 +205,37 @@
 
         headerMode: {
           type: Boolean,
-          value: false
+          value: false,
+          observer: '_headerModeChanged'
         },
 
         disableMaps: {
           type: Boolean,
           value: false
+        },
+
+        mapActivated: {
+          type: Boolean,
+          value: false
+        },
+
+        streetViewActivated: {
+          type: Boolean,
+          value: false
+        },
+
+        staticMapsApiKey: {
+          type: String,
+          value: "AIzaSyBYy8UvdDD650mz7k1pY0j2hBFQmCPVnxA"
+        }
+      },
+
+      _headerModeChanged: function (headerMode) {
+        if (headerMode===true) {
+          this.async(function () {
+            this.set('mapActivated', true);
+            this.set('streetViewActivated', true);
+          });
         }
       },
 
