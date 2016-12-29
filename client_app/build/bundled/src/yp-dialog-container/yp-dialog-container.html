@@ -1,17 +1,17 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.12">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.12">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.15">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.15">
 
 </head><body>// Preloaded
-<link rel="import" href="../yp-ajax/yp-ajax-error-dialog.html?v=6.3.12">
-<link rel="import" href="../yp-user/yp-login.html?v=6.3.12">
-<link rel="import" href="../yp-user/yp-missing-email.html?v=6.3.12">
-<link rel="import" href="../yp-user/yp-forgot-password.html?v=6.3.12">
-<link rel="import" href="../yp-user/yp-reset-password.html?v=6.3.12">
-<link rel="import" href="../yp-page/yp-page-dialog.html?v=6.3.12">
-<link rel="import" href="../yp-user/yp-accept-invite.html?v=6.3.12">
+<link rel="import" href="../yp-ajax/yp-ajax-error-dialog.html?v=6.3.15">
+<link rel="import" href="../yp-user/yp-login.html?v=6.3.15">
+<link rel="import" href="../yp-user/yp-missing-email.html?v=6.3.15">
+<link rel="import" href="../yp-user/yp-forgot-password.html?v=6.3.15">
+<link rel="import" href="../yp-user/yp-reset-password.html?v=6.3.15">
+<link rel="import" href="../yp-page/yp-page-dialog.html?v=6.3.15">
+<link rel="import" href="../yp-user/yp-accept-invite.html?v=6.3.15">
 
-<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.12">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.12">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.15">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.15">
 
 <dom-module id="yp-dialog-container">
   <template>
@@ -96,18 +96,18 @@
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.12"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.15"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.12"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.15"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.12"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.15"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
