@@ -1,12 +1,12 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.5">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.6">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.5">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.5">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.6">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.6">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.5">
-<link rel="import" href="../yp-point/yp-point.html?v=6.3.5">
-<link rel="import" href="./ac-activity-post-header.html?v=6.3.5">
-<link rel="import" href="../yp-group/yp-group-behaviors.html?v=6.3.5">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.6">
+<link rel="import" href="../yp-point/yp-point.html?v=6.3.6">
+<link rel="import" href="./ac-activity-post-header.html?v=6.3.6">
+<link rel="import" href="../yp-group/yp-group-behaviors.html?v=6.3.6">
 
 </head><body><dom-module id="ac-activity-group">
   <template>
@@ -14,13 +14,22 @@
       :host {
       }
 
-      iron-image {
-        width: 100px;
-        height: 56px;
+      .logo {
+        width: 100px !important;
+        height: 56px !important;
         margin-top: 2px;
         margin-left: 16px;
         margin-right: 8px;
         opacity: 0.5;
+      }
+
+      .logo[minimal] {
+        margin-top: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        padding-top: 0px;
+        padding-right: 8px;
+        opacity: 1.0;
       }
 
       .group-name {
@@ -50,17 +59,21 @@
         padding-top: 16px;
       }
 
+      #groupInfo[minimal] {
+        padding-top: 0;
+      }
+
       .groupInfoContainer {
         padding-top: 16px;
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <div id="groupInfo" class="layout horizontal cursor" on-tap="_goToGroup">
+    <div id="groupInfo" minimal$="[[minimal]]" class="layout horizontal cursor" on-tap="_goToGroupIfNotMinimal">
       <div>
-        <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath]]"></iron-image>
+        <iron-image minimal$="[[minimal]]" class="logo" sizing="contain" preload="" src="[[groupLogoImagePath]]"></iron-image>
       </div>
-      <div class="layout vertical groupInfoContainer">
+      <div class="layout vertical groupInfoContainer" hidden$="[[minimal]]">
         <div class="groupText">[[t('group.group')]]</div>
         <h2 class="group-name">[[groupName]]</h2>
         <div class="groupDescription"></div>
@@ -72,6 +85,19 @@
     Polymer({
 
       is: 'ac-activity-group',
+
+      properties: {
+        minimal: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _goToGroupIfNotMinimal: function () {
+        if (!this.minimal) {
+          this._goToGroup();
+        }
+      },
 
       behaviors: [
         Polymer.appHelpers,

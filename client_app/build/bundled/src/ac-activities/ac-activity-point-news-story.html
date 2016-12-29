@@ -1,34 +1,22 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.5">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.5">
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.5">
-<link rel="import" href="../yp-point/yp-point.html?v=6.3.5">
-<link rel="import" href="./ac-activity-post-header.html?v=6.3.5">
-<link rel="import" href="../yp-point/yp-point-comment-list.html?v=6.3.5">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.6">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.6">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.6">
+<link rel="import" href="../yp-point/yp-point.html?v=6.3.6">
+<link rel="import" href="./ac-activity-post-header.html?v=6.3.6">
+<link rel="import" href="../yp-point/yp-point-comment-list.html?v=6.3.6">
 
 </head><body><dom-module id="ac-activity-point-news-story">
   <template>
     <style include="iron-flex iron-flex-alignment">
-      .point {
-        padding: 8px;
-        margin: 8px;
-        @apply(--layout-vertical);
-      }
-
-      .pointText {
-        margin-bottom: 16px;
-        padding: 16px;
-        width: 360px;
+      .newsStoryContainer {
+        max-height: 250px;
+        overflow-y: scroll;
       }
 
       yp-point-news-story {
-        padding-top: 8px;
-      }
-
-      .pointLayout {
-        width: 46%;
       }
     </style>
-    <div class="layout vertical center-center">
+    <div class="layout vertical center-center newsStoryContainer">
       <yp-point-news-story hide-user="" class="card" point="[[activity.Point]]"></yp-point-news-story>
       <yp-point-comment-list id="pointCommentList" point="[[activity.Point]]"></yp-point-comment-list>
     </div>

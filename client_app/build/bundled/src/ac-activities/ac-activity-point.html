@@ -1,17 +1,15 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.5">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.6">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.5">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.6">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.5">
-<link rel="import" href="../yp-point/yp-point.html?v=6.3.5">
-<link rel="import" href="./ac-activity-post-header.html?v=6.3.5">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.6">
+<link rel="import" href="../yp-point/yp-point.html?v=6.3.6">
+<link rel="import" href="./ac-activity-post-header.html?v=6.3.6">
 
 </head><body><dom-module id="ac-activity-point">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
-        padding-top: 24px;
-        height: 100%;
       }
 
       .point {
@@ -28,7 +26,12 @@
 
       yp-point {
         width: 380px;
-        padding-top: 8px;
+      }
+
+      @media (max-width: 480px) {
+        yp-point {
+          width: 307px;
+        }
       }
 
       .pointLayout {
@@ -44,9 +47,6 @@
     </style>
 
     <div class="layout vertical center-center">
-      <div class="postName">
-        [[activity.Post.name]]
-      </div>
       <yp-point hide-user="" class="card" point="[[activity.Point]]"></yp-point>
     </div>
   </template>

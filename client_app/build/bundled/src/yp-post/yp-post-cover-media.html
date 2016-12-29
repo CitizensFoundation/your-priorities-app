@@ -1,20 +1,20 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.5">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.6">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.5">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.5">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.5">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.5">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.5">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.5">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.6">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.6">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.6">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.6">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.6">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.6">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.5">
-<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.5">
-<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.5">
-<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.5">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.6">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.6">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.6">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.6">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.5">
-<link rel="import" href="yp-post-actions.html?v=6.3.5">
-<link rel="import" href="yp-post-users.html?v=6.3.5">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.6">
+<link rel="import" href="yp-post-actions.html?v=6.3.6">
+<link rel="import" href="yp-post-users.html?v=6.3.6">
 
 </head><body><dom-module id="yp-post-cover-media">
 
@@ -84,12 +84,14 @@
 
         <iron-image hidden$="[[!imageActive]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
 
-        <google-streetview-pano hidden$="[[!streetViewActive]]" position$="[[mapPosition]]" heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" pitch="2" zoom="0.8" disable-default-ui="">
-        </google-streetview-pano>
+        <template is="dom-if" if="[[!disableMaps]]">
+          <google-streetview-pano hidden$="[[!streetViewActive]]" position$="[[mapPosition]]" heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" pitch="2" zoom="0.8" disable-default-ui="">
+          </google-streetview-pano>
 
-        <google-map hidden$="[[!mapActive]]" id="coverMediaMap" class="map" libraries="places" fit-to-markers="" zoom$="[[zoomLevel]]" map-type$="[[mapType]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-          <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
-        </google-map>
+          <google-map hidden$="[[!mapActive]]" id="coverMediaMap" class="map" libraries="places" fit-to-markers="" zoom$="[[zoomLevel]]" map-type$="[[mapType]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+            <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
+          </google-map>
+        </template>
       </div>
     </template>
 
@@ -176,6 +178,11 @@
         },
 
         headerMode: {
+          type: Boolean,
+          value: false
+        },
+
+        disableMaps: {
           type: Boolean,
           value: false
         }

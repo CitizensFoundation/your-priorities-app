@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.5"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.6"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -363,7 +363,7 @@
     });
   </script>
 </dom-module>
-<dom-module id="yp-post-points" assetpath="/">
+<dom-module id="yp-post-points" assetpath="./">
   <template>
     <style include="iron-flex iron-flex-alignment">
 
@@ -927,7 +927,7 @@
     }());
   </script>
 </dom-module>
-<dom-module id="yp-post-user-image-card" assetpath="/">
+<dom-module id="yp-post-user-image-card" assetpath="">
   <template>
     <style include="iron-flex iron-flex-alignment">
       .description {
@@ -1055,7 +1055,7 @@
     }());
   </script>
 </dom-module>
-<dom-module id="yp-post-user-images" assetpath="/">
+<dom-module id="yp-post-user-images" assetpath="./">
   <template>
     <style include="iron-flex iron-flex-alignment">
       paper-button {
@@ -1141,7 +1141,7 @@
     }());
   </script>
 </dom-module>
-<dom-module id="yp-post-user-image-edit" assetpath="/">
+<dom-module id="yp-post-user-image-edit" assetpath="./">
   <template>
 
     <style include="iron-flex iron-flex-alignment">
@@ -1775,7 +1775,6 @@
           dialog.setup(null, this.post.Group, true, null);
           dialog.open('new', { groupId: this.post.Group.id });
         },
-
 
         listeners: {
           'yp-debate-info': '_updateDebateInfo',

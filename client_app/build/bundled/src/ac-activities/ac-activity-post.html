@@ -1,28 +1,25 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.5">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.6">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.5">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.6">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.5">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.5">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.6">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.6">
 
-<link rel="import" href="../yp-post/yp-post-actions.html?v=6.3.5">
-<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.5">
-<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.3.5">
+<link rel="import" href="../yp-post/yp-post-actions.html?v=6.3.6">
+<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.6">
+<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.3.6">
 
 </head><body><dom-module id="ac-activity-post">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
         display: block;
-        width: 96%;
       }
 
       .descriptionOuter {
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--description-line-height, 1.3);
-        padding-top: 16px;
-        padding-bottom: 16px;
         margin: 0;
         width: 400px;
       }
@@ -40,12 +37,9 @@
       }
 
       .voting {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        text-align: center;
-        padding-left: 16px;
-        padding-right: 24px;
-        margin-bottom: 24px;
+        position: absolute;
+        bottom: 0;
+        right: 16px;
       }
 
       .card-actions {
@@ -83,12 +77,12 @@
 
       @media (max-width: 960px) {
         :host {
-          width: 600px;
+          width: 420px;
         }
 
         .postCard {
           height: 100%;
-          width: 600px;
+          width: 420px;
           @apply(--layout-wrap);
         }
 
@@ -107,7 +101,7 @@
         }
 
         .card-content {
-          width: 600px !important;
+          width: 420px !important;
           padding-bottom: 74px;
         }
 
@@ -116,15 +110,20 @@
         }
       }
 
-      @media (max-width: 360px) {
-        :host {
-          width: 304px;
+      :host {
+        width: 304px;
+      }
+
+      .postCard {
+        height: 100% !important;
+        width: 304px !important;
+      }
+
+      @media (max-width: 420px) {
+        .description {
+          width: 290px;
         }
 
-        .postCard {
-          height: 100% !important;
-          width: 304px !important;
-        }
 
         yp-post-cover-media {
           width: 304px !important;
@@ -135,10 +134,9 @@
 
     <div class="layout horizontal wrap">
       <div class="layout vertical descriptionOuter">
-        <h3 class="post-name postCardCursor" on-tap="goToPost">[[postNameFunc(activity.Post)]]</h3>
         <div id="description" class="description"></div>
       </div>
-      <div class="layout horizontal">
+      <div hidden="" class="layout horizontal">
         <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
       </div>
       <div class="layout horizontal center-center">

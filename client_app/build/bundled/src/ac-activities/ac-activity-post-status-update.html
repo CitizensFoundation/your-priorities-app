@@ -1,26 +1,26 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.5">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.6">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.5">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.6">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.5">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.6">
 
-<link rel="import" href="../yp-point/yp-point.html?v=6.3.5">
+<link rel="import" href="../yp-point/yp-point.html?v=6.3.6">
 
-<link rel="import" href="./ac-activity-post-header.html?v=6.3.5">
+<link rel="import" href="./ac-activity-post-header.html?v=6.3.6">
 
 </head><body><dom-module id="ac-activity-post-status-update">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
-        padding-top: 24px;
       }
 
       .statusChange {
-        width: 92%;
         padding-left: 32px;
         padding-right: 32px;
-        padding-top: 8px;
-        font-size: 19px;
+        margin-bottom: 64px;
+        font-size: 16px;
+        overflow-y: scroll;
+        max-height: 220px;
       }
 
       .postName {
@@ -38,9 +38,6 @@
     </style>
 
     <div class="layout vertical">
-      <div class="postName">
-        [[activity.Post.name]]
-      </div>
       <div class="groupName">
         [[activity.Group.name]]
       </div>

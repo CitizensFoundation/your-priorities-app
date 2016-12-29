@@ -6,13 +6,16 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.5">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.6">
 
 <script>
   (function() {
     'use strict';
-    // Used to calculate the scroll direction during touch events.
-    var LAST_TOUCH_POSITION = {
+    /**
+     * Used to calculate the scroll direction during touch events.
+     * @type {!Object}
+     */
+    var lastTouchPosition = {
       pageX: 0,
       pageY: 0
     };
@@ -20,8 +23,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * Used to avoid computing event.path and filter scrollable nodes (better perf).
      * @type {?EventTarget}
      */
-    var ROOT_TARGET = null;
-    var SCROLLABLE_NODES = [];
+    var lastRootTarget = null;
+    /**
+     * @type {!Array<Node>}
+     */
+    var lastScrollableNodes = [];
 
     /**
      * The IronDropdownScrollManager is intended to provide a central source
@@ -183,8 +189,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // If event has targetTouches (touch event), update last touch position.
         if (event.targetTouches) {
           var touch = event.targetTouches[0];
-          LAST_TOUCH_POSITION.pageX = touch.pageX;
-          LAST_TOUCH_POSITION.pageY = touch.pageY;
+          lastTouchPosition.pageX = touch.pageX;
+          lastTouchPosition.pageY = touch.pageY;
         }
       },
 
@@ -197,7 +203,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         document.addEventListener('mousewheel', this._boundScrollHandler, true);
         // IE:
         document.addEventListener('DOMMouseScroll', this._boundScrollHandler, true);
-        // Save the SCROLLABLE_NODES on touchstart, to be used on touchmove.
+        // Save the lastScrollableNodes on touchstart, to be used on touchmove.
         document.addEventListener('touchstart', this._boundScrollHandler, true);
         // Mobile devices can scroll on touch move:
         document.addEventListener('touchmove', this._boundScrollHandler, true);
@@ -224,13 +230,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // Update if root target changed. For touch events, ensure we don't
         // update during touchmove.
         var target = Polymer.dom(event).rootTarget;
-        if (event.type !== 'touchmove' && ROOT_TARGET !== target) {
-          ROOT_TARGET = target;
-          SCROLLABLE_NODES = this._getScrollableNodes(Polymer.dom(event).path);
+        if (event.type !== 'touchmove' && lastRootTarget !== target) {
+          lastRootTarget = target;
+          lastScrollableNodes = this._getScrollableNodes(Polymer.dom(event).path);
         }
 
         // Prevent event if no scrollable nodes.
-        if (!SCROLLABLE_NODES.length) {
+        if (!lastScrollableNodes.length) {
           return true;
         }
         // Don't prevent touchstart event inside the locking element when it has
@@ -241,7 +247,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // Get deltaX/Y.
         var info = this._getScrollInfo(event);
         // Prevent if there is no child that can scroll.
-        return !this._getScrollingNode(SCROLLABLE_NODES, info.deltaX, info.deltaY);
+        return !this._getScrollingNode(lastScrollableNodes, info.deltaX, info.deltaY);
       },
 
       /**
@@ -340,9 +346,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         else if (event.targetTouches) {
           var touch = event.targetTouches[0];
           // Touch moves from right to left => scrolling goes right.
-          info.deltaX = LAST_TOUCH_POSITION.pageX - touch.pageX;
+          info.deltaX = lastTouchPosition.pageX - touch.pageX;
           // Touch moves from down to up => scrolling goes down.
-          info.deltaY = LAST_TOUCH_POSITION.pageY - touch.pageY;
+          info.deltaY = lastTouchPosition.pageY - touch.pageY;
         }
         return info;
       }

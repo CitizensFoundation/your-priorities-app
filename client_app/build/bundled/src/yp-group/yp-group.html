@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.5"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.6"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -719,6 +719,11 @@ Bar in which the user can enter search terms and filter
 
 </script>
 <!--
+Dialog with which the user can filter the result set
+
+@demo demo/paper-filter-dialog.html
+-->
+<!--
 @license
 Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
@@ -794,11 +799,6 @@ Custom property | Description | Default
     });
   </script>
 </dom-module>
-<!--
-Dialog with which the user can filter the result set
-
-@demo demo/paper-filter-dialog.html
--->
 <dom-module id="paper-filter-dialog" assetpath="../../bower_components/paper-search/">
 
 	<template>
@@ -1089,6 +1089,43 @@ Dialog with which the user can filter the result set
 
 </script>
 <!--
+Panel with a search bar and filtering dialog.
+
+### Example
+
+```html
+<paper-search-panel
+  search="{{search}}"
+  count="{{count}}"
+  items="[[items]]"
+  has-more="[[hasMore]]"
+  loading="[[loading]]"
+  filters="[[filters]]"
+  selected-filters="{{selectedFilters}}"
+  on-change-request-params="loadData">
+  <div>
+  	Show your [[count]] results for "[[search]]"
+  </div>
+</paper-search-panel>
+```
+
+The content is hidden if no results are available. Content with attribute `fixed`
+is shown even without no results (check the demo for an example).
+
+@demo demo/paper-search-panel.html
+-->
+<!--
+A material design button to load more items in a list.
+
+### Example
+
+```html
+<paper-more-button has-more=[[hasMore]] loading=[[loading]]>More</paper-more-button>
+```
+
+@demo demo/index.html
+-->
+<!--
 @license
 Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
@@ -1151,17 +1188,6 @@ Custom property | Description | Default
     });
   </script>
 </dom-module>
-<!--
-A material design button to load more items in a list.
-
-### Example
-
-```html
-<paper-more-button has-more=[[hasMore]] loading=[[loading]]>More</paper-more-button>
-```
-
-@demo demo/index.html
--->
 <dom-module id="paper-more-button" assetpath="../../bower_components/paper-more-button/">
 
 	<template>
@@ -1208,32 +1234,6 @@ A material design button to load more items in a list.
 })();
 
 </script>
-<!--
-Panel with a search bar and filtering dialog.
-
-### Example
-
-```html
-<paper-search-panel
-  search="{{search}}"
-  count="{{count}}"
-  items="[[items]]"
-  has-more="[[hasMore]]"
-  loading="[[loading]]"
-  filters="[[filters]]"
-  selected-filters="{{selectedFilters}}"
-  on-change-request-params="loadData">
-  <div>
-  	Show your [[count]] results for "[[search]]"
-  </div>
-</paper-search-panel>
-```
-
-The content is hidden if no results are available. Content with attribute `fixed`
-is shown even without no results (check the demo for an example).
-
-@demo demo/paper-search-panel.html
--->
 <dom-module id="paper-search-panel" assetpath="../../bower_components/paper-search/">
 
 	<template>
@@ -1855,7 +1855,7 @@ is shown even without no results (check the demo for an example).
     });
   </script>
 </dom-module>
-<dom-module id="yp-group-card-large" assetpath="/">
+<dom-module id="yp-group-card-large" assetpath="./">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
