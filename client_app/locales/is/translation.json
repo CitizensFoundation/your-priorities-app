@@ -241,6 +241,7 @@
   },
 
   "post": {
+    "most_debated": "Mest rökrætt",
     "move": "Færa hugmynd",
     "confirmMove": "Staðfestu að þú vilt færa",
     "statusChangeConfirmText": "Ertu viss um að þú viljir senda tölvupóst á alla sem styðja og eru á móti þessari hugmynd?",

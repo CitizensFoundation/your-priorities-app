@@ -184,7 +184,7 @@
       <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section name="open">
           <div class="layout horizontal center-center">
-            <yp-post-list on-yp-clear-scroll-threshold="_clearScrollThreshold" id="openPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+            <yp-post-list id="openPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
           </div>
         </section>
         <section name="news">
@@ -193,17 +193,17 @@
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section name="in_progress">
             <div class="layout horizontal center-center">
-              <yp-post-list on-yp-clear-scroll-threshold="_clearScrollThreshold" id="inProgressPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="inProgressPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section name="successful">
             <div class="layout horizontal center-center">
-              <yp-post-list on-yp-clear-scroll-threshold="_clearScrollThreshold" id="successfulPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="successfulPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section name="failed">
             <div class="layout horizontal center-center">
-              <yp-post-list on-yp-clear-scroll-threshold="_clearScrollThreshold" id="failedPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="failedPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
         </template>
@@ -229,6 +229,7 @@
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-signals on-iron-signal-yp-refresh-group-posts="_refreshGroupPosts"></iron-signals>
+    <iron-signals on-iron-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></iron-signals>
 
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
 
@@ -336,6 +337,7 @@
 
       _clearScrollThreshold: function () {
         this.$$("#scrollTheshold").clearTriggers();
+        console.warn("Clearing scrolling triggers for group");
       },
 
       _loadDataOnTab: function (tabId) {

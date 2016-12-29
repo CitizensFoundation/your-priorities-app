@@ -655,6 +655,8 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
 
   if (req.params.filter=="newest") {
     postOrder = "created_at DESC";
+  } else if (req.params.filter=="most_debated") {
+    postOrder = "counter_points DESC";
   } else if (req.params.filter=="random") {
     postOrder = "random()";
   }

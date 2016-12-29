@@ -331,7 +331,7 @@
                   </div>
                   <div class="flex"></div>
                   <template is="dom-if" if="[[_showGroup(activity)]]">
-                    <ac-activity-group class="groupCover" minimal group="[[activity.Group]]"></ac-activity-group>
+                    <ac-activity-group hidden$="[[groupId]]" class="groupCover" minimal group="[[activity.Group]]"></ac-activity-group>
                   </template>
                 </div>
                 <div class="postNameInHeader layout horizontal" long-text$="[[_longPostNameFor(activity)]]" very-long-text$="[[_veryLongPostNameFor(activity)]]">
@@ -342,18 +342,6 @@
                   <template is="dom-if" if="[[_hasPostImage(activity.Post)]]">
                     <yp-post-cover-media disable-maps class="postCoverMedia" post$="[[activity.Post]]"></yp-post-cover-media>
                     <div class="textGradient"></div>
-                  </template>
-                </div>
-                <div class="layout horizontal" hidden$="[[postId]]">
-                  <div hidden$="[[groupId]]">
-                    <template is="dom-if" if="[[_showGroup(activity)]]">
-                      <ac-activity-group hidden group="[[activity.Group]]"></ac-activity-group>
-                    </template>
-                  </div>
-                  <template is="dom-if" if="[[activity.Post]]">
-                    <div hidden class="layout horizontal end-justified participateButton">
-                      <paper-button data-args$="[[activity]]" on-tap="_joinPost">[[t('participate')]]</paper-button>
-                    </div>
                   </template>
                 </div>
               </div>
@@ -393,6 +381,8 @@
 
     <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></iron-signals>
+
     <iron-scroll-threshold id="scrollTheshold"
                            lower-threshold="200"
                            on-lower-threshold="_loadMoreData"
@@ -474,6 +464,20 @@
         wide: {
           type: Boolean,
           value: false
+        },
+
+        selectedTab: {
+          type: String,
+          observer: '_selectedTabChanged'
+        }
+      },
+
+      _selectedTabChanged: function (selectedTab) {
+        if (selectedTab=='news') {
+          this.async(function () {
+            console.warn("CHECKING SCROLL THRESHOLD");
+            this._loadMoreData();
+          }, 500);
         }
       },
 
@@ -655,12 +659,18 @@
       },
 
       _loadMoreData: function () {
-        if (this.url!='' && this.moreToLoad && this.oldestProcessedActivityAt) {
-          this.set('moreToLoad', false);
-          console.log("_loadMoreData");
-          this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
-          this.$.ajax.generateRequest();
-        }
+        this.async(function () {
+          if (this.$$("#ironList").offsetWidth > 0 && this.$$("#ironList").offsetHeight > 0) {
+            if (this.url!='' && this.moreToLoad && this.oldestProcessedActivityAt) {
+              this.set('moreToLoad', false);
+              console.error("_loadMoreData for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
+              this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
+              this.$.ajax.generateRequest();
+            }
+          } else {
+            console.error("NOT VISIBLE for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
+          }
+        });
       },
 
       loadNewData: function () {
@@ -693,6 +703,11 @@
         this._generateRequest(newValue, 'posts');
       },
 
+      _clearScrollThreshold: function () {
+        this.$$("#scrollTheshold").clearTriggers();
+        console.warn("Clearing scrolling triggers for activity");
+      },
+
       _activitiesResponse: function (event, detail) {
         var activities = detail.response.activities;
 
@@ -711,7 +726,7 @@
             }
           }
           if (!this.wide) {
-            this.$.ironList.updateSizeForItem(activity);
+            //this.$.ironList.updateSizeForItem(activity);
           }
         }.bind(this));
 
@@ -719,9 +734,14 @@
           if (!this.latestProcessedActivityAt || this.latestProcessedActivityAt < activities[0].created_at) {
             this.set('latestProcessedActivityAt', activities[0].created_at);
           }
-          this.$$("#scrollTheshold").clearTriggers();
           this.setMoreToLoad();
+          this.async(function () {
+            this.$$("#scrollTheshold").checkScrollThesholds();
+          }, 100);
         }
+
+        var scrollThresholdEvent = new CustomEvent("iron-signal", { detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} } } );
+        document.dispatchEvent(scrollThresholdEvent);
 
         this.$.ironList.fire('iron-resize');
 

@@ -81,7 +81,7 @@
           </div>
         </section>
         <section name="news">
-          <ac-activities id="communityNews" community-id="[[community.id]]"></ac-activities>
+          <ac-activities id="communityNews" selected-tab="[[selectedTab]]" community-id="[[community.id]]"></ac-activities>
         </section>
         <section name="map" hidden$="[[locationHidden]]">
           <template is="dom-if" if="[[mapActive]]" restamp>
