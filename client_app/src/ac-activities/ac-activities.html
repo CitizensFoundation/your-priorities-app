@@ -280,6 +280,12 @@
         width: 100%;
       }
 
+      .addNewsBox {
+        background-color: #FFF;
+        height: 100% !important;
+        margin-top: 32px;
+      }
+
       @media (max-width: 400px) {
         .userInfoContainer {
           padding-left: 64px;
@@ -289,7 +295,9 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <template is="dom-if" if="[[loggedInUser]]">
-      <div class="layout vertical center-center full" hidden$="[[disableNewPosts]]">
+    </template>
+    <div class="layout vertical center-center full">
+      <paper-material elevation="2" hidden$="[[disableNewPosts]]" class="layout vertical activity addNewsBox">
         <yp-point-news-story-edit domain-id="[[domainId]]"
                                   community-id="[[communityId]]"
                                   group-id="[[groupId]]"
@@ -297,8 +305,8 @@
                                   post-id="[[postId]]"
                                   on-refresh="loadNewData">
         </yp-point-news-story-edit>
-      </div>
-    </template>
+      </paper-material>
+    </div>
     <div class="layout horizontal center-center">
       <iron-list id="ironList" override-padding-top="550" scroll-target="document" items="[[activities]]" as="activity">
         <template>

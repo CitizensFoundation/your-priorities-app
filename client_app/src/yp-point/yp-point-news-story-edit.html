@@ -26,19 +26,16 @@
 
     <style include="iron-flex iron-flex-alignment">
       :host {
-        width: 100%;
-        height: 100%;
-        margin-top: 32px;
+        padding-top: 16px;
       }
 
       paper-material {
         background-color: #FFF;
       }
 
-      paper-textarea {
-        width: 720px;
-        padding-right: 8px;
-        padding-top: 16px;
+      paper-textarea  {
+        width: 460px;
+        margin-top: -8px;
       }
 
       paper-button {
@@ -49,12 +46,10 @@
 
       .embedData {
         padding-top: 24px;
-        max-width: 695px;
       }
 
       .userImage {
-        padding-bottom: 32px;
-        padding-left: 16px;
+        padding-bottom: 16px;
         padding-right: 16px;
       }
 
@@ -70,7 +65,7 @@
       }
 
       .container {
-        width: 100%;
+        margin-bottom: 32px;
       }
 
       @media (max-width: 720px) {
@@ -109,44 +104,42 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <div elevation="3" class="container">
-      <div class="layout vertical">
-        <div class="layout horizontal center-center">
-          <yp-user-image class="userImage" user="[[loggedInUser]]"></yp-user-image>
-          <div class="layout vertical">
-            <paper-textarea id="pointNewsStory"
-                            required
-                            minlength="15"
-                            name="pointNewsStory"
-                            value="{{point.content}}"
-                            label="[[t('point.addNewsStory')]]"
-                            char-counter
-                            rows="2"
-                            max-rows="5"
-                            on-keydown="_keyDown"
-                            maxlength="500">
-            </paper-textarea>
-            <div class="layout horizontal end-justified">
-              <paper-button raised on-tap="_sendStory">[[t('point.postNewsStory')]]</paper-button>
-            </div>
+    <div class="layout vertical container">
+      <div class="layout horizontal">
+        <yp-user-image class="userImage" user="[[loggedInUser]]"></yp-user-image>
+        <div class="layout vertical">
+          <paper-textarea id="pointNewsStory"
+                          required
+                          minlength="15"
+                          name="pointNewsStory"
+                          value="{{point.content}}"
+                          label="[[t('point.addNewsStory')]]"
+                          char-counter
+                          rows="2"
+                          max-rows="5"
+                          on-keydown="_keyDown"
+                          maxlength="500">
+          </paper-textarea>
+          <div class="layout horizontal end-justified">
+            <paper-button raised on-tap="_sendStory">[[t('point.postNewsStory')]]</paper-button>
           </div>
         </div>
-
-        <div class="layout horizontal center-center">
-          <template is="dom-if" if="[[point.embed_data]]">
-            <div class="embedData layout vertical center-center">
-              <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
-              <paper-icon-button icon="clear" on-tap="_clearEmbed"></paper-icon-button>
-            </div>
-          </template>
-        </div>
-
-        <div class="layout horizontal center-center">
-          <yp-ajax id="urlPreviewAjax" url="/api/points/url_preview" hidden$="[[point.embed_detail]]" on-response="_urlPreviewResponse"></yp-ajax>
-          <yp-ajax id="postNewsStoryAjax" method="POST" on-response="_newsStoryResponse"></yp-ajax>
-        </div>
-
       </div>
+
+      <div class="layout horizontal center-center">
+        <template is="dom-if" if="[[point.embed_data]]">
+          <div class="embedData layout vertical center-center">
+            <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
+            <paper-icon-button icon="clear" on-tap="_clearEmbed"></paper-icon-button>
+          </div>
+        </template>
+      </div>
+
+      <div class="layout horizontal center-center">
+        <yp-ajax id="urlPreviewAjax" url="/api/points/url_preview" hidden$="[[point.embed_detail]]" on-response="_urlPreviewResponse"></yp-ajax>
+        <yp-ajax id="postNewsStoryAjax" method="POST" on-response="_newsStoryResponse"></yp-ajax>
+      </div>
+
     </div>
     <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
   </template>

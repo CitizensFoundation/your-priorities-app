@@ -26,6 +26,7 @@
       :host {
         width: 100%;
         margin-top: 6px;
+        margin-bottom: 64px;
       }
 
       paper-material {
@@ -33,7 +34,8 @@
       }
 
       paper-textarea {
-        width: 430px;
+        width: 370px;
+        max-height: 300px;
       }
 
       paper-button {
@@ -78,7 +80,7 @@
                           label="[[t('point.addComment')]]"
                           char-counter
                           rows="2"
-                          max-rows="3"
+                          max-rows="2"
                           on-keydown="_keyDown"
                           maxlength="200">
           </paper-textarea>
