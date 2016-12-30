@@ -26,6 +26,7 @@
 <link rel="import" href="./ac-activity-point-news-story.html">
 <link rel="import" href="./ac-activity-post-status-update.html">
 <link rel="import" href="./ac-activity-group.html">
+<link rel="import" href="./ac-activity-recommended-posts.html">
 
 <dom-module id="ac-activities">
   <template>
@@ -33,6 +34,7 @@
 
       iron-list {
         margin-top: 8px;
+        width: 550px !important;
       }
 
       .activity {
@@ -46,6 +48,13 @@
 
       .activity[small] {
         width: 420px !important;
+      }
+
+      .recommendedPosts {
+        margin: 16px !important;
+        background-color: #FFF;
+        width: 200px !important;
+        height: 100% !important;
       }
 
       .container {
@@ -286,6 +295,10 @@
         margin-top: 32px;
       }
 
+      .nudgeBox {
+        margin-left: -32px;
+      }
+
       @media (max-width: 400px) {
         .userInfoContainer {
           padding-left: 64px;
@@ -294,90 +307,96 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <template is="dom-if" if="[[loggedInUser]]">
-    </template>
-    <div class="layout vertical center-center full">
-      <paper-material elevation="2" hidden$="[[disableNewPosts]]" class="layout vertical activity addNewsBox">
-        <yp-point-news-story-edit domain-id="[[domainId]]"
-                                  community-id="[[communityId]]"
-                                  group-id="[[groupId]]"
-                                  post-group-id="[[postGroupId]]"
-                                  post-id="[[postId]]"
-                                  on-refresh="loadNewData">
-        </yp-point-news-story-edit>
-      </paper-material>
-    </div>
     <div class="layout horizontal center-center">
-      <iron-list id="ironList" override-padding-top="550" scroll-target="document" items="[[activities]]" as="activity">
-        <template>
-          <div class="layout vertical center-center full">
-            <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
-              <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
-              <div hidden class="layout vertical topHeader withCursor" newpost$="[[_isActivityType(activity,'activity.post.new')]]" on-tap="_joinPost">
-                <div class="layout horizontal">
-                  <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-                    <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb shadow"></iron-icon>
-                  </template>
-                  <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
-                    <iron-icon icon="communication:chat-bubble-outline" class="stats-icon shadow"></iron-icon>
-                  </template>
-                  <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
-                    <iron-icon icon="face" class="stats-icon shadow"></iron-icon>
-                  </template>
-                  <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
-                    <iron-icon icon="icons:language" class="stats-icon shadow"></iron-icon>
-                  </template>
-                  <div class="layout vertical headerText">
-                    <div class="layout horizontal typeName">
-                      <div class="layout vertical">
-                        <div style="cursor: pointer" class="shadow" data-args$="[[activity]]" on-tap="_joinPost">[[_getActivityTypeName(activity)]]</div>
-                        <div class="createdAt shadow" title="[[fromLongTime(activity.created_at)]]">
-                          [[fromTime(activity.created_at)]]
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <template is="dom-if" if="[[_showGroup(activity)]]">
-                    <ac-activity-group hidden$="[[groupId]]" class="groupCover" minimal group="[[activity.Group]]"></ac-activity-group>
-                  </template>
-                </div>
-                <div class="postNameInHeader layout horizontal" long-text$="[[_longPostNameFor(activity)]]" very-long-text$="[[_veryLongPostNameFor(activity)]]">
-                  <div class="shadow">
-                    [[_postNameFor(activity)]]
-                  </div>
-                  <div class="flex"></div>
-                  <template is="dom-if" if="[[_hasPostImage(activity.Post)]]">
-                    <yp-post-cover-media disable-maps class="postCoverMedia" post$="[[activity.Post]]"></yp-post-cover-media>
-                    <div class="textGradient"></div>
-                  </template>
-                </div>
-              </div>
-
-              <div class="mainActivityContent">
-                <div class="layout horizontal">
-                  <ac-activity-header class="layout horizontal headerUserImage" activity="[[activity]]"></ac-activity-header>
-                </div>
-
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-                  <ac-activity-post activity="[[activity]]"></ac-activity-post>
-                </template>
-
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
-                  <ac-activity-point activity="[[activity]]"></ac-activity-point>
-                </template>
-
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
-                  <ac-activity-point-news-story activity="[[activity]]"></ac-activity-point-news-story>
-                </template>
-
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
-                  <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
-                </template>
-              </div>
+      <div class="layout vertical self-start">
+        <template is="dom-if" if="[[loggedInUser]]">
+          <div class="layout vertical full nudgeBox">
+            <paper-material elevation="2" hidden$="[[disableNewPosts]]" class="layout vertical activity addNewsBox">
+              <yp-point-news-story-edit domain-id="[[domainId]]"
+                                        community-id="[[communityId]]"
+                                        group-id="[[groupId]]"
+                                        post-group-id="[[postGroupId]]"
+                                        post-id="[[postId]]"
+                                        on-refresh="loadNewData">
+              </yp-point-news-story-edit>
             </paper-material>
           </div>
         </template>
-      </iron-list>
+        <iron-list id="ironList" override-padding-top="550" scroll-target="document" items="[[activities]]" as="activity">
+          <template>
+            <div class="layout vertical center-center full">
+              <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
+                <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
+                <div hidden class="layout vertical topHeader withCursor" newpost$="[[_isActivityType(activity,'activity.post.new')]]" on-tap="_joinPost">
+                  <div class="layout horizontal">
+                    <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
+                      <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb shadow"></iron-icon>
+                    </template>
+                    <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
+                      <iron-icon icon="communication:chat-bubble-outline" class="stats-icon shadow"></iron-icon>
+                    </template>
+                    <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
+                      <iron-icon icon="face" class="stats-icon shadow"></iron-icon>
+                    </template>
+                    <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
+                      <iron-icon icon="icons:language" class="stats-icon shadow"></iron-icon>
+                    </template>
+                    <div class="layout vertical headerText">
+                      <div class="layout horizontal typeName">
+                        <div class="layout vertical">
+                          <div style="cursor: pointer" class="shadow" data-args$="[[activity]]" on-tap="_joinPost">[[_getActivityTypeName(activity)]]</div>
+                          <div class="createdAt shadow" title="[[fromLongTime(activity.created_at)]]">
+                            [[fromTime(activity.created_at)]]
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <template is="dom-if" if="[[_showGroup(activity)]]">
+                      <ac-activity-group hidden$="[[groupId]]" class="groupCover" minimal group="[[activity.Group]]"></ac-activity-group>
+                    </template>
+                  </div>
+                  <div class="postNameInHeader layout horizontal" long-text$="[[_longPostNameFor(activity)]]" very-long-text$="[[_veryLongPostNameFor(activity)]]">
+                    <div class="shadow">
+                      [[_postNameFor(activity)]]
+                    </div>
+                    <div class="flex"></div>
+                    <template is="dom-if" if="[[_hasPostImage(activity.Post)]]">
+                      <yp-post-cover-media disable-maps class="postCoverMedia" post$="[[activity.Post]]"></yp-post-cover-media>
+                      <div class="textGradient"></div>
+                    </template>
+                  </div>
+                </div>
+
+                <div class="mainActivityContent">
+                  <div class="layout horizontal">
+                    <ac-activity-header class="layout horizontal headerUserImage" activity="[[activity]]"></ac-activity-header>
+                  </div>
+
+                  <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
+                    <ac-activity-post activity="[[activity]]"></ac-activity-post>
+                  </template>
+
+                  <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
+                    <ac-activity-point activity="[[activity]]"></ac-activity-point>
+                  </template>
+
+                  <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
+                    <ac-activity-point-news-story activity="[[activity]]"></ac-activity-point-news-story>
+                  </template>
+
+                  <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
+                    <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
+                  </template>
+                </div>
+              </paper-material>
+            </div>
+          </template>
+        </iron-list>
+      </div>
+      <div class="layout horizontal center-center recommendedPosts">
+        <ac-activity-recommended-posts id="recommendedPosts" recommended-posts="[[recommendedPosts]]"></ac-activity-recommended-posts>
+        <yp-ajax id="recommendationAjax" large-spinner on-response="_recommendedPostsResponse"></yp-ajax>
+      </div>
     </div>
     <div class="layout horizontal center-center">
       <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
@@ -476,6 +495,16 @@
         selectedTab: {
           type: String,
           observer: '_selectedTabChanged'
+        },
+
+        recommendedPosts: {
+          type: Array,
+          value: null
+        },
+
+        skipIronListWidth: {
+          type: Boolean,
+          value: true
         }
       },
 
@@ -659,9 +688,12 @@
           if (window.appUser && window.appUser.user) {
             this.mode = 'news_feeds';
           }
-          this.set('url', '/api/'+this.mode+'/' + type + '/'+typeId);
+
+          this.set('url', '/api/'+this.mode+'/' + type + '/' + typeId);
           this.$.ajax.url = this.url;
           this.$.ajax.generateRequest();
+          this.$.recommendationAjax.url = '/api/recommendations/' + type + '/' + typeId;
+          this.$.recommendationAjax.generateRequest();
         }
       },
 
@@ -692,27 +724,35 @@
 
       _domainIdChanged: function (newValue) {
         this.set('activities', null);
+        this.set('recommendedPosts', null);
         this._generateRequest(newValue, 'domains');
       },
 
       _communityIdChanged: function (newValue) {
         this.set('activities', null);
+        this.set('recommendedPosts', null);
         this._generateRequest(newValue, 'communities');
       },
 
       _groupIdChanged: function (newValue) {
         this.set('activities', null);
+        this.set('recommendedPosts', null);
         this._generateRequest(newValue, 'groups');
       },
 
       _postIdChanged: function (newValue) {
         this.set('activities', null);
+        this.set('recommendedPosts', null);
         this._generateRequest(newValue, 'posts');
       },
 
       _clearScrollThreshold: function () {
         this.$$("#scrollTheshold").clearTriggers();
         console.warn("Clearing scrolling triggers for activity");
+      },
+
+      _recommendedPostsResponse: function (event, detail) {
+        this.set('recommendedPosts', detail.response);
       },
 
       _activitiesResponse: function (event, detail) {

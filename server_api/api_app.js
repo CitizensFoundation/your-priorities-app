@@ -27,6 +27,7 @@ var index = require('./controllers/index');
 var news_feeds = require('./active-citizen/controllers/news_feeds');
 var activities = require('./active-citizen/controllers/activities');
 var notifications = require('./active-citizen/controllers/notifications');
+var recommendations = require('./active-citizen/controllers/recommendations');
 
 var posts = require('./controllers/posts');
 var groups = require('./controllers/groups');
@@ -244,7 +245,7 @@ app.use('/api/news_feeds', news_feeds);
 app.use('/api/activities', activities);
 app.use('/api/notifications', notifications);
 app.use('/api/bulk_status_updates', bulkStatusUpdates);
-
+app.use('/api/recommendations', recommendations);
 app.use('/ideas', legacyPosts);
 app.use('/users', legacyUsers);
 app.use('/pages', legacyPages);

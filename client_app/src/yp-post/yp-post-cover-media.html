@@ -58,6 +58,12 @@
         padding-top: 32px;
       }
 
+      .category-icon[tiny] {
+        width: 100px;
+        height: 100px;
+        padding-top: 24px;
+      }
+
       @media (max-width: 600px) {
         .category-icon {
           width: 160px;
@@ -79,7 +85,7 @@
       <iron-image hidden$="[[!noneActive]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
 
       <div class="layout horizontal center-center" hidden$="[[!categoryActive]]">
-        <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
+        <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
       </div>
 
       <iron-image hidden$="[[!imageActive]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
@@ -227,6 +233,11 @@
         staticMapsApiKey: {
           type: String,
           value: "AIzaSyBYy8UvdDD650mz7k1pY0j2hBFQmCPVnxA"
+        },
+
+        tiny: {
+          type: Boolean,
+          value: false
         }
       },
 

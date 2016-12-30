@@ -36,7 +36,11 @@
           windowWidth = windowWidth - 16;
         }
         list.style.height = height + 'px';
-        list.style.width = windowWidth + 'px';
+        if (!this.skipIronListWidth) {
+          list.style.width = windowWidth + 'px';
+        } else {
+          console.error("Skipping setting iron-list width")
+        }
         this.async(function () {
           list.updateViewportBoundaries();
           this.async(function () {

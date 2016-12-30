@@ -9,21 +9,26 @@
 <link rel="import" href="../yp-post/yp-post-cover-media.html">
 <link rel="import" href="../yp-post/yp-post-behaviors.html">
 
-<dom-module id="ac-activity-recommended-post">
+<dom-module id="ac-activity-recommended-posts">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
         display: block;
+        height: 100%;
+        background-color: var(--primary-background-color);
+      }
+
+      .container {
+        width: 200px;
+        height: 100% !important;
       }
 
       .descriptionOuter {
         @apply(--layout-vertical);
         color: var(--primary-color-more-darker, #424242);
-        line-height: var(--description-line-height, 1.3);
         margin: 0;
         padding-left: 16px;
         padding-right: 16px;
-        padding-bottom: 48px;
       }
 
       .description, .post-name {
@@ -32,10 +37,11 @@
       }
 
       .post-name {
-        font-size: 24px;
-        padding-bottom: 4px;
+        font-size: 17px;
+        padding: 16px;
         margin: 0;
-        padding-top: 0;
+        background-color: #FFF;
+        color: #333;
       }
 
       .voting {
@@ -66,13 +72,13 @@
       }
 
       yp-post-cover-media {
-        width: 400px;
-        height: 221px;
+        width: 200px;
+        height: 110px;
         padding-bottom: 4px;
       }
 
       .postCard {
-        width: 960px;
+        width: 200px;
         background-color: #fff;
         @apply(--layout-horizontal);
       }
@@ -126,33 +132,60 @@
           width: 290px;
         }
 
-
         yp-post-cover-media {
           width: 304px !important;
           height: 168px !important;
         }
       }
-    </style>
 
-    <div class="layout horizontal wrap">
-      <div class="layout vertical descriptionOuter">
-        <div id="description" class="description"></div>
+      .postContainer {
+        margin-bottom: 24px !important;
+      }
+
+      .postItem {
+        background-color: #FFF;
+      }
+
+      .headerText {
+        font-size: 28px;
+        padding: 16px;
+        color: #FFF;
+        background-color: var(--accent-color);
+        margin-bottom: 16px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <paper-material elevation="1" class="header" hidden>
+      <div class="headerText layout horizontal center-center">
+        [[t('recommendedPosts')]]
       </div>
-      <div hidden class="layout horizontal">
-        <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
-      </div>
-      <div class="layout horizontal center-center">
-        <yp-post-actions elevation="-1" floating endorse-mode="[[endorseMode]]" class="voting layout vertical end" post="[[activity.Post]]"></yp-post-actions>
-      </div>
+    </paper-material>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax id="ajax" large-spinner on-response="_recommendedPostResponse"></yp-ajax>
     </div>
 
-
+    <template is="dom-repeat" items="[[recommendedPosts]]" as="post">
+      <div class="postContainer">
+        <paper-material elevation="1" class="postItem">
+          <div class="layout vertical" on-tap="goToPost">
+            <div class="layout horizontal">
+              <yp-post-cover-media tiny post="[[post]]"></yp-post-cover-media>
+            </div>
+            <div class="post-name">
+              [[post.name]]
+            </div>
+          </div>
+        </paper-material>
+      </div>
+    </template>
   </template>
 
   <script>
     Polymer({
 
-      is: 'ac-activity-recommended-post',
+      is: 'ac-activity-recommended-posts',
 
       behaviors: [
         Polymer.appHelpers,
@@ -161,26 +194,15 @@
       ],
 
       properties: {
-
-        activity: {
-          type: Object,
-          observer: '_postChanged'
+        recommendedPosts: {
+          type: Array,
+          value: null,
+          observer: '_recommendedPostsChanged'
         }
       },
 
-      _postChanged: function (activity) {
-        var post = activity.Post;
-        if (post && post.description) { this.async(function () {
-            var description = this.$$("#description");
-            if (description) {
-              description.innerHTML = this.addLinksAndEmjois(post.description);
-            } else {
-              console.error("Can't find community description element");
-            }
-          });
-        }
+      _recommendedPostsChanged: function (newValue) {
       }
-
     });
   </script>
 </dom-module>
