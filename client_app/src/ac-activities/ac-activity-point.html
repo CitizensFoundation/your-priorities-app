@@ -9,9 +9,8 @@
 <dom-module id="ac-activity-point">
   <template>
     <style include="iron-flex iron-flex-alignment">
-      :host {
+      .pointContainer {
       }
-
       .point {
         padding: 8px;
         margin: 8px;
@@ -25,7 +24,7 @@
       }
 
       yp-point {
-        margin-bottom: 48px;
+        margin-bottom: 36px;
       }
 
       @media (max-width: 480px) {
@@ -65,7 +64,7 @@
       }
     </style>
 
-    <div class="layout vertical">
+    <div class="layout vertical pointContainer">
       <div class="actionInfo withCursor" hidden$="[[!_isUpVote(activity.Point)]]" on-tap="_goToPoint">
         [[t('point.forAdded')]]...
       </div>
