@@ -9,16 +9,14 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
       .newsStoryContainer {
-        max-height: 250px;
-        overflow-y: scroll;
+        width: 100% !important;
       }
 
       yp-point-news-story {
       }
     </style>
     <div class="layout vertical center-center newsStoryContainer">
-      <yp-point-news-story hide-user class="card" point="[[activity.Point]]"></yp-point-news-story>
-      <yp-point-comment-list id="pointCommentList" point="[[activity.Point]]"></yp-point-comment-list>
+      <yp-point-news-story with-comments hide-user class="card" point="[[activity.Point]]"></yp-point-news-story>
     </div>
   </template>
 
@@ -40,9 +38,6 @@
       },
 
       _activityChanged: function (newValue) {
-        if (newValue) {
-          this.$.pointCommentList.open = false;
-        }
       }
     });
   </script>

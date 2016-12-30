@@ -97,9 +97,8 @@
         <div class="userInfoContainer layout horizontal" up-vote$="[[upVote(point)]]" down-vote$="[[downVote(point)]]" hidden$="[[hideUser]]">
           <iron-icon icon="thumb-up" class="thumbsIcon thumbsIconUp" hidden$="[[!pointValueUp]]"></iron-icon>
           <iron-icon icon="thumb-down" class="thumbsIcon thumbsIconDown" hidden$="[[pointValueUp]]"></iron-icon>
-          <div class="flex"></div>
-          <div class="layout horizontal end-justified">
-            <yp-user-with-organization title-date="[[point.created_at]]" inverted user="[[user]]"></yp-user-with-organization>
+          <div class="layout horizontal">
+            <yp-user-with-organization title-date="[[point.created_at]]" inverted user$="[[user]]"></yp-user-with-organization>
           </div>
         </div>
 

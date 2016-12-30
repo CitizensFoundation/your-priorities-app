@@ -1,4 +1,4 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+-<link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
@@ -30,14 +30,22 @@
 <dom-module id="ac-activities">
   <template>
     <style include="iron-flex iron-flex-alignment">
+
       iron-list {
+        margin-top: 8px;
       }
 
       .activity {
         margin: 16px !important;
         background-color: #FFF;
+        width: 550px !important;
+        height: 100% !important;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .activity[small] {
         width: 420px !important;
-        height: 570px !important;
       }
 
       .container {
@@ -47,9 +55,7 @@
       .topHeader {
         background-color: var(--primary-color);
         color: #fff;
-        padding-left: 16px;
-        height: 236px !important;
-        max-height: 236px !important;
+        height: 100% !important;
         z-index: 100;
       }
 
@@ -58,8 +64,7 @@
       }
 
       .mainActivityContent {
-        height: 314px !important;
-        max-height: 314px !important;
+        height: 100% !important;
       }
 
       .topHeader[newpost] {
@@ -67,7 +72,6 @@
       }
 
       ac-activity-header {
-        padding-left: 16px;
       }
 
       ac-activity-post {
@@ -76,8 +80,6 @@
 
       .headerUserImage {
         padding-top: 16px;
-        padding-bottom: 16px;
-        padding-right: 8px;
       }
 
       h1 {
@@ -86,7 +88,7 @@
 
       .userInfo {
         padding-right: 18px;
-        text-align: right;
+        text-align: left;
       }
 
       paper-button {
@@ -166,8 +168,6 @@
       }
 
       .groupCover {
-        width: 100px;
-        height: 56px;
         padding-top: 12px;
         padding-right: 12px;
       }
@@ -209,9 +209,9 @@
 
       .deleteIcon {
         position: absolute;
-        left: 0px;
-        bottom: 4px;
-        color: #eee;
+        right: 8px;
+        bottom: 8px;
+        color: #ddd;
       }
 
       .withCursor {
@@ -300,12 +300,12 @@
       </div>
     </template>
     <div class="layout horizontal center-center">
-      <iron-list id="ironList" override-padding-top="550" scroll-target="document" items="[[activities]]" as="activity" grid>
+      <iron-list id="ironList" override-padding-top="550" scroll-target="document" items="[[activities]]" as="activity">
         <template>
-          <div>
+          <div class="layout vertical center-center full">
             <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
               <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
-              <div class="layout vertical topHeader withCursor" newpost$="[[_isActivityType(activity,'activity.post.new')]]" on-tap="_joinPost">
+              <div hidden class="layout vertical topHeader withCursor" newpost$="[[_isActivityType(activity,'activity.post.new')]]" on-tap="_joinPost">
                 <div class="layout horizontal">
                   <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
                     <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb shadow"></iron-icon>
@@ -329,7 +329,6 @@
                       </div>
                     </div>
                   </div>
-                  <div class="flex"></div>
                   <template is="dom-if" if="[[_showGroup(activity)]]">
                     <ac-activity-group hidden$="[[groupId]]" class="groupCover" minimal group="[[activity.Group]]"></ac-activity-group>
                   </template>
@@ -347,7 +346,7 @@
               </div>
 
               <div class="mainActivityContent">
-                <div class="layout horizontal end-justified">
+                <div class="layout horizontal">
                   <ac-activity-header class="layout horizontal headerUserImage" activity="[[activity]]"></ac-activity-header>
                 </div>
 
@@ -725,10 +724,14 @@
               this.push('activities', activity);
             }
           }
-          if (!this.wide) {
-            //this.$.ironList.updateSizeForItem(activity);
-          }
         }.bind(this));
+
+        this.async(function () {
+          this.activities.forEach(function(activity) {
+            this.$$("#ironList").updateSizeForItem(activity);
+            console.warn("sync size for "+activity.id);
+          }.bind(this));
+        }, 22);
 
         if (activities.length>0) {
           if (!this.latestProcessedActivityAt || this.latestProcessedActivityAt < activities[0].created_at) {
