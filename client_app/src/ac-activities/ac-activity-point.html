@@ -66,17 +66,17 @@
     </style>
 
     <div class="layout vertical">
-      <div class="actionInfo withCursor" hidden$="[[_isDownVote(activity.Point)]]" on-tap="_goToPoint">
+      <div class="actionInfo withCursor" hidden$="[[!_isUpVote(activity.Point)]]" on-tap="_goToPoint">
         [[t('point.forAdded')]]...
       </div>
-      <div class="actionInfo withCursor" hidden$="[[_isUpVote(activity.Point)]]" on-tap="_goToPoint">
+      <div class="actionInfo withCursor" hidden$="[[!_isDownVote(activity.Point)]]" on-tap="_goToPoint">
         [[t('point.againstAdded')]]...
       </div>
       <div class="layout vertical">
         <div class="post-name withCursor" on-tap="_goToPoint">
           [[activity.Post.name]]
         </div>
-        <yp-point hide-user link-point class="card" point="[[activity.Point]]"></yp-point>
+        <yp-point hide-user link-point$="[[!postId]]" class="card" point="[[activity.Point]]"></yp-point>
       </div>
     </div>
   </template>
@@ -95,11 +95,18 @@
         activity: {
           type: Object,
           observer: '_activityChanged'
+        },
+
+        postId: {
+          type: Number,
+          value: null
         }
       },
 
       _goToPoint: function () {
-        this.goToPost(this.activity.Post.id, this.activity.Point.id)
+        if (!this.postId) {
+          this.goToPost(this.activity.Post.id, this.activity.Point.id)
+        }
       },
 
       _activityChanged: function (newValue) {

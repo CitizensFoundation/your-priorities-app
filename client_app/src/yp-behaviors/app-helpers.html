@@ -146,7 +146,7 @@
         return;
       }
       var postUrl = '/post/' + postId;
-      if (pointId) {
+      if (pointId && !(postIdIn instanceof Event)) {
         postUrl += '/' + pointId;
       }
       var windowLocation = window.location.href;
