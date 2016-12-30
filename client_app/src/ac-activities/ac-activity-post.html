@@ -125,6 +125,13 @@
         width: 304px !important;
       }
 
+      .actionInfo {
+        font-size: 22px;
+        margin-top: 16px;
+        padding-left: 16px;
+        margin-bottom: 16px;
+      }
+
       @media (max-width: 420px) {
         .description {
           width: 290px;
@@ -138,14 +145,17 @@
       }
     </style>
 
-    <div class="layout vertical center-center">
-      <div class="layout horizontal">
+    <div class="layout vertical">
+      <div class="actionInfo">
+        [[t('addedAnIdea')]]
+      </div>
+      <div class="layout horizontal center-center">
         <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
       </div>
-      <div class="layout vertical">
+      <div class="layout vertical center-center">
         <div class="post-name">[[activity.Post.name]]</div>
       </div>
-      <div class="layout vertical descriptionOuter">
+      <div class="layout vertical center-center descriptionOuter">
         <div id="description" class="description"></div>
       </div>
     </div>

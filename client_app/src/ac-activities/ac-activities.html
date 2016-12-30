@@ -44,6 +44,8 @@
         height: 100% !important;
         padding-left: 16px;
         padding-right: 16px;
+        margin-bottom: 8px;
+        margin-top: 8px;
       }
 
       .activity[small] {
@@ -774,6 +776,7 @@
             } else {
               this.push('activities', activity);
             }
+            this.$$("#ironList").updateSizeForItem(activity);
           }
         }.bind(this));
 
