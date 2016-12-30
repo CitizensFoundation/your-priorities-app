@@ -34,7 +34,7 @@
 
       iron-list {
         margin-top: 8px;
-        width: 550px !important;
+        width: 600px !important;
       }
 
       .activity {
@@ -53,7 +53,7 @@
       .recommendedPosts {
         margin: 16px !important;
         background-color: #FFF;
-        width: 200px !important;
+        width: 220px !important;
         height: 100% !important;
       }
 
@@ -296,7 +296,7 @@
       }
 
       .nudgeBox {
-        margin-left: -32px;
+        margin-left: -4px;
       }
 
       @media (max-width: 400px) {
@@ -679,7 +679,7 @@
         return activity.type==type
       },
 
-      _generateRequest: function (typeId, type) {
+      _generateRequest: function (typeId, typeName) {
         if (typeId) {
           this.set('activities', []);
           this.set('oldestProcessedActivityAt', null);
@@ -689,11 +689,13 @@
             this.mode = 'news_feeds';
           }
 
-          this.set('url', '/api/'+this.mode+'/' + type + '/' + typeId);
+          this.set('url', '/api/'+this.mode+'/' + typeName + '/' + typeId);
           this.$.ajax.url = this.url;
           this.$.ajax.generateRequest();
-          this.$.recommendationAjax.url = '/api/recommendations/' + type + '/' + typeId;
-          this.$.recommendationAjax.generateRequest();
+          if (typeName!='posts') {
+            this.$.recommendationAjax.url = '/api/recommendations/' + typeName + '/' + typeId;
+            this.$.recommendationAjax.generateRequest();
+          }
         }
       },
 
@@ -774,12 +776,12 @@
           }
         }.bind(this));
 
-        this.async(function () {
+        /*this.async(function () {
           this.activities.forEach(function(activity) {
             this.$$("#ironList").updateSizeForItem(activity);
             console.warn("sync size for "+activity.id);
           }.bind(this));
-        }, 22);
+        }, 22);*/
 
         if (activities.length>0) {
           if (!this.latestProcessedActivityAt || this.latestProcessedActivityAt < activities[0].created_at) {

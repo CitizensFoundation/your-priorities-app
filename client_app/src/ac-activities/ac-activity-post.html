@@ -23,7 +23,9 @@
         margin: 0;
         padding-left: 16px;
         padding-right: 16px;
-        padding-bottom: 48px;
+        padding-bottom: 8px;
+        padding-top: 8px;
+        margin-bottom: 48px;
       }
 
       .description, .post-name {
@@ -36,6 +38,7 @@
         padding-bottom: 4px;
         margin: 0;
         padding-top: 0;
+        margin-top: 16px;
       }
 
       .voting {
@@ -66,9 +69,10 @@
       }
 
       yp-post-cover-media {
-        width: 400px;
-        height: 221px;
+        width: 432px;
+        height: 258px;
         padding-bottom: 4px;
+        margin-top: 8px;
       }
 
       .postCard {
@@ -134,15 +138,15 @@
       }
     </style>
 
-    <div class="layout horizontal wrap">
-      <div class="layout vertical descriptionOuter">
-        <div id="description" class="description"></div>
-      </div>
-      <div hidden class="layout horizontal">
+    <div class="layout vertical center-center">
+      <div class="layout horizontal">
         <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
       </div>
-      <div class="layout horizontal center-center">
-        <yp-post-actions elevation="-1" floating endorse-mode="[[endorseMode]]" class="voting layout vertical end" post="[[activity.Post]]"></yp-post-actions>
+      <div class="layout vertical">
+        <div class="post-name">[[activity.Post.name]]</div>
+      </div>
+      <div class="layout vertical descriptionOuter">
+        <div id="description" class="description"></div>
       </div>
     </div>
 
