@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 
 <link rel="import" href="../yp-point/yp-point.html">
 
@@ -20,7 +21,7 @@
         margin-bottom: 64px;
         font-size: 16px;
         overflow-y: auto;
-        max-height: 420px;
+        max-height: 360px;
       }
 
       .postName {
@@ -31,7 +32,7 @@
 
       .groupName {
         padding-left: 32px;
-        padding-top: 2px;
+        padding: 16px;
         font-size: 14px;
         padding-bottom: 8px;
       }
@@ -51,7 +52,8 @@
       is: 'ac-activity-post-status-update',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.YpLinkifyAndEmjoi
       ],
 
       properties: {
@@ -65,7 +67,7 @@
       _activityChanged: function (newValue) {
         if (newValue) {
           var content = this.formatContent(newValue.PostStatusChange);
-          this.$.statusChange.innerHTML = content;
+          this.$.statusChange.innerHTML = this.addLinksAndEmjois(content);
         }
       },
 

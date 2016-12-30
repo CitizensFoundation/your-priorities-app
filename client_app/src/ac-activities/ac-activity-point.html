@@ -59,20 +59,24 @@
         margin-top: 8px;
         margin-left: 24px;
       }
+
+      .withCursor {
+        cursor: pointer;
+      }
     </style>
 
     <div class="layout vertical">
-      <div class="actionInfo" hidden$="[[_isDownVote(activity.Point)]]">
+      <div class="actionInfo withCursor" hidden$="[[_isDownVote(activity.Point)]]" on-tap="_goToPoint">
         [[t('point.forAdded')]]...
       </div>
-      <div class="actionInfo" hidden$="[[_isUpVote(activity.Point)]]">
+      <div class="actionInfo withCursor" hidden$="[[_isUpVote(activity.Point)]]" on-tap="_goToPoint">
         [[t('point.againstAdded')]]...
       </div>
       <div class="layout vertical">
-        <div class="post-name">
+        <div class="post-name withCursor" on-tap="_goToPoint">
           [[activity.Post.name]]
         </div>
-        <yp-point hide-user class="card" point="[[activity.Point]]"></yp-point>
+        <yp-point hide-user link-point class="card" point="[[activity.Point]]"></yp-point>
       </div>
     </div>
   </template>
@@ -92,6 +96,10 @@
           type: Object,
           observer: '_activityChanged'
         }
+      },
+
+      _goToPoint: function () {
+        this.goToPost(this.activity.Post.id, this.activity.Point.id)
       },
 
       _activityChanged: function (newValue) {

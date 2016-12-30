@@ -203,7 +203,8 @@
       }
 
       .createdAt {
-        color: #eee;
+        color: #777;
+        margin-top: 16px;
         font-size: 14px;
       }
 
@@ -371,6 +372,10 @@
                 <div class="mainActivityContent">
                   <div class="layout horizontal">
                     <ac-activity-header class="layout horizontal headerUserImage" activity="[[activity]]"></ac-activity-header>
+                    <div class="flex"></div>
+                    <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
+                      [[fromTime(activity.created_at)]]
+                    </div>
                   </div>
 
                   <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
@@ -591,13 +596,15 @@
       },
 
       _elevationForType: function (type) {
-        if (type=='activity.post.new') {
+        return 1;
+
+        /*if (type=='activity.post.new') {
           return 5;
         } else if (type=='activity.post.status.change') {
           return 3;
         } else {
           return 2;
-        }
+        }*/
       },
 
       _hasActivityAccess: function (activity) {

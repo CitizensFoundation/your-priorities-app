@@ -55,10 +55,10 @@
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
 
-      <template is="dom-if" if="[[useNormalHeader]]">
+      <template is="dom-if" if="[[useAlternativeHeader]]">
         <yp-community-header id="communityCard" class="largeCard card" community="[[community]]" on-update-community="_refreshAjax"></yp-community-header>
       </template>
-      <template is="dom-if" if="[[useAlternativeHeader]]">
+      <template is="dom-if" if="[[useNormalHeader]]">
         <yp-community-large-card id="communityCard" class="largeCard card" community="[[community]]" on-update-community="_refreshAjax"></yp-community-large-card>
       </template>
 

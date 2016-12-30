@@ -38,6 +38,13 @@
         padding-left: 16px;
       }
 
+      #pointContent {
+        cursor: default;
+      }
+
+      #pointContent[link-point] {
+        cursor: pointer;
+      }
 
       @media (max-width: 320px) {
         .user-image {
@@ -66,6 +73,8 @@
 
       #reportPointIconButton {
         color: #ddd;
+        width: 32px;
+        height: 32px;
       }
 
       .thumbsIcon {
@@ -89,6 +98,10 @@
       yp-user-with-organization {
         padding-left: 16px;
       }
+
+      .actionContainer {
+        margin-top: 8px;
+      }
     </style>
 
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
@@ -110,7 +123,7 @@
           <span hidden$="[[!latestContent.name]]">
             <span>[[latestContent.name]]</span>.
           </span>
-          <div id="pointContent" hidden$="[[isEditing]]"></div>
+          <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded"></div>
           <template is="dom-if" if="[[isEditing]]" restamp>
             <div class="layout vertical">
               <paper-textarea id="pointContentEditor" char-counter maxlength="500" value="{{latestContent}}"></paper-textarea>
@@ -123,8 +136,9 @@
               </div>
             </div>
           </template>
-          <div class="layout horizontal">
+          <div class="layout horizontal actionContainer">
             <yp-point-actions point="[[point]]"></yp-point-actions>
+            <paper-icon-button hidden$="[[!loggedInUser]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
             <div class="flex"></div>
             <template is="dom-if" if="[[hasPointAccess]]">
               <div class="layout horizontal self-end" hidden$="">
@@ -134,7 +148,6 @@
                 <paper-icon-button icon="clear" on-tap="_deletePoint"></paper-icon-button>
               </div>
             </template>
-            <paper-icon-button hidden$="[[!loggedInUser]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
           </div>
         </div>
       </div>
@@ -152,6 +165,11 @@
           type: Object,
           notify: true,
           observer: "_pointChanged"
+        },
+
+        linkPoint: {
+          type: Boolean,
+          value: false
         },
 
         hasPointAccess: {
@@ -202,6 +220,12 @@
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypGotAdminRightsBehavior
       ],
+
+      _linkIfNeeded: function () {
+        if (this.linkPoint) {
+          this.goToPost(this.point.Post.id, this.point.id);
+        }
+      },
 
       _updateEmojiBindings: function (isEditing) {
         if (isEditing) {

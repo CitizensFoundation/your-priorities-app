@@ -135,7 +135,7 @@
       return moment(timeValue).format();
     },
 
-    goToPost: function (postIdIn) {
+    goToPost: function (postIdIn, pointId) {
       var postId;
       if (postIdIn && !(postIdIn instanceof Event)) {
         postId = postIdIn;
@@ -146,6 +146,9 @@
         return;
       }
       var postUrl = '/post/' + postId;
+      if (pointId) {
+        postUrl += '/' + pointId;
+      }
       var windowLocation = window.location.href;
       console.log(postUrl);
       console.log(windowLocation);
