@@ -42,6 +42,7 @@
         margin: 0;
         background-color: #FFF;
         color: #333;
+        text-align: center;
       }
 
       .voting {
@@ -161,10 +162,6 @@
       </div>
     </paper-material>
 
-    <div class="layout horizontal center-center">
-      <yp-ajax id="ajax" large-spinner on-response="_recommendedPostResponse"></yp-ajax>
-    </div>
-
     <template is="dom-repeat" items="[[recommendedPosts]]" as="post">
       <div class="postContainer">
         <paper-material elevation="1" class="postItem">
@@ -172,7 +169,7 @@
             <div class="layout horizontal">
               <yp-post-cover-media tiny post="[[post]]"></yp-post-cover-media>
             </div>
-            <div class="post-name">
+            <div class="post-name layout horizontal center-center">
               [[post.name]]
             </div>
           </div>

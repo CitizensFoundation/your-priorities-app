@@ -68,6 +68,10 @@
         text-transform: lowercase;
         padding-right: 6px;
       }
+
+      .withPointer {
+        cursor: pointer;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -79,11 +83,11 @@
       <div class="layout horizontal container">
         <yp-point-actions point="[[point]]"></yp-point-actions>
         <div class="layout horizontal start-justified">
-          <div class="layout horizontal center-center" hidden$="[[!commentsCount]]">
+          <div class="layout horizontal center-center withPointer" hidden$="[[!commentsCount]]" on-tap="_setOpenToValue">
             <div class="commentText">[[t('point.comments')]]</div>
             <div id="commentCount">[[commentsCount]]</div>
           </div>
-          <div class="layout horizontal center-center" hidden$="[[_noComments(commentsCount)]]">
+          <div class="layout horizontal center-center withPointer" on-tap="_setOpenToValue" hidden$="[[_noComments(commentsCount)]]">
             <div class="commentText">[[t('noComments')]]</div>
           </div>
           <div class="layout horizontal">
@@ -139,6 +143,14 @@
       behaviors: [
         Polymer.appHelpers
       ],
+
+      _setOpenToValue: function () {
+        if (this.open) {
+          this._setClosed()
+        } else {
+          this._setOpen()
+        }
+      },
 
       _openChanged: function (newOpenValue) {
         if (newOpenValue) {

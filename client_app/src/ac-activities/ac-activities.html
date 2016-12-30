@@ -52,7 +52,6 @@
 
       .recommendedPosts {
         margin: 16px !important;
-        background-color: #FFF;
         width: 220px !important;
         height: 100% !important;
       }
@@ -394,7 +393,9 @@
         </iron-list>
       </div>
       <div class="layout horizontal center-center recommendedPosts">
-        <ac-activity-recommended-posts id="recommendedPosts" recommended-posts="[[recommendedPosts]]"></ac-activity-recommended-posts>
+        <ac-activity-recommended-posts id="recommendedPosts" recommended-posts="[[recommendedPosts]]" class="layout vertical"></ac-activity-recommended-posts>
+      </div>
+      <div class="layout horizontal center-center">
         <yp-ajax id="recommendationAjax" large-spinner on-response="_recommendedPostsResponse"></yp-ajax>
       </div>
     </div>
