@@ -329,7 +329,7 @@
           </template>
         </iron-list>
       </div>
-      <div class="layout horizontal center-center recommendedPosts" not-active$="[[!recommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
+      <div class="layout horizontal center-center recommendedPosts" not-active$="[[noRecommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
         <ac-activity-recommended-posts id="recommendedPosts" recommended-posts="[[recommendedPosts]]" class="layout vertical"></ac-activity-recommended-posts>
       </div>
       <div class="layout horizontal center-center">
@@ -437,6 +437,11 @@
         recommendedPosts: {
           type: Array,
           value: null
+        },
+
+        noRecommendedPosts: {
+          type: Boolean,
+          value: true
         },
 
         skipIronListWidth: {
@@ -660,6 +665,7 @@
         if (typeId) {
           this.set('activities', []);
           this.set('oldestProcessedActivityAt', null);
+          this.set('noRecommendedPosts', true);
 
           if (window.appUser && window.appUser.user && !this.postId) {
             this.mode = 'news_feeds';
@@ -732,7 +738,12 @@
       },
 
       _recommendedPostsResponse: function (event, detail) {
-        this.set('recommendedPosts', detail.response);
+        if (detail.response && detail.response.length>0) {
+          this.set('recommendedPosts', detail.response);
+          this.set('noRecommendedPosts', false);
+        } else {
+          this.set('noRecommendedPosts', true);
+        }
       },
 
       _activitiesResponse: function (event, detail) {
