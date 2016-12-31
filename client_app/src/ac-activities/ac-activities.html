@@ -39,19 +39,26 @@
       .activity {
         margin: 16px;
         background-color: #FFF;
-        width: 550px !important;
-        height: 100% !important;
+        width: 550px;
+        height: 100%;
         padding-left: 16px;
         padding-right: 16px;
       }
 
       @media (max-width: 500px) {
         .activity {
-          width: 100% !important;
-          padding-left: 8px;
-          padding-right: 8px;
+          width: 100%;
+          height: 100%;
+
+          padding-left: 16px;
+          padding-right: 16px;
           margin-bottom: 8px;
           margin-top: 8px;
+        }
+
+        .activity[is-safari] {
+          height: 550px;
+          overflow: auto;
         }
       }
 
@@ -240,10 +247,6 @@
         cursor: pointer;
       }
 
-      .full {
-        width: 100%;
-      }
-
       .addNewsBox {
         background-color: #FFF;
         margin-top: 32px;
@@ -267,6 +270,11 @@
           margin-left: -8px;
         }
       }
+
+      .activityContainer {
+        width: 100%;
+        min-height: 100% !important;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -285,10 +293,11 @@
             </paper-material>
           </div>
         </template>
-        <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]" override-padding-top$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
+        <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]"
+                   override-padding-top$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
-            <div class="layout vertical center-center full">
-              <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
+            <div class="layout vertical center-center">
+              <paper-material is-safari$="[[isSafari]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
                 <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
                 <div class="mainActivityContent">
                   <div class="layout horizontal">
@@ -443,7 +452,16 @@
         ironListPaddingTop: {
           type: Number,
           computed: '_ironListPaddingTop(wide)'
+        },
+
+        isSafari: {
+          type: Boolean,
+          computed: '_isSafari(wide)'
         }
+      },
+
+      _isSafari: function () {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       },
 
       _ironListResizeScrollThreshold: function (wide) {
@@ -749,9 +767,22 @@
         var scrollThresholdEvent = new CustomEvent("iron-signal", { detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} } } );
         document.dispatchEvent(scrollThresholdEvent);
 
+        this.$$('#ironList').style.display = 'none';
         this.async(function () {
+          this.$$('#ironList').style.display = 'block';
           this.$.ironList.fire('iron-resize');
         });
+
+        this.async(function () {
+          this.activities.forEach(function(activity, index) {
+            this.$$("#ironList").updateSizeForItem(index);
+          }.bind(this));
+        }, 1000);
+
+        this.async(function () {
+          this.$.ironList.fire('iron-resize');
+        }, 4000);
+
       },
 
       fireResize: function () {
