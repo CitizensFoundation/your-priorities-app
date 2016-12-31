@@ -643,8 +643,10 @@
           this.set('activities', []);
           this.set('oldestProcessedActivityAt', null);
 
-          if (window.appUser && window.appUser.user) {
+          if (window.appUser && window.appUser.user && !this.postId) {
             this.mode = 'news_feeds';
+          } else {
+            this.mode = 'activities';
           }
 
           this.set('url', '/api/'+this.mode+'/' + typeName + '/' + typeId);
