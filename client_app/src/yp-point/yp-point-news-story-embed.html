@@ -16,6 +16,13 @@
         height: 309px;
       }
 
+      @media (max-width: 600px) {
+        iron-image {
+          width: 90vw !important;
+          height: 51vw !important;
+        }
+      }
+
       #embedHtml {
         width: 100%;
         height: 100%;
@@ -46,7 +53,7 @@
     <div class="layout vertical embedContainer" hidden$="[[!embedData]]">
       <a href$="[[embedData.url]]" class="container" target="_blank">
         <div class="layout vertical center-center">
-          <iron-image sizing="cover" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
+          <iron-image sizing="contain" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
           <div id="embedHtml" hidden$="[[!embedData.html]]"></div>
         </div>
         <div class="layout vertical">

@@ -16,6 +16,7 @@
         display: block;
         height: 100%;
         background-color: var(--primary-background-color);
+        margin-top: 16px;
       }
 
       .container {
@@ -139,7 +140,7 @@
       }
 
       .postContainer {
-        margin-bottom: 24px !important;
+        margin-bottom: 12px !important;
       }
 
       .postItem {
@@ -147,20 +148,18 @@
       }
 
       .headerText {
-        font-size: 28px;
-        padding: 16px;
+        font-size: 20px;
+        padding: 8px;
         color: #FFF;
-        background-color: var(--accent-color);
-        margin-bottom: 16px;
+        background-color: var(--primary-color-700);
+        margin-bottom: 8px;
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <paper-material elevation="1" class="header" hidden>
-      <div class="headerText layout horizontal center-center">
-        [[t('recommendedPosts')]]
-      </div>
-    </paper-material>
+    <div class="headerText layout horizontal center-center">
+      [[t('recommendedPosts')]]
+    </div>
 
     <template is="dom-repeat" items="[[recommendedPosts]]" as="post">
       <div class="postContainer">

@@ -34,22 +34,25 @@
 
       iron-list {
         margin-top: 8px;
-        width: 600px !important;
       }
 
       .activity {
-        margin: 16px !important;
+        margin: 16px;
         background-color: #FFF;
         width: 550px !important;
         height: 100% !important;
         padding-left: 16px;
         padding-right: 16px;
-        margin-bottom: 8px;
-        margin-top: 8px;
       }
 
-      .activity[small] {
-        width: 420px !important;
+      @media (max-width: 500px) {
+        .activity {
+          width: 100% !important;
+          padding-left: 8px;
+          padding-right: 8px;
+          margin-bottom: 8px;
+          margin-top: 8px;
+        }
       }
 
       .recommendedPosts {
@@ -59,6 +62,10 @@
       }
 
       .recommendedPosts[not-active] {
+        display: none;
+      }
+
+      .recommendedPosts[small] {
         display: none;
       }
 
@@ -233,64 +240,6 @@
         cursor: pointer;
       }
 
-      @media (max-width: 480px) {
-        .typeName {
-          font-size: 22px;
-          padding-top: 12px;
-          padding-left: 4px;
-        }
-
-        .activity {
-          margin: 0 !important;
-          margin-top: 24px !important;
-          width: 307px !important;
-/*          height: 100% !important; */
-          height: 570px !important;
-        }
-
-        .postCoverMedia {
-          width:  307px;
-          min-width: 307px !important;
-          height: 173px;
-        }
-
-        .textGradient {
-          width:  307px;
-          min-width: 307px !important;
-          height: 173px;
-        }
-
-        .topHeader {
-          height: 173px !important;
-          max-height: 173px !important;
-          z-index: 100;
-        }
-
-        .mainActivityContent {
-/*          height: 100% !important;
-          max-height: 100% !important;
-          padding-bottom: 64px;
-          */
-            height: 390px !important;
-            max-height: 390% !important;
-        }
-
-        .postNameInHeader {
-          font-size: 22px;
-          padding: 4px;
-        }
-
-        .postNameInHeader[long-text] {
-          font-size: 19px;
-          padding: 4px;
-        }
-
-        .postNameInHeader[very-long-text] {
-          font-size: 15px;
-          padding: 4px;
-        }
-      }
-
       .full {
         width: 100%;
       }
@@ -301,12 +250,21 @@
       }
 
       .nudgeBox {
-        margin-left: -4px;
+        margin-left: -6px;
       }
 
       @media (max-width: 400px) {
         .userInfoContainer {
           padding-left: 64px;
+        }
+
+        .addNewsBox {
+          margin: 0 !important;
+          margin-top: 48px;
+        }
+
+        .nudgeBox {
+          margin-left: -8px;
         }
       }
     </style>
@@ -327,7 +285,7 @@
             </paper-material>
           </div>
         </template>
-        <iron-list id="ironList" fire-resize-after-scrolling="1000" override-padding-top="600" scroll-target="document" items="[[activities]]" as="activity" on-tap="fireResize">
+        <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]" override-padding-top$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
             <div class="layout vertical center-center full">
               <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
@@ -336,7 +294,7 @@
                   <div class="layout horizontal">
                     <ac-activity-header class="layout horizontal headerUserImage" activity="[[activity]]"></ac-activity-header>
                     <div class="flex"></div>
-                    <div class="createdAt" title="[[fromLongTime(activity.created_at)]]">
+                    <div hidden$="[[!wide]]" class="createdAt" title="[[fromLongTime(activity.created_at)]]">
                       [[fromTime(activity.created_at)]]
                     </div>
                   </div>
@@ -362,7 +320,7 @@
           </template>
         </iron-list>
       </div>
-      <div class="layout horizontal center-center recommendedPosts" not-active$="[[!recommendedPosts]]">
+      <div class="layout horizontal center-center recommendedPosts" not-active$="[[!recommendedPosts]]" small$="[[!wide]]">
         <ac-activity-recommended-posts id="recommendedPosts" recommended-posts="[[recommendedPosts]]" class="layout vertical"></ac-activity-recommended-posts>
       </div>
       <div class="layout horizontal center-center">
@@ -474,8 +432,46 @@
 
         skipIronListWidth: {
           type: Boolean,
-          value: true
+          computed: '_skipIronListWidth(wide)'
+        },
+
+        ironListResizeScrollThreshold: {
+          type: Number,
+          computed: '_ironListResizeScrollThreshold(wide)'
+        },
+
+        ironListPaddingTop: {
+          type: Number,
+          computed: '_ironListPaddingTop(wide)'
         }
+      },
+
+      _ironListResizeScrollThreshold: function (wide) {
+        if (wide) {
+          return 800;
+        } else {
+          return 300;
+        }
+      },
+
+      _ironListPaddingTop: function (wide) {
+        if (wide) {
+          return 600;
+        } else {
+          return 500;
+        }
+      },
+
+      _skipIronListWidth: function (wide) {
+        if (wide) {
+          var list = this.$$("#ironList");
+          list.style.width = '600px';
+          list.updateViewportBoundaries();
+          this.async(function () {
+            list.notifyResize();
+          });
+        }
+        return wide;
       },
 
       _hasPostImage: function (post) {
@@ -552,12 +548,12 @@
         return 1;
 
         /*if (type=='activity.post.new') {
-          return 5;
-        } else if (type=='activity.post.status.change') {
-          return 3;
-        } else {
-          return 2;
-        }*/
+         return 5;
+         } else if (type=='activity.post.status.change') {
+         return 3;
+         } else {
+         return 2;
+         }*/
       },
 
       _hasActivityAccess: function (activity) {
@@ -738,12 +734,6 @@
           }
         }.bind(this));
 
-        /*this.async(function () {
-          this.activities.forEach(function(activity, index) {
-            this.$$("#ironList").updateSizeForItem(index);
-          }.bind(this));
-        }, 22);*/
-
         if (activities.length>0) {
           if (!this.latestProcessedActivityAt || this.latestProcessedActivityAt < activities[0].created_at) {
             this.set('latestProcessedActivityAt', activities[0].created_at);
@@ -758,9 +748,8 @@
         document.dispatchEvent(scrollThresholdEvent);
 
         this.async(function () {
-          this.$.ironList.updateViewportBoundaries();
           this.$.ironList.fire('iron-resize');
-        }, 20);
+        });
       },
 
       fireResize: function () {

@@ -17,7 +17,7 @@
       .name {
         padding-top: 4px;
         font-weight: bold;
-        text-align: right;
+        text-align: left;
       }
 
       .name[inverted] {
@@ -25,7 +25,7 @@
       }
 
       .imageStatus {
-        margin-right: 16px;
+        margin-left: 8px;
         width: 48px;
         height: 48px;
       }
@@ -50,10 +50,6 @@
     <template is="dom-if" if="[[user]]">
       <div class="layout horizontal" title=[[userTitle]]>
         <yp-user-image titleFromUser="[[userTitle]]" user="[[user]]"></yp-user-image>
-        <template is="dom-if" if="[[organizationImageUrl]]">
-          <img width="48" height="48" sizing="cover" class="imageStatus" src$="[[organizationImageUrl]]">
-        </template>
-
         <div class="layout vertical">
           <div class="name" inverted$="[[inverted]]">
             [[user.name]]
@@ -62,6 +58,9 @@
             [[organizationName]]
           </div>
         </div>
+        <template is="dom-if" if="[[organizationImageUrl]]">
+          <img width="48" height="48" sizing="cover" class="imageStatus" src$="[[organizationImageUrl]]">
+        </template>
       </div>
     </template>
   </template>

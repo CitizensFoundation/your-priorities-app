@@ -68,16 +68,6 @@
         margin-bottom: 32px;
       }
 
-      @media (max-width: 720px) {
-        paper-textarea {
-          width: 450px;
-        }
-
-        .embedData {
-          max-width: 450px;
-        }
-      }
-
       @media (max-width: 420px) {
         paper-textarea {
           width: 280px;
@@ -121,7 +111,7 @@
                           maxlength="500">
           </paper-textarea>
           <div class="layout horizontal end-justified">
-            <paper-button raised on-tap="_sendStory">[[t('point.postNewsStory')]]</paper-button>
+            <paper-button id="storySubmitButton" raised on-tap="_sendStory">[[t('point.postNewsStory')]]</paper-button>
           </div>
         </div>
       </div>
@@ -137,7 +127,7 @@
 
       <div class="layout horizontal center-center">
         <yp-ajax id="urlPreviewAjax" url="/api/points/url_preview" hidden$="[[point.embed_detail]]" on-response="_urlPreviewResponse"></yp-ajax>
-        <yp-ajax id="postNewsStoryAjax" method="POST" on-response="_newsStoryResponse"></yp-ajax>
+        <yp-ajax id="postNewsStoryAjax" method="POST" on-error="_clearButtonState" on-response="_newsStoryResponse"></yp-ajax>
       </div>
 
     </div>
@@ -192,6 +182,10 @@
         Polymer.ypLoggedInUserBehavior
       ],
 
+      _clearButtonState: function () {
+        this.$.storySubmitButton.disabled = false;
+      },
+
       ready: function () {
         this._reset();
         this.$.pointNewsStory.addEventListener("paste", function () {
@@ -203,9 +197,11 @@
 
       _reset: function () {
         this.set('point', { content: '' });
+        this._clearButtonState();
       },
 
       _sendStory: function () {
+        this.$.storySubmitButton.disabled = true;
         var body = { point: this.point };
         if (this.point.content && this.point.content.length>2) {
           if (this.postId && this.postGroupId) {
@@ -226,6 +222,7 @@
           this.$.postNewsStoryAjax.body = body;
           this.$.postNewsStoryAjax.generateRequest();
         } else {
+          this._clearButtonState();
           this.$.postNewsStoryAjax.showErrorDialog(this.t('point.commentToShort'));
         }
       },
