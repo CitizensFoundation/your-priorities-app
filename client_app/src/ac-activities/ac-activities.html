@@ -767,22 +767,9 @@
         var scrollThresholdEvent = new CustomEvent("iron-signal", { detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} } } );
         document.dispatchEvent(scrollThresholdEvent);
 
-        this.$$('#ironList').style.display = 'none';
         this.async(function () {
-          this.$$('#ironList').style.display = 'block';
           this.$.ironList.fire('iron-resize');
         });
-
-        this.async(function () {
-          this.activities.forEach(function(activity, index) {
-            this.$$("#ironList").updateSizeForItem(index);
-          }.bind(this));
-        }, 1000);
-
-        this.async(function () {
-          this.$.ironList.fire('iron-resize');
-        }, 4000);
-
       },
 
       fireResize: function () {
