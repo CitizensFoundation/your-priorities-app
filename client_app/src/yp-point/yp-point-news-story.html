@@ -21,7 +21,7 @@
     <style include="iron-flex iron-flex-alignment">
 
       :host {
-        display: block;
+        display: inline;
         width: 100%;
         margin-top: 8px;
       }
@@ -77,12 +77,12 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <div class="layout vertical container">
+    <div class="layout vertical">
       <div class="story">
         [[point.content]]
       </div>
       <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
-      <div class="layout horizontal container">
+      <div class="layout horizontal">
         <yp-point-actions point="[[point]]"></yp-point-actions>
         <div class="layout horizontal start-justified">
           <div class="layout horizontal center-center withPointer" hidden$="[[!commentsCount]]" on-tap="_setOpenToValue">
@@ -99,7 +99,6 @@
         </div>
       </div>
       <yp-point-comment-list id="commentsList" on-yp-set-comments-count="_setCommentsCount" disable-open-close id="pointCommentList" point="[[point]]" hidden$="[[!withComments]]"></yp-point-comment-list>
-
     </div>
   </template>
 
