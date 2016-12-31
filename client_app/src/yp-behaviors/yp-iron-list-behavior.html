@@ -31,9 +31,10 @@
         var height;
         if (this.wide) {
           height = windowHeight - this.wideListOffset ? this.wideListOffset : 360;
+          windowWidth = windowWidth - (16+432);
         } else {
           height = windowHeight - 300;
-          windowWidth = windowWidth - 16;
+          windowWidth = windowWidth - (16+432);
         }
         list.style.height = height + 'px';
         if (!this.skipIronListWidth) {

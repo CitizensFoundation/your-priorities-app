@@ -143,18 +143,6 @@
 
     <div class="layout vertical center-center">
 
-      <div class="searchContainer layout horizontal wrap">
-        <div class="layout horizontal center-center">
-          <paper-search-bar hide-clear-button hide-filter-button query="{{searchingFor}}" placeholder="[[t('searchFor')]]" on-paper-search-search="_search"></paper-search-bar>
-        </div>
-        <div class="layout horizontal center-center">
-          <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
-                           group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
-                           category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
-          </yp-posts-filter>
-        </div>
-      </div>
-
       <template is="dom-if" if="[[noPosts]]" restamp>
         <div class="layout horiztonal center-center">
           <paper-material class="noIdeas layout horizontal center-center" elevation="2">
@@ -401,7 +389,7 @@
         }
 
         this.async(function () {
-          this.$$("#postsFilter")._updateTitle();
+          //this.$$("#postsFilter")._updateTitle();
         }, 20);
 
         this.async(function () {

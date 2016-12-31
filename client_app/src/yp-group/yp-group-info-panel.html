@@ -1,0 +1,363 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
+
+<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+
+<link rel="import" href="yp-group-stats.html">
+<link rel="import" href="yp-group-behaviors.html">
+
+<dom-module id="yp-group-info-panel">
+
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+      }
+
+      .groupAccess {
+        padding-bottom: 8px;
+      }
+
+      .group-name {
+        padding-bottom: 4px;
+        margin: 0;
+        width: 100%;
+      }
+
+      .objectives {
+        line-height: var(--objectives-line-height, 1.3);
+      }
+
+      .groupCard {
+        background-color: #fefefe;
+        color: #000;
+        width: 432px;
+        padding: 0 !important;
+        margin-top: 0 !important;
+      }
+
+      .stats {
+        margin-top: 16px;
+      }
+
+      .edit {
+        color: #FFF;
+        padding-right: 0;
+        margin-right: 0;
+      }
+
+      .description-and-stats {
+        width: 100%;
+      }
+
+      .newCategory {
+        color: var( --primary-background-color,#F2F2F2);
+        position: absolute;
+        top: 64px;
+        right: 0;
+      }
+
+      iron-image {
+        width: 432px;
+        height: 243px;
+      }
+
+      .description {
+        padding: 0;
+        margin: 0;
+      }
+
+      .groupDescription {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 16px;
+        font-size: var(--group-description-font-size, 16px);
+      }
+
+      .group-name {
+        background-color: var(--primary-color-800, #000);
+        color: #fafafa;
+        padding-left: 16px;
+        padding-top: 16px;
+        padding-bottom: 16px;
+      }
+
+      .textBox {
+      }
+
+      @media (max-width: 945px) {
+        :host {
+          width: 306px;
+        }
+
+        .groupCard {
+          margin-bottom: 16px;
+          width: 306px;
+          height: 100%;
+        }
+
+        .top-card {
+          margin-top: 16px !important;
+        }
+
+        .edit {
+          left: 265px;
+        }
+
+        iron-image {
+          width: 306px;
+          height: 172px !important;
+        }
+
+        .imageCard {
+          height: 172px !important;
+        }
+
+        .group-name {
+          font-size: 26px;
+        }
+
+        .groupDescription {
+          padding-top: 6px;
+          padding-bottom: 42px;
+        }
+
+        .stats {
+        }
+
+      }
+
+      .textBox {
+        margin-right: 0;
+      }
+
+      .nameContainer {
+        width: 432px;
+      }
+
+      .group-name {
+        font-size: 26px;
+      }
+
+      paper-search-bar {
+        width: 270px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <template is="dom-if" if="[[group]]" restamp>
+      <div class="layout vertical center-center wrap">
+        <paper-material id="card" elevation="[[elevation]]" animated-shadow class="groupCard top-card textBox">
+          <div class="layout vertical">
+            <div class="layout horizontal">
+              <div class="layout vertical description-and-stats">
+                <div class="description">
+                  <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
+                  <div class="layout horizontal nameContainer">
+                    <div class="group-name">[[groupName]]</div>
+                    <div class="flex"></div>
+                    <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasGroupAccess]]">
+                      <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                      <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                        <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
+                        <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
+                        <paper-item id="usersMenuItem">[[t('group.users')]]</paper-item>
+                        <paper-item id="adminsMenuItem">[[t('group.admins')]]</paper-item>
+                        <paper-item id="deleteMenuItem">[[t('group.delete')]]</paper-item>
+                        <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+                      </paper-menu>
+                    </paper-menu-button>
+                  </div>
+                  <div hidden class="groupAccess">[[groupAccessText]]</div>
+                  <div class="groupDescription">[[group.objectives]]</div>
+                  <div class="layout horizontal center-center">
+                    <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
+                  </div>
+                  <div class="searchContainer layout vertical">
+                    <div class="layout horizontal center-center">
+                      <paper-search-bar hide-clear-button hide-filter-button query="{{searchingFor}}" placeholder="[[t('searchFor')]]" on-paper-search-search="_search"></paper-search-bar>
+                    </div>
+                    <div class="layout horizontal center-center">
+                      <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
+                                       group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
+                                       category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+                      </yp-posts-filter>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </paper-material>
+      </div>
+    </template>
+    <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
+    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-group-info-panel',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.GroupBehaviors,
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior
+      ],
+
+      properties: {
+        group: {
+          type: Object,
+          observer: '_groupChanged'
+        },
+
+        hasGroupAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasGroupAccess(group, gotAdminRights)'
+        },
+
+        groupAccessText: {
+          type: String,
+          computed: '_groupAccessText(group, language)'
+        }
+      },
+
+      _hasGroupAccess: function(group, gotAdminRights) {
+        if (group && gotAdminRights) {
+          return (this.checkGroupAccess(group)!=null);
+        } else {
+          return false;
+        }
+      },
+
+      resetGroup: function () {
+        this.set('group', null);
+      },
+
+      _groupChanged: function (group) {
+      },
+
+      _groupAccessText: function(group, language) {
+        if (group && language) {
+          switch (group.access) {
+            case 0: // Public
+              return this.t("group.public");
+              break;
+            case 1: // Closed
+              return this.t("group.closed");
+              break;
+            case 2: //Secert
+              return this.t("group.secret");
+              break;
+          }
+        } else {
+          return "";
+        }
+      },
+
+      _menuSelection: function (event, detail) {
+        if (detail.item.id=="editMenuItem")
+          this._openEdit();
+        else if (detail.item.id=="newCategoryMenuItem")
+          this._openCategoryEdit();
+        else if (detail.item.id=="deleteMenuItem")
+          this._openDelete();
+        else if (detail.item.id=="usersMenuItem")
+          this._openUsersDialog();
+        else if (detail.item.id=="adminsMenuItem")
+          this._openAdminsDialog();
+        else if (detail.item.id=="pagesMenuItem")
+          this._openPagesDialog();
+        this.selectedMenuItem = null;
+      },
+
+      _openPagesDialog: function () {
+        window.appGlobals.activity('open', 'group.pagesAdmin');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pagesGrid");
+        dialog.setup(this.group.id, null, null, false);
+        dialog.open();
+      },
+
+      _openUsersDialog: function () {
+        window.appGlobals.activity('open', 'group.users');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
+        dialog.setup(this.group.id, null, null, false);
+        dialog.open();
+      },
+
+      _openAdminsDialog: function () {
+        window.appGlobals.activity('open', 'group.admins');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
+        dialog.setup(this.group.id, null, null, true);
+        dialog.open();
+      },
+
+      _openEdit: function () {
+        window.appGlobals.activity('open', 'group.new');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupEdit");
+        dialog.setup(this.group, false, this._refresh.bind(this));
+        dialog.open('edit', { groupId: this.group.id });
+      },
+
+      _openDelete: function () {
+        window.appGlobals.activity('open', 'group.delete');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
+        dialog.setup('/api/groups/'+this.group.id,
+          this.t('group.deleteConfirmation'),
+          this._onDeleted.bind(this));
+        dialog.open();
+      },
+
+      _openCategoryEdit: function () {
+        window.appGlobals.activity('open', 'category.new');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("categoryEdit");
+        dialog.setup(this.group, true, this._refreshCategory.bind(this));
+        dialog.open("new", { groupId: this.group.id });
+      },
+
+      _refreshCategory: function (category) {
+        this.fire("update-group");
+      },
+
+      _onDeleted: function () {
+        this.redirectTo("/community/"+this.group.community_id);
+      },
+
+      _newCategory: function () {
+
+        this.$$("#newCategory").open('new', { groupId: this.group.id });
+      },
+
+      _refresh: function (group) {
+        if (group) {
+          this.set('group', group);
+        }
+        this.fire("update-group");
+      }
+    });
+  </script>
+</dom-module>

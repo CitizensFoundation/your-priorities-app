@@ -33,7 +33,7 @@
 <link rel="import" href="../yp-post/yp-post-edit.html">
 <link rel="import" href="../yp-group/yp-group-edit.html">
 
-<link rel="import" href="yp-group-card-large.html">
+<link rel="import" href="yp-group-info-panel.html">
 
 <dom-module id="yp-group">
   <template>
@@ -138,81 +138,115 @@
           font-size: 10px !important;
         }
       }
+
+      .sideInfo {
+        width: 432px;
+        position: fixed;
+        top: 80px;
+        left: 0;
+      }
+
+      .mainContentPanel {
+        margin-left: 432px;
+      }
+
+      @media (max-width: 960px) {
+        .sideInfo {
+          display: none;
+          margin: 0;
+        }
+
+        .mainContentPanel {
+          margin-left: 0;
+        }
+
+
+        #groupActivities {
+          padding-left: 0px;
+        }
+      }
+
+      #groupActivities {
+        margin-left: 260px;
+      }
     </style>
 
     <div id="topContainer">
-
-      <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" hidden$="[[group.configuration.hideGroupHeader]]">
-        <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-card-large>
-      </div>
-
-      <template is="dom-if" if="[[createFabIcon]]">
-        <div class="largeAddButton layout horizontal center-center">
-          <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
+      <div class="layout horizontal">
+        <div class="sideInfo layout horizontal start" hidden$="[[group.configuration.hideGroupHeader]]">
+          <yp-group-info-panel id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-info-panel>
         </div>
-      </template>
-
-      <div class="layout horizontal center-center" hidden$="[[group.configuration.hideAllTabs]]">
-        <paper-tabs id="paperTabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
-          <paper-tab id="tab1" name="open">
-            <div class="layout vertical center-center tabCounterContainer">
-              <span>[[t('posts.open')]]</span><div class="counterInfo" id="tabCountOpen"></div>
+        <div class="layout vertical start mainContentPanel">
+          <template is="dom-if" if="[[createFabIcon]]">
+            <div class="largeAddButton layout horizontal center-center">
+              <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
             </div>
-          </paper-tab>
-          <template is="dom-if" if="[[hasNonOpenPosts]]">
-            <paper-tab name="in_progress">
-              <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.inProgress')]]</span><div class="counterInfo" id="tabCountInProgress"></div>
-              </div>
-            </paper-tab>
-            <paper-tab name="successful">
-              <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.successful')]]</span><div class="counterInfo" id="tabCountSuccessful"></div>
-              </div>
-            </paper-tab>
-            <paper-tab name="failed">
-              <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.failed')]]</span><div class="counterInfo" id="tabCountFailed"></div>
-              </div>
-            </paper-tab>
           </template>
-          <paper-tab name="news">[[t('news')]]</paper-tab>
-          <paper-tab name="map" hidden$="[[locationHidden]]">[[t('posts.map')]]</paper-tab>
-        </paper-tabs>
+
+          <div class="layout horizontal center-center" hidden$="[[group.configuration.hideAllTabs]]">
+            <paper-tabs hidden id="paperTabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
+              <paper-tab id="tab1" name="open">
+                <div class="layout vertical center-center tabCounterContainer">
+                  <span>[[t('posts.open')]]</span><div class="counterInfo" id="tabCountOpen"></div>
+                </div>
+              </paper-tab>
+              <template is="dom-if" if="[[hasNonOpenPosts]]">
+                <paper-tab name="in_progress">
+                  <div class="layout vertical center-center tabCounterContainer">
+                    <span>[[t('posts.inProgress')]]</span><div class="counterInfo" id="tabCountInProgress"></div>
+                  </div>
+                </paper-tab>
+                <paper-tab name="successful">
+                  <div class="layout vertical center-center tabCounterContainer">
+                    <span>[[t('posts.successful')]]</span><div class="counterInfo" id="tabCountSuccessful"></div>
+                  </div>
+                </paper-tab>
+                <paper-tab name="failed">
+                  <div class="layout vertical center-center tabCounterContainer">
+                    <span>[[t('posts.failed')]]</span><div class="counterInfo" id="tabCountFailed"></div>
+                  </div>
+                </paper-tab>
+              </template>
+              <paper-tab name="news">[[t('news')]]</paper-tab>
+              <paper-tab name="map" hidden$="[[locationHidden]]">[[t('posts.map')]]</paper-tab>
+            </paper-tabs>
+          </div>
+
+          <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+            <section name="open">
+              <div class="layout horizontal center-center">
+                <yp-post-list id="openPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              </div>
+            </section>
+            <section name="news" class="layout vertical center-center">
+              <ac-activities id="groupActivities" disable-new-posts="[[disableNewPosts]]" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" group-id="[[group.id]]"></ac-activities>
+            </section>
+            <template is="dom-if" if="[[hasNonOpenPosts]]">
+              <section name="in_progress">
+                <div class="layout horizontal center-center">
+                  <yp-post-list id="inProgressPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+                </div>
+              </section>
+              <section name="successful">
+                <div class="layout horizontal center-center">
+                  <yp-post-list id="successfulPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+                </div>
+              </section>
+              <section name="failed">
+                <div class="layout horizontal center-center">
+                  <yp-post-list id="failedPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+                </div>
+              </section>
+            </template>
+            <section name="map" hidden$="[[locationHidden]]">
+              <template is="dom-if" if="[[mapActive]]" restamp>
+                <yp-post-map group-id="[[group.id]]"></yp-post-map>
+              </template>
+            </section>
+          </iron-pages>
+        </div>
       </div>
 
-      <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <section name="open">
-          <div class="layout horizontal center-center">
-            <yp-post-list id="openPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
-          </div>
-        </section>
-        <section name="news">
-          <ac-activities id="groupActivities" disable-new-posts="[[disableNewPosts]]" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" group-id="[[group.id]]"></ac-activities>
-        </section>
-        <template is="dom-if" if="[[hasNonOpenPosts]]">
-          <section name="in_progress">
-            <div class="layout horizontal center-center">
-              <yp-post-list id="inProgressPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
-            </div>
-          </section>
-          <section name="successful">
-            <div class="layout horizontal center-center">
-              <yp-post-list id="successfulPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
-            </div>
-          </section>
-          <section name="failed">
-            <div class="layout horizontal center-center">
-              <yp-post-list id="failedPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
-            </div>
-          </section>
-        </template>
-        <section name="map" hidden$="[[locationHidden]]">
-          <template is="dom-if" if="[[mapActive]]" restamp>
-            <yp-post-map group-id="[[group.id]]"></yp-post-map>
-          </template>
-        </section>
-      </iron-pages>
     </div>
 
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden$="[[post.Group.configuration.hideNewPostOnPostPage]]">
