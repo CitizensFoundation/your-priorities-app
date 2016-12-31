@@ -1,25 +1,25 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.16">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.18">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.16">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.18">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.16">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.16">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.3.16">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.18">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.18">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.3.18">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.16">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.16">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.16">
-<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.16">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.16">
-<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.16">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.16">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.18">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.18">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.18">
+<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.18">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.18">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.18">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.18">
 
-<link rel="import" href="yp-point-actions.html?v=6.3.16">
+<link rel="import" href="yp-point-actions.html?v=6.3.18">
 
 </head><body><dom-module id="yp-point">
 
@@ -31,13 +31,19 @@
         @apply(--layout-vertical);
       }
 
-
       .point-content {
         @apply(--layout-vertical);
         padding-right: 16px;
         padding-left: 16px;
       }
 
+      #pointContent {
+        cursor: default;
+      }
+
+      #pointContent[link-point] {
+        cursor: pointer;
+      }
 
       @media (max-width: 320px) {
         .user-image {
@@ -66,6 +72,8 @@
 
       #reportPointIconButton {
         color: #ddd;
+        width: 36px;
+        height: 36px;
       }
 
       .thumbsIcon {
@@ -85,6 +93,14 @@
       iron-icon.thumbsIconDown {
         color: var(--master-point-down-color);
       }
+
+      yp-user-with-organization {
+        padding-left: 16px;
+      }
+
+      .actionContainer {
+        margin-top: 8px;
+      }
     </style>
 
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
@@ -97,9 +113,8 @@
         <div class="userInfoContainer layout horizontal" up-vote$="[[upVote(point)]]" down-vote$="[[downVote(point)]]" hidden$="[[hideUser]]">
           <iron-icon icon="thumb-up" class="thumbsIcon thumbsIconUp" hidden$="[[!pointValueUp]]"></iron-icon>
           <iron-icon icon="thumb-down" class="thumbsIcon thumbsIconDown" hidden$="[[pointValueUp]]"></iron-icon>
-          <div class="flex"></div>
-          <div class="layout horizontal end-justified">
-            <yp-user-with-organization title-date="[[point.created_at]]" inverted="" user="[[user]]"></yp-user-with-organization>
+          <div class="layout horizontal">
+            <yp-user-with-organization title-date="[[point.created_at]]" inverted="" user$="[[user]]"></yp-user-with-organization>
           </div>
         </div>
 
@@ -107,7 +122,7 @@
           <span hidden$="[[!latestContent.name]]">
             <span>[[latestContent.name]]</span>.
           </span>
-          <div id="pointContent" hidden$="[[isEditing]]"></div>
+          <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded"></div>
           <template is="dom-if" if="[[isEditing]]" restamp="">
             <div class="layout vertical">
               <paper-textarea id="pointContentEditor" char-counter="" maxlength="500" value="{{latestContent}}"></paper-textarea>
@@ -120,8 +135,9 @@
               </div>
             </div>
           </template>
-          <div class="layout horizontal">
+          <div class="layout horizontal actionContainer">
             <yp-point-actions point="[[point]]"></yp-point-actions>
+            <paper-icon-button hidden$="[[!loggedInUser]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
             <div class="flex"></div>
             <template is="dom-if" if="[[hasPointAccess]]">
               <div class="layout horizontal self-end" hidden$="">
@@ -131,7 +147,6 @@
                 <paper-icon-button icon="clear" on-tap="_deletePoint"></paper-icon-button>
               </div>
             </template>
-            <paper-icon-button hidden$="[[!loggedInUser]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
           </div>
         </div>
       </div>
@@ -149,6 +164,11 @@
           type: Object,
           notify: true,
           observer: "_pointChanged"
+        },
+
+        linkPoint: {
+          type: Boolean,
+          value: false
         },
 
         hasPointAccess: {
@@ -199,6 +219,12 @@
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypGotAdminRightsBehavior
       ],
+
+      _linkIfNeeded: function () {
+        if (this.linkPoint) {
+          this.goToPost(this.point.Post.id, this.point.id);
+        }
+      },
 
       _updateEmojiBindings: function (isEditing) {
         if (isEditing) {

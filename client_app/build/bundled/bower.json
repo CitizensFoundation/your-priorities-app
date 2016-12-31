@@ -7,7 +7,7 @@
     "google-streetview-pano": "https://github.com/rbjarnason/google-streetview-pano.git#timings-fix-maps-api-callback",
     "polymer-instagram": "https://github.com/rbjarnason/polymer-instagram-feed.git#polymer1",
     "iron-form": "rbjarnason/iron-form#add-put-support",
-    "iron-list": "rbjarnason/iron-list#addOverrideForScrollerPaddingTop",
+    "iron-list": "rbjarnason/iron-list#fire-iron-resize-after-scrolling",
     "polymer": "Polymer/polymer",
     "iron-elements": "PolymerElements/iron-elements",
     "paper-elements": "PolymerElements/paper-elements",

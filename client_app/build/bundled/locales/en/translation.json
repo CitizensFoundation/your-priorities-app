@@ -1,4 +1,7 @@
 {
+  "addedAnIdea": "Added an idea...",
+  "recommendedPosts": "Recommended",
+  "noComments": "No comments",
   "optional": "Optional",
   "additionalGroupConfig":"Additional Group Config",
   "defaultDataImage":"Default Data Image",
@@ -187,6 +190,7 @@
   },
 
   "post": {
+    "most_debated": "Most debated",
     "deleteConfirmation": "Are you sure you want to delete this idea?",
     "move": "Move idea",
     "confirmMove": "Confirm that you want to move",

@@ -1,17 +1,18 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.16">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.18">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.16">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.18">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.16">
-<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.16">
-<link rel="import" href="../yp-point/yp-point-news-story.html?v=6.3.16">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.18">
+<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.18">
+<link rel="import" href="../yp-point/yp-point-news-story.html?v=6.3.18">
+<link rel="import" href="../yp-point/yp-point-comment-list.html?v=6.3.18">
 
-<link rel="import" href="yp-point-news-story-embed.html?v=6.3.16">
+<link rel="import" href="yp-point-news-story-embed.html?v=6.3.18">
 
 </head><body><dom-module id="yp-point-news-story">
 
@@ -20,7 +21,8 @@
     <style include="iron-flex iron-flex-alignment">
 
       :host {
-
+        display: block;
+        width: 100%;
         margin-top: 8px;
       }
 
@@ -37,11 +39,12 @@
       }
 
       .story {
-        padding: 8px;
-        padding-bottom: 4px;
+        padding-bottom: 12px;
         margin-bottom: 8px;
+        padding-top: 8px;
         border-bottom: solid #ddd;
         border-bottom-width: 1px;
+        font-size: 19px;
       }
 
       yp-point-actions {
@@ -49,16 +52,54 @@
       }
 
       .container {
-        width: 100%;
+      }
+
+      #commentCount {
+        font-size: 14px;
+      }
+
+      paper-icon-button.openCloseButton {
+        width: 56px;
+        height: 56px;
+        padding-left: 0;
+        margin-left: 0;
+      }
+
+      .commentText {
+        font-size: 14px;
+        text-transform: lowercase;
+        padding-right: 6px;
+      }
+
+      .withPointer {
+        cursor: pointer;
       }
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical container">
       <div class="story">
         [[point.content]]
-        <yp-point-actions point="[[point]]"></yp-point-actions>
       </div>
       <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
+      <div class="layout horizontal container">
+        <yp-point-actions point="[[point]]"></yp-point-actions>
+        <div class="layout horizontal start-justified">
+          <div class="layout horizontal center-center withPointer" hidden$="[[!commentsCount]]" on-tap="_setOpenToValue">
+            <div class="commentText">[[t('point.comments')]]</div>
+            <div id="commentCount">[[commentsCount]]</div>
+          </div>
+          <div class="layout horizontal center-center withPointer" on-tap="_setOpenToValue" hidden$="[[_noComments(commentsCount)]]">
+            <div class="commentText">[[t('noComments')]]</div>
+          </div>
+          <div class="layout horizontal">
+            <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
+            <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
+          </div>
+        </div>
+      </div>
+      <yp-point-comment-list id="commentsList" on-yp-set-comments-count="_setCommentsCount" disable-open-close="" point="[[point]]" hidden$="[[!withComments]]"></yp-point-comment-list>
+
     </div>
   </template>
 
@@ -75,6 +116,17 @@
           observer: "_pointChanged"
         },
 
+        withComments: {
+          type: Boolean,
+          value: false
+        },
+
+        open: {
+          type: Boolean,
+          value: false,
+          observer: "_openChanged"
+        },
+
         user: {
           type: Object
         },
@@ -82,7 +134,48 @@
         hideUser: {
           type: Boolean,
           value: false
+        },
+
+        commentsCount: {
+          type: Number,
+          value: 0
         }
+      },
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      _setOpenToValue: function () {
+        if (this.open) {
+          this._setClosed()
+        } else {
+          this._setOpen()
+        }
+      },
+
+      _openChanged: function (newOpenValue) {
+        if (newOpenValue) {
+          this.$.commentsList.generateRequest();
+        }
+      },
+
+      _noComments: function (commentCount) {
+        return !(commentCount==0)
+      },
+
+      _setOpen: function () {
+        this.set('open', true);
+        this.$.commentsList._setOpen();
+      },
+
+      _setClosed: function () {
+        this.set('open', false);
+        this.$.commentsList._setClosed();
+      },
+
+      _setCommentsCount: function (event, detail) {
+        this.set('commentsCount', detail.count);
       },
 
       _pointChanged: function(newValue, oldValue) {
@@ -91,6 +184,8 @@
         } else {
           this.user = null;
         }
+
+        this.set('open', false);
       },
 
       loginName: function () {

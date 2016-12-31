@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.16"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-display" assetpath="../yp-bulk-status-update/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.18"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-display" assetpath="../yp-bulk-status-update/">
 
   <template>
 
@@ -265,7 +265,7 @@
         <yp-bulk-status-display user-id$="[[userId]]" status-update-id$="[[statusUpdateId]]"></yp-bulk-status-display>
       </section>
       <section>
-        <ac-activities user-id="[[user.id]]"></ac-activities>
+        <ac-activities selected-tab="[[selectedTab]]" user-id="[[user.id]]"></ac-activities>
       </section>
       <section>
         <template>

@@ -1,10 +1,10 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.16">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.18">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.16">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.18">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.16">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.18">
 
 </head><body><dom-module id="yp-point-news-story-embed">
 
@@ -12,17 +12,27 @@
 
     <style include="iron-flex iron-flex-alignment">
       iron-image {
-        width: 400px;
-        height: 225px;
+        width: 550px;
+        height: 309px;
+      }
+
+      @media (max-width: 600px) {
+        iron-image {
+          width: 90vw !important;
+          height: 51vw !important;
+        }
       }
 
       #embedHtml {
-        width: 390px;
-        height:100%;
+        width: 100%;
+        height: 100%;
+        border: 1px solid;
+        border-color: #999;
+        padding: 16px;
       }
 
       a {
-        color: var(--primary-color);
+        color: #333;
         text-decoration: none;
       }
 
@@ -36,17 +46,17 @@
       .container {
         border-bottom: solid #ddd;
         border-bottom-width: 1px;
-        padding: 8px;
+        margin-top: 8px;
       }
     </style>
 
-    <div class="layout vertical" hidden$="[[!embedData]]">
+    <div class="layout vertical embedContainer" hidden$="[[!embedData]]">
       <a href$="[[embedData.url]]" class="container" target="_blank">
         <div class="layout vertical center-center">
-          <iron-image sizing="cover" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
+          <iron-image sizing="contain" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
           <div id="embedHtml" hidden$="[[!embedData.html]]"></div>
         </div>
-        <div class="layout vertical center-center">
+        <div class="layout vertical">
           <div class="title">
             <h2>[[embedData.title]]</h2>
           </div>

@@ -1,29 +1,29 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.16">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.18">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.16">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.18">
 
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.16">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.18">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.16">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.16">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.16">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.16">
-<link href="../../bower_components/paper-search/paper-search.html?v=6.3.16" rel="import">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.18">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.18">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.18">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.18">
+<link href="../../bower_components/paper-search/paper-search.html?v=6.3.18" rel="import">
 
-<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.16">
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.18">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.16">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.16">
-<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.16">
-<link rel="import" href="../ac-activities/ac-activities.html?v=6.3.16">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.18">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.18">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.18">
+<link rel="import" href="../ac-activities/ac-activities.html?v=6.3.18">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.16">
-<link rel="import" href="../yp-post/yp-post-card.html?v=6.3.16">
-<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.3.16">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.18">
+<link rel="import" href="../yp-post/yp-post-card.html?v=6.3.18">
+<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.3.18">
 
-<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.3.16">
+<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.3.18">
 
 </head><body><dom-module id="yp-post-list">
   <template>
@@ -191,7 +191,7 @@
 
         categories: {
           type: Array
-          },
+        },
 
         defaultCategories: {
           type: Boolean,
@@ -338,35 +338,37 @@
       },
 
       _loadMoreData: function () {
-          if (this.moreToLoad) {
-            this.set('moreToLoad', false);
-            this.set('noPosts', false);
-            var objectId, objectType;
+        if (this.moreToLoad) {
+          console.error("_loadMoreData for groupId: "+this.groupId+" statusFilter: "+this.statusFilter);
 
-            if (this.userId) {
-              objectId = this.userId + '/posts';
-              objectType = 'users';
-            } else {
-              objectId = this.groupId;
-              objectType = 'groups';
-            }
+          this.set('moreToLoad', false);
+          this.set('noPosts', false);
+          var objectId, objectType;
 
-            if (!this.filter)
-              this.set('filter','newest');
-            if (this.searchingFor) {
-              this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
-            } else {
-              this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
-              if (this.categoryId) {
-                this.$$('#ajax').url += '/' + this.categoryId;
-              } else {
-                this.$$('#ajax').url += '/null';
-              }
-              this.$$('#ajax').url += '/'+this.statusFilter;
-            }
-            this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
-            this.$$('#ajax').generateRequest();
+          if (this.userId) {
+            objectId = this.userId + '/posts';
+            objectType = 'users';
+          } else {
+            objectId = this.groupId;
+            objectType = 'groups';
           }
+
+          if (!this.filter)
+            this.set('filter','newest');
+          if (this.searchingFor) {
+            this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
+          } else {
+            this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
+            if (this.categoryId) {
+              this.$$('#ajax').url += '/' + this.categoryId;
+            } else {
+              this.$$('#ajax').url += '/null';
+            }
+            this.$$('#ajax').url += '/'+this.statusFilter;
+          }
+          this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
+          this.$$('#ajax').generateRequest();
+        }
       },
 
       _postsResponse: function (event, detail, sender) {
@@ -405,9 +407,11 @@
         });
 
         if (posts.length>0 && posts.length!=this.postsCount) {
-          this.fire('yp-clear-scroll-threshold');
           this.setMoreToLoad();
         }
+
+        var scrollThresholdEvent = new CustomEvent("iron-signal", { detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} } } );
+        document.dispatchEvent(scrollThresholdEvent);
 
         this._processCategories();
       },

@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.16"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.18"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -985,6 +985,14 @@
         paper-material {
           width: 320px;
         }
+
+        .commentsList {
+          margin-left: 16px;
+        }
+      }
+
+      .commentsList {
+        margin-left: 32px;
       }
     </style>
 
@@ -1002,7 +1010,7 @@
           <paper-icon-button icon="clear" on-tap="_openDelete"></paper-icon-button>
         </div>
       </div>
-      <yp-point-comment-list image="[[image]]"></yp-point-comment-list>
+      <yp-point-comment-list class="commentsList" image="[[image]]"></yp-point-comment-list>
     </paper-material>
   </template>
 
@@ -1595,7 +1603,7 @@
           <yp-post-points id="pointsSection" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
         </div>
         <section name="news">
-          <ac-activities id="postNews" disable-new-posts="[[disableNewPosts]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
+          <ac-activities id="postNews" selected-tab="[[selectedTab]]" disable-new-posts="[[disableNewPosts]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
         </section>
         <section name="location">
           <div class="layout horizontal center-center">

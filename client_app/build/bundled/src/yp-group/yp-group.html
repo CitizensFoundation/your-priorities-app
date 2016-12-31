@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.16"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.18"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -300,6 +300,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   <paper-item data-filter="newest">
                     <iron-icon icon="av:new-releases" class="filterIcon"></iron-icon>
                     <span>[[t('post.newest')]]</span>
+                  </paper-item>
+                  <paper-item data-filter="most_debated">
+                    <iron-icon icon="communication:chat-bubble-outline" class="filterIcon"></iron-icon>
+                    <span>[[t('post.most_debated')]]</span>
                   </paper-item>
                   <paper-item data-filter="random">
                     <iron-icon icon="cached" class="filterIcon"></iron-icon>
@@ -1625,7 +1629,7 @@ Custom property | Description | Default
 
         categories: {
           type: Array
-          },
+        },
 
         defaultCategories: {
           type: Boolean,
@@ -1772,35 +1776,37 @@ Custom property | Description | Default
       },
 
       _loadMoreData: function () {
-          if (this.moreToLoad) {
-            this.set('moreToLoad', false);
-            this.set('noPosts', false);
-            var objectId, objectType;
+        if (this.moreToLoad) {
+          console.error("_loadMoreData for groupId: "+this.groupId+" statusFilter: "+this.statusFilter);
 
-            if (this.userId) {
-              objectId = this.userId + '/posts';
-              objectType = 'users';
-            } else {
-              objectId = this.groupId;
-              objectType = 'groups';
-            }
+          this.set('moreToLoad', false);
+          this.set('noPosts', false);
+          var objectId, objectType;
 
-            if (!this.filter)
-              this.set('filter','newest');
-            if (this.searchingFor) {
-              this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
-            } else {
-              this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
-              if (this.categoryId) {
-                this.$$('#ajax').url += '/' + this.categoryId;
-              } else {
-                this.$$('#ajax').url += '/null';
-              }
-              this.$$('#ajax').url += '/'+this.statusFilter;
-            }
-            this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
-            this.$$('#ajax').generateRequest();
+          if (this.userId) {
+            objectId = this.userId + '/posts';
+            objectType = 'users';
+          } else {
+            objectId = this.groupId;
+            objectType = 'groups';
           }
+
+          if (!this.filter)
+            this.set('filter','newest');
+          if (this.searchingFor) {
+            this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
+          } else {
+            this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
+            if (this.categoryId) {
+              this.$$('#ajax').url += '/' + this.categoryId;
+            } else {
+              this.$$('#ajax').url += '/null';
+            }
+            this.$$('#ajax').url += '/'+this.statusFilter;
+          }
+          this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
+          this.$$('#ajax').generateRequest();
+        }
       },
 
       _postsResponse: function (event, detail, sender) {
@@ -1839,9 +1845,11 @@ Custom property | Description | Default
         });
 
         if (posts.length>0 && posts.length!=this.postsCount) {
-          this.fire('yp-clear-scroll-threshold');
           this.setMoreToLoad();
         }
+
+        var scrollThresholdEvent = new CustomEvent("iron-signal", { detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} } } );
+        document.dispatchEvent(scrollThresholdEvent);
 
         this._processCategories();
       },
@@ -2323,7 +2331,7 @@ Custom property | Description | Default
       <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section name="open">
           <div class="layout horizontal center-center">
-            <yp-post-list on-yp-clear-scroll-threshold="_clearScrollThreshold" id="openPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+            <yp-post-list id="openPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
           </div>
         </section>
         <section name="news">
@@ -2332,17 +2340,17 @@ Custom property | Description | Default
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section name="in_progress">
             <div class="layout horizontal center-center">
-              <yp-post-list on-yp-clear-scroll-threshold="_clearScrollThreshold" id="inProgressPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="inProgressPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section name="successful">
             <div class="layout horizontal center-center">
-              <yp-post-list on-yp-clear-scroll-threshold="_clearScrollThreshold" id="successfulPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="successfulPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section name="failed">
             <div class="layout horizontal center-center">
-              <yp-post-list on-yp-clear-scroll-threshold="_clearScrollThreshold" id="failedPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="failedPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
         </template>
@@ -2365,6 +2373,7 @@ Custom property | Description | Default
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-signals on-iron-signal-yp-refresh-group-posts="_refreshGroupPosts"></iron-signals>
+    <iron-signals on-iron-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></iron-signals>
 
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
 
@@ -2464,6 +2473,7 @@ Custom property | Description | Default
 
       _clearScrollThreshold: function () {
         this.$$("#scrollTheshold").clearTriggers();
+        console.warn("Clearing scrolling triggers for group");
       },
 
       _loadDataOnTab: function (tabId) {

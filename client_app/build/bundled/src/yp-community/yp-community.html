@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.16"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.18"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -987,7 +987,7 @@
           </div>
         </section>
         <section name="news">
-          <ac-activities id="communityNews" community-id="[[community.id]]"></ac-activities>
+          <ac-activities id="communityNews" selected-tab="[[selectedTab]]" community-id="[[community.id]]"></ac-activities>
         </section>
         <section name="map" hidden$="[[locationHidden]]">
           <template is="dom-if" if="[[mapActive]]" restamp="">

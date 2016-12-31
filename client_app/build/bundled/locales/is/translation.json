@@ -1,4 +1,7 @@
 {
+  "addedAnIdea": "Sendi inn hugmynd...",
+  "recommendedPosts": "Mælt með",
+  "noComments": "Engar athugasemdir",
   "optional": "Valkvæmt",
   "additionalGroupConfig":"Viðbótastillingar",
   "defaultDataImage":"Sjálfgefin Data Mynd",
@@ -241,6 +244,7 @@
   },
 
   "post": {
+    "most_debated": "Mest rökrætt",
     "move": "Færa hugmynd",
     "confirmMove": "Staðfestu að þú vilt færa",
     "statusChangeConfirmText": "Ertu viss um að þú viljir senda tölvupóst á alla sem styðja og eru á móti þessari hugmynd?",
@@ -277,7 +281,7 @@
     "photographerName": "Ljósmyndari",
     "tabs": {
       "debate": "Rök",
-      "news": "Nýjasta Efni",
+      "news": "Fréttaveita",
       "location": "Staðsetning",
       "photos": "Myndir",
       "solutions": "Lausnir",

@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.16">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.18">
 
 <script>
   /**
@@ -15,11 +15,11 @@
     },
 
     attached: function () {
-      window.addEventListener('scroll', this._isLoadMoreElementInView.bind(this));
+      //window.addEventListener('scroll', this._isLoadMoreElementInView.bind(this));
     },
 
     detached: function () {
-      window.removeEventListener('scroll', this._isLoadMoreElementInView);
+      //window.removeEventListener('scroll', this._isLoadMoreElementInView);
     },
 
     _isLoadMoreElementInView: function () {

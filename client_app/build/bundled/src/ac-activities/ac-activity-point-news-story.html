@@ -1,24 +1,26 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.16">
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.16">
-<link rel="import" href="../yp-point/yp-point.html?v=6.3.16">
-<link rel="import" href="./ac-activity-post-header.html?v=6.3.16">
-<link rel="import" href="../yp-point/yp-point-comment-list.html?v=6.3.16">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.18">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.18">
+<link rel="import" href="../yp-point/yp-point.html?v=6.3.18">
+<link rel="import" href="./ac-activity-post-header.html?v=6.3.18">
+<link rel="import" href="../yp-point/yp-point-comment-list.html?v=6.3.18">
 
 </head><body><dom-module id="ac-activity-point-news-story">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      :host {
+        width: 100%;
+      }
+
       .newsStoryContainer {
-        max-height: 250px;
-        overflow-y: scroll;
+        width: 100% !important;
       }
 
       yp-point-news-story {
       }
     </style>
     <div class="layout vertical center-center newsStoryContainer">
-      <yp-point-news-story hide-user="" class="card" point="[[activity.Point]]"></yp-point-news-story>
-      <yp-point-comment-list id="pointCommentList" point="[[activity.Point]]"></yp-point-comment-list>
+      <yp-point-news-story with-comments="" hide-user="" class="card" point="[[activity.Point]]"></yp-point-news-story>
     </div>
   </template>
 
@@ -40,9 +42,6 @@
       },
 
       _activityChanged: function (newValue) {
-        if (newValue) {
-          this.$.pointCommentList.open = false;
-        }
       }
     });
   </script>

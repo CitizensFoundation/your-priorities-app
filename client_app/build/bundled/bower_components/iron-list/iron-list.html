@@ -6,10 +6,10 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.16">
-<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html?v=6.3.16">
-<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html?v=6.3.16">
-<link rel="import" href="../iron-scroll-target-behavior/iron-scroll-target-behavior.html?v=6.3.16">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.18">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html?v=6.3.18">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html?v=6.3.18">
+<link rel="import" href="../iron-scroll-target-behavior/iron-scroll-target-behavior.html?v=6.3.18">
 
 <!--
 
@@ -391,6 +391,15 @@ will only render 20.
       overridePaddingTop: {
         type: Number,
         value: null
+      },
+
+      /**
+       * Fire resize event after scrolling an amount of pixels
+       * To help hack around the problem of items with big differences in height
+       */
+      fireResizeAfterScrolling: {
+        type: Number,
+        value: null
       }
     },
 
@@ -559,6 +568,11 @@ will only render 20.
      * The cost of stamping a template in ms.
      */
     _templateCost: 0,
+
+    /**
+     * Have scrolled since last firing of iron-resize event to fix positions of different sized items
+     */
+    _haveScrolledSinceLastHardResize: 0,
 
     /**
      * The bottom of the physical content.
@@ -803,6 +817,12 @@ will only render 20.
       // Clear indexes.
       this._firstVisibleIndexVal = null;
       this._lastVisibleIndexVal = null;
+
+      this._haveScrolledSinceLastHardResize += Math.abs(delta);
+      if (this.fireResizeAfterScrolling && this.fireResizeAfterScrolling<this._haveScrolledSinceLastHardResize) {
+        this.fire('iron-resize');
+        this._haveScrolledSinceLastHardResize = 0;
+      }
 
       // Random access.
       if (Math.abs(delta) > this._physicalSize) {

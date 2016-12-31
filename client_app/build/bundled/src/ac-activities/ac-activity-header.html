@@ -1,20 +1,21 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.16">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.18">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.16">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.18">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.16">
-<link rel="import" href="../yp-user/yp-user-with-organization.html?v=6.3.16">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.18">
+<link rel="import" href="../yp-user/yp-user-with-organization.html?v=6.3.18">
 
 </head><body><dom-module id="ac-activity-header">
   <template>
     <style>
       yp-user-with-organization {
         padding-top: 0;
+        padding-bottom: 0;
         margin: 0;
       }
     </style>
-    <yp-user-with-organization user="[[activity.User]]" inverted=""></yp-user-with-organization>
+    <yp-user-with-organization user$="[[activity.User]]" inverted=""></yp-user-with-organization>
   </template>
 
   <script>
@@ -36,6 +37,7 @@
 
       _activityChanged: function (newValue) {
       }
+
 
     });
   </script>

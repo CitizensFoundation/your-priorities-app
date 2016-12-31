@@ -10425,7 +10425,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return moment(timeValue).format();
     },
 
-    goToPost: function (postIdIn) {
+    goToPost: function (postIdIn, pointId) {
       var postId;
       if (postIdIn && !(postIdIn instanceof Event)) {
         postId = postIdIn;
@@ -10436,6 +10436,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return;
       }
       var postUrl = '/post/' + postId;
+      if (pointId && !(postIdIn instanceof Event)) {
+        postUrl += '/' + pointId;
+      }
       var windowLocation = window.location.href;
       console.log(postUrl);
       console.log(windowLocation);
@@ -10584,7 +10587,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.16">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.18">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -10592,7 +10595,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.16">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.18">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -10980,7 +10983,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.16">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.18">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -16833,8 +16836,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.16">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.16">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.18">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.18">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -22847,7 +22850,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.16" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.18" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -25861,6 +25864,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       overridePaddingTop: {
         type: Number,
         value: null
+      },
+
+      /**
+       * Fire resize event after scrolling an amount of pixels
+       * To help hack around the problem of items with big differences in height
+       */
+      fireResizeAfterScrolling: {
+        type: Number,
+        value: null
       }
     },
 
@@ -26029,6 +26041,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * The cost of stamping a template in ms.
      */
     _templateCost: 0,
+
+    /**
+     * Have scrolled since last firing of iron-resize event to fix positions of different sized items
+     */
+    _haveScrolledSinceLastHardResize: 0,
 
     /**
      * The bottom of the physical content.
@@ -26273,6 +26290,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       // Clear indexes.
       this._firstVisibleIndexVal = null;
       this._lastVisibleIndexVal = null;
+
+      this._haveScrolledSinceLastHardResize += Math.abs(delta);
+      if (this.fireResizeAfterScrolling && this.fireResizeAfterScrolling<this._haveScrolledSinceLastHardResize) {
+        this.fire('iron-resize');
+        this._haveScrolledSinceLastHardResize = 0;
+      }
 
       // Random access.
       if (Math.abs(delta) > this._physicalSize) {
@@ -27906,7 +27929,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.16" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.18" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -33837,11 +33860,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
 
     attached: function () {
-      window.addEventListener('scroll', this._isLoadMoreElementInView.bind(this));
+      //window.addEventListener('scroll', this._isLoadMoreElementInView.bind(this));
     },
 
     detached: function () {
-      window.removeEventListener('scroll', this._isLoadMoreElementInView);
+      //window.removeEventListener('scroll', this._isLoadMoreElementInView);
     },
 
     _isLoadMoreElementInView: function () {
@@ -34114,7 +34137,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.16", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.18", fontName: 'FFClanWebBook' });
 
     },
 
@@ -34125,7 +34148,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.16";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.18";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -34143,7 +34166,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     }
   }
-</script><!--
+</script>-<!--
 @license
 Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
@@ -34712,7 +34735,11 @@ Example:
           windowWidth = windowWidth - 16;
         }
         list.style.height = height + 'px';
-        list.style.width = windowWidth + 'px';
+        if (!this.skipIronListWidth) {
+          list.style.width = windowWidth + 'px';
+        } else {
+          console.log("Skipping setting iron-list width");
+        }
         this.async(function () {
           list.updateViewportBoundaries();
           this.async(function () {
@@ -35200,17 +35227,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <style include="iron-flex iron-flex-alignment">
       iron-image {
-        width: 400px;
-        height: 225px;
+        width: 550px;
+        height: 309px;
+      }
+
+      @media (max-width: 600px) {
+        iron-image {
+          width: 90vw !important;
+          height: 51vw !important;
+        }
       }
 
       #embedHtml {
-        width: 390px;
-        height:100%;
+        width: 100%;
+        height: 100%;
+        border: 1px solid;
+        border-color: #999;
+        padding: 16px;
       }
 
       a {
-        color: var(--primary-color);
+        color: #333;
         text-decoration: none;
       }
 
@@ -35224,17 +35261,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .container {
         border-bottom: solid #ddd;
         border-bottom-width: 1px;
-        padding: 8px;
+        margin-top: 8px;
       }
     </style>
 
-    <div class="layout vertical" hidden$="[[!embedData]]">
+    <div class="layout vertical embedContainer" hidden$="[[!embedData]]">
       <a href$="[[embedData.url]]" class="container" target="_blank">
         <div class="layout vertical center-center">
-          <iron-image sizing="cover" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
+          <iron-image sizing="contain" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
           <div id="embedHtml" hidden$="[[!embedData.html]]"></div>
         </div>
-        <div class="layout vertical center-center">
+        <div class="layout vertical">
           <div class="title">
             <h2>[[embedData.title]]</h2>
           </div>
@@ -35275,19 +35312,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <style include="iron-flex iron-flex-alignment">
       :host {
-        width: 100%;
-        height: 100%;
-        margin-top: 32px;
+        padding-top: 16px;
       }
 
       paper-material {
         background-color: #FFF;
       }
 
-      paper-textarea {
-        width: 720px;
-        padding-right: 8px;
-        padding-top: 16px;
+      paper-textarea  {
+        width: 460px;
+        margin-top: -8px;
       }
 
       paper-button {
@@ -35298,12 +35332,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .embedData {
         padding-top: 24px;
-        max-width: 695px;
       }
 
       .userImage {
-        padding-bottom: 32px;
-        padding-left: 16px;
+        padding-bottom: 16px;
         padding-right: 16px;
       }
 
@@ -35319,17 +35351,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .container {
-        width: 100%;
-      }
-
-      @media (max-width: 720px) {
-        paper-textarea {
-          width: 450px;
-        }
-
-        .embedData {
-          max-width: 450px;
-        }
+        margin-bottom: 32px;
       }
 
       @media (max-width: 420px) {
@@ -35358,34 +35380,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <div elevation="3" class="container">
-      <div class="layout vertical">
-        <div class="layout horizontal center-center">
-          <yp-user-image class="userImage" user="[[loggedInUser]]"></yp-user-image>
-          <div class="layout vertical">
-            <paper-textarea id="pointNewsStory" required="" minlength="15" name="pointNewsStory" value="{{point.content}}" label="[[t('point.addNewsStory')]]" char-counter="" rows="2" max-rows="5" on-keydown="_keyDown" maxlength="500">
-            </paper-textarea>
-            <div class="layout horizontal end-justified">
-              <paper-button raised="" on-tap="_sendStory">[[t('point.postNewsStory')]]</paper-button>
-            </div>
+    <div class="layout vertical container">
+      <div class="layout horizontal">
+        <yp-user-image class="userImage" user="[[loggedInUser]]"></yp-user-image>
+        <div class="layout vertical">
+          <paper-textarea id="pointNewsStory" required="" minlength="15" name="pointNewsStory" value="{{point.content}}" label="[[t('point.addNewsStory')]]" char-counter="" rows="2" max-rows="5" on-keydown="_keyDown" maxlength="500">
+          </paper-textarea>
+          <div class="layout horizontal end-justified">
+            <paper-button id="storySubmitButton" raised="" on-tap="_sendStory">[[t('point.postNewsStory')]]</paper-button>
           </div>
         </div>
-
-        <div class="layout horizontal center-center">
-          <template is="dom-if" if="[[point.embed_data]]">
-            <div class="embedData layout vertical center-center">
-              <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
-              <paper-icon-button icon="clear" on-tap="_clearEmbed"></paper-icon-button>
-            </div>
-          </template>
-        </div>
-
-        <div class="layout horizontal center-center">
-          <yp-ajax id="urlPreviewAjax" url="/api/points/url_preview" hidden$="[[point.embed_detail]]" on-response="_urlPreviewResponse"></yp-ajax>
-          <yp-ajax id="postNewsStoryAjax" method="POST" on-response="_newsStoryResponse"></yp-ajax>
-        </div>
-
       </div>
+
+      <div class="layout horizontal center-center">
+        <template is="dom-if" if="[[point.embed_data]]">
+          <div class="embedData layout vertical center-center">
+            <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
+            <paper-icon-button icon="clear" on-tap="_clearEmbed"></paper-icon-button>
+          </div>
+        </template>
+      </div>
+
+      <div class="layout horizontal center-center">
+        <yp-ajax id="urlPreviewAjax" url="/api/points/url_preview" hidden$="[[point.embed_detail]]" on-response="_urlPreviewResponse"></yp-ajax>
+        <yp-ajax id="postNewsStoryAjax" method="POST" on-error="_clearButtonState" on-response="_newsStoryResponse"></yp-ajax>
+      </div>
+
     </div>
     <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
   </template>
@@ -35438,6 +35458,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         Polymer.ypLoggedInUserBehavior
       ],
 
+      _clearButtonState: function () {
+        this.$.storySubmitButton.disabled = false;
+      },
+
       ready: function () {
         this._reset();
         this.$.pointNewsStory.addEventListener("paste", function () {
@@ -35449,9 +35473,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _reset: function () {
         this.set('point', { content: '' });
+        this._clearButtonState();
       },
 
       _sendStory: function () {
+        this.$.storySubmitButton.disabled = true;
         var body = { point: this.point };
         if (this.point.content && this.point.content.length>2) {
           if (this.postId && this.postGroupId) {
@@ -35472,6 +35498,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.$.postNewsStoryAjax.body = body;
           this.$.postNewsStoryAjax.generateRequest();
         } else {
+          this._clearButtonState();
           this.$.postNewsStoryAjax.showErrorDialog(this.t('point.commentToShort'));
         }
       },
@@ -37677,7 +37704,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.16">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.18">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -39161,10 +39188,16 @@ For the complete list of available icons, see https://vaadin.com/font-icons
         padding-top: 32px;
       }
 
+      .category-icon[tiny] {
+        width: 100px;
+        height: 100px;
+        padding-top: 24px;
+      }
+
       @media (max-width: 600px) {
         .category-icon {
-          width: 160px;
-          height: 160px;
+          width: 130px;
+          height: 130px;
         }
       }
 
@@ -39178,26 +39211,40 @@ For the complete list of available icons, see https://vaadin.com/font-icons
 
     </style>
 
-      <div class="mapCanvas">
-        <iron-image hidden$="[[!noneActive]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+    <div class="mapCanvas">
+      <iron-image hidden$="[[!noneActive]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
 
-        <div class="layout horizontal center-center" hidden$="[[!categoryActive]]">
-          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
-        </div>
-
-        <iron-image hidden$="[[!imageActive]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
-
-        <template is="dom-if" if="[[!disableMaps]]">
-          <google-streetview-pano hidden$="[[!streetViewActive]]" position$="[[mapPosition]]" heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" pitch="2" zoom="0.8" disable-default-ui="">
-          </google-streetview-pano>
-
-          <google-map hidden$="[[!mapActive]]" id="coverMediaMap" class="map" libraries="places" fit-to-markers="" zoom$="[[zoomLevel]]" map-type$="[[mapType]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-            <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
-          </google-map>
-        </template>
+      <div class="layout horizontal center-center" hidden$="[[!categoryActive]]">
+        <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
       </div>
-    </template>
 
+      <iron-image hidden$="[[!imageActive]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
+
+      <template is="dom-if" if="[[!disableMaps]]">
+
+        <template is="dom-if" if="[[streetViewActive]]">
+          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;zoom=[[zoomLevel]]&amp;size=432x243&amp;maptype=hybrid&amp;key=[[staticMapsApiKey]]" hidden$="[[streetViewActivated]]"></iron-image>
+
+          <template is="dom-if" if="[[streetViewActivated]]">
+            <google-streetview-pano position$="[[mapPosition]]" heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" pitch="2" zoom="0.8" disable-default-ui="">
+            </google-streetview-pano>
+          </template>
+
+        </template>
+
+        <template is="dom-if" if="[[mapActive]]">
+          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;size=432x243&amp;zoom=[[zoomLevel]]&amp;maptype=[[mapType]]&amp;key=[[staticMapsApiKey]]" hidden$="[[mapActivated]]"></iron-image>
+
+          <template is="dom-if" if="[[mapActivated]]">
+            <google-map id="coverMediaMap" class="map" libraries="places" fit-to-markers="" zoom$="[[zoomLevel]]" map-type$="[[mapType]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+              <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
+            </google-map>
+          </template>
+        </template>
+      </template>
+    </div>
+
+  </template>
 
   <script>
     Polymer({
@@ -39208,6 +39255,7 @@ For the complete list of available icons, see https://vaadin.com/font-icons
       ],
 
       properties: {
+
 
         post: {
           type: Object,
@@ -39282,12 +39330,42 @@ For the complete list of available icons, see https://vaadin.com/font-icons
 
         headerMode: {
           type: Boolean,
-          value: false
+          value: false,
+          observer: '_headerModeChanged'
         },
 
         disableMaps: {
           type: Boolean,
           value: false
+        },
+
+        mapActivated: {
+          type: Boolean,
+          value: false
+        },
+
+        streetViewActivated: {
+          type: Boolean,
+          value: false
+        },
+
+        staticMapsApiKey: {
+          type: String,
+          value: "AIzaSyBYy8UvdDD650mz7k1pY0j2hBFQmCPVnxA"
+        },
+
+        tiny: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _headerModeChanged: function (headerMode) {
+        if (headerMode===true) {
+          this.async(function () {
+            this.set('mapActivated', true);
+            this.set('streetViewActivated', true);
+          });
         }
       },
 
@@ -39407,13 +39485,12 @@ For the complete list of available icons, see https://vaadin.com/font-icons
     <style include="iron-flex iron-flex-alignment">
       yp-user-image {
         padding-right: 16px;
-        padding-left: 16px;
       }
 
       .name {
         padding-top: 4px;
         font-weight: bold;
-        text-align: right;
+        text-align: left;
       }
 
       .name[inverted] {
@@ -39421,7 +39498,7 @@ For the complete list of available icons, see https://vaadin.com/font-icons
       }
 
       .imageStatus {
-        margin-left: 16px;
+        margin-left: 8px;
         width: 48px;
         height: 48px;
       }
@@ -39435,29 +39512,28 @@ For the complete list of available icons, see https://vaadin.com/font-icons
 
       .organizationName {
         color: #eee;
-        text-align: right;
+        text-align: left;
       }
 
       .organizationName[inverted] {
-        color: #666;
+        color: #676767;
       }
-
     </style>
 
     <template is="dom-if" if="[[user]]">
       <div class="layout horizontal" title="[[userTitle]]">
+        <yp-user-image titlefromuser="[[userTitle]]" user="[[user]]"></yp-user-image>
         <div class="layout vertical">
-        <div class="name" inverted$="[[inverted]]">
-          [[user.name]]
+          <div class="name" inverted$="[[inverted]]">
+            [[user.name]]
+          </div>
+          <div class="organizationName" inverted$="[[inverted]]" hidden$="[[!organizationName]]">
+            [[organizationName]]
+          </div>
         </div>
-        <div class="organizationName" inverted$="[[inverted]]" hidden$="[[!organizationName]]">
-          [[organizationName]]
-        </div>
-      </div>
-      <template is="dom-if" if="[[organizationImageUrl]]">
-        <img width="48" height="48" sizing="cover" class="imageStatus" src$="[[organizationImageUrl]]">
-      </template>
-      <yp-user-image titlefromuser="[[userTitle]]" user="[[user]]"></yp-user-image>
+        <template is="dom-if" if="[[organizationImageUrl]]">
+          <img width="48" height="48" sizing="cover" class="imageStatus" src$="[[organizationImageUrl]]">
+        </template>
       </div>
     </template>
   </template>
@@ -39535,10 +39611,11 @@ For the complete list of available icons, see https://vaadin.com/font-icons
     <style>
       yp-user-with-organization {
         padding-top: 0;
+        padding-bottom: 0;
         margin: 0;
       }
     </style>
-    <yp-user-with-organization user="[[activity.User]]" inverted=""></yp-user-with-organization>
+    <yp-user-with-organization user$="[[activity.User]]" inverted=""></yp-user-with-organization>
   </template>
 
   <script>
@@ -39560,6 +39637,7 @@ For the complete list of available icons, see https://vaadin.com/font-icons
 
       _activityChanged: function (newValue) {
       }
+
 
     });
   </script>
@@ -39679,7 +39757,11 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--description-line-height, 1.3);
         margin: 0;
-        width: 400px;
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-bottom: 8px;
+        padding-top: 8px;
+        margin-bottom: 48px;
       }
 
       .description, .post-name {
@@ -39692,6 +39774,7 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
         padding-bottom: 4px;
         margin: 0;
         padding-top: 0;
+        margin-top: 16px;
       }
 
       .voting {
@@ -39722,9 +39805,10 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
       }
 
       yp-post-cover-media {
-        width: 400px;
-        height: 221px;
+        width: 432px;
+        height: 258px;
         padding-bottom: 4px;
+        margin-top: 8px;
       }
 
       .postCard {
@@ -39777,6 +39861,13 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
         width: 304px !important;
       }
 
+      .actionInfo {
+        font-size: 22px;
+        margin-top: 16px;
+        padding-left: 16px;
+        margin-bottom: 16px;
+      }
+
       @media (max-width: 420px) {
         .description {
           width: 290px;
@@ -39790,15 +39881,18 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
       }
     </style>
 
-    <div class="layout horizontal wrap">
-      <div class="layout vertical descriptionOuter">
-        <div id="description" class="description"></div>
-      </div>
-      <div hidden="" class="layout horizontal">
-        <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
+    <div class="layout vertical">
+      <div class="actionInfo">
+        [[t('addedAnIdea')]]
       </div>
       <div class="layout horizontal center-center">
-        <yp-post-actions elevation="-1" floating="" endorse-mode="[[endorseMode]]" class="voting layout vertical end" post="[[activity.Post]]"></yp-post-actions>
+        <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
+      </div>
+      <div class="layout vertical center-center">
+        <div class="post-name">[[activity.Post.name]]</div>
+      </div>
+      <div class="layout vertical center-center descriptionOuter">
+        <div id="description" class="description"></div>
       </div>
     </div>
 
@@ -39821,6 +39915,11 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
         activity: {
           type: Object,
           observer: '_postChanged'
+        },
+
+        postId: {
+          type: Number,
+          value: null
         }
       },
 
@@ -40681,6 +40780,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: #aaa;
       }
 
+      yp-ajax {
+        min-width: 32px;
+      }
+
       .myButton {
       --paper-icon-button {
         width: 10px;
@@ -40847,13 +40950,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         @apply(--layout-vertical);
       }
 
-
       .point-content {
         @apply(--layout-vertical);
         padding-right: 16px;
         padding-left: 16px;
       }
 
+      #pointContent {
+        cursor: default;
+      }
+
+      #pointContent[link-point] {
+        cursor: pointer;
+      }
 
       @media (max-width: 320px) {
         .user-image {
@@ -40882,6 +40991,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       #reportPointIconButton {
         color: #ddd;
+        width: 36px;
+        height: 36px;
       }
 
       .thumbsIcon {
@@ -40901,6 +41012,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       iron-icon.thumbsIconDown {
         color: var(--master-point-down-color);
       }
+
+      yp-user-with-organization {
+        padding-left: 16px;
+      }
+
+      .actionContainer {
+        margin-top: 8px;
+      }
     </style>
 
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
@@ -40913,9 +41032,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="userInfoContainer layout horizontal" up-vote$="[[upVote(point)]]" down-vote$="[[downVote(point)]]" hidden$="[[hideUser]]">
           <iron-icon icon="thumb-up" class="thumbsIcon thumbsIconUp" hidden$="[[!pointValueUp]]"></iron-icon>
           <iron-icon icon="thumb-down" class="thumbsIcon thumbsIconDown" hidden$="[[pointValueUp]]"></iron-icon>
-          <div class="flex"></div>
-          <div class="layout horizontal end-justified">
-            <yp-user-with-organization title-date="[[point.created_at]]" inverted="" user="[[user]]"></yp-user-with-organization>
+          <div class="layout horizontal">
+            <yp-user-with-organization title-date="[[point.created_at]]" inverted="" user$="[[user]]"></yp-user-with-organization>
           </div>
         </div>
 
@@ -40923,7 +41041,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <span hidden$="[[!latestContent.name]]">
             <span>[[latestContent.name]]</span>.
           </span>
-          <div id="pointContent" hidden$="[[isEditing]]"></div>
+          <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded"></div>
           <template is="dom-if" if="[[isEditing]]" restamp="">
             <div class="layout vertical">
               <paper-textarea id="pointContentEditor" char-counter="" maxlength="500" value="{{latestContent}}"></paper-textarea>
@@ -40936,8 +41054,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </div>
             </div>
           </template>
-          <div class="layout horizontal">
+          <div class="layout horizontal actionContainer">
             <yp-point-actions point="[[point]]"></yp-point-actions>
+            <paper-icon-button hidden$="[[!loggedInUser]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
             <div class="flex"></div>
             <template is="dom-if" if="[[hasPointAccess]]">
               <div class="layout horizontal self-end" hidden$="">
@@ -40947,7 +41066,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <paper-icon-button icon="clear" on-tap="_deletePoint"></paper-icon-button>
               </div>
             </template>
-            <paper-icon-button hidden$="[[!loggedInUser]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
           </div>
         </div>
       </div>
@@ -40965,6 +41083,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Object,
           notify: true,
           observer: "_pointChanged"
+        },
+
+        linkPoint: {
+          type: Boolean,
+          value: false
         },
 
         hasPointAccess: {
@@ -41015,6 +41138,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypGotAdminRightsBehavior
       ],
+
+      _linkIfNeeded: function () {
+        if (this.linkPoint) {
+          this.goToPost(this.point.Post.id, this.point.id);
+        }
+      },
 
       _updateEmojiBindings: function (isEditing) {
         if (isEditing) {
@@ -41310,9 +41439,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="ac-activity-point" assetpath="../ac-activities/">
   <template>
     <style include="iron-flex iron-flex-alignment">
-      :host {
+      .pointContainer {
       }
-
       .point {
         padding: 8px;
         margin: 8px;
@@ -41326,7 +41454,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       yp-point {
-        width: 380px;
+        margin-bottom: 36px;
       }
 
       @media (max-width: 480px) {
@@ -41345,10 +41473,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-size: 24px;
         padding-bottom: 12px;
       }
+
+      .actionInfo {
+        font-size: 22px;
+        margin-top: 16px;
+        padding-left: 16px;
+      }
+
+      .post-name {
+        font-size: 26px;
+        padding-bottom: 8px;
+        margin: 0;
+        padding-top: 0;
+        margin-top: 8px;
+        margin-left: 24px;
+      }
+
+      .withCursor {
+        cursor: pointer;
+      }
     </style>
 
-    <div class="layout vertical center-center">
-      <yp-point hide-user="" class="card" point="[[activity.Point]]"></yp-point>
+    <div class="layout vertical pointContainer">
+      <div class="actionInfo withCursor" hidden$="[[!_isUpVote(activity.Point)]]" on-tap="_goToPoint">
+        [[t('point.forAdded')]]...
+      </div>
+      <div class="actionInfo withCursor" hidden$="[[!_isDownVote(activity.Point)]]" on-tap="_goToPoint">
+        [[t('point.againstAdded')]]...
+      </div>
+      <div class="layout vertical">
+        <div class="post-name withCursor" on-tap="_goToPoint">
+          [[activity.Post.name]]
+        </div>
+        <yp-point hide-user="" link-point$="[[!postId]]" class="card" point="[[activity.Point]]"></yp-point>
+      </div>
     </div>
   </template>
 
@@ -41366,6 +41524,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         activity: {
           type: Object,
           observer: '_activityChanged'
+        },
+
+        postId: {
+          type: Number,
+          value: null
+        }
+      },
+
+      _goToPoint: function () {
+        if (!this.postId) {
+          this.goToPost(this.activity.Post.id, this.activity.Point.id)
         }
       },
 
@@ -41373,11 +41542,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _isUpVote: function (point) {
-        return point.value > 0;
+        return point && point.value > 0;
       },
 
       _isDownVote: function (point) {
-        return point.value < 0;
+        return point && point.value < 0;
       }
     });
   </script>
@@ -41389,7 +41558,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style include="iron-flex iron-flex-alignment">
 
       :host {
-
+        display: block;
+        width: 100%;
         margin-top: 8px;
       }
 
@@ -41406,11 +41576,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .story {
-        padding: 8px;
-        padding-bottom: 4px;
+        padding-bottom: 12px;
         margin-bottom: 8px;
+        padding-top: 8px;
         border-bottom: solid #ddd;
         border-bottom-width: 1px;
+        font-size: 19px;
       }
 
       yp-point-actions {
@@ -41418,16 +41589,54 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .container {
-        width: 100%;
+      }
+
+      #commentCount {
+        font-size: 14px;
+      }
+
+      paper-icon-button.openCloseButton {
+        width: 56px;
+        height: 56px;
+        padding-left: 0;
+        margin-left: 0;
+      }
+
+      .commentText {
+        font-size: 14px;
+        text-transform: lowercase;
+        padding-right: 6px;
+      }
+
+      .withPointer {
+        cursor: pointer;
       }
     </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical container">
       <div class="story">
         [[point.content]]
-        <yp-point-actions point="[[point]]"></yp-point-actions>
       </div>
       <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
+      <div class="layout horizontal container">
+        <yp-point-actions point="[[point]]"></yp-point-actions>
+        <div class="layout horizontal start-justified">
+          <div class="layout horizontal center-center withPointer" hidden$="[[!commentsCount]]" on-tap="_setOpenToValue">
+            <div class="commentText">[[t('point.comments')]]</div>
+            <div id="commentCount">[[commentsCount]]</div>
+          </div>
+          <div class="layout horizontal center-center withPointer" on-tap="_setOpenToValue" hidden$="[[_noComments(commentsCount)]]">
+            <div class="commentText">[[t('noComments')]]</div>
+          </div>
+          <div class="layout horizontal">
+            <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
+            <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
+          </div>
+        </div>
+      </div>
+      <yp-point-comment-list id="commentsList" on-yp-set-comments-count="_setCommentsCount" disable-open-close="" point="[[point]]" hidden$="[[!withComments]]"></yp-point-comment-list>
+
     </div>
   </template>
 
@@ -41444,6 +41653,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           observer: "_pointChanged"
         },
 
+        withComments: {
+          type: Boolean,
+          value: false
+        },
+
+        open: {
+          type: Boolean,
+          value: false,
+          observer: "_openChanged"
+        },
+
         user: {
           type: Object
         },
@@ -41451,7 +41671,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         hideUser: {
           type: Boolean,
           value: false
+        },
+
+        commentsCount: {
+          type: Number,
+          value: 0
         }
+      },
+
+      behaviors: [
+        Polymer.appHelpers
+      ],
+
+      _setOpenToValue: function () {
+        if (this.open) {
+          this._setClosed()
+        } else {
+          this._setOpen()
+        }
+      },
+
+      _openChanged: function (newOpenValue) {
+        if (newOpenValue) {
+          this.$.commentsList.generateRequest();
+        }
+      },
+
+      _noComments: function (commentCount) {
+        return !(commentCount==0)
+      },
+
+      _setOpen: function () {
+        this.set('open', true);
+        this.$.commentsList._setOpen();
+      },
+
+      _setClosed: function () {
+        this.set('open', false);
+        this.$.commentsList._setClosed();
+      },
+
+      _setCommentsCount: function (event, detail) {
+        this.set('commentsCount', detail.count);
       },
 
       _pointChanged: function(newValue, oldValue) {
@@ -41460,6 +41721,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
           this.user = null;
         }
+
+        this.set('open', false);
       },
 
       loginName: function () {
@@ -41506,7 +41769,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div class="layout horizontal">
-      <div class="layout horizontal start">
+      <div class="layout horizontal">
         <yp-user-image user="[[user]]"></yp-user-image>
       </div>
       <div class="layout vertical">
@@ -41561,8 +41824,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <style include="iron-flex iron-flex-alignment">
       :host {
+        display: block;
         width: 100%;
-        margin-top: 16px;
+        margin-top: 6px;
+        margin-bottom: 64px;
       }
 
       paper-material {
@@ -41570,18 +41835,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       paper-textarea {
-        width: 100%;
-        min-width: 240px;
+        width: 370px;
+        max-height: 300px;
       }
 
       paper-button {
         margin-top: 16px;
+        margin-bottom: 16px;
         background-color: var(--accent-color);
         color: #FFF;
       }
 
       .userImage {
-        padding-top: 30px;
         padding-left: 16px;
         padding-right: 16px;
       }
@@ -41592,25 +41857,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         paper-textarea {
-          width: 100%;
+          width: 250px;
         }
 
         .userImage {
-          padding-top: 30px;
-          padding-left: 0px;
-          padding-right: 8px;
+          padding-top: 8px;
+          padding-right: 16px;
+          padding-left: 0;
         }
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <div class="layout vertical" hidden$="[[!loggedInUser]]">
-      <div class="layout horizontal start">
+    <div class="layout vertical center-center" hidden$="[[!loggedInUser]]">
+      <div class="layout horizontal">
         <yp-user-image class="userImage" user="[[loggedInUser]]"></yp-user-image>
         <div class="layout vertical">
-          <paper-textarea id="pointComment" required="" minlength="15" name="pointComment" value="{{comment.content}}" label="[[t('point.addComment')]]" char-counter="" rows="2" max-rows="3" on-keydown="_keyDown" maxlength="200">
+          <paper-textarea id="pointComment" required="" minlength="15" name="pointComment" value="{{comment.content}}" label="[[t('point.addComment')]]" char-counter="" rows="2" max-rows="2" on-keydown="_keyDown" maxlength="200">
           </paper-textarea>
-          <div class="layout horizontal end-justified">
+          <div class="layout horizontal">
             <paper-button raised="" on-tap="_sendComment">[[t('point.postComment')]]</paper-button>
           </div>
         </div>
@@ -41708,54 +41973,65 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       iron-list {
        max-height: 500px;
-       width: 100%;
+       width:  550px;
         --iron-list-items-container: {
         };
       }
 
       .listContainer {
         padding-top: 24px;
-        padding-left: 32px;
-        padding-right: 32px;
         height: 100%;
+        width: 100%;
       }
 
       .container {
-        max-width: 800px;
-        padding-left: 24px;
       }
 
       #commentCount {
-        font-size: 11px;
-        padding-top: 2px;
+        font-size: 14px;
       }
 
       paper-icon-button.openCloseButton {
         width: 56px;
         height: 56px;
+        padding-left: 0;
+        margin-left: 0;
       }
 
       .commentText {
-        padding-top: 4px;
+        font-size: 14px;
+        text-transform: lowercase;
+        padding-right: 6px;
       }
 
-      @media (max-width: 820px) {
+      @media (max-width: 520px) {
         iron-list {
-          width: 100%;
+          width: 420px;
         }
+      }
 
-        .container {
-          max-width: 600px;
+      @media (max-width: 450px) {
+        iron-list {
+          width: 318px;
+        }
+      }
+
+      @media (max-width: 359px) {
+        iron-list {
+          width: 307px;
         }
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="container layout vertical">
-      <div class="layout horizontal start-justified">
-        <div class="commentText layout vertical center-center">
-          [[t('point.comments')]]
+      <div class="layout horizontal start-justified" hidden$="[[disableOpenClose]]">
+        <div class="layout horizontal center-center" hidden$="[[!commentsCount]]">
+          <div class="commentText">[[t('point.comments')]]</div>
           <div id="commentCount">[[commentsCount]]</div>
+        </div>
+        <div class="layout horizontal center-center" hidden$="[[_noComments(commentsCount)]]">
+          <div class="commentText">[[t('noComments')]]</div>
         </div>
         <div class="layout horizontal">
           <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
@@ -41763,7 +42039,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </div>
       <template is="dom-if" if="[[open]]" restamp="">
-        <div class="layout vertical center-center listContainer">
+        <div class="layout vertical listContainer">
           <iron-list id="list" items="[[comments]]" as="point">
             <template>
               <yp-point-comment point="[[point]]" tabindex$="[[tabIndex]]"></yp-point-comment>
@@ -41815,6 +42091,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         commentsCount: {
           type: Number,
           value: null
+        },
+
+        disableOpenClose: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -41829,6 +42110,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
+      _noComments: function (commentCount) {
+        return !(commentCount==0)
+      },
+
       _setOpen: function () {
         this.set('open', true);
         this.async(function () {
@@ -41841,6 +42126,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.async(function () {
           this.notifyResize();
         },50);
+      },
+
+      generateRequest: function () {
+        this.$.commentsListAjax.generateRequest();
       },
 
       _pointChanged: function(newPoint) {
@@ -41866,6 +42155,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _countResponse: function (event, detail) {
         this.set('commentsCount', detail.response.count);
+        this.fire('yp-set-comments-count', { count: this.commentsCount })
       },
 
       _commentsResponse: function (event, detail) {
@@ -41883,17 +42173,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="ac-activity-point-news-story" assetpath="../ac-activities/">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      :host {
+        width: 100%;
+      }
+
       .newsStoryContainer {
-        max-height: 250px;
-        overflow-y: scroll;
+        width: 100% !important;
       }
 
       yp-point-news-story {
       }
     </style>
     <div class="layout vertical center-center newsStoryContainer">
-      <yp-point-news-story hide-user="" class="card" point="[[activity.Point]]"></yp-point-news-story>
-      <yp-point-comment-list id="pointCommentList" point="[[activity.Point]]"></yp-point-comment-list>
+      <yp-point-news-story with-comments="" hide-user="" class="card" point="[[activity.Point]]"></yp-point-news-story>
     </div>
   </template>
 
@@ -41915,9 +42207,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _activityChanged: function (newValue) {
-        if (newValue) {
-          this.$.pointCommentList.open = false;
-        }
       }
     });
   </script>
@@ -41933,8 +42222,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding-right: 32px;
         margin-bottom: 64px;
         font-size: 16px;
-        overflow-y: scroll;
-        max-height: 220px;
+        overflow-y: auto;
+        max-height: 360px;
       }
 
       .postName {
@@ -41945,7 +42234,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .groupName {
         padding-left: 32px;
-        padding-top: 2px;
+        padding: 16px;
         font-size: 14px;
         padding-bottom: 8px;
       }
@@ -41965,7 +42254,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'ac-activity-post-status-update',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.YpLinkifyAndEmjoi
       ],
 
       properties: {
@@ -41979,7 +42269,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _activityChanged: function (newValue) {
         if (newValue) {
           var content = this.formatContent(newValue.PostStatusChange);
-          this.$.statusChange.innerHTML = content;
+          this.$.statusChange.innerHTML = this.addLinksAndEmjois(content);
         }
       },
 
@@ -42211,17 +42501,237 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
   </script>
 </dom-module>
+<dom-module id="ac-activity-recommended-posts" assetpath="../ac-activities/">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        height: 100%;
+        background-color: var(--primary-background-color);
+        margin-top: 16px;
+      }
+
+      .container {
+        width: 220px;
+        height: 100% !important;
+      }
+
+      .descriptionOuter {
+        @apply(--layout-vertical);
+        color: var(--primary-color-more-darker, #424242);
+        margin: 0;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .description, .post-name {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .post-name {
+        font-size: 15px;
+        padding: 16px;
+        margin: 0;
+        background-color: #FFF;
+        color: #333;
+        text-align: center;
+      }
+
+      .voting {
+        position: absolute;
+        bottom: 0;
+        right: 16px;
+      }
+
+      .card-actions {
+        position: absolute;
+        bottom: 36px;
+        right: 0;
+      }
+
+
+      .category-icon {
+        width: 64px;
+        height: 64px;
+      }
+
+      .category-image-container {
+        text-align: right;
+        margin-top: -52px;
+      }
+
+      .postCardCursor {
+        cursor: pointer;
+      }
+
+      yp-post-cover-media {
+        width: 220px;
+        height: 124px;
+      }
+
+      .postCard {
+        width: 200px;
+        background-color: #fff;
+        @apply(--layout-horizontal);
+      }
+
+      @media (max-width: 960px) {
+        :host {
+          width: 420px;
+        }
+
+        .postCard {
+          height: 100%;
+          width: 420px;
+          @apply(--layout-wrap);
+        }
+
+        yp-post-cover-media {
+          width: 300px;
+          height: 166px;
+        }
+
+        .voting {
+          padding-left: 0;
+          padding-right: 0;
+        }
+
+        .card-actions {
+          width: 320px;
+        }
+
+        .card-content {
+          width: 420px !important;
+          padding-bottom: 74px;
+        }
+
+        .description {
+          width: 300px;
+        }
+      }
+
+      :host {
+        width: 304px;
+      }
+
+      .postCard {
+        height: 100% !important;
+        width: 304px !important;
+      }
+
+      @media (max-width: 420px) {
+        .description {
+          width: 290px;
+        }
+
+        yp-post-cover-media {
+          width: 304px !important;
+          height: 168px !important;
+        }
+      }
+
+      .postContainer {
+        margin-bottom: 12px !important;
+      }
+
+      .postItem {
+        background-color: #FFF;
+      }
+
+      .headerText {
+        font-size: 20px;
+        padding: 8px;
+        color: #FFF;
+        background-color: var(--primary-color-700);
+        margin-bottom: 8px;
+      }
+    </style>
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+
+    <div class="headerText layout horizontal center-center">
+      [[t('recommendedPosts')]]
+    </div>
+
+    <template is="dom-repeat" items="[[recommendedPosts]]" as="post">
+      <div class="postContainer">
+        <paper-material elevation="1" class="postItem">
+          <div class="layout vertical" on-tap="goToPost">
+            <div class="layout horizontal">
+              <yp-post-cover-media tiny="" post="[[post]]"></yp-post-cover-media>
+            </div>
+            <div class="post-name layout horizontal center-center">
+              [[post.name]]
+            </div>
+          </div>
+        </paper-material>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-activity-recommended-posts',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.YpPostBehavior,
+        Polymer.YpLinkifyAndEmjoi
+      ],
+
+      properties: {
+        recommendedPosts: {
+          type: Array,
+          value: null,
+          observer: '_recommendedPostsChanged'
+        }
+      },
+
+      _recommendedPostsChanged: function (newValue) {
+      }
+    });
+  </script>
+</dom-module>
 <dom-module id="ac-activities" assetpath="../ac-activities/">
   <template>
     <style include="iron-flex iron-flex-alignment">
+
       iron-list {
+        margin-top: 8px;
       }
 
       .activity {
-        margin: 16px !important;
+        margin: 16px;
         background-color: #FFF;
-        width: 420px !important;
-        height: 570px !important;
+        width: 550px !important;
+        height: 100% !important;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      @media (max-width: 500px) {
+        .activity {
+          width: 100% !important;
+          padding-left: 8px;
+          padding-right: 8px;
+          margin-bottom: 8px;
+          margin-top: 8px;
+        }
+      }
+
+      .recommendedPosts {
+        margin: 16px !important;
+        width: 220px !important;
+        height: 100% !important;
+      }
+
+      .recommendedPosts[not-active] {
+        display: none;
+      }
+
+      .recommendedPosts[small] {
+        display: none;
       }
 
       .container {
@@ -42231,9 +42741,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .topHeader {
         background-color: var(--primary-color);
         color: #fff;
-        padding-left: 16px;
-        height: 236px !important;
-        max-height: 236px !important;
+        height: 100% !important;
         z-index: 100;
       }
 
@@ -42242,8 +42750,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .mainActivityContent {
-        height: 314px !important;
-        max-height: 314px !important;
+        height: 100% !important;
       }
 
       .topHeader[newpost] {
@@ -42251,7 +42758,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       ac-activity-header {
-        padding-left: 16px;
       }
 
       ac-activity-post {
@@ -42260,8 +42766,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .headerUserImage {
         padding-top: 16px;
-        padding-bottom: 16px;
-        padding-right: 8px;
       }
 
       h1 {
@@ -42270,7 +42774,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .userInfo {
         padding-right: 18px;
-        text-align: right;
+        text-align: left;
       }
 
       paper-button {
@@ -42350,8 +42854,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .groupCover {
-        width: 100px;
-        height: 56px;
         padding-top: 12px;
         padding-right: 12px;
       }
@@ -42377,7 +42879,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .createdAt {
-        color: #eee;
+        color: #777;
+        margin-top: 16px;
         font-size: 14px;
       }
 
@@ -42393,175 +42896,96 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .deleteIcon {
         position: absolute;
-        left: 0px;
-        bottom: 4px;
-        color: #eee;
+        right: 8px;
+        bottom: 8px;
+        color: #ddd;
       }
 
       .withCursor {
         cursor: pointer;
       }
 
-      @media (max-width: 480px) {
-        .typeName {
-          font-size: 22px;
-          padding-top: 12px;
-          padding-left: 4px;
-        }
-
-        .activity {
-          margin: 0 !important;
-          margin-top: 24px !important;
-          width: 307px !important;
-/*          height: 100% !important; */
-          height: 570px !important;
-        }
-
-        .postCoverMedia {
-          width:  307px;
-          min-width: 307px !important;
-          height: 173px;
-        }
-
-        .textGradient {
-          width:  307px;
-          min-width: 307px !important;
-          height: 173px;
-        }
-
-        .topHeader {
-          height: 173px !important;
-          max-height: 173px !important;
-          z-index: 100;
-        }
-
-        .mainActivityContent {
-/*          height: 100% !important;
-          max-height: 100% !important;
-          padding-bottom: 64px;
-          */
-            height: 390px !important;
-            max-height: 390% !important;
-        }
-
-        .postNameInHeader {
-          font-size: 22px;
-          padding: 4px;
-        }
-
-        .postNameInHeader[long-text] {
-          font-size: 19px;
-          padding: 4px;
-        }
-
-        .postNameInHeader[very-long-text] {
-          font-size: 15px;
-          padding: 4px;
-        }
-      }
-
       .full {
         width: 100%;
+      }
+
+      .addNewsBox {
+        background-color: #FFF;
+        margin-top: 32px;
+      }
+
+      .nudgeBox {
+        margin-left: -6px;
       }
 
       @media (max-width: 400px) {
         .userInfoContainer {
           padding-left: 64px;
         }
+
+        .addNewsBox {
+          margin: 0 !important;
+          margin-top: 48px;
+        }
+
+        .nudgeBox {
+          margin-left: -8px;
+        }
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <template is="dom-if" if="[[loggedInUser]]">
-      <div class="layout vertical center-center full" hidden$="[[disableNewPosts]]">
-        <yp-point-news-story-edit domain-id="[[domainId]]" community-id="[[communityId]]" group-id="[[groupId]]" post-group-id="[[postGroupId]]" post-id="[[postId]]" on-refresh="loadNewData">
-        </yp-point-news-story-edit>
-      </div>
-    </template>
     <div class="layout horizontal center-center">
-      <iron-list id="ironList" override-padding-top="550" scroll-target="document" items="[[activities]]" as="activity" grid="">
-        <template>
-          <div>
-            <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
-              <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
-              <div class="layout vertical topHeader withCursor" newpost$="[[_isActivityType(activity,'activity.post.new')]]" on-tap="_joinPost">
-                <div class="layout horizontal">
-                  <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-                    <iron-icon icon="icons:lightbulb-outline" class="stats-icon bulb shadow"></iron-icon>
-                  </template>
-                  <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
-                    <iron-icon icon="communication:chat-bubble-outline" class="stats-icon shadow"></iron-icon>
-                  </template>
-                  <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
-                    <iron-icon icon="face" class="stats-icon shadow"></iron-icon>
-                  </template>
-                  <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
-                    <iron-icon icon="icons:language" class="stats-icon shadow"></iron-icon>
-                  </template>
-                  <div class="layout vertical headerText">
-                    <div class="layout horizontal typeName">
-                      <div class="layout vertical">
-                        <div style="cursor: pointer" class="shadow" data-args$="[[activity]]" on-tap="_joinPost">[[_getActivityTypeName(activity)]]</div>
-                        <div class="createdAt shadow" title="[[fromLongTime(activity.created_at)]]">
-                          [[fromTime(activity.created_at)]]
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="flex"></div>
-                  <template is="dom-if" if="[[_showGroup(activity)]]">
-                    <ac-activity-group class="groupCover" minimal="" group="[[activity.Group]]"></ac-activity-group>
-                  </template>
-                </div>
-                <div class="postNameInHeader layout horizontal" long-text$="[[_longPostNameFor(activity)]]" very-long-text$="[[_veryLongPostNameFor(activity)]]">
-                  <div class="shadow">
-                    [[_postNameFor(activity)]]
-                  </div>
-                  <div class="flex"></div>
-                  <template is="dom-if" if="[[_hasPostImage(activity.Post)]]">
-                    <yp-post-cover-media disable-maps="" class="postCoverMedia" post$="[[activity.Post]]"></yp-post-cover-media>
-                    <div class="textGradient"></div>
-                  </template>
-                </div>
-                <div class="layout horizontal" hidden$="[[postId]]">
-                  <div hidden$="[[groupId]]">
-                    <template is="dom-if" if="[[_showGroup(activity)]]">
-                      <ac-activity-group hidden="" group="[[activity.Group]]"></ac-activity-group>
-                    </template>
-                  </div>
-                  <template is="dom-if" if="[[activity.Post]]">
-                    <div hidden="" class="layout horizontal end-justified participateButton">
-                      <paper-button data-args$="[[activity]]" on-tap="_joinPost">[[t('participate')]]</paper-button>
-                    </div>
-                  </template>
-                </div>
-              </div>
-
-              <div class="mainActivityContent">
-                <div class="layout horizontal end-justified">
-                  <ac-activity-header class="layout horizontal headerUserImage" activity="[[activity]]"></ac-activity-header>
-                </div>
-
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-                  <ac-activity-post activity="[[activity]]"></ac-activity-post>
-                </template>
-
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
-                  <ac-activity-point activity="[[activity]]"></ac-activity-point>
-                </template>
-
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
-                  <ac-activity-point-news-story activity="[[activity]]"></ac-activity-point-news-story>
-                </template>
-
-                <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
-                  <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
-                </template>
-              </div>
+      <div class="layout vertical self-start">
+        <template is="dom-if" if="[[loggedInUser]]">
+          <div class="layout vertical full nudgeBox">
+            <paper-material elevation="1" hidden$="[[disableNewPosts]]" class="layout vertical activity addNewsBox">
+              <yp-point-news-story-edit domain-id="[[domainId]]" community-id="[[communityId]]" group-id="[[groupId]]" post-group-id="[[postGroupId]]" post-id="[[postId]]" on-refresh="loadNewData">
+              </yp-point-news-story-edit>
             </paper-material>
           </div>
         </template>
-      </iron-list>
+        <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]" override-padding-top$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
+          <template>
+            <div class="layout vertical center-center full">
+              <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
+                <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
+                <div class="mainActivityContent">
+                  <div class="layout horizontal">
+                    <ac-activity-header class="layout horizontal headerUserImage" activity="[[activity]]"></ac-activity-header>
+                    <div class="flex"></div>
+                    <div hidden$="[[!wide]]" class="createdAt" title="[[fromLongTime(activity.created_at)]]">
+                      [[fromTime(activity.created_at)]]
+                    </div>
+                  </div>
+
+                  <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
+                    <ac-activity-post post-id$="[[postId]]" activity="[[activity]]"></ac-activity-post>
+                  </template>
+
+                  <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
+                    <ac-activity-point post-id$="[[postId]]" activity="[[activity]]"></ac-activity-point>
+                  </template>
+
+                  <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
+                    <ac-activity-point-news-story activity="[[activity]]"></ac-activity-point-news-story>
+                  </template>
+
+                  <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
+                    <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
+                  </template>
+                </div>
+              </paper-material>
+            </div>
+          </template>
+        </iron-list>
+      </div>
+      <div class="layout horizontal center-center recommendedPosts" not-active$="[[!recommendedPosts]]" small$="[[!wide]]">
+        <ac-activity-recommended-posts id="recommendedPosts" recommended-posts="[[recommendedPosts]]" class="layout vertical"></ac-activity-recommended-posts>
+      </div>
+      <div class="layout horizontal center-center">
+        <yp-ajax id="recommendationAjax" large-spinner="" on-response="_recommendedPostsResponse"></yp-ajax>
+      </div>
     </div>
     <div class="layout horizontal center-center">
       <yp-ajax id="ajax" large-spinner="" on-response="_activitiesResponse"></yp-ajax>
@@ -42572,6 +42996,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></iron-signals>
+
     <iron-scroll-threshold id="scrollTheshold" lower-threshold="200" on-lower-threshold="_loadMoreData" scroll-target="document">
     </iron-scroll-threshold>
   </template>
@@ -42650,7 +43076,59 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         wide: {
           type: Boolean,
           value: false
+        },
+
+        selectedTab: {
+          type: String
+        },
+
+        recommendedPosts: {
+          type: Array,
+          value: null
+        },
+
+        skipIronListWidth: {
+          type: Boolean,
+          computed: '_skipIronListWidth(wide)'
+        },
+
+        ironListResizeScrollThreshold: {
+          type: Number,
+          computed: '_ironListResizeScrollThreshold(wide)'
+        },
+
+        ironListPaddingTop: {
+          type: Number,
+          computed: '_ironListPaddingTop(wide)'
         }
+      },
+
+      _ironListResizeScrollThreshold: function (wide) {
+        if (wide) {
+          return 800;
+        } else {
+          return 300;
+        }
+      },
+
+      _ironListPaddingTop: function (wide) {
+        if (wide) {
+          return 600;
+        } else {
+          return 500;
+        }
+      },
+
+      _skipIronListWidth: function (wide) {
+        if (wide) {
+          var list = this.$$("#ironList");
+          list.style.width = '600px';
+          list.updateViewportBoundaries();
+          this.async(function () {
+            list.notifyResize();
+          });
+        }
+        return wide;
       },
 
       _hasPostImage: function (post) {
@@ -42724,13 +43202,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _elevationForType: function (type) {
-        if (type=='activity.post.new') {
-          return 5;
-        } else if (type=='activity.post.status.change') {
-          return 3;
-        } else {
-          return 2;
-        }
+        return 1;
+
+        /*if (type=='activity.post.new') {
+         return 5;
+         } else if (type=='activity.post.status.change') {
+         return 3;
+         } else {
+         return 2;
+         }*/
       },
 
       _hasActivityAccess: function (activity) {
@@ -42815,28 +43295,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return activity.type==type
       },
 
-      _generateRequest: function (typeId, type) {
+      _generateRequest: function (typeId, typeName) {
         if (typeId) {
           this.set('activities', []);
           this.set('oldestProcessedActivityAt', null);
 
-          //TODO: Test personalized news feeds better
           if (window.appUser && window.appUser.user) {
             this.mode = 'news_feeds';
           }
-          this.set('url', '/api/'+this.mode+'/' + type + '/'+typeId);
+
+          this.set('url', '/api/'+this.mode+'/' + typeName + '/' + typeId);
           this.$.ajax.url = this.url;
           this.$.ajax.generateRequest();
+          if (typeName!='posts') {
+            this.$.recommendationAjax.url = '/api/recommendations/' + typeName + '/' + typeId;
+            this.$.recommendationAjax.generateRequest();
+          }
         }
       },
 
       _loadMoreData: function () {
-        if (this.url!='' && this.moreToLoad && this.oldestProcessedActivityAt) {
-          this.set('moreToLoad', false);
-          console.log("_loadMoreData");
-          this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
-          this.$.ajax.generateRequest();
-        }
+        this.async(function () {
+          if (this.$$("#ironList").offsetWidth > 0 && this.$$("#ironList").offsetHeight > 0) {
+            if (this.url!='' && this.moreToLoad && this.oldestProcessedActivityAt) {
+              this.set('moreToLoad', false);
+              console.info("_loadMoreData for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
+              this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
+              this.$.ajax.generateRequest();
+            }
+          } else {
+            console.warn("NOT VISIBLE for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
+          }
+        });
       },
 
       loadNewData: function () {
@@ -42851,22 +43341,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _domainIdChanged: function (newValue) {
         this.set('activities', null);
+        this.set('recommendedPosts', null);
         this._generateRequest(newValue, 'domains');
       },
 
       _communityIdChanged: function (newValue) {
         this.set('activities', null);
+        this.set('recommendedPosts', null);
         this._generateRequest(newValue, 'communities');
       },
 
       _groupIdChanged: function (newValue) {
         this.set('activities', null);
+        this.set('recommendedPosts', null);
         this._generateRequest(newValue, 'groups');
       },
 
       _postIdChanged: function (newValue) {
         this.set('activities', null);
+        this.set('recommendedPosts', null);
         this._generateRequest(newValue, 'posts');
+      },
+
+      _clearScrollThreshold: function () {
+        this.$$("#scrollTheshold").clearTriggers();
+        console.info("Clearing scrolling triggers for activity");
+      },
+
+      _recommendedPostsResponse: function (event, detail) {
+        this.set('recommendedPosts', detail.response);
       },
 
       _activitiesResponse: function (event, detail) {
@@ -42886,28 +43389,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               this.push('activities', activity);
             }
           }
-          if (!this.wide) {
-            this.$.ironList.updateSizeForItem(activity);
-          }
         }.bind(this));
 
         if (activities.length>0) {
           if (!this.latestProcessedActivityAt || this.latestProcessedActivityAt < activities[0].created_at) {
             this.set('latestProcessedActivityAt', activities[0].created_at);
           }
-          this.$$("#scrollTheshold").clearTriggers();
-          this.setMoreToLoad();
+          this.set('moreToLoad', true);
+          if (this.activities.length<12) {
+            this._loadMoreData();
+          }
         }
 
-        this.$.ironList.fire('iron-resize');
+        var scrollThresholdEvent = new CustomEvent("iron-signal", { detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} } } );
+        document.dispatchEvent(scrollThresholdEvent);
 
         this.async(function () {
           this.$.ironList.fire('iron-resize');
-        }, 200);
-
-        this.async(function () {
-          this.$.ironList.fire('iron-resize');
-        }, 2000);
+        });
       },
 
       fireResize: function () {
@@ -43407,8 +43906,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       iron-image[archived] {
-        opacity: 0.85;
-        filter: alpha(opacity=85);
       }
 
       yp-membership-button {
@@ -45888,14 +46385,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.16">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.18">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.16">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.18">
    * ```
    *
    * ### Consuming effects
@@ -46661,7 +47158,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.16">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.18">
 ```
 
 #### List of effects
@@ -52567,18 +53064,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.16"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.18"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.16"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.18"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.16"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.18"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -55276,7 +55773,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </div>
         </section>
         <section name="news">
-          <ac-activities id="domainNews" domain-id="[[domain.id]]"></ac-activities>
+          <ac-activities id="domainNews" selected-tab="[[selectedTab]]" domain-id="[[domain.id]]"></ac-activities>
         </section>
         <section name="other_social_media" class="layout vertical">
           <yp-other-social-media active$="[[otherSocialMediaActive]]"></yp-other-social-media>
@@ -57318,7 +57815,6 @@ information on the API.
     },
 
     _setFromConfiguration: function (propertyName) {
-      debugger;
       if (this.group.configuration && this.group.configuration[propertyName]!=undefined && this.group.configuration[propertyName]!="") {
         this.set(propertyName, this.group.configuration[propertyName]);
       } else {
@@ -57521,7 +58017,7 @@ information on the API.
               <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
             </div>
             <template is="dom-if" if="[[closePostHeader]]">
-              <paper-icon-button id="closePostButton" class="closePostIcon" icon="clear" on-tap="_closePost"></paper-icon-button>
+              <paper-icon-button id="closePostButton" class="closePostIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
             </template>
 
             <span class="flex"></span>
@@ -57771,9 +58267,9 @@ information on the API.
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.16");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.18");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.16");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.18");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);

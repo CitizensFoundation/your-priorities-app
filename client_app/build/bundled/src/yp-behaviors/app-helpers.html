@@ -1,5 +1,5 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.16">
-<link rel="import" href="../../bower_components/lodash-element/lodash.js.html?v=6.3.16">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.18">
+<link rel="import" href="../../bower_components/lodash-element/lodash.js.html?v=6.3.18">
 
 <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
 <script src="../../bower_components/linkifyjs/linkify.js"></script>
@@ -135,7 +135,7 @@
       return moment(timeValue).format();
     },
 
-    goToPost: function (postIdIn) {
+    goToPost: function (postIdIn, pointId) {
       var postId;
       if (postIdIn && !(postIdIn instanceof Event)) {
         postId = postIdIn;
@@ -146,6 +146,9 @@
         return;
       }
       var postUrl = '/post/' + postId;
+      if (pointId && !(postIdIn instanceof Event)) {
+        postUrl += '/' + pointId;
+      }
       var windowLocation = window.location.href;
       console.log(postUrl);
       console.log(windowLocation);

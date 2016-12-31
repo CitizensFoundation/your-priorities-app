@@ -1,20 +1,20 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.16">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.18">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.16">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.16">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.18">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.18">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.16">
-<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.16">
-<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.16">
-<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.16">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.18">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.18">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.18">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.18">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.16">
-<link rel="import" href="yp-post-actions.html?v=6.3.16">
-<link rel="import" href="yp-post-users.html?v=6.3.16">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.18">
+<link rel="import" href="yp-post-actions.html?v=6.3.18">
+<link rel="import" href="yp-post-users.html?v=6.3.18">
 
 </head><body><dom-module id="yp-post-cover-media">
 
@@ -58,10 +58,16 @@
         padding-top: 32px;
       }
 
+      .category-icon[tiny] {
+        width: 100px;
+        height: 100px;
+        padding-top: 24px;
+      }
+
       @media (max-width: 600px) {
         .category-icon {
-          width: 160px;
-          height: 160px;
+          width: 130px;
+          height: 130px;
         }
       }
 
@@ -75,26 +81,40 @@
 
     </style>
 
-      <div class="mapCanvas">
-        <iron-image hidden$="[[!noneActive]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+    <div class="mapCanvas">
+      <iron-image hidden$="[[!noneActive]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
 
-        <div class="layout horizontal center-center" hidden$="[[!categoryActive]]">
-          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
-        </div>
-
-        <iron-image hidden$="[[!imageActive]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
-
-        <template is="dom-if" if="[[!disableMaps]]">
-          <google-streetview-pano hidden$="[[!streetViewActive]]" position$="[[mapPosition]]" heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" pitch="2" zoom="0.8" disable-default-ui="">
-          </google-streetview-pano>
-
-          <google-map hidden$="[[!mapActive]]" id="coverMediaMap" class="map" libraries="places" fit-to-markers="" zoom$="[[zoomLevel]]" map-type$="[[mapType]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-            <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
-          </google-map>
-        </template>
+      <div class="layout horizontal center-center" hidden$="[[!categoryActive]]">
+        <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
       </div>
-    </template>
 
+      <iron-image hidden$="[[!imageActive]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
+
+      <template is="dom-if" if="[[!disableMaps]]">
+
+        <template is="dom-if" if="[[streetViewActive]]">
+          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;zoom=[[zoomLevel]]&amp;size=432x243&amp;maptype=hybrid&amp;key=[[staticMapsApiKey]]" hidden$="[[streetViewActivated]]"></iron-image>
+
+          <template is="dom-if" if="[[streetViewActivated]]">
+            <google-streetview-pano position$="[[mapPosition]]" heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" pitch="2" zoom="0.8" disable-default-ui="">
+            </google-streetview-pano>
+          </template>
+
+        </template>
+
+        <template is="dom-if" if="[[mapActive]]">
+          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;size=432x243&amp;zoom=[[zoomLevel]]&amp;maptype=[[mapType]]&amp;key=[[staticMapsApiKey]]" hidden$="[[mapActivated]]"></iron-image>
+
+          <template is="dom-if" if="[[mapActivated]]">
+            <google-map id="coverMediaMap" class="map" libraries="places" fit-to-markers="" zoom$="[[zoomLevel]]" map-type$="[[mapType]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+              <google-map-marker latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
+            </google-map>
+          </template>
+        </template>
+      </template>
+    </div>
+
+  </template>
 
   <script>
     Polymer({
@@ -105,6 +125,7 @@
       ],
 
       properties: {
+
 
         post: {
           type: Object,
@@ -179,12 +200,42 @@
 
         headerMode: {
           type: Boolean,
-          value: false
+          value: false,
+          observer: '_headerModeChanged'
         },
 
         disableMaps: {
           type: Boolean,
           value: false
+        },
+
+        mapActivated: {
+          type: Boolean,
+          value: false
+        },
+
+        streetViewActivated: {
+          type: Boolean,
+          value: false
+        },
+
+        staticMapsApiKey: {
+          type: String,
+          value: "AIzaSyBYy8UvdDD650mz7k1pY0j2hBFQmCPVnxA"
+        },
+
+        tiny: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _headerModeChanged: function (headerMode) {
+        if (headerMode===true) {
+          this.async(function () {
+            this.set('mapActivated', true);
+            this.set('streetViewActivated', true);
+          });
         }
       },
 
