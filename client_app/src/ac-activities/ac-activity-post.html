@@ -29,6 +29,16 @@
         width: 100% !important;
       }
 
+      .mainContainerItem[is-ie11] {
+        max-width: 480px !important;
+      }
+
+      @media (max-width: 600px) {
+        .mainContainerItem[is-ie11] {
+          max-width: 290px !important;
+        }
+      }
+
       .description, .post-name {
         padding-left: 16px;
         padding-right: 16px;
@@ -154,14 +164,12 @@
         <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
       </div>
       <div class="layout vertical center-center">
-        <div class="post-name">[[activity.Post.name]]</div>
+        <div class="post-name mainContainerItem" is-ie11$="[[isIE11]]">[[activity.Post.name]]</div>
       </div>
       <div class="layout vertical center-center descriptionOuter">
-        <div id="description" class="description"></div>
+        <div id="description" class="description mainContainerItem" is-ie11$="[[isIE11]]"></div>
       </div>
     </div>
-
-
   </template>
 
   <script>
@@ -185,7 +193,21 @@
         postId: {
           type: Number,
           value: null
+        },
+
+        wide: {
+          type: Boolean,
+          value: false
+        },
+
+        isIE11: {
+          type: Boolean,
+          computed: '_isIE11(wide)'
         }
+      },
+
+      _isIE11: function () {
+        return /Trident.*rv[ :]*11\./.test(navigator.userAgent);
       },
 
       _postChanged: function (activity) {
