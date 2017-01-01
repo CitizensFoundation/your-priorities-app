@@ -413,14 +413,18 @@ router.delete('/:id', auth.can('edit point'), function(req, res) {
         point.deleted = true;
         point.save().then(function () {
           log.info('Point Deleted', { point: toJson(point), context: 'delete', user: toJson(req.user) });
-          models.Post.find({
-            where: { id: point.post_id }
-          }).then(function(post) {
-            post.updateAllExternalCounters(req, 'down', 'counter_points', function () {
-              post.decrement('counter_points');
-              res.sendStatus(200);
+          if (point.post_id) {
+            models.Post.find({
+              where: { id: point.post_id }
+            }).then(function(post) {
+              post.updateAllExternalCounters(req, 'down', 'counter_points', function () {
+                post.decrement('counter_points');
+                res.sendStatus(200);
+              });
             });
-          });
+          } else {
+            res.sendStatus(200);
+          }
         });
       });
     });
