@@ -754,14 +754,10 @@
         }
 
         activities.forEach(function(activity) {
-          if ((activity.Post && activity.Post.deleted) || (activity.Point && activity.Point.deleted) ) {
-            // deleted post
+          if (this.$.ajax.url.indexOf('afterDate') > -1) {
+            this.unshift('activities', activity);
           } else {
-            if (this.$.ajax.url.indexOf('afterDate') > -1) {
-              this.unshift('activities', activity);
-            } else {
-              this.push('activities', activity);
-            }
+            this.push('activities', activity);
           }
         }.bind(this));
 
