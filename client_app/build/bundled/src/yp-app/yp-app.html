@@ -10587,7 +10587,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.62">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.63">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -10595,7 +10595,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.62">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.63">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -10983,7 +10983,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.62">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.63">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -16836,8 +16836,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.62">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.62">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.63">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.63">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -22850,7 +22850,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.62" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.63" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -27929,7 +27929,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.62" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.63" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -34137,7 +34137,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.62", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.63", fontName: 'FFClanWebBook' });
 
     },
 
@@ -34148,7 +34148,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.62";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.63";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -37704,7 +37704,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.62">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.63">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -43010,7 +43010,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </template>
         </iron-list>
       </div>
-      <div class="layout horizontal center-center recommendedPosts" not-active$="[[!recommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
+      <div class="layout horizontal center-center recommendedPosts" not-active$="[[noRecommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
         <ac-activity-recommended-posts id="recommendedPosts" recommended-posts="[[recommendedPosts]]" class="layout vertical"></ac-activity-recommended-posts>
       </div>
       <div class="layout horizontal center-center">
@@ -43115,6 +43115,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         recommendedPosts: {
           type: Array,
           value: null
+        },
+
+        noRecommendedPosts: {
+          type: Boolean,
+          value: true
         },
 
         skipIronListWidth: {
@@ -43338,6 +43343,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (typeId) {
           this.set('activities', []);
           this.set('oldestProcessedActivityAt', null);
+          this.set('noRecommendedPosts', true);
 
           if (window.appUser && window.appUser.user && !this.postId) {
             this.mode = 'news_feeds';
@@ -43410,7 +43416,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _recommendedPostsResponse: function (event, detail) {
-        this.set('recommendedPosts', detail.response);
+        if (detail.response && detail.response.length>0) {
+          this.set('recommendedPosts', detail.response);
+          this.set('noRecommendedPosts', false);
+        } else {
+          this.set('noRecommendedPosts', true);
+        }
       },
 
       _activitiesResponse: function (event, detail) {
@@ -43421,14 +43432,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         activities.forEach(function(activity) {
-          if ((activity.Post && activity.Post.deleted) || (activity.Point && activity.Point.deleted) ) {
-            // deleted post
+          if (this.$.ajax.url.indexOf('afterDate') > -1) {
+            this.unshift('activities', activity);
           } else {
-            if (this.$.ajax.url.indexOf('afterDate') > -1) {
-              this.unshift('activities', activity);
-            } else {
-              this.push('activities', activity);
-            }
+            this.push('activities', activity);
           }
         }.bind(this));
 
@@ -46426,14 +46433,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.62">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.63">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.62">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.63">
    * ```
    *
    * ### Consuming effects
@@ -47199,7 +47206,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.62">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.63">
 ```
 
 #### List of effects
@@ -53105,18 +53112,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.62"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.63"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.62"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.63"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.62"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.63"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -56323,7 +56330,7 @@ information on the API.
       <div class="layout vertical">
         <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
         <h1 class="post-name" id="postName" on-tap="goToPostIfNotHeader">[[postName]]</h1>
-        <div class="description layout horizontal center-center" on-tap="goToPostIfNotHeader">
+        <div class="description layout horizontal" on-tap="goToPostIfNotHeader">
           [[shortDescription]]
         </div>
         <yp-post-actions floating="" class="" elevation="-1" endorse-mode="[[endorseMode]]" post="[[post]]"></yp-post-actions>
@@ -58308,9 +58315,9 @@ information on the API.
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.62");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.63");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.62");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.63");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
