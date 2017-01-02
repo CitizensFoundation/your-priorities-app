@@ -248,7 +248,7 @@
       _groupTitle: function (group, postId, groupId, communityId) {
         if (group && !postId && !groupId) {
           var title = "";
-          if (!communityId && this.activity.Community) {
+          if (!communityId && this.activity.Community && this.activity.Community.name != this.activity.Group.name) {
             title += this.activity.Community.name + " - ";
           }
           title += this.activity.Group.name;
