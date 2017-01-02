@@ -8,6 +8,7 @@
 <link rel="import" href="../yp-post/yp-post-actions.html">
 <link rel="import" href="../yp-post/yp-post-cover-media.html">
 <link rel="import" href="../yp-post/yp-post-behaviors.html">
+<link rel="import" href="../yp-group/yp-group-behaviors.html">
 
 <dom-module id="ac-activity-post">
   <template>
@@ -153,6 +154,11 @@
           height: 168px !important;
         }
       }
+
+      .groupTitle {
+        font-size: 15px;
+        padding-top: 8px;
+      }
     </style>
 
     <div class="layout vertical">
@@ -167,6 +173,9 @@
       </div>
       <div class="layout vertical center-center descriptionOuter">
         <div id="description" class="description mainContainerItem" is-ie11$="[[isIE11]]"></div>
+        <template is="dom-if" if="[[hasGroupHeader]]">
+          <div class="groupTitle layout horizontal center-center">[[groupTitle]]</div>
+        </template>
       </div>
     </div>
   </template>
@@ -179,17 +188,28 @@
       behaviors: [
         Polymer.appHelpers,
         Polymer.YpPostBehavior,
-        Polymer.YpLinkifyAndEmjoi
+        Polymer.YpLinkifyAndEmjoi,
+        Polymer.GroupBehaviors
       ],
 
       properties: {
 
         activity: {
           type: Object,
-          observer: '_postChanged'
+          observer: '_activityChanged'
         },
 
         postId: {
+          type: Number,
+          value: null
+        },
+
+        groupId: {
+          type: Number,
+          value: null
+        },
+
+        communityId: {
           type: Number,
           value: null
         },
@@ -202,14 +222,43 @@
         isIE11: {
           type: Boolean,
           computed: '_isIE11(wide)'
+        },
+
+        hasGroupHeader: {
+          type: Boolean,
+          computed: '_hasGroupHeader(group, postId, groupId)'
+        },
+
+        groupTitle: {
+          type: Boolean,
+          computed: '_groupTitle(group, postId, groupId, communityId)'
         }
+
       },
 
       _isIE11: function () {
         return /Trident.*rv[ :]*11\./.test(navigator.userAgent);
       },
 
-      _postChanged: function (activity) {
+      _hasGroupHeader: function (group, postId, groupId) {
+        debugger;
+        return (group && !postId && !groupId)
+      },
+
+      _groupTitle: function (group, postId, groupId, communityId) {
+        if (group && !postId && !groupId) {
+          var title = "";
+          if (!communityId && this.activity.Community) {
+            title += this.activity.Community.name + " - ";
+          }
+          title += this.activity.Group.name;
+          return title;
+        } else {
+          return "";
+        }
+      },
+
+      _activityChanged: function (activity) {
         var post = activity.Post;
         if (post && post.description) { this.async(function () {
             var description = this.$$("#description");
