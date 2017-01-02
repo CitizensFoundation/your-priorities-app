@@ -10587,7 +10587,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.63">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.65">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -10595,7 +10595,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.63">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.65">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -10983,7 +10983,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.63">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.65">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -16836,8 +16836,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.63">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.63">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.65">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.65">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -22850,7 +22850,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.63" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.65" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -27929,7 +27929,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.63" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.65" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -34137,7 +34137,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.63", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.65", fontName: 'FFClanWebBook' });
 
     },
 
@@ -34148,7 +34148,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.63";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.65";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -37704,7 +37704,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.63">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.65">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -39745,6 +39745,125 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
       }
     }
   }
+</script><script>
+  /**
+   * @polymerBehavior CommunityBehaviors
+   */
+  Polymer.GroupBehaviors = {
+
+    properties: {
+      group: {
+        type: Object,
+        notify: true,
+        observer: '_groupChanged'
+      },
+
+      elevation: {
+        type: Number
+      },
+
+      groupLogoImagePath: {
+        type: String,
+        computed: '_groupLogoImagePath(group)'
+      },
+
+      groupHeaderImagePath: {
+        type: String,
+        computed: '_groupHeaderImagePath(group)'
+      },
+
+      groupName: {
+        type: String,
+        computed: '_groupName(group)'
+      },
+
+      groupObjectives: {
+        type: String,
+        computed: '_groupObjectives(group)'
+      },
+
+      noImage: {
+        type: Boolean,
+        value: true
+      },
+
+      featured: {
+        type: Boolean,
+        value: false
+      },
+
+      archived: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    _groupChanged: function (group) {
+      if (group) {
+        if (group.GroupLogoImages && group.GroupLogoImages.length>0)
+        {
+          this.set('noImage', false);
+        } else {
+          this.set('noImage', true);
+        }
+
+        if (group.status=='featured') {
+          this.set('featured', true);
+        } else if (group.status=='archived') {
+          this.set('archived', true);
+        } else {
+          this.set('featured', false);
+          this.set('archived', false);
+        }
+      } else {
+        this.set('featured', false);
+        this.set('archived', false);
+      }
+
+    },
+
+    _goToGroup: function (e) {
+      var groupUrl = '/group/' + this.group.id;
+      window.appGlobals.activity('open', 'group', groupUrl);
+      this.redirectTo(groupUrl);
+    },
+
+    _groupLogoImagePath: function (group) {
+      if (group) {
+        return this.getImageFormatUrl(group.GroupLogoImages, 0);
+      } else {
+        return "";
+      }
+    },
+
+    _groupHeaderImagePath: function (group) {
+      if (group) {
+        return this.getImageFormatUrl(group.GroupHeaderImages, 0);
+      } else {
+        return "";
+      }
+    },
+
+    _groupName: function (group) {
+      if (group) {
+        if (group.name) {
+          return this.truncate(this.trim(group.name), 60);
+        } else {
+          return group.short_name;
+        }
+      } else {
+        return "";
+      }
+    },
+
+    _groupObjectives: function (group) {
+      if (group && group.objectives) {
+        return this.truncate(this.trim(group.objectives), 200, '...');
+      } else {
+        return "";
+      }
+    }
+  };
 </script><dom-module id="ac-activity-post" assetpath="../ac-activities/">
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -39889,6 +40008,11 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
           height: 168px !important;
         }
       }
+
+      .groupTitle {
+        font-size: 15px;
+        padding-top: 8px;
+      }
     </style>
 
     <div class="layout vertical">
@@ -39903,6 +40027,9 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
       </div>
       <div class="layout vertical center-center descriptionOuter">
         <div id="description" class="description mainContainerItem" is-ie11$="[[isIE11]]"></div>
+        <template is="dom-if" if="[[hasGroupHeader]]">
+          <div class="groupTitle layout horizontal center-center">[[groupTitle]]</div>
+        </template>
       </div>
     </div>
   </template>
@@ -39915,17 +40042,28 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
       behaviors: [
         Polymer.appHelpers,
         Polymer.YpPostBehavior,
-        Polymer.YpLinkifyAndEmjoi
+        Polymer.YpLinkifyAndEmjoi,
+        Polymer.GroupBehaviors
       ],
 
       properties: {
 
         activity: {
           type: Object,
-          observer: '_postChanged'
+          observer: '_activityChanged'
         },
 
         postId: {
+          type: Number,
+          value: null
+        },
+
+        groupId: {
+          type: Number,
+          value: null
+        },
+
+        communityId: {
           type: Number,
           value: null
         },
@@ -39938,14 +40076,43 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
         isIE11: {
           type: Boolean,
           computed: '_isIE11(wide)'
+        },
+
+        hasGroupHeader: {
+          type: Boolean,
+          computed: '_hasGroupHeader(group, postId, groupId)'
+        },
+
+        groupTitle: {
+          type: Boolean,
+          computed: '_groupTitle(group, postId, groupId, communityId)'
         }
+
       },
 
       _isIE11: function () {
         return /Trident.*rv[ :]*11\./.test(navigator.userAgent);
       },
 
-      _postChanged: function (activity) {
+      _hasGroupHeader: function (group, postId, groupId) {
+        debugger;
+        return (group && !postId && !groupId)
+      },
+
+      _groupTitle: function (group, postId, groupId, communityId) {
+        if (group && !postId && !groupId) {
+          var title = "";
+          if (!communityId && this.activity.Community && this.activity.Community.name != this.activity.Group.name) {
+            title += this.activity.Community.name + " - ";
+          }
+          title += this.activity.Group.name;
+          return title;
+        } else {
+          return "";
+        }
+      },
+
+      _activityChanged: function (activity) {
         var post = activity.Post;
         if (post && post.description) { this.async(function () {
             var description = this.$$("#description");
@@ -42306,126 +42473,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
   </script>
 </dom-module>
-<script>
-  /**
-   * @polymerBehavior CommunityBehaviors
-   */
-  Polymer.GroupBehaviors = {
-
-    properties: {
-      group: {
-        type: Object,
-        notify: true,
-        observer: '_groupChanged'
-      },
-
-      elevation: {
-        type: Number
-      },
-
-      groupLogoImagePath: {
-        type: String,
-        computed: '_groupLogoImagePath(group)'
-      },
-
-      groupHeaderImagePath: {
-        type: String,
-        computed: '_groupHeaderImagePath(group)'
-      },
-
-      groupName: {
-        type: String,
-        computed: '_groupName(group)'
-      },
-
-      groupObjectives: {
-        type: String,
-        computed: '_groupObjectives(group)'
-      },
-
-      noImage: {
-        type: Boolean,
-        value: true
-      },
-
-      featured: {
-        type: Boolean,
-        value: false
-      },
-
-      archived: {
-        type: Boolean,
-        value: false
-      }
-    },
-
-    _groupChanged: function (group) {
-      if (group) {
-        if (group.GroupLogoImages && group.GroupLogoImages.length>0)
-        {
-          this.set('noImage', false);
-        } else {
-          this.set('noImage', true);
-        }
-
-        if (group.status=='featured') {
-          this.set('featured', true);
-        } else if (group.status=='archived') {
-          this.set('archived', true);
-        } else {
-          this.set('featured', false);
-          this.set('archived', false);
-        }
-      } else {
-        this.set('featured', false);
-        this.set('archived', false);
-      }
-
-    },
-
-    _goToGroup: function (e) {
-      var groupUrl = '/group/' + this.group.id;
-      window.appGlobals.activity('open', 'group', groupUrl);
-      this.redirectTo(groupUrl);
-    },
-
-    _groupLogoImagePath: function (group) {
-      if (group) {
-        return this.getImageFormatUrl(group.GroupLogoImages, 0);
-      } else {
-        return "";
-      }
-    },
-
-    _groupHeaderImagePath: function (group) {
-      if (group) {
-        return this.getImageFormatUrl(group.GroupHeaderImages, 0);
-      } else {
-        return "";
-      }
-    },
-
-    _groupName: function (group) {
-      if (group) {
-        if (group.name) {
-          return this.truncate(this.trim(group.name), 60);
-        } else {
-          return group.short_name;
-        }
-      } else {
-        return "";
-      }
-    },
-
-    _groupObjectives: function (group) {
-      if (group && group.objectives) {
-        return this.truncate(this.trim(group.objectives), 200, '...');
-      } else {
-        return "";
-      }
-    }
-  };
-</script><dom-module id="ac-activity-group" assetpath="../ac-activities/">
+<dom-module id="ac-activity-group" assetpath="../ac-activities/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -42990,7 +43038,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   </div>
 
                   <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-                    <ac-activity-post post-id$="[[postId]]" activity="[[activity]]"></ac-activity-post>
+                    <ac-activity-post post-id$="[[postId]]" group="[[activity.Group]]" community-id="[[communityId]]" group-id="[[groupId]]" activity="[[activity]]"></ac-activity-post>
                   </template>
 
                   <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
@@ -46433,14 +46481,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.63">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.65">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.63">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.65">
    * ```
    *
    * ### Consuming effects
@@ -47206,7 +47254,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.63">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.65">
 ```
 
 #### List of effects
@@ -53112,18 +53160,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.63"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.65"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.63"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.65"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.63"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.65"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -58315,9 +58363,9 @@ information on the API.
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.63");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.65");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.63");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.65");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
