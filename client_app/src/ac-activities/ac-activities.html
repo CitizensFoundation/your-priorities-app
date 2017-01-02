@@ -39,20 +39,27 @@
       .activity {
         margin: 16px;
         background-color: #FFF;
-        width: 550px !important;
-        height: 100% !important;
+        width: 550px;
+        height: 100%;
         padding-left: 16px;
         padding-right: 16px;
       }
 
       @media (max-width: 500px) {
         .activity {
-          width: 100% !important;
-          padding-left: 8px;
-          padding-right: 8px;
+          width: 100%;
+          height: 100%;
+
+          padding-left: 16px;
+          padding-right: 16px;
           margin-bottom: 8px;
           margin-top: 8px;
         }
+      }
+
+      .activity[is-safari] {
+        height: 550px;
+        overflow: auto;
       }
 
       .recommendedPosts {
@@ -240,10 +247,6 @@
         cursor: pointer;
       }
 
-      .full {
-        width: 100%;
-      }
-
       .addNewsBox {
         background-color: #FFF;
         margin-top: 32px;
@@ -267,6 +270,11 @@
           margin-left: -8px;
         }
       }
+
+      .activityContainer {
+        width: 100%;
+        min-height: 100% !important;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -285,10 +293,11 @@
             </paper-material>
           </div>
         </template>
-        <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]" override-padding-top$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
+        <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]"
+                   override-padding-top$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
-            <div class="layout vertical center-center full">
-              <paper-material elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
+            <div class="layout vertical center-center">
+              <paper-material is-safari$="[[isSafari]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
                 <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
                 <div class="mainActivityContent">
                   <div class="layout horizontal">
@@ -320,7 +329,7 @@
           </template>
         </iron-list>
       </div>
-      <div class="layout horizontal center-center recommendedPosts" not-active$="[[!recommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
+      <div class="layout horizontal center-center recommendedPosts" not-active$="[[noRecommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
         <ac-activity-recommended-posts id="recommendedPosts" recommended-posts="[[recommendedPosts]]" class="layout vertical"></ac-activity-recommended-posts>
       </div>
       <div class="layout horizontal center-center">
@@ -430,6 +439,11 @@
           value: null
         },
 
+        noRecommendedPosts: {
+          type: Boolean,
+          value: true
+        },
+
         skipIronListWidth: {
           type: Boolean,
           computed: '_skipIronListWidth(wide)'
@@ -443,7 +457,16 @@
         ironListPaddingTop: {
           type: Number,
           computed: '_ironListPaddingTop(wide)'
+        },
+
+        isSafari: {
+          type: Boolean,
+          computed: '_isSafari(wide)'
         }
+      },
+
+      _isSafari: function () {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       },
 
       _ironListResizeScrollThreshold: function (wide) {
@@ -642,6 +665,7 @@
         if (typeId) {
           this.set('activities', []);
           this.set('oldestProcessedActivityAt', null);
+          this.set('noRecommendedPosts', true);
 
           if (window.appUser && window.appUser.user && !this.postId) {
             this.mode = 'news_feeds';
@@ -714,7 +738,12 @@
       },
 
       _recommendedPostsResponse: function (event, detail) {
-        this.set('recommendedPosts', detail.response);
+        if (detail.response && detail.response.length>0) {
+          this.set('recommendedPosts', detail.response);
+          this.set('noRecommendedPosts', false);
+        } else {
+          this.set('noRecommendedPosts', true);
+        }
       },
 
       _activitiesResponse: function (event, detail) {
@@ -725,14 +754,10 @@
         }
 
         activities.forEach(function(activity) {
-          if ((activity.Post && activity.Post.deleted) || (activity.Point && activity.Point.deleted) ) {
-            // deleted post
+          if (this.$.ajax.url.indexOf('afterDate') > -1) {
+            this.unshift('activities', activity);
           } else {
-            if (this.$.ajax.url.indexOf('afterDate') > -1) {
-              this.unshift('activities', activity);
-            } else {
-              this.push('activities', activity);
-            }
+            this.push('activities', activity);
           }
         }.bind(this));
 
