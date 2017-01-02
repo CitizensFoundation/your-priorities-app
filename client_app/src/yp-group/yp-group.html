@@ -33,6 +33,7 @@
 <link rel="import" href="../yp-post/yp-post-edit.html">
 <link rel="import" href="../yp-group/yp-group-edit.html">
 
+<link rel="import" href="yp-group-card.html">
 <link rel="import" href="yp-group-info-panel.html">
 
 <dom-module id="yp-group">
@@ -174,7 +175,7 @@
     <div id="topContainer">
       <div class="layout horizontal">
         <div class="sideInfo layout horizontal start" hidden$="[[group.configuration.hideGroupHeader]]">
-          <yp-group-info-panel id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-info-panel>
+          <yp-group-card id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-card>
         </div>
         <div class="layout vertical start mainContentPanel">
           <template is="dom-if" if="[[createFabIcon]]">
@@ -492,7 +493,7 @@
         if (newValue && newValue!=this.lastValidGroupId) {
           this.set('lastValidGroupId', newValue);
           this.set('group', null);
-          this.$.groupCard.resetGroup();
+//          this.$.groupCard.resetGroup();
           this.$.tabCountOpen.innerHTML = "";
           if (this.hasNonOpenPosts) {
             this.$$("#tabCountInProgress").innerHTML = "";
