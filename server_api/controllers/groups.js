@@ -752,6 +752,15 @@ router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
       },
       group_id: req.params.id
     },
+    order: [
+      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
+    ],
+    include: [
+      { model: models.Image,
+        as: 'PostHeaderImages',
+        required: false
+      }
+    ],
     select: ['id', 'name', 'location']
   }).then(function (posts) {
     if (posts) {

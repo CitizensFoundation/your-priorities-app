@@ -163,6 +163,9 @@ router.get('/:id', auth.can('view post'), function(req, res) {
     where: {
       id: req.params.id
     },
+    order: [
+      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
+    ],
     include: [
       {
         // Category

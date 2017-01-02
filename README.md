@@ -15,7 +15,8 @@ git submodule update
 # In app root folder
 npm install
 cd client_app
-bower install
+bower install (make sure to always select packages required by your-priorities-app)
+
 
 cp server_api/config/config.json.dist server_api/config/config.json
 vi server_api/config/config.json # Add information about an empty postgres database

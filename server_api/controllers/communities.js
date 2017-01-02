@@ -587,8 +587,15 @@ router.get('/:id/post_locations', auth.can('view community'), function(req, res)
         $ne: null
       }
     },
+    order: [
+      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
+    ],
     select: ['id','name','location'],
     include: [
+      { model: models.Image,
+        as: 'PostHeaderImages',
+        required: false
+      },
       {
         model: models.Group,
         where: {
