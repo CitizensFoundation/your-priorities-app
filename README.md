@@ -15,8 +15,7 @@ git submodule update
 # In app root folder
 npm install
 cd client_app
-bower install (make sure to always select packages required by your-priorities-app)
-
+bower install (make sure to always select the packages required by your-priorities-app)
 
 cp server_api/config/config.json.dist server_api/config/config.json
 vi server_api/config/config.json # Add information about an empty postgres database
@@ -29,6 +28,13 @@ Go to localhost:4242 in your browser
 Create an user and give it admin privileges by running the following command in the root of the app
 ```bash
 node server_api/scripts/setAdminOnAll.js your@email.com
+```
+
+To build a client_dist production folder with vulcanized web components
+```bash
+npm install polymer-cli
+cd client_app
+./createDist
 ```
 
 ## For S3 Image Upload
