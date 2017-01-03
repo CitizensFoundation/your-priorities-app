@@ -1,0 +1,125 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-post/yp-post-behaviors.html">
+<link rel="import" href="../yp-user/yp-user-image.html">
+<link rel="import" href="./ac-notification-truncated-name-list.html">
+
+<dom-module id="ac-notification-list-status-update">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        text-align: left;
+        margin-bottom: 24px;
+      }
+
+      .pointerCursor {
+        cursor: pointer;
+      }
+
+      .chatIcon {
+        min-width: 24px;
+        min-height: 24px;
+        max-width: 24px;
+        max-height: 24px;
+        margin: 6px;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      .postName {
+        padding-top: 4px;
+        padding-bottom: 0;
+        font-style: italic;
+        color: #777;
+      }
+
+      .postName[point-value-up] {
+      }
+
+      .leftContainer {
+        margin-right: 8px;
+      }
+    </style>
+    <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
+      <div class="layout horizontal">
+        <div class="layout vertical center-center self-start leftContainer">
+          <yp-user-image small user="[[user]]"></yp-user-image>
+          <iron-icon icon="language" class="chatIcon"></iron-icon>
+        </div>
+        <div class="layout vertical">
+          <div class="postName">[[postNameTruncated]]</div>
+        </div>
+      </div>
+    </div>
+
+    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ac-notification-list-status-update',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.YpPostBehavior
+      ],
+
+      properties: {
+        notification: {
+          type: Object,
+          observer: '_notificationChanged'
+        },
+
+        user: {
+          type: Object,
+          value: null
+        },
+
+        postNameTruncated: {
+          type: String,
+          computed: '_postNameTruncated(post)'
+        }
+      },
+
+      _postNameTruncated: function (post) {
+        if (post && post.name) {
+          return this.truncate(post.name, 42);
+        } else {
+          return "";
+        }
+      },
+
+      goToPost: function () {
+        if (this.post) {
+          var postUrl = '/post/' + this.post.id + '/news';
+          window.appGlobals.activity('open', 'post', postUrl);
+          this.async(function () {
+            this.redirectTo(postUrl);
+          });
+        }
+      },
+
+      _notificationChanged: function (notification) {
+        if (notification) {
+          this.set('post', notification.AcActivities[0].Post);
+          this.set('user', notification.AcActivities[0].User);
+        } else {
+        }
+      },
+
+      _addWithComma: function (text, toAdd) {
+        var returnText = "";
+        if (text!='') {
+          returnText += text+",";
+        }
+        return returnText+toAdd;
+
+      }
+    });
+  </script>
+</dom-module>

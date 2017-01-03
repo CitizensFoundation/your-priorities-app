@@ -67,7 +67,6 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Point.belongsTo(sequelize.models.PostStatusChange);
         Point.belongsTo(sequelize.models.Post);
-        Point.belongsTo(sequelize.models.Group);
         Point.belongsTo(sequelize.models.Community);
         Point.belongsTo(sequelize.models.Domain);
         Point.belongsTo(sequelize.models.User);

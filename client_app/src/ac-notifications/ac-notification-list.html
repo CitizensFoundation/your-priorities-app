@@ -11,6 +11,7 @@
 
 <link rel="import" href="ac-notification-list-post.html">
 <link rel="import" href="ac-notification-list-point.html">
+<link rel="import" href="ac-notification-list-status-update.html">
 
 <dom-module id="ac-notification-list">
   <template>
@@ -62,7 +63,8 @@
             <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
               <ac-notification-list-point class="notificationItem" notification="[[notification]]"></ac-notification-list-point>
             </template>
-            <template is="dom-if" if="[[_notificationType(notification, 'system')]]">
+            <template is="dom-if" if="[[_notificationType(notification, 'notification.post.status.change')]]">
+              <ac-notification-list-status-update notification="[[notification]]"></ac-notification-list-status-update>
             </template>
           </div>
         </template>
@@ -225,7 +227,9 @@
       },
 
       _notificationType: function (notification, type) {
-        if (type=='postNotification') {
+        if (notification.type==type) {
+          return true;
+        } else if (type=='postNotification') {
           return (['notification.post.new', 'notification.post.endorsement'].indexOf(notification.type) > -1)
         } else if (type=='pointNotification') {
           return (['notification.point.new', 'notification.point.quality'].indexOf(notification.type) > -1)

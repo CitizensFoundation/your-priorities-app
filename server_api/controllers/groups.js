@@ -743,7 +743,6 @@ router.get('/:id/categories', auth.can('view group'), function(req, res) {
   });
 });
 
-
 router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
   models.Post.findAll({
     where: {
