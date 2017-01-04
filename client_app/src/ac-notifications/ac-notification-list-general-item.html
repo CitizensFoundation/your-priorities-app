@@ -8,7 +8,7 @@
 <link rel="import" href="../yp-user/yp-user-image.html">
 <link rel="import" href="./ac-notification-truncated-name-list.html">
 
-<dom-module id="ac-notification-list-status-update">
+<dom-module id="ac-notification-list-general-item">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -20,7 +20,7 @@
         cursor: pointer;
       }
 
-      .chatIcon {
+      .icon {
         min-width: 24px;
         min-height: 24px;
         max-width: 24px;
@@ -30,28 +30,32 @@
         padding-bottom: 0;
       }
 
-      .postName {
+      .name {
         padding-top: 4px;
         padding-bottom: 0;
         font-style: italic;
         color: #777;
       }
 
-      .postName[point-value-up] {
+      .shortText {
+        padding-right: 8px;
+        color: #444;
+        padding-bottom: 4px;
       }
 
       .leftContainer {
         margin-right: 8px;
       }
     </style>
-    <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
+    <div class="layout vertical pointerCursor" on-tap="_goTo">
       <div class="layout horizontal">
         <div class="layout vertical center-center self-start leftContainer">
           <yp-user-image small user="[[user]]"></yp-user-image>
-          <iron-icon icon="language" class="chatIcon"></iron-icon>
+          <iron-icon icon$="[[icon]]" class="icon"></iron-icon>
         </div>
         <div class="layout vertical">
-          <div class="postName">[[postNameTruncated]]</div>
+          <div class="name">[[nameTruncated]]</div>
+          <div hidden$="[[!shortText]]" class="shortText">[[shortTextTruncated]]</div>
         </div>
       </div>
     </div>
@@ -62,7 +66,7 @@
   <script>
     Polymer({
 
-      is: 'ac-notification-list-status-update',
+      is: 'ac-notification-list-general-item',
 
       behaviors: [
         Polymer.appHelpers,
@@ -80,15 +84,52 @@
           value: null
         },
 
-        postNameTruncated: {
+        nameTruncated: {
           type: String,
-          computed: '_postNameTruncated(post)'
+          computed: '_nameTruncated(notification)'
+        },
+
+        icon: {
+          type: String
+        },
+
+        shortText: {
+          type: String
+        },
+
+        shortTextTruncated: {
+          type: String,
+          computed: '_shortTextTruncated(shortText)'
         }
       },
 
-      _postNameTruncated: function (post) {
-        if (post && post.name) {
-          return this.truncate(post.name, 42);
+      _goTo: function () {
+        if (this.post) {
+          this.goToPost(this.post.id)
+        } else if (this.notification.AcActivities[0].Group && this.notification.AcActivities[0].Group.name!="") {
+          window.location = "/group/"+this.notification.AcActivities[0].Group.id+"/news/"+this.notification.AcActivities[0].id
+        } else if (this.notification.AcActivities[0].Community) {
+          window.location = "/group/"+this.notification.AcActivities[0].Community.id+"/news/"+this.notification.AcActivities[0].id
+        } else if (this.notification.AcActivities[0].Domain) {
+          window.location = "/group/"+this.notification.AcActivities[0].Domain.id+"/news/"+this.notification.AcActivities[0].id
+        }
+      },
+
+      _nameTruncated: function (notification) {
+        if (notification.AcActivities[0].Post) {
+          return this.truncate(notification.AcActivities[0].Post.name, 42);
+        } else if (notification.AcActivities[0].Group && notification.AcActivities[0].Group.name!="hidden_public_group_for_domain_level_points") {
+          return this.truncate(notification.AcActivities[0].Group.name, 42);
+        } else if (notification.AcActivities[0].Community) {
+          return this.truncate(notification.AcActivities[0].Community.name, 42);
+        } else if (notification.AcActivities[0].Domain) {
+          return this.truncate(notification.AcActivities[0].Domain.name, 42);
+        }
+      },
+
+      _shortTextTruncated: function (shortText) {
+        if (shortText) {
+          return this.truncate(shortText, 60);
         } else {
           return "";
         }

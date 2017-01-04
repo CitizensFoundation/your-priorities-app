@@ -11,7 +11,7 @@
 
 <link rel="import" href="ac-notification-list-post.html">
 <link rel="import" href="ac-notification-list-point.html">
-<link rel="import" href="ac-notification-list-status-update.html">
+<link rel="import" href="ac-notification-list-general-item.html">
 
 <dom-module id="ac-notification-list">
   <template>
@@ -64,7 +64,15 @@
               <ac-notification-list-point class="notificationItem" notification="[[notification]]"></ac-notification-list-point>
             </template>
             <template is="dom-if" if="[[_notificationType(notification, 'notification.post.status.change')]]">
-              <ac-notification-list-status-update notification="[[notification]]"></ac-notification-list-status-update>
+              <ac-notification-list-general-item icon="language" notification="[[notification]]"></ac-notification-list-general-item>
+            </template>
+            <template is="dom-if" if="[[_notificationType(notification, 'notification.point.newsStory')]]">
+              <ac-notification-list-general-item icon="face" notification="[[notification]]"
+                                                 short-text="[[notification.AcActivities.0.Point.content]]">
+              </ac-notification-list-general-item>
+            </template>
+            <template is="dom-if" if="[[_notificationType(notification, 'notification.point.comment')]]">
+              <ac-notification-list-general-item icon="chat-bubble" notification="[[notification]]"></ac-notification-list-general-item>
             </template>
           </div>
         </template>
