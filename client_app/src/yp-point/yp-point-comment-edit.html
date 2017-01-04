@@ -148,7 +148,7 @@
           } else {
             console.error("Can't find send ids");
           }
-          this.$.postCommentAjax.body = _.merge(body, { comment: this.comment } );
+          this.$.postCommentAjax.body = __.merge(body, { comment: this.comment } );
           this.$.postCommentAjax.generateRequest();
         } else {
           this.$.postCommentAjax.showErrorDialog(this.t('point.commentToShort'));

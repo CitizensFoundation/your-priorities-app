@@ -317,7 +317,7 @@
                   </template>
 
                   <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
-                    <ac-activity-point-news-story activity="[[activity]]"></ac-activity-point-news-story>
+                    <ac-activity-point-news-story activity="[[activity]]" point-id="[[pointId]]"></ac-activity-point-news-story>
                   </template>
 
                   <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
@@ -595,7 +595,7 @@
 
       _activityDeletedResponse: function (event, detail) {
         var activityId = detail.response.activityId;
-        this.set('activities', _.filter(this.activities, function(o) { return (o.id!=activityId) }));
+        this.set('activities', __.filter(this.activities, function(o) { return (o.id!=activityId) }));
       },
 
       _deleteActivity: function (event) {

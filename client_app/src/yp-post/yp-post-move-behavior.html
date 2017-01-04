@@ -28,7 +28,7 @@
     _uniqueInDomain: function (array, domainId) {
       var newArray = [];
       var ids = {};
-      _.each(array, function (item) {
+      __.each(array, function (item) {
         if (!ids[item.id]) {
           ids[item.id] = item.id;
           if (!item.configuration) {

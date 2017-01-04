@@ -758,6 +758,11 @@ router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
       { model: models.Image,
         as: 'PostHeaderImages',
         required: false
+      },
+      {
+        model: models.Group,
+        attributes: ['id','configuration'],
+        required: true
       }
     ],
     select: ['id', 'name', 'location']

@@ -7,7 +7,7 @@
   Polymer.AccessHelpers = {
 
     _hasAdminRights: function(objectId, adminRights) {
-      return _.find(adminRights, function(o) { return o.id == objectId; });
+      return __.find(adminRights, function(o) { return o.id == objectId; });
     },
 
     _hasAccess: function (object, objectId, adminRights) {

@@ -201,9 +201,9 @@
 
       _reset: function () {
         if (window.appUser && window.appUser.memberships) {
-          this.set('myGroups', _.take(window.appUser.memberships.GroupUsers, 1000));
-          this.set('myCommunities', _.take(window.appUser.memberships.CommunityUsers, 500));
-          this.set('myDomains', _.take(window.appUser.memberships.DomainUsers, 3));
+          this.set('myGroups', __.take(window.appUser.memberships.GroupUsers, 1000));
+          this.set('myCommunities', __.take(window.appUser.memberships.CommunityUsers, 500));
+          this.set('myDomains', __.take(window.appUser.memberships.DomainUsers, 3));
         }
 
         if (window.appUser && window.appUser.adminRights &&

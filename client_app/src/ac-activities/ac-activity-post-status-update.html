@@ -26,8 +26,11 @@
 
       .postName {
         padding-left: 32px;
+        padding-right: 32px;
         font-weight: bold;
         font-size: 19px;
+        margin-bottom: 8px;
+        color: #444;
       }
 
       .groupName {
@@ -41,6 +44,9 @@
     <div class="layout vertical">
       <div class="groupName">
         [[activity.Group.name]]
+      </div>
+      <div class="postName">
+        [[activity.Post.name]]
       </div>
       <div id="statusChange" class="statusChange"></div>
     </div>

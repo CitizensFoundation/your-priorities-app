@@ -8,13 +8,13 @@
 
     splitByStatus: function (items) {
       return {
-        active: _.filter(items, function (o) {
+        active: __.filter(items, function (o) {
           return o.status == 'active';
         }),
-        archived: _.filter(items, function (o) {
+        archived: __.filter(items, function (o) {
           return o.status == 'archived';
         }),
-        featured: _.filter(items, function (o) {
+        featured: __.filter(items, function (o) {
           return o.status == 'featured';
         })
       }

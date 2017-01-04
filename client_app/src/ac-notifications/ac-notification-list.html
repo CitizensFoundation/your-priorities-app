@@ -355,7 +355,7 @@
       },
 
       _displayToast: function (notifications) {
-        var notMyNotifications = _.reject(notifications, function (notification) {
+        var notMyNotifications = __.reject(notifications, function (notification) {
           var activityUser = notification.AcActivities[0].User;
           return !(window.appUser.user && activityUser && window.appUser.user.id != activityUser.id);
         });

@@ -279,7 +279,7 @@
         window.appGlobals.setupGoogleAnalytics(this.domain);
 
         if (this.domain.Communities) {
-          this.setupCommunities(_.dropRight(this.domain.Communities, this.domain.Communities.length-500));
+          this.setupCommunities(__.dropRight(this.domain.Communities, this.domain.Communities.length-500));
         }
 
         this.$.domainCard.setElevation(5);
