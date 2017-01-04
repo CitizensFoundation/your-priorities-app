@@ -31,6 +31,7 @@
         font-size: 19px;
         margin-bottom: 8px;
         color: #444;
+        cursor: pointer;
       }
 
       .groupName {
@@ -45,7 +46,7 @@
       <div class="groupName">
         [[activity.Group.name]]
       </div>
-      <div class="postName">
+      <div class="postName" on-tap="_goToPost">
         [[activity.Post.name]]
       </div>
       <div id="statusChange" class="statusChange"></div>
@@ -67,6 +68,12 @@
         activity: {
           type: Object,
           observer: '_activityChanged'
+        }
+      },
+
+      _goToPost: function () {
+        if (this.activity.Post) {
+          this.goToPost(this.activity.Post.id);
         }
       },
 
