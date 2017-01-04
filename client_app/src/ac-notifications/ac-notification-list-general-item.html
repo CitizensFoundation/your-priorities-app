@@ -104,14 +104,20 @@
       },
 
       _goTo: function () {
+        var gotoLocation;
         if (this.post) {
           this.goToPost(this.post.id)
-        } else if (this.notification.AcActivities[0].Group && this.notification.AcActivities[0].Group.name!="") {
-          window.location = "/group/"+this.notification.AcActivities[0].Group.id+"/news/"+this.notification.AcActivities[0].id
-        } else if (this.notification.AcActivities[0].Community) {
-          window.location = "/group/"+this.notification.AcActivities[0].Community.id+"/news/"+this.notification.AcActivities[0].id
-        } else if (this.notification.AcActivities[0].Domain) {
-          window.location = "/group/"+this.notification.AcActivities[0].Domain.id+"/news/"+this.notification.AcActivities[0].id
+        } else {
+          if (this.notification.AcActivities[0].Group && this.notification.AcActivities[0].Group.name!="hidden_public_group_for_domain_level_points") {
+            gotoLocation = "/group/"+this.notification.AcActivities[0].Group.id+"/news/"+this.notification.AcActivities[0].id
+          } else if (this.notification.AcActivities[0].Community) {
+            gotoLocation = "/community/"+this.notification.AcActivities[0].Community.id+"/news/"+this.notification.AcActivities[0].id
+          } else if (this.notification.AcActivities[0].Domain) {
+            gotoLocation = "/domain/" + this.notification.AcActivities[0].Domain.id + "/news/" + this.notification.AcActivities[0].id
+          }
+          if (gotoLocation) {
+            this.redirectTo(gotoLocation);
+          }
         }
       },
 

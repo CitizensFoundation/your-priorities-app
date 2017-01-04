@@ -2,6 +2,168 @@
 
 var async = require('async');
 
+var findCommunityAndDomainForPointFromGroup = function (sequelize, options, callback) {
+  sequelize.models.Group.find({
+    where: {
+      id: options.group_id
+    },
+    include: [
+      {
+        model: sequelize.models.Community,
+        attributes: ['id'],
+        required: true,
+        include: [
+          {
+            model: sequelize.models.Domain,
+            attributes: ['id'],
+            required: true
+          }
+        ]
+      }
+    ]
+  }).then(function (group) {
+    if (group) {
+      options.community_id = group.Community.id;
+      options.domain_id = group.Community.Domain.id;
+    }
+    callback(null, options);
+  }).catch(function (error) {
+    callback(error);
+  })
+};
+
+var attachEmptyGroupIfNeeded = function (sequelize, options, callback) {
+  if (!options.group_id &&
+    (options.domain_id || (options.community_id && options.communityAccess == sequelize.models.Community.ACCESS_PUBLIC))) {
+    sequelize.models.Group.findOrCreate({where: { name: 'hidden_public_group_for_domain_level_points' },
+      defaults: { access: sequelize.models.Group.ACCESS_PUBLIC }})
+      .spread(function(group, created) {
+        if (group) {
+          options.group_id = group.id;
+          callback(null, options);
+        } else {
+          callback("Can't create hidden public group for domain level points");
+        }
+      });
+  } else {
+    callback(null, options);
+  }
+};
+
+
+var findGroupAndCommunityAndDomainForPointFromPost = function (sequelize, options, callback) {
+  sequelize.models.Post.find({
+    where: {
+      id: options.post_id
+    },
+    include: [
+      {
+        model: sequelize.models.Group,
+        attributes: ['id'],
+        required: true,
+        include: [
+          {
+            model: sequelize.models.Community,
+            attributes: ['id'],
+            required: true,
+            include: [
+              {
+                model: sequelize.models.Domain,
+                attributes: ['id'],
+                required: true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }).then(function (post) {
+    options.group_id = post.Group.id;
+    options.community_id = post.Group.Community.id;
+    options.domain_id = post.Group.Community.Domain.id;
+    callback(null, options);
+  }).catch(function (error) {
+    callback(error);
+  })
+};
+
+var findDomainFromCommunity = function (sequelize, options, callback) {
+  sequelize.models.Community.find({
+    where: {
+      id: options.community_id
+    },
+    attributes: ['id','access'],
+    include: [
+      {
+        model: sequelize.models.Domain,
+        attributes: ['id'],
+        required: true
+      }
+    ]
+  }).then(function (community) {
+    options.domain_id = community.Domain.id;
+    options.communityAccess = community.access;
+    callback(null, options);
+  }).catch(function (error) {
+    callback(error);
+  })
+};
+
+var setAllActivityGroupingIds = function (sequelize, options, callback) {
+  async.series([
+    function (seriesCallback) {
+      if (options.post_id) {
+        findGroupAndCommunityAndDomainForPointFromPost(sequelize, options, function (error, optionsIn) {
+          if (optionsIn) {
+            options = optionsIn;
+          }
+          seriesCallback(error);
+        });
+      } else {
+        seriesCallback();
+      }
+    },
+
+    function (seriesCallback) {
+      if (options.group_id) {
+        findCommunityAndDomainForPointFromGroup(sequelize, options, function (error, optionsIn) {
+          if (optionsIn) {
+            options = optionsIn;
+          }
+          seriesCallback(error);
+        });
+      } else {
+        seriesCallback();
+      }
+    },
+
+    function (seriesCallback) {
+      if (options.community_id) {
+        findDomainFromCommunity(sequelize, options, function (error, optionsIn) {
+          if (optionsIn) {
+            options = optionsIn;
+          }
+          seriesCallback(error);
+        });
+      } else {
+        seriesCallback();
+      }
+    },
+
+    // Attach an empty public group to domain and community levels to enable join on activities with group access control
+    function (seriesCallback) {
+      attachEmptyGroupIfNeeded(sequelize, options, function (error, optionsIn) {
+        if (optionsIn) {
+          options = optionsIn;
+        }
+        seriesCallback(error);
+      });
+    }
+  ], function (error) {
+    callback(error)
+  });
+};
+
 module.exports = function(sequelize, DataTypes) {
   var Point = sequelize.define("Point", {
     name: { type: DataTypes.STRING, allowNull: true },
@@ -95,10 +257,12 @@ module.exports = function(sequelize, DataTypes) {
                 where: {
                   id: options.parent_point_id
                 },
-                attributes: ['id', 'group_id', 'post_id']
+                attributes: ['id', 'group_id', 'post_id', 'community_id', 'domain_id']
               }).then(function (parentPoint) {
                 if (parentPoint) {
                   options.group_id = parentPoint.group_id;
+                  options.community_id = parentPoint.community_id;
+                  options.domain_id = parentPoint.domain_id;
                   options.post_id = options.post_id ? options.post_id : parentPoint.post_id;
                 }
                 seriesCallback();
@@ -139,6 +303,15 @@ module.exports = function(sequelize, DataTypes) {
           },
 
           function (seriesCallback) {
+            setAllActivityGroupingIds(sequelize, options, function (error, optionsIn) {
+              if (optionsIn) {
+                options = optionsIn;
+              }
+              seriesCallback(error);
+            });
+          },
+
+          function (seriesCallback) {
             sequelize.models.Point.build(options).save().then(function (point) {
               options.point_id = point.id;
               var pointRevision = sequelize.models.PointRevision.build(options);
@@ -148,6 +321,10 @@ module.exports = function(sequelize, DataTypes) {
                   userId: options.user_id,
                   pointId: options.point_id,
                   imageId: options.image_id,
+                  domainId: options.domain_id,
+                  groupId: options.group_id ? options.group_id : 1,
+                  communityId: options.community_id,
+                  postId: options.post_id,
                   access: sequelize.models.AcActivity.ACCESS_PUBLIC
                 }, function (error) {
                   seriesCallback(error);
@@ -169,120 +346,12 @@ module.exports = function(sequelize, DataTypes) {
 
         async.series([
           function (seriesCallback) {
-            if (options.post_id) {
-              sequelize.models.Post.find({
-                where: {
-                  id: options.post_id
-                },
-                include: [
-                  {
-                    model: sequelize.models.Group,
-                    attributes: ['id'],
-                    required: true,
-                    include: [
-                      {
-                        model: sequelize.models.Community,
-                        attributes: ['id'],
-                        required: true,
-                        include: [
-                          {
-                            model: sequelize.models.Domain,
-                            attributes: ['id'],
-                            required: true
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }).then(function (post) {
-                options.group_id = post.Group.id;
-                options.community_id = post.Group.Community.id;
-                options.domain_id = post.Group.Community.Domain.id;
-                seriesCallback();
-              }).catch(function (error) {
-                seriesCallback(error);
-              })
-            } else {
-              seriesCallback();
-            }
-          },
-
-          function (seriesCallback) {
-            if (options.group_id) {
-              sequelize.models.Group.find({
-                where: {
-                  id: options.group_id
-                },
-                include: [
-                  {
-                    model: sequelize.models.Community,
-                    attributes: ['id'],
-                    required: true,
-                    include: [
-                      {
-                        model: sequelize.models.Domain,
-                        attributes: ['id'],
-                        required: true
-                      }
-                    ]
-                  }
-                ]
-              }).then(function (group) {
-                options.community_id = group.Community.id;
-                options.domain_id = group.Community.Domain.id;
-                seriesCallback();
-              }).catch(function (error) {
-                seriesCallback(error);
-              })
-            } else {
-              seriesCallback();
-            }
-          },
-
-          function (seriesCallback) {
-            if (options.community_id) {
-              sequelize.models.Community.find({
-                where: {
-                  id: options.community_id
-                },
-                attributes: ['id','access'],
-                include: [
-                  {
-                    model: sequelize.models.Domain,
-                    attributes: ['id'],
-                    required: true
-                  }
-                ]
-              }).then(function (community) {
-                options.domain_id = community.Domain.id;
-                options.communityAccess = community.access;
-                seriesCallback();
-              }).catch(function (error) {
-                seriesCallback(error);
-              })
-            } else {
-              seriesCallback();
-            }
-          },
-
-          // Attach an empty public group to domain and community levels to enable join on activities with group access control
-          function (seriesCallback) {
-            if (!options.group_id &&
-              (options.domain_id || (options.community_id && options.communityAccess == sequelize.models.Community.ACCESS_PUBLIC))) {
-              sequelize.models.Group.findOrCreate({where: { name: 'hidden_public_group_for_domain_level_points' },
-                  defaults: { access: sequelize.models.Group.ACCESS_PUBLIC }})
-                .spread(function(group, created) {
-                  if (group) {
-                    options.group_id = group.id;
-                    seriesCallback();
-                  } else {
-                    seriesCallback("Can't create hidden public group for domain level points");
-                  }
-                });
-            } else {
-              seriesCallback();
-            }
+            setAllActivityGroupingIds(sequelize, options, function (error, optionsIn) {
+              if (optionsIn) {
+                options = optionsIn;
+              }
+              seriesCallback(error);
+            });
           }
         ], function (error) {
           options.user_id = req.user.id;

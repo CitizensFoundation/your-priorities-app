@@ -72,7 +72,8 @@
               </ac-notification-list-general-item>
             </template>
             <template is="dom-if" if="[[_notificationType(notification, 'notification.point.comment')]]">
-              <ac-notification-list-general-item icon="chat-bubble" notification="[[notification]]"></ac-notification-list-general-item>
+              <ac-notification-list-general-item icon="communication:chat-bubble-outline"
+                                                 notification="[[notification]]" short-text="[[notification.AcActivities.0.Point.content]]"></ac-notification-list-general-item>
             </template>
           </div>
         </template>
