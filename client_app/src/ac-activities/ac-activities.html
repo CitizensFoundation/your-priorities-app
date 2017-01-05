@@ -60,7 +60,7 @@
         padding: 0;
       }
 
-      @media (max-width: 500px) {
+      @media (max-width: 600px) {
         .activityContainer {
           width: 100%;
           height: 100%;
@@ -154,6 +154,13 @@
         width: 100%;
         min-height: 100% !important;
       }
+
+      @media (max-width: 960px) {
+        .recommendedPosts {
+          display: none !important;
+        }
+      }
+
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -188,9 +195,9 @@
       </div>
       <div class="layout horizontal center-center recommendedPosts" not-active$="[[noRecommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
         <ac-activity-recommended-posts id="recommendedPosts" recommended-posts="[[recommendedPosts]]" class="layout vertical"></ac-activity-recommended-posts>
-      </div>
-      <div class="layout horizontal center-center">
-        <yp-ajax id="recommendationAjax" large-spinner on-response="_recommendedPostsResponse"></yp-ajax>
+        <div class="layout horizontal center-center">
+          <yp-ajax id="recommendationAjax" large-spinner on-response="_recommendedPostsResponse"></yp-ajax>
+        </div>
       </div>
     </div>
 
@@ -336,7 +343,7 @@
           list.updateViewportBoundaries();
           this.async(function () {
             list.notifyResize();
-          });
+          }, 50);
         }
         return wide;
       },

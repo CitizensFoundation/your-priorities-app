@@ -158,10 +158,15 @@
       .groupTitle {
         font-size: 15px;
         padding-top: 8px;
+        color: #777;
+      }
+
+      .hasPointer {
+        cursor: pointer;
       }
     </style>
 
-    <div class="layout vertical">
+    <div class="layout vertical hasPointer" on-tap="_goToPost">
       <div class="actionInfo">
         [[t('addedAnIdea')]]
       </div>
@@ -234,6 +239,12 @@
           computed: '_groupTitle(group, postId, groupId, communityId)'
         }
 
+      },
+
+      _goToPost: function () {
+        if (this.activity.Post && !this.postId) {
+          this.goToPost(this.activity.Post.id);
+        }
       },
 
       _isIE11: function () {
