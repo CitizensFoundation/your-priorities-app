@@ -392,8 +392,11 @@
 
       _loadMoreData: function () {
         this.async(function () {
+          console.log("_loadMoreData");
           if (this.$$("#ironList").offsetWidth > 0 && this.$$("#ironList").offsetHeight > 0) {
+            console.log("_loadMoreData 2 url: "+this.url+" moreToLoad: "+this.moreToLoad);
             if (this.url!='' && this.moreToLoad && this.oldestProcessedActivityAt) {
+              console.log("_loadMoreData 3");
               this.set('moreToLoad', false);
               console.info("_loadMoreData for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
               this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
@@ -458,6 +461,8 @@
 
         if (detail.response.oldestProcessedActivityAt) {
           this.set('oldestProcessedActivityAt', detail.response.oldestProcessedActivityAt);
+        } else {
+          console.warn("Have not set oldestProcessedActivityAt");
         }
 
         activities.forEach(function(activity) {
@@ -468,12 +473,18 @@
           }
         }.bind(this));
 
+        console.info("Activities length: "+activities.length);
         if (activities.length>0) {
           if (!this.latestProcessedActivityAt || this.latestProcessedActivityAt < activities[0].created_at) {
             this.set('latestProcessedActivityAt', activities[0].created_at);
           }
+          if (!this.latestProcessedActivityAt) {
+            console.error("Have not set latest processed activity at");
+          } else {
+            console.log("latestProcessedActivityAt: "+ this.latestProcessedActivityAt)
+          }
           this.set('moreToLoad', true);
-          if (this.activities.length<12) {
+          if (this.activities.length<15 || (activities.length<3 && this.activities.length<100)) {
             this._loadMoreData();
           }
         }
