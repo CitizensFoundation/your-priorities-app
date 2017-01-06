@@ -46,46 +46,99 @@ var sendPointNew = function (delayedNotification, callback) {
   });
 };
 
-var sendPointQuality = function (notifications, callback) {
+var sendPointQuality = function (delayedNotification, callback) {
   console.log("sendPointQuality");
-  //console.log("User email: "+delayedNotification.User.email);
+  console.log("User email: "+delayedNotification.User.email);
 
-  //var base = { email: delayedNotification.User.email, name: delayedNotification.User.name };
+  var base = { email: delayedNotification.User.email, name: delayedNotification.User.name };
   var items = [];
 
-  async.forEach(notifications, function (notification, seriesCallback) {
-    var post;
-    if (!notification.AcActivities[0].Post && notification.AcActivities[0].Point.Post) {
-      post = notification.AcActivities[0].Point.Post;
-    } else if (notification.AcActivities[0].Post) {
-      post = notification.AcActivities[0].Post;
-    }
-    if (post && notification.AcActivities[0].Point) {
-      items.push({
-        domain_id: notification.AcActivities[0].domain_id,
-        Domain: notification.AcActivities[0].Domain,
-        community_id: notification.AcActivities[0].community_id,
-        Community: notification.AcActivities[0].Community,
-        group_id: notification.AcActivities[0].group_id,
-        Group: notification.AcActivities[0].Group,
-        post_id: post.id,
-        Post: post,
-        point_id: notification.AcActivities[0].point_id,
-        Point: notification.AcActivities[0].Point,
-        User: notification.AcActivities[0].User,
-        created_at: notification.AcActivities[0].created_at
-      });
-      /*console.log("Type: "+notification.AcActivities[0].type);
-      console.log("Post name: "+post.name);
-      console.log("Point content: "+notification.AcActivities[0].Point.content);
-      console.log("Domain name: "+notification.AcActivities[0].Domain.name);
-      console.log("User name: "+notification.AcActivities[0].User.name);*/
-      seriesCallback();
-    } else {
-      console.log("can't find post");
-      seriesCallback()
-    }
-
+  async.forEach(delayedNotification.AcNotifications, function (notificationWithId, seriesCallback) {
+    models.AcNotification.find({
+      where: {
+        id: notificationWithId.id
+      },
+      include: [
+        {
+          model: models.AcActivity, as: 'AcActivities',
+          required: true,
+          where: {
+            deleted: false
+          },
+          include: [
+            {
+              model: models.User,
+              required: true
+            },
+            {
+              model: models.Post,
+              required: false
+            },
+            {
+              model: models.Domain,
+              required: true
+            },
+            {
+              model: models.Community,
+              required: true
+            },
+            {
+              model: models.Group,
+              required: false
+            },
+            {
+              model: models.Point,
+              required: false,
+              include: [
+                {
+                  model: models.Post,
+                  required: false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }).then(function (notification) {
+      if (notification) {
+        var post;
+        if (!notification.AcActivities[0].Post && notification.AcActivities[0].Point.Post) {
+          post = notification.AcActivities[0].Point.Post;
+        } else if (notification.AcActivities[0].Post) {
+          post = notification.AcActivities[0].Post;
+        }
+        if (post && notification.AcActivities[0].Point) {
+          items.push({
+            domain_id: notification.AcActivities[0].domain_id,
+            Domain: notification.AcActivities[0].Domain,
+            community_id: notification.AcActivities[0].community_id,
+            Community: notification.AcActivities[0].Community,
+            group_id: notification.AcActivities[0].group_id,
+            Group: notification.AcActivities[0].Group,
+            post_id: post.id,
+            Post: post,
+            point_id: notification.AcActivities[0].point_id,
+            Point: notification.AcActivities[0].Point,
+            User: notification.AcActivities[0].User,
+            created_at: notification.AcActivities[0].created_at
+          });
+          /*console.log("Type: "+notification.AcActivities[0].type);
+           console.log("Post name: "+post.name);
+           console.log("Point content: "+notification.AcActivities[0].Point.content);
+           console.log("Domain name: "+notification.AcActivities[0].Domain.name);
+           console.log("User name: "+notification.AcActivities[0].User.name);*/
+          seriesCallback();
+        } else {
+          console.log("can't find post");
+          seriesCallback()
+        }
+      } else {
+        console.error("No notification");
+        seriesCallback();
+      }
+    }).catch(function (error) {
+      seriesCallback(error);
+    });
   }, function (error) {
 
     var domains = _.groupBy(items, 'domain_id');
@@ -218,82 +271,8 @@ var getDelayedNotificationToProcess = function (frequency, callback) {
         }
       ]
     }).then(function (delayedNotifications) {
-      async.forEach(delayedNotifications, function (delayedNotification, outerSeriesCallback) {
-        var fullNotifications;
-        async.forEach(delayedNotification.AcNotifications, function (notificationWithId, seriesCallback) {
-          fullNotifications = [];
-          models.AcNotification.find({
-            where: {
-              id: notificationWithId.id
-            },
-            include: [
-              {
-                model: models.AcActivity, as: 'AcActivities',
-                required: true,
-                where: {
-                  deleted: false
-                },
-                include: [
-                  {
-                    model: models.User,
-                    required: true
-                  },
-                  {
-                    model: models.Post,
-                    required: false
-                  },
-                  {
-                    model: models.Domain,
-                    required: true
-                  },
-                  {
-                    model: models.Community,
-                    required: true
-                  },
-                  {
-                    model: models.Group,
-                    required: false
-                  },
-                  {
-                    model: models.Point,
-                    required: false,
-                    include: [
-                      {
-                        model: models.Post,
-                        required: false
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }).then(function (notification) {
-            if (notification) {
-              fullNotifications.push(notification);
-              seriesCallback();
-            } else {
-              console.error("No notification");
-              seriesCallback();
-            }
-          }).catch(function (error) {
-            seriesCallback(error);
-          });
-        }, function(error) {
-          sendPointQuality(fullNotifications, function (error) {
-            /*if (error) {
-             seriesCallback(error);
-             } else {
-             //notification.delivered_at = moment();
-             //notification.delivered = true;
-             notification.save().then(function () {
-             seriesCallback();
-             }).catch(function (error) {
-             seriesCallback(error);
-             });
-             }*/
-            outerSeriesCallback(error);
-          });
-        });
+      async.forEach(delayedNotifications, function (delayedNotification, seriesCallback) {
+        sendNotification(delayedNotification, seriesCallback);
       }, function (error) {
         callback(error);
       });
