@@ -28,6 +28,22 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
   });
 };
 
+auth.hasCommunityAccess = function (community, req, done) {
+  community.hasCommunityUsers(req.user).then(function (result) {
+    if (result) {
+      done(null, true);
+    } else {
+      community.hasCommunityAdmins(req.user).then(function (result) {
+        if (result) {
+          done(null, true);
+        } else {
+          done(null, false);
+        }
+      });
+    }
+  });
+};
+
 auth.authNeedsGroupAdminForCreate = function (group, req, done) {
   models.Group.findOne({
     where: { id: group.id },
@@ -113,11 +129,23 @@ auth.isGroupMemberOrOpenToCommunityMember = function (group, req, done) {
           if (result) {
             done(null, true);
           } else {
-            done(null, false);
+            group.Community.hasCommunityAdmins(req.user).then(function (result) {
+              if (result) {
+                done(null, true);
+              } else {
+                done(null, false);
+              }
+            });
           }
         });
       } else {
-        done(null, false);
+        group.hasGroupAdmins(req.user).then(function (result) {
+          if (result) {
+            done(null, true);
+          } else {
+            done(null, false);
+          }
+        });
       }
     }).catch(function (error) {
       done(error, false);
@@ -273,7 +301,7 @@ auth.entity('organization', function(req, done) {
     done(new Error('Expected url like /organizations/:organizationId'));
   } else {
     var organization = { id: match[1] };
-    done(null, organization)
+    done(null, organization);
   }
 });
 
@@ -346,13 +374,7 @@ auth.role('community.viewUser', function (community, req, done) {
     } else if (community.user_id === req.user.id) {
       done(null, true);
     } else {
-      community.hasCommunityUser(req.user).then(function (result) {
-        if (result) {
-          done(null, true);
-        } else {
-          done(null, false);
-        }
-      });
+      auth.hasCommunityAccess(community, req, done);
     }
   });
 });
@@ -926,13 +948,7 @@ auth.role('createCommunityGroup.createGroup', function (community, req, done) {
     } else if (community.user_id === req.user.id) {
       done(null, true);
     } else {
-      community.hasCommunityUsers(req.user).then(function (result) {
-        if (result) {
-          done(null, true);
-        } else {
-          done(null, false);
-        }
-      });
+      auth.hasCommunityAccess(community, req, done);
     }
   });
 });
@@ -1016,13 +1032,7 @@ auth.role('createCommunityOrganization.createCommunityOrganization', function (d
     } else if (community.user_id === req.user.id) {
       done(null, true);
     } else {
-      community.hasCommunityUsers(req.user).then(function (result) {
-        if (result) {
-          done(null, true);
-        } else {
-          done(null, false);
-        }
-      });
+      auth.hasCommunityAccess(community, req, done);
     }
   });
 });
