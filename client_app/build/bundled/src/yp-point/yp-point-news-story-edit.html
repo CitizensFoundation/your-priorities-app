@@ -1,24 +1,24 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.65">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.66">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.65">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.66">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.65">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.65">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.66">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.66">
 
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.3.65">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.3.66">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.65">
-<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.65">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.65">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.66">
+<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.66">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.66">
 
-<link rel="import" href="yp-point-news-story-embed.html?v=6.3.65">
+<link rel="import" href="yp-point-news-story-embed.html?v=6.3.66">
 
 </head><body><dom-module id="yp-point-news-story-edit">
 
@@ -195,17 +195,17 @@
         var body = { point: this.point };
         if (this.point.content && this.point.content.length>2) {
           if (this.postId && this.postGroupId) {
-            _.merge(body, { post_id: this.postId })
+            __.merge(body, { post_id: this.postId })
             this.$.postNewsStoryAjax.url = '/api/groups/'+this.postGroupId+'/post/news_story';
           } else if (this.groupId) {
-            _.merge(body, { group_id: this.groupId })
+            __.merge(body, { group_id: this.groupId })
             this.$.postNewsStoryAjax.url = '/api/groups/'+this.groupId+'/news_story';
           } else if (this.communityId) {
-            _.merge(body, { community_id: this.communityId })
+            __.merge(body, { community_id: this.communityId })
             this.$.postNewsStoryAjax.url = '/api/communities/'+this.communityId+'/news_story';
           } else if (this.domainId) {
             this.$.postNewsStoryAjax.url = '/api/domains/'+this.domainId+'/news_story';
-            _.merge(body, { domain_id: this.domainId })
+            __.merge(body, { domain_id: this.domainId })
           } else {
             console.error("Can't find send ids");
           }

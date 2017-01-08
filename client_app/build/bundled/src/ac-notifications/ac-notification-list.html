@@ -1,16 +1,17 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.65">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.66">
 
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.65">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.66">
 
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.65">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.66">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.65">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.65">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.66">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.66">
 
-<link rel="import" href="ac-notification-list-post.html?v=6.3.65">
-<link rel="import" href="ac-notification-list-point.html?v=6.3.65">
+<link rel="import" href="ac-notification-list-post.html?v=6.3.66">
+<link rel="import" href="ac-notification-list-point.html?v=6.3.66">
+<link rel="import" href="ac-notification-list-general-item.html?v=6.3.66">
 
 </head><body><dom-module id="ac-notification-list">
   <template>
@@ -62,7 +63,15 @@
             <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
               <ac-notification-list-point class="notificationItem" notification="[[notification]]"></ac-notification-list-point>
             </template>
-            <template is="dom-if" if="[[_notificationType(notification, 'system')]]">
+            <template is="dom-if" if="[[_notificationType(notification, 'notification.post.status.change')]]">
+              <ac-notification-list-general-item icon="language" notification="[[notification]]"></ac-notification-list-general-item>
+            </template>
+            <template is="dom-if" if="[[_notificationType(notification, 'notification.point.newsStory')]]">
+              <ac-notification-list-general-item icon="face" notification="[[notification]]" short-text="[[notification.AcActivities.0.Point.content]]">
+              </ac-notification-list-general-item>
+            </template>
+            <template is="dom-if" if="[[_notificationType(notification, 'notification.point.comment')]]">
+              <ac-notification-list-general-item icon="communication:chat-bubble-outline" notification="[[notification]]" short-text="[[notification.AcActivities.0.Point.content]]"></ac-notification-list-general-item>
             </template>
           </div>
         </template>
@@ -225,7 +234,9 @@
       },
 
       _notificationType: function (notification, type) {
-        if (type=='postNotification') {
+        if (notification.type==type) {
+          return true;
+        } else if (type=='postNotification') {
           return (['notification.post.new', 'notification.post.endorsement'].indexOf(notification.type) > -1)
         } else if (type=='pointNotification') {
           return (['notification.point.new', 'notification.point.quality'].indexOf(notification.type) > -1)
@@ -351,7 +362,7 @@
       },
 
       _displayToast: function (notifications) {
-        var notMyNotifications = _.reject(notifications, function (notification) {
+        var notMyNotifications = __.reject(notifications, function (notification) {
           var activityUser = notification.AcActivities[0].User;
           return !(window.appUser.user && activityUser && window.appUser.user.id != activityUser.id);
         });

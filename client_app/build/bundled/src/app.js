@@ -43,7 +43,7 @@
     var language = window.locale;
     i18n.init({ lng: language, resGetPath: '/locales/__lng__/__ns__.json' }, function(loaded) {
       window.i18nTranslation = i18n;
-      if (moment) {
+      if (typeof moment !== 'undefined' && moment ) {
         moment.locale(language);
       }
       console.log("Changed language to "+language);

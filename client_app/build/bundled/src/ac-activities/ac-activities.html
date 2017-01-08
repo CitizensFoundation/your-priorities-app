@@ -1,32 +1,27 @@
-<html><head></head><body>-<link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.65">
+<html><head></head><body>-<link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.66">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.65">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.66">
 
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.65">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.65">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.66">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.66">
 
-<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.65">
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.66">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.65">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.66">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.65">
-<link rel="import" href="../yp-point/yp-point-news-story-edit.html?v=6.3.65">
-<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.65">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.66">
+<link rel="import" href="../yp-point/yp-point-news-story-edit.html?v=6.3.66">
+<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.66">
 
-<link rel="import" href="./ac-activity-header.html?v=6.3.65">
-<link rel="import" href="./ac-activity-post.html?v=6.3.65">
-<link rel="import" href="./ac-activity-point.html?v=6.3.65">
-<link rel="import" href="./ac-activity-point-news-story.html?v=6.3.65">
-<link rel="import" href="./ac-activity-post-status-update.html?v=6.3.65">
-<link rel="import" href="./ac-activity-group.html?v=6.3.65">
-<link rel="import" href="./ac-activity-recommended-posts.html?v=6.3.65">
+<link rel="import" href="./ac-activity.html?v=6.3.66">
+<link rel="import" href="./ac-activity-recommended-posts.html?v=6.3.66">
 
 <dom-module id="ac-activities">
   <template>
@@ -36,7 +31,8 @@
         margin-top: 8px;
       }
 
-      .activity {
+
+      .addNewsBox {
         margin: 16px;
         background-color: #FFF;
         width: 550px;
@@ -46,7 +42,7 @@
       }
 
       @media (max-width: 500px) {
-        .activity {
+        .addNewsBox {
           width: 100%;
           height: 100%;
 
@@ -57,9 +53,18 @@
         }
       }
 
-      .activity[is-safari] {
-        height: 550px;
-        overflow: auto;
+      .activityContainer {
+        width: 550px;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      @media (max-width: 600px) {
+        .activityContainer {
+          width: 100%;
+          height: 100%;
+        }
       }
 
       .recommendedPosts {
@@ -76,34 +81,9 @@
         display: none;
       }
 
-      .container {
-        position: relative;
-      }
-
-      .topHeader {
-        background-color: var(--primary-color);
-        color: #fff;
-        height: 100% !important;
-        z-index: 100;
-      }
-
-      .shadow {
-        text-shadow: 2px 2px 4px #333;
-      }
 
       .mainActivityContent {
         height: 100% !important;
-      }
-
-      .topHeader[newpost] {
-        background-color: var(--accent-color);
-      }
-
-      ac-activity-header {
-      }
-
-      ac-activity-post {
-        width :100%;
       }
 
       .headerUserImage {
@@ -112,11 +92,6 @@
 
       h1 {
         font-size: 24px;
-      }
-
-      .userInfo {
-        padding-right: 18px;
-        text-align: left;
       }
 
       paper-button {
@@ -129,107 +104,11 @@
         padding-top: 14px;
       }
 
-      .headerText {
-        padding-left: 8px;
-      }
-
-      .typeName {
-        font-size: 30px;
-        padding-top: 12px;
-        padding-left: 4px;
-      }
-
-      .postName {
-        font-size: 18px;
-      }
-
-      .postNameInHeader {
-        font-size: 26px;
-        padding: 8px;
-        padding-right: 12px;
-        margin-top: 6px;
-      }
-
-      .postNameInHeader[long-text] {
-        font-size: 23px;
-        padding: 8px;
-      }
-
-      .postNameInHeader[very-long-text] {
-        font-size: 18px;
-        padding: 8px;
-      }
-
-      .bulb {
-        width: 54px;
-        height: 54px;
-        padding-top: 10px;
-        padding-left: 0;
-        padding-right: 0;
-      }
-
-      .postCoverMedia {
-        width:  420px;
-        min-width: 420px !important;
-        height: 236px;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: -1000;
-      }
-
-      .textGradient {
-        width:  420px;
-        min-width: 420px !important;
-        height: 236px;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: -100;
-        opacity: 0.5;
-        filter: alpha(opacity=50);
-        background: linear-gradient(
-          to bottom,
-          rgba(50,50,50, 100),
-          rgba(50,50,50, 0)
-        )
-      }
-
-      .groupCover {
-        padding-top: 12px;
-        padding-right: 12px;
-      }
-
-      .grayLine {
-        background-color: #f0f0f0;
-      }
-
-      .thumbIconNewsFeed {
-        height: 28px;
-        width: 28px;
-        padding-top: 2px;
-        padding-left: 12px;
-      }
-
-      .participateButton {
-        padding-top: 24px;
-        padding-right: 4px;
-      }
-
-      .postPadding {
-        padding-top: 38px;
-      }
 
       .createdAt {
         color: #777;
         margin-top: 16px;
         font-size: 14px;
-      }
-
-      .userHeaderContainer {
-        position: absolute;
-        bottom: 0px;
-        right: 0px;
       }
 
       yp-ajax {
@@ -275,6 +154,13 @@
         width: 100%;
         min-height: 100% !important;
       }
+
+      @media (max-width: 960px) {
+        .recommendedPosts {
+          display: none !important;
+        }
+      }
+
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -282,7 +168,7 @@
       <div class="layout vertical self-start">
         <template is="dom-if" if="[[loggedInUser]]">
           <div class="layout vertical full nudgeBox">
-            <paper-material elevation="1" hidden$="[[disableNewPosts]]" class="layout vertical activity addNewsBox">
+            <paper-material elevation="1" hidden$="[[disableNewPosts]]" class="layout vertical addNewsBox">
               <yp-point-news-story-edit domain-id="[[domainId]]" community-id="[[communityId]]" group-id="[[groupId]]" post-group-id="[[postGroupId]]" post-id="[[postId]]" on-refresh="loadNewData">
               </yp-point-news-story-edit>
             </paper-material>
@@ -291,48 +177,21 @@
         <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]" override-padding-top$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
             <div class="layout vertical center-center">
-              <paper-material is-safari$="[[isSafari]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
-                <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
-                <div class="mainActivityContent">
-                  <div class="layout horizontal">
-                    <ac-activity-header class="layout horizontal headerUserImage" activity="[[activity]]"></ac-activity-header>
-                    <div class="flex"></div>
-                    <div hidden$="[[!wide]]" class="createdAt" title="[[fromLongTime(activity.created_at)]]">
-                      [[fromTime(activity.created_at)]]
-                    </div>
-                  </div>
-
-                  <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-                    <ac-activity-post post-id$="[[postId]]" group="[[activity.Group]]" community-id="[[communityId]]" group-id="[[groupId]]" activity="[[activity]]"></ac-activity-post>
-                  </template>
-
-                  <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
-                    <ac-activity-point post-id$="[[postId]]" activity="[[activity]]"></ac-activity-point>
-                  </template>
-
-                  <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
-                    <ac-activity-point-news-story activity="[[activity]]"></ac-activity-point-news-story>
-                  </template>
-
-                  <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">
-                    <ac-activity-post-status-update activity="[[activity]]"></ac-activity-post-status-update>
-                  </template>
-                </div>
-              </paper-material>
+              <ac-activity class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]" domain-id="[[domainId]]" tabindex$="[[tabIndex]]" on-ak-delete-activity="_deleteActivity"></ac-activity>
             </div>
           </template>
         </iron-list>
+        <div class="layout horizontal center-center">
+          <yp-ajax id="ajax" large-spinner="" on-response="_activitiesResponse"></yp-ajax>
+          <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner="" on-response="_activityDeletedResponse"></yp-ajax>
+        </div>
       </div>
       <div class="layout horizontal center-center recommendedPosts" not-active$="[[noRecommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
         <ac-activity-recommended-posts id="recommendedPosts" recommended-posts="[[recommendedPosts]]" class="layout vertical"></ac-activity-recommended-posts>
+        <div class="layout horizontal center-center">
+          <yp-ajax id="recommendationAjax" large-spinner="" on-response="_recommendedPostsResponse"></yp-ajax>
+        </div>
       </div>
-      <div class="layout horizontal center-center">
-        <yp-ajax id="recommendationAjax" large-spinner="" on-response="_recommendedPostsResponse"></yp-ajax>
-      </div>
-    </div>
-    <div class="layout horizontal center-center">
-      <yp-ajax id="ajax" large-spinner="" on-response="_activitiesResponse"></yp-ajax>
-      <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner="" on-response="_activityDeletedResponse"></yp-ajax>
     </div>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
@@ -448,16 +307,7 @@
         ironListPaddingTop: {
           type: Number,
           computed: '_ironListPaddingTop(wide)'
-        },
-
-        isSafari: {
-          type: Boolean,
-          computed: '_isSafari(wide)'
         }
-      },
-
-      _isSafari: function () {
-        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       },
 
       _ironListResizeScrollThreshold: function (wide) {
@@ -483,114 +333,19 @@
           list.updateViewportBoundaries();
           this.async(function () {
             list.notifyResize();
-          });
+          }, 50);
         }
         return wide;
       },
 
-      _hasPostImage: function (post) {
-        return post && post.cover_media_type=="image";
-      },
-
-      _getActivityTypeName: function (activity) {
-        if (activity.type=='activity.point.new' && activity.Point) {
-          if (activity.Point.value>0) {
-            return this.t('activity.point.newFor');
-          } else if (activity.Point.value<0) {
-            return this.t('activity.point.newAgainst');
-          } else {
-            return this.t('activity.point.newComment')
-          }
-        } else {
-          return this.t(activity.type);
-        }
-      },
-
-      _hidePostListPadding: function () {
-        if (!this.postId) {
-          return true;
-        } else {
-          return false;
-        }
-      },
-
-      _postNameFor: function (activity) {
-        if (activity.Post) {
-          return activity.Post.name;
-        } else if (activity.Point && activity.Point.Post) {
-          return activity.Point.Post.name
-        } else {
-          return "";
-        }
-      },
-
-      _longPostNameFor: function (activity) {
-        if (activity.Post) {
-          return activity.Post.name.length>50;
-        } else if (activity.Point && activity.Point.Post) {
-          return activity.Point.Post.name.length>50;
-        } else {
-          return false;
-        }
-      },
-
-      _veryLongPostNameFor: function (activity) {
-        if (activity.Post) {
-          return activity.Post.name.length>70;
-        } else if (activity.Point && activity.Point.Post) {
-          return activity.Point.Post.name.length>70;
-        } else {
-          return false;
-        }
-      },
-
-      _showGroup: function (activity) {
-        if (activity.PostStatusChange) {
-          return false;
-        } else if (activity.Group) {
-          if (activity.Group.name == 'hidden_public_group_for_domain_level_points') {
-            return false;
-          } else {
-            return true;
-          }
-        } else {
-          return false;
-        }
-      },
-
-      _elevationForType: function (type) {
-        return 1;
-
-        /*if (type=='activity.post.new') {
-         return 5;
-         } else if (type=='activity.post.status.change') {
-         return 3;
-         } else {
-         return 2;
-         }*/
-      },
-
-      _hasActivityAccess: function (activity) {
-        if (this.domainId) {
-          return this.checkDomainAccess(activity.Domain)
-        } else if (this.communityId) {
-          return this.checkCommunityAccess(activity.Community)
-        } else if (this.groupId) {
-          return this.checkGroupAccess(activity.Group)
-        } else if (this.postId) {
-          return this.checkPostAccess(activity.Post)
-        } else {
-          return false;
-        }
-      },
 
       _activityDeletedResponse: function (event, detail) {
         var activityId = detail.response.activityId;
-        this.set('activities', _.filter(this.activities, function(o) { return (o.id!=activityId) }));
+        this.set('activities', __.filter(this.activities, function(o) { return (o.id!=activityId) }));
       },
 
-      _deleteActivity: function (event) {
-        this.set('activityIdToDelete', event.model.activity.id);
+      _deleteActivity: function (event, detail) {
+        this.set('activityIdToDelete', detail.id);
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
         dialog.open(this.t('activity.confirmDelete'), this._reallyDelete.bind(this));
       },
@@ -608,48 +363,6 @@
         this.$.deleteActivityAjax.body = {};
         this.$.deleteActivityAjax.generateRequest();
         this.set('activityIdToDelete', null);
-      },
-
-      _upVote: function (point) {
-        if (point && point.value == 0) {
-          return true;
-        } else if (!point) {
-          return false;
-        } else {
-          return point.value > 0;
-        }
-      },
-
-      _downVote: function (point) {
-        if (point && point.value == 0) {
-          return true;
-        } else if (!point) {
-          return false;
-        } else {
-          return point.value < 0;
-        }
-      },
-
-      _joinPost: function (event) {
-        if (!this.postId) {
-          if (event.model.activity.Post) {
-            this.goToPost(event.model.activity.Post.id);
-          } else if (event.model.activity.PostStatusChange) {
-            this.goToPost(event.model.activity.PostStatusChange.post_id);
-          }
-        }
-      },
-
-      _getActivityWithPostTitle: function (activity) {
-        return this.t(activity.type) + ' ' + activity.Post.name;
-      },
-
-      _isNotActivityType: function (activity, type) {
-        return activity.type!=type
-      },
-
-      _isActivityType: function (activity, type) {
-        return activity.type==type
       },
 
       _generateRequest: function (typeId, typeName) {
@@ -676,8 +389,11 @@
 
       _loadMoreData: function () {
         this.async(function () {
+          console.log("_loadMoreData");
           if (this.$$("#ironList").offsetWidth > 0 && this.$$("#ironList").offsetHeight > 0) {
+            console.log("_loadMoreData 2 url: "+this.url+" moreToLoad: "+this.moreToLoad);
             if (this.url!='' && this.moreToLoad && this.oldestProcessedActivityAt) {
+              console.log("_loadMoreData 3");
               this.set('moreToLoad', false);
               console.info("_loadMoreData for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
               this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
@@ -742,6 +458,8 @@
 
         if (detail.response.oldestProcessedActivityAt) {
           this.set('oldestProcessedActivityAt', detail.response.oldestProcessedActivityAt);
+        } else {
+          console.warn("Have not set oldestProcessedActivityAt");
         }
 
         activities.forEach(function(activity) {
@@ -752,12 +470,18 @@
           }
         }.bind(this));
 
+        console.info("Activities length: "+activities.length);
         if (activities.length>0) {
           if (!this.latestProcessedActivityAt || this.latestProcessedActivityAt < activities[0].created_at) {
             this.set('latestProcessedActivityAt', activities[0].created_at);
           }
+          if (!this.latestProcessedActivityAt) {
+            console.error("Have not set latest processed activity at");
+          } else {
+            console.log("latestProcessedActivityAt: "+ this.latestProcessedActivityAt)
+          }
           this.set('moreToLoad', true);
-          if (this.activities.length<12) {
+          if (this.activities.length<15 || (activities.length<3 && this.activities.length<100)) {
             this._loadMoreData();
           }
         }

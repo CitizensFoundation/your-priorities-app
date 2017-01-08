@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.65">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.66">
 
 <script>
   /**
@@ -28,7 +28,7 @@
     _uniqueInDomain: function (array, domainId) {
       var newArray = [];
       var ids = {};
-      _.each(array, function (item) {
+      __.each(array, function (item) {
         if (!ids[item.id]) {
           ids[item.id] = item.id;
           if (!item.configuration) {

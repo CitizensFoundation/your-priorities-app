@@ -1,14 +1,14 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.65">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.66">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.65">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.66">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.65">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.66">
 
-<link rel="import" href="../yp-post/yp-post-actions.html?v=6.3.65">
-<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.65">
-<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.3.65">
-<link rel="import" href="../yp-group/yp-group-behaviors.html?v=6.3.65">
+<link rel="import" href="../yp-post/yp-post-actions.html?v=6.3.66">
+<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.66">
+<link rel="import" href="../yp-post/yp-post-behaviors.html?v=6.3.66">
+<link rel="import" href="../yp-group/yp-group-behaviors.html?v=6.3.66">
 
 </head><body><dom-module id="ac-activity-post">
   <template>
@@ -158,10 +158,15 @@
       .groupTitle {
         font-size: 15px;
         padding-top: 8px;
+        color: #777;
+      }
+
+      .hasPointer {
+        cursor: pointer;
       }
     </style>
 
-    <div class="layout vertical">
+    <div class="layout vertical hasPointer" on-tap="_goToPost">
       <div class="actionInfo">
         [[t('addedAnIdea')]]
       </div>
@@ -236,12 +241,17 @@
 
       },
 
+      _goToPost: function () {
+        if (this.activity.Post && !this.postId) {
+          this.goToPost(this.activity.Post.id);
+        }
+      },
+
       _isIE11: function () {
         return /Trident.*rv[ :]*11\./.test(navigator.userAgent);
       },
 
       _hasGroupHeader: function (group, postId, groupId) {
-        debugger;
         return (group && !postId && !groupId)
       },
 

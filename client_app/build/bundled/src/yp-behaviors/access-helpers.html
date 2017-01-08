@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.65">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.66">
 
 <script>
   /**
@@ -7,7 +7,7 @@
   Polymer.AccessHelpers = {
 
     _hasAdminRights: function(objectId, adminRights) {
-      return _.find(adminRights, function(o) { return o.id == objectId; });
+      return __.find(adminRights, function(o) { return o.id == objectId; });
     },
 
     _hasAccess: function (object, objectId, adminRights) {

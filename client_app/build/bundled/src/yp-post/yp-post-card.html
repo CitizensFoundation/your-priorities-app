@@ -1,27 +1,27 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.65">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.66">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.65">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.66">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.65">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.65">
-<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.65">
-<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.65">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.66">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.66">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.66">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.66">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.65">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.66">
 
-<link rel="import" href="yp-post-actions.html?v=6.3.65">
-<link rel="import" href="yp-post-cover-media.html?v=6.3.65">
-<link rel="import" href="yp-post-behaviors.html?v=6.3.65">
+<link rel="import" href="yp-post-actions.html?v=6.3.66">
+<link rel="import" href="yp-post-cover-media.html?v=6.3.66">
+<link rel="import" href="yp-post-behaviors.html?v=6.3.66">
 
 </head><body><dom-module id="yp-post-card">
 
@@ -45,11 +45,6 @@
         cursor: pointer;
       }
 
-      yp-post-cover-media {
-        width: 420px;
-        height: 232px;
-      }
-
       .postCard {
         background-color: #fff;
         @apply(--layout-horizontal);
@@ -64,7 +59,6 @@
       :host {
         display: block;
         @apply(--layout-vertical);
-        width: 416px;
       }
 
       .postCard {
@@ -72,14 +66,31 @@
         width: 416px;
       }
 
+      .postCard[mini] {
+        width: 210px;
+        height: 100%;
+        margin: 0;
+        padding-top: 0;
+      }
+
       yp-post-cover-media {
         width: 416px;
         height: 234px;
       }
 
+      yp-post-cover-media[mini] {
+        width: 210px;
+        height: 118px;
+      }
+
       .post-name {
         font-size: 23px;
         height: 60px;
+      }
+
+      .post-name[mini] {
+        height: 100%;
+        padding: 16px;
       }
 
       .description {
@@ -126,14 +137,14 @@
     <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <paper-material class="card postCard layout vertical" elevation="[[elevation]]" animated="">
+    <paper-material mini$="[[mini]]" class="card postCard layout vertical" elevation="[[elevation]]" animated="">
       <div class="layout vertical">
-        <yp-post-cover-media post="[[post]]"></yp-post-cover-media>
-        <h1 class="post-name" id="postName" on-tap="goToPostIfNotHeader">[[postName]]</h1>
-        <div class="description layout horizontal" on-tap="goToPostIfNotHeader">
+        <yp-post-cover-media mini$="[[mini]]" post="[[post]]"></yp-post-cover-media>
+        <h1 class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">[[postName]]</h1>
+        <div class="description layout horizontal" on-tap="goToPostIfNotHeader" hidden$="[[mini]]">
           [[shortDescription]]
         </div>
-        <yp-post-actions floating="" class="" elevation="-1" endorse-mode="[[endorseMode]]" post="[[post]]"></yp-post-actions>
+        <yp-post-actions floating="" class="" elevation="-1" endorse-mode="[[endorseMode]]" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
       </div>
     </paper-material>
   </template>
@@ -176,6 +187,11 @@
           value: false,
           notify: true,
           computed: '_hasPostAccess(post, gotAdminRights)'
+        },
+
+        mini: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -219,16 +235,30 @@
           this.async(function () {
             var postName = this.$$("#postName");
             if (postName) {
-              if (post.name.length>200) {
-                postName.style.fontSize = "15px";
-              } else if (post.name.length>100) {
-                postName.style.fontSize = "17px";
-              } else if (post.name.length>40) {
-                postName.style.fontSize="18px";
-              } else if (post.name.length>20) {
-                postName.style.fontSize="24px";
+              if (this.mini) {
+                if (post.name.length>200) {
+                  postName.style.fontSize = "12px";
+                } else if (post.name.length>100) {
+                  postName.style.fontSize = "14px";
+                } else if (post.name.length>40) {
+                  postName.style.fontSize="17px";
+                } else if (post.name.length>20) {
+                  postName.style.fontSize="19px";
+                } else {
+                  postName.style.fontSize="20px";
+                }
               } else {
-                postName.style.fontSize="28px";
+                if (post.name.length>200) {
+                  postName.style.fontSize = "15px";
+                } else if (post.name.length>100) {
+                  postName.style.fontSize = "17px";
+                } else if (post.name.length>40) {
+                  postName.style.fontSize="18px";
+                } else if (post.name.length>20) {
+                  postName.style.fontSize="24px";
+                } else {
+                  postName.style.fontSize="28px";
+                }
               }
             }
           });

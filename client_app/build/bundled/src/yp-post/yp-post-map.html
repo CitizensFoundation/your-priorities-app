@@ -1,13 +1,16 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.65">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.66">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.65">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.66">
 
-<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.65">
-<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.65">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.66">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.66">
+<link rel="import" href="../../bower_components/paper-map-info/paper-map-info.html?v=6.3.66">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.65">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.65">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.66">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.66">
+<link rel="import" href="../yp-post/yp-post-card.html?v=6.3.66">
 
 </head><body><dom-module id="yp-post-map">
   <template>
@@ -19,9 +22,12 @@
       }
 
       .mapContainer {
-        margin: 24px;
+        margin: 0;
+        padding: 0;
         width: 960px;
         height: 500px;
+        margin-top: 16px;
+        margin-bottom: 48px;
       }
 
       .noMapContainer {
@@ -81,21 +87,38 @@
         }
       }
 
+      #myInfoCard {
+        background-color: #000;
+        padding: 0;
+        margin: 0 !important;
+        --paper-map-info-mixin: {
+          padding: 0;
+          margin: 0 !important;
+          max-width: 100%;
+          max-height: 100%;
+        };
+        --paper-map-info-beak-mixin: {
+          color: #F57C00;
+        };
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-media-query query="(min-width: 1000px)" query-matches="{{wide}}"></iron-media-query>
 
     <div class="layout vertical center-center">
-      <template is="dom-if" if="[[posts]]">
-        <paper-material elevation="3" class="mapContainer">
+      <div id="mapContainer" elevation="3" class="mapContainer">
+        <template is="dom-if" if="[[posts]]">
           <google-map id="map" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" fit-to-markers="">
             <template is="dom-repeat" items="[[posts]]" as="post">
-              <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" class="marker">
-                <a href="/post/[[post.id]]" target="_blank">[[post.name]]</a>
+              <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" click-events="" class="marker" on-google-map-marker-click="markerClick">
               </google-map-marker>
             </template>
+            <paper-map-info id="myInfoCard" fade-in="">
+              <yp-post-card mini="" post$="[[selectedPost]]"></yp-post-card>
+            </paper-map-info>
           </google-map>
-        </paper-material>
-      </template>
+        </template>
+      </div>
 
       <template is="dom-if" if="[[noPosts]]">
         <paper-material elevation="3" class="noMapContainer">
@@ -103,11 +126,11 @@
         </paper-material>
       </template>
 
-    <div class="layout horizontal center-center">
-      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+      <div class="layout horizontal center-center">
+        <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+      </div>
     </div>
-
-  </div></template>
+  </template>
 
   <script>
     Polymer({
@@ -136,8 +159,26 @@
         noPosts: {
           type: Boolean,
           value: false
-        }
+        },
+
+        wide: Boolean,
+        selectedPost: Object
       },
+
+      resetMapHeight: function () {
+        var map = this.$$("#mapContainer");
+        if (map) {
+          var windowHeight = window.innerHeight;
+          if (map) {
+            var height;
+            if (this.wide) {
+              height = windowHeight - 448;
+              //map.style.height = Math.max(Math.min(height, window.innerHeight)),  + 'px';
+              //map.style.width = Math.min(window.innerWidth, 1920) + 'px';
+            }
+          }
+        }
+     },
 
       _groupIdChanged: function (newValue, oldValue) {
         if (newValue) {
@@ -166,6 +207,20 @@
         } else {
           this.set('noPosts', true);
         }
+        this.resetMapHeight();
+      },
+
+      markerClick: function(e) {
+        window.appGlobals.activity('clicked', 'marker');
+        this.set('selectedPost', e.model.get('post'));
+        var a = this.selectedPost;
+        if (e.srcElement) {
+          this.$$("#myInfoCard").showInfoWindow(e.srcElement.marker);
+        } else {
+          this.$$("#myInfoCard").showInfoWindow(e.currentTarget.marker);
+        }
+        var infocardDiv = this.$$("#myInfoCard").$$("#infocarddiv");
+        infocardDiv.children[1].style.zIndex = "20";
       }
 
     });

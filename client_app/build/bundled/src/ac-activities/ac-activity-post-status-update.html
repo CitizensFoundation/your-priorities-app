@@ -1,13 +1,13 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.65">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.66">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.65">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.66">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.65">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.66">
 
-<link rel="import" href="../yp-point/yp-point.html?v=6.3.65">
+<link rel="import" href="../yp-point/yp-point.html?v=6.3.66">
 
-<link rel="import" href="./ac-activity-post-header.html?v=6.3.65">
+<link rel="import" href="./ac-activity-post-header.html?v=6.3.66">
 
 </head><body><dom-module id="ac-activity-post-status-update">
   <template>
@@ -26,8 +26,12 @@
 
       .postName {
         padding-left: 32px;
+        padding-right: 32px;
         font-weight: bold;
         font-size: 19px;
+        margin-bottom: 8px;
+        color: #444;
+        cursor: pointer;
       }
 
       .groupName {
@@ -41,6 +45,9 @@
     <div class="layout vertical">
       <div class="groupName">
         [[activity.Group.name]]
+      </div>
+      <div class="postName" on-tap="_goToPost">
+        [[activity.Post.name]]
       </div>
       <div id="statusChange" class="statusChange"></div>
     </div>
@@ -61,6 +68,12 @@
         activity: {
           type: Object,
           observer: '_activityChanged'
+        }
+      },
+
+      _goToPost: function () {
+        if (this.activity.Post) {
+          this.goToPost(this.activity.Post.id);
         }
       },
 

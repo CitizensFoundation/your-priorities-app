@@ -1,9 +1,9 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.65">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.65">
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.65">
-<link rel="import" href="../yp-point/yp-point.html?v=6.3.65">
-<link rel="import" href="./ac-activity-post-header.html?v=6.3.65">
-<link rel="import" href="../yp-point/yp-point-comment-list.html?v=6.3.65">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.66">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.66">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.66">
+<link rel="import" href="../yp-point/yp-point.html?v=6.3.66">
+<link rel="import" href="./ac-activity-post-header.html?v=6.3.66">
+<link rel="import" href="../yp-point/yp-point-comment-list.html?v=6.3.66">
 
 </head><body><dom-module id="ac-activity-point-news-story">
   <template>
@@ -14,13 +14,25 @@
 
       .newsStoryContainer {
         width: 100% !important;
+        padding-left: 8px;
+        padding-right: 8px;
       }
 
-      yp-point-news-story {
+      .postName {
+        cursor: pointer;
+        margin-top: 16px;
+        padding-left: 8px;
+        padding-right: 8px;
+        color: #555;
       }
     </style>
-    <div class="layout vertical center-center newsStoryContainer">
-      <yp-point-news-story with-comments="" hide-user="" class="card" point="[[activity.Point]]"></yp-point-news-story>
+    <div class="layout vertical">
+      <div class="postName" hidden$="[[_hidePostName(activity)]]" on-tap="_goToPost">
+        [[activity.Post.name]]
+      </div>
+      <div class="layout vertical center-center newsStoryContainer">
+        <yp-point-news-story with-comments="" hide-user="" class="card" point="[[activity.Point]]"></yp-point-news-story>
+      </div>
     </div>
   </template>
 
@@ -38,10 +50,20 @@
         activity: {
           type: Object,
           observer: '_activityChanged'
-        }
+        },
+
+        postId: Number
       },
 
       _activityChanged: function (newValue) {
+      },
+
+      _goToPost: function (){
+        this.goToPost(this.activity.Post.id);
+      },
+
+      _hidePostName: function (activity) {
+        return (this.postId!=null);
       }
     });
   </script>

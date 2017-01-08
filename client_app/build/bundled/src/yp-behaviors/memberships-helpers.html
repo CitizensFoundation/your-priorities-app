@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.65">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.66">
 
 <script>
   /**
@@ -7,7 +7,7 @@
   Polymer.MembershipsHelpers = {
 
     _hasMemberships: function(objectId, memberships) {
-      return _.find(memberships, function(o) { return o.id == objectId; });
+      return __.find(memberships, function(o) { return o.id == objectId; });
     },
 
     _hasMembership: function (object, objectId, memberships) {
