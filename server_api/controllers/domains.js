@@ -54,6 +54,9 @@ var getDomain = function (req, domainId, done) {
           where: {
             access: {
               $ne: models.Community.ACCESS_SECRET
+            },
+            status: {
+              $ne: 'hidden'
             }
           },
           include: [
