@@ -296,7 +296,7 @@ module.exports = function(sequelize, DataTypes) {
 
       getImageFormatUrl: function(formatId) {
         if (this.PostHeaderImages && this.PostHeaderImages.length>0) {
-          var formats = JSON.parse(this.PostHeaderImages[images.length-1].formats);
+          var formats = JSON.parse(this.PostHeaderImages[this.PostHeaderImages.length-1].formats);
           if (formats && formats.length>0)
             return formats[formatId];
         } else {
