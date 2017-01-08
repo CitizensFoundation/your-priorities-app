@@ -25,6 +25,7 @@
     "express-session": "git+https://github.com/rbjarnason/session.git",
     "express-useragent": "^0.2.4",
     "flickrapi": "~0.3.28",
+    "heroku-node-settings": "^1.0.2",
     "i18next": "^3.0.0",
     "i18next-node-fs-backend": "^0.1.2",
     "ip": "^1.1.0",
