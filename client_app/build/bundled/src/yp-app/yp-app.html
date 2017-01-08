@@ -16352,7 +16352,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.66">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.67">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -17754,7 +17754,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.66" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.67" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -17811,7 +17811,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.66">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.67">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -17819,7 +17819,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.66">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.67">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19020,7 +19020,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.66", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.67", fontName: 'FFClanWebBook' });
 
     },
 
@@ -19031,7 +19031,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.66";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.67";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -21590,8 +21590,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.66">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.66">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.67">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.67">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -25413,7 +25413,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.66" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.67" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -30628,7 +30628,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.66">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.67">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -38728,7 +38728,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         padding-right: 16px;
       }
 
-      @media (max-width: 500px) {
+      @media (max-width: 600px) {
         .activity {
           width: 100%;
           height: 100%;
@@ -38738,6 +38738,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           padding-right: 16px;
           margin-bottom: 8px;
           margin-top: 8px;
+          margin-left: -8px;
+          width: -webkit-calc(100% - 16px);
+          width:    -moz-calc(100% - 16px);
+          width:         calc(100% - 16px);
+        }
+
+        .activity[logged-in-user] {
+          margin-left: 0;
+          width: 100%;
         }
       }
 
@@ -38797,7 +38806,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <paper-material is-safari$="[[isSafari]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
+    <paper-material is-safari$="[[isSafari]]" logged-in-user$="[[loggedInUser]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
       <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
       <div class="mainActivityContent">
         <div class="layout horizontal">
@@ -38827,8 +38836,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </paper-material>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
-
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
   </template>
 
@@ -38924,7 +38931,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         margin-top: 8px;
       }
 
-
       .addNewsBox {
         margin: 16px;
         background-color: #FFF;
@@ -38934,7 +38940,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         padding-right: 16px;
       }
 
-      @media (max-width: 500px) {
+      @media (max-width: 600px) {
         .addNewsBox {
           width: 100%;
           height: 100%;
@@ -38943,6 +38949,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           padding-right: 16px;
           margin-bottom: 8px;
           margin-top: 8px;
+          margin-left: -8px;
+          width: -webkit-calc(100% - 24px);
+          width:    -moz-calc(100% - 24px);
+          width:         calc(100% - 24px);
         }
       }
 
@@ -39024,25 +39034,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         margin-top: 32px;
       }
 
-      .nudgeBox {
-        margin-left: -6px;
-      }
-
-      @media (max-width: 400px) {
-        .userInfoContainer {
-          padding-left: 64px;
-        }
-
-        .addNewsBox {
-          margin: 0 !important;
-          margin-top: 48px;
-        }
-
-        .nudgeBox {
-          margin-left: -8px;
-        }
-      }
-
       .activityContainer {
         width: 100%;
         min-height: 100% !important;
@@ -39060,7 +39051,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     <div class="layout horizontal center-center">
       <div class="layout vertical self-start">
         <template is="dom-if" if="[[loggedInUser]]">
-          <div class="layout vertical full nudgeBox">
+          <div class="layout vertical">
             <paper-material elevation="1" hidden$="[[disableNewPosts]]" class="layout vertical addNewsBox">
               <yp-point-news-story-edit domain-id="[[domainId]]" community-id="[[communityId]]" group-id="[[groupId]]" post-group-id="[[postGroupId]]" post-id="[[postId]]" on-refresh="loadNewData">
               </yp-point-news-story-edit>
@@ -39070,7 +39061,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]" override-padding-top$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
             <div class="layout vertical center-center">
-              <ac-activity class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]" domain-id="[[domainId]]" tabindex$="[[tabIndex]]" on-ak-delete-activity="_deleteActivity"></ac-activity>
+              <ac-activity logged-in-user$="[[loggedInUser]]" class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]" domain-id="[[domainId]]" tabindex$="[[tabIndex]]" on-ak-delete-activity="_deleteActivity"></ac-activity>
             </div>
           </template>
         </iron-list>
@@ -53238,14 +53229,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.66">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.67">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.66">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.67">
    * ```
    *
    * ### Consuming effects
@@ -54011,7 +54002,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.66">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.67">
 ```
 
 #### List of effects
@@ -59500,18 +59491,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.66"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.67"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.66"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.67"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.66"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.67"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -60904,9 +60895,9 @@ value. `setMax` should move the slider to the maximum value.
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.66");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.67");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.66");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.67");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);

@@ -48,6 +48,11 @@
           width:    -moz-calc(100% - 16px);
           width:         calc(100% - 16px);
         }
+
+        .activity[logged-in-user] {
+          margin-left: 0;
+          width: 100%;
+        }
       }
 
       .activity[is-safari] {
@@ -106,7 +111,7 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <paper-material is-safari$="[[isSafari]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
+    <paper-material is-safari$="[[isSafari]]" logged-in-user$="[[loggedInUser]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
       <paper-icon-button hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
       <div class="mainActivityContent">
         <div class="layout horizontal">
@@ -136,8 +141,6 @@
     </paper-material>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
-
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
   </template>
 

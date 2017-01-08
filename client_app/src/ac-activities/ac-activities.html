@@ -31,7 +31,6 @@
         margin-top: 8px;
       }
 
-
       .addNewsBox {
         margin: 16px;
         background-color: #FFF;
@@ -41,7 +40,7 @@
         padding-right: 16px;
       }
 
-      @media (max-width: 500px) {
+      @media (max-width: 600px) {
         .addNewsBox {
           width: 100%;
           height: 100%;
@@ -50,6 +49,10 @@
           padding-right: 16px;
           margin-bottom: 8px;
           margin-top: 8px;
+          margin-left: -8px;
+          width: -webkit-calc(100% - 24px);
+          width:    -moz-calc(100% - 24px);
+          width:         calc(100% - 24px);
         }
       }
 
@@ -131,25 +134,6 @@
         margin-top: 32px;
       }
 
-      .nudgeBox {
-        margin-left: -6px;
-      }
-
-      @media (max-width: 400px) {
-        .userInfoContainer {
-          padding-left: 64px;
-        }
-
-        .addNewsBox {
-          margin: 0 !important;
-          margin-top: 48px;
-        }
-
-        .nudgeBox {
-          margin-left: -8px;
-        }
-      }
-
       .activityContainer {
         width: 100%;
         min-height: 100% !important;
@@ -167,7 +151,7 @@
     <div class="layout horizontal center-center">
       <div class="layout vertical self-start">
         <template is="dom-if" if="[[loggedInUser]]">
-          <div class="layout vertical full nudgeBox">
+          <div class="layout vertical">
             <paper-material elevation="1" hidden$="[[disableNewPosts]]" class="layout vertical addNewsBox">
               <yp-point-news-story-edit domain-id="[[domainId]]"
                                         community-id="[[communityId]]"
@@ -183,7 +167,7 @@
                    override-padding-top$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
             <div class="layout vertical center-center">
-              <ac-activity class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]"
+              <ac-activity logged-in-user$="[[loggedInUser]]" class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]"
                            domain-id="[[domainId]]" tabindex$="[[tabIndex]]" on-ak-delete-activity="_deleteActivity"></ac-activity>
             </div>
           </template>
