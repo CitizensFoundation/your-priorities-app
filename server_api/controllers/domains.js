@@ -4,6 +4,7 @@ var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var _ = require('lodash');
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {
@@ -35,10 +36,8 @@ var getDomain = function (req, domainId, done) {
       where: {id: domainId},
       attributes: attributes,
       order: [
-        [{model: models.Community}, 'counter_users', 'desc'],
         [{model: models.Image, as: 'DomainLogoImages'}, 'created_at', 'asc'],
-        [{model: models.Image, as: 'DomainHeaderImages'}, 'created_at', 'asc'],
-        [models.Community, {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
+        [{model: models.Image, as: 'DomainHeaderImages'}, 'created_at', 'asc']
       ],
       include: [
         {
@@ -48,10 +47,13 @@ var getDomain = function (req, domainId, done) {
         {
           model: models.Image, as: 'DomainHeaderImages',
           required: false
-        },
-        {
-          model: models.Community,
+        }
+      ]
+    }).then(function (domain) {
+      if (domain) {
+        models.Community.findAll({
           where: {
+            domain_id: domain.id,
             access: {
               $ne: models.Community.ACCESS_SECRET
             },
@@ -59,6 +61,10 @@ var getDomain = function (req, domainId, done) {
               $ne: 'hidden'
             }
           },
+          order: [
+            [ 'counter_users', 'desc'],
+            [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
+          ],
           include: [
             {
               model: models.Image, as: 'CommunityLogoImages',
@@ -68,25 +74,25 @@ var getDomain = function (req, domainId, done) {
               model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
               required: false
             }
-          ],
-          required: false
-        }
-      ]
-    }).then(function (domain) {
-      if (domain) {
-        log.info('Domain Viewed', {domain: toJson(domain.simple()), context: 'view', user: toJson(req.user)});
-        if (req.ypDomain && req.ypDomain.secret_api_keys &&
-          req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
-          req.ypDomain.secret_api_keys.saml.entryPoint.length > 6) {
-          domain.dataValues.samlLoginProvided = true;
-        }
-
-        if (req.ypDomain && req.ypDomain.secret_api_keys &&
-          req.ypDomain.secret_api_keys.facebook && req.ypDomain.secret_api_keys.facebook.client_secret &&
-          req.ypDomain.secret_api_keys.facebook.client_secret.length > 6) {
-          domain.dataValues.facebookLoginProvided = true;
-        }
-        done(null, domain);
+          ]
+        }).then(function (communities) {
+          log.info('Domain Viewed', {domain: toJson(domain.simple()), context: 'view', user: toJson(req.user)});
+          if (req.ypDomain && req.ypDomain.secret_api_keys &&
+            req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
+            req.ypDomain.secret_api_keys.saml.entryPoint.length > 6) {
+            domain.dataValues.samlLoginProvided = true;
+          }
+          if (req.ypDomain && req.ypDomain.secret_api_keys &&
+            req.ypDomain.secret_api_keys.facebook && req.ypDomain.secret_api_keys.facebook.client_secret &&
+            req.ypDomain.secret_api_keys.facebook.client_secret.length > 6) {
+            domain.dataValues.facebookLoginProvided = true;
+          }
+          domain = _.merge(domain, { Communities: communities });
+          domain.dataValues.Communities = communities;
+          done(null, domain);
+        }).catch(function (error) {
+          done(error)
+        });
       } else {
         done("Not found")
       }
