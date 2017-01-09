@@ -8,8 +8,8 @@
   	Convert strings of text into linkable HTML text
   */
 
-		var tokenize = linkify.tokenize;
-		var options = linkify.options;
+		var tokenize = linkify.tokenize,
+		    options = linkify.options;
 		var Options = options.Options;
 
 
@@ -35,7 +35,7 @@
 		}
 
 		function linkifyStr(str) {
-			var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+			var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
 			opts = new Options(opts);
 
@@ -53,15 +53,13 @@
 					continue;
 				}
 
-				var _opts$resolve = opts.resolve(token);
-
-				var formatted = _opts$resolve.formatted;
-				var formattedHref = _opts$resolve.formattedHref;
-				var tagName = _opts$resolve.tagName;
-				var className = _opts$resolve.className;
-				var target = _opts$resolve.target;
-				var attributes = _opts$resolve.attributes;
-
+				var _opts$resolve = opts.resolve(token),
+				    formatted = _opts$resolve.formatted,
+				    formattedHref = _opts$resolve.formattedHref,
+				    tagName = _opts$resolve.tagName,
+				    className = _opts$resolve.className,
+				    target = _opts$resolve.target,
+				    attributes = _opts$resolve.attributes;
 
 				var link = '<' + tagName + ' href="' + escapeAttr(formattedHref) + '"';
 
@@ -92,5 +90,6 @@
 
 		return linkifyStr;
 	}(linkify);
+
 	window.linkifyStr = linkifyString;
 })(window, linkify);

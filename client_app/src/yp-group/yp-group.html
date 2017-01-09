@@ -18,6 +18,8 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
+
 <link rel="import" href="../ac-activities/ac-activities.html">
 <link rel="import" href="../yp-page/yp-page.html">
 
@@ -188,7 +190,9 @@
           </div>
         </section>
         <section name="news">
-          <ac-activities id="groupActivities" disable-new-posts="[[disableNewPosts]]" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" group-id="[[group.id]]"></ac-activities>
+          <template is="dom-if" if="[[newsTabSelected]]">
+            <ac-activities id="groupActivities" disable-new-posts="[[disableNewPosts]]" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" group-id="[[group.id]]"></ac-activities>
+          </template>
         </section>
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section name="in_progress">
@@ -261,7 +265,8 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.ypThemeBehavior
+        Polymer.ypThemeBehavior,
+        Polymer.YpNewsTabSelected
       ],
 
       listeners: {

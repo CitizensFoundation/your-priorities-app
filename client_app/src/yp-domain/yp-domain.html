@@ -15,6 +15,7 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/collection-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 <link rel="import" href="../yp-community/yp-community-collection-behaviors.html">
 
@@ -113,7 +114,9 @@
           </div>
         </section>
         <section name="news">
-          <ac-activities id="domainNews" selected-tab="[[selectedTab]]" domain-id="[[domain.id]]"></ac-activities>
+          <template is="dom-if" if="[[newsTabSelected]]">
+            <ac-activities id="domainNews" selected-tab="[[selectedTab]]" domain-id="[[domain.id]]"></ac-activities>
+          </template>
         </section>
         <section name="other_social_media" class="layout vertical">
           <yp-other-social-media active$="[[otherSocialMediaActive]]"></yp-other-social-media>
@@ -153,7 +156,8 @@
         Polymer.ypThemeBehavior,
         Polymer.CommunityCollectionBehaviors,
         Polymer.CollectionHelpers,
-        Polymer.AccessHelpers
+        Polymer.AccessHelpers,
+        Polymer.YpNewsTabSelected
       ],
 
       properties: {

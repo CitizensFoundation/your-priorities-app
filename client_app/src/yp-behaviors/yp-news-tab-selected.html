@@ -1,0 +1,21 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /**
+   * @polymerBehavior YpNewsTabSelected
+   */
+  Polymer.YpNewsTabSelected = {
+
+    properties: {
+
+      newsTabSelected: {
+        value: Boolean,
+        computed: '_newsTabSelected(selectedTab)'
+      }
+    },
+
+    _newsTabSelected: function (tab) {
+      return tab=='news';
+    }
+  }
+</script>
