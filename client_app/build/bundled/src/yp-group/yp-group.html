@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.67"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.69"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -2335,7 +2335,9 @@ Custom property | Description | Default
           </div>
         </section>
         <section name="news">
-          <ac-activities id="groupActivities" disable-new-posts="[[disableNewPosts]]" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" group-id="[[group.id]]"></ac-activities>
+          <template is="dom-if" if="[[newsTabSelected]]">
+            <ac-activities id="groupActivities" disable-new-posts="[[disableNewPosts]]" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" group-id="[[group.id]]"></ac-activities>
+          </template>
         </section>
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section name="in_progress">
@@ -2397,7 +2399,8 @@ Custom property | Description | Default
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.ypThemeBehavior
+        Polymer.ypThemeBehavior,
+        Polymer.YpNewsTabSelected
       ],
 
       listeners: {

@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.67"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.69"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -1603,7 +1603,9 @@
           <yp-post-points id="pointsSection" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
         </div>
         <section name="news">
-          <ac-activities id="postNews" selected-tab="[[selectedTab]]" disable-new-posts="[[disableNewPosts]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
+          <template is="dom-if" if="[[newsTabSelected]]">
+            <ac-activities id="postNews" selected-tab="[[selectedTab]]" disable-new-posts="[[disableNewPosts]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
+          </template>
         </section>
         <section name="location">
           <div class="layout horizontal center-center">
@@ -1662,7 +1664,8 @@
 
         behaviors: [
           Polymer.appHelpers,
-          Polymer.ypThemeBehavior
+          Polymer.ypThemeBehavior,
+          Polymer.YpNewsTabSelected
         ],
 
         properties: {
