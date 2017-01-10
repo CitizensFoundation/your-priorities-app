@@ -87,7 +87,6 @@ var getDomain = function (req, domainId, done) {
             req.ypDomain.secret_api_keys.facebook.client_secret.length > 6) {
             domain.dataValues.facebookLoginProvided = true;
           }
-          domain = _.merge(domain, { Communities: communities });
           domain.dataValues.Communities = communities;
           done(null, domain);
         }).catch(function (error) {
