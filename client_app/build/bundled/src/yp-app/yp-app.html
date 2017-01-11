@@ -10628,7 +10628,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.70">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.71">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -10636,7 +10636,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.70">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.71">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -11024,7 +11024,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.70">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.71">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -16877,8 +16877,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.70">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.70">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.71">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.71">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -22891,7 +22891,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.70" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.71" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -27970,7 +27970,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.70" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.71" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -36858,7 +36858,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.70", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.71", fontName: 'FFClanWebBook' });
 
     },
 
@@ -36869,7 +36869,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.70";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.71";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -40579,7 +40579,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.70">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.71">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -53304,14 +53304,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.70">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.71">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.70">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.71">
    * ```
    *
    * ### Consuming effects
@@ -54077,7 +54077,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.70">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.71">
 ```
 
 #### List of effects
@@ -57225,14 +57225,18 @@ value. `setMax` should move the slider to the maximum value.
     },
 
     _resetPasswordResponse: function(event, detail) {
-      this.close();
-      window.appGlobals.notifyUserViaToast(this.t('notification.passwordResetAndLoggedIn'));
-      this._loginCompleted(detail.response);
-      this.redirectTo('/');
+      if (detail.error && detail.error=='not_found') {
+        this.$.resetPasswordAjax.showErrorDialog(this.t('errorResetTokenNotFoundOrUsed'));
+      } else {
+        this.close();
+        window.appGlobals.notifyUserViaToast(this.t('notification.passwordResetAndLoggedIn'));
+        this._loginCompleted(detail.response);
+        window.location = "/";
+      }
     },
 
     _cancel: function () {
-      this.redirectTo('/');
+      window.location = "/";
     },
 
     _loginCompleted: function (user) {
@@ -59566,18 +59570,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.70"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.71"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.70"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.71"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.70"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.71"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -60365,7 +60369,7 @@ value. `setMax` should move the slider to the maximum value.
       <paper-tabs id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
         <paper-tab name="communities" class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
         <paper-tab name="news" class="tab">[[t('news')]]</paper-tab>
-        <paper-tab name="other_social_media" class="tab">
+        <paper-tab name="other_social_media" class="tab" hidden="">
           <div class="layout vertical center-center">
             <div>[[t('other')]]</div>
             <div>[[t('socialMedia')]]</div>
@@ -60386,7 +60390,7 @@ value. `setMax` should move the slider to the maximum value.
           </template>
         </section>
         <section name="other_social_media" class="layout vertical">
-          <yp-other-social-media active$="[[otherSocialMediaActive]]"></yp-other-social-media>
+          <yp-other-social-media active$="[[otherSocialMediaActive]]" hidden=""></yp-other-social-media>
         </section>
       </iron-pages>
     </yp-page>
@@ -60973,9 +60977,9 @@ value. `setMax` should move the slider to the maximum value.
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.70");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.71");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.70");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.71");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);

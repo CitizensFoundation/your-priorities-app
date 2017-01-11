@@ -1,4 +1,5 @@
 {
+  "errorResetTokenNotFoundOrUsed": "Kóði til að endursetja lykilorð finnst ekki eða það er búið að nota hann áður",
   "addedAnIdea": "Sendi inn hugmynd...",
   "recommendedPosts": "Mælt með",
   "noComments": "Engar athugasemdir",

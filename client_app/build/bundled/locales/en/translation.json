@@ -1,4 +1,5 @@
 {
+  "errorResetTokenNotFoundOrUsed": "Password reset token not found or has been used",
   "addedAnIdea": "Added an idea...",
   "recommendedPosts": "Recommended",
   "noComments": "No comments",
