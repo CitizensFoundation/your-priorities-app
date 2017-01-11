@@ -88,7 +88,7 @@ var getUserWithAll = function (userId, callback) {
     }
     callback(error, user);
   })
-}
+};
 
 // Login
 router.post('/login', function (req, res) {
@@ -593,7 +593,7 @@ router.get('/reset/:token', function(req, res) {
       });
     } else {
       log.error('Get User For Reset Password Token Not found', { user: null, context: 'getUserToken', err: 'Token not found', loggedInUser: toJson(req.user), errorStatus: 401 });
-      res.sendStatus(404);
+      res.send({ error: 'not_found' });
     }
   }).catch(function (error) {
     log.error('Get User For Reset Password Token Error', { user: null, context: 'getUserToken', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
