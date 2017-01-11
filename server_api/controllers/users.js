@@ -678,7 +678,7 @@ router.post('/reset/:token', function(req, res) {
     if (error) {
       log.error('User Reset Password Token Error', { user: null, context: 'useResetToken', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
       if (error=='Not found') {
-        res.sendStatus(404);
+        res.send({ error: 'not_found' });
       } else {
         res.sendStatus(500);
       }
