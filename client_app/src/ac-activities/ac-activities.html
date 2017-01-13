@@ -371,7 +371,8 @@
           this.set('oldestProcessedActivityAt', null);
           this.set('noRecommendedPosts', true);
 
-          if (window.appUser && window.appUser.user && !this.postId) {
+          //TODO: Add a minimum threshold of filtering before enabling dynamic news_feeds again
+          if (false && window.appUser && window.appUser.user && !this.postId) {
             this.mode = 'news_feeds';
           } else {
             this.mode = 'activities';
