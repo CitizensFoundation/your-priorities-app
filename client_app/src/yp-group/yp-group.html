@@ -493,7 +493,7 @@
 
         this.refresh();
 
-        if (this.group.configuration && this.group.configuration.canAddNewPosts!=undefined) {
+        if (this.group.configuration.canAddNewPosts!=undefined) {
           if (this.group.configuration.canAddNewPosts===true) {
             this.set('createFabIcon',"lightbulb-outline");
             this.set('disableNewPosts', false);
@@ -527,7 +527,7 @@
         if (this.group) {
           this.fire('yp-set-home-link', { type: 'group', id: this.group.id, name: this.group.name });
 
-          if (this.group.configuration && this.group.configuration.defaultLocale!=null) {
+          if (this.group.configuration.defaultLocale!=null) {
             this.changeLocaleIfNeeded(this.group.configuration.defaultLocale);
           }
 
@@ -539,7 +539,7 @@
             this.setTheme(this.group.Community.Domain.theme_id);
           }
 
-          if (this.group.configuration && this.group.configuration.locationHidden) {
+          if (this.group.configuration.locationHidden) {
             if (this.group.configuration.locationHidden == true) {
               this.set('locationHidden', true);
             } else {
@@ -557,12 +557,19 @@
             this.setupTopHeaderImage(null);
           }
 
-          this.fire("change-header", { headerTitle: this.group.Community.name,
+          this.fire("change-header", {
+            headerTitle: this.group.configuration.fixedReturnUrlName ?
+                           this.group.configuration.fixedReturnUrlName :
+                           this.group.Community.name,
             headerDescription: this.group.Community.description,
             headerIcon: "social:group",
             documentTitle: this.group.name,
             enableSearch: true,
-            backPath: "/community/" + this.group.community_id });
+            useHardBack: this.group.configuration.fixedReturnUrl ? true : false,
+            backPath:  this.group.configuration.fixedReturnUrl ?
+                         this.group.configuration.fixedReturnUrl :
+                         "/community/" + this.group.community_id
+          });
 
           this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
           this.$.pagesAjax.generateRequest();

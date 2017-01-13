@@ -339,6 +339,12 @@
         numberOfUnViewedNotifications: {
           type: String,
           value: ""
+        },
+
+        // Use window.location when clicking back link
+        useHardBack: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -579,12 +585,12 @@
       },
 
       onChangeHeader: function (event, header) {
-        this.headerTitle = document.title = header.headerTitle;
+        this.set('headerTitle', document.title = header.headerTitle);
 
         if (header.documentTitle) {
           document.title = header.documentTitle;
         }
-        this.headerDescription = header.headerDescription;
+        this.set('headerDescription', header.headerDescription);
 
         //if (header.headerIcon)
         //app.headerIcon = header.headerIcon;
@@ -592,18 +598,31 @@
           this.showSearch = true;
         else
           this.showSearch = false;
-        if (header.backPath) {
-          this.showBack = true;
-          this.backPath = header.backPath;
+
+        if (header.useHardBack===true) {
+          this.set('useHardBack', true);
         } else {
-          this.showBack = false;
-          this.backPath = null;
+          this.set('useHardBack', false);
+        }
+
+        if (header.backPath) {
+          this.set('showBack', true);
+          this.set('backPath', header.backPath);
+        } else {
+          this.set('showBack', false);
+          this.set('backPath', null);
         }
       },
 
       goBack: function (event, detail) {
-        if (this.backPath)
-          this.redirectTo(this.backPath);
+        if (this.backPath) {
+          if (this.useHardBack) {
+           window.location = this.backPath;
+           console.error("HARD BACK");
+          } else {
+            this.redirectTo(this.backPath);
+          }
+        }
       },
 
       _onSearch: function (e) {
