@@ -58,8 +58,8 @@
 
       <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
         <paper-tab><span>[[t('domain.info')]]</span></paper-tab>
-        <paper-tab>[[t('domain.apis')]]</paper-tab>
         <paper-tab>[[t('domain.settings')]]</paper-tab>
+        <paper-tab>[[t('domain.apis')]]</paper-tab>
       </paper-tabs>
 
       <div class="layout vertical wrap container">
@@ -111,6 +111,11 @@
             <input type="hidden" name="themeId" value="[[themeId]]">
             <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
             <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+          </section>
+
+          <section class="sectionMargin">
+            <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
+            <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{domain.default_locale}}"></yp-language-selector>
           </section>
 
           <section>
@@ -177,10 +182,6 @@
                             max-rows="5"
                             maxlength="20000" class="mainInput">
             </paper-textarea>
-          </section>
-          <section class="sectionMargin">
-            <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
-            <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{domain.default_locale}}"></yp-language-selector>
           </section>
         </neon-animated-pages>
 

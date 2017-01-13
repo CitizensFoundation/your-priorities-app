@@ -16,13 +16,13 @@
 
     <style include="iron-flex iron-flex-alignment">
     :host {
-      margin: 4px;
+      padding-top: 16px;
     }
 
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <div class="layout vertical center-center">
+    <div class="layout vertical">
 
     <paper-dropdown-menu label="[[t('selectLanguage')]]" selected="{{selectedLocale}}" attr-for-selected="name">
       <paper-listbox class="dropdown-content" selected="{{selectedLocale}}"  attr-for-selected="name">

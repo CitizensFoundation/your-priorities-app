@@ -1,4 +1,5 @@
 {
+  "hideGroupHeader": "Fela haus á hóp",
   "errorResetTokenNotFoundOrUsed": "Kóði til að endursetja lykilorð finnst ekki eða það er búið að nota hann áður",
   "addedAnIdea": "Sendi inn hugmynd...",
   "recommendedPosts": "Mælt með",
@@ -137,7 +138,11 @@
   "name": "Nafn",
   "description": "Lýsing",
   "domain": {
-    "edit": "Breyta vef"
+    "edit": "Breyta vef",
+    "info": "Upplýsingar",
+    "apis": "APIs",
+    "settings": "Meira",
+    "onlyAdminsCanCreateCommunities": "Aðeins vefstjórar geta bætt við svæðum"
   },
 
   "domains": "Vefir",
@@ -271,7 +276,7 @@
     "up_vote":"Kjósa upp",
     "down_vote":"Kjósa niður",
     "debate": "Rök",
-    "report": "Report post",
+    "report": "Tilkynna hugmynd",
     "notify": "Notify me about this post",
     "share": "Share this post",
     "searchingFor": "Leita að hugmynd ",

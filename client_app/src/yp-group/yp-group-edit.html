@@ -58,6 +58,10 @@
       paper-checkbox {
         padding-top: 8px;
       }
+
+      .config {
+        margin-top: 8px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -105,10 +109,10 @@
         <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       </div>
 
-      <div class="layout horizontal wrap config">
+      <div class="layout vertical">
         <div class="layout vertica config">
           <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
-          <div class="layout horizontal center-center">
+          <div class="layout vertical">
             <paper-dropdown-menu label="[[t('status.select')]]">
               <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
                 <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
@@ -116,8 +120,10 @@
                 </template>
               </paper-menu>
             </paper-dropdown-menu>
+
             <input type="hidden" name="status" value="[[status]]">
-            <div class="layout horizontal center-center">
+
+            <div class="layout horizontal">
               <paper-dropdown-menu label="[[t('endorsementButtons')]]">
                 <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{endorsementButtons}}">
                   <template is="dom-repeat" items="[[endorsementButtonsOptions]]" as="buttonsSelection">
@@ -130,7 +136,6 @@
           </div>
         </div>
         <div class="layout vertical config">
-          <h2>[[t('group.config')]]</h2>
           <paper-checkbox name="canVote" checked$="{{canVote}}">[[t('group.canVote')]]</paper-checkbox>
           <paper-checkbox name="canAddNewPosts" checked$="{{canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
           <paper-checkbox name="locationHidden" checked$="{{locationHidden}}">[[t('group.locationHidden')]]</paper-checkbox>
