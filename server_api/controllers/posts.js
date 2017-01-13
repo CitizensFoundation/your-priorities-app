@@ -545,6 +545,25 @@ router.put('/:id/:groupId/move', auth.can('edit post'), function(req, res) {
       });
     },
     function (callback) {
+      models.Point.findAll({
+        where: {
+          post_id: post.id
+        }
+      }).then(function (pointsIn) {
+        async.eachSeries(pointsIn, function (point, innerSeriesCallback) {
+          point.set('group_id', group.id);
+          point.set('community_id', communityId);
+          point.set('domain_id', domainId);
+          point.save().then(function () {
+            console.log("Have changed group and all for point: "+point.id);
+            innerSeriesCallback();
+          });
+        }, function (error) {
+          callback(error);
+        });
+      })
+    },
+    function (callback) {
       models.AcActivity.findAll({
         where: {
           post_id: post.id
