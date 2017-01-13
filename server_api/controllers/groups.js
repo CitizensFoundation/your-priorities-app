@@ -107,6 +107,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.canVote', truthValueFromBody(req.body.canVote));
   group.set('configuration.canAddNewPosts', truthValueFromBody(req.body.canAddNewPosts));
   group.set('configuration.locationHidden', truthValueFromBody(req.body.locationHidden));
+  group.set('configuration.showWhoPostedPosts', truthValueFromBody(req.body.showWhoPostedPosts));
 
   group.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
   group.set('configuration.hideNewPostOnPostPage', truthValueFromBody(req.body.hideNewPostOnPostPage));

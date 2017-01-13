@@ -116,6 +116,7 @@
   },
 
   "activity": {
+    "confirmDelete": "Staðfestu að þú viljir eyða þessu?",
     "post": {
       "new": "Hugmynd",
       "status": {
@@ -358,6 +359,7 @@
   "next": "áfram",
 
   "group": {
+    "showWhoPostedPosts": "Birta hugmyndasmið",
     "locationHidden": "Ekki nota staðsetningu",
     "group": "Hópur",
     "admins": "Hópur vefstjórar",

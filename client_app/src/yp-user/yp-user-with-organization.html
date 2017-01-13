@@ -21,7 +21,7 @@
       }
 
       .name[inverted] {
-        color: #444;
+        color: var(--ak-user-name-color, #444);
       }
 
       .imageStatus {
@@ -49,7 +49,7 @@
 
     <template is="dom-if" if="[[user]]">
       <div class="layout horizontal" title=[[userTitle]]>
-        <yp-user-image titleFromUser="[[userTitle]]" user="[[user]]"></yp-user-image>
+        <yp-user-image titleFromUser="[[userTitle]]" user="[[user]]" hidden$="[[hideImage]]"></yp-user-image>
         <div class="layout vertical">
           <div class="name" inverted$="[[inverted]]">
             [[user.name]]
@@ -81,6 +81,11 @@
 
         titleDate: {
           type: Date
+        },
+
+        hideImage: {
+          type: Boolean,
+          value: false
         },
 
         userTitle: {

@@ -134,12 +134,14 @@
           <paper-checkbox name="canVote" checked$="{{canVote}}">[[t('group.canVote')]]</paper-checkbox>
           <paper-checkbox name="canAddNewPosts" checked$="{{canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
           <paper-checkbox name="locationHidden" checked$="{{locationHidden}}">[[t('group.locationHidden')]]</paper-checkbox>
+          <paper-checkbox name="showWhoPostedPosts" checked$="{{showWhoPostedPosts}}">[[t('group.showWhoPostedPosts')]]</paper-checkbox>
         </div>
       </div>
 
       <input type="hidden" name="canVote" value$="[[canVote]]">
       <input type="hidden" name="canAddNewPosts" value$="[[canAddNewPosts]]">
       <input type="hidden" name="locationHidden" value$="[[locationHidden]]">
+      <input type="hidden" name="showWhoPostedPosts" value$="[[showWhoPostedPosts]]">
 
       <input type="hidden" name="themeId" value="[[themeId]]">
 
@@ -203,6 +205,7 @@
 
   Polymer({
 
+    //TODO: Try to eliminate configuration boiler-plate
     is: 'yp-group-edit',
 
     behaviors: [
@@ -221,6 +224,11 @@
       canAddNewPosts: {
         type: Boolean,
         value: true
+      },
+
+      showWhoPostedPosts: {
+        type: Boolean,
+        value: false
       },
 
       hideAllTabs: Boolean,
@@ -368,6 +376,7 @@
         this._setFromConfiguration('hideHelpIcon');
         this._setFromConfiguration('hideEmoji');
         this._setFromConfiguration('hideGroupHeader');
+        this._setFromConfiguration('showWhoPostedPosts');
 
         if (this.community) {
           if (this.community.access==0) {
