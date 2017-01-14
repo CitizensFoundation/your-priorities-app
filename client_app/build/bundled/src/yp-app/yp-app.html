@@ -40304,7 +40304,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       @media (max-width: 380px) {
         .tab-wrapper ::content > .tabs {
           max-width: 330px;
-          font-size: 11px !important;
+          font-size: 12px !important;
         }
 
         .tab-wrapper ::content > paper-tab {
@@ -49806,7 +49806,7 @@ paperMapInfo.register();
 
       @media (max-width: 420px) {
         :host {
-          width: 304px !important;
+
         }
 
         .postCard {
@@ -49815,6 +49815,11 @@ paperMapInfo.register();
           padding-left: 0;
           padding-right: 0;
           width: 304px;
+        }
+
+        .postCard[mini] {
+          width: 210px;
+          height: 100%;
         }
 
         .card {
@@ -49826,9 +49831,19 @@ paperMapInfo.register();
           height: 400px;
         }
 
+        .card[mini] {
+          width: 210px;
+          height: 100%;
+        }
+
         yp-post-cover-media {
           width: 304px;
           height: 165px;
+        }
+
+        yp-post-cover-media[mini] {
+          width: 210px;
+          height: 118px;
         }
       }
     </style>
