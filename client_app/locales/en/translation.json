@@ -1,4 +1,12 @@
 {
+  "domainToastCreated": "Domain Created",
+  "domainToastUpdated": "Domain Saved",
+  "communityToastCreated": "Community Created",
+  "communityToastUpdated": "Community Saved",
+  "groupToastCreated": "Group Created",
+  "groupToastUpdated": "Group Saved",
+  "userToastCreated": "Create user",
+  "userToastUpdated": "Saved user",
   "hideGroupHeader": "Hide group header",
   "errorResetTokenNotFoundOrUsed": "Password reset token not found or has been used",
   "addedAnIdea": "Added an idea...",
@@ -151,6 +159,7 @@
   "name": "Name",
 
   "domain": {
+    "createOrganization": "Create organization",
     "edit": "Edit domain",
     "info": "Settings",
     "apis": "APIs",
@@ -387,7 +396,7 @@
     "resetPassword": "Reset your password",
     "resetPasswordInstructions": "Create a new password that is not easy to guess",
     "login": "Login",
-    "create": "Create",
+    "create": "Create user",
     "cancel": "Cancel",
     "logout": "Logout",
     "newPassword": "new password",

@@ -29,7 +29,7 @@
 
     <style include="iron-flex iron-flex-alignment">
       .additionalSettings {
-        padding-top: 16px;
+        padding-top: 8px;
         margin-top: 8px;
       }
 
@@ -39,7 +39,7 @@
 
       yp-theme-selector {
         padding-top: 8px;
-        margin-bottom: 32px;
+        margin-bottom: 8px;
       }
 
       .imageSizeInfo {
@@ -47,13 +47,13 @@
       }
 
       .sectionMargin {
-        margin-top: 24px;
+        margin-top: 8px;
       }
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" icon="cloud-queue" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
       <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
@@ -288,12 +288,12 @@
     _setupTranslation: function () {
       if (this.new) {
         this.editHeaderText = this.t('domain.new');
-        this.toastText = this.t('domain.toast.created');
+        this.toastText = this.t('domainToastCreated');
         this.set('saveText', this.t('create'));
       } else {
         this.set('saveText', this.t('save'));
         this.editHeaderText = this.t('domain.edit');
-        this.toastText = this.t('domain.toast.updated');
+        this.toastText = this.t('domainToastUpdated');
       }
     }
   });

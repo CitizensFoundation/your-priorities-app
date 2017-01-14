@@ -251,7 +251,7 @@ module.exports = function(sequelize, DataTypes) {
         Domain.findOrCreate({where: { domain_name: domainName },
                                       defaults: { access: Domain.ACCESS_PUBLIC,
                                                   default_locale: 'en',
-                                                  name: 'New Your Priorities Domain',
+                                                  name: 'New Domain',
                                                   user_agent: req.useragent.source,
                                                   ip_address: req.clientIp}})
         .spread(function(domain, created) {

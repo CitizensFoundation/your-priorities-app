@@ -444,12 +444,12 @@
       if (this.language && this.t) {
         if (this.new) {
           this.editHeaderText = this.t('group.new');
-          this.toastText = this.t('group.toast.created');
+          this.toastText = this.t('groupToastCreated');
           this.set('saveText', this.t('create'));
         } else {
           this.set('saveText', this.t('save'));
           this.editHeaderText = this.t('group.update');
-          this.toastText = this.t('group.toast.updated');
+          this.toastText = this.t('groupToastUpdated');
         }
       }
     }

@@ -8,6 +8,7 @@
     "polymer-instagram": "https://github.com/rbjarnason/polymer-instagram-feed.git#polymer1",
     "iron-form": "rbjarnason/iron-form#add-put-support",
     "iron-list": "rbjarnason/iron-list#fire-iron-resize-after-scrolling",
+    "iron-ajax": "rbjarnason/iron-ajax#master",
     "polymer": "Polymer/polymer",
     "iron-elements": "PolymerElements/iron-elements",
     "paper-elements": "PolymerElements/paper-elements",

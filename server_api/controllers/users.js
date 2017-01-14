@@ -35,7 +35,7 @@ var getUserWithAll = function (userId, callback) {
     function (seriesCallback) {
       models.User.find({
         where: {id: userId},
-        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','email']),
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','email','default_locale']),
         order: [
           [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
           [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
