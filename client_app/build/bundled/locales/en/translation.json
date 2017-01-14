@@ -178,6 +178,7 @@
   "myAdminGroups": "Groups Admin",
 
   "community": {
+    "alternativeHeader": "Alternative Header",
     "edit": "Edit community",
     "hostname": "Hostname",
     "admins": "Community admins",

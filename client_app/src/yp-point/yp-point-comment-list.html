@@ -192,6 +192,8 @@
       },
 
       _pointChanged: function(newPoint) {
+        this.set('comments', []);
+        this.set('commentsCount', null);
         if (newPoint) {
           this.$.commentsListAjax.url = '/api/points/'+newPoint.id+'/comments';
           this.$.commentsCountListAjax.url = '/api/points/'+newPoint.id+'/commentsCount';
