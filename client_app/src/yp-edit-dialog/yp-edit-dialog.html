@@ -78,6 +78,16 @@
         paper-dialog > * {
           padding: 0 0;
         }
+
+        .fullScreenDialog {
+          min-width: 320px;
+        }
+      }
+
+      @media (max-width: 359px) {
+        .fullScreenDialog {
+          min-width: 320px;
+        }
       }
 
       paper-dialog {
@@ -148,8 +158,7 @@
       }
 
       #formErrorDialog {
-        width: 280px;
-        height: 200px;
+        padding: 8px;
       }
 
       paper-dialog-scrollable[small-height] {

@@ -205,9 +205,9 @@
               <div>[[t('post.cover.imageInfo')]]</div>
               <br>
               <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
-              <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal" selected="{{selectedCoverMediaType}}">
+              <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal wrap" selected="{{selectedCoverMediaType}}">
                 <paper-radio-button name="none">[[t('post.cover.none')]]</paper-radio-button>
-                <paper-radio-button name="image">[[t('post.cover.image')]]</paper-radio-button>
+                <paper-radio-button name="image" hidden$="[[!uploadedHeaderImageId]]">[[t('post.cover.image')]]</paper-radio-button>
                 <template is="dom-if" if="[[location]]">
                   <paper-radio-button name="map">[[t('post.cover.map')]]</paper-radio-button>
                   <paper-radio-button name="streetView">[[t('post.cover.streetview')]]</paper-radio-button>
