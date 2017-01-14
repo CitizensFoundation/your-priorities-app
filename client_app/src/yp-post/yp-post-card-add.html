@@ -55,7 +55,6 @@
       }
 
       paper-fab {
-        margin-right: 12px;
       }
 
       .addText {
@@ -87,7 +86,7 @@
           max-width: 250px;
           width: 250px;
           margin-left: 0;
-          margin-right: 32px;
+          margin-right: 0;
           margin-bottom: 4px;
         }
 
@@ -105,14 +104,16 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <paper-card elevation="[[elevation]]" class="postCard" on-tap="_newPost" >
-      <div class="layout horizontal center-center addNewIdeaText">
-        <div class="flex addText">
-          [[t('post.add_new')]]
+    <div class="layout vertical center-center">
+      <paper-card elevation="[[elevation]]" class="postCard" on-tap="_newPost" >
+        <div class="layout horizontal center-center addNewIdeaText">
+          <div class="flex addText">
+            [[t('post.add_new')]]
+          </div>
+          <paper-icon-button icon="lightbulb-outline"></paper-icon-button>
         </div>
-        <paper-icon-button icon="lightbulb-outline"></paper-icon-button>
-      </div>
-    </paper-card>
+      </paper-card>
+    </div>
   </template>
 
   <script>

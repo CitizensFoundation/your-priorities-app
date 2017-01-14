@@ -107,7 +107,7 @@
 
       @media (max-width: 420px) {
         :host {
-          width: 304px !important;
+
         }
 
         .postCard {
@@ -116,6 +116,11 @@
           padding-left: 0;
           padding-right: 0;
           width: 304px;
+        }
+
+        .postCard[mini] {
+          width: 210px;
+          height: 100%;
         }
 
         .card {
@@ -127,9 +132,19 @@
           height: 400px;
         }
 
+        .card[mini] {
+          width: 210px;
+          height: 100%;
+        }
+
         yp-post-cover-media {
           width: 304px;
           height: 165px;
+        }
+
+        yp-post-cover-media[mini] {
+          width: 210px;
+          height: 118px;
         }
       }
     </style>
