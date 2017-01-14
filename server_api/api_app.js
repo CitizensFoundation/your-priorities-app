@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-FORCE_PRODUCTION = true;
+FORCE_PRODUCTION = false;
 
 var debug = require('debug')('your-priorities-app');
 var express = require('express');
@@ -8,7 +8,6 @@ var session = require('express-session');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
-//var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var ConnectRoles = require('connect-roles');
