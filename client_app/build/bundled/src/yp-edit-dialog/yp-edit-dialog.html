@@ -1,19 +1,19 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.74">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.75">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.74">
-<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.74">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.74">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.75">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.75">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.75">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.75">
 
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.74">
-<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.3.74">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.74">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.74">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.75">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.3.75">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.75">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.75">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.75">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.74">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.75">
 
-<link rel="import" href="yp-fullscreen-dialog.html?v=6.3.74">
+<link rel="import" href="yp-fullscreen-dialog.html?v=6.3.75">
 
 </head><body><dom-module id="yp-edit-dialog">
 
@@ -77,6 +77,16 @@
       @media (max-width: 601px) {
         paper-dialog > * {
           padding: 0 0;
+        }
+
+        .fullScreenDialog {
+          min-width: 320px;
+        }
+      }
+
+      @media (max-width: 359px) {
+        .fullScreenDialog {
+          min-width: 320px;
         }
       }
 
@@ -148,8 +158,7 @@
       }
 
       #formErrorDialog {
-        width: 280px;
-        height: 200px;
+        padding: 12px;
       }
 
       paper-dialog-scrollable[small-height] {
