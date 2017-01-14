@@ -39,11 +39,10 @@
       }
 
       .additionalSettings {
-        padding-top: 16px;
+        padding-top: 8px;
       }
 
       file-upload {
-        padding-top: 8px;
       }
 
       .half {
@@ -59,8 +58,8 @@
         padding-top: 8px;
       }
 
-      .config {
-        margin-top: 8px;
+      .icon {
+        padding-right: 8px;
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -91,14 +90,14 @@
       </div>
 
       <div class="layout horizontal">
-        <div class="layout vertical additionalSettings half">
+        <div class="layout vertical additionalSettings">
           <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
             <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
             <span>[[t('image.logo.upload')]]</span>
           </file-upload>
         </div>
 
-        <div class="layout vertical additionalSettings half">
+        <div class="layout vertical additionalSettings">
           <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
             <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
             <span>[[t('image.header.upload')]]</span>
@@ -448,7 +447,7 @@
           this.toastText = this.t('group.toast.created');
           this.set('saveText', this.t('create'));
         } else {
-          this.set('saveText', this.t('update'));
+          this.set('saveText', this.t('save'));
           this.editHeaderText = this.t('group.update');
           this.toastText = this.t('group.toast.updated');
         }

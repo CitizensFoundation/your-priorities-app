@@ -91,6 +91,10 @@
       .optional {
         font-size: 12px;
       }
+
+      .icon {
+        padding-right: 8px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -535,7 +539,7 @@
             this.toastText = this.t('post.toast.created');
             this.set('saveText', this.t('create'));
           } else {
-            this.set('saveText', this.t('update'));
+            this.set('saveText', this.t('save'));
             this.editHeaderText = this.t('post.edit');
             this.toastText = this.t('post.toast.updated');
           }
