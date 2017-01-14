@@ -1,27 +1,29 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.73">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.73">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.73">
-<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.73">
-<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.73">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.74">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.74">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.74">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.73">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.73">
-<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.73">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.73">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.73">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.74">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.74">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.74">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.74">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.74">
 
-<link rel="import" href="yp-post-actions.html?v=6.3.73">
-<link rel="import" href="yp-post-cover-media.html?v=6.3.73">
-<link rel="import" href="yp-post-behaviors.html?v=6.3.73">
+<link rel="import" href="../yp-user/yp-user-with-organization.html?v=6.3.74">
+
+<link rel="import" href="yp-post-actions.html?v=6.3.74">
+<link rel="import" href="yp-post-cover-media.html?v=6.3.74">
+<link rel="import" href="yp-post-behaviors.html?v=6.3.74">
 
 </head><body><dom-module id="yp-post-header">
 
@@ -114,6 +116,12 @@
         right: 0;
       }
 
+      .userInfo {
+        padding-right: 32px;
+        text-align: right;
+        color: #777;
+      }
+
       @media (max-width: 960px) {
         :host {
           width: 600px;
@@ -149,8 +157,13 @@
           width: 100%;
         }
 
-        .description {
+        .description[no-user-info] {
           padding-bottom: 32px;
+        }
+
+        .userInfo {
+          margin-bottom: 36px;
+          padding-right: 8px;
         }
 
         .mediaAndInfoContainer {
@@ -191,6 +204,10 @@
         .description {
           font-size: 15px;
         }
+
+      }
+      .userWithOrg {
+        --ak-user-name-color: #555555;
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -205,7 +222,12 @@
               <yp-post-cover-media header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
               <div class="layout vertical">
                 <div class="infoContainer">
-                  <div id="description" class="description"></div>
+                  <div id="description" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]" class="description"></div>
+                  <template is="dom-if" if="[[post.Group.configuration.showWhoPostedPosts]]">
+                    <div class="layout horizontal self-end userInfo">
+                      <yp-user-with-organization class="userWithOrg" hide-image="" title-date="[[post.user.name]]" inverted="" user$="[[post.User]]"></yp-user-with-organization>
+                    </div>
+                  </template>
                 </div>
                 <div class="card-actions">
                   <yp-post-actions floating="" header-mode="[[headerMode]]" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
@@ -231,8 +253,6 @@
           </div>
         </paper-material>
       </div>
-      <template is="dom-if" if="[[headerMode]]">
-      </template>
     </template>
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>

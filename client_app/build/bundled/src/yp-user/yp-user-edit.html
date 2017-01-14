@@ -1,25 +1,25 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.73">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.73">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.73">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.73">
-<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html?v=6.3.73">
-<link rel="import" href="../../bower_components/neon-animation/neon-animation.html?v=6.3.73">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.74">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.74">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html?v=6.3.74">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.73">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.74">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.73">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.74">
 
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.73">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.73">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.74">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.74">
 
-<link rel="import" href="../ac-notifications/ac-notification-settings.html?v=6.3.73">
+<link rel="import" href="../ac-notifications/ac-notification-settings.html?v=6.3.74">
 
 </head><body><dom-module id="yp-user-edit">
   <template>
@@ -33,13 +33,16 @@
       .additionalSettings {
         margin-top: 16px;
       }
+
+      .icon {
+        padding-right: 8px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <yp-edit-dialog id="editDialog" double-width="" icon="face" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <h2>[[editHeaderText]]</h2>
       <div class="container">
-        <h2>[[editHeaderText]]</h2>
-
         <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
           <paper-tab><span>[[t('user.info')]]</span></paper-tab>
           <paper-tab>[[t('user.notifications')]]</paper-tab>
@@ -198,10 +201,12 @@
     _setupTranslation: function () {
       if (this.new) {
         this.editHeaderText = this.t('user.new');
-        this.toastText = this.t('user.toast.created');
+        this.toastText = this.t('userToastCreated');
+        this.set('saveText', this.t('create'));
       } else {
+        this.set('saveText', this.t('save'));
         this.editHeaderText = this.t('user.edit');
-        this.toastText = this.t('user.toast.updated');
+        this.toastText = this.t('userToastUpdated');
       }
     }
   });

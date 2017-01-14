@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.73"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-category-edit" assetpath="../yp-category/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.74"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-category-edit" assetpath="../yp-category/">
   <template>
 
     <style include="iron-flex iron-flex-alignment">
@@ -3338,7 +3338,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
     <style include="iron-flex iron-flex-alignment">
       .additionalSettings {
-        padding-top: 16px;
+        padding-top: 8px;
         margin-top: 8px;
       }
 
@@ -3348,7 +3348,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       yp-theme-selector {
         padding-top: 8px;
-        margin-bottom: 32px;
+        margin-bottom: 8px;
       }
 
       .imageSizeInfo {
@@ -3356,19 +3356,19 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       }
 
       .sectionMargin {
-        margin-top: 24px;
+        margin-top: 8px;
       }
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" icon="cloud-queue" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
       <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
         <paper-tab><span>[[t('domain.info')]]</span></paper-tab>
-        <paper-tab>[[t('domain.apis')]]</paper-tab>
         <paper-tab>[[t('domain.settings')]]</paper-tab>
+        <paper-tab>[[t('domain.apis')]]</paper-tab>
       </paper-tabs>
 
       <div class="layout vertical wrap container">
@@ -3409,6 +3409,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
             <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
           </section>
 
+          <section class="sectionMargin">
+            <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
+            <yp-language-selector name="defaultLocale" no-user-events="" selected-locale="{{domain.default_locale}}"></yp-language-selector>
+          </section>
+
           <section>
             <paper-input id="facebookClientId" name="facebookClientId" type="text" label="Facebook Client Id" value="{{domain.secret_api_keys.facebook.client_id}}" maxlength="60" char-counter="" class="mainInput">
             </paper-input>
@@ -3430,10 +3435,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
             <paper-textarea id="samlCert" name="samlCert" value="{{domain.secret_api_keys.saml.cert}}" label="SAML Verification Certificate Chain" char-counter="" rows="2" max-rows="5" maxlength="20000" class="mainInput">
             </paper-textarea>
-          </section>
-          <section class="sectionMargin">
-            <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
-            <yp-language-selector name="defaultLocale" no-user-events="" selected-locale="{{domain.default_locale}}"></yp-language-selector>
           </section>
         </neon-animated-pages>
 
@@ -3540,12 +3541,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
     _setupTranslation: function () {
       if (this.new) {
         this.editHeaderText = this.t('domain.new');
-        this.toastText = this.t('domain.toast.created');
+        this.toastText = this.t('domainToastCreated');
         this.set('saveText', this.t('create'));
       } else {
-        this.set('saveText', this.t('update'));
+        this.set('saveText', this.t('save'));
         this.editHeaderText = this.t('domain.edit');
-        this.toastText = this.t('domain.toast.updated');
+        this.toastText = this.t('domainToastUpdated');
       }
     }
   });

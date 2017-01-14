@@ -1,11 +1,11 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.73">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.73">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.74">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.73">
-<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.73">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.74">
+<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.74">
 
 </head><body><dom-module id="yp-user-with-organization">
   <template>
@@ -21,7 +21,7 @@
       }
 
       .name[inverted] {
-        color: #444;
+        color: var(--ak-user-name-color, #444);
       }
 
       .imageStatus {
@@ -49,7 +49,7 @@
 
     <template is="dom-if" if="[[user]]">
       <div class="layout horizontal" title="[[userTitle]]">
-        <yp-user-image titlefromuser="[[userTitle]]" user="[[user]]"></yp-user-image>
+        <yp-user-image titlefromuser="[[userTitle]]" user="[[user]]" hidden$="[[hideImage]]"></yp-user-image>
         <div class="layout vertical">
           <div class="name" inverted$="[[inverted]]">
             [[user.name]]
@@ -81,6 +81,11 @@
 
         titleDate: {
           type: Date
+        },
+
+        hideImage: {
+          type: Boolean,
+          value: false
         },
 
         userTitle: {

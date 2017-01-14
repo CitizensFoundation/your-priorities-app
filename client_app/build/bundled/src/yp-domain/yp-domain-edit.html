@@ -1,35 +1,35 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.73">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.73">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.73">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.3.73">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.73">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.73">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.73">
-<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html?v=6.3.73">
-<link rel="import" href="../../bower_components/neon-animation/neon-animation.html?v=6.3.73">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.74">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.74">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html?v=6.3.74">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html?v=6.3.74">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.73">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.73">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.74">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.74">
 
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.73">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.73">
-<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.73">
-<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.73">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.74">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.74">
+<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.74">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.74">
 
 </head><body><dom-module id="yp-domain-edit">
   <template>
 
     <style include="iron-flex iron-flex-alignment">
       .additionalSettings {
-        padding-top: 16px;
+        padding-top: 8px;
         margin-top: 8px;
       }
 
@@ -39,7 +39,7 @@
 
       yp-theme-selector {
         padding-top: 8px;
-        margin-bottom: 32px;
+        margin-bottom: 8px;
       }
 
       .imageSizeInfo {
@@ -47,19 +47,19 @@
       }
 
       .sectionMargin {
-        margin-top: 24px;
+        margin-top: 8px;
       }
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <yp-edit-dialog id="editDialog" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" icon="cloud-queue" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2>[[editHeaderText]]</h2>
 
       <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
         <paper-tab><span>[[t('domain.info')]]</span></paper-tab>
-        <paper-tab>[[t('domain.apis')]]</paper-tab>
         <paper-tab>[[t('domain.settings')]]</paper-tab>
+        <paper-tab>[[t('domain.apis')]]</paper-tab>
       </paper-tabs>
 
       <div class="layout vertical wrap container">
@@ -100,6 +100,11 @@
             <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
           </section>
 
+          <section class="sectionMargin">
+            <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
+            <yp-language-selector name="defaultLocale" no-user-events="" selected-locale="{{domain.default_locale}}"></yp-language-selector>
+          </section>
+
           <section>
             <paper-input id="facebookClientId" name="facebookClientId" type="text" label="Facebook Client Id" value="{{domain.secret_api_keys.facebook.client_id}}" maxlength="60" char-counter="" class="mainInput">
             </paper-input>
@@ -121,10 +126,6 @@
 
             <paper-textarea id="samlCert" name="samlCert" value="{{domain.secret_api_keys.saml.cert}}" label="SAML Verification Certificate Chain" char-counter="" rows="2" max-rows="5" maxlength="20000" class="mainInput">
             </paper-textarea>
-          </section>
-          <section class="sectionMargin">
-            <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
-            <yp-language-selector name="defaultLocale" no-user-events="" selected-locale="{{domain.default_locale}}"></yp-language-selector>
           </section>
         </neon-animated-pages>
 
@@ -231,12 +232,12 @@
     _setupTranslation: function () {
       if (this.new) {
         this.editHeaderText = this.t('domain.new');
-        this.toastText = this.t('domain.toast.created');
+        this.toastText = this.t('domainToastCreated');
         this.set('saveText', this.t('create'));
       } else {
-        this.set('saveText', this.t('update'));
+        this.set('saveText', this.t('save'));
         this.editHeaderText = this.t('domain.edit');
-        this.toastText = this.t('domain.toast.updated');
+        this.toastText = this.t('domainToastUpdated');
       }
     }
   });

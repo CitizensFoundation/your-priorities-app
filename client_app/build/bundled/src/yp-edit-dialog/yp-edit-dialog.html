@@ -1,19 +1,19 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.73">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.73">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.73">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.74">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.73">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.74">
 
-<link rel="import" href="yp-fullscreen-dialog.html?v=6.3.73">
+<link rel="import" href="yp-fullscreen-dialog.html?v=6.3.74">
 
 </head><body><dom-module id="yp-edit-dialog">
 
@@ -164,6 +164,18 @@
         height: 550px;
       }
 
+      .closeIconNarrow {
+        width: 48px;
+        height: 48px;
+        padding-right: 8px;
+        margin-left: 0;
+        padding-left: 0;
+      }
+
+      .smallButtonText {
+        font-weight: bold;
+      }
+
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -177,16 +189,16 @@
         <template is="dom-if" if="[[narrow]]" restamp="">
           <paper-header-panel main="" id="headerPanel" class="no-padding" mode="{{mode}}">
             <paper-toolbar id="toolbar">
-              <paper-icon-button id="dismissBtn" icon="close" dialog-dismiss=""></paper-icon-button>
+              <paper-icon-button id="dismissBtn" icon="close" class="closeIconNarrow" dialog-dismiss=""></paper-icon-button>
               <div class="layout horizontal title flex">
                 <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
                 <content select="h2"></content>
               </div>
               <template is="dom-if" if="[[!useNextTabAction]]">
-                <paper-button id="submit1" on-tap="_submit">[[saveText]]</paper-button>
+                <paper-button id="submit1" on-tap="_submit"><span class="smallButtonText">[[saveText]]</span></paper-button>
               </template>
               <template is="dom-if" if="[[useNextTabAction]]">
-                <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
+                <paper-button on-tap="_nextTab"><span class="smallButtonText">[[nextActionText]]</span></paper-button>
               </template>
             </paper-toolbar>
             <div id="scroller">

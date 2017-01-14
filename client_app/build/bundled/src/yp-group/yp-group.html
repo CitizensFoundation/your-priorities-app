@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.73"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.74"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -69,21 +69,21 @@
 
       @media (max-width: 420px) {
         .postCard {
-          width: 100% !important;
-          min-width: 260px;
+          max-width: 250px;
+          width: 250px;
           margin-left: 0;
           margin-right: 32px;
           margin-bottom: 4px;
         }
 
         .addNewIdeaText {
-          font-size: 18px;
+          font-size: 20px;
           width: 100%;
         }
 
         paper-icon-button {
-          height: 72px;
-          width: 72px;
+          height: 68px;
+          width: 68px;
         }
 
       }
@@ -1777,7 +1777,7 @@ Custom property | Description | Default
 
       _loadMoreData: function () {
         if (this.moreToLoad) {
-          console.error("_loadMoreData for groupId: "+this.groupId+" statusFilter: "+this.statusFilter);
+          console.info("_loadMoreData for groupId: "+this.groupId+" statusFilter: "+this.statusFilter);
 
           this.set('moreToLoad', false);
           this.set('noPosts', false);
@@ -2022,8 +2022,8 @@ Custom property | Description | Default
                 <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
                 <paper-item id="usersMenuItem">[[t('group.users')]]</paper-item>
                 <paper-item id="adminsMenuItem">[[t('group.admins')]]</paper-item>
-                <paper-item id="deleteMenuItem">[[t('group.delete')]]</paper-item>
                 <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+                <paper-item id="deleteMenuItem">[[t('group.delete')]]</paper-item>
               </paper-menu>
             </paper-menu-button>
           </div>
@@ -2260,8 +2260,16 @@ Custom property | Description | Default
       @media (max-width: 900px) {
         .tabs {
           max-width: 450px;
-          font-size: 13px !important;
+          font-size: 14px;
           word-wrap: break-word !important;
+        }
+
+        .tabs[has-non-open-posts] {
+          font-size: 10px;
+        }
+
+        .counterInfo[has-non-open-posts] {
+          font-size: 9px;
         }
 
         .tabs .tab {
@@ -2277,12 +2285,19 @@ Custom property | Description | Default
       @media (max-width: 380px) {
         .tabs {
           max-width: 330px;
-          font-size: 10px !important;
+          font-size: 12px;
         }
 
         paper-tab {
           width: 100px;
-          font-size: 10px !important;
+        }
+
+        .tabs[has-non-open-posts] {
+          font-size: 8px;
+        }
+
+        .counterInfo[has-non-open-posts] {
+          font-size: 9px;
         }
       }
     </style>
@@ -2300,26 +2315,26 @@ Custom property | Description | Default
       </template>
 
       <div class="layout horizontal center-center" hidden$="[[group.configuration.hideAllTabs]]">
-        <paper-tabs id="paperTabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
+        <paper-tabs id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
           <paper-tab id="tab1" name="open">
             <div class="layout vertical center-center tabCounterContainer">
-              <span>[[t('posts.open')]]</span><div class="counterInfo" id="tabCountOpen"></div>
+              <span>[[t('posts.open')]]</span><div class="counterInfo" has-non-open-posts$="[[hasNonOpenPosts]]" id="tabCountOpen"></div>
             </div>
           </paper-tab>
           <template is="dom-if" if="[[hasNonOpenPosts]]">
             <paper-tab name="in_progress">
               <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.inProgress')]]</span><div class="counterInfo" id="tabCountInProgress"></div>
+                <span>[[t('posts.inProgress')]]</span><div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountInProgress"></div>
               </div>
             </paper-tab>
             <paper-tab name="successful">
               <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.successful')]]</span><div class="counterInfo" id="tabCountSuccessful"></div>
+                <span>[[t('posts.successful')]]</span><div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountSuccessful"></div>
               </div>
             </paper-tab>
             <paper-tab name="failed">
               <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.failed')]]</span><div class="counterInfo" id="tabCountFailed"></div>
+                <span>[[t('posts.failed')]]</span><div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountFailed"></div>
               </div>
             </paper-tab>
           </template>
@@ -2627,7 +2642,7 @@ Custom property | Description | Default
 
         this.refresh();
 
-        if (this.group.configuration && this.group.configuration.canAddNewPosts!=undefined) {
+        if (this.group.configuration.canAddNewPosts!=undefined) {
           if (this.group.configuration.canAddNewPosts===true) {
             this.set('createFabIcon',"lightbulb-outline");
             this.set('disableNewPosts', false);
@@ -2661,7 +2676,7 @@ Custom property | Description | Default
         if (this.group) {
           this.fire('yp-set-home-link', { type: 'group', id: this.group.id, name: this.group.name });
 
-          if (this.group.configuration && this.group.configuration.defaultLocale!=null) {
+          if (this.group.configuration.defaultLocale!=null) {
             this.changeLocaleIfNeeded(this.group.configuration.defaultLocale);
           }
 
@@ -2673,7 +2688,7 @@ Custom property | Description | Default
             this.setTheme(this.group.Community.Domain.theme_id);
           }
 
-          if (this.group.configuration && this.group.configuration.locationHidden) {
+          if (this.group.configuration.locationHidden) {
             if (this.group.configuration.locationHidden == true) {
               this.set('locationHidden', true);
             } else {
@@ -2691,12 +2706,19 @@ Custom property | Description | Default
             this.setupTopHeaderImage(null);
           }
 
-          this.fire("change-header", { headerTitle: this.group.Community.name,
+          this.fire("change-header", {
+            headerTitle: this.group.configuration.fixedReturnUrlName ?
+                           this.group.configuration.fixedReturnUrlName :
+                           this.group.Community.name,
             headerDescription: this.group.Community.description,
             headerIcon: "social:group",
             documentTitle: this.group.name,
             enableSearch: true,
-            backPath: "/community/" + this.group.community_id });
+            useHardBack: this.group.configuration.fixedReturnUrl ? true : false,
+            backPath:  this.group.configuration.fixedReturnUrl ?
+                         this.group.configuration.fixedReturnUrl :
+                         "/community/" + this.group.community_id
+          });
 
           this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
           this.$.pagesAjax.generateRequest();

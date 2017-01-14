@@ -2,7 +2,7 @@
 @license
 Copyright (c) 2015 Winston Howes. All rights reserved.
 This code may only be used under the MIT license found at https://github.com/winhowes/file-upload/blob/master/LICENSE
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.73">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.74">
 
 <!--
 An element providing a solution to no problem in particular.
@@ -14,9 +14,9 @@ Example:
 @demo
 -->
 
-<link rel="import" href="../paper-button/paper-button.html?v=6.3.73">
-<link rel="import" href="../paper-progress/paper-progress.html?v=6.3.73">
-  <link rel="import" href="../iron-icons/iron-icons.html?v=6.3.73">
+<link rel="import" href="../paper-button/paper-button.html?v=6.3.74">
+<link rel="import" href="../paper-progress/paper-progress.html?v=6.3.74">
+  <link rel="import" href="../iron-icons/iron-icons.html?v=6.3.74">
 
 </head><body><dom-module id="file-upload">
 
@@ -33,8 +33,9 @@ Example:
     #UploadBorder{
       vertical-align: middle;
       color: #555;
-      padding: 20px;
-      max-height: 300px;
+      padding: 8px;
+      padding-right: 16px;
+      max-height: 200px;
       overflow-y: auto;
       display: inline-block;
     }
@@ -44,7 +45,7 @@ Example:
     }
 
     paper-button {
-      margin-bottom: 20px;
+      margin-bottom: 8px;
     }
 
     .file {
@@ -81,6 +82,7 @@ Example:
     paper-progress[error] {
       --paper-progress-active-color: #f40303;
     }
+
   </style>
 
   <template>

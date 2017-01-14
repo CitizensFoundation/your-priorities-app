@@ -1,23 +1,23 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.73">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.73">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.73">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.73">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.74">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.73">
-<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.73">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.74">
+<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.74">
 
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.73">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.73">
-<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.73">
-<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.73">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.73">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.74">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.74">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.74">
+<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.74">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.74">
 
 </head><body><dom-module id="yp-community-edit">
   <template>
@@ -48,6 +48,10 @@
 
       .hostnameInfo {
         color: #888;
+      }
+
+      .config {
+        margin-top: 16px;
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -91,7 +95,6 @@
       <yp-theme-selector object="[[community]]" selected-theme="{{themeId}}"></yp-theme-selector>
 
       <div class="layout vertical config">
-        <h2>[[t('community.config')]]</h2>
         <paper-checkbox name="onlyAdminsCanCreateGroups" checked$="{{community.only_admins_can_create_groups}}">[[t('community.onlyAdminsCanCreateGroups')]]</paper-checkbox>
         <paper-checkbox name="alternativeHeader" checked$="{{community.configuration.alternativeHeader}}">[[t('community.alternativeHeader')]]</paper-checkbox>
       </div>
@@ -101,7 +104,7 @@
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
-      <div class="layout horizontal center-center">
+      <div class="layout horizontal config">
         <paper-dropdown-menu label="[[t('status.select')]]">
           <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
             <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
@@ -114,7 +117,7 @@
 
       <yp-language-selector name="defaultLocale" no-user-events="" selected-locale="{{community.default_locale}}"></yp-language-selector>
 
-      <h3 class="accessHeader">[[t('Access')]]</h3>
+      <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
         <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
         <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>
@@ -262,12 +265,12 @@
       if (this.t) {
         if (this.new) {
           this.set('editHeaderText', this.t('community.new'));
-          this.set('toastText', this.t('community.toast.created'));
+          this.set('toastText', this.t('communityToastCreated'));
           this.set('saveText', this.t('create'));
         } else {
-          this.set('saveText', this.t('update'));
+          this.set('saveText', this.t('save'));
           this.set('editHeaderText', this.t('Update community info'));
-          this.set('toastText', this.t('community.toast.updated'));
+          this.set('toastText', this.t('communityToastUpdated'));
         }
       }
     }

@@ -1,4 +1,13 @@
 {
+  "domainToastCreated": "Vefur búinn til",
+  "domainToastUpdated": "Vefur vistaður",
+  "communityToastCreated": "Svæði búið til",
+  "communityToastUpdated": "Svæði vistað",
+  "groupToastCreated": "Bjó til hóp",
+  "groupToastUpdated": "Hópur vistaður",
+  "userToastCreated": "Bjó til notanda",
+  "userToastUpdated": "Vistaði notanda",
+  "hideGroupHeader": "Fela haus á hóp",
   "errorResetTokenNotFoundOrUsed": "Kóði til að endursetja lykilorð finnst ekki eða það er búið að nota hann áður",
   "addedAnIdea": "Sendi inn hugmynd...",
   "recommendedPosts": "Mælt með",
@@ -116,6 +125,7 @@
   },
 
   "activity": {
+    "confirmDelete": "Staðfestu að þú viljir eyða þessu?",
     "post": {
       "new": "Hugmynd",
       "status": {
@@ -136,7 +146,12 @@
   "name": "Nafn",
   "description": "Lýsing",
   "domain": {
-    "edit": "Breyta vef"
+    "createOrganization": "Búa til samtök",
+    "edit": "Breyta vef",
+    "info": "Upplýsingar",
+    "apis": "APIs",
+    "settings": "Meira",
+    "onlyAdminsCanCreateCommunities": "Aðeins vefstjórar geta bætt við svæðum"
   },
 
   "domains": "Vefir",
@@ -211,8 +226,8 @@
     "notifications": "Tilkynningar",
     "logout": "útskrá",
     "login": "innskrá",
-    "create": "nýskrá",
-    "edit": "Breyta",
+    "create": "Nýskrá notanda",
+    "edit": "Breyta notanda",
     "newPassword": "nýtt lykilorð",
     "forgotPassword": "Búa til nýtt lykilorð",
     "forgotPasswordInstructions": "Sláðu inn netfang og við sendum þér póst með hlekk sem þú getur fylgt til að búa til nýtt lykilorð",
@@ -270,7 +285,7 @@
     "up_vote":"Kjósa upp",
     "down_vote":"Kjósa niður",
     "debate": "Rök",
-    "report": "Report post",
+    "report": "Tilkynna hugmynd",
     "notify": "Notify me about this post",
     "share": "Share this post",
     "searchingFor": "Leita að hugmynd ",
@@ -358,6 +373,7 @@
   "next": "áfram",
 
   "group": {
+    "showWhoPostedPosts": "Birta hugmyndasmið",
     "locationHidden": "Ekki nota staðsetningu",
     "group": "Hópur",
     "admins": "Hópur vefstjórar",

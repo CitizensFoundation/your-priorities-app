@@ -1,23 +1,23 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.73">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.73">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.73">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.73">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.74">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.73">
-<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.73">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.73">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.74">
+<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.74">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.74">
 
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.73">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.73">
-<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.73">
-<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.73">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.74">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.74">
+<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.74">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.74">
 
 </head><body><dom-module id="yp-group-edit">
   <template>
@@ -39,11 +39,10 @@
       }
 
       .additionalSettings {
-        padding-top: 16px;
+        padding-top: 8px;
       }
 
       file-upload {
-        padding-top: 8px;
       }
 
       .half {
@@ -57,6 +56,15 @@
 
       paper-checkbox {
         padding-top: 8px;
+      }
+
+      .icon {
+        padding-right: 8px;
+      }
+
+      paper-dropdown-menu {
+        max-width: 250px;
+        width: 250px;
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -74,14 +82,14 @@
       </div>
 
       <div class="layout horizontal">
-        <div class="layout vertical additionalSettings half">
+        <div class="layout vertical additionalSettings">
           <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
             <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
             <span>[[t('image.logo.upload')]]</span>
           </file-upload>
         </div>
 
-        <div class="layout vertical additionalSettings half">
+        <div class="layout vertical additionalSettings">
           <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
             <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
             <span>[[t('image.header.upload')]]</span>
@@ -92,10 +100,10 @@
         <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       </div>
 
-      <div class="layout horizontal wrap config">
+      <div class="layout vertical">
         <div class="layout vertica config">
           <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
-          <div class="layout horizontal center-center">
+          <div class="layout vertical">
             <paper-dropdown-menu label="[[t('status.select')]]">
               <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
                 <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
@@ -103,8 +111,10 @@
                 </template>
               </paper-menu>
             </paper-dropdown-menu>
+
             <input type="hidden" name="status" value="[[status]]">
-            <div class="layout horizontal center-center">
+
+            <div class="layout horizontal">
               <paper-dropdown-menu label="[[t('endorsementButtons')]]">
                 <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{endorsementButtons}}">
                   <template is="dom-repeat" items="[[endorsementButtonsOptions]]" as="buttonsSelection">
@@ -117,16 +127,17 @@
           </div>
         </div>
         <div class="layout vertical config">
-          <h2>[[t('group.config')]]</h2>
           <paper-checkbox name="canVote" checked$="{{canVote}}">[[t('group.canVote')]]</paper-checkbox>
           <paper-checkbox name="canAddNewPosts" checked$="{{canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
           <paper-checkbox name="locationHidden" checked$="{{locationHidden}}">[[t('group.locationHidden')]]</paper-checkbox>
+          <paper-checkbox name="showWhoPostedPosts" checked$="{{showWhoPostedPosts}}">[[t('group.showWhoPostedPosts')]]</paper-checkbox>
         </div>
       </div>
 
       <input type="hidden" name="canVote" value$="[[canVote]]">
       <input type="hidden" name="canAddNewPosts" value$="[[canAddNewPosts]]">
       <input type="hidden" name="locationHidden" value$="[[locationHidden]]">
+      <input type="hidden" name="showWhoPostedPosts" value$="[[showWhoPostedPosts]]">
 
       <input type="hidden" name="themeId" value="[[themeId]]">
 
@@ -190,6 +201,7 @@
 
   Polymer({
 
+    //TODO: Try to eliminate configuration boiler-plate
     is: 'yp-group-edit',
 
     behaviors: [
@@ -208,6 +220,11 @@
       canAddNewPosts: {
         type: Boolean,
         value: true
+      },
+
+      showWhoPostedPosts: {
+        type: Boolean,
+        value: false
       },
 
       hideAllTabs: Boolean,
@@ -355,6 +372,7 @@
         this._setFromConfiguration('hideHelpIcon');
         this._setFromConfiguration('hideEmoji');
         this._setFromConfiguration('hideGroupHeader');
+        this._setFromConfiguration('showWhoPostedPosts');
 
         if (this.community) {
           if (this.community.access==0) {
@@ -418,12 +436,12 @@
       if (this.language && this.t) {
         if (this.new) {
           this.editHeaderText = this.t('group.new');
-          this.toastText = this.t('group.toast.created');
+          this.toastText = this.t('groupToastCreated');
           this.set('saveText', this.t('create'));
         } else {
-          this.set('saveText', this.t('update'));
+          this.set('saveText', this.t('save'));
           this.editHeaderText = this.t('group.update');
-          this.toastText = this.t('group.toast.updated');
+          this.toastText = this.t('groupToastUpdated');
         }
       }
     }

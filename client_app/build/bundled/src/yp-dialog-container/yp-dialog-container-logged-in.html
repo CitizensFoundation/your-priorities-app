@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.73"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-api-action-dialog" assetpath="../yp-api-action-dialog/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.74"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-api-action-dialog" assetpath="../yp-api-action-dialog/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -334,13 +334,16 @@
       .additionalSettings {
         margin-top: 16px;
       }
+
+      .icon {
+        padding-right: 8px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <yp-edit-dialog id="editDialog" double-width="" icon="face" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <h2>[[editHeaderText]]</h2>
       <div class="container">
-        <h2>[[editHeaderText]]</h2>
-
         <paper-tabs selected="{{selected}}" id="paper_tabs" focused="">
           <paper-tab><span>[[t('user.info')]]</span></paper-tab>
           <paper-tab>[[t('user.notifications')]]</paper-tab>
@@ -499,10 +502,12 @@
     _setupTranslation: function () {
       if (this.new) {
         this.editHeaderText = this.t('user.new');
-        this.toastText = this.t('user.toast.created');
+        this.toastText = this.t('userToastCreated');
+        this.set('saveText', this.t('create'));
       } else {
+        this.set('saveText', this.t('save'));
         this.editHeaderText = this.t('user.edit');
-        this.toastText = this.t('user.toast.updated');
+        this.toastText = this.t('userToastUpdated');
       }
     }
   });

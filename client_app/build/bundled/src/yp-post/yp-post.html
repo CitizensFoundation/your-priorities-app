@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.73"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.74"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -89,6 +89,12 @@
         right: 0;
       }
 
+      .userInfo {
+        padding-right: 32px;
+        text-align: right;
+        color: #777;
+      }
+
       @media (max-width: 960px) {
         :host {
           width: 600px;
@@ -124,8 +130,13 @@
           width: 100%;
         }
 
-        .description {
+        .description[no-user-info] {
           padding-bottom: 32px;
+        }
+
+        .userInfo {
+          margin-bottom: 36px;
+          padding-right: 8px;
         }
 
         .mediaAndInfoContainer {
@@ -166,6 +177,10 @@
         .description {
           font-size: 15px;
         }
+
+      }
+      .userWithOrg {
+        --ak-user-name-color: #555555;
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -180,7 +195,12 @@
               <yp-post-cover-media header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
               <div class="layout vertical">
                 <div class="infoContainer">
-                  <div id="description" class="description"></div>
+                  <div id="description" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]" class="description"></div>
+                  <template is="dom-if" if="[[post.Group.configuration.showWhoPostedPosts]]">
+                    <div class="layout horizontal self-end userInfo">
+                      <yp-user-with-organization class="userWithOrg" hide-image="" title-date="[[post.user.name]]" inverted="" user$="[[post.User]]"></yp-user-with-organization>
+                    </div>
+                  </template>
                 </div>
                 <div class="card-actions">
                   <yp-post-actions floating="" header-mode="[[headerMode]]" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
@@ -206,8 +226,6 @@
           </div>
         </paper-material>
       </div>
-      <template is="dom-if" if="[[headerMode]]">
-      </template>
     </template>
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>

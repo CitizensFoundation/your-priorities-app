@@ -1,11 +1,11 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.73">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.73">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.74">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.74">
 
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.73">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.73">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.74">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.74">
 
-<link rel="import" href="yp-user-image.html?v=6.3.73">
+<link rel="import" href="yp-user-image.html?v=6.3.74">
 
 </head><body><dom-module id="yp-user-info">
   <template>
@@ -37,20 +37,28 @@
       .contact-info .email {
         color: #999;
       }
+
+      .buttons {
+        margin-top: 8px;
+      }
+
+      .hasPointer {
+        cursor: pointer;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <template restamp="" is="dom-if" if="[[user]]">
       <div class="mainContainer">
         <div class="avatar-container">
-          <yp-user-image large="" user="[[user]]"></yp-user-image>
+          <yp-user-image class="hasPointer" large="" user="[[user]]" on-tap="_openEdit"></yp-user-image>
         </div>
         <div class="contact-info">
           <div class="name">[[user.name]]</div>
           <div class="email">[[user.email]]</div>
-          <div class="layout horizontal center-justified">
-            <paper-icon-button icon="create" title$="[[t('user.edit')]]" on-tap="_openEdit"></paper-icon-button>
-            <paper-icon-button icon="input" title$="[[t('user.logout')]]" on-tap="onLogout"></paper-icon-button>
+          <div class="layout vertical center-justified buttons">
+            <paper-button icon="create" title$="[[t('user.edit')]]" on-tap="_openEdit">[[t('user.edit')]]</paper-button>
+            <paper-button icon="input" title$="[[t('user.logout')]]" on-tap="onLogout">[[t('user.logout')]]</paper-button>
           </div>
         </div>
       </div>
