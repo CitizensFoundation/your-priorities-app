@@ -60,6 +60,12 @@ Import your data with the Active Citizen events_importer script (if you already 
 
 train the template
 deploy the template
+
+Here is a Dockerfile that can either be used to build a docker container with prediction IO and Universal Recommender
+or as a recipe for building your own non-docker Ubuntu/Debian based predictionIO VM on any cloud or locally.
+
+[https://github.com/rbjarnason/docker-predictionio/blob/master/Dockerfile](https://github.com/rbjarnason/docker-predictionio/blob/master/Dockerfile)
+
 ```
 [https://prediction.io/](https://prediction.io/)
 
