@@ -1,29 +1,29 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.81">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.82">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.81">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.81">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.82">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.82">
 
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.81">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.81">
-<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.81">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.82">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.82">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.82">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.81">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.81">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.81">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.81">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.82">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.82">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.82">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.82">
 
-<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.81">
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.82">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.81">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.81">
-<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.81">
-<link rel="import" href="../ac-activities/ac-activities.html?v=6.3.81">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.82">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.82">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.82">
+<link rel="import" href="../ac-activities/ac-activities.html?v=6.3.82">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.81">
-<link rel="import" href="../yp-post/yp-post-card.html?v=6.3.81">
-<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.3.81">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.82">
+<link rel="import" href="../yp-post/yp-post-card.html?v=6.3.82">
+<link rel="import" href="../yp-post/yp-post-card-add.html?v=6.3.82">
 
-<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.3.81">
+<link rel="import" href="../yp-posts-filter/yp-posts-filter.html?v=6.3.82">
 
 </head><body><dom-module id="yp-post-list">
   <template>
@@ -100,7 +100,24 @@
         width: 50%
       }
 
+      .searchBox {
+        --paper-input-container-label: {
+          font-size: 22px;
+          color: #555;
+        };
+        margin-bottom: 22px;
+        margin-right: 8px;
+      }
+
       @media (max-width: 800px) {
+
+        .searchBox {
+          --paper-input-container-label: {
+            font-size: 17px;
+          };
+          margin-bottom: 8px;
+        }
+
         .half {
           width: 100%;
         }
@@ -130,16 +147,6 @@
       .card[wide-padding] {
         padding: 16px !important;
       }
-
-
-      .searchBox {
-        --paper-input-container-label: {
-          font-size: 22px;
-          color: #555;
-        };
-        margin-bottom: 22px;
-        margin-right: 8px;
-      }
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -154,6 +161,7 @@
           <div class="layout horizontal center-center">
             <paper-input id="searchInput" label$="[[t('searchFor')]]" value="{{searchingFor}}" class="searchBox">
             </paper-input>
+            <paper-icon-button icon="search" on-tap="_search" hidden$="[[!showSearchIcon]]"></paper-icon-button>
           </div>
           <div class="layout horizontal center-center">
             <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" on-refresh-group="_refreshGroupFromFilter" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
@@ -295,6 +303,11 @@
         listOffset: {
           type: String,
           value: "500px"
+        },
+
+        showSearchIcon: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -331,6 +344,11 @@
 
       _searchingForChanged: function (newValue, oldValue) {
         this.set('moreToLoad', true);
+        if (newValue && newValue!='') {
+          this.set('showSearchIcon', true);
+        } else {
+          this.set('showSearchIcon', false);
+        }
       },
 
       _filterChanged: function (newValue, oldValue) {

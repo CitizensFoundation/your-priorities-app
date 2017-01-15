@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.81"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.82"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -267,7 +267,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       @media (max-width: 600px) {
         .subTitle {
-          font-size: 18px;
+          font-size: 17px;
           padding-top: 0;
           margin-top: 14px;
         }
@@ -641,7 +641,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         width: 50%
       }
 
+      .searchBox {
+        --paper-input-container-label: {
+          font-size: 22px;
+          color: #555;
+        };
+        margin-bottom: 22px;
+        margin-right: 8px;
+      }
+
       @media (max-width: 800px) {
+
+        .searchBox {
+          --paper-input-container-label: {
+            font-size: 17px;
+          };
+          margin-bottom: 8px;
+        }
+
         .half {
           width: 100%;
         }
@@ -671,16 +688,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .card[wide-padding] {
         padding: 16px !important;
       }
-
-
-      .searchBox {
-        --paper-input-container-label: {
-          font-size: 22px;
-          color: #555;
-        };
-        margin-bottom: 22px;
-        margin-right: 8px;
-      }
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -695,6 +702,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class="layout horizontal center-center">
             <paper-input id="searchInput" label$="[[t('searchFor')]]" value="{{searchingFor}}" class="searchBox">
             </paper-input>
+            <paper-icon-button icon="search" on-tap="_search" hidden$="[[!showSearchIcon]]"></paper-icon-button>
           </div>
           <div class="layout horizontal center-center">
             <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" on-refresh-group="_refreshGroupFromFilter" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
@@ -836,6 +844,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         listOffset: {
           type: String,
           value: "500px"
+        },
+
+        showSearchIcon: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -872,6 +885,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _searchingForChanged: function (newValue, oldValue) {
         this.set('moreToLoad', true);
+        if (newValue && newValue!='') {
+          this.set('showSearchIcon', true);
+        } else {
+          this.set('showSearchIcon', false);
+        }
       },
 
       _filterChanged: function (newValue, oldValue) {
