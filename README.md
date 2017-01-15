@@ -64,8 +64,9 @@ deploy the template
 [https://prediction.io/](https://prediction.io/) and [https://github.com/actionml/universal-recommender](https://github.com/actionml/universal-recommender)
 
 ```
-Here is a Dockerfile that can either be used to build a Docker container with PredictionIO and Universal
-Recommendation or as a recipe for building your own non-Docker Ubuntu/Debian based predictionIO VM on any cloud or locally.
+Here is a Dockerfile that can either be used to build a Docker container with PredictionIO 
+and Universal Recommendation or as a recipe for building your own non-Docker Ubuntu/Debian 
+based predictionIO VM on any cloud or locally.
 ```
 [https://github.com/rbjarnason/docker-predictionio/blob/master/Dockerfile](https://github.com/rbjarnason/docker-predictionio/blob/master/Dockerfile)
 
