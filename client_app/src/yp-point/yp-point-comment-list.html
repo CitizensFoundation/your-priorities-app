@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
 <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
@@ -93,8 +94,8 @@
           <div class="commentText">[[t('noComments')]]</div>
         </div>
         <div class="layout horizontal">
-          <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
-          <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
+          <paper-icon-button title$="[[t('openComments')]]" class="openCloseButton" icon="hardware:keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
+          <paper-icon-button title$="[[t('closeComments')]]" class="openCloseButton" icon="hardware:keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
         </div>
       </div>
       <template is="dom-if" if="[[open]]" restamp>

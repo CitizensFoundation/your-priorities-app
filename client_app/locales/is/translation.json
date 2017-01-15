@@ -1,4 +1,7 @@
 {
+  "closeComments": "Loka athugasemdum",
+  "openComments": "Opna athugasemdir",
+  "deleteActivity": "Eyða frétt",
   "pointsFor": "Rök með hugmynd",
   "pointsAgainst": "Rök á móti hugmynd",
   "pointForShort": "Með",

@@ -1,4 +1,7 @@
 {
+  "closeComments": "Close comments",
+  "openComments": "Open comments",
+  "deleteActivity": "Delete activity from newsfeed",
   "pointsFor": "Points for idea",
   "pointsAgainst": "Points against idea",
   "pointForShort": "For",
@@ -296,8 +299,8 @@
     "against": "Write point against...",
     "add_up": "Add point for",
     "add_down": "Add point against",
-    "helpful": "Vote point up as helpful",
-    "not_helpful": "Vote point down as not helpful",
+    "helpful": "Vote up as helpful",
+    "not_helpful": "Vote down as not helpful",
     "addNewsStory": "Add a news story",
     "postNewsStory": "Add news story",
     "addComment": "Your comment...",
