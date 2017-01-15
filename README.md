@@ -50,6 +50,14 @@ using machine learning to recommend content to users.
 ```
 [https://github.com/rbjarnason/active-citizen](https://github.com/rbjarnason/active-citizen)
 
+
+## Your Priorities user help
+```
+Here are basic user instructions.
+```
+[User Instructions](https://docs.google.com/document/d/1OVCkpcOa4GcUmw6iDPqckMzWIaGi5Wso6UGacrIfFpw)
+
+
 ## Active Citizen PredictionIO recommendations (optional)
 ```
 Install PredictionIO
@@ -85,6 +93,15 @@ Example dataset from our Better Reykjavik citizen particiaption website is provi
 active-citizen/exporters/datasets/better_reyjkavik
 
 ```
+
+## Translation help
+```
+If you want to help us translate the app to your language please use Trensifex for online 
+translation for the app. It's easy to use and free for open source projects. See instructions 
+in the link below.
+```
+[Transifex translation help](https://docs.google.com/document/d/1ASb4XKjncZHHf0TBo-w4vK6u5fhE3lE3tszrlFEl95k)
+
 
 ## Developed by the non-profit Citizens Foundation Iceland
 ```
