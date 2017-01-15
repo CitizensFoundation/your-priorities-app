@@ -1,17 +1,18 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.79">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.3.79">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.79">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.79">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html?v=6.3.79">
-<link rel="import" href="../../bower_components/iron-icon/iron-icon.html?v=6.3.79">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.79">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.79">
-<link rel="import" href="../../bower_components/iron-icons/maps-icons.html?v=6.3.79">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.79">
-<link rel="import" href="../../bower_components/paper-styles/default-theme.html?v=6.3.79">
-<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.79">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.80">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.3.80">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.80">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.80">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html?v=6.3.80">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html?v=6.3.80">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.80">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.80">
+<link rel="import" href="../../bower_components/iron-icons/maps-icons.html?v=6.3.80">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html?v=6.3.80">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.80">
+<link rel="import" href="../../bower_components/paper-styles/default-theme.html?v=6.3.80">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.80">
 
-<link rel="import" href="app-helpers.html?v=6.3.79">
+<link rel="import" href="app-helpers.html?v=6.3.80">
 <!--
 `emoji-selector` is a `paper-input-addon` component (see Polymer.PaperInput)
 that lets you select an emoji from a list and insert it into a text field.
@@ -140,6 +141,10 @@ the category tabs.
     paper-menu {
       background-color: #FFF;
     }
+
+    .dropdown-trigger {
+      color: #444;
+    }
   </style>
 
   <template>
@@ -147,7 +152,7 @@ the category tabs.
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <paper-menu-button id="menu" vertical-align="top" vertical-offset="20" dynamic-align="" ignore-select="">
-      <paper-icon-button icon="face" class="dropdown-trigger"></paper-icon-button>
+      <paper-icon-button title$="[[t('addEmoji')]]" icon="editor:insert-emoticon" class="dropdown-trigger"></paper-icon-button>
       <paper-menu class="dropdown-content">
         <div class="box">
           <paper-input autofocus="" no-label-float="" id="searchInput" placeholder="[[t('findAnEmoji')]]" on-input="_onSearchInput">

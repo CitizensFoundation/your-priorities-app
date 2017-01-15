@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.79"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.80"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -540,6 +540,17 @@
         margin-bottom: 16px;
         color: #555;
       }
+
+      #pointUpMaterialNotUsed {
+        border-top: solid 2px;
+        border-top-color:  var(--master-point-up-color);
+      }
+
+      #pointDownMaterialNotUsed {
+        border-top: solid 2px;
+        border-top-color: var(--master-point-down-color);
+      }
+
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-signals on-iron-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></iron-signals>
@@ -596,7 +607,7 @@
                 </div>
                 <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
                   <div class="addPointFab layout horizontal center-center">
-                    <paper-button icon="add" mini="" z="3" on-tap="addPointDown" title="[[t('point.add_down')]]">[[t('point.postComment')]]</paper-button>
+                    <paper-button icon="add" elevation="3" on-tap="addPointDown" title="[[t('point.add_down')]]">[[t('point.postComment')]]</paper-button>
                   </div>
                 </template>
               </paper-material>
@@ -1508,7 +1519,7 @@
       }
 
       .tabs {
-        margin-top: 64px;
+        margin-top: 24px;
       }
 
       @media (max-width: 934px) {
@@ -1577,6 +1588,7 @@
           max-width: 450px;
           font-size: 13px !important;
           word-wrap: break-word !important;
+          margin-top: 16px;
         }
 
         .tabs .tab {

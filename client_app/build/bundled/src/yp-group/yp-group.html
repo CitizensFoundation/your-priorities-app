@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.79"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.80"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -221,6 +221,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-bottom: 0 !important;
       }
 
+      paper-menu-button {
+        padding: 0;
+        margin: 0;
+      }
+
       .filterIcon {
         padding-right: 16px;
       }
@@ -234,20 +239,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         -ms-filter: "FlipV";
       }
 
-      .dropdown-trigger iron-icon {
-        width: 42px;
-        height: 42px;
+      .dropdown-trigger  {
+        width: 55px;
+        height: 55px;
+        margin-bottom: 16px;
       }
 
       .clear-search-trigger {
-        width: 42px;
-        height: 42px;
-        margin-top: 12px;
-      }
-
-      .clear-search-trigger iron-icon {
-        width: 42px;
-        height: 42px;
+        width: 55px;
+        height: 55px;
+        margin-bottom: 16px;
       }
 
       paper-item {
@@ -255,7 +256,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .subTitle {
-        font-size: 24px;
+        font-size: 22px;
+        margin-top: 14px;
       }
 
       #filterDropdown {
@@ -266,17 +268,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       @media (max-width: 600px) {
         .subTitle {
           font-size: 18px;
+          padding-top: 0;
+          margin-top: 14px;
         }
 
         .dropdown-trigger {
           padding-left: 0;
           margin-left: 0;
+          width: 50px;
+          height: 50px;
+          margin-bottom: 0;
+          margin-top: 0;
         }
 
         .clear-search-trigger {
-          width: 40px;
-          height: 40px;
+          width: 50px;
+          height: 50px;
           margin-top: 5px;
+          margin-bottom: 0;
+          margin-top: 0;
         }
       }
     </style>
@@ -289,8 +299,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <paper-icon-button icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
         </template>
         <template is="dom-if" if="[[showFilter]]">
-          <paper-menu-button id="filterDropdown" class="selected-items" icon="editor:merge-type" vertical-align="bottom" horizontal-align="left">
-            <paper-icon-button id="dropDownTrigger" icon="filter-list" class="dropdown-trigger"></paper-icon-button>
+          <paper-menu-button id="filterDropdown" class="selected-items" icon="sort" vertical-align="bottom" horizontal-align="left">
+            <paper-icon-button title$="[[t('filterIdeas')]]" id="dropDownTrigger" icon="sort" class="dropdown-trigger"></paper-icon-button>
             <div class="layout horizontal dropdown-content">
               <div>
                 <paper-menu class="dropdown-content" on-iron-select="_changeFilter">
@@ -340,8 +350,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </div>
           </paper-menu-button>
         </template>
-        <div on-tap="_openDropDown" style="cursor: pointer;">
-          <h2 class="subTitle">[[subTitle]]</h2>
+        <div class="layout vertical start">
+          <div class="subTitle">[[subTitle]]</div>
         </div>
       </div>
     </template>
@@ -1582,15 +1592,17 @@ Custom property | Description | Default
 
     <div class="layout vertical center-center">
 
-      <div class="searchContainer layout horizontal wrap">
-        <div class="layout horizontal center-center">
-          <paper-search-bar hide-clear-button="" hide-filter-button="" query="{{searchingFor}}" placeholder="[[t('searchFor')]]" on-paper-search-search="_search"></paper-search-bar>
+      <template is="dom-if" if="[[!noPosts]]" restamp="">
+        <div class="searchContainer layout horizontal wrap">
+          <div class="layout horizontal center-center">
+            <paper-search-bar hide-clear-button="" hide-filter-button="" query="{{searchingFor}}" placeholder="[[t('searchFor')]]" on-paper-search-search="_search"></paper-search-bar>
+          </div>
+          <div class="layout horizontal center-center">
+            <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" on-refresh-group="_refreshGroupFromFilter" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+            </yp-posts-filter>
+          </div>
         </div>
-        <div class="layout horizontal center-center">
-          <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" on-refresh-group="_refreshGroupFromFilter" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
-          </yp-posts-filter>
-        </div>
-      </div>
+      </template>
 
       <template is="dom-if" if="[[noPosts]]" restamp="">
         <div class="layout horiztonal center-center">

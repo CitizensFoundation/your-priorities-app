@@ -1,6 +1,13 @@
 {
-  "pointsFor": "Rök með hugmynd",
-  "pointsAgainst": "Rök á móti hugmynd",
+  "filterIdeas": "Sýja hugmyndir",
+  "edit": "Breyta",
+  "delete": "Eyða",
+  "addEmoji": "Bæta við Emoji",
+  "closeComments": "Loka athugasemdum",
+  "openComments": "Opna athugasemdir",
+  "deleteActivity": "Eyða frétt",
+  "pointsFor": "Rök með",
+  "pointsAgainst": "Rök á móti",
   "pointForShort": "Með",
   "pointAgainstShort": "Á móti",
   "domainToastCreated": "Vefur búinn til",
@@ -333,7 +340,7 @@
     "the_all": "Allir flokkar"
   },
   "point": {
-    "report": "Tilkynna rök",
+    "report": "Tilkynna",
     "confirmDelete": "Staðfestu að þú viljir eyða þessum rökum",
     "theseAreFor": "Rök með",
     "theseAreAgainst": "Rök á móti",

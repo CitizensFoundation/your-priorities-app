@@ -1,11 +1,11 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.79">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.79">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.80">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.80">
 
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.79">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.79">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.80">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.80">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.79">
-<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.79">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.80">
+<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.80">
 
 </head><body><dom-module id="yp-user-with-organization">
   <template>
@@ -24,7 +24,7 @@
         color: var(--ak-user-name-color, #444);
       }
 
-      .imageStatus {
+      .orgImage {
         margin-left: 8px;
         width: 48px;
         height: 48px;
@@ -45,6 +45,14 @@
       .organizationName[inverted] {
         color: #676767;
       }
+
+      @media (max-width: 600px) {
+        .orgImage {
+          margin-right: 8px;
+          margin-left: 4px;
+        }
+      }
+
     </style>
 
     <template is="dom-if" if="[[user]]">
@@ -59,7 +67,7 @@
           </div>
         </div>
         <template is="dom-if" if="[[organizationImageUrl]]">
-          <img width="48" height="48" sizing="cover" class="imageStatus" src$="[[organizationImageUrl]]">
+          <img width="48" height="48" sizing="cover" class="orgImage" src$="[[organizationImageUrl]]">
         </template>
       </div>
     </template>
