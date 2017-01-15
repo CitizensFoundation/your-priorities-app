@@ -106,7 +106,7 @@
     <iron-media-query query="(min-width: 1000px)" query-matches="{{wide}}"></iron-media-query>
 
     <div class="layout vertical center-center">
-      <div id="mapContainer" elevation="3" class="mapContainer">
+      <paper-material id="mapContainer" elevation="2" class="mapContainer">
         <template is="dom-if" if="[[posts]]">
           <google-map id="map" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" fit-to-markers>
             <template is="dom-repeat" items="[[posts]]" as="post">
@@ -119,7 +119,7 @@
             </paper-map-info>
           </google-map>
         </template>
-      </div>
+      </paper-material>
 
       <template is="dom-if" if="[[noPosts]]">
         <paper-material elevation="3" class="noMapContainer">
