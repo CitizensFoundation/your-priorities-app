@@ -1,4 +1,8 @@
 {
+  "pointsFor": "Points for idea",
+  "pointsAgainst": "Points against idea",
+  "pointForShort": "For",
+  "pointAgainstShort": "Against",
   "domainToastCreated": "Domain Created",
   "domainToastUpdated": "Domain Saved",
   "communityToastCreated": "Community Created",
@@ -288,8 +292,8 @@
     "theseAreFor": "Point for",
     "theseAreAgainst": "Point against",
     "point": "Point",
-    "for": "Why do you support this...",
-    "against": "Why do you oppose this...",
+    "for": "Write point for...",
+    "against": "Write point against...",
     "add_up": "Add point for",
     "add_down": "Add point against",
     "helpful": "Vote point up as helpful",
@@ -297,7 +301,7 @@
     "addNewsStory": "Add a news story",
     "postNewsStory": "Add news story",
     "addComment": "Your comment...",
-    "postComment": "Post comment",
+    "postComment": "Post",
     "comments": "Comments",
     "howToWrite": "Let's brainstorm the best points for and against and think in solutions...",
     "commentToShort": "The text is too short!"
