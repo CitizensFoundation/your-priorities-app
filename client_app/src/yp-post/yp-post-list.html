@@ -100,7 +100,24 @@
         width: 50%
       }
 
+      .searchBox {
+        --paper-input-container-label: {
+          font-size: 22px;
+          color: #555;
+        };
+        margin-bottom: 22px;
+        margin-right: 8px;
+      }
+
       @media (max-width: 800px) {
+
+        .searchBox {
+          --paper-input-container-label: {
+            font-size: 17px;
+          };
+          margin-bottom: 8px;
+        }
+
         .half {
           width: 100%;
         }
@@ -130,16 +147,6 @@
       .card[wide-padding] {
         padding: 16px !important;
       }
-
-
-      .searchBox {
-        --paper-input-container-label: {
-          font-size: 22px;
-          color: #555;
-        };
-        margin-bottom: 22px;
-        margin-right: 8px;
-      }
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -155,6 +162,7 @@
           <div class="layout horizontal center-center">
             <paper-input id="searchInput" label$="[[t('searchFor')]]" value="{{searchingFor}}" class="searchBox">
             </paper-input>
+            <paper-icon-button icon="search" on-tap="_search" hidden$="[[!showSearchIcon]]"></paper-icon-button>
           </div>
           <div class="layout horizontal center-center">
             <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
@@ -298,6 +306,11 @@
         listOffset: {
           type: String,
           value: "500px"
+        },
+
+        showSearchIcon: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -334,6 +347,11 @@
 
       _searchingForChanged: function (newValue, oldValue) {
         this.set('moreToLoad', true);
+        if (newValue && newValue!='') {
+          this.set('showSearchIcon', true);
+        } else {
+          this.set('showSearchIcon', false);
+        }
       },
 
       _filterChanged: function (newValue, oldValue) {
