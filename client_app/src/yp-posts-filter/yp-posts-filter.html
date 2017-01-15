@@ -25,6 +25,11 @@
         margin-bottom: 0 !important;
       }
 
+      paper-menu-button {
+        padding: 0;
+        margin: 0;
+      }
+
       .filterIcon {
         padding-right: 16px;
       }
@@ -38,20 +43,16 @@
         -ms-filter: "FlipV";
       }
 
-      .dropdown-trigger iron-icon {
-        width: 42px;
-        height: 42px;
+      .dropdown-trigger  {
+        width: 55px;
+        height: 55px;
+        margin-bottom: 16px;
       }
 
       .clear-search-trigger {
-        width: 42px;
-        height: 42px;
-        margin-top: 12px;
-      }
-
-      .clear-search-trigger iron-icon {
-        width: 42px;
-        height: 42px;
+        width: 55px;
+        height: 55px;
+        margin-bottom: 16px;
       }
 
       paper-item {
@@ -59,7 +60,8 @@
       }
 
       .subTitle {
-        font-size: 24px;
+        font-size: 22px;
+        margin-top: 14px;
       }
 
       #filterDropdown {
@@ -70,17 +72,25 @@
       @media (max-width: 600px) {
         .subTitle {
           font-size: 18px;
+          padding-top: 0;
+          margin-top: 14px;
         }
 
         .dropdown-trigger {
           padding-left: 0;
           margin-left: 0;
+          width: 50px;
+          height: 50px;
+          margin-bottom: 0;
+          margin-top: 0;
         }
 
         .clear-search-trigger {
-          width: 40px;
-          height: 40px;
+          width: 50px;
+          height: 50px;
           margin-top: 5px;
+          margin-bottom: 0;
+          margin-top: 0;
         }
       }
     </style>
@@ -93,8 +103,8 @@
           <paper-icon-button icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
         </template>
         <template is="dom-if" if="[[showFilter]]">
-          <paper-menu-button id="filterDropdown" class="selected-items" icon="editor:merge-type" vertical-align="bottom" horizontal-align="left">
-            <paper-icon-button id="dropDownTrigger" icon="filter-list" class="dropdown-trigger"></paper-icon-button>
+          <paper-menu-button id="filterDropdown" class="selected-items" icon="sort" vertical-align="bottom" horizontal-align="left">
+            <paper-icon-button title$="[[t('filterIdeas')]]" id="dropDownTrigger" icon="sort" class="dropdown-trigger"></paper-icon-button>
             <div class="layout horizontal dropdown-content">
               <div>
                 <paper-menu class="dropdown-content" on-iron-select="_changeFilter">
@@ -144,8 +154,8 @@
             </div>
           </paper-menu-button>
         </template>
-        <div on-tap="_openDropDown" style="cursor: pointer;">
-          <h2 class="subTitle">[[subTitle]]</h2>
+        <div class="layout vertical start">
+          <div class="subTitle">[[subTitle]]</div>
         </div>
       </div>
     </template>
