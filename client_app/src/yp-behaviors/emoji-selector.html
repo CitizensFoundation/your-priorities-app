@@ -140,6 +140,10 @@ the category tabs.
     paper-menu {
       background-color: #FFF;
     }
+
+    .dropdown-trigger {
+      color: #444;
+    }
   </style>
 
   <template>
@@ -150,7 +154,7 @@ the category tabs.
                        vertical-align="top" vertical-offset="20"
                        dynamic-align
                        ignore-select>
-      <paper-icon-button icon="face" class="dropdown-trigger"></paper-icon-button>
+      <paper-icon-button title$="[[t('addEmoji')]]" icon="face" class="dropdown-trigger"></paper-icon-button>
       <paper-menu class="dropdown-content">
         <div class="box">
           <paper-input autofocus no-label-float id="searchInput" placeholder="[[t('findAnEmoji')]]"

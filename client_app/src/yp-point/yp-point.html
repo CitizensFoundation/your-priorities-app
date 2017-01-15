@@ -137,14 +137,14 @@
           </template>
           <div class="layout horizontal actionContainer">
             <yp-point-actions point="[[point]]"></yp-point-actions>
-            <paper-icon-button hidden$="[[!loggedInUser]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
+            <paper-icon-button hidden$="[[!loggedInUser]]" title$="[[t('point.report')]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
             <div class="flex"></div>
             <template is="dom-if" if="[[hasPointAccess]]">
               <div class="layout horizontal self-end" hidden$="">
                 <yp-ajax id="editPointAjax" method="PUT" on-response="_editResponse"></yp-ajax>
                 <yp-ajax id="deletePointAjax" method="DELETE" on-response="_deleteResponse"></yp-ajax>
-                <paper-icon-button hidden$="[[!canEditPoint]]" icon="create" on-tap="_editPoint"></paper-icon-button>
-                <paper-icon-button icon="clear" on-tap="_deletePoint"></paper-icon-button>
+                <paper-icon-button title$="[[t('edit')]]" hidden$="[[!canEditPoint]]" icon="create" on-tap="_editPoint"></paper-icon-button>
+                <paper-icon-button title$="[[t('delete')]]" icon="clear" on-tap="_deletePoint"></paper-icon-button>
               </div>
             </template>
           </div>
