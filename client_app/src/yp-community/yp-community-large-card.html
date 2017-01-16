@@ -245,6 +245,11 @@
               console.error("Can't find community description element");
             }
           });
+        } else {
+          var description = this.$$("#description");
+          if (description) {
+            description.innerHTML = "";
+          }
         }
       },
 
