@@ -1,23 +1,23 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.83">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.84">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.83">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html?v=6.3.83">
-<link rel="import" href="../../bower_components/iron-selector/iron-selector.html?v=6.3.83">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.83">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.84">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html?v=6.3.84">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html?v=6.3.84">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.84">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.83">
-<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.3.83">
-<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html?v=6.3.83">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.84">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.3.84">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html?v=6.3.84">
 
-<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html?v=6.3.83">
-<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html?v=6.3.83">
-<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html?v=6.3.83">
-<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.83">
-<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html?v=6.3.83">
-<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html?v=6.3.83">
-<link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html?v=6.3.83">
-<link href="../yp-app-globals/yp-language-selector.html?v=6.3.83" rel="import">
-<link rel="import" href="../yp-user/yp-user-info.html?v=6.3.83">
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html?v=6.3.84">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html?v=6.3.84">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html?v=6.3.84">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.84">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html?v=6.3.84">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html?v=6.3.84">
+<link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html?v=6.3.84">
+<link href="../yp-app-globals/yp-language-selector.html?v=6.3.84" rel="import">
+<link rel="import" href="../yp-user/yp-user-info.html?v=6.3.84">
 
 </head><body><dom-module id="yp-app-nav-drawer">
 
@@ -64,6 +64,15 @@
         height: 42px;
         cursor: pointer;
       }
+
+      .languageSelector {
+        margin-left: 8px;
+        margin-right: 8px;
+      }
+
+      yp-language-selector {
+        padding-top: 0;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -74,7 +83,9 @@
           <paper-item on-tap="_goBack">[[homeLink.name]]</paper-item>
         </div>
       </div>
-      <yp-language-selector hidden$="[[user]]"></yp-language-selector>
+      <div class="languageSelector layout vertical self-start" hidden$="[[user]]">
+        <yp-language-selector class="languageSelector"></yp-language-selector>
+      </div>
       <div class="layout vertical" hidden$="[[!user]]">
         <div hidden="">
           <div class="header">[[t('myDomains')]]</div>
