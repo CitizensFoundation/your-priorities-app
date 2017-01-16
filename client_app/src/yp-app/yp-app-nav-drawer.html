@@ -64,6 +64,15 @@
         height: 42px;
         cursor: pointer;
       }
+
+      .languageSelector {
+        margin-left: 8px;
+        margin-right: 8px;
+      }
+
+      yp-language-selector {
+        padding-top: 0;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -74,7 +83,9 @@
           <paper-item on-tap="_goBack">[[homeLink.name]]</paper-item>
         </div>
       </div>
-      <yp-language-selector hidden$="[[user]]"></yp-language-selector>
+      <div class="languageSelector layout vertical self-start" hidden$="[[user]]">
+        <yp-language-selector class="languageSelector"></yp-language-selector>
+      </div>
       <div class="layout vertical" hidden$="[[!user]]">
         <div hidden>
           <div class="header">[[t('myDomains')]]</div>
