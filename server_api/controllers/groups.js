@@ -650,7 +650,7 @@ router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
 
 router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), function(req, res) {
 
-  var where = { status: { $in: ['published','inactive']}, group_id: req.params.id };
+  var where = { status: { $in: ['published','inactive']}, group_id: req.params.id, deleted: false };
 
   var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
@@ -678,6 +678,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
 
   var PostsByStatus = models.Post.scope(req.params.status);
   PostsByStatus.findAndCountAll({
+    distinct: 'posts.id',
     where: where,
     attributes: ['id','name','description','status','official_status','counter_endorsements_up','cover_media_type',
                  'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
