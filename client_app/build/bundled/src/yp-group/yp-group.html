@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.82"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.83"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -980,7 +980,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         this.async(function () {
-          this.$$("#postsFilter")._updateTitle();
+          var postFilter = this.$$("#postsFilter");
+          if (postFilter) {
+            postFilter._updateTitle();
+          }
         }, 20);
 
         this.async(function () {
