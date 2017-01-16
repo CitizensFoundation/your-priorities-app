@@ -442,7 +442,10 @@
         }
 
         this.async(function () {
-          this.$$("#postsFilter")._updateTitle();
+          var postFilter = this.$$("#postsFilter");
+          if (postFilter) {
+            postFilter._updateTitle();
+          }
         }, 20);
 
         this.async(function () {
