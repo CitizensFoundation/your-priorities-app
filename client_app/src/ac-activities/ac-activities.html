@@ -500,6 +500,9 @@
         this.async(function () {
           this.$.ironList.fire('iron-resize');
         });
+        this.async(function () {
+          this.$.ironList.fire('iron-resize');
+        }, 100);
       },
 
       fireResize: function () {
