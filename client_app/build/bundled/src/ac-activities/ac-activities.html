@@ -1,27 +1,27 @@
-<html><head></head><body>-<link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.89">
+<html><head></head><body>-<link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.91">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.89">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.89">
-<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.89">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.89">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.91">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.91">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.91">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.91">
 
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.89">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.89">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.91">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.91">
 
-<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.89">
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.91">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.89">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.89">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.89">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.89">
-<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.89">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.91">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.91">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.91">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.91">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.91">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.89">
-<link rel="import" href="../yp-point/yp-point-news-story-edit.html?v=6.3.89">
-<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.89">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.91">
+<link rel="import" href="../yp-point/yp-point-news-story-edit.html?v=6.3.91">
+<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.91">
 
-<link rel="import" href="./ac-activity.html?v=6.3.89">
-<link rel="import" href="./ac-activity-recommended-posts.html?v=6.3.89">
+<link rel="import" href="./ac-activity.html?v=6.3.91">
+<link rel="import" href="./ac-activity-recommended-posts.html?v=6.3.91">
 
 <dom-module id="ac-activities">
   <template>
@@ -160,7 +160,7 @@
     <div class="layout horizontal topLevelActivitiesContainer" wide$="[[wide]]">
       <div class="layout vertical self-start">
         <template is="dom-if" if="[[loggedInUser]]">
-          <paper-material logged-in-user$="[[loggedInUser]]" elevation="1" hidden$="[[disableNewPosts]]" hidden="" class="layout horizontal addNewsBox">
+          <paper-material logged-in-user$="[[loggedInUser]]" elevation="1" hidden$="[[disableNewPosts]]" class="layout horizontal addNewsBox">
             <yp-point-news-story-edit domain-id="[[domainId]]" community-id="[[communityId]]" group-id="[[groupId]]" post-group-id="[[postGroupId]]" post-id="[[postId]]" on-refresh="loadNewData">
             </yp-point-news-story-edit>
           </paper-material>
@@ -172,7 +172,7 @@
             </div>
           </template>
         </iron-list>
-        <div hidden="" class="layout horizontal center-center">
+        <div class="layout horizontal center-center">
           <yp-ajax id="ajax" large-spinner="" on-response="_activitiesResponse"></yp-ajax>
           <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner="" on-response="_activityDeletedResponse"></yp-ajax>
         </div>
