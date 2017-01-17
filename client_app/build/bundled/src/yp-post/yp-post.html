@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.85"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.86"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -1624,6 +1624,10 @@
           min-height: 600px !important;
         }
       }
+
+      .minHeightSection {
+        min-height: 450px;
+      }
     </style>
 
     <div class="topContainer" is-post="" create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
@@ -1651,12 +1655,12 @@
         <div name="debate" class="layout horizontal center-center">
           <yp-post-points id="pointsSection" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
         </div>
-        <section name="news">
+        <section name="news" class="minHeightSection">
           <template is="dom-if" if="[[newsTabSelected]]">
             <ac-activities id="postNews" selected-tab="[[selectedTab]]" disable-new-posts="[[disableNewPosts]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
           </template>
         </section>
-        <section name="location">
+        <section name="location" class="minHeightSection">
           <div class="layout horizontal center-center">
             <template is="dom-if" if="[[post.location]]" restamp="">
               <template is="dom-if" if="[[mapActive]]" restamp="">
@@ -1674,7 +1678,7 @@
             </template>
           </div>
         </section>
-        <section name="photos">
+        <section name="photos" class="minHeightSection">
           <div class="layout vertical flex">
             <div class="layout horizontal center-center">
               <yp-post-user-images post="[[post]]"></yp-post-user-images>

@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.85"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.86"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -1462,6 +1462,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           font-size: 9px;
         }
       }
+
+      .minHeightSection {
+        min-height: 450px;
+      }
     </style>
 
     <div id="topContainer">
@@ -1511,7 +1515,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <yp-post-list id="openPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
           </div>
         </section>
-        <section name="news">
+        <section name="news" class="minHeightSection">
           <template is="dom-if" if="[[newsTabSelected]]">
             <ac-activities id="groupActivities" disable-new-posts="[[disableNewPosts]]" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" group-id="[[group.id]]"></ac-activities>
           </template>
@@ -1533,7 +1537,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </div>
           </section>
         </template>
-        <section name="map" hidden$="[[locationHidden]]">
+        <section name="map" hidden$="[[locationHidden]]" class="minHeightSection">
           <template is="dom-if" if="[[mapActive]]" restamp="">
             <yp-post-map group-id="[[group.id]]"></yp-post-map>
           </template>

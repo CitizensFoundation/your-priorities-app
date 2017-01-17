@@ -1,44 +1,44 @@
-<html><head></head><body>-<link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.85">
+<html><head></head><body>-<link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.86">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.85">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.85">
-<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.85">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.85">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.86">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.86">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.86">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.86">
 
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.85">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.85">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.86">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.86">
 
-<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.85">
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.86">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.85">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.85">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.85">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.85">
-<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.85">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.86">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.86">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.86">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.86">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.86">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.85">
-<link rel="import" href="../yp-point/yp-point-news-story-edit.html?v=6.3.85">
-<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.85">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.86">
+<link rel="import" href="../yp-point/yp-point-news-story-edit.html?v=6.3.86">
+<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.86">
 
-<link rel="import" href="./ac-activity.html?v=6.3.85">
-<link rel="import" href="./ac-activity-recommended-posts.html?v=6.3.85">
+<link rel="import" href="./ac-activity.html?v=6.3.86">
+<link rel="import" href="./ac-activity-recommended-posts.html?v=6.3.86">
 
 <dom-module id="ac-activities">
   <template>
     <style include="iron-flex iron-flex-alignment">
 
       iron-list {
-        margin-top: 8px;
       }
 
       .addNewsBox {
-        margin: 16px;
-        margin-top: 32px;
         background-color: #FFF;
         width: 550px;
         height: 100%;
         padding-left: 16px;
         padding-right: 16px;
+        margin-top: 16px;
+        margin-left: 16px;
+        margin-right: 16px;
       }
 
       @media (max-width: 600px) {
@@ -52,6 +52,20 @@
           width: -webkit-calc(100% - 16px);
           width:    -moz-calc(100% - 16px);
           width:         calc(100% - 16px);
+        }
+      }
+
+      @media (max-width: 340px) {
+        .addNewsBox {
+          width: 100%;
+          height: 100%;
+          margin-bottom: 8px;
+          margin-top: 8px;
+          margin-left: 0;
+          margin-right: 0;
+          width: -webkit-calc(100% - 36px);
+          width:    -moz-calc(100% - 36px);
+          width:         calc(100% - 36px);
         }
       }
 
@@ -476,6 +490,9 @@
         this.async(function () {
           this.$.ironList.fire('iron-resize');
         });
+        this.async(function () {
+          this.$.ironList.fire('iron-resize');
+        }, 100);
       },
 
       fireResize: function () {
