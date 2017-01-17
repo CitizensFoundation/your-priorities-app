@@ -25,6 +25,8 @@ var reykjavikThinRoddCategoryLookup =
     15: "samgöngur"
   };
 
+// This skips status updates
+
 var moveOnePost = function (groupId, postId, categoryId, done) {
   var group, post, domainId, communityId;
 
@@ -77,6 +79,7 @@ var moveOnePost = function (groupId, postId, categoryId, done) {
         }
       }).then(function (pointsIn) {
         async.eachSeries(pointsIn, function (point, innerSeriesCallback) {
+          var newPointValues =
           point.set('group_id', group.id);
           point.set('community_id', communityId);
           point.set('domain_id', domainId);
