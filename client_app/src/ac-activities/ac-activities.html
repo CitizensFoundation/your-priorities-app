@@ -83,12 +83,6 @@
         }
       }
 
-      .recommendedPosts {
-        margin: 16px !important;
-        width: 220px !important;
-        height: 100% !important;
-      }
-
       .recommendedPosts[not-active] {
         display: none;
       }
@@ -190,7 +184,7 @@
           <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner on-response="_activityDeletedResponse"></yp-ajax>
         </div>
       </div>
-      <div class="layout horizontal center-center recommendedPosts" not-active$="[[noRecommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
+      <div class="layout vertical recommendedPosts" not-active$="[[noRecommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
         <ac-activity-recommended-posts id="recommendedPosts" recommended-posts="[[recommendedPosts]]" class="layout vertical"></ac-activity-recommended-posts>
         <div class="layout horizontal center-center">
           <yp-ajax id="recommendationAjax" large-spinner on-response="_recommendedPostsResponse"></yp-ajax>
