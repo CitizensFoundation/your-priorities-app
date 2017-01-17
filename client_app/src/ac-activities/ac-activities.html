@@ -160,7 +160,7 @@
     <div class="layout horizontal topLevelActivitiesContainer" wide$="[[wide]]">
       <div class="layout vertical self-start">
         <template is="dom-if" if="[[loggedInUser]]">
-          <paper-material logged-in-user$="[[loggedInUser]]" elevation="1" hidden$="[[disableNewPosts]]" hidden class="layout horizontal addNewsBox">
+          <paper-material logged-in-user$="[[loggedInUser]]" elevation="1" hidden$="[[disableNewPosts]]" class="layout horizontal addNewsBox">
             <yp-point-news-story-edit domain-id="[[domainId]]"
                                       community-id="[[communityId]]"
                                       group-id="[[groupId]]"
