@@ -1,32 +1,33 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.84">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.85">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.84">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.84">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.84">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.84">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.84">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.84">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.84">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.85">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.85">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.85">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.85">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.85">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.85">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.85">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.84">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.84">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.85">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.85">
 
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.3.84">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html?v=6.3.84">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.3.84">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.84">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.3.85">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html?v=6.3.85">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.3.85">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.85">
 
-<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.3.84">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.3.85">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.84">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.84">
-<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.84">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.85">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.85">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.85">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.85">
+<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html?v=6.3.85">
 
-<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html?v=6.3.84">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.84">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.85">
 
-<link rel="import" href="yp-group-stats.html?v=6.3.84">
-<link rel="import" href="yp-group-behaviors.html?v=6.3.84">
+<link rel="import" href="yp-group-stats.html?v=6.3.85">
+<link rel="import" href="yp-group-behaviors.html?v=6.3.85">
 
 </head><body><dom-module id="yp-group-card-large">
 
@@ -168,7 +169,7 @@
                 <div class="description">
                   <h2 class="group-name">[[groupName]]</h2>
                   <div hidden="" class="groupAccess">[[groupAccessText]]</div>
-                  <div class="groupDescription">[[group.objectives]]</div>
+                  <div id="objectives" class="groupDescription"></div>
                   <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
                 </div>
               </div>
@@ -204,7 +205,8 @@
         Polymer.GroupBehaviors,
         Polymer.LargeCardBehaviors,
         Polymer.AccessHelpers,
-        Polymer.ypGotAdminRightsBehavior
+        Polymer.ypGotAdminRightsBehavior,
+        Polymer.YpLinkifyAndEmjoi
       ],
 
       properties: {
@@ -238,6 +240,21 @@
       },
 
       _groupChanged: function (group) {
+        if (group && group.objectives) {
+          this.async(function () {
+            var objectives = this.$$("#objectives");
+            if (objectives) {
+              objectives.innerHTML = this.addLinksAndEmjois(group.objectives);
+            } else {
+              console.error("Can't find group objectives element");
+            }
+          });
+        } else {
+          var objectives = this.$$("#objectives");
+          if (objectives) {
+            objectives.innerHTML = "";
+          }
+        }
       },
 
       _groupAccessText: function(group, language) {

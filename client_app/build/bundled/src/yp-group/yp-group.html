@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.84"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.85"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -1156,7 +1156,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <div class="description">
                   <h2 class="group-name">[[groupName]]</h2>
                   <div hidden="" class="groupAccess">[[groupAccessText]]</div>
-                  <div class="groupDescription">[[group.objectives]]</div>
+                  <div id="objectives" class="groupDescription"></div>
                   <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
                 </div>
               </div>
@@ -1192,7 +1192,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         Polymer.GroupBehaviors,
         Polymer.LargeCardBehaviors,
         Polymer.AccessHelpers,
-        Polymer.ypGotAdminRightsBehavior
+        Polymer.ypGotAdminRightsBehavior,
+        Polymer.YpLinkifyAndEmjoi
       ],
 
       properties: {
@@ -1226,6 +1227,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _groupChanged: function (group) {
+        if (group && group.objectives) {
+          this.async(function () {
+            var objectives = this.$$("#objectives");
+            if (objectives) {
+              objectives.innerHTML = this.addLinksAndEmjois(group.objectives);
+            } else {
+              console.error("Can't find group objectives element");
+            }
+          });
+        } else {
+          var objectives = this.$$("#objectives");
+          if (objectives) {
+            objectives.innerHTML = "";
+          }
+        }
       },
 
       _groupAccessText: function(group, language) {
