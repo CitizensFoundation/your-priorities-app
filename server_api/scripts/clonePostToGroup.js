@@ -8,6 +8,7 @@ var fs = require('fs');
 var onePostId = process.argv[2];
 var oneGroupId = process.argv[3];
 var csvFileName = process.argv[4];
+var userIdToPostNewsStory = process.argv[5];
 
 var reykjavikThinRoddCategoryLookup =
   { 3: "skipulagsmál",
@@ -27,8 +28,17 @@ var reykjavikThinRoddCategoryLookup =
 
 // This skips status updates
 
-var moveOnePost = function (groupId, postId, categoryId, done) {
+var getContentForOldPost = function (newPostId) {
+  return "Þessi hugmynd hefur verið færð í Þín Rödd í ráðum borgarinnar, hægt er að finna hana hér: https://thin-rodd.betrireykjavik.is/post/"+newPostId;
+};
+
+var getContentForNewPost = function (oldPostId) {
+  return "Þessi hugmynd var upphaflega send inn í Hverfið mitt 2016 og hægt er að finna hana hér: https://hverfid-mitt-2016.betrireykjavik.is/post/"+oldPostId;
+};
+
+var cloneOnePost = function (groupId, postId, categoryId, done) {
   var group, post, domainId, communityId;
+  var newPost;
 
   async.series([
     function (callback) {
@@ -61,14 +71,59 @@ var moveOnePost = function (groupId, postId, categoryId, done) {
           id: postId
         }
       }).then(function (postIn) {
-        post = postIn;
-        post.set('group_id', group.id);
+        var postJson = postIn.toJSON();
+        delete postJson['id'];
+        newPost = models.Post.build(postJson);
+        newPost.set('group_id', group.id);
         if (categoryId) {
-          post.set('category_id', categoryId);
+          newPost.set('category_id', categoryId);
         }
-        post.save().then(function () {
-          console.log("Have changed group id for post");
-          callback();
+        newPost.save().then(function () {
+          async.series(
+            [
+              function (postSeriesCallback) {
+                models.Endorsement.findAll({
+                  where: {
+                    post_id: postIn.id
+                  }
+                }).then(function (endorsements) {
+                  async.forEach(endorsements, function (endorsement, endorsementCallback) {
+                    var endorsementJson = endorsement.toJSON();
+                    delete endorsementJson.id;
+                    var newPointQuality = models.PointQuality.build(endorsementJson);
+                    newPointQuality.set('post_id', newPost.id);
+                    newPointQuality.save().then(function () {
+                      endorsementCallback();
+                    });
+                  }, function (error) {
+                    postSeriesCallback(error);
+                  });
+                });
+              },
+              function (postSeriesCallback) {
+                models.PostRevision.findAll({
+                  where: {
+                    post_id: postIn.id
+                  }
+                }).then(function (postRevisions) {
+                  async.forEach(postRevisions, function (postRevision, postRevisionCallback) {
+                    var postRevisionJson = postRevision.toJSON();
+                    delete postRevisionJson.id;
+                    var newPointRevision = models.PostRevision.build(postRevisionJson);
+                    newPointRevision.set('post_id', newPost.id);
+                    newPointRevision.save().then(function () {
+                      postRevisionCallback();
+                    });
+                  }, function (error) {
+                    postSeriesCallback(error);
+                  });
+                });
+              }
+
+            ], function (error) {
+              console.log("Have copied post to group id");
+              callback(error);
+            });
         });
       })
     },
@@ -79,18 +134,85 @@ var moveOnePost = function (groupId, postId, categoryId, done) {
         }
       }).then(function (pointsIn) {
         async.eachSeries(pointsIn, function (point, innerSeriesCallback) {
-          var newPointValues =
-          point.set('group_id', group.id);
-          point.set('community_id', communityId);
-          point.set('domain_id', domainId);
-          point.save().then(function () {
+          var pointJson = point.toJSON();
+          delete pointJson['id'];
+          var newPoint = models.Point.build(pointJson);
+          newPoint.set('group_id', group.id);
+          newPoint.set('community_id', communityId);
+          newPoint.set('domain_id', domainId);
+          newPoint.set('post_id', newPost.id);
+          newPoint.save().then(function () {
+            async.series(
+              [
+                function (pointSeriesCallback) {
+                  models.PointQuality.findAll({
+                    where: {
+                      point_id: point.id
+                    }
+                  }).then(function (pointQualities) {
+                    async.forEach(pointQualities, function (pointQuality, pointQualityCallback) {
+                      var pointQualityJson = pointQuality.toJSON();
+                      delete pointQualityJson.id;
+                      var newPointQuality = models.PointQuality.build(pointQualityJson);
+                      newPointQuality.set('point_id', newPoint.id);
+                      newPointQuality.save().then(function () {
+                        pointQualityCallback();
+                      });
+                    }, function (error) {
+                     pointSeriesCallback(error);
+                    });
+                  });
+                },
+                function (pointSeriesCallback) {
+                  models.PointRevision.findAll({
+                    where: {
+                      point_id: point.id
+                    }
+                  }).then(function (pointRevisions) {
+                    async.forEach(pointRevisions, function (pointRevision, pointRevisionCallback) {
+                      var pointRevisionJson = pointRevision.toJSON();
+                      delete pointRevisionJson.id;
+                      var newPointRevision = models.PointRevision.build(pointRevisionJson);
+                      newPointRevision.set('point_id', newPoint.id);
+                      newPointRevision.save().then(function () {
+                        pointRevisionCallback();
+                      });
+                    }, function (error) {
+                      pointSeriesCallback(error);
+                    });
+                  });
+                },
+                function (pointSeriesCallback) {
+                  models.AcActivity.findAll({
+                    where: {
+                      point_id: pointIn.id
+                    }
+                  }).then(function (activities) {
+                    async.eachSeries(activities, function (activity, activitesSeriesCallback) {
+                      var activityJson = activity.toJSON();
+                      delete activityJson.id;
+                      var newActivity = models.AcActivity.build(activityJson);
+                      newActivity.set('group_id', group.id);
+                      newActivity.set('community_id', communityId);
+                      newActivity.set('domain_id', domainId);
+                      newActivity.set('point_id', newPoint.id);
+                      newActivity.save().then(function (results) {
+                        console.log("Have changed group and all activity: "+activity.id);
+                        activitesSeriesCallback();
+                      });
+                    }, function (error) {
+                      pointSeriesCallback(error);
+                    })
+                  });
+                }
+              ], function (error) {
+                innerSeriesCallback(error);
+              });
+          })}, function (error) {
             console.log("Have changed group and all for point: "+point.id);
-            innerSeriesCallback();
+            callback();
           });
-        }, function (error) {
-          callback(error);
-        });
-      })
+      });
     },
     function (callback) {
       models.AcActivity.findAll({
@@ -99,17 +221,47 @@ var moveOnePost = function (groupId, postId, categoryId, done) {
         }
       }).then(function (activities) {
         async.eachSeries(activities, function (activity, innerSeriesCallback) {
-          activity.set('group_id', group.id);
-          activity.set('community_id', communityId);
-          activity.set('domain_id', domainId);
-          activity.save().then(function (results) {
+          var activityJson = activity.toJSON();
+          delete activityJson.id;
+          var newActivity = models.AcActivity.build(activityJson);
+          newActivity.set('group_id', group.id);
+          newActivity.set('community_id', communityId);
+          newActivity.set('domain_id', domainId);
+          newActivity.set('post_id', newPost.id);
+          newActivity.save().then(function (results) {
             console.log("Have changed group and all activity: "+activity.id);
-            innerSeriesCallback();
+            innerSeriesCallback(error);
           });
         }, function (error) {
-          callback();
+          callback(error);
         })
       });
+    },
+    function (callback) {
+      models.Point.createNewsStory({
+        useragent: { source: 'clonePostScript' },
+        clientIp: '127.0.0.1',
+        user: { id: userIdToPostNewsStory }
+      }, {
+        post_id: post.id,
+        user_id: userIdToPostNewsStory,
+        content: getContentForOldPost(newPost.id)
+      }, function (error) {
+        callback(error);
+      })
+    },
+    function (callback) {
+      models.Point.createNewsStory({
+        useragent: { source: 'clonePostScript' },
+        clientIp: '127.0.0.1',
+        user: { id: userIdToPostNewsStory }
+      }, {
+        post_id: newPost.id,
+        user_id: userIdToPostNewsStory,
+        content: getContentForNewPost(post.id)
+      }, function (error) {
+        callback(error);
+      })
     }
   ], function (error) {
     console.log("Done");
@@ -149,7 +301,7 @@ if (onePostId!='null') {
       console.error(error);
     process.exit();
   });
-} else if (csvFileName) {
+} else if (csvFileName && userIdToPostNewsStory) {
   moveManyFromCsv(csvFileName, function (error) {
     if (error)
       console.error(error);
