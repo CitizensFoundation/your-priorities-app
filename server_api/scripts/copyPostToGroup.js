@@ -37,7 +37,21 @@ var getContentForNewPost = function (oldPostId) {
 };
 
 var getCategoryIdForPost = function (categoryName) {
-  return reykjavikThinRoddCategoryLookup[categoryName];
+  if (categoryName=="umhverfi") {
+    categoryName = "umhverfismál";
+  } else if (categoryName=="tómstundir") {
+    categoryName = "frítími útivist";
+  } else if (categoryName=="listir og menning") {
+    categoryName = "menning og listir";
+  } else if (categoryName=="skipulag") {
+    categoryName = "skipulagsmál";
+  }
+
+  var id = reykjavikThinRoddCategoryLookup[categoryName];
+  if (!id) {
+    console.error("Can't find category");
+  }
+  return id;
 };
 
 var copyOnePost = function (groupId, postId, categoryId, done) {
@@ -96,84 +110,89 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
         ]
       }).then(function (postIn) {
         oldPost = postIn;
-        var postJson = JSON.parse(JSON.stringify(postIn.toJSON()));
-        delete postJson['id'];
-        postJson.counter_points = 0;
-        newPost = models.Post.build(postJson);
-        newPost.set('group_id', group.id);
-        if (categoryId) {
-          newPost.set('category_id', categoryId);
-        }
-        newPost.save().then(function () {
-          newPost.updateAllExternalCounters({ ypDomain: domain }, 'up', 'counter_posts', function () {
-            async.series(
-              [
-                function (postSeriesCallback) {
-                  models.Endorsement.findAll({
-                    where: {
-                      post_id: oldPost.id
+        if (!postIn) {
+          console.error("No post in");
+          callback("no post");
+        } else {
+          var postJson = JSON.parse(JSON.stringify(postIn.toJSON()));
+          delete postJson['id'];
+          postJson.counter_points = 0;
+          newPost = models.Post.build(postJson);
+          newPost.set('group_id', group.id);
+          if (categoryId) {
+            newPost.set('category_id', categoryId);
+          }
+          newPost.save().then(function () {
+            newPost.updateAllExternalCounters({ ypDomain: domain }, 'up', 'counter_posts', function () {
+              async.series(
+                [
+                  function (postSeriesCallback) {
+                    models.Endorsement.findAll({
+                      where: {
+                        post_id: oldPost.id
+                      }
+                    }).then(function (endorsements) {
+                      async.eachSeries(endorsements, function (endorsement, endorsementCallback) {
+                        var endorsementJson = JSON.parse(JSON.stringify(endorsement.toJSON()));
+                        delete endorsementJson.id;
+                        var newPointQuality = models.PointQuality.build(endorsementJson);
+                        newPointQuality.set('post_id', newPost.id);
+                        newPointQuality.save().then(function () {
+                          endorsementCallback();
+                        });
+                      }, function (error) {
+                        postSeriesCallback(error);
+                      });
+                    });
+                  },
+                  function (postSeriesCallback) {
+                    models.PostRevision.findAll({
+                      where: {
+                        post_id: oldPost.id
+                      }
+                    }).then(function (postRevisions) {
+                      async.eachSeries(postRevisions, function (postRevision, postRevisionCallback) {
+                        var postRevisionJson =  JSON.parse(JSON.stringify(postRevision.toJSON()));
+                        delete postRevisionJson.id;
+                        var newPostRevision = models.PostRevision.build(postRevisionJson);
+                        newPostRevision.set('post_id', newPost.id);
+                        newPostRevision.save().then(function () {
+                          postRevisionCallback();
+                        });
+                      }, function (error) {
+                        postSeriesCallback(error);
+                      });
+                    });
+                  },
+                  function (postSeriesCallback) {
+                    if (oldPost.PostUserImages && oldPost.PostUserImages.length>0) {
+                      async.eachSeries(oldPost.PostUserImages, function (userImage, userImageCallback) {
+                        newPost.addPostUserImage(userImage).then(function () {
+                          userImageCallback();
+                        });
+                      }, function (error) {
+                        postSeriesCallback(error);
+                      });
+                    } else {
+                      postSeriesCallback();
                     }
-                  }).then(function (endorsements) {
-                    async.eachSeries(endorsements, function (endorsement, endorsementCallback) {
-                      var endorsementJson = JSON.parse(JSON.stringify(endorsement.toJSON()));
-                      delete endorsementJson.id;
-                      var newPointQuality = models.PointQuality.build(endorsementJson);
-                      newPointQuality.set('post_id', newPost.id);
-                      newPointQuality.save().then(function () {
-                        endorsementCallback();
+                  },
+                  function (postSeriesCallback) {
+                    if (oldPost.PostHeaderImages && oldPost.PostHeaderImages.length>0) {
+                      newPost.addPostHeaderImage(oldPost.PostHeaderImages[0]).then(function () {
+                        postSeriesCallback()
                       });
-                    }, function (error) {
-                      postSeriesCallback(error);
-                    });
-                  });
-                },
-                function (postSeriesCallback) {
-                  models.PostRevision.findAll({
-                    where: {
-                      post_id: oldPost.id
-                    }
-                  }).then(function (postRevisions) {
-                    async.eachSeries(postRevisions, function (postRevision, postRevisionCallback) {
-                      var postRevisionJson =  JSON.parse(JSON.stringify(postRevision.toJSON()));
-                      delete postRevisionJson.id;
-                      var newPostRevision = models.PostRevision.build(postRevisionJson);
-                      newPostRevision.set('post_id', newPost.id);
-                      newPostRevision.save().then(function () {
-                        postRevisionCallback();
-                      });
-                    }, function (error) {
-                      postSeriesCallback(error);
-                    });
-                  });
-                },
-                function (postSeriesCallback) {
-                  if (oldPost.PostUserImages && oldPost.PostUserImages.length>0) {
-                    async.eachSeries(oldPost.PostUserImages, function (userImage, userImageCallback) {
-                      newPost.addPostUserImage(userImage).then(function () {
-                        userImageCallback();
-                      });
-                    }, function (error) {
-                      postSeriesCallback(error);
-                    });
-                  } else {
-                    postSeriesCallback();
-                  }
-                },
-                function (postSeriesCallback) {
-                  if (oldPost.PostHeaderImages && oldPost.PostHeaderImages.length>0) {
-                    newPost.addPostHeaderImage(oldPost.PostHeaderImages[0]).then(function () {
+                    } else {
                       postSeriesCallback()
-                    });
-                  } else {
-                    postSeriesCallback()
+                    }
                   }
-                }
-              ], function (error) {
-                console.log("Have copied post to group id");
-                callback(error);
-              });
+                ], function (error) {
+                  console.log("Have copied post to group id");
+                  callback(error);
+                });
+            });
           });
-        });
+        }
       })
     },
     function (callback) {
