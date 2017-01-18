@@ -79,6 +79,11 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
             model: models.Image,
             as: 'PostHeaderImages',
             required: false
+          },
+          {
+            model: models.Image,
+            as: 'PostUserImages',
+            required: false
           }
         ]
       }).then(function (postIn) {
@@ -132,8 +137,21 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
                 });
               },
               function (postSeriesCallback) {
+                if (oldPost.PostUserImages && oldPost.PostUserImages.length>0) {
+                  async.forEach(oldPost.PostUserImages, function (userImage, userImageCallback) {
+                    newPost.addPostUserImage(userImage).then(function () {
+                      userImageCallback();
+                    });
+                  }, function (error) {
+                    postSeriesCallback(error);
+                  });
+                } else {
+                  postSeriesCallback();
+                }
+              },
+              function (postSeriesCallback) {
                 if (oldPost.PostHeaderImages && oldPost.PostHeaderImages.length>0) {
-                  newPost.addPostHeaderImage(oldPost.PostHeaderImages[0]).then(function (error) {
+                  newPost.addPostHeaderImage(oldPost.PostHeaderImages[0]).then(function () {
                     postSeriesCallback()
                   });
                 } else {
