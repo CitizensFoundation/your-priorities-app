@@ -287,7 +287,7 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
     },
     function (callback) {
       // TODO FIX DOUBLE ACTIVITIES FOR POINTS
-      callback("FIX DAFP");
+      callback("FIX DAFP AND LINKS ON VIEW AND GROUP COMMUNITY NAMES ON NEWS FROM BEHAVIOR");
       models.AcActivity.findAll({
         where: {
           post_id: oldPost.id

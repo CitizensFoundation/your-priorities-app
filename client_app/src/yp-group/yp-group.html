@@ -409,7 +409,7 @@
             var configOverride= configRoute.substring(1, configRoute.length);
             if (groupId && configOverride && configOverride!="")
             window.appGlobals.setupGroupConfigOverride(groupId, configOverride);
-            this.redirectTo("/group/" + groupId+'/open');
+            this.set('selectedTab', 'open');
           });
         } else {
           if (this.group) {
