@@ -6,24 +6,24 @@ var csvParser = require('csv-parse');
 var fs = require('fs');
 
 var onePostId = process.argv[2];
-var oneGroupId = process.argv[3];
+var toGroupId = process.argv[3];
 var csvFileName = process.argv[4];
 var userIdToPostNewsStory = process.argv[5];
 
 var reykjavikThinRoddCategoryLookup =
-  { 3: "skipulagsmál",
-    4: "ýmislegt",
-    5: "stjórnsýsla",
-    6: "mannréttindi",
-    7: "menning og listir",
-    8: "íþróttir",
-    9: "frítími og útivist",
-    10: "menntamál",
-    11: "umhverfismál",
-    12: "ferðamál",
-    13: "velferð",
-    14: "framkvæmdir",
-    15: "samgöngur"
+  { "skipulagsmál":3,
+    "ýmislegt":4,
+    "stjórnsýsla":5,
+    "mannréttindi":6,
+    "menning og listir":7,
+    "íþróttir":8,
+    "frítími útivist":9,
+    "menntamál":10,
+    "umhverfismál":11,
+    "ferðamál":12,
+    "velferð":13,
+    "framkvæmdir":14,
+    "samgöngur":15
   };
 
 // This skips status updates
@@ -36,8 +36,13 @@ var getContentForNewPost = function (oldPostId) {
   return "Þessi hugmynd var upphaflega send inn í Hverfið mitt 2016 og hægt er að finna hana hér: https://hverfid-mitt-2016.betrireykjavik.is/post/"+oldPostId;
 };
 
-var cloneOnePost = function (groupId, postId, categoryId, done) {
+var getCategoryIdForPost = function (categoryName) {
+  return reykjavikThinRoddCategoryLookup[categoryName];
+};
+
+var copyOnePost = function (groupId, postId, categoryId, done) {
   var group, post, domainId, communityId;
+  var domain;
   var newPost;
   var oldPost;
 
@@ -63,7 +68,10 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
         group = groupIn;
         communityId = group.Community.id;
         domainId = group.Community.Domain.id;
+        domain = group.Community.Domain;
         callback();
+      }).catch(function (error) {
+        callback(error);
       });
     },
     function (callback) {
@@ -88,80 +96,83 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
         ]
       }).then(function (postIn) {
         oldPost = postIn;
-        var postJson = postIn.toJSON();
+        var postJson = JSON.parse(JSON.stringify(postIn.toJSON()));
         delete postJson['id'];
+        postJson.counter_points = 0;
         newPost = models.Post.build(postJson);
         newPost.set('group_id', group.id);
         if (categoryId) {
           newPost.set('category_id', categoryId);
         }
         newPost.save().then(function () {
-          async.series(
-            [
-              function (postSeriesCallback) {
-                models.Endorsement.findAll({
-                  where: {
-                    post_id: oldPost.id
+          newPost.updateAllExternalCounters({ ypDomain: domain }, 'up', 'counter_posts', function () {
+            async.series(
+              [
+                function (postSeriesCallback) {
+                  models.Endorsement.findAll({
+                    where: {
+                      post_id: oldPost.id
+                    }
+                  }).then(function (endorsements) {
+                    async.eachSeries(endorsements, function (endorsement, endorsementCallback) {
+                      var endorsementJson = JSON.parse(JSON.stringify(endorsement.toJSON()));
+                      delete endorsementJson.id;
+                      var newPointQuality = models.PointQuality.build(endorsementJson);
+                      newPointQuality.set('post_id', newPost.id);
+                      newPointQuality.save().then(function () {
+                        endorsementCallback();
+                      });
+                    }, function (error) {
+                      postSeriesCallback(error);
+                    });
+                  });
+                },
+                function (postSeriesCallback) {
+                  models.PostRevision.findAll({
+                    where: {
+                      post_id: oldPost.id
+                    }
+                  }).then(function (postRevisions) {
+                    async.eachSeries(postRevisions, function (postRevision, postRevisionCallback) {
+                      var postRevisionJson =  JSON.parse(JSON.stringify(postRevision.toJSON()));
+                      delete postRevisionJson.id;
+                      var newPostRevision = models.PostRevision.build(postRevisionJson);
+                      newPostRevision.set('post_id', newPost.id);
+                      newPostRevision.save().then(function () {
+                        postRevisionCallback();
+                      });
+                    }, function (error) {
+                      postSeriesCallback(error);
+                    });
+                  });
+                },
+                function (postSeriesCallback) {
+                  if (oldPost.PostUserImages && oldPost.PostUserImages.length>0) {
+                    async.eachSeries(oldPost.PostUserImages, function (userImage, userImageCallback) {
+                      newPost.addPostUserImage(userImage).then(function () {
+                        userImageCallback();
+                      });
+                    }, function (error) {
+                      postSeriesCallback(error);
+                    });
+                  } else {
+                    postSeriesCallback();
                   }
-                }).then(function (endorsements) {
-                  async.forEach(endorsements, function (endorsement, endorsementCallback) {
-                    var endorsementJson = endorsement.toJSON();
-                    delete endorsementJson.id;
-                    var newPointQuality = models.PointQuality.build(endorsementJson);
-                    newPointQuality.set('post_id', newPost.id);
-                    newPointQuality.save().then(function () {
-                      endorsementCallback();
+                },
+                function (postSeriesCallback) {
+                  if (oldPost.PostHeaderImages && oldPost.PostHeaderImages.length>0) {
+                    newPost.addPostHeaderImage(oldPost.PostHeaderImages[0]).then(function () {
+                      postSeriesCallback()
                     });
-                  }, function (error) {
-                    postSeriesCallback(error);
-                  });
-                });
-              },
-              function (postSeriesCallback) {
-                models.PostRevision.findAll({
-                  where: {
-                    post_id: oldPost.id
-                  }
-                }).then(function (postRevisions) {
-                  async.forEach(postRevisions, function (postRevision, postRevisionCallback) {
-                    var postRevisionJson = postRevision.toJSON();
-                    delete postRevisionJson.id;
-                    var newPointRevision = models.PostRevision.build(postRevisionJson);
-                    newPointRevision.set('post_id', newPost.id);
-                    newPointRevision.save().then(function () {
-                      postRevisionCallback();
-                    });
-                  }, function (error) {
-                    postSeriesCallback(error);
-                  });
-                });
-              },
-              function (postSeriesCallback) {
-                if (oldPost.PostUserImages && oldPost.PostUserImages.length>0) {
-                  async.forEach(oldPost.PostUserImages, function (userImage, userImageCallback) {
-                    newPost.addPostUserImage(userImage).then(function () {
-                      userImageCallback();
-                    });
-                  }, function (error) {
-                    postSeriesCallback(error);
-                  });
-                } else {
-                  postSeriesCallback();
-                }
-              },
-              function (postSeriesCallback) {
-                if (oldPost.PostHeaderImages && oldPost.PostHeaderImages.length>0) {
-                  newPost.addPostHeaderImage(oldPost.PostHeaderImages[0]).then(function () {
+                  } else {
                     postSeriesCallback()
-                  });
-                } else {
-                  postSeriesCallback()
+                  }
                 }
-              }
-            ], function (error) {
-              console.log("Have copied post to group id");
-              callback(error);
-            });
+              ], function (error) {
+                console.log("Have copied post to group id");
+                callback(error);
+              });
+          });
         });
       })
     },
@@ -172,7 +183,8 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
         }
       }).then(function (pointsIn) {
         async.eachSeries(pointsIn, function (point, innerSeriesCallback) {
-          var pointJson = point.toJSON();
+          var pointJson = JSON.parse(JSON.stringify(point.toJSON()));
+          var currentOldPoint = point;
           delete pointJson['id'];
           var newPoint = models.Point.build(pointJson);
           newPoint.set('group_id', group.id);
@@ -180,74 +192,76 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
           newPoint.set('domain_id', domainId);
           newPoint.set('post_id', newPost.id);
           newPoint.save().then(function () {
-            async.series(
-              [
-                function (pointSeriesCallback) {
-                  models.PointQuality.findAll({
-                    where: {
-                      point_id: point.id
-                    }
-                  }).then(function (pointQualities) {
-                    async.forEach(pointQualities, function (pointQuality, pointQualityCallback) {
-                      var pointQualityJson = pointQuality.toJSON();
-                      delete pointQualityJson.id;
-                      var newPointQuality = models.PointQuality.build(pointQualityJson);
-                      newPointQuality.set('point_id', newPoint.id);
-                      newPointQuality.save().then(function () {
-                        pointQualityCallback();
+            newPost.updateAllExternalCounters({ ypDomain: domain }, 'up', 'counter_points', function () {
+              async.series(
+                [
+                  function (pointSeriesCallback) {
+                    models.PointQuality.findAll({
+                      where: {
+                        point_id: currentOldPoint.id
+                      }
+                    }).then(function (pointQualities) {
+                      async.eachSeries(pointQualities, function (pointQuality, pointQualityCallback) {
+                        var pointQualityJson = JSON.parse(JSON.stringify(pointQuality.toJSON()));
+                        delete pointQualityJson.id;
+                        var newPointQuality = models.PointQuality.build(pointQualityJson);
+                        newPointQuality.set('point_id', newPoint.id);
+                        newPointQuality.save().then(function () {
+                          pointQualityCallback();
+                        });
+                      }, function (error) {
+                        pointSeriesCallback(error);
                       });
-                    }, function (error) {
-                     pointSeriesCallback(error);
                     });
-                  });
-                },
-                function (pointSeriesCallback) {
-                  models.PointRevision.findAll({
-                    where: {
-                      point_id: point.id
-                    }
-                  }).then(function (pointRevisions) {
-                    async.forEach(pointRevisions, function (pointRevision, pointRevisionCallback) {
-                      var pointRevisionJson = pointRevision.toJSON();
-                      delete pointRevisionJson.id;
-                      var newPointRevision = models.PointRevision.build(pointRevisionJson);
-                      newPointRevision.set('point_id', newPoint.id);
-                      newPointRevision.save().then(function () {
-                        pointRevisionCallback();
+                  },
+                  function (pointSeriesCallback) {
+                    models.PointRevision.findAll({
+                      where: {
+                        point_id: currentOldPoint.id
+                      }
+                    }).then(function (pointRevisions) {
+                      async.eachSeries(pointRevisions, function (pointRevision, pointRevisionCallback) {
+                        var pointRevisionJson = JSON.parse(JSON.stringify(pointRevision.toJSON()));
+                        delete pointRevisionJson.id;
+                        var newPointRevision = models.PointRevision.build(pointRevisionJson);
+                        newPointRevision.set('point_id', newPoint.id);
+                        newPointRevision.save().then(function () {
+                          pointRevisionCallback();
+                        });
+                      }, function (error) {
+                        pointSeriesCallback(error);
                       });
-                    }, function (error) {
-                      pointSeriesCallback(error);
                     });
-                  });
-                },
-                function (pointSeriesCallback) {
-                  models.AcActivity.findAll({
-                    where: {
-                      point_id: pointIn.id
-                    }
-                  }).then(function (activities) {
-                    async.eachSeries(activities, function (activity, activitesSeriesCallback) {
-                      var activityJson = activity.toJSON();
-                      delete activityJson.id;
-                      var newActivity = models.AcActivity.build(activityJson);
-                      newActivity.set('group_id', group.id);
-                      newActivity.set('community_id', communityId);
-                      newActivity.set('domain_id', domainId);
-                      newActivity.set('point_id', newPoint.id);
-                      newActivity.save().then(function (results) {
-                        console.log("Have changed group and all activity: "+activity.id);
-                        activitesSeriesCallback();
-                      });
-                    }, function (error) {
-                      pointSeriesCallback(error);
-                    })
-                  });
-                }
-              ], function (error) {
-                innerSeriesCallback(error);
-              });
+                  },
+                  function (pointSeriesCallback) {
+                    models.AcActivity.findAll({
+                      where: {
+                        point_id: currentOldPoint.id
+                      }
+                    }).then(function (activities) {
+                      async.eachSeries(activities, function (activity, activitesSeriesCallback) {
+                        var activityJson = JSON.parse(JSON.stringify(activity.toJSON()));
+                        delete activityJson.id;
+                        var newActivity = models.AcActivity.build(activityJson);
+                        newActivity.set('group_id', group.id);
+                        newActivity.set('community_id', communityId);
+                        newActivity.set('domain_id', domainId);
+                        newActivity.set('point_id', newPoint.id);
+                        newActivity.save().then(function (results) {
+                          console.log("Have changed group and all activity: "+newActivity.id);
+                          activitesSeriesCallback();
+                        });
+                      }, function (error) {
+                        pointSeriesCallback(error);
+                      })
+                    });
+                  }
+                ], function (error) {
+                  innerSeriesCallback(error);
+                });
+            });
           })}, function (error) {
-            console.log("Have changed group and all for point: "+point.id);
+            console.log("Have changed group and all for point");
             callback();
           });
       });
@@ -259,7 +273,7 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
         }
       }).then(function (activities) {
         async.eachSeries(activities, function (activity, innerSeriesCallback) {
-          var activityJson = activity.toJSON();
+          var activityJson = JSON.parse(JSON.stringify(activity.toJSON()));
           delete activityJson.id;
           var newActivity = models.AcActivity.build(activityJson);
           newActivity.set('group_id', group.id);
@@ -267,8 +281,8 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
           newActivity.set('domain_id', domainId);
           newActivity.set('post_id', newPost.id);
           newActivity.save().then(function (results) {
-            console.log("Have changed group and all activity: "+activity.id);
-            innerSeriesCallback(error);
+            console.log("Have changed group and all activity: "+newActivity.id);
+            innerSeriesCallback();
           });
         }, function (error) {
           callback(error);
@@ -277,26 +291,26 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
     },
     function (callback) {
       models.Point.createNewsStory({
-        useragent: { source: 'clonePostScript' },
+        useragent: { source: 'copyPostScript' },
         clientIp: '127.0.0.1',
         user: { id: userIdToPostNewsStory }
       }, {
         post_id: oldPost.id,
         user_id: userIdToPostNewsStory,
-        content: getContentForOldPost(newPost.id)
+        point: { content: getContentForOldPost(newPost.id) }
       }, function (error) {
         callback(error);
       })
     },
     function (callback) {
       models.Point.createNewsStory({
-        useragent: { source: 'clonePostScript' },
+        useragent: { source: 'copyPostScript' },
         clientIp: '127.0.0.1',
         user: { id: userIdToPostNewsStory }
       }, {
         post_id: newPost.id,
         user_id: userIdToPostNewsStory,
-        content: getContentForNewPost(post.id)
+        point: { content: getContentForNewPost(oldPost.id) }
       }, function (error) {
         callback(error);
       })
@@ -309,23 +323,28 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
   })
 };
 
+var parsePosts = function (allPosts, done) {
+  async.eachSeries(allPosts, function (post, seriesCallback) {
+    console.log("Post: "+post[0]);
+    copyOnePost(toGroupId, getPostIdFromUrl(post[6]), getCategoryIdForPost(post[5]), function (error) {
+      seriesCallback(error);
+    });
+  }, function (error) {
+    done(error);
+  });
+};
+
 var getPostIdFromUrl = function (url) {
   var splitted = url.split('/');
   return splitted[splitted.length-1]
 };
 
-var moveManyFromCsv = function (csvFileName, done) {
+var copyManyFromCsv = function (csvFileName, done) {
   fs.readFile(csvFileName, 'utf8', function(error, contents) {
-    console.log(contents);
+    //console.log(contents);
     if (!error) {
       csvParser(contents, {}, function(err, allPosts) {
-        async.forEach(allPosts, function (post, seriesCallback) {
-          moveOnePost(getPostIdFromUrl(post[0]), post[1], post[2], function (error) {
-            seriesCallback(error);
-          });
-        }, function (error) {
-          done(error);
-        });
+        parsePosts(allPosts, done);
       });
     } else {
       done(error);
@@ -334,13 +353,13 @@ var moveManyFromCsv = function (csvFileName, done) {
 };
 
 if (onePostId!='null') {
-  moveOnePost(oneGroupId, onePostId, null, function (error) {
+  copyOnePost(toGroupId, onePostId, null, function (error) {
     if (error)
       console.error(error);
     process.exit();
   });
 } else if (csvFileName && userIdToPostNewsStory) {
-  moveManyFromCsv(csvFileName, function (error) {
+  copyManyFromCsv(csvFileName, function (error) {
     if (error)
       console.error(error);
     process.exit();

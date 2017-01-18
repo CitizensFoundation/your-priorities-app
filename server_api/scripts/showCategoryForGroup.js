@@ -12,7 +12,7 @@ models.Category.findAll({
 
   var json = "{ ";
   _.forEach(categories, function (category) {
-    json+=category.id+': "'+category.name+'", \n'
+    json+='"'+category.name+'":'+category.id+', \n'
   });
   json += "}";
   console.log(json.toLowerCase());
