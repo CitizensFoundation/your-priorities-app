@@ -273,7 +273,7 @@
                           bind-value="{{textValueMobileUpOrDown}}" value=[[textValueMobileUpOrDown]] label="[[labelMobileUpOrDown]]"
                           char-counter rows="2"
                           max-rows="3" maxlength="500"></paper-textarea>
-          <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
+          <div class="horizontal end-justified layout">
             <div class="layout horizontal">
               <paper-radio-group id="upOrDown" attribute-for-selected="name" class="layout horizontal" selected="{{pointUpOrDownSelected}}">
                 <paper-radio-button name="pointFor">[[t('pointForShort')]]</paper-radio-button>
@@ -281,7 +281,7 @@
               </paper-radio-group>
             </div>
             <div class="flex"></div>
-            <emoji-selector id="pointUpDownEmojiSelector"></emoji-selector>
+            <emoji-selector id="pointUpDownEmojiSelector" hidden$="[[post.Group.configuration.hideEmoji]]"></emoji-selector>
           </div>
           <template is="dom-if" if="[[ifLengthIsRight(textValueMobileUpOrDown)]]">
             <div class="addPointFab layout horizontal center-center mobileFab">
