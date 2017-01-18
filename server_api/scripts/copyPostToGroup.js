@@ -33,7 +33,7 @@ var getContentForOldPost = function (newPostId) {
 };
 
 var getContentForNewPost = function (oldPostId) {
-  return "Þessi hugmynd var upphaflega send inn í Hverfið mitt 2016 og hægt er að finna hana hér: https://hverfid-mitt-2016.betrireykjavik.is/post/"+oldPostId;
+  return "Þessi hugmynd var færð úr Hverfið mitt 2016 og hægt er að finna hana hér: https://hverfid-mitt-2016.betrireykjavik.is/post/"+oldPostId;
 };
 
 var getCategoryIdForPost = function (categoryName) {
@@ -286,6 +286,8 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
       });
     },
     function (callback) {
+      // TODO FIX DOUBLE ACTIVITIES FOR POINTS
+      callback("FIX DAFP");
       models.AcActivity.findAll({
         where: {
           post_id: oldPost.id
