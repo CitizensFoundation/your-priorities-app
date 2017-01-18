@@ -29,7 +29,7 @@ var reykjavikThinRoddCategoryLookup =
 // This skips status updates
 
 var getContentForOldPost = function (newPostId) {
-  return "Þessi hugmynd hefur verið færð í Þín Rödd í ráðum borgarinnar, hægt er að finna hana hér: https://thin-rodd.betrireykjavik.is/post/"+newPostId;
+  return "Þessi hugmynd hefur verið færð í Þín Rödd í ráðum borgarinnar og hægt er að finna hana hér: https://thin-rodd.betrireykjavik.is/post/"+newPostId;
 };
 
 var getContentForNewPost = function (oldPostId) {
@@ -39,6 +39,7 @@ var getContentForNewPost = function (oldPostId) {
 var cloneOnePost = function (groupId, postId, categoryId, done) {
   var group, post, domainId, communityId;
   var newPost;
+  var oldPost;
 
   async.series([
     function (callback) {
@@ -69,8 +70,19 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
       models.Post.find({
         where: {
           id: postId
-        }
+        },
+        order: [
+          [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
+        ],
+        include: [
+          {
+            model: models.Image,
+            as: 'PostHeaderImages',
+            required: false
+          }
+        ]
       }).then(function (postIn) {
+        oldPost = postIn;
         var postJson = postIn.toJSON();
         delete postJson['id'];
         newPost = models.Post.build(postJson);
@@ -84,7 +96,7 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
               function (postSeriesCallback) {
                 models.Endorsement.findAll({
                   where: {
-                    post_id: postIn.id
+                    post_id: oldPost.id
                   }
                 }).then(function (endorsements) {
                   async.forEach(endorsements, function (endorsement, endorsementCallback) {
@@ -103,7 +115,7 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
               function (postSeriesCallback) {
                 models.PostRevision.findAll({
                   where: {
-                    post_id: postIn.id
+                    post_id: oldPost.id
                   }
                 }).then(function (postRevisions) {
                   async.forEach(postRevisions, function (postRevision, postRevisionCallback) {
@@ -118,8 +130,16 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
                     postSeriesCallback(error);
                   });
                 });
+              },
+              function (postSeriesCallback) {
+                if (oldPost.PostHeaderImages && oldPost.PostHeaderImages.length>0) {
+                  newPost.addPostHeaderImage(oldPost.PostHeaderImages[0]).then(function (error) {
+                    postSeriesCallback()
+                  });
+                } else {
+                  postSeriesCallback()
+                }
               }
-
             ], function (error) {
               console.log("Have copied post to group id");
               callback(error);
@@ -217,7 +237,7 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
     function (callback) {
       models.AcActivity.findAll({
         where: {
-          post_id: post.id
+          post_id: oldPost.id
         }
       }).then(function (activities) {
         async.eachSeries(activities, function (activity, innerSeriesCallback) {
@@ -243,7 +263,7 @@ var cloneOnePost = function (groupId, postId, categoryId, done) {
         clientIp: '127.0.0.1',
         user: { id: userIdToPostNewsStory }
       }, {
-        post_id: post.id,
+        post_id: oldPost.id,
         user_id: userIdToPostNewsStory,
         content: getContentForOldPost(newPost.id)
       }, function (error) {
