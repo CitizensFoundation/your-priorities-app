@@ -1,24 +1,24 @@
-<html><head></head><body>-<link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.92">
+<html><head></head><body>-<link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.93">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.92">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.92">
-<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.92">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.92">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.93">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.93">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.93">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.93">
 
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.92">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.92">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.93">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.93">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.92">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.92">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.92">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.93">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.93">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.93">
 
-<link rel="import" href="./ac-activity-header.html?v=6.3.92">
-<link rel="import" href="./ac-activity-post.html?v=6.3.92">
-<link rel="import" href="./ac-activity-point.html?v=6.3.92">
-<link rel="import" href="./ac-activity-point-news-story.html?v=6.3.92">
-<link rel="import" href="./ac-activity-post-status-update.html?v=6.3.92">
-<link rel="import" href="./ac-activity-group.html?v=6.3.92">
-<link rel="import" href="./ac-activity-recommended-posts.html?v=6.3.92">
+<link rel="import" href="./ac-activity-header.html?v=6.3.93">
+<link rel="import" href="./ac-activity-post.html?v=6.3.93">
+<link rel="import" href="./ac-activity-point.html?v=6.3.93">
+<link rel="import" href="./ac-activity-point-news-story.html?v=6.3.93">
+<link rel="import" href="./ac-activity-post-status-update.html?v=6.3.93">
+<link rel="import" href="./ac-activity-group.html?v=6.3.93">
+<link rel="import" href="./ac-activity-recommended-posts.html?v=6.3.93">
 
 <dom-module id="ac-activity">
   <template>
@@ -125,7 +125,7 @@
         </div>
 
         <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-          <ac-activity-post post-id$="[[postId]]" group="[[activity.Group]]" community-id="[[communityId]]" group-id="[[groupId]]" activity="[[activity]]"></ac-activity-post>
+          <ac-activity-post activity="[[activity]]" post-id$="[[postId]]" community-id="[[communityId]]" group-id="[[groupId]]"></ac-activity-post>
         </template>
 
         <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
@@ -133,7 +133,7 @@
         </template>
 
         <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
-          <ac-activity-point-news-story activity="[[activity]]" post-id="[[postId]]"></ac-activity-point-news-story>
+          <ac-activity-point-news-story activity="[[activity]]" post-id="[[postId]]" community-id="[[communityId]]" group-id="[[groupId]]"></ac-activity-point-news-story>
         </template>
 
         <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">

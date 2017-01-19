@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.92"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.93"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -771,7 +771,7 @@
 
     <template is="dom-if" if="[[community]]">
       <div class="layout horizontal wrap">
-        <paper-material id="card" elevation="5" animated="" class="large-card top-card textBox">
+        <paper-material id="card" elevation="4" animated="" class="large-card top-card textBox">
           <div class="layout vertical">
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">
@@ -799,7 +799,7 @@
             </paper-menu-button>
           </div>
         </paper-material>
-        <paper-material id="cardImage" elevation="2" animated="" class="large-card imageCard">
+        <paper-material id="cardImage" elevation="3" animated="" class="large-card imageCard">
           <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
         </paper-material>
       </div>

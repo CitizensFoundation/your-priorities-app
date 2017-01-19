@@ -1,18 +1,19 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.92">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.93">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.92">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.92">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.92">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.92">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.92">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.92">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.93">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.93">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.93">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.93">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.93">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.93">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.92">
-<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.92">
-<link rel="import" href="../yp-point/yp-point-news-story.html?v=6.3.92">
-<link rel="import" href="../yp-point/yp-point-comment-list.html?v=6.3.92">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.93">
+<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.93">
+<link rel="import" href="../yp-point/yp-point-news-story.html?v=6.3.93">
+<link rel="import" href="../yp-point/yp-point-comment-list.html?v=6.3.93">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.93">
 
-<link rel="import" href="yp-point-news-story-embed.html?v=6.3.92">
+<link rel="import" href="yp-point-news-story-embed.html?v=6.3.93">
 
 </head><body><dom-module id="yp-point-news-story">
 
@@ -78,8 +79,7 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical">
-      <div class="story">
-        [[point.content]]
+      <div id="content" class="story">
       </div>
       <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
       <div class="layout horizontal">
@@ -142,7 +142,8 @@
       },
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.YpLinkifyAndEmjoi
       ],
 
       _setOpenToValue: function () {
@@ -177,11 +178,22 @@
         this.set('commentsCount', detail.count);
       },
 
-      _pointChanged: function(newValue, oldValue) {
-        if (newValue) {
-          this.user = this.point.PointRevisions[0].User;
+      _pointChanged: function(point) {
+        if (point) {
+          this.user = point.PointRevisions[0].User;
         } else {
           this.user = null;
+        }
+
+        if (point && point.content) {
+          this.async(function () {
+            var content = this.$$("#content");
+            if (content) {
+              content.innerHTML = this.addLinksAndEmjois(point.content);
+            } else {
+              console.error("Can't find point content element");
+            }
+          });
         }
 
         this.set('open', false);
