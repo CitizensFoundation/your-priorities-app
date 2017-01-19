@@ -29,7 +29,7 @@
     },
 
     _hasGroupHeader: function (group, postId, groupId) {
-      return (group && !postId && !groupId)
+      return (group && group.name!='hidden_public_group_for_domain_level_points' && !postId && !groupId)
     },
 
     _groupTitle: function (group, postId, groupId, communityId) {
