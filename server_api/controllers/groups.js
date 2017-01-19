@@ -684,8 +684,8 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
                  'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
     order: [
 //          [models.sequelize.fn('-', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'],
-      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
-      models.sequelize.literal(postOrder)
+      models.sequelize.literal(postOrder),
+      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
     ],
     include: [
       {
