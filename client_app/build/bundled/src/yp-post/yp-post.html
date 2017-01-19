@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.91"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.92"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -179,6 +179,7 @@
         }
 
       }
+
       .userWithOrg {
         --ak-user-name-color: #555555;
       }
@@ -626,7 +627,7 @@
       <template is="dom-if" if="[[!largeMode]]">
         <paper-material id="pointUpOrDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="">
           <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueMobileUpOrDown}}" value="[[textValueMobileUpOrDown]]" label="[[labelMobileUpOrDown]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
-          <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
+          <div class="horizontal end-justified layout">
             <div class="layout horizontal">
               <paper-radio-group id="upOrDown" attribute-for-selected="name" class="layout horizontal" selected="{{pointUpOrDownSelected}}">
                 <paper-radio-button name="pointFor">[[t('pointForShort')]]</paper-radio-button>
@@ -634,7 +635,7 @@
               </paper-radio-group>
             </div>
             <div class="flex"></div>
-            <emoji-selector id="pointUpDownEmojiSelector"></emoji-selector>
+            <emoji-selector id="pointUpDownEmojiSelector" hidden$="[[post.Group.configuration.hideEmoji]]"></emoji-selector>
           </div>
           <template is="dom-if" if="[[ifLengthIsRight(textValueMobileUpOrDown)]]">
             <div class="addPointFab layout horizontal center-center mobileFab">
@@ -1965,7 +1966,9 @@
             this.fire("change-header", { headerTitle: this.truncate(this.post.Group.name,80),
               documentTitle: this.post.name,
               headerDescription: '',//this.truncate(this.post.Group.objectives,45),
-              backPath: "/group/" + this.post.group_id });
+              backPath: "/group/" + this.post.group_id,
+              hideHelpIcon: this.post.Group.configuration.hideHelpIcon ? true : null,
+            });
           }
         },
 

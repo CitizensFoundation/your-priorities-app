@@ -1,21 +1,21 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.91">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.92">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.91">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.91">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.91">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.92">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.92">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.92">
 
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.91">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.91">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.91">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.91">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.3.91">
-<link rel="import" href="../../bower_components/paper-input/paper-input-char-counter.html?v=6.3.91">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.91">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.91">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.92">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.92">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.92">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.92">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.3.92">
+<link rel="import" href="../../bower_components/paper-input/paper-input-char-counter.html?v=6.3.92">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.92">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.92">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.91">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.91">
-<link rel="import" href="../yp-point/yp-point.html?v=6.3.91">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.92">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.92">
+<link rel="import" href="../yp-point/yp-point.html?v=6.3.92">
 
 </head><body><dom-module id="yp-post-points">
   <template>
@@ -262,7 +262,7 @@
       <template is="dom-if" if="[[!largeMode]]">
         <paper-material id="pointUpOrDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="">
           <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueMobileUpOrDown}}" value="[[textValueMobileUpOrDown]]" label="[[labelMobileUpOrDown]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
-          <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
+          <div class="horizontal end-justified layout">
             <div class="layout horizontal">
               <paper-radio-group id="upOrDown" attribute-for-selected="name" class="layout horizontal" selected="{{pointUpOrDownSelected}}">
                 <paper-radio-button name="pointFor">[[t('pointForShort')]]</paper-radio-button>
@@ -270,7 +270,7 @@
               </paper-radio-group>
             </div>
             <div class="flex"></div>
-            <emoji-selector id="pointUpDownEmojiSelector"></emoji-selector>
+            <emoji-selector id="pointUpDownEmojiSelector" hidden$="[[post.Group.configuration.hideEmoji]]"></emoji-selector>
           </div>
           <template is="dom-if" if="[[ifLengthIsRight(textValueMobileUpOrDown)]]">
             <div class="addPointFab layout horizontal center-center mobileFab">

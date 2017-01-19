@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.91"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.92"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -141,23 +141,27 @@
           top: 144px;
         }
       }
+
+      .withPointer {
+        cursor: pointer;
+      }
     </style>
 
     <template is="dom-if" if="[[group]]">
       <paper-card class="groupCard" animated="" elevation="[[elevation]]">
         <div class="card-content">
           <template is="dom-if" if="[[noImage]]">
-            <iron-image header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+            <iron-image header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToGroup"></iron-image>
           </template>
           <template is="dom-if" if="[[!noImage]]">
-            <iron-image archived$="[[archived]]" class="logo" sizing="cover" preload="" src="[[groupLogoImagePath]]"></iron-image>
+            <iron-image archived$="[[archived]]" class="logo withPointer" sizing="cover" on-tap="_goToGroup" preload="" src="[[groupLogoImagePath]]"></iron-image>
           </template>
           <div class="description">
             <h2 class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
               [[groupName]]
               <span hidden$="[[!archived]]">- [[t('archived')]]</span>
             </h2>
-            <div class="objectives">[[groupObjectives]]</div>
+            <div class="objectives withPointer" on-tap="_goToGroup">[[groupObjectives]]</div>
           </div>
         </div>
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>

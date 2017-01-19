@@ -1,13 +1,13 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.91">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.92">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.91">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.92">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.91">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.91">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.92">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.92">
 
-<link rel="import" href="../yp-point/yp-point.html?v=6.3.91">
+<link rel="import" href="../yp-point/yp-point.html?v=6.3.92">
 
-<link rel="import" href="./ac-activity-post-header.html?v=6.3.91">
+<link rel="import" href="./ac-activity-post-header.html?v=6.3.92">
 
 </head><body><dom-module id="ac-activity-post-status-update">
   <template>
@@ -78,16 +78,14 @@
       },
 
       _activityChanged: function (newValue) {
-        if (newValue) {
-          var content = this.formatContent(newValue.PostStatusChange);
-          this.$.statusChange.innerHTML = this.addLinksAndEmjois(content);
+        if (newValue && newValue.PostStatusChange && newValue.PostStatusChange.content) {
+          this.$.statusChange.innerHTML = this.formatContent(this.addLinksAndEmjois(newValue.PostStatusChange.content));
         }
       },
 
       formatContent: function (statusUpdate) {
-        if (statusUpdate && statusUpdate.content) {
-          var truncated = this.truncate(this.trim(statusUpdate.content), 500000, '...');
-          return truncated.replace(/(\r\n|\n|\r)/g,"<br />");
+        if (statusUpdate && statusUpdate) {
+          return statusUpdate.replace(/(\r\n)/g,"<br>");
         } else {
           return '';
         }

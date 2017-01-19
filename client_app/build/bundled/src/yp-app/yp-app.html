@@ -16390,7 +16390,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.91">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.92">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -17792,7 +17792,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.91" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.92" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -17849,7 +17849,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.91">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.92">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -17857,7 +17857,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.91">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.92">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19058,7 +19058,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.91", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.92", fontName: 'FFClanWebBook' });
 
     },
 
@@ -19069,7 +19069,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.91";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.92";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -21628,8 +21628,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.91">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.91">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.92">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.92">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -25451,7 +25451,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.91" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.92" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -30679,7 +30679,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.91">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.92">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -38436,6 +38436,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       .newsStoryContainer {
         width: 100% !important;
+        padding-left: 8px;
+        padding-right: 8px;
       }
 
       .postName {
@@ -38557,16 +38559,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       _activityChanged: function (newValue) {
-        if (newValue) {
-          var content = this.formatContent(newValue.PostStatusChange);
-          this.$.statusChange.innerHTML = this.addLinksAndEmjois(content);
+        if (newValue && newValue.PostStatusChange && newValue.PostStatusChange.content) {
+          this.$.statusChange.innerHTML = this.formatContent(this.addLinksAndEmjois(newValue.PostStatusChange.content));
         }
       },
 
       formatContent: function (statusUpdate) {
-        if (statusUpdate && statusUpdate.content) {
-          var truncated = this.truncate(this.trim(statusUpdate.content), 500000, '...');
-          return truncated.replace(/(\r\n|\n|\r)/g,"<br />");
+        if (statusUpdate && statusUpdate) {
+          return statusUpdate.replace(/(\r\n)/g,"<br>");
         } else {
           return '';
         }
@@ -39240,7 +39240,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner="" on-response="_activityDeletedResponse"></yp-ajax>
         </div>
       </div>
-      <div class="layout vertical recommendedPosts" not-active$="[[noRecommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
+      <div class="layout vertical self-start recommendedPosts" not-active$="[[noRecommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
         <ac-activity-recommended-posts id="recommendedPosts" recommended-posts="[[recommendedPosts]]" class="layout vertical"></ac-activity-recommended-posts>
         <div class="layout horizontal center-center">
           <yp-ajax id="recommendationAjax" large-spinner="" on-response="_recommendedPostsResponse"></yp-ajax>
@@ -40123,7 +40123,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           width: 320px;
           height: 180px;
         }
+      }
 
+      .withPointer {
+        cursor: pointer;
       }
     </style>
 
@@ -40133,10 +40136,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <paper-card featured$="[[featured]]" class="communityCard" animated="" elevation="[[elevation]]">
         <div class="layout horizontal">
           <template is="dom-if" if="[[noImage]]">
-            <iron-image header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+            <iron-image header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToCommunity"></iron-image>
           </template>
           <template is="dom-if" if="[[!noImage]]">
-            <iron-image sizing="cover" archived$="[[archived]]" featured$="[[featured]]" preload="" src="[[communityLogoImagePath]]" class="post-image"></iron-image>
+            <iron-image sizing="cover" archived$="[[archived]]" featured$="[[featured]]" preload="" src="[[communityLogoImagePath]]" class="post-image withPointer" on-tap="_goToCommunity"></iron-image>
           </template>
         </div>
         <div class="informationText">
@@ -40144,7 +40147,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             [[communityName]]
             <span hidden$="[[!archived]]">- [[t('archived')]]</span>
           </div>
-          <div id="description" class="description" featured$="[[featured]]"></div>
+          <div id="description" class="description withPointer" featured$="[[featured]]" on-tap="_goToCommunity"></div>
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
         <yp-membership-button archived$="[[archived]]" featured$="[[featured]]" community="[[community]]"></yp-membership-button>
@@ -47989,11 +47992,11 @@ information on the API.
                 if (post.name.length>200) {
                   postName.style.fontSize = "15px";
                 } else if (post.name.length>100) {
-                  postName.style.fontSize = "17px";
+                  postName.style.fontSize = "19px";
                 } else if (post.name.length>40) {
-                  postName.style.fontSize="18px";
+                  postName.style.fontSize="20px";
                 } else if (post.name.length>20) {
-                  postName.style.fontSize="24px";
+                  postName.style.fontSize="25px";
                 } else {
                   postName.style.fontSize="28px";
                 }
@@ -50416,14 +50419,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.91">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.92">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.91">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.92">
    * ```
    *
    * ### Consuming effects
@@ -51189,7 +51192,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.91">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.92">
 ```
 
 #### List of effects
@@ -56710,18 +56713,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.91"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.92"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.91"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.92"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.91"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.92"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -60966,7 +60969,7 @@ paperMapInfo.register();
             <span class="flex"></span>
 
             <paper-menu-button horizontal-align="right">
-              <paper-icon-button icon="help-outline" class="dropdown-trigger"></paper-icon-button>
+              <paper-icon-button icon="help-outline" class="dropdown-trigger" hidden$="[[hideHelpIcon]]"></paper-icon-button>
               <paper-menu class="dropdown-content">
                 <template is="dom-repeat" items="[[translatedPages]]" as="page">
                   <paper-item data-args$="[[index]]" on-tap="_openPage">[[_getLocalizePageTitle(page)]]</paper-item>
@@ -61125,6 +61128,11 @@ paperMapInfo.register();
         useHardBack: {
           type: Boolean,
           value: false
+        },
+
+        hideHelpIcon: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -61216,9 +61224,9 @@ paperMapInfo.register();
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.91");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.92");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.91");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.92");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
@@ -61391,6 +61399,12 @@ paperMapInfo.register();
         } else {
           this.set('showBack', false);
           this.set('backPath', null);
+        }
+
+        if (header.hideHelpIcon) {
+          this.set('hideHelpIcon', true);
+        } else {
+          this.set('hideHelpIcon', false);
         }
       },
 
