@@ -31,9 +31,11 @@
       }
 
       .noMapContainer {
-        padding: 8px;
-        margin: 48px;
+        padding: 32px;
+        margin: 16px;
         background-color: #FFF;
+        font-size: 22px;
+        color: #222;
       }
 
       #map {
@@ -106,8 +108,8 @@
     <iron-media-query query="(min-width: 1000px)" query-matches="{{wide}}"></iron-media-query>
 
     <div class="layout vertical center-center">
-      <paper-material id="mapContainer" elevation="2" class="mapContainer">
-        <template is="dom-if" if="[[posts]]">
+      <template is="dom-if" if="[[posts]]">
+        <paper-material id="mapContainer" elevation="2" class="mapContainer">
           <google-map id="map" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" fit-to-markers>
             <template is="dom-repeat" items="[[posts]]" as="post">
               <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"
@@ -118,12 +120,12 @@
               <yp-post-card mini post$="[[selectedPost]]"></yp-post-card>
             </paper-map-info>
           </google-map>
-        </template>
-      </paper-material>
+        </paper-material>
+      </template>
 
       <template is="dom-if" if="[[noPosts]]">
-        <paper-material elevation="3" class="noMapContainer">
-          <h1>[[t('posts.noMapPosts')]]</h1>
+        <paper-material elevation="1" class="noMapContainer">
+          <div>[[t('posts.noMapPosts')]]</div>
         </paper-material>
       </template>
 
