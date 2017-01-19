@@ -184,7 +184,7 @@
             <span class="flex"></span>
 
             <paper-menu-button horizontal-align="right">
-              <paper-icon-button icon="help-outline" class="dropdown-trigger"></paper-icon-button>
+              <paper-icon-button icon="help-outline" class="dropdown-trigger" hidden$="[[hideHelpIcon]]"></paper-icon-button>
               <paper-menu class="dropdown-content">
                 <template is="dom-repeat" items="[[translatedPages]]" as="page">
                   <paper-item data-args$="[[index]]" on-tap="_openPage">[[_getLocalizePageTitle(page)]]</paper-item>
@@ -345,6 +345,11 @@
 
         // Use window.location when clicking back link
         useHardBack: {
+          type: Boolean,
+          value: false
+        },
+
+        hideHelpIcon: {
           type: Boolean,
           value: false
         }
@@ -613,6 +618,12 @@
         } else {
           this.set('showBack', false);
           this.set('backPath', null);
+        }
+
+        if (header.hideHelpIcon) {
+          this.set('hideHelpIcon', true);
+        } else {
+          this.set('hideHelpIcon', false);
         }
       },
 

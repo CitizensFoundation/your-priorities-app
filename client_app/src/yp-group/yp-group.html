@@ -544,7 +544,11 @@
 
       refresh: function () {
         if (this.group) {
-          this.fire('yp-set-home-link', { type: 'group', id: this.group.id, name: this.group.name });
+          this.fire('yp-set-home-link', {
+            type: 'group',
+            id: this.group.id,
+            name: this.group.name
+          });
 
           if (this.group.configuration.defaultLocale!=null) {
             this.changeLocaleIfNeeded(this.group.configuration.defaultLocale);
@@ -584,6 +588,7 @@
             headerIcon: "social:group",
             documentTitle: this.group.name,
             enableSearch: true,
+            hideHelpIcon: this.group.configuration.hideHelpIcon ? true : null,
             useHardBack: this.group.configuration.fixedReturnUrl ? true : false,
             backPath:  this.group.configuration.fixedReturnUrl ?
                          this.group.configuration.fixedReturnUrl :
