@@ -54,6 +54,21 @@ var getCategoryIdForPost = function (categoryName) {
   return id;
 };
 
+var getDataFromUrl = function (url, done) {
+  var https = require('https');
+
+  var results = "";
+
+  var req = https.request(url, function(res) {
+    res.on('data', function(data) {
+      results+=data.toString();
+    });
+    res.on('end', function (d) {
+      done(results);
+    });
+  });
+  req.end();};
+
 var copyOnePost = function (groupId, postId, categoryId, done) {
   var group, post, domainId, communityId;
   var domain;
@@ -365,16 +380,11 @@ var getPostIdFromUrl = function (url) {
   return splitted[splitted.length-1]
 };
 
-var copyManyFromCsv = function (csvFileName, done) {
-  fs.readFile(csvFileName, 'utf8', function(error, contents) {
-    //console.log(contents);
-    if (!error) {
-      csvParser(contents, {}, function(err, allPosts) {
-        parsePosts(allPosts, done);
-      });
-    } else {
-      done(error);
-    }
+var copyManyFromCsv = function (csvUrl, done) {
+  getDataFromUrl(csvUrl, function (contents) {
+    csvParser(contents, {}, function(err, allPosts) {
+      parsePosts(allPosts, done);
+    });
   });
 };
 
