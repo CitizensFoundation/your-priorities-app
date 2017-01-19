@@ -2,8 +2,9 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-point/yp-point.html">
-<link rel="import" href="./ac-activity-post-header.html">
 <link rel="import" href="../yp-point/yp-point-comment-list.html">
+
+<link rel="import" href="yp-activity-group-title-behavior.html">
 
 <dom-module id="ac-activity-point-news-story">
   <template>
@@ -25,6 +26,18 @@
         padding-right: 8px;
         color: #555;
       }
+
+      .groupTitle {
+        font-size: 15px;
+        color: #777;
+        padding-bottom: 16px;
+        margin: 0;
+        padding-top: 0;
+      }
+
+      .hasPointer {
+        cursor: pointer;
+      }
     </style>
     <div class="layout vertical">
       <div class="postName" hidden$="[[_hidePostName(activity)]]" on-tap="_goToPost">
@@ -33,6 +46,9 @@
       <div class="layout vertical center-center newsStoryContainer">
         <yp-point-news-story with-comments hide-user class="card" point="[[activity.Point]]"></yp-point-news-story>
       </div>
+      <template is="dom-if" if="[[hasGroupHeader]]">
+        <div class="groupTitle layout horizontal center-center">[[groupTitle]]</div>
+      </template>
     </div>
   </template>
 
@@ -42,20 +58,20 @@
       is: 'ac-activity-point-news-story',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.ypActivityGroupTitleBehavior
       ],
 
       properties: {
 
         activity: {
-          type: Object,
-          observer: '_activityChanged'
+          type: Object
         },
 
-        postId: Number
-      },
-
-      _activityChanged: function (newValue) {
+        postId: {
+          type: Boolean,
+          value: null
+        }
       },
 
       _goToPost: function (){

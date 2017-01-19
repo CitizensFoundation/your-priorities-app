@@ -10,6 +10,8 @@
 <link rel="import" href="../yp-post/yp-post-behaviors.html">
 <link rel="import" href="../yp-group/yp-group-behaviors.html">
 
+<link rel="import" href="yp-activity-group-title-behavior.html">
+
 <dom-module id="ac-activity-post">
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -194,7 +196,7 @@
         Polymer.appHelpers,
         Polymer.YpPostBehavior,
         Polymer.YpLinkifyAndEmjoi,
-        Polymer.GroupBehaviors
+        Polymer.ypActivityGroupTitleBehavior
       ],
 
       properties: {
@@ -209,16 +211,6 @@
           value: null
         },
 
-        groupId: {
-          type: Number,
-          value: null
-        },
-
-        communityId: {
-          type: Number,
-          value: null
-        },
-
         wide: {
           type: Boolean,
           value: false
@@ -227,18 +219,7 @@
         isIE11: {
           type: Boolean,
           computed: '_isIE11(wide)'
-        },
-
-        hasGroupHeader: {
-          type: Boolean,
-          computed: '_hasGroupHeader(group, postId, groupId)'
-        },
-
-        groupTitle: {
-          type: Boolean,
-          computed: '_groupTitle(group, postId, groupId, communityId)'
         }
-
       },
 
       _goToPost: function () {
@@ -249,23 +230,6 @@
 
       _isIE11: function () {
         return /Trident.*rv[ :]*11\./.test(navigator.userAgent);
-      },
-
-      _hasGroupHeader: function (group, postId, groupId) {
-        return (group && !postId && !groupId)
-      },
-
-      _groupTitle: function (group, postId, groupId, communityId) {
-        if (group && !postId && !groupId) {
-          var title = "";
-          if (!communityId && this.activity.Community && this.activity.Community.name != this.activity.Group.name) {
-            title += this.activity.Community.name + " - ";
-          }
-          title += this.activity.Group.name;
-          return title;
-        } else {
-          return "";
-        }
       },
 
       _activityChanged: function (activity) {

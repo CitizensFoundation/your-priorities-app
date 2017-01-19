@@ -125,7 +125,7 @@
         </div>
 
         <template is="dom-if" if="[[_isActivityType(activity,'activity.post.new')]]">
-          <ac-activity-post post-id$="[[postId]]" group="[[activity.Group]]" community-id="[[communityId]]" group-id="[[groupId]]" activity="[[activity]]"></ac-activity-post>
+          <ac-activity-post activity="[[activity]]" post-id$="[[postId]]" community-id="[[communityId]]" group-id="[[groupId]]"></ac-activity-post>
         </template>
 
         <template is="dom-if" if="[[_isActivityType(activity,'activity.point.new')]]">
@@ -133,7 +133,7 @@
         </template>
 
         <template is="dom-if" if="[[_isActivityType(activity,'activity.point.newsStory.new')]]">
-          <ac-activity-point-news-story activity="[[activity]]" post-id="[[postId]]"></ac-activity-point-news-story>
+          <ac-activity-point-news-story activity="[[activity]]" post-id="[[postId]]" community-id="[[communityId]]" group-id="[[groupId]]"></ac-activity-point-news-story>
         </template>
 
         <template is="dom-if" if="[[_isActivityType(activity,'activity.post.status.change')]]">

@@ -11,6 +11,7 @@
 <link rel="import" href="../yp-user/yp-user-image.html">
 <link rel="import" href="../yp-point/yp-point-news-story.html">
 <link rel="import" href="../yp-point/yp-point-comment-list.html">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 
 <link rel="import" href="yp-point-news-story-embed.html">
 
@@ -78,8 +79,7 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical">
-      <div class="story">
-        [[point.content]]
+      <div id="content" class="story">
       </div>
       <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
       <div class="layout horizontal">
@@ -142,7 +142,8 @@
       },
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.YpLinkifyAndEmjoi
       ],
 
       _setOpenToValue: function () {
@@ -177,11 +178,22 @@
         this.set('commentsCount', detail.count);
       },
 
-      _pointChanged: function(newValue, oldValue) {
-        if (newValue) {
-          this.user = this.point.PointRevisions[0].User;
+      _pointChanged: function(point) {
+        if (point) {
+          this.user = point.PointRevisions[0].User;
         } else {
           this.user = null;
+        }
+
+        if (point && point.content) {
+          this.async(function () {
+            var content = this.$$("#content");
+            if (content) {
+              content.innerHTML = this.addLinksAndEmjois(point.content);
+            } else {
+              console.error("Can't find point content element");
+            }
+          });
         }
 
         this.set('open', false);
