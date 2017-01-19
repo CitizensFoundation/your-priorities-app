@@ -59,6 +59,7 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
   var domain;
   var newPost;
   var oldPost;
+  var skipPointActivitiesIdsForPostCopy = [];
 
   async.series([
     function (callback) {
@@ -259,6 +260,7 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
                       }
                     }).then(function (activities) {
                       async.eachSeries(activities, function (activity, activitesSeriesCallback) {
+                        skipPointActivitiesIdsForPostCopy.push(activity.id);
                         var activityJson = JSON.parse(JSON.stringify(activity.toJSON()));
                         delete activityJson.id;
                         var newActivity = models.AcActivity.build(activityJson);
@@ -286,11 +288,12 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
       });
     },
     function (callback) {
-      // TODO FIX DOUBLE ACTIVITIES FOR POINTS
-      callback("FIX DAFP AND LINKS ON VIEW AND GROUP COMMUNITY NAMES ON NEWS FROM BEHAVIOR");
       models.AcActivity.findAll({
         where: {
-          post_id: oldPost.id
+          post_id: oldPost.id,
+          id: {
+            $notIn: skipPointActivitiesIdsForPostCopy
+          }
         }
       }).then(function (activities) {
         async.eachSeries(activities, function (activity, innerSeriesCallback) {
