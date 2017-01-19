@@ -368,6 +368,7 @@ module.exports = function(sequelize, DataTypes) {
               sequelize.models.AcActivity.createActivity({
                 type: 'activity.point.newsStory.new',
                 userId: options.user_id,
+                subType: options.subType ? options.subType : null,
                 domainId: options.domain_id,
                 groupId: options.group_id ? options.group_id : 1,
                 pointId: options.point_id,

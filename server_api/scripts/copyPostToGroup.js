@@ -316,6 +316,7 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
         clientIp: '127.0.0.1',
         user: { id: userIdToPostNewsStory }
       }, {
+        subType: 'bulkOperation',
         post_id: oldPost.id,
         user_id: userIdToPostNewsStory,
         point: { content: getContentForOldPost(newPost.id) }
@@ -329,6 +330,7 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
         clientIp: '127.0.0.1',
         user: { id: userIdToPostNewsStory }
       }, {
+        subType: 'bulkOperation',
         post_id: newPost.id,
         user_id: userIdToPostNewsStory,
         point: { content: getContentForNewPost(oldPost.id) }
