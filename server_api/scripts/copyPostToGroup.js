@@ -110,7 +110,7 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
           id: postId
         },
         order: [
-          [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
+          [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'desc' ]
         ],
         include: [
           {
