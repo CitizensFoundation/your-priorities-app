@@ -536,6 +536,9 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
     if (community) {
       community.name = req.body.name;
       community.description = req.body.description;
+      if (req.body.hostname && req.body.hostname!="") {
+        community.hostname = req.body.hostname;
+      }
       community.only_admins_can_create_groups = req.body.onlyAdminsCanCreateGroups ? true : false;
       if (req.body.defaultLocale && req.body.defaultLocale!="") {
         community.default_locale = req.body.defaultLocale;
