@@ -1,4 +1,47 @@
 {
+  "filterIdeas": "Филтер",
+  "edit": "Измените",
+  "delete": "Обришите",
+  "addEmoji": "Додајте емотикон",
+  "closeComments": "Затворите коментаре",
+  "openComments": "Отворите коментаре",
+  "deleteActivity": "Обришите активност из вести",
+  "pointsFor": "Аргументи за",
+  "pointsAgainst": "Аргументи против",
+  "pointForShort": "За ",
+  "pointAgainstShort": "Против",
+  "domainToastCreated": "Направљен домен",
+  "domainToastUpdated": "Сачуван домен",
+  "communityToastCreated": "Направљена заједница",
+  "communityToastUpdated": "Сачувана заједница",
+  "groupToastCreated": "Направљена група",
+  "groupToastUpdated": "Сачувана група",
+  "userToastCreated": "Направите новог корисника",
+  "userToastUpdated": "Сачуван корисник",
+  "hideGroupHeader": "Сакријте заглавље",
+  "errorResetTokenNotFoundOrUsed": "Жетон за ресет лозинке није пронаћен или је већ употребљен",
+  "addedAnIdea": "Додао/ла идеју...",
+  "recommendedPosts": "Препоручио/ла",
+  "noComments": "Нема коментара",
+  "optional": "Опционо",
+  "additionalGroupConfig":"Додатна конфигурација групе",
+  "defaultDataImage":"Предефинисана слика за податак",
+  "defaultPostImage":"Предефинисана слика за прилог",
+  "hideAllTabs":"Сакријте све табове",
+  "hideNewPostOnPostPage":"Сакријте нови прилог на страници",
+  "newPointOptional":"Постаите нови аргумент као опциони",
+  "hideHelpIcon":"Сакријте иконицу за помоћ",
+  "hideEmoji":"Сакријте емотиконе",
+  "endorsementButtonsHeart":"Срца",
+  "endorsementArrows":"Стрелице",
+  "endorsementThumbs":"Палчеви",
+  "endorsementHats":"Капе",
+  "endorsementButtons": "Беџеви",
+  "bulkStatusUdateForInfo": "Кликните на предлоге за више информација",
+  "urlLink": "Линк",
+  "bulkStatusUdateFor": "Укључено ажурирање статуса за предлоге",
+  "inviteNotFoundOrAlreadyUsed": "Позив није пронађен или је већ употребљен",
+  "reportConfirmation": "Да ли сте сигурни да желите да пријавите овај садржај за кршење правила сајта?",
   "uniqueStatusMessage": "Јединствена статусна порука",
   "templateContent": "Садржај темплата",
   "bulkStatusUpdate": "Групни статуси",
@@ -89,13 +132,23 @@
     "active": "Активно",
     "featured": "У фокусу",
     "archived": "Архивирано",
+    "hidden": "Сакривено",
     "published": "Отворено",
-    "successful": "Прихваћено",
-    "failed": "Одбијено",
+    "successful": "Успешно",
+    "failed": "Неуспешно",
     "inProgress": "У току"
   },
 
+  "pluralStatus": {
+    "published": "Отворено",
+    "successful": "Успешни предлози",
+    "failed": "Неуспешни предлози",
+    "inProgress": "Предлози у току",
+    "inVoting": "Предлози на гласању"
+  },
+
   "activity": {
+    "confirmDelete": "Потврдите да желите да обришете ову активност?",
     "post": {
       "new": "Предлог",
       "status": {
@@ -117,7 +170,12 @@
   "name": "Име",
 
   "domain": {
-    "edit": "Измените домен"
+    "createOrganization": "Направите организацију",
+    "edit": "Измените домен",
+    "info": "Подешавања",
+    "apis": "API",
+    "settings": "Додатно",
+    "onlyAdminsCanCreateCommunities": "Само администратори могу да праве нове заједнице"
   },
 
   "domains": "Домени",
@@ -131,6 +189,7 @@
   "myAdminGroups": "Администратор групе",
 
   "community": {
+    "alternativeHeader": "Алтернативно заглавље",
     "edit": "Промените детаље заједнице",
     "hostname": "Назив хоста",
     "admins": "Администратори заједнице",
@@ -160,6 +219,8 @@
   },
 
   "post": {
+    "most_debated": "Највише дискутовано",
+    "deleteConfirmation": "Да ли сте сигурни да желите да обришете овај предлог?",
     "move": "Померите предлог",
     "confirmMove": "Потрдите да желите померање",
     "statusChangeConfirmText": "Да ли сте сигурни да желите да пошаљете мејл свима који су за или против овог предлога?",
@@ -231,22 +292,23 @@
   },
 
   "point": {
+    "report": "Пријавите",
     "againstAdded": "Додат аргумент против",
     "forAdded": "Додат аргумент за",
     "confirmDelete": "Потврдите да желите да обришете овај аргумент",
     "theseAreFor": "Аргумент за",
     "theseAreAgainst": "Аргумент против",
     "point": "Аргумент",
-    "for": "Зашто подржавате...",
-    "against": "Зашто не подржавате...",
+    "for": "Напишите аргумент за...",
+    "against": "Напишите аргумент против...",
     "add_up": "Додајте аргумент за",
     "add_down": "Додајте аргумент против",
-    "helpful": "Гласајте за аргумент",
-    "not_helpful": "Гласајте против аргумента",
+    "helpful": "Означите као корисно",
+    "not_helpful": "Означите да није корисно",
     "addNewsStory": "Додајте вест",
     "postNewsStory": "Додајте вест",
     "addComment": "Ваш коментар",
-    "postComment": "Оставите коментар",
+    "postComment": "Поставите",
     "comments": "Коментари",
     "howToWrite": "Хајде да продискутујемо најбоље аргументе и размислимо о решењима...",
     "commentToShort": "Текст је превише кратак!"
@@ -263,7 +325,7 @@
     "feature_not_implemented_a": "Ова могућност још није примењена у верзији Your Priorities 6.0",
     "feature_not_implemented_b": "Реците нам шта мислите :)",
     "welcome_a": "Ово је верзија Your Priorities 6.0 у којој можете само да прегледате садржај, не и да га додајете. Захвални смо за ваше мишљење. ",
-    "welcome_b": "Currently it only works in Chrome but will support all major browsers by release date in Q1 2015.",
+    "welcome_b": "За сада ради само у Chrome предраживачу али ће подржавати све веће предраживаче до пуштања у рад у првом кварталу 2015.",
     "welcome_heading": "Добродошли на преглед Your Priorities 6.0 технологије",
     "continue": "Наставите за преглед",
     "deleteConfirmation": "Да ли желите да обришете ову групу?"
@@ -275,6 +337,7 @@
   },
 
   "group": {
+    "showWhoPostedPosts": "Приказ особа које су објавиле прилоге",
     "locationHidden": "Онемогућите локацију",
     "group": "Група",
     "admins": "Администратори групе",
@@ -328,7 +391,7 @@
     "setEmail": "Додајте адресу електронске поште уз налог",
     "linkAccount": "Повежите се са налогом",
     "setEmailInfo": "Додајте адресу електронске поште уз налог",
-    "existsLinkAccountInfo": "Enter your password to connect to this access your email account.",
+    "existsLinkAccountInfo": "Унесите лозинку",
     "logoutCompleteFor": "Одјавите се",
     "loggedInWithSaml": "Пријављени сте путем SAML",
     "loggedInWithFacebook": "Пријављени сте путем Фејсбука",
@@ -345,7 +408,7 @@
     "resetPassword": "Промена лозинке",
     "resetPasswordInstructions": "Задајте нову лозинку коју није лако погодити",
     "login": "Пријавите се",
-    "create": "Направите",
+    "create": "Направите новог корисника",
     "cancel": "Откажите",
     "logout": "Одјава",
     "newPassword": "нова лозинка",
