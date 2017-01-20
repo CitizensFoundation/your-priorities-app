@@ -110,9 +110,14 @@ to improve their communities.
 ```
 [http://www.citizens.is/](http://www.citizens.is/)
 
+## Other live servers
+https://betrireykjavik.is/
+
+https://betraisland.is/
+
 ## The Team
 - Robert Bjarnason
-- Gunnar Grímsson
 - Guðný Maren Valsdóttir
+- Gunnar Grímsson
 - Nathalie Stembert
 - Alexander Máni Gautason
