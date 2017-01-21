@@ -45,6 +45,8 @@ var legacyPages = require('./controllers/legacyPages');
 
 var nonSPArouter = require('./controllers/nonSpa');
 
+var generateSitemap = require('./utils/sitemap_generator');
+
 var models = require('./models');
 var auth = require('./authorization');
 var log = require('./utils/logger');
@@ -224,6 +226,10 @@ app.use(function (req, res, next) {
     res.set("Cache-Control","no-cache,no-store");
   }
   next();
+});
+
+app.get('/sitemap.xml', function(req, res) {
+  generateSitemap(req, res);
 });
 
 app.use('/domain', index);

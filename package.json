@@ -58,6 +58,7 @@
     "sequelize": "^3.28.0",
     "sequelize-cli": "^2.4.0",
     "serve-favicon": "~2.1.6",
+    "sitemap": "^1.9.0",
     "temp": "^0.8.3",
     "wordwrap": "^1.0.0",
     "xml2js": "^0.4.17",
