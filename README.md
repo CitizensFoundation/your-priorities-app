@@ -37,6 +37,12 @@ cd client_app
 ./createDist
 ```
 
+For production mode you need to supply the URL to the database as an ENV variable
+```bash
+postgres://username:password@dbhost:dbport/dbname
+```
+
+
 ## For S3 Image Upload
 ```
 # To run with image upload to S3 enabled
