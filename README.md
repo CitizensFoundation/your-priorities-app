@@ -45,6 +45,7 @@ postgres://username:password@dbhost:dbport/dbname
 If you are running behind a web server like ningx and want to disable production 
 to force https, you can define an ENV variable as DISABLE_FORCE_HTTPS=1
 
+For production please define SESSION_SECRET=somethingrandomandlong
 
 ## For S3 Image Upload
 ```
