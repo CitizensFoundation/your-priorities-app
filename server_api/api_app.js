@@ -65,7 +65,7 @@ var airbrake = require('airbrake').createClient(process.env.AIRBRAKE_PROJECT_ID,
 airbrake.handleExceptions();
 app.use(airbrake.expressHandler());
 
-if (app.get('env') != 'development') {
+if (app.get('env') != 'development' && !process.env.DISABLE_FORCE_HTTPS) {
   app.use(function(req, res, next) {
     if (!/https/.test(req.protocol)){
       res.redirect("https://" + req.headers.host + req.url);
