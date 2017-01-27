@@ -42,6 +42,9 @@ For production mode you need to supply the URL to the database as an ENV variabl
 postgres://username:password@dbhost:dbport/dbname
 ```
 
+If you are running behind a web server like ningx and want to disable production 
+to force https, you can define an ENV variable as DISABLE_FORCE_HTTPS=1
+
 
 ## For S3 Image Upload
 ```
