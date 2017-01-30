@@ -186,6 +186,19 @@
         '_routeTabChanged(tabRouteData.tabName)'
       ],
 
+      _newPostSelectGroup: function () {
+        window.appGlobals.activity('open', 'newPostFromCommunity');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupSelectionForNewPost");
+        dialog.open(this);
+      },
+
+      _newPostForGroup: function (group) {
+        window.appGlobals.activity('open', 'newPost');
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
+        dialog.setup(null, group, true, null);
+        dialog.open('new', { groupId: group.id });
+      },
+
       _refreshTabsAndPages: function () {
         this.async(function () {
           var pages = this.$$("#tabPages");

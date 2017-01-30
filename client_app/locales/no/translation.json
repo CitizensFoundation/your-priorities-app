@@ -78,7 +78,7 @@
   "cancel": "Avbryt",
   "ok": "Ok",
   "next": "Neste",
-  "create": "Skape",
+  "create": "Publiser",
   "confirm": "Bekreft",
   "access": "Adgang",
   "searchFor": "Søk etter...",
@@ -195,12 +195,12 @@
     "admins": "Administratorer",
     "users": "Brukere",
     "delete": "Slett fellesskap",
-    "new": "Opprett fellesskap",
+    "new": "Legg til fellesskap",
     "public": "Offentlig fellesskap",
     "closed": "Lukket fellesskap",
     "secret": "Hemmelig fellesskap",
     "pages":"Fellesskap sider",
-    "onlyAdminsCanCreateGroups": "Kun administratorer kan opprette grupper"
+    "onlyAdminsCanCreateGroups": "Kun administratorer kan legge til grupper"
   },
 
   "posts": {
@@ -314,7 +314,7 @@
     "commentToShort": "Teksten er for kort!"
   },
 
-  "news": "Sist lagt til",
+  "news": "Tilleggsinformasjon",
 
   "uploading": {
     "inProgress": "Laster opp…"
@@ -395,25 +395,25 @@
     "logoutCompleteFor": "Logg av for",
     "loggedInWithSaml": "Logget på med SAML",
     "loggedInWithFacebook": "Logget på med Facebook",
-    "facebookLogin": "Facebook pålogging",
+    "facebookLogin": "Logg på med Facebook",
     "info":"Informasjon",
     "notifications": "Varsler",
     "name": "Fullt navn",
     "email": "E-postadresse",
     "edit": "Rediger bruker",
     "password": "Passord",
-    "forgotPassword": "Opprett nytt passord",
-    "forgotPasswordInstructions": "Skriv inn din e-postadresse og vi vil sende deg en e-post med en link som du kan bruke til å opprette et nytt passord.",
+    "forgotPassword": "Lag nytt passord",
+    "forgotPasswordInstructions": "Skriv inn din e-postadresse og vi vil sende deg en e-post med en link som du kan bruke til å lage et nytt passord.",
     "forgotPasswordEmailHasBeenSent": "En e-post med nærmere instruksjoner for tilbakestilling av passordet har blitt sendt.",
     "resetPassword": "Tilbakestille passordet ditt",
-    "resetPasswordInstructions": "Opprett et nytt passord som ikke er lett å gjette",
+    "resetPasswordInstructions": "Lag et nytt passord som ikke er lett å gjette",
     "login": "Logg på",
-    "create": "Publiser",
+    "create": "Opprett bruker",
     "cancel": "Avbryt",
     "logout": "Logg av",
     "newPassword": "Nytt passord",
     "register": "Ny bruker",
-    "alreadyRegisterred": "Denne e-postadressen er allerede registrert. Du kan opprette et nytt passord hvis nødvendig.",
+    "alreadyRegisterred": "Denne e-postadressen er allerede registrert. Du kan lage et nytt passord hvis nødvendig.",
     "registrationError": "Feil i registrering",
     "loginError": "Påloggingsfeil",
     "completeForm": "Fyll ut skjemaet korrekt",
