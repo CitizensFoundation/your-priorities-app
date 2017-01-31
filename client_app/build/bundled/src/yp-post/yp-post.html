@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.98"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.99"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -49,6 +49,7 @@
         color: #FFF;
         padding: 16px;
         cursor: pointer;
+        font-weight: bold;
       }
 
       .category-icon {
@@ -90,9 +91,8 @@
       }
 
       .userInfo {
-        padding-right: 32px;
-        text-align: right;
-        color: #777;
+        color: #ddd;
+        font-size: 17px;
       }
 
       @media (max-width: 960px) {
@@ -135,8 +135,7 @@
         }
 
         .userInfo {
-          margin-bottom: 36px;
-          padding-right: 8px;
+          font-size: 14px;
         }
 
         .mediaAndInfoContainer {
@@ -191,17 +190,21 @@
       <div class="layout horizontal center-center">
         <paper-material class="postCard" elevation="[[elevation]]" animated="">
           <div class="layout vertical wrap">
-            <h1 class="post-name" on-tap="goToPostIfNotHeader">[[postName]]</h1>
+            <div class="post-name layout vertical" on-tap="goToPostIfNotHeader">
+              <div>
+                [[postName]]
+              </div>
+              <template is="dom-if" if="[[post.Group.configuration.showWhoPostedPosts]]">
+                <div class="layout horizontal userInfo">
+                  <yp-user-with-organization class="userWithOrg" hide-image="" title-date="[[post.user.name]]" user$="[[post.User]]"></yp-user-with-organization>
+                </div>
+              </template>
+            </div>
             <div class="layout horizontal wrap mediaAndInfoContainer">
               <yp-post-cover-media header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
               <div class="layout vertical">
                 <div class="infoContainer">
                   <div id="description" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]" class="description"></div>
-                  <template is="dom-if" if="[[post.Group.configuration.showWhoPostedPosts]]">
-                    <div class="layout horizontal self-end userInfo">
-                      <yp-user-with-organization class="userWithOrg" hide-image="" title-date="[[post.user.name]]" inverted="" user$="[[post.User]]"></yp-user-with-organization>
-                    </div>
-                  </template>
                 </div>
                 <div class="card-actions">
                   <yp-post-actions floating="" header-mode="[[headerMode]]" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
@@ -468,6 +471,7 @@
           font-size: 26px;
           height: 42px;
           overflow: visible;
+          color: #AAAAAA;
         }
       }
 
