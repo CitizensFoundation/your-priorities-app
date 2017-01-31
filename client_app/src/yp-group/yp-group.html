@@ -554,6 +554,8 @@
             this.changeLocaleIfNeeded(this.group.configuration.defaultLocale);
           }
 
+          window.appGlobals.setCommunityAnalyticsTracker(this.group.Community.google_analytics_code);
+
           if (this.group.theme_id!=null) {
             this.setTheme(this.group.theme_id);
           } else if (this.group.Community.theme_id!=null) {

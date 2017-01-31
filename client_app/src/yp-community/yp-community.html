@@ -334,6 +334,8 @@
         if (this.community) {
           this.fire('yp-set-home-link', { type: 'community', id: this.community.id, name: this.community.name });
 
+          window.appGlobals.setCommunityAnalyticsTracker(this.community.google_analytics_code);
+
           if (this.community.theme_id!=null) {
             this.setTheme(this.community.theme_id);
           } else if (this.community.Domain.theme_id!=null) {

@@ -189,7 +189,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
           },
           {
             model: models.Community,
-            attributes: ['id','name','theme_id'],
+            attributes: ['id','name','theme_id','google_analytics_code'],
             required: false
           }
         ]

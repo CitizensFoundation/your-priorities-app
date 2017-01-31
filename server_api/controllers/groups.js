@@ -590,7 +590,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     include: [
       {
         model: models.Community,
-        attributes: ['id','theme_id','name','access'],
+        attributes: ['id','theme_id','name','access','google_analytics_code'],
         include: [
           {
             model: models.Domain,
