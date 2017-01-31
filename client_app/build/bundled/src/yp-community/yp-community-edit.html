@@ -1,23 +1,23 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.97">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.98">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.97">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.97">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.98">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.98">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.97">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.97">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.97">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.97">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.98">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.98">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.98">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.98">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.97">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.98">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.97">
-<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.97">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.98">
+<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.98">
 
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.97">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.97">
-<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.97">
-<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.97">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.97">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.98">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.98">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.98">
+<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.98">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.98">
 
 </head><body><dom-module id="yp-community-edit">
   <template>
@@ -71,9 +71,11 @@
 
         <paper-textarea id="description" name="description" value="{{community.description}}" label="[[t('description')]]" char-counter="" rows="2" max-rows="5" minlength="1" required="" maxlength="300" class="mainInput">
         </paper-textarea>
+
         <div class="horizontal end-justified layout">
           <emoji-selector id="emojiSelectorDescription"></emoji-selector>
         </div>
+
       </div>
 
       <div class="layout horizontal">
@@ -116,6 +118,9 @@
       </div>
 
       <yp-language-selector name="defaultLocale" no-user-events="" selected-locale="{{community.default_locale}}"></yp-language-selector>
+
+      <paper-input id="google_analytics_code" name="google_analytics_code" type="text" label="[[t('analyticsTrackerCode')]]" value="{{community.google_analytics_code}}" maxlength="40" style="width: 200px;">
+      </paper-input>
 
       <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">

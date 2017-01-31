@@ -1,15 +1,15 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.97">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.98">
 
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.97">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.98">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.97">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.97">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.97">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.98">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.98">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.98">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.97">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.98">
 
-<link rel="import" href="../yp-session/yp-session.html?v=6.3.97">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.97">
+<link rel="import" href="../yp-session/yp-session.html?v=6.3.98">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.98">
 
 </head><body><dom-module id="yp-app-globals">
 
@@ -81,6 +81,16 @@
           },
 
           groupConfigOverrides: {
+            type: Object,
+            value: {}
+          },
+
+          communityTrackerId: {
+            type: String,
+            value: null
+          },
+
+          communityTrackerIds: {
             type: Object,
             value: {}
           }
@@ -283,13 +293,48 @@
           return sid;
         },
 
+        setCommunityAnalyticsTracker: function (trackerId) {
+          if (trackerId && trackerId!='' && trackerId!=this.communityTrackerId) {
+            this.set('communityTrackerId', trackerId);
+            this.sendToGoogleAnalytics('sendOnlyCommunity', 'pageview', {
+              'page': location.pathname + location.search  + location.hash
+            });
+          } else {
+            this.set('communityTrackerId', null);
+          }
+        },
+
         sendToGoogleAnalytics: function (a, b, c, d) {
           //console.log("Google analytics "+a+" "+b+" "+c+" "+d);
           if (typeof ga == 'function') {
-            if (c && d) {
-              ga(a,b,c,d);
+            if (a=='sendOnlyCommunity') {
+              a = 'send';
             } else {
-              ga(a, b);
+              if (c && d) {
+                ga('send', b, c, d);
+              } else if (c) {
+                ga('send', b, c);
+              } else {
+                ga('send', b);
+              }
+              console.debug("Global: "+b);
+            }
+            if (this.communityTrackerId) {
+              var sendName = 'tracker'+this.communityTrackerId.replace(/-/g,'');
+              if (!this.communityTrackerIds[this.communityTrackerId]) {
+                ga('create', this.communityTrackerId, 'auto', sendName);
+                this.communityTrackerIds[this.communityTrackerId] = true;
+                console.debug("Created tracker: "+sendName);
+              }
+              sendName += '.send';
+              console.debug(sendName+": "+b);
+              if (c && d) {
+                ga(sendName, b, c, d);
+              } else if (c) {
+                ga(sendName, b, c);
+              } else {
+                ga(sendName, b);
+              }
             }
           } else {
             console.warn("Google analytics message not sent for a:"+a+" b:"+b+" c:"+c+" d:"+d);

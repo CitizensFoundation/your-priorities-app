@@ -16390,7 +16390,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.97">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.98">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -17792,7 +17792,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.97" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.98" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -17849,7 +17849,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.97">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.98">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -17857,7 +17857,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.97">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.98">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19058,7 +19058,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.97", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.98", fontName: 'FFClanWebBook' });
 
     },
 
@@ -19069,7 +19069,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.97";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.98";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -21628,8 +21628,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.97">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.97">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.98">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.98">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -25451,7 +25451,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.97" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.98" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -30679,7 +30679,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.97">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.98">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -53806,14 +53806,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.97">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.98">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.97">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.98">
    * ```
    *
    * ### Consuming effects
@@ -54579,7 +54579,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.97">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.98">
 ```
 
 #### List of effects
@@ -56136,6 +56136,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           groupConfigOverrides: {
             type: Object,
             value: {}
+          },
+
+          communityTrackerId: {
+            type: String,
+            value: null
+          },
+
+          communityTrackerIds: {
+            type: Object,
+            value: {}
           }
         },
 
@@ -56336,13 +56346,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           return sid;
         },
 
+        setCommunityAnalyticsTracker: function (trackerId) {
+          if (trackerId && trackerId!='' && trackerId!=this.communityTrackerId) {
+            this.set('communityTrackerId', trackerId);
+            this.sendToGoogleAnalytics('sendOnlyCommunity', 'pageview', {
+              'page': location.pathname + location.search  + location.hash
+            });
+          } else {
+            this.set('communityTrackerId', null);
+          }
+        },
+
         sendToGoogleAnalytics: function (a, b, c, d) {
           //console.log("Google analytics "+a+" "+b+" "+c+" "+d);
           if (typeof ga == 'function') {
-            if (c && d) {
-              ga(a,b,c,d);
+            if (a=='sendOnlyCommunity') {
+              a = 'send';
             } else {
-              ga(a, b);
+              if (c && d) {
+                ga('send', b, c, d);
+              } else if (c) {
+                ga('send', b, c);
+              } else {
+                ga('send', b);
+              }
+              console.debug("Global: "+b);
+            }
+            if (this.communityTrackerId) {
+              var sendName = 'tracker'+this.communityTrackerId.replace(/-/g,'');
+              if (!this.communityTrackerIds[this.communityTrackerId]) {
+                ga('create', this.communityTrackerId, 'auto', sendName);
+                this.communityTrackerIds[this.communityTrackerId] = true;
+                console.debug("Created tracker: "+sendName);
+              }
+              sendName += '.send';
+              console.debug(sendName+": "+b);
+              if (c && d) {
+                ga(sendName, b, c, d);
+              } else if (c) {
+                ga(sendName, b, c);
+              } else {
+                ga(sendName, b);
+              }
             }
           } else {
             console.warn("Google analytics message not sent for a:"+a+" b:"+b+" c:"+c+" d:"+d);
@@ -59832,18 +59877,18 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.97"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.98"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.97"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.98"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.97"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.98"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -60368,9 +60413,11 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
 
         <paper-textarea id="description" name="description" value="{{community.description}}" label="[[t('description')]]" char-counter="" rows="2" max-rows="5" minlength="1" required="" maxlength="300" class="mainInput">
         </paper-textarea>
+
         <div class="horizontal end-justified layout">
           <emoji-selector id="emojiSelectorDescription"></emoji-selector>
         </div>
+
       </div>
 
       <div class="layout horizontal">
@@ -60413,6 +60460,9 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
       </div>
 
       <yp-language-selector name="defaultLocale" no-user-events="" selected-locale="{{community.default_locale}}"></yp-language-selector>
+
+      <paper-input id="google_analytics_code" name="google_analytics_code" type="text" label="[[t('analyticsTrackerCode')]]" value="{{community.google_analytics_code}}" maxlength="40" style="width: 200px;">
+      </paper-input>
 
       <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
@@ -61260,9 +61310,9 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.97");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.98");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.97");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.98");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
@@ -61271,7 +61321,7 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
         if (page) {
           this.async(function () {
             window.appGlobals.activity('open', 'page', window.location.href);
-            ga('send', 'pageview', {
+            window.appGlobals.sendToGoogleAnalytics('send', 'pageview', {
               'page': location.pathname + location.search  + location.hash
             });
           });

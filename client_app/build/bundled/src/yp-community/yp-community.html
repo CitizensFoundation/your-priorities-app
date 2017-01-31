@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.97"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.98"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -1240,6 +1240,8 @@
       refresh: function () {
         if (this.community) {
           this.fire('yp-set-home-link', { type: 'community', id: this.community.id, name: this.community.name });
+
+          window.appGlobals.setCommunityAnalyticsTracker(this.community.google_analytics_code);
 
           if (this.community.theme_id!=null) {
             this.setTheme(this.community.theme_id);
