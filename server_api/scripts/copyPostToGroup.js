@@ -151,9 +151,9 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
                       async.eachSeries(endorsements, function (endorsement, endorsementCallback) {
                         var endorsementJson = JSON.parse(JSON.stringify(endorsement.toJSON()));
                         delete endorsementJson.id;
-                        var newPointQuality = models.PointQuality.build(endorsementJson);
-                        newPointQuality.set('post_id', newPost.id);
-                        newPointQuality.save().then(function () {
+                        var endorsementModel = models.Endorsement.build(endorsementJson);
+                        endorsementModel.set('post_id', newPost.id);
+                        endorsementModel.save().then(function () {
                           endorsementCallback();
                         });
                       }, function (error) {
