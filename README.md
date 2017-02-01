@@ -30,6 +30,13 @@ Create an user and give it admin privileges by running the following command in 
 node server_api/scripts/setAdminOnAll.js your@email.com
 ```
 
+You need to set the ENV var REDIS_URL to point to your local redis installation with 
+URL format like redis://user:pwd@hostname:port
+
+Bunyan is used for logging into JSON, which is great for feeding for 
+example into Elastic Search for analytic - https://github.com/trentm/node-bunyan 
+The log is piped to STDOUT so you need to pipe it into a file > /var/log/yrpri.log
+
 To build a client_dist production folder with vulcanized web components
 ```bash
 npm install polymer-cli
@@ -42,10 +49,10 @@ For production mode you need to supply the URL to the database as an ENV variabl
 postgres://username:password@dbhost:dbport/dbname
 ```
 
+For production please define SESSION_SECRET=somethingrandomandlong
+
 If you are running behind a web server like ningx and want to disable production 
 to force https, you can define an ENV variable as DISABLE_FORCE_HTTPS=1
-
-For production please define SESSION_SECRET=somethingrandomandlong
 
 ## For S3 Image Upload
 ```
