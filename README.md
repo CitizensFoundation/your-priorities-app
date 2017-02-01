@@ -57,7 +57,7 @@ to force https, you can define an ENV variable as DISABLE_FORCE_HTTPS=1
 ## For S3 Image Upload
 ```
 # To run with image upload to S3 enabled
-AWS_ACCESS_KEY_ID=XXX AWS_SECRET_ACCESS_KEY=XXX S3_BUCKET=my-test ./start
+AWS_ACCESS_KEY_ID=XXX AWS_SECRET_ACCESS_KEY=XXX S3_BUCKET=my-test S3_REGION=eu-central-1 ./start
 ```
 
 ## Your Priorities uses Active Citizen
