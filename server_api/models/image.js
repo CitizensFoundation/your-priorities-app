@@ -232,7 +232,7 @@ module.exports = function(sequelize, DataTypes) {
 
         return new Upload(s3BucketName, {
           aws: {
-            region: 'us-east-1',
+            region: process.env.S3_REGION ? process.env.S3_REGION : 'us-east-1',
             acl: 'public-read'
           },
 
