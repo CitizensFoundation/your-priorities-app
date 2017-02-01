@@ -51,8 +51,11 @@ postgres://username:password@dbhost:dbport/dbname
 
 For production please define SESSION_SECRET=somethingrandomandlong
 
-If you are running behind a web server like ningx and want to disable production 
+If you are running behind a web server like nginx and want to disable production 
 to force https, you can define an ENV variable as DISABLE_FORCE_HTTPS=1
+
+Also if you are running behind nginx you want to add the following to your config:
+proxy_set_header   X-Forwarded-Proto  https;
 
 ## For S3 Image Upload
 ```
