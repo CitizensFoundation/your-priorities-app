@@ -263,16 +263,13 @@
           this.fire('app-ready');
           this.$.boot.generateRequest();
 
-          if (this.disableWelcome) {
-            localStorage.setItem('yrpri-welcome-status', true);
-          } else if (this.resetSeenWelcome) {
-            localStorage.setItem('yrpri-welcome-status', false);
-          }
-          this.activity('open', 'page', window.location.href);
-          this.seenWelcome = localStorage.getItem('yrpri-welcome-status') == 'true';
-          if (!this.seenWelcome) {
-            this.$.welcomeDialog.open();
-          }
+          this.async(function () {
+            if (typeof ga == 'function') {
+              ga('set', 'anonymizeIp', true);
+            } else {
+              console.error("Can't find Google Analytics object");
+            }
+          });
         },
 
         setSeenWelcome: function () {
@@ -307,9 +304,7 @@
         sendToGoogleAnalytics: function (a, b, c, d) {
           //console.log("Google analytics "+a+" "+b+" "+c+" "+d);
           if (typeof ga == 'function') {
-            if (a=='sendOnlyCommunity') {
-              a = 'send';
-            } else {
+            if (a!='sendOnlyCommunity') {
               if (c && d) {
                 ga('send', b, c, d);
               } else if (c) {
