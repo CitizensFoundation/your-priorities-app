@@ -128,6 +128,23 @@
         }
       },
 
+      getDialogAsync: function (idName, callback) {
+        var element = this.$$("#"+idName);
+        if (element && (typeof element.ready === "function")) {
+          this.set('waitForUpgradeCounter', 0);
+          callback(this.$$("#"+idName));
+        } else {
+          console.warn("Element not upgraded: "+idName);
+          this.waitForUpgradeCounter += 1;
+          if (this.waitForUpgradeCounter>100) {
+            console.error("Element upgraded after wait: "+idName);
+          }
+          this.async(function () {
+            this.getDialogAsync(idName, callback);
+          }.bind(this), 250);
+        }
+      },
+
       _forgotPassword: function () {
         this.$.forgotPassword.open();
       }

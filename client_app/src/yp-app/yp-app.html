@@ -402,6 +402,8 @@
           this.openResetPasswordDialog(tokenParams[tokenParams.length-1]);
         } else if (route.path.indexOf('/user/accept/invite') > -1) {
           this.openAcceptInvitationDialog(tokenParams[tokenParams.length-1]);
+        } else if (route.path.indexOf('/user/open_notification_settings') > -1) {
+          this.openUserNotificationsDialog();
         } else if (route.path.indexOf('domain') > -1) {
           this.set('domainSubRoute', this.subRoute);
           if (typeof this.$.domainPage.refresh !== "undefined") {
@@ -431,8 +433,11 @@
       },
 
       _routePageChanged: function(page) {
-        if (this.route.path.indexOf('/user/reset_password') > -1 || this.route.path.indexOf('/user/accept/invite') > -1) {
-          this.page = "domain";
+        if (this.route.path.indexOf('/user/reset_password') > -1 ||
+            this.route.path.indexOf('/user/accept/invite') > -1 ||
+            this.route.path.indexOf('/user/open_notification_settings') > -1) {
+          window.history.pushState({}, null, "/");
+          window.dispatchEvent(new CustomEvent('location-changed'));
         } else {
           this.page = page;
         }
@@ -464,6 +469,14 @@
       openResetPasswordDialog: function (resetPasswordToken) {
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("resetPassword");
         dialog.open(resetPasswordToken);
+      },
+
+      openUserNotificationsDialog: function () {
+        if (window.appUser && window.appUser.loggedIn()===true) {
+          window.appUser.openNotificationSettings();
+        } else {
+          window.appUser.loginForNotificationSettings();
+        }
       },
 
       openAcceptInvitationDialog: function (inviteToken) {
@@ -568,6 +581,10 @@
         return this.$$("#dialogContainer").getDialog(idName);
       },
 
+      getDialogAsync: function (idName, callback) {
+        this.$$("#dialogContainer").getDialogAsync(idName, callback);
+      },
+
       scrollPageToTop: function() {
         var mainArea = document.getElementById('#mainArea');
         if (mainArea) {
@@ -631,7 +648,6 @@
         if (this.backPath) {
           if (this.useHardBack) {
            window.location = this.backPath;
-           console.error("HARD BACK");
           } else {
             this.redirectTo(this.backPath);
           }

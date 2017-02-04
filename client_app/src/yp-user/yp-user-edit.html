@@ -201,10 +201,13 @@
       this.$.profileImageUpload.clear();
     },
 
-    setup: function (user, newNotEdit, refreshFunction) {
+    setup: function (user, newNotEdit, refreshFunction, openNotificationTab) {
       this.set('user', user);
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
+      if (openNotificationTab) {
+        this.set('selected', 1);
+      }
       this._setupTranslation();
     },
 

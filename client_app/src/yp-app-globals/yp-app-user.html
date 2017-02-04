@@ -79,6 +79,11 @@
             value: null
           },
 
+          loginForNotificationSettingsParams: {
+            type: Boolean,
+            value: false
+          },
+
           toastLoginTextCombined: {
             type: String
           },
@@ -162,6 +167,11 @@
           this.openUserlogin();
         },
 
+        loginForNotificationSettings: function () {
+          this.set('loginForNotificationSettingsParams', true);
+          this.openUserlogin();
+        },
+
         openUserlogin: function () {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
           dialog.setup(this._handleLogin.bind(this));
@@ -212,7 +222,16 @@
             this.loginForAcceptInviteParams = null;
           } else if (this.loginFor401refreshFunction) {
             this.loginFor401refreshFunction();
+          } else if (this.loginForNotificationSettingsParams) {
+            this.openNotificationSettings();
           }
+        },
+
+        openNotificationSettings: function () {
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("userEdit", function (dialog) {
+            dialog.setup(window.appUser.user, false, null, true);
+            dialog.open('edit', { userId: window.appUser.user.id });
+          });
         },
 
         _forgotPassword: function (event, detail) {
