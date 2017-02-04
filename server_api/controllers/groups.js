@@ -715,6 +715,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         attributes: ['id','configuration']
       },
       { model: models.Image,
+        attributes: { exclude: ['ip_address', 'user_agent'] },
         as: 'PostHeaderImages',
         required: false
       }
