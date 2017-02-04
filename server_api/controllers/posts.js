@@ -287,6 +287,7 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
           $gt: req.query.latestPointCreatedAt
         }
       },
+      attributes: { exclude: ['ip_address', 'user_agent'] },
       order: [
         ['created_at', 'asc'],
         [ models.PointRevision, 'created_at', 'asc' ],
@@ -320,9 +321,11 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
         },
         {
           model: models.PointRevision,
+          attributes: { exclude: ['ip_address', 'user_agent'] },
           required: false
         },
         { model: models.PointQuality,
+          attributes: { exclude: ['ip_address', 'user_agent'] },
           required: false,
           include: [
             { model: models.User,
@@ -357,6 +360,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
     where: {
       post_id: req.params.id
     },
+    attributes: { exclude: ['ip_address', 'user_agent'] },
     order: [
       models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
       [ models.PointRevision, 'created_at', 'asc' ],
@@ -390,9 +394,11 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
       },
       {
         model: models.PointRevision,
+        attributes: { exclude: ['ip_address', 'user_agent'] },
         required: false
       },
       { model: models.PointQuality,
+        attributes: { exclude: ['ip_address', 'user_agent'] },
         required: false,
         include: [
           { model: models.User,
@@ -403,6 +409,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
       },
       {
         model: models.Post,
+        attributes: { exclude: ['ip_address', 'user_agent'] },
         required: false
       }
     ]

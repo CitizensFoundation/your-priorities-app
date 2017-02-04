@@ -690,11 +690,13 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
     include: [
       {
         model: models.Category,
+        attributes: { exclude: ['ip_address', 'user_agent'] },
         required: false,
         include: [
           {
             model: models.Image,
             required: false,
+            attributes: { exclude: ['ip_address', 'user_agent'] },
             as: 'CategoryIconImages',
             order: [
               [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
@@ -704,6 +706,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
       },
       {
         model: models.PostRevision,
+        attributes: { exclude: ['ip_address', 'user_agent'] },
         required: false
       },
       {
