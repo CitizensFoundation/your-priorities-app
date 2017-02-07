@@ -642,6 +642,11 @@
         } else {
           this.set('hideHelpIcon', false);
         }
+
+        if (this.showBack && header.disableDomainUpLink===true) {
+          this.set('showBack', false);
+          this.set('headerTitle', '');
+        }
       },
 
       goBack: function (event, detail) {

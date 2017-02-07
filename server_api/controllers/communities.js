@@ -97,6 +97,7 @@ var updateCommunityConfigParameters = function (req, community) {
     community.set('configuration', {});
   }
   community.set('configuration.alternativeHeader', (req.body.alternativeHeader && req.body.alternativeHeader!="") ? req.body.alternativeHeader : null);
+  community.set('configuration.disableDomainUpLink', (req.body.disableDomainUpLink && req.body.disableDomainUpLink!="") ? true : false);
 };
 
 router.delete('/:communityId/:activityId/delete_activity', auth.can('edit community'), function(req, res) {
