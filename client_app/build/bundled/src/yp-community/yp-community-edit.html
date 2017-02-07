@@ -1,23 +1,23 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.99">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.100">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.99">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.99">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.100">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.100">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.99">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.99">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.99">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.99">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.100">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.100">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.100">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.100">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.99">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.100">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.99">
-<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.99">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.100">
+<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.100">
 
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.99">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.99">
-<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.99">
-<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.99">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.99">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.100">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.100">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.100">
+<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.100">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.100">
 
 </head><body><dom-module id="yp-community-edit">
   <template>
@@ -52,6 +52,10 @@
 
       .config {
         margin-top: 16px;
+      }
+
+      paper-checkbox {
+        margin-bottom: 4px;
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -99,6 +103,7 @@
       <div class="layout vertical config">
         <paper-checkbox name="onlyAdminsCanCreateGroups" checked$="{{community.only_admins_can_create_groups}}">[[t('community.onlyAdminsCanCreateGroups')]]</paper-checkbox>
         <paper-checkbox name="alternativeHeader" checked$="{{community.configuration.alternativeHeader}}">[[t('community.alternativeHeader')]]</paper-checkbox>
+        <paper-checkbox name="disableDomainUpLink" checked$="{{community.configuration.disableDomainUpLink}}">[[t('disableCommunityDomainUpLink')]]</paper-checkbox>
       </div>
 
       <input type="hidden" name="themeId" value="[[themeId]]">

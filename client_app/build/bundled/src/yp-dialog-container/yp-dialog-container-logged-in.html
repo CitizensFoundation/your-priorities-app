@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.99"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-api-action-dialog" assetpath="../yp-api-action-dialog/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.100"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-api-action-dialog" assetpath="../yp-api-action-dialog/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -492,10 +492,13 @@
       this.$.profileImageUpload.clear();
     },
 
-    setup: function (user, newNotEdit, refreshFunction) {
+    setup: function (user, newNotEdit, refreshFunction, openNotificationTab) {
       this.set('user', user);
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
+      if (openNotificationTab) {
+        this.set('selected', 1);
+      }
       this._setupTranslation();
     },
 
