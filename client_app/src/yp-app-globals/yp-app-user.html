@@ -127,6 +127,7 @@
             value: false
           },
 
+          lastLoginMethod: String,
           facebookPopupWindow: Object,
           samlPopupWindow: Object,
           pollingStartedAt: Date
@@ -252,10 +253,13 @@
           this.$.session.set('user', user);
           this.set('user', user);
           this.fire('iron-signal', {name: 'logged-in', data: user });
-          // Fire another signal a bit later in case some components had not set up their listeners
+          // TODO: Look at this. Fire another signal a bit later in case some components had not set up their listeners
           this.async(function () {
             this.fire('iron-signal', {name: 'logged-in', data: user });
           }, 1000);
+
+          window.appGlobals.sendLoginAndSignupToAnalytics(user.id, "Login Success", this.lastLoginMethod ? this.lastLoginMethod : 'Email');
+          this.set('lastLoginMethod', null);
         },
 
         removeUserSession: function () {
@@ -353,11 +357,13 @@
 
         loginFromFacebook: function () {
           this.cancelLoginPolling();
+          this.set('lastLoginMethod', 'Facebook');
           this._completeExternalLogin(this.t('user.loggedInWithFacebook'));
         },
 
         loginFromSaml: function () {
           this.cancelLoginPolling();
+          this.set('lastLoginMethod', 'Saml2');
           this._completeExternalLogin(this.t('user.loggedInWithSaml'));
         },
 
@@ -454,7 +460,7 @@
           this.removeUserSession();
           this.$.logoutToast.show();
           this.async(function() {
-            location.reload();
+            window.location = "/";
           },1200);
         },
 
