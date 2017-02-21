@@ -1,21 +1,21 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.101">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.102">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.101">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.101">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.102">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.102">
 
-<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.101">
-<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.101">
+<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.102">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.102">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.101">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.101">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.101">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.101">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.101">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.101">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.102">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.102">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.102">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.102">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.102">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.102">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.101">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.102">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.101">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.102">
 
 </head><body><dom-module id="yp-login">
 
@@ -495,15 +495,14 @@
     },
 
     _validateAndSend: function(e) {
+      window.appGlobals.sendLoginAndSignupToAnalytics(null, this.registerMode ? 'Signup Submit' : 'Login Submit', 'Email');
       if (this.$$("#form").checkValidity() && this.email && this.password){
         if (this.registerMode) {
           this.$$("#registerAjax").body = this.credentials;
           this.$$("#registerAjax").generateRequest();
-          window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup Submit', 'Email');
         } else {
           this.$$("#loginAjax").body = this.credentials;
           this.$$("#loginAjax").generateRequest();
-          window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Login Submit', 'Email');
         }
       } else {
         this.$$("#loginAjax").showErrorDialog(this.t('user.completeForm'));
@@ -543,6 +542,7 @@
           this.$$("#dialog").open();
         });
       });
+      window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup/Login Opened', 'Undecided');
     },
 
     close: function() {
@@ -553,7 +553,6 @@
       this.set('opened', false);
       this.set('userSpinner', false);
     }
-
   });
 </script>
 </body></html>
