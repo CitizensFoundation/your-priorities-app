@@ -511,15 +511,14 @@
     },
 
     _validateAndSend: function(e) {
+      window.appGlobals.sendLoginAndSignupToAnalytics(null, this.registerMode ? 'Signup Submit' : 'Login Submit', 'Email');
       if (this.$$("#form").checkValidity() && this.email && this.password){
         if (this.registerMode) {
           this.$$("#registerAjax").body = this.credentials;
           this.$$("#registerAjax").generateRequest();
-          window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup Submit', 'Email');
         } else {
           this.$$("#loginAjax").body = this.credentials;
           this.$$("#loginAjax").generateRequest();
-          window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Login Submit', 'Email');
         }
       } else {
         this.$$("#loginAjax").showErrorDialog(this.t('user.completeForm'));
@@ -559,6 +558,7 @@
           this.$$("#dialog").open();
         });
       });
+      window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup/Login Opened', 'Undecided');
     },
 
     close: function() {
@@ -569,6 +569,5 @@
       this.set('opened', false);
       this.set('userSpinner', false);
     }
-
   });
 </script>

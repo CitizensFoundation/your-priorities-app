@@ -375,6 +375,11 @@
                 'metric6': '1'
               };
               break;
+            case 'Signup/Login Opened':
+              fieldsObjects = {
+                'metric7': '1'
+              };
+              break;
           }
           this.sendToGoogleAnalytics('send','event','Login and Signup', eventType, authProviderText, fieldsObjects);
         },
