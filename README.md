@@ -143,3 +143,9 @@ https://betraisland.is/
 - Gunnar Grímsson
 - Nathalie Stembert
 - Alexander Máni Gautason
+
+## With help from
+
+Browser testing enabled by BrowserStack
+[<img src="https://s3.amazonaws.com/yrpri-direct-asset/bsLogo.svg">](https://www.browserstack.com/)
+
