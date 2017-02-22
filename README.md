@@ -63,6 +63,8 @@ proxy_set_header   X-Forwarded-Proto  https;
 AWS_ACCESS_KEY_ID=XXX AWS_SECRET_ACCESS_KEY=XXX S3_BUCKET=my-test S3_REGION=eu-central-1 ./start
 ```
 
+You will need to have the imagemagick package installed.
+
 ## Your Priorities uses Active Citizen
 ```
 Active Citizen is an open source library, API and UI for activity streams and notifications 
