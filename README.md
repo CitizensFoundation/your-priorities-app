@@ -147,5 +147,6 @@ https://betraisland.is/
 ## With help from
 
 Browser testing enabled by BrowserStack
+
 [<img src="https://s3.amazonaws.com/yrpri-direct-asset/bsLogo.svg" width="200">](https://www.browserstack.com/)
 
