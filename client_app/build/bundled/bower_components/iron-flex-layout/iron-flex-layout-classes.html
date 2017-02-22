@@ -12,7 +12,7 @@ You must include this file in every element that needs to use them.
 
 Sample use:
 
-    <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.102">
+    <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.103">
     <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
     <div class="layout horizontal layout-start">
@@ -25,7 +25,7 @@ The following imports are available:
  - iron-flex-alignment
  - iron-flex-factors
  - iron-positioning
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.102">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.103">
 
 <!-- Most common used flex styles-->
 </head><body><dom-module id="iron-flex">
@@ -60,6 +60,12 @@ The following imports are available:
         -ms-flex-wrap: wrap;
         -webkit-flex-wrap: wrap;
         flex-wrap: wrap;
+      }
+
+      .layout.no-wrap {
+        -ms-flex-wrap: nowrap;
+        -webkit-flex-wrap: nowrap;
+        flex-wrap: nowrap;
       }
 
       .layout.center,
@@ -228,7 +234,7 @@ The following imports are available:
         -ms-align-self: baseline;
         -webkit-align-self: baseline;
         align-self: baseline;
-      };
+      }
 
       /**
        * multi-line alignment in main axis.

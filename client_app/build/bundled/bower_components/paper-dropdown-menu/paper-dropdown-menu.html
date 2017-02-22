@@ -6,20 +6,20 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.102">
-<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html?v=6.3.102">
-<link rel="import" href="../iron-behaviors/iron-button-state.html?v=6.3.102">
-<link rel="import" href="../iron-behaviors/iron-control-state.html?v=6.3.102">
-<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html?v=6.3.102">
-<link rel="import" href="../iron-icon/iron-icon.html?v=6.3.102">
-<link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html?v=6.3.102">
-<link rel="import" href="../paper-input/paper-input.html?v=6.3.102">
-<link rel="import" href="../paper-menu-button/paper-menu-button.html?v=6.3.102">
-<link rel="import" href="../paper-ripple/paper-ripple.html?v=6.3.102">
-<link rel="import" href="../paper-styles/default-theme.html?v=6.3.102">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.103">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html?v=6.3.103">
+<link rel="import" href="../iron-behaviors/iron-button-state.html?v=6.3.103">
+<link rel="import" href="../iron-behaviors/iron-control-state.html?v=6.3.103">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html?v=6.3.103">
+<link rel="import" href="../iron-icon/iron-icon.html?v=6.3.103">
+<link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html?v=6.3.103">
+<link rel="import" href="../paper-input/paper-input.html?v=6.3.103">
+<link rel="import" href="../paper-menu-button/paper-menu-button.html?v=6.3.103">
+<link rel="import" href="../paper-ripple/paper-ripple.html?v=6.3.103">
+<link rel="import" href="../paper-styles/default-theme.html?v=6.3.103">
 
-<link rel="import" href="paper-dropdown-menu-icons.html?v=6.3.102">
-<link rel="import" href="paper-dropdown-menu-shared-styles.html?v=6.3.102">
+<link rel="import" href="paper-dropdown-menu-icons.html?v=6.3.103">
+<link rel="import" href="paper-dropdown-menu-shared-styles.html?v=6.3.103">
 
 <!--
 Material design: [Dropdown menus](https://www.google.com/design/spec/components/buttons.html#buttons-dropdown-buttons)
@@ -84,7 +84,7 @@ respectively.
 
     <!-- this div fulfills an a11y requirement for combobox, do not remove -->
     <span role="button"></span>
-    <paper-menu-button id="menuButton" vertical-align="[[verticalAlign]]" horizontal-align="[[horizontalAlign]]" dynamic-align="[[dynamicAlign]]" vertical-offset="[[_computeMenuVerticalOffset(noLabelFloat)]]" disabled="[[disabled]]" no-animations="[[noAnimations]]" on-iron-select="_onIronSelect" on-iron-deselect="_onIronDeselect" opened="{{opened}}" close-on-activate="" allow-outside-scroll="[[allowOutsideScroll]]">
+    <paper-menu-button id="menuButton" vertical-align="[[verticalAlign]]" horizontal-align="[[horizontalAlign]]" dynamic-align="[[dynamicAlign]]" vertical-offset="[[_computeMenuVerticalOffset(noLabelFloat)]]" disabled="[[disabled]]" no-animations="[[noAnimations]]" on-iron-select="_onIronSelect" on-iron-deselect="_onIronDeselect" opened="{{opened}}" close-on-activate="" allow-outside-scroll="[[allowOutsideScroll]]" restore-focus-on-close="[[restoreFocusOnClose]]">
       <div class="dropdown-trigger">
         <paper-ripple></paper-ripple>
         <!-- paper-input has type="text" for a11y, do not remove -->
@@ -242,6 +242,14 @@ respectively.
            */
           dynamicAlign: {
             type: Boolean
+          },
+            
+          /**
+           * Whether focus should be restored to the dropdown when the menu closes.
+           */
+          restoreFocusOnClose: {
+            type: Boolean,
+            value: true
           },
         },
 
