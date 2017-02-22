@@ -50,7 +50,9 @@
     // Setup Polymer options
     window.Polymer = {
       //dom: 'shadow',
-      lazyRegister: 'max'
+      lazyRegister: 'max',
+      suppressTemplateNotifications: true,
+      suppressBindingNotifications: true
     };
 
     // Load webcomponentsjs polyfill if browser does not support native Web Components
