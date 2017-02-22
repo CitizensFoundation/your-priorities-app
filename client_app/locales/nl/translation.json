@@ -179,7 +179,7 @@
 
   "post": {
     "deleteConfirmation": "Weet u zeker dat u dit idee wilt verwijderen?",
-    "move": "Verschuif idee",
+    "move": "Verplaats idee",
     "confirmMove": "Bevestig verschuiving",
     "statusChangeConfirmText": "Weet u zeker dat u iedereen vóór en tegen dit idee een email wilt sturen?",
     "statusChangeSelectNewStatus": "Nieuwe status",
