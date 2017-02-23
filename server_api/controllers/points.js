@@ -388,7 +388,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
   });
 });
 
-router.delete('/:id', auth.can('edit point'), function(req, res) {
+router.delete('/:id', auth.can('delete point'), function(req, res) {
   models.Point.find({
     where: {id: req.params.id }
   }).then(function (point) {

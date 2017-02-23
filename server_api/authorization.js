@@ -578,7 +578,7 @@ auth.entity('post', function(req, done) {
 
 // Post admin and view
 
-auth.role('point.admin', function (point, req, done) {
+auth.role('point.delete', function (point, req, done) {
   if (!req.isAuthenticated()) {
     done();
   } models.Point.findOne({
@@ -620,6 +620,20 @@ auth.role('point.admin', function (point, req, done) {
           }
         });
       }
+    }
+  })
+});
+
+auth.role('point.admin', function (point, req, done) {
+  if (!req.isAuthenticated()) {
+    done();
+  } models.Point.findOne({
+    where: { id: point.id }
+  }).then(function (point) {
+    if (point.user_id === req.user.id) {
+      done(null, true);
+    } else {
+      done(null, false);
     }
   })
 });
@@ -1066,6 +1080,7 @@ auth.action('send status change', ['post.statusChange']);
 auth.action('edit user', ['user.admin']);
 auth.action('edit category', ['category.admin']);
 auth.action('edit point', ['point.admin']);
+auth.action('delete point', ['point.delete']);
 auth.action('edit bulkStatusUpdate', ['bulkStatusUpdates.admin']);
 
 auth.action('view organization', ['organization.viewUser']);
