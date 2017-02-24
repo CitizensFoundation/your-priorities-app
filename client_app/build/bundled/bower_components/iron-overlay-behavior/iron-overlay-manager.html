@@ -6,9 +6,9 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.105">
-<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html?v=6.3.105">
-<link rel="import" href="iron-overlay-backdrop.html?v=6.3.105">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.106">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html?v=6.3.106">
+<link rel="import" href="iron-overlay-backdrop.html?v=6.3.106">
 
 <script>
 
@@ -38,8 +38,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     this._backdropElement = null;
 
     // Enable document-wide tap recognizer.
-    Polymer.Gestures.add(document, 'tap', this._onCaptureClick.bind(this));
-
+    // NOTE: Use useCapture=true to avoid accidentally prevention of the closing
+    // of an overlay via event.stopPropagation(). The only way to prevent
+    // closing of an overlay should be through its APIs.
+    Polymer.Gestures.add(document, 'tap', null);
+    document.addEventListener('tap', this._onCaptureClick.bind(this), true);
     document.addEventListener('focus', this._onCaptureFocus.bind(this), true);
     document.addEventListener('keydown', this._onCaptureKeyDown.bind(this), true);
   };
