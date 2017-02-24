@@ -51,6 +51,15 @@ postgres://username:password@dbhost:dbport/dbname
 
 For production please define SESSION_SECRET=somethingrandomandlong
 
+## Email Support
+
+For SMTP support define SMTP_SERVER, SMTP_USERNAME, SMTP_PASSWORD and SMTP_PORT.
+We assume security through STARTTLS negotiation.
+
+When using Heroku SENDGRID_USERNAME, and SENDGRID_PASSWORD need to be defined.
+
+## Running behind another web server
+
 If you are running behind a web server like nginx and want to disable production 
 to force https, you can define an ENV variable as DISABLE_FORCE_HTTPS=1
 

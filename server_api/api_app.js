@@ -61,9 +61,12 @@ if (process.env.REDISTOGO_URL) {
 var app = express();
 app.set('port', process.env.PORT || 4242);
 
-var airbrake = require('airbrake').createClient(process.env.AIRBRAKE_PROJECT_ID, process.env.AIRBRAKE_API_KEY);
-airbrake.handleExceptions();
-app.use(airbrake.expressHandler());
+var airbrake = null;
+if(process.env.AIRBRAKE_PROJECT_ID) {
+  airbrake = require('airbrake').createClient(process.env.AIRBRAKE_PROJECT_ID, process.env.AIRBRAKE_API_KEY);
+  airbrake.handleExceptions();
+  app.use(airbrake.expressHandler());
+}
 
 if (app.get('env') != 'development' && !process.env.DISABLE_FORCE_HTTPS) {
   app.use(function(req, res, next) {
@@ -199,21 +202,25 @@ passport.deserializeUser(function(sessionUser, done) {
       done(null, user);
     } else {
       log.error("User Deserialized Not found", { context: 'deserializeUser' });
-      airbrake.notify("User Deserialized Not found", function(airbrakeErr, url) {
+      if(airbrake) {
+        airbrake.notify("User Deserialized Not found", function(airbrakeErr, url) {
+          if (airbrakeErr) {
+            log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
+          }
+          done(null, false);
+        });
+      }
+    }
+  }).catch(function(error) {
+    log.error("User Deserialize Error", { context: 'deserializeUser', user: id, err: error, errorStatus: 500 });
+    if(airbrake) {
+      airbrake.notify(error, function(airbrakeErr, url) {
         if (airbrakeErr) {
           log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
         }
         done(null, false);
       });
     }
-  }).catch(function(error) {
-    log.error("User Deserialize Error", { context: 'deserializeUser', user: id, err: error, errorStatus: 500 });
-    airbrake.notify(error, function(airbrakeErr, url) {
-      if (airbrakeErr) {
-        log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
-      }
-      done(null, false);
-    });
   });
 });
 
@@ -262,12 +269,14 @@ app.post('/authenticate_from_island_is', function (req, res) {
     if (error) {
       log.error("Error from SAML login", { err: error });
       error.url = req.url;
-      airbrake.notify(error, function(airbrakeErr, url) {
-        if (airbrakeErr) {
-          log.error("AirBrake Error", { context: 'airbrake', err: airbrakeErr, errorStatus: 500 });
-        }
-        res.sendStatus(500);
-      });
+      if(airbrake) {
+        airbrake.notify(error, function(airbrakeErr, url) {
+          if (airbrakeErr) {
+            log.error("AirBrake Error", { context: 'airbrake', err: airbrakeErr, errorStatus: 500 });
+          }
+          res.sendStatus(500);
+        });
+      }
     } else {
       log.info("SAML SAML 3", {domainId: req.ypDomain.id});
       res.render('samlLoginComplete', {});
@@ -304,15 +313,17 @@ app.use(function(err, req, res, next) {
   err.url = req.url;
   err.params = req.params;
   if (status!=404) {
-    airbrake.notify(err, function(airbrakeErr, url) {
-      if (airbrakeErr) {
-        log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
-      }
-      res.send({
-        message: err.message,
-        error: err
+    if(airbrake) {
+      airbrake.notify(err, function(airbrakeErr, url) {
+        if (airbrakeErr) {
+          log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
+        }
+        res.send({
+          message: err.message,
+          error: err
+        });
       });
-    });
+    }
   } else {
     res.send({
       message: err.message,
