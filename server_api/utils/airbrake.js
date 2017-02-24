@@ -1,4 +1,3 @@
-if(process.env.AIRBRAKE_PROJECT_ID) {
+if (process.env.AIRBRAKE_PROJECT_ID) {
   module.exports = require('airbrake').createClient(process.env.AIRBRAKE_PROJECT_ID, process.env.AIRBRAKE_API_KEY);
 }
-

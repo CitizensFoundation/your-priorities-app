@@ -62,15 +62,16 @@ var app = express();
 app.set('port', process.env.PORT || 4242);
 
 var airbrake = null;
-if(process.env.AIRBRAKE_PROJECT_ID) {
+
+if (process.env.AIRBRAKE_PROJECT_ID) {
   airbrake = require('airbrake').createClient(process.env.AIRBRAKE_PROJECT_ID, process.env.AIRBRAKE_API_KEY);
   airbrake.handleExceptions();
   app.use(airbrake.expressHandler());
 }
 
 if (app.get('env') != 'development' && !process.env.DISABLE_FORCE_HTTPS) {
-  app.use(function(req, res, next) {
-    if (!/https/.test(req.protocol)){
+  app.use(function (req, res, next) {
+    if (!/https/.test(req.protocol)) {
       res.redirect("https://" + req.headers.host + req.url);
     } else {
       return next();
@@ -78,21 +79,21 @@ if (app.get('env') != 'development' && !process.env.DISABLE_FORCE_HTTPS) {
   });
 }
 
-app.set('views', __dirname+'/views');
+app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
 app.use(morgan('combined'));
 app.use(useragent.express());
 app.use(requestIp.mw());
 app.use(bodyParser.json({limit: '5mb'}));
-app.use(bodyParser.urlencoded({limit: '5mb', extended: true }));
+app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
 
 var sessionConfig = {
   store: new RedisStore({url: process.env.REDIS_URL}),
   name: 'yrpri.sid',
   secret: process.env.SESSION_SECRET ? process.env.SESSION_SECRET : 'not so secret... use env var.',
   resave: true,
-  cookie: { autoSubDomain: true },
+  cookie: {autoSubDomain: true},
   saveUninitialized: true
 };
 
@@ -109,7 +110,7 @@ app.use(passport.session());
 // Setup the current domain from the host
 app.use(function (req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
-    log.info("Setup Domain Completed", { context: 'setYpDomain', domain: toJson(req.ypDomain.simple()) });
+    log.info("Setup Domain Completed", {context: 'setYpDomain', domain: toJson(req.ypDomain.simple())});
     next();
   });
 });
@@ -117,16 +118,16 @@ app.use(function (req, res, next) {
 // Setup the current community from the host
 app.use(function (req, res, next) {
   models.Community.setYpCommunity(req, res, function () {
-    log.info("Setup Community Completed", { context: 'setYpCommunity', community: req.ypCommunity.hostname });
+    log.info("Setup Community Completed", {context: 'setYpCommunity', community: req.ypCommunity.hostname});
     next();
   });
 });
 
-app.use(function(req,res,next) {
+app.use(function (req, res, next) {
   var ua = req.headers['user-agent'];
   if (/^(facebookexternalhit)|(Twitterbot)|(Slackbot)|(Embedly)|(Pinterest)/gi.test(ua)) {
-    console.log(ua,' is a bot');
-    nonSPArouter(req,res,next);
+    console.log(ua, ' is a bot');
+    nonSPArouter(req, res, next);
   } else {
     next();
   }
@@ -153,37 +154,42 @@ app.use(function (req, res, next) {
   next();
 });
 
-passport.serializeUser(function(profile, done) {
-  log.info("User Serialized From", { profile: profile });
-  if (profile.provider && profile.provider=='facebook') {
+passport.serializeUser(function (profile, done) {
+  log.info("User Serialized From", {profile: profile});
+  if (profile.provider && profile.provider == 'facebook') {
     models.User.serializeFacebookUser(profile, function (error, user) {
       if (error) {
-        log.error("Error in User Serialized from Facebook", {err: error });
+        log.error("Error in User Serialized from Facebook", {err: error});
         done(error);
       } else {
-        log.info("User Serialized Connected to Facebook", { context: 'loginFromFacebook', user: toJson(user)});
-        done(null, { userId: user.id, loginProvider: 'facebook' });
+        log.info("User Serialized Connected to Facebook", {context: 'loginFromFacebook', user: toJson(user)});
+        done(null, {userId: user.id, loginProvider: 'facebook'});
       }
     });
   } else if (profile.provider && profile.UserSSN) {
-      models.User.serializeSamlUser(profile, function (error, user) {
-        if (error) {
-          log.error("Error in User Serialized from SAML", {err: error });
-          done(error);
-        } else {
-          log.info("User Serialized Connected to SAML", { context: 'loginFromSaml', user: toJson(user)});
-          done(null, { userId: user.id, loginProvider: 'saml' });
-        }
-      });
+    models.User.serializeSamlUser(profile, function (error, user) {
+      if (error) {
+        log.error("Error in User Serialized from SAML", {err: error});
+        done(error);
+      } else {
+        log.info("User Serialized Connected to SAML", {context: 'loginFromSaml', user: toJson(user)});
+        done(null, {userId: user.id, loginProvider: 'saml'});
+      }
+    });
   } else {
-    log.info("User Serialized", { profile: profile, context: 'deserializeUser', userEmail: profile.email, userId: profile.id });
-    done(null, { userId: profile.id, loginProvider: 'email' } );
+    log.info("User Serialized", {
+      profile: profile,
+      context: 'deserializeUser',
+      userEmail: profile.email,
+      userId: profile.id
+    });
+    done(null, {userId: profile.id, loginProvider: 'email'});
   }
 });
 
-passport.deserializeUser(function(sessionUser, done) {
+passport.deserializeUser(function (sessionUser, done) {
   models.User.find({
-    where: { id: sessionUser.userId },
+    where: {id: sessionUser.userId},
     attributes: ["id", "name", "email", "default_locale", "facebook_id", "twitter_id", "google_id", "github_id", "ssn"],
     include: [
       {
@@ -195,28 +201,38 @@ passport.deserializeUser(function(sessionUser, done) {
         required: false
       }
     ]
-  }).then(function(user) {
+  }).then(function (user) {
     if (user) {
-      log.info("User Deserialized", { context: 'deserializeUser', user: user.email});
+      log.info("User Deserialized", {context: 'deserializeUser', user: user.email});
       user.loginProvider = sessionUser.loginProvider;
       done(null, user);
     } else {
-      log.error("User Deserialized Not found", { context: 'deserializeUser' });
-      if(airbrake) {
-        airbrake.notify("User Deserialized Not found", function(airbrakeErr, url) {
+      log.error("User Deserialized Not found", {context: 'deserializeUser'});
+      if (airbrake) {
+        airbrake.notify("User Deserialized Not found", function (airbrakeErr, url) {
           if (airbrakeErr) {
-            log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
+            log.error("AirBrake Error", {
+              context: 'airbrake',
+              user: toJson(req.user),
+              err: airbrakeErr,
+              errorStatus: 500
+            });
           }
           done(null, false);
         });
       }
     }
-  }).catch(function(error) {
-    log.error("User Deserialize Error", { context: 'deserializeUser', user: id, err: error, errorStatus: 500 });
-    if(airbrake) {
-      airbrake.notify(error, function(airbrakeErr, url) {
+  }).catch(function (error) {
+    log.error("User Deserialize Error", {context: 'deserializeUser', user: id, err: error, errorStatus: 500});
+    if (airbrake) {
+      airbrake.notify(error, function (airbrakeErr, url) {
         if (airbrakeErr) {
-          log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
+          log.error("AirBrake Error", {
+            context: 'airbrake',
+            user: toJson(req.user),
+            err: airbrakeErr,
+            errorStatus: 500
+          });
         }
         done(null, false);
       });
@@ -230,12 +246,12 @@ app.use('/', index);
 app.use(function (req, res, next) {
   var ua = req.headers['user-agent'];
   if (/Trident/gi.test(ua)) {
-    res.set("Cache-Control","no-cache,no-store");
+    res.set("Cache-Control", "no-cache,no-store");
   }
   next();
 });
 
-app.get('/sitemap.xml', function(req, res) {
+app.get('/sitemap.xml', function (req, res) {
   generateSitemap(req, res);
 });
 
@@ -264,15 +280,15 @@ app.use('/pages', legacyPages);
 
 app.post('/authenticate_from_island_is', function (req, res) {
   log.info("SAML SAML 1", {domainId: req.ypDomain.id});
-  req.sso.authenticate('saml-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+  req.sso.authenticate('saml-strategy-' + req.ypDomain.id, {}, req, res, function (error, user) {
     log.info("SAML SAML 2", {domainId: req.ypDomain.id, err: error});
     if (error) {
-      log.error("Error from SAML login", { err: error });
+      log.error("Error from SAML login", {err: error});
       error.url = req.url;
-      if(airbrake) {
-        airbrake.notify(error, function(airbrakeErr, url) {
+      if (airbrake) {
+        airbrake.notify(error, function (airbrakeErr, url) {
           if (airbrakeErr) {
-            log.error("AirBrake Error", { context: 'airbrake', err: airbrakeErr, errorStatus: 500 });
+            log.error("AirBrake Error", {context: 'airbrake', err: airbrakeErr, errorStatus: 500});
           }
           res.sendStatus(500);
         });
@@ -284,9 +300,14 @@ app.post('/authenticate_from_island_is', function (req, res) {
   })
 });
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   if (err instanceof auth.UnauthorizedError) {
-    log.error("User Unauthorized", { context: 'unauthorizedError', user: toJson(req.user), err: 'Unauthorized', errorStatus: 401 });
+    log.error("User Unauthorized", {
+      context: 'unauthorizedError',
+      user: toJson(req.user),
+      err: 'Unauthorized',
+      errorStatus: 401
+    });
     res.sendStatus(401);
   } else {
     next(err);
@@ -294,29 +315,40 @@ app.use(function(err, req, res, next) {
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
-  log.warn("Not Found", { context: 'notFound', user: toJson(req.user), err: 'Not Found', errorStatus: 404 });
+  log.warn("Not Found", {context: 'notFound', user: toJson(req.user), err: 'Not Found', errorStatus: 404});
   next(err);
 });
 
 // Error handlers
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   var status = err.status || 500;
   res.status(status);
-  if (status==404) {
-    log.warn("Not found", { context: 'notFound', errorStatus: status, url: req.url });
+  if (status == 404) {
+    log.warn("Not found", {context: 'notFound', errorStatus: status, url: req.url});
   } else {
-    log.error("General Error", { context: 'generalError', user: toJson(req.user), err: err, errStack: err.stack, errorStatus: status });
+    log.error("General Error", {
+      context: 'generalError',
+      user: toJson(req.user),
+      err: err,
+      errStack: err.stack,
+      errorStatus: status
+    });
   }
   err.url = req.url;
   err.params = req.params;
-  if (status!=404) {
-    if(airbrake) {
-      airbrake.notify(err, function(airbrakeErr, url) {
+  if (status != 404) {
+    if (airbrake) {
+      airbrake.notify(err, function (airbrakeErr, url) {
         if (airbrakeErr) {
-          log.error("AirBrake Error", { context: 'airbrake', user: toJson(req.user), err: airbrakeErr, errorStatus: 500 });
+          log.error("AirBrake Error", {
+            context: 'airbrake',
+            user: toJson(req.user),
+            err: airbrakeErr,
+            errorStatus: 500
+          });
         }
         res.send({
           message: err.message,
@@ -332,7 +364,7 @@ app.use(function(err, req, res, next) {
   }
 });
 
-var server = app.listen(app.get('port'), function() {
+var server = app.listen(app.get('port'), function () {
   debug('Your Priorities server listening on port ' + server.address().port);
 });
 
