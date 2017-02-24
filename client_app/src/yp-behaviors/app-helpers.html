@@ -60,7 +60,7 @@
       }
     },
 
-    changeLocaleIfNeeded: function (locale, force) {
+    changeLocaleIfNeededAfterWait: function (locale, force) {
       console.log("changeLocaleIfNeeded "+locale);
       if (locale && this.language!=locale) {
         if (force || !localStorage.getItem('yp-user-locale')) {
@@ -75,6 +75,16 @@
             document.dispatchEvent(event);
           });
         }
+      }
+    },
+
+    changeLocaleIfNeeded: function (locale, force) {
+      if (typeof i18n !== 'undefined') {
+        this.changeLocaleIfNeededAfterWait(locale, force)
+      } else {
+        this.async(function () {
+          this.changeLocaleIfNeededAfterWait(locale, force)
+        }, 1000);
       }
     },
 
