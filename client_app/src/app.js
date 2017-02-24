@@ -120,6 +120,10 @@
       setupLocale('no');
     } else if (window.location.hostname.indexOf('bolja-pula') > -1) {
       setupLocale('hr');
+    } else if (window.location.hostname.indexOf('e-dem.nl') > -1) {
+      setupLocale('nl');
+    } else if (window.location.hostname.indexOf('waag.org') > -1) {
+      setupLocale('nl');
     } else if (window.location.hostname.indexOf('boljikarlovac') > -1) {
       setupLocale('hr');
     } else if (window.location.hostname.indexOf('boljilosinj') > -1) {
