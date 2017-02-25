@@ -6,10 +6,10 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.110">
-<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html?v=6.3.110">
-<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html?v=6.3.110">
-<link rel="import" href="../iron-scroll-target-behavior/iron-scroll-target-behavior.html?v=6.3.110">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.111">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html?v=6.3.111">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html?v=6.3.111">
+<link rel="import" href="../iron-scroll-target-behavior/iron-scroll-target-behavior.html?v=6.3.111">
 
 <!--
 
@@ -230,6 +230,7 @@ will only render 20.
     <style>
       :host {
         display: block;
+        position: relative;
       }
 
       @media only screen and (-webkit-max-device-pixel-ratio: 1) {
@@ -245,7 +246,7 @@ will only render 20.
 
       :host(:not([grid])) #items > ::content > * {
         width: 100%;
-      }
+      };
 
       #items > ::content > * {
         box-sizing: border-box;
@@ -399,20 +400,6 @@ will only render 20.
       fireResizeAfterScrolling: {
         type: Number,
         value: null
-      },
-
-      /**
-       * The offset top from the scrolling element to the iron-list element.
-       * This value can be computed using the position returned by `getBoundingClientRect()`
-       * although it's preferred to use a constant value when possible.
-       *
-       * This property is useful when an external scrolling element is used and there's
-       * some offset between the scrolling element and the list.
-       * For example: a header is placed above the list.
-       */
-      scrollOffset: {
-        type: Number,
-        value: 0
       }
     },
 
@@ -420,7 +407,7 @@ will only render 20.
       '_itemsChanged(items.*)',
       '_selectionEnabledChanged(selectionEnabled)',
       '_multiSelectionChanged(multiSelection)',
-      '_setOverflow(scrollTarget, scrollOffset)'
+      '_setOverflow(scrollTarget)'
     ],
 
     behaviors: [
@@ -617,17 +604,10 @@ will only render 20.
     },
 
     /**
-     * The parent node for the _userTemplate.
-     */
-    get _itemsParent() {
-      return Polymer.dom(Polymer.dom(this._userTemplate).parentNode);
-    },
-
-    /**
      * The maximum scroll top value.
      */
     get _maxScrollTop() {
-      return this._estScrollHeight - this._viewportHeight + this._scrollOffset;
+      return this._estScrollHeight - this._viewportHeight + this._scrollerPaddingTop;
     },
 
     /**
@@ -718,24 +698,23 @@ will only render 20.
      * @type {number}
      */
     get firstVisibleIndex() {
-      var idx = this._firstVisibleIndexVal;
-      if (idx == null) {
-        var physicalOffset = this._physicalTop + this._scrollOffset;
+      if (this._firstVisibleIndexVal === null) {
+        var physicalOffset = Math.floor(this._physicalTop + this._scrollerPaddingTop);
 
-        idx = this._iterateItems(function(pidx, vidx) {
-          physicalOffset += this._getPhysicalSizeIncrement(pidx);
+        this._firstVisibleIndexVal = this._iterateItems(
+          function(pidx, vidx) {
+            physicalOffset += this._getPhysicalSizeIncrement(pidx);
 
-          if (physicalOffset > this._scrollPosition) {
-            return this.grid ? vidx - (vidx % this._itemsPerRow) : vidx;
-          }
-          // Handle a partially rendered final row in grid mode
-          if (this.grid && this._virtualCount - 1 === vidx) {
-            return vidx - (vidx % this._itemsPerRow);
-          }
-        }) || 0;
-        this._firstVisibleIndexVal = idx;
+            if (physicalOffset > this._scrollPosition) {
+              return this.grid ? vidx - (vidx % this._itemsPerRow) : vidx;
+            }
+            // Handle a partially rendered final row in grid mode
+            if (this.grid && this._virtualCount - 1 === vidx) {
+              return vidx - (vidx % this._itemsPerRow);
+            }
+          }) || 0;
       }
-      return idx;
+      return this._firstVisibleIndexVal;
     },
 
     /**
@@ -744,23 +723,24 @@ will only render 20.
      * @type {number}
      */
     get lastVisibleIndex() {
-      var idx = this._lastVisibleIndexVal;
-      if (idx == null) {
+      if (this._lastVisibleIndexVal === null) {
         if (this.grid) {
-          idx = Math.min(this._virtualCount,
-              this.firstVisibleIndex + this._estRowsInView * this._itemsPerRow - 1);
+          var lastIndex = this.firstVisibleIndex + this._estRowsInView * this._itemsPerRow - 1;
+          this._lastVisibleIndexVal = Math.min(this._virtualCount, lastIndex);
         } else {
-          var physicalOffset = this._physicalTop + this._scrollOffset;
+          var physicalOffset = this._physicalTop;
           this._iterateItems(function(pidx, vidx) {
             if (physicalOffset < this._scrollBottom) {
-              idx = vidx;
+              this._lastVisibleIndexVal = vidx;
+            } else {
+              // Break _iterateItems
+              return true;
             }
             physicalOffset += this._getPhysicalSizeIncrement(pidx);
           });
         }
-        this._lastVisibleIndexVal = idx;
       }
-      return idx;
+      return this._lastVisibleIndexVal;
     },
 
     get _defaultScrollTarget() {
@@ -777,10 +757,6 @@ will only render 20.
 
     get _physicalRows() {
       return Math.ceil(this._physicalCount / this._itemsPerRow);
-    },
-
-    get _scrollOffset() {
-      return this._scrollerPaddingTop + this.scrollOffset;
     },
 
     ready: function() {
@@ -806,10 +782,6 @@ will only render 20.
     _setOverflow: function(scrollTarget) {
       this.style.webkitOverflowScrolling = scrollTarget === this ? 'touch' : '';
       this.style.overflow = scrollTarget === this ? 'auto' : '';
-      // Clear cache.
-      this._lastVisibleIndexVal = null;
-      this._firstVisibleIndexVal = null;
-      this._debounceTemplate(this._render);
     },
 
     /**
@@ -820,8 +792,8 @@ will only render 20.
      */
     updateViewportBoundaries: function() {
       var styles = window.getComputedStyle(this);
-      this._scrollerPaddingTop = this.scrollTarget === this ? 0 :
-          parseInt(styles['padding-top'], 10);
+      this._scrollerPaddingTop =
+          this.scrollTarget === this ? 0 : parseInt(styles['padding-top'], 10);
 
       if (this.overridePaddingTop) {
         this._scrollerPaddingTop = this.overridePaddingTop;
@@ -854,8 +826,7 @@ will only render 20.
 
       // Random access.
       if (Math.abs(delta) > this._physicalSize) {
-        delta = delta - this._scrollOffset;
-        var idxAdjustment = Math.round(delta / this._physicalAverage) * this._itemsPerRow;
+        var idxAdjustment =  Math.round(delta / this._physicalAverage) * this._itemsPerRow
         this._physicalTop = this._physicalTop + delta;
         this._virtualStart = this._virtualStart + idxAdjustment;
         this._physicalStart = this._physicalStart + idxAdjustment;
@@ -891,19 +862,18 @@ will only render 20.
       var virtualStart = this._virtualStart;
       var virtualEnd = this._virtualEnd;
       var physicalCount = this._physicalCount;
-      var top = this._physicalTop + this._scrollOffset;
-      var bottom = this._physicalBottom + this._scrollOffset;
+      var physicalTop = this._physicalTop + this._scrollerPaddingTop;
       var scrollTop = this._scrollTop;
       var scrollBottom = this._scrollBottom;
 
       if (fromTop) {
         ith = this._physicalStart;
         lastIth = this._physicalEnd;
-        offsetContent = scrollTop - top;
+        offsetContent = scrollTop - physicalTop;
       } else {
         ith = this._physicalEnd;
         lastIth = this._physicalStart;
-        offsetContent = bottom - scrollBottom;
+        offsetContent = this._physicalBottom - scrollBottom;
       }
       while (true) {
         physicalItemHeight = this._getPhysicalSizeIncrement(ith);
@@ -917,11 +887,11 @@ will only render 20.
             break;
           }
           // Check that the index is not visible.
-          if (top + physicalItemHeight >= scrollTop - this._scrollOffset) {
+          if (physicalTop + physicalItemHeight >= scrollTop) {
             break;
           }
           idxs.push(ith);
-          top = top + physicalItemHeight;
+          physicalTop = physicalTop + physicalItemHeight;
           ith = (ith + 1) % physicalCount;
         } else {
           // Check that index is within the valid range.
@@ -929,15 +899,15 @@ will only render 20.
             break;
           }
           // Check that the index is not visible.
-          if (top + this._physicalSize - physicalItemHeight <= scrollBottom) {
+          if (physicalTop + this._physicalSize - physicalItemHeight <= scrollBottom) {
             break;
           }
           idxs.push(ith);
-          top = top - physicalItemHeight;
+          physicalTop = physicalTop - physicalItemHeight;
           ith = (ith === 0) ? physicalCount - 1 : ith - 1;
         }
       }
-      return { indexes: idxs, physicalTop: top - this._scrollOffset };
+      return { indexes: idxs, physicalTop: physicalTop - this._scrollerPaddingTop };
     },
 
     /**
@@ -979,7 +949,7 @@ will only render 20.
         // First element child is item; Safari doesn't support children[0]
         // on a doc fragment.
         physicalItems[i] = inst.root.querySelector('*');
-        this._itemsParent.appendChild(inst.root);
+        Polymer.dom(this).appendChild(inst.root);
       }
       return physicalItems;
     },
@@ -991,9 +961,10 @@ will only render 20.
      */
     _increasePoolIfNeeded: function() {
       var self = this;
-      var isClientFull = this._physicalBottom + this._scrollOffset >= this._scrollBottom &&
-          this._physicalTop - this._scrollOffset <= this._scrollPosition;
-      // Base case 1: if the physical size is optimal and the list's client height is full
+      var isClientFull = this._physicalBottom >= this._scrollBottom &&
+          this._physicalTop <= this._scrollPosition;
+
+      // Base case 2: if the physical size is optimal and the list's client height is full
       // with physical items, don't increase the pool.
       if (this._physicalSize >= this._optPhysicalSize && isClientFull) {
         return false;
@@ -1087,7 +1058,7 @@ will only render 20.
         props[this.selectedAs] = true;
         props.tabIndex = true;
         this._instanceProps = props;
-        this._userTemplate = this.queryEffectiveChildren('template');
+        this._userTemplate = Polymer.dom(this).querySelector('template');
 
         if (this._userTemplate) {
           this.templatize(this._userTemplate);
@@ -1122,13 +1093,11 @@ will only render 20.
      * notifying parent path change on each row.
      */
     _forwardParentProp: function(prop, value) {
-      (this._physicalItems || [])
-        .concat([this._offscreenFocusedItem, this._focusBackfillItem])
-        .forEach(function(item) {
-          if (item) {
-            item._templateInstance[prop] = value;
-          }
-        });
+      if (this._physicalItems) {
+        this._physicalItems.forEach(function(item) {
+          item._templateInstance[prop] = value;
+        }, this);
+      }
     },
 
     /**
@@ -1137,13 +1106,11 @@ will only render 20.
      * notifying parent.<path> path change on each row.
      */
     _forwardParentPath: function(path, value) {
-      (this._physicalItems || [])
-        .concat([this._offscreenFocusedItem, this._focusBackfillItem])
-        .forEach(function(item) {
-          if (item) {
-            item._templateInstance.notifyPath(path, value, true);
-          }
-        });
+      if (this._physicalItems) {
+        this._physicalItems.forEach(function(item) {
+          item._templateInstance.notifyPath(path, value, true);
+        }, this);
+      }
     },
 
     /**
@@ -1201,7 +1168,7 @@ will only render 20.
         this._physicalItems = this._physicalItems || [];
         this._physicalSizes = this._physicalSizes || [];
         this._physicalStart = 0;
-        if (this._scrollTop > this._scrollOffset) {
+        if (this._scrollTop > this._scrollerPaddingTop) {
           this._resetScrollPosition(0);
         }
         this._removeFocusedItem();
@@ -1212,6 +1179,7 @@ will only render 20.
         this._virtualCount = this.items ? this.items.length : 0;
 
         this._debounceTemplate(this._render);
+
       } else {
         this._forwardItemPath(change.path.split('.').slice(1).join('.'), change.value);
       }
@@ -1514,7 +1482,7 @@ will only render 20.
       }
       this._updateScrollerSize(true);
       this._positionItems();
-      this._resetScrollPosition(this._physicalTop + this._scrollOffset + targetOffsetTop);
+      this._resetScrollPosition(this._physicalTop + this._scrollerPaddingTop + targetOffsetTop);
       this._increasePoolIfNeeded();
       // clear cached visible index.
       this._firstVisibleIndexVal = null;
@@ -1677,8 +1645,7 @@ will only render 20.
       }
       var modelTabIndex, activeElTabIndex;
       var target = Polymer.dom(e).path[0];
-      var itemsHost = this._itemsParent.node.domHost;
-      var activeEl = Polymer.dom(itemsHost ? itemsHost.root : document).activeElement;
+      var activeEl = Polymer.dom(this.domHost ? this.domHost.root : document).activeElement;
       var physicalItem = this._physicalItems[this._getPhysicalIndex(model[this.indexAs])];
       // Safari does not focus certain form controls via mouse
       // https://bugs.webkit.org/show_bug.cgi?id=118043
@@ -1791,7 +1758,7 @@ will only render 20.
 
     _removeFocusedItem: function() {
       if (this._offscreenFocusedItem) {
-        this._itemsParent.removeChild(this._offscreenFocusedItem);
+        Polymer.dom(this).removeChild(this._offscreenFocusedItem);
       }
       this._offscreenFocusedItem = null;
       this._focusBackfillItem = null;
@@ -1810,7 +1777,7 @@ will only render 20.
         // Create a physical item.
         var stampedTemplate = this.stamp(null);
         this._focusBackfillItem = stampedTemplate.root.querySelector('*');
-        this._itemsParent.appendChild(stampedTemplate.root);
+        Polymer.dom(this).appendChild(stampedTemplate.root);
       }
       // Set the offcreen focused physical item.
       this._offscreenFocusedItem = this._physicalItems[pidx];
