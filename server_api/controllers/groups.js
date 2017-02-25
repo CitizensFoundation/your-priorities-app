@@ -118,6 +118,7 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.endorsementButtons', (req.body.endorsementButtons && req.body.endorsementButtons!="") ? req.body.endorsementButtons : "hearts");
   group.set('configuration.alternativeHeader', (req.body.alternativeHeader && req.body.alternativeHeader!="") ? req.body.alternativeHeader : null);
+  group.set('configuration.defaultLocationLongLat', (req.body.defaultLocationLongLat && req.body.defaultLocationLongLat!="") ? req.body.defaultLocationLongLat : null);
 
   if (truthValueFromBody(req.body.status)) {
     group.status = req.body.status;
@@ -590,7 +591,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     include: [
       {
         model: models.Community,
-        attributes: ['id','theme_id','name','access','google_analytics_code'],
+        attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
         include: [
           {
             model: models.Domain,

@@ -1,4 +1,5 @@
 {
+  "defaultLocationLongLat": "Sjálfgefin staðsetning longitude,latitude",
   "disableCommunityDomainUpLink": "Ekki sýna domain upp hlekk",
   "analyticsTrackerCode": "Google Analytics Id",
   "filterIdeas": "Sýja hugmyndir",

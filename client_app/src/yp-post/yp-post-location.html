@@ -69,15 +69,20 @@
 
     <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
 
-    <google-map-search id="mapSearch" map="[[map]]" on-google-map-search-results="_mapSearchResults"></google-map-search>
+    <google-map-search id="mapSearch" map="[[map]]"
+                       on-google-map-search-results="_mapSearchResults"></google-map-search>
 
-    <google-map id="map" zoom="[[mapZoom]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"  map="{{map}}" libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers>
-      <google-map-marker latitude="64.13897027178841" longitude="-21.876912117004395" id="marker"></google-map-marker>
+    <google-map id="map" zoom="[[mapZoom]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" map="{{map}}"
+                libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events
+                on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers>
+      <google-map-marker latitude="[[defaultLatitude]]" longitude="[[defaultLongitude]]"
+                         id="marker"></google-map-marker>
     </google-map>
 
     <div class="mapSearchInput layout vertical center-center">
       <div class="layout horizontal center-center wrap">
-        <paper-input max-length="60" label="[[t('maps.searchInput')]]" value="{{mapSearchString}}" on-keydown="_submitOnEnter"></paper-input>
+        <paper-input max-length="60" label="[[t('maps.searchInput')]]" value="{{mapSearchString}}"
+                     on-keydown="_submitOnEnter"></paper-input>
         <paper-button on-tap="_searchMap">[[t('maps.search')]]</paper-button>
       </div>
       <div class="searchResultText layout horizontal center-center">
@@ -98,6 +103,21 @@
       properties: {
         map: {
           type: Object
+        },
+
+        group: {
+          type: Object,
+          observer: '_groupChanged'
+        },
+
+        defaultLatitude: {
+          type: String,
+          value: "64.13897027178841"
+        },
+
+        defaultLongitude: {
+          type: String,
+          value: "-21.876912117004395"
         },
 
         mapSearchString: {
@@ -161,13 +181,13 @@
         this.$.mapSearch.query = this.mapSearchString;
         this.$.mapSearch.search();
         this.$.spinner.active = true;
-        this.set('mapSearchResultAddress','');
+        this.set('mapSearchResultAddress', '');
       },
 
       _mapSearchResults: function (event, detail) {
         this.$.spinner.active = false;
-        if (detail && detail.length>0) {
-          this.set('location', { latitude: detail[0].latitude, longitude: detail[0].longitude, map_zoom: 15 });
+        if (detail && detail.length > 0) {
+          this.set('location', {latitude: detail[0].latitude, longitude: detail[0].longitude, map_zoom: 15});
           this.mapSearchResultAddress = detail[0].formatted_address;
           this.$.map.zoom = 15;
           this.$.map.resize();
@@ -178,12 +198,16 @@
         if (!this.location) {
           this.async(function () {
             if ("geolocation" in navigator) {
-              navigator.geolocation.getCurrentPosition(function(position) {
+              navigator.geolocation.getCurrentPosition(function (position) {
                 if (!this.location)
-                  this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, map_zoom: 13 }
+                  this.location = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    map_zoom: 13
+                  }
               }.bind(this));
             }
-          },50);
+          }, 50);
         }
       },
 
@@ -215,11 +239,36 @@
       },
 
       _setLocation: function (event, detail) {
-        this.set('location', { latitude: detail.latLng.lat(), longitude: detail.latLng.lng(), mapType: this.$.map.mapType, map_zoom: this.$.map.zoom });
+        this.set('location', {
+          latitude: detail.latLng.lat(),
+          longitude: detail.latLng.lng(),
+          mapType: this.$.map.mapType,
+          map_zoom: this.$.map.zoom
+        });
       },
 
-      _postChanged: function  (newValue, oldValue) {
-        if (!newValue) {
+      _groupChanged: function (group) {
+        if (group) {
+          debugger;
+          var longLat;
+          if (group.configuration.defaultLocationLongLat &&
+            group.configuration.defaultLocationLongLat != "" &&
+            group.configuration.defaultLocationLongLat.split(",").length > 1) {
+            longLat = group.configuration.defaultLocationLongLat.trim().split(",");
+            this.set('defaultLongitude', longLat[0]);
+            this.set('defaultLatitude', longLat[1]);
+          } else if (group.Community.configuration.defaultLocationLongLat &&
+            group.Community.configuration.defaultLocationLongLat != "" &&
+            group.Community.configuration.defaultLocationLongLat.split(",").length > 1) {
+            longLat = group.Community.configuration.defaultLocationLongLat.trim().split(",");
+            this.set('defaultLongitude', longLat[0]);
+            this.set('defaultLatitude', longLat[1]);
+          }
+        }
+      },
+
+      _postChanged: function (post) {
+        if (!post) {
           this.set("location", null);
         }
       }
