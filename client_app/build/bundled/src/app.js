@@ -116,7 +116,7 @@
     setupBetterIcelandSplash();
   } else {
     setupYourPrioritiesSplash();
-    if (window.location.hostname.indexOf('forbrukerraadet') > -1) {
+    if (window.location.hostname.indexOf('forbrukerradet') > -1) {
       setupLocale('no');
     } else if (window.location.hostname.indexOf('bolja-pula') > -1) {
       setupLocale('hr');
