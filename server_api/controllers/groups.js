@@ -132,8 +132,8 @@ var updateGroupConfigParamters = function (req, group) {
     group.set('configuration.defaultDataImageId', req.body.uploadedDefaultDataImageId);
   }
 
-  if (truthValueFromBody(req.body.uploadedDefaulPostImageId)) {
-    group.set('configuration.uploadedDefaulPostImageId', req.body.uploadedDefaulPostImageId);
+  if (truthValueFromBody(req.body.uploadedDefaultPostImageId)) {
+    group.set('configuration.uploadedDefaultPostImageId', req.body.uploadedDefaultPostImageId);
   }
 };
 
@@ -496,6 +496,27 @@ router.get('/:groupId/users', auth.can('edit group'), function (req, res) {
     }
   }).catch(function (error) {
     log.error('Could not get admin users', { err: error, context: 'users', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:groupId/default_post_image/:imageId', auth.can('view group'), function (req, res) {
+  models.Image.find({
+    where: {
+      id: req.params.imageId
+    },
+    order: [
+      [ 'created_at', 'asc' ]
+    ]
+  }).then(function (image) {
+    if (image) {
+      var formats = JSON.parse(image.formats);
+      res.redirect(formats[0]);
+    } else {
+      res.sendStatus(200);
+    }
+  }).catch(function (error) {
+    log.error('Could not get image', { err: error, context: 'post_default_image' });
     res.sendStatus(500);
   });
 });

@@ -169,13 +169,13 @@
 
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
-          <file-upload id="defaultPostImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
+          <file-upload id="defaultPostImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultPostImageUploaded">
             <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
             <span>[[t('defaultPostImage')]]</span>
           </file-upload>
         </div>
 
-        <input type="hidden" name="uploadedDefaulPostImageId" value="[[uploadedDefaultPostImageId]]">
+        <input type="hidden" name="uploadedDefaultPostImageId" value="[[uploadedDefaultPostImageId]]">
       </div>
 
       <div class="layout vertical config">

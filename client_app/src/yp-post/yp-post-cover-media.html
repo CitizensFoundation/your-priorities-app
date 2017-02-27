@@ -82,7 +82,12 @@
     </style>
 
     <div class="mapCanvas">
-      <iron-image hidden$="[[!noneActive]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+      <span hidden$="[[!noneActive]]">
+        <iron-image hidden$="[[uploadedDefaultPostImageId]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+        <template is="dom-if" if="[[uploadedDefaultPostImageId]]">
+         <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="/api/groups/[[post.Group.id]]/default_post_image/[[uploadedDefaultPostImageId]]" on-tap="goToPost"></iron-image>
+        </template>
+      </span>
 
       <div class="layout horizontal center-center" hidden$="[[!categoryActive]]">
         <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
@@ -238,6 +243,11 @@
         tiny: {
           type: Boolean,
           value: false
+        },
+
+        uploadedDefaultPostImageId: {
+          type: String,
+          value: null
         }
       },
 
@@ -301,8 +311,12 @@
           return false;
       },
 
-      _postChanged: function(newValue, oldValue) {
-        //debugger;
+      _postChanged: function(post, oldValue) {
+        if (post && post.Group.configuration.uploadedDefaultPostImageId && post.Group.configuration.uploadedDefaultPostImageId!="") {
+          this.set('uploadedDefaultPostImageId', post.Group.configuration.uploadedDefaultPostImageId);
+        } else {
+          this.set('uploadedDefaultPostImageId', null);
+        }
       },
 
       _zoomLevel: function (location) {

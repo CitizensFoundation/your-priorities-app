@@ -61,6 +61,11 @@
       this.set('uploadedDefaultDataImageId', image.id);
     },
 
+    _defaultPostImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedDefaultPostImageId', image.id);
+    },
+
     customFormResponse: function () {
     },
 
