@@ -420,7 +420,7 @@
 
     _hasFacebookLogin: function (domain) {
       if (domain) {
-        return (domain.facebookLoginProvided != null)
+        return (domain.facebookLoginProvided != null && domain.facebookLoginProvided != "")
       } else {
         return false;
       }
@@ -428,7 +428,7 @@
 
     _hasSamlLogin: function (domain) {
       if (domain) {
-        return (domain.samlLoginProvided != null);
+        return (domain.samlLoginProvided != null && domain.samlLoginProvided != "");
       } else {
         return false;
       }
