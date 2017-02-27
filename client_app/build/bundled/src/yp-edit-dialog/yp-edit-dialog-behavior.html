@@ -1,5 +1,5 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.111">
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.111">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.112">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.112">
 
 <script>
   /**
@@ -59,6 +59,11 @@
     _defaultDataImageUploaded: function (event, detail) {
       var image = JSON.parse(detail.xhr.response);
       this.set('uploadedDefaultDataImageId', image.id);
+    },
+
+    _defaultPostImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedDefaultPostImageId', image.id);
     },
 
     customFormResponse: function () {

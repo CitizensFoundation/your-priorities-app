@@ -1,23 +1,23 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.111">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.112">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.111">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.111">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.112">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.112">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.111">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.111">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.111">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.111">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.112">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.112">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.112">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.112">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.111">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.112">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.111">
-<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.111">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.111">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.112">
+<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.112">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.112">
 
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.111">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.111">
-<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.111">
-<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.111">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.112">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.112">
+<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.112">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.112">
 
 </head><body><dom-module id="yp-group-edit">
   <template>
@@ -156,13 +156,13 @@
 
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
-          <file-upload id="defaultPostImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
+          <file-upload id="defaultPostImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultPostImageUploaded">
             <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
             <span>[[t('defaultPostImage')]]</span>
           </file-upload>
         </div>
 
-        <input type="hidden" name="uploadedDefaulPostImageId" value="[[uploadedDefaultPostImageId]]">
+        <input type="hidden" name="uploadedDefaultPostImageId" value="[[uploadedDefaultPostImageId]]">
       </div>
 
       <div class="layout vertical config">
@@ -174,6 +174,9 @@
         <paper-checkbox name="hideEmoji" checked$="{{hideEmoji}}">[[t('hideEmoji')]]</paper-checkbox>
         <paper-checkbox name="hideGroupHeader" checked$="{{hideGroupHeader}}">[[t('hideGroupHeader')]]</paper-checkbox>
       </div>
+
+      <paper-input id="defaultLocationLongLat" name="defaultLocationLongLat" type="text" label="[[t('defaultLocationLongLat')]]" value="{{group.defaultLocationLongLat}}" maxlength="100" style="width: 300px;">
+      </paper-input>
 
       <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
       <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">

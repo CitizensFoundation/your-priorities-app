@@ -16534,7 +16534,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.111">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.112">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -17942,7 +17942,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.111" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.112" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -17999,7 +17999,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.111">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.112">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -18007,7 +18007,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.111">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.112">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19208,7 +19208,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.111", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.112", fontName: 'FFClanWebBook' });
 
     },
 
@@ -19219,7 +19219,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.111";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.112";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -21778,8 +21778,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.111">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.111">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.112">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.112">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -25618,7 +25618,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.111" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.112" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -30846,7 +30846,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.111">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.112">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -32354,7 +32354,12 @@ For the complete list of available icons, see https://vaadin.com/font-icons
     </style>
 
     <div class="mapCanvas">
-      <iron-image hidden$="[[!noneActive]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+      <span hidden$="[[!noneActive]]">
+        <iron-image hidden$="[[uploadedDefaultPostImageId]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+        <template is="dom-if" if="[[uploadedDefaultPostImageId]]">
+         <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="/api/groups/[[post.Group.id]]/default_post_image/[[uploadedDefaultPostImageId]]" on-tap="goToPost"></iron-image>
+        </template>
+      </span>
 
       <div class="layout horizontal center-center" hidden$="[[!categoryActive]]">
         <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
@@ -32499,6 +32504,11 @@ For the complete list of available icons, see https://vaadin.com/font-icons
         tiny: {
           type: Boolean,
           value: false
+        },
+
+        uploadedDefaultPostImageId: {
+          type: String,
+          value: null
         }
       },
 
@@ -32562,8 +32572,12 @@ For the complete list of available icons, see https://vaadin.com/font-icons
           return false;
       },
 
-      _postChanged: function(newValue, oldValue) {
-        //debugger;
+      _postChanged: function(post, oldValue) {
+        if (post && post.Group.configuration.uploadedDefaultPostImageId && post.Group.configuration.uploadedDefaultPostImageId!="") {
+          this.set('uploadedDefaultPostImageId', post.Group.configuration.uploadedDefaultPostImageId);
+        } else {
+          this.set('uploadedDefaultPostImageId', null);
+        }
       },
 
       _zoomLevel: function (location) {
@@ -44582,6 +44596,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this.set('uploadedDefaultDataImageId', image.id);
     },
 
+    _defaultPostImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('uploadedDefaultPostImageId', image.id);
+    },
+
     customFormResponse: function () {
     },
 
@@ -48425,7 +48444,7 @@ information on the API.
     <google-map-search id="mapSearch" map="[[map]]" on-google-map-search-results="_mapSearchResults"></google-map-search>
 
     <google-map id="map" zoom="[[mapZoom]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" map="{{map}}" libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers="">
-      <google-map-marker latitude="64.13897027178841" longitude="-21.876912117004395" id="marker"></google-map-marker>
+      <google-map-marker latitude="[[defaultLatitude]]" longitude="[[defaultLongitude]]" id="marker"></google-map-marker>
     </google-map>
 
     <div class="mapSearchInput layout vertical center-center">
@@ -48451,6 +48470,21 @@ information on the API.
       properties: {
         map: {
           type: Object
+        },
+
+        group: {
+          type: Object,
+          observer: '_groupChanged'
+        },
+
+        defaultLatitude: {
+          type: String,
+          value: "64.13897027178841"
+        },
+
+        defaultLongitude: {
+          type: String,
+          value: "-21.876912117004395"
         },
 
         mapSearchString: {
@@ -48514,13 +48548,13 @@ information on the API.
         this.$.mapSearch.query = this.mapSearchString;
         this.$.mapSearch.search();
         this.$.spinner.active = true;
-        this.set('mapSearchResultAddress','');
+        this.set('mapSearchResultAddress', '');
       },
 
       _mapSearchResults: function (event, detail) {
         this.$.spinner.active = false;
-        if (detail && detail.length>0) {
-          this.set('location', { latitude: detail[0].latitude, longitude: detail[0].longitude, map_zoom: 15 });
+        if (detail && detail.length > 0) {
+          this.set('location', {latitude: detail[0].latitude, longitude: detail[0].longitude, map_zoom: 15});
           this.mapSearchResultAddress = detail[0].formatted_address;
           this.$.map.zoom = 15;
           this.$.map.resize();
@@ -48531,12 +48565,16 @@ information on the API.
         if (!this.location) {
           this.async(function () {
             if ("geolocation" in navigator) {
-              navigator.geolocation.getCurrentPosition(function(position) {
+              navigator.geolocation.getCurrentPosition(function (position) {
                 if (!this.location)
-                  this.location = { latitude: position.coords.latitude, longitude: position.coords.longitude, map_zoom: 13 }
+                  this.location = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    map_zoom: 13
+                  }
               }.bind(this));
             }
-          },50);
+          }, 50);
         }
       },
 
@@ -48568,11 +48606,35 @@ information on the API.
       },
 
       _setLocation: function (event, detail) {
-        this.set('location', { latitude: detail.latLng.lat(), longitude: detail.latLng.lng(), mapType: this.$.map.mapType, map_zoom: this.$.map.zoom });
+        this.set('location', {
+          latitude: detail.latLng.lat(),
+          longitude: detail.latLng.lng(),
+          mapType: this.$.map.mapType,
+          map_zoom: this.$.map.zoom
+        });
       },
 
-      _postChanged: function  (newValue, oldValue) {
-        if (!newValue) {
+      _groupChanged: function (group) {
+        if (group) {
+          var longLat;
+          if (group.configuration.defaultLocationLongLat &&
+            group.configuration.defaultLocationLongLat != "" &&
+            group.configuration.defaultLocationLongLat.split(",").length > 1) {
+            longLat = group.configuration.defaultLocationLongLat.trim().split(",");
+            this.set('defaultLongitude', longLat[0]);
+            this.set('defaultLatitude', longLat[1]);
+          } else if (group.Community.configuration.defaultLocationLongLat &&
+            group.Community.configuration.defaultLocationLongLat != "" &&
+            group.Community.configuration.defaultLocationLongLat.split(",").length > 1) {
+            longLat = group.Community.configuration.defaultLocationLongLat.trim().split(",");
+            this.set('defaultLongitude', longLat[0]);
+            this.set('defaultLatitude', longLat[1]);
+          }
+        }
+      },
+
+      _postChanged: function (post) {
+        if (!post) {
           this.set("location", null);
         }
       }
@@ -48715,7 +48777,7 @@ information on the API.
           <template is="dom-if" if="[[!locationHidden]]" restamp="">
             <section>
               <template is="dom-if" if="[[mapActive]]" restamp="">
-                <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" post="[[post]]"></yp-post-location>
+                <yp-post-location encoded-location="{{encodedLocation}}" location="{{location}}" group="[[group]]" post="[[post]]"></yp-post-location>
               </template>
             </section>
           </template>
@@ -50631,14 +50693,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.111">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.112">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.111">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.112">
    * ```
    *
    * ### Consuming effects
@@ -51404,7 +51466,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.111">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.112">
 ```
 
 #### List of effects
@@ -57052,18 +57114,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.111"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.112"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.111"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.112"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.111"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.112"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -57724,6 +57786,9 @@ value. `setMax` should move the slider to the maximum value.
       <yp-language-selector name="defaultLocale" no-user-events="" selected-locale="{{community.default_locale}}"></yp-language-selector>
 
       <paper-input id="google_analytics_code" name="google_analytics_code" type="text" label="[[t('analyticsTrackerCode')]]" value="{{community.google_analytics_code}}" maxlength="40" style="width: 200px;">
+      </paper-input>
+
+      <paper-input id="defaultLocationLongLat" name="defaultLocationLongLat" type="text" label="[[t('defaultLocationLongLat')]]" value="{{community.defaultLocationLongLat}}" maxlength="100" style="width: 300px;">
       </paper-input>
 
       <h3 class="accessHeader">[[t('access')]]</h3>
@@ -60892,13 +60957,13 @@ paperMapInfo.register();
 
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
-          <file-upload id="defaultPostImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
+          <file-upload id="defaultPostImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultPostImageUploaded">
             <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
             <span>[[t('defaultPostImage')]]</span>
           </file-upload>
         </div>
 
-        <input type="hidden" name="uploadedDefaulPostImageId" value="[[uploadedDefaultPostImageId]]">
+        <input type="hidden" name="uploadedDefaultPostImageId" value="[[uploadedDefaultPostImageId]]">
       </div>
 
       <div class="layout vertical config">
@@ -60910,6 +60975,9 @@ paperMapInfo.register();
         <paper-checkbox name="hideEmoji" checked$="{{hideEmoji}}">[[t('hideEmoji')]]</paper-checkbox>
         <paper-checkbox name="hideGroupHeader" checked$="{{hideGroupHeader}}">[[t('hideGroupHeader')]]</paper-checkbox>
       </div>
+
+      <paper-input id="defaultLocationLongLat" name="defaultLocationLongLat" type="text" label="[[t('defaultLocationLongLat')]]" value="{{group.defaultLocationLongLat}}" maxlength="100" style="width: 300px;">
+      </paper-input>
 
       <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
       <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
@@ -61599,9 +61667,9 @@ paperMapInfo.register();
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.111");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.112");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.111");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.112");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);

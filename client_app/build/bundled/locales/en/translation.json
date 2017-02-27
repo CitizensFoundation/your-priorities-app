@@ -1,4 +1,5 @@
 {
+  "defaultLocationLongLat": "Default location longitude,latitude",
   "disableCommunityDomainUpLink": "Disable Domain Up Link",
   "analyticsTrackerCode": "Google Analytics Id",
   "filterIdeas": "Filter ideas",
