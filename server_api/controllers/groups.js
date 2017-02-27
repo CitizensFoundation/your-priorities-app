@@ -504,10 +504,7 @@ router.get('/:groupId/default_post_image/:imageId', auth.can('view group'), func
   models.Image.find({
     where: {
       id: req.params.imageId
-    },
-    order: [
-      [ 'created_at', 'asc' ]
-    ]
+    }
   }).then(function (image) {
     if (image) {
       var formats = JSON.parse(image.formats);
