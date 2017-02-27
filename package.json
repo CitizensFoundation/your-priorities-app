@@ -37,6 +37,7 @@
     "morgan": "~1.5.0",
     "multer": "^1.0.3",
     "nodemailer": "^2.0.0",
+    "nodemailer-smtp-transport": "^2.7.2",
     "nodemailer-wellknown": "^0.1.7",
     "parse-domain": "^0.2.1",
     "passport": "^0.3.2",
