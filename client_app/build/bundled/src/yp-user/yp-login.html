@@ -1,21 +1,21 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.114">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.115">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.114">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.114">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.115">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.115">
 
-<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.114">
-<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.114">
+<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.115">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.115">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.114">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.114">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.114">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.114">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.114">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.114">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.115">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.115">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.115">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.115">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.115">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.115">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.114">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.115">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.114">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.115">
 
 </head><body><dom-module id="yp-login">
 
@@ -213,12 +213,16 @@
             </paper-input>
 
             <div class="layout horizontal center-center socialMediaLogin">
-              <div class="btn-auth btn-facebook" on-tap="_facebookLogin" hidden$="[[!hasFacebookLogin]]">
-                [[t('user.facebookLogin')]]
-              </div>
-              <div class="islandIs" on-tap="_islandIsLogin" hidden$="[[!hasSamlLogin]]">
-                <iron-image width="80" height="18" sizing="contain" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"></iron-image>
-              </div>
+              <template is="dom-if" if="[[hasFacebookLogin]]">
+                <div class="btn-auth btn-facebook" on-tap="_facebookLogin">
+                  [[t('user.facebookLogin')]]
+                </div>
+              </template>
+              <template is="dom-if" if="[[hasSamlLogin]]">
+                <div class="islandIs" on-tap="_islandIsLogin">
+                  <iron-image width="80" height="18" sizing="contain" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"></iron-image>
+                </div>
+              </template>
             </div>
 
             <template>
@@ -349,11 +353,13 @@
 
       hasFacebookLogin: {
         type: Boolean,
+        value: null,
         computed: '_hasFacebookLogin(domain)'
       },
 
       hasSamlLogin: {
         type: Boolean,
+        value: null,
         computed: '_hasSamlLogin(domain)'
       }
     },
@@ -397,12 +403,14 @@
     },
 
     _domainEvent: function (event, detail) {
+      debugger;
       if (detail.domain) {
         this.set('domain', detail.domain);
       }
     },
 
     _hasFacebookLogin: function (domain) {
+      debugger;
       if (domain) {
         return (domain.facebookLoginProvided != null && domain.facebookLoginProvided != "")
       } else {
@@ -464,6 +472,10 @@
     },
 
     ready: function () {
+      debugger;
+      if (window.appGlobals && window.appGlobals.domain) {
+        this.set('domain', window.appGlobals.domain)
+      }
       //this._setTexts();
     },
 

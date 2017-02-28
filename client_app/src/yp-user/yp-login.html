@@ -488,16 +488,17 @@
     },
 
     ready: function () {
-      debugger;
       if (window.appGlobals && window.appGlobals.domain) {
         this.set('domain', window.appGlobals.domain)
       }
-      //this._setTexts();
     },
 
-    setup: function (onLoginFunction) {
+    setup: function (onLoginFunction, domain) {
       this.set('onLoginFunction', onLoginFunction);
       this._setTexts();
+      if (domain) {
+        this.set('domain', domain);
+      }
     },
 
     _setTexts: function () {

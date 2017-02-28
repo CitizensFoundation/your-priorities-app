@@ -175,7 +175,7 @@
 
         openUserlogin: function () {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
-          dialog.setup(this._handleLogin.bind(this));
+          dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain);
           dialog.open();
         },
 
