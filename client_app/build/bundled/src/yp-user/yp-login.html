@@ -1,21 +1,21 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.116">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.117">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.116">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.116">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.117">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.117">
 
-<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.116">
-<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.116">
+<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.117">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.117">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.116">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.116">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.116">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.116">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.116">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.116">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.117">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.117">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.117">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.117">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.117">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.117">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.116">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.117">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.116">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.117">
 
 </head><body><dom-module id="yp-login">
 
@@ -403,14 +403,12 @@
     },
 
     _domainEvent: function (event, detail) {
-      debugger;
       if (detail.domain) {
         this.set('domain', detail.domain);
       }
     },
 
     _hasFacebookLogin: function (domain) {
-      debugger;
       if (domain) {
         return (domain.facebookLoginProvided != null && domain.facebookLoginProvided != "")
       } else {
