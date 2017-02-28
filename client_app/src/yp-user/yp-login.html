@@ -419,14 +419,12 @@
     },
 
     _domainEvent: function (event, detail) {
-      debugger;
       if (detail.domain) {
         this.set('domain', detail.domain);
       }
     },
 
     _hasFacebookLogin: function (domain) {
-      debugger;
       if (domain) {
         return (domain.facebookLoginProvided != null && domain.facebookLoginProvided != "")
       } else {
