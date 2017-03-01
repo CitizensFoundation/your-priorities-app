@@ -1,15 +1,15 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.118">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.119">
 
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.118">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.119">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.118">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.118">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.118">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.119">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.119">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.119">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.118">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.119">
 
-<link rel="import" href="../yp-session/yp-session.html?v=6.3.118">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.118">
+<link rel="import" href="../yp-session/yp-session.html?v=6.3.119">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.119">
 
 </head><body><dom-module id="yp-app-globals">
 
@@ -152,6 +152,8 @@
         setupGoogleAnalytics: function(domain) {
           if (domain.public_api_keys && domain.public_api_keys && domain.public_api_keys.google && domain.public_api_keys.google.analytics_tracking_id) {
             ga('create', domain.public_api_keys.google.analytics_tracking_id, 'auto');
+          } else if (domain.google_analytics_code && domain.google_analytics_code!="") {
+            ga('create', domain.google_analytics_code, 'auto');
           }
         },
 
