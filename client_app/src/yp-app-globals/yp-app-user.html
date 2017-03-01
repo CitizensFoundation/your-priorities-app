@@ -197,6 +197,10 @@
           this.toastLoginTextCombined = this.t("user.loginCompleteFor")+ " " + this.user.name;
           this.$.loginToast.show();
           this.fire("login");
+          this._checkLoginForParameters();
+        },
+
+        _checkLoginForParameters: function () {
           if (this.loginForEditParams) {
             var loginParams = this.loginForEditParams;
             loginParams.editDialog.open(loginParams.newOrUpdate,loginParams.params);
@@ -479,6 +483,7 @@
             window.appGlobals.notifyUserViaToast(this.completeExternalLoginText);
             this._closeUserLogin();
             this.set('completeExternalLoginText', null);
+            this._checkLoginForParameters();
           }
         },
 
