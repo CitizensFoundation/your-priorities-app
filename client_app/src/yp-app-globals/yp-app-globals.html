@@ -152,6 +152,8 @@
         setupGoogleAnalytics: function(domain) {
           if (domain.public_api_keys && domain.public_api_keys && domain.public_api_keys.google && domain.public_api_keys.google.analytics_tracking_id) {
             ga('create', domain.public_api_keys.google.analytics_tracking_id, 'auto');
+          } else if (domain.google_analytics_code && domain.google_analytics_code!="") {
+            ga('create', domain.google_analytics_code, 'auto');
           }
         },
 
