@@ -312,7 +312,7 @@
       },
 
       _postChanged: function(post, oldValue) {
-        if (post && post.Group.configuration.uploadedDefaultPostImageId && post.Group.configuration.uploadedDefaultPostImageId!="") {
+        if (post && post.Group && post.Group.configuration && post.Group.configuration.uploadedDefaultPostImageId && post.Group.configuration.uploadedDefaultPostImageId!="") {
           this.set('uploadedDefaultPostImageId', post.Group.configuration.uploadedDefaultPostImageId);
         } else {
           this.set('uploadedDefaultPostImageId', null);
