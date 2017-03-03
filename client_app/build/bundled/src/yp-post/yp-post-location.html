@@ -1,24 +1,24 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.121">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.122">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.121">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.121">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.121">
-<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.121">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.121">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.122">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.122">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.122">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.122">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.122">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.121">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.121">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.122">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.122">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.121">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.121">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.122">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.122">
 
-<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.121">
-<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.121">
-<link rel="import" href="../../bower_components/google-map/google-map-search.html?v=6.3.121">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.122">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.122">
+<link rel="import" href="../../bower_components/google-map/google-map-search.html?v=6.3.122">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.121">
-<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.121">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.121">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.122">
+<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.122">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.122">
 
 </head><body><dom-module id="yp-post-location">
   <template>
@@ -245,13 +245,13 @@
       _groupChanged: function (group) {
         if (group) {
           var longLat;
-          if (group.configuration.defaultLocationLongLat &&
+          if (group.configuration && group.configuration.defaultLocationLongLat &&
             group.configuration.defaultLocationLongLat != "" &&
             group.configuration.defaultLocationLongLat.split(",").length > 1) {
             longLat = group.configuration.defaultLocationLongLat.trim().split(",");
             this.set('defaultLongitude', longLat[0]);
             this.set('defaultLatitude', longLat[1]);
-          } else if (group.Community.configuration.defaultLocationLongLat &&
+          } else if (group.Community && group.Community.configuration && group.Community.configuration.defaultLocationLongLat &&
             group.Community.configuration.defaultLocationLongLat != "" &&
             group.Community.configuration.defaultLocationLongLat.split(",").length > 1) {
             longLat = group.Community.configuration.defaultLocationLongLat.trim().split(",");
