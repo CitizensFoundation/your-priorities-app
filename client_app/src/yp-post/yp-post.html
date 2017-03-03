@@ -409,6 +409,7 @@
 
     <div class="layout horizontal center-center">
       <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
     </div>
   </template>
 
@@ -612,6 +613,10 @@
           }
         },
 
+        _pagesResponse: function (event, detail) {
+          this.fire('yp-set-pages', detail.response);
+        },
+
         _getPost: function () {
           this.$.ajax.url = '/api/posts/' + this.postId;
           this.$$('#ajax').retryMethodAfter401Login = this._getPost.bind(this);
@@ -673,6 +678,8 @@
               backPath: "/group/" + this.post.group_id,
               hideHelpIcon: this.post.Group.configuration.hideHelpIcon ? true : null,
             });
+            this.$.pagesAjax.url = "/api/groups/"+this.post.Group.id+"/pages";
+            this.$.pagesAjax.generateRequest();
           }
         },
 
