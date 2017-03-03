@@ -250,13 +250,13 @@
       _groupChanged: function (group) {
         if (group) {
           var longLat;
-          if (group.configuration.defaultLocationLongLat &&
+          if (group.configuration && group.configuration.defaultLocationLongLat &&
             group.configuration.defaultLocationLongLat != "" &&
             group.configuration.defaultLocationLongLat.split(",").length > 1) {
             longLat = group.configuration.defaultLocationLongLat.trim().split(",");
             this.set('defaultLongitude', longLat[0]);
             this.set('defaultLatitude', longLat[1]);
-          } else if (group.Community.configuration.defaultLocationLongLat &&
+          } else if (group.Community && group.Community.configuration && group.Community.configuration.defaultLocationLongLat &&
             group.Community.configuration.defaultLocationLongLat != "" &&
             group.Community.configuration.defaultLocationLongLat.split(",").length > 1) {
             longLat = group.Community.configuration.defaultLocationLongLat.trim().split(",");
