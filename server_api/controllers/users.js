@@ -969,7 +969,9 @@ router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
             post.newOfficialStatus = 0;
           if (!gotStatus[post.newOfficialStatus]) {
             gotStatus[post.newOfficialStatus] = true;
-            config.groups[groupsIndex]["statuses"].push({official_status: post.newOfficialStatus, posts: []});
+            if (post.newOfficialStatus) {
+              config.groups[groupsIndex]["statuses"].push({official_status: post.newOfficialStatus, posts: []});
+            }
           }
           _.each(config.groups[groupsIndex]["statuses"], function (status, index) {
             if (status.official_status == post.newOfficialStatus) {
