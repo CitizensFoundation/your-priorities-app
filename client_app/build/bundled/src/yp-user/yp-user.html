@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.124"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-display" assetpath="../yp-bulk-status-update/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.125"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-display" assetpath="../yp-bulk-status-update/">
 
   <template>
 
@@ -57,9 +57,7 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical center-center">
-      <h2 class="mainHeader">[[t('bulkStatusUdateFor')]] [[community.name]]</h2>
-      <div class="infoText">Kosningu fyrir Hverfið mitt 2016 lýkur á miðnætti í kvöld. Taktu þátt hér:</div>
-      <div class="infoText voteText"><a href="https://kosning.reykjavik.is/" target="_blank">kosning.reykjavik.is</a></div>
+      <h2 class="mainHeader">[[t('bulkStatusUdateFor')]]: [[community.name]]</h2>
       <div class="infoText">[[t('bulkStatusUdateForInfo')]]</div>
     </div>
 
@@ -67,7 +65,7 @@
       <paper-material elevation="2" class="statusMaterial layout horizontal wrap">
         <template is="dom-repeat" items="[[_orderGroupStatuses(group.statuses)]]" as="status">
           <div class="layout vertical">
-            <h1>[[group.name]]</h1>
+            <h1 hidden="">[[group.name]]</h1>
             <h2>[[_officialStatusOptionsNamePlural(status.official_status)]]</h2>
             <template is="dom-repeat" items="[[status.posts]]" as="post">
               <div class="layout vertical">
