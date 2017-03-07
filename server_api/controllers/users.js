@@ -918,14 +918,29 @@ router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
     function (seriesCallback) {
       models.BulkStatusUpdate.find({
         where: { id: req.params.bulkStatusUpdateId },
+        order: [
+          [ models.Community, {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc'],
+          [ models.Community, {model: models.Image, as: 'CommunityHeaderImages'}, 'created_at', 'asc']
+        ],
         include: [
           {
             model: models.Community,
-            required: true
+            required: true,
+            include: [
+              {
+                model: models.Image, as: 'CommunityLogoImages',
+                required: false
+              },
+              {
+                model: models.Image, as: 'CommunityHeaderImages',
+                required: false
+              }
+            ]
           },
           {
             model: models.User,
-            required: true
+            required: true,
+            attributes: models.User.defaultAttributesWithSocialMediaPublic
           }
         ]
       }).then(function(statusUpdateIn) {
