@@ -1,20 +1,20 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.126">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.127">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.126">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.126">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.126">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.126">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.126">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.126">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.127">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.127">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.127">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.127">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.127">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.127">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.126">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.126">
-<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.126">
-<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.126">
-<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.126">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.127">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.127">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.127">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.127">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.127">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.126">
-<link rel="import" href="../yp-behaviors/yp-official-status-options.html?v=6.3.126">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.127">
+<link rel="import" href="../yp-behaviors/yp-official-status-options.html?v=6.3.127">
 
 </head><body><dom-module id="yp-bulk-status-display">
 
@@ -30,6 +30,7 @@
         background-color: #FFF;
         padding: 16px;
         margin: 16px;
+        margin-top: 8px;
       }
 
       a {
@@ -75,6 +76,15 @@
         background-color: var(--primary-background-color);
         background-image: var(--top-area-background-image, none);
         height: 300px;
+        padding-top: 0;
+        margin-top: -24px;
+      }
+
+      .headerMaterial {
+        padding: 16px;
+        background-color: #fcfcfc;
+        padding-top: 8px;
+        padding-bottom: 24px;
       }
 
 
@@ -89,14 +99,16 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical center-center topArea">
-      <h2 class="mainHeader">[[t('bulkStatusUdateFor')]]: [[community.name]]</h2>
-      <div class="infoText">[[t('bulkStatusUdateForInfo')]]</div>
+      <paper-material elevation="5" class="headerMaterial layout vertical center-center">
+        <h2 class="mainHeader">[[t('bulkStatusUdateFor')]]: [[community.name]]</h2>
+        <div class="infoText">[[t('bulkStatusUdateForInfo')]]</div>
+      </paper-material>
     </div>
 
     <template is="dom-repeat" items="[[config.groups]]" as="group">
-      <paper-material elevation="2" class="statusMaterial layout horizontal wrap">
+      <paper-material elevation="2" class="statusMaterial layout horizontal center-center wrap">
         <template is="dom-repeat" items="[[_orderGroupStatuses(group.statuses)]]" as="status">
-          <div class="layout vertical">
+          <div class="layout vertical self-start">
             <h1 hidden="">[[group.name]]</h1>
             <h2>[[_officialStatusOptionsNamePlural(status.official_status)]]</h2>
             <template is="dom-repeat" items="[[status.posts]]" as="post">
@@ -167,9 +179,8 @@
       },
 
       _communityChanged: function (community) {
-        debugger;
         if (community && community.CommunityHeaderImages && community.CommunityHeaderImages.length>0) {
-          this.setupTopHeaderImage(community.CommunityHeaderImages[0])
+          this.setupTopHeaderImage(community.CommunityHeaderImages)
         }
       },
 
@@ -186,10 +197,10 @@
 
       _orderGroupStatuses: function (statuses) {
         var order = {
-          "-1": 0,
-          "0": 1,
-          "-2": 2,
-          "2": 3
+          "-1": 3,
+          "0": 2,
+          "-2": 1,
+          "2": 0
         };
 
         return statuses.sort(function (a, b) {
