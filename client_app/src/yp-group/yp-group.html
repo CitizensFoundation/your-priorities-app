@@ -351,6 +351,16 @@
         locationHidden: {
           type: Boolean,
           value: false
+        },
+
+        haveGotTabCountInfoCount: {
+          type: Number,
+          value: 0
+        },
+
+        tabCounters: {
+          type: Object,
+          value: {}
         }
       },
 
@@ -454,6 +464,23 @@
         var tabCounter = this.$$('#'+tabCounterInfo.tabCounterId);
         if (tabCounter) {
           tabCounter.innerHTML = this.formatNumber(tabCounterInfo.count);
+          this.tabCounters[tabCounterInfo.tabCounterId] = tabCounterInfo.count;
+        }
+
+        this.haveGotTabCountInfoCount+=1;
+
+        if (this.hasNonOpenPosts) {
+          if (this.haveGotTabCountInfoCount==4) {
+            if (this.tabCounters["tabCountOpen"] && this.tabCounters["tabCountOpen"]>0) {
+              this.set('selectedTab', 'open');
+            } else if (this.tabCounters["tabCountInProgress"] && this.tabCounters["tabCountInProgress"]>0) {
+              this.set('selectedTab', 'in_progress');
+            } else if (this.tabCounters["tabCountSuccessful"] && this.tabCounters["tabCountSuccessful"]>0) {
+              this.set('selectedTab', 'successful');
+            } else if (this.tabCounters["tabCountFailed"] && this.tabCounters["tabCountFailed"]>0) {
+              this.set('selectedTab', 'failed');
+            }
+          }
         }
       },
 
@@ -491,6 +518,8 @@
           }
           this.set('selectedTab', 'open');
           this.set('hasNonOpenPosts', false);
+          this.set('haveGotTabCountInfoCount', 0);
+          this.set('tabCounters', {});
           this._getGroup();
         }
       },
