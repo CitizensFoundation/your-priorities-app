@@ -1,15 +1,15 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.125">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.126">
 
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.125">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.126">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.125">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.125">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.125">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.126">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.126">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.126">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.125">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.126">
 
-<link rel="import" href="../yp-session/yp-session.html?v=6.3.125">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.125">
+<link rel="import" href="../yp-session/yp-session.html?v=6.3.126">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.126">
 
 </head><body><dom-module id="yp-app-globals">
 
@@ -159,7 +159,9 @@
 
         _userLoggedIn: function (event, user) {
           this.async(function () {
-            ga('set', '&uid', user.id);
+            if (typeof ga == 'function') {
+              ga('set', '&uid', user.id);
+            }
           }, 250); // Wait a bit to make sure google anlytics tracking id has been set up dynamatically
         },
 
@@ -328,63 +330,65 @@
         },
 
         sendLoginAndSignupToAnalytics: function (userId, eventType, authProvider, validationError) {
-          if (userId) {
-            ga('set', '&uid', userId);
-          }
+          if (typeof ga == 'function') {
+            if (userId) {
+              ga('set', '&uid', userId);
+            }
 
-          var fieldsObjects;
-          var authProviderText = authProvider;
+            var fieldsObjects;
+            var authProviderText = authProvider;
 
-          switch(eventType) {
-            case 'Signup Success':
-              fieldsObjects = {
-                'dimension1': userId,
-                'dimension2': 'Yes',
-                'dimension3': authProvider,
-                'metric1': '1'
-              };
-              break;
-            case 'Signup Fail':
-              fieldsObjects = {
-                'dimension3': authProvider,
-                'metric2': '1'
-              };
-              authProviderText += ": "+validationError;
-              break;
-            case 'Signup Submit':
-              fieldsObjects = {
-                'dimension3': authProvider,
-                'metric3': '1'
-              };
-              break;
-            case 'Login Success':
-              fieldsObjects = {
-                'dimension1': userId,
-                'dimension2': 'Yes',
-                'dimension3': authProvider,
-                'metric4': '1'
-              };
-              break;
-            case 'Login Fail':
-              fieldsObjects = {
-                'dimension3': authProvider,
-                'metric5': '1'
-              };
-              authProviderText += ": "+validationError;
-              break;
-            case 'Login Submit':
-              fieldsObjects = {
-                'dimension3': authProvider,
-                'metric6': '1'
-              };
-              break;
-            case 'Signup/Login Opened':
-              fieldsObjects = {
-                'metric7': '1'
-              };
-              break;
+            switch(eventType) {
+              case 'Signup Success':
+                fieldsObjects = {
+                  'dimension1': userId,
+                  'dimension2': 'Yes',
+                  'dimension3': authProvider,
+                  'metric1': '1'
+                };
+                break;
+              case 'Signup Fail':
+                fieldsObjects = {
+                  'dimension3': authProvider,
+                  'metric2': '1'
+                };
+                authProviderText += ": "+validationError;
+                break;
+              case 'Signup Submit':
+                fieldsObjects = {
+                  'dimension3': authProvider,
+                  'metric3': '1'
+                };
+                break;
+              case 'Login Success':
+                fieldsObjects = {
+                  'dimension1': userId,
+                  'dimension2': 'Yes',
+                  'dimension3': authProvider,
+                  'metric4': '1'
+                };
+                break;
+              case 'Login Fail':
+                fieldsObjects = {
+                  'dimension3': authProvider,
+                  'metric5': '1'
+                };
+                authProviderText += ": "+validationError;
+                break;
+              case 'Login Submit':
+                fieldsObjects = {
+                  'dimension3': authProvider,
+                  'metric6': '1'
+                };
+                break;
+              case 'Signup/Login Opened':
+                fieldsObjects = {
+                  'metric7': '1'
+                };
+                break;
+            }
+            this.sendToGoogleAnalytics('send','event','Login and Signup', eventType, authProviderText, fieldsObjects);
           }
-          this.sendToGoogleAnalytics('send','event','Login and Signup', eventType, authProviderText, fieldsObjects);
         },
 
         computeHeading: function () {

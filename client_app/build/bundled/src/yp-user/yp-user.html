@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.125"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-display" assetpath="../yp-bulk-status-update/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.126"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-display" assetpath="../yp-bulk-status-update/">
 
   <template>
 
@@ -52,11 +52,25 @@
       .voteText {
         font-size: 19px;
       }
+
+      .topArea {
+        background-color: var(--primary-background-color);
+        background-image: var(--top-area-background-image, none);
+        height: 300px;
+      }
+
+
+      @media (max-width: 900px) {
+        .topArea {
+          height: auto;
+        }
+      }
+
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <div class="layout vertical center-center">
+    <div class="layout vertical center-center topArea">
       <h2 class="mainHeader">[[t('bulkStatusUdateFor')]]: [[community.name]]</h2>
       <div class="infoText">[[t('bulkStatusUdateForInfo')]]</div>
     </div>
@@ -117,7 +131,8 @@
         },
 
         community: {
-          type: Object
+          type: Object,
+          observer: '_communityChanged'
         },
 
         statusUpdateId: {
@@ -131,6 +146,24 @@
         },
 
         userId: Number
+      },
+
+      _communityChanged: function (community) {
+        debugger;
+        if (community && community.CommunityHeaderImages && community.CommunityHeaderImages.length>0) {
+          this.setupTopHeaderImage(community.CommunityHeaderImages[0])
+        }
+      },
+
+      setupTopHeaderImage: function (image) {
+        var path;
+        if (image) {
+          path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+        } else {
+          path = 'none';
+        }
+        this.customStyle['--top-area-background-image'] = path;
+        this.updateStyles();
       },
 
       _orderGroupStatuses: function (statuses) {
