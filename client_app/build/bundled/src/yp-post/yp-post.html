@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.129"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.130"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -1978,7 +1978,7 @@
               documentTitle: this.post.name,
               headerDescription: '',//this.truncate(this.post.Group.objectives,45),
               backPath: "/group/" + this.post.group_id,
-              hideHelpIcon: this.post.Group.configuration.hideHelpIcon ? true : null,
+              hideHelpIcon: (this.post.Group.configuration && this.post.Group.configuration.hideHelpIcon) ? true : null,
             });
             this.$.pagesAjax.url = "/api/groups/"+this.post.Group.id+"/pages";
             this.$.pagesAjax.generateRequest();
