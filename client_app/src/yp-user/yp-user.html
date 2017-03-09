@@ -170,8 +170,7 @@
 
         selectedTab: {
           type: String,
-          value: null,
-          observer: '_selectedTabChanged'
+          value: null
         },
 
         user: {
@@ -265,20 +264,22 @@
 
       _response: function (event, detail, sender) {
         this.set('user', detail.response);
-        if (this.user.theme_id!=null) {
-          this.setTheme(this.user.theme_id);
+        if (this.user) {
+          if (this.user.theme_id!=null) {
+            this.setTheme(this.user.theme_id);
+          }
+
+          if (this.user.UserHeaderImages && this.user.UserHeaderImages.length>0) {
+            this.$.page.setupTopHeaderImage(this.user.UserHeaderImages);
+          }
+          this.setupCommunities(this.user.CommunityUsers);
+          this.setupGroups(this.user.GroupUsers);
+
+          //   this.$.userCard.setElevation(5);
+          //   this.$.userCard.lowerCardLater();
+
+          this.fire("change-header", { historyBack: true });
         }
-
-        if (this.user.UserHeaderImages && this.user.UserHeaderImages.length>0) {
-          this.$.page.setupTopHeaderImage(this.user.UserHeaderImages);
-        }
-        this.setupCommunities(this.user.CommunityUsers);
-        this.setupGroups(this.user.GroupUsers);
-
-     //   this.$.userCard.setElevation(5);
-     //   this.$.userCard.lowerCardLater();
-
-        this.fire("change-header", { historyBack: true });
       }
 
     });

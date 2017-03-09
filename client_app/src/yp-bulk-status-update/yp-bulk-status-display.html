@@ -15,6 +15,7 @@
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-official-status-options.html">
+<link rel="import" href="../yp-theme/yp-theme-behavior.html">
 
 <dom-module id="yp-bulk-status-display">
 
@@ -29,8 +30,8 @@
       .statusMaterial {
         background-color: #FFF;
         padding: 16px;
-        margin: 16px;
-        margin-top: 8px;
+        margin: 32px;
+        margin-top: 16px;
       }
 
       a {
@@ -92,6 +93,14 @@
         .topArea {
           height: auto;
         }
+
+        .statusMaterial {
+          background-color: #FFF;
+          padding: 16px;
+          margin: 16px;
+          margin-top: 8px;
+        }
+
       }
 
     </style>
@@ -147,7 +156,8 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.ypOfficialStatusOptions
+        Polymer.ypOfficialStatusOptions,
+        Polymer.ypThemeBehavior
       ],
 
       properties: {
@@ -251,6 +261,11 @@
           documentTitle: this.t('bulkStatusUdateFor')+' '+this.truncate(this.community.name,80),
           headerDescription: '',//this.truncate(this.post.Group.objectives,45),
           backPath: "/community/" + this.community.id });
+        if (this.community.theme_id!=null) {
+          this.setTheme(this.community.theme_id);
+        }
+
+
       }
     });
   </script>

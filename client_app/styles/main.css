@@ -15,11 +15,6 @@ body {
 
 html {
   overflow-y: scroll;
-
-  -webkit-hyphens: auto;
-  -moz-hyphens: auto;
-  -ms-hyphens: auto;
-  hyphens: auto;
 }
 
 .currentUser {
