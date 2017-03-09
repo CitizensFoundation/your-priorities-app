@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.127"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-display" assetpath="../yp-bulk-status-update/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.129"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-bulk-status-display" assetpath="../yp-bulk-status-update/">
 
   <template>
 
@@ -11,8 +11,8 @@
       .statusMaterial {
         background-color: #FFF;
         padding: 16px;
-        margin: 16px;
-        margin-top: 8px;
+        margin: 32px;
+        margin-top: 16px;
       }
 
       a {
@@ -74,6 +74,14 @@
         .topArea {
           height: auto;
         }
+
+        .statusMaterial {
+          background-color: #FFF;
+          padding: 16px;
+          margin: 16px;
+          margin-top: 8px;
+        }
+
       }
 
     </style>
@@ -91,7 +99,7 @@
       <paper-material elevation="2" class="statusMaterial layout horizontal center-center wrap">
         <template is="dom-repeat" items="[[_orderGroupStatuses(group.statuses)]]" as="status">
           <div class="layout vertical self-start">
-            <h1 hidden="">[[group.name]]</h1>
+            <h1 hidden$="[[hideGroupName]]">[[group.name]]</h1>
             <h2>[[_officialStatusOptionsNamePlural(status.official_status)]]</h2>
             <template is="dom-repeat" items="[[status.posts]]" as="post">
               <div class="layout vertical">
@@ -129,7 +137,8 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.ypOfficialStatusOptions
+        Polymer.ypOfficialStatusOptions,
+        Polymer.ypThemeBehavior
       ],
 
       properties: {
@@ -157,12 +166,23 @@
           computed: '_readyToLoad(userId, statusUpdateId)'
         },
 
-        userId: Number
+        userId: Number,
+
+        hideGroupName: {
+          type: Boolean,
+          value: false
+        }
       },
 
       _communityChanged: function (community) {
         if (community && community.CommunityHeaderImages && community.CommunityHeaderImages.length>0) {
-          this.setupTopHeaderImage(community.CommunityHeaderImages)
+          this.setupTopHeaderImage(community.CommunityHeaderImages);
+        }
+
+        if (community) {
+          if (community.id==470) {
+            this.set('hideGroupName', true);
+          }
         }
       },
 
@@ -233,6 +253,11 @@
           documentTitle: this.t('bulkStatusUdateFor')+' '+this.truncate(this.community.name,80),
           headerDescription: '',//this.truncate(this.post.Group.objectives,45),
           backPath: "/community/" + this.community.id });
+        if (this.community.theme_id!=null) {
+          this.setTheme(this.community.theme_id);
+        }
+
+
       }
     });
   </script>
@@ -366,8 +391,7 @@
 
         selectedTab: {
           type: String,
-          value: null,
-          observer: '_selectedTabChanged'
+          value: null
         },
 
         user: {
@@ -461,20 +485,22 @@
 
       _response: function (event, detail, sender) {
         this.set('user', detail.response);
-        if (this.user.theme_id!=null) {
-          this.setTheme(this.user.theme_id);
+        if (this.user) {
+          if (this.user.theme_id!=null) {
+            this.setTheme(this.user.theme_id);
+          }
+
+          if (this.user.UserHeaderImages && this.user.UserHeaderImages.length>0) {
+            this.$.page.setupTopHeaderImage(this.user.UserHeaderImages);
+          }
+          this.setupCommunities(this.user.CommunityUsers);
+          this.setupGroups(this.user.GroupUsers);
+
+          //   this.$.userCard.setElevation(5);
+          //   this.$.userCard.lowerCardLater();
+
+          this.fire("change-header", { historyBack: true });
         }
-
-        if (this.user.UserHeaderImages && this.user.UserHeaderImages.length>0) {
-          this.$.page.setupTopHeaderImage(this.user.UserHeaderImages);
-        }
-        this.setupCommunities(this.user.CommunityUsers);
-        this.setupGroups(this.user.GroupUsers);
-
-     //   this.$.userCard.setElevation(5);
-     //   this.$.userCard.lowerCardLater();
-
-        this.fire("change-header", { historyBack: true });
       }
 
     });
