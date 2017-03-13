@@ -6,7 +6,10 @@ var _ = require('lodash');
 var groupId = process.argv[2];
 
 var clean = function (text) {
-  return text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(',',';').trim();
+  //console.log("Before: "+ text);
+  var newText = text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(/"/gm,"'").replace(',',';').trim();
+  //console.log("After:" + newText);
+  return newText;
 };
 
 var getLocation = function (post) {
@@ -75,10 +78,13 @@ var getImages = function (post) {
   return imagesText;
 };
 
-models.Post.findAll({
+models.Post.unscoped().findAll({
   where: {
     group_id: groupId
   },
+  order: [
+    ['created_at', 'asc' ]
+  ],
   include: [
     {
       model: models.Category,
@@ -112,12 +118,18 @@ models.Post.findAll({
   ]
 }).then(function (posts) {
   console.log(posts.length);
-  console.log("Id,email,User Name,Post Name,Description,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images");
+  console.log("Id, Post id,email,User Name,Post Name,Description,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images");
+  postCounter = 0;
   async.eachSeries(posts, function (post, seriesCallback) {
-    console.log(post.id+',"'+post.User.email+'","'+post.User.name+'","'+clean(post.name)+'","'+clean(post.description)+'",'+
-                getLocation(post)+','+post.counter_endorsements_up+','+post.counter_endorsements_down+
-                ','+post.counter_points+','+getPointsUp(post)+','+getPointsDown(post)+','+
-                getImages(post));
+    postCounter += 1;
+    if (!post.deleted) {
+      console.log(postCounter+','+post.id+',"'+post.User.email+'","'+post.User.name+'","'+clean(post.name)+'","'+clean(post.description)+'",'+
+        getLocation(post)+','+post.counter_endorsements_up+','+post.counter_endorsements_down+
+        ','+post.counter_points+','+getPointsUp(post)+','+getPointsDown(post)+','+
+        getImages(post));
+    } else {
+      console.log(postCounter+','+post.id+',DELETED,,,,,,,,,,,');
+    }
     seriesCallback();
   }, function (error) {
     process.exit();
