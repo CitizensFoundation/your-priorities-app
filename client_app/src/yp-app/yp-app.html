@@ -458,10 +458,8 @@
 
         if (page) {
           this.async(function () {
+            window.appGlobals.sendToGoogleAnalytics('send', 'pageview', location.pathname);
             window.appGlobals.activity('open', 'page', window.location.href);
-            window.appGlobals.sendToGoogleAnalytics('send', 'pageview', {
-              'page': location.pathname + location.search  + location.hash
-            });
           });
         }
       },

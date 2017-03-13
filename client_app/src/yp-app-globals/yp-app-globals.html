@@ -298,9 +298,7 @@
         setCommunityAnalyticsTracker: function (trackerId) {
           if (trackerId && trackerId!='' && trackerId!=this.communityTrackerId) {
             this.set('communityTrackerId', trackerId);
-            this.sendToGoogleAnalytics('sendOnlyCommunity', 'pageview', {
-              'page': location.pathname + location.search  + location.hash
-            });
+            this.sendToGoogleAnalytics('sendOnlyCommunity', 'pageview', location.pathname);
           } else {
             this.set('communityTrackerId', null);
           }
@@ -311,7 +309,7 @@
           if (typeof ga == 'function') {
             if (a!='sendOnlyCommunity') {
               ga('send', b, c, d, e, f);
-              console.debug("Global: "+b);
+              console.debug("Analytics global: send "+b+" "+c+" "+d);
             }
             if (this.communityTrackerId) {
               var sendName = 'tracker'+this.communityTrackerId.replace(/-/g,'');
@@ -321,7 +319,7 @@
                 console.debug("Created tracker: "+sendName);
               }
               sendName += '.send';
-              console.debug(sendName+": "+b);
+              console.debug("Analytics: "+sendName+": "+b+" "+c+" "+d);
               ga(sendName, b, c, d, e, f);
             }
           } else {
