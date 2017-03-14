@@ -1,4 +1,6 @@
 {
+  "hidePointAuthor": "Hide point author",
+  "hidePostAuthor": "Hide post author",
   "defaultLocationLongLat": "Default location longitude,latitude",
   "disableCommunityDomainUpLink": "Disable Domain Up Link",
   "analyticsTrackerCode": "Google Analytics Id",

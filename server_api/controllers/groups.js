@@ -115,6 +115,8 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hideHelpIcon', truthValueFromBody(req.body.hideHelpIcon));
   group.set('configuration.hideEmoji', truthValueFromBody(req.body.hideEmoji));
   group.set('configuration.hideGroupHeader', truthValueFromBody(req.body.hideGroupHeader));
+  group.set('configuration.hidePointAuthor', truthValueFromBody(req.body.hidePointAuthor));
+  group.set('configuration.hidePostAuthor', truthValueFromBody(req.body.hidePostAuthor));
 
   group.set('configuration.endorsementButtons', (req.body.endorsementButtons && req.body.endorsementButtons!="") ? req.body.endorsementButtons : "hearts");
   group.set('configuration.alternativeHeader', (req.body.alternativeHeader && req.body.alternativeHeader!="") ? req.body.alternativeHeader : null);

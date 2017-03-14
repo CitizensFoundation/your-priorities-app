@@ -118,7 +118,14 @@ var loadPointWithAll = function (pointId, callback) {
       },
       {
         model: models.Post,
-        required: false
+        required: false,
+        include: [
+          {
+            model: models.Group,
+            attributes: ['id','configuration'],
+            required: false
+          }
+        ]
       }
     ]
   }).then(function(point) {

@@ -410,7 +410,14 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
       {
         model: models.Post,
         attributes: { exclude: ['ip_address', 'user_agent'] },
-        required: false
+        required: false,
+        include: [
+          {
+            model: models.Group,
+            attributes: ['id','configuration'],
+            required: false
+          }
+        ]
       }
     ]
   }).then(function(points) {
