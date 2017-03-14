@@ -1,4 +1,6 @@
 {
+  "hidePointAuthor": "Fela höfund raka",
+  "hidePostAuthor": "Fela höfund hugmynda",
   "defaultLocationLongLat": "Sjálfgefin staðsetning longitude,latitude",
   "disableCommunityDomainUpLink": "Ekki sýna domain upp hlekk",
   "analyticsTrackerCode": "Google Analytics Id",

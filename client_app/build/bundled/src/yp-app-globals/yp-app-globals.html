@@ -1,15 +1,15 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.130">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.131">
 
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.130">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.131">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.130">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.130">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.130">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.131">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.131">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.131">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.130">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.131">
 
-<link rel="import" href="../yp-session/yp-session.html?v=6.3.130">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.130">
+<link rel="import" href="../yp-session/yp-session.html?v=6.3.131">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.131">
 
 </head><body><dom-module id="yp-app-globals">
 
@@ -298,9 +298,7 @@
         setCommunityAnalyticsTracker: function (trackerId) {
           if (trackerId && trackerId!='' && trackerId!=this.communityTrackerId) {
             this.set('communityTrackerId', trackerId);
-            this.sendToGoogleAnalytics('sendOnlyCommunity', 'pageview', {
-              'page': location.pathname + location.search  + location.hash
-            });
+            this.sendToGoogleAnalytics('sendOnlyCommunity', 'pageview', location.pathname);
           } else {
             this.set('communityTrackerId', null);
           }
@@ -311,7 +309,7 @@
           if (typeof ga == 'function') {
             if (a!='sendOnlyCommunity') {
               ga('send', b, c, d, e, f);
-              console.debug("Global: "+b);
+              console.debug("Analytics global: send "+b+" "+c+" "+d);
             }
             if (this.communityTrackerId) {
               var sendName = 'tracker'+this.communityTrackerId.replace(/-/g,'');
@@ -321,7 +319,7 @@
                 console.debug("Created tracker: "+sendName);
               }
               sendName += '.send';
-              console.debug(sendName+": "+b);
+              console.debug("Analytics: "+sendName+": "+b+" "+c+" "+d);
               ga(sendName, b, c, d, e, f);
             }
           } else {
