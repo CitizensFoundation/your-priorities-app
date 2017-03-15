@@ -2,8 +2,29 @@ var models = require('../models');
 var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
+var fs = require('fs');
 
 var groupId = process.argv[2];
+var urlPrefix = process.argv[3];
+var outFile = process.argv[4];
+
+var skipEmail = true;
+
+var getPostUrl = function (post) {
+  if (urlPrefix) {
+    return urlPrefix+'/post/'+post.id;
+  } else {
+    return "https://yrpri.org/post/"+post.id;
+  }
+};
+
+var getUserEmail = function (post) {
+  if (skipEmail) {
+    return "hidden";
+  } else {
+    return post.User.email;
+  }
+};
 
 var clean = function (text) {
   //console.log("Before: "+ text);
@@ -117,21 +138,29 @@ models.Post.unscoped().findAll({
     }
   ]
 }).then(function (posts) {
+  var outFileContent = "";
   console.log(posts.length);
-  console.log("Id, Post id,email,User Name,Post Name,Description,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images");
+  outFileContent += "Id, Post id,email,User Name,Post Name,Description,Url,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images";
   postCounter = 0;
   async.eachSeries(posts, function (post, seriesCallback) {
     postCounter += 1;
     if (!post.deleted) {
-      console.log(postCounter+','+post.id+',"'+post.User.email+'","'+post.User.name+'","'+clean(post.name)+'","'+clean(post.description)+'",'+
+      outFileContent += postCounter+','+post.id+',"'+getUserEmail(post)+'","'+post.User.name+'","'+clean(post.name)+'","'+clean(post.description)+'",'+
+        '"'+getPostUrl(post)+'",'+
         getLocation(post)+','+post.counter_endorsements_up+','+post.counter_endorsements_down+
         ','+post.counter_points+','+getPointsUp(post)+','+getPointsDown(post)+','+
-        getImages(post));
+        getImages(post)+'\n';
     } else {
-      console.log(postCounter+','+post.id+',DELETED,,,,,,,,,,,');
+      outFileContent += postCounter+','+post.id+',DELETED,,,,,,,,,,,\n';
     }
     seriesCallback();
   }, function (error) {
-    process.exit();
+    fs.writeFile(outFile, outFileContent, function(err) {
+      if(err) {
+        console.log(err);
+      }
+      console.log("The file was saved!");
+      process.exit();
+    });
   });
 });
