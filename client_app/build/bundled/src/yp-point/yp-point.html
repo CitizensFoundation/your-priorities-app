@@ -151,9 +151,9 @@
                 <yp-ajax id="deletePointAjax" method="DELETE" on-response="_deleteResponse"></yp-ajax>
                 <paper-icon-button title$="[[t('edit')]]" hidden$="[[!canEditPoint]]" icon="create" on-tap="_editPoint"></paper-icon-button>
                 <paper-icon-button title$="[[t('delete')]]" icon="clear" on-tap="_deletePoint"></paper-icon-button>
-                <paper-share-button class="shareIcon" horizontal-align="left" id="shareButton" title$="[[t('sharePoint')]]" facebook="" google="" twitter="" popup="" url="[[pointUrl]]"></paper-share-button>
               </div>
             </template>
+            <paper-share-button class="shareIcon" horizontal-align="left" id="shareButton" title$="[[t('sharePoint')]]" facebook="" google="" twitter="" popup="" url="[[pointUrl]]"></paper-share-button>
           </div>
         </div>
       </div>
