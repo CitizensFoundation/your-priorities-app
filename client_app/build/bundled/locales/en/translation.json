@@ -1,4 +1,8 @@
 {
+  "sharePoint": "Share point",
+  "alternativePointForHeader": "Alternative point for header",
+  "alternativePointAgainstHeader": "Alternative point against header",
+  "or": "or",
   "hidePointAuthor": "Hide point author",
   "hidePostAuthor": "Hide post author",
   "defaultLocationLongLat": "Default location longitude,latitude",

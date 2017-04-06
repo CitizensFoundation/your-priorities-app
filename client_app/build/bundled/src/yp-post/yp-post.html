@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.131"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.132"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -571,8 +571,11 @@
         <div class="layout vertical topContainer">
           <div class="main-container">
             <div class="point">
-              <div class="pointMainHeader layout horizontal center-center">
+              <div class="pointMainHeader layout horizontal center-center" hidden$="[[post.Group.configuration.alternativePointForHeader]]">
                 [[t('pointsFor')]]
+              </div>
+              <div class="pointMainHeader layout horizontal center-center" hidden$="[[!post.Group.configuration.alternativePointForHeader]]">
+                [[post.Group.configuration.alternativePointForHeader]]
               </div>
 
               <paper-material id="pointUpMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="">
@@ -601,8 +604,12 @@
 
             <div class="point">
 
-              <div class="pointMainHeader pointAgainstMainHeader layout horizontal center-center">
+              <div class="pointMainHeader pointAgainstMainHeader layout horizontal center-center" hidden$="[[post.Group.configuration.alternativePointAgainstHeader]]">
                 [[t('pointsAgainst')]]
+              </div>
+
+              <div class="pointMainHeader pointAgainstMainHeader layout horizontal center-center" hidden$="[[!post.Group.configuration.alternativePointAgainstHeader]]">
+                [[post.Group.configuration.alternativePointAgainstHeader]]
               </div>
               <paper-material id="pointDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="">
                 <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueDown}}" value="[[textValueDown]]" label="[[t('point.against')]]" char-counter="" rows="2" max-rows="5" maxlength="500">

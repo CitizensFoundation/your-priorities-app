@@ -1,25 +1,26 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.131">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.132">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.131">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.131">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.131">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.131">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.131">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.131">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.132">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.132">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.132">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.132">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.132">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.132">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.131">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.131">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.3.131">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.132">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.132">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.3.132">
+<link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html?v=6.3.132">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.131">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.131">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.131">
-<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.131">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.131">
-<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.131">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.131">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.132">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.132">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.132">
+<link rel="import" href="../yp-user/yp-user-image.html?v=6.3.132">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.132">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.132">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.132">
 
-<link rel="import" href="yp-point-actions.html?v=6.3.131">
+<link rel="import" href="yp-point-actions.html?v=6.3.132">
 
 </head><body><dom-module id="yp-point">
 
@@ -101,6 +102,11 @@
       .actionContainer {
         margin-top: 8px;
       }
+
+      .shareIcon {
+        --paper-share-button-icon-color: #ddd;
+        text-align: right;
+      }
     </style>
 
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
@@ -145,6 +151,7 @@
                 <yp-ajax id="deletePointAjax" method="DELETE" on-response="_deleteResponse"></yp-ajax>
                 <paper-icon-button title$="[[t('edit')]]" hidden$="[[!canEditPoint]]" icon="create" on-tap="_editPoint"></paper-icon-button>
                 <paper-icon-button title$="[[t('delete')]]" icon="clear" on-tap="_deletePoint"></paper-icon-button>
+                <paper-share-button class="shareIcon" horizontal-align="left" id="shareButton" title$="[[t('sharePoint')]]" facebook="" google="" twitter="" popup="" url="[[pointUrl]]"></paper-share-button>
               </div>
             </template>
           </div>
@@ -209,6 +216,11 @@
         pointValueUp: {
           type: Boolean,
           computed: 'upVote(point)'
+        },
+
+        pointUrl: {
+          type: String,
+          computed: '_pointUrl(point)'
         }
       },
 
@@ -219,6 +231,12 @@
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypGotAdminRightsBehavior
       ],
+
+      _pointUrl: function (point) {
+        if (point && point.Post) {
+          return window.location.protocol+"//"+window.location.hostname+"/post/"+point.Post.id+"/"+point.id;
+        }
+      },
 
       _linkIfNeeded: function () {
         if (this.linkPoint) {

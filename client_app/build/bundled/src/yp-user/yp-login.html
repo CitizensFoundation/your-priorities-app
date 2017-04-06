@@ -1,21 +1,21 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.131">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.132">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.131">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.131">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.132">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.132">
 
-<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.131">
-<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.131">
+<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.132">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.132">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.131">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.131">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.131">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.131">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.131">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.131">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.132">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.132">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.132">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.132">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.132">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.132">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.131">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.132">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.131">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.132">
 
 </head><body><dom-module id="yp-login">
 
@@ -158,12 +158,6 @@
         padding-bottom: 28px;
       }
 
-      .socialMediaLogin {
-        padding-top: 24px;
-        padding-bottom: 8px;
-        cursor: pointer;
-      }
-
       @media (max-width: 480px) {
         paper-dialog {
           padding: 0;
@@ -185,8 +179,68 @@
       }
 
       .buttons {
-        margin-left: 0;
-        padding-left: 0;
+        margin-bottom: 0;
+        padding-bottom: 8px;
+        font-size: 15px;
+      }
+
+      @media (max-width: 480px) {
+        .buttons {
+          font-size: 14px;
+        }
+      }
+
+      .additionAuthMethodsDivider {
+        color: #444;
+        padding-bottom: 8px;
+      }
+
+      .strike {
+        display: block;
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap;
+        font-size: 17px;
+      }
+
+      .strike > span {
+        position: relative;
+        display: inline-block;
+      }
+
+      .strike > span:before,
+      .strike > span:after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 9999px;
+        height: 1px;
+        background: #888;
+      }
+
+      .strike > span:before {
+        right: 85%;
+        margin-right: 15px;
+      }
+
+      .strike > span:after {
+        left: 85%;
+        margin-left: 15px;
+      }
+
+
+      .socialMediaLogin {
+        padding-top: 8px;
+        margin-top: 8px;
+        padding-bottom: 32px;
+        cursor: pointer;
+      }
+
+      .orContainer {
+        padding-top: 0;
+        margin-top: 0;
+        padding-bottom: 4px;
+        color: #555;
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -211,8 +265,23 @@
 
             <paper-input id="password" type="password" label="[[t('user.password')]]" value="{{password}}" error-message="[[passwordErrorMessage]]">
             </paper-input>
+          </form>
+          <div class="buttons">
+            <paper-spinner active="" hidden$="[[!userSpinner]]"></paper-spinner>
+            <yp-ajax id="loginAjax" dispatch-error="" on-error="_loginError" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
+            <yp-ajax id="registerAjax" method="POST" dispatch-error="" on-error="_registerError" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
+            <paper-button dialog-dismiss="">[[t('cancel')]]</paper-button>
+            <paper-button on-tap="_forgotPassword">[[t('user.newPassword')]]</paper-button>
+            <paper-button autofocus="" on-tap="_validateAndSend">[[submitText]]</paper-button>
+          </div>
+          <div class="orContainer" hidden$="[[!hasAdditionalAuthMethods]]">
+            <div class="strike">
+              <span>[[t('or')]]</span>
+            </div>
+          </div>
 
-            <div class="layout horizontal center-center socialMediaLogin">
+          <div class="layout vertical center-center socialMediaLogin" hidden$="[[!hasAdditionalAuthMethods]]">
+            <div class="layout horizontal center-center">
               <template is="dom-if" if="[[hasFacebookLogin]]">
                 <div class="btn-auth btn-facebook" on-tap="_facebookLogin">
                   [[t('user.facebookLogin')]]
@@ -224,22 +293,13 @@
                 </div>
               </template>
             </div>
-
-            <template>
-              <div class="layout horizontal center-center">
-                <re-captcha sitekey="[[reCaptchaSiteKey]]" lang="[[language]]"></re-captcha>
-              </div>
-            </template>
-
-          </form>
-          <div class="buttons">
-            <paper-spinner active="" hidden$="[[!userSpinner]]"></paper-spinner>
-            <yp-ajax id="loginAjax" dispatch-error="" on-error="_loginError" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
-            <yp-ajax id="registerAjax" method="POST" dispatch-error="" on-error="_registerError" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
-            <paper-button on-tap="_forgotPassword">[[t('user.newPassword')]]</paper-button>
-            <paper-button dialog-dismiss="">[[t('cancel')]]</paper-button>
-            <paper-button autofocus="" on-tap="_validateAndSend">[[submitText]]</paper-button>
           </div>
+
+          <template>
+            <div class="layout horizontal center-center">
+              <re-captcha sitekey="[[reCaptchaSiteKey]]" lang="[[language]]"></re-captcha>
+            </div>
+          </template>
         </paper-dialog>
 
         <iron-a11y-keys id="a11y" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
@@ -361,6 +421,11 @@
         type: Boolean,
         value: null,
         computed: '_hasSamlLogin(domain)'
+      },
+
+      hasAdditionalAuthMethods: {
+        type: Boolean,
+        computed: '_hasAdditionalAuthMethods(domain)'
       }
     },
 
@@ -406,6 +471,10 @@
       if (detail.domain) {
         this.set('domain', detail.domain);
       }
+    },
+
+    _hasAdditionalAuthMethods: function (domain) {
+      return (this._hasFacebookLogin(domain) || this._hasSamlLogin(domain));
     },
 
     _hasFacebookLogin: function (domain) {

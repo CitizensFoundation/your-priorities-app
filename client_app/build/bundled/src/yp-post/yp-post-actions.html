@@ -1,24 +1,22 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.131">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.132">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.131">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.132">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.131">
-<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.131">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.132">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.132">
 
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.131">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.131">
-<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html?v=6.3.131">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.131">
-<link rel="import" href="../../bower_components/iron-icons/notification-icons.html?v=6.3.131">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.131">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.132">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.132">
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html?v=6.3.132">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.132">
+<link rel="import" href="../../bower_components/iron-icons/notification-icons.html?v=6.3.132">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.132">
 
-<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html?v=6.3.131">
+<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html?v=6.3.132">
 
-<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-facebook.html?v=6.3.131">
-<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-twitter.html?v=6.3.131">
-<link rel="import" href="../../bower_components/paper-share-buttons/paper-share-google.html?v=6.3.131">
+<link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html?v=6.3.132">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.131">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.132">
 
 </head><body><dom-module id="yp-post-actions">
 
@@ -140,15 +138,13 @@
         color: #9e9e9e;
       }
 
-      .shareIcon::shadow #icon {
-        width: 32px !important;
-        height: 32px !important;
-        color: #999;
-      }
-
       .shareIcon {
         margin-left: 16px;
-        margin-top: 2px;
+        margin-top: 3px;
+        --paper-share-button-icon-color: #999;
+        --paper-share-button-icon-height: 46px;
+        --paper-share-button-icon-width: 46px;
+        text-align: right;
       }
 
       .up-vote-icon {
@@ -180,11 +176,6 @@
         background-color: #FFF;
       }
 
-      paper-share-facebook {
-        padding: 0;
-        margin: 0;
-      }
-
       @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
         .action-debate {
           display: none;
@@ -214,17 +205,8 @@
         <div class="action-text down-text">[[formattedDownCount]]</div>
       </div>
       <div class="share">
-        <paper-icon-button title$="[[t('post.shareInfo')]]" icon="social:share" on-tap="_toggleShare" class="shareIcon" id="shareButton"></paper-icon-button>
+        <paper-share-button class="shareIcon" horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
       </div>
-      <template is="dom-if" if="[[showShareButtons]]">
-        <div class="layout horizontal shareButtonContainer">
-          <paper-material elevation="5" class="shareShare">
-            <paper-share-facebook link$="[[postUrl]]" class="shareButton"></paper-share-facebook>
-            <paper-share-google link$="[[postUrl]]" class="shareButton"></paper-share-google>
-            <paper-share-twitter link$="[[postUrl]]" class="shareButton"></paper-share-twitter>
-          </paper-material>
-        </div>
-      </template>
     </paper-material>
 
     <iron-signals on-iron-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></iron-signals>
@@ -286,11 +268,6 @@
         disabledTitle: {
           type: String,
           value: null
-        },
-
-        showShareButtons: {
-          type: Boolean,
-          value: false
         },
 
         floating: {
@@ -367,20 +344,6 @@
           console.warn("Can't find post for action");
           return "";
         }
-      },
-
-      _toggleShare: function () {
-        this.set('showShareButtons', !this.showShareButtons);
-      },
-
-      _shareMouseOver: function () {
-        this.set('showShareButtons', true);
-      },
-
-      _shareMouseOut: function () {
-        this.async(function () {
-          this.set('showShareButtons', false);
-        },1200);
       },
 
       _elevationPlusOne: function (elevation) {
