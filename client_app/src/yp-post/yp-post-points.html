@@ -203,8 +203,11 @@
         <div class="layout vertical topContainer">
           <div class="main-container">
             <div class="point">
-              <div class="pointMainHeader layout horizontal center-center">
+              <div class="pointMainHeader layout horizontal center-center" hidden$="[[post.Group.configuration.alternativePointForHeader]]">
                 [[t('pointsFor')]]
+              </div>
+              <div class="pointMainHeader layout horizontal center-center" hidden$="[[!post.Group.configuration.alternativePointForHeader]]">
+                [[post.Group.configuration.alternativePointForHeader]]
               </div>
 
               <paper-material id="pointUpMaterial" elevation="1" class="pointInputMaterial layout vertical" animated>
@@ -237,8 +240,12 @@
 
             <div class="point">
 
-              <div class="pointMainHeader pointAgainstMainHeader layout horizontal center-center">
+              <div class="pointMainHeader pointAgainstMainHeader layout horizontal center-center" hidden$="[[post.Group.configuration.alternativePointAgainstHeader]]">
                 [[t('pointsAgainst')]]
+              </div>
+
+              <div class="pointMainHeader pointAgainstMainHeader layout horizontal center-center" hidden$="[[!post.Group.configuration.alternativePointAgainstHeader]]">
+                [[post.Group.configuration.alternativePointAgainstHeader]]
               </div>
               <paper-material id="pointDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated>
                 <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
