@@ -137,7 +137,12 @@ var updateGroupConfigParamters = function (req, group) {
   if (truthValueFromBody(req.body.uploadedDefaultPostImageId)) {
     group.set('configuration.uploadedDefaultPostImageId', req.body.uploadedDefaultPostImageId);
   }
+
+  group.set('configuration.alternativePointForHeader', (req.body.alternativePointForHeader && req.body.alternativePointForHeader!="") ? req.body.alternativePointForHeader : null);
+  group.set('configuration.alternativePointAgainstHeader', (req.body.alternativePointAgainstHeader && req.body.alternativePointAgainstHeader!="") ? req.body.alternativePointAgainstHeader : null);
 };
+
+
 
 router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), function(req, res) {
   models.AcActivity.find({

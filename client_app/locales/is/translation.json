@@ -1,4 +1,7 @@
 {
+  "alternativePointForHeader": "Annar titill fyrir rök með",
+  "alternativePointAgainstHeader": "Annar titill fyrir rök á móti",
+  "or": "eða",
   "hidePointAuthor": "Fela höfund raka",
   "hidePostAuthor": "Fela höfund hugmynda",
   "defaultLocationLongLat": "Sjálfgefin staðsetning longitude,latitude",

@@ -205,6 +205,24 @@
       <input type="hidden" name="hideEmoji" value$="[[hideEmoji]]">
       <input type="hidden" name="hideGroupHeader" value$="[[hideGroupHeader]]">
 
+      <paper-input id="alternativePointForHeader"
+                   name="alternativePointForHeader"
+                   type="text"
+                   label="[[t('alternativePointForHeader')]]"
+                   value="{{group.configuration.alternativePointForHeader}}"
+                   maxlength="100"
+                   char-counter>
+      </paper-input>
+
+      <paper-input id="alternativePointAgainstHeader"
+                   name="alternativePointAgainstHeader"
+                   type="text"
+                   label="[[t('alternativePointAgainstHeader')]]"
+                   value="{{group.configuration.alternativePointAgainstHeader}}"
+                   maxlength="100"
+                   char-counter>
+      </paper-input>
+
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
           <file-upload id="defaultDataImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
