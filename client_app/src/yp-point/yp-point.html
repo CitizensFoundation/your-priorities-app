@@ -10,6 +10,7 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
@@ -101,6 +102,11 @@
       .actionContainer {
         margin-top: 8px;
       }
+
+      .shareIcon {
+        --paper-share-button-icon-color: #ddd;
+        text-align: right;
+      }
     </style>
 
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
@@ -145,7 +151,7 @@
                 <yp-ajax id="deletePointAjax" method="DELETE" on-response="_deleteResponse"></yp-ajax>
                 <paper-icon-button title$="[[t('edit')]]" hidden$="[[!canEditPoint]]" icon="create" on-tap="_editPoint"></paper-icon-button>
                 <paper-icon-button title$="[[t('delete')]]" icon="clear" on-tap="_deletePoint"></paper-icon-button>
-                <paper-icon-button title$="[[t('share')]]" icon="share" on-top="_openShare"></paper-icon-button>
+                <paper-share-button class="shareIcon" horizontal-align="left" id="shareButton" title$="[[t('sharePoint')]]" facebook google twitter popup url="[[pointUrl]]"></paper-share-button>
               </div>
             </template>
           </div>
@@ -210,6 +216,11 @@
         pointValueUp: {
           type: Boolean,
           computed: 'upVote(point)'
+        },
+
+        pointUrl: {
+          type: String,
+          computed: '_pointUrl(point)'
         }
       },
 
@@ -220,6 +231,12 @@
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypGotAdminRightsBehavior
       ],
+
+      _pointUrl: function (point) {
+        if (point && point.Post) {
+          return window.location.protocol+"//"+window.location.hostname+"/post/"+point.Post.id+"/"+point.id;
+        }
+      },
 
       _linkIfNeeded: function () {
         if (this.linkPoint) {
