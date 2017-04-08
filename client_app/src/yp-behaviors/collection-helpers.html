@@ -9,7 +9,7 @@
     splitByStatus: function (items) {
       return {
         active: __.filter(items, function (o) {
-          return o.status == 'active';
+          return o.status == 'active' || o.status == 'hidden';
         }),
         archived: __.filter(items, function (o) {
           return o.status == 'archived';

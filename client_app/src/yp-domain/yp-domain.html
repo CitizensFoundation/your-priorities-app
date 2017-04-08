@@ -129,6 +129,7 @@
     </yp-page>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
 
     <app-route
       route="{{idRoute}}"
@@ -161,7 +162,8 @@
         Polymer.CommunityCollectionBehaviors,
         Polymer.CollectionHelpers,
         Polymer.AccessHelpers,
-        Polymer.YpNewsTabSelected
+        Polymer.YpNewsTabSelected,
+        Polymer.ypLoggedInUserBehavior
       ],
 
       properties: {
@@ -212,6 +214,14 @@
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
+
+      _userLoggedIn: function (user) {
+        if (user) {
+          if (this.domain) {
+            this._domainIdChanged(this.domain.id);
+          }
+        }
+      },
 
       _routeIdChanged: function (newId) {
         if (newId) {

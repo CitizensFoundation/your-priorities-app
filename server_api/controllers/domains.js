@@ -5,6 +5,7 @@ var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
+var async = require('async');
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {
@@ -26,78 +27,179 @@ var sendDomainOrError = function (res, domain, context, user, error, errorStatus
 };
 
 var getDomain = function (req, domainId, done) {
+  var domain;
   var attributes = null;
-  auth.hasDomainAdmin(domainId, req, function (error, isAdmin) {
-    if (!isAdmin) {
-      attributes = models.Domain.defaultAttributesPublic;
-    }
-
-    models.Domain.find({
-      where: {id: domainId},
-      attributes: attributes,
-      order: [
-        [{model: models.Image, as: 'DomainLogoImages'}, 'created_at', 'asc'],
-        [{model: models.Image, as: 'DomainHeaderImages'}, 'created_at', 'asc']
-      ],
-      include: [
-        {
-          model: models.Image, as: 'DomainLogoImages',
-          required: false
-        },
-        {
-          model: models.Image, as: 'DomainHeaderImages',
-          required: false
-        }
-      ]
-    }).then(function (domain) {
-      if (domain) {
-        models.Community.findAll({
-          where: {
-            domain_id: domain.id,
-            access: {
-              $ne: models.Community.ACCESS_SECRET
-            },
-            status: {
-              $ne: 'hidden'
-            }
+  var memberAdminCommunities;
+  async.series([
+    function (seriesCallback) {
+      auth.hasDomainAdmin(domainId, req, function (error, isAdmin) {
+          if (!isAdmin) {
+            attributes = models.Domain.defaultAttributesPublic;
+          }
+        seriesCallback(error);
+      });
+    },
+    function (seriesCallback) {
+      models.Domain.find({
+        where: {id: domainId},
+        attributes: attributes,
+        order: [
+          [{model: models.Image, as: 'DomainLogoImages'}, 'created_at', 'asc'],
+          [{model: models.Image, as: 'DomainHeaderImages'}, 'created_at', 'asc']
+        ],
+        include: [
+          {
+            model: models.Image, as: 'DomainLogoImages',
+            required: false
           },
-          order: [
-            [ 'counter_users', 'desc'],
-            [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
-          ],
-          include: [
-            {
-              model: models.Image, as: 'CommunityLogoImages',
-              required: false
+          {
+            model: models.Image, as: 'DomainHeaderImages',
+            required: false
+          }
+        ]
+      }).then(function (domainIn) {
+        domain = domainIn;
+        if (domain) {
+          models.Community.findAll({
+            where: {
+              domain_id: domain.id,
+              access: {
+                $ne: models.Community.ACCESS_SECRET
+              },
+              status: {
+                $ne: 'hidden'
+              }
             },
-            {
-              model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
-              required: false
+            order: [
+              [ 'counter_users', 'desc'],
+              [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
+            ],
+            include: [
+              {
+                model: models.Image, as: 'CommunityLogoImages',
+                required: false
+              },
+              {
+                model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                required: false
+              }
+            ]
+          }).then(function (communities) {
+            log.info('Domain Viewed', {domain: toJson(domain.simple()), context: 'view', user: toJson(req.user)});
+            if (req.ypDomain && req.ypDomain.secret_api_keys &&
+              req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
+              req.ypDomain.secret_api_keys.saml.entryPoint.length > 6) {
+              domain.dataValues.samlLoginProvided = true;
             }
-          ]
-        }).then(function (communities) {
-          log.info('Domain Viewed', {domain: toJson(domain.simple()), context: 'view', user: toJson(req.user)});
-          if (req.ypDomain && req.ypDomain.secret_api_keys &&
-            req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
-            req.ypDomain.secret_api_keys.saml.entryPoint.length > 6) {
-            domain.dataValues.samlLoginProvided = true;
+            if (req.ypDomain && req.ypDomain.secret_api_keys &&
+              req.ypDomain.secret_api_keys.facebook && req.ypDomain.secret_api_keys.facebook.client_secret &&
+              req.ypDomain.secret_api_keys.facebook.client_secret.length > 6) {
+              domain.dataValues.facebookLoginProvided = true;
+            }
+            domain.dataValues.Communities = communities;
+            seriesCallback(null);
+          }).catch(function (error) {
+            seriesCallback(error)
+          });
+        } else {
+          seriesCallback("Not found")
+        }
+      }).catch(function (error) {
+        seriesCallback(error)
+      });
+    },
+    function (seriesCallback) {
+      if (req.user) {
+        var adminCommunities, userCommunities;
+
+        async.parallel([
+          function (parallelCallback) {
+            models.Community.findAll({
+              where: {
+                domain_id: domain.id
+              },
+              order: [
+                [ 'counter_users', 'desc'],
+                [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
+              ],
+              include: [
+                {
+                  model: models.Image, as: 'CommunityLogoImages',
+                  required: false
+                },
+                {
+                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  required: false
+                },
+                {
+                  model: models.User,
+                  as: 'CommunityAdmins',
+                  attributes: ['id'],
+                  required: true,
+                  where: {
+                    id: req.user.id
+                  }
+                }
+              ]
+            }).then(function (communities) {
+              adminCommunities = communities;
+              parallelCallback();
+            }).catch(function (error) {
+              parallelCallback(error)
+            });
+          },
+          function (parallelCallback) {
+            models.Community.findAll({
+              where: {
+                domain_id: domain.id
+              },
+              order: [
+                [ 'counter_users', 'desc'],
+                [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
+              ],
+              include: [
+                {
+                  model: models.Image, as: 'CommunityLogoImages',
+                  required: false
+                },
+                {
+                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  required: false
+                },
+                {
+                  model: models.User,
+                  as: 'CommunityUsers',
+                  attributes: ['id'],
+                  required: true,
+                  where: {
+                    id: req.user.id
+                  }
+                }
+              ]
+            }).then(function (communities) {
+              userCommunities = communities;
+              parallelCallback();
+            }).catch(function (error) {
+              parallelCallback(error)
+            });
           }
-          if (req.ypDomain && req.ypDomain.secret_api_keys &&
-            req.ypDomain.secret_api_keys.facebook && req.ypDomain.secret_api_keys.facebook.client_secret &&
-            req.ypDomain.secret_api_keys.facebook.client_secret.length > 6) {
-            domain.dataValues.facebookLoginProvided = true;
-          }
-          domain.dataValues.Communities = communities;
-          done(null, domain);
-        }).catch(function (error) {
-          done(error)
+        ], function (error) {
+          var combinedCommunities = _.concat(userCommunities, domain.dataValues.Communities);
+          combinedCommunities = _.concat(adminCommunities, combinedCommunities);
+          combinedCommunities = _.uniqBy(combinedCommunities, function (community) {
+            return community.id;
+          });
+
+          domain.dataValues.Communities = combinedCommunities;
+
+          seriesCallback(error);
         });
       } else {
-        done("Not found")
+        seriesCallback();
       }
-    }).catch(function (error) {
-      done(error)
-    });
+    }
+  ], function (error) {
+    done(error, domain);
   });
 };
 
