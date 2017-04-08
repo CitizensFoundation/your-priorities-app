@@ -15,8 +15,10 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/collection-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
+
 <link rel="import" href="../yp-community/yp-community-collection-behaviors.html">
 
 <link rel="import" href="../ac-activities/ac-activities.html">
@@ -218,7 +220,7 @@
       _userLoggedIn: function (user) {
         if (user) {
           if (this.domain) {
-            this._domainIdChanged(this.domain.id);
+            this.$.ajax.generateRequest();
           }
         }
       },

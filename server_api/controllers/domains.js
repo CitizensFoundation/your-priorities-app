@@ -109,7 +109,7 @@ var getDomain = function (req, domainId, done) {
       });
     },
     function (seriesCallback) {
-      if (req.user) {
+      if (req.user && domain) {
         var adminCommunities, userCommunities;
 
         async.parallel([

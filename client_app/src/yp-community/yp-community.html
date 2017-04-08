@@ -16,6 +16,8 @@
 <link rel="import" href="../yp-behaviors/collection-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
+
 <link rel="import" href="../ac-activities/ac-activities.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 
@@ -99,6 +101,7 @@
     </yp-page>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
 
     <app-route
       route="{{idRoute}}"
@@ -128,7 +131,8 @@
         Polymer.CollectionHelpers,
         Polymer.GroupCollectionBehaviors,
         Polymer.AccessHelpers,
-        Polymer.YpNewsTabSelected
+        Polymer.YpNewsTabSelected,
+        Polymer.ypLoggedInUserBehavior
       ],
 
       properties: {
@@ -185,6 +189,14 @@
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
+
+      _userLoggedIn: function (user) {
+        if (user) {
+          if (this.community) {
+            this.$$('#ajax').generateRequest();
+          }
+        }
+      },
 
       _newPostSelectGroup: function () {
         window.appGlobals.activity('open', 'newPostFromCommunity');

@@ -92,6 +92,147 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
   });
 };
 
+var getCommunity = function(req, done) {
+  var community;
+
+  async.series([
+    function (seriesCallback) {
+      models.Community.find({
+        where: { id: req.params.id },
+        order: [
+          [ { model: models.Group }, 'counter_users', 'desc' ],
+          [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
+          [ { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
+          [ models.Group, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
+        ],
+        include: [
+          {
+            model: models.Domain,
+            attributes: models.Domain.defaultAttributesPublic
+          },
+          {
+            model: models.Image, as: 'CommunityLogoImages',
+            required: false
+          },
+          {
+            model: models.Image, as: 'CommunityHeaderImages',
+            required: false
+          },
+          {
+            model: models.Group,
+            where: {
+              access: {
+                $ne: models.Group.ACCESS_SECRET
+              }
+            },
+            required: false,
+            include: [
+              {
+                model: models.Image, as: 'GroupLogoImages',
+                required: false
+              }
+            ]
+          }
+        ]
+      }).then(function(communityIn) {
+        community = communityIn;
+        if (community) {
+          log.info('Community Viewed', { community: toJson(community.simple()), context: 'view', user: toJson(req.user) });
+          seriesCallback()
+        } else {
+          seriesCallback("Not found");
+        }
+      }).catch(function(error) {
+        seriesCallback(error);
+      });
+    },
+    function (seriesCallback) {
+      if (req.user && community) {
+        var adminGroups, userGroups;
+
+        async.parallel([
+          function (parallelCallback) {
+            models.Group.findAll({
+              where: {
+                community_id: community.id
+              },
+              order: [
+                [ 'counter_users', 'desc'],
+                [ {model: models.Image, as: 'GroupLogoImages'}, 'created_at', 'asc']
+              ],
+              include: [
+                {
+                  model: models.Image, as: 'GroupLogoImages',
+                  required: false
+                },
+                {
+                  model: models.User,
+                  as: 'GroupAdmins',
+                  attributes: ['id'],
+                  required: true,
+                  where: {
+                    id: req.user.id
+                  }
+                }
+              ]
+            }).then(function (groups) {
+              adminGroups = groups;
+              parallelCallback();
+            }).catch(function (error) {
+              parallelCallback(error)
+            });
+          },
+          function (parallelCallback) {
+            models.Group.findAll({
+              where: {
+                community_id: community.id
+              },
+              order: [
+                [ 'counter_users', 'desc'],
+                [ {model: models.Image, as: 'GroupLogoImages'}, 'created_at', 'asc']
+              ],
+              include: [
+                {
+                  model: models.Image, as: 'GroupLogoImages',
+                  required: false
+                },
+                {
+                  model: models.User,
+                  as: 'GroupUsers',
+                  attributes: ['id'],
+                  required: true,
+                  where: {
+                    id: req.user.id
+                  }
+                }
+              ]
+            }).then(function (groups) {
+              userGroups = groups;
+              userGroups();
+            }).catch(function (error) {
+              parallelCallback(error)
+            });
+          }
+        ], function (error) {
+          var combinedGroups = _.concat(userGroups, community.dataValues.Groups);
+          combinedGroups = _.concat(adminGroups, combinedGroups);
+          combinedGroups = _.uniqBy(combinedGroups, function (group) {
+            return group.id;
+          });
+
+          community.dataValues.Groups = combinedGroups;
+
+          seriesCallback(error);
+        });
+      } else {
+        seriesCallback();
+      }
+    }
+  ], function (error) {
+    done(error, community);
+  });
+};
+
 var updateCommunityConfigParameters = function (req, community) {
   if (!community.configuration) {
     community.set('configuration', {});
@@ -441,52 +582,14 @@ router.get('/:communityId/users', auth.can('edit community'), function (req, res
 
 
 router.get('/:id', auth.can('view community'), function(req, res) {
-  models.Community.find({
-    where: { id: req.params.id },
-    order: [
-      [ { model: models.Group }, 'counter_users', 'desc' ],
-      [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
-      [ { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
-      [ models.Group, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
-    ],
-    include: [
-      {
-        model: models.Domain,
-        attributes: models.Domain.defaultAttributesPublic
-      },
-      {
-        model: models.Image, as: 'CommunityLogoImages',
-        required: false
-      },
-      {
-        model: models.Image, as: 'CommunityHeaderImages',
-        required: false
-      },
-      {
-        model: models.Group,
-        where: {
-          access: {
-            $ne: models.Group.ACCESS_SECRET
-          }
-        },
-        required: false,
-        include: [
-          {
-            model: models.Image, as: 'GroupLogoImages',
-            required: false
-          }
-        ]
-      }
-    ]
-  }).then(function(community) {
+  getCommunity(req, function (error, community) {
     if (community) {
-      log.info('Community Viewed', { community: toJson(community.simple()), context: 'view', user: toJson(req.user) });
       res.send(community);
+    } else if (error) {
+      sendCommunityOrError(res, null, 'view', req.user, error);
     } else {
       sendCommunityOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
     }
-  }).catch(function(error) {
-    sendCommunityOrError(res, null, 'view', req.user, error);
   });
 });
 
