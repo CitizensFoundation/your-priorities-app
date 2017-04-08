@@ -451,7 +451,8 @@ router.get('/:id', auth.can('view community'), function(req, res) {
     ],
     include: [
       {
-        model: models.Domain
+        model: models.Domain,
+        attributes: models.Domain.defaultAttributesPublic
       },
       {
         model: models.Image, as: 'CommunityLogoImages',

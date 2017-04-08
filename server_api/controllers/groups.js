@@ -831,7 +831,8 @@ router.put('/:id/:groupId/mergeWithGroup', auth.can('edit post'), function(req, 
                 include: [
                   {
                     model: models.Domain,
-                    required: true
+                    required: true,
+                    attributes: models.Domain.defaultAttributesPublic
                   }
                 ]
               }
@@ -855,7 +856,8 @@ router.put('/:id/:groupId/mergeWithGroup', auth.can('edit post'), function(req, 
                 include: [
                   {
                     model: models.Domain,
-                    required: true
+                    required: true,
+                    attributes: models.Domain.defaultAttributesPublic
                   }
                 ]
               }
