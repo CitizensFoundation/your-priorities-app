@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.133">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.134">
 
 <script>
   /**
@@ -9,7 +9,7 @@
     splitByStatus: function (items) {
       return {
         active: __.filter(items, function (o) {
-          return o.status == 'active';
+          return o.status == 'active' || o.status == 'hidden';
         }),
         archived: __.filter(items, function (o) {
           return o.status == 'archived';

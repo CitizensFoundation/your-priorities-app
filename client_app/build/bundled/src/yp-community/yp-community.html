@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.133"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.134"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -1013,6 +1013,7 @@
     </yp-page>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
 
     <app-route route="{{idRoute}}" pattern="/:id" data="{{idRouteData}}" tail="{{tabRoute}}">
     </app-route>
@@ -1035,7 +1036,8 @@
         Polymer.CollectionHelpers,
         Polymer.GroupCollectionBehaviors,
         Polymer.AccessHelpers,
-        Polymer.YpNewsTabSelected
+        Polymer.YpNewsTabSelected,
+        Polymer.ypLoggedInUserBehavior
       ],
 
       properties: {
@@ -1092,6 +1094,14 @@
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
+
+      _userLoggedIn: function (user) {
+        if (user) {
+          if (this.community) {
+            this.$$('#ajax').generateRequest();
+          }
+        }
+      },
 
       _newPostSelectGroup: function () {
         window.appGlobals.activity('open', 'newPostFromCommunity');
