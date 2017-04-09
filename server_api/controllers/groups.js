@@ -140,6 +140,9 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.alternativePointForHeader', (req.body.alternativePointForHeader && req.body.alternativePointForHeader!="") ? req.body.alternativePointForHeader : null);
   group.set('configuration.alternativePointAgainstHeader', (req.body.alternativePointAgainstHeader && req.body.alternativePointAgainstHeader!="") ? req.body.alternativePointAgainstHeader : null);
+
+  group.set('configuration.alternativePointForLabel', (req.body.alternativePointForLabel && req.body.alternativePointForLabel!="") ? req.body.alternativePointForLabel : null);
+  group.set('configuration.alternativePointAgainstLabel', (req.body.alternativePointAgainstLabel && req.body.alternativePointAgainstLabel!="") ? req.body.alternativePointAgainstLabel : null);
 };
 
 
