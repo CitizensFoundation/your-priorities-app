@@ -223,7 +223,7 @@ passport.deserializeUser(function (sessionUser, done) {
       }
     }
   }).catch(function (error) {
-    log.error("User Deserialize Error", {context: 'deserializeUser', user: id, err: error, errorStatus: 500});
+    log.error("User Deserialize Error", {context: 'deserializeUser', user: sessionUser.userId, err: error, errorStatus: 500});
     if (airbrake) {
       airbrake.notify(error, function (airbrakeErr, url) {
         if (airbrakeErr) {
