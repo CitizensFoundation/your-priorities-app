@@ -25,6 +25,7 @@
   ],
   "includeDependencies": [
     "manifest.json",
+    "robots.txt",
     "bower_components/webcomponentsjs/webcomponents-lite.min.js"
   ]
 }
