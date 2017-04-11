@@ -30,7 +30,7 @@ var clean = function (text) {
   //console.log("Before: "+ text);
   var newText = text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(/"/gm,"'").replace(',',';').trim();
   //console.log("After:" + newText);
-  return newText;
+  return newText.replace(/´/g,'');
 };
 
 var getLocation = function (post) {
@@ -140,7 +140,7 @@ models.Post.unscoped().findAll({
 }).then(function (posts) {
   var outFileContent = "";
   console.log(posts.length);
-  outFileContent += "Id, Post id,email,User Name,Post Name,Description,Url,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images";
+  outFileContent += "Id, Post id,email,User Name,Post Name,Description,Url,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images\n";
   postCounter = 0;
   async.eachSeries(posts, function (post, seriesCallback) {
     postCounter += 1;
