@@ -266,11 +266,11 @@ module.exports = function(sequelize, DataTypes) {
               req.ypDomain.loginProviders = providers;
               sequelize.models.Domain.getLoginHosts(function (error, hosts) {
                 req.ypDomain.loginHosts = hosts;
-                next();
+                return next();
               });
             });
           } else {
-            next();
+            return next();
           }
         });
       },

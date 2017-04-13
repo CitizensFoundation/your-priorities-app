@@ -221,6 +221,7 @@ module.exports = function(sequelize, DataTypes) {
             log.warn("User LocalStrategy Incorrect username", { context: 'localStrategy', user: toJson(user), err: 'Incorrect username', errorStatus: 401 });
             return done(null, false, { message: 'Incorrect username.' });
           }
+          return null;
         }).catch(function(error) {
           log.error("User LocalStrategy Error", { context: 'localStrategy', err: error, errorStatus: 500 });
           done(error);

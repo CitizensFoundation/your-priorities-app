@@ -161,7 +161,7 @@ auth.isLoggedIn = function (req, res, next) {
     return next();
   } else {
     log.info('User is Not Logged in', { context: 'isLoggedInAuth', user: toJson(req.user), errorStatus: 401});
-    res.send(401, 'Unauthorized');
+    res.status(401);
   }
 };
 

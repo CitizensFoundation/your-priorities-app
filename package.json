@@ -21,7 +21,7 @@
     "ejs": "^2.3.4",
     "email-templates": "^2.0.1",
     "embedly": "^1.0.4",
-    "express": "^4.13.3",
+    "express": "^4.15.2",
     "express-generator": "^4.9.0",
     "express-session": "git+https://github.com/rbjarnason/session.git",
     "express-useragent": "^0.2.4",
@@ -48,7 +48,7 @@
     "passport-saml": "git+https://github.com/rbjarnason/passport-saml.git",
     "passport-sso": "git+https://github.com/rbjarnason/passport-sso.git",
     "passport-twitter": "^1.0.3",
-    "pg": "^3.6.3",
+    "pg": "^6.1.5",
     "pg-hstore": "^2.3.2",
     "polylint": "^2.9.1",
     "posix": "^4.0.0",
@@ -56,7 +56,7 @@
     "randomstring": "^1.1.4",
     "request-ip": "^1.2.2",
     "s3-uploader": "^1.0.0",
-    "sequelize": "^3.28.0",
+    "sequelize": "^3.30.3",
     "sequelize-cli": "^2.4.0",
     "serve-favicon": "~2.1.6",
     "sitemap": "^1.9.0",
@@ -86,6 +86,6 @@
     "node_modules"
   ],
   "engines": {
-    "node": "4.4.3"
+    "node": "6.10.2"
   }
 }

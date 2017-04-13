@@ -98,12 +98,14 @@ var getDomain = function (req, domainId, done) {
             }
             domain.dataValues.Communities = communities;
             seriesCallback(null);
+            return null;
           }).catch(function (error) {
             seriesCallback(error)
           });
         } else {
           seriesCallback("Not found")
         }
+        return null;
       }).catch(function (error) {
         seriesCallback(error)
       });

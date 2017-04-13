@@ -340,6 +340,7 @@ router.get('/:groupId/pages', auth.can('view group'), function(req, res) {
         res.send(pages);
       }
     });
+    return null;
   }).catch(function (error) {
     log.error('Could not get pages for group', { err: error, context: 'pages', user: req.user ? toJson(req.user.simple()) : null});
     res.sendStatus(500);
@@ -662,6 +663,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     } else {
       sendGroupOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
     }
+    return null;
   }).catch(function(error) {
     sendGroupOrError(res, null, 'view', req.user, error);
   });

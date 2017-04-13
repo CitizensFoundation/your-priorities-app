@@ -206,6 +206,7 @@ passport.deserializeUser(function (sessionUser, done) {
       log.info("User Deserialized", {context: 'deserializeUser', user: user.email});
       user.loginProvider = sessionUser.loginProvider;
       done(null, user);
+      return null;
     } else {
       log.error("User Deserialized Not found", {context: 'deserializeUser'});
       if (airbrake) {
@@ -218,9 +219,9 @@ passport.deserializeUser(function (sessionUser, done) {
               errorStatus: 500
             });
           }
-          done(null, false);
         });
       }
+      return done(null, false);
     }
   }).catch(function (error) {
     log.error("User Deserialize Error", {context: 'deserializeUser', user: sessionUser.userId, err: error, errorStatus: 500});
@@ -234,9 +235,9 @@ passport.deserializeUser(function (sessionUser, done) {
             errorStatus: 500
           });
         }
-        done(null, false);
       });
     }
+    return done(null, false);
   });
 });
 
