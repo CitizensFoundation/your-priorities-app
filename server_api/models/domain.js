@@ -213,7 +213,8 @@ module.exports = function(sequelize, DataTypes) {
             seriesCallback();
           }, function (error) {
             callback(error, providers);
-          })
+          });
+          return null;
         }).catch(function (error) {
           callback(error);
         });
@@ -230,7 +231,8 @@ module.exports = function(sequelize, DataTypes) {
             seriesCallback();
           }, function (error) {
             callback(error, hosts);
-          })
+          });
+          return null;
         }).catch(function (error) {
           callback(error);
         });
@@ -272,6 +274,9 @@ module.exports = function(sequelize, DataTypes) {
           } else {
             return next();
           }
+          return null;
+        }).catch(function (error) {
+          next(error);
         });
       },
 
