@@ -499,7 +499,10 @@
 
       _refreshAjax: function () {
         this.$.ajax.generateRequest();
-        this.$$("#groupActivities").loadNewData();
+        var groupActivities = this.$$("#groupActivities");
+        if (groupActivities) {
+          this.$$("#groupActivities").loadNewData();
+        }
       },
 
       ready: function () {

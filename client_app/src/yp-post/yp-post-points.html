@@ -403,6 +403,16 @@
           'yp-point-deleted': '_pointDeleted'
         },
 
+        observers: [
+          '_setupPointTextStartState(pointUpOrDownSelected, post)'
+        ],
+
+        _setupPointTextStartState: function(pointUpOrDownSelected, post) {
+          if (post) {
+            this._pointUpOrDownSelectedChanged(pointUpOrDownSelected)
+          }
+        },
+
         _loadNewPointsIfNeeded: function (event, detail) {
           if (this.post && this.post.id == detail.postId) {
             this.$.newPointsAjax.url = '/api/posts/' + this.post.id + '/newPoints';
