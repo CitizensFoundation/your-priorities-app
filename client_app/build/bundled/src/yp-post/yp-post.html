@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.134"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.135"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -757,6 +757,16 @@
 
         listeners: {
           'yp-point-deleted': '_pointDeleted'
+        },
+
+        observers: [
+          '_setupPointTextStartState(pointUpOrDownSelected, post)'
+        ],
+
+        _setupPointTextStartState: function(pointUpOrDownSelected, post) {
+          if (post) {
+            this._pointUpOrDownSelectedChanged(pointUpOrDownSelected)
+          }
         },
 
         _loadNewPointsIfNeeded: function (event, detail) {

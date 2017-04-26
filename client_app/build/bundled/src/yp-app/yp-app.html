@@ -16534,7 +16534,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.134">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.135">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -17942,7 +17942,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.134" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.135" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -17999,7 +17999,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.134">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.135">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -18007,7 +18007,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.134">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.135">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19208,7 +19208,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.134", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.135", fontName: 'FFClanWebBook' });
 
     },
 
@@ -19219,7 +19219,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.134";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.135";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -21778,8 +21778,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.134">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.134">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.135">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.135">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -22453,7 +22453,7 @@ Custom property | Description | Default
 `--iron-overlay-backdrop-opened`           | Mixin applied to `iron-overlay-backdrop` when it is displayed | {}
 -->
 
-<dom-module id="iron-overlay-backdrop" assetpath="">
+<dom-module id="iron-overlay-backdrop" assetpath="../../bower_components/iron-overlay-behavior/">
 
   <template>
     <style>
@@ -25638,7 +25638,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.134" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.135" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -30866,7 +30866,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.134">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.135">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -34053,7 +34053,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
   </script>
 </dom-module>
-<dom-module id="ac-activity-header" assetpath="">
+<dom-module id="ac-activity-header" assetpath="../ac-activities/">
   <template>
     <style>
       yp-user-with-organization {
@@ -34356,7 +34356,7 @@ ncap:"⩃",Ncaron:"Ň",ncaron:"ň",Ncedil:"Ņ",ncedil:"ņ",ncong:"≇",ncongdot:
       }
     }
   }
-</script><dom-module id="ac-activity-post" assetpath="">
+</script><dom-module id="ac-activity-post" assetpath="../ac-activities/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -37783,7 +37783,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     });
   </script>
 </dom-module>
-<dom-module id="ac-activity-post-header" assetpath="">
+<dom-module id="ac-activity-post-header" assetpath="../ac-activities/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -37927,7 +37927,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     });
   </script>
 </dom-module>
-<dom-module id="ac-activity-point" assetpath="">
+<dom-module id="ac-activity-point" assetpath="../ac-activities/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       .pointContainer {
@@ -38673,7 +38673,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     });
   </script>
 </dom-module>
-<dom-module id="ac-activity-point-news-story" assetpath="">
+<dom-module id="ac-activity-point-news-story" assetpath="../ac-activities/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -38751,7 +38751,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     });
   </script>
 </dom-module>
-<dom-module id="ac-activity-post-status-update" assetpath="">
+<dom-module id="ac-activity-post-status-update" assetpath="../ac-activities/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -38835,7 +38835,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     });
   </script>
 </dom-module>
-<dom-module id="ac-activity-group" assetpath="">
+<dom-module id="ac-activity-group" assetpath="../ac-activities/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -38933,7 +38933,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     });
   </script>
 </dom-module>
-<dom-module id="ac-activity-recommended-posts" assetpath="">
+<dom-module id="ac-activity-recommended-posts" assetpath="../ac-activities/">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -39853,10 +39853,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <div class="stats layout horizontal end-justified">
       <iron-icon title$="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
-      <div title$="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(community.counter_posts)}}</div>
+      <div title$="[[t('stats.posts')]]" class="stats-text" style=".">{{formatNumber(community.counter_posts)}}</div>
 
       <iron-icon title$="[[t('stats.groups')]]" icon="social:people" class="stats-icon"></iron-icon>
-      <div title$="[[t('stats.groups')]]" class="stats-text" style="">{{formatNumber(community.counter_groups)}}</div>
+      <div title$="[[t('stats.groups')]]" class="stats-text" style=".">{{formatNumber(community.counter_groups)}}</div>
 
       <iron-icon title$="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
       <div title$="[[t('stats.users')]]" class="stats-text">{{formatNumber(community.counter_users)}}</div>
@@ -50714,7 +50714,7 @@ paperMapInfo.register();
 
     <div class="stats layout horizontal end-justified">
       <iron-icon title$="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
-      <div title$="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(group.counter_posts)}}</div>
+      <div title$="[[t('stats.posts')]]" class="stats-text" style=".">{{formatNumber(group.counter_posts)}}</div>
 
       <iron-icon title$="[[t('stats.discussions')]]" icon="communication:chat-bubble-outline" class="stats-icon"></iron-icon>
       <div title$="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(group.counter_points)}}</div>
@@ -54111,14 +54111,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.134">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.135">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.134">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.135">
    * ```
    *
    * ### Consuming effects
@@ -54884,7 +54884,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.134">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.135">
 ```
 
 #### List of effects
@@ -60354,18 +60354,18 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.134"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.135"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.134"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.135"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.134"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.135"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -60479,7 +60479,7 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
     });
   </script>
 </dom-module>
-<dom-module id="yp-domain-stats" assetpath="">
+<dom-module id="yp-domain-stats" assetpath="../yp-domain/">
 
   <template>
 
@@ -60520,17 +60520,17 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
       <div class="layout horizontal wrap">
         <div class="layout horizontal">
           <iron-icon title$="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon"></iron-icon>
-          <div title$="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(domain.counter_posts)}}</div>
+          <div title$="[[t('stats.posts')]]" class="stats-text" style=".">{{formatNumber(domain.counter_posts)}}</div>
 
           <iron-icon title$="[[t('stats.discussions')]]" icon="communication:chat-bubble-outline" class="stats-icon"></iron-icon>
           <div title$="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(domain.counter_points)}}</div>
 
           <iron-icon hidden$="[[narrowScreen]]" title$="[[t('stats.communities')]]" icon="group-work" class="stats-icon hideIfMobile"></iron-icon>
-          <div hidden$="[[narrowScreen]]" title$="[[t('stats.communities')]]" class="stats-text hideIfMobile" style="">{{formatNumber(domain.counter_communities)}}</div>
+          <div hidden$="[[narrowScreen]]" title$="[[t('stats.communities')]]" class="stats-text hideIfMobile" style=".">{{formatNumber(domain.counter_communities)}}</div>
         </div>
         <div class="layout horizontal">
           <iron-icon hidden="" title$="[[t('stats.groups')]]" icon="social:people" class="stats-icon hideIfMobile"></iron-icon>
-          <div hidden="" title$="[[t('stats.groups')]]" class="stats-text hideIfMobile" style="">{{formatNumber(domain.counter_groups)}}</div>
+          <div hidden="" title$="[[t('stats.groups')]]" class="stats-text hideIfMobile" style=".">{{formatNumber(domain.counter_groups)}}</div>
 
           <iron-icon title$="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
           <div title$="[[t('stats.users')]]" class="stats-text">{{formatNumber(domain.counter_users)}}</div>
@@ -61827,9 +61827,9 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.134");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.135");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.134");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.135");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
