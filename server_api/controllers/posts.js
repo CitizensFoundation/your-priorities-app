@@ -370,7 +370,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
     include: [
       { model: models.User,
         attributes: ["id", "name", "facebook_id", "twitter_id", "google_id", "github_id"],
-        required: false,
+        required: true,
         include: [
           {
             model: models.Image, as: 'UserProfileImages',
