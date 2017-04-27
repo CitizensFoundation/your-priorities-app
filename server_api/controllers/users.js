@@ -114,7 +114,7 @@ router.post('/login', function (req, res) {
 // Register
 router.post('/register', function (req, res) {
   var user = models.User.build({
-    email: req.body.email,
+    email: req.body.email.toLowerCase(),
     name: req.body.name,
     notifications_settings: models.AcNotification.defaultNotificationSettings,
     status: 'active'
@@ -130,7 +130,8 @@ router.post('/register', function (req, res) {
       log.error("User Error", { context: 'SequelizeUniqueConstraintError', user: user, err: error,
         errorStatus: 500 });
       res.status(500).send({status:500, message: error.name, type:'internal'});
-      } else {
+
+    } else {
       sendUserOrError(res, null, 'create', error);
     }
   });
@@ -512,11 +513,41 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
   }
 });
 
+router.delete('/delete_current_user', function (req, res) {
+  if (req.isAuthenticated()) {
+    log.info('Deleting user', { user: toJson(req.user), context: 'delete_current_user'});
+    var userId = req.user.id;
+    req.logOut();
+    models.User.find({
+      where: {
+        id: userId
+      }
+    }).then(function (user) {
+      if (user) {
+        user.deleted = true;
+        user.email = user.email+"_deleted_"+Math.floor(Math.random() * 9000);
+        user.save().then(function () {
+          res.sendStatus(200);
+        });
+      } else {
+        log.error('User delete user not found', { error: error, user: toJson(req.user), context: 'delete_current_user'});
+        res.sendStatus(404);
+      }
+    }).catch(function (error) {
+      log.error('User delete error', { error: error, user: toJson(req.user), context: 'delete_current_user'});
+      res.sendStatus(500);
+    });
+  } else {
+    log.error('Trying to delete user but not logged in', { user: toJson(req.user), context: 'delete_current_user'});
+    res.sendStatus(401);
+  }
+});
+
 router.post('/logout', function (req, res) {
   if (req.isAuthenticated()) {
     log.info('User Logging out', { user: toJson(req.user), context: 'logout'});
   } else {
-    log.warn('User Logging out vut not logged in', { user: toJson(req.user), context: 'logout'});
+    log.warn('User Logging out but not logged in', { user: toJson(req.user), context: 'logout'});
   }
   req.logOut();
   res.sendStatus(200);

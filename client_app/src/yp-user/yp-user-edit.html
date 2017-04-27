@@ -37,6 +37,10 @@
       .icon {
         padding-right: 8px;
       }
+
+      #deleteUser {
+        margin-top: 16px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -82,6 +86,10 @@
               </div>
 
               <yp-language-selector name="defaultLocale" selected-locale="{{user.default_locale}}"></yp-language-selector>
+
+              <paper-button id="deleteUser" raised on-tap="_deleteUser">[[t('deleteUser')]]</paper-button>
+
+              <yp-ajax id="deleteUserAjax" method="DELETE" url="/api/users/delete_current_user"></yp-ajax>
 
               <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
               <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
@@ -157,6 +165,26 @@
 
     listeners: {
       'yp-notifications-changed': '_setNotificationSettings'
+    },
+
+    _deleteUser: function () {
+      var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+      dialog.open(this.t('areYouSureYouWantToDeleteUser'), this._deleteUserFinalWarning.bind(this));
+    },
+
+    _deleteUserFinalWarning: function () {
+      this.async(function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+        dialog.open(this.t('areYouReallySureYouWantToDeleteUser'), this._deleteUserForReals.bind(this));
+      });
+    },
+
+    _deleteUserForReals: function () {
+      this.$.deleteUserAjax.body = {};
+      this.$.deleteUserAjax.generateRequest();
+      this._clear();
+      this.$$("#editDialog").close();
+      window.location.reload();
     },
 
     _setNotificationSettings: function (event, detail) {
