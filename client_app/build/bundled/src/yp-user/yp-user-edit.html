@@ -1,25 +1,25 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.135">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.136">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.135">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.135">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.136">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.136">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.135">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.135">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.135">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.135">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.135">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.135">
-<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html?v=6.3.135">
-<link rel="import" href="../../bower_components/neon-animation/neon-animation.html?v=6.3.135">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.136">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.136">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.136">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html?v=6.3.136">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.136">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html?v=6.3.136">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html?v=6.3.136">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html?v=6.3.136">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.135">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.136">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.135">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.136">
 
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.135">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.135">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.136">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.136">
 
-<link rel="import" href="../ac-notifications/ac-notification-settings.html?v=6.3.135">
+<link rel="import" href="../ac-notifications/ac-notification-settings.html?v=6.3.136">
 
 </head><body><dom-module id="yp-user-edit">
   <template>
@@ -36,6 +36,10 @@
 
       .icon {
         padding-right: 8px;
+      }
+
+      #deleteUser {
+        margin-top: 16px;
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -72,6 +76,10 @@
               </div>
 
               <yp-language-selector name="defaultLocale" selected-locale="{{user.default_locale}}"></yp-language-selector>
+
+              <paper-button id="deleteUser" raised="" on-tap="_deleteUser">[[t('deleteUser')]]</paper-button>
+
+              <yp-ajax id="deleteUserAjax" method="DELETE" url="/api/users/delete_current_user"></yp-ajax>
 
               <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
               <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
@@ -147,6 +155,26 @@
 
     listeners: {
       'yp-notifications-changed': '_setNotificationSettings'
+    },
+
+    _deleteUser: function () {
+      var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+      dialog.open(this.t('areYouSureYouWantToDeleteUser'), this._deleteUserFinalWarning.bind(this));
+    },
+
+    _deleteUserFinalWarning: function () {
+      this.async(function () {
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
+        dialog.open(this.t('areYouReallySureYouWantToDeleteUser'), this._deleteUserForReals.bind(this));
+      });
+    },
+
+    _deleteUserForReals: function () {
+      this.$.deleteUserAjax.body = {};
+      this.$.deleteUserAjax.generateRequest();
+      this._clear();
+      this.$$("#editDialog").close();
+      window.location.reload();
     },
 
     _setNotificationSettings: function (event, detail) {

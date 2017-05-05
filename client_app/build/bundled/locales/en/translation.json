@@ -1,4 +1,7 @@
 {
+  "deleteUser": "Delete user account",
+  "areYouSureYouWantToDeleteUser": "Are you sure you want to delete your account?",
+  "areYouReallySureYouWantToDeleteUser": "Are you 100% sure you want to delete your account? All your points, comments and endorsements will be deleted and all your ideas will be anonymized!",
   "alternativePointForLabel": "Alternative point for label",
   "alternativePointAgainstLabel": "Alternative point against label",
   "sharePoint": "Share point",
