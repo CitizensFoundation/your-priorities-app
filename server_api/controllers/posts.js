@@ -668,7 +668,7 @@ router.get('/:id/endorsements', auth.can('view post'), function(req, res) {
   });
 });
 
-router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(req, res) {
+router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
   var post;
 
   models.Endorsement.find({
@@ -767,7 +767,7 @@ router.post('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(
   });
 });
 
-router.delete('/:id/endorse', auth.isLoggedIn, auth.can('vote on post'), function(req, res) {
+router.delete('/:id/endorse', auth.can('vote on post'), function(req, res) {
   console.log("user: "+req.user.id + " post: " + req.params.id);
   models.Endorsement.find({
     where: { post_id: req.params.id, user_id: req.user.id }

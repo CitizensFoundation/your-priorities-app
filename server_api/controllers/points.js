@@ -440,7 +440,7 @@ router.delete('/:id', auth.can('delete point'), function(req, res) {
   });
 });
 
-router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), function(req, res) {
+router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
   var point, post;
   models.PointQuality.find({
     where: { point_id: req.params.id, user_id: req.user.id },
@@ -537,7 +537,7 @@ router.post('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), fun
   });
 });
 
-router.delete('/:id/pointQuality', auth.isLoggedIn, auth.can('vote on point'), function(req, res) {
+router.delete('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
   models.PointQuality.find({
     where: { point_id: req.params.id, user_id: req.user.id }
   }).then(function(pointQuality) {

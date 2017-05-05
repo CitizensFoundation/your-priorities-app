@@ -129,7 +129,7 @@
 
               <paper-input id="name"
                            required
-                           minlength="5"
+                           minlength="3"
                            name="name"
                            type="text"
                            label="[[t('title')]]"
@@ -151,7 +151,7 @@
 
               <paper-textarea id="description"
                               required
-                              minlength="10"
+                              minlength="3"
                               name="description"
                               value="{{post.description}}"
                               label="[[t('post.description')]]"
@@ -170,7 +170,7 @@
             <section class="subContainer">
               <paper-textarea id="pointFor"
                               required$="[[!group.configuration.newPointOptional]]"
-                              minlength="5"
+                              minlength="3"
                               name="pointFor"
                               value="{{post.pointFor}}"
                               label="[[t('point.for')]]"

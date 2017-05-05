@@ -5,6 +5,14 @@ var toJson = require('./utils/to_json');
 
 // COMMON
 
+auth.isAuthenticated = function (req, group) {
+  if (req.user && req.user.profile_data && req.user.profile_data.isAnonGroupUser===true) {
+    return (group && req.user.profile_data.anonGroupId && req.user.profile_data.anonGroupId===group.id);
+  } else {
+    return req.isAuthenticated();
+  }
+};
+
 auth.authNeedsGroupForCreate = function (group, req, done) {
   models.Group.findOne({
     where: { id: group.id },
@@ -16,7 +24,7 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
       }
     ]
   }).then(function (group) {
-    if (!req.isAuthenticated()) {
+    if (!auth.isAuthenticated(req, group)) {
       done(null, false);
     } else if (group.access === models.Group.ACCESS_PUBLIC) {
       done(null, true);
@@ -55,7 +63,7 @@ auth.authNeedsGroupAdminForCreate = function (group, req, done) {
       }
     ]
   }).then(function (group) {
-    if (!req.isAuthenticated()) {
+    if (!auth.isAuthenticated(req, group)) {
       done(null, false);
     } else if (group.user_id === req.user.id) {
       done(null, true);
@@ -83,7 +91,7 @@ auth.authNeedsCommunnityAdminForCreate = function (community, req, done) {
   models.Community.findOne({
     where: { id: community.id }
   }).then(function (community) {
-    if (!req.isAuthenticated()) {
+    if (!auth.isAuthenticated(req)) {
       done(null, false);
     } else if (community.user_id === req.user.id) {
       done(null, true);
@@ -103,7 +111,7 @@ auth.hasDomainAdmin = function (domainId, req, done) {
   models.Domain.findOne({
     where: { id: domainId }
   }).then(function (domain) {
-    if (!req.isAuthenticated()) {
+    if (!auth.isAuthenticated(req)) {
       done(null, false);
     } else if (domain.user_id === req.user.id) {
       done(null, true);
@@ -156,7 +164,7 @@ auth.isGroupMemberOrOpenToCommunityMember = function (group, req, done) {
 };
 
 auth.isLoggedIn = function (req, res, next) {
-  if (req.isAuthenticated()) {
+  if (auth.isAuthenticated(req)) {
     log.info('User is Logged in', { context: 'isLoggedInAuth', user: toJson(req.user) });
     return next();
   } else {
@@ -169,7 +177,7 @@ auth.isLoggedIn = function (req, res, next) {
 
 // User admin
 auth.role('user.admin', function (user, req, done) {
-  if (!req.isAuthenticated()) {
+  if (!auth.isAuthenticated(req)) {
     done(null, false);
   } else {
     models.User.findOne({
@@ -197,7 +205,7 @@ auth.entity('user', function(req, done) {
 
 // Domain admin and view
 auth.role('domain.admin', function (domain, req, done) {
-  if (!req.isAuthenticated()) {
+  if (!auth.isAuthenticated(req)) {
     done();
   } else {
     models.Domain.findOne({
@@ -224,7 +232,7 @@ auth.role('domain.viewUser', function (domain, req, done) {
   }).then(function (domain) {
     if (domain.access === models.Domain.ACCESS_PUBLIC) {
       done(null, true);
-    }  else if (!req.isAuthenticated()) {
+    }  else if (!auth.isAuthenticated(req)) {
       done(null, false);
     } else if (domain.user_id === req.user.id) {
       done(null, true);
@@ -252,7 +260,7 @@ auth.entity('domain', function(req, done) {
 
 // Organization admin and view
 auth.role('organization.admin', function (organization, req, done) {
-  if (!req.isAuthenticated()) {
+  if (!auth.isAuthenticated(req)) {
     done();
   } else {
     models.Organization.findOne({
@@ -279,7 +287,7 @@ auth.role('organization.viewUser', function (organization, req, done) {
   }).then(function (organization) {
     if (organization.access === models.Organization.ACCESS_PUBLIC) {
       done(null, true);
-    }  else if (!req.isAuthenticated()) {
+    }  else if (!auth.isAuthenticated(req)) {
       done(null, false);
     } else if (organization.user_id === req.user.id) {
       done(null, true);
@@ -307,7 +315,7 @@ auth.entity('organization', function(req, done) {
 
 // Bulk Status Updates Admin
 auth.role('bulkStatusUpdates.admin', function (community, req, done) {
-  if (!req.isAuthenticated()) {
+  if (!auth.isAuthenticated(req)) {
     done();
   } else {
     models.Community.findOne({
@@ -340,7 +348,7 @@ auth.entity('bulkStatusUpdates', function(req, done) {
 
 // Community admin and view
 auth.role('community.admin', function (community, req, done) {
-  if (!req.isAuthenticated()) {
+  if (!auth.isAuthenticated(req)) {
     done();
   } else {
     models.Community.findOne({
@@ -369,7 +377,7 @@ auth.role('community.viewUser', function (community, req, done) {
       done(null, false);
     } else if (community.access === models.Community.ACCESS_PUBLIC) {
       done(null, true);
-    }  else if (!req.isAuthenticated()) {
+    }  else if (!auth.isAuthenticated(req)) {
       done(null, false);
     } else if (community.user_id === req.user.id) {
       done(null, true);
@@ -391,7 +399,7 @@ auth.entity('community', function(req, done) {
 
 // Group admin and view
 auth.role('group.admin', function (group, req, done) {
-  if (!req.isAuthenticated()) {
+  if (!auth.isAuthenticated(req)) {
     done();
   } else {
     models.Group.findOne({
@@ -426,7 +434,7 @@ auth.role('group.viewUser', function (group, req, done) {
     if (group.access === models.Group.ACCESS_PUBLIC &&
         group.Community.access === models.Community.ACCESS_PUBLIC) {
       done(null, true);
-    }  else if (!req.isAuthenticated()) {
+    }  else if (!auth.isAuthenticated(req)) {
       done(null, false);
     } else if (group.user_id === req.user.id) {
       done(null, true);
@@ -449,7 +457,7 @@ auth.entity('group', function(req, done) {
 // Post admin and view
 
 auth.role('post.admin', function (post, req, done) {
-  if (!req.isAuthenticated()) {
+  if (!auth.isAuthenticated(req)) {
     done();
   } else {
     models.Post.findOne({
@@ -459,7 +467,7 @@ auth.role('post.admin', function (post, req, done) {
       ]
     }).then(function (post) {
       var group = post.Group;
-      if (!req.isAuthenticated()) {
+      if (!auth.isAuthenticated(req, group)) {
         done(null, false);
       } else if (post.user_id === req.user.id) {
         done(null, true);
@@ -477,7 +485,7 @@ auth.role('post.admin', function (post, req, done) {
 });
 
 auth.role('post.statusChange', function (post, req, done) {
-  if (!req.isAuthenticated()) {
+  if (!auth.isAuthenticated(req)) {
     done();
   } else {
     models.Post.findOne({
@@ -487,7 +495,7 @@ auth.role('post.statusChange', function (post, req, done) {
       ]
     }).then(function (post) {
       var group = post.Group;
-      if (!req.isAuthenticated()) {
+      if (!auth.isAuthenticated(req)) {
         done(null, false);
       } else {
         group.hasGroupAdmins(req.user).then(function (result) {
@@ -524,7 +532,7 @@ auth.role('post.viewUser', function (post, req, done) {
     var group = post.Group;
     if (group.access === models.Group.ACCESS_PUBLIC) {
       done(null, true);
-    }  else if (!req.isAuthenticated()) {
+    }  else if (!auth.isAuthenticated(req, group)) {
       done(null, false);
     } else if (post.user_id === req.user.id) {
       done(null, true);
@@ -551,7 +559,7 @@ auth.role('post.vote', function (post, req, done) {
     ]
   }).then(function (post) {
     var group = post.Group;
-    if (!req.isAuthenticated()) {
+    if (!auth.isAuthenticated(req, group)) {
       done(null, false);
     } else if (group.access === models.Group.ACCESS_PUBLIC) {
       done(null, true);
@@ -578,10 +586,8 @@ auth.entity('post', function(req, done) {
 
 // Post admin and view
 
-auth.role('point.delete', function (point, req, done) {
-  if (!req.isAuthenticated()) {
-    done();
-  } models.Point.findOne({
+auth.role('point.admin', function (point, req, done) {
+  models.Point.findOne({
     where: { id: point.id },
     include: [
       {
@@ -602,13 +608,16 @@ auth.role('point.delete', function (point, req, done) {
   }).then(function (point) {
     var group;
 
+
     if (point && point.Post) {
       group = point.Post.Group;
     } else {
       group = point.Group;
     }
 
-    if (point && group) {
+    if (!auth.isAuthenticated(req, group)) {
+      done(null, false);
+    } else if (point && group) {
       if (point.user_id === req.user.id) {
         done(null, true);
       } else {
@@ -620,18 +629,6 @@ auth.role('point.delete', function (point, req, done) {
           }
         });
       }
-    }
-  })
-});
-
-auth.role('point.admin', function (point, req, done) {
-  if (!req.isAuthenticated()) {
-    done();
-  } models.Point.findOne({
-    where: { id: point.id }
-  }).then(function (point) {
-    if (point.user_id === req.user.id) {
-      done(null, true);
     } else {
       done(null, false);
     }
@@ -676,7 +673,7 @@ auth.role('point.viewUser', function (point, req, done) {
     if (point && group) {
       if (group.access === models.Group.ACCESS_PUBLIC) {
         done(null, true);
-      } else if (!req.isAuthenticated()) {
+      } else if (!auth.isAuthenticated(req)) {
         done(null, false);
       } else if (point.user_id === req.user.id) {
         done(null, true);
@@ -724,7 +721,7 @@ auth.role('image.viewUser', function (image, req, done) {
     if (group) {
       if (group.access === models.Group.ACCESS_PUBLIC) {
         done(null, true);
-      }  else if (!req.isAuthenticated()) {
+      }  else if (!auth.isAuthenticated(req)) {
         done(null, false);
       } else if (group.user_id === req.user.id) {
         done(null, true);
@@ -776,7 +773,7 @@ auth.role('point.vote', function (point, req, done) {
     }
 
     if (group) {
-      if (!req.isAuthenticated()) {
+      if (!auth.isAuthenticated(req, group)) {
         done(null, false);
       } else if (group.access === models.Group.ACCESS_PUBLIC) {
         done(null, true);
@@ -816,14 +813,14 @@ auth.entity('image', function(req, done) {
 // Category admin and view
 
 auth.role('category.admin', function (category, req, done) {
-  if (!req.isAuthenticated()) {
+  if (!auth.isAuthenticated(req)) {
     done();
   } else {
     models.Category.findOne({
       where: { id: category.id }
     }).then(function (category) {
       var group = category.Group;
-      if (!req.isAuthenticated()) {
+      if (!auth.isAuthenticated(req)) {
         done(null, false);
       } else if (category.user_id === req.user.id) {
         done(null, true);
@@ -861,7 +858,7 @@ auth.role('category.viewUser', function (category, req, done) {
     var group = category.Group;
     if (group.access === models.Group.ACCESS_PUBLIC) {
       done(null, true);
-    }  else if (!req.isAuthenticated()) {
+    }  else if (!auth.isAuthenticated(req)) {
       done(null, false);
     } else if (category.user_id === req.user.id) {
       done(null, true);
@@ -955,7 +952,7 @@ auth.role('createCommunityGroup.createGroup', function (community, req, done) {
   models.Community.findOne({
     where: { id: community.id }
   }).then(function (community) {
-    if (!req.isAuthenticated()) {
+    if (!auth.isAuthenticated(req)) {
       done(null, false);
     } else if (community.access === models.Community.ACCESS_PUBLIC) {
       done(null, true);
@@ -983,7 +980,7 @@ auth.role('createDomainCommunity.createCommunity', function (domain, req, done) 
   models.Domain.findOne({
     where: { id: domain.id }
   }).then(function (domain) {
-    if (!req.isAuthenticated()) {
+    if (!auth.isAuthenticated(req)) {
       done(null, false);
     } else if (domain.access === models.Domain.ACCESS_PUBLIC) {
       done(null, true);
@@ -1017,7 +1014,7 @@ auth.role('createDomainOrganization.createDomainOrganization', function (domain,
   models.Domain.findOne({
     where: { id: domain.id }
   }).then(function (domain) {
-    if (!req.isAuthenticated()) {
+    if (!auth.isAuthenticated(req)) {
       done(null, false);
     } else if (domain.access === models.Domain.ACCESS_PUBLIC) {
       done(null, true);
@@ -1039,7 +1036,7 @@ auth.role('createCommunityOrganization.createCommunityOrganization', function (d
   models.Community.findOne({
     where: { id: community.id }
   }).then(function (community) {
-    if (!req.isAuthenticated()) {
+    if (!auth.isAuthenticated(req)) {
       done(null, false);
     } else if (community.access === models.Domain.ACCESS_PUBLIC) {
       done(null, true);
@@ -1080,7 +1077,7 @@ auth.action('send status change', ['post.statusChange']);
 auth.action('edit user', ['user.admin']);
 auth.action('edit category', ['category.admin']);
 auth.action('edit point', ['point.admin']);
-auth.action('delete point', ['point.delete']);
+auth.action('delete point', ['point.admin']);
 auth.action('edit bulkStatusUpdate', ['bulkStatusUpdates.admin']);
 
 auth.action('view organization', ['organization.viewUser']);
