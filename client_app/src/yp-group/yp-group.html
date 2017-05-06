@@ -167,7 +167,7 @@
         <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-card-large>
       </div>
 
-      <template is="dom-if" if="[[createFabIcon]]">
+      <template is="dom-if" if="[[!disableNewPosts]]" restamp>
         <div class="largeAddButton layout horizontal center-center">
           <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
         </div>
@@ -238,11 +238,11 @@
       </iron-pages>
     </div>
 
-    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden$="[[post.Group.configuration.hideNewPostOnPostPage]]">
-      <template is="dom-if" if="[[createFabIcon]]">
-        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
-      </template>
-    </div>
+    <template is="dom-if" if="[[!disableNewPosts]]" restamp>
+      <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden$="[[disableNewPosts]]">
+          <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
+      </div>
+    </template>
 
     <iron-scroll-threshold id="scrollTheshold"
                            lower-threshold="150"
@@ -302,8 +302,7 @@
 
         createFabIcon: {
           type: String,
-          value: null,
-          notify: true
+          value: "lightbulb-outline"
         },
 
         groupId: {
@@ -546,14 +545,12 @@
 
         if (this.group.configuration.canAddNewPosts!=undefined) {
           if (this.group.configuration.canAddNewPosts===true) {
-            this.set('createFabIcon',"lightbulb-outline");
             this.set('disableNewPosts', false);
           } else {
             this.set('disableNewPosts', true);
-            this.set('createFabIcon', null);
           }
         } else {
-          this.set('createFabIcon',"lightbulb-outline");
+          this.set('disableNewPosts', false);
         }
 
         this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);

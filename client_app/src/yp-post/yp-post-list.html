@@ -235,7 +235,8 @@
 
         group: {
           type: Object,
-          notify: true
+          notify: true,
+          observer: "_groupChanged"
         },
 
         filter: {
@@ -367,10 +368,25 @@
       },
 
       _groupIdChanged: function (newValue, oldValue) {
+
+      },
+
+      _groupChanged: function (group) {
         this.set("posts", null);
         this.set('noPosts', false);
-        this.set('moreToLoad', true);
-        if (newValue) {
+        if (group) {
+          this.set('moreToLoad', true);
+          if (group.configuration && group.configuration.canAddNewPosts!=undefined) {
+            if (group.configuration.canAddNewPosts===true) {
+              this.set('filter','newest');
+            } else if (group.configuration.canAddNewPosts===false && group.configuration.canVote===false) {
+              this.set('filter','top');
+            } else {
+              this.set('filter','random');
+            }
+          } else if (!this.filter) {
+            this.set('filter','newest');
+          }
           this._loadMoreData();
         }
       },
@@ -382,7 +398,7 @@
       },
 
       _loadMoreData: function () {
-        if (this.moreToLoad) {
+        if (this.moreToLoad && this.group) {
           console.info("_loadMoreData for groupId: "+this.groupId+" statusFilter: "+this.statusFilter);
 
           this.set('moreToLoad', false);
@@ -397,8 +413,6 @@
             objectType = 'groups';
           }
 
-          if (!this.filter)
-            this.set('filter','newest');
           if (this.searchingFor) {
             this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
           } else {
