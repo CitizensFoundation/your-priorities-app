@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.136"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.137"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -1743,7 +1743,7 @@
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
 
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden$="[[post.Group.configuration.hideNewPostOnPostPage]]">
-      <template is="dom-if" if="[[createFabIcon]]">
+      <template is="dom-if" if="[[!disableNewPosts]]">
         <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
       </template>
     </div>
@@ -1812,7 +1812,7 @@
 
           createFabIcon: {
             type: String,
-            value: null
+            value: "lightbulb-outline"
           },
 
           disableNewPosts: {
@@ -1971,14 +1971,12 @@
 
           if (this.post.Group.configuration && this.post.Group.configuration.canAddNewPosts!=undefined) {
             if (this.post.Group.configuration.canAddNewPosts===true) {
-              this.set('createFabIcon',"lightbulb-outline");
               this.set('disableNewPosts', false);
             } else {
               this.set('disableNewPosts', true);
-              this.set('createFabIcon', null);
             }
           } else {
-            this.set('createFabIcon',"lightbulb-outline");
+            this.set('disableNewPosts', false);
           }
 
           if (this.post.description === null) {

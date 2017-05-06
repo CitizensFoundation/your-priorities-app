@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.136"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.137"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -775,7 +775,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         group: {
           type: Object,
-          notify: true
+          notify: true,
+          observer: "_groupChanged"
         },
 
         filter: {
@@ -907,10 +908,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _groupIdChanged: function (newValue, oldValue) {
+
+      },
+
+      _groupChanged: function (group) {
         this.set("posts", null);
         this.set('noPosts', false);
-        this.set('moreToLoad', true);
-        if (newValue) {
+        if (group) {
+          this.set('moreToLoad', true);
+          if (group.configuration && group.configuration.canAddNewPosts!=undefined) {
+            if (group.configuration.canAddNewPosts===true) {
+              this.set('filter','newest');
+            } else if (group.configuration.canAddNewPosts===false && group.configuration.canVote===false) {
+              this.set('filter','top');
+            } else {
+              this.set('filter','random');
+            }
+          } else if (!this.filter) {
+            this.set('filter','newest');
+          }
           this._loadMoreData();
         }
       },
@@ -922,7 +938,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _loadMoreData: function () {
-        if (this.moreToLoad) {
+        if (this.moreToLoad && this.group) {
           console.info("_loadMoreData for groupId: "+this.groupId+" statusFilter: "+this.statusFilter);
 
           this.set('moreToLoad', false);
@@ -937,8 +953,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             objectType = 'groups';
           }
 
-          if (!this.filter)
-            this.set('filter','newest');
           if (this.searchingFor) {
             this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
           } else {
@@ -1477,7 +1491,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-card-large>
       </div>
 
-      <template is="dom-if" if="[[createFabIcon]]">
+      <template is="dom-if" if="[[!disableNewPosts]]" restamp="">
         <div class="largeAddButton layout horizontal center-center">
           <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
         </div>
@@ -1548,11 +1562,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </iron-pages>
     </div>
 
-    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden$="[[post.Group.configuration.hideNewPostOnPostPage]]">
-      <template is="dom-if" if="[[createFabIcon]]">
-        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
-      </template>
-    </div>
+    <template is="dom-if" if="[[!disableNewPosts]]" restamp="">
+      <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden$="[[disableNewPosts]]">
+          <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
+      </div>
+    </template>
 
     <iron-scroll-threshold id="scrollTheshold" lower-threshold="150" on-lower-threshold="_loadMoreData" scroll-target="document">
     </iron-scroll-threshold>
@@ -1601,8 +1615,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         createFabIcon: {
           type: String,
-          value: null,
-          notify: true
+          value: "lightbulb-outline"
         },
 
         groupId: {
@@ -1845,14 +1858,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         if (this.group.configuration.canAddNewPosts!=undefined) {
           if (this.group.configuration.canAddNewPosts===true) {
-            this.set('createFabIcon',"lightbulb-outline");
             this.set('disableNewPosts', false);
           } else {
             this.set('disableNewPosts', true);
-            this.set('createFabIcon', null);
           }
         } else {
-          this.set('createFabIcon',"lightbulb-outline");
+          this.set('disableNewPosts', false);
         }
 
         this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
