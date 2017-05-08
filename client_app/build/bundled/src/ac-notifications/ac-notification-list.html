@@ -1,17 +1,17 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.139">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.140">
 
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.139">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.140">
 
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.139">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.140">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.139">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.139">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.139">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.139">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.140">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.140">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.140">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.140">
 
-<link rel="import" href="ac-notification-list-post.html?v=6.3.139">
-<link rel="import" href="ac-notification-list-point.html?v=6.3.139">
-<link rel="import" href="ac-notification-list-general-item.html?v=6.3.139">
+<link rel="import" href="ac-notification-list-post.html?v=6.3.140">
+<link rel="import" href="ac-notification-list-point.html?v=6.3.140">
+<link rel="import" href="ac-notification-list-general-item.html?v=6.3.140">
 
 </head><body><dom-module id="ac-notification-list">
   <template>
@@ -164,8 +164,8 @@
       },
 
       _markAsViewed: function (notifications) {
+        var marked = [];
         if (notifications) {
-          var marked = [];
           notifications.forEach(function (notification) {
             if (!notification.viewed) {
               marked.push(notification.id);
@@ -213,8 +213,12 @@
 
       _userChanged: function (user) {
         if (user) {
-          this.$.loadNotificationsAjax.url = this.url;
-          this.$.loadNotificationsAjax.generateRequest();
+          if (user.profile_data && user.profile_data.isAnonymousUser) {
+            this.cancelTimer();
+          } else {
+            this.$.loadNotificationsAjax.url = this.url;
+            this.$.loadNotificationsAjax.generateRequest();
+          }
         } else {
           this.cancelTimer();
         }
