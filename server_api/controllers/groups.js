@@ -143,7 +143,7 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.alternativePointForLabel', (req.body.alternativePointForLabel && req.body.alternativePointForLabel!="") ? req.body.alternativePointForLabel : null);
   group.set('configuration.alternativePointAgainstLabel', (req.body.alternativePointAgainstLabel && req.body.alternativePointAgainstLabel!="") ? req.body.alternativePointAgainstLabel : null);
-  group.set('configuration.allowAnonymousUsers', (req.body.allowAnonymousUsers && req.body.allowAnonymousUsers!="") ? req.body.allowAnonymousUsers : null);
+  group.set('configuration.allowAnonymousUsers', truthValueFromBody(req.body.allowAnonymousUsers));
 };
 
 router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), function(req, res) {

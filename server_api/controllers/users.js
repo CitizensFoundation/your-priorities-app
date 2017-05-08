@@ -19,7 +19,7 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
                                 errorStatus: errorStatus ? errorStatus : 500 });
     }
     if (errorStatus) {
-      res.status(errorStatus).send({ message: error.name });
+      res.status(errorStatus).send({ message: error ? error.name  : "Unknown"});
     } else {
       res.status(500).send({ message: error.name });
     }
@@ -35,7 +35,7 @@ var getUserWithAll = function (userId, callback) {
     function (seriesCallback) {
       models.User.find({
         where: {id: userId},
-        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','email','default_locale']),
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','profile_data','email','default_locale']),
         order: [
           [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
           [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
@@ -138,7 +138,7 @@ router.post('/register', function (req, res) {
 });
 
 // Register anonymous
-router.post('/register_anonymous', function (req, res) {
+router.post('/register_anonymously', function (req, res) {
   var groupId = req.body.groupId;
   models.Group.find({
     where: {
@@ -155,7 +155,7 @@ router.post('/register_anonymous', function (req, res) {
         if (existingUser && existingUser.profile_data && existingUser.profile_data.isAnonymousUser) {
           log.info('Found Already Registered Anonymous', { user: toJson(existingUser), context: 'register_anonymous' });
           req.logIn(existingUser, function (error, detail) {
-            sendUserOrError(res, user, 'register_anonymous', error, 401);
+            sendUserOrError(res, existingUser, 'register_anonymous', error, 401);
           });
         } else {
           var user = models.User.build({
@@ -165,6 +165,7 @@ router.post('/register_anonymous', function (req, res) {
             status: 'active'
           });
 
+          user.set('profile_data', {});
           user.set('profile_data.isAnonymousUser', true);
           user.save().then(function () {
             log.info('User Created Anonymous', { user: toJson(user), context: 'register_anonymous' });
@@ -186,7 +187,7 @@ router.post('/register_anonymous', function (req, res) {
         res.status(500).send({status:500, message: error.name, type:'internal'});
       });
     } else {
-      log.error("Tried ot register to a group anonymously", { context: 'register_anonymous', user: user, err: "", errorStatus: 401 });
+      log.error("Tried ot register to a group anonymously", { context: 'register_anonymous', err: "", errorStatus: 401 });
       req.sendStatus(401);
     }
   }).catch(function (error) {

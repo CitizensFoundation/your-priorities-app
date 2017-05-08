@@ -190,7 +190,7 @@ passport.serializeUser(function (profile, done) {
 passport.deserializeUser(function (sessionUser, done) {
   models.User.find({
     where: {id: sessionUser.userId},
-    attributes: ["id", "name", "email", "default_locale", "facebook_id", "twitter_id", "google_id", "github_id", "ssn"],
+    attributes: ["id", "name", "email", "default_locale", "facebook_id", "twitter_id", "google_id", "github_id", "ssn", "profile_data"],
     include: [
       {
         model: models.Image, as: 'UserProfileImages',

@@ -192,7 +192,7 @@
 
       _userLoggedIn: function (user) {
         if (user) {
-          if (this.community) {
+          if (this.community && window.location.href.indexOf("/community/") > -1) {
             this.$$('#ajax').generateRequest();
           }
         }

@@ -483,14 +483,23 @@
         },
 
         _isLoggedInResponse: function(event, detail) {
-          if (detail.response===0) {
+          var user = detail.response;
+          if (user===0) {
             this.removeUserSession();
-          } else if (detail.response.name) {
-            this.setLoggedInUser(detail.response);
+          } else if (user.name && user.profile_data && user.profile_data.isAnonymousUser) {
+            this.async(function () {
+              if (window.appGlobals.currentAnonymousGroup) {
+                this.setLoggedInUser(user);
+              } else {
+                window.appGlobals.setAnonymousUser(user);
+              }
+            }, 300);
+          } else if (user.name) {
+            this.setLoggedInUser(user);
           }
-          if (detail.response.missingEmail) {
+          if (user.missingEmail) {
             var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("missingEmail");
-            dialog.open(detail.response.loginProvider);
+            dialog.open(user.loginProvider);
           }
 
           if (this.completeExternalLoginText) {

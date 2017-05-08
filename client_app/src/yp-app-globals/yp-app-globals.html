@@ -107,24 +107,25 @@
           }
         },
 
-        // TODO: Just keep the anonymous user active but log him out in the client when not in a group that supports anonymous
-        // The server just holds a reference to one anon user that can use any anon enabled group
-        // If you really log in, destroy the anonymous client user reference.
-
         setAnonymousUser: function (user) {
           this.set('currentAnonymousUser', user);
+          console.debug("Set anon user "+user);
         },
 
         setAnonymousGroupStatus: function (group) {
           if (group && group.configuration && group.configuration.allowAnonymousUsers) {
             this.set('currentAnonymousGroup', group);
+            console.debug("Have set anonymous group id: "+group.id);
             if (!window.appUser.user && this.currentAnonymousUser) {
+              console.debug("Setting anon user from cache");
               window.appUser.setLoggedInUser(this.currentAnonymousUser);
             }
           } else {
             if (window.appUser.user && window.appUser.user.profile_data && window.appUser.user.profile_data.isAnonymousUser) {
               window.appUser.removeAnonymousUser();
+              console.debug("Logout anon user");
             }
+            console.debug("Set anon group to null");
             this.set('currentAnonymousGroup', null);
           }
         },
@@ -190,11 +191,13 @@
         },
 
         _userLoggedIn: function (event, user) {
-          this.async(function () {
-            if (typeof ga == 'function') {
-              ga('set', '&uid', user.id);
-            }
-          }, 250); // Wait a bit to make sure google anlytics tracking id has been set up dynamatically
+          if (user) {
+            this.async(function () {
+              if (typeof ga == 'function') {
+                ga('set', '&uid', user.id);
+              }
+            }, 250); // Wait a bit to make sure google analytics tracking id has been set up dynamatically
+          }
         },
 
         _bootResponse: function (event, detail) {
