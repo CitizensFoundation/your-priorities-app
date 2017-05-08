@@ -286,7 +286,7 @@
         },
 
         loggedIn: function () {
-          return this.$.session.has('user');
+          return this.user!=null;
         },
 
         logout: function () {
