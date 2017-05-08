@@ -86,6 +86,16 @@
             value: {}
           },
 
+          currentAnonymousUser: {
+            type: Object,
+            value: null
+          },
+
+          currentAnonymousGroup: {
+            type: Object,
+            value: null
+          },
+
           communityTrackerId: {
             type: String,
             value: null
@@ -94,6 +104,28 @@
           communityTrackerIds: {
             type: Object,
             value: {}
+          }
+        },
+
+        // TODO: Just keep the anonymous user active but log him out in the client when not in a group that supports anonymous
+        // The server just holds a reference to one anon user that can use any anon enabled group
+        // If you really log in, destroy the anonymous client user reference.
+
+        setAnonymousUser: function (user) {
+          this.set('currentAnonymousUser', user);
+        },
+
+        setAnonymousGroupStatus: function (group) {
+          if (group && group.configuration && group.configuration.allowAnonymousUsers) {
+            this.set('currentAnonymousGroup', group);
+            if (!window.appUser.user && this.currentAnonymousUser) {
+              window.appUser.setLoggedInUser(this.currentAnonymousUser);
+            }
+          } else {
+            if (window.appUser.user && window.appUser.user.profile_data && window.appUser.user.profile_data.isAnonymousUser) {
+              window.appUser.removeAnonymousUser();
+            }
+            this.set('currentAnonymousGroup', null);
           }
         },
 

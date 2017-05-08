@@ -629,6 +629,7 @@
 
           this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
           this.$.pagesAjax.generateRequest();
+          window.appGlobals.setAnonymousGroupStatus(this.group);
         }
       },
 

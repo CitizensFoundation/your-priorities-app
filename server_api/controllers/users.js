@@ -137,6 +137,64 @@ router.post('/register', function (req, res) {
   });
 });
 
+// Register anonymous
+router.post('/register_anonymous', function (req, res) {
+  var groupId = req.body.groupId;
+  models.Group.find({
+    where: {
+      id: groupId
+    }
+  }).then(function (group) {
+    if (group && group.configuration && group.configuration.allowAnonymousUsers) {
+      var anonEmail = req.sessionID+"_anonymous@citizens.is";
+      models.User.find({
+        where: {
+          email: anonEmail
+        }
+      }).then(function (existingUser) {
+        if (existingUser && existingUser.profile_data && existingUser.profile_data.isAnonymousUser) {
+          log.info('Found Already Registered Anonymous', { user: toJson(existingUser), context: 'register_anonymous' });
+          req.logIn(existingUser, function (error, detail) {
+            sendUserOrError(res, user, 'register_anonymous', error, 401);
+          });
+        } else {
+          var user = models.User.build({
+            email: anonEmail,
+            name: "Anonymous User",
+            notifications_settings: models.AcNotification.anonymousNotificationSettings,
+            status: 'active'
+          });
+
+          user.set('profile_data.isAnonymousUser', true);
+          user.save().then(function () {
+            log.info('User Created Anonymous', { user: toJson(user), context: 'register_anonymous' });
+            req.logIn(user, function (error, detail) {
+              sendUserOrError(res, user, 'register_anonymous', error, 401);
+            });
+          }).catch(function (error) {
+            if (error && error.name=='SequelizeUniqueConstraintError') {
+              log.error("User Error", { context: 'SequelizeUniqueConstraintError', user: user, err: error,
+                errorStatus: 500 });
+              res.status(500).send({status:500, message: error.name, type:'internal'});
+            } else {
+              sendUserOrError(res, null, 'register_anonymous', error);
+            }
+          });
+        }
+      }).catch(function (error) {
+        log.error("User Error", { context: 'register_anonymous', err: error, errorStatus: 500 });
+        res.status(500).send({status:500, message: error.name, type:'internal'});
+      });
+    } else {
+      log.error("Tried ot register to a group anonymously", { context: 'register_anonymous', user: user, err: "", errorStatus: 401 });
+      req.sendStatus(401);
+    }
+  }).catch(function (error) {
+    log.error("User Error", { context: 'register_anonymous', err: error, errorStatus: 500 });
+    res.status(500).send({status:500, message: error.name, type:'internal'});
+  });
+});
+
 // Edit User
 router.put('/:id', auth.can('edit user'), function (req, res) {
   models.User.find({

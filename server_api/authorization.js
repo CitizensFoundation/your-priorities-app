@@ -6,8 +6,8 @@ var toJson = require('./utils/to_json');
 // COMMON
 
 auth.isAuthenticated = function (req, group) {
-  if (req.user && req.user.profile_data && req.user.profile_data.isAnonGroupUser===true) {
-    return (group && req.user.profile_data.anonGroupId && req.user.profile_data.anonGroupId===group.id);
+  if (req.user && req.user.profile_data && req.user.profile_data.isAnonymousUser===true) {
+    return (group && group.configuration && group.configuration.allowAnonymousUsers);
   } else {
     return req.isAuthenticated();
   }

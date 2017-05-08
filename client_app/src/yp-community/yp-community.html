@@ -381,6 +381,7 @@
                                        backPath: "/domain/" + this.community.domain_id });
           this.$.pagesAjax.url = "/api/communities/"+this.community.id+"/pages";
           this.$.pagesAjax.generateRequest();
+          window.appGlobals.setAnonymousGroupStatus(null);
         }
       },
 
