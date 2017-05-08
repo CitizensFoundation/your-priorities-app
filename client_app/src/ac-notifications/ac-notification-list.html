@@ -166,8 +166,8 @@
       },
 
       _markAsViewed: function (notifications) {
+        var marked = [];
         if (notifications) {
-          var marked = [];
           notifications.forEach(function (notification) {
             if (!notification.viewed) {
               marked.push(notification.id);
@@ -215,8 +215,12 @@
 
       _userChanged: function (user) {
         if (user) {
-          this.$.loadNotificationsAjax.url = this.url;
-          this.$.loadNotificationsAjax.generateRequest();
+          if (user.profile_data && user.profile_data.isAnonymousUser) {
+            this.cancelTimer();
+          } else {
+            this.$.loadNotificationsAjax.url = this.url;
+            this.$.loadNotificationsAjax.generateRequest();
+          }
         } else {
           this.cancelTimer();
         }
