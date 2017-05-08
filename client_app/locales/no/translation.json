@@ -1,4 +1,11 @@
 {
+  "participateAnonymously": "Delta anonymt",
+  "allowAnonymousUsers": "Tillat anonyme brukere",
+  "deleteUser": "Slett brukerkonto",
+  "areYouSureYouWantToDeleteUser": "Er du sikker på at du vil slette kontoen din?",
+  "areYouReallySureYouWantToDeleteUser": "Er du 100% sikker på at du vil slette kontoen din? Alle dine argumenter, kommentarer og stemminger vil bli slettet, og alle dine ideer vil bli anonymisert!",
+  "alternativePointForLabel": "Alternativ tekst inntastingsfelt 'Argument for'",
+  "alternativePointAgainstLabel": "Alternativ tekst inntastingsfelt 'Argument mot'",
   "sharePoint": "Del argument",
   "alternativePointForHeader": "Alternativ overskrift til 'argument for'",
   "alternativePointAgainstHeader": "Alternativ overskrift til 'argument mot'",

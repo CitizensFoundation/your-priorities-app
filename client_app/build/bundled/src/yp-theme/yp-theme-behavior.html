@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.137">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.138">
 
 <script>
   /**
@@ -242,8 +242,28 @@
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.137", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.138", fontName: 'FFClanWebBook' });
 
+      this.push('themes', {
+        name: 'I choose Malta',
+        '--primary-background-color': 'var(--paper-blue-grey-100)',
+        '--primary-color': '#001a4b',
+        '--primary-color-200': '#000024',
+        '--primary-color-300': '#000024',
+        '--primary-color-400': '#001a4b',
+        '--primary-color-600': '#001a4b',
+        '--primary-color-700': '#001a4b',
+        '--primary-color-800': '#001a4b',
+        '--primary-color-900': '#001a4b',
+        '--accent-color': '#d71920',
+        '--accent-color-100': '#d71920',
+        '--accent-color-200': '#d71920',
+        '--accent-color-300': '#d71920',
+        '--accent-color-400': '#d71920',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff'
+      });
+      this.push('fonts', {});
     },
 
     setTheme: function (number) {
@@ -253,7 +273,7 @@
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.137";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.138";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {

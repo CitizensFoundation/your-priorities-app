@@ -1,15 +1,15 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.137">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.138">
 
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.137">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.138">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.137">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.137">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.137">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.138">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.138">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.138">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.137">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.138">
 
-<link rel="import" href="../yp-session/yp-session.html?v=6.3.137">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.137">
+<link rel="import" href="../yp-session/yp-session.html?v=6.3.138">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.138">
 
 </head><body><dom-module id="yp-app-globals">
 
@@ -86,6 +86,16 @@
             value: {}
           },
 
+          currentAnonymousUser: {
+            type: Object,
+            value: null
+          },
+
+          currentAnonymousGroup: {
+            type: Object,
+            value: null
+          },
+
           communityTrackerId: {
             type: String,
             value: null
@@ -94,6 +104,29 @@
           communityTrackerIds: {
             type: Object,
             value: {}
+          }
+        },
+
+        setAnonymousUser: function (user) {
+          this.set('currentAnonymousUser', user);
+          console.debug("Set anon user "+user);
+        },
+
+        setAnonymousGroupStatus: function (group) {
+          if (group && group.configuration && group.configuration.allowAnonymousUsers) {
+            this.set('currentAnonymousGroup', group);
+            console.debug("Have set anonymous group id: "+group.id);
+            if (!window.appUser.user && this.currentAnonymousUser) {
+              console.debug("Setting anon user from cache");
+              window.appUser.setLoggedInUser(this.currentAnonymousUser);
+            }
+          } else {
+            if (window.appUser.user && window.appUser.user.profile_data && window.appUser.user.profile_data.isAnonymousUser) {
+              window.appUser.removeAnonymousUser();
+              console.debug("Logout anon user");
+            }
+            console.debug("Set anon group to null");
+            this.set('currentAnonymousGroup', null);
           }
         },
 
@@ -158,11 +191,13 @@
         },
 
         _userLoggedIn: function (event, user) {
-          this.async(function () {
-            if (typeof ga == 'function') {
-              ga('set', '&uid', user.id);
-            }
-          }, 250); // Wait a bit to make sure google anlytics tracking id has been set up dynamatically
+          if (user) {
+            this.async(function () {
+              if (typeof ga == 'function') {
+                ga('set', '&uid', user.id);
+              }
+            }, 250); // Wait a bit to make sure google analytics tracking id has been set up dynamatically
+          }
         },
 
         _bootResponse: function (event, detail) {

@@ -1,21 +1,21 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.137">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.138">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.137">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.137">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.138">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.138">
 
-<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.137">
-<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.137">
+<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.138">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.138">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.137">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.137">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.137">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.137">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.137">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.137">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.138">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.138">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.138">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.138">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.138">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.138">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.137">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.138">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.137">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.138">
 
 </head><body><dom-module id="yp-login">
 
@@ -270,6 +270,7 @@
             <paper-spinner active="" hidden$="[[!userSpinner]]"></paper-spinner>
             <yp-ajax id="loginAjax" dispatch-error="" on-error="_loginError" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
             <yp-ajax id="registerAjax" method="POST" dispatch-error="" on-error="_registerError" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
+            <yp-ajax id="registerAnonymouslyAjax" method="POST" dispatch-error="" on-error="_registerError" url="/api/users/register_anonymously" on-response="_registerResponse"></yp-ajax>
             <paper-button dialog-dismiss="">[[t('cancel')]]</paper-button>
             <paper-button on-tap="_forgotPassword">[[t('user.newPassword')]]</paper-button>
             <paper-button autofocus="" on-tap="_validateAndSend">[[submitText]]</paper-button>
@@ -282,6 +283,11 @@
 
           <div class="layout vertical center-center socialMediaLogin" hidden$="[[!hasAdditionalAuthMethods]]">
             <div class="layout horizontal center-center">
+
+              <template is="dom-if" if="[[hasAnonymousLogin]]">
+                <paper-button raised="" on-tap="_anonymousLogin">[[t('participateAnonymously')]]</paper-button>
+              </template>
+
               <template is="dom-if" if="[[hasFacebookLogin]]">
                 <div class="btn-auth btn-facebook" on-tap="_facebookLogin">
                   [[t('user.facebookLogin')]]
@@ -417,6 +423,11 @@
         computed: '_hasFacebookLogin(domain)'
       },
 
+      hasAnonymousLogin: {
+        type: Boolean,
+        value: false
+      },
+
       hasSamlLogin: {
         type: Boolean,
         value: null,
@@ -425,7 +436,7 @@
 
       hasAdditionalAuthMethods: {
         type: Boolean,
-        computed: '_hasAdditionalAuthMethods(domain)'
+        computed: '_hasAdditionalAuthMethods(domain, hasAnonymousLogin)'
       }
     },
 
@@ -452,6 +463,12 @@
       window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Login Submit', 'Facebook');
     },
 
+    _anonymousLogin: function () {
+      this.$$("#registerAnonymouslyAjax").body = { groupId: window.appGlobals.currentAnonymousGroup.id };
+      this.$$("#registerAnonymouslyAjax").generateRequest();
+      window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup Submit', 'Anonymous');
+    },
+
     _islandIsLogin: function () {
       var url = '/api/users/auth/saml',
         width = 1200,
@@ -473,8 +490,8 @@
       }
     },
 
-    _hasAdditionalAuthMethods: function (domain) {
-      return (this._hasFacebookLogin(domain) || this._hasSamlLogin(domain));
+    _hasAdditionalAuthMethods: function (domain, hasAnonymousLogin) {
+      return (this._hasFacebookLogin(domain) || this._hasSamlLogin(domain) || hasAnonymousLogin);
     },
 
     _hasFacebookLogin: function (domain) {
@@ -495,6 +512,11 @@
 
     _openedChanged: function (newValue) {
       if (newValue) {
+        if (window.appGlobals.currentAnonymousGroup) {
+          this.set('hasAnonymousLogin', true);
+        } else {
+          this.set('hasAnonymousLogin', false);
+        }
         this.async(function () {
           this.$$("#a11y").target = this.$$("#form");
           this.$$("#email").focus();

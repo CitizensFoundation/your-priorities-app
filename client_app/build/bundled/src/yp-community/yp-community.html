@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.137"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.138"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -1097,7 +1097,7 @@
 
       _userLoggedIn: function (user) {
         if (user) {
-          if (this.community) {
+          if (this.community && window.location.href.indexOf("/community/") > -1) {
             this.$$('#ajax').generateRequest();
           }
         }
@@ -1286,6 +1286,7 @@
                                        backPath: "/domain/" + this.community.domain_id });
           this.$.pagesAjax.url = "/api/communities/"+this.community.id+"/pages";
           this.$.pagesAjax.generateRequest();
+          window.appGlobals.setAnonymousGroupStatus(null);
         }
       },
 
