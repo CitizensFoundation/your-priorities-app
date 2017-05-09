@@ -13,6 +13,10 @@ auth.isAuthenticated = function (req, group) {
   }
 };
 
+auth.isAuthenticatedNoAnonymousCheck = function (req) {
+  return req.isAuthenticated();
+};
+
 auth.authNeedsGroupForCreate = function (group, req, done) {
   models.Group.findOne({
     where: { id: group.id },
@@ -174,11 +178,22 @@ auth.isLoggedIn = function (req, res, next) {
   }
 };
 
+auth.isLoggedInNoAnonymousCheck = function (req, res, next) {
+  if (auth.isAuthenticatedNoAnonymousCheck(req)) {
+    log.info('User is Logged in', { context: 'isLoggedInNoAnonymousCheck', user: toJson(req.user) });
+    return next();
+  } else {
+    log.info('User is Not Logged in', { context: 'isLoggedInNoAnonymousCheck', user: toJson(req.user), errorStatus: 401});
+    res.sendStatus(401);
+    next({status: 401, error: "Not authorized"});
+  }
+};
+
 // ADMIN AND VIEW
 
 // User admin
 auth.role('user.admin', function (user, req, done) {
-  if (!auth.isAuthenticated(req)) {
+  if (!auth.isAuthenticatedNoAnonymousCheck(req)) {
     done(null, false);
   } else {
     models.User.findOne({
