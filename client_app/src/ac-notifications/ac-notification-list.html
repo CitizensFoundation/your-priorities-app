@@ -207,10 +207,10 @@
 
       _newNotificationsError: function (event, detail) {
         console.error("Error in getting new notifications");
-        // Retry starting the time in 15 seconds
+        // Retry starting the time in 120 seconds
         this.async(function () {
           this._startTimer();
-        }, 15000);
+        }, 120*1000);
       },
 
       _userChanged: function (user) {

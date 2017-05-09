@@ -173,7 +173,6 @@ auth.isLoggedIn = function (req, res, next) {
     return next();
   } else {
     log.info('User is Not Logged in', { context: 'isLoggedInAuth', user: toJson(req.user), errorStatus: 401});
-    res.sendStatus(401);
     next({status: 401, error: "Not authorized"});
   }
 };
@@ -184,7 +183,6 @@ auth.isLoggedInNoAnonymousCheck = function (req, res, next) {
     return next();
   } else {
     log.info('User is Not Logged in', { context: 'isLoggedInNoAnonymousCheck', user: toJson(req.user), errorStatus: 401});
-    res.sendStatus(401);
     next({status: 401, error: "Not authorized"});
   }
 };

@@ -363,6 +363,7 @@ app.use(function (err, req, res, next) {
       error: err
     });
   }
+  res.end();
 });
 
 var server = app.listen(app.get('port'), function () {
