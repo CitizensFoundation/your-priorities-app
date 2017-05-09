@@ -51,7 +51,7 @@
       document.dispatchEvent(event);
       setTimeout(function(){
         onSplashClick();
-      }, 50);
+      }, 720);
     });
   };
 
@@ -96,9 +96,15 @@
     splashDiv = document.createElement("div");
     splashDiv.id = "splashSub";
     // splashDiv.innerHTML = '<img src="">';
-    splashDiv.innerHTML = '<span class="loadingText">Loading...</span><br><span class="loadingHostname">'+window.location.hostname+'</span>';
-    splashDiv.innerHTML += '<img src="https://i.imgur.com/6MWkhrR.png">';
-    splashDiv.innerHTML += '<img src="https://s3.amazonaws.com/yrpri-direct-asset/heartSpinner.gif">';
+    splashDiv.innerHTML = '<div><div class="loadingText">Loading...</div><br><div class="loadingHostname">'+window.location.hostname+'</div>';
+
+    if (window.location.href.indexOf("forzanazzjonali.yrpri.org") >-1) {
+      splashDiv.innerHTML += '<img style="width:200px; padding-top: 8px; padding-bottom: 8px" src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/malta/malta_splash-2.jpg"><br>';
+    } else {
+      splashDiv.innerHTML += '<img src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/yrprLogo.png">';
+    }
+
+    splashDiv.innerHTML += '<img src="https://s3.amazonaws.com/yrpri-direct-asset/heartSpinner.gif"></div>';
 
     splashDiv.className = "js-fade fade-in";
 
@@ -156,6 +162,8 @@
 
   window.addEventListener('WebComponentsReady', function(e) {
     console.log("WebComponentsReady");
-    onSplashClick();
+    setTimeout(function(){
+      onSplashClick();
+    }, 600);
   });
 })(document);
