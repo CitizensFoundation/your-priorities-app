@@ -382,7 +382,9 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
                   log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
                   res.sendStatus(500);
                 } else {
-                  res.send(loadedPoint);
+                  models.Group.addUserToGroupIfNeeded(point.group_id, req, function () {
+                    res.send(loadedPoint);
+                  });
                 }
               });
             });
@@ -510,6 +512,15 @@ router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
           }, function (error) {
             seriesCallback(error);
           });
+        },
+        function (seriesCallback) {
+          if (point && point.group_id) {
+            models.Group.addUserToGroupIfNeeded(point.group_id, req, function () {
+              seriesCallback();
+            });
+          } else {
+            seriesCallback();
+          }
         }
       ], function (error) {
         if (error) {
