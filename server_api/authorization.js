@@ -432,7 +432,9 @@ auth.role('group.viewUser', function (group, req, done) {
       }
     ]
   }).then(function (group) {
-    if (group.access === models.Group.ACCESS_PUBLIC &&
+    if (!group) {
+      done(null, false);
+    } else if (group.access === models.Group.ACCESS_PUBLIC &&
         group.Community.access === models.Community.ACCESS_PUBLIC) {
       done(null, true);
     }  else if (!auth.isAuthenticated(req)) {
@@ -530,15 +532,19 @@ auth.role('post.viewUser', function (post, req, done) {
       }
     ]
   }).then(function (post) {
-    var group = post.Group;
-    if (group.access === models.Group.ACCESS_PUBLIC) {
-      done(null, true);
-    }  else if (!auth.isAuthenticated(req, group)) {
-      done(null, false);
-    } else if (post.user_id === req.user.id) {
-      done(null, true);
+    if (post) {
+      var group = post.Group;
+      if (group.access === models.Group.ACCESS_PUBLIC) {
+        done(null, true);
+      }  else if (!auth.isAuthenticated(req, group)) {
+        done(null, false);
+      } else if (post.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+      }
     } else {
-      auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+      done(null, false)
     }
   });
 });
@@ -559,15 +565,19 @@ auth.role('post.vote', function (post, req, done) {
       }
     ]
   }).then(function (post) {
-    var group = post.Group;
-    if (!auth.isAuthenticated(req, group)) {
-      done(null, false);
-    } else if (group.access === models.Group.ACCESS_PUBLIC) {
-      done(null, true);
-    } else if (post.user_id === req.user.id) {
-      done(null, true);
+    if (post) {
+      var group = post.Group;
+      if (!auth.isAuthenticated(req, group)) {
+        done(null, false);
+      } else if (group.access === models.Group.ACCESS_PUBLIC) {
+        done(null, true);
+      } else if (post.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+      }
     } else {
-      auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+      done(null, false);
     }
   });
 });
@@ -608,7 +618,6 @@ auth.role('point.admin', function (point, req, done) {
     ]
   }).then(function (point) {
     var group;
-
 
     if (point && point.Post) {
       group = point.Post.Group;
