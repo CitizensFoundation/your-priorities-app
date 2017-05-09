@@ -98,7 +98,7 @@
     // splashDiv.innerHTML = '<img src="">';
     splashDiv.innerHTML = '<div><div class="loadingText">Loading...</div><br><div class="loadingHostname">'+window.location.hostname+'</div>';
 
-    if (true || window.location.href.indexOf("forzanazzjonali.yrpri.org") >-1) {
+    if (window.location.href.indexOf("forzanazzjonali.yrpri.org") >-1) {
       splashDiv.innerHTML += '<img style="width:200px; padding-top: 8px; padding-bottom: 8px" src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/malta/malta_splash-2.jpg"><br>';
     } else {
       splashDiv.innerHTML += '<img src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/yrprLogo.png">';
