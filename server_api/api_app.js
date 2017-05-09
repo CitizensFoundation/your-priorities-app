@@ -326,7 +326,6 @@ app.use(function (req, res, next) {
 // Error handlers
 app.use(function (err, req, res, next) {
   var status = err.status || 500;
-  res.status(status);
   if (status == 404) {
     log.warn("Not found", {context: 'notFound', errorStatus: status, url: req.url});
   } else {
@@ -351,19 +350,23 @@ app.use(function (err, req, res, next) {
             errorStatus: 500
           });
         }
-        res.send({
+        res.status(status).send({
           message: err.message,
           error: err
         });
       });
+    } else {
+      res.status(status).send({
+        message: err.message,
+        error: err
+      });
     }
   } else {
-    res.send({
+    res.status(status).send({
       message: err.message,
       error: err
     });
   }
-  res.end();
 });
 
 var server = app.listen(app.get('port'), function () {
