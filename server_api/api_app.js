@@ -339,7 +339,7 @@ app.use(function (err, req, res, next) {
   }
   err.url = req.url;
   err.params = req.params;
-  if (status != 404) {
+  if (status != 404 && status != 401) {
     if (airbrake) {
       airbrake.notify(err, function (airbrakeErr, url) {
         if (airbrakeErr) {

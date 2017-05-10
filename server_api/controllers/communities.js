@@ -218,7 +218,13 @@ var getCommunity = function(req, done) {
           var combinedGroups = _.concat(userGroups, community.dataValues.Groups);
           combinedGroups = _.concat(adminGroups, combinedGroups);
           combinedGroups = _.uniqBy(combinedGroups, function (group) {
-            return group.id;
+            if (group) {
+              log.error("Can't find group in combinedGroups", { combinedGroups: combinedGroups,
+                communityDataValuesGroups: community.dataValues.Groups, userGroups: userGroups, err: "Cant find group in combinedGroups" });
+              return null;
+            } else {
+              return group.id;
+            }
           });
 
           community.dataValues.Groups = combinedGroups;

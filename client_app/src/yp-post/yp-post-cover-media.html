@@ -84,8 +84,8 @@
     <div class="mapCanvas">
       <span hidden$="[[!noneActive]]">
         <iron-image hidden$="[[uploadedDefaultPostImageId]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
-        <template is="dom-if" if="[[uploadedDefaultPostImageId]]">
-         <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="/api/groups/[[post.Group.id]]/default_post_image/[[uploadedDefaultPostImageId]]" on-tap="goToPost"></iron-image>
+        <template is="dom-if" if="[[defaultImageGroupId]]">
+         <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="/api/groups/[[defaultImageGroupId]]/default_post_image/[[uploadedDefaultPostImageId]]" on-tap="goToPost"></iron-image>
         </template>
       </span>
 
@@ -248,7 +248,13 @@
         uploadedDefaultPostImageId: {
           type: String,
           value: null
+        },
+
+        defaultImageGroupId: {
+          type: String,
+          value: null
         }
+
       },
 
       _headerModeChanged: function (headerMode) {
@@ -283,7 +289,7 @@
 
       _isCategoryActive: function (post) {
         if (this._withCoverMediaType(post, 'category'))
-          return true
+          return true;
         else
           return false
       },
@@ -314,6 +320,7 @@
       _postChanged: function(post, oldValue) {
         if (post && post.Group && post.Group.configuration && post.Group.configuration.uploadedDefaultPostImageId && post.Group.configuration.uploadedDefaultPostImageId!="") {
           this.set('uploadedDefaultPostImageId', post.Group.configuration.uploadedDefaultPostImageId);
+          this.set('defaultImageGroupId', post.Group.id);
         } else {
           this.set('uploadedDefaultPostImageId', null);
         }
