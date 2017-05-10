@@ -141,51 +141,59 @@ module.exports = function(sequelize, DataTypes) {
         sequelize.models.Group.find({
           where: { id: groupId }
         }).then(function (group) {
-          group.hasGroupUser(req.user).then(function(result) {
-            if (!result) {
-              async.parallel([
-                function(callback) {
-                  group.addGroupUser(req.user).then(function (result) {
-                    group.increment('counter_users');
-                    callback();
-                  })
-                },
-                function(callback) {
-                  sequelize.models.Community.find({
-                    where: {id: group.community_id}
-                  }).then(function (community) {
-                    community.hasCommunityUser(req.user).then(function(result) {
+          if (group) {
+            group.hasGroupUser(req.user).then(function(result) {
+              if (!result) {
+                async.parallel([
+                  function(callback) {
+                    group.addGroupUser(req.user).then(function (result) {
+                      group.increment('counter_users');
+                      callback();
+                    })
+                  },
+                  function(callback) {
+                    sequelize.models.Community.find({
+                      where: {id: group.community_id}
+                    }).then(function (community) {
+                      if (community) {
+                        community.hasCommunityUser(req.user).then(function(result) {
+                          if (result) {
+                            callback();
+                          } else {
+                            community.addCommunityUser(req.user).then(function (result) {
+                              community.increment('counter_users');
+                              callback();
+                            });
+                          }
+                        });
+                      } else {
+                        callback();
+                      }
+                    }.bind(this));
+                  }.bind(this),
+                  function(callback) {
+                    req.ypDomain.hasDomainUser(req.user).then(function(result) {
                       if (result) {
                         callback();
                       } else {
-                        community.addCommunityUser(req.user).then(function (result) {
-                          community.increment('counter_users');
+                        req.ypDomain.addDomainUser(req.user).then(function(result) {
+                          req.ypDomain.increment('counter_users');
                           callback();
                         });
                       }
                     });
-                  }.bind(this));
-                }.bind(this),
-                function(callback) {
-                  req.ypDomain.hasDomainUser(req.user).then(function(result) {
-                    if (result) {
-                      callback();
-                    } else {
-                      req.ypDomain.addDomainUser(req.user).then(function(result) {
-                        req.ypDomain.increment('counter_users');
-                        callback();
-                      });
-                    }
-                  });
-                }.bind(this)
-              ], function(err) {
-                console.log(err);
-                done(err);
-              });
-            } else {
-              done();
-            }
-          });
+                  }.bind(this)
+                ], function(err) {
+                  console.log(err);
+                  done(err);
+                });
+              } else {
+                done();
+              }
+            });
+          } else {
+            done();
+          }
         })
       },
 
