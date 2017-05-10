@@ -151,7 +151,8 @@ var getCommunity = function(req, done) {
       if (req.user && community) {
         var adminGroups, userGroups;
 
-        async.parallel([
+        async.parallel(
+          [
           function (parallelCallback) {
             models.Group.findAll({
               where: {
@@ -178,11 +179,12 @@ var getCommunity = function(req, done) {
               ]
             }).then(function (groups) {
               adminGroups = groups;
-              parallelCallback();
+              parallelCallback(null, "admin");
             }).catch(function (error) {
               parallelCallback(error)
             });
           },
+
           function (parallelCallback) {
             models.Group.findAll({
               where: {
@@ -209,18 +211,19 @@ var getCommunity = function(req, done) {
               ]
             }).then(function (groups) {
               userGroups = groups;
-              userGroups();
+              parallelCallback(null, "users");
             }).catch(function (error) {
               parallelCallback(error)
             });
           }
         ], function (error) {
           var combinedGroups = _.concat(userGroups, community.dataValues.Groups);
-          combinedGroups = _.concat(adminGroups, combinedGroups);
+          if (adminGroups) {
+            combinedGroups = _.concat(adminGroups, combinedGroups);
+          }
           combinedGroups = _.uniqBy(combinedGroups, function (group) {
-            if (group) {
-              log.error("Can't find group in combinedGroups", { combinedGroups: combinedGroups,
-                communityDataValuesGroups: community.dataValues.Groups, userGroups: userGroups, err: "Cant find group in combinedGroups" });
+            if (!group) {
+              log.error("Can't find group in combinedGroups", { combinedGroupsL: combinedGroups.length, err: "Cant find group in combinedGroups" });
               return null;
             } else {
               return group.id;
