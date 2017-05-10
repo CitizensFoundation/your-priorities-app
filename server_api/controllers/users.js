@@ -861,8 +861,8 @@ router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
         }
       })
     } else {
-      log.warn('User Invite Token Not found', {user: toJson(user), context: 'get_invite_info'});
       res.sendStatus(404);
+      log.warn('User Invite Token Not found', {context: 'get_invite_info'});
     }
   });
 });

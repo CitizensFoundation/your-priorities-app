@@ -632,25 +632,29 @@ auth.role('point.admin', function (point, req, done) {
   }).then(function (point) {
     var group;
 
-    if (point && point.Post) {
-      group = point.Post.Group;
-    } else {
-      group = point.Group;
-    }
-
-    if (!auth.isAuthenticated(req, group)) {
-      done(null, false);
-    } else if (point && group) {
-      if (point.user_id === req.user.id) {
-        done(null, true);
+    if (point) {
+      if (point.Post) {
+        group = point.Post.Group;
       } else {
-        group.hasGroupAdmins(req.user).then(function (result) {
-          if (result) {
-            done(null, true);
-          } else {
-            done(null, false);
-          }
-        });
+        group = point.Group;
+      }
+
+      if (!auth.isAuthenticated(req, group)) {
+        done(null, false);
+      } else if (point && group) {
+        if (point.user_id === req.user.id) {
+          done(null, true);
+        } else {
+          group.hasGroupAdmins(req.user).then(function (result) {
+            if (result) {
+              done(null, true);
+            } else {
+              done(null, false);
+            }
+          });
+        }
+      } else {
+        done(null, false);
       }
     } else {
       done(null, false);
