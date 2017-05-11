@@ -98,7 +98,7 @@
     <div class="mapCanvas">
       <span hidden$="[[!noneActive]]">
         <iron-image hidden$="[[uploadedDefaultPostImageId]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
-        <template is="dom-if" if="[[defaultImageGroupId]]">
+        <template is="dom-if" if="[[defaultImageGroupId]]" restamp>
          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="/api/groups/[[defaultImageGroupId]]/default_post_image/[[uploadedDefaultPostImageId]]" on-tap="goToPost"></iron-image>
         </template>
       </span>
