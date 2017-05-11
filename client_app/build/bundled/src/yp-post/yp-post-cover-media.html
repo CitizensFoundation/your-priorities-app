@@ -1,20 +1,20 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.146">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.147">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.146">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.146">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.146">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.146">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.146">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.146">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.147">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.147">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.147">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.147">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.147">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.147">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.146">
-<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.146">
-<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.146">
-<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.146">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.147">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.147">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.147">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.147">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.146">
-<link rel="import" href="yp-post-actions.html?v=6.3.146">
-<link rel="import" href="yp-post-users.html?v=6.3.146">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.147">
+<link rel="import" href="yp-post-actions.html?v=6.3.147">
+<link rel="import" href="yp-post-users.html?v=6.3.147">
 
 </head><body><dom-module id="yp-post-cover-media">
 
@@ -64,10 +64,24 @@
         padding-top: 24px;
       }
 
+      .category-icon[large] {
+        width: 100%;
+        height: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
       @media (max-width: 600px) {
         .category-icon {
           width: 130px;
           height: 130px;
+        }
+
+        .category-icon[large] {
+          width: 100%;
+          height: 100%;
+          margin: 0 !important;
+          padding: 0 !important;
         }
       }
 
@@ -89,9 +103,11 @@
         </template>
       </span>
 
-      <div class="layout horizontal center-center" hidden$="[[!categoryActive]]">
+      <div id="categoryImageId" class="layout horizontal center-center" hidden$="[[!categoryActive]]">
         <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
       </div>
+
+      <iron-image header-mode$="[[headerMode]]" large="" on-tap="goToPost" class="category-icon pointer" hidden$="[[!categoryLargeActive]]" title="[[post.Category.name]]" sizing="cover" src$="[[getCategoryImagePath]]"></iron-image>
 
       <iron-image hidden$="[[!imageActive]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
 
@@ -148,6 +164,12 @@
           type: Boolean,
           value: false,
           computed: '_isCategoryActive(post)'
+        },
+
+        categoryLargeActive: {
+          type: Boolean,
+          value: false,
+          computed: '_isCategoryLargeActive(post)'
         },
 
         imageActive: {
@@ -271,13 +293,22 @@
 
       _isNoneActive: function (post) {
         if (this._withCoverMediaType(post, 'none'))
-          return true
+          return true;
         else
           return false
       },
 
       _isCategoryActive: function (post) {
-        if (this._withCoverMediaType(post, 'category'))
+        if (this._withCoverMediaType(post, 'category') && post.id<=11000)
+          return true;
+        else
+          return false
+      },
+
+
+      // We switch over to 100% category images
+      _isCategoryLargeActive: function (post) {
+        if (this._withCoverMediaType(post, 'category') && post.id>11000)
           return true;
         else
           return false
@@ -285,14 +316,14 @@
 
       _isImageActive: function (post) {
         if (this._withCoverMediaType(post,'image'))
-          return true
+          return true;
         else
           return false
       },
 
       _isMapActive: function (post) {
         if (post && post.location && post.location.latitude && this._withCoverMediaType(post,'map'))
-          return true
+          return true;
         else
           return false
       },
@@ -312,6 +343,7 @@
           this.set('defaultImageGroupId', post.Group.id);
         } else {
           this.set('uploadedDefaultPostImageId', null);
+          this.set('defaultImageGroupId', null);
         }
       },
 
