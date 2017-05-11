@@ -16534,7 +16534,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.145">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.146">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -17942,7 +17942,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.145" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.146" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -17999,7 +17999,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.145">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.146">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -18007,7 +18007,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.145">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.146">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19208,7 +19208,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.145", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.146", fontName: 'FFClanWebBook' });
 
       this.push('themes', {
         name: 'I choose Malta',
@@ -19239,7 +19239,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.145";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.146";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -21798,8 +21798,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.145">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.145">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.146">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.146">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -25658,7 +25658,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.145" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.146" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -30886,7 +30886,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.145">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.146">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -44641,6 +44641,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.action = this.baseAction + '/'+this.params.userId;
         } else if (this.params && this.params.domainId) {
           this.action = this.baseAction + '/'+this.params.domainId;
+        } else if (this.params && this.params.categoryId) {
+          this.action = this.baseAction + '/' + this.params.categoryId;
         }
         if (this.$$("#form").validate()) {
           this.$$("#form").submit();
@@ -50923,6 +50925,10 @@ paperMapInfo.register();
         max-width: 250px;
         width: 250px;
       }
+
+      .categoryName {
+        padding-left: 8px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -51068,6 +51074,15 @@ paperMapInfo.register();
         <input type="hidden" name="uploadedDefaultDataImageId" value="[[uploadedDefaultDataImageId]]">
       </div>
 
+      <div class="layout vertical config" hidden$="[[!group.Categories]]">
+        <h2>[[t('categories.the_all')]]</h2>
+        <template is="dom-repeat" items="[[group.Categories]]" as="category">
+          <paper-item data-category$="[[category]]" data-category-name$="[[category.name]]" on-tap="_openCategoryEdit">
+            <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
+            <span class="categoryName">[[category.name]]</span>
+          </paper-item>
+        </template>
+      </div>
     </yp-edit-dialog>
   </template>
 
@@ -51170,6 +51185,29 @@ paperMapInfo.register();
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _openCategoryEdit: function (event) {
+      window.appGlobals.activity('open', 'category.new');
+      var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("categoryEdit");
+      dialog.setup(this.group, false, this._refreshCategories.bind(this), event.model.category);
+      dialog.open("edit", { categoryId: event.model.category.id});
+    },
+
+    _refreshCategories: function (newCategory) {
+      var newCategories = [];
+      __.each(this.group.Categories, function (oldCategory) {
+        if (oldCategory.id===newCategory.id) {
+          newCategories.push(newCategory)
+        } else {
+          newCategories.push(oldCategory);
+        }
+      });
+      this.set('group.Categories', newCategories);
+    },
+
+    _categoryImageSrc: function (category) {
+      return this.getImageFormatUrl(category.CategoryIconImages, 0);
+    },
 
     _endorsementButtonsOptions: function(language) {
       if (this.t) {
@@ -54213,14 +54251,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.145">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.146">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.145">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.146">
    * ```
    *
    * ### Consuming effects
@@ -54986,7 +55024,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.145">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.146">
 ```
 
 #### List of effects
@@ -60540,18 +60578,18 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.145"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.146"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.145"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.146"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.145"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.146"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -62013,9 +62051,9 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.145");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.146");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.145");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.146");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);

@@ -1,23 +1,23 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.145">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.146">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.145">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.145">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.146">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.146">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.145">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.145">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.145">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.145">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.146">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.146">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.146">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.146">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.145">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.146">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.145">
-<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.145">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.145">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.146">
+<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.146">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.146">
 
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.145">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.145">
-<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.145">
-<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.145">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.146">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.146">
+<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.146">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.146">
 
 </head><body><dom-module id="yp-group-edit">
   <template>
@@ -65,6 +65,10 @@
       paper-dropdown-menu {
         max-width: 250px;
         width: 250px;
+      }
+
+      .categoryName {
+        padding-left: 8px;
       }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -211,6 +215,15 @@
         <input type="hidden" name="uploadedDefaultDataImageId" value="[[uploadedDefaultDataImageId]]">
       </div>
 
+      <div class="layout vertical config" hidden$="[[!group.Categories]]">
+        <h2>[[t('categories.the_all')]]</h2>
+        <template is="dom-repeat" items="[[group.Categories]]" as="category">
+          <paper-item data-category$="[[category]]" data-category-name$="[[category.name]]" on-tap="_openCategoryEdit">
+            <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
+            <span class="categoryName">[[category.name]]</span>
+          </paper-item>
+        </template>
+      </div>
     </yp-edit-dialog>
   </template>
 
@@ -313,6 +326,29 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _openCategoryEdit: function (event) {
+      window.appGlobals.activity('open', 'category.new');
+      var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("categoryEdit");
+      dialog.setup(this.group, false, this._refreshCategories.bind(this), event.model.category);
+      dialog.open("edit", { categoryId: event.model.category.id});
+    },
+
+    _refreshCategories: function (newCategory) {
+      var newCategories = [];
+      __.each(this.group.Categories, function (oldCategory) {
+        if (oldCategory.id===newCategory.id) {
+          newCategories.push(newCategory)
+        } else {
+          newCategories.push(oldCategory);
+        }
+      });
+      this.set('group.Categories', newCategories);
+    },
+
+    _categoryImageSrc: function (category) {
+      return this.getImageFormatUrl(category.CategoryIconImages, 0);
+    },
 
     _endorsementButtonsOptions: function(language) {
       if (this.t) {
