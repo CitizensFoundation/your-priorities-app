@@ -98,7 +98,7 @@
     <div class="mapCanvas">
       <span hidden$="[[!noneActive]]">
         <iron-image hidden$="[[uploadedDefaultPostImageId]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
-        <template is="dom-if" if="[[defaultImageGroupId]]" restamp>
+        <template is="dom-if" if="[[defaultPostImageEnabled]]" restamp>
          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="/api/groups/[[defaultImageGroupId]]/default_post_image/[[uploadedDefaultPostImageId]]" on-tap="goToPost"></iron-image>
         </template>
       </span>
@@ -275,6 +275,11 @@
         defaultImageGroupId: {
           type: String,
           value: null
+        },
+
+        defaultPostImageEnabled: {
+          type: Boolean,
+          value: false
         }
 
       },
@@ -352,9 +357,13 @@
         if (post && post.Group && post.Group.configuration && post.Group.configuration.uploadedDefaultPostImageId && post.Group.configuration.uploadedDefaultPostImageId!="") {
           this.set('uploadedDefaultPostImageId', post.Group.configuration.uploadedDefaultPostImageId);
           this.set('defaultImageGroupId', post.Group.id);
+          this.set('defaultPostImageEnabled', true);
         } else {
-          this.set('defaultImageGroupId', null);
-          this.set('uploadedDefaultPostImageId', null);
+          this.set('defaultPostImageEnabled', false);
+          this.async(function () {
+            this.set('defaultImageGroupId', null);
+            this.set('uploadedDefaultPostImageId', null);
+          });
         }
       },
 
