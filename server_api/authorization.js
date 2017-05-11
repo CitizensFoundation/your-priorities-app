@@ -772,7 +772,7 @@ auth.role('point.vote', function (point, req, done) {
         include: [
           {
             model: models.Group,
-            attributes: ['id', 'access'],
+            attributes: ['id', 'access','configuration'],
             required: false,
             include: [
               {
