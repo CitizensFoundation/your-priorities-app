@@ -1,20 +1,20 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.148">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.149">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.148">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.148">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.148">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.148">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.148">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.148">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.149">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.149">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.149">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.149">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.149">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.149">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.148">
-<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.148">
-<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.148">
-<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.148">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.149">
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html?v=6.3.149">
+<link rel="import" href="../../bower_components/google-map/google-map.html?v=6.3.149">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html?v=6.3.149">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.148">
-<link rel="import" href="yp-post-actions.html?v=6.3.148">
-<link rel="import" href="yp-post-users.html?v=6.3.148">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.149">
+<link rel="import" href="yp-post-actions.html?v=6.3.149">
+<link rel="import" href="yp-post-users.html?v=6.3.149">
 
 </head><body><dom-module id="yp-post-cover-media">
 
@@ -98,7 +98,7 @@
     <div class="mapCanvas">
       <span hidden$="[[!noneActive]]">
         <iron-image hidden$="[[uploadedDefaultPostImageId]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
-        <template is="dom-if" if="[[defaultImageGroupId]]" restamp="">
+        <template is="dom-if" if="[[defaultPostImageEnabled]]" restamp="">
          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="/api/groups/[[defaultImageGroupId]]/default_post_image/[[uploadedDefaultPostImageId]]" on-tap="goToPost"></iron-image>
         </template>
       </span>
@@ -264,6 +264,11 @@
         defaultImageGroupId: {
           type: String,
           value: null
+        },
+
+        defaultPostImageEnabled: {
+          type: Boolean,
+          value: false
         }
 
       },
@@ -341,9 +346,13 @@
         if (post && post.Group && post.Group.configuration && post.Group.configuration.uploadedDefaultPostImageId && post.Group.configuration.uploadedDefaultPostImageId!="") {
           this.set('uploadedDefaultPostImageId', post.Group.configuration.uploadedDefaultPostImageId);
           this.set('defaultImageGroupId', post.Group.id);
+          this.set('defaultPostImageEnabled', true);
         } else {
-          this.set('defaultImageGroupId', null);
-          this.set('uploadedDefaultPostImageId', null);
+          this.set('defaultPostImageEnabled', false);
+          this.async(function () {
+            this.set('defaultImageGroupId', null);
+            this.set('uploadedDefaultPostImageId', null);
+          });
         }
       },
 
