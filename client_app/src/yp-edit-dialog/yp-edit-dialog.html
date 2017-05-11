@@ -491,6 +491,8 @@
           this.action = this.baseAction + '/'+this.params.userId;
         } else if (this.params && this.params.domainId) {
           this.action = this.baseAction + '/'+this.params.domainId;
+        } else if (this.params && this.params.categoryId) {
+          this.action = this.baseAction + '/' + this.params.categoryId;
         }
         if (this.$$("#form").validate()) {
           this.$$("#form").submit();

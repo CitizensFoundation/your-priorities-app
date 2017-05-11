@@ -718,7 +718,8 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
     order: [
 //          [models.sequelize.fn('-', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'],
       models.sequelize.literal(postOrder),
-      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
+      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
+      [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
     ],
     include: [
       {
@@ -730,10 +731,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
             model: models.Image,
             required: false,
             attributes: { exclude: ['ip_address', 'user_agent'] },
-            as: 'CategoryIconImages',
-            order: [
-              [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
-            ]
+            as: 'CategoryIconImages'
           }
         ]
       },

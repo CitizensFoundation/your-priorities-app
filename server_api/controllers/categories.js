@@ -78,7 +78,16 @@ router.post('/:groupId', auth.can('create category'), function(req, res) {
 
 router.put('/:id', auth.can('edit category'), function(req, res) {
   models.Category.find({
-    where: { id: req.params.id }
+    where: { id: req.params.id },
+    order:[[ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]],
+    include: [
+      {
+        model: models.Image,
+        required: false,
+        attributes: { exclude: ['ip_address', 'user_agent'] },
+        as: 'CategoryIconImages'
+      }
+    ]
   }).then(function(category) {
     if (category) {
       category.name = req.body.name;
@@ -86,7 +95,22 @@ router.put('/:id', auth.can('edit category'), function(req, res) {
       category.save().then(function () {
         log.info('Category Updated', { category: toJson(category), context: 'update', user: toJson(req.user) });
         category.setupImages(req.body, function(error) {
-          sendCategoryOrError(res, category, 'setupImages', req.user, error);
+          setTimeout(function () {
+            models.Category.find({
+              where: { id: req.params.id },
+              order:[[ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]],
+              include: [
+                {
+                  model: models.Image,
+                  required: false,
+                  attributes: { exclude: ['ip_address', 'user_agent'] },
+                  as: 'CategoryIconImages'
+                }
+              ]
+            }).then(function(reloadedCategory) {
+              sendCategoryOrError(res, reloadedCategory, 'setupImages', req.user, error);
+            });
+          }, 25);
         });
       });
     } else {

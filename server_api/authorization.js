@@ -844,7 +844,8 @@ auth.role('category.admin', function (category, req, done) {
     done();
   } else {
     models.Category.findOne({
-      where: { id: category.id }
+      where: { id: category.id },
+      include: [ models.Group ]
     }).then(function (category) {
       var group = category.Group;
       if (!auth.isAuthenticated(req)) {

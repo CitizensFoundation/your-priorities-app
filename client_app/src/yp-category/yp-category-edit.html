@@ -123,10 +123,13 @@
       this.set('uploadedHeaderImageId', image.id);
     },
 
-    setup: function (group, newNotEdit, refreshFunction) {
+    setup: function (group, newNotEdit, refreshFunction, category) {
       this.set('group', group);
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
+      if (category) {
+        this.set('category', category);
+      }
       this._setupTranslation();
       this._setupNewUpdateState();
     },

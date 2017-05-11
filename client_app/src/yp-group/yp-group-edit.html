@@ -66,6 +66,10 @@
         max-width: 250px;
         width: 250px;
       }
+
+      .categoryName {
+        padding-left: 8px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -253,6 +257,15 @@
         <input type="hidden" name="uploadedDefaultDataImageId" value="[[uploadedDefaultDataImageId]]">
       </div>
 
+      <div class="layout vertical config" hidden$="[[!group.Categories]]">
+        <h2>[[t('categories.the_all')]]</h2>
+        <template is="dom-repeat" items="[[group.Categories]]" as="category">
+          <paper-item data-category$="[[category]]" data-category-name$="[[category.name]]" on-tap="_openCategoryEdit">
+            <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
+            <span class="categoryName">[[category.name]]</span>
+          </paper-item>
+        </template>
+      </div>
     </yp-edit-dialog>
   </template>
 
@@ -355,6 +368,29 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _openCategoryEdit: function (event) {
+      window.appGlobals.activity('open', 'category.new');
+      var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("categoryEdit");
+      dialog.setup(this.group, false, this._refreshCategories.bind(this), event.model.category);
+      dialog.open("edit", { categoryId: event.model.category.id});
+    },
+
+    _refreshCategories: function (newCategory) {
+      var newCategories = [];
+      __.each(this.group.Categories, function (oldCategory) {
+        if (oldCategory.id===newCategory.id) {
+          newCategories.push(newCategory)
+        } else {
+          newCategories.push(oldCategory);
+        }
+      });
+      this.set('group.Categories', newCategories);
+    },
+
+    _categoryImageSrc: function (category) {
+      return this.getImageFormatUrl(category.CategoryIconImages, 0);
+    },
 
     _endorsementButtonsOptions: function(language) {
       if (this.t) {
