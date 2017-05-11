@@ -157,21 +157,19 @@
 
     <div class="layout vertical center-center">
 
-      <template is="dom-if" if="[[!noPosts]]" restamp>
-        <div class="searchContainer layout horizontal wrap">
-          <div class="layout horizontal center-center">
-            <paper-input id="searchInput" label$="[[t('searchFor')]]" value="{{searchingFor}}" class="searchBox">
-            </paper-input>
-            <paper-icon-button icon="search" on-tap="_search" hidden$="[[!showSearchIcon]]"></paper-icon-button>
-          </div>
-          <div class="layout horizontal center-center">
-            <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
-                             group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
-                             category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
-            </yp-posts-filter>
-          </div>
+      <div class="searchContainer layout horizontal wrap">
+        <div class="layout horizontal center-center">
+          <paper-input id="searchInput" label$="[[t('searchFor')]]" value="{{searchingFor}}" class="searchBox">
+          </paper-input>
+          <paper-icon-button icon="search" on-tap="_search" hidden$="[[!showSearchIcon]]"></paper-icon-button>
         </div>
-      </template>
+        <div class="layout horizontal center-center">
+          <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
+                           group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
+                           category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+          </yp-posts-filter>
+        </div>
+      </div>
 
       <template is="dom-if" if="[[noPosts]]" restamp>
         <div class="layout horiztonal center-center">
