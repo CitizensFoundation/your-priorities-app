@@ -671,6 +671,9 @@ router.get('/:id', auth.can('view group'), function(req, res) {
 router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
     log.info('Group Search', { groupId: req.params.id, context: 'view', user: toJson(req.user) });
     models.Post.search(req.params.term, req.params.id, models.Category).then(function(posts) {
+      posts = _.reject(posts,function (post) {
+        return post.deleted == true;
+      });
       res.send({
         posts: posts,
         totalPostsCount: posts.length
