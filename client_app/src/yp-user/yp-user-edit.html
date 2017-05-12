@@ -89,7 +89,7 @@
 
               <paper-button id="deleteUser" raised on-tap="_deleteUser">[[t('deleteUser')]]</paper-button>
 
-              <yp-ajax id="deleteUserAjax" method="DELETE" url="/api/users/delete_current_user"></yp-ajax>
+              <yp-ajax id="deleteUserAjax" on-response="_deleteCompleted" method="DELETE" url="/api/users/delete_current_user"></yp-ajax>
 
               <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
               <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
@@ -182,9 +182,14 @@
     _deleteUserForReals: function () {
       this.$.deleteUserAjax.body = {};
       this.$.deleteUserAjax.generateRequest();
+    },
+
+    _deleteCompleted: function () {
       this._clear();
       this.$$("#editDialog").close();
-      window.location.reload();
+      this.async(function () {
+        window.location.reload();
+      }, 100);
     },
 
     _setNotificationSettings: function (event, detail) {
