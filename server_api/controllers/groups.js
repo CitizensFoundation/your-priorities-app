@@ -7,6 +7,7 @@ var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var async = require('async');
 var crypto = require("crypto");
+var seededShuffle = require("knuth-shuffle-seeded");
 
 var sendGroupOrError = function (res, group, context, user, error, errorStatus) {
   if (error || !group) {
@@ -692,7 +693,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
   } else if (req.params.filter=="most_debated") {
     postOrder = "counter_points DESC";
   } else if (req.params.filter=="random") {
-    postOrder = "random()";
+    postOrder = "created_at DESC";
   }
 
   console.log(req.param["categoryId"]);
@@ -753,9 +754,13 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
     ]
   }).then(function(posts) {
     var rows = [];
-    if (offset<posts.rows.length) {
+    var postRows = posts.rows;
+    if (req.params.filter==="random" && req.query.randomSeed && postRows && postRows.length>0) {
+      postRows = seededShuffle(postRows, req.query.randomSeed);
+    }
+    if (offset<postRows.length) {
       var toValue = offset+20;
-      rows = _.slice(posts.rows, offset, toValue);
+      rows = _.slice(postRows, offset, toValue);
     }
     res.send({
       posts: rows,

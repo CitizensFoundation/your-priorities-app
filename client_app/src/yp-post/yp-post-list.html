@@ -310,6 +310,11 @@
         showSearchIcon: {
           type: Boolean,
           value: false
+        },
+
+        randomSeed: {
+          type: Number,
+          value: null
         }
       },
 
@@ -372,6 +377,7 @@
       _groupChanged: function (group) {
         this.set("posts", null);
         this.set('noPosts', false);
+        this.set('randomSeed', Math.random());
         if (group) {
           this.set('moreToLoad', true);
           if (group.configuration && group.configuration.canAddNewPosts!=undefined) {
@@ -423,6 +429,9 @@
             this.$$('#ajax').url += '/'+this.statusFilter;
           }
           this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
+          if (this.randomSeed) {
+            this.$$('#ajax').url += "&randomSeed="+this.randomSeed;
+          }
           this.$$('#ajax').generateRequest();
         }
       },

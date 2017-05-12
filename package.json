@@ -31,6 +31,7 @@
     "i18next-node-fs-backend": "^0.1.2",
     "ip": "^1.1.0",
     "jade": "^1.11.0",
+    "knuth-shuffle-seeded": "^1.0.6",
     "kue": "^0.11.0",
     "lodash": "^4.6.1",
     "moment": "^2.13.0",
