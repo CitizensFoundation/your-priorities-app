@@ -227,7 +227,7 @@
             this.loginForMembershipParams = null;
           } else if (this.loginForAcceptInviteParams) {
             var acceptInviteParams = this.loginForAcceptInviteParams;
-            acceptInviteParams.editDialog.open(acceptInviteParams.token);
+            acceptInviteParams.editDialog.afterLogin(acceptInviteParams.token);
             this.loginForAcceptInviteParams = null;
           } else if (this.loginFor401refreshFunction) {
             this.loginFor401refreshFunction();
