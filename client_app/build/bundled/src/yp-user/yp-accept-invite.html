@@ -1,17 +1,17 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.149">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.150">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.149">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.149">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.150">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.150">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.149">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.149">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.149">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.149">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.149">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.150">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.150">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.150">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.150">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.150">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.149">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.150">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.149">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.150">
 
 </head><body><dom-module id="yp-accept-invite">
 
@@ -44,13 +44,16 @@
     <paper-dialog id="dialog">
       <h3>[[t('user.acceptInvite')]]</h3>
 
-      [[inviteName]] [[t('user.hasSentYouAndInvitation')]]: <br>
-      <b>[[targetName]]</b>
-      <p>[[t('user.acceptInviteInstructions')]]</p>
+      <div class="layout vertical">
+        <div>
+          [[inviteName]] [[t('user.hasSentYouAndInvitation')]]:<br> <b>[[targetName]]</b>
+        </div>
+        <p>[[t('user.acceptInviteInstructions')]]</p>
+      </div>
 
       <div class="buttons">
-        <yp-ajax id="acceptInviteAjax" method="POST" dispatch-error="" on-error="_inviteError" iron-response="_acceptInviteResponse"></yp-ajax>
-        <yp-ajax id="getInviteSenderAjax" method="GET" on-response="_getInviteSenderResponse"></yp-ajax>
+        <yp-ajax id="acceptInviteAjax" method="POST" dispatch-error="" on-error="_inviteError" on-response="_acceptInviteResponse"></yp-ajax>
+        <yp-ajax id="getInviteSenderAjax" dispatch-error="" method="GET" on-error="_inviteError" on-response="_getInviteSenderResponse"></yp-ajax>
         <paper-button on-tap="_cancel" dialog-dismiss="">[[t('cancel')]]</paper-button>
         <paper-button autofocus="" on-tap="_acceptInvite">[[t('user.acceptInvite')]]</paper-button>
       </div>
@@ -83,11 +86,14 @@
         type: String
       },
 
-      targetName: String
+      targetName: String,
+
+      targetEmail: String
     },
 
     _inviteError: function (event, detail) {
       this.$.acceptInviteAjax.showErrorDialog(this.t('inviteNotFoundOrAlreadyUsed'));
+      this.close();
     },
 
     _checkInviteSender: function(e) {
@@ -96,6 +102,21 @@
     },
 
     _acceptInvite: function(e) {
+      if (window.appUser && window.appUser.loggedIn()===true) {
+        this._reallyAcceptInvite();
+      } else {
+        window.appUser.loginForAcceptInvite(this, this.token);
+      }
+    },
+
+    afterLogin: function (token) {
+      if (!this.token) {
+        this.set('token', token);
+      }
+      this._reallyAcceptInvite();
+    },
+
+    _reallyAcceptInvite: function(e) {
       this.$.acceptInviteAjax.url = '/api/users/accept_invite/'+this.token;
       this.$.acceptInviteAjax.body = {};
       this.$.acceptInviteAjax.generateRequest();
@@ -107,9 +128,9 @@
     },
 
     _acceptInviteResponse: function(event, detail) {
-      this.close();
       window.appGlobals.notifyUserViaToast(this.t('notification.invite_accepted_for')+ detail.response.name);
       this.redirectTo(detail.response.redirectTo);
+      this.close();
     },
 
     _cancel: function () {
@@ -119,12 +140,8 @@
     open: function(token) {
       if (token)
         this.set('token', token);
-      if (window.appUser && window.appUser.loggedIn()===true) {
-        this._checkInviteSender();
-        this.$.dialog.open();
-      } else {
-        window.appUser.loginForAcceptInvite(this, token);
-      }
+      this._checkInviteSender();
+      this.$.dialog.open();
     },
 
     close: function() {

@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.149"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-category-edit" assetpath="../yp-category/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.150"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-category-edit" assetpath="../yp-category/">
   <template>
 
     <style include="iron-flex iron-flex-alignment">
@@ -3406,6 +3406,9 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
                 <span class="imageSizeInfo">1920 x 600</span>
               </file-upload>
             </div>
+
+            <paper-input id="customUserRegistrationText" name="customUserRegistrationText" type="text" label="[[t('customUserRegistrationText')]]" value="{{domain.configuration.customUserRegistrationText}}" maxlength="256" char-counter="">
+            </paper-input>
 
             <input type="hidden" name="themeId" value="[[themeId]]">
             <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">

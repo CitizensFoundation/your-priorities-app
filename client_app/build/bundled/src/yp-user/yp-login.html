@@ -1,21 +1,21 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.149">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.150">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.149">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.149">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.150">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.150">
 
-<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.149">
-<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.149">
+<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.150">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.150">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.149">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.149">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.149">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.149">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.149">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.149">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.150">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.150">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.150">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.150">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.150">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.150">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.149">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.150">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.149">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.150">
 
 </head><body><dom-module id="yp-login">
 
@@ -242,6 +242,11 @@
         padding-bottom: 4px;
         color: #555;
       }
+
+      .customUserRegistrationText {
+        font-size: 14px;
+        padding-top: 8px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-signals on-iron-signal-yp-domain-changed="_domainEvent"></iron-signals>
@@ -257,6 +262,11 @@
           </paper-tabs>
 
           <form is="iron-form" id="form">
+            <span hidden$="[[!registerMode]]">
+              <div hidden$="[[!customUserRegistrationText]]" class="customUserRegistrationText">
+                [[customUserRegistrationText]]
+              </div>
+            </span>
             <paper-input id="name" type="text" label="[[t('user.name')]]" value="{{name}}" hidden$="[[!registerMode]]" maxlength="50" char-counter="">
             </paper-input>
 
@@ -399,6 +409,11 @@
         type: String
       },
 
+      customUserRegistrationText: {
+        type: String,
+        value: null
+      },
+
       opened: {
         type: Boolean,
         value: false,
@@ -516,6 +531,13 @@
           this.set('hasAnonymousLogin', true);
         } else {
           this.set('hasAnonymousLogin', false);
+        }
+        if (window.appGlobals.domain &&
+            window.appGlobals.domain.configuration &&
+            window.appGlobals.domain.configuration.customUserRegistrationText) {
+          this.set('customUserRegistrationText', window.appGlobals.domain.configuration.customUserRegistrationText);
+        } else {
+          this.set('customUserRegistrationText', null);
         }
         this.async(function () {
           this.$$("#a11y").target = this.$$("#form");
