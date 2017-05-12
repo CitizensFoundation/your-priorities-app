@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.151"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.153"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -850,6 +850,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         showSearchIcon: {
           type: Boolean,
           value: false
+        },
+
+        randomSeed: {
+          type: Number,
+          value: null
         }
       },
 
@@ -912,6 +917,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _groupChanged: function (group) {
         this.set("posts", null);
         this.set('noPosts', false);
+        this.set('randomSeed', Math.random());
         if (group) {
           this.set('moreToLoad', true);
           if (group.configuration && group.configuration.canAddNewPosts!=undefined) {
@@ -963,6 +969,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.$$('#ajax').url += '/'+this.statusFilter;
           }
           this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
+          if (this.randomSeed) {
+            this.$$('#ajax').url += "&randomSeed="+this.randomSeed;
+          }
           this.$$('#ajax').generateRequest();
         }
       },
