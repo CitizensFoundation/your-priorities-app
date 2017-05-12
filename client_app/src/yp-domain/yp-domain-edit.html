@@ -108,6 +108,15 @@
               </file-upload>
             </div>
 
+            <paper-input id="customUserRegistrationText"
+                         name="customUserRegistrationText"
+                         type="text"
+                         label="[[t('customUserRegistrationText')]]"
+                         value="{{domain.configuration.customUserRegistrationText}}"
+                         maxlength="256"
+                         char-counter>
+            </paper-input>
+
             <input type="hidden" name="themeId" value="[[themeId]]">
             <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
             <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">

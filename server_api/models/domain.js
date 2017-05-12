@@ -126,7 +126,7 @@ module.exports = function(sequelize, DataTypes) {
         'default_locale', 'message_to_users', 'message_for_new_idea','google_analytics_code',
         'counter_communities','counter_users','counter_groups','counter_points','counter_posts',
         'counter_organizations','only_admins_can_create_communities','theme_id','other_social_media_info',
-        'public_api_keys','info_texts'],
+        'public_api_keys','info_texts','configuration'],
 
       getLoginProviders: function (req, callback) {
         var providers = [];

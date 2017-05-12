@@ -242,6 +242,11 @@
         padding-bottom: 4px;
         color: #555;
       }
+
+      .customUserRegistrationText {
+        font-size: 14px;
+        padding-top: 8px;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-signals on-iron-signal-yp-domain-changed="_domainEvent"></iron-signals>
@@ -257,6 +262,11 @@
           </paper-tabs>
 
           <form is="iron-form" id="form">
+            <span hidden$="[[!registerMode]]">
+              <div hidden$="[[!customUserRegistrationText]]" class="customUserRegistrationText">
+                [[customUserRegistrationText]]
+              </div>
+            </span>
             <paper-input id="name"
                          type="text"
                          label="[[t('user.name')]]"
@@ -415,6 +425,11 @@
         type: String
       },
 
+      customUserRegistrationText: {
+        type: String,
+        value: null
+      },
+
       opened: {
         type: Boolean,
         value: false,
@@ -532,6 +547,13 @@
           this.set('hasAnonymousLogin', true);
         } else {
           this.set('hasAnonymousLogin', false);
+        }
+        if (window.appGlobals.domain &&
+            window.appGlobals.domain.configuration &&
+            window.appGlobals.domain.configuration.customUserRegistrationText) {
+          this.set('customUserRegistrationText', window.appGlobals.domain.configuration.customUserRegistrationText);
+        } else {
+          this.set('customUserRegistrationText', null);
         }
         this.async(function () {
           this.$$("#a11y").target = this.$$("#form");

@@ -371,6 +371,13 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
         domain.set('secret_api_keys.saml.callbackUrl', req.body.samlCallbackUrl);
         domain.set('secret_api_keys.saml.cert', req.body.samlCert);
       }
+
+      if (!domain.configuration) {
+        domain.set('configuration', {});
+      }
+
+      domain.set('configuration.customUserRegistrationText', (req.body.customUserRegistrationText && req.body.customUserRegistrationText!="") ? req.body.customUserRegistrationText : null);
+
       domain.name = req.body.name;
       domain.description = req.body.description;
       domain.only_admins_can_create_communities = req.body.onlyAdminsCanCreateCommunities ? true : false;
