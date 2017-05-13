@@ -1,0 +1,5 @@
+{
+  "strict": true,
+  "laxcomma": true,
+  "node": true
+}
