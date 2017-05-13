@@ -75,6 +75,7 @@
     "merge-stream": "^1.0.0",
     "plylog": "^0.4.0",
     "polymer-build": "^0.4.0",
+    "jshint": "^2.9.4",
     "gulp-version-append": "^0.2.0",
     "gulp-version-html-imports": "git+https://github.com/rbjarnason/gulp-version-html-imports.git"
   },

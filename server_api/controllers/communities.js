@@ -609,8 +609,8 @@ router.post('/:domainId', auth.can('create community'), function(req, res) {
     where: {
       hostname: req.body.hostname
     }
-  }).then(function (community) {
-    if (community) {
+  }).then(function (oldCommunity) {
+    if (oldCommunity) {
       log.error("Can't save community, hostname already taken", {hostname:  req.body.hostname});
       res.send({hostnameTaken: true, isError: true});
     } else {

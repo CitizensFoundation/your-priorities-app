@@ -1,6 +1,6 @@
-"use strict";
-
 var async = require('async');
+
+"use strict";
 
 module.exports = function(sequelize, DataTypes) {
   var BulkStatusUpdate = sequelize.define("BulkStatusUpdate", {

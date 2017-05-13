@@ -142,12 +142,12 @@ router.post('/:imageId/comment', auth.isLoggedIn, auth.can('view image'), functi
 router.post('/', isAuthenticated, function(req, res) {
   multerMultipartResolver(req, res, function (error) {
     if (error) {
-      sendError(res, image, 'multerMultipartResolver', res.user, error);
+      sendError(res, null, 'multerMultipartResolver', res.user, error);
     } else {
       var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, req.query.itemType);
       s3UploadClient.upload(req.file.path, {}, function(error, versions, meta) {
         if (error) {
-          sendError(res, image, 's3UploadClient', res.user, error);
+          sendError(res, null, 's3UploadClient', res.user, error);
         } else {
           var image = models.Image.build({
             user_id: req.user.id,
