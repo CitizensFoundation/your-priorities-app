@@ -135,7 +135,7 @@ module.exports = function(sequelize, DataTypes) {
         });
       },
 
-      serializeFacebookUser: function (profile, callback) {
+      serializeFacebookUser: function (profile, domain, callback) {
         var user;
 
         /*
@@ -207,6 +207,15 @@ module.exports = function(sequelize, DataTypes) {
               }).catch (function (error) {
                 seriesCallback(error);
               })
+            } else {
+              seriesCallback();
+            }
+          },
+          function (seriesCallback) {
+            if (false && domain.configuration && domain.configuration.downloadFacebookImagesForUser===true) {
+              models.Image.downloadFacebookImagesForUser(user, function (error) {
+                seriesCallback(error);
+              });
             } else {
               seriesCallback();
             }
