@@ -217,7 +217,7 @@ module.exports = function(sequelize, DataTypes) {
         return Post.findAll({
           order: "created_at DESC",
           where: [where, []],
-          limit: 100,
+          limit: 512,
           include: [
             {
               model: sequelize.models.Category,
