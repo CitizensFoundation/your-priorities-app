@@ -8,6 +8,53 @@ var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
+var request = require('request').defaults({ encoding: null });
+var fs = require('fs');
+var randomstring = require("randomstring");
+
+var downloadFacebookImagesForUser = function (req, res, user) {
+  //var facebookId = user.facebook_id;
+  var facebookId = 746850516;
+  request.get('https://graph.facebook.com/' + facebookId + '/picture', function (err, downloadResponse, body) {
+    var filepath = "uploads/fb_image_donwload"+randomstring.generate(10) + '.png';
+    var originalFilename = "facebook_profile_"+facebookId+".png";
+    fs.writeFile(filepath, body, function(err) {
+      if (err) {
+        log.error("Error when trying to write image", {err: error});
+        res.sendStatus(500);
+        return;
+      }
+
+      var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, "user-profile");
+      s3UploadClient.upload(filepath, {}, function(error, versions, meta) {
+        if (error) {
+          sendUserOrError(res, null, 'downloadFacebookImagesForUser', res.user, error);
+        } else {
+          var image = models.Image.build({
+            user_id: req.user.id,
+            s3_bucket_name: process.env.S3_BUCKET,
+            original_filename: originalFilename,
+            formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
+            user_agent: req.useragent.source,
+            ip_address: req.clientIp
+          });
+          image.save().then(function() {
+            log.info('Image Created', { image: toJson(image), context: 'create', user: toJson(req.user) });
+            user.setupImages({uploadedProfileImageId: image.id}, function (error) {
+              setTimeout(function () {
+                getUserWithAll(user.id, function (error, newUser) {
+                  sendUserOrError(res, newUser, 'downloadFacebookImagesForUser', error);
+                });
+              }, 20);
+            });
+          }).catch(function(error) {
+            sendUserOrError(res, null, 'create', error);
+          });
+        }
+      });
+    });
+  });
+};
 
 var sendUserOrError = function (res, user, context, error, errorStatus) {
   if (error || !user) {
@@ -123,14 +170,17 @@ router.post('/register', function (req, res) {
   user.save().then(function () {
     log.info('User Created', { user: toJson(user), context: 'create', loggedInUser: toJson(req.user) });
     req.logIn(user, function (error, detail) {
-      sendUserOrError(res, user, 'registerUser', error, 401);
+      if (!error && true) { // && req.query.downloadFacebookImages && user.facebook_id) {
+        downloadFacebookImagesForUser(req, res, user);
+      } else {
+        sendUserOrError(res, user, 'registerUser', error, 401);
+      }
     });
   }).catch(function (error) {
     if (error && error.name=='SequelizeUniqueConstraintError') {
       log.error("User Error", { context: 'SequelizeUniqueConstraintError', user: user, err: error,
         errorStatus: 500 });
       res.status(500).send({status:500, message: error.name, type:'internal'});
-
     } else {
       sendUserOrError(res, null, 'create', error);
     }

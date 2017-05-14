@@ -377,6 +377,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       }
 
       domain.set('configuration.customUserRegistrationText', (req.body.customUserRegistrationText && req.body.customUserRegistrationText!="") ? req.body.customUserRegistrationText : null);
+      domain.set('configuration.downloadFacebookImagesForUser', (req.body.downloadFacebookImagesForUser && req.body.downloadFacebookImagesForUser!="") ? true : false);
 
       domain.name = req.body.name;
       domain.description = req.body.description;
