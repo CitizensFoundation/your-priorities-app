@@ -123,12 +123,7 @@ router.post('/register', function (req, res) {
   user.save().then(function () {
     log.info('User Created', { user: toJson(user), context: 'create', loggedInUser: toJson(req.user) });
     req.logIn(user, function (error, detail) {
-      if (!error && true) { // && req.query.downloadFacebookImages && user.facebook_id) {
-        models.Image.downloadFacebookImagesForUser(req, res, user);
-      } else {
-        sendUserOrError(res, user, 'registerUser', error, 401);
-      }
-//      sendUserOrError(res, user, 'registerUser', error, 401);
+      sendUserOrError(res, user, 'registerUser', error, 401);
     });
   }).catch(function (error) {
     if (error && error.name=='SequelizeUniqueConstraintError') {
