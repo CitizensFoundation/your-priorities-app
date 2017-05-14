@@ -1,4 +1,9 @@
 var async = require("async");
+var request = require('request').defaults({ encoding: null });
+var fs = require('fs');
+var randomstring = require("randomstring");
+var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
 
 "use strict";
 
@@ -268,6 +273,74 @@ module.exports = function(sequelize, DataTypes) {
         Image.belongsToMany(models.Group, { as: 'GroupHeaderImages', through: 'GroupHeaderImage' });
         Image.belongsToMany(models.Domain, { as: 'DomainLogoImages', through: 'DomainLogoImage' });
         Image.belongsToMany(models.Domain, { as: 'DomainHeaderImages', through: 'DomainHeaderImage' });
+      },
+      
+      sendUserOrError: function (res, user, context, error, errorStatus) {
+        if (error || !user) {
+          if (errorStatus == 404) {
+            log.warn("User Not Found", { context: context, err: error, user: user,
+              errorStatus: 404 });
+          } else {
+            log.error("User Error", { context: context, user: user, err: error,
+              errorStatus: errorStatus ? errorStatus : 500 });
+          }
+          if (errorStatus) {
+            res.status(errorStatus).send({ message: error ? error.name  : "Unknown"});
+          } else {
+            res.status(500).send({ message: error.name });
+          }
+        } else {
+          res.send(user);
+        }
+      },
+
+      downloadFacebookImagesForUser: function (req, res, user) {
+        //var facebookId = user.facebook_id;
+        var facebookId = 746850516;
+        request.get('https://graph.facebook.com/' + facebookId + '/picture', function (err, downloadResponse, body) {
+          var filepath = "uploads/fb_image_download"+randomstring.generate(10) + '.png';
+          var originalFilename = "facebook_profile_"+facebookId+".png";
+          fs.writeFile(filepath, body, function(err) {
+            if (err) {
+              log.error("Error when trying to write image", {err: error});
+              res.sendStatus(500);
+              return;
+            }
+
+            var s3UploadClient = sequelize.models.Image.getUploadClient(process.env.S3_BUCKET, "user-profile");
+            s3UploadClient.upload(filepath, {}, function(error, versions, meta) {
+              if (error) {
+                sequelize.models.Image.sendUserOrError(res, null, 'downloadFacebookImagesForUser', res.user, error);
+              } else {
+                var image = sequelize.models.Image.build({
+                  user_id: req.user.id,
+                  s3_bucket_name: process.env.S3_BUCKET,
+                  original_filename: originalFilename,
+                  formats: JSON.stringify(sequelize.models.Image.createFormatsFromVersions(versions)),
+                  user_agent: req.useragent.source,
+                  ip_address: req.clientIp
+                });
+                image.save().then(function() {
+                  log.info('Image Created', { image: toJson(image), context: 'create', user: toJson(req.user) });
+                  user.setupImages({uploadedProfileImageId: image.id}, function (error) {
+                    fs.unlink(filepath, function(error) {
+                      if (error) {
+                        log.error("Error in unlinking image file: "+filepath);
+                      }
+                      setTimeout(function () {
+                        sequelize.models.User.getUserWithAll(user.id, function (error, newUser) {
+                          sequelize.models.Image.sendUserOrError(res, newUser, 'downloadFacebookImagesForUser', error);
+                        });
+                      }, 5);
+                    });
+                  });
+                }).catch(function(error) {
+                  sequelize.models.Image.sendUserOrError(res, null, 'create', error);
+                });
+              }
+            });
+          });
+        });
       }
     }
   });

@@ -1,6 +1,7 @@
 var async = require("async");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+var _ = require('lodash');
 
 "use strict";
 
@@ -250,6 +251,68 @@ module.exports = function(sequelize, DataTypes) {
         User.belongsToMany(models.Group, { as: 'GroupAdmins', through: 'GroupAdmin' });
         User.belongsToMany(models.Organization, { as: 'OrganizationAdmins', through: 'OrganizationAdmin' });
         User.belongsToMany(models.Organization, { as: 'OrganizationUsers', through: 'OrganizationUser' });
+      },
+
+      getUserWithAll: function (userId, callback) {
+        var user, endorsements, pointQualities;
+
+        async.parallel([
+          function (seriesCallback) {
+           sequelize.models.User.find({
+              where: {id: userId},
+              attributes: _.concat(sequelize.models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','profile_data','email','default_locale']),
+              order: [
+                [ { model:sequelize.models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
+                [ { model:sequelize.models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
+              ],
+              include: [
+                {
+                  model:sequelize.models.Image, as: 'UserProfileImages',
+                  attributes: ['id', 'created_at', 'formats'],
+                  required: false
+                },
+                {
+                  model:sequelize.models.Image, as: 'UserHeaderImages',
+                  attributes: ['id', 'created_at', 'formats'],
+                  required: false
+                }
+              ]
+            }).then(function(userIn) {
+              user = userIn;
+              seriesCallback();
+            }).catch(function(error) {
+              seriesCallback(error);
+            });
+          },
+          function (seriesCallback) {
+            sequelize.models.Endorsement.findAll({
+              where: {user_id: userId},
+              attributes: ['id', 'value', 'post_id']
+            }).then(function(endorsementsIn) {
+              endorsements = endorsementsIn;
+              seriesCallback();
+            }).catch(function(error) {
+              seriesCallback(error);
+            });
+          },
+          function (seriesCallback) {
+            sequelize.models.PointQuality.findAll({
+              where: {user_id: userId},
+              attributes: ['id', 'value', 'point_id']
+            }).then(function (pointQualitiesIn) {
+              pointQualities = pointQualitiesIn;
+              seriesCallback();
+            }).catch(function (error) {
+              seriesCallback(error);
+            });
+          }
+        ], function (error) {
+          if (user) {
+            user.dataValues.Endorsements = endorsements;
+            user.dataValues.PointQualities = pointQualities;
+          }
+          callback(error, user);
+        })
       }
     },
 
