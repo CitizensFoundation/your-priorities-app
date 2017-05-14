@@ -137,7 +137,7 @@ module.exports = function(sequelize, DataTypes) {
 
       serializeFacebookUser: function (profile, callback) {
         var user;
-        
+
         /*
          if (!error && true) { // && req.query.downloadFacebookImages && user.facebook_id) {
          models.Image.downloadFacebookImagesForUser(req, res, user);

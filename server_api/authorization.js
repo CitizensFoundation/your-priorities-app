@@ -244,20 +244,24 @@ auth.role('domain.viewUser', function (domain, req, done) {
   models.Domain.findOne({
     where: { id: domain.id }
   }).then(function (domain) {
-    if (domain.access === models.Domain.ACCESS_PUBLIC) {
-      done(null, true);
-    }  else if (!auth.isAuthenticated(req)) {
-      done(null, false);
-    } else if (domain.user_id === req.user.id) {
-      done(null, true);
+    if (domain) {
+      if (domain.access === models.Domain.ACCESS_PUBLIC) {
+        done(null, true);
+      }  else if (!auth.isAuthenticated(req)) {
+        done(null, false);
+      } else if (domain.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        domain.hasUser(req.user).then(function (result) {
+          if (result) {
+            done(null, true);
+          } else {
+            done(null, false);
+          }
+        });
+      }
     } else {
-      domain.hasUser(req.user).then(function (result) {
-        if (result) {
-          done(null, true);
-        } else {
-          done(null, false);
-        }
-      });
+      done(null, false);
     }
   });
 });
@@ -482,19 +486,23 @@ auth.role('post.admin', function (post, req, done) {
         models.Group
       ]
     }).then(function (post) {
-      var group = post.Group;
-      if (!auth.isAuthenticated(req, group)) {
-        done(null, false);
-      } else if (post.user_id === req.user.id) {
-        done(null, true);
+      if (post) {
+        var group = post.Group;
+        if (!auth.isAuthenticated(req, group)) {
+          done(null, false);
+        } else if (post.user_id === req.user.id) {
+          done(null, true);
+        } else {
+          group.hasGroupAdmins(req.user).then(function (result) {
+            if (result) {
+              done(null, true);
+            } else {
+              done(null, false);
+            }
+          });
+        }
       } else {
-        group.hasGroupAdmins(req.user).then(function (result) {
-          if (result) {
-            done(null, true);
-          } else {
-            done(null, false);
-          }
-        });
+        done(null, false);
       }
     });
   }
@@ -793,21 +801,25 @@ auth.role('point.vote', function (point, req, done) {
   }).then(function (point) {
     var group;
 
-    if (point.Post) {
-      group = point.Post.Group;
-    } else {
-      group = point.Group;
-    }
+    if (point) {
+      if (point.Post) {
+        group = point.Post.Group;
+      } else {
+        group = point.Group;
+      }
 
-    if (group) {
-      if (!auth.isAuthenticated(req, group)) {
-        done(null, false);
-      } else if (group.access === models.Group.ACCESS_PUBLIC) {
-        done(null, true);
-      } else if (point.user_id === req.user.id) {
-        done(null, true);
-      } else if (group.Community) {
-        auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+      if (group) {
+        if (!auth.isAuthenticated(req, group)) {
+          done(null, false);
+        } else if (group.access === models.Group.ACCESS_PUBLIC) {
+          done(null, true);
+        } else if (point.user_id === req.user.id) {
+          done(null, true);
+        } else if (group.Community) {
+          auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+        } else {
+          done(null, false);
+        }
       } else {
         done(null, false);
       }
