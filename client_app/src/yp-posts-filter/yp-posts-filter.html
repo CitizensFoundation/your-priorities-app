@@ -440,6 +440,9 @@
       },
 
       _groupChanged: function (group) {
+        this.set('categoriesWithCount', null);
+        this.set('allPostCount', 0);
+        this.set('categoryId',null);
         if (group) {
           this._updateTitle();
           if (group.Categories && group.Categories.length>0) {
