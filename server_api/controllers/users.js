@@ -586,7 +586,36 @@ router.delete('/delete_current_user', function (req, res) {
         user.deleted = true;
         user.email = user.email+"_deleted_"+Math.floor(Math.random() * 9000);
         user.save().then(function () {
-          res.sendStatus(200);
+          models.Endorsement.findAll({
+            where: {
+              user_id: user.id
+            },
+            include: [
+              {
+                model: models.Post
+              }
+            ]
+          }).then(function (endorsements) {
+            async.forEach(endorsements, function (endorsement, forEachCallback) {
+              if (endorsement.value===1) {
+                endorsement.Post.decrement('counter_endorsements_up');
+              } else {
+                endorsement.Post.decrement('counter_endorsements_down');
+              }
+              endorsement.deleted = true;
+              endorsement.save().then(function () {
+                forEachCallback();
+              });
+            }, function (error) {
+              if (error) {
+                log.error('User delete error', { error: error, user: toJson(req.user), context: 'delete_current_user'});
+                res.sendStatus(500);
+              } else {
+                log.info('User deleted', { user: toJson(req.user), context: 'delete_current_user'});
+                res.sendStatus(200);
+              }
+            });
+          });
         });
       } else {
         log.error('User delete user not found', { error: error, user: toJson(req.user), context: 'delete_current_user'});
