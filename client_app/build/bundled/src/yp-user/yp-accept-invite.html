@@ -1,17 +1,17 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.155">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.156">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.155">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.155">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.156">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.156">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.155">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.155">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.155">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.155">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.155">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.156">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.156">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.156">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.156">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.156">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.155">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.156">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.155">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.156">
 
 </head><body><dom-module id="yp-accept-invite">
 
@@ -88,7 +88,10 @@
 
       targetName: String,
 
-      targetEmail: String
+      targetEmail: {
+        type: String,
+        value: null
+      }
     },
 
     _inviteError: function (event, detail) {
@@ -105,7 +108,7 @@
       if (window.appUser && window.appUser.loggedIn()===true) {
         this._reallyAcceptInvite();
       } else {
-        window.appUser.loginForAcceptInvite(this, this.token);
+        window.appUser.loginForAcceptInvite(this, this.token, this.targetEmail);
       }
     },
 
@@ -125,6 +128,7 @@
     _getInviteSenderResponse: function (event, detail) {
       this.set('inviteName', detail.response.inviteName);
       this.set('targetName', detail.response.targetName);
+      this.set('targetEmail', detail.response.targetEmail);
     },
 
     _acceptInviteResponse: function(event, detail) {
