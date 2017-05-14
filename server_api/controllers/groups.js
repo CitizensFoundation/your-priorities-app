@@ -817,11 +817,68 @@ router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
       });
       res.send(posts);
     } else {
-      sendCommunityOrError(res, null, 'view post locations', req.user, 'Not found', 404);
+      sendGroupOrError(res, null, 'view post locations', req.user, 'Not found', 404);
     }
   }).catch(function (error) {
-    sendCommunityOrError(res, null, 'view post locations', req.user, error);
+    sendGroupOrError(res, null, 'view post locations', req.user, error);
   });
+});
+
+router.get('/:id/categories_count/:tabName', auth.can('view group'), function(req, res) {
+  var categoriesCount, allPostCount;
+  var status = null;
+  if (req.params.tabName==="failed") {
+    status = -2;
+  } else if (req.params.tabName==="open") {
+    status = 0;
+  } else if (req.params.tabName==="in_progress") {
+    status = -1;
+  } else if (req.params.tabName==="successful") {
+    status = 2;
+  }
+  if (status!==null) {
+    async.parallel([
+      function (parallelCallback) {
+        models.Post.count({
+          attributes: ['category_id'],
+          where: {
+            group_id: req.params.id,
+            official_status: status
+          },
+          include: [{
+            model: models.Category
+          }],
+          group: ['category_id']
+        }).then(function (results) {
+          categoriesCount=results;
+          parallelCallback();
+        }).catch(function (error) {
+          parallelCallback(error);
+        });
+      },
+      function (parallelCallback) {
+        models.Post.count({
+          where: {
+            group_id: req.params.id,
+            official_status: status
+          }
+        }).then(function (count) {
+          allPostCount=count;
+          parallelCallback();
+        }).catch(function (error) {
+          parallelCallback(error);
+        });
+      }
+    ], function (error) {
+      if (error) {
+        sendGroupOrError(res, null, 'categories_count', req.user, error);
+      } else {
+        res.send({categoriesCount: categoriesCount, allPostCount: allPostCount});
+      }
+    });
+  } else {
+    sendGroupOrError(res, null, 'categories_count', req.user, "Cant find status for posts");
+  }
 });
 
 router.put('/:id/:groupId/mergeWithGroup', auth.can('edit post'), function(req, res) {

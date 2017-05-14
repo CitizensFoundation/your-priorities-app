@@ -147,6 +147,10 @@
       .card[wide-padding] {
         padding: 16px !important;
       }
+
+      #searchInput {
+        margin-left: 8px;
+      }
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -159,15 +163,15 @@
 
       <div class="searchContainer layout horizontal wrap">
         <div class="layout horizontal center-center">
-          <paper-input id="searchInput" label$="[[t('searchFor')]]" value="{{searchingFor}}" class="searchBox">
-          </paper-input>
-          <paper-icon-button icon="search" on-tap="_search" hidden$="[[!showSearchIcon]]"></paper-icon-button>
-        </div>
-        <div class="layout horizontal center-center">
           <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
                            group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
                            category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
           </yp-posts-filter>
+        </div>
+        <div class="layout horizontal center-center">
+          <paper-input id="searchInput" label$="[[t('searchFor')]]" value="{{searchingFor}}" class="searchBox">
+          </paper-input>
+          <paper-icon-button icon="search" on-tap="_search" hidsden$="[[!showSearchIcon]]"></paper-icon-button>
         </div>
       </div>
 
@@ -334,7 +338,9 @@
 
       _search: function () {
         window.appGlobals.activity('click', 'search');
-        this._refreshGroupFromFilter();
+        if (this.searchingFor && this.searchingFor!='') {
+          this._refreshGroupFromFilter();
+        }
       },
 
       cardMouseOver: function (event) {
