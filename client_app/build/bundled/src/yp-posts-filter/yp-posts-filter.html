@@ -1,22 +1,22 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.154">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.155">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.154">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.154">
-<link rel="import" href="../../bower_components/iron-icons/av-icons.html?v=6.3.154">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.154">
-<link rel="import" href="../../bower_components/iron-selector/iron-selector.html?v=6.3.154">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.154">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.155">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.155">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html?v=6.3.155">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.155">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html?v=6.3.155">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.155">
 
-<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.3.154">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.3.155">
 
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html?v=6.3.154">
-<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html?v=6.3.154">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.154">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.3.154">
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.3.154">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html?v=6.3.155">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html?v=6.3.155">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.155">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.3.155">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.3.155">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.154">
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.154">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.155">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.155">
 
 </head><body><dom-module id="yp-posts-filter">
   <template>
@@ -440,6 +440,9 @@
       },
 
       _groupChanged: function (group) {
+        this.set('categoriesWithCount', null);
+        this.set('allPostCount', 0);
+        this.set('categoryId',null);
         if (group) {
           this._updateTitle();
           if (group.Categories && group.Categories.length>0) {
