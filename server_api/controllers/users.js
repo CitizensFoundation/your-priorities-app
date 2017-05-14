@@ -816,7 +816,7 @@ router.get('/get_invite_info/:token', function(req, res) {
       } else if (invite.Community) {
         targetName = invite.Community.name;
       }
-      res.send({ targetName: targetName, inviteName: invite.FromUser.name });
+      res.send({ targetName: targetName, inviteName: invite.FromUser.name, targetEmail: invite.metadata ? invite.metadata.toEmail : null });
     } else {
       log.info('User Invite Token Not found', {context: 'get_invite_info'});
       res.sendStatus(404);

@@ -334,7 +334,8 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
         type: models.Invite.INVITE_TO_COMMUNITY,
         community_id: req.params.communityId,
         user_id: user ? user.id : null,
-        from_user_id: req.user.id
+        from_user_id: req.user.id,
+        metadata:  { toEmail: req.params.userEmail}
       }).then(function (inviteIn) {
         if (inviteIn) {
           invite = inviteIn;

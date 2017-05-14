@@ -672,10 +672,13 @@
       this.fire('iron-signal', {name: 'logged-in', data: user});
     },
 
-    open: function(redirectTo) {
+    open: function(redirectTo, email) {
       this.redirectTo = redirectTo;
       this.set('userSpinner', false);
       this.set('opened', false);
+      if (email) {
+        this.set('email', email);
+      }
       this.async(function () {
         this.set('opened', true);
         this.async(function () {

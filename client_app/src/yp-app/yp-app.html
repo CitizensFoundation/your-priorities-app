@@ -479,9 +479,25 @@
 
       openAcceptInvitationDialog: function (inviteToken) {
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("acceptInvite");
-        this.async(function () {
+        if (typeof dialog.afterLogin === "function") {
           dialog.open(inviteToken);
-        }, 2000);
+        } else {
+          this.async(function () {
+            if (typeof dialog.afterLogin === "function") {
+              dialog.open(inviteToken);
+            } else {
+              this.async(function () {
+                if (typeof dialog.afterLogin === "function") {
+                  dialog.open(inviteToken);
+                } else {
+                  this.async(function () {
+                    dialog.open(inviteToken);
+                  }, 1000);
+                }
+              }, 1000);
+            }
+          }, 500);
+        }
       },
 
       _showPage404: function() {

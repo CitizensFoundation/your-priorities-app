@@ -6,6 +6,7 @@ module.exports = function(sequelize, DataTypes) {
     expires_at: DataTypes.DATE,
     token: DataTypes.STRING,
     joined_at: DataTypes.DATE,
+    metadata: DataTypes.JSONB,
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
 
@@ -41,6 +42,12 @@ module.exports = function(sequelize, DataTypes) {
         Invite.belongsTo(models.Post);
         Invite.belongsTo(models.User, { as: 'FromUser' });
         Invite.belongsTo(models.User, { as: 'ToUser' });
+      },
+
+      checkIfColumnExists: function(columnName) {
+        var a = this.rawAttributes;
+        var b = this.rawAttributes[columnName];
+        return this.rawAttributes[columnName]!=null;
       }
     }
   });

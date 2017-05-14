@@ -230,7 +230,8 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
         group_id: req.params.groupId,
         domain_id: req.ypDomain.id,
         user_id: user ? user.id : null,
-        from_user_id: req.user.id
+        from_user_id: req.user.id,
+        metadata:  { toEmail: req.params.userEmail}
       }).then(function (inviteIn) {
         if (inviteIn) {
           invite = inviteIn;

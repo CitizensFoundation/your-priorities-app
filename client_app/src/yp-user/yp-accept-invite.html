@@ -88,7 +88,10 @@
 
       targetName: String,
 
-      targetEmail: String
+      targetEmail: {
+        type: String,
+        value: null
+      }
     },
 
     _inviteError: function (event, detail) {
@@ -105,7 +108,7 @@
       if (window.appUser && window.appUser.loggedIn()===true) {
         this._reallyAcceptInvite();
       } else {
-        window.appUser.loginForAcceptInvite(this, this.token);
+        window.appUser.loginForAcceptInvite(this, this.token, this.targetEmail);
       }
     },
 
@@ -125,6 +128,7 @@
     _getInviteSenderResponse: function (event, detail) {
       this.set('inviteName', detail.response.inviteName);
       this.set('targetName', detail.response.targetName);
+      this.set('targetEmail', detail.response.targetEmail);
     },
 
     _acceptInviteResponse: function(event, detail) {
