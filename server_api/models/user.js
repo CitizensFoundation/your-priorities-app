@@ -137,15 +137,6 @@ module.exports = function(sequelize, DataTypes) {
 
       serializeFacebookUser: function (profile, domain, callback) {
         var user;
-
-        /*
-         if (!error && true) { // && req.query.downloadFacebookImages && user.facebook_id) {
-         models.Image.downloadFacebookImagesForUser(req, res, user);
-         } else {
-         sendUserOrError(res, user, 'registerUser', error, 401);
-         }
-         */
-
         async.series([
           function (seriesCallback) {
             sequelize.models.User.find({
@@ -212,7 +203,7 @@ module.exports = function(sequelize, DataTypes) {
             }
           },
           function (seriesCallback) {
-            if (false && domain.configuration && domain.configuration.downloadFacebookImagesForUser===true) {
+            if (false && domain && domain.configuration && domain.configuration.downloadFacebookImagesForUser===true) {
               models.Image.downloadFacebookImagesForUser(user, function (error, newUser) {
                 user = newUser;
                 seriesCallback(error);
