@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.157"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-category-edit" assetpath="../yp-category/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.158"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-category-edit" assetpath="../yp-category/">
   <template>
 
     <style include="iron-flex iron-flex-alignment">
@@ -3417,6 +3417,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
           <section class="sectionMargin">
             <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
+            <paper-checkbox name="downloadFacebookImagesForUser" checked$="{{domain.configuration.downloadFacebookImagesForUser}}">[[t('downloadFacebookImagesForUser')]]</paper-checkbox>
             <yp-language-selector name="defaultLocale" no-user-events="" selected-locale="{{domain.default_locale}}"></yp-language-selector>
           </section>
 
