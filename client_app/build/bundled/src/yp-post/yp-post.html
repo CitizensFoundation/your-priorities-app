@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.156"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.157"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -594,7 +594,7 @@
               </paper-material>
 
               <div id="allUpPoints">
-                <template is="dom-repeat" items="[[upPoints]]" as="point">
+                <template is="dom-repeat" initial-count="7" items="[[upPoints]]" as="point">
                   <paper-material id="point[[point.id]]" elevation="1" animated="" class="pointMaterial">
                     <yp-point point="[[point]]"></yp-point>
                   </paper-material>
@@ -625,7 +625,7 @@
               </paper-material>
 
               <div id="allDownPoints">
-                <template is="dom-repeat" items="[[downPoints]]" as="point">
+                <template is="dom-repeat" initial-count="7" items="[[downPoints]]" as="point">
                   <paper-material id="point[[point.id]]" elevation="1" animated="" class="pointMaterial">
                     <yp-point point="[[point]]"></yp-point>
                   </paper-material>
@@ -655,7 +655,7 @@
           </template>
         </paper-material>
         <div class="layout vertical center-center">
-          <template is="dom-repeat" items="[[points]]" as="point">
+          <template is="dom-repeat" initial-count="7" items="[[points]]" as="point">
             <paper-material id="point[[point.id]]" elevation="1" animated="" class="pointMaterial">
               <yp-point point="[[point]]"></yp-point>
             </paper-material>

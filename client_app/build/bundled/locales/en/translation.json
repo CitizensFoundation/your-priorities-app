@@ -1,4 +1,5 @@
 {
+  "downloadFacebookImagesForUser": "Download Facebook images for users to our db",
   "customUserRegistrationText": "Custom user registration text",
   "participateAnonymously": "Participate Anonymously",
   "allowAnonymousUsers": "Allow anonymous users",
