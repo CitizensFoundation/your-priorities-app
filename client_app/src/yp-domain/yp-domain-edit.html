@@ -124,6 +124,8 @@
 
           <section class="sectionMargin">
             <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
+            <paper-checkbox name="downloadFacebookImagesForUser" checked$="{{domain.configuration.downloadFacebookImagesForUser}}">[[t('downloadFacebookImagesForUser')]]</paper-checkbox>
+
             <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{domain.default_locale}}"></yp-language-selector>
           </section>
 

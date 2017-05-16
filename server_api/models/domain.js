@@ -254,6 +254,7 @@ module.exports = function(sequelize, DataTypes) {
                                       defaults: { access: Domain.ACCESS_PUBLIC,
                                                   default_locale: 'en',
                                                   name: 'New Domain',
+                                                  configuration: {},
                                                   user_agent: req.useragent.source,
                                                   ip_address: req.clientIp}})
         .spread(function(domain, created) {

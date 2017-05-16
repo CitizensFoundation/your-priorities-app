@@ -276,9 +276,9 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       downloadFacebookImagesForUser: function (user, done) {
-        //var facebookId = user.facebook_id;
-        var facebookId = 746850516;
-        if (!user.UserProfileImages || user.UserProfileImages.length===0) {
+        var facebookId = user.facebook_id;
+        //var facebookId = 746850516;
+        if (facebookId && !user.UserProfileImages || user.UserProfileImages.length===0) {
           request.get('https://graph.facebook.com/' + facebookId + '/picture', function (err, downloadResponse, body) {
             if (err) {
               return done(err);
@@ -327,7 +327,7 @@ module.exports = function(sequelize, DataTypes) {
             });
           });
         } else {
-          log.info("User already has an image", {user: user});
+          log.info("User already has an image", {user: user, facebook_id: user ? user.facebook_id : null});
           done()
         }
       }

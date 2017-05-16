@@ -154,10 +154,10 @@ app.use(function (req, res, next) {
   next();
 });
 
-passport.serializeUser(function (profile, done) {
+passport.serializeUser(function (req, profile, done) {
   log.info("User Serialized From", {profile: profile});
   if (profile.provider && profile.provider == 'facebook') {
-    models.User.serializeFacebookUser(profile, null, function (error, user) {
+    models.User.serializeFacebookUser(profile, req.ypDomain, function (error, user) {
       if (error) {
         log.error("Error in User Serialized from Facebook", {err: error});
         done(error);
