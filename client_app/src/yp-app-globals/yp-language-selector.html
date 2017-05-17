@@ -27,7 +27,7 @@
 
     <div class="layout vertical">
 
-    <paper-dropdown-menu label="[[t('selectLanguage')]]" selected="{{selectedLocale}}" attr-for-selected="name">
+    <paper-dropdown-menu label="Select language" selected="{{selectedLocale}}" attr-for-selected="name">
       <paper-listbox class="dropdown-content" selected="{{selectedLocale}}"  attr-for-selected="name">
         <template is="dom-repeat" items="[[languages]]">
           <paper-item name="[[item.language]]">[[item.name]]</paper-item>
