@@ -683,42 +683,19 @@ router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
     });
 });
 
-router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), function(req, res) {
-
-  var where = { status: { $in: ['published','inactive']}, group_id: req.params.id, deleted: false };
-
-  var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
-
-  if (req.params.filter=="newest") {
-    postOrder = "created_at DESC";
-  } else if (req.params.filter=="most_debated") {
-    postOrder = "counter_points DESC";
-  } else if (req.params.filter=="random") {
-    postOrder = "created_at DESC";
-  }
-
-  console.log(req.param["categoryId"]);
-  console.log(req.params);
-
-  if (req.params.categoryId!='null') {
-    where['category_id'] = req.params.categoryId;
-  }
-
-  log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', user: toJson(req.user) });
-
-  var offset = 0;
-  if (req.query.offset) {
-    offset = parseInt(req.query.offset);
-  }
-
-  var PostsByStatus = models.Post.scope(req.params.status);
-  PostsByStatus.findAndCountAll({
-    distinct: 'posts.id',
-    where: where,
+var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
+  var collectedIds = _.map(postsWithIds, function (post) {
+    return post.id;
+  });
+  models.Post.findAll({
+    where: {
+      id: {
+        $in: collectedIds
+      }
+    },
     attributes: ['id','name','description','status','official_status','counter_endorsements_up','cover_media_type',
-                 'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
+      'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
     order: [
-//          [models.sequelize.fn('-', models.sequelize.col('counter_endorsements_up'), models.sequelize.col('counter_endorsements_down')), 'DESC'],
       models.sequelize.literal(postOrder),
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
       [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
@@ -754,8 +731,52 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
       }
     ]
   }).then(function(posts) {
+    done(null, posts);
+  }).catch(function (error) {
+    done(error);
+  });
+};
+
+router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), function(req, res) {
+
+  var where = { status: { $in: ['published','inactive']}, group_id: req.params.id, deleted: false };
+
+  var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
+
+  if (req.params.filter=="newest") {
+    postOrder = "created_at DESC";
+  } else if (req.params.filter=="most_debated") {
+    postOrder = "counter_points DESC";
+  } else if (req.params.filter=="random") {
+    postOrder = "created_at DESC";
+  }
+
+  console.log(req.param["categoryId"]);
+  console.log(req.params);
+
+  if (req.params.categoryId!='null') {
+    where['category_id'] = req.params.categoryId;
+  }
+
+  log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', user: toJson(req.user) });
+
+  var offset = 0;
+  if (req.query.offset) {
+    offset = parseInt(req.query.offset);
+  }
+
+  var PostsByStatus = models.Post.scope(req.params.status);
+  PostsByStatus.findAll({
+    where: where,
+    attributes: ['id','status','official_status','counter_endorsements_up',
+                 'counter_endorsements_down','created_at'],
+    order: [
+      models.sequelize.literal(postOrder)
+    ]
+  }).then(function(posts) {
+    var totalPostsCount = posts.length;
     var rows = [];
-    var postRows = posts.rows;
+    var postRows = posts;
     if (req.params.filter==="random" && req.query.randomSeed && postRows && postRows.length>0) {
       postRows = seededShuffle(postRows, req.query.randomSeed);
     }
@@ -763,10 +784,21 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
       var toValue = offset+20;
       rows = _.slice(postRows, offset, toValue);
     }
-    res.send({
-      posts: rows,
-      totalPostsCount: posts.count
+    //TODO: Remove this hack by finding way to let sequelize work with offsets... (maybe in seq 4.0)
+    getPostsWithAllFromIds(rows, postOrder, function (error, finalRows) {
+      if (error) {
+        log.error("Error getting group", { err: error });
+        res.sendStatus(500);
+      } else {
+        res.send({
+          posts: finalRows,
+          totalPostsCount: totalPostsCount
+        });
+      }
     });
+  }).catch(function (error) {
+    log.error("Error getting group", { err: error });
+    res.sendStatus(500);
   });
 });
 
