@@ -204,7 +204,7 @@ module.exports = function(sequelize, DataTypes) {
           },
           function (seriesCallback) {
             if (domain && domain.configuration && domain.configuration.downloadFacebookImagesForUser===true) {
-              models.Image.downloadFacebookImagesForUser(user, function (error, newUser) {
+              sequelize.models.Image.downloadFacebookImagesForUser(user, function (error, newUser) {
                 user = newUser;
                 seriesCallback(error);
               });
