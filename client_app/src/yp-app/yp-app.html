@@ -458,7 +458,7 @@
 
         if (page) {
           this.async(function () {
-            window.appGlobals.sendToGoogleAnalytics('send', 'pageview', location.pathname);
+            window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
             window.appGlobals.activity('open', 'page', window.location.href);
           });
         }

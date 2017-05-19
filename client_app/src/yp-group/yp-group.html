@@ -585,6 +585,10 @@
 
           window.appGlobals.setCommunityAnalyticsTracker(this.group.Community.google_analytics_code);
 
+          if (this.group.Community.configuration && this.group.Community.configuration.facebookPixelId) {
+            window.appGlobals.setCommunityPixelTracker(this.group.Community.configuration.facebookPixelId);
+          }
+
           if (this.group.theme_id!=null) {
             this.setTheme(this.group.theme_id);
           } else if (this.group.Community.theme_id!=null) {

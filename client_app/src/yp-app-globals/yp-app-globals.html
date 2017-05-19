@@ -96,6 +96,11 @@
             value: null
           },
 
+          pixelTrackerId: {
+            type: String,
+            value: null
+          },
+
           communityTrackerId: {
             type: String,
             value: null
@@ -273,7 +278,7 @@
           if (context)
             logString += ' ' + context;
 
-          this.sendToGoogleAnalytics('send', 'event', object, type);
+          this.sendToAnalyticsTrackers('send', 'event', object, type);
 
           var activityAjax = document.createElement('iron-ajax');
           var date = new Date();
@@ -333,16 +338,49 @@
           return sid;
         },
 
-        setCommunityAnalyticsTracker: function (trackerId) {
-          if (trackerId && trackerId!='' && trackerId!=this.communityTrackerId) {
-            this.set('communityTrackerId', trackerId);
-            this.sendToGoogleAnalytics('sendOnlyCommunity', 'pageview', location.pathname);
+        // Pixel tracking
+
+        facebookPixelTracking: function (event, detailedEvent) {
+          if (this.pixelTrackerId && event) {
+            var fbEvent;
+            if (event==="pageview") {
+              fbEvent="PageView"
+            } else if (event==="event" && detailedEvent) {
+              fbEvent=detailedEvent;
+            } else {
+              fbEvent=event;
+            }
+            var image = new Image(1,1);
+            image.src = "https://www.facebook.com/tr?id="+this.pixelTrackerId+"&ev="+fbEvent+"&noscript=1";
+            console.debug("Have sent to Facebook pixel: "+fbEvent)
+          }
+        },
+
+        setCommunityPixelTracker: function (trackerId) {
+          if (trackerId && trackerId!=='') {
+            var oldTrackerId = this.pixelTrackerId;
+            this.set('pixelTrackerId', trackerId);
+            if (trackerId!==oldTrackerId) {
+              this.facebookPixelTracking('pageview');
+            }
           } else {
             this.set('communityTrackerId', null);
           }
         },
 
-        sendToGoogleAnalytics: function (a, b, c, d, e, f) {
+        setCommunityAnalyticsTracker: function (trackerId) {
+          if (trackerId && trackerId!=='') {
+            var oldTrackerId = this.communityTrackerId;
+            this.set('communityTrackerId', trackerId);
+            if (trackerId!==oldTrackerId) {
+              this.sendToAnalyticsTrackers('sendOnlyCommunity', 'pageview', location.pathname);
+            }
+          } else {
+            this.set('communityTrackerId', null);
+          }
+        },
+
+        sendToAnalyticsTrackers: function (a, b, c, d, e, f) {
           //console.log("Google analytics "+a+" "+b+" "+c+" "+d);
           if (typeof ga == 'function') {
             if (a!='sendOnlyCommunity') {
@@ -362,6 +400,9 @@
             }
           } else {
             console.warn("Google analytics message not sent for a:"+a+" b:"+b+" c:"+c+" d:"+d+" e:"+e+" f:"+f);
+          }
+          if (a!='sendOnlyCommunity') {
+            this.facebookPixelTracking(b, c);
           }
         },
 
@@ -423,7 +464,7 @@
                 };
                 break;
             }
-            this.sendToGoogleAnalytics('send','event','Login and Signup', eventType, authProviderText, fieldsObjects);
+            this.sendToAnalyticsTrackers('send','event','Login and Signup', eventType, authProviderText, fieldsObjects);
           }
         },
 

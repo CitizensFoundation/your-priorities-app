@@ -348,6 +348,10 @@
 
           window.appGlobals.setCommunityAnalyticsTracker(this.community.google_analytics_code);
 
+          if (this.community.configuration && this.community.configuration.facebookPixelId) {
+            window.appGlobals.setCommunityPixelTracker(this.community.configuration.facebookPixelId);
+          }
+
           if (this.community.theme_id!=null) {
             this.setTheme(this.community.theme_id);
           } else if (this.community.Domain.theme_id!=null) {

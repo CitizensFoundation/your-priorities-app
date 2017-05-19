@@ -654,6 +654,10 @@
 
             window.appGlobals.setCommunityAnalyticsTracker(this.post.Group.Community.google_analytics_code);
 
+            if (this.post.Group.Community.configuration && this.post.Group.Community.configuration.facebookPixelId) {
+              window.appGlobals.setCommunityPixelTracker(this.post.Group.Community.configuration.facebookPixelId);
+            }
+
             if (this.post.Group.configuration && this.post.Group.configuration.defaultLocale!=null) {
               this.changeLocaleIfNeeded(this.post.Group.configuration.defaultLocale);
             }
