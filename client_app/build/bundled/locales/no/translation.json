@@ -415,7 +415,7 @@
     "info":"Informasjon",
     "notifications": "Varsler",
     "name": "Ditt navn (eller alias)",
-    "email": "E-postadresse (varsel om respons på innlegg)",
+    "email": "E-postadresse",
     "edit": "Rediger bruker",
     "password": "Passord",
     "forgotPassword": "Lag nytt passord",

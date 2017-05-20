@@ -16534,7 +16534,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.158">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.159">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -17942,7 +17942,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.158" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.159" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -17999,7 +17999,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.158">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.159">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -18007,7 +18007,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.158">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.159">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19208,7 +19208,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.158", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.159", fontName: 'FFClanWebBook' });
 
       this.push('themes', {
         name: 'I choose Malta',
@@ -19230,6 +19230,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--icon-general-color': '#fff'
       });
       this.push('fonts', {});
+
+      this.push('themes', {
+        name: 'Reykjavík dark',
+        '--primary-background-color': 'var(--paper-blue-grey-100)',
+        '--primary-color': '#222',
+        '--primary-color-100': '#222',
+        '--primary-color-200': '#222',
+        '--primary-color-300': '#222',
+        '--primary-color-400': '#222',
+        '--primary-color-600': '#222',
+        '--primary-color-700': '#222',
+        '--primary-color-800': '#222',
+        '--primary-color-900': '#222',
+        '--accent-color': 'var(--paper-orange-a700)',
+        '--accent-color-100': 'var(--paper-orange-a100)',
+        '--accent-color-200': 'var(--paper-orange-a200)',
+        '--accent-color-300': 'var(--paper-orange-a400)',
+        '--accent-color-400': 'var(--paper-orange-a700)',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff'
+      });
+      this.push('fonts', {});
     },
 
     setTheme: function (number) {
@@ -19239,7 +19261,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.158";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.159";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -21798,8 +21820,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.158">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.158">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.159">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.159">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -25658,7 +25680,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.158" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.159" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -30886,7 +30908,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.158">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.159">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -32729,25 +32751,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </script>
 </dom-module>
 <dom-module id="paper-share-button" assetpath="../../bower_components/paper-share-button/">
-    <iron-iconset-svg name="custom" size="24">
-        <svg><defs>
-    <g id="share"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"></path></g>
-    <g id="email"><path d="M0 0h24v24H0z" fill="none"></path><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"></path></g>
-  </defs></svg>
-    </iron-iconset-svg>
-    <iron-iconset-svg name="brand" size="16">
-        <svg><defs>
-  <g id="facebook"><path d="M15.117 0H.883C.395 0 0 .395 0 .883v14.234c0 .488.395.883.883.883h7.663V9.804H6.46V7.39h2.086V5.607c0-2.066 1.262-3.19 3.106-3.19.883 0 1.642.064 1.863.094v2.16h-1.28c-1 0-1.195.48-1.195 1.18v1.54h2.39l-.31 2.42h-2.08V16h4.077c.488 0 .883-.395.883-.883V.883C16 .395 15.605 0 15.117 0"></path></g>
-  <g id="google"><path d="M5.09 7.273v1.745h2.89c-.116.75-.873 2.197-2.887 2.197-1.737 0-3.155-1.44-3.155-3.215S3.353 4.785 5.09 4.785c.99 0 1.652.422 2.03.786l1.382-1.33c-.887-.83-2.037-1.33-3.41-1.33C2.275 2.91 0 5.19 0 8s2.276 5.09 5.09 5.09c2.94 0 4.888-2.065 4.888-4.974 0-.334-.036-.59-.08-.843H5.09zm10.91 0h-1.455V5.818H13.09v1.455h-1.454v1.454h1.455v1.455h1.46V8.727H16"></path></g>
-  <g id="twitter"><path d="M16 3.038c-.59.26-1.22.437-1.885.517.677-.407 1.198-1.05 1.443-1.816-.634.37-1.337.64-2.085.79-.598-.64-1.45-1.04-2.396-1.04-1.812 0-3.282 1.47-3.282 3.28 0 .26.03.51.085.75-2.728-.13-5.147-1.44-6.766-3.42C.83 2.58.67 3.14.67 3.75c0 1.14.58 2.143 1.46 2.732-.538-.017-1.045-.165-1.487-.41v.04c0 1.59 1.13 2.918 2.633 3.22-.276.074-.566.114-.865.114-.21 0-.41-.02-.61-.058.42 1.304 1.63 2.253 3.07 2.28-1.12.88-2.54 1.404-4.07 1.404-.26 0-.52-.015-.78-.045 1.46.93 3.18 1.474 5.04 1.474 6.04 0 9.34-5 9.34-9.33 0-.14 0-.28-.01-.42.64-.46 1.2-1.04 1.64-1.7z" fill-rule="nonzero"></path></g>
-  <g id="vk"><path d="M7.828 12.526h.957s.288-.032.436-.19c.14-.147.14-.42.14-.42s-.02-1.284.58-1.473c.59-.187 1.34 1.24 2.14 1.788.61.42 1.07.33 1.07.33l2.14-.03s1.12-.07.59-.95c-.04-.07-.3-.65-1.58-1.84-1.34-1.24-1.16-1.04.45-3.19.98-1.31 1.38-2.11 1.25-2.45-.11-.32-.84-.24-.84-.24l-2.4.02s-.18-.02-.31.06-.21.26-.21.26-.38 1.02-.89 1.88C10.27 7.9 9.84 8 9.67 7.88c-.403-.26-.3-1.053-.3-1.62 0-1.76.27-2.5-.52-2.69-.26-.06-.454-.1-1.123-.11-.86-.01-1.585.006-1.996.207-.27.135-.48.434-.36.45.16.02.52.098.71.358.25.337.24 1.09.24 1.09s.14 2.077-.33 2.335c-.33.174-.77-.187-1.73-1.837-.49-.84-.86-1.78-.86-1.78s-.07-.17-.2-.27c-.15-.11-.37-.15-.37-.15l-2.29.02s-.34.01-.46.16c-.11.13-.01.41-.01.41s1.79 4.19 3.82 6.3c1.86 1.935 3.97 1.81 3.97 1.81z"></path></g>
-  <g id="blogger"><path d="M14.65 16H1.35C.6 16 0 15.4 0 14.65V1.35C0 .6.6 0 1.35 0H14.7c.7 0 1.3.6 1.3 1.35v13.3c0 .75-.6 1.35-1.35 1.35zM8 2.65H6c-1.85 0-3.35 1.5-3.35 3.35v4c0 1.85 1.5 3.35 3.35 3.35h4c1.85 0 3.35-1.5 3.35-3.35V7.35c0-.4-.3-.7-.7-.7H12c-.35 0-.65-.3-.65-.65 0-1.85-1.5-3.35-3.35-3.35zm2.05 8H6c-.35 0-.65-.3-.65-.65 0-.35.3-.65.65-.65h4.05c.35 0 .65.3.65.65 0 .35-.3.65-.65.65zm-1.7-5.3c.35 0 .65.3.65.65 0 .35-.3.65-.65.65h-2.4c-.35 0-.65-.3-.65-.65 0-.35.3-.65.65-.65h2.4z"></path></g>
-  <g id="reddit"><path d="M1.473 9.368c-.04.185-.06.374-.06.566 0 2.3 2.94 4.173 6.554 4.173 3.613 0 6.553-1.872 6.553-4.173 0-.183-.02-.364-.055-.54l-.01-.022c-.013-.036-.02-.073-.02-.11-.2-.784-.745-1.497-1.533-2.072-.03-.01-.058-.026-.084-.047-.017-.013-.03-.028-.044-.043-1.198-.824-2.91-1.34-4.807-1.34-1.88 0-3.576.506-4.772 1.315-.01.012-.02.023-.033.033-.026.022-.056.04-.087.05-.805.576-1.364 1.293-1.572 2.086 0 .038-.01.077-.025.114l-.005.01zM8 13.003c-1.198 0-2.042-.26-2.58-.8-.116-.116-.116-.305 0-.422.117-.11.307-.11.424 0 .42.42 1.125.63 2.155.63 1.03 0 1.73-.2 2.15-.62.11-.11.3-.11.42 0 .11.12.11.31 0 .43-.54.54-1.38.8-2.58.8zM5.592 7.945c-.61 0-1.12.51-1.12 1.12 0 .608.51 1.102 1.12 1.102.61 0 1.103-.494 1.103-1.102 0-.61-.494-1.12-1.103-1.12zm4.83 0c-.61 0-1.12.51-1.12 1.12 0 .608.51 1.102 1.12 1.102.61 0 1.103-.494 1.103-1.102 0-.61-.494-1.12-1.103-1.12zM13.46 6.88c.693.556 1.202 1.216 1.462 1.94.3-.225.48-.578.48-.968 0-.67-.545-1.214-1.214-1.214-.267 0-.52.087-.728.243zM1.812 6.64c-.67 0-1.214.545-1.214 1.214 0 .363.16.7.43.927.268-.72.782-1.37 1.478-1.92-.202-.14-.443-.22-.694-.22zm6.155 8.067c-3.944 0-7.152-2.14-7.152-4.77 0-.183.016-.363.046-.54-.53-.33-.86-.91-.86-1.545 0-1 .82-1.812 1.82-1.812.45 0 .87.164 1.2.455 1.24-.796 2.91-1.297 4.75-1.33l1.21-3.69.27.063s.01 0 .01.002l2.82.663c.23-.533.76-.908 1.38-.908.82 0 1.49.67 1.49 1.492 0 .823-.67 1.492-1.49 1.492s-1.49-.67-1.49-1.49L9.4 2.18l-.98 2.99c1.77.07 3.37.57 4.57 1.35.33-.31.764-.48 1.225-.48 1 0 1.814.81 1.814 1.81 0 .66-.36 1.26-.92 1.58.02.17.04.33.04.5-.01 2.63-3.21 4.77-7.16 4.77zM13.43 1.893c-.494 0-.895.4-.895.894 0 .493.4.894.894.894.49 0 .89-.4.89-.89s-.4-.89-.9-.89z"></path></g>
-  <g id="tumblr"><path d="M9.708 16c-3.396 0-4.687-2.504-4.687-4.274V6.498H3.41V4.432C5.83 3.557 6.418 1.368 6.55.12c.01-.086.077-.12.115-.12H9.01v4.076h3.2v2.422H8.997v4.98c.01.667.25 1.58 1.472 1.58h.06c.42-.012.99-.136 1.29-.278l.77 2.283c-.29.424-1.6.916-2.77.936H9.7z" fill-rule="nonzero"></path></g>
-  </defs></svg>
-    </iron-iconset-svg>
+  <iron-iconset-svg name="custom" size="24">
+    <svg><defs>
+      <g id="share"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"></path></g>
+      <g id="email"><path d="M0 0h24v24H0z" fill="none"></path><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"></path></g>
+    </defs></svg>
+  </iron-iconset-svg>
+  <iron-iconset-svg name="brand" size="16">
+    <svg><defs>
+      <g id="facebook"><path d="M15.117 0H.883C.395 0 0 .395 0 .883v14.234c0 .488.395.883.883.883h7.663V9.804H6.46V7.39h2.086V5.607c0-2.066 1.262-3.19 3.106-3.19.883 0 1.642.064 1.863.094v2.16h-1.28c-1 0-1.195.48-1.195 1.18v1.54h2.39l-.31 2.42h-2.08V16h4.077c.488 0 .883-.395.883-.883V.883C16 .395 15.605 0 15.117 0"></path></g>
+      <g id="google"><path d="M5.09 7.273v1.745h2.89c-.116.75-.873 2.197-2.887 2.197-1.737 0-3.155-1.44-3.155-3.215S3.353 4.785 5.09 4.785c.99 0 1.652.422 2.03.786l1.382-1.33c-.887-.83-2.037-1.33-3.41-1.33C2.275 2.91 0 5.19 0 8s2.276 5.09 5.09 5.09c2.94 0 4.888-2.065 4.888-4.974 0-.334-.036-.59-.08-.843H5.09zm10.91 0h-1.455V5.818H13.09v1.455h-1.454v1.454h1.455v1.455h1.46V8.727H16"></path></g>
+      <g id="twitter"><path d="M16 3.038c-.59.26-1.22.437-1.885.517.677-.407 1.198-1.05 1.443-1.816-.634.37-1.337.64-2.085.79-.598-.64-1.45-1.04-2.396-1.04-1.812 0-3.282 1.47-3.282 3.28 0 .26.03.51.085.75-2.728-.13-5.147-1.44-6.766-3.42C.83 2.58.67 3.14.67 3.75c0 1.14.58 2.143 1.46 2.732-.538-.017-1.045-.165-1.487-.41v.04c0 1.59 1.13 2.918 2.633 3.22-.276.074-.566.114-.865.114-.21 0-.41-.02-.61-.058.42 1.304 1.63 2.253 3.07 2.28-1.12.88-2.54 1.404-4.07 1.404-.26 0-.52-.015-.78-.045 1.46.93 3.18 1.474 5.04 1.474 6.04 0 9.34-5 9.34-9.33 0-.14 0-.28-.01-.42.64-.46 1.2-1.04 1.64-1.7z" fill-rule="nonzero"></path></g>
+      <g id="vk"><path d="M7.828 12.526h.957s.288-.032.436-.19c.14-.147.14-.42.14-.42s-.02-1.284.58-1.473c.59-.187 1.34 1.24 2.14 1.788.61.42 1.07.33 1.07.33l2.14-.03s1.12-.07.59-.95c-.04-.07-.3-.65-1.58-1.84-1.34-1.24-1.16-1.04.45-3.19.98-1.31 1.38-2.11 1.25-2.45-.11-.32-.84-.24-.84-.24l-2.4.02s-.18-.02-.31.06-.21.26-.21.26-.38 1.02-.89 1.88C10.27 7.9 9.84 8 9.67 7.88c-.403-.26-.3-1.053-.3-1.62 0-1.76.27-2.5-.52-2.69-.26-.06-.454-.1-1.123-.11-.86-.01-1.585.006-1.996.207-.27.135-.48.434-.36.45.16.02.52.098.71.358.25.337.24 1.09.24 1.09s.14 2.077-.33 2.335c-.33.174-.77-.187-1.73-1.837-.49-.84-.86-1.78-.86-1.78s-.07-.17-.2-.27c-.15-.11-.37-.15-.37-.15l-2.29.02s-.34.01-.46.16c-.11.13-.01.41-.01.41s1.79 4.19 3.82 6.3c1.86 1.935 3.97 1.81 3.97 1.81z"></path></g>
+      <g id="blogger"><path d="M14.65 16H1.35C.6 16 0 15.4 0 14.65V1.35C0 .6.6 0 1.35 0H14.7c.7 0 1.3.6 1.3 1.35v13.3c0 .75-.6 1.35-1.35 1.35zM8 2.65H6c-1.85 0-3.35 1.5-3.35 3.35v4c0 1.85 1.5 3.35 3.35 3.35h4c1.85 0 3.35-1.5 3.35-3.35V7.35c0-.4-.3-.7-.7-.7H12c-.35 0-.65-.3-.65-.65 0-1.85-1.5-3.35-3.35-3.35zm2.05 8H6c-.35 0-.65-.3-.65-.65 0-.35.3-.65.65-.65h4.05c.35 0 .65.3.65.65 0 .35-.3.65-.65.65zm-1.7-5.3c.35 0 .65.3.65.65 0 .35-.3.65-.65.65h-2.4c-.35 0-.65-.3-.65-.65 0-.35.3-.65.65-.65h2.4z"></path></g>
+      <g id="reddit"><path d="M1.473 9.368c-.04.185-.06.374-.06.566 0 2.3 2.94 4.173 6.554 4.173 3.613 0 6.553-1.872 6.553-4.173 0-.183-.02-.364-.055-.54l-.01-.022c-.013-.036-.02-.073-.02-.11-.2-.784-.745-1.497-1.533-2.072-.03-.01-.058-.026-.084-.047-.017-.013-.03-.028-.044-.043-1.198-.824-2.91-1.34-4.807-1.34-1.88 0-3.576.506-4.772 1.315-.01.012-.02.023-.033.033-.026.022-.056.04-.087.05-.805.576-1.364 1.293-1.572 2.086 0 .038-.01.077-.025.114l-.005.01zM8 13.003c-1.198 0-2.042-.26-2.58-.8-.116-.116-.116-.305 0-.422.117-.11.307-.11.424 0 .42.42 1.125.63 2.155.63 1.03 0 1.73-.2 2.15-.62.11-.11.3-.11.42 0 .11.12.11.31 0 .43-.54.54-1.38.8-2.58.8zM5.592 7.945c-.61 0-1.12.51-1.12 1.12 0 .608.51 1.102 1.12 1.102.61 0 1.103-.494 1.103-1.102 0-.61-.494-1.12-1.103-1.12zm4.83 0c-.61 0-1.12.51-1.12 1.12 0 .608.51 1.102 1.12 1.102.61 0 1.103-.494 1.103-1.102 0-.61-.494-1.12-1.103-1.12zM13.46 6.88c.693.556 1.202 1.216 1.462 1.94.3-.225.48-.578.48-.968 0-.67-.545-1.214-1.214-1.214-.267 0-.52.087-.728.243zM1.812 6.64c-.67 0-1.214.545-1.214 1.214 0 .363.16.7.43.927.268-.72.782-1.37 1.478-1.92-.202-.14-.443-.22-.694-.22zm6.155 8.067c-3.944 0-7.152-2.14-7.152-4.77 0-.183.016-.363.046-.54-.53-.33-.86-.91-.86-1.545 0-1 .82-1.812 1.82-1.812.45 0 .87.164 1.2.455 1.24-.796 2.91-1.297 4.75-1.33l1.21-3.69.27.063s.01 0 .01.002l2.82.663c.23-.533.76-.908 1.38-.908.82 0 1.49.67 1.49 1.492 0 .823-.67 1.492-1.49 1.492s-1.49-.67-1.49-1.49L9.4 2.18l-.98 2.99c1.77.07 3.37.57 4.57 1.35.33-.31.764-.48 1.225-.48 1 0 1.814.81 1.814 1.81 0 .66-.36 1.26-.92 1.58.02.17.04.33.04.5-.01 2.63-3.21 4.77-7.16 4.77zM13.43 1.893c-.494 0-.895.4-.895.894 0 .493.4.894.894.894.49 0 .89-.4.89-.89s-.4-.89-.9-.89z"></path></g>
+      <g id="tumblr"><path d="M9.708 16c-3.396 0-4.687-2.504-4.687-4.274V6.498H3.41V4.432C5.83 3.557 6.418 1.368 6.55.12c.01-.086.077-.12.115-.12H9.01v4.076h3.2v2.422H8.997v4.98c.01.667.25 1.58 1.472 1.58h.06c.42-.012.99-.136 1.29-.278l.77 2.283c-.29.424-1.6.916-2.77.936H9.7z" fill-rule="nonzero"></path></g>
+    </defs></svg>
+  </iron-iconset-svg>
 
-    <template>
+  <template>
     <style>
       :host {
         display: inline-block;
@@ -32807,123 +32829,124 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </paper-menu-button>
   </template>
 
-    <script>
-        Polymer({
+  <script>
+    Polymer({
 
-            is: 'paper-share-button',
+      is: 'paper-share-button',
 
-            properties: {
-                /** URL to share. Don't forget to use http:// or https:// at the beginning of the url! */
-                url: {
-                    type: String
-                },
-                /** Use window.location.href as url. (Only if the url is not set) */
-                autoUrl: {
-                    type: Boolean
-                },
-                /** The icon for the button (share icon by default)*/
-                buttonIcon: {
-                    type: String,
-                    value: 'custom:share'
-                },
-                /** text to share with the URL. (Compatible w/ Twitter / Reddit / Blogger) */
-                sharingText: {
-                    type: String,
-                    value: ''
-                },
-                /** Set to true to make all the logo black & white */
-                monochrome: {
-                    type: Boolean,
-                    value: false
-                },
-                /** Enable Popup sharing. Only working with compatible website (Facebook, Google Plus, Twitter)*/
-                popup: {
-                    type: Boolean,
-                    value: false
-                },
-                /** Set to true to enable share with email (mailto) */
-                email: {
-                    type: Boolean,
-                    value: false
-                },
-                /** Set to true to enable share with Facebook */
-                facebook: {
-                    type: Boolean,
-                    value: false
-                },
-                /** Set to true to enable share with Google Plus */
-                google: {
-                    type: Boolean,
-                    value: false
-                },
-                /** Set to true to enable share with Twitter */
-                twitter: {
-                    type: Boolean,
-                    value: false
-                },
-                /** Set to true to enable share with Reddit */
-                reddit: {
-                    type: Boolean,
-                    value: false
-                },
-                /** Set to true to enable share with VK */
-                vk: {
-                    type: Boolean,
-                    value: false
-                },
-                /** Set to true to enable share with Blogger */
-                blogger: {
-                    type: Boolean,
-                    value: false
-                },
-                /** Set to true to enable share with Tumblr */
-                tumblr: {
-                    type: Boolean,
-                    value: false
-                },
-                
-                horizontalAlign: {
-                    type: String,
-                    value: "left"
-                }
-            },
+      properties: {
+        /** URL to share. Don't forget to use http:// or https:// at the beginning of the url! */
+        url: {
+          type: String
+        },
+        /** Use window.location.href as url. (Only if the url is not set) */
+        autoUrl: {
+          type: Boolean
+        },
+        /** The icon for the button (share icon by default)*/
+        buttonIcon: {
+          type: String,
+          value: 'custom:share'
+        },
+        /** text to share with the URL. (Compatible w/ Twitter / Reddit / Blogger) */
+        sharingText: {
+          type: String,
+          value: ''
+        },
+        /** Set to true to make all the logo black & white */
+        monochrome: {
+          type: Boolean,
+          value: false
+        },
+        /** Enable Popup sharing. Only working with compatible website (Facebook, Google Plus, Twitter)*/
+        popup: {
+          type: Boolean,
+          value: false
+        },
+        /** Set to true to enable share with email (mailto) */
+        email: {
+          type: Boolean,
+          value: false
+        },
+        /** Set to true to enable share with Facebook */
+        facebook: {
+          type: Boolean,
+          value: false
+        },
+        /** Set to true to enable share with Google Plus */
+        google: {
+          type: Boolean,
+          value: false
+        },
+        /** Set to true to enable share with Twitter */
+        twitter: {
+          type: Boolean,
+          value: false
+        },
+        /** Set to true to enable share with Reddit */
+        reddit: {
+          type: Boolean,
+          value: false
+        },
+        /** Set to true to enable share with VK */
+        vk: {
+          type: Boolean,
+          value: false
+        },
+        /** Set to true to enable share with Blogger */
+        blogger: {
+          type: Boolean,
+          value: false
+        },
+        /** Set to true to enable share with Tumblr */
+        tumblr: {
+          type: Boolean,
+          value: false
+        },
 
-            _share: function(event) {
-              var element = Polymer.dom(event).localTarget;
-                if (!this.url && this.autoUrl) {
-                  this.url = window.location.href;
-                }
-                if (this.url) {
-                    if (this.popup) {
-                        switch (element.icon) {
-                            case 'brand:facebook':
-                                this._openPopup(element.getAttribute('href'), 'Sharing', 600, 375);
-                                break;
-                            case 'brand:google':
-                                this._openPopup(element.getAttribute('href'), 'Sharing', 400, 445);
-                                break;
-                            case 'brand:twitter':
-                                this._openPopup(element.getAttribute('href'), 'Sharing', 500, 230);
-                                break;
-                            default:
-                                window.open(element.getAttribute('href'), 'Sharing');
-                        }
-                    } else {
-                        window.open(element.getAttribute('href'), 'Sharing');
-                    }
-                } else {
-                    console.error("Impossible to share, no url set");
-                }
-                this.$.shareMenu.close();
-            },
-            _openPopup: function(url, title, w, h) {
-                //Center and open the popup.
-                var y = window.top.outerHeight / 2 + window.top.screenY - (h / 2)
-                var x = window.top.outerWidth / 2 + window.top.screenX - (w / 2)
-                window.open(url, title, 'width=' + w + ', height=' + h + ', top=' + y + ', left=' + x);
+        horizontalAlign: {
+          type: String,
+          value: "left"
+        }
+      },
+
+      _share: function(event) {
+        var element = Polymer.dom(event).localTarget;
+        if (!this.url && this.autoUrl) {
+          this.url = window.location.href;
+        }
+        if (this.url) {
+          this.fire("share-tap", { brand: element.icon });
+          if (this.popup) {
+            switch (element.icon) {
+              case 'brand:facebook':
+                this._openPopup(element.getAttribute('href'), 'Sharing', 600, 375);
+                break;
+              case 'brand:google':
+                this._openPopup(element.getAttribute('href'), 'Sharing', 400, 445);
+                break;
+              case 'brand:twitter':
+                this._openPopup(element.getAttribute('href'), 'Sharing', 500, 230);
+                break;
+              default:
+                window.open(element.getAttribute('href'), 'Sharing');
             }
-        });
-    </script>
+          } else {
+            window.open(element.getAttribute('href'), 'Sharing');
+          }
+        } else {
+          console.error("Impossible to share, no url set");
+        }
+        this.$.shareMenu.close();
+      },
+      _openPopup: function(url, title, w, h) {
+        //Center and open the popup.
+        var y = window.top.outerHeight / 2 + window.top.screenY - (h / 2)
+        var x = window.top.outerWidth / 2 + window.top.screenX - (w / 2)
+        window.open(url, title, 'width=' + w + ', height=' + h + ', top=' + y + ', left=' + x);
+      }
+    });
+  </script>
 </dom-module>
 <dom-module id="yp-post-actions" assetpath="../yp-post/">
 
@@ -33112,7 +33135,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="action-text down-text">[[formattedDownCount]]</div>
       </div>
       <div class="share">
-        <paper-share-button class="shareIcon" horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
+        <paper-share-button on-share-tap="_shareTap" class="shareIcon" horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
       </div>
     </paper-material>
 
@@ -33400,6 +33423,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this._enableVoting();
           window.appUser.loginForEndorse(this, { value: value } );
         }
+      },
+
+      _shareTap: function (event, detail) {
+        window.appGlobals.activity('postShareOpen', detail.brand, this.post.id);
       },
 
       upVote: function (event) {
@@ -37605,7 +37632,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             <yp-point-actions point="[[point]]"></yp-point-actions>
             <paper-icon-button hidden$="[[!loggedInUser]]" title$="[[t('point.report')]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
             <div class="flex"></div>
-            <paper-share-button class="shareIcon" horizontal-align="right" id="shareButton" title$="[[t('sharePoint')]]" facebook="" google="" twitter="" popup="" url="[[pointUrl]]"></paper-share-button>
+            <paper-share-button on-share-tap="_shareTap" class="shareIcon" horizontal-align="right" id="shareButton" title$="[[t('sharePoint')]]" facebook="" google="" twitter="" popup="" url="[[pointUrl]]"></paper-share-button>
             <template is="dom-if" if="[[hasPointAccess]]">
               <div class="layout horizontal self-end" hidden$="">
                 <yp-ajax id="editPointAjax" method="PUT" on-response="_editResponse"></yp-ajax>
@@ -37691,6 +37718,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypGotAdminRightsBehavior
       ],
+
+      _shareTap: function (event, detail) {
+        window.appGlobals.activity('pointShareOpen', detail.brand, this.point.id);
+      },
 
       _pointUrl: function (point) {
         if (point && point.Post) {
@@ -47451,7 +47482,7 @@ of a listbox item will also focus it.
 
     <div class="layout vertical">
 
-    <paper-dropdown-menu label="[[t('selectLanguage')]]" selected="{{selectedLocale}}" attr-for-selected="name">
+    <paper-dropdown-menu label="Select language" selected="{{selectedLocale}}" attr-for-selected="name">
       <paper-listbox class="dropdown-content" selected="{{selectedLocale}}" attr-for-selected="name">
         <template is="dom-repeat" items="[[languages]]">
           <paper-item name="[[item.language]]">[[item.name]]</paper-item>
@@ -50883,14 +50914,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.158">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.159">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.158">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.159">
    * ```
    *
    * ### Consuming effects
@@ -51656,7 +51687,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.158">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.159">
 ```
 
 #### List of effects
@@ -53328,6 +53359,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             value: null
           },
 
+          pixelTrackerId: {
+            type: String,
+            value: null
+          },
+
           communityTrackerId: {
             type: String,
             value: null
@@ -53505,7 +53541,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           if (context)
             logString += ' ' + context;
 
-          this.sendToGoogleAnalytics('send', 'event', object, type);
+          this.sendToAnalyticsTrackers('send', 'event', object, type);
 
           var activityAjax = document.createElement('iron-ajax');
           var date = new Date();
@@ -53565,16 +53601,49 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           return sid;
         },
 
-        setCommunityAnalyticsTracker: function (trackerId) {
-          if (trackerId && trackerId!='' && trackerId!=this.communityTrackerId) {
-            this.set('communityTrackerId', trackerId);
-            this.sendToGoogleAnalytics('sendOnlyCommunity', 'pageview', location.pathname);
+        // Pixel tracking
+
+        facebookPixelTracking: function (event, detailedEvent) {
+          if (this.pixelTrackerId && event) {
+            var fbEvent;
+            if (event==="pageview") {
+              fbEvent="PageView"
+            } else if (event==="event" && detailedEvent) {
+              fbEvent=detailedEvent;
+            } else {
+              fbEvent=event;
+            }
+            var image = new Image(1,1);
+            image.src = "https://www.facebook.com/tr?id="+this.pixelTrackerId+"&ev="+fbEvent+"&noscript=1";
+            console.debug("Have sent to Facebook pixel: "+fbEvent)
+          }
+        },
+
+        setCommunityPixelTracker: function (trackerId) {
+          if (trackerId && trackerId!=='') {
+            var oldTrackerId = this.pixelTrackerId;
+            this.set('pixelTrackerId', trackerId);
+            if (trackerId!==oldTrackerId) {
+              this.facebookPixelTracking('pageview');
+            }
           } else {
             this.set('communityTrackerId', null);
           }
         },
 
-        sendToGoogleAnalytics: function (a, b, c, d, e, f) {
+        setCommunityAnalyticsTracker: function (trackerId) {
+          if (trackerId && trackerId!=='') {
+            var oldTrackerId = this.communityTrackerId;
+            this.set('communityTrackerId', trackerId);
+            if (trackerId!==oldTrackerId) {
+              this.sendToAnalyticsTrackers('sendOnlyCommunity', 'pageview', location.pathname);
+            }
+          } else {
+            this.set('communityTrackerId', null);
+          }
+        },
+
+        sendToAnalyticsTrackers: function (a, b, c, d, e, f) {
           //console.log("Google analytics "+a+" "+b+" "+c+" "+d);
           if (typeof ga == 'function') {
             if (a!='sendOnlyCommunity') {
@@ -53594,6 +53663,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
           } else {
             console.warn("Google analytics message not sent for a:"+a+" b:"+b+" c:"+c+" d:"+d+" e:"+e+" f:"+f);
+          }
+          if (a!='sendOnlyCommunity') {
+            this.facebookPixelTracking(b, c);
           }
         },
 
@@ -53655,7 +53727,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 };
                 break;
             }
-            this.sendToGoogleAnalytics('send','event','Login and Signup', eventType, authProviderText, fieldsObjects);
+            this.sendToAnalyticsTrackers('send','event','Login and Signup', eventType, authProviderText, fieldsObjects);
           }
         },
 
@@ -57527,18 +57599,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.158"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.159"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.158"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.159"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.158"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.159"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -58199,6 +58271,9 @@ value. `setMax` should move the slider to the maximum value.
       <yp-language-selector name="defaultLocale" no-user-events="" selected-locale="{{community.default_locale}}"></yp-language-selector>
 
       <paper-input id="google_analytics_code" name="google_analytics_code" type="text" label="[[t('analyticsTrackerCode')]]" value="{{community.google_analytics_code}}" maxlength="40" style="width: 200px;">
+      </paper-input>
+
+      <paper-input id="facebookPixelId" name="facebookPixelId" type="text" label="[[t('facebookPixelId')]]" value="{{community.configuration.facebookPixelId}}" maxlength="40" style="width: 200px;">
       </paper-input>
 
       <paper-input id="defaultLocationLongLat" name="defaultLocationLongLat" type="text" label="[[t('defaultLocationLongLat')]]" value="{{community.defaultLocationLongLat}}" maxlength="100" style="width: 300px;">
@@ -62141,9 +62216,9 @@ paperMapInfo.register();
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.158");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.159");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.158");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.159");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
@@ -62151,7 +62226,7 @@ paperMapInfo.register();
 
         if (page) {
           this.async(function () {
-            window.appGlobals.sendToGoogleAnalytics('send', 'pageview', location.pathname);
+            window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
             window.appGlobals.activity('open', 'page', window.location.href);
           });
         }

@@ -1,4 +1,4 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.158">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.159">
 
 <script>
   /**
@@ -242,7 +242,7 @@
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.158", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.159", fontName: 'FFClanWebBook' });
 
       this.push('themes', {
         name: 'I choose Malta',
@@ -264,6 +264,28 @@
         '--icon-general-color': '#fff'
       });
       this.push('fonts', {});
+
+      this.push('themes', {
+        name: 'Reykjavík dark',
+        '--primary-background-color': 'var(--paper-blue-grey-100)',
+        '--primary-color': '#222',
+        '--primary-color-100': '#222',
+        '--primary-color-200': '#222',
+        '--primary-color-300': '#222',
+        '--primary-color-400': '#222',
+        '--primary-color-600': '#222',
+        '--primary-color-700': '#222',
+        '--primary-color-800': '#222',
+        '--primary-color-900': '#222',
+        '--accent-color': 'var(--paper-orange-a700)',
+        '--accent-color-100': 'var(--paper-orange-a100)',
+        '--accent-color-200': 'var(--paper-orange-a200)',
+        '--accent-color-300': 'var(--paper-orange-a400)',
+        '--accent-color-400': 'var(--paper-orange-a700)',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff'
+      });
+      this.push('fonts', {});
     },
 
     setTheme: function (number) {
@@ -273,7 +295,7 @@
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.158";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.159";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
