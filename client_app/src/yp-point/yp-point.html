@@ -146,7 +146,7 @@
             <yp-point-actions point="[[point]]"></yp-point-actions>
             <paper-icon-button hidden$="[[!loggedInUser]]" title$="[[t('point.report')]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
             <div class="flex"></div>
-            <paper-share-button class="shareIcon" horizontal-align="right" id="shareButton" title$="[[t('sharePoint')]]" facebook google twitter popup url="[[pointUrl]]"></paper-share-button>
+            <paper-share-button on-share-tap="_shareTap" class="shareIcon" horizontal-align="right" id="shareButton" title$="[[t('sharePoint')]]" facebook google twitter popup url="[[pointUrl]]"></paper-share-button>
             <template is="dom-if" if="[[hasPointAccess]]">
               <div class="layout horizontal self-end" hidden$="">
                 <yp-ajax id="editPointAjax" method="PUT" on-response="_editResponse"></yp-ajax>
@@ -232,6 +232,10 @@
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypGotAdminRightsBehavior
       ],
+
+      _shareTap: function (event, detail) {
+        window.appGlobals.activity('pointShareOpen', detail.brand, this.point.id);
+      },
 
       _pointUrl: function (point) {
         if (point && point.Post) {

@@ -205,7 +205,7 @@
         <div class="action-text down-text">[[formattedDownCount]]</div>
       </div>
       <div class="share" >
-        <paper-share-button class="shareIcon" horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook google twitter popup url="[[postUrl]]"></paper-share-button>
+        <paper-share-button on-share-tap="_shareTap" class="shareIcon" horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook google twitter popup url="[[postUrl]]"></paper-share-button>
       </div>
     </paper-material>
 
@@ -493,6 +493,10 @@
           this._enableVoting();
           window.appUser.loginForEndorse(this, { value: value } );
         }
+      },
+
+      _shareTap: function (event, detail) {
+        window.appGlobals.activity('postShareOpen', detail.brand, this.post.id);
       },
 
       upVote: function (event) {
