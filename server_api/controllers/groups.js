@@ -696,8 +696,8 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
     attributes: ['id','name','description','status','official_status','counter_endorsements_up','cover_media_type',
       'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
     order: [
-      models.sequelize.literal(postOrder),
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
+
       [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
     ],
     include: [
@@ -790,6 +790,9 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         log.error("Error getting group", { err: error });
         res.sendStatus(500);
       } else {
+        if (req.params.filter==="random" && req.query.randomSeed && finalRows && finalRows.length>0) {
+          finalRows = seededShuffle(finalRows, req.query.randomSeed);
+        }
         res.send({
           posts: finalRows,
           totalPostsCount: totalPostsCount
