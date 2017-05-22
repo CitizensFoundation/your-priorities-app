@@ -379,6 +379,7 @@
       },
 
       _changeCategory: function (e, detail) {
+        var oldCategoryId = this.categoryId;
         var categoryId = detail.item.dataset.categoryId;
         if (categoryId != '-1') {
           this.set('categoryId',categoryId);
@@ -389,7 +390,9 @@
           this.$$("#categoryMenu").selected = null;
         }
         this._updateTitle();
-        this._updateAfterFiltering();
+        if (oldCategoryId!==this.categoryId) {
+          this._updateAfterFiltering();
+        }
       },
 
       buildPostsUrlPath: function () {
