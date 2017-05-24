@@ -65,11 +65,11 @@ var deleteImage = function (imageId, callback) {
     if (image) {
     image.deleted = true;
       image.save().then(function () {
-        log.info('Post User Image Deleted', { imageId: imageId, context: 'delete', user: toJson(req.user) });
+        log.info('Post User Image Deleted', { imageId: imageId, context: 'delete' });
       });
       callback();
     } else {
-      log.error('Post User Image Delete Error', { imageId: imageId, context: 'delete', user: toJson(req.user) });
+      log.error('Post User Image Delete Error', { imageId: imageId, context: 'delete' });
       callback('Not found');
     }
   }).catch(function(error) {
