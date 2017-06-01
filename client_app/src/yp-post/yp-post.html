@@ -684,6 +684,7 @@
             this.$.pagesAjax.url = "/api/groups/"+this.post.Group.id+"/pages";
             this.$.pagesAjax.generateRequest();
             window.appGlobals.setAnonymousGroupStatus(this.post.Group);
+            window.appGlobals.disableFacebookLoginForGroup = false;
           }
         },
 

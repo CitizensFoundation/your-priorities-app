@@ -314,7 +314,7 @@
               </template>
 
               <template is="dom-if" if="[[hasFacebookLogin]]">
-                <div class="btn-auth btn-facebook" on-tap="_facebookLogin">
+                <div class="btn-auth btn-facebook" on-tap="_facebookLogin" hidden$="[[disableFacebookLoginForGroup]]">
                   [[t('user.facebookLogin')]]
                 </div>
               </template>
@@ -468,6 +468,11 @@
       hasAdditionalAuthMethods: {
         type: Boolean,
         computed: '_hasAdditionalAuthMethods(domain, hasAnonymousLogin)'
+      },
+
+      disableFacebookLoginForGroup: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -547,6 +552,11 @@
           this.set('hasAnonymousLogin', true);
         } else {
           this.set('hasAnonymousLogin', false);
+        }
+        if (window.appGlobals.disableFacebookLoginForGroup) {
+          this.set('disableFacebookLoginForGroup', true);
+        } else {
+          this.set('disableFacebookLoginForGroup', false);
         }
         if (window.appGlobals.domain &&
             window.appGlobals.domain.configuration &&
