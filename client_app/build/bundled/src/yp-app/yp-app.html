@@ -16534,7 +16534,7 @@ in every element that needs to use them.
 
   Sample use:
 
-      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.161">
+      <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html?v=6.3.162">
       <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
       <div class="layout horizontal layout-start">
@@ -17942,7 +17942,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.161" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.162" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -17999,7 +17999,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.161">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.162">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -18007,7 +18007,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.161">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.162">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19208,7 +19208,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.161", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.162", fontName: 'FFClanWebBook' });
 
       this.push('themes', {
         name: 'I choose Malta',
@@ -19261,7 +19261,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.161";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.162";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -21820,8 +21820,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.161">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.161">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.162">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.162">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -25680,7 +25680,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.161" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.162" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -30908,7 +30908,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.161">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.162">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -50914,14 +50914,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.161">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.162">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.161">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.162">
    * ```
    *
    * ### Consuming effects
@@ -51687,7 +51687,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.161">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.162">
 ```
 
 #### List of effects
@@ -53372,6 +53372,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           communityTrackerIds: {
             type: Object,
             value: {}
+          },
+
+          disableFacebookLoginForGroup: {
+            type: Boolean,
+            value: false
           }
         },
 
@@ -54568,7 +54573,7 @@ value. `setMax` should move the slider to the maximum value.
               </template>
 
               <template is="dom-if" if="[[hasFacebookLogin]]">
-                <div class="btn-auth btn-facebook" on-tap="_facebookLogin">
+                <div class="btn-auth btn-facebook" on-tap="_facebookLogin" hidden$="[[disableFacebookLoginForGroup]]">
                   [[t('user.facebookLogin')]]
                 </div>
               </template>
@@ -54721,6 +54726,11 @@ value. `setMax` should move the slider to the maximum value.
       hasAdditionalAuthMethods: {
         type: Boolean,
         computed: '_hasAdditionalAuthMethods(domain, hasAnonymousLogin)'
+      },
+
+      disableFacebookLoginForGroup: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -54800,6 +54810,11 @@ value. `setMax` should move the slider to the maximum value.
           this.set('hasAnonymousLogin', true);
         } else {
           this.set('hasAnonymousLogin', false);
+        }
+        if (window.appGlobals.disableFacebookLoginForGroup) {
+          this.set('disableFacebookLoginForGroup', true);
+        } else {
+          this.set('disableFacebookLoginForGroup', false);
         }
         if (window.appGlobals.domain &&
             window.appGlobals.domain.configuration &&
@@ -57599,18 +57614,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.161"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.162"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.161"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.162"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.161"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.162"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -58721,6 +58736,7 @@ value. `setMax` should move the slider to the maximum value.
           this.$.pagesAjax.generateRequest();
         }
         window.appGlobals.setAnonymousGroupStatus(null);
+        window.appGlobals.disableFacebookLoginForGroup = false;
       }
     });
   </script>
@@ -61479,6 +61495,7 @@ paperMapInfo.register();
         <paper-checkbox name="hidePointAuthor" checked$="{{group.configuration.hidePointAuthor}}">[[t('hidePointAuthor')]]</paper-checkbox>
         <paper-checkbox name="hidePostAuthor" checked$="{{group.configuration.hidePostAuthor}}">[[t('hidePostAuthor')]]</paper-checkbox>
         <paper-checkbox name="allowAnonymousUsers" checked$="{{group.configuration.allowAnonymousUsers}}">[[t('allowAnonymousUsers')]]</paper-checkbox>
+        <paper-checkbox name="disableFacebookLoginForGroup" checked$="{{group.configuration.disableFacebookLoginForGroup}}">[[t('disableFacebookLoginForGroup')]]</paper-checkbox>
       </div>
 
       <paper-input id="defaultLocationLongLat" name="defaultLocationLongLat" type="text" label="[[t('defaultLocationLongLat')]]" value="{{group.defaultLocationLongLat}}" maxlength="100" style="width: 300px;">
@@ -62216,9 +62233,9 @@ paperMapInfo.register();
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.161");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.162");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.161");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.162");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);

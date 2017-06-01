@@ -1,21 +1,21 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.161">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.162">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.161">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.161">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.162">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.162">
 
-<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.161">
-<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.161">
+<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.162">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.162">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.161">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.161">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.161">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.161">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.161">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.161">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.162">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.162">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.162">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.162">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.162">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.162">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.161">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.162">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.161">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.162">
 
 </head><body><dom-module id="yp-login">
 
@@ -299,7 +299,7 @@
               </template>
 
               <template is="dom-if" if="[[hasFacebookLogin]]">
-                <div class="btn-auth btn-facebook" on-tap="_facebookLogin">
+                <div class="btn-auth btn-facebook" on-tap="_facebookLogin" hidden$="[[disableFacebookLoginForGroup]]">
                   [[t('user.facebookLogin')]]
                 </div>
               </template>
@@ -452,6 +452,11 @@
       hasAdditionalAuthMethods: {
         type: Boolean,
         computed: '_hasAdditionalAuthMethods(domain, hasAnonymousLogin)'
+      },
+
+      disableFacebookLoginForGroup: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -531,6 +536,11 @@
           this.set('hasAnonymousLogin', true);
         } else {
           this.set('hasAnonymousLogin', false);
+        }
+        if (window.appGlobals.disableFacebookLoginForGroup) {
+          this.set('disableFacebookLoginForGroup', true);
+        } else {
+          this.set('disableFacebookLoginForGroup', false);
         }
         if (window.appGlobals.domain &&
             window.appGlobals.domain.configuration &&
