@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.162"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.163"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -2025,7 +2025,11 @@
             this.$.pagesAjax.url = "/api/groups/"+this.post.Group.id+"/pages";
             this.$.pagesAjax.generateRequest();
             window.appGlobals.setAnonymousGroupStatus(this.post.Group);
-            window.appGlobals.disableFacebookLoginForGroup = false;
+            if (this.post.Group.configuration && this.post.Group.configuration.disableFacebookLoginForGroup===true) {
+              window.appGlobals.disableFacebookLoginForGroup = true;
+            } else {
+              window.appGlobals.disableFacebookLoginForGroup = false;
+            }
           }
         },
 
