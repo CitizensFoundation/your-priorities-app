@@ -3,7 +3,7 @@ var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
 
-var communityId = 606; //process.argv[2];
+var communityId = process.argv[2];
 var groupId = process.argv[3];
 
 var endorsementsToAnalyse;
