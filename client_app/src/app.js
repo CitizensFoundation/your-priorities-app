@@ -102,6 +102,8 @@
       splashDiv.innerHTML += '<img style="width:200px; padding-top: 8px; padding-bottom: 8px" src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/malta/malta_splash-2.jpg"><br>';
     } else if (window.location.hostname.indexOf("forbrukerradet") >-1) {
       splashDiv.innerHTML += '<img style="width:200px; padding-top: 8px; padding-bottom: 8px" src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/ForbLogoSmall.jpg"><br>';
+    }  else if (window.location.hostname.indexOf("brainstorm-app") >-1) {
+      splashDiv.innerHTML += '<img style="width:200px; padding-top: 8px; padding-bottom: 8px" src="https://s3-eu-west-1.amazonaws.com/brainstorm-direct-assets-eu/brainStormSplash.png"><br>';
     } else {
       splashDiv.innerHTML += '<img src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/yrprLogo.png">';
     }
