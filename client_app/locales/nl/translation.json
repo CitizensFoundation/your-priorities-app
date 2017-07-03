@@ -1,39 +1,6 @@
 {
-  "disableCommunityDomainUpLink": "Ga door naar preview",
-  "analyticsTrackerCode": "Google Analytics",
-  "filterIdeas": "Filter ideeën",
-  "edit": "Bewerk",
-  "delete": "Verwijder",
-  "addEmoji": "Voeg een emoji toe",
-  "closeComments": "Commentaarfunctie sluiten",
-  "openComments": "Commentaarfunctie openen",
-  "deleteActivity": "Verwijder items uit de nieuwsfeed",
-  "pointsFor": "Argumenter vóór",
+  "pointsFor": "Argumenten vóór",
   "pointsAgainst": "Argumenten tegen",
-  "pointForShort": "Vóór",
-  "pointAgainstShort": "Tegen",
-  "domainToastCreated": "Domein aangemaakt",
-  "domainToastUpdated": "Domein opgeslagen",
-  "communityToastCreated": "Community aangemaakt",
-  "communityToastUpdated": "Community opgeslagen",
-  "groupToastCreated": "Groep aangemaakt",
-  "groupToastUpdated": "Groep opgeslagen",
-  "userToastCreated": "Maak gebruiker aan",
-  "userToastUpdated": "Sla gebruiker op",
-  "hideGroupHeader": "Verberg groep kop",
-  "errorResetTokenNotFoundOrUsed": "Wachtwoord reset token is niet gevonden of al gebruikt",
-  "addedAnIdea": "Heeft een idee toegevoegd…",
-  "recommendedPosts": "Aanbevolen",
-  "noComments": "Geen commentaar",
-  "optional": "Optioneel",
-  "additionalGroupConfig":"Uitgebreide groep settings",
-  "defaultDataImage":"Default data beeld",
-  "defaultPostImage":"Default bijdrage beeld",
-  "hideAllTabs":"Verberg tabbladen",
-  "hideNewPostOnPostPage":"Verberg nieuwe bijdrage op bijdragen pagina",
-  "newPointOptional":"Zet nieuw argument als optioneel",
-  "hideHelpIcon":"Verberg help icon",
-  "hideEmoji":"Verberg emojis",
   "endorsementButtonsHeart":"Hearts",
   "endorsementArrows":"Arrows",
   "endorsementThumbs":"Thumbs",
@@ -134,7 +101,6 @@
     "active": "Actief",
     "featured": "Aanbevolen",
     "archived": "Gearchiveerd",
-    "hidden": "Verborgen",
     "published": "Open",
     "successful": "Succesvol",
     "failed": "Mislukt",
@@ -150,7 +116,6 @@
   },
 
   "activity": {
-    "confirmDelete": "Bevestig dat je deze bijdragen wilt verwijderen?",
     "post": {
       "new": "Idee",
       "status": {
@@ -172,12 +137,7 @@
   "name": "Naam",
 
   "domain": {
-    "createOrganization": "Maak organisatie aan",
-    "edit": "Bewerk domein",
-    "info": "Instellingen",
-    "apis": "API's",
-    "settings": "Meer",
-    "onlyAdminsCanCreateCommunities": "Communities kunnen alleen door admins worden aangemaakt"
+    "edit": "Bewerk domein"
   },
 
   "domains": "Domeinen",
@@ -191,7 +151,6 @@
   "myAdminGroups": "Groepen admin",
 
   "community": {
-    "alternativeHeader": "Alternatieve kop",
     "edit": "Bewerk community",
     "hostname": "Hostnaam",
     "admins": "Community administratoren",
@@ -221,7 +180,6 @@
   },
 
   "post": {
-    "most_debated": "Meest besproken",
     "deleteConfirmation": "Weet u zeker dat u dit idee wilt verwijderen?",
     "move": "Verschuif idee",
     "confirmMove": "Bevestig verschuiving",
@@ -230,7 +188,7 @@
     "statusChangeContent": "Status verandering inhoud voor alle voor- en tegenstanders",
     "statusChange": "Stuur status verandering emails",
     "statusChangeSent": "Status emails verstuurd",
-    "noLocation": "Geen lokatie",
+    "noLocation": "Geen locatie",
     "shareInfo": "Deel idee",
     "description": "Beschrijving",
     "debate": "Debat",
@@ -242,7 +200,7 @@
     "newest": "Laatste ideeën",
     "random": "Willekeurige ideeën",
     "inProgress": "Ideeën in bewerking",
-    "groups": "Post groepen",
+    "groups": "Post groups",
     "search": "Zoek ideeën",
     "add_new":"Voeg een idee toe",
     "up_vote":"Stem een idee omhoog",
@@ -252,7 +210,7 @@
     "share": "Deel dit idee",
     "yourPost": "Idee",
     "yourPoint": "Argument vóór",
-    "location": "Lokatie",
+    "location": "Locatie",
     "photo": "Foto",
     "photographerName": "Fotograaf",
     "newPhoto": "Nieuwe foto",
@@ -261,7 +219,7 @@
     "tabs": {
       "debate": "Debat",
       "news": "Nieuws",
-      "location": "Lokatie",
+      "location": "Locatie",
       "photos": "Fotos",
       "solutions": "Oplossingen",
       "not_implemented": "Nog niet geïmplementeerd"
@@ -294,23 +252,23 @@
   },
 
   "point": {
-    "report": "Rapport",
+    "report": "Rapporteer argument",
     "againstAdded": "Argument tegen toegevoegd",
     "forAdded": "Argument vóór toegevoegd",
     "confirmDelete": "Bevestig dat u dit argument wilt verwijderen",
     "theseAreFor": "Argument vóór",
     "theseAreAgainst": "Argument tegen",
     "point": "Argument",
-    "for": "Schrijf argument vóór…",
-    "against": "Schrijg argument tegen…",
+    "for": "Waarom steunt u dit/deze...",
+    "against": "Waarom bent u tegen dit/deze...",
     "add_up": "Voeg argument vóór toe",
     "add_down": "Voeg argument tegen toe",
-    "helpful": "Stem omhoog ",
-    "not_helpful": "Stem omlaag",
+    "helpful": "Stem argument omhoog ",
+    "not_helpful": "Stem argument omlaag",
     "addNewsStory": "Voeg een nieuwsbericht toe",
     "postNewsStory": "Voeg een nieuwsbericht toe",
     "addComment": "Uw opmerkingen...",
-    "postComment": "Bijdrage",
+    "postComment": "Voeg opmerking toe",
     "comments": "Opmerkingen",
     "howToWrite": "Laten we de beste voor- en tegenargumenten eens op een rijtje zetten, en in oplossingen gaan denken...",
     "commentToShort": "Deze tekst is te kort!"
@@ -326,10 +284,10 @@
     "ok": "Ok",
     "feature_not_implemented_a": "Deze functionaliteit is nog niet geïmplementeerd in deze preview if Your Priorities 6.0.",
     "feature_not_implemented_b": "Laat ons weten wat je denkt!",
-    "welcome_a": "Ga door naar preview",
+    "welcome_a": "This is a read-only preview of Your Priorities 6.0 so you can only view content, not add to it. Feedback is most appreciated.",
     "welcome_b": "Currently it only works in Chrome but will support all major browsers by release date in Q1 2015.",
-    "welcome_heading": "Welkom bij Your Priorities 6.0 tech preview",
-    "continue": "Ga door naar preview",
+    "welcome_heading": "Welcome to Your Priorities 6.0 technology preview",
+    "continue": "Continue to preview",
     "deleteConfirmation": "Wilt u deze groep verwijderen?"
   },
 
@@ -339,8 +297,7 @@
   },
 
   "group": {
-    "showWhoPostedPosts": "Laat zien wie bijgedragen heeft geleverd",
-    "locationHidden": "Zet lokatie uit",
+    "locationHidden": "Zet locatie uit",
     "group": "Groep",
     "admins": "Groep aministrators",
     "users": "Groep gebruikers",
@@ -405,12 +362,12 @@
     "edit": "Bewerk gebruiker",
     "password": "Wachtwoord",
     "forgotPassword": "Maak nieuw wachtwoord",
-    "forgotPasswordInstructions": "Vul email adres in, dan sturen we je een link waar je een nieuw wachtwoord kan maken.",
-    "forgotPasswordEmailHasBeenSent": "Email met wachtwoord reset instructies gestuurd",
+    "forgotPasswordInstructions": "Enter you email address and we will send you an email with a link you can use to create a new password.",
+    "forgotPasswordEmailHasBeenSent": "Email with password reset instructions has been sent.",
     "resetPassword": "Reset uw wachtwoord",
     "resetPasswordInstructions": "Maak een nieuw wachtwoord dat niet makkelijk te raden is",
     "login": "Log in",
-    "create": "Maak gebruiker aan",
+    "create": "Maak",
     "cancel": "Annuleer",
     "logout": "Log uit",
     "newPassword": "nieuw wachtwoord",
@@ -427,7 +384,7 @@
   "socialMedia": "Sociale media",
 
   "location": {
-    "set": "Zet lokatie"
+    "set": "Zet locatie"
   },
   "image": {
     "upload": "Upload beeld",
