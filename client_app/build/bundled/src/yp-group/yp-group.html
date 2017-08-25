@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.163"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.164"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -820,7 +820,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </template>
     </div>
     <div class="layout horizontal center-center">
-      <iron-list id="ironList" override-padding-top="550" items="[[posts]]" as="post" scroll-target="document" grid="">
+      <iron-list id="ironList" scroll-offset="550" items="[[posts]]" as="post" scroll-target="document" grid="">
         <template>
           <div wide-padding$="[[wide]]" class="card layout vertical center-center">
             <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>

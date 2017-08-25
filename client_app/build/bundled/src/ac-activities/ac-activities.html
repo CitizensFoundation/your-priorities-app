@@ -1,27 +1,27 @@
-<html><head></head><body>-<link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.163">
+<html><head></head><body>-<link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.164">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.163">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.163">
-<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.163">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.163">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.164">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html?v=6.3.164">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html?v=6.3.164">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.164">
 
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.163">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.163">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.164">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.164">
 
-<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.163">
+<link rel="import" href="../with-in-viewport/with-in-viewport.html?v=6.3.164">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.163">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.163">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.163">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.163">
-<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.163">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.164">
+<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html?v=6.3.164">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html?v=6.3.164">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.164">
+<link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html?v=6.3.164">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.163">
-<link rel="import" href="../yp-point/yp-point-news-story-edit.html?v=6.3.163">
-<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.163">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.164">
+<link rel="import" href="../yp-point/yp-point-news-story-edit.html?v=6.3.164">
+<link rel="import" href="../yp-post/yp-post-cover-media.html?v=6.3.164">
 
-<link rel="import" href="./ac-activity.html?v=6.3.163">
-<link rel="import" href="./ac-activity-recommended-posts.html?v=6.3.163">
+<link rel="import" href="./ac-activity.html?v=6.3.164">
+<link rel="import" href="./ac-activity-recommended-posts.html?v=6.3.164">
 
 <dom-module id="ac-activities">
   <template>
@@ -165,7 +165,7 @@
             </yp-point-news-story-edit>
           </paper-material>
         </template>
-        <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]" override-padding-top$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
+        <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]" scroll-offset$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
             <div class="layout vertical center-center">
               <ac-activity logged-in-user$="[[loggedInUser]]" class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]" domain-id="[[domainId]]" tabindex$="[[tabIndex]]" on-ak-delete-activity="_deleteActivity"></ac-activity>

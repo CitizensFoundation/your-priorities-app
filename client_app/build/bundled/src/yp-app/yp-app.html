@@ -10871,11 +10871,12 @@ layout means (e.g. the `flex` or `fit` classes).
       flex: 1 1 auto;
     }
   </style>
-
   <app-toolbar>App name</app-toolbar>
   <iron-list items="[[items]]">
     <template>
-      ...
+      <div>
+        ...
+      </div>
     </template>
   </iron-list>
 </template>
@@ -10894,7 +10895,9 @@ layout means (e.g. the `flex` or `fit` classes).
   </style>
   <iron-list items="[[items]]">
     <template>
-      ...
+      <div>
+        ...
+      </div>
     </template>
   </iron-list>
 </template>
@@ -10928,12 +10931,17 @@ layout means (e.g. the `flex` or `fit` classes).
     <app-toolbar>App name</app-toolbar>
     <iron-list scroll-target="document" items="[[items]]">
       <template>
-        ...
+        <div>
+          ...
+        </div>
       </template>
     </iron-list>
   </template>
 </body>
 ```
+
+`iron-list` must be given a `<template>` which contains exactly one element. In the examples
+above we used a `<div>`, but you can provide any element (including custom elements).
 
 ### Template model
 
@@ -11033,13 +11041,13 @@ document.querySelector('iron-list').fire('iron-resize');
 ### When should `<iron-list>` be used?
 
 `iron-list` should be used when a page has significantly more DOM nodes than the ones
-visible on the screen. e.g. the page has 500 nodes, but only 20 are visible at the time.
+visible on the screen. e.g. the page has 500 nodes, but only 20 are visible at a time.
 This is why we refer to it as a `virtual` list. In this case, a `dom-repeat` will still
 create 500 nodes which could slow down the web app, but `iron-list` will only create 20.
 
 However, having an `iron-list` does not mean that you can load all the data at once.
-Say, you have a million records in the database, you want to split the data into pages
-so you can bring a page at the time. The page could contain 500 items, and iron-list
+Say you have a million records in the database, you want to split the data into pages
+so you can bring in a page at the time. The page could contain 500 items, and iron-list
 will only render 20.
 
 @group Iron Element
@@ -11988,7 +11996,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style>
       :host {
         display: block;
-        position: relative;
       }
 
       @media only screen and (-webkit-max-device-pixel-ratio: 1) {
@@ -12004,7 +12011,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       :host(:not([grid])) #items > ::content > * {
         width: 100%;
-      };
+      }
 
       #items > ::content > * {
         box-sizing: border-box;
@@ -12144,11 +12151,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       /**
-       * Override the paddingTop to account for headers on the page
+       * The offset top from the scrolling element to the iron-list element.
+       * This value can be computed using the position returned by `getBoundingClientRect()`
+       * although it's preferred to use a constant value when possible.
+       *
+       * This property is useful when an external scrolling element is used and there's
+       * some offset between the scrolling element and the list.
+       * For example: a header is placed above the list.
        */
-      overridePaddingTop: {
+      scrollOffset: {
         type: Number,
-        value: null
+        value: 0
       },
 
       /**
@@ -12165,7 +12178,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       '_itemsChanged(items.*)',
       '_selectionEnabledChanged(selectionEnabled)',
       '_multiSelectionChanged(multiSelection)',
-      '_setOverflow(scrollTarget)'
+      '_setOverflow(scrollTarget, scrollOffset)'
     ],
 
     behaviors: [
@@ -12176,8 +12189,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     ],
 
     keyBindings: {
-      'up': '_didMoveUp',
-      'down': '_didMoveDown',
+      'up': '_didMoveBackward',
+      'down': '_didMoveForward',
+      'left': '_didMoveLeft',
+      'right': '_didMoveRight',
       'enter': '_didEnter'
     },
 
@@ -12362,10 +12377,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
 
     /**
+     * The parent node for the _userTemplate.
+     */
+    get _itemsParent() {
+      return Polymer.dom(Polymer.dom(this._userTemplate).parentNode);
+    },
+
+    /**
      * The maximum scroll top value.
      */
     get _maxScrollTop() {
-      return this._estScrollHeight - this._viewportHeight + this._scrollerPaddingTop;
+      return this._estScrollHeight - this._viewportHeight + this._scrollOffset;
     },
 
     /**
@@ -12386,7 +12408,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     _virtualStartVal: 0,
 
     set _virtualStart(val) {
-      this._virtualStartVal = Math.min(this._maxVirtualStart, Math.max(this._minVirtualStart, val));
+      val = Math.min(this._maxVirtualStart, Math.max(this._minVirtualStart, val));
+      if (this.grid) {
+        val = val - (val % this._itemsPerRow);
+      }
+      this._virtualStartVal = val;
     },
 
     get _virtualStart() {
@@ -12399,10 +12425,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     _physicalStartVal: 0,
 
     set _physicalStart(val) {
-      this._physicalStartVal = val % this._physicalCount;
-      if (this._physicalStartVal < 0) {
-        this._physicalStartVal = this._physicalCount + this._physicalStartVal;
+      val = val % this._physicalCount;
+      if (val < 0) {
+        val = this._physicalCount + val;
       }
+      if (this.grid) {
+        val = val - (val % this._itemsPerRow);
+      }
+      this._physicalStartVal = val;
       this._physicalEnd = (this._physicalStart + this._physicalCount - 1) % this._physicalCount;
     },
 
@@ -12456,23 +12486,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @type {number}
      */
     get firstVisibleIndex() {
-      if (this._firstVisibleIndexVal === null) {
-        var physicalOffset = Math.floor(this._physicalTop + this._scrollerPaddingTop);
+      var idx = this._firstVisibleIndexVal;
+      if (idx == null) {
+        var physicalOffset = this._physicalTop + this._scrollOffset;
 
-        this._firstVisibleIndexVal = this._iterateItems(
-          function(pidx, vidx) {
-            physicalOffset += this._getPhysicalSizeIncrement(pidx);
+        idx = this._iterateItems(function(pidx, vidx) {
+          physicalOffset += this._getPhysicalSizeIncrement(pidx);
 
-            if (physicalOffset > this._scrollPosition) {
-              return this.grid ? vidx - (vidx % this._itemsPerRow) : vidx;
-            }
-            // Handle a partially rendered final row in grid mode
-            if (this.grid && this._virtualCount - 1 === vidx) {
-              return vidx - (vidx % this._itemsPerRow);
-            }
-          }) || 0;
+          if (physicalOffset > this._scrollPosition) {
+            return this.grid ? vidx - (vidx % this._itemsPerRow) : vidx;
+          }
+          // Handle a partially rendered final row in grid mode
+          if (this.grid && this._virtualCount - 1 === vidx) {
+            return vidx - (vidx % this._itemsPerRow);
+          }
+        }) || 0;
+        this._firstVisibleIndexVal = idx;
       }
-      return this._firstVisibleIndexVal;
+      return idx;
     },
 
     /**
@@ -12481,24 +12512,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @type {number}
      */
     get lastVisibleIndex() {
-      if (this._lastVisibleIndexVal === null) {
+      var idx = this._lastVisibleIndexVal;
+      if (idx == null) {
         if (this.grid) {
-          var lastIndex = this.firstVisibleIndex + this._estRowsInView * this._itemsPerRow - 1;
-          this._lastVisibleIndexVal = Math.min(this._virtualCount, lastIndex);
+          idx = Math.min(this._virtualCount,
+              this.firstVisibleIndex + this._estRowsInView * this._itemsPerRow - 1);
         } else {
-          var physicalOffset = this._physicalTop;
+          var physicalOffset = this._physicalTop + this._scrollOffset;
           this._iterateItems(function(pidx, vidx) {
             if (physicalOffset < this._scrollBottom) {
-              this._lastVisibleIndexVal = vidx;
-            } else {
-              // Break _iterateItems
-              return true;
+              idx = vidx;
             }
             physicalOffset += this._getPhysicalSizeIncrement(pidx);
           });
         }
+        this._lastVisibleIndexVal = idx;
       }
-      return this._lastVisibleIndexVal;
+      return idx;
     },
 
     get _defaultScrollTarget() {
@@ -12515,6 +12545,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     get _physicalRows() {
       return Math.ceil(this._physicalCount / this._itemsPerRow);
+    },
+
+    get _scrollOffset() {
+      return this._scrollerPaddingTop + this.scrollOffset;
     },
 
     ready: function() {
@@ -12540,6 +12574,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     _setOverflow: function(scrollTarget) {
       this.style.webkitOverflowScrolling = scrollTarget === this ? 'touch' : '';
       this.style.overflow = scrollTarget === this ? 'auto' : '';
+      // Clear cache.
+      this._lastVisibleIndexVal = null;
+      this._firstVisibleIndexVal = null;
+      this._debounceTemplate(this._render);
     },
 
     /**
@@ -12550,13 +12588,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      */
     updateViewportBoundaries: function() {
       var styles = window.getComputedStyle(this);
-      this._scrollerPaddingTop =
-          this.scrollTarget === this ? 0 : parseInt(styles['padding-top'], 10);
-
-      if (this.overridePaddingTop) {
-        this._scrollerPaddingTop = this.overridePaddingTop;
-      }
-
+      this._scrollerPaddingTop = this.scrollTarget === this ? 0 :
+          parseInt(styles['padding-top'], 10);
       this._isRTL = Boolean(styles.direction === 'rtl');
       this._viewportWidth = this.$.items.offsetWidth;
       this._viewportHeight = this._scrollTargetHeight;
@@ -12583,11 +12616,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       // Random access.
-      if (Math.abs(delta) > this._physicalSize) {
-        var idxAdjustment =  Math.round(delta / this._physicalAverage) * this._itemsPerRow
-        this._physicalTop = this._physicalTop + delta;
+      if (Math.abs(delta) > this._physicalSize && this._physicalSize > 0) {
+        delta = delta - this._scrollOffset;
+        var idxAdjustment = Math.round(delta / this._physicalAverage) * this._itemsPerRow;
         this._virtualStart = this._virtualStart + idxAdjustment;
         this._physicalStart = this._physicalStart + idxAdjustment;
+        // Estimate new physical offset.
+        this._physicalTop = Math.floor(this._virtualStart / this._itemsPerRow) * this._physicalAverage;
         this._update();
       } else {
         var reusables = this._getReusables(isScrollingDown);
@@ -12620,18 +12655,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var virtualStart = this._virtualStart;
       var virtualEnd = this._virtualEnd;
       var physicalCount = this._physicalCount;
-      var physicalTop = this._physicalTop + this._scrollerPaddingTop;
+      var top = this._physicalTop + this._scrollOffset;
+      var bottom = this._physicalBottom + this._scrollOffset;
       var scrollTop = this._scrollTop;
       var scrollBottom = this._scrollBottom;
 
       if (fromTop) {
         ith = this._physicalStart;
         lastIth = this._physicalEnd;
-        offsetContent = scrollTop - physicalTop;
+        offsetContent = scrollTop - top;
       } else {
         ith = this._physicalEnd;
         lastIth = this._physicalStart;
-        offsetContent = this._physicalBottom - scrollBottom;
+        offsetContent = bottom - scrollBottom;
       }
       while (true) {
         physicalItemHeight = this._getPhysicalSizeIncrement(ith);
@@ -12645,11 +12681,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             break;
           }
           // Check that the index is not visible.
-          if (physicalTop + physicalItemHeight >= scrollTop) {
+          if (top + physicalItemHeight >= scrollTop - this._scrollOffset) {
             break;
           }
           idxs.push(ith);
-          physicalTop = physicalTop + physicalItemHeight;
+          top = top + physicalItemHeight;
           ith = (ith + 1) % physicalCount;
         } else {
           // Check that index is within the valid range.
@@ -12657,15 +12693,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             break;
           }
           // Check that the index is not visible.
-          if (physicalTop + this._physicalSize - physicalItemHeight <= scrollBottom) {
+          if (top + this._physicalSize - physicalItemHeight <= scrollBottom) {
             break;
           }
           idxs.push(ith);
-          physicalTop = physicalTop - physicalItemHeight;
+          top = top - physicalItemHeight;
           ith = (ith === 0) ? physicalCount - 1 : ith - 1;
         }
       }
-      return { indexes: idxs, physicalTop: physicalTop - this._scrollerPaddingTop };
+      return { indexes: idxs, physicalTop: top - this._scrollOffset };
     },
 
     /**
@@ -12707,7 +12743,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // First element child is item; Safari doesn't support children[0]
         // on a doc fragment.
         physicalItems[i] = inst.root.querySelector('*');
-        Polymer.dom(this).appendChild(inst.root);
+        this._itemsParent.appendChild(inst.root);
       }
       return physicalItems;
     },
@@ -12719,10 +12755,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      */
     _increasePoolIfNeeded: function() {
       var self = this;
-      var isClientFull = this._physicalBottom >= this._scrollBottom &&
-          this._physicalTop <= this._scrollPosition;
-
-      // Base case 2: if the physical size is optimal and the list's client height is full
+      var isClientFull = this._physicalBottom + this._scrollOffset >= this._scrollBottom &&
+          this._physicalTop - this._scrollOffset <= this._scrollPosition;
+      // Base case 1: if the physical size is optimal and the list's client height is full
       // with physical items, don't increase the pool.
       if (this._physicalSize >= this._optPhysicalSize && isClientFull) {
         return false;
@@ -12816,7 +12851,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         props[this.selectedAs] = true;
         props.tabIndex = true;
         this._instanceProps = props;
-        this._userTemplate = Polymer.dom(this).querySelector('template');
+        this._userTemplate = this.queryEffectiveChildren('template');
 
         if (this._userTemplate) {
           this.templatize(this._userTemplate);
@@ -12851,11 +12886,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * notifying parent path change on each row.
      */
     _forwardParentProp: function(prop, value) {
-      if (this._physicalItems) {
-        this._physicalItems.forEach(function(item) {
-          item._templateInstance[prop] = value;
-        }, this);
-      }
+      (this._physicalItems || [])
+        .concat([this._offscreenFocusedItem, this._focusBackfillItem])
+        .forEach(function(item) {
+          if (item) {
+            item._templateInstance[prop] = value;
+          }
+        });
     },
 
     /**
@@ -12864,11 +12901,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * notifying parent.<path> path change on each row.
      */
     _forwardParentPath: function(path, value) {
-      if (this._physicalItems) {
-        this._physicalItems.forEach(function(item) {
-          item._templateInstance.notifyPath(path, value, true);
-        }, this);
-      }
+      (this._physicalItems || [])
+        .concat([this._offscreenFocusedItem, this._focusBackfillItem])
+        .forEach(function(item) {
+          if (item) {
+            item._templateInstance.notifyPath(path, value, true);
+          }
+        });
     },
 
     /**
@@ -12926,7 +12965,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this._physicalItems = this._physicalItems || [];
         this._physicalSizes = this._physicalSizes || [];
         this._physicalStart = 0;
-        if (this._scrollTop > this._scrollerPaddingTop) {
+        if (this._scrollTop > this._scrollOffset) {
           this._resetScrollPosition(0);
         }
         this._removeFocusedItem();
@@ -12937,7 +12976,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this._virtualCount = this.items ? this.items.length : 0;
 
         this._debounceTemplate(this._render);
-
       } else {
         this._forwardItemPath(change.path.split('.').slice(1).join('.'), change.value);
       }
@@ -13146,12 +13184,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     _adjustScrollPosition: function() {
       var deltaHeight = this._virtualStart === 0 ? this._physicalTop :
           Math.min(this._scrollPosition + this._physicalTop, 0);
-
-      if (deltaHeight) {
+      // Note: the delta can be positive or negative.
+      if (deltaHeight !== 0) {
         this._physicalTop = this._physicalTop - deltaHeight;
+        var scrollTop = this._scrollTop;
         // juking scroll position during interial scrolling on iOS is no bueno
-        if (!IOS_TOUCH_SCROLLING && this._physicalTop !== 0) {
-          this._resetScrollPosition(this._scrollTop - deltaHeight);
+        if (!IOS_TOUCH_SCROLLING && scrollTop > 0) {
+          this._resetScrollPosition(scrollTop - deltaHeight);
         }
       }
     },
@@ -13160,7 +13199,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * Sets the position of the scroll.
      */
     _resetScrollPosition: function(pos) {
-      if (this.scrollTarget) {
+      if (this.scrollTarget && pos >= 0) {
         this._scrollTop = pos;
         this._scrollPosition = this._scrollTop;
       }
@@ -13240,7 +13279,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       this._updateScrollerSize(true);
       this._positionItems();
-      this._resetScrollPosition(this._physicalTop + this._scrollerPaddingTop + targetOffsetTop);
+      this._resetScrollPosition(this._physicalTop + this._scrollOffset + targetOffsetTop);
       this._increasePoolIfNeeded();
       // clear cached visible index.
       this._firstVisibleIndexVal = null;
@@ -13403,7 +13442,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       var modelTabIndex, activeElTabIndex;
       var target = Polymer.dom(e).path[0];
-      var activeEl = Polymer.dom(this.domHost ? this.domHost.root : document).activeElement;
+      var itemsHost = this._itemsParent.node.domHost;
+      var activeEl = Polymer.dom(itemsHost ? itemsHost.root : document).activeElement;
       var physicalItem = this._physicalItems[this._getPhysicalIndex(model[this.indexAs])];
       // Safari does not focus certain form controls via mouse
       // https://bugs.webkit.org/show_bug.cgi?id=118043
@@ -13516,7 +13556,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     _removeFocusedItem: function() {
       if (this._offscreenFocusedItem) {
-        Polymer.dom(this).removeChild(this._offscreenFocusedItem);
+        this._itemsParent.removeChild(this._offscreenFocusedItem);
       }
       this._offscreenFocusedItem = null;
       this._focusBackfillItem = null;
@@ -13535,7 +13575,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // Create a physical item.
         var stampedTemplate = this.stamp(null);
         this._focusBackfillItem = stampedTemplate.root.querySelector('*');
-        Polymer.dom(this).appendChild(stampedTemplate.root);
+        this._itemsParent.appendChild(stampedTemplate.root);
       }
       // Set the offcreen focused physical item.
       this._offscreenFocusedItem = this._physicalItems[pidx];
@@ -13556,17 +13596,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       // Get the new physical index for the focused index.
       pidx = this._getPhysicalIndex(fidx);
 
-      if (pidx != null) {
+      var onScreenItem = this._physicalItems[pidx];
+      if (!onScreenItem) {
+        return;
+      }
+      var onScreenInstance = onScreenItem._templateInstance;
+      var offScreenInstance = this._offscreenFocusedItem._templateInstance;
+      // Restores the physical item only when it has the same model
+      // as the offscreen one. Use key for comparison since users can set
+      // a new item via set('items.idx').
+      if (onScreenInstance.__key__ === offScreenInstance.__key__) {
         // Flip the focus backfill.
-        this._focusBackfillItem = this._physicalItems[pidx];
-        this._focusBackfillItem._templateInstance.tabIndex = -1;
+        this._focusBackfillItem = onScreenItem;
+        onScreenInstance.tabIndex = -1;
         // Restore the focused physical item.
         this._physicalItems[pidx] = this._offscreenFocusedItem;
-        // Reset the offscreen focused item.
-        this._offscreenFocusedItem = null;
         // Hide the physical item that backfills.
         this.translate3d(0, HIDDEN_Y, 0, this._focusBackfillItem);
+      } else {
+        this._removeFocusedItem();
+        this._focusBackfillItem = null;
       }
+      this._offscreenFocusedItem = null;
     },
 
     _didFocus: function(e) {
@@ -13597,15 +13648,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
     },
-
-    _didMoveUp: function() {
-      this._focusPhysicalItem(this._focusedIndex - 1);
+    _didMoveBackward: function() {
+      // When `grid === true` the `downArrow` goes forward `this._itemsPerRow` items
+      this._focusPhysicalItem(this._focusedIndex - (this.grid ? this._itemsPerRow : 1));
     },
-
-    _didMoveDown: function(e) {
+    _didMoveForward: function(e) {
       // disable scroll when pressing the down key
       e.detail.keyboardEvent.preventDefault();
-      this._focusPhysicalItem(this._focusedIndex + 1);
+      // When `grid === true` the `upArrow` goes backward `this._itemsPerRow` items
+      this._focusPhysicalItem(this._focusedIndex + (this.grid ? this._itemsPerRow : 1));
+    },
+    // When in grid mode, the use of `leftArrow` changes the focus based on the text direction
+    _didMoveLeft: function(e) {
+      if (!this.grid) return;
+      this._focusPhysicalItem(this._focusedIndex + (this._isRTL ? 1 : -1));
+    },
+    // When in grid mode, the use of `rightArrow` changes the focus based on the text direction
+    _didMoveRight: function(e) {
+      if (!this.grid) return;
+      this._focusPhysicalItem(this._focusedIndex + (this._isRTL ? -1 : 1));
     },
 
     _didEnter: function(e) {
@@ -16643,7 +16704,7 @@ in every element that needs to use them.
     ```
 
     ```html
-    <link rel="import" href="iron-flex-layout-classes.html?v=6.3.163">
+    <link rel="import" href="iron-flex-layout-classes.html?v=6.3.164">
     <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
     <style>
       .test { width: 100px; }
@@ -18054,7 +18115,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.163" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.164" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -18111,7 +18172,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.163">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.164">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -18119,7 +18180,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.163">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.164">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19320,7 +19381,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.163", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.164", fontName: 'FFClanWebBook' });
 
       this.push('themes', {
         name: 'I choose Malta',
@@ -19373,7 +19434,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.163";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.164";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -22024,8 +22085,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.163">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.163">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.164">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.164">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -25883,7 +25944,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.163" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.164" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -31138,7 +31199,7 @@ To use the `vaadin-icons` iconset, import the specific `vaadin-icons.html`, and
 specify the icon as `vaadin:<icon>`. For example, to use a cart icon, you would
 use:
 ```html
-    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.163">
+    <link rel="import" href="/components/vaadin-icons/vaadin-icons.html?v=6.3.164">
     <iron-icon icon="vaadin:cart"></iron-icon>
 ```
 
@@ -39947,7 +40008,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             </yp-point-news-story-edit>
           </paper-material>
         </template>
-        <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]" override-padding-top$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
+        <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]" scroll-offset$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
             <div class="layout vertical center-center">
               <ac-activity logged-in-user$="[[loggedInUser]]" class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]" domain-id="[[domainId]]" tabindex$="[[tabIndex]]" on-ak-delete-activity="_deleteActivity"></ac-activity>
@@ -51210,14 +51271,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.163">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.164">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.163">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.164">
    * ```
    *
    * ### Consuming effects
@@ -51983,7 +52044,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.163">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.164">
 ```
 
 #### List of effects
@@ -57917,18 +57978,18 @@ value. `setMax` should move the slider to the maximum value.
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.163"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.164"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.163"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.164"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.163"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.164"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -58009,7 +58070,7 @@ value. `setMax` should move the slider to the maximum value.
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <iron-list id="ironList" override-padding-top="350" items="[[activeCommunities]]" as="community" scroll-target="document" grid="">
+    <iron-list id="ironList" scroll-offset="350" items="[[activeCommunities]]" as="community" scroll-target="document" grid="">
       <template>
         <yp-community-card wide$="[[wide]]" class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
       </template>
@@ -62536,9 +62597,9 @@ paperMapInfo.register();
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.163");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.164");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.163");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.164");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
