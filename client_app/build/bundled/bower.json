@@ -9,7 +9,7 @@
     "iron-form": "rbjarnason/iron-form#add-put-support",
     "iron-list": "rbjarnason/iron-list#v117",
     "iron-ajax": "rbjarnason/iron-ajax#master",
-    "polymer": "Polymer/polymer",
+    "polymer": "polymer/polymer#1.9.3",
     "iron-elements": "PolymerElements/iron-elements",
     "paper-elements": "PolymerElements/paper-elements",
     "platinum-elements": "PolymerElements/platinum-elements",

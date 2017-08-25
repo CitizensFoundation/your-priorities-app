@@ -30,7 +30,7 @@
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
     <div class="layout vertical center-center">
-      <iron-list id="ironList" override-padding-top="350" items="[[activeGroups]]" as="group" scroll-target="document" grid>
+      <iron-list id="ironList" scroll-offset="350" items="[[activeGroups]]" as="group" scroll-target="document" grid>
         <template>
           <div class="groupCard" wide-padding$="[[wide]]">
             <yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>

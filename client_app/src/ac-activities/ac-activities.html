@@ -171,7 +171,7 @@
           </paper-material>
         </template>
         <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]"
-                   override-padding-top$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
+                   scroll-offset$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
             <div class="layout vertical center-center">
               <ac-activity logged-in-user$="[[loggedInUser]]" class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]"

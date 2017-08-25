@@ -44,7 +44,7 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <iron-list id="ironList" override-padding-top="350" items="[[activeCommunities]]" as="community" scroll-target="document" grid>
+    <iron-list id="ironList" scroll-offset="350" items="[[activeCommunities]]" as="community" scroll-target="document" grid>
       <template>
         <yp-community-card wide$="[[wide]]" class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
       </template>
