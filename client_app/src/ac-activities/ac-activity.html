@@ -57,7 +57,7 @@
         }
       }
 
-      .activity[is-safari] {
+      .activity[is-old-safari-or-ie] {
         height: 550px;
         overflow: auto;
       }
@@ -113,7 +113,7 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <paper-material is-safari$="[[isSafari]]" logged-in-user$="[[loggedInUser]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
+    <paper-material is-old-safari-or-ie$="[[isOldSafariOrIe]]" logged-in-user$="[[loggedInUser]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
       <paper-icon-button title$="[[t('deleteActivity')]]" hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
       <div class="mainActivityContent">
         <div class="layout horizontal">
@@ -188,9 +188,9 @@
           value: false
         },
 
-        isSafari: {
+        isOldSafariOrIe: {
           type: Boolean,
-          computed: '_isSafari(wide)'
+          computed: '_isOldSafariOrIe(wide)'
         },
 
         loggedInUser: {
@@ -199,8 +199,11 @@
         }
       },
 
-      _isSafari: function (wide) {
-        return /^((?!chrome|android).)*safari/i.test(navigator.userAgent) && !window.MSStream;
+      _isOldSafariOrIe: function (wide) {
+        console.log(navigator.userAgent);
+        return /^((?!chrome|android).)*safari/i.test(navigator.userAgent) &&
+          !(/10/i.test(navigator.userAgent)) &&
+          !window.MSStream;
       },
 
       _elevationForType: function (type) {
