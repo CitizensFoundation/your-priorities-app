@@ -10,17 +10,31 @@
       wide: {
         type: Boolean,
         observer: '_wideChanged'
-      }
+      },
+
+      resizeTimer: Object
     },
 
     attached: function () {
       this.async(function () {
         this.resetSize();
+        window.addEventListener("resize", this.resetSizeWithDelay.bind(this));
       }.bind(this));
+    },
+
+    detached: function() {
+      window.removeEventListener("resize", this.resetSizeWithDelay);
     },
 
     _wideChanged: function () {
       this.resetSize();
+    },
+
+    resetSizeWithDelay: function () {
+      clearTimeout(this.resizeTimer);
+      this.resizeTimer = setTimeout(function() {
+        this.resetSize();
+      }.bind(this), 250);
     },
 
     resetSize: function () {
