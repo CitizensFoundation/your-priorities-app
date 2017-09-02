@@ -1,6 +1,6 @@
 {
   "name": "your-priorities-app",
-  "version": "0.9.1",
+  "version": "6.9.1",
   "dependencies": {
     "file-upload": "rbjarnason/file-upload#master",
     "google-map": "GoogleWebComponents/google-map",
