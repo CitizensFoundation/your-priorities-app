@@ -200,7 +200,6 @@
       },
 
       _isOldSafariOrIe: function (wide) {
-        console.log(navigator.userAgent);
         return /^((?!chrome|android).)*safari/i.test(navigator.userAgent) &&
           !(/10/i.test(navigator.userAgent)) &&
           !window.MSStream;

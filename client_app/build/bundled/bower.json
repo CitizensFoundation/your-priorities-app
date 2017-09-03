@@ -1,6 +1,6 @@
 {
   "name": "your-priorities-app",
-  "version": "0.9.1",
+  "version": "6.9.1",
   "dependencies": {
     "file-upload": "rbjarnason/file-upload#master",
     "google-map": "GoogleWebComponents/google-map",
@@ -26,8 +26,8 @@
     "vaadin-grid": "~1.0.0",
     "paper-share-button": "https://github.com/rbjarnason/paper-share-button.git#master",
     "paper-search": "https://github.com/rbjarnason/paper-search.git#master",
-    "app-layout": "PolymerElements/app-layout#^0.10.0",
-    "app-route": "PolymerElements/app-route#^0.9.0",
+    "app-layout": "PolymerElements/app-layout#1.0.1",
+    "app-route": "PolymerElements/app-route#1.0.1",
     "linkifyjs": "^2.1.0",
     "paper-map-info": "~1.0.8"
   },

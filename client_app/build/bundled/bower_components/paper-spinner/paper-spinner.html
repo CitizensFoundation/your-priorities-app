@@ -7,6 +7,7 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.164">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html?v=6.3.164">
 <link rel="import" href="../paper-styles/color.html?v=6.3.164">
 <link rel="import" href="paper-spinner-behavior.html?v=6.3.164">
 <link rel="import" href="paper-spinner-styles.html?v=6.3.164">
@@ -53,7 +54,7 @@ Custom property | Description | Default
   <template strip-whitespace="">
     <style include="paper-spinner-styles"></style>
 
-    <div id="spinnerContainer" class-name="[[__computeContainerClasses(active, __coolingDown)]]" on-animationend="__reset" on-webkit-animation-end="__reset">
+    <div id="spinnerContainer" class-name="[[__computeContainerClasses(active, __coolingDown)]]">
       <div class="spinner-layer layer-1">
         <div class="circle-clipper left"></div>
         <div class="circle-clipper right"></div>

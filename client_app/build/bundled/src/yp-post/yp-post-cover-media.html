@@ -114,7 +114,7 @@
       <template is="dom-if" if="[[!disableMaps]]">
 
         <template is="dom-if" if="[[streetViewActive]]">
-          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;zoom=[[zoomLevel]]&amp;size=432x243&amp;maptype=hybrid&amp;key=[[staticMapsApiKey]]" hidden$="[[streetViewActivated]]"></iron-image>
+          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;zoom=[[zoomLevel]]&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]" hidden$="[[streetViewActivated]]"></iron-image>
 
           <template is="dom-if" if="[[streetViewActivated]]">
             <google-streetview-pano position$="[[mapPosition]]" heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" pitch="2" zoom="0.8" disable-default-ui="">
@@ -124,7 +124,7 @@
         </template>
 
         <template is="dom-if" if="[[mapActive]]">
-          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;size=432x243&amp;zoom=[[zoomLevel]]&amp;maptype=[[mapType]]&amp;key=[[staticMapsApiKey]]" hidden$="[[mapActivated]]"></iron-image>
+          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;size=432x243&amp;zoom=[[zoomLevel]]&amp;maptype=[[mapType]]&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]" hidden$="[[mapActivated]]"></iron-image>
 
           <template is="dom-if" if="[[mapActivated]]">
             <google-map id="coverMediaMap" class="map" libraries="places" fit-to-markers="" zoom$="[[zoomLevel]]" map-type$="[[mapType]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
