@@ -1,15 +1,15 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.165">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.167">
 
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.165">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.167">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.165">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.165">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.165">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.167">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.167">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.167">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.165">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.167">
 
-<link rel="import" href="../yp-session/yp-session.html?v=6.3.165">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.165">
+<link rel="import" href="../yp-session/yp-session.html?v=6.3.167">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.167">
 
 </head><body><dom-module id="yp-app-globals">
 
@@ -283,7 +283,14 @@
           if (context)
             logString += ' ' + context;
 
-          this.sendToAnalyticsTrackers('send', 'event', object, type);
+          if (type=='open') {
+            // Wait by sending open so pageview event can be completed before
+            this.async(function ()  {
+              this.sendToAnalyticsTrackers('send', 'event', object, type);
+            }, 25);
+          } else {
+            this.sendToAnalyticsTrackers('send', 'event', object, type);
+          }
 
           var activityAjax = document.createElement('iron-ajax');
           var date = new Date();
@@ -386,7 +393,7 @@
         },
 
         sendToAnalyticsTrackers: function (a, b, c, d, e, f) {
-          //console.log("Google analytics "+a+" "+b+" "+c+" "+d);
+          //console.debug("Analytics "+a+" "+b+" "+c+" "+d);
           if (typeof ga == 'function') {
             if (a!='sendOnlyCommunity') {
               ga('send', b, c, d, e, f);

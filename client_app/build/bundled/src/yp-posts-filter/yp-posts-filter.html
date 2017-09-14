@@ -1,22 +1,22 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.165">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.167">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.165">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.165">
-<link rel="import" href="../../bower_components/iron-icons/av-icons.html?v=6.3.165">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.165">
-<link rel="import" href="../../bower_components/iron-selector/iron-selector.html?v=6.3.165">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.165">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.167">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.167">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html?v=6.3.167">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.167">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html?v=6.3.167">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.167">
 
-<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.3.165">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.3.167">
 
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html?v=6.3.165">
-<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html?v=6.3.165">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.165">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.3.165">
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.3.165">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html?v=6.3.167">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html?v=6.3.167">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.167">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.3.167">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.3.167">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.165">
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.165">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.167">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.167">
 
 </head><body><dom-module id="yp-posts-filter">
   <template>
@@ -153,7 +153,7 @@
                 <div class="layout horizontal center-center">
                   <yp-ajax id="categoriesWithCountAjax" on-response="_categoriesCountResponse"></yp-ajax>
                 </div>
-                <paper-menu class="dropdown-content" on-iron-select="_changeFilter">
+                <paper-menu class="dropdown-content" id="mainListMenu" on-iron-select="_changeFilter">
                   <paper-item data-filter="top">
                     <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
                     <span>[[t('post.top')]]</span>
@@ -423,6 +423,21 @@
         }
       },
 
+      resetSelection: function () {
+        this.async(function () {
+          var categoryMenu = this.$$("#categoryMenu");
+          if (categoryMenu) {
+            this.$$("#categoryMenu").selected = null;
+          }
+          var mainListMenu = this.$$("#mainListMenu");
+          if (mainListMenu) {
+            this.$$("#mainListMenu").selected = null;
+          } else {
+            console.error("Cant find mainListMenu menu");
+          }
+        }, 100);
+      },
+
       _tabNameChanged: function (tabName) {
         if (false && tabName && this.group && this.group.Categories && this.group.Categories.length>0) {
           this._setupCategories(this.group, tabName);
@@ -451,6 +466,7 @@
           if (group.Categories && group.Categories.length>0) {
             this._setupCategories(group, this.tabName);
           }
+          this.resetSelection();
         }
       },
 

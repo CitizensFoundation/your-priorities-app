@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.165"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.167"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -350,7 +350,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <div class="layout horizontal center-center">
                   <yp-ajax id="categoriesWithCountAjax" on-response="_categoriesCountResponse"></yp-ajax>
                 </div>
-                <paper-menu class="dropdown-content" on-iron-select="_changeFilter">
+                <paper-menu class="dropdown-content" id="mainListMenu" on-iron-select="_changeFilter">
                   <paper-item data-filter="top">
                     <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
                     <span>[[t('post.top')]]</span>
@@ -620,6 +620,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
+      resetSelection: function () {
+        this.async(function () {
+          var categoryMenu = this.$$("#categoryMenu");
+          if (categoryMenu) {
+            this.$$("#categoryMenu").selected = null;
+          }
+          var mainListMenu = this.$$("#mainListMenu");
+          if (mainListMenu) {
+            this.$$("#mainListMenu").selected = null;
+          } else {
+            console.error("Cant find mainListMenu menu");
+          }
+        }, 100);
+      },
+
       _tabNameChanged: function (tabName) {
         if (false && tabName && this.group && this.group.Categories && this.group.Categories.length>0) {
           this._setupCategories(this.group, tabName);
@@ -648,6 +663,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           if (group.Categories && group.Categories.length>0) {
             this._setupCategories(group, this.tabName);
           }
+          this.resetSelection();
         }
       },
 
