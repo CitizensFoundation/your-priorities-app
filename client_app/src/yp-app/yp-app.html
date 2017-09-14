@@ -457,10 +457,8 @@
         }
 
         if (page) {
-          this.async(function () {
-            window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
-            window.appGlobals.activity('open', 'page', window.location.href);
-          });
+          window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
+          window.appGlobals.activity('open', 'page', window.location.href);
         }
       },
 
