@@ -326,6 +326,7 @@
           this.async(function () {
             if (typeof ga == 'function') {
               ga('set', 'anonymizeIp', true);
+              ga('send', 'pageview', location.pathname);
             } else {
               console.error("Can't find Google Analytics object");
             }

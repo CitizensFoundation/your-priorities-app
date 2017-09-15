@@ -7,9 +7,9 @@ var moment = require('moment');
 var communityIdA = 699; // process.argv[2];
 var communityIdB = 470; // process.argv[2];
 var dateRangeAFrom = moment("01.09.2017","DD.MM.YYYY");
-var dateRangeATo = moment("12.09.2017","DD.MM.YYYY");
+var dateRangeATo = moment("15.09.2017","DD.MM.YYYY");
 var dateRangeBFrom = moment("12.05.2016","DD.MM.YYYY");
-var dateRangeBTo = moment("24.05.2016","DD.MM.YYYY");
+var dateRangeBTo = moment("26.05.2016","DD.MM.YYYY");
 
 var getCsvLinesWithHeader = function (csv, headertext, items) {
   var days = _.groupBy(items, function (item) {
@@ -91,6 +91,36 @@ var getNumberOfPoints = function (csv, headerText, communityId, dateRangeFrom, d
   });
 };
 
+var getNumberOfEndorsement = function (csv, headerText, communityId, dateRangeFrom, dateRangeTo, done) {
+  models.Endorsement.findAll({
+    where: {
+      created_at: {
+        $between: [dateRangeFrom.toDate(), dateRangeTo.toDate()]
+      }
+    },
+    include: [
+      {
+        model: models.Post,
+        include: [
+          {
+            model: models.Group,
+            include: [
+              {
+                model: models.Community,
+                where: {
+                  id: communityId
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }).then(function (posts) {
+    done(getCsvLinesWithHeader(csv, headerText, posts));
+  });
+};
+
 var getNumberOfUsers = function (csv, headerText, communityId, dateRangeFrom, dateRangeTo, done) {
   models.Community.find({
     where: {
@@ -138,6 +168,18 @@ async.series([
   },
   function (seriesCallback) {
     getNumberOfPosts("", "2017 posts", communityIdA, dateRangeAFrom, dateRangeATo, function (csvIn) {
+      csv += csvIn;
+      seriesCallback();
+    })
+  },
+  function (seriesCallback) {
+    getNumberOfEndorsement("", "2016 idea votes", communityIdB, dateRangeBFrom, dateRangeBTo, function (csvIn) {
+      csv += csvIn;
+      seriesCallback();
+    })
+  },
+  function (seriesCallback) {
+    getNumberOfEndorsement("", "2017 idea votes", communityIdA, dateRangeAFrom, dateRangeATo, function (csvIn) {
       csv += csvIn;
       seriesCallback();
     })
