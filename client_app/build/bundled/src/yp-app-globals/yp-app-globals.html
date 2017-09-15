@@ -1,15 +1,15 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.168">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.169">
 
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.168">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.169">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.168">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.168">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.168">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.169">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.169">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.169">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.168">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.169">
 
-<link rel="import" href="../yp-session/yp-session.html?v=6.3.168">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.168">
+<link rel="import" href="../yp-session/yp-session.html?v=6.3.169">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.169">
 
 </head><body><dom-module id="yp-app-globals">
 
@@ -198,6 +198,12 @@
           } else if (domain.google_analytics_code && domain.google_analytics_code!="") {
             ga('create', domain.google_analytics_code, 'auto');
           }
+          if (typeof ga == 'function') {
+            ga('set', 'anonymizeIp', true);
+            ga('send', 'pageview', location.pathname);
+          } else {
+            console.error("Can't find Google Analytics object");
+          }
         },
 
         _userLoggedIn: function (event, user) {
@@ -322,15 +328,6 @@
           this.requestInProgress = true;
           this.fire('app-ready');
           this.$.boot.generateRequest();
-
-          this.async(function () {
-            if (typeof ga == 'function') {
-              ga('set', 'anonymizeIp', true);
-              ga('send', 'pageview', location.pathname);
-            } else {
-              console.error("Can't find Google Analytics object");
-            }
-          });
         },
 
         setSeenWelcome: function () {
