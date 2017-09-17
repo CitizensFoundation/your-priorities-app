@@ -1,15 +1,15 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.169">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.170">
 
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.169">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html?v=6.3.170">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.169">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.169">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.169">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.170">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.170">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.170">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.169">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.170">
 
-<link rel="import" href="../yp-session/yp-session.html?v=6.3.169">
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.169">
+<link rel="import" href="../yp-session/yp-session.html?v=6.3.170">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.170">
 
 </head><body><dom-module id="yp-app-globals">
 
@@ -201,6 +201,10 @@
           if (typeof ga == 'function') {
             ga('set', 'anonymizeIp', true);
             ga('send', 'pageview', location.pathname);
+            ga('set', 'nonInteraction', true);
+            this.async(function () {
+              ga('set', 'nonInteraction', false);
+            }, 900);
           } else {
             console.error("Can't find Google Analytics object");
           }
