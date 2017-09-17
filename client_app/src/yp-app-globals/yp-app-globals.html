@@ -201,6 +201,10 @@
           if (typeof ga == 'function') {
             ga('set', 'anonymizeIp', true);
             ga('send', 'pageview', location.pathname);
+            ga('set', 'nonInteraction', true);
+            this.async(function () {
+              ga('set', 'nonInteraction', false);
+            }, 900);
           } else {
             console.error("Can't find Google Analytics object");
           }
