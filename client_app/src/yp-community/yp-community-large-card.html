@@ -115,7 +115,7 @@
       }
 
       .textBox {
-        margin-right: 32px;
+        margin-left: 32px;
       }
 
       @media (max-width: 945px) {
@@ -163,7 +163,7 @@
         }
 
         .textBox {
-          margin-right: 0;
+          margin-left: 0;
         }
       }
     </style>
@@ -172,7 +172,10 @@
 
     <template is="dom-if" if="[[community]]">
       <div class="layout horizontal wrap">
-        <paper-material id="card" elevation="4" animated class="large-card top-card textBox">
+        <paper-material id="cardImage" elevation="3" animated class="large-card imageCard top-card">
+          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
+        </paper-material>
+        <paper-material id="card" elevation="4" animated class="large-card textBox">
           <div class="layout vertical">
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">
@@ -199,9 +202,6 @@
               </paper-menu>
             </paper-menu-button>
           </div>
-        </paper-material>
-        <paper-material id="cardImage" elevation="3" animated class="large-card imageCard">
-          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
         </paper-material>
       </div>
     </template>

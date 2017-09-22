@@ -83,7 +83,7 @@
       }
 
       .textBox {
-        margin-right: 32px;
+        margin-left: 32px;
       }
 
       .description {
@@ -144,7 +144,7 @@
         }
 
         .textBox {
-          margin-right: 0;
+          margin-left: 0;
         }
       }
 
@@ -153,7 +153,12 @@
 
     <template is="dom-if" if="[[domain]]">
       <div class="layout horizontal wrap">
-        <paper-material id="card" elevation="4" animated class="large-card top-card textBox">
+        <paper-material id="cardImage" elevation="3" animated class="large-card imageCard top-card">
+          <div class="layout horizontal wrap">
+            <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
+          </div>
+        </paper-material>
+        <paper-material id="card" elevation="4" animated class="large-card textBox">
           <div class="layout vertical">
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">
@@ -175,11 +180,6 @@
                 <paper-item id="organizationsGridMenuItem">[[t('organizationsAdmin')]]</paper-item>
               </paper-menu>
             </paper-menu-button>
-          </div>
-        </paper-material>
-        <paper-material id="cardImage" elevation="3" animated class="large-card imageCard">
-          <div class="layout horizontal wrap">
-            <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
           </div>
         </paper-material>
       </div>

@@ -110,7 +110,7 @@
       }
 
       .textBox {
-        margin-right: 32px;
+        margin-left: 32px;
       }
 
       @media (max-width: 945px) {
@@ -154,7 +154,7 @@
         }
 
         .textBox {
-          margin-right: 0;
+          margin-left: 0;
         }
       }
     </style>
@@ -162,7 +162,10 @@
 
     <template is="dom-if" if="[[group]]" restamp>
       <div class="layout horizontal center-center wrap">
-        <paper-material id="card" elevation="4" animated-shadow class="groupCard top-card textBox">
+        <paper-material id="cardImage" elevation="3" animated class="groupCard imageCard top-card">
+          <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
+        </paper-material>
+        <paper-material id="card" elevation="4" animated-shadow class="groupCard textBox">
           <div class="layout vertical">
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">
@@ -186,9 +189,6 @@
               </paper-menu>
             </paper-menu-button>
           </div>
-        </paper-material>
-        <paper-material id="cardImage" elevation="3" animated class="groupCard imageCard">
-          <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
         </paper-material>
       </div>
     </template>
