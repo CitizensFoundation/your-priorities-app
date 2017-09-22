@@ -204,14 +204,16 @@
       },
 
       setupTopHeaderImage: function (image) {
-        var path;
-        if (image) {
-          path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
-        } else {
-          path = 'none';
+        if (this.wideWidth) {
+          var path;
+          if (image) {
+            path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+          } else {
+            path = 'none';
+          }
+          this.customStyle['--top-area-background-image'] = path;
+          this.updateStyles();
         }
-        this.customStyle['--top-area-background-image'] = path;
-        this.updateStyles();
       },
 
       _fabTabChanged: function (newValue) {

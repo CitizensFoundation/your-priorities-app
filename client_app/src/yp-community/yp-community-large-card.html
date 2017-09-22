@@ -249,6 +249,8 @@
               community.configuration.welcomeHTML!="" &&
               this.$$("#welcomeHTML")) {
                 this.$$("#welcomeHTML").innerHTML = community.configuration.welcomeHTML;
+            } else if (this.$$("#welcomeHTML")) {
+              this.$$("#welcomeHTML").innerHTML = "";
             }
           });
         } else {
