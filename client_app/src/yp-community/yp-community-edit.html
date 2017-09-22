@@ -181,6 +181,17 @@
         <paper-radio-button name="secret">[[t('secret')]]</paper-radio-button>
       </paper-radio-group>
 
+      <paper-textarea id="welcomeHTML"
+                      name="welcomeHTML"
+                      value="{{community.configuration.welcomeHTML}}"
+                      label="[[t('welcomeHTML')]]"
+                      rows="2"
+                      max-rows="5"
+                      minlength="1"
+                      required
+                      class="mainInput">
+      </paper-textarea>
+
     </yp-edit-dialog>
   </template>
 

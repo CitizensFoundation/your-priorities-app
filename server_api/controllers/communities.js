@@ -251,6 +251,25 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.disableDomainUpLink', (req.body.disableDomainUpLink && req.body.disableDomainUpLink!="") ? true : false);
   community.set('configuration.defaultLocationLongLat', (req.body.defaultLocationLongLat && req.body.defaultLocationLongLat!="") ? req.body.defaultLocationLongLat : null);
   community.set('configuration.facebookPixelId', (req.body.facebookPixelId && req.body.facebookPixelId!="") ? req.body.facebookPixelId : null);
+
+  community.set('configuration.welcomeHTML', (req.body.welcomeHTML && req.body.welcomeHTML!="") ? req.body.welcomeHTML : null);
+
+  if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
+    community.google_analytics_code = req.body.google_analytics_code;
+  } else {
+    community.google_analytics_code = null;
+  }
+
+  community.only_admins_can_create_groups = req.body.onlyAdminsCanCreateGroups ? true : false;
+
+  if (req.body.defaultLocale && req.body.defaultLocale!="") {
+    community.default_locale = req.body.defaultLocale;
+  }
+
+  community.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
+  if (req.body.status && req.body.status!="") {
+    community.status = req.body.status;
+  }
 };
 
 router.delete('/:communityId/:activityId/delete_activity', auth.can('edit community'), function(req, res) {
@@ -632,12 +651,6 @@ router.post('/:domainId', auth.can('create community'), function(req, res) {
         ip_address: req.clientIp
       });
 
-      if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
-        community.google_analytics_code = req.body.google_analytics_code;
-      } else {
-        community.google_analytics_code = null;
-      }
-
       updateCommunityConfigParameters(req, community);
       community.save().then(function() {
         log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
@@ -662,24 +675,12 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
     if (community) {
       community.name = req.body.name;
       community.description = req.body.description;
+
       if (req.body.hostname && req.body.hostname!="") {
         community.hostname = req.body.hostname;
       }
-      community.only_admins_can_create_groups = req.body.onlyAdminsCanCreateGroups ? true : false;
-      if (req.body.defaultLocale && req.body.defaultLocale!="") {
-        community.default_locale = req.body.defaultLocale;
-      }
-      community.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
-      if (req.body.status && req.body.status!="") {
-        community.status = req.body.status;
-      }
-      community.access = models.Community.convertAccessFromRadioButtons(req.body);
 
-      if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
-        community.google_analytics_code = req.body.google_analytics_code;
-      } else {
-        community.google_analytics_code = null;
-      }
+      community.access = models.Community.convertAccessFromRadioButtons(req.body);
 
       updateCommunityConfigParameters(req, community);
       community.save().then(function () {
