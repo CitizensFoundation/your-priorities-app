@@ -689,6 +689,11 @@
             } else {
               window.appGlobals.disableFacebookLoginForGroup = false;
             }
+            this.fire('yp-set-home-link', {
+              type: 'group',
+              id: this.post.Group.id,
+              name: this.post.Group.name
+            });
           }
         },
 

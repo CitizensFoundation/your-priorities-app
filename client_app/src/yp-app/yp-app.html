@@ -59,9 +59,9 @@
 
       [title] {
         /* The difference in font size is used to calculate the scale of the title in the transition. */
-        font-size: 22;
         padding-top: 8px;
         padding-left: 8px;
+        padding-bottom: 8px;
       }
 
       .backIcon {
@@ -88,6 +88,10 @@
         width: 200px;
       }
 
+      #paperToggleNavMenu {
+        min-width: 40px;
+      }
+
       @media (max-width: 480px) {
         div[title] {
           font-size: 17px;
@@ -97,8 +101,10 @@
 
         .backIcon {
           width: 40px;
+          min-width: 40px;
           height: 40px;
           padding-right: 8px;
+          margin-top: 7px;
         }
 
         .closePostIcon {
@@ -174,7 +180,7 @@
           <app-toolbar>
             <div hidden$="[[closePostHeader]]" class="layout horizontal">
               <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
-              <div title class="layout vertical wrap">[[headerTitle]]</div>
+              <div title class="layout vertical">[[headerTitle]]</div>
               <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
             </div>
             <template is="dom-if" if="[[closePostHeader]]">
