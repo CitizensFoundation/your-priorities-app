@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.170"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.171"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-header" assetpath="./">
 
   <template>
 
@@ -578,7 +578,7 @@
                 [[post.Group.configuration.alternativePointForHeader]]
               </div>
 
-              <paper-material id="pointUpMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="">
+              <paper-material id="pointUpMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="" hidden$="[[post.Group.configuration.disableDebate]]">
                 <yp-user-with-organization user=""></yp-user-with-organization>
                 <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueUp}}" value="[[textValueUp]]" label$="[[labelUp]]" char-counter="" rows="2" max-rows="3" maxlength="500">
                 </paper-textarea>
@@ -611,7 +611,7 @@
               <div class="pointMainHeader pointAgainstMainHeader layout horizontal center-center" hidden$="[[!post.Group.configuration.alternativePointAgainstHeader]]">
                 [[post.Group.configuration.alternativePointAgainstHeader]]
               </div>
-              <paper-material id="pointDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="">
+              <paper-material id="pointDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="" hidden$="[[post.Group.configuration.disableDebate]]">
                 <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueDown}}" value="[[textValueDown]]" label$="[[labelDown]]" char-counter="" rows="2" max-rows="5" maxlength="500">
                 </paper-textarea>
                 <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
@@ -636,7 +636,7 @@
         </div>
       </template>
       <template is="dom-if" if="[[!largeMode]]">
-        <paper-material id="pointUpOrDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="">
+        <paper-material id="pointUpOrDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="" hidden$="[[post.Group.configuration.disableDebate]]">
           <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueMobileUpOrDown}}" value="[[textValueMobileUpOrDown]]" label="[[labelMobileUpOrDown]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
           <div class="horizontal end-justified layout">
             <div class="layout horizontal">
@@ -2030,6 +2030,11 @@
             } else {
               window.appGlobals.disableFacebookLoginForGroup = false;
             }
+            this.fire('yp-set-home-link', {
+              type: 'group',
+              id: this.post.Group.id,
+              name: this.post.Group.name
+            });
           }
         },
 

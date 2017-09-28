@@ -1,23 +1,23 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.170">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.171">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.170">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.170">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.171">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.171">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.170">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.170">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.170">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.170">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.171">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.171">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.171">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html?v=6.3.171">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.170">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html?v=6.3.171">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.170">
-<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.170">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.170">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.171">
+<link rel="import" href="../yp-behaviors/yp-collection-status-options.html?v=6.3.171">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.171">
 
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.170">
-<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.170">
-<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.170">
-<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.170">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html?v=6.3.171">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html?v=6.3.171">
+<link rel="import" href="../yp-theme/yp-theme-selector.html?v=6.3.171">
+<link rel="import" href="../yp-app-globals/yp-language-selector.html?v=6.3.171">
 
 </head><body><dom-module id="yp-group-edit">
   <template>
@@ -134,6 +134,7 @@
         <div class="layout vertical config">
           <paper-checkbox name="canVote" checked$="{{canVote}}">[[t('group.canVote')]]</paper-checkbox>
           <paper-checkbox name="canAddNewPosts" checked$="{{canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
+          <paper-checkbox name="disableDebate" checked$="{{group.configuration.disableDebate}}">[[t('disableDebate')]]</paper-checkbox>
           <paper-checkbox name="locationHidden" checked$="{{locationHidden}}">[[t('group.locationHidden')]]</paper-checkbox>
           <paper-checkbox name="showWhoPostedPosts" checked$="{{showWhoPostedPosts}}">[[t('group.showWhoPostedPosts')]]</paper-checkbox>
         </div>

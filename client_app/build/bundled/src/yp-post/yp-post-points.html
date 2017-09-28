@@ -1,21 +1,21 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.170">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.171">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.170">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.170">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.170">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.171">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.171">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.171">
 
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.170">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.170">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.170">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.170">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.3.170">
-<link rel="import" href="../../bower_components/paper-input/paper-input-char-counter.html?v=6.3.170">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.170">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.170">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.171">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html?v=6.3.171">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html?v=6.3.171">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.171">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html?v=6.3.171">
+<link rel="import" href="../../bower_components/paper-input/paper-input-char-counter.html?v=6.3.171">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html?v=6.3.171">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.171">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.170">
-<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.170">
-<link rel="import" href="../yp-point/yp-point.html?v=6.3.170">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.171">
+<link rel="import" href="../yp-behaviors/emoji-selector.html?v=6.3.171">
+<link rel="import" href="../yp-point/yp-point.html?v=6.3.171">
 
 </head><body><dom-module id="yp-post-points">
   <template>
@@ -210,7 +210,7 @@
                 [[post.Group.configuration.alternativePointForHeader]]
               </div>
 
-              <paper-material id="pointUpMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="">
+              <paper-material id="pointUpMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="" hidden$="[[post.Group.configuration.disableDebate]]">
                 <yp-user-with-organization user=""></yp-user-with-organization>
                 <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueUp}}" value="[[textValueUp]]" label$="[[labelUp]]" char-counter="" rows="2" max-rows="3" maxlength="500">
                 </paper-textarea>
@@ -243,7 +243,7 @@
               <div class="pointMainHeader pointAgainstMainHeader layout horizontal center-center" hidden$="[[!post.Group.configuration.alternativePointAgainstHeader]]">
                 [[post.Group.configuration.alternativePointAgainstHeader]]
               </div>
-              <paper-material id="pointDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="">
+              <paper-material id="pointDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="" hidden$="[[post.Group.configuration.disableDebate]]">
                 <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueDown}}" value="[[textValueDown]]" label$="[[labelDown]]" char-counter="" rows="2" max-rows="5" maxlength="500">
                 </paper-textarea>
                 <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
@@ -268,7 +268,7 @@
         </div>
       </template>
       <template is="dom-if" if="[[!largeMode]]">
-        <paper-material id="pointUpOrDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="">
+        <paper-material id="pointUpOrDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="" hidden$="[[post.Group.configuration.disableDebate]]">
           <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" bind-value="{{textValueMobileUpOrDown}}" value="[[textValueMobileUpOrDown]]" label="[[labelMobileUpOrDown]]" char-counter="" rows="2" max-rows="3" maxlength="500"></paper-textarea>
           <div class="horizontal end-justified layout">
             <div class="layout horizontal">

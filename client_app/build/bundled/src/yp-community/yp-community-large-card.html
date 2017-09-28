@@ -1,30 +1,30 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.170">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.171">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.170">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.170">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.170">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.170">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.170">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.170">
-<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.170">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.170">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.171">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.171">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.171">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.171">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.171">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.171">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.171">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.171">
 
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.3.170">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html?v=6.3.170">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.3.170">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.170">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.3.171">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html?v=6.3.171">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html?v=6.3.171">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.171">
 
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.170">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.171">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.170">
-<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.170">
-<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.170">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.171">
+<link rel="import" href="../yp-behaviors/access-helpers.html?v=6.3.171">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html?v=6.3.171">
 
-<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html?v=6.3.170">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.170">
+<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html?v=6.3.171">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html?v=6.3.171">
 
-<link rel="import" href="yp-community-behaviors.html?v=6.3.170">
-<link rel="import" href="yp-community-stats.html?v=6.3.170">
+<link rel="import" href="yp-community-behaviors.html?v=6.3.171">
+<link rel="import" href="yp-community-stats.html?v=6.3.171">
 
 </head><body><dom-module id="yp-community-large-card">
 
@@ -115,12 +115,52 @@
       }
 
       .textBox {
-        margin-right: 32px;
+        margin-left: 32px;
       }
+
+      #welcomeHTML {
+        width: 432px;
+        max-width: 432px;
+        overflow: hidden;
+      }
+
+      .k2017Image {
+        height: 72px;
+      }
+
+      .k2017extraMargin {
+        margin-right: 68px;
+        margin-left: 45px;
+      }
+
+      .k2017topPadding {
+        padding: 8px;
+      }
+
+      .k2017topPadding a:link { color: #333 }
+      .k2017topPadding a:visited { color: #333 }
 
       @media (max-width: 945px) {
         :host {
           width: 306px;
+        }
+
+        .k2017Image {
+          height: 42px;
+        }
+
+        .k2017extraMargin {
+          margin-right: 52px;
+          margin-left: 32px;
+        }
+
+        .k2017topPadding {
+          padding-top: 4px;
+        }
+
+        #welcomeHTML {
+          width: 306px;
+          max-width: 306px;
         }
 
         .large-card {
@@ -163,16 +203,22 @@
         }
 
         .textBox {
-          margin-right: 0;
+          margin-left: 0;
         }
       }
+
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <template is="dom-if" if="[[community]]">
       <div class="layout horizontal wrap">
-        <paper-material id="card" elevation="4" animated="" class="large-card top-card textBox">
+        <paper-material id="cardImage" elevation="3" animated="" class="large-card imageCard top-card">
+          <div id="welcomeHTML" hidden$="[[!community.configuration.welcomeHTML]]">
+          </div>
+          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]" hidden$="[[community.configuration.welcomeHTML]]"></iron-image>
+        </paper-material>
+        <paper-material id="card" elevation="3" animated="" class="large-card textBox">
           <div class="layout vertical">
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">
@@ -199,9 +245,6 @@
               </paper-menu>
             </paper-menu-button>
           </div>
-        </paper-material>
-        <paper-material id="cardImage" elevation="3" animated="" class="large-card imageCard">
-          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
         </paper-material>
       </div>
     </template>
@@ -243,6 +286,16 @@
               description.innerHTML = this.addLinksAndEmjois(community.description);
             } else {
               console.error("Can't find community description element");
+            }
+            if (community.configuration.welcomeHTML &&
+              community.configuration.welcomeHTML!="" &&
+              this.$$("#welcomeHTML")) {
+                var div = document.createElement('div');
+                div.innerHTML = community.configuration.welcomeHTML;
+                this.$$("#welcomeHTML").innerHTML = "";
+                Polymer.dom(this.$$("#welcomeHTML")).appendChild(div);
+            } else if (this.$$("#welcomeHTML")) {
+             this.$$("#welcomeHTML").innerHTML = "";
             }
           });
         } else {

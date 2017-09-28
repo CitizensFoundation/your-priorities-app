@@ -1,4 +1,6 @@
 {
+  "disableDebate": "Loka rökræðum",
+  "welcomeHTML": "welcome HTML (use with care)",
   "disableFacebookLoginForGroup": "Slökkva á Facebook Login fyrir hóp",
   "facebookPixelId": "Facebook pixel id",
   "downloadFacebookImagesForUser": "Geyma Facebook notenda myndir í okkar grunni",

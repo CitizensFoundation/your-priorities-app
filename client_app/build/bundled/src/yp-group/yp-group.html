@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.170"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.171"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -1239,7 +1239,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .textBox {
-        margin-right: 32px;
+        margin-left: 32px;
       }
 
       @media (max-width: 945px) {
@@ -1283,7 +1283,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         .textBox {
-          margin-right: 0;
+          margin-left: 0;
         }
       }
     </style>
@@ -1291,7 +1291,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <template is="dom-if" if="[[group]]" restamp="">
       <div class="layout horizontal center-center wrap">
-        <paper-material id="card" elevation="4" animated-shadow="" class="groupCard top-card textBox">
+        <paper-material id="cardImage" elevation="3" animated="" class="groupCard imageCard top-card">
+          <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath]]"></iron-image>
+        </paper-material>
+        <paper-material id="card" elevation="3" animated-shadow="" class="groupCard textBox">
           <div class="layout vertical">
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">
@@ -1315,9 +1318,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </paper-menu>
             </paper-menu-button>
           </div>
-        </paper-material>
-        <paper-material id="cardImage" elevation="3" animated="" class="groupCard imageCard">
-          <iron-image class="logo" sizing="cover" preload="" src="[[groupLogoImagePath]]"></iron-image>
         </paper-material>
       </div>
     </template>
@@ -2000,14 +2000,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       setupTopHeaderImage: function (image) {
-        var path;
-        if (image) {
-          path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
-        } else {
-          path = 'none';
+        if (this.wideWidth) {
+          var path;
+          if (image) {
+            path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+          } else {
+            path = 'none';
+          }
+          this.customStyle['--top-area-background-image'] = path;
+          this.updateStyles();
         }
-        this.customStyle['--top-area-background-image'] = path;
-        this.updateStyles();
       },
 
       refresh: function () {

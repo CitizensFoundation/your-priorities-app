@@ -1,4 +1,6 @@
 {
+  "disableDebate": "Disable debate",
+  "welcomeHTML": "welcome HTML (use with care)",
   "disableFacebookLoginForGroup": "Disable Facebook Login for group",
   "facebookPixelId": "Facebook pixel id",
   "downloadFacebookImagesForUser": "Download Facebook images for users to our db",
