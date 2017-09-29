@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.171"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.172"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -727,6 +727,10 @@
         height: 72px;
       }
 
+      .k2017FeaturedImage {
+        height: 85px;
+      }
+
       .k2017extraMargin {
         margin-right: 68px;
         margin-left: 45px;
@@ -746,6 +750,10 @@
 
         .k2017Image {
           height: 42px;
+        }
+
+        .k2017FeaturedImage {
+          height: 55px;
         }
 
         .k2017extraMargin {
@@ -813,7 +821,7 @@
     <template is="dom-if" if="[[community]]">
       <div class="layout horizontal wrap">
         <paper-material id="cardImage" elevation="3" animated="" class="large-card imageCard top-card">
-          <div id="welcomeHTML" hidden$="[[!community.configuration.welcomeHTML]]">
+          <div id="welcomeHTML" hidden$="[[!community.configuration.welcomeHTML]]" class="layout vertical center-center">
           </div>
           <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]" hidden$="[[community.configuration.welcomeHTML]]"></iron-image>
         </paper-material>

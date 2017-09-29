@@ -1,6 +1,6 @@
 {
   "name": "your-priorities-app",
-  "version": "6.3.171",
+  "version": "6.3.172",
   "dependencies": {
     "airbrake": "^1.0.1",
     "async": "^1.4.2",
