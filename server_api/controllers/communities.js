@@ -612,6 +612,69 @@ router.get('/:communityId/users', auth.can('edit community'), function (req, res
   });
 });
 
+router.get('/:communityId/posts', auth.can('view community'), function (req, res) {
+  var where = { status: { $in: ['published','inactive']}, deleted: false };
+
+  var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
+
+  if (req.query.sortBy=="newest") {
+    postOrder = "created_at DESC";
+  } else if (req.query.sortBy=="most_debated") {
+    postOrder = "counter_points DESC";
+  } else if (req.query.sortBy=="random") {
+    postOrder = "created_at DESC";
+  }
+
+  var limit = req.query.limit ? Math.max(req.query.limit, 25) :  7;
+
+  models.Post.findAll({
+    where: where,
+    attributes: ['id','name','description','status','official_status','counter_endorsements_up','cover_media_type',
+      'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
+    order: [
+      models.sequelize.literal(postOrder),
+      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
+      [ { model: models.Group }, { model: models.Image, as: 'GroupLogoImages' } ,'updated_at', 'asc' ]
+    ],
+    include: [
+      {
+        model: models.Group,
+        required: true,
+        where: { access: { $in: [models.Group.ACCESS_OPEN_TO_COMMUNITY, models.Group.ACCESS_PUBLIC]} },
+        attributes: ['id','configuration'],
+        include: [
+          {
+            model: models.Image, as: 'GroupLogoImages',
+            required: false
+          },
+          {
+            model: models.Community,
+            required: true,
+            where: {
+              id: req.params.communityId
+            },
+            attributes: ['id','configuration']
+          }
+        ]
+      },
+      { model: models.Image,
+        attributes: { exclude: ['ip_address', 'user_agent'] },
+        as: 'PostHeaderImages',
+        required: false
+      }
+    ]
+  }).then(function(posts) {
+    log.info('Got posts', { context: 'posts'});
+    if (posts) {
+      res.send(_.dropRight(posts, limit));
+    } else {
+      res.send([]);
+    }
+  }).catch(function (error) {
+    log.error('Could not get posts', { err: error, context: 'posts' });
+    res.sendStatus(500);
+  });
+});
 
 router.get('/:id', auth.can('view community'), function(req, res) {
   getCommunity(req, function (error, community) {
