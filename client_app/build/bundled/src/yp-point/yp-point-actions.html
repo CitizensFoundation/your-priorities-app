@@ -1,13 +1,13 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.174">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.175">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.174">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.175">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.174">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.174">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.174">
-<link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html?v=6.3.174">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.175">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.175">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.175">
+<link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html?v=6.3.175">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.174">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.175">
 
 </head><body><dom-module id="yp-point-actions">
 
@@ -134,6 +134,7 @@
       ],
 
       _onPointChanged: function (newValue, oldValue) {
+        this.set('isUpVoted', false);
         if (newValue) {
           this._updateQualities();
         }
@@ -150,8 +151,6 @@
             this._setPointQuality(thisPointQuality.value);
             if (thisPointQuality.value>0) {
               this.set('isUpVoted', true);
-            } else {
-              this.set('isUpVoted', false);
             }
           } else {
             this._setPointQuality(null);
@@ -164,6 +163,7 @@
       _qualityChanged: function (a, b) {
         // TODO: Fix where you can't vote up a newstory just after posting
         //this._resetClasses();
+        this.set('isUpVoted', false);
       },
 
       _resetClasses: function () {
