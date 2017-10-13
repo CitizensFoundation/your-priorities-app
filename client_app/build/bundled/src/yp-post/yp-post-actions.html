@@ -1,22 +1,22 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.173">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.174">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.173">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.174">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.173">
-<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.173">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.174">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.174">
 
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.173">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.173">
-<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html?v=6.3.173">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.173">
-<link rel="import" href="../../bower_components/iron-icons/notification-icons.html?v=6.3.173">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.173">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.174">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.174">
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html?v=6.3.174">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.174">
+<link rel="import" href="../../bower_components/iron-icons/notification-icons.html?v=6.3.174">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.174">
 
-<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html?v=6.3.173">
+<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html?v=6.3.174">
 
-<link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html?v=6.3.173">
+<link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html?v=6.3.174">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.173">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.174">
 
 </head><body><dom-module id="yp-post-actions">
 
@@ -147,6 +147,10 @@
         text-align: right;
       }
 
+      .shareIcon[endorsed] {
+        --paper-share-button-icon-color: var(--accent-color-400);
+      }
+
       .up-vote-icon {
         margin-left: 8px;
       }
@@ -205,7 +209,7 @@
         <div class="action-text down-text">[[formattedDownCount]]</div>
       </div>
       <div class="share">
-        <paper-share-button on-share-tap="_shareTap" class="shareIcon" horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
+        <paper-share-button on-share-tap="_shareTap" class="shareIcon" endorsed$="[[isEndorsed]]" horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
       </div>
     </paper-material>
 
@@ -248,6 +252,11 @@
         endorseValue: {
           type: Number,
           value: 0
+        },
+
+        isEndorsed: {
+          type: Boolean,
+          value: false
         },
 
         elevation: {
@@ -424,6 +433,13 @@
 
       _setEndorsement: function (value) {
         this.endorseValue = value;
+
+        if (value>0) {
+          this.set('isEndorsed', true);
+        } else {
+          this.set('isEndorsed', false);
+        }
+
         if (this.endorsementButtons=='hearts') {
           if (value > 0) {
             this.$.actionUp.className += ' ' + 'hearts-up-selected';
@@ -503,6 +519,8 @@
         this.set('allDisabled', true);
         this.generateEndorsement(1);
         window.appGlobals.activity('clicked', 'endorse_up', this.post.id);
+        this.set('isEndorsed', true);
+        this.updateStyles();
       },
 
       downVote: function (event) {
