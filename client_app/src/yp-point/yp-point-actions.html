@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
@@ -61,6 +62,15 @@
         height: 10px;
       }
       }
+
+      .shareIcon {
+        --paper-share-button-icon-color: #ddd;
+        text-align: right;
+      }
+
+      .shareIcon[up-voted] {
+        --paper-share-button-icon-color: var(--accent-color-400);
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
@@ -74,6 +84,8 @@
         <div class="action-text">{{point.counter_quality_down}}</div>
       </div>
     </div>
+    <paper-share-button on-share-tap="_shareTap" class="shareIcon" up-voted$="[[isUpVoted]]" horizontal-align="right" id="shareButton" title$="[[t('sharePoint')]]" facebook google twitter popup url="[[pointUrl]]"></paper-share-button>
+
     <yp-ajax id="pointQualityAjax" method="POST" on-response="_pointQualityResponse"></yp-ajax>
     <iron-signals on-iron-signal-got-endorsements-and-qualities="_updateQualitiesFromSignal"></iron-signals>
 
@@ -102,9 +114,18 @@
           value: 0
         },
 
+        isUpVoted: {
+          type: Boolean,
+          value: false
+        },
+
         allDisabled: {
           type: Boolean,
           value: false
+        },
+
+        pointUrl: {
+          type: String
         }
       },
 
@@ -127,6 +148,11 @@
           var thisPointQuality = window.appUser.pointQualitiesIndex[this.point.id];
           if (thisPointQuality) {
             this._setPointQuality(thisPointQuality.value);
+            if (thisPointQuality.value>0) {
+              this.set('isUpVoted', true);
+            } else {
+              this.set('isUpVoted', false);
+            }
           } else {
             this._setPointQuality(null);
           }
@@ -202,6 +228,8 @@
         this.set('allDisabled', true);
         window.appGlobals.activity('clicked', 'pointHelpful', this.point.id);
         this.generatePointQuality(1);
+        this.set('isUpVoted', true);
+        this.updateStyles();
       },
 
       pointNotHelpful: function () {

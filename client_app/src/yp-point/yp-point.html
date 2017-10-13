@@ -10,7 +10,6 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
-<link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
@@ -102,11 +101,6 @@
       .actionContainer {
         margin-top: 8px;
       }
-
-      .shareIcon {
-        --paper-share-button-icon-color: #ddd;
-        text-align: right;
-      }
     </style>
 
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
@@ -143,10 +137,9 @@
             </div>
           </template>
           <div class="layout horizontal actionContainer">
-            <yp-point-actions point="[[point]]"></yp-point-actions>
+            <yp-point-actions point="[[point]]" point-url$="[[pointUrl]]"></yp-point-actions>
             <paper-icon-button hidden$="[[!loggedInUser]]" title$="[[t('point.report')]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
             <div class="flex"></div>
-            <paper-share-button on-share-tap="_shareTap" class="shareIcon" horizontal-align="right" id="shareButton" title$="[[t('sharePoint')]]" facebook google twitter popup url="[[pointUrl]]"></paper-share-button>
             <template is="dom-if" if="[[hasPointAccess]]">
               <div class="layout horizontal self-end" hidden$="">
                 <yp-ajax id="editPointAjax" method="PUT" on-response="_editResponse"></yp-ajax>
