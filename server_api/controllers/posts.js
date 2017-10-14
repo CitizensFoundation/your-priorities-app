@@ -610,6 +610,7 @@ router.put('/:id/:groupId/move', auth.can('edit post'), function(req, res) {
 
 router.delete('/:id', auth.can('edit post'), function(req, res) {
   var postId = req.params.id;
+  log.info('Post Deleted Got Start', { context: 'delete', user: toJson(req.user) });
   models.Post.find({
     where: {id: postId }
   }).then(function (post) {
