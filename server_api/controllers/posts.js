@@ -613,6 +613,7 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
   models.Post.find({
     where: {id: postId }
   }).then(function (post) {
+    log.info('Post Deleted Got Post', { context: 'delete', user: toJson(req.user) });
     models.AcActivity.findAll({
       attributes: ['id','deleted'],
       include: [
@@ -625,6 +626,7 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
         }
       ]
     }).then(function (activities) {
+      log.info('Post Deleted Got Activities', { context: 'delete', user: toJson(req.user) });
       async.eachSeries(activities, function (activity, innerCallback) {
         activity.deleted = true;
         activity.save().then(function () {
@@ -633,8 +635,9 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
       }, function done() {
         post.deleted = true;
         post.save().then(function () {
-          log.info('Post Deleted', { post: toJson(post), context: 'delete', user: toJson(req.user) });
+          log.info('Post Deleted Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
           post.updateAllExternalCounters(req, 'down', 'counter_posts', function () {
+            log.info('Post Deleted Counters updates', { context: 'delete', user: toJson(req.user) });
             res.sendStatus(200);
           });
         });
