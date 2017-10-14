@@ -295,7 +295,7 @@
             } else {
               console.error("Can't find community description element");
             }
-            if (community.configuration.welcomeHTML &&
+            if (community.configuration && community.configuration.welcomeHTML &&
               community.configuration.welcomeHTML!="" &&
               this.$$("#welcomeHTML")) {
                 var div = document.createElement('div');
