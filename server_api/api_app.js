@@ -82,7 +82,7 @@ if (app.get('env') != 'development' && !process.env.DISABLE_FORCE_HTTPS) {
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
-app.use(cors());
+// app.use(cors());
 
 app.use(morgan('combined'));
 app.use(useragent.express());
