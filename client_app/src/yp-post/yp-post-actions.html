@@ -368,6 +368,7 @@
       },
 
       _onPostChanged: function (post, oldValue) {
+        this.set('isEndorsed', false);
         if (post) {
           this.removeClass(this.$.actionUp,'hearts-up-selected');
           this.removeClass(this.$.actionDown, 'hearts-down-selected');
@@ -399,6 +400,7 @@
       },
 
       _updateEndorsements: function (post) {
+        this.set('isEndorsed', false);
         if (window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
           var thisPostsEndorsement = window.appUser.endorsementPostsIndex[post.id];
           if (thisPostsEndorsement)
@@ -436,8 +438,6 @@
 
         if (value>0) {
           this.set('isEndorsed', true);
-        } else {
-          this.set('isEndorsed', false);
         }
 
         if (this.endorsementButtons=='hearts') {
