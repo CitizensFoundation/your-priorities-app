@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.175"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.177"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -242,8 +242,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .dropdown-trigger  {
-        width: 55px;
-        height: 55px;
+        width: 60px;
+        height: 60px;
         margin-bottom: 16px;
       }
 
@@ -259,7 +259,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .subTitle {
         font-size: 22px;
-        margin-top: 14px;
+        margin-top: 18px;
       }
 
       #filterDropdown {
@@ -271,14 +271,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         .subTitle {
           font-size: 17px;
           padding-top: 0;
-          margin-top: 14px;
+          margin-top: 16px;
         }
 
         .dropdown-trigger {
           padding-left: 0;
           margin-left: 0;
-          width: 50px;
-          height: 50px;
+          width: 52px;
+          height: 52px;
           margin-bottom: 0;
           margin-top: 0;
         }
@@ -313,7 +313,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       #dropDownTrigger {
         color: var(--accent-color);
-        margin-left: 8px;
+        margin-left: 0;
       }
     </style>
 
@@ -322,7 +322,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <template is="dom-if" if="[[group]]">
       <div class="layout horizontal mainContainer">
         <template is="dom-if" if="[[showFilter]]">
-          <paper-menu-button id="filterDropdown" class="selected-items" icon="sort" vertical-align="auto" horizontal-align="left">
+          <div class="layout vertical start">
+            <div class="subTitle">[[subTitle]]</div>
+          </div>
+          <paper-menu-button id="filterDropdown" class="selected-items" icon="sort" vertical-align="auto" horizontal-align="right">
             <paper-icon-button title$="[[t('filterIdeas')]]" id="dropDownTrigger" icon="sort" class="dropdown-trigger"></paper-icon-button>
             <div class="layout vertical dropdown-content">
               <div>
@@ -375,9 +378,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <template is="dom-if" if="[[searchingFor]]">
           <paper-icon-button icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
         </template>
-        <div class="layout vertical start">
-          <div class="subTitle">[[subTitle]]</div>
-        </div>
       </div>
     </template>
   </template>
