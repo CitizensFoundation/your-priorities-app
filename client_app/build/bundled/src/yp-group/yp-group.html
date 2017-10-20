@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.178"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.179"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -44,7 +44,7 @@
       }
 
       .addText {
-        padding-left: 16px;
+        padding-left: 0;
       }
 
       iron-icon {
@@ -94,10 +94,10 @@
     <div class="layout vertical center-center">
       <paper-card elevation="[[elevation]]" class="postCard" on-tap="_newPost">
         <div class="layout horizontal center-center addNewIdeaText">
+          <paper-icon-button icon="lightbulb-outline"></paper-icon-button>
           <div class="flex addText">
             [[t('post.add_new')]]
           </div>
-          <paper-icon-button icon="lightbulb-outline"></paper-icon-button>
         </div>
       </paper-card>
     </div>
@@ -242,9 +242,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .dropdown-trigger  {
-        width: 60px;
-        height: 60px;
         margin-bottom: 16px;
+        margin-left: 16px;
       }
 
       .clear-search-trigger {
@@ -259,7 +258,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .subTitle {
         font-size: 22px;
-        margin-top: 18px;
+        margin-top: 10px;
+        margin-right: 8px;
       }
 
       #filterDropdown {
@@ -277,8 +277,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         .dropdown-trigger {
           padding-left: 0;
           margin-left: 0;
-          width: 52px;
-          height: 52px;
           margin-bottom: 0;
           margin-top: 0;
         }
@@ -312,21 +310,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       #dropDownTrigger {
-        color: var(--accent-color);
-        margin-left: 0;
+        background-color: var(--accent-color);
+        margin-left: 16px;
+        color: #FFF;
+
+      }
+
+      .dropdownIcon {
+        color: #FFF;
+        margin-right: 8px;
+        margin-left: 8px;
       }
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <template is="dom-if" if="[[group]]">
-      <div class="layout horizontal mainContainer">
+      <div class="layout horizontal center-center mainContainer wrap">
         <template is="dom-if" if="[[showFilter]]">
-          <div class="layout vertical start">
-            <div class="subTitle">[[subTitle]]</div>
-          </div>
           <paper-menu-button id="filterDropdown" class="selected-items" icon="sort" vertical-align="auto" horizontal-align="right">
-            <paper-icon-button title$="[[t('filterIdeas')]]" id="dropDownTrigger" icon="sort" class="dropdown-trigger"></paper-icon-button>
+            <paper-button raised="" title$="[[t('filterIdeas')]]" id="dropDownTrigger" icon="sort" class="dropdown-trigger">
+              <iron-icon icon="sort" class="dropdownIcon"></iron-icon>
+              {{t('filterIdeas')}}
+            </paper-button>
+
             <div class="layout vertical dropdown-content">
               <div>
                 <div class="filterHeader layout horizontal center-center">
@@ -420,7 +427,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         subTitle: {
           type: String,
-          value: ''
+          value: '',
+          notify: true
         },
 
         searchingFor: {
@@ -504,7 +512,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _searchingForChanged: function (newValue, oldValue) {
         if (newValue) {
-          this.showFilter = false;
+          this.showFilter = true;
         } else {
           this.showFilter = true;
         }
@@ -549,23 +557,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _updateTitle: function () {
         if (this.searchingFor) {
-          this.subTitle = this.t('post.searchingFor') + this.searchingFor;
+          this.set('subTitle', this.t('post.searchingFor') + this.searchingFor);
         } else {
           var translatedFilterName = this.t(this.filterName);
           var translatedCategoryName;
           if (this.categoryName) {
             translatedCategoryName = this.categoryName;
           } else {
-            translatedCategoryName = this.t('categories.all');
+            translatedCategoryName = this.t('categories.the_all');
           }
           var inWord = this.t('short_word.in');
           if (this._ifCategories()) {
-            this.subTitle = translatedFilterName + ' ' + inWord + ' ' + translatedCategoryName;
-            if (this.postsCount) {
-              this.subTitle += ' (' + this.postsCount + ')';
-            }
+            this.set('subTitle', translatedFilterName + ' - ' + translatedCategoryName);
           } else {
-            this.subTitle = translatedFilterName;
+            this.set('subTitle', translatedFilterName);
           }
         }
       },
@@ -814,10 +819,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-a11y-keys id="a11y" target="[[searchTarget]]" keys="enter" on-keys-pressed="_search"></iron-a11y-keys>
 
     <div class="layout vertical center-center">
-
       <div class="searchContainer layout horizontal wrap">
         <div class="layout horizontal center-center">
-          <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" on-refresh-group="_refreshGroupFromFilter" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+          <yp-posts-filter on-tap="_tapOnFilter" sub-title="{{subTitle}}" class="filter" id="postsFilter" tab-name="[[statusFilter]]" on-refresh-group="_refreshGroupFromFilter" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
           </yp-posts-filter>
         </div>
         <div class="layout horizontal center-center">
@@ -861,10 +865,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         Polymer.ypIronListBehavior
       ],
 
+      _subTitleChanged: function (val) {
+        console.error(val);
+      },
       properties: {
 
         categories: {
           type: Array
+        },
+
+        subTitle: {
+          type: String,
+          observer: '_subTitleChanged',
+          notify: true
         },
 
         defaultCategories: {
@@ -972,6 +985,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Number,
           value: null
         }
+      },
+
+      _tapOnFilter: function () {
+        window.appGlobals.activity('click', 'filter');
       },
 
       _searchTarget: function (noPosts) {
@@ -1626,23 +1643,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-tabs id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
           <paper-tab id="tab1" name="open">
             <div class="layout vertical center-center tabCounterContainer">
-              <span>[[t('posts.open')]]</span><div class="counterInfo" has-non-open-posts$="[[hasNonOpenPosts]]" id="tabCountOpen"></div>
+              <div hidden$="[[isTabOpen]]">
+                [[t('posts.open')]]
+              </div>
+              <div hidden$="[[!isTabOpen]]">
+                [[tabOpenSubTitle]]
+              </div>
+              <div class="counterInfo" has-non-open-posts$="[[hasNonOpenPosts]]" id="tabCountOpen"></div>
             </div>
           </paper-tab>
           <template is="dom-if" if="[[hasNonOpenPosts]]">
             <paper-tab name="in_progress">
               <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.inProgress')]]</span><div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountInProgress"></div>
+                <div hidden$="[[isTabInProgress]]">
+                  [[t('posts.inProgress')]]
+                </div>
+                <div hidden$="[[!isTabInProgress]]">
+                  [[tabInProgressSubTitle]]
+                </div>
+                <div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountInProgress"></div>
               </div>
             </paper-tab>
             <paper-tab name="successful">
               <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.successful')]]</span><div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountSuccessful"></div>
+                <div hidden$="[[isTabSuccessful]]">
+                  [[t('posts.successful')]]
+                </div>
+                <div hidden$="[[!isTabSuccessful]]">
+                  [[tabSuccessfulSubTitle]]
+                </div>
+                <div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountSuccessful"></div>
               </div>
             </paper-tab>
             <paper-tab name="failed">
               <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.failed')]]</span><div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountFailed"></div>
+                <div hidden$="[[isTabFailed]]">
+                  [[t('posts.failed')]]
+                </div>
+                <div hidden$="[[!isTabFailed]]">
+                  [[tabFailedSubTitle]]
+                </div>
+                <div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountFailed"></div>
               </div>
             </paper-tab>
           </template>
@@ -1654,7 +1695,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section name="open">
           <div class="layout horizontal center-center">
-            <yp-post-list id="openPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+            <yp-post-list id="openPostList" sub-title="{{tabOpenSubTitle}}" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
           </div>
         </section>
         <section name="news" class="minHeightSection">
@@ -1665,17 +1706,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section name="in_progress">
             <div class="layout horizontal center-center">
-              <yp-post-list id="inProgressPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="inProgressPostList" sub-title="{{tabInProgressSubTitle}}" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section name="successful">
             <div class="layout horizontal center-center">
-              <yp-post-list id="successfulPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="successfulPostList" sub-title="{{tabSuccessfulSubTitle}}" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section name="failed">
             <div class="layout horizontal center-center">
-              <yp-post-list id="failedPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="failedPostList" sub-title="{{tabFailedSubTitle}}" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
         </template>
@@ -1798,6 +1839,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         tabCounters: {
           type: Object,
           value: {}
+        },
+
+        tabOpenSubTitle: String,
+        tabInProgressSubTitle: String,
+        tabSuccessfulSubTitle: String,
+        tabFailedSubTitle: String,
+
+        isTabOpen: {
+          type: Boolean,
+          computed: '_isTabOpen(selectedTab)'
+
+        },
+
+        isTabInProgress: {
+          type: Boolean,
+          computed: '_isTabInProgress(selectedTab)'
+        },
+
+        isTabSuccessful: {
+          type: Boolean,
+          computed: '_isTabSuccessful(selectedTab)'
+        },
+
+        isTabFailed: {
+          type: Boolean,
+          computed: '_isTabFailed(selectedTab)'
         }
       },
 
@@ -1805,6 +1872,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
+
+      _isTabOpen: function (selectedTab) {
+        return selectedTab==='open';
+      },
+
+      _isTabInProgress: function (selectedTab) {
+        return selectedTab==='in_progress';
+      },
+
+      _isTabFailed: function (selectedTab) {
+        return selectedTab==='failed';
+      },
+
+      _isTabSuccessful: function (selectedTab) {
+        return selectedTab==='successful';
+      },
 
       _clearScrollThreshold: function () {
         this.$$("#scrollTheshold").clearTriggers();
