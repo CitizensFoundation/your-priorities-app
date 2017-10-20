@@ -162,7 +162,8 @@
     <div class="layout vertical center-center">
       <div class="searchContainer layout horizontal wrap">
         <div class="layout horizontal center-center">
-          <yp-posts-filter sub-title="{{subTitle}}" class="filter" id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
+          <yp-posts-filter on-tap="_tapOnFilter"
+                           sub-title="{{subTitle}}" class="filter" id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
                            group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
                            category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
           </yp-posts-filter>
@@ -328,6 +329,10 @@
           type: Number,
           value: null
         }
+      },
+
+      _tapOnFilter: function () {
+        window.appGlobals.activity('click', 'filter');
       },
 
       _searchTarget: function (noPosts) {
