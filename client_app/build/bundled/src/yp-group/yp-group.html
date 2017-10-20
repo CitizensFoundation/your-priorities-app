@@ -1580,7 +1580,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       @media (max-width: 900px) {
         .tabs {
-          max-width: 450px;
+          max-width: 550px;
+          width: 550px;
           font-size: 14px;
           word-wrap: break-word !important;
         }
@@ -1605,20 +1606,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       @media (max-width: 380px) {
         .tabs {
-          max-width: 330px;
+          max-width: 360px;
           font-size: 12px;
+          width: 360px;
         }
 
         paper-tab {
-          width: 100px;
+          width: 170px;
+        }
+      }
+
+      @media (max-width: 320px) {
+        .tabs {
+          max-width: 320px;
+          font-size: 12px;
+          width: 320px;
         }
 
-        .tabs[has-non-open-posts] {
-          font-size: 8px;
-        }
-
-        .counterInfo[has-non-open-posts] {
-          font-size: 9px;
+        paper-tab {
+          width: 160px;
         }
       }
 
@@ -1626,9 +1632,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         min-height: 450px;
       }
 
-      paper-tab {
-        flex: none;
-      }
     </style>
 
     <div id="topContainer">
@@ -1644,7 +1647,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </template>
 
       <div class="layout horizontal center-center" hidden$="[[group.configuration.hideAllTabs]]">
-        <paper-tabs id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
+        <paper-tabs scrollable$="[[!wideWidth]]" id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
           <paper-tab id="tab1" name="open">
             <div class="layout vertical center-center tabCounterContainer">
               <div hidden$="[[isTabOpen]]">
