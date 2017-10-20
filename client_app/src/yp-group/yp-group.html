@@ -176,23 +176,47 @@
         <paper-tabs id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
           <paper-tab id="tab1" name="open">
             <div class="layout vertical center-center tabCounterContainer">
-              <span>[[t('posts.open')]]</span><div class="counterInfo" has-non-open-posts$="[[hasNonOpenPosts]]" id="tabCountOpen"></div>
+              <div hidden$="[[isTabOpen]]">
+                [[t('posts.open')]]
+              </div>
+              <div hidden$="[[!isTabOpen]]">
+                [[tabOpenSubTitle]]
+              </div>
+              <div class="counterInfo" has-non-open-posts$="[[hasNonOpenPosts]]" id="tabCountOpen"></div>
             </div>
           </paper-tab>
           <template is="dom-if" if="[[hasNonOpenPosts]]">
             <paper-tab name="in_progress">
               <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.inProgress')]]</span><div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountInProgress"></div>
+                <div hidden$="[[isTabInProgress]]">
+                  [[t('posts.inProgress')]]
+                </div>
+                <div hidden$="[[!isTabInProgress]]">
+                  [[tabInProgressSubTitle]]
+                </div>
+                <div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountInProgress"></div>
               </div>
             </paper-tab>
             <paper-tab name="successful">
               <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.successful')]]</span><div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountSuccessful"></div>
+                <div hidden$="[[isTabSuccessful]]">
+                  [[t('posts.successful')]]
+                </div>
+                <div hidden$="[[!isTabSuccessful]]">
+                  [[tabSuccessfulSubTitle]]
+                </div>
+                <div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountSuccessful"></div>
               </div>
             </paper-tab>
             <paper-tab name="failed">
               <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.failed')]]</span><div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountFailed"></div>
+                <div hidden$="[[isTabFailed]]">
+                  [[t('posts.failed')]]
+                </div>
+                <div hidden$="[[!isTabFailed]]">
+                  [[tabFailedSubTitle]]
+                </div>
+                <div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountFailed"></div>
               </div>
             </paper-tab>
           </template>
@@ -204,7 +228,7 @@
       <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section name="open">
           <div class="layout horizontal center-center">
-            <yp-post-list id="openPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+            <yp-post-list id="openPostList" sub-title="{{tabOpenSubTitle}}" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
           </div>
         </section>
         <section name="news" class="minHeightSection">
@@ -215,17 +239,17 @@
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section name="in_progress">
             <div class="layout horizontal center-center">
-              <yp-post-list id="inProgressPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="inProgressPostList" sub-title="{{tabInProgressSubTitle}}" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section name="successful">
             <div class="layout horizontal center-center">
-              <yp-post-list id="successfulPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="successfulPostList" sub-title="{{tabSuccessfulSubTitle}}" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section name="failed">
             <div class="layout horizontal center-center">
-              <yp-post-list id="failedPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="failedPostList" sub-title="{{tabFailedSubTitle}}" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
         </template>
@@ -359,6 +383,32 @@
         tabCounters: {
           type: Object,
           value: {}
+        },
+
+        tabOpenSubTitle: String,
+        tabInProgressSubTitle: String,
+        tabSuccessfulSubTitle: String,
+        tabFailedSubTitle: String,
+
+        isTabOpen: {
+          type: Boolean,
+          computed: '_isTabOpen(selectedTab)'
+
+        },
+
+        isTabInProgress: {
+          type: Boolean,
+          computed: '_isTabInProgress(selectedTab)'
+        },
+
+        isTabSuccessful: {
+          type: Boolean,
+          computed: '_isTabSuccessful(selectedTab)'
+        },
+
+        isTabFailed: {
+          type: Boolean,
+          computed: '_isTabFailed(selectedTab)'
         }
       },
 
@@ -366,6 +416,22 @@
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
+
+      _isTabOpen: function (selectedTab) {
+        return selectedTab==='open';
+      },
+
+      _isTabInProgress: function (selectedTab) {
+        return selectedTab==='in_progress';
+      },
+
+      _isTabFailed: function (selectedTab) {
+        return selectedTab==='failed';
+      },
+
+      _isTabSuccessful: function (selectedTab) {
+        return selectedTab==='successful';
+      },
 
       _clearScrollThreshold: function () {
         this.$$("#scrollTheshold").clearTriggers();

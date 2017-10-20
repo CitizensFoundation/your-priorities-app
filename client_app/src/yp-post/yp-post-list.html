@@ -160,10 +160,9 @@
                     on-keys-pressed="_search"></iron-a11y-keys>
 
     <div class="layout vertical center-center">
-
       <div class="searchContainer layout horizontal wrap">
         <div class="layout horizontal center-center">
-          <yp-posts-filter class="filter" id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
+          <yp-posts-filter sub-title="{{subTitle}}" class="filter" id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
                            group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}"
                            category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
           </yp-posts-filter>
@@ -209,10 +208,19 @@
         Polymer.ypIronListBehavior
       ],
 
+      _subTitleChanged: function (val) {
+        console.error(val);
+      },
       properties: {
 
         categories: {
           type: Array
+        },
+
+        subTitle: {
+          type: String,
+          observer: '_subTitleChanged',
+          notify: true
         },
 
         defaultCategories: {
