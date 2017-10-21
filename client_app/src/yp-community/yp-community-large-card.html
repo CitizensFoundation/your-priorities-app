@@ -144,6 +144,10 @@
       .k2017topPadding a:link { color: #333 }
       .k2017topPadding a:visited { color: #333 }
 
+      .k2017showOnlyMobile {
+        display: none;
+      }
+
       @media (max-width: 945px) {
         :host {
           width: 306px;
@@ -164,6 +168,14 @@
 
         .k2017topPadding {
           padding-top: 4px;
+        }
+
+        .k2017hiddenMobile  {
+          display: none;
+        }
+
+        .k2017showOnlyMobile {
+          display: inline;
         }
 
         #welcomeHTML {

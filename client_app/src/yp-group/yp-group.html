@@ -195,7 +195,7 @@
           <template is="dom-if" if="[[hasNonOpenPosts]]">
             <paper-tab name="in_progress">
               <div class="layout vertical center-center tabCounterContainer">
-                <div hidden$="[[isTabInProgress]]">
+                <div>
                   [[t('posts.inProgress')]]
                 </div>
                 <div hidden$="[[!isTabInProgress]]">
@@ -206,7 +206,7 @@
             </paper-tab>
             <paper-tab name="successful">
               <div class="layout vertical center-center tabCounterContainer">
-                <div hidden$="[[isTabSuccessful]]">
+                <div>
                   [[t('posts.successful')]]
                 </div>
                 <div hidden$="[[!isTabSuccessful]]">
@@ -217,7 +217,7 @@
             </paper-tab>
             <paper-tab name="failed">
               <div class="layout vertical center-center tabCounterContainer">
-                <div hidden$="[[isTabFailed]]">
+                <div>
                   [[t('posts.failed')]]
                 </div>
                 <div hidden$="[[!isTabFailed]]">

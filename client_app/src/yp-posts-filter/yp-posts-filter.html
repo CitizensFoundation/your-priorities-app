@@ -153,7 +153,7 @@
                         </paper-item>
                         <template is="dom-repeat" items="[[categoriesWithCount]]" as="category">
                           <paper-item data-category-id$="[[category.id]]" data-category-name$="[[category.name]]">
-                            <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
+                            <img sizing="cover" height="24" width="43" class="filterIcon" src="[[_categoryImageSrc(category)]]">
                             [[category.name]] ([[category.count]])
                           </paper-item>
                         </template>
@@ -290,7 +290,9 @@
         //categoriesWithCount.push({id: "all", name: this.t('categories.the_all'), count: detail.response.allPostCount});
         __.each(this.group.Categories, function (category) {
           category.count = this._getCategoryCount(category.id, categoryCounts);
-          categoriesWithCount.push(category);
+          if (category.count > 0) {
+            categoriesWithCount.push(category);
+          }
         }.bind(this));
         if (categoriesWithCount.length>1) {
           this.set('categoriesWithCount', categoriesWithCount);
