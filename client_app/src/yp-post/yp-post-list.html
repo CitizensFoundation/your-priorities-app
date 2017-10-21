@@ -89,7 +89,7 @@
       }
 
       .searchContainer {
-        margin-top: 16px;
+        margin-top: 8px;
       }
 
       yp-posts-filter {
@@ -209,9 +209,6 @@
         Polymer.ypIronListBehavior
       ],
 
-      _subTitleChanged: function (val) {
-        console.error(val);
-      },
       properties: {
 
         categories: {
@@ -220,7 +217,6 @@
 
         subTitle: {
           type: String,
-          observer: '_subTitleChanged',
           notify: true
         },
 
