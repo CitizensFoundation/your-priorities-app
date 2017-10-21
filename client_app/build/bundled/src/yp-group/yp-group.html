@@ -1609,6 +1609,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         .topArea {
           height: auto;
         }
+
+        .largeAddButton[is-apple] {
+          margin-top: 32px;
+        }
+
+        .largeAddButton[is-ipad] {
+          margin-top: 48px;
+        }
       }
 
       @media (max-width: 380px) {
@@ -1648,7 +1656,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
 
       <template is="dom-if" if="[[!disableNewPosts]]" restamp="">
-        <div class="largeAddButton layout horizontal center-center">
+        <div class="largeAddButton layout horizontal center-center" is-apple$="[[isApple]]" is-ipad$="[[isIpad]]">
           <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
         </div>
       </template>
@@ -1879,6 +1887,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         isTabFailed: {
           type: Boolean,
           computed: '_isTabFailed(selectedTab)'
+        },
+
+        isApple: {
+          type: Boolean,
+          computed: '_isApple(groupId)'
+        },
+
+        isIpad: {
+          type: Boolean,
+          computed: '_isIpad(groupId)'
         }
       },
 
@@ -1915,6 +1933,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
           console.error("Cant find tab "+tabId);
         }
+      },
+
+      _isApple: function () {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      },
+
+      _isIpad: function () {
+        return /iPad/.test(navigator.userAgent) && !window.MSStream;
       },
 
       _loadMoreData: function () {
