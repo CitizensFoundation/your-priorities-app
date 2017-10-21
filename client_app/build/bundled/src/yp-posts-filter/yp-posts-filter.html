@@ -1,23 +1,23 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.179">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.180">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.179">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.179">
-<link rel="import" href="../../bower_components/iron-icons/av-icons.html?v=6.3.179">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.179">
-<link rel="import" href="../../bower_components/iron-selector/iron-selector.html?v=6.3.179">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.179">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.180">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.180">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html?v=6.3.180">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.180">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html?v=6.3.180">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.180">
 
-<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.3.179">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.179">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.3.180">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.180">
 
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html?v=6.3.179">
-<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html?v=6.3.179">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.179">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.3.179">
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.3.179">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html?v=6.3.180">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html?v=6.3.180">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.180">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html?v=6.3.180">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.3.180">
 
-<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.179">
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.179">
+<link rel="import" href="../yp-ajax/yp-ajax.html?v=6.3.180">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.180">
 
 </head><body><dom-module id="yp-posts-filter">
   <template>
@@ -153,7 +153,8 @@
                         </paper-item>
                         <template is="dom-repeat" items="[[categoriesWithCount]]" as="category">
                           <paper-item data-category-id$="[[category.id]]" data-category-name$="[[category.name]]">
-                            <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
+                            <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]" hidden="[[_oldCategory(category)]]">
+                            <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]" hidden="[[!_oldCategory(category)]]">
                             [[category.name]] ([[category.count]])
                           </paper-item>
                         </template>
@@ -283,6 +284,14 @@
         }
       },
 
+      _oldCategory: function (category) {
+        if (!category || category.id<804) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
       _categoriesCountResponse: function (event, detail) {
         var categoryCounts = detail.response.categoriesCount;
         this.set('allPostCount', detail.response.allPostCount);
@@ -290,7 +299,9 @@
         //categoriesWithCount.push({id: "all", name: this.t('categories.the_all'), count: detail.response.allPostCount});
         __.each(this.group.Categories, function (category) {
           category.count = this._getCategoryCount(category.id, categoryCounts);
-          categoriesWithCount.push(category);
+          if (category.count > 0) {
+            categoriesWithCount.push(category);
+          }
         }.bind(this));
         if (categoriesWithCount.length>1) {
           this.set('categoriesWithCount', categoriesWithCount);

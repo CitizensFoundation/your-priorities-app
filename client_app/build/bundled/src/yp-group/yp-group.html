@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.179"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.180"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -10,7 +10,7 @@
         width: 280px;
         min-height: 80px;
         height: 100%;
-        margin-top: 16px;
+        margin-top: 2px;
         padding: 8px;
         background-color: var(--accent-color);
         color: #FFF;
@@ -349,7 +349,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         </paper-item>
                         <template is="dom-repeat" items="[[categoriesWithCount]]" as="category">
                           <paper-item data-category-id$="[[category.id]]" data-category-name$="[[category.name]]">
-                            <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
+                            <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]" hidden="[[_oldCategory(category)]]">
+                            <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]" hidden="[[!_oldCategory(category)]]">
                             [[category.name]] ([[category.count]])
                           </paper-item>
                         </template>
@@ -479,6 +480,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
+      _oldCategory: function (category) {
+        if (!category || category.id<804) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
       _categoriesCountResponse: function (event, detail) {
         var categoryCounts = detail.response.categoriesCount;
         this.set('allPostCount', detail.response.allPostCount);
@@ -486,7 +495,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         //categoriesWithCount.push({id: "all", name: this.t('categories.the_all'), count: detail.response.allPostCount});
         __.each(this.group.Categories, function (category) {
           category.count = this._getCategoryCount(category.id, categoryCounts);
-          categoriesWithCount.push(category);
+          if (category.count > 0) {
+            categoriesWithCount.push(category);
+          }
         }.bind(this));
         if (categoriesWithCount.length>1) {
           this.set('categoriesWithCount', categoriesWithCount);
@@ -749,7 +760,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .searchContainer {
-        margin-top: 16px;
+        margin-top: 8px;
       }
 
       yp-posts-filter {
@@ -865,9 +876,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         Polymer.ypIronListBehavior
       ],
 
-      _subTitleChanged: function (val) {
-        console.error(val);
-      },
       properties: {
 
         categories: {
@@ -876,7 +884,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         subTitle: {
           type: String,
-          observer: '_subTitleChanged',
           notify: true
         },
 
@@ -1565,7 +1572,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .largeAddButton {
-        margin-bottom: 8px;
+        margin-bottom: 4px;
       }
 
       @media (max-width: 1024px) {
@@ -1662,7 +1669,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <template is="dom-if" if="[[hasNonOpenPosts]]">
             <paper-tab name="in_progress">
               <div class="layout vertical center-center tabCounterContainer">
-                <div hidden$="[[isTabInProgress]]">
+                <div>
                   [[t('posts.inProgress')]]
                 </div>
                 <div hidden$="[[!isTabInProgress]]">
@@ -1673,7 +1680,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </paper-tab>
             <paper-tab name="successful">
               <div class="layout vertical center-center tabCounterContainer">
-                <div hidden$="[[isTabSuccessful]]">
+                <div>
                   [[t('posts.successful')]]
                 </div>
                 <div hidden$="[[!isTabSuccessful]]">
@@ -1684,7 +1691,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </paper-tab>
             <paper-tab name="failed">
               <div class="layout vertical center-center tabCounterContainer">
-                <div hidden$="[[isTabFailed]]">
+                <div>
                   [[t('posts.failed')]]
                 </div>
                 <div hidden$="[[!isTabFailed]]">
