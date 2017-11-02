@@ -1,19 +1,20 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.180">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.181">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.180">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.180">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.180">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.180">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.180">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.180">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.181">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html?v=6.3.181">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html?v=6.3.181">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html?v=6.3.181">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html?v=6.3.181">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html?v=6.3.181">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.181">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.180">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.180">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html?v=6.3.181">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html?v=6.3.181">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.180">
-<link rel="import" href="yp-group-stats.html?v=6.3.180">
-<link rel="import" href="yp-group-behaviors.html?v=6.3.180">
-<link rel="import" href="../yp-membership-button/yp-membership-button.html?v=6.3.180">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.181">
+<link rel="import" href="yp-group-stats.html?v=6.3.181">
+<link rel="import" href="yp-group-behaviors.html?v=6.3.181">
+<link rel="import" href="../yp-membership-button/yp-membership-button.html?v=6.3.181">
 
 </head><body><dom-module id="yp-group-card">
 
@@ -164,6 +165,8 @@
       }
     </style>
 
+    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
+
     <template is="dom-if" if="[[group]]">
       <paper-card class="groupCard" animated="" elevation="[[elevation]]">
         <div class="card-content">
@@ -174,7 +177,7 @@
             <iron-image archived$="[[archived]]" class="logo withPointer" sizing="cover" on-tap="_goToGroup" preload="" src="[[groupLogoImagePath]]"></iron-image>
           </template>
           <div class="description">
-            <h2 class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
+            <h2 id="groupName" class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
               [[groupName]]
               <span hidden$="[[!archived]]">- [[t('archived')]]</span>
             </h2>

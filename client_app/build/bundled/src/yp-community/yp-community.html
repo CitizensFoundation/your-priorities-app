@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.180"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.181"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-group-card" assetpath="../yp-group/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -147,6 +147,8 @@
       }
     </style>
 
+    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
+
     <template is="dom-if" if="[[group]]">
       <paper-card class="groupCard" animated="" elevation="[[elevation]]">
         <div class="card-content">
@@ -157,7 +159,7 @@
             <iron-image archived$="[[archived]]" class="logo withPointer" sizing="cover" on-tap="_goToGroup" preload="" src="[[groupLogoImagePath]]"></iron-image>
           </template>
           <div class="description">
-            <h2 class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
+            <h2 id="groupName" class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
               [[groupName]]
               <span hidden$="[[!archived]]">- [[t('archived')]]</span>
             </h2>

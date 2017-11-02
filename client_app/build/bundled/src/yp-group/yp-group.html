@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.180"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../yp-app/yp-app.html?v=6.3.181"></head><body><div hidden="" by-vulcanize=""><dom-module id="yp-post-card-add" assetpath="../yp-post/">
 
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -10,7 +10,7 @@
         width: 280px;
         min-height: 80px;
         height: 100%;
-        margin-top: 2px;
+        margin-top: 8px;
         padding: 8px;
         background-color: var(--accent-color);
         color: #FFF;
@@ -229,7 +229,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .filterIcon {
-        padding-right: 16px;
+        padding-right: 8px;
       }
 
       .filterIconTransform {
@@ -321,6 +321,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-right: 8px;
         margin-left: 8px;
       }
+
+      .catImage {
+        width: 24px;
+        height: 24px;
+        margin-right: 8px;
+      }
     </style>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -349,8 +355,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         </paper-item>
                         <template is="dom-repeat" items="[[categoriesWithCount]]" as="category">
                           <paper-item data-category-id$="[[category.id]]" data-category-name$="[[category.name]]">
-                            <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]" hidden="[[_oldCategory(category)]]">
-                            <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]" hidden="[[!_oldCategory(category)]]">
+                            <iron-image sizing="cover" class="catImage" height="24" width="24" src="[[_categoryImageSrc(category)]]"></iron-image>
                             [[category.name]] ([[category.count]])
                           </paper-item>
                         </template>
@@ -1198,6 +1203,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin: 0;
       }
 
+      .group-name[admin] {
+        padding-right: 16px;
+      }
+
       .objectives {
         line-height: var(--objectives-line-height, 1.3);
       }
@@ -1323,7 +1332,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">
                 <div class="description">
-                  <h2 class="group-name">[[groupName]]</h2>
+                  <h2 class="group-name" admin$="[[hasGroupAccess]]">[[groupName]]</h2>
                   <div hidden="" class="groupAccess">[[groupAccessText]]</div>
                   <div id="objectives" class="groupDescription"></div>
                   <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
