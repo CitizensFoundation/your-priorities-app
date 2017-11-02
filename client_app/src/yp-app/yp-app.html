@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
@@ -157,6 +158,8 @@
       }
     </style>
 
+    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
+
     <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
 
     <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
@@ -181,7 +184,7 @@
           <app-toolbar>
             <div hidden$="[[closePostHeader]]" class="layout horizontal">
               <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
-              <div title class="layout vertical">[[headerTitle]]</div>
+              <div id="headerTitle" title class="layout vertical">[[headerTitle]]</div>
               <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
             </div>
             <template is="dom-if" if="[[closePostHeader]]">
@@ -359,7 +362,9 @@
         hideHelpIcon: {
           type: Boolean,
           value: false
-        }
+        },
+
+        wide: Boolean
       },
 
       observers: [
@@ -628,6 +633,21 @@
 
       onChangeHeader: function (event, header) {
         this.set('headerTitle', document.title = header.headerTitle);
+
+        this.async(function () {
+          var headerTitle = this.$$("#headerTitle");
+          if (headerTitle) {
+            if (this.wide) {
+              headerTitle.style.fontSize = "20px";
+            } else {
+              if (header.headerTitle.length < 25) {
+                headerTitle.style.fontSize = "17px";
+              } else {
+                headerTitle.style.fontSize = "15px";
+              }
+            }
+          }
+        });
 
         if (header.documentTitle) {
           document.title = header.documentTitle;
