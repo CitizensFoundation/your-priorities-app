@@ -50,6 +50,10 @@
       archived: {
         type: Boolean,
         value: false
+      },
+
+      wide: {
+        type: Boolean
       }
     },
 
@@ -70,11 +74,45 @@
           this.set('featured', false);
           this.set('archived', false);
         }
+
+        this.async(function () {
+          var groupName = this.$$("#groupName");
+          if (groupName) {
+            if (this.wide) {
+              if (group.name.length<=18) {
+                groupName.style.fontSize = "30px";
+              } else if (group.name.length>40) {
+                groupName.style.fontSize = "22px";
+              } else if (group.name.length>30) {
+                groupName.style.fontSize = "24px";
+              } else if (group.name.length>18) {
+                groupName.style.fontSize = "26px";
+              }
+            } else {
+              if (group.name.length<=18) {
+                groupName.style.fontSize = "28px";
+              } else if (group.name.length>40) {
+                groupName.style.fontSize = "19px";
+              } else if (group.name.length>30) {
+                groupName.style.fontSize = "22px";
+              } else if (group.name.length>18) {
+                groupName.style.fontSize = "24px";
+              }
+            }
+
+            if (this.archived) {
+              var fontSizePixels = groupName.style.fontSize.replace("px", "");
+              fontSizePixels = parseInt(fontSizePixels);
+              fontSizePixels = fontSizePixels - 3;
+              groupName.style.fontSize = fontSizePixels+"px";
+            }
+          }
+        });
+
       } else {
         this.set('featured', false);
         this.set('archived', false);
       }
-
     },
 
     _goToGroup: function (e) {

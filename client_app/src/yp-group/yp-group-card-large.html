@@ -45,6 +45,10 @@
         margin: 0;
       }
 
+      .group-name[admin] {
+        padding-right: 16px;
+      }
+
       .objectives {
         line-height: var(--objectives-line-height, 1.3);
       }
@@ -170,7 +174,7 @@
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">
                 <div class="description">
-                  <h2 class="group-name">[[groupName]]</h2>
+                  <h2 class="group-name" admin$="[[hasGroupAccess]]">[[groupName]]</h2>
                   <div hidden class="groupAccess">[[groupAccessText]]</div>
                   <div id="objectives" class="groupDescription"></div>
                   <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
