@@ -29,6 +29,7 @@
 
 
 
+
 </head><body><div hidden="" by-vulcanize=""><!--
 @license
 Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
@@ -62343,6 +62344,8 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
       }
     </style>
 
+    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
+
     <yp-app-globals id="appGlobals" setup-defaults="" on-change-header="onChangeHeader"></yp-app-globals>
 
     <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
@@ -62367,7 +62370,7 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
           <app-toolbar>
             <div hidden$="[[closePostHeader]]" class="layout horizontal">
               <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
-              <div title="" class="layout vertical">[[headerTitle]]</div>
+              <div id="headerTitle" title="" class="layout vertical">[[headerTitle]]</div>
               <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
             </div>
             <template is="dom-if" if="[[closePostHeader]]">
@@ -62541,7 +62544,9 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
         hideHelpIcon: {
           type: Boolean,
           value: false
-        }
+        },
+
+        wide: Boolean
       },
 
       observers: [
@@ -62810,6 +62815,21 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
 
       onChangeHeader: function (event, header) {
         this.set('headerTitle', document.title = header.headerTitle);
+
+        this.async(function () {
+          var headerTitle = this.$$("#headerTitle");
+          if (headerTitle) {
+            if (this.wide) {
+              headerTitle.style.fontSize = "20px";
+            } else {
+              if (header.headerTitle.length < 25) {
+                headerTitle.style.fontSize = "17px";
+              } else {
+                headerTitle.style.fontSize = "15px";
+              }
+            }
+          }
+        });
 
         if (header.documentTitle) {
           document.title = header.documentTitle;
