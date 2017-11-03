@@ -72,7 +72,14 @@
           <paper-button on-tap="_logout">[[t('user.logout')]]</paper-button>
           <paper-button on-tap="_forgotPassword" hidden$="[[!needPassword]]">[[t('user.newPassword')]]</paper-button>
           <paper-button on-tap="_notNow">[[t('later')]]</paper-button>
-          <paper-button id="sendButton" autofocus on-tap="_validateAndSend">[[submitText]]</paper-button>
+          <paper-button id="sendButton" autofocus on-tap="_validateAndSend">
+            <span hidden$="[[linkAccountText]]">
+              [[t('user.setEmail')]]
+            </span>
+            <span hidden$="[[!linkAccountText]]">
+              [[t('user.linkAccount')]]
+            </span>
+          </paper-button>
         </div>
       </paper-dialog>
 
@@ -129,8 +136,9 @@
         computed: '_computeCredentials(email, password)'
       },
 
-      submitText: {
-        type: String
+      linkAccountText: {
+        type: Boolean,
+        value: false
       },
 
       heading: {
@@ -162,10 +170,7 @@
     },
 
     ready: function () {
-      this.async(function () {
-        this.header = this.t('user.setEmail');
-        this.set('submitText', this.t('user.setEmail'));
-      }, 400);
+      this.header = this.t('user.setEmail');
     },
 
     _computeCredentials: function(email, password) {
@@ -194,7 +199,7 @@
       if (detail.response && detail.response.alreadyRegistered) {
         this.set('needPassword', true);
         this.set('header', this.t('user.linkAccount'));
-        this.set('submitText', this.t('user.linkAccount'));
+        this.set('linkAccountText', true);
       } else {
         window.appGlobals.notifyUserViaToast(this.t('user.haveSetEmail')+ " " + detail.response.email);
         this.close();
