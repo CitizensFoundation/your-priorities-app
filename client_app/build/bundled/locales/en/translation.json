@@ -414,7 +414,7 @@
     "setEmail": "Add email to account",
     "linkAccount": "Connect with account",
     "setEmailInfo": "Add email to account",
-    "existsLinkAccountInfo": "Enter your password to connect to this access your email account.",
+    "existsLinkAccountInfo": "This email is already registered! Enter your password to connect to this access method your email account.",
     "logoutCompleteFor": "Logout for",
     "loggedInWithSaml": "Logged in with SAML",
     "loggedInWithFacebook": "Logged in with Facebook",

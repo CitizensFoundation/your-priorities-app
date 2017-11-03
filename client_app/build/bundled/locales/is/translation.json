@@ -252,7 +252,7 @@
     "setEmail": "Bættu við netfangi",
     "linkAccount": "Tengja reikning við netfang",
     "setEmailInfo": "Bættu við netfangi",
-    "existsLinkAccountInfo": "Skráðu lykilorð to að tengja þennan aðgang við þinn netfangs reikning.",
+    "existsLinkAccountInfo": "Þetta netfang er þegar skráð. Sláðu inn lykilorð til að tengja þennan aðgang við þinn eldri reikning.",
     "logoutCompleteFor": "Útskráning fyrir",
     "loggedInWithFacebook": "Innskráning með Facebook",
     "loggedInWithSaml": "Innskráning með island.is",
