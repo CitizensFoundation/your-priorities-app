@@ -1050,6 +1050,11 @@
       .minHeightSection {
         min-height: 450px;
       }
+
+      #paper_tabs[apple] {
+        margin-top: 54px;
+        margin-bottom: 16px;
+      }
     </style>
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
@@ -1057,11 +1062,12 @@
       <template is="dom-if" if="[[useAlternativeHeader]]">
         <yp-community-header id="communityCard" class="largeCard card" community="[[community]]" on-update-community="_refreshAjax"></yp-community-header>
       </template>
+
       <template is="dom-if" if="[[useNormalHeader]]">
         <yp-community-large-card id="communityCard" class="largeCard card" community="[[community]]" on-update-community="_refreshAjax"></yp-community-large-card>
       </template>
 
-      <paper-tabs id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
+      <paper-tabs apple$="[[isApple]]" id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
         <paper-tab name="groups" class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
         <paper-tab name="news" class="tab">[[t('news')]]</paper-tab>
         <paper-tab name="map" class="tab" hidden$="[[locationHidden]]">[[t('posts.map')]]</paper-tab>
@@ -1159,9 +1165,14 @@
           value: false
         },
 
+        isApple: {
+          type: Boolean,
+          computed: '_isApple(communityId)'
+        },
+
         useNormalHeader: {
           type: Boolean,
-          value: false
+          value: true
         }
       },
 
@@ -1169,6 +1180,10 @@
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
+
+      _isApple: function () {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      },
 
       _userLoggedIn: function (user) {
         if (user) {
