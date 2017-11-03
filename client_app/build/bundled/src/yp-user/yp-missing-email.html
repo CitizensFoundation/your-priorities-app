@@ -1,18 +1,18 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.181">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.182">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.181">
-<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.181">
-<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.181">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.181">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.182">
+<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.182">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.182">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.182">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.181">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.181">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.181">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.181">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.181">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.182">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.182">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.182">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.182">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.182">
 
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.181">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.182">
 
 </head><body><dom-module id="yp-missing-email">
 
@@ -41,9 +41,9 @@
     <div id="outer">
       <paper-dialog id="dialog" modal="">
         <h2>[[heading]]</h2>
-        <div class="setEmailInfo">
+        <h2 class="setEmailInfo">
           [[t('user.setEmailInfo')]]
-        </div>
+        </h2>
         <form is="iron-form" id="form">
           <paper-input id="email" type="text" label="[[t('user.email')]]" value="{{email}}" pattern="[[emailValidationPattern]]" error-message="[[emailErrorMessage]]">
           </paper-input>
@@ -61,6 +61,7 @@
           <yp-ajax id="linkAccountsAjax" method="PUT" dispatch-error="" on-error="_registerError" url="/api/users/missingEmail/linkAccounts" on-response="_linkAccountsResponse"></yp-ajax>
           <paper-button on-tap="_logout">[[t('user.logout')]]</paper-button>
           <paper-button on-tap="_forgotPassword" hidden$="[[!needPassword]]">[[t('user.newPassword')]]</paper-button>
+          <paper-button on-tap="_notNow">[[t('later')]]</paper-button>
           <paper-button id="sendButton" autofocus="" on-tap="_validateAndSend">[[submitText]]</paper-button>
         </div>
       </paper-dialog>
@@ -119,8 +120,7 @@
       },
 
       submitText: {
-        type: String,
-        value: ""
+        type: String
       },
 
       heading: {
@@ -133,11 +133,14 @@
           return this.$$("#form");
         }
       }
-
     },
 
     onEnter: function (event) {
       this._validateAndSend();
+    },
+
+    _notNow: function (event) {
+      this.$$("#dialog").close();
     },
 
     _logout: function () {
@@ -149,8 +152,10 @@
     },
 
     ready: function () {
-      this.header = this.t('user.setEmail');
-      this.set('submitText',this.t('user.setEmail'));
+      this.async(function () {
+        this.header = this.t('user.setEmail');
+        this.set('submitText', this.t('user.setEmail'));
+      }, 400);
     },
 
     _computeCredentials: function(email, password) {
