@@ -1652,6 +1652,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
+      .tabSubTitle {
+        font-size: 13px;
+      }
+
       .minHeightSection {
         min-height: 450px;
       }
@@ -1677,7 +1681,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <div hidden$="[[isTabOpen]]">
                 [[t('posts.open')]]
               </div>
-              <div hidden$="[[!isTabOpen]]">
+              <div hidden$="[[!isTabOpen]]" class="tabSubTitsle">
                 [[tabOpenSubTitle]]
               </div>
               <div class="counterInfo" has-non-open-posts$="[[hasNonOpenPosts]]" id="tabCountOpen"></div>
@@ -1689,10 +1693,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <div>
                   [[t('posts.inProgress')]]
                 </div>
-                <div hidden$="[[!isTabInProgress]]">
+                <div hidden$="[[!isTabInProgress]]" class="tabSubTitle">
                   [[tabInProgressSubTitle]]
                 </div>
-                <div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountInProgress"></div>
+                <div hidden$="[[isTabInProgress]]" has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountInProgress"></div>
               </div>
             </paper-tab>
             <paper-tab name="successful">
@@ -1700,10 +1704,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <div>
                   [[t('posts.successful')]]
                 </div>
-                <div hidden$="[[!isTabSuccessful]]">
+                <div hidden$="[[!isTabSuccessful]]" class="tabSubTitle">
                   [[tabSuccessfulSubTitle]]
                 </div>
-                <div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountSuccessful"></div>
+                <div hidden$="[[isTabSuccessful]]" has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountSuccessful"></div>
               </div>
             </paper-tab>
             <paper-tab name="failed">
@@ -1711,10 +1715,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <div>
                   [[t('posts.failed')]]
                 </div>
-                <div hidden$="[[!isTabFailed]]">
+                <div hidden$="[[!isTabFailed]]" class="tabSubTitle">
                   [[tabFailedSubTitle]]
                 </div>
-                <div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountFailed"></div>
+                <div hidden$="[[isTabFailed]]" has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountFailed"></div>
               </div>
             </paper-tab>
           </template>
