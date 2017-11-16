@@ -1,0 +1,467 @@
+{
+  "disableDebate": "Vita letiltása",
+  "welcomeHTML": "hello HTML (óvatosan használd)",
+  "disableFacebookLoginForGroup": "Csoport Facebook belépésének tiltása",
+  "facebookPixelId": "Facebook pixel azonosító",
+  "downloadFacebookImagesForUser": "Felhasználók Facebook képeinek letöltése az adatbázisba",
+  "customUserRegistrationText": "Speciális felhasználó regisztráció szövet",
+  "participateAnonymously": "Anonim részvétel",
+  "allowAnonymousUsers": "Anonim felhasználók engedélyezése",
+  "deleteUser": "Felhasználói fiók törlése",
+  "areYouSureYouWantToDeleteUser": "Biztos benne, hogy törölni akarja a fiókját?",
+  "areYouReallySureYouWantToDeleteUser": "100 százalék, hogy törölni akarod a fiókodat? Minden érved, hozzászólásod, hozzájárulásod eltűnik, és minden ötleted névtelen lesz!",
+  "alternativePointForLabel": "Más érv a címke mellett",
+  "alternativePointAgainstLabel": "Más érv a címke ellen",
+  "sharePoint": "Érv megosztása",
+  "alternativePointForHeader": "Más érv fejlécként",
+  "alternativePointAgainstHeader": "Más érv a fejléc mellett",
+  "or": "vagy",
+  "hidePointAuthor": "Érv írójának elrejtése",
+  "hidePostAuthor": "Bejegyzés írójának elrejtése",
+  "defaultLocationLongLat": "Alapértelmezett helyszín koordinátái",
+  "disableCommunityDomainUpLink": "Domén fel link",
+  "analyticsTrackerCode": "Google Analytics azonosító",
+  "filterIdeas": "Ötletek szűrése",
+  "edit": "Szerkesztés",
+  "delete": "Törlés",
+  "addEmoji": "Emoji hozzáadása",
+  "closeComments": "Hozzászólások bezárása",
+  "openComments": "Hozzászólások megnyitása",
+  "deleteActivity": "Tevékenység törlése a hírfolyamból",
+  "pointsFor": "Érv mellette",
+  "pointsAgainst": "Érvek ellene",
+  "pointForShort": "Mellett",
+  "pointAgainstShort": "Ellen",
+  "domainToastCreated": "Domain létrehozva",
+  "domainToastUpdated": "Domain elmentve",
+  "communityToastCreated": "Közösség létrehozva",
+  "communityToastUpdated": "Közösség elmentve",
+  "groupToastCreated": "Csoport létrehozva",
+  "groupToastUpdated": "Csoport elmentve",
+  "userToastCreated": "Felhasználó létrehozása",
+  "userToastUpdated": "Mentett felhasználó",
+  "hideGroupHeader": "Csoport fejléc elrejtése",
+  "errorResetTokenNotFoundOrUsed": "Jelszó visszaállítás tóken nem található, vagy már használták",
+  "addedAnIdea": "Hozzáadott egy ötletet...",
+  "recommendedPosts": "Ajánlott",
+  "noComments": "Nincs hozzászólás",
+  "optional": "Választható",
+  "additionalGroupConfig":"További csoport beállítások",
+  "defaultDataImage":"Alapértelmezett adat kép",
+  "defaultPostImage":"Alapértelmezett bejegyzés kép",
+  "hideAllTabs":"Minden fül elrejtése",
+  "hideNewPostOnPostPage":"Új bejegyzés elrejtése a bejegyzés oldalán",
+  "newPointOptional":"Új érv legyen választható",
+  "hideHelpIcon":"Segítség ikon elrejtése",
+  "hideEmoji":"Emojik elrejtése",
+  "endorsementButtonsHeart":"Szívek",
+  "endorsementArrows":"Nyilak",
+  "endorsementThumbs":"Ikonkép",
+  "endorsementHats":"Kalapok",
+  "endorsementButtons": "Hozzájárulás gombok",
+  "bulkStatusUdateForInfo": "Kattints az ötletekre további információért",
+  "urlLink": "Link",
+  "bulkStatusUdateFor": "Ötletek állapotjelentése bekapcsolva",
+  "inviteNotFoundOrAlreadyUsed": "Meghívás nem létezik vagy már használva",
+  "reportConfirmation": "Biztos benne, hogy jelenteni akarja ezt a tartalmat az oldal szabályainak megsértése miatt?",
+  "uniqueStatusMessage": "Különleges állapot üzenet",
+  "templateContent": "Sablon tartalom",
+  "bulkStatusUpdate": "Együttes állapot frissítés",
+  "close": "Bezár",
+  "editTemplates": "Sablonok szerkesztése",
+  "editTemplate": "Sablon szerkesztése",
+  "deleteTemplate": "Sablon törlése",
+  "addTemplate": "Sablon hozzáadása",
+  "save": "Ment",
+  "saved": "Mentve",
+  "config": "Beállítások",
+  "newBulkStatusUpdate": "Új együttes állapot frissítés",
+  "editBulkStatusUpdate": "Együttes állapot frissítés szerkesztése",
+  "bulkStatusUdateConfig": "Együttes állapot frissítés beállításai",
+  "bulkStatusUpdatesTemplates": "Együttes állapot frissítés sablonok",
+  "selectStatusTemplate": "Sablon",
+  "moveToGroup": "Áthelyezés",
+  "noIdeasHere": "Itt nincsenek ötletek",
+  "organizationsAdmin": "Szervezetek admininisztrátora",
+  "unviewed": "nem megtekintett",
+  "notificationMarkAllViewed": "Összes megtekintett megjelölése",
+  "notificationConfirmMarkAllViewed": "Valóban minden értesítésedet olvasottnak akarod jelölni?",
+  "upVotedPoint": "Szavazott az ötletedre",
+  "downVotedPoint": "Leszavazta az ötletedet",
+  "endorsedYourPost": "Hozzájárult az ötletedhez",
+  "opposedYourPost": "Ellenezte az ötletedet",
+  "notifications": "Értesítések",
+  "votingDisabled": "Szavazás nem aktív",
+  "pageNotFound": "Az applikáció által kért oldal nem található",
+  "participate": "Részt veszek",
+  "emojiSearchResults": "Keresési eredmények",
+  "recentlyUsedEmoji": "Mostanában használt",
+  "findAnEmoji": "Emoji keresése",
+  "cancel": "Mégsem",
+  "ok": "Ok",
+  "next": "Következő",
+  "create": "Létrehoz",
+  "confirm": "Jóváhagyás",
+  "access": "Hozzáférés",
+  "searchFor": "Rákeresés",
+  "title": "Cím",
+  "selectLanguage": "Nyelv kiválasztása",
+  "update": "Frissítés",
+  "errorCantConnect": "Nem lehet csatlakozni a szerverhez. Próbálkozz később.  Lehet, hogy túl nagy a forgalom, vagy frissítik a szoftvert. ",
+  "errorNotFound": "Nincs találat",
+  "errorNotAuthorized": "NIncs hozzáférésed ehhez!",
+  "generalError": "Váratlan hiba történt. Értesítettek minket.",
+  "stats": {
+    "posts": "Ötletek száma",
+    "discussions": "Beszélgetések száma",
+    "communities": "Közösségek száma",
+    "groups": "Csoportok száma",
+    "users": "Felhasználók száma"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "A jelszavad megváltozott, és be vagy jelentkezve.",
+    "method": "Módszer",
+    "frequency": "Gyakoriság",
+    "myPosts": "Ötleteim",
+    "muted": "Kikapcsolás",
+    "browser": "Böngésző",
+    "email": "Email",
+    "asItHappens": "Ahogy történik",
+    "daily": "Naponta",
+    "hourly": "Óránkénti",
+    "weekly": "Heti",
+    "monthly": "Havi",
+    "myPostsEndorsements": "Ötletek amik tetszenek",
+    "myPoints": "Érveim",
+    "myPointEndorsements": "Érvek amik tetszenek",
+    "allCommunity": "Minden értesítés a közösségeimtől",
+    "allGroup": "Minden értesítés a csoportjaimtól",
+    "invite_accepted_for": "Részt vesz ebben"
+  },
+
+  "pages": {
+    "addLocale": "Hely hozzáadása",
+    "unPublish": "Publikálás visszavonása",
+    "deletePage": "Töröl",
+    "addPage": "Új oldal hozzáadása",
+    "managePages": "Oldalak rendezése"
+  },
+
+  "archived": "Archivált",
+
+  "status": {
+    "select": "Válassz állapotot!",
+    "active": "Aktív",
+    "featured": "Bemutatott",
+    "archived": "Archivált",
+    "hidden": "Rejtett",
+    "published": "Megnyit",
+    "successful": "Sikeres",
+    "failed": "Sikertelen",
+    "inProgress": "Folyamatban"
+  },
+
+  "pluralStatus": {
+    "published": "Nyitott ötletek",
+    "successful": "Sikeres ötletek",
+    "failed": "Megbukott ötletek",
+    "inProgress": "Folyamatban lévő ötletek",
+    "inVoting": "Szavazásra váró ötletek"
+  },
+
+  "activity": {
+    "confirmDelete": "Valóban törölni akarod ezt az tevékenységet?",
+    "post": {
+      "new": "Ötlet",
+      "status": {
+       "change": "Állapot frissítés"
+      }
+    },
+    "point": {
+      "forAdded": "Mellette érvet adott hozzá",
+      "againstAdded": "Ellenérvet adott hozzá",
+      "new": "Érv",
+      "newFor": "Érv mellette",
+      "newAgainst": "Érv ellene",
+      "newComment": "Hozzászólás",
+      "newsStory": {
+        "new": "Felhasználói hírek"
+      }
+    }
+  },
+  "name": "Név",
+
+  "domain": {
+    "createOrganization": "Szervezet létrehozása",
+    "edit": "Domain szerkesztése",
+    "info": "Beállítások",
+    "apis": "Alkalmazásprogramozási felületek",
+    "settings": "Hozzáadott",
+    "onlyAdminsCanCreateCommunities": "Csak az adminisztrátorok hozhatnak létre közösségeket"
+  },
+
+  "domains": "Domainek",
+  "communities": "Közösségek",
+  "groups": "Csoportok",
+
+  "myDomains": "Domainjeim",
+  "myCommunities": "Az én közösségeim",
+  "myGroups": "Csoportjaim",
+  "myAdminCommunities": "Közösségek adminisztrátora",
+  "myAdminGroups": "Csoportok adminisztrátora",
+
+  "community": {
+    "alternativeHeader": "Más fejléc",
+    "edit": "Közösség szerkesztése",
+    "hostname": "Host név",
+    "admins": "Közösség adminisztrátorai",
+    "users": "Közösségi felhasználók",
+    "delete": "Közösség törlése",
+    "new": "Közösség létrehozása",
+    "public": "Nyilvános közösség",
+    "closed": "Zárt közösség",
+    "secret": "Titkos közösség",
+    "pages":"Közösség oldalai",
+    "onlyAdminsCanCreateGroups": "Csak adminisztrátorok hozhatnak létre csoportokat"
+  },
+
+  "posts": {
+    "posts": "Ötletek",
+    "open": "Megnyit",
+    "inProgress": "Folyamatban",
+    "successful": "Sikeres",
+    "failed": "Sikertelen",
+    "map": "Térkép",
+    "noMapPosts": "Nincsenek helyhez kötött ötletek",
+    "newUserImage": "Fotó hozzáadása"
+  },
+
+  "form": {
+    "invalid": "Fejezd be a kérdőív kitöltését"
+  },
+
+  "post": {
+    "most_debated": "Leginkább vitatott",
+    "deleteConfirmation": "Biztos vagy benne, hogy törölni akarod ezt az ötletet?",
+    "move": "Ötlet áthelyezése",
+    "confirmMove": "Áthelyezés jóváhagyása",
+    "statusChangeConfirmText": "Biztos benne, hogy mindenkinek aki ezt az ötletet támogatja vagy ellenzi, emailt akar küldeni?",
+    "statusChangeSelectNewStatus": "Új állapot",
+    "statusChangeContent": "Az állapot változás tartalmat nem lehet elküldeni minden ellenzőnek és támogatónak",
+    "statusChange": "Állapot változás emailek küldése",
+    "statusChangeSent": "Állapot változás emailek elküldve",
+    "noLocation": "Nincs helyszín",
+    "shareInfo": "Ötlet megosztása",
+    "description": "Leírás",
+    "debate": "Vita",
+    "formInvalid": "Fejezd be az űrlap kitöltését!",
+    "status": "Ennek az ötletnek az állapota",
+    "new": "Új ötlet",
+    "searchingFor": "Rákeresés",
+    "top": "Népszerű",
+    "newest": "Legutóbbi",
+    "random": "Véletlenszerűen",
+    "inProgress": "Folyamatban",
+    "groups": "Csoport posztolása",
+    "search": "Ötletek keresése",
+    "add_new":"Új ötlet hozzáadása",
+    "up_vote":"Szavazás az ötletre",
+    "down_vote":"Ötlet leszavazása",
+    "report": "Ötlet jelentése",
+    "notify": "Értesíts ezzel az ötlettel kapcsolatban",
+    "share": "Ötlet megosztása",
+    "yourPost": "Ötlet",
+    "yourPoint": "Érv mellette",
+    "location": "Helyszín",
+    "photo": "Fotó",
+    "photographerName": "Fotós",
+    "newPhoto": "Új fotó",
+    "photoUpdate": "Fotó frissítése",
+    "photoDeleteConfirmation": "Biztos vagy benne, hogy törölni akarod ezt a fotót?",
+    "tabs": {
+      "debate": "Vita",
+      "news": "Hírek",
+      "location": "Helyszín",
+      "photos": "Fotók",
+      "solutions": "Megoldások",
+      "not_implemented": "Még nincs megvalósítva"
+    },
+    "cover": {
+      "media": "Borító kiválasztása",
+      "imageInfo": "Ha adsz hozzá képet, az emberek hajlamosabbak megosztani. Oszd meg az ötletedet a közösségi médiában!",
+      "map": "Térkép",
+      "streetview": "Utcanézet",
+      "image": "Kép",
+      "none": "Egyik sem"
+    },
+    "edit": "Ötlet szerkesztése",
+    "delete": "Ötlet törlése",
+    "addNewIntroBoxText": "Használd a villanykörte ikont új ötlet hozzáadásához"
+  },
+
+  "short_word": {
+    "in": "Benn"
+  },
+
+  "category": {
+    "new": "Új kategória",
+    "select": "Kategória választás"
+  },
+
+  "categories": {
+    "all": "minden kategória",
+    "the_all": "Minden kategória"
+  },
+
+  "point": {
+    "report": "Jelentés",
+    "againstAdded": "Ellenérvet adott hozzá",
+    "forAdded": "Hozzáadott támogató érv",
+    "confirmDelete": "Valóban ki akarod törölni ezt az érvet?",
+    "theseAreFor": "Támogató érv",
+    "theseAreAgainst": "Érv ellene",
+    "point": "Érv",
+    "for": "Támogató érv írása",
+    "against": "Ellenérv írása",
+    "add_up": "Támogató érv hozzáadása",
+    "add_down": "Ellenérv hozzádása",
+    "helpful": "Szavazz arra, hogy hasznos",
+    "not_helpful": "Szavazz arra, hogy nem hasznos",
+    "addNewsStory": "Hír hozzáadása",
+    "postNewsStory": "Hír hozzáadása",
+    "addComment": "A te hozzászólásod...",
+    "postComment": "Bejegyzés",
+    "comments": "Hozzászólások",
+    "howToWrite": "Gondokozz el a legjobb pro és kontra érveken, és fókuszálj a megoldásokra!",
+    "commentToShort": "A szöveg túl rövid!"
+  },
+
+  "news": "Hírek",
+
+  "uploading": {
+    "inProgress": "Feltöltés..."
+  },
+
+  "notice": {
+    "ok": "Ok",
+    "feature_not_implemented_a": "Ez a funkció még nem érhető el a Your Priorities 6.0 csak olvasható előnézetében",
+    "feature_not_implemented_b": "Mondd el nekünk, mit gondolsz! :)",
+    "welcome_a": "Ez egy csak olvasható előnézete a Your Priorities 6.0 oldalnak, szerkeszteni nem tudod, de észrevételeidet szívesen vesszük. ",
+    "welcome_b": "Egyelőre csak Chrome-ban működik, de 2015 első negyedévétől minden nagyobb böngészőt támogat.",
+    "welcome_heading": "Köszöntünk a Your Priorities 6.0 technikai előnézetében",
+    "continue": "Előnézet folytatása",
+    "deleteConfirmation": "Ki akarod törölni ezt a csoportot?"
+  },
+
+  "maps": {
+    "searchInput": "Cím",
+    "search": "Keresés"
+  },
+
+  "group": {
+    "showWhoPostedPosts": "Mutasd, kinek volt bejegyzése",
+    "locationHidden": "Lokáció letiltása",
+    "group": "Csoport",
+    "admins": "Csoport adminisztrátorok",
+    "users": "Csoport felhasználók",
+    "new": "Új csoport hozzáadása",
+    "edit": "Csoport szerkesztése",
+    "invite": "Ismerős meghívása",
+    "invite_to_group": "Ismerős meghívása ebbe a csoportba",
+    "share_group": "Csoport megosztása",
+    "delete": "Csoport törlése",
+    "objectives": "Célok",
+    "public": "Nyilvános csoport",
+    "closed": "Zárt csoport",
+    "secret": "Titkos csoport",
+    "openToCommunity": "Megnyitás közösség számára",
+    "canVote": "Szavazás engedélyezve",
+    "canAddNewPosts": "Új ötletek engedélyezve",
+    "config": "Beállítások",
+    "update": "Csoport frissítése"
+  },
+
+  "membership": {
+    "joined": "Csatlakoztál",
+    "left": "Kiléptél"
+  },
+
+  "menu": {
+    "my_pages": "Profilom",
+    "about": "Info",
+    "help": "Segítség",
+    "settings": "Beállítások"
+
+  },
+
+  "users": {
+    "removeAdmin": "Adminisztrátor eltávolítása",
+    "addAdmin": "Adminisztrátor hozzáadása",
+    "removeUser": "Felhasználó eltávolítása",
+    "inviteUser": "Felhasználó meghívása",
+    "email": "email",
+    "removeFromOrganization": "Eltávolítás",
+    "addToOrganization": "Szervezet",
+    "selectOrganization": "Válassz szervezetet"
+  },
+
+  "user": {
+    "loginCompleteFor": "Bejelentkezés mint",
+    "acceptInvite": "Részvételi felkérés efogadása",
+    "hasSentYouAndInvitation": "meghívott, hogy vegyél részt ",
+    "acceptInviteInstructions": "Kattints a lent található gombra a meghívás elfogadásához!",
+    "setEmail": "Email hozzáadása a fiókhoz",
+    "linkAccount": "Csatlakozás fiókkal",
+    "setEmailInfo": "Email hozzáadása a fiókhoz",
+    "existsLinkAccountInfo": "Add meg a jelszavadat, hogy csatlakozhass az email fiókodhoz!",
+    "logoutCompleteFor": "Kijelentkezés",
+    "loggedInWithSaml": "SAML-val bejelentkezve",
+    "loggedInWithFacebook": "Facebookkal bejelentkezve",
+    "facebookLogin": "Facebook bejelentkezés",
+    "info":"Információ",
+    "notifications": "Értesítések",
+    "name": "Teljes név",
+    "email": "Email.",
+    "edit": "Felhasználó szerkesztése",
+    "password": "Jelszó",
+    "forgotPassword": "Új jelszó megadása",
+    "forgotPasswordInstructions": "Add meg az email címedet, hogy küldhessünk egy linket az új jelszó létrehozásához.",
+    "forgotPasswordEmailHasBeenSent": "Küldtünk egy emailt a jelszó visszaállítás folyamatáról.",
+    "resetPassword": "Jelszó visszaállítása",
+    "resetPasswordInstructions": "Adj meg nehezebben kitalálható jelszót!",
+    "login": "Bejelentkezés",
+    "create": "Felhasználó létrehozása",
+    "cancel": "Mégsem",
+    "logout": "Kijelentkezés",
+    "newPassword": "új jelszó",
+    "register": "Új felhasználó",
+    "alreadyRegisterred": "Ezt az emailt már használja valaki. Létrehozhatsz egy új jelszót, ha szükséges.",
+    "registrationError": "Hiba a regisztrációban",
+    "loginError": "Bejelentkezési hiba",
+    "completeForm": "Töltsd ki az űrlapot helyesen!",
+    "loginNotAuthorized": "Az email vagy a jelszó hibás"
+  },
+
+  "other": "Más",
+
+  "socialMedia": "Közösségi média",
+
+  "location": {
+    "set": "Helyszín megadása"
+  },
+  "image": {
+    "upload": "Kép feltöltése",
+    "logo": {
+      "upload": "Logo feltöltése"
+    },
+    "header": {
+      "upload": "Fejléc feltöltése"
+    },
+    "profile": {
+      "upload": "Profilkép feltöltése"
+    }
+  },
+  "theme": {
+    "choose": "Válassz témát!"
+  }
+}
