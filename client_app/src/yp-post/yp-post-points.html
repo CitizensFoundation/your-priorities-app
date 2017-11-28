@@ -230,7 +230,7 @@
               </paper-material>
 
               <div id="allUpPoints">
-                <template is="dom-repeat" initial-count="3" items="[[upPoints]]" as="point">
+                <template is="dom-repeat" initial-count="10" target-framerate="25" items="[[upPoints]]" as="point">
                   <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
                     <yp-point point="[[point]]"></yp-point>
                   </paper-material>
@@ -265,7 +265,7 @@
               </paper-material>
 
               <div id="allDownPoints">
-                <template is="dom-repeat" initial-count="3" items="[[downPoints]]" as="point">
+                <template is="dom-repeat" initial-count="10" target-framerate="25" items="[[downPoints]]" as="point">
                   <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
                     <yp-point point="[[point]]"></yp-point>
                   </paper-material>
@@ -299,7 +299,7 @@
           </template>
         </paper-material>
         <div class="layout vertical center-center">
-          <template is="dom-repeat" initial-count="3" items="[[points]]" as="point">
+          <template is="dom-repeat" initial-count="10" target-framerate="25" items="[[points]]" as="point">
             <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
               <yp-point point="[[point]]"></yp-point>
             </paper-material>
