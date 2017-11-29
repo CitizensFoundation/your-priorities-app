@@ -3,7 +3,7 @@ var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
 
-var groupId = 1249; // process.argv[2];
+var groupId = process.argv[2];
 var postsCount = 0;
 var pointsCount = 0;
 
