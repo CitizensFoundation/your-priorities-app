@@ -66,6 +66,9 @@ var getDomain = function (req, domainId, done) {
               access: {
                 $ne: models.Community.ACCESS_SECRET
               },
+              counter_users: {
+                $gt: 5
+              },
               status: {
                 $ne: 'hidden'
               }
