@@ -139,7 +139,7 @@ module.exports = function(sequelize, DataTypes) {
         if (!hostname && req.params.communityHostname)
           hostname = req.params.communityHostname;
 
-        if (hostname && hostname!="" && hostname!="www" && hostname!="new") {
+        if (hostname && hostname!="" && hostname!="www" && hostname!="new" && hostname!="app") {
           //log.info("PARSE 3", {hostname: hostname});
           Community.find({
             where: {hostname: hostname}

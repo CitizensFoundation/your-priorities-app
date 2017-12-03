@@ -102,6 +102,8 @@
       splashDiv.innerHTML += '<img style="width:200px; padding-top: 8px; padding-bottom: 8px" src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/malta/malta_splash-2.jpg"><br>';
     } else if (window.location.hostname.indexOf("forbrukerradet") >-1) {
       splashDiv.innerHTML += '<img style="width:200px; padding-top: 8px; padding-bottom: 8px" src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/ForbLogoSmall.jpg"><br>';
+    } else if (window.location.hostname.indexOf("idea-synergy.com") >-1) {
+      splashDiv.innerHTML += '<img style="width:200px; padding-top: 8px; padding-bottom: 8px" width="230" height="230" src="https://www.idea-synergy.com/wp-content/uploads/2017/12/Idea_Synergy_Logo_Orange_on_WhiteGreenBulb.png"><br>';
     } else {
       splashDiv.innerHTML += '<img src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/yrprLogo.png">';
     }
