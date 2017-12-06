@@ -153,7 +153,7 @@
     if (loadContainer) {
       loadContainer.parentNode.removeChild(loadContainer);
     } else {
-      Polymer.Base.async(function () {
+      this.async(function () {
         console.log("Remove splash with delay");
         loadContainer = document.getElementById('splashCore');
         if (loadContainer) {

@@ -145,10 +145,7 @@
       },
 
       target: {
-        type: Object,
-        value: function() {
-          return this.$$("#form");
-        }
+        type: Object
       }
     },
 
@@ -170,6 +167,9 @@
 
     ready: function () {
       this.header = this.t('user.setEmail');
+      this.async(function () {
+        this.$$("#a11y").target = this.$$("#form");
+      }.bind(this), 50);
     },
 
     _computeCredentials: function(email, password) {

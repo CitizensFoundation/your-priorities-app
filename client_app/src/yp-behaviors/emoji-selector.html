@@ -45,109 +45,108 @@ the category tabs.
 -->
 
 <dom-module id="emoji-selector">
-
-  <style>
-    :host {
-      display: inline-block;
-    }
-
-    paper-tabs {
-      height: 30px;
-      color: var(--emoji-selector-icon-color, black);
-      background-color: var(--emoji-selector-background-color, #FFF);
-    }
-
-    paper-tab iron-icon {
-      --iron-icon-width: 18px;
-      --iron-icon-height: 18px;
-    }
-
-    #searchInput {
-      --paper-input-container-input: {
-        text-align: center;
-      };
-    };
-
-    iron-pages {
-      height: 155px;
-    }
-
-    #menu {
-      padding: 0;
-    }
-
-    .box {
-      background-color: var(--emoji-selector-background-color, #FFF);
-      border-radius: 2px;
-      box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
-
-      width: 270px;
-      height: 240px;
-      font-size: 15px;
-
-      @apply(--emoji-selector);
-    }
-
-    .section-title {
-      padding: 0;
-      margin: 0;
-      font-size: 11px;
-      text-transform: uppercase;
-      color: var(--emoji-selector-icon-color, black);
-    }
-
-    .emoji-section {
-      height: 100%;
-      overflow-y: auto;
-      flex-direction: column;
-      flex-wrap: wrap;
-      padding-left: 8px;
-      padding-top: 5px;
-    }
-
-    .emoji-icon {
-      cursor: pointer;
-      text-align: center;
-      display: inline-block;
-      font-size: 18px;
-      line-height: 24px;
-      width: 24px;
-      height: 24px;
-
-      /* >.< */
-      -webkit-transition: all .14s linear;
-      -moz-transition: all .14s linear;
-      -o-transition: all .14s linear;
-      -ms-transition: all .14s linear;
-      transition: all .14s linear;
-
-      @apply(--emoji-selector-icon);
-    }
-
-    .emoji-icon:hover {
-      transform: scale(1.3, 1.3);
-      -webkit-transform: scale(1.3, 1.3);
-      @apply(--emoji-selector-icon-hover);
-    }
-
-    paper-icon-button.clear-button {
-      color: var(--paper-input-container-color);
-      --iron-icon-width: 15px;
-      --iron-icon-height: 15px;
-      padding: 0px 4px;
-      margin-left: 4px;
-    }
-
-    paper-listbox {
-      background-color: #FFF;
-    }
-
-    .dropdown-trigger {
-      color: #444;
-    }
-  </style>
-
   <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+
+      paper-tabs {
+        height: 30px;
+        color: var(--emoji-selector-icon-color, black);
+        background-color: var(--emoji-selector-background-color, #FFF);
+      }
+
+      paper-tab iron-icon {
+        --iron-icon-width: 18px;
+        --iron-icon-height: 18px;
+      }
+
+      #searchInput {
+        --paper-input-container-input: {
+          text-align: center;
+        };
+      };
+
+      iron-pages {
+        height: 155px;
+      }
+
+      #menu {
+        padding: 0;
+      }
+
+      .box {
+        background-color: var(--emoji-selector-background-color, #FFF);
+        border-radius: 2px;
+        box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+
+        width: 270px;
+        height: 240px;
+        font-size: 15px;
+
+        @apply(--emoji-selector);
+      }
+
+      .section-title {
+        padding: 0;
+        margin: 0;
+        font-size: 11px;
+        text-transform: uppercase;
+        color: var(--emoji-selector-icon-color, black);
+      }
+
+      .emoji-section {
+        height: 100%;
+        overflow-y: auto;
+        flex-direction: column;
+        flex-wrap: wrap;
+        padding-left: 8px;
+        padding-top: 5px;
+      }
+
+      .emoji-icon {
+        cursor: pointer;
+        text-align: center;
+        display: inline-block;
+        font-size: 18px;
+        line-height: 24px;
+        width: 24px;
+        height: 24px;
+
+        /* >.< */
+        -webkit-transition: all .14s linear;
+        -moz-transition: all .14s linear;
+        -o-transition: all .14s linear;
+        -ms-transition: all .14s linear;
+        transition: all .14s linear;
+
+        @apply(--emoji-selector-icon);
+      }
+
+      .emoji-icon:hover {
+        transform: scale(1.3, 1.3);
+        -webkit-transform: scale(1.3, 1.3);
+        @apply(--emoji-selector-icon-hover);
+      }
+
+      paper-icon-button.clear-button {
+        color: var(--paper-input-container-color);
+        --iron-icon-width: 15px;
+        --iron-icon-height: 15px;
+        padding: 0px 4px;
+        margin-left: 4px;
+      }
+
+      paper-listbox {
+        background-color: #FFF;
+      }
+
+      .dropdown-trigger {
+        color: #444;
+      }
+    </style>
+
     <iron-media-query query="(max-width: 375px)" query-matches="{{smallScreen}}"></iron-media-query>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 

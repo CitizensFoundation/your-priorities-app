@@ -361,7 +361,14 @@
           value: false
         },
 
-        wide: Boolean
+        wide: Boolean,
+
+        _scrollPositionMap: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        }
       },
 
       observers: [

@@ -57,7 +57,7 @@
       var button = pointActions.querySelector('.point-up-vote-icon');
       button.click();
 
-      Polymer.Base.async(function() {
+      this.async(function() {
         var defaultDialog = document.querySelector('#dialog');
         expect(defaultDialog.opened).to.be.equal(true);
         done();
@@ -71,7 +71,7 @@
       var button = pointActions.querySelector('.point-down-vote-icon');
       button.click();
 
-      Polymer.Base.async(function() {
+      this.async(function() {
         var defaultDialog = document.querySelector('#dialog');
         expect(defaultDialog.opened).to.be.equal(true);
         done();

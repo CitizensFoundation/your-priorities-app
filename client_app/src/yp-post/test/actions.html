@@ -60,7 +60,7 @@
       var button = postActions.querySelector('.up-vote-icon');
       button.click();
 
-      Polymer.Base.async(function() {
+      this.async(function() {
         var defaultDialog = document.querySelector('#dialog');
         expect(defaultDialog.opened).to.be.equal(true);
         done();
@@ -73,7 +73,7 @@
       var button = postActions.querySelector('.down-vote-icon');
       button.click();
 
-      Polymer.Base.async(function() {
+      this.async(function() {
         var defaultDialog = document.querySelector('#dialog');
         expect(defaultDialog.opened).to.be.equal(true);
         done();

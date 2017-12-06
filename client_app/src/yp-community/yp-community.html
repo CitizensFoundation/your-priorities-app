@@ -333,7 +333,7 @@
         this.setupGroups(this.community.Groups);
         this._setLocationHidden(this.community.Groups);
 
-        Polymer.Base.async(function() {
+        this.async(function() {
           var communityCard = this.$$('#communityCard');
           if (communityCard) {
             communityCard.setElevation(5);
