@@ -152,7 +152,7 @@
                 <template is="dom-if" if="[[categoriesWithCount]]" restamp>
                   <div class="layout vertical">
                     <paper-dropdown-menu class="dropdown-content wrap categoriesDropdownMenu">
-                      <paper-menu class="dropdown-content" id="categoryMenu" attr-for-selected="data-category-id" on-iron-select="_changeCategory">
+                      <paper-listbox class="dropdown-content" id="categoryMenu" attr-for-selected="data-category-id" on-iron-select="_changeCategory">
                         <paper-item data-category-id="-1" name="-1">
                           <iron-icon icon="select-all" class="filterIcon"></iron-icon>
                           <span>[[t('categories.the_all')]] ([[allPostCount]])</span>
@@ -163,14 +163,14 @@
                             [[category.name]] ([[category.count]])
                           </paper-item>
                         </template>
-                      </paper-menu>
+                      </paper-listbox>
                     </paper-dropdown-menu>
                   </div>
                 </template>
                 <div class="layout horizontal center-center">
                   <yp-ajax id="categoriesWithCountAjax" on-response="_categoriesCountResponse"></yp-ajax>
                 </div>
-                <paper-menu class="dropdown-content" id="mainListMenu" on-iron-select="_changeFilter">
+                <paper-listbox class="dropdown-content" id="mainListMenu" on-iron-select="_changeFilter">
                   <paper-item data-filter="top">
                     <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
                     <span>[[t('post.top')]]</span>
@@ -187,7 +187,7 @@
                     <iron-icon icon="cached" class="filterIcon"></iron-icon>
                     <span>[[t('post.random')]]</span>
                   </paper-item>
-                </paper-menu>
+                </paper-listbox>
               </div>
             </div>
           </paper-menu-button>

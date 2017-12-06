@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
@@ -20,11 +20,11 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <paper-dropdown-menu label="[[t('theme.choose')]]">
-      <paper-menu class="dropdown-content" selected="{{selectedTheme}}">
+      <paper-listbox class="dropdown-content" selected="{{selectedTheme}}">
         <template is="dom-repeat" items="[[themes]]" as="theme">
           <paper-item name="[[index]]">[[theme.name]]</paper-item>
         </template>
-      </paper-menu>
+      </paper-listbox>
     </paper-dropdown-menu>
 
   </template>

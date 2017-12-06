@@ -138,7 +138,7 @@ the category tabs.
       margin-left: 4px;
     }
 
-    paper-menu {
+    paper-listbox {
       background-color: #FFF;
     }
 
@@ -156,7 +156,7 @@ the category tabs.
                        dynamic-align
                        ignore-select>
       <paper-icon-button title$="[[t('addEmoji')]]" icon="editor:insert-emoticon" class="dropdown-trigger"></paper-icon-button>
-      <paper-menu class="dropdown-content">
+      <paper-listbox class="dropdown-content">
         <div class="box">
           <paper-input autofocus no-label-float id="searchInput" placeholder="[[t('findAnEmoji')]]"
                        on-input="_onSearchInput">
@@ -199,7 +199,7 @@ the category tabs.
             </div>
           </iron-pages>
         </div>
-      </paper-menu>
+      </paper-listbox>
     </paper-menu-button>
 
   </template>

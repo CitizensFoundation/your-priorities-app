@@ -63,11 +63,11 @@
     <paper-dialog id="selectOrganizationDialog" modal>
       <h2>[[t('users.selectOrganization')]]</h2>
       <paper-dialog-scrollable>
-        <paper-menu>
+        <paper-listbox>
           <template is="dom-repeat" items="[[availableOrganizations]]">
             <paper-item on-tap="_selectOrganization" id="[[item.id]]">[[item.name]]</paper-item>
           </template>
-        </paper-menu>
+        </paper-listbox>
       </paper-dialog-scrollable>
 
       <div class="buttons">

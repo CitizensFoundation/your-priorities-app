@@ -12,7 +12,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html" >
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" >
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html" >
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html" >
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html" >
 
 <link rel="import" href="../yp-behaviors/app-helpers.html" >
 <link rel="import" href="../yp-behaviors/access-helpers.html" >
@@ -94,7 +94,7 @@
         padding-top: 8px;
       }
 
-      paper-menu {
+      paper-listbox {
         z-index: 100;
       }
 
@@ -134,7 +134,7 @@
         font-size: 18px;
       }
 
-      paper-menu {
+      paper-listbox {
         max-height: 220px;
       }
     </style>
@@ -172,29 +172,29 @@
                           <div class="layout horizontal">
                             <div class="postDropdown">
                               <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
-                                <paper-menu class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.newOfficialStatus}}" on-iron-select="_selectNewOfficialStatus">
+                                <paper-listbox class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.newOfficialStatus}}" on-iron-select="_selectNewOfficialStatus">
                                   <template is="dom-repeat" items="[[officialStatusOptions]]" as="statusOption">
                                     <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
                                   </template>
-                                </paper-menu>
+                                </paper-listbox>
                               </paper-dropdown-menu>
                             </div>
                             <div class="postDropdown">
                               <paper-dropdown-menu label="[[t('selectStatusTemplate')]]">
-                                <paper-menu class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.selectedTemplateName}}">
+                                <paper-listbox class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.selectedTemplateName}}">
                                   <template is="dom-repeat" items="[[templatesWithNone]]" as="templateOption">
                                     <paper-item name="[[templateOption.title]]">[[templateOption.title]]</paper-item>
                                   </template>
-                                </paper-menu>
+                                </paper-listbox>
                               </paper-dropdown-menu>
                             </div>
                             <div class="postDropdown">
                               <paper-dropdown-menu label="[[t('moveToGroup')]]">
-                                <paper-menu class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.moveToGroupId}}">
+                                <paper-listbox class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.moveToGroupId}}">
                                   <template is="dom-repeat" items="[[availableGroups]]" as="group">
                                     <paper-item name="[[group.id]]">[[group.name]]</paper-item>
                                   </template>
-                                </paper-menu>
+                                </paper-listbox>
                               </paper-dropdown-menu>
                             </div>
                             <div class="postUniqueMessage">

@@ -35,11 +35,11 @@
 
       <div class="layout horizontal center-center">
         <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
-          <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{officialStatus}}">
+          <paper-listbox class="dropdown-content" attr-for-selected="name" selected="{{officialStatus}}">
             <template is="dom-repeat" items="[[officialStatusOptions]]" as="statusOption">
               <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
             </template>
-          </paper-menu>
+          </paper-listbox>
         </paper-dropdown-menu>
         <input type="hidden" name="official_status" value="[[officialStatus]]">
       </div>

@@ -8,7 +8,7 @@
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
@@ -80,11 +80,11 @@
         <paper-icon-button icon="av:mic"></paper-icon-button>
       </paper-toolbar>
 
-      <paper-menu on-core-select="onSelect">
+      <paper-listbox on-core-select="onSelect">
         <template is="dom-repeat" items="{{previousSearches}}" as="p">
           <paper-item icon="history" label="{{p}}"></paper-item>
         </template>
-      </paper-menu>
+      </paper-listbox>
 
     </paper-header-panel>
 

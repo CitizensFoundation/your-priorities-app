@@ -13,7 +13,7 @@
 
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
@@ -183,14 +183,14 @@
             </div>
             <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasGroupAccess]]">
               <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+              <paper-listbox class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                 <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
                 <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
                 <paper-item id="usersMenuItem">[[t('group.users')]]</paper-item>
                 <paper-item id="adminsMenuItem">[[t('group.admins')]]</paper-item>
                 <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
                 <paper-item id="deleteMenuItem">[[t('group.delete')]]</paper-item>
-              </paper-menu>
+              </paper-listbox>
             </paper-menu-button>
           </div>
         </paper-material>

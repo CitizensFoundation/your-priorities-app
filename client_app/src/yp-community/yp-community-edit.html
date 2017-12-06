@@ -139,11 +139,11 @@
 
       <div class="layout horizontal config">
         <paper-dropdown-menu label="[[t('status.select')]]">
-          <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
+          <paper-listbox class="dropdown-content" attr-for-selected="name" selected="{{status}}">
             <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
               <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
             </template>
-          </paper-menu>
+          </paper-listbox>
         </paper-dropdown-menu>
         <input type="hidden" name="status" value="[[status]]">
       </div>
