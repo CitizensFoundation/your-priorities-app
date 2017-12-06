@@ -162,8 +162,6 @@
 
     <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
 
-    <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
-
     <app-drawer-layout drawer-width="360px" responsive-width="16000px">
 
       <app-drawer id="drawer" align="end" position="right" opened="{{userDrawerOpened}}" swipe-open>
@@ -444,14 +442,27 @@
         }
       },
 
-      _routePageChanged: function(page) {
+      _routePageChanged: function(pageData, oldPageData) {
         if (this.route.path.indexOf('/user/reset_password') > -1 ||
             this.route.path.indexOf('/user/accept/invite') > -1 ||
             this.route.path.indexOf('/user/open_notification_settings') > -1) {
           window.history.pushState({}, null, "/");
           window.dispatchEvent(new CustomEvent('location-changed'));
         } else {
-          this.page = page;
+
+          var map = this._scrollPositionMap;
+
+          if (oldPageData != null && oldPageData.page != null) {
+            map[oldPageData.page] = window.pageYOffset;
+          }
+
+          this.page = pageData;
+
+          if (map[pageData.page] != null) {
+            Polymer.AppLayout.scroll({ top: map[pageData.page], behavior: 'silent' });
+          } else if (this.isAttached) {
+            Polymer.AppLayout.scroll({ top: 0, behavior: 'silent' });
+          }
         }
       },
 
