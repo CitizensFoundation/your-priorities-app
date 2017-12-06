@@ -3,7 +3,6 @@
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
-<link rel="import" href="../../bower_components/re-captcha/re-captcha.html">
 <link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
@@ -334,11 +333,6 @@
             <paper-button autofocus on-tap="_validateAndSend">[[submitText]]</paper-button>
           </div>
 
-          <template>
-            <div class="layout horizontal center-center">
-              <re-captcha sitekey="[[reCaptchaSiteKey]]" lang="[[language]]"></re-captcha>
-            </div>
-          </template>
         </paper-dialog>
 
         <iron-a11y-keys id="a11y" keys="enter"
