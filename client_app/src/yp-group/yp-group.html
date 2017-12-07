@@ -20,7 +20,6 @@
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
 
 <link rel="import" href="../ac-activities/ac-activities.html">
-<link rel="import" href="../yp-page/yp-page.html">
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-post/yp-post-card.html">
@@ -670,8 +669,7 @@
           } else {
             path = 'none';
           }
-          this.customStyle['--top-area-background-image'] = path;
-          this.updateStyles();
+          this.updateStyles( {'--top-area-background-image': path });
         }
       },
 

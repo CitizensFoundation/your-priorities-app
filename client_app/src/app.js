@@ -153,7 +153,7 @@
     if (loadContainer) {
       loadContainer.parentNode.removeChild(loadContainer);
     } else {
-      this.async(function () {
+      setTimeout(function() {
         console.log("Remove splash with delay");
         loadContainer = document.getElementById('splashCore');
         if (loadContainer) {

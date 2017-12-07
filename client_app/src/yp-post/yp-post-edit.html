@@ -101,7 +101,7 @@
     <yp-edit-dialog double-width id="editDialog" icon="icons:lightbulb-outline" action="[[action]]"
                     use-next-tab-action="[[new]]" on-next-tab-action="_nextTab" method="[[method]]"
                     save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
-      <h2>[[editHeaderText]]</h2>
+      <h2 slot="h2">[[editHeaderText]]</h2>
       <paper-tabs selected="{{selected}}" id="paperTabs" focused>
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
         <template is="dom-if" restamp if="[[new]]">

@@ -212,8 +212,7 @@
         } else {
           path = 'none';
         }
-        this.customStyle['--top-area-background-image'] = path;
-        this.updateStyles();
+        this.updateStyles({ '--top-area-background-image': path });
       },
 
       _orderGroupStatuses: function (statuses) {

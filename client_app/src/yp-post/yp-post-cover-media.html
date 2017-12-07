@@ -107,9 +107,13 @@
         <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
       </div>
 
-      <iron-image header-mode$="[[headerMode]]" large on-tap="goToPost" class="category-icon pointer" hidden$="[[!categoryLargeActive]]" title="[[post.Category.name]]" sizing="cover" src$="[[getCategoryImagePath]]"></iron-image>
+      <div hidden$="[[!categoryLargeActive]]">
+        <iron-image header-mode$="[[headerMode]]" large on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="cover" src$="[[getCategoryImagePath]]"></iron-image>
+      </div>
 
-      <iron-image hidden$="[[!imageActive]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
+      <div hidden$="[[!imageActive]]">
+        <iron-image  header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
+      </div>
 
       <template is="dom-if" if="[[!disableMaps]]">
 
@@ -324,17 +328,18 @@
 
       // We switch over to 100% category images
       _isCategoryLargeActive: function (post) {
-        if (this._withCoverMediaType(post, 'category') && post.id>11000)
+        if (post && this._withCoverMediaType(post, 'category') && post.id>11000)
           return true;
         else
           return false
       },
 
       _isImageActive: function (post) {
-        if (this._withCoverMediaType(post,'image'))
+        if (this._withCoverMediaType(post,'image')) {
           return true;
-        else
-          return false
+        } else {
+          return false;
+        }
       },
 
       _isMapActive: function (post) {

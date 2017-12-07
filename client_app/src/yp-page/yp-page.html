@@ -138,18 +138,18 @@
 
     <div class="layout vertical mainArea">
       <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post$="[[isPost]]">
-        <content select=".largeCard"></content>
+        <slot name="largeCard"></slot>
       </div>
       <template is="dom-if" if="[[hasLargeButton]]">
         <div class="largeButtonWrapper layout horizontal center-center" hidden$="[[!wideWidth]]">
-          <content select=".largeAddButton"></content>
+          <slot name="largeAddButton"></slot>
         </div>
       </template>
       <div class="tab-wrapper layout horizontal center-center">
-        <content select=".tabs"></content>
+        <slot name="tabs"></slot>
       </div>
       <div class="tab-pages-wrapper layout vertical">
-        <content select=".tabPages"></content>
+        <slot name="tabPages"></slot>
       </div>
     </div>
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
