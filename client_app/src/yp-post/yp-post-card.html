@@ -100,10 +100,10 @@
         cursor: pointer;
       }
 
-      yp-post-actions {
+      .postActions  {
         position: absolute;
         right: 16px;
-        bottom: 0px;
+        bottom: 16px;
       }
 
       @media (max-width: 420px) {
@@ -161,7 +161,7 @@
         <div class="description layout horizontal" on-tap="goToPostIfNotHeader" hidden$="[[mini]]">
           [[shortDescription]]
         </div>
-        <yp-post-actions floating class="" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
+        <yp-post-actions floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
       </div>
     </paper-material>
   </template>

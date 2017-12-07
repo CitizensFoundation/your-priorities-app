@@ -31,7 +31,7 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <yp-edit-dialog id="editDialog" double-width icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
-      <h2>[[editHeaderText]]</h2>
+      <h2 slot="h2">[[editHeaderText]]</h2>
 
       <div class="layout horizontal center-center">
         <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">

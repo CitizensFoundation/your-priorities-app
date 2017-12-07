@@ -54,7 +54,7 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <yp-edit-dialog id="editDialog" icon="cloud-queue" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
-      <h2>[[editHeaderText]]</h2>
+      <h2 slot="h2">[[editHeaderText]]</h2>
 
       <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
         <paper-tab><span>[[t('domain.info')]]</span></paper-tab>
