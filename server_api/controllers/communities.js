@@ -105,17 +105,22 @@ var getCommunity = function(req, done) {
           [ { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
           [ models.Group, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
         ],
+        attributes: models.Community.defaultAttributesPublic,
         include: [
           {
             model: models.Domain,
             attributes: models.Domain.defaultAttributesPublic
           },
           {
-            model: models.Image, as: 'CommunityLogoImages',
+            model: models.Image,
+            as: 'CommunityLogoImages',
+            attributes:  models.Image.defaultAttributesPublic,
             required: false
           },
           {
-            model: models.Image, as: 'CommunityHeaderImages',
+            model: models.Image,
+            as: 'CommunityHeaderImages',
+            attributes:  models.Image.defaultAttributesPublic,
             required: false
           },
           {
@@ -128,7 +133,9 @@ var getCommunity = function(req, done) {
             required: false,
             include: [
               {
-                model: models.Image, as: 'GroupLogoImages',
+                model: models.Image,
+                as: 'GroupLogoImages',
+                attributes:  models.Image.defaultAttributesPublic,
                 required: false
               }
             ]

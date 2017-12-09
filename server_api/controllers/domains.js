@@ -51,13 +51,13 @@ var getDomain = function (req, domainId, done) {
           {
             model: models.Image,
             as: 'DomainLogoImages',
-            attributes: ["id","created_at","formats"],
+            attributes:  models.Image.defaultAttributesPublic,
             required: false
           },
           {
             model: models.Image,
             as: 'DomainHeaderImages',
-            attributes: ["id","created_at","formats"],
+            attributes:  models.Image.defaultAttributesPublic,
             required: false
           }
         ]
@@ -86,13 +86,13 @@ var getDomain = function (req, domainId, done) {
               {
                 model: models.Image,
                 as: 'CommunityLogoImages',
-                attributes: ["id","created_at","formats"],
+                attributes:  models.Image.defaultAttributesPublic,
                 required: false
               },
               {
                 model: models.Image,
                 as: 'CommunityHeaderImages',
-                attributes: ["id","created_at","formats"],
+                attributes:  models.Image.defaultAttributesPublic,
                 order: 'created_at asc',
                 required: false
               }
