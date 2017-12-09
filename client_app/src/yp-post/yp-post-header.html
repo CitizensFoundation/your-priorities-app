@@ -245,7 +245,7 @@
                 <template is="dom-if" if="[[loggedInUser]]">
                   <paper-menu-button vertical-align="top" horizontal-align="right" class="edit">
                     <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-                    <paper-listbox class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                    <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                       <template is="dom-if" if="[[hasPostAccess]]">
                         <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
                         <paper-item id="moveMenuItem">[[t('post.move')]]</paper-item>

@@ -20,7 +20,7 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <paper-dropdown-menu label="[[t('theme.choose')]]">
-      <paper-listbox class="dropdown-content" selected="{{selectedTheme}}">
+      <paper-listbox slot="dropdown-content" selected="{{selectedTheme}}">
         <template is="dom-repeat" items="[[themes]]" as="theme">
           <paper-item name="[[index]]">[[theme.name]]</paper-item>
         </template>

@@ -140,7 +140,7 @@
 
               <template is="dom-if" if="[[_showCategories(group)]]" restamp>
                 <paper-dropdown-menu label="[[t('category.select')]]">
-                  <paper-listbox class="dropdown-content" selected="{{selectedCategoryArrayId}}">
+                  <paper-listbox slot="dropdown-content" selected="{{selectedCategoryArrayId}}">
                     <template is="dom-repeat" items="[[group.Categories]]" as="category">
                       <paper-item data-category-id$="[[category.id]]">[[category.name]]</paper-item>
                     </template>

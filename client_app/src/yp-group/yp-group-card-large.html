@@ -182,7 +182,7 @@
           </div>
           <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasGroupAccess]]">
             <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-            <paper-listbox class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+            <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
               <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
               <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
               <paper-item id="usersMenuItem">[[t('group.users')]]</paper-item>

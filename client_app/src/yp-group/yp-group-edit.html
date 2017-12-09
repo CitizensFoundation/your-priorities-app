@@ -123,7 +123,7 @@
           <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
           <div class="layout vertical">
             <paper-dropdown-menu label="[[t('status.select')]]">
-              <paper-listbox class="dropdown-content" attr-for-selected="name" selected="{{status}}">
+              <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{status}}">
                 <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
                   <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
                 </template>
@@ -134,7 +134,7 @@
 
             <div class="layout horizontal">
               <paper-dropdown-menu label="[[t('endorsementButtons')]]">
-                <paper-listbox class="dropdown-content" attr-for-selected="name" selected="{{endorsementButtons}}">
+                <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{endorsementButtons}}">
                   <template is="dom-repeat" items="[[endorsementButtonsOptions]]" as="buttonsSelection">
                     <paper-item name="[[buttonsSelection.name]]">[[buttonsSelection.translatedName]]</paper-item>
                   </template>

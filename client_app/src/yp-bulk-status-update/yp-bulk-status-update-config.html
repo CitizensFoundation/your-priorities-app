@@ -172,7 +172,7 @@
                           <div class="layout horizontal">
                             <div class="postDropdown">
                               <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
-                                <paper-listbox class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.newOfficialStatus}}" on-iron-select="_selectNewOfficialStatus">
+                                <paper-listbox slot="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.newOfficialStatus}}" on-iron-select="_selectNewOfficialStatus">
                                   <template is="dom-repeat" items="[[officialStatusOptions]]" as="statusOption">
                                     <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
                                   </template>
@@ -181,7 +181,7 @@
                             </div>
                             <div class="postDropdown">
                               <paper-dropdown-menu label="[[t('selectStatusTemplate')]]">
-                                <paper-listbox class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.selectedTemplateName}}">
+                                <paper-listbox slot="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.selectedTemplateName}}">
                                   <template is="dom-repeat" items="[[templatesWithNone]]" as="templateOption">
                                     <paper-item name="[[templateOption.title]]">[[templateOption.title]]</paper-item>
                                   </template>
@@ -190,7 +190,7 @@
                             </div>
                             <div class="postDropdown">
                               <paper-dropdown-menu label="[[t('moveToGroup')]]">
-                                <paper-listbox class="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.moveToGroupId}}">
+                                <paper-listbox slot="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.moveToGroupId}}">
                                   <template is="dom-repeat" items="[[availableGroups]]" as="group">
                                     <paper-item name="[[group.id]]">[[group.name]]</paper-item>
                                   </template>

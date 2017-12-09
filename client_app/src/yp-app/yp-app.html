@@ -195,7 +195,7 @@
 
             <paper-menu-button horizontal-align="right">
               <paper-icon-button icon="help-outline" slot="dropdown-trigger" hidden$="[[hideHelpIcon]]"></paper-icon-button>
-              <paper-listbox class="dropdown-content">
+              <paper-listbox slot="dropdown-content">
                 <template is="dom-repeat" items="[[translatedPages]]" as="page">
                   <paper-item data-args$="[[index]]" on-tap="_openPage">[[_getLocalizePageTitle(page)]]</paper-item>
                 </template>

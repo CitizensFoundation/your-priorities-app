@@ -41,7 +41,8 @@
     "i18next": "10.x",
     "app-layout": "PolymerElements/app-layout#2.x",
     "app-route": "PolymerElements/app-route#2.x",
-    "linkifyjs": "2.x"
+    "linkifyjs": "2.x",
+    "web-animations-js": "^2.3.1"
   },
   "devDependencies": {
     "test-fixture": "PolymerElements/test-fixture#2.x"

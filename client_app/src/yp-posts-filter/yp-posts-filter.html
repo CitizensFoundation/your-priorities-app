@@ -145,7 +145,7 @@
               {{t('filterIdeas')}}
             </paper-button>
 
-            <div class="layout vertical dropdown-content">
+            <div slot="dropdown-content" class="layout vertical">
               <div>
                 <div class="filterHeader layout horizontal center-center">
                   [[t('filterIdeas')]]
@@ -153,7 +153,7 @@
                 <template is="dom-if" if="[[categoriesWithCount]]" restamp>
                   <div class="layout vertical">
                     <paper-dropdown-menu class="dropdown-content wrap categoriesDropdownMenu">
-                      <paper-listbox class="dropdown-content" id="categoryMenu" attr-for-selected="data-category-id" on-iron-select="_changeCategory">
+                      <paper-listbox slot="dropdown-content" id="categoryMenu" attr-for-selected="data-category-id" on-iron-select="_changeCategory">
                         <paper-item data-category-id="-1" name="-1">
                           <iron-icon icon="select-all" class="filterIcon"></iron-icon>
                           <span>[[t('categories.the_all')]] ([[allPostCount]])</span>
@@ -171,7 +171,7 @@
                 <div class="layout horizontal center-center">
                   <yp-ajax id="categoriesWithCountAjax" on-response="_categoriesCountResponse"></yp-ajax>
                 </div>
-                <paper-listbox class="dropdown-content" id="mainListMenu" on-iron-select="_changeFilter">
+                <paper-listbox slot="dropdown-content" id="mainListMenu" on-iron-select="_changeFilter">
                   <paper-item data-filter="top">
                     <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
                     <span>[[t('post.top')]]</span>
