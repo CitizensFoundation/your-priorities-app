@@ -5,7 +5,7 @@
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 
-<link rel="import" href="../../bower_components/iron-list/iron-list.html.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
 
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
@@ -26,7 +26,7 @@
 
       :host {
         display: block;
-      }
+        }
 
       .item {
         @apply --layout-horizontal;
@@ -241,7 +241,7 @@
             </paper-material>
 
             <div id="allUpPoints">
-              <iron-list items="[[upPoints]]" as="point" scroll-target="document" fifre-resize-after-scrolling="100">
+              <iron-list id="allUpPointsList" items="[[upPoints]]" as="point" scroll-target="document" scroll-offset="600" fire-resize-after-scrolling="300">
                 <template>
                   <div>
                     <div class="item" tabindex$="[[tabIndex]]">
@@ -281,7 +281,7 @@
             </paper-material>
 
             <div id="allDownPoints">
-              <iron-list items="[[downPoints]]" as="point" scroll-target="document" fifre-resize-after-scrolling="100">
+              <iron-list id="allDownPointsList" items="[[downPoints]]" as="point" scroll-target="document" scroll-offset="600" fire-resize-after-scrolling="300">
                 <template>
                   <div>
                     <div class="item" tabindex$="[[tabIndex]]">
@@ -460,6 +460,12 @@
         _pointsChanged: function (points) {
           if (points) {
             this._updateEmojiBindings();
+          }
+          if (points) {
+            this.async(function () {
+              this.$$("#allDownPointsList").fire("iron-resize");
+              this.$$("#allUpPointsList").fire("iron-resize");
+            }, 500);
           }
         },
 
