@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html" >
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
 
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
@@ -175,7 +176,7 @@
             </div>
             <div>
               <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasCommunityAccess]]">
-                <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
                 <paper-listbox class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                   <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
                   <paper-item id="usersMenuItem">[[t('community.users')]]</paper-item>

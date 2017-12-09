@@ -10,6 +10,9 @@
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-badge/paper-badge.html">
 
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
+
 <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
@@ -191,7 +194,7 @@
             <span class="flex"></span>
 
             <paper-menu-button horizontal-align="right">
-              <paper-icon-button icon="help-outline" class="dropdown-trigger" hidden$="[[hideHelpIcon]]"></paper-icon-button>
+              <paper-icon-button icon="help-outline" slot="dropdown-trigger" hidden$="[[hideHelpIcon]]"></paper-icon-button>
               <paper-listbox class="dropdown-content">
                 <template is="dom-repeat" items="[[translatedPages]]" as="page">
                   <paper-item data-args$="[[index]]" on-tap="_openPage">[[_getLocalizePageTitle(page)]]</paper-item>

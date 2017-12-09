@@ -10,6 +10,7 @@
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
 
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
@@ -180,7 +181,7 @@
             </div>
           </div>
           <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasGroupAccess]]">
-            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+            <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
             <paper-listbox class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
               <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
               <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>

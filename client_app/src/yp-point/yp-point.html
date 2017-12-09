@@ -259,6 +259,7 @@
       },
 
       _saveEdit: function () {
+        this._updateLatestContentHTML();
         this.$$("#editPointAjax").url = "/api/points/"+this.point.id;
         this.$$("#editPointAjax").body = { content: this.latestContent };
         this.$$("#editPointAjax").generateRequest();
@@ -329,6 +330,10 @@
           this.set('user', null);
           this.set('latestContent', null);
         }
+        this._updateLatestContentHTML();
+      },
+
+      _updateLatestContentHTML: function () {
         if (this.latestContent) {
           this.async(function () {
             var content = this.$$("#pointContent");
