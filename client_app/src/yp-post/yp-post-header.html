@@ -1,10 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
@@ -17,6 +13,7 @@
 <link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html">
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
@@ -35,6 +32,7 @@
 
     <style include="iron-flex iron-flex-alignment">
       :host {
+        display: block;
       }
 
       .infoContainer {
@@ -217,51 +215,49 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
 
-    <template is="dom-if" if="[[post]]" restamp>
-      <div class="layout horizontal center-center">
-        <paper-material class="postCard" elevation="[[elevation]]" animated>
-          <div class="layout vertical wrap">
-            <div class="post-name layout vertical" on-tap="goToPostIfNotHeader">
-              <div>
-                [[postName]]
-              </div>
-              <template is="dom-if" if="[[post.Group.configuration.showWhoPostedPosts]]">
-                <div class="layout horizontal userInfo">
-                  <yp-user-with-organization class="userWithOrg" hide-image title-date="[[post.user.name]]" user$="[[post.User]]"></yp-user-with-organization>
-                </div>
-              </template>
+    <div class="layout horizontal center-center">
+      <paper-material class="postCard" elevation="[[elevation]]" animated>
+        <div class="layout vertical wrap">
+          <div class="post-name layout vertical" on-tap="goToPostIfNotHeader">
+            <div>
+              [[postName]]
             </div>
-            <div class="layout horizontal wrap mediaAndInfoContainer">
-              <yp-post-cover-media header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
-              <div class="layout vertical">
-                <div class="infoContainer">
-                  <div id="description" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]" class="description"></div>
-                </div>
-                <div class="card-actions">
-                  <yp-post-actions floating header-mode="[[headerMode]]" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
-                </div>
+            <template is="dom-if" if="[[post.Group.configuration.showWhoPostedPosts]]">
+              <div class="layout horizontal userInfo">
+                <yp-user-with-organization class="userWithOrg" hide-image title-date="[[post.user.name]]" user$="[[post.User]]"></yp-user-with-organization>
               </div>
-              <template is="dom-if" if="[[headerMode]]">
-                <template is="dom-if" if="[[loggedInUser]]">
-                  <paper-menu-button vertical-align="top" horizontal-align="right" class="edit">
-                    <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-                    <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-                      <template is="dom-if" if="[[hasPostAccess]]">
-                        <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                        <paper-item id="moveMenuItem">[[t('post.move')]]</paper-item>
-                        <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
-                        <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
-                      </template>
-                      <paper-item id="reportMenuItem">[[t('post.report')]]</paper-item>
-                    </paper-listbox>
-                  </paper-menu-button>
-                </template>
-              </template>
-            </div>
+            </template>
           </div>
-        </paper-material>
-      </div>
-    </template>
+          <div class="layout horizontal wrap mediaAndInfoContainer">
+            <yp-post-cover-media header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
+            <div class="layout vertical">
+              <div class="infoContainer">
+                <div id="description" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]" class="description"></div>
+              </div>
+              <div class="card-actions">
+                <yp-post-actions floating header-mode="[[headerMode]]" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+              </div>
+            </div>
+            <template is="dom-if" if="[[headerMode]]">
+              <template is="dom-if" if="[[loggedInUser]]">
+                <paper-menu-button vertical-align="top" horizontal-align="right" class="edit">
+                  <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+                  <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+                    <template is="dom-if" if="[[hasPostAccess]]">
+                      <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+                      <paper-item id="moveMenuItem">[[t('post.move')]]</paper-item>
+                      <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
+                      <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+                    </template>
+                    <paper-item id="reportMenuItem">[[t('post.report')]]</paper-item>
+                  </paper-listbox>
+                </paper-menu-button>
+              </template>
+            </template>
+          </div>
+        </div>
+      </paper-material>
+    </div>
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
 

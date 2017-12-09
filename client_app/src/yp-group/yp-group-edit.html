@@ -73,7 +73,7 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <yp-edit-dialog id="editDialog" icon="social:people" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" icon="people" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2 slot="h2">[[editHeaderText]]</h2>
 
       <paper-input id="name"
@@ -102,14 +102,14 @@
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
           <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
-            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('image.logo.upload')]]</span>
           </file-upload>
         </div>
 
         <div class="layout vertical additionalSettings">
           <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
-            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('image.header.upload')]]</span>
           </file-upload>
         </div>
@@ -175,7 +175,7 @@
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
           <file-upload id="defaultPostImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultPostImageUploaded">
-            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('defaultPostImage')]]</span>
           </file-upload>
         </div>
@@ -251,7 +251,7 @@
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
           <file-upload id="defaultDataImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
-            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('defaultDataImage')]]</span>
           </file-upload>
         </div>

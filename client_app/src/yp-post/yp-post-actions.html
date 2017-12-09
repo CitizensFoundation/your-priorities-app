@@ -5,15 +5,11 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/notification-icons.html" >
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-post-actions">
@@ -191,7 +187,7 @@
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
       <div id="actionUp" class="action-up">
-        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.up_vote')]]" icon$="[[endorseModeIcon(endorsementButtons,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
+        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.up_vote')]]" icon="[[endorseModeIcon(endorsementButtons,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">[[formattedUpCount]]</div>
       </div>
 
@@ -203,7 +199,7 @@
       <div class="" hidden$="[[!_hideDebate(small,forceSmall)]]"></div>
 
       <div id="actionDown" class="action-down">
-        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.down_vote')]]" icon$="[[endorseModeIcon(endorsementButtons,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
+        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.down_vote')]]" icon="[[endorseModeIcon(endorsementButtons,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
         <div class="action-text down-text">[[formattedDownCount]]</div>
       </div>
       <div class="share" >

@@ -1,10 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
@@ -13,6 +9,7 @@
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 <link rel="import" href="../../bower_components/google-map/google-map-marker.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-official-status-options.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
@@ -123,7 +120,7 @@
             <template is="dom-repeat" items="[[status.posts]]" as="post">
               <div class="layout vertical">
                 <div class="layout horizontal">
-                  <iron-icon class="openCloseButton" data-args$="[[post.id]]" icon="hardware:keyboard-arrow-right" on-tap="_setOpen"></iron-icon>
+                  <iron-icon class="openCloseButton" data-args$="[[post.id]]" icon="keyboard-arrow-right" on-tap="_setOpen"></iron-icon>
                   <div class="postName">
                     <div class="ideaLink" data-args$="[[post.id]]" on-tap="_setOpen">[[post.name]]</div>
                   </div>

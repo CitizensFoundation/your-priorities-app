@@ -1,8 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/av-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html" >
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
@@ -17,6 +15,7 @@
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
@@ -177,11 +176,11 @@
                     <span>[[t('post.top')]]</span>
                   </paper-item>
                   <paper-item data-filter="newest">
-                    <iron-icon icon="av:new-releases" class="filterIcon"></iron-icon>
+                    <iron-icon icon="new-releases" class="filterIcon"></iron-icon>
                     <span>[[t('post.newest')]]</span>
                   </paper-item>
                   <paper-item data-filter="most_debated">
-                    <iron-icon icon="communication:chat-bubble-outline" class="filterIcon"></iron-icon>
+                    <iron-icon icon="chat-bubble-outline" class="filterIcon"></iron-icon>
                     <span>[[t('post.most_debated')]]</span>
                   </paper-item>
                   <paper-item data-filter="random">

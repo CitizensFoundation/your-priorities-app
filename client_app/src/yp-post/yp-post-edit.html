@@ -98,7 +98,7 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <yp-edit-dialog double-width id="editDialog" icon="icons:lightbulb-outline" action="[[action]]"
+    <yp-edit-dialog double-width id="editDialog" icon="lightbulb-outline" action="[[action]]"
                     use-next-tab-action="[[new]]" on-next-tab-action="_nextTab" method="[[method]]"
                     save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
       <h2 slot="h2">[[editHeaderText]]</h2>
@@ -196,7 +196,7 @@
           <section>
             <div class="layout vertical center-center">
               <file-upload id="imageFileUpload" raised="true" multi="true" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
-                <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                <iron-icon class="icon" icon="photo-camera"></iron-icon>
                 <span>[[t('image.upload')]]</span>
               </file-upload>
               <div class="imageSizeInfo layout horizontal">

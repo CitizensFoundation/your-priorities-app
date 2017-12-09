@@ -166,13 +166,13 @@
 
     <app-drawer-layout drawer-width="360px" responsive-width="16000px">
 
-      <app-drawer id="drawer" align="end" position="right" opened="{{userDrawerOpened}}" swipe-open>
+      <app-drawer id="drawer" slot="drawer" align="end" position="right" opened="{{userDrawerOpened}}" swipe-open>
         <div style="height: 100%; overflow: auto;">
           <yp-app-user-drawer id="ypDrawer" user="[[user]]" opened="[[userDrawerOpened]]" route="[[route]]"></yp-app-user-drawer>
         </div>
       </app-drawer>
 
-      <app-drawer id="navDrawer" align="start" position="left" swipe-open>
+      <app-drawer id="navDrawer" slot="drawer" align="start" position="left" swipe-open>
         <div style="height: 100%; overflow: auto;">
           <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
         </div>

@@ -1,8 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/av-icons.html" >
 <link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html" >
 
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
@@ -10,6 +8,7 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-posts-search-box">
@@ -77,7 +76,7 @@
       <paper-toolbar class$="{{computeClass(narrow)}}">
         <paper-icon-button icon="arrow-back" on-tap="toggle"></paper-icon-button>
         <input id="searchbox" placeholder="{{computePlaceholder()}}" value="{{term::input}}" flex="">
-        <paper-icon-button icon="av:mic"></paper-icon-button>
+        <paper-icon-button icon="mic"></paper-icon-button>
       </paper-toolbar>
 
       <paper-listbox on-core-select="onSelect">

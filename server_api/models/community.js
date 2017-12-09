@@ -116,6 +116,11 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_CLOSED: 1,
       ACCESS_SECRET: 2,
 
+      defaultAttributesPublic: ['id', 'access', 'configuration', 'counter_groups', 'counter_organizations', 'counter_points',
+        'counter_posts', 'counter_users', 'created_at','default_locale',
+        'description','domain_id','google_analytics_code','name','only_admins_can_create_groups',
+        'status','theme_id','updated_at','weight'],
+
       setYpCommunity: function (req,res,next) {
         var hostname = null;
         var parsedDomain = parseDomain(req.headers.host);
