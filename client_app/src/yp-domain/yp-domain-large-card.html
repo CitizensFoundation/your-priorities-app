@@ -151,39 +151,37 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <template is="dom-if" if="[[domain]]">
-      <div class="layout horizontal wrap">
-        <paper-material id="cardImage" elevation="3" animated class="large-card imageCard top-card">
+    <div class="layout horizontal wrap">
+      <paper-material id="cardImage" elevation="3" animated class="large-card imageCard top-card">
+        <div class="layout horizontal wrap">
+          <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
+        </div>
+      </paper-material>
+      <paper-material id="card" elevation="4" animated class="large-card textBox">
+        <div class="layout vertical">
           <div class="layout horizontal wrap">
-            <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
-          </div>
-        </paper-material>
-        <paper-material id="card" elevation="4" animated class="large-card textBox">
-          <div class="layout vertical">
-            <div class="layout horizontal wrap">
-              <div class="layout vertical description-and-stats">
-                <div class="description">
-                  <h1 class="domain-name">[[_domainName(domain)]]</h1>
-                  <div id="description" class="domainDescription">
-                    [[_domainDescription(domain)]]
-                  </div>
-                  <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
+            <div class="layout vertical description-and-stats">
+              <div class="description">
+                <h1 class="domain-name">[[_domainName(domain)]]</h1>
+                <div id="description" class="domainDescription">
+                  [[_domainDescription(domain)]]
                 </div>
               </div>
             </div>
-            <paper-menu-button vertical-align="top" horizontal-align="[[editMenuAlign]]" class="edit" hidden$="[[!hasDomainAccess]]">
-              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-              <paper-listbox class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-                <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
-                <paper-item id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
-                <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-                <paper-item id="organizationsGridMenuItem">[[t('organizationsAdmin')]]</paper-item>
-              </paper-listbox>
-            </paper-menu-button>
           </div>
-        </paper-material>
-      </div>
-    </template>
+          <paper-menu-button vertical-align="top" horizontal-align="[[editMenuAlign]]" class="edit" hidden$="[[!hasDomainAccess]]">
+            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+            <paper-listbox class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+              <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
+              <paper-item id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
+              <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              <paper-item id="organizationsGridMenuItem">[[t('organizationsAdmin')]]</paper-item>
+            </paper-listbox>
+          </paper-menu-button>
+        </div>
+        <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
+      </paper-material>
+    </div>
 
     <iron-media-query query="(max-width: 945px)" query-matches="{{narrowScreen}}"></iron-media-query>
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>

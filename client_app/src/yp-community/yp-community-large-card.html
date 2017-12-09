@@ -42,7 +42,7 @@
       }
 
       .stats {
-        position: absolute;
+        position: fixed;
         bottom: 0;
         right: 8px;
       }
@@ -231,43 +231,40 @@
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <template is="dom-if" if="[[community]]">
-      <div class="layout horizontal wrap">
-        <paper-material id="cardImage" elevation="3" animated class="large-card imageCard top-card">
-          <div id="welcomeHTML" hidden$="[[!community.configuration.welcomeHTML]]" class="layout vertical center-center">
-          </div>
-          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]" hidden$="[[community.configuration.welcomeHTML]]"></iron-image>
-        </paper-material>
-        <paper-material id="card" elevation="3" animated class="large-card textBox">
-          <div class="layout vertical">
-            <div class="layout horizontal wrap">
-              <div class="layout vertical description-and-stats">
-                <div class="description">
-                  <h2 class="community-name">[[communityNameFull]]</h2>
-                  <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
-
-                  <div id="description" class="communityDescription">
-                  </div>
-
-                  <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
-                </div>
+    <div class="layout horizontal wrap">
+      <paper-material id="cardImage" elevation="3" animated class="large-card imageCard top-card">
+        <div id="welcomeHTML" hidden$="[[!community.configuration.welcomeHTML]]" class="layout vertical center-center">
+        </div>
+        <div hidden$="[[community.configuration.welcomeHTML]]">
+          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
+        </div>
+      </paper-material>
+      <paper-material id="card" elevation="3" animated class="large-card textBox">
+        <div class="layout vertical">
+          <div class="layout horizontal wrap">
+            <div class="layout vertical description-and-stats">
+              <div class="description">
+                <h2 class="community-name">[[communityNameFull]]</h2>
+                <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
+                <div id="description" class="communityDescription"></div>
               </div>
             </div>
-            <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasCommunityAccess]]">
-              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-              <paper-listbox class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
-                <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
-                <paper-item id="usersMenuItem">[[t('community.users')]]</paper-item>
-                <paper-item id="adminsMenuItem">[[t('community.admins')]]</paper-item>
-                <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
-                <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-                <paper-item id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
-              </paper-listbox>
-            </paper-menu-button>
           </div>
-        </paper-material>
-      </div>
-    </template>
+          <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasCommunityAccess]]">
+            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+            <paper-listbox class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+              <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
+              <paper-item id="usersMenuItem">[[t('community.users')]]</paper-item>
+              <paper-item id="adminsMenuItem">[[t('community.admins')]]</paper-item>
+              <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
+              <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              <paper-item id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
+            </paper-listbox>
+          </paper-menu-button>
+        </div>
+        <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+      </paper-material>
+    </div>
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
   </template>
@@ -308,7 +305,7 @@
               console.error("Can't find community description element");
             }
             if (community.configuration && community.configuration.welcomeHTML &&
-              community.configuration.welcomeHTML!="" &&
+              community.configuration.welcomeHTML !== "" &&
               this.$$("#welcomeHTML")) {
                 var div = document.createElement('div');
                 div.innerHTML = community.configuration.welcomeHTML;
