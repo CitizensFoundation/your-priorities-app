@@ -360,7 +360,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
     where: {
       post_id: req.params.id
     },
-    attributes: { exclude: ['ip_address', 'user_agent'] },
+    attributes: ['id','name','content','value','counter_quality_up','counter_quality_down','embed_data'],
     order: [
       models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
       [ models.PointRevision, 'created_at', 'asc' ],
@@ -374,6 +374,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
         include: [
           {
             model: models.Image, as: 'UserProfileImages',
+            attributes: ['id', 'formats'],
             required: false
           },
           {
@@ -394,22 +395,22 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
       },
       {
         model: models.PointRevision,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
+        attributes: ['content','value','embed_data','created_at'],
         required: false
       },
       { model: models.PointQuality,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
+        attributes: ['value'],
         required: false,
         include: [
           { model: models.User,
-            attributes: ["id", "name"],
+            attributes: ["id"],
             required: false
           }
         ]
       },
       {
         model: models.Post,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
+        attributes: ['id'],
         required: false,
         include: [
           {
