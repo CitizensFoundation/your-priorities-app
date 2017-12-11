@@ -639,6 +639,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
             model: models.Image,
             required: false,
             as: 'CategoryIconImages',
+            attributes:  models.Image.defaultAttributesPublic,
             order: [
               [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
             ]
@@ -646,11 +647,15 @@ router.get('/:id', auth.can('view group'), function(req, res) {
         ]
       },
       {
-        model: models.Image, as: 'GroupLogoImages',
+        model: models.Image,
+        as: 'GroupLogoImages',
+        attributes:  models.Image.defaultAttributesPublic,
         required: false
       },
       {
-        model: models.Image, as: 'GroupHeaderImages',
+        model: models.Image,
+        as: 'GroupHeaderImages',
+        attributes:  models.Image.defaultAttributesPublic,
         required: false
       }
     ]

@@ -99,12 +99,12 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <yp-edit-dialog double-width id="editDialog" icon="lightbulb-outline" action="[[action]]"
-                    use-next-tab-action="[[new]]" on-next-tab-action="_nextTab" method="[[method]]"
+                    use-next-tab-action="[[newPost]]" on-next-tab-action="_nextTab" method="[[method]]"
                     save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
       <h2 slot="h2">[[editHeaderText]]</h2>
       <paper-tabs selected="{{selected}}" id="paperTabs" focused>
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
-        <template is="dom-if" restamp if="[[new]]">
+        <template is="dom-if" restamp if="[[newPost]]">
           <paper-tab>
             <div class="layout vertical center-center">
               <div>
@@ -166,7 +166,7 @@
             </div>
           </section>
 
-          <template is="dom-if" restamp if="[[new]]">
+          <template is="dom-if" restamp if="[[newPost]]">
             <section class="subContainer">
               <paper-textarea id="pointFor"
                               required$="[[!group.configuration.newPointOptional]]"
@@ -243,7 +243,7 @@
         value: "/api/posts"
       },
 
-      new: {
+      newPost: {
         type: Boolean,
         value: false
       },
@@ -351,14 +351,14 @@
     },
 
     _formInvalid: function () {
-      if (this.new && this.$$('#name').validate() && this.$$('#description').validate()) {
+      if (this.newPost && this.$$('#name').validate() && this.$$('#description').validate()) {
         this.set('selected', 1);
       } else {
         this.set('selected', 0);
       }
       this.$$('#name').autoValidate = true;
       this.$$('#description').autoValidate = true;
-      if (this.new) {
+      if (this.newPost) {
         this.$$('#pointFor').autoValidate = true;
       }
     },
@@ -386,7 +386,7 @@
 
     _nextTab: function () {
       var length = 3;
-      if (!this.new) {
+      if (!this.newPost) {
         length = 2;
       }
       if (this.locationHidden) {
@@ -398,7 +398,7 @@
     },
 
     _selectedChanged: function (newValue) {
-      if (!this.locationHidden && newValue==(this.new ? 2 : 1)) {
+      if (!this.locationHidden && newValue==(this.newPost ? 2 : 1)) {
         this.set('mapActive', true);
       } else {
         this.set('mapActive', false);
@@ -406,7 +406,7 @@
 
       var finalTabNumber = this.locationHidden ? 2 : 3;
 
-      if (!this.new || (this.new && newValue==finalTabNumber)) {
+      if (!this.newPost || (this.newPost && newValue==finalTabNumber)) {
         this.$$("#editDialog").useNextTabAction = false;
       } else {
         this.$$("#editDialog").useNextTabAction = true;
@@ -487,7 +487,7 @@
     },
 
     _clear: function () {
-      if (this.new) {
+      if (this.newPost) {
         this.set('post', { name: '', description: '', pointFor: '', categoryId: null });
         this.set('location', null);
         this.set('selectedCategoryArrayId',null);
@@ -519,7 +519,7 @@
       } else {
         this.set('post', null);
       }
-      this.set('new', newNotEdit);
+      this.set('newPost', newNotEdit);
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
       this._clear();
@@ -534,7 +534,7 @@
     _setupTranslation: function () {
       this.async(function () {
         if (this.t) {
-          if (this.new) {
+          if (this.newPost) {
             this.editHeaderText = this.t('post.new');
             this.toastText = this.t('post.toast.created');
             this.set('saveText', this.t('create'));

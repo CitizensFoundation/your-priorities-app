@@ -11,21 +11,23 @@
     "src/yp-user/yp-user.html",
     "src/yp-app/yp-view-404.html"
   ],
-  "sourceGlobs": [
+
+  "builds": [{
+    "name": "bundled",
+    "bundle": true,
+    "js": {"compile": true, "minify": true},
+    "css": {"minify": true},
+    "html": {"minify": true},
+    "addServiceWorker": true
+  }],
+
+  "sources": [
     "src/**/*",
     "images/**/*",
     "styles/**/*",
     "locales/**/*",
     "index_br.html",
     "index_bi.html",
-    "manifest_yp.json",
-    "manifest_br.json",
-    "manifest_bi.json",
     "bower.json"
-  ],
-  "includeDependencies": [
-    "manifest.json",
-    "robots.txt",
-    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
   ]
 }

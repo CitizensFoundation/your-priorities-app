@@ -1,5 +1,4 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
@@ -42,6 +41,7 @@
       method="[[method]]"
       body="[[body]]"
       handle-as="json"
+      bubbles
       content-type="application/json"
       on-error="_error"
       on-response="_response"
@@ -127,7 +127,7 @@
 
       _response: function (event) {
         this.$.spinner.active = false;
-        //this.fire('response', event.detail);
+        console.error("Got yp-ajax response");
       },
 
       ready: function() {
@@ -166,6 +166,7 @@
 
       generateRequest: function () {
         this.$.spinner.active = true;
+        console.error("yp-ajax request");
         this.$.ajax.generateRequest();
       },
 

@@ -286,6 +286,8 @@
       },
 
       _response: function (event, detail, sender) {
+        console.error("Got domain response: "+detail.response.id);
+
         this.set('domain', detail.response);
 
         window.appGlobals.domain = this.domain;

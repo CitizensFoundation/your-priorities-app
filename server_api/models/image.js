@@ -41,7 +41,7 @@ module.exports = function(sequelize, DataTypes) {
 
     classMethods: {
 
-      defaultAttributesPublic: ["id","created_at","formats"],
+      defaultAttributesPublic: ["id","updated_at","formats"],
 
       createFormatsFromVersions: function (versions) {
         var formats = [];
