@@ -367,6 +367,8 @@
 
         properties: {
 
+          host: String,
+
           downPoints: {
             type: Array,
             value: function () {
@@ -576,7 +578,11 @@
           // Remove any manually inserted points when the list is updated
           this.set('points', null);
           if (newPost) {
-            this.$.ajax.url = '/api/posts/' + newPost.id + '/points';
+            if (this.host) {
+              this.$.ajax.url = this.host+'/api/posts/' + newPost.id + '/points';
+            } else {
+              this.$.ajax.url = '/api/posts/' + newPost.id + '/points';
+            }
             this.$.ajax.generateRequest();
             if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointForLabel) {
               this.set('labelUp', this.post.Group.configuration.alternativePointForLabel);

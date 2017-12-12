@@ -312,7 +312,7 @@
 
       _canEditPoint: function (point) {
         var isEligible = (point && (point.counter_quality_up + point.counter_quality_down) <= this.maxNumberOfPointsBeforeEditFrozen);
-        return isEligible && window.appUser.user && window.appUser.user.id==point.user_id;
+        return isEligible && window.appUser && window.appUser.user && window.appUser.user.id==point.user_id;
       },
 
       _setlatestContent: function (point) {

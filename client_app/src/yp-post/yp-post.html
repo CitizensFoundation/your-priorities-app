@@ -350,7 +350,7 @@
 
       <iron-pages id="pages" class="tabPages" selected="[[selectedTab]]" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <div name="debate" class="layout horizontal center-center">
-          <yp-post-points id="pointsSection" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
+          <yp-post-points host="[[host]]" id="pointsSection" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
         </div>
         <section name="news" class="minHeightSection">
           <template is="dom-if" if="[[newsTabSelected]]">
@@ -438,6 +438,8 @@
             value: null,
             observer: "_postIdChanged"
           },
+
+          host: String,
 
           post: {
             type: Object,
@@ -619,7 +621,11 @@
         },
 
         _getPost: function () {
-          this.$.ajax.url = '/api/posts/' + this.postId;
+          if (this.host) {
+            this.$.ajax.url = this.host+'/api/posts/' + this.postId;
+          } else {
+            this.$.ajax.url = '/api/posts/' + this.postId;
+          }
           this.$$('#ajax').retryMethodAfter401Login = this._getPost.bind(this);
           this.$.ajax.generateRequest();
         },
@@ -653,10 +659,13 @@
               this.setTheme(this.post.Group.Community.theme_id);
             }
 
-            window.appGlobals.setCommunityAnalyticsTracker(this.post.Group.Community.google_analytics_code);
+            if (window.appGlobals) {
+              window.appGlobals.setCommunityAnalyticsTracker(this.post.Group.Community.google_analytics_code);
 
-            if (this.post.Group.Community.configuration && this.post.Group.Community.configuration.facebookPixelId) {
-              window.appGlobals.setCommunityPixelTracker(this.post.Group.Community.configuration.facebookPixelId);
+              if (this.post.Group.Community.configuration && this.post.Group.Community.configuration.facebookPixelId) {
+                window.appGlobals.setCommunityPixelTracker(this.post.Group.Community.configuration.facebookPixelId);
+              }
+              window.appGlobals.setAnonymousGroupStatus(this.post.Group);
             }
 
             if (this.post.Group.configuration && this.post.Group.configuration.defaultLocale!=null) {
@@ -684,7 +693,6 @@
             });
             this.$.pagesAjax.url = "/api/groups/"+this.post.Group.id+"/pages";
             this.$.pagesAjax.generateRequest();
-            window.appGlobals.setAnonymousGroupStatus(this.post.Group);
             if (this.post.Group.configuration && this.post.Group.configuration.disableFacebookLoginForGroup===true) {
               window.appGlobals.disableFacebookLoginForGroup = true;
             } else {

@@ -145,7 +145,7 @@
       },
 
       _updateQualities: function () {
-        if (window.appUser.loggedIn() && window.appUser.user && window.appUser.user.PointQualities) {
+        if (window.appUser && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.PointQualities) {
           var thisPointQuality = window.appUser.pointQualitiesIndex[this.point.id];
           if (thisPointQuality) {
             this._setPointQuality(thisPointQuality.value);
@@ -226,10 +226,10 @@
 
       pointHelpful: function () {
         this.set('allDisabled', true);
-        window.appGlobals.activity('clicked', 'pointHelpful', this.point.id);
         this.generatePointQuality(1);
         this.set('isUpVoted', true);
         this.updateStyles();
+        window.appGlobals.activity('clicked', 'pointHelpful', this.point.id);
       },
 
       pointNotHelpful: function () {

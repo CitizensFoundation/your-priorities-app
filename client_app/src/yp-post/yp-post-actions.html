@@ -395,7 +395,7 @@
 
       _updateEndorsements: function (post) {
         this.set('isEndorsed', false);
-        if (window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
+        if (window.appUser && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
           var thisPostsEndorsement = window.appUser.endorsementPostsIndex[post.id];
           if (thisPostsEndorsement)
             this._setEndorsement(thisPostsEndorsement.value);
