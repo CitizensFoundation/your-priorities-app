@@ -211,9 +211,11 @@
               </template>
             </paper-toolbar>
             <div id="scroller">
-              <form is="iron-form" id="form" name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
-                <content></content>
-              </form>
+              <iron-form id="form">
+                <form name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
+                  <content></content>
+                </form>
+              </iron-form>
             </div>
           </paper-header-panel>
           <paper-spinner id="spinner"></paper-spinner>
@@ -227,9 +229,11 @@
             </div>
           </div>
           <paper-dialog-scrollable small-height$="[[smallHeight]]" medium-height$="[[mediumHeight]]" large-height$="[[largeHeight]]">
-            <form is="iron-form" id="form" name="ypForm" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
-              <content id="mainEditContent"></content>
-            </form>
+            <iron-form id="form">
+              <form name="ypForm" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
+                <content id="mainEditContent"></content>
+              </form>
+            </iron-form>
             <paper-spinner id="spinner"></paper-spinner>
           </paper-dialog-scrollable>
           <div class="buttons">

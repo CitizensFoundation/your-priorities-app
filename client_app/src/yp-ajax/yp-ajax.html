@@ -41,6 +41,7 @@
       auto="[[auto]]"
       method="[[method]]"
       body="[[body]]"
+      bubbles
       handle-as="json"
       content-type="application/json"
       on-error="_error"
@@ -127,7 +128,6 @@
 
       _response: function (event) {
         this.$.spinner.active = false;
-        this.fire('response', event.detail);
       },
 
       ready: function() {
