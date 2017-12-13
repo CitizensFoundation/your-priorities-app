@@ -1,0 +1,467 @@
+{
+  "disableDebate": "停用辯論",
+  "welcomeHTML": "歡迎訊息 HTML (小心使用)",
+  "disableFacebookLoginForGroup": "停用群組的臉書登入功能",
+  "facebookPixelId": "Facebook pixel id",
+  "downloadFacebookImagesForUser": "把使用者的臉書圖片下載到資料庫",
+  "customUserRegistrationText": "自訂使用者註冊說明文字",
+  "participateAnonymously": "匿名參與",
+  "allowAnonymousUsers": "允許匿名使用者",
+  "deleteUser": "刪除使用者帳號",
+  "areYouSureYouWantToDeleteUser": "確定要刪除你的帳號？",
+  "areYouReallySureYouWantToDeleteUser": "100% 確定要刪除你的帳號？你的所有點子、評論與連署都會刪除，而你所提的想法會變成匿名提出",
+  "alternativePointForLabel": "替換正面觀點標籤",
+  "alternativePointAgainstLabel": "替換反面觀點標籤",
+  "sharePoint": "分享觀點",
+  "alternativePointForHeader": "替換正面觀點的頁首",
+  "alternativePointAgainstHeader": "替換反面觀點的頁首",
+  "or": "或",
+  "hidePointAuthor": "隱藏觀點作者",
+  "hidePostAuthor": "隱藏文章作者",
+  "defaultLocationLongLat": "預設地理位置的經緯度",
+  "disableCommunityDomainUpLink": "停用上層網址連結",
+  "analyticsTrackerCode": "Google Analytics Id",
+  "filterIdeas": "過濾點子",
+  "edit": "編輯",
+  "delete": "刪除",
+  "addEmoji": "新增表情圖示",
+  "closeComments": "關閉評論",
+  "openComments": "開啟評論",
+  "deleteActivity": "從新聞牆刪除活動",
+  "pointsFor": "正面觀點",
+  "pointsAgainst": "反面觀點",
+  "pointForShort": "正面",
+  "pointAgainstShort": "反面",
+  "domainToastCreated": "已建立網域",
+  "domainToastUpdated": "網域儲存了",
+  "communityToastCreated": "社群建立了",
+  "communityToastUpdated": "社群儲存了",
+  "groupToastCreated": "群組建立了",
+  "groupToastUpdated": "群組儲存了",
+  "userToastCreated": "建立使用者",
+  "userToastUpdated": "使用者儲存了",
+  "hideGroupHeader": "隱藏群組頁首",
+  "errorResetTokenNotFoundOrUsed": "找不到密碼重設代碼或是已經被使用",
+  "addedAnIdea": "新增了一個點子",
+  "recommendedPosts": "建議的",
+  "noComments": "沒有評論",
+  "optional": "選擇性的",
+  "additionalGroupConfig":"其他群組設定",
+  "defaultDataImage":"預設資料圖片",
+  "defaultPostImage":"預設文章圖片",
+  "hideAllTabs":"隱藏所有頁籤",
+  "hideNewPostOnPostPage":"在文章頁隱藏新文章",
+  "newPointOptional":"讓新觀點成為選擇性的",
+  "hideHelpIcon":"隱藏說明圖示",
+  "hideEmoji":"隱藏表情圖示",
+  "endorsementButtonsHeart":"愛心",
+  "endorsementArrows":"箭頭",
+  "endorsementThumbs":"縮圖",
+  "endorsementHats":"帽子",
+  "endorsementButtons": "連署按鈕",
+  "bulkStatusUdateForInfo": "點選點子看更多資訊",
+  "urlLink": "連結",
+  "bulkStatusUdateFor": "點子狀態更新了",
+  "inviteNotFoundOrAlreadyUsed": "找不到邀請碼或是已經使用",
+  "reportConfirmation": "確定要通報這個內容違反了網站規定？",
+  "uniqueStatusMessage": "唯一狀態訊息",
+  "templateContent": "樣板內容",
+  "bulkStatusUpdate": "批次狀態更新",
+  "close": "關閉",
+  "editTemplates": "編輯樣板",
+  "editTemplate": "編輯樣板",
+  "deleteTemplate": "刪除樣板",
+  "addTemplate": "新增樣板",
+  "save": "儲存",
+  "saved": "儲存了",
+  "config": "設定",
+  "newBulkStatusUpdate": "新批次狀態更新",
+  "editBulkStatusUpdate": "編輯批次狀態更新",
+  "bulkStatusUdateConfig": "批次狀態更新設定",
+  "bulkStatusUpdatesTemplates": "批次狀態更新樣板",
+  "selectStatusTemplate": "樣板",
+  "moveToGroup": "移動",
+  "noIdeasHere": "這裡沒有任何點子",
+  "organizationsAdmin": "組織管理員",
+  "unviewed": "未審核",
+  "notificationMarkAllViewed": "全部標示已讀",
+  "notificationConfirmMarkAllViewed": "確認你要將所有提醒標示為已讀",
+  "upVotedPoint": "推薦了你的觀點",
+  "downVotedPoint": "不推薦你的觀點",
+  "endorsedYourPost": "連署你的點子",
+  "opposedYourPost": "反對你的點子",
+  "notifications": "提醒",
+  "votingDisabled": "沒有啟用投票",
+  "pageNotFound": "你要瀏覽的頁面不存在",
+  "participate": "參與",
+  "emojiSearchResults": "搜尋結果",
+  "recentlyUsedEmoji": "最近使用",
+  "findAnEmoji": "搜尋表情圖示",
+  "cancel": "取消",
+  "ok": "好",
+  "next": "下一個",
+  "create": "建立",
+  "confirm": "確認",
+  "access": "存取",
+  "searchFor": "搜尋",
+  "title": "標題",
+  "selectLanguage": "選擇語言",
+  "update": "更新",
+  "errorCantConnect": "無法連線伺服器，請稍後重試，這也許是網站流量過高或是軟體升級中",
+  "errorNotFound": "找不到",
+  "errorNotAuthorized": "你沒有存取權限！",
+  "generalError": "發生無法預期的錯誤，我們已經記錄下來",
+  "stats": {
+    "posts": "點子數量",
+    "discussions": "討論數量",
+    "communities": "社群數量",
+    "groups": "群組數量",
+    "users": "使用者數量"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "你的密碼已經更新而且你現在已經登入",
+    "method": "方法",
+    "frequency": "頻率",
+    "myPosts": "我的點子",
+    "muted": "關閉",
+    "browser": "瀏覽器",
+    "email": "信箱",
+    "asItHappens": "發生時間點",
+    "daily": "每天",
+    "hourly": "每小時",
+    "weekly": "每週",
+    "monthly": "每月",
+    "myPostsEndorsements": "我喜歡的點子",
+    "myPoints": "我的觀點",
+    "myPointEndorsements": "我喜歡的觀點",
+    "allCommunity": "來自我的社群的提醒",
+    "allGroup": "來自我的群組的提醒",
+    "invite_accepted_for": "參與"
+  },
+
+  "pages": {
+    "addLocale": "新增地區",
+    "unPublish": "取消發布",
+    "deletePage": "刪除",
+    "addPage": "新增頁面",
+    "managePages": "管理頁面"
+  },
+
+  "archived": "已封存",
+
+  "status": {
+    "select": "選擇狀態",
+    "active": "啟用",
+    "featured": "推薦",
+    "archived": "已封存",
+    "hidden": "隱藏",
+    "published": "開啟",
+    "successful": "成功",
+    "failed": "失敗",
+    "inProgress": "進行中"
+  },
+
+  "pluralStatus": {
+    "published": "開放的點子",
+    "successful": "成功的點子",
+    "failed": "失敗的點子",
+    "inProgress": "進行中的點子",
+    "inVoting": "投票中的點子"
+  },
+
+  "activity": {
+    "confirmDelete": "確認要刪除這個活動？",
+    "post": {
+      "new": "點子",
+      "status": {
+       "change": "狀態更新"
+      }
+    },
+    "point": {
+      "forAdded": "新增了正面觀點",
+      "againstAdded": "新增了反面觀點",
+      "new": "觀點",
+      "newFor": "正面觀點",
+      "newAgainst": "反面觀點",
+      "newComment": "評論",
+      "newsStory": {
+        "new": "使用者新聞"
+      }
+    }
+  },
+  "name": "名稱",
+
+  "domain": {
+    "createOrganization": "建立組織",
+    "edit": "編輯網域",
+    "info": "設定",
+    "apis": "APIs",
+    "settings": "其他的",
+    "onlyAdminsCanCreateCommunities": "只有管理者可以建立社群"
+  },
+
+  "domains": "網域",
+  "communities": "社群",
+  "groups": "群組",
+
+  "myDomains": "我的網域",
+  "myCommunities": "我的社群",
+  "myGroups": "我的群組",
+  "myAdminCommunities": "社群管理者",
+  "myAdminGroups": "群組管理者",
+
+  "community": {
+    "alternativeHeader": "替代頁首",
+    "edit": "編輯社群",
+    "hostname": "主機名稱",
+    "admins": "社群管理員",
+    "users": "社群使用者",
+    "delete": "刪除社群",
+    "new": "建立社群",
+    "public": "公開社群",
+    "closed": "封閉社群",
+    "secret": "祕密社群",
+    "pages":"社群頁面",
+    "onlyAdminsCanCreateGroups": "只有管理員可以建立群組"
+  },
+
+  "posts": {
+    "posts": "點子",
+    "open": "開放",
+    "inProgress": "進行中",
+    "successful": "成功",
+    "failed": "失敗",
+    "map": "地圖",
+    "noMapPosts": "沒有設定地理位置的點子",
+    "newUserImage": "新增照片"
+  },
+
+  "form": {
+    "invalid": "完成表單填答"
+  },
+
+  "post": {
+    "most_debated": "最多辯論",
+    "deleteConfirmation": "確定要刪除這個點子？",
+    "move": "移動點子",
+    "confirmMove": "確認要移動",
+    "statusChangeConfirmText": "你確定要寄發信件給所有贊成或反對這個點子的使用者？",
+    "statusChangeSelectNewStatus": "新狀態",
+    "statusChangeContent": "要寄送給所有支持者與反對者的狀態更新內容",
+    "statusChange": "寄送狀態更新信件",
+    "statusChangeSent": "已經寄送狀態更新信件",
+    "noLocation": "沒有設定地點",
+    "shareInfo": "分享點子",
+    "description": "描述",
+    "debate": "辯論",
+    "formInvalid": "完成表單填答",
+    "status": "這個點子的狀態",
+    "new": "新點子",
+    "searchingFor": "搜尋",
+    "top": "熱門",
+    "newest": "最新",
+    "random": "隨機",
+    "inProgress": "進行中",
+    "groups": "文章群組",
+    "search": "搜尋點子",
+    "add_new":"新增點子",
+    "up_vote":"投票支持",
+    "down_vote":"投票反對",
+    "report": "通報點子",
+    "notify": "訂閱這個點子的提醒",
+    "share": "分享這個點子",
+    "yourPost": "點子",
+    "yourPoint": "觀點",
+    "location": "位置",
+    "photo": "照片",
+    "photographerName": "照片提供者",
+    "newPhoto": "新照片",
+    "photoUpdate": "更新照片",
+    "photoDeleteConfirmation": "確定要刪除這個照片？",
+    "tabs": {
+      "debate": "辯論",
+      "news": "新聞",
+      "location": "地點",
+      "photos": "照片",
+      "solutions": "解決方案",
+      "not_implemented": "還沒建置"
+    },
+    "cover": {
+      "media": "選擇封面圖案",
+      "imageInfo": "新增一張照片會讓人們更願意分享，同時會把你的點子分享到社交媒體上",
+      "map": "地圖",
+      "streetview": "街景",
+      "image": "圖片",
+      "none": "無"
+    },
+    "edit": "編輯點子",
+    "delete": "刪除點子",
+    "addNewIntroBoxText": "使用燈泡操作按鈕來新增點子"
+  },
+
+  "short_word": {
+    "in": "在"
+  },
+
+  "category": {
+    "new": "新類別",
+    "select": "選擇類別"
+  },
+
+  "categories": {
+    "all": "所有類別",
+    "the_all": "所有類別"
+  },
+
+  "point": {
+    "report": "通報",
+    "againstAdded": "新增了反面觀點",
+    "forAdded": "新增了正面觀點",
+    "confirmDelete": "確認要刪除這個觀點",
+    "theseAreFor": "正面觀點",
+    "theseAreAgainst": "反面觀點",
+    "point": "觀點",
+    "for": "填寫正面觀點",
+    "against": "填寫反面觀點",
+    "add_up": "新增正面觀點",
+    "add_down": "新增反面觀點",
+    "helpful": "推薦表示覺得有幫助",
+    "not_helpful": "不推薦表示覺得沒幫助",
+    "addNewsStory": "新增新聞",
+    "postNewsStory": "新增新聞",
+    "addComment": "你的評論",
+    "postComment": "文章",
+    "comments": "評論",
+    "howToWrite": "一起運用正面、反面觀點腦力激盪並且思考解決方案",
+    "commentToShort": "文字太短"
+  },
+
+  "news": "新聞",
+
+  "uploading": {
+    "inProgress": "上傳中"
+  },
+
+  "notice": {
+    "ok": "確認",
+    "feature_not_implemented_a": "這個功能還沒完成",
+    "feature_not_implemented_b": "讓我們知道你的想法",
+    "welcome_a": "這是唯讀的預覽，所以你只能夠檢視評論而無法參與，感謝各種回饋",
+    "welcome_b": "Currently it only works in Chrome but will support all major browsers by release date in Q1 2015.",
+    "welcome_heading": "Welcome to Your Priorities 6.0 technology preview",
+    "continue": "繼續預覽",
+    "deleteConfirmation": "確定要刪除這個群組？"
+  },
+
+  "maps": {
+    "searchInput": "住址",
+    "search": "搜尋"
+  },
+
+  "group": {
+    "showWhoPostedPosts": "顯示誰發表文章",
+    "locationHidden": "停用地點",
+    "group": "群組",
+    "admins": "群組管理員",
+    "users": "群組使用者",
+    "new": "新增群組",
+    "edit": "編輯群組",
+    "invite": "邀請朋友",
+    "invite_to_group": "邀請朋友參與群組",
+    "share_group": "分享這個群組",
+    "delete": "刪除群組",
+    "objectives": "目標",
+    "public": "公開群組",
+    "closed": "封閉群組",
+    "secret": "祕密群組",
+    "openToCommunity": "開放到社群",
+    "canVote": "允許票選",
+    "canAddNewPosts": "允許新點子",
+    "config": "設定",
+    "update": "更新群組"
+  },
+
+  "membership": {
+    "joined": "你已經加入",
+    "left": "你已經離開"
+  },
+
+  "menu": {
+    "my_pages": "我的資料",
+    "about": "關於",
+    "help": "說明",
+    "settings": "設定"
+
+  },
+
+  "users": {
+    "removeAdmin": "移除管理者",
+    "addAdmin": "新增管理者",
+    "removeUser": "移除使用者",
+    "inviteUser": "邀請使用者",
+    "email": "信箱",
+    "removeFromOrganization": "移除",
+    "addToOrganization": "組織",
+    "selectOrganization": "選擇組織"
+  },
+
+  "user": {
+    "loginCompleteFor": "登入",
+    "acceptInvite": "允許邀請參與",
+    "hasSentYouAndInvitation": "寄發了一個邀請給你來參與",
+    "acceptInviteInstructions": "點選下面按鈕來接受邀請",
+    "setEmail": "新增信箱到帳號",
+    "linkAccount": "連結帳號",
+    "setEmailInfo": "新增信箱到帳號",
+    "existsLinkAccountInfo": "輸入密碼來存取你的信箱帳號",
+    "logoutCompleteFor": "登出",
+    "loggedInWithSaml": "使用 SAML 登入",
+    "loggedInWithFacebook": "使用臉書登入",
+    "facebookLogin": "臉書登入",
+    "info":"資訊",
+    "notifications": "提醒",
+    "name": "完整姓名",
+    "email": "信箱",
+    "edit": "編輯使用者",
+    "password": "密碼",
+    "forgotPassword": "建立新密碼",
+    "forgotPasswordInstructions": "輸入你的信箱，我們會寄發帶有連結的信件，點選連結即可建立新密碼",
+    "forgotPasswordEmailHasBeenSent": "密碼重設說明已經寄出",
+    "resetPassword": "重設你的密碼",
+    "resetPasswordInstructions": "建立一個不容易被猜出來的密碼",
+    "login": "登入",
+    "create": "建立使用者",
+    "cancel": "取消",
+    "logout": "登出",
+    "newPassword": "新密碼",
+    "register": "新使用者",
+    "alreadyRegisterred": "這個信箱已經有人使用，如果需要可以試著重設密碼",
+    "registrationError": "註冊時發生錯誤",
+    "loginError": "登入錯誤",
+    "completeForm": "請正確填答表單",
+    "loginNotAuthorized": "信箱或是密碼錯誤"
+  },
+
+  "other": "其他",
+
+  "socialMedia": "社群媒體",
+
+  "location": {
+    "set": "設定地點"
+  },
+  "image": {
+    "upload": "上傳圖片",
+    "logo": {
+      "upload": "上傳代表圖示"
+    },
+    "header": {
+      "upload": "上傳頁首"
+    },
+    "profile": {
+      "upload": "上傳個人照片"
+    }
+  },
+  "theme": {
+    "choose": "選擇佈景"
+  }
+}
