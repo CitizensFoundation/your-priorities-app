@@ -26,14 +26,14 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical">
-
-    <paper-dropdown-menu label="Select language" selected="{{selectedLocale}}" attr-for-selected="name">
-      <paper-listbox class="dropdown-content" selected="{{selectedLocale}}"  attr-for-selected="name">
-        <template is="dom-repeat" items="[[languages]]">
-          <paper-item name="[[item.language]]">[[item.name]]</paper-item>
-        </template>
-      </paper-listbox>
-    </paper-dropdown-menu>
+      <paper-dropdown-menu label="Select language" selected="{{selectedLocale}}" attr-for-selected="name">
+        <paper-listbox class="dropdown-content" selected="{{selectedLocale}}"  attr-for-selected="name">
+          <template is="dom-repeat" items="[[languages]]">
+            <paper-item name="[[item.language]]">[[item.name]]</paper-item>
+          </template>
+        </paper-listbox>
+      </paper-dropdown-menu>
+    </div>
   </template>
 
   <script>
@@ -55,6 +55,7 @@
             no: 'Norwegian',
             nl: 'Dutch',
             hu: 'Hungarian',
+            zh_TW: 'Chinese (TW)',
             sr: 'Serbian',
             sr_latin: 'Serbian (latin)',
             hr: 'Croatian',
