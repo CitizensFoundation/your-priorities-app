@@ -1,19 +1,19 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.183">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.184">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.183">
-<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.183">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.183">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.183">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.184">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html?v=6.3.184">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.184">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.184">
 
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.183">
-<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.3.183">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.183">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.183">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.183">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.184">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html?v=6.3.184">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.184">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.184">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.184">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.183">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.184">
 
-<link rel="import" href="yp-fullscreen-dialog.html?v=6.3.183">
+<link rel="import" href="yp-fullscreen-dialog.html?v=6.3.184">
 
 </head><body><dom-module id="yp-edit-dialog">
 
@@ -211,11 +211,9 @@
               </template>
             </paper-toolbar>
             <div id="scroller">
-              <iron-form id="form">
-                <form name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" params="[[params]]">
-                  <content></content>
-                </form>
-              </iron-form>
+              <form is="iron-form" id="form" name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" params="[[params]]">
+                <content></content>
+              </form>
             </div>
           </paper-header-panel>
           <paper-spinner id="spinner"></paper-spinner>
@@ -229,11 +227,9 @@
             </div>
           </div>
           <paper-dialog-scrollable small-height$="[[smallHeight]]" medium-height$="[[mediumHeight]]" large-height$="[[largeHeight]]">
-            <iron-form id="form">
-              <form name="ypForm" iron-method="[[method]]" action="[[action]]" params="[[params]]">
-                <content id="mainEditContent"></content>
-              </form>
-            </iron-form>
+            <form is="iron-form" id="form" name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" params="[[params]]">
+              <content></content>
+            </form>
             <paper-spinner id="spinner"></paper-spinner>
           </paper-dialog-scrollable>
           <div class="buttons">

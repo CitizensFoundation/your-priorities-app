@@ -1,21 +1,21 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.183">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.184">
 
-<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.183">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.183">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html?v=6.3.184">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.184">
 
-<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.183">
-<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.183">
+<link rel="import" href="../../bower_components/re-captcha/re-captcha.html?v=6.3.184">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html?v=6.3.184">
 
-<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.183">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.183">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.183">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.183">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.183">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.183">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html?v=6.3.184">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html?v=6.3.184">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html?v=6.3.184">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html?v=6.3.184">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html?v=6.3.184">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html?v=6.3.184">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.183">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html?v=6.3.184">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.183">
+<link rel="import" href="../yp-behaviors/app-helpers.html?v=6.3.184">
 
 </head><body><dom-module id="yp-login">
 
@@ -278,7 +278,7 @@
               <div class="layout horizontal center-center">
 
                 <template is="dom-if" if="[[hasAnonymousLogin]]">
-                  <paper-button raised="" on-tap="_anonymousLogin">[[t('participateAnonymously')]]</paper-button>
+                  <paper-button raised="" on-tap="anonymousLogin">[[t('participateAnonymously')]]</paper-button>
                 </template>
 
                 <template is="dom-if" if="[[hasFacebookLogin]]">
@@ -313,7 +313,6 @@
             <paper-spinner active="" hidden$="[[!userSpinner]]"></paper-spinner>
             <yp-ajax id="loginAjax" dispatch-error="" on-error="_loginError" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
             <yp-ajax id="registerAjax" method="POST" dispatch-error="" on-error="_registerError" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
-            <yp-ajax id="registerAnonymouslyAjax" method="POST" dispatch-error="" on-error="_registerError" url="/api/users/register_anonymously" on-response="_registerResponse"></yp-ajax>
             <paper-button dialog-dismiss="">[[t('cancel')]]</paper-button>
             <paper-button on-tap="_forgotPassword">[[t('user.newPassword')]]</paper-button>
             <paper-button autofocus="" on-tap="_validateAndSend">[[submitText]]</paper-button>
@@ -328,6 +327,7 @@
 
         <iron-a11y-keys id="a11y" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
       </template>
+      <yp-ajax id="registerAnonymouslyAjax" method="POST" dispatch-error="" on-error="_registerError" url="/api/users/register_anonymously" on-response="_registerResponse"></yp-ajax>
     </div>
   </template>
 
@@ -404,8 +404,9 @@
         value: ""
       },
 
-      redirectTo: {
-        type: String
+      redirectToURL: {
+        type: String,
+        value: null
       },
 
       forgotPasswordOpen: {
@@ -491,8 +492,10 @@
       window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Login Submit', 'Facebook');
     },
 
-    _anonymousLogin: function () {
-      this.$$("#registerAnonymouslyAjax").body = { groupId: window.appGlobals.currentAnonymousGroup.id };
+    anonymousLogin: function () {
+      this.$$("#registerAnonymouslyAjax").body = {
+        groupId: window.appGlobals.currentAnonymousGroup.id,
+        trackingParameters: window.appGlobals.originalQueryParameters };
       this.$$("#registerAnonymouslyAjax").generateRequest();
       window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup Submit', 'Anonymous');
     },
@@ -663,8 +666,8 @@
     },
 
     _loginCompleted: function (user) {
-      if (this.redirectTo)
-        this.redirectTo(this.redirectTo);
+      if (this.redirectToURL)
+        this.redirectTo(this.redirectToURL);
       this.fire("login", user);
       if (this.onLoginFunction) {
         this.onLoginFunction(user);
@@ -674,8 +677,8 @@
       this.fire('iron-signal', {name: 'logged-in', data: user});
     },
 
-    open: function(redirectTo, email) {
-      this.redirectTo = redirectTo;
+    open: function(redirectToURL, email) {
+      this.redirectToURL = redirectToURL;
       this.set('userSpinner', false);
       this.set('opened', false);
       if (email) {

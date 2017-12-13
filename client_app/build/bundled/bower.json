@@ -6,7 +6,7 @@
     "google-map": "GoogleWebComponents/google-map",
     "google-streetview-pano": "https://github.com/rbjarnason/google-streetview-pano.git#timings-fix-maps-api-callback",
     "polymer-instagram": "https://github.com/rbjarnason/polymer-instagram-feed.git#polymer1",
-    "iron-form": "rbjarnason/iron-form#add-put-support",
+    "iron-form": "rbjarnason/iron-form#p1",
     "iron-list": "rbjarnason/iron-list#v117",
     "iron-ajax": "rbjarnason/iron-ajax#master",
     "polymer": "polymer/polymer#1.x",
