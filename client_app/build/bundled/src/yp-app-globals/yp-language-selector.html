@@ -1,14 +1,14 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.184">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html?v=6.3.185">
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.184">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.184">
-<link rel="import" href="../../bower_components/iron-form-element-behavior/iron-form-element-behavior.html?v=6.3.184">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html?v=6.3.185">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html?v=6.3.185">
+<link rel="import" href="../../bower_components/iron-form-element-behavior/iron-form-element-behavior.html?v=6.3.185">
 
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.3.184">
-<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html?v=6.3.184">
-<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.3.184">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html?v=6.3.185">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html?v=6.3.185">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html?v=6.3.185">
 
-<link rel="import" href="../yp-user/yp-user-info.html?v=6.3.184">
+<link rel="import" href="../yp-user/yp-user-info.html?v=6.3.185">
 
 </head><body><dom-module id="yp-language-selector">
 
@@ -26,15 +26,15 @@
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical">
-
-    <paper-dropdown-menu label="Select language" selected="{{selectedLocale}}" attr-for-selected="name">
-      <paper-listbox class="dropdown-content" selected="{{selectedLocale}}" attr-for-selected="name">
-        <template is="dom-repeat" items="[[languages]]">
-          <paper-item name="[[item.language]]">[[item.name]]</paper-item>
-        </template>
-      </paper-listbox>
-    </paper-dropdown-menu>
-  </div></template>
+      <paper-dropdown-menu label="Select language" selected="{{selectedLocale}}" attr-for-selected="name">
+        <paper-listbox class="dropdown-content" selected="{{selectedLocale}}" attr-for-selected="name">
+          <template is="dom-repeat" items="[[languages]]">
+            <paper-item name="[[item.language]]">[[item.name]]</paper-item>
+          </template>
+        </paper-listbox>
+      </paper-dropdown-menu>
+    </div>
+  </template>
 
   <script>
     Polymer({
@@ -55,6 +55,7 @@
             no: 'Norwegian',
             nl: 'Dutch',
             hu: 'Hungarian',
+            zh_TW: 'Chinese (TW)',
             sr: 'Serbian',
             sr_latin: 'Serbian (latin)',
             hr: 'Croatian',

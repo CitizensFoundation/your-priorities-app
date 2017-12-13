@@ -6,8 +6,8 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.184">
-<link rel="import" href="../iron-meta/iron-meta.html?v=6.3.184">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.185">
+<link rel="import" href="../iron-meta/iron-meta.html?v=6.3.185">
 
 <script>
   /**
@@ -78,21 +78,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       rtlMirroring: {
         type: Boolean,
         value: false
-      },
-
-      /**
-       * Set to true to measure RTL based on the dir attribute on the body or
-       * html elements (measured on document.body or document.documentElement as
-       * available).
-       */
-      useGlobalRtlAttribute: {
-        type: Boolean,
-        value: false
       }
-    },
-
-    created: function() {
-      this._meta = new Polymer.IronMeta({type: 'iconset', key: null, value: null});
     },
 
     attached: function() {
@@ -129,14 +115,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @return {?Element} The svg element which renders the icon.
      */
     applyIcon: function(element, iconName) {
+      // insert svg element into shadow root, if it exists
+      element = element.root || element;
       // Remove old svg element
       this.removeIcon(element);
       // install new svg element
       var svg = this._cloneIcon(iconName,
           this.rtlMirroring && this._targetIsRTL(element));
       if (svg) {
-        // insert svg element into shadow root, if it exists
-        var pde = Polymer.dom(element.root || element);
+        var pde = Polymer.dom(element);
         pde.insertBefore(svg, pde.childNodes[0]);
         return element._svgIcon = svg;
       }
@@ -151,8 +138,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      */
     removeIcon: function(element) {
       // Remove old svg element
+      element = element.root || element;
       if (element._svgIcon) {
-        Polymer.dom(element.root || element).removeChild(element._svgIcon);
+        Polymer.dom(element).removeChild(element._svgIcon);
         element._svgIcon = null;
       }
     },
@@ -164,21 +152,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      */
     _targetIsRTL: function(target) {
       if (this.__targetIsRTL == null) {
-        if (this.useGlobalRtlAttribute) {
-          var globalElement =
-              (document.body && document.body.hasAttribute('dir'))
-                  ? document.body
-                  : document.documentElement;
-
-          this.__targetIsRTL = globalElement.getAttribute('dir') === 'rtl';
-        } else {
-          if (target && target.nodeType !== Node.ELEMENT_NODE) {
-            target = target.host;
-          }
-
-          this.__targetIsRTL = target &&
-              window.getComputedStyle(target)['direction'] === 'rtl';
+        if (target && target.nodeType !== Node.ELEMENT_NODE) {
+          target = target.host;
         }
+
+        this.__targetIsRTL = target &&
+            window.getComputedStyle(target)['direction'] === 'rtl';
       }
 
       return this.__targetIsRTL;
@@ -190,10 +169,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      *
      */
     _nameChanged: function() {
-      this._meta.value = null;
-      this._meta.key = this.name;
-      this._meta.value = this;
-
+      new Polymer.IronMeta({type: 'iconset', key: this.name, value: this});
       this.async(function() {
         this.fire('iron-iconset-added', this, {node: window});
       });

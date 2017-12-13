@@ -6,15 +6,15 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
---><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.184">
-<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html?v=6.3.184">
-<link rel="import" href="../iron-behaviors/iron-control-state.html?v=6.3.184">
-<link rel="import" href="../iron-dropdown/iron-dropdown.html?v=6.3.184">
-<link rel="import" href="../neon-animation/animations/fade-in-animation.html?v=6.3.184">
-<link rel="import" href="../neon-animation/animations/fade-out-animation.html?v=6.3.184">
-<link rel="import" href="../paper-styles/default-theme.html?v=6.3.184">
-<link rel="import" href="../paper-styles/shadow.html?v=6.3.184">
-<link rel="import" href="paper-menu-button-animations.html?v=6.3.184">
+--><html><head><link rel="import" href="../polymer/polymer.html?v=6.3.185">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html?v=6.3.185">
+<link rel="import" href="../iron-behaviors/iron-control-state.html?v=6.3.185">
+<link rel="import" href="../iron-dropdown/iron-dropdown.html?v=6.3.185">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html?v=6.3.185">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html?v=6.3.185">
+<link rel="import" href="../paper-styles/default-theme.html?v=6.3.185">
+<link rel="import" href="../paper-styles/shadow.html?v=6.3.185">
+<link rel="import" href="paper-menu-button-animations.html?v=6.3.185">
 
 <!--
 Material design: [Dropdown buttons](https://www.google.com/design/spec/components/buttons.html#buttons-dropdown-buttons)
@@ -23,8 +23,8 @@ Material design: [Dropdown buttons](https://www.google.com/design/spec/component
 another element that represents "content", to create a dropdown menu that
 displays the "content" when the "trigger" is clicked.
 
-The child element assigned to the `dropdown-trigger` slot will be used as the
-"trigger" element. The child element assigned to the `dropdown-content` slot will be
+The child element with the class `dropdown-trigger` will be used as the
+"trigger" element. The child element with the class `dropdown-content` will be
 used as the "content" element.
 
 The `paper-menu-button` is sensitive to its content's `iron-select` events. If
@@ -34,12 +34,12 @@ will close automatically.
 Example:
 
     <paper-menu-button>
-      <paper-icon-button icon="menu" slot="dropdown-trigger"></paper-icon-button>
-      <paper-listbox slot="dropdown-content">
+      <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+      <paper-menu class="dropdown-content">
         <paper-item>Share</paper-item>
         <paper-item>Settings</paper-item>
         <paper-item>Help</paper-item>
-      </paper-listbox>
+      </paper-menu>
     </paper-menu-button>
 
 ### Styling
@@ -67,28 +67,28 @@ Custom property | Description | Default
         padding: 8px;
         outline: none;
 
-        @apply --paper-menu-button;
+        @apply(--paper-menu-button);
       }
 
       :host([disabled]) {
         cursor: auto;
         color: var(--disabled-text-color);
 
-        @apply --paper-menu-button-disabled;
+        @apply(--paper-menu-button-disabled);
       }
 
       iron-dropdown {
-        @apply --paper-menu-button-dropdown;
+        @apply(--paper-menu-button-dropdown);
       }
 
       .dropdown-content {
-        @apply --shadow-elevation-2dp;
+        @apply(--shadow-elevation-2dp);
 
         position: relative;
         border-radius: 2px;
-        background-color: var(--paper-menu-button-dropdown-background, var(--primary-background-color));
+        background-color: var(--paper-menu-button-dropdown-background, --primary-background-color);
 
-        @apply --paper-menu-button-content;
+        @apply(--paper-menu-button-content);
       }
 
       :host([vertical-align="top"]) .dropdown-content {
@@ -102,19 +102,19 @@ Custom property | Description | Default
         margin-bottom: -10px;
         margin-top: 20px;
       }
-
+      
       #trigger {
         cursor: pointer;
       }
     </style>
 
     <div id="trigger" on-tap="toggle">
-      <slot name="dropdown-trigger"></slot>
+      <content select=".dropdown-trigger"></content>
     </div>
 
     <iron-dropdown id="dropdown" opened="{{opened}}" horizontal-align="[[horizontalAlign]]" vertical-align="[[verticalAlign]]" dynamic-align="[[dynamicAlign]]" horizontal-offset="[[horizontalOffset]]" vertical-offset="[[verticalOffset]]" no-overlap="[[noOverlap]]" open-animation-config="[[openAnimationConfig]]" close-animation-config="[[closeAnimationConfig]]" no-animations="[[noAnimations]]" focus-target="[[_dropdownContent]]" allow-outside-scroll="[[allowOutsideScroll]]" restore-focus-on-close="[[restoreFocusOnClose]]" on-iron-overlay-canceled="__onIronOverlayCanceled">
-      <div slot="dropdown-content" class="dropdown-content">
-        <slot id="content" name="dropdown-content"></slot>
+      <div class="dropdown-content">
+        <content id="content" select=".dropdown-content"></content>
       </div>
     </iron-dropdown>
   </template>
@@ -348,13 +348,7 @@ Custom property | Description | Default
          * The content element that is contained by the menu button, if any.
          */
         get contentElement() {
-          // Polymer 2.x returns slot.assignedNodes which can contain text nodes.
-          var nodes = Polymer.dom(this.$.content).getDistributedNodes();
-          for (var i = 0, l = nodes.length; i < l; i++) {
-            if (nodes[i].nodeType === Node.ELEMENT_NODE) {
-              return nodes[i];
-            }
-          }
+          return Polymer.dom(this.$.content).getDistributedNodes()[0];
         },
 
         /**

@@ -10,6 +10,8 @@
     "iron-list": "rbjarnason/iron-list#v117",
     "iron-ajax": "rbjarnason/iron-ajax#master",
     "polymer": "polymer/polymer#1.x",
+    "paper-listbox": "PolymerElements/paper-listbox#1.x",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#1.x",
     "iron-elements": "PolymerElements/iron-elements",
     "paper-elements": "PolymerElements/paper-elements",
     "platinum-elements": "PolymerElements/platinum-elements",

@@ -16831,7 +16831,7 @@ in every element that needs to use them.
     ```
 
     ```html
-    <link rel="import" href="iron-flex-layout-classes.html?v=6.3.184">
+    <link rel="import" href="iron-flex-layout-classes.html?v=6.3.185">
     <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
     <style>
       .test { width: 100px; }
@@ -18242,7 +18242,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.184" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.185" rel="import">
 
     <paper-fab icon="add"></paper-fab>
     <paper-fab mini icon="favorite"></paper-fab>
@@ -18299,7 +18299,7 @@ Example setting size to 32px x 32px:
 The iron elements include several sets of icons.
 To use the default set of icons, import `iron-icons.html` and use the `icon` attribute to specify an icon:
 
-    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.184">
+    <link rel="import" href="/components/iron-icons/iron-icons.html?v=6.3.185">
 
     <iron-icon icon="menu"></iron-icon>
 
@@ -18307,7 +18307,7 @@ To use a different built-in set of icons, import the specific `iron-icons/<icons
 specify the icon as `<iconset>:<icon>`. For example, to use a communication icon, you would
 use:
 
-    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.184">
+    <link rel="import" href="/components/iron-icons/communication-icons.html?v=6.3.185">
 
     <iron-icon icon="communication:email"></iron-icon>
 
@@ -19508,7 +19508,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
       });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.184", fontName: 'FFClanWebBook' });
+      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html?v=6.3.185", fontName: 'FFClanWebBook' });
 
       this.push('themes', {
         name: 'I choose Malta',
@@ -19561,7 +19561,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var fontHtmlImport = this.fonts[number].htmlImport;
 
       if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.184";
+        fontHtmlImport = "/styles/fonts/default-font.html?v=6.3.185";
       }
 
       if (window.lastLoadedFont!=fontHtmlImport) {
@@ -22226,8 +22226,8 @@ is opened or closed. See the documentation in
 
 For example:
 
-    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.184">
-    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.184">
+    <link rel="import" href="components/neon-animation/animations/scale-up-animation.html?v=6.3.185">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html?v=6.3.185">
 
     <paper-dialog entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
@@ -24924,21 +24924,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       rtlMirroring: {
         type: Boolean,
         value: false
-      },
-
-      /**
-       * Set to true to measure RTL based on the dir attribute on the body or
-       * html elements (measured on document.body or document.documentElement as
-       * available).
-       */
-      useGlobalRtlAttribute: {
-        type: Boolean,
-        value: false
       }
-    },
-
-    created: function() {
-      this._meta = new Polymer.IronMeta({type: 'iconset', key: null, value: null});
     },
 
     attached: function() {
@@ -24975,14 +24961,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @return {?Element} The svg element which renders the icon.
      */
     applyIcon: function(element, iconName) {
+      // insert svg element into shadow root, if it exists
+      element = element.root || element;
       // Remove old svg element
       this.removeIcon(element);
       // install new svg element
       var svg = this._cloneIcon(iconName,
           this.rtlMirroring && this._targetIsRTL(element));
       if (svg) {
-        // insert svg element into shadow root, if it exists
-        var pde = Polymer.dom(element.root || element);
+        var pde = Polymer.dom(element);
         pde.insertBefore(svg, pde.childNodes[0]);
         return element._svgIcon = svg;
       }
@@ -24997,8 +24984,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      */
     removeIcon: function(element) {
       // Remove old svg element
+      element = element.root || element;
       if (element._svgIcon) {
-        Polymer.dom(element.root || element).removeChild(element._svgIcon);
+        Polymer.dom(element).removeChild(element._svgIcon);
         element._svgIcon = null;
       }
     },
@@ -25010,21 +24998,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      */
     _targetIsRTL: function(target) {
       if (this.__targetIsRTL == null) {
-        if (this.useGlobalRtlAttribute) {
-          var globalElement =
-              (document.body && document.body.hasAttribute('dir'))
-                  ? document.body
-                  : document.documentElement;
-
-          this.__targetIsRTL = globalElement.getAttribute('dir') === 'rtl';
-        } else {
-          if (target && target.nodeType !== Node.ELEMENT_NODE) {
-            target = target.host;
-          }
-
-          this.__targetIsRTL = target &&
-              window.getComputedStyle(target)['direction'] === 'rtl';
+        if (target && target.nodeType !== Node.ELEMENT_NODE) {
+          target = target.host;
         }
+
+        this.__targetIsRTL = target &&
+            window.getComputedStyle(target)['direction'] === 'rtl';
       }
 
       return this.__targetIsRTL;
@@ -25036,10 +25015,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      *
      */
     _nameChanged: function() {
-      this._meta.value = null;
-      this._meta.key = this.name;
-      this._meta.value = this;
-
+      new Polymer.IronMeta({type: 'iconset', key: this.name, value: this});
       this.async(function() {
         this.fire('iron-iconset-added', this, {node: window});
       });
@@ -26109,7 +26085,7 @@ how to use a custom icon set.
 
 Example:
 
-    <link href="path/to/iron-icons/iron-icons.html?v=6.3.184" rel="import">
+    <link href="path/to/iron-icons/iron-icons.html?v=6.3.185" rel="import">
 
     <paper-icon-button icon="favorite"></paper-icon-button>
     <paper-icon-button src="star.png"></paper-icon-button>
@@ -31418,8 +31394,8 @@ Material design: [Dropdown buttons](https://www.google.com/design/spec/component
 another element that represents "content", to create a dropdown menu that
 displays the "content" when the "trigger" is clicked.
 
-The child element assigned to the `dropdown-trigger` slot will be used as the
-"trigger" element. The child element assigned to the `dropdown-content` slot will be
+The child element with the class `dropdown-trigger` will be used as the
+"trigger" element. The child element with the class `dropdown-content` will be
 used as the "content" element.
 
 The `paper-menu-button` is sensitive to its content's `iron-select` events. If
@@ -31429,12 +31405,12 @@ will close automatically.
 Example:
 
     <paper-menu-button>
-      <paper-icon-button icon="menu" slot="dropdown-trigger"></paper-icon-button>
-      <paper-listbox slot="dropdown-content">
+      <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+      <paper-menu class="dropdown-content">
         <paper-item>Share</paper-item>
         <paper-item>Settings</paper-item>
         <paper-item>Help</paper-item>
-      </paper-listbox>
+      </paper-menu>
     </paper-menu-button>
 
 ### Styling
@@ -32272,28 +32248,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 8px;
         outline: none;
 
-        @apply --paper-menu-button;
+        @apply(--paper-menu-button);
       }
 
       :host([disabled]) {
         cursor: auto;
         color: var(--disabled-text-color);
 
-        @apply --paper-menu-button-disabled;
+        @apply(--paper-menu-button-disabled);
       }
 
       iron-dropdown {
-        @apply --paper-menu-button-dropdown;
+        @apply(--paper-menu-button-dropdown);
       }
 
       .dropdown-content {
-        @apply --shadow-elevation-2dp;
+        @apply(--shadow-elevation-2dp);
 
         position: relative;
         border-radius: 2px;
-        background-color: var(--paper-menu-button-dropdown-background, var(--primary-background-color));
+        background-color: var(--paper-menu-button-dropdown-background, --primary-background-color);
 
-        @apply --paper-menu-button-content;
+        @apply(--paper-menu-button-content);
       }
 
       :host([vertical-align="top"]) .dropdown-content {
@@ -32307,19 +32283,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-bottom: -10px;
         margin-top: 20px;
       }
-
+      
       #trigger {
         cursor: pointer;
       }
     </style>
 
     <div id="trigger" on-tap="toggle">
-      <slot name="dropdown-trigger"></slot>
+      <content select=".dropdown-trigger"></content>
     </div>
 
     <iron-dropdown id="dropdown" opened="{{opened}}" horizontal-align="[[horizontalAlign]]" vertical-align="[[verticalAlign]]" dynamic-align="[[dynamicAlign]]" horizontal-offset="[[horizontalOffset]]" vertical-offset="[[verticalOffset]]" no-overlap="[[noOverlap]]" open-animation-config="[[openAnimationConfig]]" close-animation-config="[[closeAnimationConfig]]" no-animations="[[noAnimations]]" focus-target="[[_dropdownContent]]" allow-outside-scroll="[[allowOutsideScroll]]" restore-focus-on-close="[[restoreFocusOnClose]]" on-iron-overlay-canceled="__onIronOverlayCanceled">
-      <div slot="dropdown-content" class="dropdown-content">
-        <slot id="content" name="dropdown-content"></slot>
+      <div class="dropdown-content">
+        <content id="content" select=".dropdown-content"></content>
       </div>
     </iron-dropdown>
   </template>
@@ -32553,13 +32529,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * The content element that is contained by the menu button, if any.
          */
         get contentElement() {
-          // Polymer 2.x returns slot.assignedNodes which can contain text nodes.
-          var nodes = Polymer.dom(this.$.content).getDistributedNodes();
-          for (var i = 0, l = nodes.length; i < l; i++) {
-            if (nodes[i].nodeType === Node.ELEMENT_NODE) {
-              return nodes[i];
-            }
-          }
+          return Polymer.dom(this.$.content).getDistributedNodes()[0];
         },
 
         /**
@@ -47536,15 +47506,15 @@ of a listbox item will also focus it.
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
     <div class="layout vertical">
-
-    <paper-dropdown-menu label="Select language" selected="{{selectedLocale}}" attr-for-selected="name">
-      <paper-listbox class="dropdown-content" selected="{{selectedLocale}}" attr-for-selected="name">
-        <template is="dom-repeat" items="[[languages]]">
-          <paper-item name="[[item.language]]">[[item.name]]</paper-item>
-        </template>
-      </paper-listbox>
-    </paper-dropdown-menu>
-  </div></template>
+      <paper-dropdown-menu label="Select language" selected="{{selectedLocale}}" attr-for-selected="name">
+        <paper-listbox class="dropdown-content" selected="{{selectedLocale}}" attr-for-selected="name">
+          <template is="dom-repeat" items="[[languages]]">
+            <paper-item name="[[item.language]]">[[item.name]]</paper-item>
+          </template>
+        </paper-listbox>
+      </paper-dropdown-menu>
+    </div>
+  </template>
 
   <script>
     Polymer({
@@ -47565,6 +47535,7 @@ of a listbox item will also focus it.
             no: 'Norwegian',
             nl: 'Dutch',
             hu: 'Hungarian',
+            zh_TW: 'Chinese (TW)',
             sr: 'Serbian',
             sr_latin: 'Serbian (latin)',
             hr: 'Croatian',
@@ -54397,14 +54368,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * `app-scroll-effects.html`:
    *
    * ```html
-   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.184">
+   * <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.185">
    * ```
    *
    * The scroll effects can also be used by individually importing
    * `app-layout/app-scroll-effects/effects/[effectName].html`. For example:
    *
    * ```html
-   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.184">
+   *  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/effects/waterfall.html?v=6.3.185">
    * ```
    *
    * ### Consuming effects
@@ -55170,7 +55141,7 @@ recommends effects that can be installed via the `effects` property. e.g.
 To use the scroll effects, you must explicitly import them in addition to `app-header`:
 
 ```html
-<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.184">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html?v=6.3.185">
 ```
 
 #### List of effects
@@ -60170,8 +60141,8 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
           <paper-item on-tap="_goBack">[[homeLink.name]]</paper-item>
         </div>
       </div>
+      <yp-language-selector class="languageSelector"></yp-language-selector>
       <div class="languageSelector layout vertical self-start" hidden$="[[user]]">
-        <yp-language-selector class="languageSelector"></yp-language-selector>
       </div>
       <div class="layout vertical" hidden$="[[!user]]">
         <div hidden="">
@@ -60881,18 +60852,18 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.184"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html?v=6.3.185"), null, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.184"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html?v=6.3.185"), null, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.184"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html?v=6.3.185"), null, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -62372,9 +62343,9 @@ BEWARE: THE re-captcha ELEMENT ONLY WORKS IN THE DOM OR LIGHT DOM OF ANOTHER COM
         if (page && page!='domain') {
           var resolvedPageUrl;
           if (page=="view-404") {
-            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.184");
+            resolvedPageUrl = this.resolveUrl("yp-view-404.html?v=6.3.185");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.184");
+            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=6.3.185");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
