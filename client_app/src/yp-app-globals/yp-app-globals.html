@@ -114,7 +114,18 @@
           disableFacebookLoginForGroup: {
             type: Boolean,
             value: false
-          }
+          },
+
+          originalQueryParameters: Object
+        },
+
+        parseQueryString: function () {
+          var query = (window.location.search || '?').substr(1),
+            map   = {};
+          query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
+            map[key] = value;
+          });
+          this.originalQueryParameters = map;
         },
 
         setAnonymousUser: function (user) {
@@ -129,6 +140,9 @@
             if (!window.appUser.user && this.currentAnonymousUser) {
               console.debug("Setting anon user from cache");
               window.appUser.setLoggedInUser(this.currentAnonymousUser);
+            } else if (window.appUser &&!window.appUser.user && group.configuration.allowAnonymousAutoLogin &&
+                       this.originalQueryParameters && this.originalQueryParameters.autoLogin) {
+              window.appUser.autoAnonymousLogin();
             }
           } else {
             if (window.appUser.user && window.appUser.user.profile_data && window.appUser.user.profile_data.isAnonymousUser) {
@@ -325,13 +339,15 @@
           window.appStartTime = new Date();
           window.appGlobals = this;
 
+          this.fire('app-ready');
+          this.$.boot.generateRequest();
+          this.requestInProgress = true;
+
           window.googleMapsApiKey = null; //'AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0';
           window.instagramAccessToken = '3066250812.cf0499d.4d1d4db0bb8b43b59c057346511161c8';
           window.instagramClientID = 'd2f248ec764d4b208ab668b7561a89cc';
 
-          this.requestInProgress = true;
-          this.fire('app-ready');
-          this.$.boot.generateRequest();
+          this.parseQueryString();
         },
 
         setSeenWelcome: function () {

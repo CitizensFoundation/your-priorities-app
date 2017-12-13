@@ -179,6 +179,12 @@
           dialog.open(null, email);
         },
 
+        autoAnonymousLogin: function () {
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
+          dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain);
+          dialog.anonymousLogin();
+        },
+
         _closeUserLogin: function () {
           var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
           dialog.close();
