@@ -34,7 +34,7 @@
 
     <paper-spinner id="spinner" hidden$="[[!useSpinner]]"></paper-spinner>
 
-    <iron-ajax id="ajax" url="[[url]]" params="[[params]]" auto="[[auto]]" method="[[method]]" body="[[body]]" handle-as="json" content-type="application/json" on-error="_error" on-response="_response" loading="{{loading}}">
+    <iron-ajax id="ajax" url="[[url]]" params="[[params]]" auto="[[auto]]" method="[[method]]" body="[[body]]" bubbles="" handle-as="json" content-type="application/json" on-error="_error" on-response="_response" loading="{{loading}}">
     </iron-ajax>
 
   </template>
@@ -116,7 +116,6 @@
 
       _response: function (event) {
         this.$.spinner.active = false;
-        this.fire('response', event.detail);
       },
 
       ready: function() {

@@ -19,73 +19,71 @@ Example:
   <link rel="import" href="../iron-icons/iron-icons.html?v=6.3.183">
 
 </head><body><dom-module id="file-upload">
-
-  <style type="text/css">
-    .enabled {
-      border: 1px dashed #555;
-    }
-
-    .hover {
-      opacity: .7;
-      border: 1px dashed #111;
-    }
-
-    #UploadBorder{
-      vertical-align: middle;
-      color: #555;
-      padding: 8px;
-      padding-right: 16px;
-      max-height: 200px;
-      overflow-y: auto;
-      display: inline-block;
-    }
-
-    #dropArea {
-      text-align: center;
-    }
-
-    paper-button {
-      margin-bottom: 8px;
-    }
-
-    .file {
-      padding: 10px 0px;
-    }
-
-    .commands {
-      float: right;
-    }
-
-    .commands iron-icon:not([icon="check-circle"]) {
-      cursor: pointer;
-      opacity: .9;
-    }
-
-    .commands iron-icon:hover {
-      opacity: 1;
-    }
-
-    [hidden] {
-      display: none;
-    }
-
-    .error {
-      color: #f40303;
-      font-size: 11px;
-      margin: 2px 0px -3px;
-    }
-
-    paper-progress {
-      --paper-progress-active-color: #03a9f4;
-    }
-
-    paper-progress[error] {
-      --paper-progress-active-color: #f40303;
-    }
-
-  </style>
-
   <template>
+     <style type="text/css">
+        .enabled {
+          border: 1px dashed #555;
+        }
+
+        .hover {
+          opacity: .7;
+          border: 1px dashed #111;
+        }
+
+        #UploadBorder{
+          vertical-align: middle;
+          color: #555;
+          padding: 8px;
+          padding-right: 16px;
+          max-height: 200px;
+          overflow-y: auto;
+          display: inline-block;
+        }
+
+        #dropArea {
+          text-align: center;
+        }
+
+        paper-button {
+          margin-bottom: 8px;
+        }
+
+        .file {
+          padding: 10px 0px;
+        }
+
+        .commands {
+          float: right;
+        }
+
+        .commands iron-icon:not([icon="check-circle"]) {
+          cursor: pointer;
+          opacity: .9;
+        }
+
+        .commands iron-icon:hover {
+          opacity: 1;
+        }
+
+        [hidden] {
+          display: none;
+        }
+
+        .error {
+          color: #f40303;
+          font-size: 11px;
+          margin: 2px 0px -3px;
+        }
+
+        paper-progress {
+          --paper-progress-active-color: #03a9f4;
+        }
+
+        paper-progress[error] {
+          --paper-progress-active-color: #f40303;
+        }
+      </style>
+
     <div>
       <paper-button id="button" icon="file-upload" class="blue" on-click="_fileClick">
         <content></content>
