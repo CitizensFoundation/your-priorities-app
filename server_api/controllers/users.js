@@ -139,6 +139,7 @@ router.post('/register', function (req, res) {
 // Register anonymous
 router.post('/register_anonymously', function (req, res) {
   var groupId = req.body.groupId;
+
   models.Group.find({
     where: {
       id: groupId
@@ -166,6 +167,7 @@ router.post('/register_anonymously', function (req, res) {
 
           user.set('profile_data', {});
           user.set('profile_data.isAnonymousUser', true);
+          user.set('profile_data.trackingParameters', req.body.trackingParameters);
           user.save().then(function () {
             log.info('User Created Anonymous', { user: toJson(user), context: 'register_anonymous' });
             req.logIn(user, function (error, detail) {

@@ -1,4 +1,5 @@
 {
+  "allowAnonymousAutoLogin": "Allow anonymous auto login",
   "later": "Not now",
   "disableDebate": "Disable debate",
   "welcomeHTML": "welcome HTML (use with care)",
