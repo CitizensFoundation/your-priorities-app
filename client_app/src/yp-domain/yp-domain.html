@@ -99,15 +99,9 @@
       <paper-tabs id="paper_tabs" slot="tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
         <paper-tab name="communities" class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
         <paper-tab name="news" class="tab">[[t('news')]]</paper-tab>
-        <paper-tab name="other_social_media" class="tab" hidden>
-          <div class="layout vertical center-center">
-            <div>[[t('other')]]</div>
-            <div>[[t('socialMedia')]]</div>
-          </div>
-        </paper-tab>
       </paper-tabs>
 
-      <iron-pages class="tabPages" slot="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+      <iron-pages class="tabPages" fullbleed slot="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section name="communities" class="layout vertical">
           <div class="card-container layout center-center wrap">
             <yp-community-grid

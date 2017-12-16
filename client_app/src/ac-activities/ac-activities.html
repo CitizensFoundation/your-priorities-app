@@ -25,6 +25,10 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
 
+      :host {
+        height: 100%;
+      }
+
       iron-list {
       }
 
@@ -150,6 +154,10 @@
 
       .topLevelActivitiesContainer[wide] {
         @apply(--layout-center-center);
+      }
+
+      .topLevelActivitiesContainer {
+        height: 100%;
       }
     </style>
     <div class="layout horizontal topLevelActivitiesContainer" wide$="[[wide]]">

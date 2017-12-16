@@ -284,9 +284,8 @@
           </app-toolbar>
         </app-header>
 
-        <iron-pages selected="{{page}}" attr-for-selected="name" fullbleed>
-          <yp-domain id="domainPage" name="domasin" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
-          <div name="domain" style="background-color: #0F0;width:100%;height:100%"><H1>hhh</H1></div>
+        <iron-pages selected="{{page}}" style="height:100%;" attr-for-selected="name" fullbleed>
+          <yp-domain id="domainPage" name="domain" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
           <yp-community id="communityPage" name="community"id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
           <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
           <yp-post id="postPage" name="post" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
