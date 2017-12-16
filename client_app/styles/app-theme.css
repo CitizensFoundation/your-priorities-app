@@ -1,28 +1,8 @@
-<!--
-@license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
-<style is="custom-style">
-
-  /*
-   Polymer includes a shim for CSS Custom Properties that we can use for application theming.
-   Below, you'll find the default palette for the Polymer Starter Kit layout. Feel free to play
-   with changing the colors used or generate your own palette of colours at MaterialPalette.com.
-
-   See https://www.polymer-project.org/1.0/docs/devguide/styling.html#xscope-styling-details
-   for further information on custom CSS properties.
-   */
 
   /* Application theme */
 
   /* Theme Sigvalda Frænda */
-  :root {
+  :host  {
     --yrpri-reykjavik-blue-50: var(--paper-blue-grey-50);
     --yrpri-reykjavik-blue-100: #3C6286;
     --yrpri-reykjavik-blue-200: #3C6286;
@@ -59,6 +39,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     --primary-color-700: var(--yrpri-reykjavik-blue-400);
     --primary-color-800: var(--yrpri-reykjavik-blue-500);
     --primary-color-900: var(--yrpri-reykjavik-blue-600);
+
     --accent-color: var(--paper-orange-a700);
     --accent-color-100: var(--paper-orange-a100);
     --accent-color-200: var(--paper-orange-a200);
@@ -75,7 +56,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   }
 
 
-  :root {
+  :host  {
 
     --paper-dropdown-menu: {
       background-color: #FFF;
@@ -104,8 +85,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       border-bottom: 4px solid !important;
       border-bottom-color: var(--accent-color, #000) !important;
     };
-
-
 
     /* paper-drawer-panel */
     --drawer-menu-color: #ffffff;
@@ -355,4 +334,3 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   @media all and (min-width: 1281px) and (max-width: 1600px) { }
   /* desktop-xlarge */
   @media all and (min-width: 1601px) and (max-width: 1920px) { }
-</style>

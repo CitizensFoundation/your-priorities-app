@@ -38,6 +38,75 @@
 
     <style include="iron-flex iron-flex-alignment">
       :host {
+        --yrpri-reykjavik-blue-50: var(--paper-blue-grey-50);
+        --yrpri-reykjavik-blue-100: #3C6286;
+        --yrpri-reykjavik-blue-200: #3C6286;
+        --yrpri-reykjavik-blue-300: #234A6F;
+        --yrpri-reykjavik-blue-400: #234A6F;
+        --yrpri-reykjavik-blue-500: #103458;
+        --yrpri-reykjavik-blue-600: #3C6286;
+        --yrpri-reykjavik-blue-700: #04213E;
+        --yrpri-reykjavik-blue-800: #04213E;
+        --yrpri-reykjavik-blue-900: #011325;
+
+        --yrpri-reykjavik-accent-a100: #CE7B53;
+        --yrpri-reykjavik-accent-a200: #AB562D;
+        --yrpri-reykjavik-accent-a300: #883710;
+        --yrpri-reykjavik-accent-a400: #601F00;
+
+        --main-stats-color-on-white: #878787;
+
+        --paper-dialog-button-color: var(--accent-color);
+        --paper-tabs-selection-bar-color: var(--accent-color);
+        --paper-input-container-focus-color: var(--accent-color);
+
+        --paper-dropdown-menu: {
+          background-color: #FFF;
+        };
+
+        --icon-general-color: '#fff';
+        --master-point-up-color: rgba(0,127,0,0.62);
+        --master-point-down-color: rgba(127,0,0,0.62);
+      }
+
+      :host  {
+        --paper-dropdown-menu: {
+          background-color: #FFF;
+        };
+
+        --light-primary-color: #FFCC80;
+        --text-primary-color: #fff;
+        --dark-primary-color: #F57C00;
+        --primary-text-color: #212121;
+        --secondary-text-color: #727272;
+        --disabled-text-color: #bdbdbd;
+        --divider-color: #FF5722;
+
+        --paper-tabs: {
+          font-size: 18px;
+          text-transform: uppercase;
+        };
+
+        --paper-fab-mini: {
+          background: var(--primary-background-color);
+          color: #555 !important;
+        };
+        /* Components */
+
+        --paper-tabs-selection-bar: {
+          border-bottom: 4px solid !important;
+          border-bottom-color: var(--accent-color, #000) !important;
+        };
+
+        /* paper-drawer-panel */
+        --drawer-menu-color: #ffffff;
+        --drawer-border-color: 1px solid #ccc;
+        /* paper-menu */
+        --paper-menu-background-color: var(--primary-background-color);
+        --menu-link-color: #111111;
+      }
+
+      :host {
         background-color: var(--primary-background-color);
       }
 
@@ -164,7 +233,7 @@
 
     <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
 
-    <app-drawer-layout drawer-width="360px" responsive-width="16000px">
+    <app-drawer-layout drawer-width="360px" responsive-width="16000px" fullbleed>
 
       <app-drawer id="drawer" slot="drawer" align="end" position="right" opened="{{userDrawerOpened}}" swipe-open>
         <div style="height: 100%; overflow: auto;">
@@ -178,7 +247,7 @@
         </div>
       </app-drawer>
 
-      <app-header-layout id="mainArea">
+      <app-header-layout id="mainArea" fullbleed>
 
         <app-header id="appHeader" effects="waterfall" reveals class="main-header">
           <app-toolbar>
@@ -215,8 +284,9 @@
           </app-toolbar>
         </app-header>
 
-        <iron-pages selected="{{page}}" attr-for-selected="name">
-          <yp-domain id="domainPage" name="domain" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
+        <iron-pages selected="{{page}}" attr-for-selected="name" fullbleed>
+          <yp-domain id="domainPage" name="domasin" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
+          <div name="domain" style="background-color: #0F0;width:100%;height:100%"><H1>hhh</H1></div>
           <yp-community id="communityPage" name="community"id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
           <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
           <yp-post id="postPage" name="post" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
