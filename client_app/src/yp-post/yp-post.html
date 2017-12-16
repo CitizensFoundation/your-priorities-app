@@ -121,24 +121,27 @@
       }
 
       .createFab {
-        background-color: var(--accent-color);
-        color: var(--icon-general-color, #FFF);
         position: fixed;
         bottom: 24px;
         right: 28px;
+        background-color: var(--accent-color);
+        color: #FFF;
+
+        --paper-fab-iron-icon: {
+          color: var(--icon-general-color, #FFF);
+          height: 40px;
+          width: 40px;
+        }
       }
 
       .createFab[wide-layout] {
         width: 72px;
         height: 72px;
-      }
-
-      .createFabContainer[wide-layout] .createFab {
-      }
-
-      paper-fab[wide-layout]::shadow #icon {
-        width: 40px;
-        height: 40px;
+        --paper-fab-iron-icon: {
+          color: var(--icon-general-color, #FFF);
+          width: 72px;
+          height: 72px;
+        }
       }
 
       @media (max-width: 360px) {
