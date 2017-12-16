@@ -127,7 +127,7 @@
 
       _response: function (event) {
         this.$.spinner.active = false;
-        console.error("Got yp-ajax response");
+        console.debug("Got yp-ajax response");
       },
 
       ready: function() {
@@ -166,7 +166,7 @@
 
       generateRequest: function () {
         this.$.spinner.active = true;
-        console.error("yp-ajax request");
+        console.debug("Sent yp-ajax request");
         this.$.ajax.generateRequest();
       },
 

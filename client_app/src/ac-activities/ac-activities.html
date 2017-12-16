@@ -28,7 +28,6 @@
       :host {
         height: 100%;
       }
-
       iron-list {
       }
 
@@ -154,10 +153,6 @@
 
       .topLevelActivitiesContainer[wide] {
         @apply(--layout-center-center);
-      }
-
-      .topLevelActivitiesContainer {
-        height: 100%;
       }
     </style>
     <div class="layout horizontal topLevelActivitiesContainer" wide$="[[wide]]">
@@ -311,6 +306,21 @@
         ironListPaddingTop: {
           type: Number,
           computed: '_ironListPaddingTop(wide)'
+        },
+
+        wideListOffset: {
+          type: String,
+          computed: '_wideListOffset(groupId)'
+        }
+      },
+
+      _wideListOffset: function (groupId) {
+        if (groupId) {
+          console.error("800px");
+          return "800px";
+        } else {
+          console.error("400px");
+          return "415px"
         }
       },
 
