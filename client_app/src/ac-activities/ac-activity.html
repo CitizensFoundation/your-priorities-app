@@ -113,7 +113,7 @@
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <paper-material is-old-safari-or-ie$="[[isOldSafariOrIe]]" logged-in-user$="[[loggedInUser]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
+    <paper-material is-old-safari-or-ie$="[[isOldSafariOrIe]]" logged-in-user$="[[hasLoggedInUser]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
       <paper-icon-button title$="[[t('deleteActivity')]]" hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
       <div class="mainActivityContent">
         <div class="layout horizontal">
@@ -193,9 +193,16 @@
           computed: '_isOldSafariOrIe(wide)'
         },
 
-        loggedInUser: {
-          type: Object,
-          value: null
+        hasLoggedInUser: {
+          type: Boolean
+        }
+      },
+
+      _hasLoggedInUser: function (user) {
+        if (user) {
+          return true;
+        } else {
+          return false;
         }
       },
 

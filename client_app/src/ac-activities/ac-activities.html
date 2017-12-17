@@ -158,7 +158,7 @@
     <div class="layout horizontal topLevelActivitiesContainer" wide$="[[wide]]">
       <div class="layout vertical self-start">
         <template is="dom-if" if="[[loggedInUser]]">
-          <paper-material logged-in-user$="[[loggedInUser]]" elevation="1" class="layout horizontal addNewsBox">
+          <paper-material logged-in-user$="[[hasLoggedInUser]]" elevation="1" class="layout horizontal addNewsBox">
             <yp-point-news-story-edit domain-id="[[domainId]]"
                                       community-id="[[communityId]]"
                                       group-id="[[groupId]]"
@@ -172,7 +172,7 @@
                    scroll-offset$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
             <div class="layout vertical center-center">
-              <ac-activity logged-in-user$="[[loggedInUser]]" class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]"
+              <ac-activity has-logged-in-user$="[[hasLoggedInUser]]" class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]"
                            domain-id="[[domainId]]" tabindex$="[[tabIndex]]" on-ak-delete-activity="_deleteActivity"></ac-activity>
             </div>
           </template>
@@ -311,6 +311,19 @@
         wideListOffset: {
           type: String,
           computed: '_wideListOffset(groupId)'
+        },
+
+        hasLoggedInUser: {
+          type: Boolean,
+          computed: '_hasLoggedInUser(loggedInUser)'
+        }
+      },
+
+      _hasLoggedInUser: function (user) {
+        if (user) {
+          return true;
+        } else {
+          return false;
         }
       },
 
