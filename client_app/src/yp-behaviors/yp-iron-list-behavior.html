@@ -38,6 +38,7 @@
     },
 
     resetSize: function () {
+      var skipHeight = true;
       var list = this.$$("#ironList");
       var windowHeight = window.innerHeight;
       var windowWidth = window.innerWidth;
@@ -51,7 +52,11 @@
           height = windowHeight - 300;
           windowWidth = windowWidth - 16;
         }
-        list.style.height = height + 'px';
+
+        if (!skipHeight) {
+          list.style.height = height + 'px';
+        }
+
         if (!this.skipIronListWidth) {
           list.style.width = windowWidth + 'px';
         } else {
@@ -64,7 +69,10 @@
           })
         });
       } else {
-        console.error("Can't find iron list");
+        console.error("Can't find iron list, waiting");
+        this.async(function () {
+          this.resetSize();
+        },1500);
       }
     }
   };
