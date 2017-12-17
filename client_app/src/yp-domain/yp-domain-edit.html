@@ -8,13 +8,13 @@
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html" >
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html">
-
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
+
+<link rel="import" href="../yp-file-upload/yp-file-upload.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
@@ -93,19 +93,19 @@
             </div>
 
             <div class="layout vertical additionalSettings">
-              <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
+              <yp-file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
                 <iron-icon class="icon" icon="photo-camera"></iron-icon>
                 <span>[[t('image.logo.upload')]]</span><br>
                 <span class="imageSizeInfo">864 x 486</span>
-              </file-upload>
+              </yp-file-upload>
             </div>
 
             <div class="layout vertical additionalSettings">
-              <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-header" method="POST" on-success="_headerImageUploaded">
+              <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-header" method="POST" on-success="_headerImageUploaded">
                 <iron-icon class="icon" icon="photo-camera"></iron-icon>
                 <span>[[t('image.header.upload')]]</span><br>
                 <span class="imageSizeInfo">1920 x 600</span>
-              </file-upload>
+              </yp-file-upload>
             </div>
 
             <paper-input id="customUserRegistrationText"

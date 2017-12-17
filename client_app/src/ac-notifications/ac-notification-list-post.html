@@ -76,13 +76,17 @@
           <iron-icon icon="lightbulb-outline" new-post$="[[newPostMode]]" class="bulb-icon"></iron-icon>
         </div>
         <div class="layout vertical">
-          <div class="layout horizontal" hidden$="[[!endorsementsText]]">
-            <iron-icon icon="favorite" class="smallIcons endorsers"></iron-icon>
-            <div class="endorsers">[[endorsementsText]]</div>
+          <div hidden$="[[!endorsementsText]]">
+            <div class="layout horizontal">
+              <iron-icon icon="favorite" class="smallIcons endorsers"></iron-icon>
+              <div class="endorsers">[[endorsementsText]]</div>
+            </div>
           </div>
-          <div class="layout horizontal" hidden$="[[!oppositionsText]]">
-            <iron-icon icon="do-not-disturb" class="smallIcons opposers"></iron-icon>
-            <div class="opposers">[[oppositionsText]]</div>
+          <div hidden$="[[!oppositionsText]]">
+            <div class="layout horizontal">
+              <iron-icon icon="do-not-disturb" class="smallIcons opposers"></iron-icon>
+              <div class="opposers">[[oppositionsText]]</div>
+            </div>
           </div>
           <div class="postName">[[postName]]</div>
           <div hidden$="[[!newPostMode]]" class="userName">[[userName]]</div>

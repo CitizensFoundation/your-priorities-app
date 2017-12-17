@@ -81,8 +81,8 @@
         <div class="layout vertical center-center self-start leftContainer">
           <yp-user-image small user="[[user]]"></yp-user-image>
           <iron-icon icon="chat-bubble-outline" class="chatIcon"></iron-icon>
-          <iron-icon icon="thumb-up" class="chatIcon thumbsIcon" hidden$="[[!pointValueUp]]"></iron-icon>
-          <iron-icon icon="thumb-down" class="chatIcon thumbsIcon" hidden$="[[pointValueUp]]"></iron-icon>
+          <div hidden$="[[!pointValueUp]]"><iron-icon icon="thumb-up" class="chatIcon thumbsIcon"></iron-icon></div>
+          <div hidden$="[[pointValueUp]]"><iron-icon icon="thumb-down" class="chatIcon thumbsIcon"></iron-icon></div>
         </div>
         <div class="layout vertical">
           <div point-value-up$="[[pointValueUp]]" class="layout horizontal pointContent">

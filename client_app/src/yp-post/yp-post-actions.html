@@ -192,7 +192,7 @@
       </div>
 
       <div class="action-debate" hidden$="[[_hideDebate(small,forceSmall)]]">
-        <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="communication:chat-bubble-outline" class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
+        <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline" class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
         <div class="action-text debate-text">[[formattedPointCount]]</div>
       </div>
 
@@ -415,11 +415,11 @@
         } else if (endorsementButtons=='hearts' && upDown=='up') {
           return 'favorite';
         } else if (endorsementButtons=='hearts' && upDown=='down') {
-          return 'notification:do-not-disturb';
+          return 'do-not-disturb';
         } else if (endorsementButtons=='hats' && upDown=='up') {
-          return 'hardware:keyboard-arrow-up';
+          return 'keyboard-arrow-up';
         } else if (endorsementButtons=='hats' && upDown=='down') {
-          return 'hardware:keyboard-arrow-down';
+          return 'keyboard-arrow-down';
         } else if (endorsementButtons=='arrows' && upDown=='up') {
           return 'arrow-upward';
         } else if (endorsementButtons=='arrows' && upDown=='down') {

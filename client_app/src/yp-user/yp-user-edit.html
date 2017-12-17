@@ -12,7 +12,7 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html">
+<link rel="import" href="../yp-file-upload/yp-file-upload.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
@@ -72,17 +72,17 @@
               </paper-input>
 
               <div class="layout vertical additionalSettings">
-                <file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
+                <yp-file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
                   <iron-icon class="icon" icon="photo-camera"></iron-icon>
                   <span>[[t('image.profile.upload')]]</span>
-                </file-upload>
+                </yp-file-upload>
               </div>
 
               <div class="layout vertical additionalSettings" hidden>
-                <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
+                <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
                   <iron-icon class="icon" icon="photo-camera"></iron-icon>
                   <span>[[t('image.header.upload')]]</span>
-                </file-upload>
+                </yp-file-upload>
               </div>
 
               <yp-language-selector name="defaultLocale" selected-locale="{{user.default_locale}}"></yp-language-selector>

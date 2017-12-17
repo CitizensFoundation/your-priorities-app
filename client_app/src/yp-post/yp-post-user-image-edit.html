@@ -6,7 +6,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html">
+<link rel="import" href="../yp-file-upload/yp-file-upload.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
@@ -23,10 +23,10 @@
       <h2 slot="h2">[[editHeaderText]]</h2>
 
       <div class="layout vertical center-center">
-        <file-upload id="imageFileUpload" raised="true" multi="false" method="POST" on-success="_imageUploaded">
+        <yp-file-upload id="imageFileUpload" raised="true" multi="false" method="POST" on-success="_imageUploaded">
           <iron-icon class="icon" icon="photo-camera"></iron-icon>
           <span>[[t('image.upload')]]</span>
-        </file-upload>
+        </yp-file-upload>
       </div>
 
       <paper-input id="photographerName"
