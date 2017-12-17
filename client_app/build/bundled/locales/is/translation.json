@@ -1,4 +1,5 @@
 {
+  "allowAnonymousAutoLogin": "Allow anonymous auto login",
   "later": "Ekki núna",
   "disableDebate": "Loka rökræðum",
   "welcomeHTML": "welcome HTML (use with care)",
