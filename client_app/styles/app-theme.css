@@ -1,7 +1,6 @@
 
   /* Application theme */
 
-  /* Theme Sigvalda Frænda */
   :host  {
     --yrpri-reykjavik-blue-50: var(--paper-blue-grey-50);
     --yrpri-reykjavik-blue-100: #3C6286;
@@ -50,11 +49,6 @@
     --master-point-up-color: rgba(0,127,0,0.62);
     --master-point-down-color: rgba(127,0,0,0.62);
     }
-
-  body {
-    background-color:  var(--primary-background-color);
-  }
-
 
   :host  {
 

@@ -25,6 +25,8 @@
 <link rel="import" href="../yp-app-globals/yp-app-globals.html">
 <link rel="import" href="../yp-app-globals/yp-app-user.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-theme/yp-theme-behavior.html">
+
 <link rel="import" href="yp-app-user-drawer.html">
 <link rel="import" href="yp-app-nav-drawer.html">
 <link rel="import" href="../yp-dialog-container/yp-dialog-container.html">
@@ -38,22 +40,6 @@
 
     <style include="iron-flex iron-flex-alignment">
       :host {
-        --yrpri-reykjavik-blue-50: var(--paper-blue-grey-50);
-        --yrpri-reykjavik-blue-100: #3C6286;
-        --yrpri-reykjavik-blue-200: #3C6286;
-        --yrpri-reykjavik-blue-300: #234A6F;
-        --yrpri-reykjavik-blue-400: #234A6F;
-        --yrpri-reykjavik-blue-500: #103458;
-        --yrpri-reykjavik-blue-600: #3C6286;
-        --yrpri-reykjavik-blue-700: #04213E;
-        --yrpri-reykjavik-blue-800: #04213E;
-        --yrpri-reykjavik-blue-900: #011325;
-
-        --yrpri-reykjavik-accent-a100: #CE7B53;
-        --yrpri-reykjavik-accent-a200: #AB562D;
-        --yrpri-reykjavik-accent-a300: #883710;
-        --yrpri-reykjavik-accent-a400: #601F00;
-
         --main-stats-color-on-white: #878787;
 
         --paper-dialog-button-color: var(--accent-color);
@@ -295,7 +281,6 @@
         </iron-pages>
 
       </app-header-layout>
-
     </app-drawer-layout>
 
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
@@ -318,7 +303,8 @@
       is: 'yp-app',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.ypThemeBehavior
       ],
 
       properties: {
@@ -441,6 +427,11 @@
           value: function() {
             return {};
           }
+        },
+
+        haveLoadedThemes: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -452,7 +443,15 @@
         'yp-set-pages': '_setPages',
         'yp-set-home-link': '_setHomeLink',
         'yp-redirect-to': '_redirectTo',
-        'yp-set-number-of-un-viewed-notifications': '_setNumberOfUnViewedNotifications'
+        'yp-set-number-of-un-viewed-notifications': '_setNumberOfUnViewedNotifications',
+        'yp-have-loaded-themes': '_haveLoadedThemes'
+      },
+
+      _haveLoadedThemes: function () {
+        if (!this.haveLoadedThemes) {
+          this.haveLoadedThemes = true;
+          this.setTheme(0);
+        }
       },
 
       _translatedPages: function (pages, language) {
