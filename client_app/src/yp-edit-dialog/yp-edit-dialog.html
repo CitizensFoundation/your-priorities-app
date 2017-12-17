@@ -209,8 +209,8 @@
               </template>
             </paper-toolbar>
             <div id="scroller">
-              <iron-form id="form">
-                <form id="form" name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
+              <iron-form id="form" content-type="application/json" method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
+                <form id="form" name="ypForm" method="[[method]]" action="[[action]]">
                   <slot></slot>
                 </form>
               </iron-form>
@@ -226,10 +226,10 @@
               <slot name="h2"></slot>
             </div>
           </div>
-          <paper-dialog-scrollable small-height$="[[smallHeight]]" medium-height$="[[mediumHeight]]" large-height$="[[largeHeight]]">
-            <iron-form id="form">
-              <form name="ypForm" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
-                <slot id="mainEditContent"></slot>
+          <paper-dialog-scrollable id="scrollable" small-height$="[[smallHeight]]" medium-height$="[[mediumHeight]]" large-height$="[[largeHeight]]">
+            <iron-form id="form" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
+              <form name="ypForm" method="[[method]]" action="[[action]]">
+                <slot></slot>
               </form>
             </iron-form>
             <paper-spinner id="spinner"></paper-spinner>
@@ -496,6 +496,7 @@
         } else if (this.params && this.params.categoryId) {
           this.action = this.baseAction + '/' + this.params.categoryId;
         }
+
         if (this.$$("#form").validate()) {
           this.$$("#form").submit();
           this.$$("#spinner").active = true;

@@ -585,6 +585,8 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
         group.setupImages(req.body, function(error) {
           sendGroupOrError(res, group, 'setupImages', req.user, error);
         });
+      }).catch(function(error) {
+        sendGroupOrError(res, null, 'update', req.user, error);
       });
     } else {
       sendGroupOrError(res, req.params.id, 'update', req.user, 'Not found', 404);
