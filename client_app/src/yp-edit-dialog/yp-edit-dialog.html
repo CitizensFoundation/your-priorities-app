@@ -11,6 +11,10 @@
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-edit-dialog">
@@ -97,7 +101,7 @@
         padding-top: 0 !important;
       }
 
-      paper-toolbar {
+      app-toolbar {
         margin-top: 0;
         padding-top: 0;
       }
@@ -159,18 +163,6 @@
         padding: 12px;
       }
 
-      paper-dialog-scrollable[small-height] {
-        height: 320px;
-      }
-
-      paper-dialog-scrollable[medium-height] {
-        height: 390px;
-      }
-
-      paper-dialog-scrollable[large-height] {
-        height: 550px;
-      }
-
       .closeIconNarrow {
         width: 48px;
         height: 48px;
@@ -194,8 +186,8 @@
       <iron-media-query query="(max-height: 640px)" query-matches="{{smallHeight}}"></iron-media-query>
       <template is="dom-if" if="opened" restamp>
         <template is="dom-if" if="[[narrow]]" restamp>
-          <paper-header-panel main id="headerPanel" class="no-padding" mode="{{mode}}">
-            <paper-toolbar id="toolbar">
+          <app-header-layout main id="headerPanel" class="no-padding" mode="{{mode}}">
+            <app-toolbar id="toolbar">
               <paper-icon-button id="dismissBtn" icon="close" class="closeIconNarrow" dialog-dismiss></paper-icon-button>
               <div class="layout horizontal title flex">
                 <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
@@ -207,7 +199,7 @@
               <template is="dom-if" if="[[useNextTabAction]]">
                 <paper-button on-tap="_nextTab"><span class="smallButtonText">[[nextActionText]]</span></paper-button>
               </template>
-            </paper-toolbar>
+            </app-toolbar>
             <div id="scroller">
               <iron-form id="form" content-type="application/json" method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
                 <form id="form" name="ypForm" method="[[method]]" action="[[action]]">
@@ -215,7 +207,7 @@
                 </form>
               </iron-form>
             </div>
-          </paper-header-panel>
+          </app-header-layout>
           <paper-spinner id="spinner"></paper-spinner>
         </template>
 
