@@ -6,10 +6,6 @@
 <script src='../../bower_components/lodash/lodash.js'></script>
 
 <script>
-  /**
-   * @polymerBehavior Polymer.appHelpers
-   */
-
   window.__ = _.noConflict();
 
   Array.prototype.chunk = function(chunkSize) {
@@ -21,6 +17,7 @@
     );
   };
 
+  /** @polymerBehavior Polymer.appHelpers */
   Polymer.appHelpers = {
 
     properties: {
