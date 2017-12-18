@@ -332,7 +332,11 @@
           observer: '_routeChanged'
         },
 
-        routeData: Object,
+        routeData: {
+          type: Object,
+          observer: '_routePageChanged'
+        },
+
         subRoute: Object,
 
         appTitle: {
@@ -435,10 +439,6 @@
         }
       },
 
-      observers: [
-        '_routePageChanged(routeData.page)'
-      ],
-
       listeners: {
         'yp-set-pages': '_setPages',
         'yp-set-home-link': '_setHomeLink',
@@ -530,11 +530,16 @@
 
           var map = this._scrollPositionMap;
 
+          console.error(map);
+          console.error(oldPageData);
+
           if (oldPageData != null && oldPageData.page != null) {
             map[oldPageData.page] = window.pageYOffset;
           }
 
-          this.page = pageData;
+          console.error(map);
+
+          this.page = pageData.page;
 
           if (map[pageData.page] != null) {
             Polymer.AppLayout.scroll({ top: map[pageData.page], behavior: 'silent' });
