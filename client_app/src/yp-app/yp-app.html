@@ -530,14 +530,9 @@
 
           var map = this._scrollPositionMap;
 
-          console.error(map);
-          console.error(oldPageData);
-
           if (oldPageData != null && oldPageData.page != null) {
             map[oldPageData.page] = window.pageYOffset;
           }
-
-          console.error(map);
 
           this.page = pageData.page;
 
