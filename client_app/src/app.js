@@ -172,9 +172,7 @@
   }
 
   window.addEventListener('WebComponentsReady', function(e) {
-    console.log("WebComponentsReady");
-    setTimeout(function(){
-      onSplashClick();
-    }, 600);
+    console.error("WebComponentsReady");
+    onSplashClick();
   });
 })(document);
