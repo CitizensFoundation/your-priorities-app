@@ -41,8 +41,9 @@
     }
 
     var language = window.locale;
-    i18n.init({ lng: language, resGetPath: '/locales/__lng__/__ns__.json' }, function(loaded) {
-      window.i18nTranslation = i18n;
+    i18next.use(i18nextXHRBackend).
+            init({ lng: language, backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' } }, function(loaded) {
+      window.i18nTranslation = i18next;
       if (typeof moment !== 'undefined' && moment ) {
         moment.locale(language);
       }

@@ -61,9 +61,9 @@
       console.log("changeLocaleIfNeeded "+locale);
       if (locale && this.language!=locale) {
         if (force || !localStorage.getItem('yp-user-locale')) {
-          i18n.init({ lng: locale, resGetPath: '/locales/__lng__/__ns__.json' }, function(loaded) {
+          i18next.changeLanguage(locale, function(loaded) {
             if (!window.i18nTranslation) {
-              window.i18nTranslation = i18n;
+              window.i18nTranslation = i18next;
             }
             console.log("i18n init loaded "+loaded);
             moment.locale(locale);
@@ -76,7 +76,7 @@
     },
 
     changeLocaleIfNeeded: function (locale, force) {
-      if (typeof i18n !== 'undefined') {
+      if (typeof i18next !== 'undefined') {
         this.changeLocaleIfNeededAfterWait(locale, force)
       } else {
         this.async(function () {
