@@ -42,7 +42,7 @@
 
     var language = window.locale;
     i18next.use(i18nextXHRBackend).
-            init({ lng: language, backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' } }, function(loaded) {
+            init({ lng: language, fallbackLng: 'en', backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' } }, function(loaded) {
       window.i18nTranslation = i18next;
       if (typeof moment !== 'undefined' && moment ) {
         moment.locale(language);
