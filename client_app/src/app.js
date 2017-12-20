@@ -46,6 +46,12 @@
       window.i18nTranslation = i18next;
       if (typeof moment !== 'undefined' && moment ) {
         moment.locale(language);
+      } else {
+        setTimeout(function(){
+          if (typeof moment !== 'undefined' && moment ) {
+            moment.locale(language);
+          }
+        }, 500);
       }
       console.log("Changed language to "+language);
       var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-loaded', language: language } } } );
