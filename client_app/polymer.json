@@ -28,6 +28,8 @@
     "locales/**/*",
     "index_br.html",
     "index_bi.html",
-    "bower.json"
+    "bower.json",
+    "bower_components/i18next/i18next.min.js",
+    "bower_components/i18next-xhr-backend/i18nextXHRBackend.min.js"
   ]
 }

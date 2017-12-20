@@ -42,7 +42,6 @@
     "i18next": "10.x",
     "linkifyjs": "2.x",
     "i18next-xhr-backend": "^1.5.0",
-    "sanitize-html": "^1.11.4",
     "twemoji-min": "^2.3.0"
   },
   "devDependencies": {
