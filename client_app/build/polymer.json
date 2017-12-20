@@ -2,7 +2,6 @@
   "entrypoint": "index_yp.html",
   "shell": "src/yp-app/yp-app.html",
   "fragments": [
-    "src/yp-domain/yp-domain.html",
     "src/yp-community/yp-community.html",
     "src/yp-group/yp-group.html",
     "src/yp-post/yp-post.html",
@@ -24,7 +23,6 @@
     "bower_components/i18next-xhr-backend/i18nextXHRBackend.min.js",
     "index_yp.html",
     "src/yp-app/yp-app.html",
-    "src/yp-domain/yp-domain.html",
     "src/yp-community/yp-community.html",
     "src/yp-group/yp-group.html",
     "src/yp-post/yp-post.html",
