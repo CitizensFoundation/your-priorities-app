@@ -5,24 +5,14 @@
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
-<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
-
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
-<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 <link rel="import" href="../../bower_components/google-map/google-map-marker.html">
-<link rel="import" href="../../bower_components/google-map/google-map-search.html">
 
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 
@@ -32,15 +22,9 @@
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
 
-<link rel="import" href="yp-post-card.html">
 <link rel="import" href="yp-post-header.html">
 <link rel="import" href="yp-post-points.html">
-<link rel="import" href="yp-post-actions.html">
-<link rel="import" href="yp-post-users.html">
-<link rel="import" href="yp-post-cover-media.html">
 <link rel="import" href="yp-post-user-images.html">
-<link rel="import" href="yp-post-user-image-edit.html">
-<link rel="import" href="yp-post-edit.html">
 
 <dom-module id="yp-post">
   <template>
@@ -69,11 +53,6 @@
         width: 940px;
       }
 
-      yp-post-cover-media {
-        width: 420px !important;
-        height: 232px !important;
-      }
-
       .statusHeader {
         padding: 16px;
         background-color: #fefefe;
@@ -85,10 +64,6 @@
       .description {
         width: 510px;
         padding-left: 24px;
-      }
-
-      yp-post-actions {
-        width: 270px;
       }
 
       ac-activities {
@@ -160,13 +135,6 @@
           width: 360px;
         }
 
-        yp-post-cover-media {
-          width: 320px !important;
-          height: 181px !important;
-          padding-top: 16px;
-          padding-left: 20px;
-        }
-
         .statusHeader {
           width: 360px;
           height: 120px;
@@ -184,11 +152,6 @@
           padding: 8px;
           padding-left: 20px;
           padding-bottom: 16px;
-        }
-
-        yp-post-actions {
-          width: 320px;
-          padding-left: 20px;
         }
 
         .statusColumn {
