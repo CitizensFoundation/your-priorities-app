@@ -12,7 +12,7 @@ var walkSync = function(dir, filelist) {
     }
     else {
       if (file.endsWith((".html"))) {
-        if (!(dir.indexOf("demo") > -1)) {
+        if (!(dir.indexOf("test") > -1) && !(dir.indexOf("demo") > -1) && !(file.indexOf('-container-') > -1)) {
           filelist.push(path.join(dir, file));
         } else {
           //console.error("SKIP: "+ dir);
@@ -30,7 +30,8 @@ var checkFile = function (filePath) {
 
   var importLines = _.reject(lines, function (line) {
     return !line.endsWith('.html">') || line.indexOf("iron-flex-layout") > -1 ||
-            line.indexOf("behavior") > -1 || line.indexOf("/polymer.html") > -1 || line.indexOf("yp-app-icons") > -1
+            line.indexOf("behavior") > -1 || line.indexOf("/polymer.html") > -1 ||
+            line.indexOf("yp-app-icons") > -1 || line.indexOf("app-helpers") > -1
   });
 
   var importedElements = _.map(importLines, function (importLine) {
