@@ -118,32 +118,42 @@
     document.title = "Your Priorities";
   };
 
-  if (window.location.hostname.indexOf('betrireykjavik') > -1) {
+  var hostname = window.location.hostname;
+  if (hostname.indexOf('betrireykjavik') > -1) {
     setupLocale('is');
     setupBetterReykjavikSplash();
-  } else if (window.location.hostname.indexOf('betraisland') > -1) {
+  } else if (hostname.indexOf('betraisland') > -1) {
     setupLocale('is');
     setupBetterIcelandSplash();
   } else {
     setupYourPrioritiesSplash();
-    if (window.location.hostname.indexOf('forbrukerradet') > -1) {
+    if (hostname.indexOf('forbrukerradet') > -1) {
       setupLocale('no');
-    } else if (window.location.hostname.indexOf('bolja-pula') > -1) {
+    } else if (hostname.indexOf('bolja-pula') > -1) {
       setupLocale('hr');
-    } else if (window.location.hostname.indexOf('e-dem.nl') > -1) {
+    } else if (hostname.indexOf('waag.org') > -1) {
       setupLocale('nl');
-    } else if (window.location.hostname.indexOf('waag.org') > -1) {
-      setupLocale('nl');
-    } else if (window.location.hostname.indexOf('boljikarlovac') > -1) {
+    } else if (hostname.indexOf('boljikarlovac') > -1) {
       setupLocale('hr');
-    } else if (window.location.hostname.indexOf('boljilosinj') > -1) {
+    } else if (hostname.indexOf('boljilosinj') > -1) {
       setupLocale('hr');
-    } else if (window.location.hostname.indexOf('pulaodlucuje') > -1) {
+    } else if (hostname.indexOf('pulaodlucuje') > -1) {
       setupLocale('hr');
     } else if (window.location.href.indexOf("group/801") > -1) {
       setupLocale('sl');
     } else {
-      setupLocale('en');
+      var tld = hostname.substring(hostname.lastIndexOf('.'));
+      var localeByTld = {
+        '.fr': 'fr',
+        '.hr': 'hr',
+        '.hu': 'hu',
+        '.is': 'is',
+        '.nl': 'nl',
+        '.no': 'no',
+        '.pl': 'pl',
+        '.tw': 'zh_TW',
+      };
+      setupLocale(localeByTld[tld] || 'en');
     }
   }
 
