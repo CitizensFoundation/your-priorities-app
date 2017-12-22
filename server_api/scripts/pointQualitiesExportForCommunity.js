@@ -60,7 +60,7 @@ models.PointQuality.findAll({
   var outFileContent = "";
   console.log(endorsements.length);
   outFileContent += "Point qualities for Community Id: "+communityId+"\n";
-  outFileContent += "User Id, External User Id, State, Group id, Post id, Point id, Vote Value\n";
+  outFileContent += "User Id, External User Id, State, Group Id, Post Id, Point Id, Vote Value\n";
   async.eachSeries(endorsements, function (endorsement, seriesCallback) {
     var externalUserId='', state='';
     if (endorsement.User.profile_data) {

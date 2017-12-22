@@ -55,7 +55,7 @@ models.Endorsement.findAll({
   var outFileContent = "";
   console.log(endorsements.length);
   outFileContent += "Post endorsements for Community Id: "+communityId+"\n";
-  outFileContent += "User Id, External User Id, State, Group id, Post id, Vote Value\n";
+  outFileContent += "User Id, External User Id, State, Group Id, Post Id, Vote Value\n";
   async.eachSeries(endorsements, function (endorsement, seriesCallback) {
     var externalUserId='', state='';
     if (endorsement.User.profile_data) {
