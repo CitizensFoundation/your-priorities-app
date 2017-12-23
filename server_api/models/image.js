@@ -53,7 +53,7 @@ module.exports = function(sequelize, DataTypes) {
         return formats;
       },
 
-      getUploadClient: function (s3BucketName, itemType) {
+      getUploadClient: function (itemType) {
         var versions;
 
         if (itemType && itemType === 'user-profile') {
@@ -242,9 +242,10 @@ module.exports = function(sequelize, DataTypes) {
           ]
         }
 
-        return new Upload(s3BucketName, {
+        return new Upload(process.env.S3_BUCKET, {
+          url: process.env.S3_URL || null,
           aws: {
-            region: process.env.S3_REGION ? process.env.S3_REGION : 'us-east-1',
+            region: process.env.S3_REGION || 'us-east-1',
             acl: 'public-read'
           },
 
@@ -290,7 +291,7 @@ module.exports = function(sequelize, DataTypes) {
                 log.error("Error when trying to write image", {err: error});
                 return done(err);
               }
-              var s3UploadClient = sequelize.models.Image.getUploadClient(process.env.S3_BUCKET, "user-profile");
+              var s3UploadClient = sequelize.models.Image.getUploadClient("user-profile");
               s3UploadClient.upload(filepath, {}, function(error, versions, meta) {
                 if (error) {
                   done(error);
