@@ -70,9 +70,17 @@ Also if you are running behind nginx you want to add the following to your confi
 proxy_set_header   X-Forwarded-Proto  https;
 
 ## For S3 Image Upload
+
+If you use Amazon AWS S3:
 ```
 # To run with image upload to S3 enabled
 AWS_ACCESS_KEY_ID=XXX AWS_SECRET_ACCESS_KEY=XXX S3_BUCKET=my-test S3_REGION=eu-central-1 ./start
+```
+
+If you use an alternative to Amazon AWS S3:
+```
+# To run with image upload to a S3 alternative enabled
+AWS_ACCESS_KEY_ID=XXX AWS_SECRET_ACCESS_KEY=XXX S3_BUCKET=my-test S3_ENDPOINT=my.s3.website.com ./start
 ```
 
 You will need to have the imagemagick package installed.

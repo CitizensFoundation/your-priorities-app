@@ -47,7 +47,9 @@ module.exports = function(sequelize, DataTypes) {
         versions.forEach(function(version) {
           var n = version.url.lastIndexOf(process.env.S3_BUCKET);
           var path = version.url.substring(n+process.env.S3_BUCKET.length, version.url.length);
-          var newUrl = "https://"+process.env.S3_BUCKET+".s3.amazonaws.com"+path;
+          var newUrl = "https://"
+            + process.env.S3_BUCKET + "." + (process.env.S3_ENDPOINT || "s3.amazonaws.com")
+            + path;
           formats.push(newUrl);
         });
         return formats;
@@ -243,9 +245,9 @@ module.exports = function(sequelize, DataTypes) {
         }
 
         return new Upload(process.env.S3_BUCKET, {
-          url: process.env.S3_URL || null,
           aws: {
-            region: process.env.S3_REGION || 'us-east-1',
+            endpoint: process.env.S3_ENDPOINT || null,
+            region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : 'us-east-1'),
             acl: 'public-read'
           },
 
