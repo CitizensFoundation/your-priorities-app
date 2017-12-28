@@ -48,13 +48,15 @@ module.exports = function(sequelize, DataTypes) {
         versions.forEach(function(version) {
           var n = version.url.lastIndexOf(process.env.S3_BUCKET);
           var path = version.url.substring(n+process.env.S3_BUCKET.length, version.url.length);
-          var newUrl = "https://"+process.env.S3_BUCKET+".s3.amazonaws.com"+path;
+          var newUrl = "https://"
+            + process.env.S3_BUCKET + "." + (process.env.S3_ENDPOINT || "s3.amazonaws.com")
+            + path;
           formats.push(newUrl);
         });
         return formats;
       },
 
-      getUploadClient: function (s3BucketName, itemType) {
+      getUploadClient: function (itemType) {
         var versions;
 
         if (itemType && itemType === 'user-profile') {
@@ -243,9 +245,10 @@ module.exports = function(sequelize, DataTypes) {
           ]
         }
 
-        return new Upload(s3BucketName, {
+        return new Upload(process.env.S3_BUCKET, {
           aws: {
-            region: process.env.S3_REGION ? process.env.S3_REGION : 'us-east-1',
+            endpoint: process.env.S3_ENDPOINT || null,
+            region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : 'us-east-1'),
             acl: 'public-read'
           },
 
@@ -291,7 +294,7 @@ module.exports = function(sequelize, DataTypes) {
                 log.error("Error when trying to write image", {err: error});
                 return done(err);
               }
-              var s3UploadClient = sequelize.models.Image.getUploadClient(process.env.S3_BUCKET, "user-profile");
+              var s3UploadClient = sequelize.models.Image.getUploadClient("user-profile");
               s3UploadClient.upload(filepath, {}, function(error, versions, meta) {
                 if (error) {
                   done(error);

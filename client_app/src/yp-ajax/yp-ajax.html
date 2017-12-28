@@ -40,6 +40,7 @@
       auto="[[auto]]"
       method="[[method]]"
       body="[[body]]"
+      bubbles
       handle-as="json"
       bubbles
       content-type="application/json"
@@ -127,7 +128,6 @@
 
       _response: function (event) {
         this.$.spinner.active = false;
-        console.debug("Got yp-ajax response");
       },
 
       ready: function() {

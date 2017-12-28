@@ -144,7 +144,7 @@ router.post('/', isAuthenticated, function(req, res) {
     if (error) {
       sendError(res, null, 'multerMultipartResolver', res.user, error);
     } else {
-      var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, req.query.itemType);
+      var s3UploadClient = models.Image.getUploadClient(req.query.itemType);
       s3UploadClient.upload(req.file.path, {}, function(error, versions, meta) {
         if (error) {
           sendError(res, null, 's3UploadClient', res.user, error);
