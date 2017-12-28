@@ -261,7 +261,7 @@ var changePostCounter = function (req, postId, column, upDown, next) {
 };
 
 var s3Upload = function(filePath, itemType, userId, callback) {
-  var s3UploadClient = models.Image.getUploadClient(process.env.S3_BUCKET, itemType);
+  var s3UploadClient = models.Image.getUploadClient(itemType);
   s3UploadClient.upload(filePath, {}, function(error, versions, meta) {
     console.log("Uploading tried: "+error+" "+versions);
     if (error) {
