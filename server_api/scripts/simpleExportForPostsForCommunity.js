@@ -19,7 +19,8 @@ models.Post.findAll({
     ['created_at', 'asc' ]
   ],
   include: [
-      {
+    models.User,
+    {
         model: models.Group,
         include: [
             {
@@ -34,12 +35,21 @@ models.Post.findAll({
 }).then(function (posts) {
   var outFileContent = "";
   console.log(posts.length);
-  outFileContent += "group id, post id, author id, title, text, up votes, down votes\n";
+  outFileContent += "group id,post id,author id,title,text,up votes,down votes,external user id,state\n";
   postCounter = 0;
   async.eachSeries(posts, function (post, seriesCallback) {
     postCounter += 1;
     if (!post.deleted) {
-      outFileContent += post.group_id+','+post.id+',"'+post.user_id+'","'+clean(post.name)+'","'+clean(post.description)+'",'+post.counter_endorsements_up+','+post.counter_endorsements_down+'\n';
+      var externalUserId='', state='';
+      if (post.User.profile_data) {
+        if (post.User.profile_data.trackingParameters && post.User.profile_data.trackingParameters.externalUserId) {
+          externalUserId = post.User.profile_data.trackingParameters.externalUserId;
+        }
+        if (post.User.profile_data.trackingParameters && post.User.profile_data.trackingParameters.state) {
+          state = post.User.profile_data.trackingParameters.state;
+        }
+      }
+      outFileContent += post.group_id+','+post.id+',"'+post.user_id+'","'+clean(post.name)+'","'+clean(post.description)+'",'+post.counter_endorsements_up+','+post.counter_endorsements_down+','+externalUserId+','+state+'\n';
     }
     seriesCallback();
   }, function (error) {

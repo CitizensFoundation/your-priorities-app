@@ -33,6 +33,7 @@ models.Point.findAll({
     ['created_at', 'asc' ]
   ],
   include: [
+      models.User,
       {
         model: models.Post,
           include: [
@@ -53,12 +54,21 @@ models.Point.findAll({
 }).then(function (points) {
   var outFileContent = "";
   console.log(points.length);
-  outFileContent += "group id, post id, point id, point type, author id, text, helpful votes, unhelpful votes\n";
+  outFileContent += "group id,post id,point id,point type,author id,text,helpful votes,unhelpful votes,external user id,state\n";
   pointCounter = 0;
   async.eachSeries(points, function (point, seriesCallback) {
     pointCounter += 1;
     if (!point.deleted) {
-      outFileContent += point.Post.group_id+','+point.Post.id+',"'+point.id+'","'+getPointType(point.value)+'","'+point.user_id+'","'+clean(point.content)+'",'+point.counter_quality_up+','+point.counter_quality_down+'\n';
+      var externalUserId='', state='';
+      if (point.User.profile_data) {
+        if (point.User.profile_data.trackingParameters && point.User.profile_data.trackingParameters.externalUserId) {
+          externalUserId = point.User.profile_data.trackingParameters.externalUserId;
+        }
+        if (point.User.profile_data.trackingParameters && point.User.profile_data.trackingParameters.state) {
+          state = point.User.profile_data.trackingParameters.state;
+        }
+      }
+      outFileContent += point.Post.group_id+','+point.Post.id+',"'+point.id+'","'+getPointType(point.value)+'","'+point.user_id+'","'+clean(point.content)+'",'+point.counter_quality_up+','+point.counter_quality_down+','+externalUserId+','+state+'\n';
     }
     seriesCallback();
   }, function (error) {
