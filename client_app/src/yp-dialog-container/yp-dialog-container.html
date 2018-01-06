@@ -23,13 +23,17 @@
       #dialogs {
         background-color: var(--primary-background-color) !important;
       }
+
+      #dialogs[hide] {
+        display: none;
+      }
     </style>
 
     <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
     <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
     <iron-signals on-iron-signal-open-bulk-status-updates="_openBulkStatusUpdates"></iron-signals>
 
-    <div id="dialogs">
+    <div id="dialogs" hide$="[[hideDialogs]]">
       <paper-toast id="masterToast"></paper-toast>
       <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
       <yp-login id="userLogin" on-yp-forgot-password="_forgotPassword"></yp-login>
@@ -91,6 +95,11 @@
         bulkStatusUpdates: {
           type: Boolean,
           value: false
+        },
+
+        hideDialogs: {
+          type: Boolean,
+          value: true
         }
       },
 
@@ -112,6 +121,7 @@
       },
 
       getDialog: function (idName) {
+        this.set('hideDialogs', false);
         var element = this.$$("#"+idName);
         if (element && (typeof element.ready === "function")) {
           this.set('waitForUpgradeCounter', 0);

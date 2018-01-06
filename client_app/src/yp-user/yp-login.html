@@ -250,6 +250,10 @@
         font-size: 14px;
         padding-top: 8px;
       }
+
+      .mainSpinner[hide] {
+        display: none;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-signals on-iron-signal-yp-domain-changed="_domainEvent"></iron-signals>
@@ -322,7 +326,7 @@
             </paper-input>
           </form>
           <div class="buttons">
-            <paper-spinner active hidden$="[[!userSpinner]]"></paper-spinner>
+            <paper-spinner active class="mainSpinner" hide$="[[!userSpinner]]"></paper-spinner>
             <yp-ajax id="loginAjax" dispatch-error on-error="_loginError" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
             <yp-ajax id="registerAjax" method="POST" dispatch-error on-error="_registerError" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
             <paper-button dialog-dismiss>[[t('cancel')]]</paper-button>
