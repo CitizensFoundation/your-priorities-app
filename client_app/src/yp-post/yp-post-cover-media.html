@@ -131,7 +131,9 @@
         </template>
 
         <template is="dom-if" if="[[mapActive]]">
-          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&size=432x243&zoom=[[zoomLevel]]&maptype=[[mapType]]&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[staticMapsApiKey]]" hidden$="[[mapActivated]]"></iron-image>
+          <div hidden$="[[mapActivated]]">
+            <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&size=432x243&zoom=[[zoomLevel]]&maptype=[[mapType]]&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[staticMapsApiKey]]"></iron-image>
+          </div>
 
           <template is="dom-if" if="[[mapActivated]]">
             <google-map id="coverMediaMap" class="map"

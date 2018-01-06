@@ -130,6 +130,10 @@
         padding-top: 0;
       }
 
+      .backIcon[hide] {
+        display: none;
+      }
+
       .closePostIcon {
         width: 52px;
         height: 52px;
@@ -213,6 +217,14 @@
       .activeBadge {
         --paper-badge-background: var(--accent-color);
       }
+
+      .helpButton[hide] {
+        display: none;
+      }
+
+      .navContainer[hide] {
+        display: none;
+      }
     </style>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
@@ -237,10 +249,10 @@
 
         <app-header id="appHeader" effects="waterfall" reveals class="main-header">
           <app-toolbar>
-            <div hidden$="[[closePostHeader]]" class="layout horizontal">
+            <div hide$="[[closePostHeader]]" class="layout horizontal navContainer">
               <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
               <div id="headerTitle" title class="layout vertical">[[headerTitle]]</div>
-              <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
+              <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hide$="[[!showBack]]"></paper-icon-button>
             </div>
             <template is="dom-if" if="[[closePostHeader]]">
               <paper-icon-button id="closePostButton" class="closePostIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
@@ -248,8 +260,9 @@
 
             <span class="flex"></span>
 
-            <paper-menu-button horizontal-align="right">
-              <paper-icon-button icon="help-outline" slot="dropdown-trigger" hidden$="[[hideHelpIcon]]"></paper-icon-button>
+            <paper-menu-button horizontal-align="right" hide$="[[hideHelpIcon]]" class="helpButton">
+              <paper-icon-button icon="help-outline" slot="dropdown-trigger"></paper-icon-button>
+
               <paper-listbox slot="dropdown-content">
                 <template is="dom-repeat" items="[[translatedPages]]" as="page">
                   <paper-item data-args$="[[index]]" on-tap="_openPage">[[_getLocalizePageTitle(page)]]</paper-item>

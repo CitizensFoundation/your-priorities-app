@@ -110,6 +110,14 @@ var getImages = function (post) {
   return imagesText;
 };
 
+var getCategory = function (post) {
+  if (post.Category) {
+    return post.Category.name;
+  } else {
+    return ""
+  }
+};
+
 models.Post.unscoped().findAll({
   where: {
     group_id: groupId
@@ -151,13 +159,13 @@ models.Post.unscoped().findAll({
 }).then(function (posts) {
   var outFileContent = "";
   console.log(posts.length);
-  outFileContent += "Id, Post id,email,User Name,Post Name,Description,Url,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images\n";
+  outFileContent += "Id, Post id,email,User Name,Post Name,Description,Url,Category,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images\n";
   postCounter = 0;
   async.eachSeries(posts, function (post, seriesCallback) {
     postCounter += 1;
     if (!post.deleted) {
       outFileContent += postCounter+','+post.id+',"'+getUserEmail(post)+'","'+post.User.name+'","'+clean(post.name)+'","'+clean(post.description)+'",'+
-        '"'+getPostUrl(post)+'",'+
+        '"'+getPostUrl(post)+'",'+'"'+getCategory(post)+'",'+
         getLocation(post)+','+post.counter_endorsements_up+','+post.counter_endorsements_down+
         ','+post.counter_points+','+getPointsUp(post)+','+getPointsDown(post)+','+
         getImages(post)+'\n';
