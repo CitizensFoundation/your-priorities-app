@@ -37,6 +37,10 @@
       .hasPointer {
         cursor: pointer;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
     <div class="layout vertical">
       <div class="postName" hidden$="[[_hidePostName(activity)]]" on-tap="_goToPost">

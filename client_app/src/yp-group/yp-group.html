@@ -176,6 +176,13 @@
         min-height: 450px;
       }
 
+      .tabContainer[hide] {
+        display: none;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
 
     <div id="topContainer">
@@ -190,7 +197,7 @@
         </div>
       </template>
 
-      <div class="layout horizontal center-center" hidden$="[[group.configuration.hideAllTabs]]">
+      <div class="layout horizontal center-center tabContainer" hide$="[[group.configuration.hideAllTabs]]">
         <paper-tabs scrollable$="[[!wideWidth]]" id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
           <paper-tab id="tab1" name="open">
             <div class="layout vertical center-center tabCounterContainer">

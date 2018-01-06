@@ -48,11 +48,17 @@
         color: #777;
         font-size: 14px;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
+
     <div hidden$="[[!unViewedCount]]" class="unViewedCount layout vertical center-center">
       <div>[[unViewedCount]] [[t('unviewed')]]</div>
       <paper-button on-tap="_markAllAsViewed">[[t('notificationMarkAllViewed')]]</paper-button>
     </div>
+
     <div id="scrollableRegion">
       <iron-list id="list" items="[[notifications]]" scroll-offset="150" as="notification">
         <template>

@@ -39,6 +39,10 @@
           display: none;
         }
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
     <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
