@@ -156,6 +156,10 @@
       [hidden] {
         display: none !important;
       }
+
+      .spinnerContainer {
+        margin-top: 32px;
+      }
     </style>
     <div class="layout horizontal topLevelActivitiesContainer" wide$="[[wide]]">
       <div class="layout vertical self-start">
@@ -179,7 +183,7 @@
             </div>
           </template>
         </iron-list>
-        <div class="layout horizontal center-center">
+        <div class="layout horizontal center-center spinnerContainer">
           <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
           <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner on-response="_activityDeletedResponse"></yp-ajax>
         </div>
