@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
@@ -28,7 +28,7 @@
         cursor: pointer;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <yp-edit-dialog id="editDialog" icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <h2 slot="h2">[[editHeaderText]]</h2>

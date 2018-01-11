@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html" >
@@ -137,8 +137,8 @@
         max-height: 220px;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-    <iron-signals on-iron-signal-bulk-status-updates-templates="_updatedTemplates"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-bulk-status-updates-templates="_updatedTemplates"></lite-signal>
 
     <paper-dialog id="dialog" modal>
       <h2>[[t('bulkStatusUdateConfig')]]</h2>

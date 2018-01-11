@@ -1,5 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
@@ -17,7 +17,7 @@
       }
     </style>
 
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-dropdown-menu label="[[t('theme.choose')]]">
       <paper-listbox slot="dropdown-content" selected="{{selectedTheme}}">

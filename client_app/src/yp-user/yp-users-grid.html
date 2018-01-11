@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html" >
@@ -60,7 +60,7 @@
         display: none !important;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-dialog id="selectOrganizationDialog" modal>
       <h2>[[t('users.selectOrganization')]]</h2>

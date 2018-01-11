@@ -3,7 +3,7 @@
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
@@ -175,7 +175,7 @@
       }
 
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop$="[[!narrowPad]]" modal>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrow}}"></iron-media-query>

@@ -3,7 +3,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
@@ -130,7 +130,7 @@
       }
     </style>
 
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <template is="dom-if" if="[[group]]">
       <div class="layout horizontal center-center mainContainer wrap">

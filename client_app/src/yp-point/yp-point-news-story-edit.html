@@ -2,7 +2,7 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
@@ -89,7 +89,7 @@
         display: none !important;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="layout vertical container">
       <div class="layout horizontal">
@@ -128,7 +128,7 @@
       </div>
 
     </div>
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
   </template>
 
   <script>

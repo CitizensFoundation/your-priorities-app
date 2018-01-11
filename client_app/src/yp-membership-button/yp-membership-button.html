@@ -63,7 +63,7 @@
     <paper-fab mini$="[[!large]]" id="button" on-tap="_toggleMembership"  disabled="[[disabled]]" class="heartButton" icon="favorite"></paper-fab>
     <yp-ajax class="ajax" id="membershipAjax" hidden$="[[!disabled]]" method="POST" on-response="_membershipResponse"></yp-ajax>
 
-    <iron-signals on-iron-signal-got-memberships="_updateMembershipFromSignal"></iron-signals>
+    <lite-signal on-lite-signal-got-memberships="_updateMembershipFromSignal"></lite-signal>
   </template>
   <script>
     Polymer({

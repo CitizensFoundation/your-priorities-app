@@ -1,7 +1,7 @@
 -<link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
@@ -109,7 +109,7 @@
         display: none !important;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-material is-old-safari-or-ie$="[[isOldSafariOrIe]]" logged-in-user$="[[hasLoggedInUser]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
       <paper-icon-button title$="[[t('deleteActivity')]]" hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
@@ -141,7 +141,7 @@
     </paper-material>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
   </template>
 
   <script>

@@ -4,7 +4,7 @@
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
@@ -145,7 +145,7 @@
       }
     </style>
 
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
     <iron-a11y-keys id="a11y" target="[[searchTarget]]" keys="enter"

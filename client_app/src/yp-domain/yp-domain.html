@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 
@@ -110,8 +110,8 @@
       </iron-pages>
     </yp-page>
 
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
 
     <app-route
       route="{{idRoute}}"

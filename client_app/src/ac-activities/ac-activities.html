@@ -3,7 +3,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
@@ -198,9 +198,9 @@
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-    <iron-signals on-iron-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></iron-signals>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></lite-signal>
 
     <iron-scroll-threshold id="scrollTheshold"
                            lower-threshold="200"

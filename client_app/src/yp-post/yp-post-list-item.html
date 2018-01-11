@@ -2,7 +2,7 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
@@ -192,8 +192,8 @@
         display: none !important;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
 
     <template is="dom-if" if="[[post]]" restamp>
       <div class="layout horizontal center-center">
@@ -233,7 +233,7 @@
       <template is="dom-if" if="[[headerMode]]">
       </template>
     </template>
-    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
+    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
   </template>
 
   <script>

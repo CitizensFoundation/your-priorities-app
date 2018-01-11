@@ -6,7 +6,7 @@
     "iron-form": "rbjarnason/iron-form#add-put-support",
     "iron-list": "rbjarnason/iron-list#v117",
     "iron-ajax": "PolymerElements/iron-ajax#2.x",
-    "iron-signals": "rbjarnason/iron-signals#master",
+    "lite-signal": "CitizensFoundation/lite-signal#master",
     "iron-pages": "PolymerElements/iron-pages#2.x",
     "iron-icon": "PolymerElements/iron-icon#2.x",
     "iron-image": "PolymerElements/iron-image#2.x",

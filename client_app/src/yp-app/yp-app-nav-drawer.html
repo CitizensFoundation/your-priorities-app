@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
@@ -62,7 +62,7 @@
         display: none !important;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-material elevation="0" class="material">
       <div hidden$="[[!homeLink]]">
@@ -111,8 +111,8 @@
         </template>
       </div>
     </paper-material>
-    <iron-signals on-iron-signal-got-memberships="_userMembershipsReady"></iron-signals>
-    <iron-signals on-iron-signal-got-admin-rights="_reset"></iron-signals>
+    <lite-signal on-lite-signal-got-memberships="_userMembershipsReady"></lite-signal>
+    <lite-signal on-lite-signal-got-admin-rights="_reset"></lite-signal>
   </template>
 
   <script>

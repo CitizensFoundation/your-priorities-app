@@ -5,7 +5,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html">
 
@@ -184,7 +184,7 @@
         display: none !important;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
 
@@ -211,7 +211,7 @@
       </div>
     </paper-material>
 
-    <iron-signals on-iron-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></iron-signals>
+    <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></lite-signal>
   </template>
   <script>
     Polymer({

@@ -3,7 +3,7 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
@@ -76,7 +76,7 @@
         display: none !important;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="all-actions" hidden$="[[hideNotHelpful]]">
       <div id="actionUp" class="actionUp layout horizontal">
@@ -91,7 +91,7 @@
     <paper-share-button on-share-tap="_shareTap" class="shareIcon" up-voted$="[[isUpVoted]]" horizontal-align="right" id="shareButton" title$="[[t('sharePoint')]]" facebook google twitter popup url="[[pointUrl]]"></paper-share-button>
 
     <yp-ajax id="pointQualityAjax" method="POST" on-response="_pointQualityResponse"></yp-ajax>
-    <iron-signals on-iron-signal-got-endorsements-and-qualities="_updateQualitiesFromSignal"></iron-signals>
+    <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateQualitiesFromSignal"></lite-signal>
 
   </template>
   <script>

@@ -1,5 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 // Preloaded
 <link rel="import" href="../yp-ajax/yp-ajax-error-dialog.html">
@@ -29,9 +29,9 @@
       }
     </style>
 
-    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
-    <iron-signals on-iron-signal-open-bulk-status-updates="_openBulkStatusUpdates"></iron-signals>
+    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+    <lite-signal on-lite-signal-open-bulk-status-updates="_openBulkStatusUpdates"></lite-signal>
 
     <div id="dialogs" hide$="[[hideDialogs]]">
       <paper-toast id="masterToast"></paper-toast>
@@ -104,6 +104,7 @@
       },
 
       _loggedInUserChanged: function (newValue) {
+        console.error("_loggedInUserChanged");
         if (newValue) {
           this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), function () {
             console.info("Have loaded logged-in container");
@@ -112,6 +113,7 @@
       },
 
       _gotAdminRightsChanged: function (newValue) {
+        console.error("_gotAdminRightsChanged");
         if (newValue===true) {
           this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {
             console.info("Have loaded admin container");

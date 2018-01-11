@@ -2,7 +2,7 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
@@ -140,8 +140,8 @@
         display: none !important;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
     <paper-material mini$="[[mini]]" class="card postCard layout vertical" elevation="[[elevation]]" animated>

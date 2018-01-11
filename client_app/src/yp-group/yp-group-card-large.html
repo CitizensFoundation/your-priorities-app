@@ -2,7 +2,7 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
@@ -162,7 +162,7 @@
         display: none !important;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="layout horizontal center-center wrap">
       <paper-material id="cardImage" elevation="3" animated class="groupCard imageCard top-card">
@@ -197,7 +197,7 @@
       </paper-material>
     </div>
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
-    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
+    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
   </template>
 
   <script>

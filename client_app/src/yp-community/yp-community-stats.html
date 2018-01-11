@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
@@ -35,7 +35,7 @@
         margin-right:4px;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="stats layout horizontal end-justified">
       <iron-icon title$="[[t('stats.posts')]]" icon="lightbulb-outline" class="stats-icon bulb"></iron-icon>
