@@ -105,18 +105,24 @@
 
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), function () {
+            console.log("Have loaded logged-in container");
+          }, null, true);
         }
       },
 
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), null, null, true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {
+            console.log("Have loaded admin container");
+          }, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html"), function () {
+          console.log("Have loaded bulk status container");
+        }, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
