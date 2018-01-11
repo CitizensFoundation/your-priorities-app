@@ -259,7 +259,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
           dialog.setup(null, true, this._refreshAjax.bind(this));
           dialog.open('new', {domainId: this.domainId});
-        });
+        }.bind(this));
       },
 
       _pagesResponse: function (event, detail) {

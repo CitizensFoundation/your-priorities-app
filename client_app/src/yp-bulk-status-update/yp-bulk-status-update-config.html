@@ -402,7 +402,7 @@
       _editTemplates: function () {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateEditTemplates", function (dialog) {
           dialog.open(this.templates);
-        });
+        }.bind(this));
       },
 
       open: function (bulkStatusUpdate) {

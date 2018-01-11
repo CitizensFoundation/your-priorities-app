@@ -211,7 +211,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
           dialog.setup(this.community, false, this._refresh.bind(this));
           dialog.open('edit', {communityId: this.community.id});
-        });
+        }.bind(this));
       },
 
       _onDeleted: function () {

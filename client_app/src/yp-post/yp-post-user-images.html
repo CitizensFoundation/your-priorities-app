@@ -78,9 +78,10 @@
 
         _newImage: function () {
           window.appGlobals.activity('open', 'newUserImage');
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userImageEdit");
-          dialog.setup(this.post, null, true, this._refresh.bind(this));
-          dialog.open('new', { postId: this.post.id,  userImages: true });
+          var dialog = Polymer.dom(document).querySelector('yp-app').getDialogAsync("userImageEdit", function (dialog) {
+            dialog.setup(this.post, null, true, this._refresh.bind(this));
+            dialog.open('new', {postId: this.post.id, userImages: true});
+          }.bind(this));
         },
 
         _response: function (event, detail) {

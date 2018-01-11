@@ -90,7 +90,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("userEdit", function (dialog) {
           dialog.setup(this.user, false, null);
           dialog.open('edit', {userId: this.user.id});
-        });
+        }.bind(this));
       },
 
       routeChanged: function(newValue, oldValue) {

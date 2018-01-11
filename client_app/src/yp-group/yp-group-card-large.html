@@ -300,7 +300,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("pagesGrid", function (dialog) {
           dialog.setup(this.group.id, null, null, false);
           dialog.open();
-        });
+        }.bind(this));
       },
 
       _openUsersDialog: function () {
@@ -308,7 +308,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("usersGrid", function (dialog) {
           dialog.setup(this.group.id, null, null, false);
           dialog.open();
-        });
+        }.bind(this));
       },
 
       _openAdminsDialog: function () {
@@ -316,7 +316,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("usersGrid", function (dialog) {
           dialog.setup(this.group.id, null, null, true);
           dialog.open();
-        });
+        }.bind(this));
       },
 
       _openEdit: function () {
@@ -324,7 +324,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
           dialog.setup(this.group, false, this._refresh.bind(this));
           dialog.open('edit', {groupId: this.group.id});
-        });
+        }.bind(this));
       },
 
       _openDelete: function () {
@@ -334,7 +334,7 @@
             this.t('group.deleteConfirmation'),
             this._onDeleted.bind(this));
           dialog.open();
-        });
+        }.bind(this));
       },
 
       _openCategoryEdit: function () {

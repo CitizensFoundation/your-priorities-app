@@ -381,7 +381,7 @@
       Polymer.dom(document).querySelector('yp-app').getDialogAsync("categoryEdit", function (dialog) {
         dialog.setup(this.group, false, this._refreshCategories.bind(this), event.model.category);
         dialog.open("edit", {categoryId: event.model.category.id});
-      });
+      }.bind(this));
     },
 
     _refreshCategories: function (newCategory) {

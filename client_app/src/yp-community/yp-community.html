@@ -215,7 +215,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
           dialog.setup(null, group, true, null);
           dialog.open('new', {groupId: group.id});
-        });
+        }.bind(this));
       },
 
       _refreshTabsAndPages: function () {
@@ -305,7 +305,7 @@
           dialog.community = this.community;
           dialog.setup(null, true, this._refreshAjax.bind(this));
           dialog.open('new', { communityId: this.communityId });
-        });
+        }.bind(this));
       },
 
       _pagesResponse: function (event, detail) {

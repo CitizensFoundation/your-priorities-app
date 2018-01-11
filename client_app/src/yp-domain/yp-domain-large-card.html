@@ -268,7 +268,7 @@
         window.appGlobals.activity('open', 'domain.organizationsGrid');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("organizationsGrid", function (dialog) {
           dialog.open();
-        });
+        }.bind(this));
       },
 
       _openPagesDialog: function () {
@@ -276,7 +276,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("pagesGrid", function (dialog) {
           dialog.setup(null, null, this.domain.id, false);
           dialog.open();
-        });
+        }.bind(this));
       },
 
       _openEdit: function () {
@@ -284,7 +284,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("domainEdit", function (dialog) {
           dialog.setup(this.domain, false, this._refresh.bind(this));
           dialog.open('edit', {domainId: this.domain.id});
-        });
+        }.bind(this));
       },
 
       _newOrganization: function () {
@@ -292,7 +292,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("organizationEdit", function (dialog) {
           dialog.setup(null, true, this._refresh.bind(this));
           dialog.open('new', {domainId: this.domain.id});
-        });
+        }.bind(this));
       },
 
       _refresh: function (domain) {

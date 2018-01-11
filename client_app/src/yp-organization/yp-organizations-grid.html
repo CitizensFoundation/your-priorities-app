@@ -179,7 +179,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("organizationEdit", function (dialog) {
           dialog.setup(null, true, null);
           dialog.open('new', {});
-        });
+        }.bind(this));
       },
 
       _editOrganization: function (event) {
@@ -188,7 +188,7 @@
           dialog._clear();
           dialog.setup(organization, false, null);
           dialog.open('edit', {organizationId: organization.id});
-        });
+        }.bind(this));
       },
 
       _organizationImageUrl: function (organization) {

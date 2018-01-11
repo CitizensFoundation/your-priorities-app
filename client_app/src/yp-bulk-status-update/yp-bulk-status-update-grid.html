@@ -134,7 +134,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateEdit", function (dialog) {
           dialog.setup(null, true, null);
           dialog.open('new', {communityId: this.communityId});
-        });
+        }.bind(this));
       },
 
       _editConfig: function (event) {
@@ -144,7 +144,7 @@
           dialog.reset();
           dialog.open(this.selectedUpdate);
           this.$.dialog.close();
-        });
+        }.bind(this));
       },
 
       _editBulkStatusUpdate: function (event) {
@@ -153,7 +153,7 @@
           dialog._clear();
           dialog.setup(bulkStatusUpdate, false, null);
           dialog.open('edit', {communityId: this.communityId, bulkStatusUpdateId: bulkStatusUpdate.id});
-        });
+        }.bind(this));
       },
 
       _bulkStatusUpdateResponse: function (event, detail) {
@@ -169,7 +169,7 @@
           this.$.getBulkStatusUpdatesAjax.url = "/api/bulk_status_updates/" + communityId;
           this.$.getBulkStatusUpdatesAjax.generateRequest();
           this.$.dialog.open();
-        });
+        }.bind(this));
       }
     });
   </script>

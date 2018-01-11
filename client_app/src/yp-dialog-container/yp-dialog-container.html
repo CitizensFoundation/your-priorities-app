@@ -145,10 +145,12 @@
       },
 
       getDialogAsync: function (idName, callback) {
+        this.set('hideDialogs', false);
         var element = this.$$("#"+idName);
         if (element && (typeof element.ready === "function")) {
           this.set('waitForUpgradeCounter', 0);
-          callback(this.$$("#"+idName));
+          console.log("Found element async");
+          callback(element);
         } else {
           console.warn("Element not upgraded: "+idName);
           this.waitForUpgradeCounter += 1;
