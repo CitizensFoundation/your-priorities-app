@@ -176,17 +176,19 @@
       },
 
       _newOrganization: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("organizationEdit");
-        dialog.setup(null, true, null);
-        dialog.open('new', {});
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("organizationEdit", function (dialog) {
+          dialog.setup(null, true, null);
+          dialog.open('new', {});
+        });
       },
 
       _editOrganization: function (event) {
         var organization = JSON.parse(event.target.getAttribute('data-args'));
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("organizationEdit");
-        dialog._clear();
-        dialog.setup(organization, false, null);
-        dialog.open('edit', { organizationId: organization.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("organizationEdit", function (dialog) {
+          dialog._clear();
+          dialog.setup(organization, false, null);
+          dialog.open('edit', {organizationId: organization.id});
+        });
       },
 
       _organizationImageUrl: function (organization) {

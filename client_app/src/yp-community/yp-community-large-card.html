@@ -367,48 +367,44 @@
         this.set('selectedMenuItem', null);
       },
 
-      _openBulkStatusUpdates: function () {
-        window.appGlobals.activity('open', 'community.bulkStatusUpdates');
-        this.fire('iron-signal', {name: 'open-bulk-status-updates', data: null });
-        this.async(function () {
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateGrid");
-          dialog.open(this.community.id);
-        }, 1500);
-      },
-
       _openUsersDialog: function () {
         window.appGlobals.activity('open', 'community.users');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
-        dialog.setup(null, this.community.id, null, false);
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("usersGrid", function (dialog) {
+          dialog.setup(null, this.community.id, null, false);
+          dialog.open();
+        });
       },
 
       _openAdminsDialog: function () {
         window.appGlobals.activity('open', 'community.admins');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
-        dialog.setup(null, this.community.id, null, true);
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("usersGrid", function (dialog) {
+          dialog.setup(null, this.community.id, null, true);
+          dialog.open();
+        });
       },
 
       _openPagesDialog: function () {
         window.appGlobals.activity('open', 'community.pagesAdmin');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pagesGrid");
-        dialog.setup(null, this.community.id, null, false);
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("pagesGrid", function (dialog) {
+          dialog.setup(null, this.community.id, null, false);
+          dialog.open();
+        });
       },
 
       _openDelete: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
-        dialog.setup('/api/communities/'+this.community.id,
-          this.t('community.deleteConfirmation'),
-          this._onDeleted.bind(this));
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/communities/' + this.community.id,
+            this.t('community.deleteConfirmation'),
+            this._onDeleted.bind(this));
+          dialog.open();
+        });
       },
 
       _openEdit: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("communityEdit");
-        dialog.setup(this.community, false, this._refresh.bind(this));
-        dialog.open('edit', { communityId: this.community.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
+          dialog.setup(this.community, false, this._refresh.bind(this));
+          dialog.open('edit', {communityId: this.community.id});
+        });
       },
 
       _onDeleted: function () {

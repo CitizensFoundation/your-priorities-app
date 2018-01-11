@@ -297,46 +297,52 @@
 
       _openPagesDialog: function () {
         window.appGlobals.activity('open', 'group.pagesAdmin');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pagesGrid");
-        dialog.setup(this.group.id, null, null, false);
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("pagesGrid", function (dialog) {
+          dialog.setup(this.group.id, null, null, false);
+          dialog.open();
+        });
       },
 
       _openUsersDialog: function () {
         window.appGlobals.activity('open', 'group.users');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
-        dialog.setup(this.group.id, null, null, false);
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("usersGrid", function (dialog) {
+          dialog.setup(this.group.id, null, null, false);
+          dialog.open();
+        });
       },
 
       _openAdminsDialog: function () {
         window.appGlobals.activity('open', 'group.admins');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
-        dialog.setup(this.group.id, null, null, true);
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("usersGrid", function (dialog) {
+          dialog.setup(this.group.id, null, null, true);
+          dialog.open();
+        });
       },
 
       _openEdit: function () {
         window.appGlobals.activity('open', 'group.new');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupEdit");
-        dialog.setup(this.group, false, this._refresh.bind(this));
-        dialog.open('edit', { groupId: this.group.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
+          dialog.setup(this.group, false, this._refresh.bind(this));
+          dialog.open('edit', {groupId: this.group.id});
+        });
       },
 
       _openDelete: function () {
         window.appGlobals.activity('open', 'group.delete');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
-        dialog.setup('/api/groups/'+this.group.id,
-          this.t('group.deleteConfirmation'),
-          this._onDeleted.bind(this));
-        dialog.open();
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/groups/' + this.group.id,
+            this.t('group.deleteConfirmation'),
+            this._onDeleted.bind(this));
+          dialog.open();
+        });
       },
 
       _openCategoryEdit: function () {
         window.appGlobals.activity('open', 'category.new');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("categoryEdit");
-        dialog.setup(this.group, true, this._refreshCategory.bind(this));
-        dialog.open("new", { groupId: this.group.id });
+        Polymer.dom(document).querySelector('yp-app').getDialog("categoryEdit", function (dialog) {
+          dialog.setup(this.group, true, this._refreshCategory.bind(this));
+          dialog.open("new", {groupId: this.group.id});
+        });
       },
 
       _refreshCategory: function (category) {

@@ -483,7 +483,7 @@
           }
         },
 
-       _isNumber: function(n) {
+        _isNumber: function(n) {
           return !isNaN(parseFloat(n)) && isFinite(n);
         },
 
@@ -512,9 +512,10 @@
 
         _newPost: function () {
           window.appGlobals.activity('open', 'newPost');
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
-          dialog.setup(null, this.post.Group, true, null);
-          dialog.open('new', { groupId: this.post.Group.id });
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
+            dialog.setup(null, this.post.Group, true, null);
+            dialog.open('new', {groupId: this.post.Group.id});
+          });
         },
 
         listeners: {

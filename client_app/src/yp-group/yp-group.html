@@ -755,9 +755,10 @@
 
       _newPost: function () {
         window.appGlobals.activity('open', 'newPost');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
-        dialog.setup(null, this.group, true, null);
-        dialog.open('new', { groupId: this.groupId });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
+          dialog.setup(null, this.group, true, null);
+          dialog.open('new', {groupId: this.groupId});
+        });
       }
     });
   </script>

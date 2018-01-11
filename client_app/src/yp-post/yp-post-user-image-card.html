@@ -128,9 +128,10 @@
 
         _openEdit: function () {
           window.appGlobals.activity('open', 'userImage.edit');
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userImageEdit");
-          dialog.setup(this.post, this.image, false, this._refresh.bind(this));
-          dialog.open('edit', { postId: this.post.id, userImages: true });
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("userImageEdit", function (dialog) {
+            dialog.setup(this.post, this.image, false, this._refresh.bind(this));
+            dialog.open('edit', { postId: this.post.id, userImages: true });
+          });
         },
 
         _openDelete: function () {

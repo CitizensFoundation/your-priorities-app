@@ -256,9 +256,10 @@
 
       _newCommunity: function () {
         window.appGlobals.activity('open', 'newCommunity');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("communityEdit");
-        dialog.setup(null, true, this._refreshAjax.bind(this));
-        dialog.open('new', { domainId: this.domainId });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
+          dialog.setup(null, true, this._refreshAjax.bind(this));
+          dialog.open('new', {domainId: this.domainId});
+        });
       },
 
       _pagesResponse: function (event, detail) {

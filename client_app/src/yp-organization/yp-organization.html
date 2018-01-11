@@ -165,9 +165,10 @@
 
       _newGroup: function () {
         window.appGlobals.activity('open', 'newGroup');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupEdit");
-        dialog.setup(null, true, null);
-        dialog.open('new', { organizationId: this.organizationId });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
+          dialog.setup(null, true, null);
+          dialog.open('new', {organizationId: this.organizationId});
+        });
       },
 
       _response: function (event, detail, sender) {

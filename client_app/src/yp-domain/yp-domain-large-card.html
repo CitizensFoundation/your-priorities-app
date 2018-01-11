@@ -266,27 +266,33 @@
 
       _openOrganizationsGrid: function () {
         window.appGlobals.activity('open', 'domain.organizationsGrid');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("organizationsGrid");
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("organizationsGrid", function (dialog) {
+          dialog.open();
+        });
       },
 
       _openPagesDialog: function () {
         window.appGlobals.activity('open', 'domain.pagesAdmin');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pagesGrid");
-        dialog.setup(null, null, this.domain.id, false);
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("pagesGrid", function (dialog) {
+          dialog.setup(null, null, this.domain.id, false);
+          dialog.open();
+        });
       },
 
       _openEdit: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("domainEdit");
-        dialog.setup(this.domain, false, this._refresh.bind(this));
-        dialog.open('edit', { domainId: this.domain.id });
+        window.appGlobals.activity('open', 'domainEdit');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("domainEdit", function (dialog) {
+          dialog.setup(this.domain, false, this._refresh.bind(this));
+          dialog.open('edit', {domainId: this.domain.id});
+        });
       },
 
       _newOrganization: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("organizationEdit");
-        dialog.setup(null, true, this._refresh.bind(this));
-        dialog.open('new', { domainId: this.domain.id });
+        window.appGlobals.activity('open', 'organizationEdit');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("organizationEdit", function (dialog) {
+          dialog.setup(null, true, this._refresh.bind(this));
+          dialog.open('new', {domainId: this.domain.id});
+        });
       },
 
       _refresh: function (domain) {

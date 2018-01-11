@@ -346,9 +346,10 @@
       },
 
       _refresh: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
-        dialog.selected = 0;
-        this.fire('refresh');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
+          dialog.selected = 0;
+          this.fire('refresh');
+        });
       },
 
       _menuSelection: function (event, detail) {
@@ -366,41 +367,46 @@
       },
 
       _openMovePost: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postMove");
-        dialog.setupAndOpen(this.post, this._refresh.bind(this));
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("postMove", function (dialog) {
+          dialog.setupAndOpen(this.post, this._refresh.bind(this));
+        });
       },
 
       _openPostStatusChange: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postStatusChangeEdit");
-        dialog.setup(this.post, null, this._refresh.bind(this));
-        dialog.open('new', { postId: this.post.id, statusChange: true });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("postStatusChangeEdit", function (dialog) {
+          dialog.setup(this.post, null, this._refresh.bind(this));
+          dialog.open('new', {postId: this.post.id, statusChange: true});
+        });
       },
 
       _openEdit: function () {
         window.appGlobals.activity('open', 'post.new');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
-        dialog.setup(this.post, this.post.Group, false, this._refresh.bind(this));
-        dialog.open('edit', { postId: this.post.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
+          dialog.setup(this.post, this.post.Group, false, this._refresh.bind(this));
+          dialog.open('edit', {postId: this.post.id});
+        });
       },
 
       _openReport: function () {
         window.appGlobals.activity('open', 'post.report');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
-        dialog.setup('/api/posts/'+this.post.id+'/report',
-          this.t('reportConfirmation'),
-          this._onReport.bind(this),
-          this.t('post.report'),
-          'PUT');
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/posts/' + this.post.id + '/report',
+            this.t('reportConfirmation'),
+            this._onReport.bind(this),
+            this.t('post.report'),
+            'PUT');
+          dialog.open();
+        });
       },
 
       _openDelete: function () {
         window.appGlobals.activity('open', 'post.delete');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
-        dialog.setup('/api/posts/'+this.post.id,
-          this.t('post.deleteConfirmation'),
-          this._onDeleted.bind(this));
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/posts/' + this.post.id,
+            this.t('post.deleteConfirmation'),
+            this._onDeleted.bind(this));
+          dialog.open();
+        });
       },
 
       _onReport: function () {

@@ -106,7 +106,7 @@
       _loggedInUserChanged: function (newValue) {
         if (newValue) {
           this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), function () {
-            console.error("Have loaded logged-in container");
+            console.info("Have loaded logged-in container");
           }, null, true);
         }
       },
@@ -114,14 +114,14 @@
       _gotAdminRightsChanged: function (newValue) {
         if (newValue===true) {
           this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {
-            console.error("Have loaded admin container");
+            console.info("Have loaded admin container");
           }, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
         this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html"), function () {
-          console.error("Have loaded bulk status container");
+          console.info("Have loaded bulk status container");
         }, null, true);
         this.set('bulkStatusUpdates', true);
       },

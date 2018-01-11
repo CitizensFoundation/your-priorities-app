@@ -208,9 +208,10 @@
       },
 
       _openEdit: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("communityEdit");
-        dialog.setup(this.community, false, this._refresh.bind(this));
-        dialog.open('edit', { communityId: this.community.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
+          dialog.setup(this.community, false, this._refresh.bind(this));
+          dialog.open('edit', {communityId: this.community.id});
+        });
       },
 
       _onDeleted: function () {

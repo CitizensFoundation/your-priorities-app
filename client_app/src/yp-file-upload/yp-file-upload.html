@@ -32,7 +32,7 @@ Example:
           border: 1px dashed #111;
         }
 
-        #UploadBorder{
+        #UploadBorder {
           vertical-align: middle;
           color: #555;
           padding: 8px;
@@ -92,7 +92,7 @@ Example:
 
     <div>
       <paper-button id="button" icon="file-upload" class="blue" on-click="_fileClick">
-        <content></content>
+        <slot></slot>
       </paper-button>
       <div id='UploadBorder'>
         <div id="dropArea" hidden$="{{!_shownDropText}}">{{dropText}}</div>

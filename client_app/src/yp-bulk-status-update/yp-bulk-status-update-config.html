@@ -384,22 +384,25 @@
       },
 
       _newBulkStatusUpdate: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateEdit");
-        dialog.setup(null, true, null);
-        dialog.open('new', {});
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateEdit", function (dialog) {
+          dialog.setup(null, true, null);
+          dialog.open('new', {});
+        });
       },
 
       _editBulkStatusUpdate: function (event) {
         var bulkStatusUpdate = JSON.parse(event.target.getAttribute('data-args'));
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateEdit");
-        dialog._clear();
-        dialog.setup(bulkStatusUpdate, false, null);
-        dialog.open('edit', { bulkStatusUpdateId: bulkStatusUpdate.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateEdit", function (dialog) {
+          dialog._clear();
+          dialog.setup(bulkStatusUpdate, false, null);
+          dialog.open('edit', {bulkStatusUpdateId: bulkStatusUpdate.id});
+        });
       },
 
       _editTemplates: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateEditTemplates");
-        dialog.open(this.templates);
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateEditTemplates", function (dialog) {
+          dialog.open(this.templates);
+        });
       },
 
       open: function (bulkStatusUpdate) {

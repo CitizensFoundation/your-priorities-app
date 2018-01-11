@@ -87,9 +87,10 @@
       },
 
       _openEdit: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userEdit");
-        dialog.setup(this.user, false, null);
-        dialog.open('edit', { userId: this.user.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("userEdit", function (dialog) {
+          dialog.setup(this.user, false, null);
+          dialog.open('edit', {userId: this.user.id});
+        });
       },
 
       routeChanged: function(newValue, oldValue) {

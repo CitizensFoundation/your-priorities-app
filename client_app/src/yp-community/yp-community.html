@@ -210,17 +210,12 @@
         }
       },
 
-      _newPostSelectGroup: function () {
-        window.appGlobals.activity('open', 'newPostFromCommunity');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupSelectionForNewPost");
-        dialog.open(this);
-      },
-
       _newPostForGroup: function (group) {
         window.appGlobals.activity('open', 'newPost');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
-        dialog.setup(null, group, true, null);
-        dialog.open('new', { groupId: group.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
+          dialog.setup(null, group, true, null);
+          dialog.open('new', {groupId: group.id});
+        });
       },
 
       _refreshTabsAndPages: function () {
@@ -306,10 +301,11 @@
 
       _newGroup: function () {
         window.appGlobals.activity('open', 'newGroup');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupEdit");
-        dialog.community = this.community;
-        dialog.setup(null, true, this._refreshAjax.bind(this));
-        dialog.open('new', { communityId: this.communityId });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
+          dialog.community = this.community;
+          dialog.setup(null, true, this._refreshAjax.bind(this));
+          dialog.open('new', { communityId: this.communityId });
+        });
       },
 
       _pagesResponse: function (event, detail) {
