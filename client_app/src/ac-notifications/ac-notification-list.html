@@ -214,10 +214,11 @@
 
       _newNotificationsError: function (event, detail) {
         console.error("Error in getting new notifications");
-        // Retry starting the time in 120 seconds
-        this.async(function () {
-          this._startTimer();
-        }, 120*1000);
+        this.cancelTimer();
+
+        if (detail && detail.status && detail.status==401) {
+          window.appUser.checkLogin();
+        }
       },
 
       _userChanged: function (user) {
@@ -240,9 +241,11 @@
       },
 
       cancelTimer: function () {
+        console.log("notifications: cancelTimer");
         if (this.timer) {
           clearTimeout(this.timer);
           this.set('timer', null);
+          console.log("notifications: clearTimeout");
         }
       },
 
@@ -288,11 +291,13 @@
       },
 
       _startTimer: function () {
+        console.log("notifications: startTimer");
         this.cancelTimer();
         if (this.user) {
           this.timer = this.async(function () {
             this.loadNewData();
           }.bind(this), this.notificationGetTTL)
+          console.log("notifications: have started timer with delay");
         }
       },
 

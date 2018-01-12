@@ -687,7 +687,13 @@
       } else {
         window.appUser.setLoggedInUser(user);
       }
-      this.fire('iron-signal', {name: 'logged-in', data: user});
+      document.dispatchEvent(
+        new CustomEvent("lite-signal", {
+          bubbles: true,
+          compose: true,
+          detail: { name: 'logged-in', data: user }
+        })
+      );
     },
 
     open: function(redirectToURL, email) {

@@ -206,11 +206,17 @@
           this.set('myGroups', __.take(groupUsers, 1000));
           this.set('myCommunities', __.take(window.appUser.memberships.CommunityUsers, 500));
           this.set('myDomains', __.take(window.appUser.memberships.DomainUsers, 3));
+        } else {
+          this.set('myGroups', null);
+          this.set('myCommunities', null);
+          this.set('myDomains', null);
         }
 
         if (window.appUser && window.appUser.adminRights &&
             window.appUser.adminRights.CommunityAdmins && window.appUser.adminRights.CommunityAdmins.length>0) {
           this.set('myAdminCommunities', window.appUser.adminRights.CommunityAdmins);
+        } else {
+          this.set('myAdminCommunities', null);
         }
 
         if (window.appUser && window.appUser.adminRights &&
@@ -219,6 +225,8 @@
             return item.name=="hidden_public_group_for_domain_level_points";
           });
           this.set('myAdminGroups', groupAdmins);
+        } else {
+          this.set('myAdminGroups', null);
         }
       },
 

@@ -135,6 +135,14 @@ app.use(function (req, res, next) {
   }
 });
 
+app.get('/*', function (req, res, next) {
+  if (req.url.indexOf("service-worker.js") > -1) {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
+    res.setHeader("Last-Modified", new Date(Date.now()).toUTCString());
+  }
+  next();
+});
+
 if (!FORCE_PRODUCTION && app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_app')));
 } else {

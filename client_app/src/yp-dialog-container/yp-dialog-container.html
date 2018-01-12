@@ -67,6 +67,7 @@
         <yp-post-move id="postMove"></yp-post-move>
       </template>
 
+
       <template is="dom-if" if="[[bulkStatusUpdates]]">
         <yp-bulk-status-update-config id="bulkStatusUpdateConfig"></yp-bulk-status-update-config>
         <yp-bulk-status-update-grid id="bulkStatusUpdateGrid"></yp-bulk-status-update-grid>
@@ -103,18 +104,18 @@
         }
       },
 
-      _loggedInUserChanged: function (newValue) {
-        console.error("_loggedInUserChanged");
-        if (newValue) {
+      _loggedInUser: function (event, user) {
+        console.error("_loggedInUser");
+        if (user) {
           this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), function () {
             console.info("Have loaded logged-in container");
           }, null, true);
         }
       },
 
-      _gotAdminRightsChanged: function (newValue) {
-        console.error("_gotAdminRightsChanged");
-        if (newValue===true) {
+      _gotAdminRights: function (event, detail) {
+        console.error("_gotAdminRights");
+        if (detail===true) {
           this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {
             console.info("Have loaded admin container");
           }, null, true);

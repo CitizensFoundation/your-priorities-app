@@ -273,7 +273,14 @@
 
       _openBulkStatusUpdates: function () {
         window.appGlobals.activity('open', 'community.bulkStatusUpdates');
-        this.fire('iron-signal', {name: 'open-bulk-status-updates', data: null });
+        document.dispatchEvent(
+          new CustomEvent("lite-signal", {
+            bubbles: true,
+            compose: true,
+            detail: { name: 'open-bulk-status-updates', data: null }
+          })
+        );
+
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateGrid", function (dialog) {
           dialog.open(this.community.id);
         }.bind(this));

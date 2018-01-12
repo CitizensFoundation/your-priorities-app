@@ -164,7 +164,13 @@
 
       _templatesChanged: function (templates) {
         if (templates) {
-          this.fire('iron-signal', {name: 'bulk-status-updates-templates', data: this.templates });
+          document.dispatchEvent(
+            new CustomEvent("lite-signal", {
+              bubbles: true,
+              compose: true,
+              detail: {name: 'bulk-status-updates-templates', data: this.templates }
+            })
+          );
         }
       },
 

@@ -259,11 +259,26 @@
         setLoggedInUser: function (user) {
           this.$.session.set('user', user);
           this.set('user', user);
-          this.fire('iron-signal', {name: 'logged-in', data: user });
+
+          document.dispatchEvent(
+            new CustomEvent("lite-signal", {
+              bubbles: true,
+              compose: true,
+              detail: { name: 'logged-in', data: this.user }
+            })
+          );
+
           // TODO: Look at this. Fire another signal a bit later in case some components had not set up their listeners
-          this.async(function () {
-            this.fire('iron-signal', {name: 'logged-in', data: user });
+          /*this.async(function () {
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true, // to cross Shadow DOM boundaries
+                detail: {name: 'logged-in', data: user }
+              })
+            );
           }, 1000);
+          */
 
           window.appGlobals.sendLoginAndSignupToAnalytics(user.id, "Login Success", this.lastLoginMethod ? this.lastLoginMethod : 'Email');
           this.set('lastLoginMethod', null);
@@ -276,12 +291,18 @@
 
         removeAnonymousUser: function () {
           this.removeUserSession();
-          this.fire('iron-signal', {name: 'logged-in', data: null });
         },
 
         removeUserSession: function () {
           this.$.session.unset('user');
           this.set('user', null);
+          document.dispatchEvent(
+            new CustomEvent("lite-signal", {
+              bubbles: true,
+              compose: true,
+              detail: { name: 'logged-in', data: null }
+            })
+          );
         },
 
         loggedIn: function () {
@@ -468,7 +489,13 @@
           if (newValue) {
             this._updateEndorsementPostsIndex(newValue);
             this._updatePointQualitiesIndex(newValue);
-            this.fire('iron-signal', {name: 'got-endorsements-and-qualities'});
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true,
+                detail: { name: 'got-endorsements-and-qualities' }
+              })
+            );
           }
         },
 
@@ -476,9 +503,6 @@
           this.toastLogoutTextCombined = this.t("user.logoutCompleteFor")+ " " + this.user.name;
           this.$.logoutToast.show();
           this.removeUserSession();
-          this.async(function() {
-            window.location = "/";
-          },1200);
         },
 
         _isLoggedInResponse: function(event, detail) {
@@ -514,11 +538,34 @@
           if (detail.response && detail.response!=0) {
             console.error("_adminRightsResponse 2");
             this.set('adminRights', detail.response);
-            this.fire('iron-signal', {name: 'got-admin-rights'});
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true,
+                detail: { name: 'got-admin-rights', data: true }
+              })
+            );
+
             // Fire another signal a bit later in case some components had not set up their listeners
-            this.async(function () {
-              this.fire('iron-signal', {name: 'got-admin-rights'});
+            /*this.async(function () {
+              this.dispatchEvent(
+                new CustomEvent("lite-signal", {
+                  bubbles: true,
+                  compose: true,
+                  detail: { name: 'got-admin-rights' }
+                })
+              );
             }, 1000);
+            */
+          } else {
+            this.set('adminRights', null);
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true,
+                detail: { name: 'got-admin-rights', data: false }
+              })
+            );
           }
         },
 
@@ -544,7 +591,23 @@
           if (detail.response && detail.response!=0) {
             this.set('memberships', detail.response);
             this._updateMembershipsIndex(this.memberships);
-            this.fire('iron-signal', {name: 'got-memberships'});
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true,
+                detail: { name: 'got-memberships' }
+              })
+            );
+          } else {
+            this.set('memberships', null);
+            this._updateMembershipsIndex(this.memberships);
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true,
+                detail: { name: 'got-memberships' }
+              })
+            );
           }
         }
       });
