@@ -141,7 +141,7 @@
               window.appUser.autoAnonymousLogin();
             }
           } else {
-            if (window.appUser.user && window.appUser.user.profile_data && window.appUser.user.profile_data.isAnonymousUser) {
+            if (window.appUser && window.appUser.user && window.appUser.user.profile_data && window.appUser.user.profile_data.isAnonymousUser) {
               window.appUser.removeAnonymousUser();
               console.debug("Logout anon user");
             }

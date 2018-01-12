@@ -105,8 +105,7 @@
       },
 
       _loggedInUser: function (event, user) {
-        console.error("_loggedInUser");
-        debugger;
+        console.info("_loggedInUser");
         if (user) {
           this.set('loggedInUser', user);
           this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), function () {
@@ -116,7 +115,7 @@
       },
 
       _gotAdminRights: function (event, detail) {
-        console.error("_gotAdminRights");
+        console.info("_gotAdminRights");
         if (detail===true) {
           this.set('gotAdminRights', true);
           this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {

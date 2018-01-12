@@ -269,16 +269,15 @@
           );
 
           // TODO: Look at this. Fire another signal a bit later in case some components had not set up their listeners
-          /*this.async(function () {
+          this.async(function () {
             document.dispatchEvent(
               new CustomEvent("lite-signal", {
                 bubbles: true,
-                compose: true, // to cross Shadow DOM boundaries
-                detail: {name: 'logged-in', data: user }
+                compose: true,
+                detail: {name: 'logged-in', data: this.user }
               })
             );
           }, 1000);
-          */
 
           window.appGlobals.sendLoginAndSignupToAnalytics(user.id, "Login Success", this.lastLoginMethod ? this.lastLoginMethod : 'Email');
           this.set('lastLoginMethod', null);
@@ -546,17 +545,15 @@
               })
             );
 
-            // Fire another signal a bit later in case some components had not set up their listeners
-            /*this.async(function () {
-              this.dispatchEvent(
+            // Fire another signal a bit later in case some components had not set up their listeners TODO: Find a better way
+            this.async(function () {
+              document.dispatchEvent(
                 new CustomEvent("lite-signal", {
                   bubbles: true,
                   compose: true,
-                  detail: { name: 'got-admin-rights' }
+                  detail: { name: 'got-admin-rights', data: true }
                 })
-              );
-            }, 1000);
-            */
+              )}, 1000);
           } else {
             this.set('adminRights', null);
             document.dispatchEvent(

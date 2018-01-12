@@ -410,7 +410,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
       },
       {
         model: models.Post,
-        attributes: ['id'],
+        attributes: ['id','group_id'],
         required: false,
         include: [
           {

@@ -9,9 +9,17 @@
     properties: {
       gotAdminRights: {
         type: Boolean,
-        value: false
+        notify: true,
+        value: false,
+        observer: '_gotAdminRightsChanged'
       }
     },
+
+    listeners: {
+      'yp-user-got-admin-rights': '_gotAdminRights'
+    },
+
+    _gotAdminRightsChanged: function () {},
 
     ready: function () {
       if (window.appUser && window.appUser.adminRights) {
@@ -20,6 +28,7 @@
     },
 
     _gotAdminRights: function (event, detail) {
+      console.error("gotAdminRights: "+detail);
       this.set('gotAdminRights', detail);
     }
   }
