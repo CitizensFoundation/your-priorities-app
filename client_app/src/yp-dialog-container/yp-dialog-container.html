@@ -105,8 +105,9 @@
       },
 
       _loggedInUser: function (event, user) {
-        console.error("_loggedInUser");
+        console.info("_loggedInUser");
         if (user) {
+          this.set('loggedInUser', user);
           this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), function () {
             console.info("Have loaded logged-in container");
           }, null, true);
@@ -114,7 +115,7 @@
       },
 
       _gotAdminRights: function (event, detail) {
-        console.error("_gotAdminRights");
+        console.info("_gotAdminRights");
         if (detail===true) {
           this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {
             console.info("Have loaded admin container");
@@ -136,14 +137,7 @@
           this.set('waitForUpgradeCounter', 0);
           return this.$$("#"+idName);
         } else {
-          console.warn("Element not upgraded: "+idName);
-          this.waitForUpgradeCounter += 1;
-          if (this.waitForUpgradeCounter>100) {
-            console.error("Element upgraded after wait: "+idName);
-          }
-          this.async(function () {
-            this.getDialog(idName);
-          }.bind(this), 250);
+          console.error("Element not upgraded: "+idName);
         }
       },
 
@@ -158,11 +152,11 @@
           console.warn("Element not upgraded: "+idName);
           this.waitForUpgradeCounter += 1;
           if (this.waitForUpgradeCounter>100) {
-            console.error("Element upgraded after wait: "+idName);
+            console.error("Element not upgraded after wait: "+idName);
           }
           this.async(function () {
             this.getDialogAsync(idName, callback);
-          }.bind(this), 250);
+          }.bind(this), this.waitForUpgradeCounter>100 ? 1000 : 250);
         }
       },
 

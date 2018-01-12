@@ -289,13 +289,14 @@
 
       _reportPoint: function () {
         window.appGlobals.activity('open', 'point.report');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
-        dialog.setup('/api/points/'+this.point.id+'/report',
-          this.t('reportConfirmation'),
-          this._onReport.bind(this),
-          this.t('point.report'),
-          'PUT');
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/points/' + this.point.id + '/report',
+            this.t('reportConfirmation'),
+            this._onReport.bind(this),
+            this.t('point.report'),
+            'PUT');
+          dialog.open();
+        }.bind(this));
       },
 
       _onReport: function () {

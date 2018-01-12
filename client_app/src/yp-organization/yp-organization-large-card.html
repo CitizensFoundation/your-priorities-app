@@ -200,11 +200,12 @@
       },
 
       _openDelete: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
-        dialog.setup('/api/communities/'+this.community.id,
-                     this.t('community.deleteConfirmation'),
-                     this._onDeleted.bind(this));
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/communities/' + this.community.id,
+            this.t('community.deleteConfirmation'),
+            this._onDeleted.bind(this));
+          dialog.open();
+        }.bind(this));
       },
 
       _openEdit: function () {
