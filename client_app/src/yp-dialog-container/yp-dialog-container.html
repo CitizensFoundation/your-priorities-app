@@ -30,7 +30,7 @@
     </style>
 
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
-    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+    <lite-signal on-lite-signal-logged-in="_loggedInUser"></lite-signal>
     <lite-signal on-lite-signal-open-bulk-status-updates="_openBulkStatusUpdates"></lite-signal>
 
     <div id="dialogs" hide$="[[hideDialogs]]">
@@ -105,7 +105,8 @@
       },
 
       _loggedInUser: function (event, user) {
-        console.info("_loggedInUser");
+        console.error("_loggedInUser");
+        debugger;
         if (user) {
           this.set('loggedInUser', user);
           this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), function () {
@@ -115,8 +116,9 @@
       },
 
       _gotAdminRights: function (event, detail) {
-        console.info("_gotAdminRights");
+        console.error("_gotAdminRights");
         if (detail===true) {
+          this.set('gotAdminRights', true);
           this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {
             console.info("Have loaded admin container");
           }, null, true);
