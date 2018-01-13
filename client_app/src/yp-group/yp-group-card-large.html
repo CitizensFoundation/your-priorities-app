@@ -350,11 +350,11 @@
       },
 
       _onDeleted: function () {
+        this.dispatchEvent(new CustomEvent('yp-refresh-community', {bubbles: true, composed: true}));
         this.redirectTo("/community/"+this.group.community_id);
       },
 
       _newCategory: function () {
-
         this.$$("#newCategory").open('new', { groupId: this.group.id });
       },
 

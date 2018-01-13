@@ -414,6 +414,7 @@
       },
 
       _onDeleted: function () {
+        this.dispatchEvent(new CustomEvent('yp-refresh-group', {bubbles: true, composed: true}));
         this.redirectTo("/group/"+this.post.group_id);
       }
     });

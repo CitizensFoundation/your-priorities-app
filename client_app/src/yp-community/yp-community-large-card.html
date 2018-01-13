@@ -409,6 +409,7 @@
 
       _onDeleted: function () {
         this.redirectTo("/domain/"+this.community.domain_id);
+        this.dispatchEvent(new CustomEvent('yp-refresh-domain', {bubbles: true, composed: true}));
       },
 
       _refresh: function (community) {

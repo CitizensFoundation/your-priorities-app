@@ -285,41 +285,6 @@
         }.bind(this));
       },
 
-      _menuSelection: function (event, detail) {
-        if (detail.item.id=="editMenuItem")
-          this._openEdit();
-        else if (detail.item.id=="deleteMenuItem")
-          this._openDelete();
-        else if (detail.item.id=="statusChangeMenuItem")
-          this._openPostStatusChange();
-        else if (detail.item.id=="moveMenuItem")
-          this._openMovePost();
-        else if (detail.item.id=="reportMenuItem")
-          this._openReport();
-        this.selectedMenuItem = null;
-      },
-
-      _openMovePost: function () {
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("postMove", function (dialog) {
-          dialog.setupAndOpen(this.post, this._refresh.bind(this));
-        }.bind(this));
-      },
-
-      _openPostStatusChange: function () {
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("postStatusChangeEdit", function (dialog) {
-          dialog.setup(this.post, null, this._refresh.bind(this));
-          dialog.open('new', {postId: this.post.id, statusChange: true});
-        }.bind(this));
-      },
-
-      _openEdit: function () {
-        window.appGlobals.activity('open', 'post.new');
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
-          dialog.setup(this.post, this.post.Group, false, this._refresh.bind(this));
-          dialog.open('edit', {postId: this.post.id});
-        }.bind(this));
-      },
-
       _openReport: function () {
         window.appGlobals.activity('open', 'post.report');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
@@ -332,22 +297,8 @@
         }.bind(this));
       },
 
-      _openDelete: function () {
-        window.appGlobals.activity('open', 'post.delete');
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
-          dialog.setup('/api/posts/' + this.post.id,
-            this.t('post.deleteConfirmation'),
-            this._onDeleted.bind(this));
-          dialog.open();
-        }.bind(this));
-      },
-
       _onReport: function () {
         window.appGlobals.notifyUserViaToast(this.t('post.report')+': '+this.post.name);
-      },
-
-      _onDeleted: function () {
-        this.redirectTo("/group/"+this.post.group_id);
       }
     });
   </script>

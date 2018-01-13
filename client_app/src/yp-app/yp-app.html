@@ -461,7 +461,29 @@
         'yp-redirect-to': '_redirectTo',
         'yp-set-number-of-un-viewed-notifications': '_setNumberOfUnViewedNotifications',
         'yp-have-loaded-themes': '_haveLoadedThemes',
-        'yp-close-right-drawer': '_closeLeftDrawer'
+        'yp-close-right-drawer': '_closeLeftDrawer',
+        'yp-refresh-group': '_refreshGroup',
+        'yp-refresh-community': '_refreshCommunity',
+        'yp-refresh-domain': '_refreshDomain'
+      },
+
+      _refreshGroup: function () {
+        this._refreshByName("#groupPage");
+      },
+
+      _refreshCommunity: function () {
+        this._refreshByName("#communityPage");
+      },
+
+      _refreshDomain: function () {
+        this._refreshByName("#domainPage");
+      },
+
+      _refreshByName: function(id) {
+        var el = this.$$(id);
+        if (el) {
+          el._refreshAjax();
+        }
       },
 
       _closeLeftDrawer: function () {
@@ -543,8 +565,8 @@
 
       _routePageChanged: function(pageData, oldPageData) {
         if (this.route.path.indexOf('/user/reset_password') > -1 ||
-            this.route.path.indexOf('/user/accept/invite') > -1 ||
-            this.route.path.indexOf('/user/open_notification_settings') > -1) {
+          this.route.path.indexOf('/user/accept/invite') > -1 ||
+          this.route.path.indexOf('/user/open_notification_settings') > -1) {
           window.history.pushState({}, null, "/");
           window.dispatchEvent(new CustomEvent('location-changed'));
         } else {
@@ -800,7 +822,7 @@
       goBack: function (event, detail) {
         if (this.backPath) {
           if (this.useHardBack) {
-           window.location = this.backPath;
+            window.location = this.backPath;
           } else {
             this.redirectTo(this.backPath);
           }
