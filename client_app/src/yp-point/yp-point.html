@@ -196,7 +196,7 @@
         isEditing: {
           type: Boolean,
           value: false,
-          observer: '_updateEmojiBindings'
+          observer: '_isEditingChanged'
         },
 
         maxNumberOfPointsBeforeEditFrozen: {
@@ -222,6 +222,13 @@
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypGotAdminRightsBehavior
       ],
+
+      _isEditingChanged: function () {
+        this._updateEmojiBindings();
+        this.async(function () {
+          this.fire('iron-resize');
+        });
+      },
 
       _shareTap: function (event, detail) {
         window.appGlobals.activity('pointShareOpen', detail.brand, this.point.id);
