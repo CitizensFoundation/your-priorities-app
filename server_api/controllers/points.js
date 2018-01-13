@@ -6,6 +6,7 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var async = require('async');
 var embedly = require('embedly');
+var _ = require('lodash');
 
 var changePointCounter = function (pointId, column, upDown, next) {
   models.Point.find({
@@ -408,6 +409,7 @@ router.delete('/:id', auth.can('delete point'), function(req, res) {
       include: [
         {
           model: models.Point,
+          attributes: ['id'],
           required: true,
           where: {
             id: point.id
@@ -415,12 +417,18 @@ router.delete('/:id', auth.can('delete point'), function(req, res) {
         }
       ]
     }).then(function (activities) {
-      async.eachSeries(activities, function (activity, innerCallback) {
-        activity.deleted = true;
-        activity.save().then(function () {
-          innerCallback();
-        });
-      }, function done() {
+      var activityIds = _.map(activities, function (activity) {
+        return activity.id;
+      });
+      models.AcActivity.update(
+        { deleted: true },
+        { where: {
+            id: {
+              $in: activityIds
+            }
+          }
+        }
+      ).then(function (spread) {
         point.deleted = true;
         point.save().then(function () {
           log.info('Point Deleted', { point: toJson(point), context: 'delete', user: toJson(req.user) });

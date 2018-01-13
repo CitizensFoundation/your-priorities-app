@@ -5,6 +5,7 @@ var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var async = require('async');
+var _ = require('lodash');
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
@@ -621,6 +622,7 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
       include: [
         {
           model: models.Post,
+          attributes: ['id'],
           required: true,
           where: {
             id: postId
@@ -629,12 +631,17 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
       ]
     }).then(function (activities) {
       log.info('Post Deleted Got Activities', { context: 'delete', user: toJson(req.user) });
-      async.eachSeries(activities, function (activity, innerCallback) {
-        activity.deleted = true;
-        activity.save().then(function () {
-          innerCallback();
-        });
-      }, function done() {
+      var activityIds = _.map(activities, function (activity) {
+        return activity.id;
+      });
+      models.AcActivity.update(
+        { deleted: true },
+        { where: {
+            id: {
+              $in: activityIds
+            }
+          }}
+      ).then(function (spread) {
         post.deleted = true;
         post.save().then(function () {
           log.info('Post Deleted Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
