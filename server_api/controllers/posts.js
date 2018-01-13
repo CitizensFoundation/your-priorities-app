@@ -360,7 +360,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
     where: {
       post_id: req.params.id
     },
-    attributes: ['id','name','content','value','counter_quality_up','counter_quality_down','embed_data'],
+    attributes: ['id','name','content','user_id','value','counter_quality_up','counter_quality_down','embed_data'],
     order: [
       models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
       [ models.PointRevision, 'created_at', 'asc' ],
