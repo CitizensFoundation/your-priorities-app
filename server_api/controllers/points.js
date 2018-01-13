@@ -120,6 +120,7 @@ var loadPointWithAll = function (pointId, callback) {
       {
         model: models.Post,
         required: false,
+        attributes: ['id','group_id'],
         include: [
           {
             model: models.Group,

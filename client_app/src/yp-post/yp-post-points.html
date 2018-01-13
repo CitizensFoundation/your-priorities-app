@@ -20,7 +20,7 @@
 
       :host {
         display: block;
-        }
+      }
 
       .item {
         @apply --layout-horizontal;
@@ -230,7 +230,7 @@
 
                 <div hidden="[[!ifLengthUpIsRight]]">
                   <div class="addPointFab layout horizontal center-center">
-                    <paper-button icon="add" mini="" elevation="3" on-tap="addPointUp"
+                    <paper-button disabled$="[[addPointDisabled]]" icon="add" mini="" elevation="3" on-tap="addPointUp"
                                   title="[[t('point.add_up')]]">[[t('point.postComment')]]</paper-button>
                   </div>
                 </div>
@@ -278,7 +278,7 @@
 
                 <div hidden="[[!ifLengthDownIsRight]]">
                   <div class="addPointFab layout horizontal center-center">
-                    <paper-button icon="add" elevation="3" on-tap="addPointDown"
+                    <paper-button disabled$="[[addPointDisabled]]" icon="add" elevation="3" on-tap="addPointDown"
                                   title="[[t('point.add_down')]]">[[t('point.postComment')]]</paper-button>
                   </div>
                 </div>
@@ -319,7 +319,7 @@
           </div>
           <div hidden="[[!ifLengthMobileRight]]">
             <div class="addPointFab layout horizontal center-center mobileFab">
-              <paper-button icon="add" z="3" on-tap="addMobilePointUpOrDown"
+              <paper-button disabled$="[[addPointDisabled]]" icon="add" z="3" on-tap="addMobilePointUpOrDown"
                             title="[[t('point.postComment')]]">[[t('point.postComment')]]</paper-button>
             </div>
           </div>
@@ -337,7 +337,7 @@
     <div hidden class="layout horizontal center-center">
       <yp-ajax id="ajax" on-response="_response"></yp-ajax>
       <yp-ajax id="newPointsAjax" on-response="_newPointsResponse"></yp-ajax>
-      <yp-ajax id="newPointAjax" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
+      <yp-ajax id="newPointAjax" on-error="_newPointError" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
     </div>
 
     <paper-toast id="newPointToast" text="[[newPointTextCombined]]"></paper-toast>
@@ -456,7 +456,16 @@
             type: Boolean,
             value: false,
             computed: 'ifLengthIsRight(textValueMobileUpOrDown)'
+          },
+
+          addPointDisabled: {
+            type: Boolean,
+            value: false
           }
+        },
+
+        _newPointError: function () {
+          this.set('addPointDisabled', false);
         },
 
         _ironListResizeScrollThreshold: function (largeMode) {
@@ -579,9 +588,9 @@
               this.set('labelUp', this.t('point.for'));
             }
             if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointAgainstLabel) {
-                this.set('labelDown', this.post.Group.configuration.alternativePointAgainstLabel);
+              this.set('labelDown', this.post.Group.configuration.alternativePointAgainstLabel);
             } else {
-                this.set('labelDown', this.t('point.against'));
+              this.set('labelDown', this.t('point.against'));
             }
           }
         },
@@ -674,6 +683,7 @@
         },
 
         _newPointResponse: function (event, detail) {
+          this.set('addPointDisabled', false);
           var point = detail.response;
           if (point.value > 0) {
             this.newPointTextCombined = this.t("point.forAdded") + " " + this.truncate(point.content, 21);
@@ -719,6 +729,7 @@
               value: value
             };
             this.$.newPointAjax.generateRequest();
+            this.set('addPointDisabled', true);
           } else {
             window.appUser.loginForNewPoint(this, {content: content, value: value});
           }
