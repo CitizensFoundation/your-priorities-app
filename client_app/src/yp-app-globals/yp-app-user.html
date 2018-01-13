@@ -501,6 +501,7 @@
         _logoutResponse: function (event, detail) {
           this.toastLogoutTextCombined = this.t("user.logoutCompleteFor")+ " " + this.user.name;
           this.$.logoutToast.show();
+          this.fire('yp-close-right-drawer');
           this.removeUserSession();
         },
 

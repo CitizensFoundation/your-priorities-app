@@ -460,7 +460,12 @@
         'yp-set-home-link': '_setHomeLink',
         'yp-redirect-to': '_redirectTo',
         'yp-set-number-of-un-viewed-notifications': '_setNumberOfUnViewedNotifications',
-        'yp-have-loaded-themes': '_haveLoadedThemes'
+        'yp-have-loaded-themes': '_haveLoadedThemes',
+        'yp-close-right-drawer': '_closeLeftDrawer'
+      },
+
+      _closeLeftDrawer: function () {
+        this.$$("#drawer").close();
       },
 
       _haveLoadedThemes: function () {
