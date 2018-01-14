@@ -62,6 +62,8 @@
 
     _languageEvent: function (event, detail) {
       if (detail.type == 'language-loaded') {
+        var oldLang= this.language;
+        var oldLoaded = this.loadedLanguage;
         this.set('loadedLanguage', detail.language);
         this.set('language', detail.language);
         window.locale = detail.language;
@@ -79,8 +81,14 @@
             console.log("i18n init loaded "+loaded);
             moment.locale(locale);
             console.log("Changed language to "+locale);
-            var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale } } } );
-            document.dispatchEvent(event);
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true,
+                detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale}  }
+              })
+            );
+
           });
         }
       }
@@ -102,7 +110,7 @@
       window.dispatchEvent(new CustomEvent('location-changed'));
     },
 
-    _translate: function(language) {
+    _translate: function (language) {
       return function() {
         var key = arguments[0];
         if (window.i18nTranslation) {

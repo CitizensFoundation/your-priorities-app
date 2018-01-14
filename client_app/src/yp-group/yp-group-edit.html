@@ -505,10 +505,10 @@
     },
 
     _clear: function () {
-      this.group = { name: '', objectives: '', access: 0, status: 'active' };
-      this.uploadedLogoImageId = null;
-      this.uploadedHeaderImageId = null;
-      this.uploadedDefaultDataImageId = null;
+      this.set('group', { name: '', objectives: '', access: 0, status: 'active' });
+      this.set('uploadedLogoImageId', null);
+      this.set('uploadedHeaderImageId', null);
+      this.set('uploadedDefaultDataImageId', null);
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
       this.$.defaultDataImageUpload.clear();

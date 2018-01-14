@@ -53,9 +53,17 @@
           }
         }, 500);
       }
+
       console.log("Changed language to "+language);
-      var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-loaded', language: language } } } );
-      document.dispatchEvent(event);
+
+      document.dispatchEvent(
+        new CustomEvent("lite-signal", {
+          bubbles: true,
+          compose: true,
+          detail: { name: 'yp-language', data: { type: 'language-loaded', language: language }  }
+        })
+      );
+
       setTimeout(function(){
         onSplashClick();
       }, 720);

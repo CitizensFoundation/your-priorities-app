@@ -518,8 +518,13 @@
           }
         }
 
-        var scrollThresholdEvent = new CustomEvent("iron-signal", { detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} } } );
-        document.dispatchEvent(scrollThresholdEvent);
+        document.dispatchEvent(
+          new CustomEvent("lite-signal", {
+            bubbles: true,
+            compose: true,
+            detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} }
+          })
+        );
 
         this.async(function () {
           this.$.ironList.fire('iron-resize');

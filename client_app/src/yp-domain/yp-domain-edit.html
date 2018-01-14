@@ -279,9 +279,9 @@
     },
 
     _clear: function () {
-      this.domain = { name: '', description: '' };
-      this.uploadedLogoImageId = null;
-      this.uploadedHeaderImageId = null;
+      this.set('domain', { name: '', description: '' });
+      this.set('uploadedLogoImageId', null);
+      this.set('uploadedHeaderImageId', null);
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
     },

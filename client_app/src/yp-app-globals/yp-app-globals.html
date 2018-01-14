@@ -152,8 +152,13 @@
 
         _domainChanged: function (domain) {
           if (domain) {
-            var event = new CustomEvent("iron-signal", { detail: { name: 'yp-domain-changed', data: { domain: domain } } } );
-            document.dispatchEvent(event);
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true,
+                detail: { name: 'yp-domain-changed', data: { domain: domain } }
+              })
+            );
           }
         },
 

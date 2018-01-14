@@ -306,8 +306,13 @@
           if (notification.type=='notification.point.new') {
             var activityUser = notification.AcActivities[0].User;
             if (window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) {
-              var event = new CustomEvent("iron-signal", { detail: { name: 'yp-update-points-for-post', data: { postId: notification.AcActivities[0].Post.id } } } );
-              document.dispatchEvent(event);
+              document.dispatchEvent(
+                new CustomEvent("lite-signal", {
+                  bubbles: true,
+                  compose: true,
+                  detail: { name: 'yp-update-points-for-post', data: { postId: notification.AcActivities[0].Post.id } }
+                })
+              );
             }
           }
         }.bind(this));

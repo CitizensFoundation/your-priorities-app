@@ -133,9 +133,9 @@
     },
 
     _clear: function () {
-      this.category = { name: '', description: '' };
-      this.uploadedIconImageId = null;
-      this.uploadedHeaderImageId = null;
+      this.set('category', { name: '', description: '' });
+      this.set('uploadedIconImageId', null);
+      this.set('uploadedHeaderImageId', null);
       this.$.headerImageUpload.clear();
       this.$.iconImageUpload.clear();
     },

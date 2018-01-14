@@ -226,8 +226,8 @@
 
     _clear: function () {
       this.set('user', { name: '', email: '', access: 2 } );
-      this.uploadedProfileImageId = null;
-      this.uploadedHeaderImageId = null;
+      this.set('uploadedProfileImageId', null);
+      this.set('uploadedHeaderImageId', null);
       this.$.headerImageUpload.clear();
       this.$.profileImageUpload.clear();
     },

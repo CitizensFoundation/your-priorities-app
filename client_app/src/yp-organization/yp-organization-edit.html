@@ -173,8 +173,8 @@
 
     _clear: function () {
       this.set('organization', { name: '', description: '', access: 0 });
-      this.uploadedLogoImageId = null;
-      this.uploadedHeaderImageId = null;
+      this.set('uploadedLogoImageId', null);
+      this.set('uploadedHeaderImageId', null);
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
     },

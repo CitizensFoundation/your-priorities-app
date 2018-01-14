@@ -534,9 +534,9 @@
         },
 
         _adminRightsResponse: function (event, detail) {
-          console.error("_adminRightsResponse 1");
+          console.debug("_adminRightsResponse 1");
           if (detail.response && detail.response!=0) {
-            console.error("_adminRightsResponse 2");
+            console.debug("_adminRightsResponse 2");
             this.set('adminRights', detail.response);
             document.dispatchEvent(
               new CustomEvent("lite-signal", {

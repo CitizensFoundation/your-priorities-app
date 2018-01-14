@@ -317,8 +317,13 @@
     ],
 
     customFormResponse: function () {
-      var event = new CustomEvent("iron-signal", { detail: { name: 'yp-refresh-group-posts', data: { id: 4 } } } );
-      document.dispatchEvent(event);
+      document.dispatchEvent(
+        new CustomEvent("lite-signal", {
+          bubbles: true,
+          compose: true,
+          detail: { name: 'yp-refresh-group-posts', data: { id: 4 } }
+        })
+      )
     },
 
     _updateEmojiBindings: function () {
