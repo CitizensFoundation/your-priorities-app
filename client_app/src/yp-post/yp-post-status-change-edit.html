@@ -24,9 +24,8 @@
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <yp-edit-dialog id="editDialog" double-width icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
-      <h2 slot="h2">[[editHeaderText]]</h2>
-
+    <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" double-width icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]"
+                    action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <div class="layout horizontal center-center">
         <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
           <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{officialStatus}}">

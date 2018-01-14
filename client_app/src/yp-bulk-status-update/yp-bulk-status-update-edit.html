@@ -24,9 +24,8 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <yp-edit-dialog id="editDialog" double-width icon="language" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
-      <h2 slot="h2">[[editHeaderText]]</h2>
-
+    <yp-edit-dialog id="editDialog" double-width icon="language" action="[[action]]" method="[[method]]"
+                    title="[[editHeaderText]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <div class="layout vertical">
         <paper-input id="name"
                      name="name"

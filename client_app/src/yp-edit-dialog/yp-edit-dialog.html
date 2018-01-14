@@ -138,7 +138,7 @@
         color: #FFF;
         margin: 0;
         padding: 16px;
-        max-height: 50px !important;
+        vertical-align: center;
       }
 
       .largeIcon {
@@ -152,10 +152,11 @@
         padding-right: 8px;
       }
 
-      .content-wrapper ::slotted(h2) {
+      .titleHeader {
         font-size: 32px;
         padding-left: 12px;
-        padding-bottom: 8px;
+        padding-top: 14px;
+        font-weight: bold;
       }
 
       #formErrorDialog {
@@ -190,7 +191,7 @@
               <paper-icon-button id="dismissBtn" icon="close" class="closeIconNarrow" dialog-dismiss></paper-icon-button>
               <div class="layout horizontal title flex">
                 <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
-                <slot name="h2"></slot>
+                <h2>[[title]]</h2>
               </div>
               <template is="dom-if" if="[[!useNextTabAction]]">
                 <paper-button id="submit1" on-tap="_submit"><span class="smallButtonText">[[saveText]]</span></paper-button>
@@ -213,9 +214,7 @@
         <template is="dom-if" if="[[!narrow]]" restamp>
           <div class="layout horizontal bigHeader">
             <iron-icon class="largeIcon" icon="[[icon]]"></iron-icon>
-            <div class="content-wrapper">
-              <slot name="h2"></slot>
-            </div>
+            <div class="titleHeader">[[title]]</div>
           </div>
           <paper-dialog-scrollable id="scrollable" small-height$="[[smallHeight]]" medium-height$="[[mediumHeight]]" large-height$="[[largeHeight]]">
             <iron-form id="form" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
@@ -359,7 +358,9 @@
 
         confirmationText: {
           type: String
-        }
+        },
+
+        title: String
       },
 
       _fileUploadStarting: function (event) {

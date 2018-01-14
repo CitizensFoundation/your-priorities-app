@@ -30,9 +30,8 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <yp-edit-dialog id="editDialog" icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
-      <h2 slot="h2">[[editHeaderText]]</h2>
-
+    <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]"
+                    action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <template is="dom-repeat" items="[[availableGroups]]" as="group">
         <div class="groupName" on-tap="_selectGroup" data-args$="[[group.id]]" data-args-name$="[[group.name]]">[[group.name]]</div>
       </template>
