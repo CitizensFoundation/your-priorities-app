@@ -1,0 +1,55 @@
+{
+  "entrypoint": "index_yp.html",
+  "shell": "src/yp-app/yp-app.html",
+  "fragments": [
+    "src/yp-community/yp-community.html",
+    "src/yp-group/yp-group.html",
+    "src/yp-post/yp-post.html",
+    "src/yp-dialog-container/yp-dialog-container-logged-in.html",
+    "src/yp-dialog-container/yp-dialog-container-admin.html",
+    "src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html",
+    "src/yp-user/yp-user.html",
+    "src/yp-app/yp-view-404.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "images/**/*",
+    "styles/**/*",
+    "locales/**/*",
+    "index_br.html",
+    "index_bi.html",
+    "bower.json",
+    "bower_components/i18next/i18next.min.js",
+    "bower_components/i18next-xhr-backend/i18nextXHRBackend.min.js",
+    "index_yp.html",
+    "src/yp-app/yp-app.html",
+    "src/yp-community/yp-community.html",
+    "src/yp-group/yp-group.html",
+    "src/yp-post/yp-post.html",
+    "src/yp-dialog-container/yp-dialog-container-logged-in.html",
+    "src/yp-dialog-container/yp-dialog-container-admin.html",
+    "src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html",
+    "src/yp-user/yp-user.html",
+    "src/yp-app/yp-view-404.html"
+  ],
+  "extraDependencies": [
+    "bower_components/webcomponentsjs/*.js"
+  ],
+  "builds": [
+    {
+      "name": "bundled",
+      "bundle": true,
+      "js": {
+        "compile": true,
+        "minify": true
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      },
+      "addServiceWorker": true
+    }
+  ]
+}

@@ -1,0 +1,445 @@
+{
+  "filterIdeas": "Филтер",
+  "edit": "Измените",
+  "delete": "Обришите",
+  "addEmoji": "Додајте емотикон",
+  "closeComments": "Затворите коментаре",
+  "openComments": "Отворите коментаре",
+  "deleteActivity": "Обришите активност из вести",
+  "pointsFor": "Аргументи за",
+  "pointsAgainst": "Аргументи против",
+  "pointForShort": "За ",
+  "pointAgainstShort": "Против",
+  "domainToastCreated": "Направљен домен",
+  "domainToastUpdated": "Сачуван домен",
+  "communityToastCreated": "Направљена заједница",
+  "communityToastUpdated": "Сачувана заједница",
+  "groupToastCreated": "Направљена група",
+  "groupToastUpdated": "Сачувана група",
+  "userToastCreated": "Направите новог корисника",
+  "userToastUpdated": "Сачуван корисник",
+  "hideGroupHeader": "Сакријте заглавље",
+  "errorResetTokenNotFoundOrUsed": "Жетон за ресет лозинке није пронаћен или је већ употребљен",
+  "addedAnIdea": "Додао/ла идеју...",
+  "recommendedPosts": "Препоручио/ла",
+  "noComments": "Нема коментара",
+  "optional": "Опционо",
+  "additionalGroupConfig":"Додатна конфигурација групе",
+  "defaultDataImage":"Предефинисана слика за податак",
+  "defaultPostImage":"Предефинисана слика за прилог",
+  "hideAllTabs":"Сакријте све табове",
+  "hideNewPostOnPostPage":"Сакријте нови прилог на страници",
+  "newPointOptional":"Постаите нови аргумент као опциони",
+  "hideHelpIcon":"Сакријте иконицу за помоћ",
+  "hideEmoji":"Сакријте емотиконе",
+  "endorsementButtonsHeart":"Срца",
+  "endorsementArrows":"Стрелице",
+  "endorsementThumbs":"Палчеви",
+  "endorsementHats":"Капе",
+  "endorsementButtons": "Беџеви",
+  "bulkStatusUdateForInfo": "Кликните на предлоге за више информација",
+  "urlLink": "Линк",
+  "bulkStatusUdateFor": "Укључено ажурирање статуса за предлоге",
+  "inviteNotFoundOrAlreadyUsed": "Позив није пронађен или је већ употребљен",
+  "reportConfirmation": "Да ли сте сигурни да желите да пријавите овај садржај за кршење правила сајта?",
+  "uniqueStatusMessage": "Јединствена статусна порука",
+  "templateContent": "Садржај темплата",
+  "bulkStatusUpdate": "Групни статуси",
+  "close": "Затворите",
+  "editTemplates": "Измените темплате",
+  "editTemplate": "Измените темплат",
+  "deleteTemplate": "Обришите темплат",
+  "addTemplate": "Додајте темплат",
+  "save": "Сачувајте",
+  "saved": "Сачувано",
+  "config": "Конфигурација",
+  "newBulkStatusUpdate": "Нови групни статус",
+  "editBulkStatusUpdate": "Измените групни статус",
+  "bulkStatusUdateConfig": "Конфигурација групног статуса",
+  "bulkStatusUpdatesTemplates": "Темплати групних статуса",
+  "selectStatusTemplate": "Темплат",
+  "moveToGroup": "Померите",
+  "noIdeasHere": "Нема предлога.",
+  "organizationsAdmin": "Администратор организација",
+  "unviewed": "није погледано",
+  "notificationMarkAllViewed": "Означите као погледано",
+  "notificationConfirmMarkAllViewed": "Потврдите да желите да означите сва своја обавештења као погледана",
+  "upVotedPoint": "је гласао/ла за ваш аргумент",
+  "downVotedPoint": "је гласао/ла против вашег аргумента",
+  "endorsedYourPost": "је подржао/ла вашу идеју",
+  "opposedYourPost": "се супротставио/ла вашој идеји",
+  "notifications": "Обавештења",
+  "votingDisabled": "Гласање није активно",
+  "pageNotFound": "Тражена страница није пронађена",
+  "participate": "Учествујте",
+  "emojiSearchResults": "Резултати претраге",
+  "recentlyUsedEmoji": "Недавно коришћено",
+  "findAnEmoji": "Пронађите емотикон",
+  "cancel": "Откажите",
+  "ok": "У реду",
+  "next": "Следеће",
+  "create": "Направите",
+  "confirm": "Потврдите",
+  "access": "Приступите",
+  "searchFor": "Претрага...",
+  "title": "Назив",
+  "selectLanguage": "Изаберите језик",
+  "update": "Ажурирајте",
+  "errorCantConnect": "Повезивање на сервер није могуће због превеликог саобраћаја или надградње софтвера. Молимо вас покушајте мало касније.",
+  "errorNotFound": "Није пронађено...",
+  "errorNotAuthorized": "Немате приступ овом садржају!",
+  "generalError": "Догодила се неочекивана грешка. Обавештени смо о проблему.",
+  "stats": {
+    "posts": "Број предлога",
+    "discussions": "Број дискусија",
+    "communities": "Број заједница",
+    "groups": "Број група",
+    "users": "Број корисника"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "Ваша лозинка је промењена и сада сте пријављени. ",
+    "method": "Метод",
+    "frequency": "Учесталост",
+    "myPosts": "Моји предлози",
+    "muted": "Искључите",
+    "browser": "Претраживач",
+    "email": "Електронска пошта",
+    "asItHappens": "Одмах",
+    "daily": "Дневно",
+    "hourly": "На сат",
+    "weekly": "Недељно",
+    "monthly": "Месечно",
+    "myPostsEndorsements": "Предлози који ми се свиђају",
+    "myPoints": "Моји аргументи",
+    "myPointEndorsements": "Аргументи који ми се свиђају",
+    "allCommunity": "Сва обавештења од мојих заједница",
+    "allGroup": "Сва обавештења од мојих група",
+    "invite_accepted_for": "Учествује у"
+  },
+
+  "pages": {
+    "addLocale": "Додајте локацију",
+    "unPublish": "Уклоните објаву",
+    "deletePage": "Обришите",
+    "addPage": "Додајте нову страницу",
+    "managePages": "Управљање страницама"
+  },
+
+  "archived": "Архивирано",
+
+  "status": {
+    "select": "Изаберите статус",
+    "active": "Активно",
+    "featured": "У фокусу",
+    "archived": "Архивирано",
+    "hidden": "Сакривено",
+    "published": "Отворено",
+    "successful": "Успешно",
+    "failed": "Неуспешно",
+    "inProgress": "У току"
+  },
+
+  "pluralStatus": {
+    "published": "Отворено",
+    "successful": "Успешни предлози",
+    "failed": "Неуспешни предлози",
+    "inProgress": "Предлози у току",
+    "inVoting": "Предлози на гласању"
+  },
+
+  "activity": {
+    "confirmDelete": "Потврдите да желите да обришете ову активност?",
+    "post": {
+      "new": "Предлог",
+      "status": {
+       "change": "Ажурирање статуса"
+      }
+    },
+    "point": {
+      "forAdded": "Додат аргумент за",
+      "againstAdded": "Додат аргумент против",
+      "new": "Аргумент",
+      "newFor": "Аргумент за",
+      "newAgainst": "Аргумент против",
+      "newComment": "Коментар",
+      "newsStory": {
+        "new": "Вести од корисника"
+      }
+    }
+  },
+  "name": "Име",
+
+  "domain": {
+    "createOrganization": "Направите организацију",
+    "edit": "Измените домен",
+    "info": "Подешавања",
+    "apis": "API",
+    "settings": "Додатно",
+    "onlyAdminsCanCreateCommunities": "Само администратори могу да праве нове заједнице"
+  },
+
+  "domains": "Домени",
+  "communities": "Заједнице",
+  "groups": "Групе",
+
+  "myDomains": "Моји домени",
+  "myCommunities": "Моје заједнице",
+  "myGroups": "Моје групе",
+  "myAdminCommunities": "Администратор заједнице",
+  "myAdminGroups": "Администратор групе",
+
+  "community": {
+    "alternativeHeader": "Алтернативно заглавље",
+    "edit": "Промените детаље заједнице",
+    "hostname": "Назив хоста",
+    "admins": "Администратори заједнице",
+    "users": "Корисници заједнице",
+    "delete": "Обришите заједницу",
+    "new": "Направите заједницу",
+    "public": "Отворена заједница",
+    "closed": "Затворена заједница",
+    "secret": "Тајна заједница",
+    "pages":"Странице заједнице",
+    "onlyAdminsCanCreateGroups": "Само администратори могу да креирају групе"
+  },
+
+  "posts": {
+    "posts": "Предлози",
+    "open": "Отворено",
+    "inProgress": "У току",
+    "successful": "Успешно",
+    "failed": "Неуспешно",
+    "map": "Мапа",
+    "noMapPosts": "Нема идеја са локацијом",
+    "newUserImage": "Додајте илустрацију"
+  },
+
+  "form": {
+    "invalid": "Попуните образац до краја"
+  },
+
+  "post": {
+    "most_debated": "Највише дискутовано",
+    "deleteConfirmation": "Да ли сте сигурни да желите да обришете овај предлог?",
+    "move": "Померите предлог",
+    "confirmMove": "Потрдите да желите померање",
+    "statusChangeConfirmText": "Да ли сте сигурни да желите да пошаљете мејл свима који су за или против овог предлога?",
+    "statusChangeSelectNewStatus": "Нови статус",
+    "statusChangeContent": "Промена садржаја статуса биће прослеђена свима који су за или против предлога",
+    "statusChange": "Пошаљите мејл о промени статуса",
+    "statusChangeSent": "Мејл о промени статуса послат",
+    "noLocation": "Без локације",
+    "shareInfo": "Поделите предлог",
+    "description": "Опис",
+    "debate": "Дискусија",
+    "formInvalid": "Попуните образац до краја",
+    "status": "Статус предлога",
+    "new": "Нови предлог",
+    "searchingFor": "Претраживање",
+    "top": "Најпопуларнији предлози",
+    "newest": "Последњи предлози",
+    "random": "Случајни распоред предлога",
+    "inProgress": "Предлози у току",
+    "groups": "Поставите групе",
+    "search": "Претражите предлоге",
+    "add_new":"Додајте нови предлог",
+    "up_vote":"Гласајте за предлог",
+    "down_vote":"Гласајте против предлога",
+    "report": "Пријавите предлог као проблематичан",
+    "notify": "Обавестите ме о овом предлогу",
+    "share": "Поделите овај предлог",
+    "yourPost": "Предлог",
+    "yourPoint": "Аргумент за",
+    "location": "Локација",
+    "photo": "Илустрација",
+    "photographerName": "Фотограф",
+    "newPhoto": "Нова илустрација",
+    "photoUpdate": "Ажурирајте илустрацију",
+    "photoDeleteConfirmation": "Да ли сте сигурни да желите да обришете ову илустрацију?",
+    "tabs": {
+      "debate": "Дискусија",
+      "news": "Вести",
+      "location": "Локација",
+      "photos": "Илустрације",
+      "solutions": "Решења",
+      "not_implemented": "Није још примењено"
+    },
+    "cover": {
+      "media": "Одаберите позадину",
+      "imageInfo": "Можете додати документ или слику која илуструје ваш предлог или аргумент.",
+      "map": "Мапа",
+      "streetview": "Street view",
+      "image": "Слика",
+      "none": "Ништа"
+    },
+    "edit": "Измените предлог",
+    "delete": "Обришите предлог",
+    "addNewIntroBoxText": "Кликните на сијалицу да додате нову идеју"
+  },
+
+  "short_word": {
+    "in": "у"
+  },
+
+  "category": {
+    "new": "Нова категорија",
+    "select": "Изаберите категорију"
+  },
+
+  "categories": {
+    "all": "све категорије",
+    "the_all": "Све категорије"
+  },
+
+  "point": {
+    "report": "Пријавите",
+    "againstAdded": "Додат аргумент против",
+    "forAdded": "Додат аргумент за",
+    "confirmDelete": "Потврдите да желите да обришете овај аргумент",
+    "theseAreFor": "Аргумент за",
+    "theseAreAgainst": "Аргумент против",
+    "point": "Аргумент",
+    "for": "Напишите аргумент за...",
+    "against": "Напишите аргумент против...",
+    "add_up": "Додајте аргумент за",
+    "add_down": "Додајте аргумент против",
+    "helpful": "Означите као корисно",
+    "not_helpful": "Означите да није корисно",
+    "addNewsStory": "Додајте вест",
+    "postNewsStory": "Додајте вест",
+    "addComment": "Ваш коментар",
+    "postComment": "Поставите",
+    "comments": "Коментари",
+    "howToWrite": "Хајде да продискутујемо најбоље аргументе и размислимо о решењима...",
+    "commentToShort": "Текст је превише кратак!"
+  },
+
+  "news": "Вести",
+
+  "uploading": {
+    "inProgress": "Ажурирање..."
+  },
+
+  "notice": {
+    "ok": "У реду",
+    "feature_not_implemented_a": "Ова могућност још није примењена у верзији Your Priorities 6.0",
+    "feature_not_implemented_b": "Реците нам шта мислите :)",
+    "welcome_a": "Ово је верзија Your Priorities 6.0 у којој можете само да прегледате садржај, не и да га додајете. Захвални смо за ваше мишљење. ",
+    "welcome_b": "За сада ради само у Chrome предраживачу али ће подржавати све веће предраживаче до пуштања у рад у првом кварталу 2015.",
+    "welcome_heading": "Добродошли на преглед Your Priorities 6.0 технологије",
+    "continue": "Наставите за преглед",
+    "deleteConfirmation": "Да ли желите да обришете ову групу?"
+  },
+
+  "maps": {
+    "searchInput": "Адреса",
+    "search": "Претрага"
+  },
+
+  "group": {
+    "showWhoPostedPosts": "Приказ особа које су објавиле прилоге",
+    "locationHidden": "Онемогућите локацију",
+    "group": "Група",
+    "admins": "Администратори групе",
+    "users": "Корисници групе",
+    "new": "Додајте нову групу",
+    "edit": "Измените групу",
+    "invite": "Позовите пријатеља",
+    "invite_to_group": "Позовите пријатеља у ову групу",
+    "share_group": "Поделите ову групу",
+    "delete": "Обришите групу",
+    "objectives": "Циљеви",
+    "public": "Отворена група",
+    "closed": "Затворена група",
+    "secret": "Тајна група",
+    "openToCommunity": "Отворено за заједницу",
+    "canVote": "Гласање дозвољено",
+    "canAddNewPosts": "Нови предлози дозвољени",
+    "config": "Конфигурација",
+    "update": "Ажурирајте групу"
+  },
+
+  "membership": {
+    "joined": "Прикључите се",
+    "left": "Искључили сте се"
+  },
+
+  "menu": {
+    "my_pages": "Мој профил",
+    "about": "О нама",
+    "help": "Помоћ",
+    "settings": "Подешавања"
+
+  },
+
+  "users": {
+    "removeAdmin": "Уклоните администратора",
+    "addAdmin": "Додајте администратора",
+    "removeUser": "Уклоните корисника",
+    "inviteUser": "Позовите корисника",
+    "email": "електронска пошта",
+    "removeFromOrganization": "Уклоните",
+    "addToOrganization": "Организација",
+    "selectOrganization": "Изаберите организацију"
+  },
+
+  "user": {
+    "loginCompleteFor": "Пријава за",
+    "acceptInvite": "Прихватите позовите учествујте",
+    "hasSentYouAndInvitation": "вам је послао/ла позив да учествујете ",
+    "acceptInviteInstructions": "Кликните на дугме испод да прихватите позив",
+    "setEmail": "Додајте адресу електронске поште уз налог",
+    "linkAccount": "Повежите се са налогом",
+    "setEmailInfo": "Додајте адресу електронске поште уз налог",
+    "existsLinkAccountInfo": "Унесите лозинку",
+    "logoutCompleteFor": "Одјавите се",
+    "loggedInWithSaml": "Пријављени сте путем SAML",
+    "loggedInWithFacebook": "Пријављени сте путем Фејсбука",
+    "facebookLogin": "Пријавите се путем Фејсбука",
+    "info":"Информације",
+    "notifications": "Обавештења",
+    "name": "Име и презиме",
+    "email": "Електронска пошта",
+    "edit": "Измена детаља корисника",
+    "password": "Лозинка",
+    "forgotPassword": "Креирајте нову лозинку",
+    "forgotPasswordInstructions": "Упишите своју мејл адресу и добићете линк путем кога можете направити нову лозинку.",
+    "forgotPasswordEmailHasBeenSent": "Послат вам је мејл са упутством за промену лозинке. ",
+    "resetPassword": "Промена лозинке",
+    "resetPasswordInstructions": "Задајте нову лозинку коју није лако погодити",
+    "login": "Пријавите се",
+    "create": "Направите новог корисника",
+    "cancel": "Откажите",
+    "logout": "Одјава",
+    "newPassword": "нова лозинка",
+    "register": "Нови корисник",
+    "alreadyRegisterred": "Овај мејл је већ регистрован. Можете направити нову лозинку. ",
+    "registrationError": "Грешка при регистрацији",
+    "loginError": "Грешка при пријави",
+    "completeForm": "Попуните формулар исправно",
+    "loginNotAuthorized": "Погрешан мејл или лозинка"
+  },
+
+  "other": "Остало",
+
+  "socialMedia": "Друштвени медији",
+
+  "location": {
+    "set": "Подесите локацију"
+  },
+  "image": {
+    "upload": "Поставите слику",
+    "logo": {
+      "upload": "Поставите лого"
+    },
+    "header": {
+      "upload": "Поставите заглавље"
+    },
+    "profile": {
+      "upload": "Поставите профилну слику"
+    }
+  },
+  "theme": {
+    "choose": "Изаберите тему"
+  }
+}

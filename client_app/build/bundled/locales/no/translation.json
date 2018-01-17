@@ -1,0 +1,461 @@
+{
+  "participateAnonymously": "Delta anonymt",
+  "allowAnonymousUsers": "Tillat anonyme brukere",
+  "deleteUser": "Slett brukerkonto",
+  "areYouSureYouWantToDeleteUser": "Er du sikker på at du vil slette kontoen din?",
+  "areYouReallySureYouWantToDeleteUser": "Er du 100% sikker på at du vil slette kontoen din? Alle dine argumenter, kommentarer og stemminger vil bli slettet, og alle dine ideer vil bli anonymisert!",
+  "alternativePointForLabel": "Alternativ tekst inntastingsfelt 'Argument for'",
+  "alternativePointAgainstLabel": "Alternativ tekst inntastingsfelt 'Argument mot'",
+  "sharePoint": "Del argument",
+  "alternativePointForHeader": "Alternativ overskrift til 'argument for'",
+  "alternativePointAgainstHeader": "Alternativ overskrift til 'argument mot'",
+  "or": "eller",
+  "hidePointAuthor": "Skjul forfattere til argumenter",
+  "hidePostAuthor": "Skjul forfattere til idéer",
+  "defaultLocationLongLat": "Standardplassering lengdegrad, breddegrad ",
+  "disableCommunityDomainUpLink": "Deaktiver lenken til overordnete Your Priorities",
+  "analyticsTrackerCode": "Google Analytics ID",
+  "filterIdeas": "Sorter innlegg",
+  "edit": "Rediger",
+  "delete": "Slett",
+  "addEmoji": "Legg til smilefjes",
+  "closeComments": "Lukk kommentarer",
+  "openComments": "Åpne kommentarer",
+  "deleteActivity": "Slett aktivitet fra nyhetsfeeden",
+  "pointsFor": "Dette er en god idé fordi…",
+  "pointsAgainst": "Dette er ikke en god idé fordi…",
+  "pointForShort": "For",
+  "pointAgainstShort": "Mot",
+  "domainToastCreated": "Domene opprettet",
+  "domainToastUpdated": "Domene lagret",
+  "communityToastCreated": "Felleskap opprettet",
+  "communityToastUpdated": "Felleskap lagret",
+  "groupToastCreated": "Gruppe opprettet",
+  "groupToastUpdated": "Gruppe lagret",
+  "userToastCreated": "Opprett bruker",
+  "userToastUpdated": "Lagret bruker",
+  "hideGroupHeader": "Skjul gruppeheadingen",
+  "errorResetTokenNotFoundOrUsed": "Plassholderen for tilbakestilling av passordet ikke funnet eller allerede brukt",
+  "addedAnIdea": "Lagt til et innlegg...",
+  "recommendedPosts": "Anbefalt",
+  "noComments": "Ingen kommentarer",
+  "optional": "Valgfri",
+  "additionalGroupConfig":"Flere gruppeinstillinger",
+  "defaultDataImage":"Standard databilde",
+  "defaultPostImage":"Standard innleggsbilde",
+  "hideAllTabs":"Skjul alle faner",
+  "hideNewPostOnPostPage":"Skjul 'Nytt innlegg' på Innleggside",
+  "newPointOptional":"Valgfritt 'Argument for' ved nytt innlegg ",
+  "hideHelpIcon":"Skjul Hjelpikon",
+  "hideEmoji":"Skjul Emojier",
+  "endorsementButtonsHeart":"Hjerter",
+  "endorsementArrows":"Piler",
+  "endorsementThumbs":"Tomler",
+  "endorsementHats":"Hatter",
+  "endorsementButtons": "Påtegningsknapper",
+  "bulkStatusUdateForInfo": "Klikk på innleggene for mer informasjon",
+  "urlLink": "Lenke",
+  "bulkStatusUdateFor": "Statusoppdateringer for inlegg om",
+  "inviteNotFoundOrAlreadyUsed": "Invitasjon ikke funnet eller allerede brukt",
+  "reportConfirmation": "Er du sikker på at du vil rapportere dette innspillet som upassende?",
+  "uniqueStatusMessage": "Unik statusmelding",
+  "templateContent": "Mal innhold",
+  "bulkStatusUpdate": "Bulk-statusoppdateringer",
+  "close": "Lukk",
+  "editTemplates": "Rediger maler",
+  "editTemplate": "Rediger mal",
+  "deleteTemplate": "Slett mal",
+  "addTemplate": "Legg til mal",
+  "save": "Lagre",
+  "saved": "Lagret",
+  "config": "Konfig",
+  "newBulkStatusUpdate": "Ny bulk-statusoppdatering",
+  "editBulkStatusUpdate": "Rediger bulk-statusoppdatering",
+  "bulkStatusUdateConfig": "Bulk-statusoppdatering konfig",
+  "bulkStatusUpdatesTemplates": "Bulk-statusoppdateringer maler",
+  "selectStatusTemplate": "Mal",
+  "moveToGroup": "Flytt",
+  "noIdeasHere": "Det fins ikke noe innlegg her",
+  "organizationsAdmin": "Organisasjon Admin",
+  "unviewed": "ikke vist",
+  "notificationMarkAllViewed": "Merk alle som vist",
+  "notificationConfirmMarkAllViewed": "Bekreft at du vil merke alle varslene som vist",
+  "upVotedPoint": "Stemte for argumentet ditt",
+  "downVotedPoint": "Stemte mot argumentet ditt",
+  "endorsedYourPost": "Støttet idéen din",
+  "opposedYourPost": "Motsatt seg idéen din",
+  "notifications": "Varsler",
+  "votingDisabled": "Avstemning er ikke aktiv",
+  "pageNotFound": "Siden er ikke funnet",
+  "participate": "Delta",
+  "emojiSearchResults": "Søkeresultater",
+  "recentlyUsedEmoji": "Nylig brukt",
+  "findAnEmoji": "Finn emoji",
+  "cancel": "Avbryt",
+  "ok": "Ok",
+  "next": "Neste",
+  "create": "Publiser",
+  "confirm": "Bekreft",
+  "access": "Adgang",
+  "searchFor": "Søk etter...",
+  "title": "Tittel",
+  "selectLanguage": "Velg språk",
+  "update": "Oppdater",
+  "errorCantConnect": "Kan ikke koble til serveren. Dette kan skyldes høy trafikk eller programvareoppgradering. Vennligst prøv igjen litt senere.",
+  "errorNotFound": "Ikke funnet...",
+  "errorNotAuthorized": "Du har ikke tilgang til dette!",
+  "generalError": "Det har oppstått en uforventet feil. Vi har fått beskjed om det.",
+  "stats": {
+    "posts": "Antall innlegg",
+    "discussions": "Antall debatter",
+    "communities": "Antall felleskap",
+    "groups": "Antall tema",
+    "users": "Antall brukere"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "Ditt passord er blitt endret og du er nå logget på.",
+    "method": "Metode",
+    "frequency": "Hyppighet",
+    "myPosts": "Mine idéer",
+    "muted": "Slå av",
+    "browser": "Nettleser",
+    "email": "E-postadresse",
+    "asItHappens": "Sanntid",
+    "daily": "Daglig",
+    "hourly": "Hver time",
+    "weekly": "Ukentlig",
+    "monthly": "Månedlig",
+    "myPostsEndorsements": "Idéer jeg liker",
+    "myPoints": "Mine argumenter",
+    "myPointEndorsements": "Argumenter jeg liker",
+    "allCommunity": "Varsler fra felleskap jeg følger",
+    "allGroup": "Varsler fra alle sakene jeg følger",
+    "invite_accepted_for": "Deltar i "
+  },
+
+  "pages": {
+    "addLocale": "Legg til språksetting",
+    "unPublish": "Avpubliser",
+    "deletePage": "Slett",
+    "addPage": "Legg til ny side",
+    "managePages": "Administrer sider"
+  },
+
+  "archived": "Arkivert",
+
+  "status": {
+    "select": "Velg status",
+    "active": "Aktiv",
+    "featured": "Utvalgt",
+    "archived": "Arkivert",
+    "hidden": "Skjult",
+    "published": "Åpen",
+    "successful": "Vellykket",
+    "failed": "Mislykket",
+    "inProgress": "Behandles"
+  },
+
+  "pluralStatus": {
+    "published": "Åpne innlegg",
+    "successful": "Vellykkete innlegg",
+    "failed": "Mislykkete innlegg",
+    "inProgress": "Innlegg under behandling",
+    "inVoting": "Innlegg under avstemning"
+  },
+
+  "activity": {
+    "confirmDelete": "Bekreft sletting",
+    "post": {
+      "new": "Innlegg",
+      "status": {
+       "change": "Statusoppdatering"
+      }
+    },
+    "point": {
+      "forAdded": "Lagt til argument for",
+      "againstAdded": "Lagt til argument mot",
+      "new": "Argument",
+      "newFor": "Argument for",
+      "newAgainst": "Argument mot",
+      "newComment": "Kommentar",
+      "newsStory": {
+        "new": "Brukernyheter"
+      }
+    }
+  },
+  "name": "Navn",
+
+  "domain": {
+    "createOrganization": "Opprett organisasjon",
+    "edit": "Rediger domene",
+    "info": "Innstillinger",
+    "apis": "API'er",
+    "settings": "Ytterligere",
+    "onlyAdminsCanCreateCommunities": "Kun administratorer kan legge til fellesskap"
+  },
+
+  "domains": "Domener",
+  "communities": "Fellesskap",
+  "groups": "Alle saker",
+
+  "myDomains": "Mine domener",
+  "myCommunities": "Mine fellesskap",
+  "myGroups": "Saker jeg følger",
+  "myAdminCommunities": "Administrator",
+  "myAdminGroups": "Gruppeadministrator",
+
+  "community": {
+    "alternativeHeader": "Alternativ overskrift",
+    "edit": "Rediger fellesskap",
+    "hostname": "Hostname",
+    "admins": "Administratorer",
+    "users": "Brukere",
+    "delete": "Slett fellesskap",
+    "new": "Legg til fellesskap",
+    "public": "Offentlig fellesskap",
+    "closed": "Lukket fellesskap",
+    "secret": "Hemmelig fellesskap",
+    "pages":"Fellesskap sider",
+    "onlyAdminsCanCreateGroups": "Kun administratorer kan legge til grupper"
+  },
+
+  "posts": {
+    "posts": "Innlegg",
+    "open": "Alle innlegg",
+    "inProgress": "Behandles",
+    "successful": "Vellykket",
+    "failed": "Mislykket",
+    "map": "Kart",
+    "noMapPosts": "Ingen innlegg med plassering ",
+    "newUserImage": "Legg til bilde"
+  },
+
+  "form": {
+    "invalid": "Fullfør utfylling av skjemaet"
+  },
+
+  "post": {
+    "most_debated": "Mest debattert",
+    "deleteConfirmation": "Er du sikker på at du vil rapportere dette innspillet som upassende?",
+    "move": "Flytt innlegget",
+    "confirmMove": "Bekreft at du vil flytte",
+    "statusChangeConfirmText": "Er du sikker på at du vil sende en e-post til alle som støtter eller motsetter seg dette innlegget?",
+    "statusChangeSelectNewStatus": "Ny status ",
+    "statusChangeContent": "Statusendring innhold som skal sendes til alle støttespillere og motstandere",
+    "statusChange": "Send e-poster om statusendring",
+    "statusChangeSent": "Sendte e-poster om statusendring",
+    "noLocation": "Ingen plassering",
+    "shareInfo": "Del innlegg",
+    "description": "Beskrivelse",
+    "debate": "Kommentar",
+    "formInvalid": "Fullfør utfylling av skjemaet",
+    "status": "Status til innlegget",
+    "new": "Nytt innlegg",
+    "searchingFor": "Søk etter…",
+    "top": "Mest populære innlegg først",
+    "newest": "Siste innlegg først",
+    "random": "Tilfeldig rekkefølge",
+    "inProgress": "Innlegg under behandling",
+    "groups": "Innleggrupper",
+    "search": "Søk etter innlegg",
+    "add_new":"Legg inn din idé",
+    "up_vote":"Stem opp innlegget",
+    "down_vote":"Stem ned innlegget",
+    "report": "Rapporter innlegget",
+    "notify": "Varsle meg om innlegget",
+    "share": "Del innlegget",
+    "yourPost": "Idé",
+    "yourPoint": "Argument for",
+    "location": "Plassering",
+    "photo": "Bilde",
+    "photographerName": "Fotograf",
+    "newPhoto": "Nytt bilde",
+    "photoUpdate": "Oppdater bilde",
+    "photoDeleteConfirmation": "Er du sikker på at du vil slette dette bildet?",
+    "tabs": {
+      "debate": "Kommenter",
+      "news": "Nyheter",
+      "location": "Plassering",
+      "photos": "Bilder",
+      "solutions": "Løsninger",
+      "not_implemented": "Ingen implementert ennå"
+    },
+    "cover": {
+      "media": "Velg bruk av bilde",
+      "imageInfo": "Hvis du legger til et bilde, så er det mer sannsynlig at andre vil dele innlegget ditt. Forbrukerrådet kommer ikke til å bruke dine bilder til noe annet formål.\nNB! Bruk av andres bilder krever samtykke. Bilder av identifiserbare personer kan også kreve godkjenning.",
+      "map": "Kart",
+      "streetview": "Gatesyn",
+      "image": "Bilde",
+      "none": "Ingen"
+    },
+    "edit": "Rediger innlegget",
+    "delete": "Slett innlegget",
+    "addNewIntroBoxText": "Bruk 'lyspære'-knappen for å legge inn nye idéer"
+  },
+
+  "short_word": {
+    "in": "i "
+  },
+
+  "category": {
+    "new": "Ny kategori",
+    "select": "Velg kategori"
+  },
+
+  "categories": {
+    "all": "Alle kategorier",
+    "the_all": "Alle kategorier"
+  },
+
+  "point": {
+    "report": "Rapporter argument",
+    "againstAdded": "Lagt til argument mot",
+    "forAdded": "Lagt til argument for",
+    "confirmDelete": "Bekreft at du vil slette dette argumentet",
+    "theseAreFor": "Argument for",
+    "theseAreAgainst": "Argument mot",
+    "point": "Argument ",
+    "for": "Her kan du skrive et argument for",
+    "against": "Her kan du skrive et argument mot",
+    "add_up": "Legg til argument for",
+    "add_down": "Legg til argument mot",
+    "helpful": "Stem opp argument som 'nyttig'",
+    "not_helpful": "Stem ned argument som 'ikke nyttig'",
+    "addNewsStory": "Legg til",
+    "postNewsStory": "Legg til",
+    "addComment": "Din kommentar...",
+    "postComment": "Legg til kommentar",
+    "comments": "Kommentarer",
+    "howToWrite": "La oss diskuttere om de beste argumentene for og mot og tenke på løsninger...",
+    "commentToShort": "Teksten er for kort!"
+  },
+
+  "news": "Tilleggsinformasjon",
+
+  "uploading": {
+    "inProgress": "Laster opp…"
+  },
+
+  "notice": {
+    "ok": "Ok",
+    "feature_not_implemented_a": "Funksjonen er ikke implementert ennå i denne skrivebeskyttete forhåndsvisning av Your Priorities 6.0.",
+    "feature_not_implemented_b": "La oss få vite hva du synes!",
+    "welcome_a": "Dette er en skrivebeskyttet forhåndsvisning av Your Priorities 6.0 så du kan bare seg på innholdet, ikke legge til det. Fint om du gir tilbakemelding.",
+    "welcome_b": "Foreløpig fungerer det kun i Chrome, men vil støttes av alle de store nettleserne ved utgivelsesdato i 1. kvartal 2015.",
+    "welcome_heading": "Velkommen til Your Priorities 6.0 teknologi forhåndsvisning",
+    "continue": "Fortsett forhåndsvisning",
+    "deleteConfirmation": "Ønsker du å slette denne gruppen?"
+  },
+
+  "maps": {
+    "searchInput": "Adresse",
+    "search": "Søk"
+  },
+
+  "group": {
+    "showWhoPostedPosts": "Vis hvem som har lagt ut innlegg",
+    "locationHidden": "Deaktiver plassering",
+    "group": "Gruppen",
+    "admins": "Gruppeadministrator",
+    "users": "Gruppebrukere",
+    "new": "Legg til ny gruppe",
+    "edit": "Rediger gruppe",
+    "invite": "Inviter en venn",
+    "invite_to_group": "Inviter en venn til denne gruppen",
+    "share_group": "Del denne gruppen",
+    "delete": "Slett gruppe",
+    "objectives": "Mål",
+    "public": "Offentlig gruppe",
+    "closed": "Lukket gruppe",
+    "secret": "Hemmelig gruppe",
+    "openToCommunity": "Åpen for felleskap",
+    "canVote": "Avstemning tillatt",
+    "canAddNewPosts": "Nye innlegg tillatt",
+    "config": "Konfigurasjon",
+    "update": "Oppdater gruppe"
+  },
+
+  "membership": {
+    "joined": "Du har blitt med i",
+    "left": "Du har forlatt"
+  },
+
+  "menu": {
+    "my_pages": "Min profil",
+    "about": "Om",
+    "help": "Hjelp",
+    "settings": "Innstillinger"
+
+  },
+
+  "users": {
+    "removeAdmin": "Fjern administrator",
+    "addAdmin": "Legg til administrator",
+    "removeUser": "Fjern bruker",
+    "inviteUser": "Inviter bruker",
+    "email": "e-post",
+    "removeFromOrganization": "Fjern",
+    "addToOrganization": "Organisasjon",
+    "selectOrganization": "Velg organisasjon"
+  },
+
+  "user": {
+    "loginCompleteFor": "Pålogging for",
+    "acceptInvite": "Godta invitasjon",
+    "hasSentYouAndInvitation": "har sendt deg en invitasjon til å delta i",
+    "acceptInviteInstructions": "Klikk på knappen under for å godta invitasjonen",
+    "setEmail": "Legg til e-postadresse til kontoen",
+    "linkAccount": "Koble til kontoen",
+    "setEmailInfo": "Legg til e-postadresse til kontoen",
+    "existsLinkAccountInfo": "Skriv inn passordet ditt for å koble til denne tilgangen din e-postkonto.",
+    "logoutCompleteFor": "Avlogging for",
+    "loggedInWithSaml": "Logget på med SAML",
+    "loggedInWithFacebook": "Logget på med Facebook",
+    "facebookLogin": "Logg på med Facebook",
+    "info":"Informasjon",
+    "notifications": "Varsler",
+    "name": "Ditt navn (eller alias)",
+    "email": "E-postadresse",
+    "edit": "Rediger bruker",
+    "password": "Passord",
+    "forgotPassword": "Lag nytt passord",
+    "forgotPasswordInstructions": "Skriv inn din e-postadresse og vi vil sende deg en e-post med en link som du kan bruke til å lage et nytt passord.",
+    "forgotPasswordEmailHasBeenSent": "En e-post med nærmere instruksjoner for tilbakestilling av passordet har blitt sendt.",
+    "resetPassword": "Tilbakestill passordet ditt",
+    "resetPasswordInstructions": "Lag et nytt passord som ikke er lett å gjette",
+    "login": "Logg på",
+    "create": "Opprett bruker",
+    "cancel": "Avbryt",
+    "logout": "Logg av",
+    "newPassword": "Nytt passord",
+    "register": "Ny bruker",
+    "alreadyRegisterred": "Denne e-postadressen er allerede registrert. Om nødvendig kan du lage et nytt passord.",
+    "registrationError": "Feil i registrering",
+    "loginError": "Påloggingsfeil",
+    "completeForm": "Fyll ut skjemaet korrekt",
+    "loginNotAuthorized": "E-postadresse eller passord feil"
+  },
+
+  "other": "Andre",
+
+  "socialMedia": "Sosiale medier",
+
+  "location": {
+    "set": "Velg plassering"
+  },
+  "image": {
+    "upload": "Last opp bilde",
+    "logo": {
+      "upload": "Last opp logo"
+    },
+    "header": {
+      "upload": "Last opp heading"
+    },
+    "profile": {
+      "upload": "Last opp profilbilde"
+    }
+  },
+  "theme": {
+    "choose": "Velg et tema"
+  }
+}

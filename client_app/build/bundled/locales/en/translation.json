@@ -1,0 +1,469 @@
+{
+  "allowAnonymousAutoLogin": "Allow anonymous auto login",
+  "later": "Not now",
+  "disableDebate": "Disable debate",
+  "welcomeHTML": "welcome HTML (use with care)",
+  "disableFacebookLoginForGroup": "Disable Facebook Login for group",
+  "facebookPixelId": "Facebook pixel id",
+  "downloadFacebookImagesForUser": "Download Facebook images for users to our db",
+  "customUserRegistrationText": "Custom user registration text",
+  "participateAnonymously": "Participate Anonymously",
+  "allowAnonymousUsers": "Allow anonymous users",
+  "deleteUser": "Delete user account",
+  "areYouSureYouWantToDeleteUser": "Are you sure you want to delete your account?",
+  "areYouReallySureYouWantToDeleteUser": "Are you 100% sure you want to delete your account? All your points, comments and endorsements will be deleted and all your ideas will be anonymized!",
+  "alternativePointForLabel": "Alternative point for label",
+  "alternativePointAgainstLabel": "Alternative point against label",
+  "sharePoint": "Share point",
+  "alternativePointForHeader": "Alternative point for header",
+  "alternativePointAgainstHeader": "Alternative point against header",
+  "or": "or",
+  "hidePointAuthor": "Hide point author",
+  "hidePostAuthor": "Hide post author",
+  "defaultLocationLongLat": "Default location longitude,latitude",
+  "disableCommunityDomainUpLink": "Disable Domain Up Link",
+  "analyticsTrackerCode": "Google Analytics Id",
+  "filterIdeas": "Filter ideas",
+  "edit": "Edit",
+  "delete": "Delete",
+  "addEmoji": "Add Emoji",
+  "closeComments": "Close comments",
+  "openComments": "Open comments",
+  "deleteActivity": "Delete activity from newsfeed",
+  "pointsFor": "Points for",
+  "pointsAgainst": "Points against",
+  "pointForShort": "For",
+  "pointAgainstShort": "Against",
+  "domainToastCreated": "Domain Created",
+  "domainToastUpdated": "Domain Saved",
+  "communityToastCreated": "Community Created",
+  "communityToastUpdated": "Community Saved",
+  "groupToastCreated": "Group Created",
+  "groupToastUpdated": "Group Saved",
+  "userToastCreated": "Create user",
+  "userToastUpdated": "Saved user",
+  "hideGroupHeader": "Hide group header",
+  "errorResetTokenNotFoundOrUsed": "Password reset token not found or has been used",
+  "addedAnIdea": "Added an idea...",
+  "recommendedPosts": "Recommended",
+  "noComments": "No comments",
+  "optional": "Optional",
+  "additionalGroupConfig":"Additional Group Config",
+  "defaultDataImage":"Default Data Image",
+  "defaultPostImage":"Default Post Image",
+  "hideAllTabs":"Hide All Tabs",
+  "hideNewPostOnPostPage":"Hide New Post on Post Page",
+  "newPointOptional":"Make New Point Optional",
+  "hideHelpIcon":"Hide Help Icon",
+  "hideEmoji":"Hide Emojis",
+  "endorsementButtonsHeart":"Hearts",
+  "endorsementArrows":"Arrows",
+  "endorsementThumbs":"Thumbs",
+  "endorsementHats":"Hats",
+  "endorsementButtons": "Endorsement buttons",
+  "bulkStatusUdateForInfo": "Click on the ideas for more information",
+  "urlLink": "Link",
+  "bulkStatusUdateFor": "Status updates for ideas on",
+  "inviteNotFoundOrAlreadyUsed": "Invite not found or already used",
+  "reportConfirmation": "Are you sure you want to report this content for having broken the rules of this website?",
+  "uniqueStatusMessage": "Unique Status Message",
+  "templateContent": "Template content",
+  "bulkStatusUpdate": "Bulk Status Updates",
+  "close": "Close",
+  "editTemplates": "Edit Templates",
+  "editTemplate": "Edit Template",
+  "deleteTemplate": "Delete Template",
+  "addTemplate": "Add Template",
+  "save": "Save",
+  "saved": "Saved",
+  "config": "Config",
+  "newBulkStatusUpdate": "New Bulk Status Update",
+  "editBulkStatusUpdate": "Edit Bulk Status Update",
+  "bulkStatusUdateConfig": "Bulk Status Update Config",
+  "bulkStatusUpdatesTemplates": "Bulk Status Updates Templates",
+  "selectStatusTemplate": "Template",
+  "moveToGroup": "Move",
+  "noIdeasHere": "There are no ideas here.",
+  "organizationsAdmin": "Organizations Admin",
+  "unviewed": "not viewed",
+  "notificationMarkAllViewed": "Mark all Viewed",
+  "notificationConfirmMarkAllViewed": "Confirm that you want to mark all your notifications as viewed",
+  "upVotedPoint": "Up voted your point",
+  "downVotedPoint": "Down voted your point",
+  "endorsedYourPost": "Endorsed your idea",
+  "opposedYourPost": "Opposed your idea",
+  "notifications": "Notifications",
+  "votingDisabled": "Voting is not active",
+  "pageNotFound": "The page the app requested is not found",
+  "participate": "Participate",
+  "emojiSearchResults": "Search results",
+  "recentlyUsedEmoji": "Recently used",
+  "findAnEmoji": "Find emoji",
+  "cancel": "Cancel",
+  "ok": "Ok",
+  "next": "Next",
+  "create": "Create",
+  "confirm": "Confirm",
+  "access": "Access",
+  "searchFor": "Search for...",
+  "title": "Title",
+  "selectLanguage": "Select language",
+  "update": "Update",
+  "errorCantConnect": "Can't connect to the server. Please try again a bit later. This might be due to high traffic or a software upgrade.",
+  "errorNotFound": "Not found...",
+  "errorNotAuthorized": "You do not have access to this!",
+  "generalError": "There has been an unexpected error. We have been notified.",
+  "stats": {
+    "posts": "Number of ideas",
+    "discussions": "Number of discussions",
+    "communities": "Number of communities",
+    "groups": "Number of groups",
+    "users": "Number of users"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "Your password has been changed and you are now logged in.",
+    "method": "Method",
+    "frequency": "Frequency",
+    "myPosts": "My ideas",
+    "muted": "Turn off",
+    "browser": "Browser",
+    "email": "Email",
+    "asItHappens": "As it happens",
+    "daily": "Daily",
+    "hourly": "Hourly",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "myPostsEndorsements": "Ideas I like",
+    "myPoints": "My points",
+    "myPointEndorsements": "Points I like",
+    "allCommunity": "All notifications from my communities",
+    "allGroup": "All notifications from my groups",
+    "invite_accepted_for": "Participating in"
+  },
+
+  "pages": {
+    "addLocale": "Add locale",
+    "unPublish": "UnPublish",
+    "deletePage": "Delete",
+    "addPage": "Add new page",
+    "managePages": "Manage pages"
+  },
+
+  "archived": "Archived",
+
+  "status": {
+    "select": "Select status",
+    "active": "Active",
+    "featured": "Featured",
+    "archived": "Archived",
+    "hidden": "Hidden",
+    "published": "Open",
+    "successful": "Successful",
+    "failed": "Failed",
+    "inProgress": "In progress"
+  },
+
+  "pluralStatus": {
+    "published": "Open ideas",
+    "successful": "Successful ideas",
+    "failed": "Failed ideas",
+    "inProgress": "Ideas in progress",
+    "inVoting": "Ideas in voting"
+  },
+
+  "activity": {
+    "confirmDelete": "Confirm you want to delete this activity?",
+    "post": {
+      "new": "Idea",
+      "status": {
+       "change": "Status update"
+      }
+    },
+    "point": {
+      "forAdded": "Added point for",
+      "againstAdded": "Added point against",
+      "new": "Point",
+      "newFor": "Point for",
+      "newAgainst": "Point against",
+      "newComment": "Comment",
+      "newsStory": {
+        "new": "User news"
+      }
+    }
+  },
+  "name": "Name",
+
+  "domain": {
+    "createOrganization": "Create organization",
+    "edit": "Edit domain",
+    "info": "Settings",
+    "apis": "APIs",
+    "settings": "Additional",
+    "onlyAdminsCanCreateCommunities": "Only admins can create communities"
+  },
+
+  "domains": "Domains",
+  "communities": "Communities",
+  "groups": "Groups",
+
+  "myDomains": "My Domains",
+  "myCommunities": "My Communities",
+  "myGroups": "My Groups",
+  "myAdminCommunities": "Communities Admin",
+  "myAdminGroups": "Groups Admin",
+
+  "community": {
+    "alternativeHeader": "Alternative Header",
+    "edit": "Edit community",
+    "hostname": "Hostname",
+    "admins": "Community admins",
+    "users": "Community users",
+    "delete": "Delete community",
+    "new": "Create community",
+    "public": "Public community",
+    "closed": "Closed community",
+    "secret": "Secret community",
+    "pages":"Community Pages",
+    "onlyAdminsCanCreateGroups": "Only admins can create groups"
+  },
+
+  "posts": {
+    "posts": "Ideas",
+    "open": "Open",
+    "inProgress": "In progress",
+    "successful": "Successful",
+    "failed": "Failed",
+    "map": "Map",
+    "noMapPosts": "No ideas with location",
+    "newUserImage": "Add Photo"
+  },
+
+  "form": {
+    "invalid": "Complete filling out the form"
+  },
+
+  "post": {
+    "most_debated": "Most debated",
+    "deleteConfirmation": "Are you sure you want to delete this idea?",
+    "move": "Move idea",
+    "confirmMove": "Confirm that you want to move",
+    "statusChangeConfirmText": "Are you sure you want to send everybody that supports or opposes this idea an email?",
+    "statusChangeSelectNewStatus": "New status",
+    "statusChangeContent": "Status change content to be sent to all supporters and opposers",
+    "statusChange": "Send status change emails",
+    "statusChangeSent": "Sent status change emails",
+    "noLocation": "No location",
+    "shareInfo": "Share idea",
+    "description": "Description",
+    "debate": "Debate",
+    "formInvalid": "Complete filling out the form",
+    "status": "Status of this idea",
+    "new": "New idea",
+    "searchingFor": "Searching for ",
+    "top": "Popular",
+    "newest": "Latest",
+    "random": "By random",
+    "inProgress": "In progress",
+    "groups": "Post groups",
+    "search": "Search for ideas",
+    "add_new":"Add new idea",
+    "up_vote":"Vote idea up",
+    "down_vote":"Vote idea down",
+    "report": "Report idea",
+    "notify": "Notify me about this idea",
+    "share": "Share this idea",
+    "yourPost": "Idea",
+    "yourPoint": "Point for",
+    "location": "Location",
+    "photo": "Photo",
+    "photographerName": "Photographer",
+    "newPhoto": "New photo",
+    "photoUpdate": "Update photo",
+    "photoDeleteConfirmation": "Are you sure you want to delete this photo?",
+    "tabs": {
+      "debate": "Debate",
+      "news": "News",
+      "location": "Location",
+      "photos": "Photos",
+      "solutions": "Solutions",
+      "not_implemented": "No implemented yet"
+    },
+    "cover": {
+      "media": "Choose cover media",
+      "imageInfo": "If you add a picture people will more likely share it. And share your idea on social media!",
+      "map": "Map",
+      "streetview": "Street View",
+      "image": "Image",
+      "none": "None"
+    },
+    "edit": "Edit idea",
+    "delete": "Delete idea",
+    "addNewIntroBoxText": "Use the lightbulb action button to add new ideas"
+  },
+
+  "short_word": {
+    "in": "in"
+  },
+
+  "category": {
+    "new": "New category",
+    "select": "Select category"
+  },
+
+  "categories": {
+    "all": "all categories",
+    "the_all": "All categories"
+  },
+
+  "point": {
+    "report": "Report",
+    "againstAdded": "Added point against",
+    "forAdded": "Added point for",
+    "confirmDelete": "Confirm that you want to delete this point",
+    "theseAreFor": "Point for",
+    "theseAreAgainst": "Point against",
+    "point": "Point",
+    "for": "Write point for...",
+    "against": "Write point against...",
+    "add_up": "Add point for",
+    "add_down": "Add point against",
+    "helpful": "Vote up as helpful",
+    "not_helpful": "Vote down as not helpful",
+    "addNewsStory": "Add a news story",
+    "postNewsStory": "Add news story",
+    "addComment": "Your comment...",
+    "postComment": "Post",
+    "comments": "Comments",
+    "howToWrite": "Let's brainstorm the best points for and against and think in solutions...",
+    "commentToShort": "The text is too short!"
+  },
+
+  "news": "News",
+
+  "uploading": {
+    "inProgress": "Uploading..."
+  },
+
+  "notice": {
+    "ok": "Ok",
+    "feature_not_implemented_a": "This feature has not yet been implemented in this read-only preview of Your Priorities 6.0.",
+    "feature_not_implemented_b": "Let us know what you think :)",
+    "welcome_a": "This is a read-only preview of Your Priorities 6.0 so you can only view content, not add to it. Feedback is most appreciated.",
+    "welcome_b": "Currently it only works in Chrome but will support all major browsers by release date in Q1 2015.",
+    "welcome_heading": "Welcome to Your Priorities 6.0 technology preview",
+    "continue": "Continue to preview",
+    "deleteConfirmation": "Do you want to delete this group?"
+  },
+
+  "maps": {
+    "searchInput": "Address",
+    "search": "Search"
+  },
+
+  "group": {
+    "showWhoPostedPosts": "Show who posted posts",
+    "locationHidden": "Disable location",
+    "group": "Group",
+    "admins": "Group admins",
+    "users": "Group users",
+    "new": "Add new group",
+    "edit": "Edit group",
+    "invite": "Invite a friend",
+    "invite_to_group": "Invite friend to this group",
+    "share_group": "Share this group",
+    "delete": "Delete group",
+    "objectives": "Objectives",
+    "public": "Public group",
+    "closed": "Closed group",
+    "secret": "Secret group",
+    "openToCommunity": "Open to community",
+    "canVote": "Voting allowed",
+    "canAddNewPosts": "New ideas allowed",
+    "config": "Config",
+    "update": "Update group"
+  },
+
+  "membership": {
+    "joined": "You have joined",
+    "left": "You have left"
+  },
+
+  "menu": {
+    "my_pages": "My profile",
+    "about": "About",
+    "help": "Help",
+    "settings": "Settings"
+
+  },
+
+  "users": {
+    "removeAdmin": "Remove admin",
+    "addAdmin": "Add admin",
+    "removeUser": "Remove user",
+    "inviteUser": "Invite user",
+    "email": "email",
+    "removeFromOrganization": "Remove",
+    "addToOrganization": "Organization",
+    "selectOrganization": "Select organization"
+  },
+
+  "user": {
+    "loginCompleteFor": "Login for",
+    "acceptInvite": "Accept invite participate",
+    "hasSentYouAndInvitation": "has sent you an invitation to participate in",
+    "acceptInviteInstructions": "Click on the button below to accept the invitation",
+    "setEmail": "Add email to account",
+    "linkAccount": "Connect with account",
+    "setEmailInfo": "Add email to account",
+    "existsLinkAccountInfo": "This email is already registered! Enter your password to connect to this access method your email account.",
+    "logoutCompleteFor": "Logout for",
+    "loggedInWithSaml": "Logged in with SAML",
+    "loggedInWithFacebook": "Logged in with Facebook",
+    "facebookLogin": "Facebook login",
+    "info":"Info",
+    "notifications": "Notifications",
+    "name": "Full name",
+    "email": "Email",
+    "edit": "Edit user",
+    "password": "Password",
+    "forgotPassword": "Create New password",
+    "forgotPasswordInstructions": "Enter you email address and we will send you an email with a link you can use to create a new password.",
+    "forgotPasswordEmailHasBeenSent": "Email with password reset instructions has been sent.",
+    "resetPassword": "Reset your password",
+    "resetPasswordInstructions": "Create a new password that is not easy to guess",
+    "login": "Login",
+    "create": "Create user",
+    "cancel": "Cancel",
+    "logout": "Logout",
+    "newPassword": "new password",
+    "register": "New user",
+    "alreadyRegisterred": "This email is already registered. You can create a New Password if needed.",
+    "registrationError": "Error in registration",
+    "loginError": "Login error",
+    "completeForm": "Fill our the form correctly",
+    "loginNotAuthorized": "Email or password wrong"
+  },
+
+  "other": "Other",
+
+  "socialMedia": "Social Media",
+
+  "location": {
+    "set": "Set location"
+  },
+  "image": {
+    "upload": "Upload image",
+    "logo": {
+      "upload": "Upload logo"
+    },
+    "header": {
+      "upload": "Upload header"
+    },
+    "profile": {
+      "upload": "Upload profile image"
+    }
+  },
+  "theme": {
+    "choose": "Choose a theme"
+  }
+}

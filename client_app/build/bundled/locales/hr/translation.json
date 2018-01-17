@@ -1,0 +1,363 @@
+{
+  "unviewed": "nepregledane",
+  "notificationMarkAllViewed": "Označi kao pregledane",
+  "notificationConfirmMarkAllViewed": "Potvrdi da želiš sve obavijesti označiti kao pregledane",
+  "upVotedPoint": "smatra tvoj argument korisnim",
+  "downVotedPoint": "smatra tvoj argument nekorisnim",
+  "endorsedYourPost": "je glasao/la za tvoj prijedlog",
+  "opposedYourPost": "je glasao/la protiv tvog prijedloga",
+  "notifications": "Obavijesti",
+  "votingDisabled": "Glasanje nije otvoreno",
+  "pageNotFound": "Stranica koju je aplikacija zatražila nije pronađena",
+  "participate": "Uključi se",
+  "emojiSearchResults": "Rezultati pretraživanja",
+  "recentlyUsedEmoji": "Nedavno korišteno",
+  "findAnEmoji": "Pretraži 'smajliće'",
+  "cancel": "Odustani",
+  "ok": "U redu",
+  "next": "Nastavi",
+  "create": "Objavi",
+  "confirm": "Potvrdi",
+  "access": "Pristup",
+  "searchFor": "Pretraži...",
+  "title": "Naslov",
+  "selectLanguage": "Odaberi jezik",
+  "update": "Prihvati",
+  "errorCantConnect": "Ne mogu se spojiti na server. Molim probaj ponovno malo kasnije. Razlog bi mogao biti pove\u0107an promet podataka ili nadogradnja softvera.",
+  "errorNotFound": "Nije prona\u0111eno...",
+  "errorNotAuthorized": "Nema\u0161 pristup ovome!",
+  "generalError": "Do\u0161lo je do neo\u010dekivane pogre\u0161ke. Obavije\u0161teni smo o ovom doga\u0111aju.",
+  "stats": {
+    "posts": "Broj prijedloga",
+    "discussions": "Broj rasprava",
+    "communities": "Broj zajednica",
+    "groups": "Broj grupa",
+    "users": "Broj korisnika"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "Tvoja lozinka je izmijenjena i sada si prijavljen.",
+    "method": "Na\u010din slanja obavijesti",
+    "frequency": "U\u010destalost",
+    "myPosts": "Moji prijedlozi",
+    "muted": "Ne šalji",
+    "browser": "Preglednik",
+    "email": "E-po\u0161ta",
+    "asItHappens": "U\u017eivo",
+    "daily": "Dnevno",
+    "hourly": "Svaki sat",
+    "weekly": "Tjedno",
+    "monthly": "Mjese\u010dno",
+    "myPostsEndorsements": "Prijedlozi koji mi se svi\u0111aju",
+    "myPoints": "Moji argumenti",
+    "myPointEndorsements": "Argumenti koji mi se svi\u0111aju",
+    "allCommunity": "Sve obavijesti iz svih mojih zajednica",
+    "allGroup": "Sve obavijesti iz svih mojih grupa",
+    "invite_accepted_for": "Sudjeluje u "
+  },
+
+  "pages": {
+    "addLocale": "Dodaj lokalne postavke",
+    "unPublish": "Ukloni objavu",
+    "deletePage": "Obri\u0161i",
+    "addPage": "Dodaj novu stranicu",
+    "managePages": "Upravljanje stranicama"
+  },
+
+  "archived": "Arhivirano",
+
+  "status": {
+    "select": "Odaberi status",
+    "active": "Aktivno",
+    "featured": "Izdvojeno",
+    "archived": "Arhivirano",
+    "published": "Aktualan",
+    "successful": "Prihvaćen",
+    "failed": "Odbijen",
+    "inProgress": "U obradi"
+  },
+
+  "activity": {
+    "post": {
+      "new": "Prijedlog",
+      "status": {
+       "change": "Promjena statusa"
+      }
+    },
+    "point": {
+      "forAdded": "Dodan argument 'za'",
+      "againstAdded": "Dodan argument 'protiv'",
+      "new": "Argument",
+      "newFor": "Argument 'za'",
+      "newAgainst": "Argument 'protiv'",
+      "newComment": "Komentar",
+      "newsStory": {
+        "new": "Novost od strane korisnika"
+      }
+    }
+  },
+  "name": "Naziv",
+
+  "domain": {
+    "edit": "Uredi domenu"
+  },
+
+  "domains": "Domene",
+  "communities": "Zajednice",
+  "groups": "Grupe",
+
+  "myDomains": "Moje domene",
+  "myCommunities": "Moje zajednice",
+  "myGroups": "Moje grupe",
+  "myAdminCommunities": "Administrator zajednica",
+  "myAdminGroups": "Administrator grupa",
+
+  "community": {
+    "edit": "Uredi zajednicu",
+    "hostname": "Adresa",
+    "admins": "Administratori zajednice",
+    "users": "Članovi zajednice",
+    "delete": "Obri\u0161i zajednicu",
+    "new": "Stvori novu zajednicu",
+    "public": "Javna zajednica",
+    "closed": "Zatvorena zajednica",
+    "secret": "Tajna zajednica",
+    "pages":"Stranice zajednice",
+    "onlyAdminsCanCreateGroups": "Grupe mogu otvarati samo administratori"
+  },
+
+  "posts": {
+    "posts": "Prijedlozi",
+    "open": "Aktualno",
+    "inProgress": "U obradi",
+    "successful": "Prihvaćeno",
+    "failed": "Odbijeno",
+    "map": "Karta",
+    "noMapPosts": "Nema objava s tom lokacijom",
+    "newUserImage": "Dodaj fotografiju"
+  },
+
+  "form": {
+    "invalid": "Dovr\u0161i popunjavanje obrasca"
+  },
+
+  "post": {
+    "move": "Premjesti prijedlog",
+    "confirmMove": "Potvrdi da želiš premjestiti",
+    "statusChangeConfirmText": "Jesi li siguran da želiš poslati e-mail svima koji podržavaju ili se protive ovom prijedlogu?",
+    "statusChangeSelectNewStatus": "Odaberi status prijedloga",
+    "statusChangeContent": "Tekst obavijesti o promjeni statusa koji će biti poslan korisnicima koji su glasali za ili protiv prijedloga",
+    "statusChange": "Pošalji e-mailove o promjeni statusa",
+    "statusChangeSent": "E-mailovi o promjeni statusa su poslani",
+    "noLocation": "Bez lokacije",
+    "shareInfo": "Podijeli prijedlog sa prijateljima",
+    "description": "Opis",
+    "debate": "Rasprave",
+    "formInvalid": "Dovr\u0161i popunjavanje obrasca",
+    "status": "Status ovog prijedloga",
+    "new": "Novi prijedlog",
+    "searchingFor": "Tra\u017ei ",
+    "top": "Najva\u017eniji prijedlozi",
+    "newest": "Posljednji prijedlozi",
+    "random": "Nasumi\u010dni prijedlozi",
+    "inProgress": "Prijedlozi u razvoju",
+    "groups": "Po\u0161alji poruku grupama",
+    "search": "Potra\u017ei prijedlog",
+    "add_new":"Dodaj novi prijedlog",
+    "up_vote":"Glasaj ZA ovaj prijedlog",
+    "down_vote":"Glasaj PROTIV ovog prijedloga",
+    "report": "Prijavi prijedlog",
+    "notify": "Obavje\u0161tavaj me o ovom prijedlogu",
+    "share": "Podijeli ovaj prijedlog sa prijateljima",
+    "yourPost": "Ideja",
+    "yourPoint": "Argument 'za'",
+    "location": "Lokacija",
+    "photo": "Fotografija",
+    "photographerName": "Fotograf",
+    "newPhoto": "Nova fotografija",
+    "photoUpdate": "Osvje\u017ei fotografiju",
+    "photoDeleteConfirmation": "Sigurni ste da \u017eelite obrisati ovu fotografiju?",
+    "tabs": {
+      "debate": "Rasprava",
+      "news": "Novosti",
+      "location": "Lokacija",
+      "photos": "Fotografije",
+      "solutions": "Rje\u0161enja",
+      "not_implemented": "Nije jo\u0161 dostupno"
+    },
+    "cover": {
+      "media": "Odaberi izgled naslovnice",
+      "imageInfo": "Ako prijedlogu dodate sliku, veća je vjerojatnost da će ga ostali podijeliti na društvenim mrežama",
+      "map": "Karta",
+      "streetview": "Street View",
+      "image": "Slika",
+      "none": "Ni\u0161ta"
+    },
+    "edit": "Uredi prijedlog",
+    "delete": "Obri\u0161i prijedlog",
+    "addNewIntroBoxText": "Klikni ikonu \u017earulje za dodavanje novih prijedloga"
+  },
+
+  "short_word": {
+    "in": "-"
+  },
+
+  "category": {
+    "new": "Nova kategorija",
+    "select": "Odaberi kategoriju"
+  },
+
+  "categories": {
+    "all": "sve kategorije",
+    "the_all": "Sve kategorije"
+  },
+
+  "point": {
+    "againstAdded": "Dodan argument 'protiv'",
+    "forAdded": "Dodan argument 'za'",
+    "confirmDelete": "Potvrdi da želiš obrisati ovaj argument",
+    "theseAreFor": "Argument 'za'",
+    "theseAreAgainst": "Komentari",
+    "point": "Argument",
+    "for": "Tvoj argument 'za'...",
+    "against": "Tvoj argument 'protiv'...",
+    "add_up": "Dodaj argument 'za'",
+    "add_down": "Dodaj argument 'protiv'",
+    "helpful": "Pozitivno ocijeni ovaj argument - koristan za raspravu",
+    "not_helpful": "Negativno ocijeni ovaj argument - nije koristan za raspravu",
+    "addNewsStory": "Upiši tekst novosti i/ili poveznicu na članak",
+    "postNewsStory": "Objavi novost",
+    "addComment": "Tvoj komentar...",
+    "postComment": "Objavi komentar",
+    "comments": "Komentari",
+    "howToWrite": "Poku\u0161ajmo osmisliti najbolje argumente za i protiv prijedloga te promisliti rje\u0161enja...",
+    "commentToShort": "Tekst je prekratak!"
+  },
+
+  "news": "Novosti",
+
+  "uploading": {
+    "inProgress": "Slanje..."
+  },
+
+  "notice": {
+    "ok": "U redu",
+    "feature_not_implemented_a": "Ova funkcija jo\u0161 nije implementirana u ovoj probnoj i read-only verziji Your Priorities 6.0",
+    "feature_not_implemented_b": "Javi nam \u0161to misli\u0161 ;)",
+    "welcome_a": "Ovo je read-only probna verzija  Your Priorities 6.0 pa mo\u017ee\u0161 samo pregledavati sadr\u017eaj, a ne i dodavati ga. Svaka povratna informacija je dobrodo\u0161la.",
+    "welcome_b": "Trenutno radi samo u Chrome pregledniku, ali podr\u017eavat \u0107e sve glavne preglednike kada bude dovr\u0161ena.",
+    "welcome_heading": "Dobrodo\u0161li na Your Priorities 6.0 prikaz tehnologije",
+    "continue": "Nastavi pregledavati",
+    "deleteConfirmation": "\u017deli\u0161 li obrisati ovu grupu?"
+  },
+
+  "maps": {
+    "searchInput": "Adresa",
+    "search": "Tra\u017ei"
+  },
+
+  "group": {
+    "locationHidden": "Disable location",
+    "group": "Grupa",
+    "admins": "Administratori grupe",
+    "users": "Korisnici u grupi",
+    "new": "Otvori novu grupu",
+    "edit": "Uredi grupu",
+    "invite": "Pozovi prijatelja",
+    "invite_to_group": "Pozovi prijatelje u ovu grupu",
+    "share_group": "Podijeli ovu grupu s prijateljima",
+    "delete": "Izbri\u0161i grupu",
+    "objectives": "Ciljevi",
+    "public": "Javna grupa",
+    "closed": "Zatvorena grupa",
+    "secret": "Tajna grupa",
+    "openToCommunity": "Otvoreno za zajednicu",
+    "canVote": "Glasanje dozvoljeno",
+    "canAddNewPosts": "Novi prijedlozi dozvoljeni",
+    "config": "Postavke",
+    "update": "Postavke grupe"
+  },
+
+  "membership": {
+    "joined": "Pridru\u017eio si se",
+    "left": "Napustio si"
+  },
+
+  "menu": {
+    "my_pages": "Moj profil",
+    "about": "Informacije o aplikaciji",
+    "help": "Pomo\u0107",
+    "settings": "Postavke"
+
+  },
+
+  "users": {
+    "removeAdmin": "Ukloni administratora",
+    "addAdmin": "Dodaj administratora",
+    "removeUser": "Ukloni korisnika",
+    "inviteUser": "Pozovi korisnika",
+    "email": "E-po\u0161ta",
+    "removeFromOrganization": "Ukloni",
+    "addToOrganization": "Organizacija",
+    "selectOrganization": "Odaberi organizaciju"
+  },
+
+  "user": {
+    "loginCompleteFor": "Prijava za",
+    "acceptInvite": "Prihvati pozivnicu",
+    "hasSentYouAndInvitation": "ti je poslao pozivnicu za sudjelovanjem u",
+    "acceptInviteInstructions": "Klikni na donji gumb kako bi prihvatio pozivnicu",
+    "setEmail": "Dodaj adresu e-po\u0161te svojem korisni\u010dkom ra\u010dunu",
+    "linkAccount": "Pove\u017ei s korisni\u010dkim ra\u010dunom",
+    "setEmailInfo": "Dodaj adresu e-po\u0161te korisni\u010dkom ra\u010dunu",
+    "existsLinkAccountInfo": "Unesi svoju lozinku da pristup ovome omogu\u0107i\u0161 i svojem korisni\u010dkom ra\u010dunu e-po\u0161te.",
+    "logoutCompleteFor": "Odjava za",
+    "loggedInWithSaml": "Prijavljen koriste\u0107i SAML",
+    "loggedInWithFacebook": "Prijavljen s Facebookom",
+    "facebookLogin": "Facebook prijava",
+    "info":"Informacije",
+    "notifications": "Obavijesti",
+    "name": "Ime i prezime",
+    "email": "E-po\u0161ta",
+    "edit": "Postavke korisnika",
+    "password": "Lozinka",
+    "forgotPassword": "Izradi novu lozinku",
+    "forgotPasswordInstructions": "Unesi adresu svoje e-po\u0161te i poslat \u0107emo ti poruku s linkom za izradu nove lozinke.",
+    "forgotPasswordEmailHasBeenSent": "Poruka s uputama za promjenu lozinke poslana je e-po\u0161tom.",
+    "resetPassword": "Promijeni lozinku",
+    "resetPasswordInstructions": "Izradi novu lozinku koju nije lako pogoditi",
+    "login": "Prijava",
+    "create": "Izradi",
+    "cancel": "Odustani",
+    "logout": "Odjava",
+    "newPassword": "nova lozinka",
+    "register": "Novi korisnik",
+    "alreadyRegisterred": "Ova adresa e-po\u0161te ve\u0107 je registirana. Ukoliko \u017eeli\u0161 mo\u017ee\u0161 izraditi novu lozinku.",
+    "registrationError": "Gre\u0161ka pri registraciji",
+    "loginError": "Gre\u0161ka tijekom prijave",
+    "completeForm": "Obrazac popuniti ispravno",
+    "loginNotAuthorized": "Adresa e-po\u0161te ili lozinka nisu to\u010dni"
+  },
+
+  "other": "Ostalo",
+
+  "socialMedia": "Dru\u0161tveni mediji",
+
+  "location": {
+    "set": "Postavi lokaciju"
+  },
+  "image": {
+    "upload": "Postavi sliku",
+    "logo": {
+      "upload": "Postavi logo"
+    },
+    "header": {
+      "upload": "Postavi sliku zaglavlja"
+    },
+    "profile": {
+      "upload": "Postavi sliku profila"
+    }
+  },
+  "theme": {
+    "choose": "Odaberi temu"
+  }
+}
