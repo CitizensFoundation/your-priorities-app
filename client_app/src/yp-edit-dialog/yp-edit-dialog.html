@@ -202,7 +202,7 @@
             </app-toolbar>
             <div id="scroller">
               <iron-form id="form" content-type="application/json" method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
-                <form id="form" name="ypForm" method="[[method]]" action="[[action]]">
+                <form name="ypForm" method="[[method]]" action="[[action]]">
                   <slot></slot>
                 </form>
               </iron-form>
@@ -248,7 +248,6 @@
         <paper-button dialog-confirm autofocus on-tap="_clearErrorText">[[t('ok')]]</paper-button>
       </div>
     </paper-dialog>
-
     <paper-toast id="toast" text="[[toastTextCombined]]"></paper-toast>
 
   </template>
@@ -401,7 +400,9 @@
         this.set("opened", false);
         this.async(function () {
           this.set("opened", true);
-          this.$$("#editDialog").open();
+          this.async(function () {
+            this.$$("#editDialog").open();
+          });
         });
       },
 
