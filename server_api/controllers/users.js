@@ -139,6 +139,7 @@ router.post('/register', function (req, res) {
 // Register anonymous
 router.post('/register_anonymously', function (req, res) {
   var groupId = req.body.groupId;
+
   models.Group.find({
     where: {
       id: groupId
@@ -166,6 +167,7 @@ router.post('/register_anonymously', function (req, res) {
 
           user.set('profile_data', {});
           user.set('profile_data.isAnonymousUser', true);
+          user.set('profile_data.trackingParameters', req.body.trackingParameters);
           user.save().then(function () {
             log.info('User Created Anonymous', { user: toJson(user), context: 'register_anonymous' });
             req.logIn(user, function (error, detail) {
@@ -187,7 +189,7 @@ router.post('/register_anonymously', function (req, res) {
       });
     } else {
       log.error("Tried ot register to a group anonymously", { context: 'register_anonymous', err: "", errorStatus: 401 });
-      req.sendStatus(401);
+      res.sendStatus(401);
     }
   }).catch(function (error) {
     log.error("User Error", { context: 'register_anonymous', err: error, errorStatus: 500 });
@@ -981,12 +983,12 @@ router.put('/missingEmail/linkAccounts', function(req, res, next) {
               });
             }).catch(function (err) {
               log.error("User Serialized Linked Accounts Error", { userFrom: req.user, toUser: user, err: err });
-              req.send( {
+              res.send( {
                 error: 'Unexpected error'
               });
             });
           } else {
-            req.send( {
+            res.send( {
               error: 'no login provider to move from'
             });
           }
@@ -994,7 +996,7 @@ router.put('/missingEmail/linkAccounts', function(req, res, next) {
       });
     } else {
       log.error("Email not found for linkAccounts", {});
-      req.sendStatus(404);
+      res.sendStatus(404);
     }
   }).catch(function (error) {
     log.error("Error from linkAccounts", { err: error });

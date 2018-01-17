@@ -1,10 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-membership-button">
@@ -56,12 +54,16 @@
           }
         }
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
 
     <paper-fab mini$="[[!large]]" id="button" on-tap="_toggleMembership"  disabled="[[disabled]]" class="heartButton" icon="favorite"></paper-fab>
     <yp-ajax class="ajax" id="membershipAjax" hidden$="[[!disabled]]" method="POST" on-response="_membershipResponse"></yp-ajax>
 
-    <iron-signals on-iron-signal-got-memberships="_updateMembershipFromSignal"></iron-signals>
+    <lite-signal on-lite-signal-got-memberships="_updateMembershipFromSignal"></lite-signal>
   </template>
   <script>
     Polymer({

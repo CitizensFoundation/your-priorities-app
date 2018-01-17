@@ -1,16 +1,16 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
-
 <link rel="import" href="../yp-point/yp-point.html">
 
 <dom-module id="yp-post-user-image-card">
@@ -80,6 +80,10 @@
       .commentsList {
         margin-left: 32px;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
 
     <paper-material elevation="2" class="layout vertical">
@@ -124,18 +128,20 @@
 
         _openEdit: function () {
           window.appGlobals.activity('open', 'userImage.edit');
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userImageEdit");
-          dialog.setup(this.post, this.image, false, this._refresh.bind(this));
-          dialog.open('edit', { postId: this.post.id, userImages: true });
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("userImageEdit", function (dialog) {
+            dialog.setup(this.post, this.image, false, this._refresh.bind(this));
+            dialog.open('edit', { postId: this.post.id, userImages: true });
+          }.bind(this));
         },
 
         _openDelete: function () {
           window.appGlobals.activity('open', 'userImage.delete');
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
-          dialog.setup('/api/images/'+this.post.id+'/'+this.image.id+'/user_images',
-            this.t('userImage.deleteConfirmation'),
-            this._refresh.bind(this));
-          dialog.open();
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+            dialog.setup('/api/images/'+this.post.id+'/'+this.image.id+'/user_images',
+              this.t('userImage.deleteConfirmation'),
+              this._refresh.bind(this));
+            dialog.open();
+          }.bind(this));
         },
 
         _refresh: function () {

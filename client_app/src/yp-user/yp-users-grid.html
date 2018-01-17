@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html" >
@@ -8,8 +8,6 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html" >
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html" >
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" >
-
-<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
 
 <link rel="import" href="../yp-ajax/yp-ajax.html" >
 
@@ -57,17 +55,21 @@
         background-color: #FFF;
 
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-dialog id="selectOrganizationDialog" modal>
       <h2>[[t('users.selectOrganization')]]</h2>
       <paper-dialog-scrollable>
-        <paper-menu>
+        <paper-listbox>
           <template is="dom-repeat" items="[[availableOrganizations]]">
             <paper-item on-tap="_selectOrganization" id="[[item.id]]">[[item.name]]</paper-item>
           </template>
-        </paper-menu>
+        </paper-listbox>
       </paper-dialog-scrollable>
 
       <div class="buttons">
@@ -365,7 +367,6 @@
 
       _usersResponse: function (event, detail) {
         this.set('users', detail.response);
-      //  debugger;
       },
 
       setup: function (groupId, communityId, domainId, adminUsers) {

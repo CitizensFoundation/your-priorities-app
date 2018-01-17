@@ -2,7 +2,7 @@
 
 <script>
   /**
-   * @polymerBehavior ypGotAdminRightsBehavior
+   * @polymerBehavior Polymer.ypGotAdminRightsBehavior
    */
   Polymer.ypGotAdminRightsBehavior = {
 
@@ -27,8 +27,8 @@
       }
     },
 
-    _gotAdminRights: function (event) {
-      this.set('gotAdminRights', true);
+    _gotAdminRights: function (event, detail) {
+      this.set('gotAdminRights', detail);
     }
   }
 </script>

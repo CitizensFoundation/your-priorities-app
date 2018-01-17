@@ -41,14 +41,29 @@
     }
 
     var language = window.locale;
-    i18n.init({ lng: language, resGetPath: '/locales/__lng__/__ns__.json' }, function(loaded) {
-      window.i18nTranslation = i18n;
+    i18next.use(i18nextXHRBackend).
+            init({ lng: language, fallbackLng: 'en', backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' } }, function(loaded) {
+      window.i18nTranslation = i18next;
       if (typeof moment !== 'undefined' && moment ) {
         moment.locale(language);
+      } else {
+        setTimeout(function(){
+          if (typeof moment !== 'undefined' && moment ) {
+            moment.locale(language);
+          }
+        }, 500);
       }
+
       console.log("Changed language to "+language);
-      var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-loaded', language: language } } } );
-      document.dispatchEvent(event);
+
+      document.dispatchEvent(
+        new CustomEvent("lite-signal", {
+          bubbles: true,
+          compose: true,
+          detail: { name: 'yp-language', data: { type: 'language-loaded', language: language }  }
+        })
+      );
+
       setTimeout(function(){
         onSplashClick();
       }, 720);
@@ -102,8 +117,13 @@
       splashDiv.innerHTML += '<img style="width:200px; padding-top: 8px; padding-bottom: 8px" src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/malta/malta_splash-2.jpg"><br>';
     } else if (window.location.hostname.indexOf("forbrukerradet") >-1) {
       splashDiv.innerHTML += '<img style="width:200px; padding-top: 8px; padding-bottom: 8px" src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/ForbLogoSmall.jpg"><br>';
+<<<<<<< HEAD
     }  else if (window.location.hostname.indexOf("brainstorm-app") >-1) {
       splashDiv.innerHTML += '<img style="width:200px; padding-top: 8px; padding-bottom: 8px" src="https://s3-eu-west-1.amazonaws.com/brainstorm-direct-assets-eu/brainStormSplash.png"><br>';
+=======
+    } else if (window.location.hostname.indexOf("idea-synergy.com") >-1) {
+      splashDiv.innerHTML += '<img style="width:200px; padding-top: 8px; padding-bottom: 8px" width="230" height="230" src="https://www.idea-synergy.com/wp-content/uploads/2017/12/Idea_Synergy_Logo_Orange_on_WhiteGreenBulb.png"><br>';
+>>>>>>> origin/polymer2-dev
     } else {
       splashDiv.innerHTML += '<img src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/yrprLogo.png">';
     }
@@ -118,32 +138,42 @@
     document.title = "Your Priorities";
   };
 
-  if (window.location.hostname.indexOf('betrireykjavik') > -1) {
+  var hostname = window.location.hostname;
+  if (hostname.indexOf('betrireykjavik') > -1) {
     setupLocale('is');
     setupBetterReykjavikSplash();
-  } else if (window.location.hostname.indexOf('betraisland') > -1) {
+  } else if (hostname.indexOf('betraisland') > -1) {
     setupLocale('is');
     setupBetterIcelandSplash();
   } else {
     setupYourPrioritiesSplash();
-    if (window.location.hostname.indexOf('forbrukerradet') > -1) {
+    if (hostname.indexOf('forbrukerradet') > -1) {
       setupLocale('no');
-    } else if (window.location.hostname.indexOf('bolja-pula') > -1) {
+    } else if (hostname.indexOf('bolja-pula') > -1) {
       setupLocale('hr');
-    } else if (window.location.hostname.indexOf('e-dem.nl') > -1) {
+    } else if (hostname.indexOf('waag.org') > -1) {
       setupLocale('nl');
-    } else if (window.location.hostname.indexOf('waag.org') > -1) {
-      setupLocale('nl');
-    } else if (window.location.hostname.indexOf('boljikarlovac') > -1) {
+    } else if (hostname.indexOf('boljikarlovac') > -1) {
       setupLocale('hr');
-    } else if (window.location.hostname.indexOf('boljilosinj') > -1) {
+    } else if (hostname.indexOf('boljilosinj') > -1) {
       setupLocale('hr');
-    } else if (window.location.hostname.indexOf('pulaodlucuje') > -1) {
+    } else if (hostname.indexOf('pulaodlucuje') > -1) {
       setupLocale('hr');
     } else if (window.location.href.indexOf("group/801") > -1) {
       setupLocale('sl');
     } else {
-      setupLocale('en');
+      var tld = hostname.substring(hostname.lastIndexOf('.'));
+      var localeByTld = {
+        '.fr': 'fr',
+        '.hr': 'hr',
+        '.hu': 'hu',
+        '.is': 'is',
+        '.nl': 'nl',
+        '.no': 'no',
+        '.pl': 'pl',
+        '.tw': 'zh_TW',
+      };
+      setupLocale(localeByTld[tld] || 'en');
     }
   }
 
@@ -153,7 +183,7 @@
     if (loadContainer) {
       loadContainer.parentNode.removeChild(loadContainer);
     } else {
-      Polymer.Base.async(function () {
+      setTimeout(function() {
         console.log("Remove splash with delay");
         loadContainer = document.getElementById('splashCore');
         if (loadContainer) {
@@ -165,9 +195,7 @@
   }
 
   window.addEventListener('WebComponentsReady', function(e) {
-    console.log("WebComponentsReady");
-    setTimeout(function(){
-      onSplashClick();
-    }, 600);
+    console.error("WebComponentsReady");
+    onSplashClick();
   });
 })(document);

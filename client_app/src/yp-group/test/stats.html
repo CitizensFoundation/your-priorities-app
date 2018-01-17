@@ -46,7 +46,7 @@
       var shareButton = groupStats.querySelector('.group-share');
       shareButton.click();
 
-      Polymer.Base.async(function() {
+      this.async(function() {
         var defaultDialog = document.querySelector('#dialog');
         expect(defaultDialog.opened).to.be.equal(true);
         done();
@@ -59,7 +59,7 @@
       var inviteButton = groupStats.querySelector('.group-invite');
       inviteButton.click();
 
-      Polymer.Base.async(function() {
+      this.async(function() {
         var defaultDialog = document.querySelector('#dialog');
         expect(defaultDialog.opened).to.be.equal(true);
         done();

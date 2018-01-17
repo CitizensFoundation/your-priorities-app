@@ -1,16 +1,12 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../../bower_components/re-captcha/re-captcha.html">
 <link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
-
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
@@ -35,15 +31,19 @@
           width: 100%;
         }
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div id="outer">
       <paper-dialog id="dialog" modal>
         <h2>[[heading]]</h2>
-        <div class="setEmailInfo">
+        <h2 class="setEmailInfo">
           [[t('user.setEmailInfo')]]
-        </div>
+        </h2>
         <form is="iron-form" id="form">
           <paper-input id="email"
                        type="text"
@@ -71,7 +71,15 @@
           <yp-ajax id="linkAccountsAjax" method="PUT" dispatch-error on-error="_registerError" url="/api/users/missingEmail/linkAccounts" on-response="_linkAccountsResponse"></yp-ajax>
           <paper-button on-tap="_logout">[[t('user.logout')]]</paper-button>
           <paper-button on-tap="_forgotPassword" hidden$="[[!needPassword]]">[[t('user.newPassword')]]</paper-button>
-          <paper-button id="sendButton" autofocus on-tap="_validateAndSend">[[submitText]]</paper-button>
+          <paper-button on-tap="_notNow">[[t('later')]]</paper-button>
+          <paper-button id="sendButton" autofocus on-tap="_validateAndSend">
+            <span hidden$="[[linkAccountText]]">
+              [[t('user.setEmail')]]
+            </span>
+            <span hidden$="[[!linkAccountText]]">
+              [[t('user.linkAccount')]]
+            </span>
+          </paper-button>
         </div>
       </paper-dialog>
 
@@ -128,9 +136,9 @@
         computed: '_computeCredentials(email, password)'
       },
 
-      submitText: {
-        type: String,
-        value: ""
+      linkAccountText: {
+        type: Boolean,
+        value: false
       },
 
       heading: {
@@ -138,16 +146,16 @@
       },
 
       target: {
-        type: Object,
-        value: function() {
-          return this.$$("#form");
-        }
+        type: Object
       }
-
     },
 
     onEnter: function (event) {
       this._validateAndSend();
+    },
+
+    _notNow: function (event) {
+      this.$$("#dialog").close();
     },
 
     _logout: function () {
@@ -160,7 +168,9 @@
 
     ready: function () {
       this.header = this.t('user.setEmail');
-      this.set('submitText',this.t('user.setEmail'));
+      this.async(function () {
+        this.$$("#a11y").target = this.$$("#form");
+      }.bind(this), 50);
     },
 
     _computeCredentials: function(email, password) {
@@ -189,7 +199,7 @@
       if (detail.response && detail.response.alreadyRegistered) {
         this.set('needPassword', true);
         this.set('header', this.t('user.linkAccount'));
-        this.set('submitText', this.t('user.linkAccount'));
+        this.set('linkAccountText', true);
       } else {
         window.appGlobals.notifyUserViaToast(this.t('user.haveSetEmail')+ " " + detail.response.email);
         this.close();

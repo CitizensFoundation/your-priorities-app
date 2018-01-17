@@ -44,16 +44,27 @@
       }
 
       .createFab {
-        background-color: var(--accent-color);
-        color: var(--icon-general-color, #FFF);
         position: fixed;
         bottom: 24px;
         right: 28px;
+        background-color: var(--accent-color);
+        color: #FFF;
+
+        --paper-fab-iron-icon: {
+          color: var(--icon-general-color, #FFF);
+          height: 40px;
+          width: 40px;
+        }
       }
 
       .createFab[wide-layout] {
         width: 72px;
         height: 72px;
+        --paper-fab-iron-icon: {
+          color: var(--icon-general-color, #FFF);
+          width: 72px;
+          height: 72px;
+        }
       }
 
       .createFabContainer[wide-layout] .createFab {
@@ -64,34 +75,34 @@
         height: 40px;
       }
 
-      .tab-wrapper ::content > .tabs {
+      .tab-wrapper ::slotted(.tabs) {
         width: 1100px;
         padding-top: 8px;
         padding-bottom: 8px;
       }
 
-      .tab-wrapper ::content > .tabs .tab {
+      .tab-wrapper ::slotted(.tabs .tab) {
         width: 250px;
       }
 
       @media (max-width: 1024px) {
-        .tab-wrapper ::content > .tabs {
+        .tab-wrapper ::slotted(.tabs) {
           max-width: 920px;
         }
 
-        .tab-wrapper ::content > .tabs .tab {
+        .tab-wrapper ::slotted(.tabs .tab) {
           width: 200px;
         }
       }
 
       @media (max-width: 945px) {
-        .tab-wrapper ::content > .tabs {
+        .tab-wrapper ::slotted(.tabs) {
           max-width: 450px;
           font-size: 13px !important;
           word-wrap: break-word !important;
         }
 
-        .tab-wrapper ::content > .tabs .tab {
+        .tab-wrapper ::slotted(.tabs .tab) {
           width: 120px;
           word-wrap: break-word !important;
         }
@@ -114,12 +125,12 @@
       }
 
       @media (max-width: 380px) {
-        .tab-wrapper ::content > .tabs {
+        .tab-wrapper ::slotted(.tabs) {
           max-width: 330px;
           font-size: 12px !important;
         }
 
-        .tab-wrapper ::content > paper-tab {
+        .tab-wrapper ::slotted(paper-tab) {
           width: 100px;
         }
 
@@ -134,22 +145,26 @@
 
       @media (max-width: 480px) {
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
 
     <div class="layout vertical mainArea">
       <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post$="[[isPost]]">
-        <content select=".largeCard"></content>
+        <slot name="largeCard"></slot>
       </div>
       <template is="dom-if" if="[[hasLargeButton]]">
         <div class="largeButtonWrapper layout horizontal center-center" hidden$="[[!wideWidth]]">
-          <content select=".largeAddButton"></content>
+          <slot name="largeAddButton"></slot>
         </div>
       </template>
       <div class="tab-wrapper layout horizontal center-center">
-        <content select=".tabs"></content>
+        <slot name="tabs"></slot>
       </div>
       <div class="tab-pages-wrapper layout vertical">
-        <content select=".tabPages"></content>
+        <slot name="tabPages"></slot>
       </div>
     </div>
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
@@ -204,14 +219,15 @@
       },
 
       setupTopHeaderImage: function (image) {
-        var path;
-        if (image) {
-          path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
-        } else {
-          path = 'none';
+        if (this.wideWidth) {
+          var path;
+          if (image) {
+            path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+          } else {
+            path = 'none';
+          }
+          this.updateStyles({ '--top-area-background-image': path });
         }
-        this.customStyle['--top-area-background-image'] = path;
-        this.updateStyles();
       },
 
       _fabTabChanged: function (newValue) {

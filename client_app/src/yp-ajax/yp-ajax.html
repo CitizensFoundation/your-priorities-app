@@ -1,36 +1,39 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-ajax">
-  <style include="iron-flex iron-flex-alignment">
-    :host {
-      background: transparent;
-    }
-
-    .large {
-      height: 64px !important;
-      width: 64px !important;
-      --paper-spinner-stroke-width: 7px;
-    }
-
-    paper-spinner {
-      background: transparent;
-    }
-
-    paper-spinner[active] {
-      display: block;
-    }
-
-    paper-spinner {
-      display: none;
-    }
-  </style>
   <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        background: transparent;
+      }
+
+      .large {
+        height: 64px !important;
+        width: 64px !important;
+        --paper-spinner-stroke-width: 7px;
+      }
+
+      paper-spinner {
+        background: transparent;
+      }
+
+      paper-spinner[active] {
+        display: block;
+      }
+
+      paper-spinner {
+        display: none;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+    </style>
 
     <paper-spinner id="spinner" hidden$="[[!useSpinner]]"></paper-spinner>
 
@@ -41,6 +44,7 @@
       auto="[[auto]]"
       method="[[method]]"
       body="[[body]]"
+      bubbles
       handle-as="json"
       content-type="application/json"
       on-error="_error"
@@ -127,7 +131,6 @@
 
       _response: function (event) {
         this.$.spinner.active = false;
-        this.fire('response', event.detail);
       },
 
       ready: function() {
@@ -142,6 +145,7 @@
       _error: function (event) {
         this.$.spinner.active = false;
         if (this.dispatchError) {
+          event.stopPropagation();
           if (event.detail.request.xhr.response && event.detail.request.xhr.response.error) {
             this.fire("error", event.detail.request.xhr.response.error);
           } else if (event.detail.request.xhr.response && event.detail.request.xhr.response.message) {
@@ -166,6 +170,7 @@
 
       generateRequest: function () {
         this.$.spinner.active = true;
+        console.debug("Sent yp-ajax request");
         this.$.ajax.generateRequest();
       },
 

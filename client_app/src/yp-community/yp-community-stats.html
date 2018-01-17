@@ -1,16 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
-<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html" >
-
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-community-stats">
@@ -42,13 +35,13 @@
         margin-right:4px;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="stats layout horizontal end-justified">
-      <iron-icon title$="[[t('stats.posts')]]" icon="icons:lightbulb-outline" class="stats-icon bulb"></iron-icon>
+      <iron-icon title$="[[t('stats.posts')]]" icon="lightbulb-outline" class="stats-icon bulb"></iron-icon>
       <div title$="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(community.counter_posts)}}</div>
 
-      <iron-icon title$="[[t('stats.groups')]]" icon="social:people" class="stats-icon"></iron-icon>
+      <iron-icon title$="[[t('stats.groups')]]" icon="people" class="stats-icon"></iron-icon>
       <div title$="[[t('stats.groups')]]" class="stats-text" style="">{{formatNumber(community.counter_groups)}}</div>
 
       <iron-icon title$="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>

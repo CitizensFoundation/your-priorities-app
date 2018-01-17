@@ -1,8 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-post/yp-post-behaviors.html">
 <link rel="import" href="./ac-notification-truncated-name-list.html">
@@ -68,6 +68,10 @@
       .leftContainer {
         margin-right: 8px;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
     <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
       <div class="layout horizontal">
@@ -76,13 +80,17 @@
           <iron-icon icon="lightbulb-outline" new-post$="[[newPostMode]]" class="bulb-icon"></iron-icon>
         </div>
         <div class="layout vertical">
-          <div class="layout horizontal" hidden$="[[!endorsementsText]]">
-            <iron-icon icon="favorite" class="smallIcons endorsers"></iron-icon>
-            <div class="endorsers">[[endorsementsText]]</div>
+          <div hidden$="[[!endorsementsText]]">
+            <div class="layout horizontal">
+              <iron-icon icon="favorite" class="smallIcons endorsers"></iron-icon>
+              <div class="endorsers">[[endorsementsText]]</div>
+            </div>
           </div>
-          <div class="layout horizontal" hidden$="[[!oppositionsText]]">
-            <iron-icon icon="notification:do-not-disturb" class="smallIcons opposers"></iron-icon>
-            <div class="opposers">[[oppositionsText]]</div>
+          <div hidden$="[[!oppositionsText]]">
+            <div class="layout horizontal">
+              <iron-icon icon="do-not-disturb" class="smallIcons opposers"></iron-icon>
+              <div class="opposers">[[oppositionsText]]</div>
+            </div>
           </div>
           <div class="postName">[[postName]]</div>
           <div hidden$="[[!newPostMode]]" class="userName">[[userName]]</div>
@@ -90,7 +98,7 @@
       </div>
     </div>
 
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
   </template>
 
   <script>

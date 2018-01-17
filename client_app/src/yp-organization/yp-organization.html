@@ -1,23 +1,17 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
-<link rel="import" href="../ac-activities/ac-activities.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 
 <link rel="import" href="../yp-post/yp-post-map.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
-<link rel="import" href="../yp-group/yp-group-card.html">
-<link rel="import" href="../yp-group/yp-group-card-add.html">
 <link rel="import" href="../yp-page/yp-page.html">
 
 <link rel="import" href="yp-organization-large-card.html">
@@ -39,19 +33,19 @@
         background-color: var(--primary-background-color);
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <yp-page id="page" create-fab-icon="social:group" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
+    <yp-page id="page" create-fab-icon="group" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
 
-      <yp-organization-large-card id="organizationCard" class="largeCard card" organization="[[organization]]" on-update-organization="_refresh"></yp-organization-large-card>
+      <yp-organization-large-card id="organizationCard" slot="largeCard" class="largeCard card" organization="[[organization]]" on-update-organization="_refresh"></yp-organization-large-card>
 
-      <paper-tabs  id="paper_tabs" class="tabs" selected="{{selected}}" focused>
+      <paper-tabs  id="paper_tabs" slot="tabs" class="tabs" selected="{{selected}}" focused>
         <paper-tab class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groups.length]]</span>)</paper-tab>
         <paper-tab class="tab">[[t('news')]]</paper-tab>
         <paper-tab class="tab">[[t('posts.map')]]</paper-tab>
       </paper-tabs>
 
-      <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+      <iron-pages class="tabPages" slot="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section>
           <div class="layout horizontal center-center wrap">
           </div>
@@ -171,9 +165,10 @@
 
       _newGroup: function () {
         window.appGlobals.activity('open', 'newGroup');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupEdit");
-        dialog.setup(null, true, null);
-        dialog.open('new', { organizationId: this.organizationId });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
+          dialog.setup(null, true, null);
+          dialog.open('new', {organizationId: this.organizationId});
+        }.bind(this));
       },
 
       _response: function (event, detail, sender) {
@@ -188,7 +183,7 @@
         var url = this._organizationHeaderUrl(this.organization);
         //headerPanel.style.background = "#f5f5f5 url('"+url+"') no-repeat center top";
         this.set("groups", this.organization.Groups);
-        Polymer.Base.async(function() {
+        this.async(function() {
           var organizationCard = this.$$('#organizationCard');
           if (organizationCard) {
             organizationCard.setElevation(5);

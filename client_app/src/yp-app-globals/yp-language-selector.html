@@ -1,14 +1,14 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-form-element-behavior/iron-form-element-behavior.html">
 
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
-<link rel="import" href="../yp-user/yp-user-info.html">
+<link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-language-selector">
 
@@ -23,12 +23,11 @@
         max-width: 250px;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="layout vertical">
-
     <paper-dropdown-menu label="Select language" selected="{{selectedLocale}}" attr-for-selected="name">
-      <paper-listbox class="dropdown-content" selected="{{selectedLocale}}"  attr-for-selected="name">
+      <paper-listbox slot="dropdown-content" selected="{{selectedLocale}}"  attr-for-selected="name">
         <template is="dom-repeat" items="[[languages]]">
           <paper-item name="[[item.language]]">[[item.name]]</paper-item>
         </template>
@@ -51,9 +50,12 @@
           type: Object,
           value: {
             en: 'English',
+            fr: 'Français',
             is: 'Íslenska',
             no: 'Norwegian',
             nl: 'Dutch',
+            hu: 'Hungarian',
+            zh_TW: 'Chinese (TW)',
             sr: 'Serbian',
             sr_latin: 'Serbian (latin)',
             hr: 'Croatian',

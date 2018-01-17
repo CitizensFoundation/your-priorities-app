@@ -1,8 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-post/yp-post-behaviors.html">
 <link rel="import" href="../yp-user/yp-user-image.html">
@@ -75,14 +75,18 @@
       .leftContainer {
         margin-right: 8px;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
     <div class="layout vertical pointerCursor" on-tap="goToPost" hidden$="[[!post]]">
       <div class="layout horizontal">
         <div class="layout vertical center-center self-start leftContainer">
           <yp-user-image small user="[[user]]"></yp-user-image>
-          <iron-icon icon="communication:chat-bubble-outline" class="chatIcon"></iron-icon>
-          <iron-icon icon="thumb-up" class="chatIcon thumbsIcon" hidden$="[[!pointValueUp]]"></iron-icon>
-          <iron-icon icon="thumb-down" class="chatIcon thumbsIcon" hidden$="[[pointValueUp]]"></iron-icon>
+          <iron-icon icon="chat-bubble-outline" class="chatIcon"></iron-icon>
+          <div hidden$="[[!pointValueUp]]"><iron-icon icon="thumb-up" class="chatIcon thumbsIcon"></iron-icon></div>
+          <div hidden$="[[pointValueUp]]"><iron-icon icon="thumb-down" class="chatIcon thumbsIcon"></iron-icon></div>
         </div>
         <div class="layout vertical">
           <div point-value-up$="[[pointValueUp]]" class="layout horizontal pointContent">
@@ -101,7 +105,7 @@
       </div>
     </div>
 
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
   </template>
 
   <script>

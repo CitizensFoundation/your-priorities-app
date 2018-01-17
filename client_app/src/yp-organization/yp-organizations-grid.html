@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html" >
@@ -66,17 +66,21 @@
       .pageItem {
         padding-top: 8px;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-dialog id="selectOrganizationDialog" modal>
       <h2>[[t('users.selectOrganization')]]</h2>
       <paper-dialog-scrollable>
-        <paper-menu>
+        <paper-listbox>
           <template is="dom-repeat" items="[[availableOrganizations]]">
             <paper-item on-tap="_selectOrganization" id="[[item.id]]">[[item.name]]</paper-item>
           </template>
-        </paper-menu>
+        </paper-listbox>
       </paper-dialog-scrollable>
 
       <div class="buttons">
@@ -172,17 +176,19 @@
       },
 
       _newOrganization: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("organizationEdit");
-        dialog.setup(null, true, null);
-        dialog.open('new', {});
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("organizationEdit", function (dialog) {
+          dialog.setup(null, true, null);
+          dialog.open('new', {});
+        }.bind(this));
       },
 
       _editOrganization: function (event) {
         var organization = JSON.parse(event.target.getAttribute('data-args'));
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("organizationEdit");
-        dialog._clear();
-        dialog.setup(organization, false, null);
-        dialog.open('edit', { organizationId: organization.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("organizationEdit", function (dialog) {
+          dialog._clear();
+          dialog.setup(organization, false, null);
+          dialog.open('edit', {organizationId: organization.id});
+        }.bind(this));
       },
 
       _organizationImageUrl: function (organization) {

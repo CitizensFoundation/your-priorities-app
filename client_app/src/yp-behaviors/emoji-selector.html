@@ -2,16 +2,13 @@
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/maps-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../bower_components/paper-styles/default-theme.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="app-helpers.html">
 <!--
 `emoji-selector` is a `paper-input-addon` component (see Polymer.PaperInput)
@@ -45,118 +42,117 @@ the category tabs.
 -->
 
 <dom-module id="emoji-selector">
-
-  <style>
-    :host {
-      display: inline-block;
-    }
-
-    paper-tabs {
-      height: 30px;
-      color: var(--emoji-selector-icon-color, black);
-      background-color: var(--emoji-selector-background-color, #FFF);
-    }
-
-    paper-tab iron-icon {
-      --iron-icon-width: 18px;
-      --iron-icon-height: 18px;
-    }
-
-    #searchInput {
-      --paper-input-container-input: {
-        text-align: center;
-      };
-    };
-
-    iron-pages {
-      height: 155px;
-    }
-
-    #menu {
-      padding: 0;
-    }
-
-    .box {
-      background-color: var(--emoji-selector-background-color, #FFF);
-      border-radius: 2px;
-      box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
-
-      width: 270px;
-      height: 240px;
-      font-size: 15px;
-
-      @apply(--emoji-selector);
-    }
-
-    .section-title {
-      padding: 0;
-      margin: 0;
-      font-size: 11px;
-      text-transform: uppercase;
-      color: var(--emoji-selector-icon-color, black);
-    }
-
-    .emoji-section {
-      height: 100%;
-      overflow-y: auto;
-      flex-direction: column;
-      flex-wrap: wrap;
-      padding-left: 8px;
-      padding-top: 5px;
-    }
-
-    .emoji-icon {
-      cursor: pointer;
-      text-align: center;
-      display: inline-block;
-      font-size: 18px;
-      line-height: 24px;
-      width: 24px;
-      height: 24px;
-
-      /* >.< */
-      -webkit-transition: all .14s linear;
-      -moz-transition: all .14s linear;
-      -o-transition: all .14s linear;
-      -ms-transition: all .14s linear;
-      transition: all .14s linear;
-
-      @apply(--emoji-selector-icon);
-    }
-
-    .emoji-icon:hover {
-      transform: scale(1.3, 1.3);
-      -webkit-transform: scale(1.3, 1.3);
-      @apply(--emoji-selector-icon-hover);
-    }
-
-    paper-icon-button.clear-button {
-      color: var(--paper-input-container-color);
-      --iron-icon-width: 15px;
-      --iron-icon-height: 15px;
-      padding: 0px 4px;
-      margin-left: 4px;
-    }
-
-    paper-menu {
-      background-color: #FFF;
-    }
-
-    .dropdown-trigger {
-      color: #444;
-    }
-  </style>
-
   <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+
+      paper-tabs {
+        height: 30px;
+        color: var(--emoji-selector-icon-color, black);
+        background-color: var(--emoji-selector-background-color, #FFF);
+      }
+
+      paper-tab iron-icon {
+        --iron-icon-width: 18px;
+        --iron-icon-height: 18px;
+      }
+
+      #searchInput {
+        --paper-input-container-input: {
+          text-align: center;
+        };
+      };
+
+      iron-pages {
+        height: 155px;
+      }
+
+      #menu {
+        padding: 0;
+      }
+
+      .box {
+        background-color: var(--emoji-selector-background-color, #FFF);
+        border-radius: 2px;
+        box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+
+        width: 270px;
+        height: 240px;
+        font-size: 15px;
+
+        @apply(--emoji-selector);
+      }
+
+      .section-title {
+        padding: 0;
+        margin: 0;
+        font-size: 11px;
+        text-transform: uppercase;
+        color: var(--emoji-selector-icon-color, black);
+      }
+
+      .emoji-section {
+        height: 100%;
+        overflow-y: auto;
+        flex-direction: column;
+        flex-wrap: wrap;
+        padding-left: 8px;
+        padding-top: 5px;
+      }
+
+      .emoji-icon {
+        cursor: pointer;
+        text-align: center;
+        display: inline-block;
+        font-size: 18px;
+        line-height: 24px;
+        width: 24px;
+        height: 24px;
+
+        /* >.< */
+        -webkit-transition: all .14s linear;
+        -moz-transition: all .14s linear;
+        -o-transition: all .14s linear;
+        -ms-transition: all .14s linear;
+        transition: all .14s linear;
+
+        @apply(--emoji-selector-icon);
+      }
+
+      .emoji-icon:hover {
+        transform: scale(1.3, 1.3);
+        -webkit-transform: scale(1.3, 1.3);
+        @apply(--emoji-selector-icon-hover);
+      }
+
+      paper-icon-button.clear-button {
+        color: var(--paper-input-container-color);
+        --iron-icon-width: 15px;
+        --iron-icon-height: 15px;
+        padding: 0px 4px;
+        margin-left: 4px;
+      }
+
+      paper-listbox {
+        background-color: #FFF;
+      }
+
+      .dropdown-trigger {
+        color: #444;
+      }
+    </style>
+
     <iron-media-query query="(max-width: 375px)" query-matches="{{smallScreen}}"></iron-media-query>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-menu-button id="menu"
                        vertical-align="top" vertical-offset="20"
                        dynamic-align
                        ignore-select>
-      <paper-icon-button title$="[[t('addEmoji')]]" icon="editor:insert-emoticon" class="dropdown-trigger"></paper-icon-button>
-      <paper-menu class="dropdown-content">
+      <paper-icon-button title$="[[t('addEmoji')]]" icon="insert-emoticon" slot="dropdown-trigger"></paper-icon-button>
+      <paper-listbox slot="dropdown-content">
         <div class="box">
           <paper-input autofocus no-label-float id="searchInput" placeholder="[[t('findAnEmoji')]]"
                        on-input="_onSearchInput">
@@ -166,12 +162,12 @@ the category tabs.
           </paper-input>
 
           <paper-tabs selected="{{selected}}" id="tabs" tabindex="0">
-            <paper-tab><iron-icon icon="icons:history"></iron-icon></paper-tab>
-            <paper-tab><iron-icon icon="social:mood"></iron-icon></paper-tab>
-            <paper-tab><iron-icon icon="maps:local-florist"></iron-icon></paper-tab>
-            <paper-tab><iron-icon icon="maps:local-pizza"></iron-icon></paper-tab>
-            <paper-tab><iron-icon icon="social:cake"></iron-icon></paper-tab>
-            <paper-tab><iron-icon icon="maps:directions-walk"></iron-icon></paper-tab>
+            <paper-tab><iron-icon icon="history"></iron-icon></paper-tab>
+            <paper-tab><iron-icon icon="mood"></iron-icon></paper-tab>
+            <paper-tab><iron-icon icon="local-florist"></iron-icon></paper-tab>
+            <paper-tab><iron-icon icon="local-pizza"></iron-icon></paper-tab>
+            <paper-tab><iron-icon icon="cake"></iron-icon></paper-tab>
+            <paper-tab><iron-icon icon="directions-walk"></iron-icon></paper-tab>
             <paper-tab><iron-icon icon="account-balance"></iron-icon></paper-tab>
             <paper-tab><iron-icon icon="perm-phone-msg"></iron-icon></paper-tab>
           </paper-tabs>
@@ -199,7 +195,7 @@ the category tabs.
             </div>
           </iron-pages>
         </div>
-      </paper-menu>
+      </paper-listbox>
     </paper-menu-button>
 
   </template>

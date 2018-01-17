@@ -2,7 +2,7 @@
 
 <script>
   /**
-   * @polymerBehavior appHelpers
+   * @polymerBehavior Polymer.ypIronListBehavior
    */
   Polymer.ypIronListBehavior = {
 
@@ -10,32 +10,51 @@
       wide: {
         type: Boolean,
         observer: '_wideChanged'
-      }
+      },
+
+      resizeTimer: Object
     },
 
     attached: function () {
       this.async(function () {
         this.resetSize();
+        window.addEventListener("resize", this.resetSizeWithDelay.bind(this));
       }.bind(this));
+    },
+
+    detached: function() {
+      window.removeEventListener("resize", this.resetSizeWithDelay);
     },
 
     _wideChanged: function () {
       this.resetSize();
     },
 
+    resetSizeWithDelay: function () {
+      clearTimeout(this.resizeTimer);
+      this.resizeTimer = setTimeout(function() {
+        this.resetSize();
+      }.bind(this), 250);
+    },
+
     resetSize: function () {
+      var skipHeight = true;
       var list = this.$$("#ironList");
       var windowHeight = window.innerHeight;
       var windowWidth = window.innerWidth;
       if (list) {
         var height;
         if (this.wide) {
-          height = windowHeight - this.wideListOffset ? this.wideListOffset : 360;
+          height = windowHeight - (this.wideListOffset ? this.wideListOffset : 415);
         } else {
           height = windowHeight - 300;
           windowWidth = windowWidth - 16;
         }
-        list.style.height = height + 'px';
+
+        if (!skipHeight) {
+          list.style.height = height + 'px';
+        }
+
         if (!this.skipIronListWidth) {
           list.style.width = windowWidth + 'px';
         } else {
@@ -48,7 +67,10 @@
           })
         });
       } else {
-        console.error("Can't find iron list");
+        console.error("Can't find iron list, waiting");
+        this.async(function () {
+          this.resetSize();
+        },1500);
       }
     }
   };

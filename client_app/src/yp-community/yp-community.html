@@ -1,14 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 
@@ -23,13 +20,9 @@
 
 <link rel="import" href="../yp-post/yp-post-map.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
-<link rel="import" href="../yp-group/yp-group-card.html">
-<link rel="import" href="../yp-group/yp-group-card-add.html">
 <link rel="import" href="../yp-page/yp-page.html">
 <link rel="import" href="../yp-group/yp-group-collection-behaviors.html">
 <link rel="import" href="../yp-group/yp-group-grid.html">
-
-<link rel="import" href="../yp-group/yp-group-edit.html">
 
 <link rel="import" href="yp-community-header.html">
 <link rel="import" href="yp-community-large-card.html">
@@ -58,24 +51,34 @@
       .minHeightSection {
         min-height: 450px;
       }
+
+      #paper_tabs[apple] {
+        margin-top: 42px;
+        margin-bottom: 8px;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup">
 
       <template is="dom-if" if="[[useAlternativeHeader]]">
-        <yp-community-header id="communityCard" class="largeCard card" community="[[community]]" on-update-community="_refreshAjax"></yp-community-header>
-      </template>
-      <template is="dom-if" if="[[useNormalHeader]]">
-        <yp-community-large-card id="communityCard" class="largeCard card" community="[[community]]" on-update-community="_refreshAjax"></yp-community-large-card>
+        <yp-community-header id="communityCard" slot="largeCard" class="largeCard card" community="[[community]]" on-update-community="_refreshAjax"></yp-community-header>
       </template>
 
-      <paper-tabs  id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
+      <template is="dom-if" if="[[useNormalHeader]]">
+        <yp-community-large-card id="communityCard" slot="largeCard" class="largeCard card" community="[[community]]" on-update-community="_refreshAjax"></yp-community-large-card>
+      </template>
+
+      <paper-tabs  apple$="[[isApple]]" id="paper_tabs" slot="tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
         <paper-tab name="groups" class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
         <paper-tab name="news" class="tab">[[t('news')]]</paper-tab>
-        <paper-tab name="map" class="tab" hidden$="[[locationHidden]]">[[t('posts.map')]]</paper-tab>
+        <div hidden$="[[locationHidden]]"><paper-tab name="map" class="tab">[[t('posts.map')]]</paper-tab></div>
       </paper-tabs>
 
-      <iron-pages class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+      <iron-pages class="tabPages" slot="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section name="groups">
           <div class="layout horizontal center-center wrap">
             <yp-group-grid
@@ -100,8 +103,8 @@
       </iron-pages>
     </yp-page>
 
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
 
     <app-route
       route="{{idRoute}}"
@@ -127,9 +130,9 @@
 
       behaviors: [
         Polymer.appHelpers,
+        Polymer.GroupCollectionBehaviors,
         Polymer.ypThemeBehavior,
         Polymer.CollectionHelpers,
-        Polymer.GroupCollectionBehaviors,
         Polymer.AccessHelpers,
         Polymer.YpNewsTabSelected,
         Polymer.ypLoggedInUserBehavior
@@ -179,9 +182,14 @@
           value: false
         },
 
+        isApple: {
+          type: Boolean,
+          computed: '_isApple(communityId)'
+        },
+
         useNormalHeader: {
           type: Boolean,
-          value: false
+          value: true
         }
       },
 
@@ -189,6 +197,10 @@
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
+
+      _isApple: function () {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      },
 
       _userLoggedIn: function (user) {
         if (user) {
@@ -198,17 +210,12 @@
         }
       },
 
-      _newPostSelectGroup: function () {
-        window.appGlobals.activity('open', 'newPostFromCommunity');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupSelectionForNewPost");
-        dialog.open(this);
-      },
-
       _newPostForGroup: function (group) {
         window.appGlobals.activity('open', 'newPost');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
-        dialog.setup(null, group, true, null);
-        dialog.open('new', { groupId: group.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
+          dialog.setup(null, group, true, null);
+          dialog.open('new', {groupId: group.id});
+        }.bind(this));
       },
 
       _refreshTabsAndPages: function () {
@@ -294,10 +301,11 @@
 
       _newGroup: function () {
         window.appGlobals.activity('open', 'newGroup');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupEdit");
-        dialog.community = this.community;
-        dialog.setup(null, true, this._refreshAjax.bind(this));
-        dialog.open('new', { communityId: this.communityId });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
+          dialog.community = this.community;
+          dialog.setup(null, true, this._refreshAjax.bind(this));
+          dialog.open('new', { communityId: this.communityId });
+        }.bind(this));
       },
 
       _pagesResponse: function (event, detail) {
@@ -318,7 +326,7 @@
         this.setupGroups(this.community.Groups);
         this._setLocationHidden(this.community.Groups);
 
-        Polymer.Base.async(function() {
+        this.async(function() {
           var communityCard = this.$$('#communityCard');
           if (communityCard) {
             communityCard.setElevation(5);
@@ -386,6 +394,7 @@
           this.$.pagesAjax.url = "/api/communities/"+this.community.id+"/pages";
           this.$.pagesAjax.generateRequest();
           window.appGlobals.setAnonymousGroupStatus(null);
+          window.appGlobals.disableFacebookLoginForGroup = false;
         }
       },
 

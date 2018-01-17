@@ -1,14 +1,14 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html">
+<link rel="import" href="../yp-file-upload/yp-file-upload.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-collection-status-options.html">
@@ -42,7 +42,7 @@
         padding-top: 8px;
       }
 
-      file-upload {
+      yp-file-upload {
       }
 
       .half {
@@ -70,12 +70,14 @@
       .categoryName {
         padding-left: 8px;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <yp-edit-dialog id="editDialog" icon="social:people" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
-      <h2>[[editHeaderText]]</h2>
-
+    <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" icon="people" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <paper-input id="name"
                    name="name"
                    type="text"
@@ -101,17 +103,17 @@
 
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
-          <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
-            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+          <yp-file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('image.logo.upload')]]</span>
-          </file-upload>
+          </yp-file-upload>
         </div>
 
         <div class="layout vertical additionalSettings">
-          <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
-            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+          <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('image.header.upload')]]</span>
-          </file-upload>
+          </yp-file-upload>
         </div>
 
         <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
@@ -123,22 +125,22 @@
           <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
           <div class="layout vertical">
             <paper-dropdown-menu label="[[t('status.select')]]">
-              <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
+              <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{status}}">
                 <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
                   <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
                 </template>
-              </paper-menu>
+              </paper-listbox>
             </paper-dropdown-menu>
 
             <input type="hidden" name="status" value="[[status]]">
 
             <div class="layout horizontal">
               <paper-dropdown-menu label="[[t('endorsementButtons')]]">
-                <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{endorsementButtons}}">
+                <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{endorsementButtons}}">
                   <template is="dom-repeat" items="[[endorsementButtonsOptions]]" as="buttonsSelection">
                     <paper-item name="[[buttonsSelection.name]]">[[buttonsSelection.translatedName]]</paper-item>
                   </template>
-                </paper-menu>
+                </paper-listbox>
               </paper-dropdown-menu>
               <input type="hidden" name="endorsementButtons" value="[[endorsementButtons]]">
             </div>
@@ -147,6 +149,7 @@
         <div class="layout vertical config">
           <paper-checkbox name="canVote" checked$="{{canVote}}">[[t('group.canVote')]]</paper-checkbox>
           <paper-checkbox name="canAddNewPosts" checked$="{{canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
+          <paper-checkbox name="disableDebate" checked$="{{group.configuration.disableDebate}}">[[t('disableDebate')]]</paper-checkbox>
           <paper-checkbox name="locationHidden" checked$="{{locationHidden}}">[[t('group.locationHidden')]]</paper-checkbox>
           <paper-checkbox name="showWhoPostedPosts" checked$="{{showWhoPostedPosts}}">[[t('group.showWhoPostedPosts')]]</paper-checkbox>
         </div>
@@ -173,10 +176,10 @@
 
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
-          <file-upload id="defaultPostImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultPostImageUploaded">
-            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+          <yp-file-upload id="defaultPostImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultPostImageUploaded">
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('defaultPostImage')]]</span>
-          </file-upload>
+          </yp-file-upload>
         </div>
 
         <input type="hidden" name="uploadedDefaultPostImageId" value="[[uploadedDefaultPostImageId]]">
@@ -193,6 +196,8 @@
         <paper-checkbox name="hidePointAuthor" checked$="{{group.configuration.hidePointAuthor}}">[[t('hidePointAuthor')]]</paper-checkbox>
         <paper-checkbox name="hidePostAuthor" checked$="{{group.configuration.hidePostAuthor}}">[[t('hidePostAuthor')]]</paper-checkbox>
         <paper-checkbox name="allowAnonymousUsers" checked$="{{group.configuration.allowAnonymousUsers}}">[[t('allowAnonymousUsers')]]</paper-checkbox>
+        <paper-checkbox name="allowAnonymousAutoLogin" checked$="{{group.configuration.allowAnonymousAutoLogin}}">[[t('allowAnonymousAutoLogin')]]</paper-checkbox>
+        <paper-checkbox name="disableFacebookLoginForGroup" checked$="{{group.configuration.disableFacebookLoginForGroup}}">[[t('disableFacebookLoginForGroup')]]</paper-checkbox>
       </div>
 
       <paper-input id="defaultLocationLongLat"
@@ -248,10 +253,10 @@
 
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
-          <file-upload id="defaultDataImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
-            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+          <yp-file-upload id="defaultDataImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('defaultDataImage')]]</span>
-          </file-upload>
+          </yp-file-upload>
         </div>
 
         <input type="hidden" name="uploadedDefaultDataImageId" value="[[uploadedDefaultDataImageId]]">
@@ -371,9 +376,10 @@
 
     _openCategoryEdit: function (event) {
       window.appGlobals.activity('open', 'category.new');
-      var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("categoryEdit");
-      dialog.setup(this.group, false, this._refreshCategories.bind(this), event.model.category);
-      dialog.open("edit", { categoryId: event.model.category.id});
+      Polymer.dom(document).querySelector('yp-app').getDialogAsync("categoryEdit", function (dialog) {
+        dialog.setup(this.group, false, this._refreshCategories.bind(this), event.model.category);
+        dialog.open("edit", {categoryId: event.model.category.id});
+      }.bind(this));
     },
 
     _refreshCategories: function (newCategory) {
@@ -497,10 +503,10 @@
     },
 
     _clear: function () {
-      this.group = { name: '', objectives: '', access: 0, status: 'active' };
-      this.uploadedLogoImageId = null;
-      this.uploadedHeaderImageId = null;
-      this.uploadedDefaultDataImageId = null;
+      this.set('group', { name: '', objectives: '', access: 0, status: 'active' });
+      this.set('uploadedLogoImageId', null);
+      this.set('uploadedHeaderImageId', null);
+      this.set('uploadedDefaultDataImageId', null);
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
       this.$.defaultDataImageUpload.clear();

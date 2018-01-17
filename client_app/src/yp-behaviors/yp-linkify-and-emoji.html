@@ -1,11 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<script src="twemoji.min-2.1.2.js"></script>
-<script type="text/javascript"  src="sanitize-html.min.js"></script>
+<script src="../../bower_components/twemoji-min/2/twemoji.min.js"></script>
+<script type="text/javascript" src="sanitize-html.min.js"></script>
 
 <script>
   /**
-   * @polymerBehavior YpLinkifyAndEmjoi
+   * @polymerBehavior Polymer.YpLinkifyAndEmjoi
    */
   Polymer.YpLinkifyAndEmjoi = {
     addLinksAndEmjois: function (text) {
@@ -25,7 +25,9 @@
           'strong'
         ]
       });
-      return twemoji.parse(sanitizedText).replace(/&amp\;quot\;/g,"\"");
+      return twemoji.parse(sanitizedText).
+                     replace(/&amp\;quot\;/g,"\"").
+                     replace(/class=\"emoji\" /g,'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" ');
     }
   }
 </script>

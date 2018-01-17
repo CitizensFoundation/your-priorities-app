@@ -1,28 +1,23 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
 
 <link rel="import" href="yp-organization-behaviors.html">
-<link rel="import" href="yp-organization-stats.html">
 
 <dom-module id="yp-community-large-card">
 
@@ -122,8 +117,12 @@
           height: 122px;
         }
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <iron-media-query query="(max-width: 480px)" query-matches="{{phoneSize}}"></iron-media-query>
 
     <template is="dom-if" if="[[community]]">
@@ -146,11 +145,11 @@
           </div>
           <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
           <paper-menu-button class="edit" hidden$="[[!checkCommunityAccess(community)]]">
-            <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-            <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+            <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+            <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
               <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
               <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
-            </paper-menu>
+            </paper-listbox>
           </paper-menu-button>
         </div>
       </paper-material>
@@ -201,17 +200,19 @@
       },
 
       _openDelete: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
-        dialog.setup('/api/communities/'+this.community.id,
-                     this.t('community.deleteConfirmation'),
-                     this._onDeleted.bind(this));
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/communities/' + this.community.id,
+            this.t('community.deleteConfirmation'),
+            this._onDeleted.bind(this));
+          dialog.open();
+        }.bind(this));
       },
 
       _openEdit: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("communityEdit");
-        dialog.setup(this.community, false, this._refresh.bind(this));
-        dialog.open('edit', { communityId: this.community.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
+          dialog.setup(this.community, false, this._refresh.bind(this));
+          dialog.open('edit', {communityId: this.community.id});
+        }.bind(this));
       },
 
       _onDeleted: function () {

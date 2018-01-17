@@ -1,20 +1,14 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html">
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 <link rel="import" href="../../bower_components/google-map/google-map-marker.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="yp-post-actions.html">
-<link rel="import" href="yp-post-users.html">
 
 <dom-module id="yp-post-cover-media">
 
@@ -47,7 +41,6 @@
       }
 
       .mapCanvas {
-        position: relative;
         width: 100%;
         height: 100%;
       }
@@ -93,28 +86,39 @@
         cursor: default;
       }
 
+      [hidden] {
+        display: none !important;
+      }
     </style>
 
     <div class="mapCanvas">
-      <span hidden$="[[!noneActive]]">
-        <iron-image hidden$="[[uploadedDefaultPostImageId]]" header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+      <template is="dom-if" if="[[noneActive]]">
+        <div hidden$="[[uploadedDefaultPostImageId]]">
+          <iron-image  header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+        </div>
         <template is="dom-if" if="[[defaultPostImageEnabled]]" restamp>
-         <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="/api/groups/[[defaultImageGroupId]]/default_post_image/[[uploadedDefaultPostImageId]]" on-tap="goToPost"></iron-image>
+          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="/api/groups/[[defaultImageGroupId]]/default_post_image/[[uploadedDefaultPostImageId]]" on-tap="goToPost"></iron-image>
         </template>
-      </span>
+      </template>
 
-      <div id="categoryImageId" class="layout horizontal center-center" hidden$="[[!categoryActive]]">
-        <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
-      </div>
+      <template is="dom-if" if="[[categoryActive]]">
+        <div id="categoryImageId" class="layout horizontal center-center">
+          <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
+        </div>
+      </template>
 
-      <iron-image header-mode$="[[headerMode]]" large on-tap="goToPost" class="category-icon pointer" hidden$="[[!categoryLargeActive]]" title="[[post.Category.name]]" sizing="cover" src$="[[getCategoryImagePath]]"></iron-image>
+      <template is="dom-if" if="[[categoryLargeActive]]">
+        <iron-image header-mode$="[[headerMode]]" large on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="cover" src$="[[getCategoryImagePath]]"></iron-image>
+      </template>
 
-      <iron-image hidden$="[[!imageActive]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src$="[[postImagePath]]"></iron-image>
+      <template is="dom-if" if="[[imageActive]]">
+        <iron-image  header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postImagePath]]"></iron-image>
+      </template>
 
       <template is="dom-if" if="[[!disableMaps]]">
 
         <template is="dom-if" if="[[streetViewActive]]">
-          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&zoom=[[zoomLevel]]&size=432x243&maptype=hybrid&key=[[staticMapsApiKey]]" hidden$="[[streetViewActivated]]"></iron-image>
+          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&zoom=[[zoomLevel]]&size=432x243&maptype=hybrid&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[staticMapsApiKey]]" hidden$="[[streetViewActivated]]"></iron-image>
 
           <template is="dom-if" if="[[streetViewActivated]]">
             <google-streetview-pano
@@ -130,7 +134,9 @@
         </template>
 
         <template is="dom-if" if="[[mapActive]]">
-          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&size=432x243&zoom=[[zoomLevel]]&maptype=[[mapType]]&key=[[staticMapsApiKey]]" hidden$="[[mapActivated]]"></iron-image>
+          <div hidden$="[[mapActivated]]">
+            <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&size=432x243&zoom=[[zoomLevel]]&maptype=[[mapType]]&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[staticMapsApiKey]]"></iron-image>
+          </div>
 
           <template is="dom-if" if="[[mapActivated]]">
             <google-map id="coverMediaMap" class="map"
@@ -324,17 +330,18 @@
 
       // We switch over to 100% category images
       _isCategoryLargeActive: function (post) {
-        if (this._withCoverMediaType(post, 'category') && post.id>11000)
+        if (post && this._withCoverMediaType(post, 'category') && post.id>11000)
           return true;
         else
           return false
       },
 
       _isImageActive: function (post) {
-        if (this._withCoverMediaType(post,'image'))
+        if (this._withCoverMediaType(post,'image')) {
           return true;
-        else
-          return false
+        } else {
+          return false;
+        }
       },
 
       _isMapActive: function (post) {
@@ -346,7 +353,6 @@
 
       _isStreetViewActive: function (post) {
         if (post && post.location && post.location.latitude && this._withCoverMediaType(post,'streetView')) {
-          //debugger;
           return true;
         }
         else

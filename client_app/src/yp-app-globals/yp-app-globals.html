@@ -2,10 +2,6 @@
 
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
-
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <link rel="import" href="../yp-session/yp-session.html">
@@ -20,7 +16,7 @@
     <yp-session id="session"></yp-session>
 
     <yp-ajax id="boot" url="/api/domains" on-response="_bootResponse"></yp-ajax>
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
   </template>
 
   <script>
@@ -109,7 +105,23 @@
           communityTrackerIds: {
             type: Object,
             value: {}
-          }
+          },
+
+          disableFacebookLoginForGroup: {
+            type: Boolean,
+            value: false
+          },
+
+          originalQueryParameters: Object
+        },
+
+        parseQueryString: function () {
+          var query = (window.location.search || '?').substr(1),
+            map   = {};
+          query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
+            map[key] = value;
+          });
+          this.originalQueryParameters = map;
         },
 
         setAnonymousUser: function (user) {
@@ -124,9 +136,12 @@
             if (!window.appUser.user && this.currentAnonymousUser) {
               console.debug("Setting anon user from cache");
               window.appUser.setLoggedInUser(this.currentAnonymousUser);
+            } else if (window.appUser &&!window.appUser.user && group.configuration.allowAnonymousAutoLogin &&
+                       this.originalQueryParameters && this.originalQueryParameters.autoLogin) {
+              window.appUser.autoAnonymousLogin();
             }
           } else {
-            if (window.appUser.user && window.appUser.user.profile_data && window.appUser.user.profile_data.isAnonymousUser) {
+            if (window.appUser && window.appUser.user && window.appUser.user.profile_data && window.appUser.user.profile_data.isAnonymousUser) {
               window.appUser.removeAnonymousUser();
               console.debug("Logout anon user");
             }
@@ -137,8 +152,13 @@
 
         _domainChanged: function (domain) {
           if (domain) {
-            var event = new CustomEvent("iron-signal", { detail: { name: 'yp-domain-changed', data: { domain: domain } } } );
-            document.dispatchEvent(event);
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true,
+                detail: { name: 'yp-domain-changed', data: { domain: domain } }
+              })
+            );
           }
         },
 
@@ -193,6 +213,16 @@
           } else if (domain.google_analytics_code && domain.google_analytics_code!="") {
             ga('create', domain.google_analytics_code, 'auto');
           }
+          if (typeof ga == 'function') {
+            ga('set', 'anonymizeIp', true);
+            ga('send', 'pageview', location.pathname);
+            ga('set', 'nonInteraction', true);
+            this.async(function () {
+              ga('set', 'nonInteraction', false);
+            }, 900);
+          } else {
+            console.error("Can't find Google Analytics object");
+          }
         },
 
         _userLoggedIn: function (event, user) {
@@ -201,7 +231,7 @@
               if (typeof ga == 'function') {
                 ga('set', '&uid', user.id);
               }
-            }, 250); // Wait a bit to make sure google analytics tracking id has been set up dynamatically
+            }, 250); // Wait a bit to make sure google analytics tracking id has been set up dynamically
           }
         },
 
@@ -278,7 +308,14 @@
           if (context)
             logString += ' ' + context;
 
-          this.sendToAnalyticsTrackers('send', 'event', object, type);
+          if (type=='open') {
+            // Wait by sending open so pageview event can be completed before
+            this.async(function ()  {
+              this.sendToAnalyticsTrackers('send', 'event', object, type);
+            }, 25);
+          } else {
+            this.sendToAnalyticsTrackers('send', 'event', object, type);
+          }
 
           var activityAjax = document.createElement('iron-ajax');
           var date = new Date();
@@ -303,21 +340,15 @@
           window.appStartTime = new Date();
           window.appGlobals = this;
 
+          this.fire('app-ready');
+          this.$.boot.generateRequest();
+          this.requestInProgress = true;
+
           window.googleMapsApiKey = null; //'AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0';
           window.instagramAccessToken = '3066250812.cf0499d.4d1d4db0bb8b43b59c057346511161c8';
           window.instagramClientID = 'd2f248ec764d4b208ab668b7561a89cc';
 
-          this.requestInProgress = true;
-          this.fire('app-ready');
-          this.$.boot.generateRequest();
-
-          this.async(function () {
-            if (typeof ga == 'function') {
-              ga('set', 'anonymizeIp', true);
-            } else {
-              console.error("Can't find Google Analytics object");
-            }
-          });
+          this.parseQueryString();
         },
 
         setSeenWelcome: function () {
@@ -381,7 +412,7 @@
         },
 
         sendToAnalyticsTrackers: function (a, b, c, d, e, f) {
-          //console.log("Google analytics "+a+" "+b+" "+c+" "+d);
+          //console.debug("Analytics "+a+" "+b+" "+c+" "+d);
           if (typeof ga == 'function') {
             if (a!='sendOnlyCommunity') {
               ga('send', b, c, d, e, f);

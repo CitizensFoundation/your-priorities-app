@@ -1,14 +1,14 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html">
+<link rel="import" href="../yp-file-upload/yp-file-upload.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-collection-status-options.html">
@@ -58,11 +58,9 @@
         margin-bottom: 4px;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <yp-edit-dialog id="editDialog" icon="group-work" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
-      <h2>[[editHeaderText]]</h2>
-
+    <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" icon="group-work" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <div class="layout vertical">
         <paper-input id="name"
                      name="name"
@@ -78,7 +76,7 @@
         <paper-input id="hostname"
                      name="hostname"
                      type="text"
-                     allowed-pattern="[a-zA-Z0-9-]"
+                     allowed-pattern="[a-z0-9-]"
                      label="[[t('community.hostname')]]"
                      value="{{community.hostname}}"
                      maxlength="80"
@@ -110,17 +108,17 @@
 
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings half">
-          <file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=community-logo" method="POST" on-success="_logoImageUploaded">
-            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+          <yp-file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=community-logo" method="POST" on-success="_logoImageUploaded">
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('image.logo.upload')]]</span>
-          </file-upload>
+          </yp-file-upload>
         </div>
 
         <div class="layout vertical additionalSettings half">
-          <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=community-header" method="POST" on-success="_headerImageUploaded">
-            <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+          <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=community-header" method="POST" on-success="_headerImageUploaded">
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('image.header.upload')]]</span>
-          </file-upload>
+          </yp-file-upload>
         </div>
       </div>
 
@@ -139,11 +137,11 @@
 
       <div class="layout horizontal config">
         <paper-dropdown-menu label="[[t('status.select')]]">
-          <paper-menu class="dropdown-content" attr-for-selected="name" selected="{{status}}">
+          <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{status}}">
             <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
               <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
             </template>
-          </paper-menu>
+          </paper-listbox>
         </paper-dropdown-menu>
         <input type="hidden" name="status" value="[[status]]">
       </div>
@@ -180,6 +178,16 @@
         <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>
         <paper-radio-button name="secret">[[t('secret')]]</paper-radio-button>
       </paper-radio-group>
+
+      <paper-textarea id="welcomeHTML"
+                      name="welcomeHTML"
+                      value="{{community.configuration.welcomeHTML}}"
+                      label="[[t('welcomeHTML')]]"
+                      rows="2"
+                      max-rows="5"
+                      minlength="1"
+                      class="mainInput">
+      </paper-textarea>
 
     </yp-edit-dialog>
   </template>
@@ -301,8 +309,8 @@
 
     _clear: function () {
       this.set('community', { name: '', description: '', access: 0 });
-      this.uploadedLogoImageId = null;
-      this.uploadedHeaderImageId = null;
+      this.set('uploadedLogoImageId', null);
+      this.set('uploadedHeaderImageId', null);
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
     },

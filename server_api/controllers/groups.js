@@ -107,8 +107,11 @@ var updateGroupConfigParamters = function (req, group) {
   }
   group.set('configuration.canVote', truthValueFromBody(req.body.canVote));
   group.set('configuration.canAddNewPosts', truthValueFromBody(req.body.canAddNewPosts));
+  group.set('configuration.disableDebate', truthValueFromBody(req.body.disableDebate));
   group.set('configuration.locationHidden', truthValueFromBody(req.body.locationHidden));
   group.set('configuration.showWhoPostedPosts', truthValueFromBody(req.body.showWhoPostedPosts));
+  group.set('configuration.allowAnonymousUsers', truthValueFromBody(req.body.allowAnonymousUsers));
+  group.set('configuration.allowAnonymousAutoLogin', truthValueFromBody(req.body.allowAnonymousAutoLogin));
 
   group.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
   group.set('configuration.hideNewPostOnPostPage', truthValueFromBody(req.body.hideNewPostOnPostPage));
@@ -144,7 +147,7 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.alternativePointForLabel', (req.body.alternativePointForLabel && req.body.alternativePointForLabel!="") ? req.body.alternativePointForLabel : null);
   group.set('configuration.alternativePointAgainstLabel', (req.body.alternativePointAgainstLabel && req.body.alternativePointAgainstLabel!="") ? req.body.alternativePointAgainstLabel : null);
-  group.set('configuration.allowAnonymousUsers', truthValueFromBody(req.body.allowAnonymousUsers));
+  group.set('configuration.disableFacebookLoginForGroup', truthValueFromBody(req.body.disableFacebookLoginForGroup));
 };
 
 router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), function(req, res) {
@@ -582,6 +585,8 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
         group.setupImages(req.body, function(error) {
           sendGroupOrError(res, group, 'setupImages', req.user, error);
         });
+      }).catch(function(error) {
+        sendGroupOrError(res, null, 'update', req.user, error);
       });
     } else {
       sendGroupOrError(res, req.params.id, 'update', req.user, 'Not found', 404);
@@ -637,6 +642,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
             model: models.Image,
             required: false,
             as: 'CategoryIconImages',
+            attributes:  models.Image.defaultAttributesPublic,
             order: [
               [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
             ]
@@ -644,11 +650,15 @@ router.get('/:id', auth.can('view group'), function(req, res) {
         ]
       },
       {
-        model: models.Image, as: 'GroupLogoImages',
+        model: models.Image,
+        as: 'GroupLogoImages',
+        attributes:  models.Image.defaultAttributesPublic,
         required: false
       },
       {
-        model: models.Image, as: 'GroupHeaderImages',
+        model: models.Image,
+        as: 'GroupHeaderImages',
+        attributes:  models.Image.defaultAttributesPublic,
         required: false
       }
     ]

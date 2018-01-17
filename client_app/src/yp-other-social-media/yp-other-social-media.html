@@ -1,18 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
-
-<link rel="import" href="../../bower_components/polymer-instagram/polymer-instagram.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
@@ -36,16 +26,11 @@
       <div class="layout vertical center-center" style="width: 100%;">
         <div class="layout horizontal center-center">
           <paper-item on-tap="_selectTwitter">Twitter</paper-item>
-          <paper-item on-tap="_selectInstagram">Instagram</paper-item>
         </div>
         <div class="layout vertical socialMediaArea">
           <iron-pages class="tabPages" selected="{{selected}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
             <section class="feed">
               <a class="twitter-timeline" lang="[[language]]" href="https://twitter.com/hashtag/BetriReykjavik" data-widget-id="713327367431782400">#BetriReykjavik Tweets</a>
-            </section>
-            <section class="feed">
-              <h3>Instagram</h3>
-              <polymer-instagram class="layout horizontal start-aligned" client-id="[[_instagramClientId()]]" access-token="[[_instagramAccessToken()]]"></polymer-instagram>
             </section>
           </iron-pages>
         </div>

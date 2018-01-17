@@ -1,30 +1,25 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
+
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
-
-<link rel="import" href="../yp-ajax/yp-ajax.html">
 
 <link rel="import" href="yp-group-stats.html">
 <link rel="import" href="yp-group-behaviors.html">
@@ -43,6 +38,10 @@
       .group-name {
         padding-bottom: 4px;
         margin: 0;
+      }
+
+      .group-name[admin] {
+        padding-right: 16px;
       }
 
       .objectives {
@@ -110,7 +109,8 @@
       }
 
       .textBox {
-        margin-right: 32px;
+        margin-left: 32px;
+        position: relative;
       }
 
       @media (max-width: 945px) {
@@ -154,46 +154,50 @@
         }
 
         .textBox {
-          margin-right: 0;
+          margin-left: 0;
         }
       }
-    </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <template is="dom-if" if="[[group]]" restamp>
-      <div class="layout horizontal center-center wrap">
-        <paper-material id="card" elevation="4" animated-shadow class="groupCard top-card textBox">
-          <div class="layout vertical">
-            <div class="layout horizontal wrap">
-              <div class="layout vertical description-and-stats">
-                <div class="description">
-                  <h2 class="group-name">[[groupName]]</h2>
-                  <div hidden class="groupAccess">[[groupAccessText]]</div>
-                  <div id="objectives" class="groupDescription"></div>
-                  <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-                </div>
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+
+    <div class="layout horizontal center-center wrap">
+      <paper-material id="cardImage" elevation="3" animated class="groupCard imageCard top-card">
+        <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
+      </paper-material>
+      <paper-material id="card" elevation="3" animated-shadow class="groupCard textBox">
+        <div class="layout vertical">
+          <div class="layout horizontal wrap">
+            <div class="layout vertical description-and-stats">
+              <div class="description">
+                <h2 class="group-name" admin$="[[hasGroupAccess]]">[[groupName]]</h2>
+                <div hidden class="groupAccess">[[groupAccessText]]</div>
+                <div id="objectives" class="groupDescription"></div>
               </div>
             </div>
-            <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasGroupAccess]]">
-              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+          </div>
+          <div hidden$="[[!hasGroupAccess]]">
+            <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]">
+              <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+              <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                 <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
                 <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
                 <paper-item id="usersMenuItem">[[t('group.users')]]</paper-item>
                 <paper-item id="adminsMenuItem">[[t('group.admins')]]</paper-item>
                 <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
                 <paper-item id="deleteMenuItem">[[t('group.delete')]]</paper-item>
-              </paper-menu>
+              </paper-listbox>
             </paper-menu-button>
           </div>
-        </paper-material>
-        <paper-material id="cardImage" elevation="3" animated class="groupCard imageCard">
-          <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
-        </paper-material>
-      </div>
-    </template>
+        </div>
+        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
+      </paper-material>
+    </div>
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
-    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
+    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
   </template>
 
   <script>
@@ -293,46 +297,52 @@
 
       _openPagesDialog: function () {
         window.appGlobals.activity('open', 'group.pagesAdmin');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pagesGrid");
-        dialog.setup(this.group.id, null, null, false);
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("pagesGrid", function (dialog) {
+          dialog.setup(this.group.id, null, null, false);
+          dialog.open();
+        }.bind(this));
       },
 
       _openUsersDialog: function () {
         window.appGlobals.activity('open', 'group.users');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
-        dialog.setup(this.group.id, null, null, false);
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("usersGrid", function (dialog) {
+          dialog.setup(this.group.id, null, null, false);
+          dialog.open();
+        }.bind(this));
       },
 
       _openAdminsDialog: function () {
         window.appGlobals.activity('open', 'group.admins');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
-        dialog.setup(this.group.id, null, null, true);
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("usersGrid", function (dialog) {
+          dialog.setup(this.group.id, null, null, true);
+          dialog.open();
+        }.bind(this));
       },
 
       _openEdit: function () {
         window.appGlobals.activity('open', 'group.new');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("groupEdit");
-        dialog.setup(this.group, false, this._refresh.bind(this));
-        dialog.open('edit', { groupId: this.group.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
+          dialog.setup(this.group, false, this._refresh.bind(this));
+          dialog.open('edit', {groupId: this.group.id});
+        }.bind(this));
       },
 
       _openDelete: function () {
         window.appGlobals.activity('open', 'group.delete');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
-        dialog.setup('/api/groups/'+this.group.id,
-          this.t('group.deleteConfirmation'),
-          this._onDeleted.bind(this));
-        dialog.open();
+        var dialog = Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/groups/' + this.group.id,
+            this.t('group.deleteConfirmation'),
+            this._onDeleted.bind(this));
+          dialog.open();
+        }.bind(this));
       },
 
       _openCategoryEdit: function () {
         window.appGlobals.activity('open', 'category.new');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("categoryEdit");
-        dialog.setup(this.group, true, this._refreshCategory.bind(this));
-        dialog.open("new", { groupId: this.group.id });
+        Polymer.dom(document).querySelector('yp-app').getDialog("categoryEdit", function (dialog) {
+          dialog.setup(this.group, true, this._refreshCategory.bind(this));
+          dialog.open("new", {groupId: this.group.id});
+        });
       },
 
       _refreshCategory: function (category) {
@@ -340,11 +350,11 @@
       },
 
       _onDeleted: function () {
+        this.dispatchEvent(new CustomEvent('yp-refresh-community', {bubbles: true, composed: true}));
         this.redirectTo("/community/"+this.group.community_id);
       },
 
       _newCategory: function () {
-
         this.$$("#newCategory").open('new', { groupId: this.group.id });
       },
 

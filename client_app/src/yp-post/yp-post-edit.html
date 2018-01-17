@@ -1,14 +1,14 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
@@ -16,12 +16,11 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html">
+<link rel="import" href="../yp-file-upload/yp-file-upload.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
-<link rel="import" href="../yp-image-uploader/yp-image-uploader.html">
 <link rel="import" href="yp-post-location.html">
 
 <dom-module id="yp-post-edit">
@@ -33,12 +32,12 @@
         @apply(--layout-center-justified);
       }
 
-      file-upload::shadow paper-button {
+      paper-button {
         background-color: var(--accent-color);
         color: #FFF;
       }
 
-      file-upload {
+      yp-file-upload {
         margin-top: 16px;
       }
 
@@ -95,16 +94,19 @@
       .icon {
         padding-right: 8px;
       }
-    </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
 
-    <yp-edit-dialog double-width id="editDialog" icon="icons:lightbulb-outline" action="[[action]]"
-                    use-next-tab-action="[[new]]" on-next-tab-action="_nextTab" method="[[method]]"
-                    save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
-      <h2>[[editHeaderText]]</h2>
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+
+    <yp-edit-dialog double-width id="editDialog" icon="lightbulb-outline" action="[[action]]"
+                    use-next-tab-action="[[newPost]]" on-next-tab-action="_nextTab" method="[[method]]"
+                    title="[[editHeaderText]]" save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
       <paper-tabs selected="{{selected}}" id="paperTabs" focused>
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
-        <template is="dom-if" restamp if="[[new]]">
+        <template is="dom-if" restamp if="[[newPost]]">
           <paper-tab>
             <div class="layout vertical center-center">
               <div>
@@ -140,11 +142,11 @@
 
               <template is="dom-if" if="[[_showCategories(group)]]" restamp>
                 <paper-dropdown-menu label="[[t('category.select')]]">
-                  <paper-menu class="dropdown-content" selected="{{selectedCategoryArrayId}}">
+                  <paper-listbox slot="dropdown-content" selected="{{selectedCategoryArrayId}}">
                     <template is="dom-repeat" items="[[group.Categories]]" as="category">
                       <paper-item data-category-id$="[[category.id]]">[[category.name]]</paper-item>
                     </template>
-                  </paper-menu>
+                  </paper-listbox>
                 </paper-dropdown-menu>
                 <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
               </template>
@@ -166,7 +168,7 @@
             </div>
           </section>
 
-          <template is="dom-if" restamp if="[[new]]">
+          <template is="dom-if" restamp if="[[newPost]]">
             <section class="subContainer">
               <paper-textarea id="pointFor"
                               required$="[[!group.configuration.newPointOptional]]"
@@ -195,10 +197,10 @@
 
           <section>
             <div class="layout vertical center-center">
-              <file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
-                <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+              <yp-file-upload id="imageFileUpload" raised="true" multi="true" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
+                <iron-icon class="icon" icon="photo-camera"></iron-icon>
                 <span>[[t('image.upload')]]</span>
-              </file-upload>
+              </yp-file-upload>
               <div class="imageSizeInfo layout horizontal">
                 <div>864 x 486 (16/9 widescreen)</div>
               </div>
@@ -243,7 +245,7 @@
         value: "/api/posts"
       },
 
-      new: {
+      newPost: {
         type: Boolean,
         value: false
       },
@@ -314,8 +316,13 @@
     ],
 
     customFormResponse: function () {
-      var event = new CustomEvent("iron-signal", { detail: { name: 'yp-refresh-group-posts', data: { id: 4 } } } );
-      document.dispatchEvent(event);
+      document.dispatchEvent(
+        new CustomEvent("lite-signal", {
+          bubbles: true,
+          compose: true,
+          detail: { name: 'yp-refresh-group-posts', data: { id: 4 } }
+        })
+      )
     },
 
     _updateEmojiBindings: function () {
@@ -351,14 +358,14 @@
     },
 
     _formInvalid: function () {
-      if (this.new && this.$$('#name').validate() && this.$$('#description').validate()) {
+      if (this.newPost && this.$$('#name').validate() && this.$$('#description').validate()) {
         this.set('selected', 1);
       } else {
         this.set('selected', 0);
       }
       this.$$('#name').autoValidate = true;
       this.$$('#description').autoValidate = true;
-      if (this.new) {
+      if (this.newPost) {
         this.$$('#pointFor').autoValidate = true;
       }
     },
@@ -386,7 +393,7 @@
 
     _nextTab: function () {
       var length = 3;
-      if (!this.new) {
+      if (!this.newPost) {
         length = 2;
       }
       if (this.locationHidden) {
@@ -398,7 +405,7 @@
     },
 
     _selectedChanged: function (newValue) {
-      if (!this.locationHidden && newValue==(this.new ? 2 : 1)) {
+      if (!this.locationHidden && newValue==(this.newPost ? 2 : 1)) {
         this.set('mapActive', true);
       } else {
         this.set('mapActive', false);
@@ -406,7 +413,7 @@
 
       var finalTabNumber = this.locationHidden ? 2 : 3;
 
-      if (!this.new || (this.new && newValue==finalTabNumber)) {
+      if (!this.newPost || (this.newPost && newValue==finalTabNumber)) {
         this.$$("#editDialog").useNextTabAction = false;
       } else {
         this.$$("#editDialog").useNextTabAction = true;
@@ -487,7 +494,7 @@
     },
 
     _clear: function () {
-      if (this.new) {
+      if (this.newPost) {
         this.set('post', { name: '', description: '', pointFor: '', categoryId: null });
         this.set('location', null);
         this.set('selectedCategoryArrayId',null);
@@ -519,7 +526,7 @@
       } else {
         this.set('post', null);
       }
-      this.set('new', newNotEdit);
+      this.set('newPost', newNotEdit);
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
       this._clear();
@@ -534,7 +541,7 @@
     _setupTranslation: function () {
       this.async(function () {
         if (this.t) {
-          if (this.new) {
+          if (this.newPost) {
             this.editHeaderText = this.t('post.new');
             this.toastText = this.t('post.toast.created');
             this.set('saveText', this.t('create'));

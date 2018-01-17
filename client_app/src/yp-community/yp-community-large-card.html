@@ -1,21 +1,17 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
@@ -115,12 +111,73 @@
       }
 
       .textBox {
-        margin-right: 32px;
+        margin-left: 32px;
+        position: relative;
+      }
+
+      #welcomeHTML {
+        width: 432px;
+        max-width: 432px;
+        overflow: hidden;
+      }
+
+      .k2017Image {
+        height: 72px;
+      }
+
+      .k2017FeaturedImage {
+        height: 85px;
+      }
+
+      .k2017extraMargin {
+        margin-right: 68px;
+        margin-left: 45px;
+      }
+
+      .k2017topPadding {
+        padding: 8px;
+      }
+
+      .k2017topPadding a:link { color: #333 }
+      .k2017topPadding a:visited { color: #333 }
+
+      .k2017showOnlyMobile {
+        display: none;
       }
 
       @media (max-width: 945px) {
         :host {
           width: 306px;
+        }
+
+        .k2017Image {
+          height: 42px;
+        }
+
+        .k2017FeaturedImage {
+          height: 55px;
+        }
+
+        .k2017extraMargin {
+          margin-right: 52px;
+          margin-left: 32px;
+        }
+
+        .k2017topPadding {
+          padding-top: 4px;
+        }
+
+        .k2017hiddenMobile  {
+          display: none;
+        }
+
+        .k2017showOnlyMobile {
+          display: inline;
+        }
+
+        #welcomeHTML {
+          width: 306px;
+          max-width: 306px;
         }
 
         .large-card {
@@ -163,50 +220,55 @@
         }
 
         .textBox {
-          margin-right: 0;
+          margin-left: 0;
         }
+      }
+
+      [hidden] {
+        display: none !important;
       }
     </style>
 
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <template is="dom-if" if="[[community]]">
-      <div class="layout horizontal wrap">
-        <paper-material id="card" elevation="4" animated class="large-card top-card textBox">
-          <div class="layout vertical">
-            <div class="layout horizontal wrap">
-              <div class="layout vertical description-and-stats">
-                <div class="description">
-                  <h2 class="community-name">[[communityNameFull]]</h2>
-                  <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
-
-                  <div id="description" class="communityDescription">
-                  </div>
-
-                  <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
-                </div>
+    <div class="layout horizontal wrap">
+      <paper-material id="cardImage" elevation="3" animated class="large-card imageCard top-card">
+        <div id="welcomeHTML" hidden$="[[!community.configuration.welcomeHTML]]" class="layout vertical center-center">
+        </div>
+        <div hidden$="[[community.configuration.welcomeHTML]]">
+          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
+        </div>
+      </paper-material>
+      <paper-material id="card" elevation="3" animated class="large-card textBox">
+        <div class="layout vertical">
+          <div class="layout horizontal wrap">
+            <div class="layout vertical description-and-stats">
+              <div class="description">
+                <h2 class="community-name">[[communityNameFull]]</h2>
+                <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
+                <div id="description" class="communityDescription"></div>
               </div>
             </div>
-            <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]" hidden$="[[!hasCommunityAccess]]">
-              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-              <paper-menu class="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+          </div>
+          <div hidden$="[[!hasCommunityAccess]]">
+            <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]">
+              <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+              <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
                 <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
                 <paper-item id="usersMenuItem">[[t('community.users')]]</paper-item>
                 <paper-item id="adminsMenuItem">[[t('community.admins')]]</paper-item>
                 <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
                 <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
                 <paper-item id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
-              </paper-menu>
+              </paper-listbox>
             </paper-menu-button>
           </div>
-        </paper-material>
-        <paper-material id="cardImage" elevation="3" animated class="large-card imageCard">
-          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
-        </paper-material>
-      </div>
-    </template>
+        </div>
+        <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+      </paper-material>
+    </div>
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
-    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
+    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
   </template>
 
   <script>
@@ -243,6 +305,16 @@
               description.innerHTML = this.addLinksAndEmjois(community.description);
             } else {
               console.error("Can't find community description element");
+            }
+            if (community.configuration && community.configuration.welcomeHTML &&
+              community.configuration.welcomeHTML !== "" &&
+              this.$$("#welcomeHTML")) {
+                var div = document.createElement('div');
+                div.innerHTML = community.configuration.welcomeHTML;
+                this.$$("#welcomeHTML").innerHTML = "";
+                Polymer.dom(this.$$("#welcomeHTML")).appendChild(div);
+            } else if (this.$$("#welcomeHTML")) {
+             this.$$("#welcomeHTML").innerHTML = "";
             }
           });
         } else {
@@ -295,52 +367,49 @@
         this.set('selectedMenuItem', null);
       },
 
-      _openBulkStatusUpdates: function () {
-        window.appGlobals.activity('open', 'community.bulkStatusUpdates');
-        this.fire('iron-signal', {name: 'open-bulk-status-updates', data: null });
-        this.async(function () {
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateGrid");
-          dialog.open(this.community.id);
-        }, 1500);
-      },
-
       _openUsersDialog: function () {
         window.appGlobals.activity('open', 'community.users');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
-        dialog.setup(null, this.community.id, null, false);
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("usersGrid", function (dialog) {
+          dialog.setup(null, this.community.id, null, false);
+          dialog.open();
+        }.bind(this));
       },
 
       _openAdminsDialog: function () {
         window.appGlobals.activity('open', 'community.admins');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("usersGrid");
-        dialog.setup(null, this.community.id, null, true);
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("usersGrid", function (dialog) {
+          dialog.setup(null, this.community.id, null, true);
+          dialog.open();
+        }.bind(this));
       },
 
       _openPagesDialog: function () {
         window.appGlobals.activity('open', 'community.pagesAdmin');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("pagesGrid");
-        dialog.setup(null, this.community.id, null, false);
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("pagesGrid", function (dialog) {
+          dialog.setup(null, this.community.id, null, false);
+          dialog.open();
+        }.bind(this));
       },
 
       _openDelete: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
-        dialog.setup('/api/communities/'+this.community.id,
-          this.t('community.deleteConfirmation'),
-          this._onDeleted.bind(this));
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/communities/' + this.community.id,
+            this.t('community.deleteConfirmation'),
+            this._onDeleted.bind(this));
+          dialog.open();
+        }.bind(this));
       },
 
       _openEdit: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("communityEdit");
-        dialog.setup(this.community, false, this._refresh.bind(this));
-        dialog.open('edit', { communityId: this.community.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
+          dialog.setup(this.community, false, this._refresh.bind(this));
+          dialog.open('edit', {communityId: this.community.id});
+        }.bind(this));
       },
 
       _onDeleted: function () {
         this.redirectTo("/domain/"+this.community.domain_id);
+        this.dispatchEvent(new CustomEvent('yp-refresh-domain', {bubbles: true, composed: true}));
       },
 
       _refresh: function (community) {

@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html" >
@@ -67,7 +67,7 @@
         padding-top: 8px;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-dialog id="dialog">
       <h2>[[t('bulkStatusUpdate')]]</h2>
@@ -131,26 +131,29 @@
       },
 
       _newBulkStatusUpdate: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateEdit");
-        dialog.setup(null, true, null);
-        dialog.open('new', { communityId: this.communityId});
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateEdit", function (dialog) {
+          dialog.setup(null, true, null);
+          dialog.open('new', {communityId: this.communityId});
+        }.bind(this));
       },
 
       _editConfig: function (event) {
         var bulkStatusUpdate = JSON.parse(event.target.getAttribute('data-args'));
         this.set('selectedUpdate', bulkStatusUpdate);
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateConfig");
-        dialog.reset();
-        dialog.open(this.selectedUpdate);
-        this.$.dialog.close();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateConfig", function (dialog) {
+          dialog.reset();
+          dialog.open(this.selectedUpdate);
+          this.$.dialog.close();
+        }.bind(this));
       },
 
       _editBulkStatusUpdate: function (event) {
         var bulkStatusUpdate = JSON.parse(event.target.getAttribute('data-args'));
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateEdit");
-        dialog._clear();
-        dialog.setup(bulkStatusUpdate, false, null);
-        dialog.open('edit', { communityId: this.communityId, bulkStatusUpdateId: bulkStatusUpdate.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateEdit", function (dialog) {
+          dialog._clear();
+          dialog.setup(bulkStatusUpdate, false, null);
+          dialog.open('edit', {communityId: this.communityId, bulkStatusUpdateId: bulkStatusUpdate.id});
+        }.bind(this));
       },
 
       _bulkStatusUpdateResponse: function (event, detail) {
@@ -161,11 +164,12 @@
         this.set('communityId', communityId);
         this.set('bulkStatusUpdates', null);
         this.set('selectedUpdate', null);
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("bulkStatusUpdateConfig");
-        dialog.reset();
-        this.$.getBulkStatusUpdatesAjax.url="/api/bulk_status_updates/"+communityId;
-        this.$.getBulkStatusUpdatesAjax.generateRequest();
-        this.$.dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateConfig", function (dialog) {
+          dialog.reset();
+          this.$.getBulkStatusUpdatesAjax.url = "/api/bulk_status_updates/" + communityId;
+          this.$.getBulkStatusUpdatesAjax.generateRequest();
+          this.$.dialog.open();
+        }.bind(this));
       }
     });
   </script>

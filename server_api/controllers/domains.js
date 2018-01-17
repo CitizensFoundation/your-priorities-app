@@ -49,11 +49,15 @@ var getDomain = function (req, domainId, done) {
         ],
         include: [
           {
-            model: models.Image, as: 'DomainLogoImages',
+            model: models.Image,
+            as: 'DomainLogoImages',
+            attributes:  models.Image.defaultAttributesPublic,
             required: false
           },
           {
-            model: models.Image, as: 'DomainHeaderImages',
+            model: models.Image,
+            as: 'DomainHeaderImages',
+            attributes:  models.Image.defaultAttributesPublic,
             required: false
           }
         ]
@@ -66,21 +70,30 @@ var getDomain = function (req, domainId, done) {
               access: {
                 $ne: models.Community.ACCESS_SECRET
               },
+              counter_users: {
+                $gt: 5
+              },
               status: {
                 $ne: 'hidden'
               }
             },
+            attributes: models.Community.defaultAttributesPublic,
             order: [
               [ 'counter_users', 'desc'],
               [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
             ],
             include: [
               {
-                model: models.Image, as: 'CommunityLogoImages',
+                model: models.Image,
+                as: 'CommunityLogoImages',
+                attributes:  models.Image.defaultAttributesPublic,
                 required: false
               },
               {
-                model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                model: models.Image,
+                as: 'CommunityHeaderImages',
+                attributes:  models.Image.defaultAttributesPublic,
+                order: 'created_at asc',
                 required: false
               }
             ]

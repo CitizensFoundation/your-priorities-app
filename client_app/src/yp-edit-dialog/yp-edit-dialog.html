@@ -3,7 +3,7 @@
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
@@ -11,9 +11,11 @@
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 
-<link rel="import" href="yp-fullscreen-dialog.html">
+
+<link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-edit-dialog">
 
@@ -61,7 +63,7 @@
         background-color: #FFF;
       }
 
-      .title ::content h2 {
+      .title ::slotted(h2) {
         @apply(--paper-font-title);
         padding-top: 2px;
       }
@@ -99,7 +101,7 @@
         padding-top: 0 !important;
       }
 
-      paper-toolbar {
+      app-toolbar {
         margin-top: 0;
         padding-top: 0;
       }
@@ -133,10 +135,10 @@
 
       .bigHeader {
         background-color: var(--accent-color);
-        max-height: 120px;
         color: #FFF;
         margin: 0;
         padding: 16px;
+        vertical-align: center;
       }
 
       .largeIcon {
@@ -150,27 +152,15 @@
         padding-right: 8px;
       }
 
-      .content-wrapper ::content > h2 {
+      .titleHeader {
         font-size: 32px;
         padding-left: 12px;
-        padding-top: 10px;
-        padding-bottom: 8px;
+        padding-top: 14px;
+        font-weight: bold;
       }
 
       #formErrorDialog {
         padding: 12px;
-      }
-
-      paper-dialog-scrollable[small-height] {
-        height: 320px;
-      }
-
-      paper-dialog-scrollable[medium-height] {
-        height: 390px;
-      }
-
-      paper-dialog-scrollable[large-height] {
-        height: 550px;
       }
 
       .closeIconNarrow {
@@ -186,22 +176,22 @@
       }
 
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop$="[[!narrowPad]]" modal>
-      <iron-media-query query="(max-width: 600px)" query-matches="{{narrow}}"></iron-media-query>
+      <iron-media-query query="(max-width: 1024px)" query-matches="{{narrow}}"></iron-media-query>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
       <iron-media-query query="(min-height: 830px)" query-matches="{{largeHeight}}"></iron-media-query>
       <iron-media-query query="(min-height: 640px)" query-matches="{{mediumHeight}}"></iron-media-query>
       <iron-media-query query="(max-height: 640px)" query-matches="{{smallHeight}}"></iron-media-query>
       <template is="dom-if" if="opened" restamp>
         <template is="dom-if" if="[[narrow]]" restamp>
-          <paper-header-panel main id="headerPanel" class="no-padding" mode="{{mode}}">
-            <paper-toolbar id="toolbar">
+          <app-header-layout main id="headerPanel" class="no-padding" mode="{{mode}}">
+            <app-toolbar id="toolbar">
               <paper-icon-button id="dismissBtn" icon="close" class="closeIconNarrow" dialog-dismiss></paper-icon-button>
               <div class="layout horizontal title flex">
                 <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
-                <content select="h2"></content>
+                <h2>[[title]]</h2>
               </div>
               <template is="dom-if" if="[[!useNextTabAction]]">
                 <paper-button id="submit1" on-tap="_submit"><span class="smallButtonText">[[saveText]]</span></paper-button>
@@ -209,27 +199,29 @@
               <template is="dom-if" if="[[useNextTabAction]]">
                 <paper-button on-tap="_nextTab"><span class="smallButtonText">[[nextActionText]]</span></paper-button>
               </template>
-            </paper-toolbar>
+            </app-toolbar>
             <div id="scroller">
-              <form is="iron-form" id="form" name="ypForm" content-type="application/json" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
-                <content></content>
-              </form>
+              <iron-form id="form" content-type="application/json" method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
+                <form name="ypForm" method="[[method]]" action="[[action]]">
+                  <slot></slot>
+                </form>
+              </iron-form>
             </div>
-          </paper-header-panel>
+          </app-header-layout>
           <paper-spinner id="spinner"></paper-spinner>
         </template>
 
         <template is="dom-if" if="[[!narrow]]" restamp>
           <div class="layout horizontal bigHeader">
             <iron-icon class="largeIcon" icon="[[icon]]"></iron-icon>
-            <div class="content-wrapper">
-              <content select="h2"></content>
-            </div>
+            <div class="titleHeader">[[title]]</div>
           </div>
-          <paper-dialog-scrollable small-height$="[[smallHeight]]" medium-height$="[[mediumHeight]]" large-height$="[[largeHeight]]">
-            <form is="iron-form" id="form" name="ypForm" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
-              <content id="mainEditContent"></content>
-            </form>
+          <paper-dialog-scrollable id="scrollable" small-height$="[[smallHeight]]" medium-height$="[[mediumHeight]]" large-height$="[[largeHeight]]">
+            <iron-form id="form" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
+              <form name="ypForm" method="[[method]]" action="[[action]]">
+                <slot></slot>
+              </form>
+            </iron-form>
             <paper-spinner id="spinner"></paper-spinner>
           </paper-dialog-scrollable>
           <div class="buttons">
@@ -256,7 +248,6 @@
         <paper-button dialog-confirm autofocus on-tap="_clearErrorText">[[t('ok')]]</paper-button>
       </div>
     </paper-dialog>
-
     <paper-toast id="toast" text="[[toastTextCombined]]"></paper-toast>
 
   </template>
@@ -366,7 +357,9 @@
 
         confirmationText: {
           type: String
-        }
+        },
+
+        title: String
       },
 
       _fileUploadStarting: function (event) {
@@ -407,7 +400,9 @@
         this.set("opened", false);
         this.async(function () {
           this.set("opened", true);
-          this.$$("#editDialog").open();
+          this.async(function () {
+            this.$$("#editDialog").open();
+          });
         });
       },
 
@@ -494,6 +489,7 @@
         } else if (this.params && this.params.categoryId) {
           this.action = this.baseAction + '/' + this.params.categoryId;
         }
+
         if (this.$$("#form").validate()) {
           this.$$("#form").submit();
           this.$$("#spinner").active = true;

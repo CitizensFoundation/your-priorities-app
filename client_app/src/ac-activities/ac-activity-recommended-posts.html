@@ -5,7 +5,6 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 
-<link rel="import" href="../yp-post/yp-post-actions.html">
 <link rel="import" href="../yp-post/yp-post-cover-media.html">
 <link rel="import" href="../yp-post/yp-post-behaviors.html">
 
@@ -162,7 +161,7 @@
         background-color: var(--primary-color-700);
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="headerText layout horizontal center-center">
       [[t('recommendedPosts')]]

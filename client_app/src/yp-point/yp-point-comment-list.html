@@ -1,19 +1,13 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 
 <link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html" >
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-user/yp-user-image.html">
-<link rel="import" href="../yp-point/yp-point-news-story.html">
 
 <link rel="import" href="yp-point-comment.html">
 <link rel="import" href="yp-point-comment-edit.html">
@@ -81,8 +75,12 @@
           width: 307px;
         }
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="container layout vertical">
       <div class="layout horizontal start-justified" hidden$="[[disableOpenClose]]">

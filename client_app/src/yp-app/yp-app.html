@@ -2,26 +2,30 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-badge/paper-badge.html">
 
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+
 <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
+
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-globals.html">
 <link rel="import" href="../yp-app-globals/yp-app-user.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-theme/yp-theme-behavior.html">
+
 <link rel="import" href="yp-app-user-drawer.html">
 <link rel="import" href="yp-app-nav-drawer.html">
 <link rel="import" href="../yp-dialog-container/yp-dialog-container.html">
@@ -34,6 +38,60 @@
   <template>
 
     <style include="iron-flex iron-flex-alignment">
+      :host {
+        --main-stats-color-on-white: #878787;
+
+        --paper-dialog-button-color: var(--accent-color);
+        --paper-tabs-selection-bar-color: var(--accent-color);
+        --paper-input-container-focus-color: var(--accent-color);
+
+        --paper-dropdown-menu: {
+          background-color: #FFF;
+        };
+
+        --icon-general-color: '#fff';
+        --master-point-up-color: rgba(0,127,0,0.62);
+        --master-point-down-color: rgba(127,0,0,0.62);
+      }
+
+      :host  {
+        --paper-dropdown-menu: {
+          background-color: #FFF;
+        };
+
+        --light-primary-color: #FFCC80;
+        --text-primary-color: #fff;
+        --dark-primary-color: #F57C00;
+        --primary-text-color: #212121;
+        --secondary-text-color: #727272;
+        --disabled-text-color: #bdbdbd;
+        --divider-color: #FF5722;
+
+        --paper-tabs: {
+          font-size: 18px;
+          text-transform: uppercase;
+        };
+
+        --paper-fab-mini: {
+          background: var(--primary-background-color);
+          color: #555 !important;
+        };
+
+        /* Components */
+
+        --paper-tabs-selection-bar: {
+          border-bottom: 4px solid !important;
+          border-bottom-color: var(--accent-color, #000) !important;
+        };
+
+        /* paper-drawer-panel */
+        --drawer-menu-color: #ffffff;
+        --drawer-border-color: 1px solid #ccc;
+        /* paper-menu */
+        --paper-menu-background-color: var(--primary-background-color);
+        --menu-link-color: #111111;
+      }
+
       :host {
         background-color: var(--primary-background-color);
       }
@@ -59,17 +117,21 @@
 
       [title] {
         /* The difference in font size is used to calculate the scale of the title in the transition. */
-        font-size: 22;
         padding-top: 8px;
         padding-left: 8px;
+        padding-bottom: 8px;
       }
 
       .backIcon {
-        width: 48px;
-        height: 48px;
-        padding-right: 16px;
-        padding-bottom: 8px;
+        width: 45px;
+        height: 45px;
+        margin-right: 16px;
+        margin-left: 4px;
         padding-top: 0;
+      }
+
+      .backIcon[hide] {
+        display: none;
       }
 
       .closePostIcon {
@@ -88,6 +150,10 @@
         width: 200px;
       }
 
+      #paperToggleNavMenu {
+        min-width: 40px;
+      }
+
       @media (max-width: 480px) {
         div[title] {
           font-size: 17px;
@@ -96,9 +162,12 @@
         }
 
         .backIcon {
-          width: 40px;
-          height: 40px;
-          padding-right: 8px;
+          width: 42px;
+          min-width: 42px;
+          height: 42px;
+          margin-right: 8px;
+          margin-top: 2px;
+          margin-left: 0;
         }
 
         .closePostIcon {
@@ -148,34 +217,46 @@
       .activeBadge {
         --paper-badge-background: var(--accent-color);
       }
+
+      .helpButton[hide] {
+        display: none;
+      }
+
+      .navContainer[hide] {
+        display: none;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
+
+    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
     <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
 
-    <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
+    <app-drawer-layout drawer-width="360px" responsive-width="16000px" fullbleed>
 
-    <app-drawer-layout drawer-width="360px" responsive-width="16000px">
-
-      <app-drawer id="drawer" align="end" position="right" opened="{{userDrawerOpened}}" swipe-open>
+      <app-drawer id="drawer" slot="drawer" align="end" position="right" opened="{{userDrawerOpened}}" swipe-open>
         <div style="height: 100%; overflow: auto;">
           <yp-app-user-drawer id="ypDrawer" user="[[user]]" opened="[[userDrawerOpened]]" route="[[route]]"></yp-app-user-drawer>
         </div>
       </app-drawer>
 
-      <app-drawer id="navDrawer" align="start" position="left" swipe-open>
+      <app-drawer id="navDrawer" slot="drawer" align="start" position="left" swipe-open>
         <div style="height: 100%; overflow: auto;">
           <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
         </div>
       </app-drawer>
 
-      <app-header-layout id="mainArea">
+      <app-header-layout id="mainArea" fullbleed>
 
         <app-header id="appHeader" effects="waterfall" reveals class="main-header">
           <app-toolbar>
-            <div hidden$="[[closePostHeader]]" class="layout horizontal">
+            <div hide$="[[closePostHeader]]" class="layout horizontal navContainer">
               <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
-              <div title class="layout vertical wrap">[[headerTitle]]</div>
-              <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hidden$="[[!showBack]]"></paper-icon-button>
+              <div id="headerTitle" title class="layout vertical">[[headerTitle]]</div>
+              <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hide$="[[!showBack]]"></paper-icon-button>
             </div>
             <template is="dom-if" if="[[closePostHeader]]">
               <paper-icon-button id="closePostButton" class="closePostIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
@@ -183,13 +264,14 @@
 
             <span class="flex"></span>
 
-            <paper-menu-button horizontal-align="right">
-              <paper-icon-button icon="help-outline" class="dropdown-trigger" hidden$="[[hideHelpIcon]]"></paper-icon-button>
-              <paper-menu class="dropdown-content">
+            <paper-menu-button horizontal-align="right" hide$="[[hideHelpIcon]]" class="helpButton">
+              <paper-icon-button icon="help-outline" slot="dropdown-trigger"></paper-icon-button>
+
+              <paper-listbox slot="dropdown-content">
                 <template is="dom-repeat" items="[[translatedPages]]" as="page">
                   <paper-item data-args$="[[index]]" on-tap="_openPage">[[_getLocalizePageTitle(page)]]</paper-item>
                 </template>
-              </paper-menu>
+              </paper-listbox>
             </paper-menu-button>
 
             <template is="dom-if" if="[[user]]">
@@ -205,7 +287,7 @@
           </app-toolbar>
         </app-header>
 
-        <iron-pages selected="{{page}}" attr-for-selected="name">
+        <iron-pages selected="{{page}}" style="height:auto;" attr-for-selected="name" fullbleed>
           <yp-domain id="domainPage" name="domain" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
           <yp-community id="communityPage" name="community"id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
           <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
@@ -215,10 +297,9 @@
         </iron-pages>
 
       </app-header-layout>
-
     </app-drawer-layout>
 
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <app-location route="{{route}}"></app-location>
 
@@ -238,7 +319,8 @@
       is: 'yp-app',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.appHelpers,
+        Polymer.ypThemeBehavior
       ],
 
       properties: {
@@ -266,7 +348,11 @@
           observer: '_routeChanged'
         },
 
-        routeData: Object,
+        routeData: {
+          type: Object,
+          observer: '_routePageChanged'
+        },
+
         subRoute: Object,
 
         appTitle: {
@@ -352,18 +438,63 @@
         hideHelpIcon: {
           type: Boolean,
           value: false
+        },
+
+        wide: Boolean,
+
+        _scrollPositionMap: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        },
+
+        haveLoadedThemes: {
+          type: Boolean,
+          value: false
         }
       },
-
-      observers: [
-        '_routePageChanged(routeData.page)'
-      ],
 
       listeners: {
         'yp-set-pages': '_setPages',
         'yp-set-home-link': '_setHomeLink',
         'yp-redirect-to': '_redirectTo',
-        'yp-set-number-of-un-viewed-notifications': '_setNumberOfUnViewedNotifications'
+        'yp-set-number-of-un-viewed-notifications': '_setNumberOfUnViewedNotifications',
+        'yp-have-loaded-themes': '_haveLoadedThemes',
+        'yp-close-right-drawer': '_closeLeftDrawer',
+        'yp-refresh-group': '_refreshGroup',
+        'yp-refresh-community': '_refreshCommunity',
+        'yp-refresh-domain': '_refreshDomain'
+      },
+
+      _refreshGroup: function () {
+        this._refreshByName("#groupPage");
+      },
+
+      _refreshCommunity: function () {
+        this._refreshByName("#communityPage");
+      },
+
+      _refreshDomain: function () {
+        this._refreshByName("#domainPage");
+      },
+
+      _refreshByName: function(id) {
+        var el = this.$$(id);
+        if (el) {
+          el._refreshAjax();
+        }
+      },
+
+      _closeLeftDrawer: function () {
+        this.$$("#drawer").close();
+      },
+
+      _haveLoadedThemes: function () {
+        if (!this.haveLoadedThemes) {
+          this.haveLoadedThemes = true;
+          this.setTheme(0);
+        }
       },
 
       _translatedPages: function (pages, language) {
@@ -432,14 +563,27 @@
         }
       },
 
-      _routePageChanged: function(page) {
+      _routePageChanged: function(pageData, oldPageData) {
         if (this.route.path.indexOf('/user/reset_password') > -1 ||
-            this.route.path.indexOf('/user/accept/invite') > -1 ||
-            this.route.path.indexOf('/user/open_notification_settings') > -1) {
+          this.route.path.indexOf('/user/accept/invite') > -1 ||
+          this.route.path.indexOf('/user/open_notification_settings') > -1) {
           window.history.pushState({}, null, "/");
           window.dispatchEvent(new CustomEvent('location-changed'));
         } else {
-          this.page = page;
+
+          var map = this._scrollPositionMap;
+
+          if (oldPageData != null && oldPageData.page != null) {
+            map[oldPageData.page] = window.pageYOffset;
+          }
+
+          this.page = pageData.page;
+
+          if (map[pageData.page] != null) {
+            Polymer.AppLayout.scroll({ top: map[pageData.page], behavior: 'silent' });
+          } else if (this.isAttached) {
+            Polymer.AppLayout.scroll({ top: 0, behavior: 'silent' });
+          }
         }
       },
 
@@ -457,10 +601,7 @@
         }
 
         if (page) {
-          this.async(function () {
-            window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
-            window.appGlobals.activity('open', 'page', window.location.href);
-          });
+          window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
         }
       },
 
@@ -625,6 +766,21 @@
       onChangeHeader: function (event, header) {
         this.set('headerTitle', document.title = header.headerTitle);
 
+        this.async(function () {
+          var headerTitle = this.$$("#headerTitle");
+          if (headerTitle) {
+            if (this.wide) {
+              headerTitle.style.fontSize = "20px";
+            } else {
+              if (headerTitle.length < 25) {
+                headerTitle.style.fontSize = "17px";
+              } else {
+                headerTitle.style.fontSize = "15px";
+              }
+            }
+          }
+        });
+
         if (header.documentTitle) {
           document.title = header.documentTitle;
         }
@@ -666,7 +822,7 @@
       goBack: function (event, detail) {
         if (this.backPath) {
           if (this.useHardBack) {
-           window.location = this.backPath;
+            window.location = this.backPath;
           } else {
             this.redirectTo(this.backPath);
           }

@@ -1,8 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-post/yp-post-behaviors.html">
 <link rel="import" href="../yp-user/yp-user-image.html">
@@ -46,6 +46,10 @@
       .leftContainer {
         margin-right: 8px;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
     <div class="layout vertical pointerCursor" on-tap="_goTo">
       <div class="layout horizontal">
@@ -60,7 +64,7 @@
       </div>
     </div>
 
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
   </template>
 
   <script>

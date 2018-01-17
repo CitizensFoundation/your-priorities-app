@@ -1,12 +1,22 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/lodash-element/lodash.js.html">
 
-<script src='../../bower_components/moment/min/moment-with-locales.min.js'></script>
+<script src='../../bower_components/moment/min/moment.min.js'></script>
+<script src='../../bower_components/moment/locale/is.js'></script>
+<script src='../../bower_components/moment/locale/nb.js'></script>
+<script src='../../bower_components/moment/locale/nl.js'></script>
+<script src='../../bower_components/moment/locale/hu.js'></script>
+<script src='../../bower_components/moment/locale/zh-tw.js'></script>
+<script src='../../bower_components/moment/locale/sr.js'></script>
+<script src='../../bower_components/moment/locale/hr.js'></script>
+<script src='../../bower_components/moment/locale/sl.js'></script>
+<script src='../../bower_components/moment/locale/pt.js'></script>
+<script src='../../bower_components/moment/locale/pl.js'></script>
+
 <script src="../../bower_components/linkifyjs/linkify.js"></script>
 <script src="../../bower_components/linkifyjs/linkify-string.js"></script>
+<script src='../../bower_components/lodash/lodash.js'></script>
 
 <script>
-
   window.__ = _.noConflict();
 
   Array.prototype.chunk = function(chunkSize) {
@@ -18,9 +28,7 @@
     );
   };
 
-  /**
-   * @polymerBehavior appHelpers
-   */
+  /** @polymerBehavior Polymer.appHelpers */
   Polymer.appHelpers = {
 
     properties: {
@@ -54,6 +62,8 @@
 
     _languageEvent: function (event, detail) {
       if (detail.type == 'language-loaded') {
+        var oldLang= this.language;
+        var oldLoaded = this.loadedLanguage;
         this.set('loadedLanguage', detail.language);
         this.set('language', detail.language);
         window.locale = detail.language;
@@ -64,22 +74,28 @@
       console.log("changeLocaleIfNeeded "+locale);
       if (locale && this.language!=locale) {
         if (force || !localStorage.getItem('yp-user-locale')) {
-          i18n.init({ lng: locale, resGetPath: '/locales/__lng__/__ns__.json' }, function(loaded) {
+          i18next.changeLanguage(locale, function(loaded) {
             if (!window.i18nTranslation) {
-              window.i18nTranslation = i18n;
+              window.i18nTranslation = i18next;
             }
             console.log("i18n init loaded "+loaded);
             moment.locale(locale);
             console.log("Changed language to "+locale);
-            var event = new CustomEvent("iron-signal", { detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale } } } );
-            document.dispatchEvent(event);
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true,
+                detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale}  }
+              })
+            );
+
           });
         }
       }
     },
 
     changeLocaleIfNeeded: function (locale, force) {
-      if (typeof i18n !== 'undefined') {
+      if (typeof i18next !== 'undefined') {
         this.changeLocaleIfNeededAfterWait(locale, force)
       } else {
         this.async(function () {
@@ -94,7 +110,7 @@
       window.dispatchEvent(new CustomEvent('location-changed'));
     },
 
-    _translate: function(language) {
+    _translate: function (language) {
       return function() {
         var key = arguments[0];
         if (window.i18nTranslation) {

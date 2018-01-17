@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html" >
@@ -67,7 +67,7 @@
         padding-top: 8px;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-dialog id="editTemplateLocale" modal class="layout vertical">
       <h2>[[t('editTemplate')]]</h2>
@@ -164,7 +164,13 @@
 
       _templatesChanged: function (templates) {
         if (templates) {
-          this.fire('iron-signal', {name: 'bulk-status-updates-templates', data: this.templates });
+          document.dispatchEvent(
+            new CustomEvent("lite-signal", {
+              bubbles: true,
+              compose: true,
+              detail: {name: 'bulk-status-updates-templates', data: this.templates }
+            })
+          );
         }
       },
 

@@ -3,12 +3,9 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
-
-<link rel="import" href="../with-in-viewport/with-in-viewport.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
@@ -18,7 +15,6 @@
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-point/yp-point-news-story-edit.html">
-<link rel="import" href="../yp-post/yp-post-cover-media.html">
 
 <link rel="import" href="./ac-activity.html">
 <link rel="import" href="./ac-activity-recommended-posts.html">
@@ -27,6 +23,9 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
 
+      :host {
+        height: 100%;
+      }
       iron-list {
       }
 
@@ -71,7 +70,6 @@
 
       .activityContainer {
         width: 550px;
-        height: 100%;
         margin: 0;
         padding: 0;
       }
@@ -79,7 +77,6 @@
       @media (max-width: 600px) {
         .activityContainer {
           width: 100%;
-          height: 100%;
         }
       }
 
@@ -138,7 +135,6 @@
 
       .activityContainer {
         width: 100%;
-        min-height: 100% !important;
       }
 
       @-moz-document url-prefix() {
@@ -156,11 +152,19 @@
       .topLevelActivitiesContainer[wide] {
         @apply(--layout-center-center);
       }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .spinnerContainer {
+        margin-top: 32px;
+      }
     </style>
     <div class="layout horizontal topLevelActivitiesContainer" wide$="[[wide]]">
       <div class="layout vertical self-start">
         <template is="dom-if" if="[[loggedInUser]]">
-          <paper-material logged-in-user$="[[loggedInUser]]" elevation="1" class="layout horizontal addNewsBox">
+          <paper-material logged-in-user$="[[hasLoggedInUser]]" elevation="1" class="layout horizontal addNewsBox">
             <yp-point-news-story-edit domain-id="[[domainId]]"
                                       community-id="[[communityId]]"
                                       group-id="[[groupId]]"
@@ -171,15 +175,15 @@
           </paper-material>
         </template>
         <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]"
-                   override-padding-top$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
+                   scroll-offset$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
             <div class="layout vertical center-center">
-              <ac-activity logged-in-user$="[[loggedInUser]]" class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]"
+              <ac-activity has-logged-in-user$="[[hasLoggedInUser]]" class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]"
                            domain-id="[[domainId]]" tabindex$="[[tabIndex]]" on-ak-delete-activity="_deleteActivity"></ac-activity>
             </div>
           </template>
         </iron-list>
-        <div class="layout horizontal center-center">
+        <div class="layout horizontal center-center spinnerContainer">
           <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
           <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner on-response="_activityDeletedResponse"></yp-ajax>
         </div>
@@ -194,9 +198,9 @@
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-    <iron-signals on-iron-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></iron-signals>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></lite-signal>
 
     <iron-scroll-threshold id="scrollTheshold"
                            lower-threshold="200"
@@ -308,6 +312,32 @@
         ironListPaddingTop: {
           type: Number,
           computed: '_ironListPaddingTop(wide)'
+        },
+
+        wideListOffset: {
+          type: String,
+          computed: '_wideListOffset(groupId)'
+        },
+
+        hasLoggedInUser: {
+          type: Boolean,
+          computed: '_hasLoggedInUser(loggedInUser)'
+        }
+      },
+
+      _hasLoggedInUser: function (user) {
+        if (user) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      _wideListOffset: function (groupId) {
+        if (groupId) {
+          return "800";
+        } else {
+          return "415"
         }
       },
 
@@ -488,8 +518,13 @@
           }
         }
 
-        var scrollThresholdEvent = new CustomEvent("iron-signal", { detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} } } );
-        document.dispatchEvent(scrollThresholdEvent);
+        document.dispatchEvent(
+          new CustomEvent("lite-signal", {
+            bubbles: true,
+            compose: true,
+            detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} }
+          })
+        );
 
         this.async(function () {
           this.$.ironList.fire('iron-resize');

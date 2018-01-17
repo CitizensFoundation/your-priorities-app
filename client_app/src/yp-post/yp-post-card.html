@@ -1,18 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html">
-<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html">
-<link rel="import" href="../../bower_components/google-map/google-map.html">
-
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
@@ -48,12 +40,6 @@
       .postCard {
         background-color: #fff;
         @apply(--layout-horizontal);
-      }
-
-      paper-icon-button {
-        position: absolute;
-        top: 0;
-        right: 0;
       }
 
       :host {
@@ -100,10 +86,10 @@
         cursor: pointer;
       }
 
-      yp-post-actions {
+      .postActions  {
         position: absolute;
         right: 16px;
-        bottom: 0px;
+        bottom: 16px;
       }
 
       @media (max-width: 420px) {
@@ -149,9 +135,13 @@
           min-height: 118px;
         }
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
     <paper-material mini$="[[mini]]" class="card postCard layout vertical" elevation="[[elevation]]" animated>
@@ -161,7 +151,7 @@
         <div class="description layout horizontal" on-tap="goToPostIfNotHeader" hidden$="[[mini]]">
           [[shortDescription]]
         </div>
-        <yp-post-actions floating class="" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
+        <yp-post-actions floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
       </div>
     </paper-material>
   </template>
@@ -289,69 +279,26 @@
       },
 
       _refresh: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
-        dialog.selected = 0;
-        this.fire('refresh');
-      },
-
-      _menuSelection: function (event, detail) {
-        if (detail.item.id=="editMenuItem")
-          this._openEdit();
-        else if (detail.item.id=="deleteMenuItem")
-          this._openDelete();
-        else if (detail.item.id=="statusChangeMenuItem")
-          this._openPostStatusChange();
-        else if (detail.item.id=="moveMenuItem")
-          this._openMovePost();
-        else if (detail.item.id=="reportMenuItem")
-          this._openReport();
-        this.selectedMenuItem = null;
-      },
-
-      _openMovePost: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postMove");
-        dialog.setupAndOpen(this.post, this._refresh.bind(this));
-      },
-
-      _openPostStatusChange: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postStatusChangeEdit");
-        dialog.setup(this.post, null, this._refresh.bind(this));
-        dialog.open('new', { postId: this.post.id, statusChange: true });
-      },
-
-      _openEdit: function () {
-        window.appGlobals.activity('open', 'post.new');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
-        dialog.setup(this.post, this.post.Group, false, this._refresh.bind(this));
-        dialog.open('edit', { postId: this.post.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
+          dialog.selected = 0;
+          this.fire('refresh');
+        }.bind(this));
       },
 
       _openReport: function () {
         window.appGlobals.activity('open', 'post.report');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
-        dialog.setup('/api/posts/'+this.post.id+'/report',
-          this.t('reportConfirmation'),
-          this._onReport.bind(this),
-          this.t('post.report'),
-          'PUT');
-        dialog.open();
-      },
-
-      _openDelete: function () {
-        window.appGlobals.activity('open', 'post.delete');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("apiActionDialog");
-        dialog.setup('/api/posts/'+this.post.id,
-          this.t('post.deleteConfirmation'),
-          this._onDeleted.bind(this));
-        dialog.open();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/posts/' + this.post.id + '/report',
+            this.t('reportConfirmation'),
+            this._onReport.bind(this),
+            this.t('post.report'),
+            'PUT');
+          dialog.open();
+        }.bind(this));
       },
 
       _onReport: function () {
         window.appGlobals.notifyUserViaToast(this.t('post.report')+': '+this.post.name);
-      },
-
-      _onDeleted: function () {
-        this.redirectTo("/group/"+this.post.group_id);
       }
     });
   </script>

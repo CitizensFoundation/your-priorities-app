@@ -2,28 +2,19 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button-animations.html">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 <link rel="import" href="../../bower_components/google-map/google-map-marker.html">
-<link rel="import" href="../../bower_components/google-map/google-map-search.html">
 
 <link rel="import" href="../../bower_components/google-map/google-map.html">
-<link rel="import" href="../yp-page/yp-page.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
@@ -31,15 +22,9 @@
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
 
-<link rel="import" href="yp-post-card.html">
 <link rel="import" href="yp-post-header.html">
 <link rel="import" href="yp-post-points.html">
-<link rel="import" href="yp-post-actions.html">
-<link rel="import" href="yp-post-users.html">
-<link rel="import" href="yp-post-cover-media.html">
 <link rel="import" href="yp-post-user-images.html">
-<link rel="import" href="yp-post-user-image-edit.html">
-<link rel="import" href="yp-post-edit.html">
 
 <dom-module id="yp-post">
   <template>
@@ -68,11 +53,6 @@
         width: 940px;
       }
 
-      yp-post-cover-media {
-        width: 420px !important;
-        height: 232px !important;
-      }
-
       .statusHeader {
         padding: 16px;
         background-color: #fefefe;
@@ -84,10 +64,6 @@
       .description {
         width: 510px;
         padding-left: 24px;
-      }
-
-      yp-post-actions {
-        width: 270px;
       }
 
       ac-activities {
@@ -120,24 +96,27 @@
       }
 
       .createFab {
-        background-color: var(--accent-color);
-        color: var(--icon-general-color, #FFF);
         position: fixed;
         bottom: 24px;
         right: 28px;
+        background-color: var(--accent-color);
+        color: #FFF;
+
+        --paper-fab-iron-icon: {
+          color: var(--icon-general-color, #FFF);
+          height: 40px;
+          width: 40px;
+        }
       }
 
       .createFab[wide-layout] {
         width: 72px;
         height: 72px;
-      }
-
-      .createFabContainer[wide-layout] .createFab {
-      }
-
-      paper-fab[wide-layout]::shadow #icon {
-        width: 40px;
-        height: 40px;
+        --paper-fab-iron-icon: {
+          color: var(--icon-general-color, #FFF);
+          width: 72px;
+          height: 72px;
+        }
       }
 
       @media (max-width: 360px) {
@@ -154,13 +133,6 @@
 
         .tabsMaterial {
           width: 360px;
-        }
-
-        yp-post-cover-media {
-          width: 320px !important;
-          height: 181px !important;
-          padding-top: 16px;
-          padding-left: 20px;
         }
 
         .statusHeader {
@@ -180,11 +152,6 @@
           padding: 8px;
           padding-left: 20px;
           padding-bottom: 16px;
-        }
-
-        yp-post-actions {
-          width: 320px;
-          padding-left: 20px;
         }
 
         .statusColumn {
@@ -324,9 +291,13 @@
       .minHeightSection {
         min-height: 450px;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
 
-    <div class="topContainer" is-post create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
+    <div class="topContainer layout vertical center-center" is-post create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
 
       <yp-post-header id="postCard" class="largeCard" post="[[post]]" on-refresh="_refreshAjax" header-mode></yp-post-header>
 
@@ -349,7 +320,7 @@
 
       <iron-pages id="pages" class="tabPages" selected="[[selectedTab]]" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <div name="debate" class="layout horizontal center-center">
-          <yp-post-points id="pointsSection" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
+          <yp-post-points host="[[host]]" id="pointsSection" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
         </div>
         <section name="news" class="minHeightSection">
           <template is="dom-if" if="[[newsTabSelected]]">
@@ -384,7 +355,7 @@
       </iron-pages>
     </div>
 
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <app-route
       route="{{idRoute}}"
@@ -437,6 +408,8 @@
             value: null,
             observer: "_postIdChanged"
           },
+
+          host: String,
 
           post: {
             type: Object,
@@ -510,7 +483,7 @@
           }
         },
 
-       _isNumber: function(n) {
+        _isNumber: function(n) {
           return !isNaN(parseFloat(n)) && isFinite(n);
         },
 
@@ -539,9 +512,10 @@
 
         _newPost: function () {
           window.appGlobals.activity('open', 'newPost');
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
-          dialog.setup(null, this.post.Group, true, null);
-          dialog.open('new', { groupId: this.post.Group.id });
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
+            dialog.setup(null, this.post.Group, true, null);
+            dialog.open('new', {groupId: this.post.Group.id});
+          }.bind(this));
         },
 
         listeners: {
@@ -618,7 +592,11 @@
         },
 
         _getPost: function () {
-          this.$.ajax.url = '/api/posts/' + this.postId;
+          if (this.host) {
+            this.$.ajax.url = this.host+'/api/posts/' + this.postId;
+          } else {
+            this.$.ajax.url = '/api/posts/' + this.postId;
+          }
           this.$$('#ajax').retryMethodAfter401Login = this._getPost.bind(this);
           this.$.ajax.generateRequest();
         },
@@ -652,10 +630,13 @@
               this.setTheme(this.post.Group.Community.theme_id);
             }
 
-            window.appGlobals.setCommunityAnalyticsTracker(this.post.Group.Community.google_analytics_code);
+            if (window.appGlobals) {
+              window.appGlobals.setCommunityAnalyticsTracker(this.post.Group.Community.google_analytics_code);
 
-            if (this.post.Group.Community.configuration && this.post.Group.Community.configuration.facebookPixelId) {
-              window.appGlobals.setCommunityPixelTracker(this.post.Group.Community.configuration.facebookPixelId);
+              if (this.post.Group.Community.configuration && this.post.Group.Community.configuration.facebookPixelId) {
+                window.appGlobals.setCommunityPixelTracker(this.post.Group.Community.configuration.facebookPixelId);
+              }
+              window.appGlobals.setAnonymousGroupStatus(this.post.Group);
             }
 
             if (this.post.Group.configuration && this.post.Group.configuration.defaultLocale!=null) {
@@ -683,14 +664,22 @@
             });
             this.$.pagesAjax.url = "/api/groups/"+this.post.Group.id+"/pages";
             this.$.pagesAjax.generateRequest();
-            window.appGlobals.setAnonymousGroupStatus(this.post.Group);
+            if (this.post.Group.configuration && this.post.Group.configuration.disableFacebookLoginForGroup===true) {
+              window.appGlobals.disableFacebookLoginForGroup = true;
+            } else {
+              window.appGlobals.disableFacebookLoginForGroup = false;
+            }
+            this.fire('yp-set-home-link', {
+              type: 'group',
+              id: this.post.Group.id,
+              name: this.post.Group.name
+            });
           }
         },
 
         setupTopHeaderImage: function (image) {
           var url = 'url(' + this.getImageFormatUrl(image, 0) + ')';
-          this.customStyle['--top-area-background-image'] = url;
-          this.updateStyles();
+          this.updateStyles({ '--top-area-background-image': url });
         },
 
         computeUrl: function (post_id) {

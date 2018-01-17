@@ -3,9 +3,10 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+<link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-point-actions">
@@ -61,8 +62,21 @@
         height: 10px;
       }
       }
+
+      .shareIcon {
+        --paper-share-button-icon-color: #ddd;
+        text-align: right;
+      }
+
+      .shareIcon[up-voted] {
+        --paper-share-button-icon-color: var(--accent-color-400);
+      }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="all-actions" hidden$="[[hideNotHelpful]]">
       <div id="actionUp" class="actionUp layout horizontal">
@@ -74,8 +88,10 @@
         <div class="action-text">{{point.counter_quality_down}}</div>
       </div>
     </div>
+    <paper-share-button on-share-tap="_shareTap" class="shareIcon" up-voted$="[[isUpVoted]]" horizontal-align="right" id="shareButton" title$="[[t('sharePoint')]]" facebook google twitter popup url="[[pointUrl]]"></paper-share-button>
+
     <yp-ajax id="pointQualityAjax" method="POST" on-response="_pointQualityResponse"></yp-ajax>
-    <iron-signals on-iron-signal-got-endorsements-and-qualities="_updateQualitiesFromSignal"></iron-signals>
+    <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateQualitiesFromSignal"></lite-signal>
 
   </template>
   <script>
@@ -102,9 +118,18 @@
           value: 0
         },
 
+        isUpVoted: {
+          type: Boolean,
+          value: false
+        },
+
         allDisabled: {
           type: Boolean,
           value: false
+        },
+
+        pointUrl: {
+          type: String
         }
       },
 
@@ -113,6 +138,7 @@
       ],
 
       _onPointChanged: function (newValue, oldValue) {
+        this.set('isUpVoted', false);
         if (newValue) {
           this._updateQualities();
         }
@@ -123,10 +149,13 @@
       },
 
       _updateQualities: function () {
-        if (window.appUser.loggedIn() && window.appUser.user && window.appUser.user.PointQualities) {
+        if (window.appUser && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.PointQualities) {
           var thisPointQuality = window.appUser.pointQualitiesIndex[this.point.id];
           if (thisPointQuality) {
             this._setPointQuality(thisPointQuality.value);
+            if (thisPointQuality.value>0) {
+              this.set('isUpVoted', true);
+            }
           } else {
             this._setPointQuality(null);
           }
@@ -138,6 +167,7 @@
       _qualityChanged: function (a, b) {
         // TODO: Fix where you can't vote up a newstory just after posting
         //this._resetClasses();
+        this.set('isUpVoted', false);
       },
 
       _resetClasses: function () {
@@ -200,8 +230,10 @@
 
       pointHelpful: function () {
         this.set('allDisabled', true);
-        window.appGlobals.activity('clicked', 'pointHelpful', this.point.id);
         this.generatePointQuality(1);
+        this.set('isUpVoted', true);
+        this.updateStyles();
+        window.appGlobals.activity('clicked', 'pointHelpful', this.point.id);
       },
 
       pointNotHelpful: function () {

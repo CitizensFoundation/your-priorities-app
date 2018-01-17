@@ -105,17 +105,22 @@ var getCommunity = function(req, done) {
           [ { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
           [ models.Group, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
         ],
+        attributes: models.Community.defaultAttributesPublic,
         include: [
           {
             model: models.Domain,
             attributes: models.Domain.defaultAttributesPublic
           },
           {
-            model: models.Image, as: 'CommunityLogoImages',
+            model: models.Image,
+            as: 'CommunityLogoImages',
+            attributes:  models.Image.defaultAttributesPublic,
             required: false
           },
           {
-            model: models.Image, as: 'CommunityHeaderImages',
+            model: models.Image,
+            as: 'CommunityHeaderImages',
+            attributes:  models.Image.defaultAttributesPublic,
             required: false
           },
           {
@@ -128,7 +133,9 @@ var getCommunity = function(req, done) {
             required: false,
             include: [
               {
-                model: models.Image, as: 'GroupLogoImages',
+                model: models.Image,
+                as: 'GroupLogoImages',
+                attributes:  models.Image.defaultAttributesPublic,
                 required: false
               }
             ]
@@ -251,6 +258,25 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.disableDomainUpLink', (req.body.disableDomainUpLink && req.body.disableDomainUpLink!="") ? true : false);
   community.set('configuration.defaultLocationLongLat', (req.body.defaultLocationLongLat && req.body.defaultLocationLongLat!="") ? req.body.defaultLocationLongLat : null);
   community.set('configuration.facebookPixelId', (req.body.facebookPixelId && req.body.facebookPixelId!="") ? req.body.facebookPixelId : null);
+
+  community.set('configuration.welcomeHTML', (req.body.welcomeHTML && req.body.welcomeHTML!="") ? req.body.welcomeHTML : null);
+
+  if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
+    community.google_analytics_code = req.body.google_analytics_code;
+  } else {
+    community.google_analytics_code = null;
+  }
+
+  community.only_admins_can_create_groups = req.body.onlyAdminsCanCreateGroups ? true : false;
+
+  if (req.body.defaultLocale && req.body.defaultLocale!="") {
+    community.default_locale = req.body.defaultLocale;
+  }
+
+  community.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
+  if (req.body.status && req.body.status!="") {
+    community.status = req.body.status;
+  }
 };
 
 router.delete('/:communityId/:activityId/delete_activity', auth.can('edit community'), function(req, res) {
@@ -593,6 +619,69 @@ router.get('/:communityId/users', auth.can('edit community'), function (req, res
   });
 });
 
+router.get('/:communityId/posts', auth.can('view community'), function (req, res) {
+  var where = { status: { $in: ['published','inactive']}, deleted: false };
+
+  var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
+
+  if (req.query.sortBy=="newest") {
+    postOrder = "created_at DESC";
+  } else if (req.query.sortBy=="most_debated") {
+    postOrder = "counter_points DESC";
+  } else if (req.query.sortBy=="random") {
+    postOrder = "created_at DESC";
+  }
+
+  var limit = req.query.limit ? Math.max(req.query.limit, 25) :  7;
+
+  models.Post.findAll({
+    where: where,
+    attributes: ['id','name','description','status','official_status','counter_endorsements_up','cover_media_type',
+      'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
+    order: [
+      models.sequelize.literal(postOrder),
+      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
+      [ { model: models.Group }, { model: models.Image, as: 'GroupLogoImages' } ,'updated_at', 'asc' ]
+    ],
+    include: [
+      {
+        model: models.Group,
+        required: true,
+        where: { access: { $in: [models.Group.ACCESS_OPEN_TO_COMMUNITY, models.Group.ACCESS_PUBLIC]} },
+        attributes: ['id','configuration'],
+        include: [
+          {
+            model: models.Image, as: 'GroupLogoImages',
+            required: false
+          },
+          {
+            model: models.Community,
+            required: true,
+            where: {
+              id: req.params.communityId
+            },
+            attributes: ['id','configuration']
+          }
+        ]
+      },
+      { model: models.Image,
+        attributes: { exclude: ['ip_address', 'user_agent'] },
+        as: 'PostHeaderImages',
+        required: false
+      }
+    ]
+  }).then(function(posts) {
+    log.info('Got posts', { context: 'posts'});
+    if (posts) {
+      res.send(_.dropRight(posts, limit));
+    } else {
+      res.send([]);
+    }
+  }).catch(function (error) {
+    log.error('Could not get posts', { err: error, context: 'posts' });
+    res.sendStatus(500);
+  });
+});
 
 router.get('/:id', auth.can('view community'), function(req, res) {
   getCommunity(req, function (error, community) {
@@ -632,12 +721,6 @@ router.post('/:domainId', auth.can('create community'), function(req, res) {
         ip_address: req.clientIp
       });
 
-      if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
-        community.google_analytics_code = req.body.google_analytics_code;
-      } else {
-        community.google_analytics_code = null;
-      }
-
       updateCommunityConfigParameters(req, community);
       community.save().then(function() {
         log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
@@ -662,24 +745,12 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
     if (community) {
       community.name = req.body.name;
       community.description = req.body.description;
+
       if (req.body.hostname && req.body.hostname!="") {
         community.hostname = req.body.hostname;
       }
-      community.only_admins_can_create_groups = req.body.onlyAdminsCanCreateGroups ? true : false;
-      if (req.body.defaultLocale && req.body.defaultLocale!="") {
-        community.default_locale = req.body.defaultLocale;
-      }
-      community.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
-      if (req.body.status && req.body.status!="") {
-        community.status = req.body.status;
-      }
-      community.access = models.Community.convertAccessFromRadioButtons(req.body);
 
-      if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
-        community.google_analytics_code = req.body.google_analytics_code;
-      } else {
-        community.google_analytics_code = null;
-      }
+      community.access = models.Community.convertAccessFromRadioButtons(req.body);
 
       updateCommunityConfigParameters(req, community);
       community.save().then(function () {

@@ -1,27 +1,23 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
 
 <link rel="import" href="../ac-activities/ac-activities.html">
-<link rel="import" href="../yp-page/yp-page.html">
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-post/yp-post-card.html">
@@ -30,9 +26,6 @@
 <link rel="import" href="../yp-post/yp-post-list.html">
 <link rel="import" href="../yp-post/yp-post-map.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
-
-<link rel="import" href="../yp-post/yp-post-edit.html">
-<link rel="import" href="../yp-group/yp-group-edit.html">
 
 <link rel="import" href="yp-group-card-large.html">
 
@@ -61,24 +54,30 @@
       }
 
       .createFab {
-        background-color: var(--accent-color);
-        color: var(--icon-general-color, #FFF);
         position: fixed;
         bottom: 24px;
         right: 28px;
+        background-color: var(--accent-color);
+        color: #FFF;
+
+        --paper-fab-iron-icon: {
+          color: var(--icon-general-color, #FFF);
+          height: 40px;
+          width: 40px;
+        }
       }
 
       .createFab[wide-layout] {
         width: 72px;
         height: 72px;
+        --paper-fab-iron-icon: {
+          color: var(--icon-general-color, #FFF);
+          width: 72px;
+          height: 72px;
+        }
       }
 
       .createFabContainer[wide-layout] .createFab {
-      }
-
-      paper-fab[wide-layout]::shadow #icon {
-        width: 40px;
-        height: 40px;
       }
 
       .topArea {
@@ -98,7 +97,7 @@
       }
 
       .largeAddButton {
-        margin-bottom: 8px;
+        margin-bottom: 4px;
       }
 
       @media (max-width: 1024px) {
@@ -113,7 +112,8 @@
 
       @media (max-width: 900px) {
         .tabs {
-          max-width: 450px;
+          max-width: 550px;
+          width: 550px;
           font-size: 14px;
           word-wrap: break-word !important;
         }
@@ -134,29 +134,54 @@
         .topArea {
           height: auto;
         }
+
+        .largeAddButton[is-apple] {
+          margin-top: 32px;
+        }
+
+        .largeAddButton[is-ipad] {
+          margin-top: 48px;
+        }
       }
 
       @media (max-width: 380px) {
         .tabs {
-          max-width: 330px;
+          max-width: 360px;
           font-size: 12px;
+          width: 360px;
         }
 
         paper-tab {
-          width: 100px;
+          width: 170px;
+        }
+      }
+
+      @media (max-width: 320px) {
+        .tabs {
+          max-width: 320px;
+          font-size: 12px;
+          width: 320px;
         }
 
-        .tabs[has-non-open-posts] {
-          font-size: 8px;
+        paper-tab {
+          width: 160px;
         }
+      }
 
-        .counterInfo[has-non-open-posts] {
-          font-size: 9px;
-        }
+      .tabSubTitle {
+        font-size: 13px;
       }
 
       .minHeightSection {
         min-height: 450px;
+      }
+
+      .tabContainer[hide] {
+        display: none;
+      }
+
+      [hidden] {
+        display: none !important;
       }
     </style>
 
@@ -167,32 +192,56 @@
       </div>
 
       <template is="dom-if" if="[[!disableNewPosts]]" restamp>
-        <div class="largeAddButton layout horizontal center-center">
+        <div class="largeAddButton layout horizontal center-center" is-apple$="[[isApple]]" is-ipad$="[[isIpad]]">
           <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
         </div>
       </template>
 
-      <div class="layout horizontal center-center" hidden$="[[group.configuration.hideAllTabs]]">
-        <paper-tabs id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
+      <div class="layout horizontal center-center tabContainer" hide$="[[group.configuration.hideAllTabs]]">
+        <paper-tabs scrollable$="[[!wideWidth]]" id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
           <paper-tab id="tab1" name="open">
             <div class="layout vertical center-center tabCounterContainer">
-              <span>[[t('posts.open')]]</span><div class="counterInfo" has-non-open-posts$="[[hasNonOpenPosts]]" id="tabCountOpen"></div>
+              <div hidden$="[[isTabOpen]]">
+                [[t('posts.open')]]
+              </div>
+              <div hidden$="[[!isTabOpen]]" class="tabSubTitsle">
+                [[tabOpenSubTitle]]
+              </div>
+              <div class="counterInfo" has-non-open-posts$="[[hasNonOpenPosts]]" id="tabCountOpen"></div>
             </div>
           </paper-tab>
           <template is="dom-if" if="[[hasNonOpenPosts]]">
             <paper-tab name="in_progress">
               <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.inProgress')]]</span><div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountInProgress"></div>
+                <div>
+                  [[t('posts.inProgress')]]
+                </div>
+                <div hidden$="[[!isTabInProgress]]" class="tabSubTitle">
+                  [[tabInProgressSubTitle]]
+                </div>
+                <div hidden$="[[isTabInProgress]]" has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountInProgress"></div>
               </div>
             </paper-tab>
             <paper-tab name="successful">
               <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.successful')]]</span><div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountSuccessful"></div>
+                <div>
+                  [[t('posts.successful')]]
+                </div>
+                <div hidden$="[[!isTabSuccessful]]" class="tabSubTitle">
+                  [[tabSuccessfulSubTitle]]
+                </div>
+                <div hidden$="[[isTabSuccessful]]" has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountSuccessful"></div>
               </div>
             </paper-tab>
             <paper-tab name="failed">
               <div class="layout vertical center-center tabCounterContainer">
-                <span>[[t('posts.failed')]]</span><div has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountFailed"></div>
+                <div>
+                  [[t('posts.failed')]]
+                </div>
+                <div hidden$="[[!isTabFailed]]" class="tabSubTitle">
+                  [[tabFailedSubTitle]]
+                </div>
+                <div hidden$="[[isTabFailed]]" has-non-open-posts$="[[hasNonOpenPosts]]" class="counterInfo" id="tabCountFailed"></div>
               </div>
             </paper-tab>
           </template>
@@ -204,7 +253,7 @@
       <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section name="open">
           <div class="layout horizontal center-center">
-            <yp-post-list id="openPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+            <yp-post-list id="openPostList" sub-title="{{tabOpenSubTitle}}" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
           </div>
         </section>
         <section name="news" class="minHeightSection">
@@ -215,17 +264,17 @@
         <template is="dom-if" if="[[hasNonOpenPosts]]">
           <section name="in_progress">
             <div class="layout horizontal center-center">
-              <yp-post-list id="inProgressPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="inProgressPostList" sub-title="{{tabInProgressSubTitle}}" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section name="successful">
             <div class="layout horizontal center-center">
-              <yp-post-list id="successfulPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="successfulPostList" sub-title="{{tabSuccessfulSubTitle}}" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
           <section name="failed">
             <div class="layout horizontal center-center">
-              <yp-post-list id="failedPostList" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
+              <yp-post-list id="failedPostList" sub-title="{{tabFailedSubTitle}}" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
             </div>
           </section>
         </template>
@@ -249,9 +298,9 @@
                            scroll-target="document">
     </iron-scroll-threshold>
 
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-    <iron-signals on-iron-signal-yp-refresh-group-posts="_refreshGroupPosts"></iron-signals>
-    <iron-signals on-iron-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-refresh-group-posts="_refreshGroupPosts"></lite-signal>
+    <lite-signal on-lite-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></lite-signal>
 
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
 
@@ -359,6 +408,42 @@
         tabCounters: {
           type: Object,
           value: {}
+        },
+
+        tabOpenSubTitle: String,
+        tabInProgressSubTitle: String,
+        tabSuccessfulSubTitle: String,
+        tabFailedSubTitle: String,
+
+        isTabOpen: {
+          type: Boolean,
+          computed: '_isTabOpen(selectedTab)'
+
+        },
+
+        isTabInProgress: {
+          type: Boolean,
+          computed: '_isTabInProgress(selectedTab)'
+        },
+
+        isTabSuccessful: {
+          type: Boolean,
+          computed: '_isTabSuccessful(selectedTab)'
+        },
+
+        isTabFailed: {
+          type: Boolean,
+          computed: '_isTabFailed(selectedTab)'
+        },
+
+        isApple: {
+          type: Boolean,
+          computed: '_isApple(groupId)'
+        },
+
+        isIpad: {
+          type: Boolean,
+          computed: '_isIpad(groupId)'
         }
       },
 
@@ -366,6 +451,22 @@
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
+
+      _isTabOpen: function (selectedTab) {
+        return selectedTab==='open';
+      },
+
+      _isTabInProgress: function (selectedTab) {
+        return selectedTab==='in_progress';
+      },
+
+      _isTabFailed: function (selectedTab) {
+        return selectedTab==='failed';
+      },
+
+      _isTabSuccessful: function (selectedTab) {
+        return selectedTab==='successful';
+      },
 
       _clearScrollThreshold: function () {
         this.$$("#scrollTheshold").clearTriggers();
@@ -379,6 +480,14 @@
         } else {
           console.error("Cant find tab "+tabId);
         }
+      },
+
+      _isApple: function () {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      },
+
+      _isIpad: function () {
+        return /iPad/.test(navigator.userAgent) && !window.MSStream;
       },
 
       _loadMoreData: function () {
@@ -561,14 +670,15 @@
       },
 
       setupTopHeaderImage: function (image) {
-        var path;
-        if (image) {
-          path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
-        } else {
-          path = 'none';
+        if (this.wideWidth) {
+          var path;
+          if (image) {
+            path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+          } else {
+            path = 'none';
+          }
+          this.updateStyles( {'--top-area-background-image': path });
         }
-        this.customStyle['--top-area-background-image'] = path;
-        this.updateStyles();
       },
 
       refresh: function () {
@@ -632,15 +742,23 @@
 
           this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
           this.$.pagesAjax.generateRequest();
+
           window.appGlobals.setAnonymousGroupStatus(this.group);
+
+          if (this.group.configuration && this.group.configuration.disableFacebookLoginForGroup===true) {
+            window.appGlobals.disableFacebookLoginForGroup = true;
+          } else {
+            window.appGlobals.disableFacebookLoginForGroup = false;
+          }
         }
       },
 
       _newPost: function () {
         window.appGlobals.activity('open', 'newPost');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("postEdit");
-        dialog.setup(null, this.group, true, null);
-        dialog.open('new', { groupId: this.groupId });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
+          dialog.setup(null, this.group, true, null);
+          dialog.open('new', {groupId: this.groupId});
+        }.bind(this));
       }
     });
   </script>

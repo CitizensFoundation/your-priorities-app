@@ -1,16 +1,13 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-post-card-add">
@@ -25,7 +22,7 @@
         width: 280px;
         min-height: 80px;
         height: 100%;
-        margin-top: 16px;
+        margin-top: 8px;
         padding: 8px;
         background-color: var(--accent-color);
         color: #FFF;
@@ -59,7 +56,7 @@
       }
 
       .addText {
-        padding-left: 16px;
+        padding-left: 0;
       }
 
       iron-icon {
@@ -104,15 +101,15 @@
 
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="layout vertical center-center">
       <paper-card elevation="[[elevation]]" class="postCard" on-tap="_newPost" >
         <div class="layout horizontal center-center addNewIdeaText">
+          <paper-icon-button icon="lightbulb-outline"></paper-icon-button>
           <div class="flex addText">
             [[t('post.add_new')]]
           </div>
-          <paper-icon-button icon="lightbulb-outline"></paper-icon-button>
         </div>
       </paper-card>
     </div>

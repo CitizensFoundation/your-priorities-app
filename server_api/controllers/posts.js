@@ -5,6 +5,7 @@ var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var async = require('async');
+var _ = require('lodash');
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
@@ -360,7 +361,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
     where: {
       post_id: req.params.id
     },
-    attributes: { exclude: ['ip_address', 'user_agent'] },
+    attributes: ['id','name','content','user_id','value','counter_quality_up','counter_quality_down','embed_data'],
     order: [
       models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
       [ models.PointRevision, 'created_at', 'asc' ],
@@ -374,6 +375,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
         include: [
           {
             model: models.Image, as: 'UserProfileImages',
+            attributes: ['id', 'formats'],
             required: false
           },
           {
@@ -394,22 +396,22 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
       },
       {
         model: models.PointRevision,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
+        attributes: ['content','value','embed_data','created_at'],
         required: false
       },
       { model: models.PointQuality,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
+        attributes: ['value'],
         required: false,
         include: [
           { model: models.User,
-            attributes: ["id", "name"],
+            attributes: ["id"],
             required: false
           }
         ]
       },
       {
         model: models.Post,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
+        attributes: ['id','group_id'],
         required: false,
         include: [
           {
@@ -610,14 +612,17 @@ router.put('/:id/:groupId/move', auth.can('edit post'), function(req, res) {
 
 router.delete('/:id', auth.can('edit post'), function(req, res) {
   var postId = req.params.id;
+  log.info('Post Deleted Got Start', { context: 'delete', user: toJson(req.user) });
   models.Post.find({
     where: {id: postId }
   }).then(function (post) {
+    log.info('Post Deleted Got Post', { context: 'delete', user: toJson(req.user) });
     models.AcActivity.findAll({
       attributes: ['id','deleted'],
       include: [
         {
           model: models.Post,
+          attributes: ['id'],
           required: true,
           where: {
             id: postId
@@ -625,16 +630,23 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
         }
       ]
     }).then(function (activities) {
-      async.eachSeries(activities, function (activity, innerCallback) {
-        activity.deleted = true;
-        activity.save().then(function () {
-          innerCallback();
-        });
-      }, function done() {
+      log.info('Post Deleted Got Activities', { context: 'delete', user: toJson(req.user) });
+      var activityIds = _.map(activities, function (activity) {
+        return activity.id;
+      });
+      models.AcActivity.update(
+        { deleted: true },
+        { where: {
+            id: {
+              $in: activityIds
+            }
+          }}
+      ).then(function (spread) {
         post.deleted = true;
         post.save().then(function () {
-          log.info('Post Deleted', { post: toJson(post), context: 'delete', user: toJson(req.user) });
+          log.info('Post Deleted Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
           post.updateAllExternalCounters(req, 'down', 'counter_posts', function () {
+            log.info('Post Deleted Counters updates', { context: 'delete', user: toJson(req.user) });
             res.sendStatus(200);
           });
         });

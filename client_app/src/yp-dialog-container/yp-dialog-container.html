@@ -1,5 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 // Preloaded
 <link rel="import" href="../yp-ajax/yp-ajax-error-dialog.html">
@@ -23,13 +23,17 @@
       #dialogs {
         background-color: var(--primary-background-color) !important;
       }
+
+      #dialogs[hide] {
+        display: none;
+      }
     </style>
 
-    <iron-signals on-iron-signal-got-admin-rights="_gotAdminRights"></iron-signals>
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
-    <iron-signals on-iron-signal-open-bulk-status-updates="_openBulkStatusUpdates"></iron-signals>
+    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+    <lite-signal on-lite-signal-logged-in="_loggedInUser"></lite-signal>
+    <lite-signal on-lite-signal-open-bulk-status-updates="_openBulkStatusUpdates"></lite-signal>
 
-    <div id="dialogs">
+    <div id="dialogs" hide$="[[hideDialogs]]">
       <paper-toast id="masterToast"></paper-toast>
       <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
       <yp-login id="userLogin" on-yp-forgot-password="_forgotPassword"></yp-login>
@@ -63,6 +67,7 @@
         <yp-post-move id="postMove"></yp-post-move>
       </template>
 
+
       <template is="dom-if" if="[[bulkStatusUpdates]]">
         <yp-bulk-status-update-config id="bulkStatusUpdateConfig"></yp-bulk-status-update-config>
         <yp-bulk-status-update-grid id="bulkStatusUpdateGrid"></yp-bulk-status-update-grid>
@@ -91,57 +96,68 @@
         bulkStatusUpdates: {
           type: Boolean,
           value: false
+        },
+
+        hideDialogs: {
+          type: Boolean,
+          value: true
         }
       },
 
-      _loggedInUserChanged: function (newValue) {
-        if (newValue) {
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), null, null, true);
+      _loggedInUser: function (event, user) {
+        console.info("_loggedInUser");
+        if (user) {
+          this.set('loggedInUser', user);
+          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), function () {
+            console.info("Have loaded logged-in container");
+          }, null, true);
         }
       },
 
-      _gotAdminRightsChanged: function (newValue) {
-        if (newValue===true) {
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), null, null, true);
+      _gotAdminRights: function (event, detail) {
+        console.info("_gotAdminRights");
+        if (detail===true) {
+          this.set('gotAdminRights', true);
+          this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {
+            console.info("Have loaded admin container");
+          }, null, true);
         }
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html"), null, null, true);
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html"), function () {
+          console.info("Have loaded bulk status container");
+        }, null, true);
         this.set('bulkStatusUpdates', true);
       },
 
       getDialog: function (idName) {
+        this.set('hideDialogs', false);
         var element = this.$$("#"+idName);
         if (element && (typeof element.ready === "function")) {
           this.set('waitForUpgradeCounter', 0);
           return this.$$("#"+idName);
         } else {
-          console.warn("Element not upgraded: "+idName);
-          this.waitForUpgradeCounter += 1;
-          if (this.waitForUpgradeCounter>100) {
-            console.error("Element upgraded after wait: "+idName);
-          }
-          this.async(function () {
-            this.getDialog(idName);
-          }.bind(this), 250);
+          console.error("Element not upgraded: "+idName);
         }
       },
 
       getDialogAsync: function (idName, callback) {
+        this.set('hideDialogs', false);
         var element = this.$$("#"+idName);
         if (element && (typeof element.ready === "function")) {
           this.set('waitForUpgradeCounter', 0);
-          callback(this.$$("#"+idName));
+          console.log("Found element async");
+          callback(element);
         } else {
           console.warn("Element not upgraded: "+idName);
           this.waitForUpgradeCounter += 1;
           if (this.waitForUpgradeCounter>100) {
-            console.error("Element upgraded after wait: "+idName);
+            console.error("Element not upgraded after wait: "+idName);
           }
           this.async(function () {
             this.getDialogAsync(idName, callback);
-          }.bind(this), 250);
+          }.bind(this), this.waitForUpgradeCounter>100 ? 1000 : 250);
         }
       },
 

@@ -1,14 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/image-icons.html" >
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html" >
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-user/yp-user-image.html">
 <link rel="import" href="../yp-point/yp-point-news-story.html">
 <link rel="import" href="../yp-point/yp-point-comment-list.html">
 <link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
@@ -29,10 +25,6 @@
 
       .userName {
         color: #777;
-      }
-
-      yp-user-image {
-        padding-top: 4px;
       }
 
       .userName {
@@ -75,8 +67,12 @@
       .withPointer {
         cursor: pointer;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="layout vertical">
       <div id="content" class="story">
@@ -93,8 +89,8 @@
             <div class="commentText">[[t('noComments')]]</div>
           </div>
           <div class="layout horizontal">
-            <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
-            <paper-icon-button class="openCloseButton" icon="hardware:keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
+            <paper-icon-button class="openCloseButton" icon="keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
+            <paper-icon-button class="openCloseButton" icon="keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
           </div>
         </div>
       </div>

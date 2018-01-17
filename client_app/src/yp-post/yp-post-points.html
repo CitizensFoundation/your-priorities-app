@@ -1,18 +1,15 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
-<link rel="import" href="../../bower_components/paper-input/paper-input-char-counter.html">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
 <link rel="import" href="../yp-point/yp-point.html">
@@ -22,8 +19,15 @@
     <style include="iron-flex iron-flex-alignment">
 
       :host {
-        height: 100%;
+        display: block;
       }
+
+      .item {
+        @apply --layout-horizontal;
+        background-color: white;
+        margin: 16px auto 0 auto;
+      }
+
 
       .main-container {
         @apply(--layout-horizontal);
@@ -61,7 +65,6 @@
       }
 
       .pointMaterial {
-        margin-bottom: 18px;
         padding-top: 8px;
         background-color: #FFF;
         padding-left: 0;
@@ -81,16 +84,6 @@
         width: 28px;
         padding-bottom: 16px;
         color: var(--primary-color);
-      }
-
-      paper-fab::shadow #icon {
-        background-color: var(--accent-color);
-        color: #FFF;
-      }
-
-      paper-fab {
-        background-color: var(--accent-color);
-        color: #FFF;
       }
 
       .addPointFab {
@@ -188,97 +181,130 @@
         border-top-color: var(--master-point-down-color);
       }
 
+      .pointElement {
+        margin-bottom: 18px;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-    <iron-signals on-iron-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></lite-signal>
 
     <iron-media-query query="(min-width: 985px)" query-matches="{{largeMode}}"></iron-media-query>
 
     <template is="dom-if" if="[[points]]">
-      <div class="layout horizontal center-center penContainer" hidden>
-        <div class="howToWriteInfoText">[[t('point.howToWrite')]]</div>
-        <iron-icon icon="editor:mode-edit" class="editIcon"></iron-icon>
-      </div>
       <template is="dom-if" if="[[largeMode]]">
         <div class="layout vertical topContainer">
           <div class="main-container">
-            <div class="point">
-              <div class="pointMainHeader layout horizontal center-center" hidden$="[[post.Group.configuration.alternativePointForHeader]]">
-                [[t('pointsFor')]]
-              </div>
-              <div class="pointMainHeader layout horizontal center-center" hidden$="[[!post.Group.configuration.alternativePointForHeader]]">
-                [[post.Group.configuration.alternativePointForHeader]]
-              </div>
 
-              <paper-material id="pointUpMaterial" elevation="1" class="pointInputMaterial layout vertical" animated>
-                <yp-user-with-organization user=""></yp-user-with-organization>
+            <div class="point">
+              <template is="dom-if" if="[[!post.Group.configuration.alternativePointForHeader]]">
+                <div class="pointMainHeader layout horizontal center-center">
+                  [[t('pointsFor')]]
+                </div>
+              </template>
+
+              <template is="dom-if" if="[[post.Group.configuration.alternativePointForHeader]]">
+                <div class="pointMainHeader layout horizontal center-center">
+                  [[post.Group.configuration.alternativePointForHeader]]
+                </div>
+              </template>
+
+              <paper-material id="pointUpMaterial" elevation="1" class="pointInputMaterial layout vertical"
+                              animated hidden$="[[post.Group.configuration.disableDebate]]">
+
                 <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                                bind-value="{{textValueUp}}" value=[[textValueUp]] label$="[[labelUp]]"
+                                value="{{textValueUp}}" label$="[[labelUp]]"
                                 char-counter rows="2"
                                 max-rows="3" maxlength="500">
                 </paper-textarea>
-                <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
+
+                <div hidden$="[[post.Group.configuration.hideEmoji]]">
+
+                </div>
+                <div class="horizontal end-justified layout">
                   <emoji-selector id="pointUpEmojiSelector"></emoji-selector>
                 </div>
 
-                <template is="dom-if" if="[[ifLengthIsRight(textValueUp)]]">
+                <div hidden="[[!ifLengthUpIsRight]]">
                   <div class="addPointFab layout horizontal center-center">
-                    <paper-button icon="add" mini="" elevation="3" on-tap="addPointUp"
+                    <paper-button disabled$="[[addPointDisabled]]" icon="add" mini="" elevation="3" on-tap="addPointUp"
                                   title="[[t('point.add_up')]]">[[t('point.postComment')]]</paper-button>
                   </div>
-                </template>
+                </div>
               </paper-material>
 
               <div id="allUpPoints">
-                <template is="dom-repeat" initial-count="3" items="[[upPoints]]" as="point">
-                  <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
-                    <yp-point point="[[point]]"></yp-point>
-                  </paper-material>
+                <template is="dom-repeat" items="[[upPoints]]" as="point" initial-count="14">
+                  <div>
+                    <div class="item" tabindex$="[[tabIndex]]">
+                      <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
+                        <yp-point point="[[point]]"></yp-point>
+                      </paper-material>
+                    </div>
+                  </div>
                 </template>
               </div>
             </div>
 
             <div class="point">
+              <template is="dom-if" if="[[!post.Group.configuration.alternativePointAgainstHeader]]">
+                <div class="pointMainHeader layout horizontal center-center">
+                  [[t('pointsAgainst')]]
+                </div>
+              </template>
 
-              <div class="pointMainHeader pointAgainstMainHeader layout horizontal center-center" hidden$="[[post.Group.configuration.alternativePointAgainstHeader]]">
-                [[t('pointsAgainst')]]
-              </div>
+              <template is="dom-if" if="[[post.Group.configuration.alternativePointAgainstHeader]]">
+                <div class="pointMainHeader layout horizontal center-center">
+                  [[post.Group.configuration.alternativePointAgainstHeader]]
+                </div>
+              </template>
 
-              <div class="pointMainHeader pointAgainstMainHeader layout horizontal center-center" hidden$="[[!post.Group.configuration.alternativePointAgainstHeader]]">
-                [[post.Group.configuration.alternativePointAgainstHeader]]
-              </div>
-              <paper-material id="pointDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated>
+
+              <paper-material id="pointDownMaterial" elevation="1" class="pointInputMaterial layout vertical"
+                              animated hidden$="[[post.Group.configuration.disableDebate]]">
+
                 <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                                bind-value="{{textValueDown}}" value=[[textValueDown]] label$="[[labelDown]]"
+                                value="{{textValueDown}}" label$="[[labelDown]]"
                                 char-counter rows="2"
                                 max-rows="5" maxlength="500">
                 </paper-textarea>
+
                 <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
                   <emoji-selector id="pointDownEmojiSelector"></emoji-selector>
                 </div>
-                <template is="dom-if" if="[[ifLengthIsRight(textValueDown)]]">
+
+                <div hidden="[[!ifLengthDownIsRight]]">
                   <div class="addPointFab layout horizontal center-center">
-                    <paper-button icon="add" elevation="3" on-tap="addPointDown"
+                    <paper-button disabled$="[[addPointDisabled]]" icon="add" elevation="3" on-tap="addPointDown"
                                   title="[[t('point.add_down')]]">[[t('point.postComment')]]</paper-button>
                   </div>
-                </template>
+                </div>
               </paper-material>
 
               <div id="allDownPoints">
-                <template is="dom-repeat" initial-count="3" items="[[downPoints]]" as="point">
-                  <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
-                    <yp-point point="[[point]]"></yp-point>
-                  </paper-material>
+                <template is="dom-repeat" items="[[downPoints]]" as="point" initial-count="14">
+                  <div>
+                    <div class="item" tabindex$="[[tabIndex]]">
+                      <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
+                        <yp-point point="[[point]]"></yp-point>
+                      </paper-material>
+                    </div>
+                  </div>
                 </template>
               </div>
             </div>
+
+
           </div>
         </div>
       </template>
       <template is="dom-if" if="[[!largeMode]]">
-        <paper-material id="pointUpOrDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated>
+        <paper-material id="pointUpOrDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated hidden$="[[post.Group.configuration.disableDebate]]">
           <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                          bind-value="{{textValueMobileUpOrDown}}" value=[[textValueMobileUpOrDown]] label="[[labelMobileUpOrDown]]"
+                          value="{{textValueMobileUpOrDown}}" label="[[labelMobileUpOrDown]]"
                           char-counter rows="2"
                           max-rows="3" maxlength="500"></paper-textarea>
           <div class="horizontal end-justified layout">
@@ -291,15 +317,15 @@
             <div class="flex"></div>
             <emoji-selector id="pointUpDownEmojiSelector" hidden$="[[post.Group.configuration.hideEmoji]]"></emoji-selector>
           </div>
-          <template is="dom-if" if="[[ifLengthIsRight(textValueMobileUpOrDown)]]">
+          <div hidden="[[!ifLengthMobileRight]]">
             <div class="addPointFab layout horizontal center-center mobileFab">
-              <paper-button icon="add" z="3" on-tap="addMobilePointUpOrDown"
+              <paper-button disabled$="[[addPointDisabled]]" icon="add" z="3" on-tap="addMobilePointUpOrDown"
                             title="[[t('point.postComment')]]">[[t('point.postComment')]]</paper-button>
             </div>
-          </template>
+          </div>
         </paper-material>
         <div class="layout vertical center-center">
-          <template is="dom-repeat" initial-count="3" items="[[points]]" as="point">
+          <template is="dom-repeat" initial-count="14" items="[[points]]" as="point">
             <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
               <yp-point point="[[point]]"></yp-point>
             </paper-material>
@@ -311,7 +337,7 @@
     <div hidden class="layout horizontal center-center">
       <yp-ajax id="ajax" on-response="_response"></yp-ajax>
       <yp-ajax id="newPointsAjax" on-response="_newPointsResponse"></yp-ajax>
-      <yp-ajax id="newPointAjax" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
+      <yp-ajax id="newPointAjax" on-error="_newPointError" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
     </div>
 
     <paper-toast id="newPointToast" text="[[newPointTextCombined]]"></paper-toast>
@@ -330,6 +356,8 @@
 
         properties: {
 
+          host: String,
+
           downPoints: {
             type: Array,
             value: function () {
@@ -345,11 +373,15 @@
           },
 
           textValueUp: {
-            type: String
+            type: String,
+            notify: true,
+            value: ""
           },
 
           textValueDown: {
-            type: String
+            type: String,
+            notify: true,
+            value: ""
           },
 
           newPointTextCombined: {
@@ -396,9 +428,61 @@
             type: String,
             value: null,
             observer: '_scrollToIdChanged'
+          },
+
+          ironListResizeScrollThreshold: {
+            type: Number,
+            computed: '_ironListResizeScrollThreshold(largeMode)'
+          },
+
+          ironListPaddingTop: {
+            type: Number,
+            computed: '_ironListPaddingTop(wide)'
+          },
+
+          ifLengthUpIsRight: {
+            type: Boolean,
+            value: false,
+            computed: 'ifLengthIsRight(textValueUp)'
+          },
+
+          ifLengthDownIsRight: {
+            type: Boolean,
+            value: false,
+            computed: 'ifLengthIsRight(textValueDown)'
+          },
+
+          ifLengthMobileRight: {
+            type: Boolean,
+            value: false,
+            computed: 'ifLengthIsRight(textValueMobileUpOrDown)'
+          },
+
+          addPointDisabled: {
+            type: Boolean,
+            value: false
           }
         },
 
+        _newPointError: function () {
+          this.set('addPointDisabled', false);
+        },
+
+        _ironListResizeScrollThreshold: function (largeMode) {
+          if (largeMode) {
+            return 300;
+          } else {
+            return 300;
+          }
+        },
+
+        _ironListPaddingTop: function (largeMode) {
+          if (largeMode) {
+            return 600;
+          } else {
+            return 500;
+          }
+        },
         listeners: {
           'yp-point-deleted': '_pointDeleted'
         },
@@ -438,6 +522,12 @@
         _pointsChanged: function (points) {
           if (points) {
             this._updateEmojiBindings();
+          }
+          if (false && points) {
+            this.async(function () {
+              this.$$("#allDownPointsList").fire("iron-resize");
+              this.$$("#allUpPointsList").fire("iron-resize");
+            }, 500);
           }
         },
 
@@ -486,7 +576,11 @@
           // Remove any manually inserted points when the list is updated
           this.set('points', null);
           if (newPost) {
-            this.$.ajax.url = '/api/posts/' + newPost.id + '/points';
+            if (this.host) {
+              this.$.ajax.url = this.host+'/api/posts/' + newPost.id + '/points';
+            } else {
+              this.$.ajax.url = '/api/posts/' + newPost.id + '/points';
+            }
             this.$.ajax.generateRequest();
             if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointForLabel) {
               this.set('labelUp', this.post.Group.configuration.alternativePointForLabel);
@@ -494,9 +588,9 @@
               this.set('labelUp', this.t('point.for'));
             }
             if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointAgainstLabel) {
-                this.set('labelDown', this.post.Group.configuration.alternativePointAgainstLabel);
+              this.set('labelDown', this.post.Group.configuration.alternativePointAgainstLabel);
             } else {
-                this.set('labelDown', this.t('point.against'));
+              this.set('labelDown', this.t('point.against'));
             }
           }
         },
@@ -589,6 +683,7 @@
         },
 
         _newPointResponse: function (event, detail) {
+          this.set('addPointDisabled', false);
           var point = detail.response;
           if (point.value > 0) {
             this.newPointTextCombined = this.t("point.forAdded") + " " + this.truncate(point.content, 21);
@@ -634,6 +729,7 @@
               value: value
             };
             this.$.newPointAjax.generateRequest();
+            this.set('addPointDisabled', true);
           } else {
             window.appUser.loginForNewPoint(this, {content: content, value: value});
           }
@@ -658,7 +754,6 @@
         ifLengthIsRight: function (textValue) {
           return textValue.length > 1;
         }
-
       });
     }());
   </script>

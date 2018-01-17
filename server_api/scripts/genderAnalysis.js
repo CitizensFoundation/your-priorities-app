@@ -61,7 +61,3 @@ models.Domain.find({where: {id: 1}}).then(function(domain) {
     });
   });
 });
-
-
-
-

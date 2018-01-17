@@ -1,12 +1,12 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html">
+<link rel="import" href="../yp-file-upload/yp-file-upload.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
@@ -16,17 +16,16 @@
 
     <style include="iron-flex iron-flex-alignment">
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <yp-edit-dialog double-width id="editDialog" icon="image:photo-camera" action="[[action]]"
-                    method="[[method]]" save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
-      <h2>[[editHeaderText]]</h2>
-
+    <yp-edit-dialog double-width id="editDialog" icon="photo-camera" action="[[action]]"
+                    title="[[editHeaderText]]" method="[[method]]" save-text="[[saveText]]"
+                    next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
       <div class="layout vertical center-center">
-        <file-upload id="imageFileUpload" raised="true" multi="false" method="POST" on-success="_imageUploaded">
-          <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+        <yp-file-upload id="imageFileUpload" raised="true" multi="false" method="POST" on-success="_imageUploaded">
+          <iron-icon class="icon" icon="photo-camera"></iron-icon>
           <span>[[t('image.upload')]]</span>
-        </file-upload>
+        </yp-file-upload>
       </div>
 
       <paper-input id="photographerName"

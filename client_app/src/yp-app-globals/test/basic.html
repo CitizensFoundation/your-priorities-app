@@ -78,12 +78,12 @@
     test('automatically open welcome dialog when new', function(done) {
       var globals = fixture('resetSeenWelcome');
 
-      Polymer.Base.async(function() {
+      this.async(function() {
         var welcomeDialog = globals.querySelector('#welcomeDialog');
         expect(welcomeDialog.opened).to.be.equal(true);
         var seenWelcomeButton = globals.querySelector('#seenWelcomeButton');
         seenWelcomeButton.click()
-        Polymer.Base.async(function() {
+        this.async(function() {
           expect(welcomeDialog.opened).to.be.equal(false);
           done();
         });
@@ -93,7 +93,7 @@
     test('welcome dialog closed on second use', function(done) {
       var globalsTwo = fixture('basic');
 
-      Polymer.Base.async(function() {
+      this.async(function() {
         var welcomeDialog = globalsTwo.querySelector('#welcomeDialog');
         expect(welcomeDialog.opened).to.be.equal(false);
         done();
@@ -106,7 +106,7 @@
 
       windowAppGlobals.activity("actor","verb","object","context");
 
-      Polymer.Base.async(function() {
+      this.async(function() {
 
         var request = server.requests[2];
 
@@ -124,12 +124,12 @@
       var defaultDialog = globals.querySelector('#dialog');
       globals.openDialog("this.is.test");
 
-      Polymer.Base.async(function() {
+      this.async(function() {
         expect(defaultDialog.opened).to.be.equal(true);
         expect(defaultDialog.innerHTML).to.include("this.is.test");
         var defaultOkButton = globals.querySelector('#defaultOkButton');
         defaultOkButton.click()
-        Polymer.Base.async(function() {
+        this.async(function() {
           expect(defaultDialog.opened).to.be.equal(false);
           done();
         });

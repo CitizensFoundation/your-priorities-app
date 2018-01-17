@@ -58,7 +58,7 @@
 
       var basicGroup = basicGroupFixture.querySelector('#group');
 
-      Polymer.Base.async(function() {
+      this.async(function() {
         expect(basicGroup.innerHTML).to.include("assets/flags/64/is.png");
         done();
       },10000);

@@ -2,7 +2,7 @@
 
 <script>
   /**
-   * @polymerBehavior ypThemeBehavior
+   * @polymerBehavior Polymer.ypThemeBehavior
    */
   Polymer.ypThemeBehavior = {
 
@@ -25,19 +25,18 @@
     },
 
     ready: function () {
-      //
       this.push('themes', {
         name: 'Reykjavík',
         '--primary-background-color': 'var(--paper-blue-grey-100)',
-        '--primary-color': 'var(--yrpri-reykjavik-blue-500)',
-        '--primary-color-100': 'var(--yrpri-reykjavik-blue-100)',
-        '--primary-color-200': 'var(--yrpri-reykjavik-blue-200)',
-        '--primary-color-300': 'var(--yrpri-reykjavik-blue-300)',
-        '--primary-color-400': 'var(--yrpri-reykjavik-blue-300)',
-        '--primary-color-600': 'var(--yrpri-reykjavik-blue-300)',
-        '--primary-color-700': 'var(--yrpri-reykjavik-blue-400)',
-        '--primary-color-800': 'var(--yrpri-reykjavik-blue-500)',
-        '--primary-color-900': 'var(--yrpri-reykjavik-blue-600)',
+        '--primary-color': '#103458',
+        '--primary-color-100': '#3C6286',
+        '--primary-color-200': '#3C6286',
+        '--primary-color-300': '#234A6F',
+        '--primary-color-400': '#234A6F',
+        '--primary-color-600': '#234A6F',
+        '--primary-color-700': '#234A6F',
+        '--primary-color-800': '#103458',
+        '--primary-color-900': '#3C6286',
         '--accent-color': 'var(--paper-orange-a700)',
         '--accent-color-100': 'var(--paper-orange-a100)',
         '--accent-color-200': 'var(--paper-orange-a200)',
@@ -286,30 +285,34 @@
         '--icon-general-color': '#fff'
       });
       this.push('fonts', {});
+      this.fire('ak-have-loaded-themes');
     },
 
     setTheme: function (number) {
       if (this.themes[number]) {
         Polymer.updateStyles(this.themes[number]);
       }
-      var fontHtmlImport = this.fonts[number].htmlImport;
 
-      if (!this.fonts[number].htmlImport) {
-        fontHtmlImport = "/styles/fonts/default-font.html";
-      }
+      if (this.fonts[number]) {
+        var fontHtmlImport = this.fonts[number].htmlImport;
 
-      if (window.lastLoadedFont!=fontHtmlImport) {
-        var randomNumber = Math.floor((Math.random() * 100000000) + 1);
-        this.importHref(fontHtmlImport+ "?random="+randomNumber, function(e) {
-          this.async(function () {
-            window.lastLoadedFont = fontHtmlImport;
-            console.log("I have loaded font");
-          })
-        }, function(e) {
-          console.error("Could not load font file "+this.fonts[number]);
-        }, true);
-      } else {
-        console.log("Not loading the same font "+window.lastLoadedFont);
+        if (!this.fonts[number].htmlImport) {
+          fontHtmlImport = "/styles/fonts/default-font.html";
+        }
+
+        if (window.lastLoadedFont!=fontHtmlImport) {
+          var randomNumber = Math.floor((Math.random() * 100000000) + 1);
+          this.importHref(fontHtmlImport+ "?random="+randomNumber, function(e) {
+            this.async(function () {
+              window.lastLoadedFont = fontHtmlImport;
+              console.log("I have loaded font");
+            })
+          }, function(e) {
+            console.error("Could not load font file "+this.fonts[number]);
+          }, true);
+        } else {
+          console.log("Not loading the same font "+window.lastLoadedFont);
+        }
       }
     }
   }

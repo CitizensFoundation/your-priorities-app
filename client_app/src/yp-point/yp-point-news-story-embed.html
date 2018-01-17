@@ -1,9 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
 <dom-module id="yp-point-news-story-embed">
@@ -48,23 +48,29 @@
         border-bottom-width: 1px;
         margin-top: 8px;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
 
-    <div class="layout vertical embedContainer" hidden$="[[!embedData]]">
-      <a href$="[[embedData.url]]" class="container" target="_blank">
-        <div class="layout vertical center-center">
-          <iron-image sizing="contain" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
-          <div id="embedHtml" hidden$="[[!embedData.html]]"></div>
-        </div>
-        <div class="layout vertical">
-          <div class="title">
-            <h2>[[embedData.title]]</h2>
+    <div hidden$="[[!embedData]]">
+      <div class="layout vertical embedContainer">
+        <a href$="[[embedData.url]]" class="container" target="_blank">
+          <div class="layout vertical center-center">
+            <iron-image sizing="contain" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
+            <div id="embedHtml" hidden$="[[!embedData.html]]"></div>
           </div>
-          <div class="description">
-            [[embedData.description]]
+          <div class="layout vertical">
+            <div class="title">
+              <h2>[[embedData.title]]</h2>
+            </div>
+            <div class="description">
+              [[embedData.description]]
+            </div>
           </div>
-        </div>
-      </a>
+        </a>
+      </div>
     </div>
 
   </template>

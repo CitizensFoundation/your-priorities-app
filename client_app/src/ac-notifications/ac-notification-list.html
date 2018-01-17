@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 
@@ -16,6 +16,7 @@
 <dom-module id="ac-notification-list">
   <template>
     <style include="iron-flex iron-flex-alignment">
+
       iron-list {
         padding-bottom: 4px;
         --iron-list-items-container: {
@@ -47,13 +48,19 @@
         color: #777;
         font-size: 14px;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
+
     <div hidden$="[[!unViewedCount]]" class="unViewedCount layout vertical center-center">
       <div>[[unViewedCount]] [[t('unviewed')]]</div>
       <paper-button on-tap="_markAllAsViewed">[[t('notificationMarkAllViewed')]]</paper-button>
     </div>
+
     <div id="scrollableRegion">
-      <iron-list id="list" items="[[notifications]]" as="notification">
+      <iron-list id="list" items="[[notifications]]" scroll-offset="150" as="notification">
         <template>
           <div class="layout vertical">
             <p hidden>[[notification.type]] [[notification.id]] [[notification.AcActivities.length]] pId [[notification.AcActivities.0.Post.id]] v [[notification.AcActivities.0.Point.value]]</p>
@@ -72,7 +79,7 @@
               </ac-notification-list-general-item>
             </template>
             <template is="dom-if" if="[[_notificationType(notification, 'notification.point.comment')]]">
-              <ac-notification-list-general-item icon="communication:chat-bubble-outline"
+              <ac-notification-list-general-item icon="chat-bubble-outline"
                                                  notification="[[notification]]" short-text="[[notification.AcActivities.0.Point.content]]"></ac-notification-list-general-item>
             </template>
           </div>
@@ -91,8 +98,8 @@
       </template>
     </div>
 
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
-    <iron-signals on-iron-signal-logged-in="_userLoggedIn"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
   </template>
 
   <script>
@@ -207,10 +214,11 @@
 
       _newNotificationsError: function (event, detail) {
         console.error("Error in getting new notifications");
-        // Retry starting the time in 120 seconds
-        this.async(function () {
-          this._startTimer();
-        }, 120*1000);
+        this.cancelTimer();
+
+        if (detail && detail.status && detail.status==401) {
+          window.appUser.checkLogin();
+        }
       },
 
       _userChanged: function (user) {
@@ -233,9 +241,11 @@
       },
 
       cancelTimer: function () {
+        console.log("notifications: cancelTimer");
         if (this.timer) {
           clearTimeout(this.timer);
           this.set('timer', null);
+          console.log("notifications: clearTimeout");
         }
       },
 
@@ -281,11 +291,13 @@
       },
 
       _startTimer: function () {
+        console.log("notifications: startTimer");
         this.cancelTimer();
         if (this.user) {
           this.timer = this.async(function () {
             this.loadNewData();
           }.bind(this), this.notificationGetTTL)
+          console.log("notifications: have started timer with delay");
         }
       },
 
@@ -294,8 +306,13 @@
           if (notification.type=='notification.point.new') {
             var activityUser = notification.AcActivities[0].User;
             if (window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) {
-              var event = new CustomEvent("iron-signal", { detail: { name: 'yp-update-points-for-post', data: { postId: notification.AcActivities[0].Post.id } } } );
-              document.dispatchEvent(event);
+              document.dispatchEvent(
+                new CustomEvent("lite-signal", {
+                  bubbles: true,
+                  compose: true,
+                  detail: { name: 'yp-update-points-for-post', data: { postId: notification.AcActivities[0].Post.id } }
+                })
+              );
             }
           }
         }.bind(this));

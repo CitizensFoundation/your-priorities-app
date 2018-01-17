@@ -1,18 +1,16 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
-<link rel="import" href="../../bower_components/file-upload/file-upload.html">
+<link rel="import" href="../yp-file-upload/yp-file-upload.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 
@@ -28,6 +26,7 @@
       .container {
         margin-top: 16px;
         height: 100%;
+        min-height: 350px;
       }
 
       .additionalSettings {
@@ -42,10 +41,10 @@
         margin-top: 16px;
       }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <yp-edit-dialog id="editDialog" double-width icon="face" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
-      <h2>[[editHeaderText]]</h2>
+    <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" double-width icon="face" action="[[action]]"
+                    method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <div class="container">
         <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
           <paper-tab><span>[[t('user.info')]]</span></paper-tab>
@@ -72,17 +71,17 @@
               </paper-input>
 
               <div class="layout vertical additionalSettings">
-                <file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
-                  <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                <yp-file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
+                  <iron-icon class="icon" icon="photo-camera"></iron-icon>
                   <span>[[t('image.profile.upload')]]</span>
-                </file-upload>
+                </yp-file-upload>
               </div>
 
               <div class="layout vertical additionalSettings" hidden>
-                <file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
-                  <iron-icon class="icon" icon="image:photo-camera"></iron-icon>
+                <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
+                  <iron-icon class="icon" icon="photo-camera"></iron-icon>
                   <span>[[t('image.header.upload')]]</span>
-                </file-upload>
+                </yp-file-upload>
               </div>
 
               <yp-language-selector name="defaultLocale" selected-locale="{{user.default_locale}}"></yp-language-selector>
@@ -228,8 +227,8 @@
 
     _clear: function () {
       this.set('user', { name: '', email: '', access: 2 } );
-      this.uploadedProfileImageId = null;
-      this.uploadedHeaderImageId = null;
+      this.set('uploadedProfileImageId', null);
+      this.set('uploadedHeaderImageId', null);
       this.$.headerImageUpload.clear();
       this.$.profileImageUpload.clear();
     },

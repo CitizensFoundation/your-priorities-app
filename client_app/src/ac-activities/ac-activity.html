@@ -1,12 +1,9 @@
 -<link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html">
-<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
-<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
@@ -17,8 +14,6 @@
 <link rel="import" href="./ac-activity-point.html">
 <link rel="import" href="./ac-activity-point-news-story.html">
 <link rel="import" href="./ac-activity-post-status-update.html">
-<link rel="import" href="./ac-activity-group.html">
-<link rel="import" href="./ac-activity-recommended-posts.html">
 
 <dom-module id="ac-activity">
   <template>
@@ -57,7 +52,7 @@
         }
       }
 
-      .activity[is-safari] {
+      .aaaactivity[is-old-safari-or-ie] {
         height: 550px;
         overflow: auto;
       }
@@ -110,10 +105,13 @@
         color: #ddd;
       }
 
+      [hidden] {
+        display: none !important;
+      }
     </style>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <paper-material is-safari$="[[isSafari]]" logged-in-user$="[[loggedInUser]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
+    <paper-material is-old-safari-or-ie$="[[isOldSafariOrIe]]" logged-in-user$="[[hasLoggedInUser]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
       <paper-icon-button title$="[[t('deleteActivity')]]" hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
       <div class="mainActivityContent">
         <div class="layout horizontal">
@@ -143,7 +141,7 @@
     </paper-material>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
   </template>
 
   <script>
@@ -188,19 +186,28 @@
           value: false
         },
 
-        isSafari: {
+        isOldSafariOrIe: {
           type: Boolean,
-          computed: '_isSafari(wide)'
+          computed: '_isOldSafariOrIe(wide)'
         },
 
-        loggedInUser: {
-          type: Object,
-          value: null
+        hasLoggedInUser: {
+          type: Boolean
         }
       },
 
-      _isSafari: function (wide) {
-        return /^((?!chrome|android).)*safari/i.test(navigator.userAgent) && !window.MSStream;
+      _hasLoggedInUser: function (user) {
+        if (user) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      _isOldSafariOrIe: function (wide) {
+        return /^((?!chrome|android).)*safari/i.test(navigator.userAgent) &&
+          !(/10/i.test(navigator.userAgent)) &&
+          !window.MSStream;
       },
 
       _elevationForType: function (type) {

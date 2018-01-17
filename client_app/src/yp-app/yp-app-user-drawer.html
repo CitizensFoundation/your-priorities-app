@@ -1,21 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
-
-<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
-<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
-<link rel="import" href="../yp-app-globals/yp-language-selector.html">
 
 <link rel="import" href="../ac-notifications/ac-notification-list.html">
 <link rel="import" href="../yp-user/yp-user-info.html">
@@ -57,7 +45,7 @@
         </app-header>
       </app-header-layout>
     </paper-material>
-    <iron-signals on-iron-signal-yp-language="_languageEvent"></iron-signals>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
   </template>
 
@@ -99,9 +87,10 @@
       },
 
       _openEdit: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userEdit");
-        dialog.setup(this.user, false, null);
-        dialog.open('edit', { userId: this.user.id });
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("userEdit", function (dialog) {
+          dialog.setup(this.user, false, null);
+          dialog.open('edit', {userId: this.user.id});
+        }.bind(this));
       },
 
       routeChanged: function(newValue, oldValue) {
