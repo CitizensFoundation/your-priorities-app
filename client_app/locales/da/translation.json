@@ -1,0 +1,467 @@
+{
+  "disableDebate": "Deaktiver debat",
+  "welcomeHTML": "velkommen HTML (skal bruges med omhu)",
+  "disableFacebookLoginForGroup": "Deaktiver Facebook Login for gruppe",
+  "facebookPixelId": "Facebook pixel id",
+  "downloadFacebookImagesForUser": "Download Facebook-billeder til brugere til vores db",
+  "customUserRegistrationText": "Brugerdefineret bruger registrerings tekst",
+  "participateAnonymously": "Deltag anonymt",
+  "allowAnonymousUsers": "Tillad anonyme brugere",
+  "deleteUser": "Slet brugerkonto",
+  "areYouSureYouWantToDeleteUser": "Er du sikker på at du vil slette din brugerkonto?",
+  "areYouReallySureYouWantToDeleteUser": "Er du 100% sikker på, at du vil slette din konto? Alle dine pointer, kommentarer og reaktioner slettes, og alle dine ideer bliver anonymiseret!",
+  "alternativePointForLabel": "Alternativt mening for Tag",
+  "alternativePointAgainstLabel": "Alternativt mening imod Tag",
+  "sharePoint": "Del mening",
+  "alternativePointForHeader": "Alternativt mening for header",
+  "alternativePointAgainstHeader": "Alternativt mening imod header",
+  "or": "eller",
+  "hidePointAuthor": "Skjul forfatter",
+  "hidePostAuthor": "Skjul afsender",
+  "defaultLocationLongLat": "Default beliggenhed længdegrad, breddegrad",
+  "disableCommunityDomainUpLink": "Deaktiver Domain Up Link",
+  "analyticsTrackerCode": "Google Analytics Id",
+  "filterIdeas": "Filtrer ideer",
+  "edit": "Rediger",
+  "delete": "Slet",
+  "addEmoji": "Tilføj Emoji",
+  "closeComments": "Luk kommentarer",
+  "openComments": "Åben kommentarer",
+  "deleteActivity": "Slet aktivitet på newsfeed",
+  "pointsFor": "Meninger for",
+  "pointsAgainst": "Meninger imod",
+  "pointForShort": "For",
+  "pointAgainstShort": "Imod",
+  "domainToastCreated": "Domæne oprettet",
+  "domainToastUpdated": "Domæne gemt",
+  "communityToastCreated": "Fællesskab oprettet",
+  "communityToastUpdated": "Fællesskab gemt",
+  "groupToastCreated": "Gruppe oprettet",
+  "groupToastUpdated": "Gruppe gemt",
+  "userToastCreated": "Opret bruger",
+  "userToastUpdated": "Gemt bruger",
+  "hideGroupHeader": "Skjul gruppens header",
+  "errorResetTokenNotFoundOrUsed": "Kodeord nulstillet taget ikke fundet eller er allerede brugt",
+  "addedAnIdea": "Tilføjet en ide",
+  "recommendedPosts": "Anbefalet",
+  "noComments": "Ingen kommentarer",
+  "optional": "Valgfri",
+  "additionalGroupConfig":"Yderligere Gruppe konfig",
+  "defaultDataImage":"Default Data billede",
+  "defaultPostImage":"Default sendt billede",
+  "hideAllTabs":"Skjul alle Tabs",
+  "hideNewPostOnPostPage":"Skjul nyt indlæg på indlægssiden",
+  "newPointOptional":"Gør ny mening valgfrit",
+  "hideHelpIcon":"Skjul hjælp ikonet",
+  "hideEmoji":"Skjul Emojis",
+  "endorsementButtonsHeart":"Hjerter",
+  "endorsementArrows":"Pile",
+  "endorsementThumbs":"Tommelfingre",
+  "endorsementHats":"Hatte",
+  "endorsementButtons": "Påtegningsknapper",
+  "bulkStatusUdateForInfo": "Klik på ideerne for mere information",
+  "urlLink": "Link",
+  "bulkStatusUdateFor": "Status updates for ideer om",
+  "inviteNotFoundOrAlreadyUsed": "Invitation ikke fundet eller allerede brugt",
+  "reportConfirmation": "Er du sikker på, at du vil rapportere dette indhold for at have brudt reglerne på denne hjemmeside?",
+  "uniqueStatusMessage": "Enestående statusmeddelelse",
+  "templateContent": "Skabelonens indhold",
+  "bulkStatusUpdate": "Bulk Status Updates",
+  "close": "Luk",
+  "editTemplates": "Rediger skabeloner",
+  "editTemplate": "Rediger skabelon",
+  "deleteTemplate": "Slet skabelon",
+  "addTemplate": "Tilføj skabelon",
+  "save": "Gem",
+  "saved": "Gemt",
+  "config": "Konfig",
+  "newBulkStatusUpdate": "Ny Bulk Status Update",
+  "editBulkStatusUpdate": "Rediger bulk status opdatering",
+  "bulkStatusUdateConfig": "Bulk Status Update konfig",
+  "bulkStatusUpdatesTemplates": "Bulk Status Updates Skabeloner",
+  "selectStatusTemplate": "Skabelon",
+  "moveToGroup": "Flyt",
+  "noIdeasHere": "Der er ingen ideer her.",
+  "organizationsAdmin": "Organisationer Admin",
+  "unviewed": "Ikke set",
+  "notificationMarkAllViewed": "Marker alle set",
+  "notificationConfirmMarkAllViewed": "Bekræft, at du vil markere alle dine anmeldelser som vist",
+  "upVotedPoint": "Stemt på din mening",
+  "downVotedPoint": "Stemt ned på din mening",
+  "endorsedYourPost": "Tilsluttet sig for din ide",
+  "opposedYourPost": "Modsat sig imod din ide",
+  "notifications": "Underretninger",
+  "votingDisabled": "Afstemning er ikke aktiv",
+  "pageNotFound": "Siden, hvor du anmoder om app´en, findes ikke ",
+  "participate": "Deltag",
+  "emojiSearchResults": "Søge resultater",
+  "recentlyUsedEmoji": "Nyligt brugt",
+  "findAnEmoji": "Find emoji",
+  "cancel": "Aflys",
+  "ok": "Ok",
+  "next": "Næste",
+  "create": "Opret",
+  "confirm": "Bekræft",
+  "access": "Adgang",
+  "searchFor": "Søg efter...",
+  "title": "Titel",
+  "selectLanguage": "Vælg sprog",
+  "update": "Updater",
+  "errorCantConnect": "Kan ikke oprette forbindelse til serveren. Prøv igen lidt senere. Dette kan skyldes høj trafik eller en softwareopgradering.",
+  "errorNotFound": "Ikke fundet...",
+  "errorNotAuthorized": "Du har ikke adgang til dette!",
+  "generalError": "Vi har fået besked om at der er sket en uventet fejl.",
+  "stats": {
+    "posts": "Antal ideer",
+    "discussions": "Antal diskussioner",
+    "communities": "Antal fællesskaber",
+    "groups": "Antal grupper",
+    "users": "Antal brugere"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "Dit kodeord er blevet ændret, og du er nu logget ind.",
+    "method": "Metode",
+    "frequency": "Frekvens",
+    "myPosts": "Mine ideer",
+    "muted": "Sluk",
+    "browser": "Browser",
+    "email": "Email",
+    "asItHappens": "Som det sker",
+    "daily": "Daglig",
+    "hourly": "Hver time",
+    "weekly": "Hver uge",
+    "monthly": "Hver måned",
+    "myPostsEndorsements": "Ideer, som jeg kan li´",
+    "myPoints": "Mine meninger",
+    "myPointEndorsements": "Meninger, som jeg kan li´",
+    "allCommunity": "Alle underretninger fra mine fællesskaber",
+    "allGroup": "Alle underretninger fra mine grupper",
+    "invite_accepted_for": "Deltager i"
+  },
+
+  "pages": {
+    "addLocale": "Tilføj placering",
+    "unPublish": "Afpublicer",
+    "deletePage": "Slet",
+    "addPage": "Tilføj en ny side",
+    "managePages": "Administrer sider"
+  },
+
+  "archived": "Arkiveret",
+
+  "status": {
+    "select": "Vælg status",
+    "active": "Aktiv",
+    "featured": "Udvalgte",
+    "archived": "Arkiveret",
+    "hidden": "Skjult",
+    "published": "Åben",
+    "successful": "Succesfuld",
+    "failed": "Mislykket",
+    "inProgress": "I gang"
+  },
+
+  "pluralStatus": {
+    "published": "Åbne ideer",
+    "successful": "Succesfulde ideer",
+    "failed": "Mislykkede ideer",
+    "inProgress": "Igangværende ideer",
+    "inVoting": "Ideer i afstemning"
+  },
+
+  "activity": {
+    "confirmDelete": "Bekræft, at du vil slette denne aktivitet?",
+    "post": {
+      "new": "Ide",
+      "status": {
+       "change": "Status opdatering"
+      }
+    },
+    "point": {
+      "forAdded": "Tilføjet mening for",
+      "againstAdded": "Tilføjet mening imod",
+      "new": "Mening",
+      "newFor": "Meninger for",
+      "newAgainst": "Mening imod",
+      "newComment": "Kommentar",
+      "newsStory": {
+        "new": "Brugernyheder"
+      }
+    }
+  },
+  "name": "Navn",
+
+  "domain": {
+    "createOrganization": "Opret organisation",
+    "edit": "Rediger domæne",
+    "info": "Indstillinger",
+    "apis": "APIs",
+    "settings": "Supplerende",
+    "onlyAdminsCanCreateCommunities": "Kun administratorer kan oprette fællesskaber"
+  },
+
+  "domains": "Domæner",
+  "communities": "Fællesskaber",
+  "groups": "Grupper",
+
+  "myDomains": "Mine domæner",
+  "myCommunities": "Mine fællesskaber",
+  "myGroups": "Mine grupper",
+  "myAdminCommunities": "Fælleskaber Admin",
+  "myAdminGroups": "Grupper Admin",
+
+  "community": {
+    "alternativeHeader": "Alternativ header",
+    "edit": "Rediger fællesskab",
+    "hostname": "Værtsnavn",
+    "admins": "Fælleskaber admins",
+    "users": "Brugere af fællesskaber",
+    "delete": "Slet fælleskab",
+    "new": "Opret fælleskab",
+    "public": "Offentlig fælleskab",
+    "closed": "Lukket fælleskab",
+    "secret": "Hemmelig fælleskab",
+    "pages":"Fælleskabssider",
+    "onlyAdminsCanCreateGroups": "Kun administratorer kan oprette grupper"
+  },
+
+  "posts": {
+    "posts": "Ideer",
+    "open": "Åben",
+    "inProgress": "I gang",
+    "successful": "Lykkedes",
+    "failed": "Mislykkedes",
+    "map": "Landkort",
+    "noMapPosts": "Ingen ideer om placering",
+    "newUserImage": "Tilføj billed"
+  },
+
+  "form": {
+    "invalid": "Udfyld hele formularen"
+  },
+
+  "post": {
+    "most_debated": "Mest diskuteret",
+    "deleteConfirmation": "Er du sikker på, at du vil slette denne ide?",
+    "move": "Flyt ide",
+    "confirmMove": "Bekræft at du vil flytte",
+    "statusChangeConfirmText": "Er du sikker på, at du vil sende alle, der støtter eller modsætter sig denne ide en email?",
+    "statusChangeSelectNewStatus": "New status",
+    "statusChangeContent": "Ændre status for indhold, der skal sendes til alle tilhængere og modstandere",
+    "statusChange": "Send status ændringsemail",
+    "statusChangeSent": "Har sent statusændringsemail",
+    "noLocation": "Ingen placering",
+    "shareInfo": "Del ide",
+    "description": "Beskrivelse",
+    "debate": "Debat",
+    "formInvalid": "Udfyld hele formularen",
+    "status": "Status for denne ide",
+    "new": "Ny ide",
+    "searchingFor": "Søger efter",
+    "top": "Populær",
+    "newest": "Senest",
+    "random": "Tilfældigt",
+    "inProgress": "I gang",
+    "groups": "Postgrupper",
+    "search": "Søg efter ideer",
+    "add_new":"Tilføj ny ide",
+    "up_vote":"Stem idéen op",
+    "down_vote":"Stem idéen ned",
+    "report": "Rapporter ide",
+    "notify": "Underret mig om denne ide",
+    "share": "Del denne ide",
+    "yourPost": "Ide",
+    "yourPoint": "Meninger for",
+    "location": "Placering",
+    "photo": "Billede",
+    "photographerName": "Fotograf",
+    "newPhoto": "Ny billede",
+    "photoUpdate": "Updater billede",
+    "photoDeleteConfirmation": "Er du sikker du vil slette dette billede?",
+    "tabs": {
+      "debate": "Debat",
+      "news": "Nyheder",
+      "location": "Placering",
+      "photos": "Billeder",
+      "solutions": "Løsninger",
+      "not_implemented": "Ikke tilføjet endnu"
+    },
+    "cover": {
+      "media": "Vælg media cover",
+      "imageInfo": "Hvis du tilføjer et billede, vil folk sandsynligvis dele det. Og del din idé om sociale medier!",
+      "map": "Landkort",
+      "streetview": "Street view",
+      "image": "Billede",
+      "none": "Ingen"
+    },
+    "edit": "Rediger ide",
+    "delete": "Slet ide",
+    "addNewIntroBoxText": "Brug piletasterne til at tilføje nye ideer"
+  },
+
+  "short_word": {
+    "in": "Inde"
+  },
+
+  "category": {
+    "new": "Ny kategori",
+    "select": "Vælg kategori"
+  },
+
+  "categories": {
+    "all": "alle kategorier",
+    "the_all": "Alle kategorier"
+  },
+
+  "point": {
+    "report": "Rapporter",
+    "againstAdded": "Tilføjet mening imod",
+    "forAdded": "Tilføjet meninger for",
+    "confirmDelete": "Bekræft at du vil slette denne mening",
+    "theseAreFor": "Meninger for",
+    "theseAreAgainst": "Meninger imod",
+    "point": "Mening",
+    "for": "Skriv mening for...",
+    "against": "Skriv mening imod..",
+    "add_up": "Tilføj mening for",
+    "add_down": "Tilføj mening imod",
+    "helpful": "Afstem som nyttigt",
+    "not_helpful": "Afstem som ikke nyttigt",
+    "addNewsStory": "Tilføj en nyhedshistorie",
+    "postNewsStory": "Tilføj nyhedshistorie",
+    "addComment": "Din kommentar",
+    "postComment": "Send",
+    "comments": "Kommentarer",
+    "howToWrite": "Lad os brainstorme om de bedste meninger for og imod og tænke i løsninger...",
+    "commentToShort": "Teksten er for kort!"
+  },
+
+  "news": "Nyheder",
+
+  "uploading": {
+    "inProgress": "Uploader..."
+  },
+
+  "notice": {
+    "ok": "Ok",
+    "feature_not_implemented_a": "Denne funktion er endnu ikke implementeret i denne skrivebeskyttet preview af Your Priorities 6.0.",
+    "feature_not_implemented_b": "Lad os vide, hvad du synes :)",
+    "welcome_a": "Dette er en skrivebeskyttet preview af Your Priorities 6.0, så du kun kan se indholdet før tilføjelse. Feedback er meget værdsat.",
+    "welcome_b": "I øjeblikket virker det kun i Chrome, men understøtter alle større browsere med udgivelsesdato den 1. kvartal 2015.",
+    "welcome_heading": "Velkommen til Your Priorities 6.0 teknologiske preview",
+    "continue": "Fortsæt til preview",
+    "deleteConfirmation": "Vil du gerne slette denne gruppe?"
+  },
+
+  "maps": {
+    "searchInput": "Adresse",
+    "search": "Søg"
+  },
+
+  "group": {
+    "showWhoPostedPosts": "Vis afsenderen",
+    "locationHidden": "Deaktiver placering",
+    "group": "Gruppe",
+    "admins": "Gruppe administrator",
+    "users": "Gruppebrugere",
+    "new": "Tilføj en ny gruppe",
+    "edit": "Rediger gruppe",
+    "invite": "Inviter en ven",
+    "invite_to_group": "Inviter en ven til denne gruppe",
+    "share_group": "Del denne gruppe",
+    "delete": "Slet gruppe",
+    "objectives": "Mål",
+    "public": "Offentlig gruppe",
+    "closed": "Lukket gruppe",
+    "secret": "Hemmelig gruppe",
+    "openToCommunity": "Åben til fælleskab",
+    "canVote": "Afstemning tilladt",
+    "canAddNewPosts": "Ny ideer tilladt",
+    "config": "Konfig",
+    "update": "Updater gruppe"
+  },
+
+  "membership": {
+    "joined": "Du er blevet tilmeldt",
+    "left": "Du har forladt"
+  },
+
+  "menu": {
+    "my_pages": "Min profil",
+    "about": "Om",
+    "help": "Hjælp",
+    "settings": "Indstillinger"
+
+  },
+
+  "users": {
+    "removeAdmin": "Fjern admin",
+    "addAdmin": "Tilføj admin",
+    "removeUser": "Fjern bruger",
+    "inviteUser": "Inviter bruger",
+    "email": "email",
+    "removeFromOrganization": "Fjern",
+    "addToOrganization": "Organisation",
+    "selectOrganization": "Vælg organisation"
+  },
+
+  "user": {
+    "loginCompleteFor": "Login for",
+    "acceptInvite": "Accepter invitation for deltagelse",
+    "hasSentYouAndInvitation": "har sendt dig en invitation for at deltage i",
+    "acceptInviteInstructions": "klik på knappen herunder for at acceptere invitationen",
+    "setEmail": "Tilføj email til kontoen",
+    "linkAccount": "Få forbindelse til kontoen",
+    "setEmailInfo": "Tilføj email til kontoen",
+    "existsLinkAccountInfo": "Indtast dit kodeord for at oprette adgang til din e-mail-konto.",
+    "logoutCompleteFor": "Log ud for",
+    "loggedInWithSaml": "Logget på med SAML",
+    "loggedInWithFacebook": "Logget på med Facebook",
+    "facebookLogin": "Facebook login",
+    "info":"Info",
+    "notifications": "Underretninger",
+    "name": "Fuld navn",
+    "email": "Email",
+    "edit": "Rediger bruger",
+    "password": "Adgangskode",
+    "forgotPassword": "Opret ny adgangskode",
+    "forgotPasswordInstructions": "Indtast din e-mail-adresse, og vi vil sende dig en email med et link, du kan bruge til at oprette en ny adgangskode.",
+    "forgotPasswordEmailHasBeenSent": "E-mail med adgangskodeindstillinger er blevet sendt.",
+    "resetPassword": "Nulstil din adgangskode",
+    "resetPasswordInstructions": "Opret en ny adgangskode, der er svær at gætte",
+    "login": "Login",
+    "create": "Opret bruger",
+    "cancel": "Ophæv",
+    "logout": "Log ud",
+    "newPassword": "ny adgangskode",
+    "register": "Ny bruger",
+    "alreadyRegisterred": "Denne email er allerede registreret. Du kan oprette et nyt kodeord, hvis det er nødvendigt.",
+    "registrationError": "Fejl ved registrering",
+    "loginError": "Fejl ved login",
+    "completeForm": "Udfyld vores formular korrekt",
+    "loginNotAuthorized": "Forkert email eller adgangskode"
+  },
+
+  "other": "Andet",
+
+  "socialMedia": "Social Media",
+
+  "location": {
+    "set": "Indstil placering"
+  },
+  "image": {
+    "upload": "Upload billede",
+    "logo": {
+      "upload": "Upload logo"
+    },
+    "header": {
+      "upload": "Upload header"
+    },
+    "profile": {
+      "upload": "Upload profil-billede"
+    }
+  },
+  "theme": {
+    "choose": "Vælg et tema"
+  }
+}

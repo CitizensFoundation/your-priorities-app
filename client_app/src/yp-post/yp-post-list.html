@@ -451,12 +451,7 @@
           count: this.postsCount
         } );
 
-        if (!this.posts) {
-          this.set('posts', []);
-        }
-        posts.forEach(function(post) {
-          this.push('posts', post);
-        }.bind(this));
+        this.set('posts', posts);
 
         if (posts.length==0 && (this.posts==null || this.posts.length==0)) {
           this.set('noPosts', true);
