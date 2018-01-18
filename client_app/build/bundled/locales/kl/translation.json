@@ -1,0 +1,467 @@
+{
+  "disableDebate": "Oqallinneq unitsiguk",
+  "welcomeHTML": "Tikilluarit HTML (mianersorluni atugassiaq)",
+  "disableFacebookLoginForGroup": "Facebookimi gruppimut isissutissaq unitsiguk",
+  "facebookPixelId": "Facebookimi pixelimik atuisup aqqa",
+  "downloadFacebookImagesForUser": "Assit Facebookimiittut db-tsinnik atuisunut aakkit",
+  "customUserRegistrationText": "Atuisup ilanngunnermini allaffissaa",
+  "participateAnonymously": "Kinaassutsit isertorlugu peqataagit",
+  "allowAnonymousUsers": "Atuisut kinaassutsiminnik isertuussisut piginnaatikkit",
+  "deleteUser": "Atuisup atuisuunera atorunnaarsiguk",
+  "areYouSureYouWantToDeleteUser": "Atuisuunerit ilumut atorunnaarsinniarpiuk?",
+  "areYouReallySureYouWantToDeleteUser": "Atuisuunerpit atorunnaarsinnissaa 100 procentimik aalajangiuppiuk? Atuisuujunnaaruit isummersornitit, oqaaseqaatitit tapersersuinitillu tamarmik peerneqassapput isumassarsiatullu saqqummiussanni kinaassutsit ersikkunnaassaaq.",
+  "alternativePointForLabel": "Ilanngussamut isumaqataanermi qisuariaat alla",
+  "alternativePointAgainstLabel": "Ilanngussamut akerliunermi qisuariaat alla",
+  "sharePoint": "Isummat siammarteruk",
+  "alternativePointForHeader": "Qulequttamut isumaqataanermut tunngavilersuut alla",
+  "alternativePointAgainstHeader": "Qulequttamut akerliunermi tunngavilersuut alla",
+  "or": "Imaluunniit",
+  "hidePointAuthor": "Isummersortup aqqa isertortunngortiguk",
+  "hidePostAuthor": "Nassitsisup aqqa isertortunngortiguk",
+  "defaultLocationLongLat": "Allorniusani sanimukartuni tukimukartunilu sumiiffik",
+  "disableCommunityDomainUpLink": "Domain Up Linki unitsiguk",
+  "analyticsTrackerCode": "Google Analyticsimik atuisup kinaassusaa ",
+  "filterIdeas": "Isumassarsiat immikkoortitikkit",
+  "edit": "Aaqqissoruk",
+  "delete": "Peeruk",
+  "addEmoji": "Ilisarnaammik ilanngussigit",
+  "closeComments": "Oqaaseqaatit matukkit",
+  "openComments": "Oqaaseqaatit ammakkit",
+  "deleteActivity": "Iliuuseq newsfeedimit peeruk",
+  "pointsFor": "Isumaqataasut tunngavilersuutaat",
+  "pointsAgainst": "Akerliusut tunngavilersuutaat",
+  "pointForShort": "Isumaqataasut",
+  "pointAgainstShort": "Akerliusut",
+  "domainToastCreated": "Domain pilersinneqarpoq",
+  "domainToastUpdated": "Domain toqqorneqarpoq",
+  "communityToastCreated": "Ataatsimoorfik pilersinneqarpoq",
+  "communityToastUpdated": "Ataatsimoorfik toqqorneqarpoq",
+  "groupToastCreated": "Eqimattaq pilersinneqarpoq",
+  "groupToastUpdated": "Eqimattaq toqqorneqarpoq",
+  "userToastCreated": "Atuisunngorit",
+  "userToastUpdated": "Atuisoq toqqorneqarpoq",
+  "hideGroupHeader": "Eqimattap qulequtaa ersikkunnaartiguk",
+  "errorResetTokenNotFoundOrUsed": "Isissutissaq nutarteruk atorneqarpoq nassaarineqanngilaq imaluunniit atorneqarsimasuuvoq",
+  "addedAnIdea": "Isumassarsiamik ilanngussivoq",
+  "recommendedPosts": "Innersuussutigineqarpoq",
+  "noComments": "Oqaaseqaatissaqanngilanga",
+  "optional": "Nammineq qinigassaq",
+  "additionalGroupConfig":"Eqimattaliorneq",
+  "defaultDataImage":"Assitaliussat pillugit tamatigoortumik paasissutissat",
+  "defaultPostImage":"Assit tamatigoortut",
+  "hideAllTabs":"Tabit tamaasa ersikkunnaarsikkit",
+  "hideNewPostOnPostPage":"Nassiussat nutaaq Post Pagemi ersikkunnaarsiguk",
+  "newPointOptional":"Tunngavilersuut nutaaq nammineq qinigassanngortiguk",
+  "hideHelpIcon":"Ikiortip ilisarnaataa ersikkunnaarsiguk",
+  "hideEmoji":"Ilisarnaartit ersikkunnaartikkit",
+  "endorsementButtonsHeart":"Uummatit",
+  "endorsementArrows":"Qarsut",
+  "endorsementThumbs":"Kullut",
+  "endorsementHats":"Natsat",
+  "endorsementButtons": "Akuerinninnermi tuugassat",
+  "bulkStatusUdateForInfo": "Itinerusumik paasissutissiivimmukarit",
+  "urlLink": "Quppernermut iserfissaq",
+  "bulkStatusUdateFor": "Isumassarsiat pillugit killiffik",
+  "inviteNotFoundOrAlreadyUsed": "Qaaqqusissut nassaassaanngilaq imaluunniit atorneqareerpoq",
+  "reportConfirmation": "Imarisaa quppernermi maleruagassanik unioqqutitsisutut ilumut nalunaarutigerusuppiuk?",
+  "uniqueStatusMessage": "Killiffik pillugu asseqanngitsumik nalunaarut",
+  "templateContent": "Imarisaanut ilisserut",
+  "bulkStatusUpdate": "Killiffinnik annertuunik nutarterinerit",
+  "close": "Matujuk",
+  "editTemplates": "Imarisai aaqqissukkit",
+  "editTemplate": "Imarisaa aaqqissoruk",
+  "deleteTemplate": "Imarisaa peeruk",
+  "addTemplate": "Imassaanik nutaamik ilanngussigit",
+  "save": "Toqqoruk",
+  "saved": "Toqqoreerpoq",
+  "config": "Config",
+  "newBulkStatusUpdate": "Killiffimmik annertuumik nutarterineq",
+  "editBulkStatusUpdate": "Killiffimmik annertuumik aaqqiineq",
+  "bulkStatusUdateConfig": "Annertuumik nutarterinermi config",
+  "bulkStatusUpdatesTemplates": "Annertuumik nutarterinerup imarisai",
+  "selectStatusTemplate": "Imarisaq",
+  "moveToGroup": "Ingerlagit",
+  "noIdeasHere": "Uani isumassarsiaqanngilaq",
+  "organizationsAdmin": "Nittartakkamik aqutsivik",
+  "unviewed": "Alakkarneqarsimanngilaq",
+  "notificationMarkAllViewed": "Alakkaanerit tamaasa markeerikkit",
+  "notificationConfirmMarkAllViewed": "Ilanngussavit tamakkerlutik alakkarneqarsimasutut markeererneqarnissaat akueriuk ",
+  "upVotedPoint": "Tunngavilersuutit taperserneqarpoq",
+  "downVotedPoint": "Tunngavilersuutit taperserneqanngilaq",
+  "endorsedYourPost": "Isummat akuerineqarpoq",
+  "opposedYourPost": "Isummat akerlilerneqarpoq",
+  "notifications": "Ilisimatitsissutit",
+  "votingDisabled": "Taasisoqarsinnaanngilaq",
+  "pageNotFound": "Qupperneq App-ilu qinnutigineqartut nassaarineqanngillat",
+  "participate": "Peqataagit",
+  "emojiSearchResults": "Ujaasinerup inerneri",
+  "recentlyUsedEmoji": "Atorneqaqqammerpoq",
+  "findAnEmoji": "Ilisarnaat ujaruk",
+  "cancel": "Pisussaajunnaarsiguk",
+  "ok": "Ok",
+  "next": "Tullia",
+  "create": "Pilersiguk",
+  "confirm": "Akueriuk",
+  "access": "Isersinnaatitaaneq",
+  "searchFor": "Una ujaruk..",
+  "title": "Qulequtaq",
+  "selectLanguage": "Oqaatsinik toqqaagit",
+  "update": "Nutarterineq",
+  "errorCantConnect": "Serverimut attaveeruppoq. Kingusinnerusukkut misileqqiguk. Sofwaremik nutarterinermik atuisulluunniit amerlavallaarnerannik pissuteqarpoq.",
+  "errorNotFound": "Nassaarineqanngilaq",
+  "errorNotAuthorized": "Ilinnut iserfigeqquneqanngilaq!",
+  "generalError": "Naatsorsuutigisaanngitsumik ajutoorneq, tamatuminnga ilisimatinneqarpugut.",
+  "stats": {
+    "posts": "Isumassarsiat amerlassusiat",
+    "discussions": "Oqallittut amerlassusiat",
+    "communities": "Ataatsimoorfiit amerlassusiat",
+    "groups": "Eqimattat amerlassusiat",
+    "users": "Atuisut amerlassusiat"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "Isissutissat allanngorpoq isertinneqareerputillu",
+    "method": "Periaaseq",
+    "frequency": "Akuttussuseq",
+    "myPosts": "Isumassarsiakka",
+    "muted": "Qamiguk",
+    "browser": "Browseri",
+    "email": "Emaili",
+    "asItHappens": "Pisoqarneratigut",
+    "daily": "Ullut tamaasa",
+    "hourly": "Akunnerit tamaasa",
+    "weekly": "Sapaatit akunneri tamaasa",
+    "monthly": "Qaammatit tamaasa",
+    "myPostsEndorsements": "Isumassarsiat nuannarisakka",
+    "myPoints": "Tunngavilersuutikka",
+    "myPointEndorsements": "Tunngavilersuutit nuannarisakka",
+    "allCommunity": "Ataatsimoorfinni peqataaffigisanni ilisimatitsissutit tamarmiusut",
+    "allGroup": "Eqimattani peqataaffigisanni ilisimatitsissutit tamarmiusut",
+    "invite_accepted_for": "Peqataavoq"
+  },
+
+  "pages": {
+    "addLocale": "Sumiiffiit ilanngutiguk",
+    "unPublish": "Saqqumiunnaarsiguk",
+    "deletePage": "Peeruk",
+    "addPage": "Nutaamik qupperniliorit",
+    "managePages": "Qupperit aaqqissuutikkit"
+  },
+
+  "archived": "Toqqorneqarpoq",
+
+  "status": {
+    "select": "Killiffik toqqaruk",
+    "active": "Isersimavoq",
+    "featured": "Toqqakkat",
+    "archived": "Toqqorneqarsimavoq",
+    "hidden": "Ersigunnaarsitaavoq",
+    "published": "Ammaruk",
+    "successful": "Iluatsilluarpoq",
+    "failed": "Iluatsinngitsoorpoq",
+    "inProgress": "Ingerlaarpoq"
+  },
+
+  "pluralStatus": {
+    "published": "Isumassarsiat ammasut",
+    "successful": "Isumassarsiat iluatsilluartut",
+    "failed": "Isumassarsiat iluatsinngitsut",
+    "inProgress": "Isumassarsiat ineriartortinneqartut",
+    "inVoting": "Isumassarsiat qinersinermiittut"
+  },
+
+  "activity": {
+    "confirmDelete": "Suliniut manna peersusuppiuk?",
+    "post": {
+      "new": "Isuma",
+      "status": {
+       "change": "Killiffimmik nutarterineq"
+      }
+    },
+    "point": {
+      "forAdded": "Isumaqataaneq ilanngutereerpoq",
+      "againstAdded": "Akerliuneq ilanngutereerpoq",
+      "new": "Tunngavilersuut",
+      "newFor": "Isumaqataanermi tunngavilersuut",
+      "newAgainst": "Akerliunermi tunngavilersuut",
+      "newComment": "Oqaaseqaat",
+      "newsStory": {
+        "new": "Atuisunit nutaarsiassat"
+      }
+    }
+  },
+  "name": "Ateq",
+
+  "domain": {
+    "createOrganization": "Siunertaqaqatigiinnik pilersitsigit",
+    "edit": "Domain aaqqiguk",
+    "info": "Iliuuserisinnaasat",
+    "apis": "APIs",
+    "settings": "Allat saniatigut ilanngunneqarsinnaasoq",
+    "onlyAdminsCanCreateCommunities": "Aaqqissuisut kisimik ataatsimoorfinnik pilersitsisinnaapput"
+  },
+
+  "domains": "Domainit",
+  "communities": "Ataatsimoorfiit",
+  "groups": "Eqimattat",
+
+  "myDomains": "Domainit nutaat",
+  "myCommunities": "Ataatsimoorfiit peqataaffigisakka",
+  "myGroups": "Eqimattat peqataaffigisakka",
+  "myAdminCommunities": "Ataatsimoorfinnik aaqqissuisoq",
+  "myAdminGroups": "Eqimattanik aaqqissuisoq",
+
+  "community": {
+    "alternativeHeader": "Qulequtsiunneqarsinnaasoq alla",
+    "edit": "Ataatsimoorfik aaqqissoruk",
+    "hostname": "Ingerlatsisup aqqa",
+    "admins": "Attasimoorfinnik aaqqissuisut",
+    "users": "Ataatsimoorfinnik atuisut ",
+    "delete": "Ataatsimoorfik peeruk",
+    "new": "Ataatsimoorfimmik pilersitsigit",
+    "public": "Ataatsimoorfik tamanut ammasoq",
+    "closed": "Ataatsimoorfik matoqqasoq",
+    "secret": "Ataatsimoorfik isertortoq",
+    "pages":"Ataatsimoorfimmi quppernerit",
+    "onlyAdminsCanCreateGroups": "Aaqqissuisut kisimik eqimattaliorsinnaapput"
+  },
+
+  "posts": {
+    "posts": "Isumassarsiat",
+    "open": "Ammavoq",
+    "inProgress": "Ingerlavoq",
+    "successful": "Iluatsilluarpoq",
+    "failed": "Iluatsinngitsoorpoq",
+    "map": "Nunap assinga",
+    "noMapPosts": "Sumiissusersiuminaappoq",
+    "newUserImage": "Assimik ilanngussigit"
+  },
+
+  "form": {
+    "invalid": "Immersugassamik immersuinerit naammassiuk"
+  },
+
+  "post": {
+    "most_debated": "Oqallisigineqarnerpaat",
+    "deleteConfirmation": "Isumassarsiaq ilumut peerusuppiuk?",
+    "move": "Isumassarsiaq nuuguk",
+    "confirmMove": "Nuussiniarnerit uppernarsaruk",
+    "statusChangeConfirmText": "Tapersersuisut akerliusullu tamaasa emailerfigerusuppigit?",
+    "statusChangeSelectNewStatus": "Killiffik nutaaq",
+    "statusChangeContent": "Killiffimmik allannguineq tapersiisunut akerliusunullu tamanut nassiussassaq",
+    "statusChange": "Killiffimmik allannguinerit emailikkut nassiutikkit",
+    "statusChangeSent": "Killiffimmik allannguinerit emailikkut nassiutereerput",
+    "noLocation": "Sumiissusersineqanngilaq",
+    "shareInfo": "Isumassarsiat siammarteruk",
+    "description": "Allaatiginninneq",
+    "debate": "Oqallinneq",
+    "formInvalid": " Immersugassamik immersuinerit naammassiuk",
+    "status": "Isumassarsiap killiffia",
+    "new": "Isumassarsiaq nutaaq",
+    "searchingFor": "Una ujarpara",
+    "top": "Nuannarineqartoq",
+    "newest": "Kingullerpaat",
+    "random": "Arlaannik",
+    "inProgress": "Ingerlavoq",
+    "groups": "Nassitsivissat",
+    "search": "Isumassarsianik ujaasigit",
+    "add_new":"Isumassarsiamik nutaamik ilanngussigit",
+    "up_vote":"Isumassarsiamut tapersiigit",
+    "down_vote":"Isumassarsiamut akerliugit",
+    "report": "Isumassarsiaq nalunaarutigiuk",
+    "notify": "Isumassarsiaq pillugu ilisimatinnga",
+    "share": "Isumassarsiaq siammarteruk",
+    "yourPost": "Isumassarsiaq",
+    "yourPoint": "Isumaqataasut",
+    "location": "Sumiiffik",
+    "photo": "Assi",
+    "photographerName": "Assiliisoq",
+    "newPhoto": "Assi nutaaq",
+    "photoUpdate": "Assi nutarteruk",
+    "photoDeleteConfirmation": "Asseq ilumut peerusuppiuk?",
+    "tabs": {
+      "debate": "Oqallinneq",
+      "news": "Nutaarsiassat",
+      "location": "Sumiiffik",
+      "photos": "Assit",
+      "solutions": "Aaqqiissutaasut",
+      "not_implemented": "Suli ilanngunneqanngilaq"
+    },
+    "cover": {
+      "media": "Mediap saqqassaanik toqqaagit",
+      "imageInfo": "Asseq ilanngussat allat siammarterusussajunnarsivaat, isumassarsiallu social mediani aamma siammarterlugu!",
+      "map": "Nunap assinga",
+      "streetview": "Street view",
+      "image": "Assi",
+      "none": "Soqanngilaq"
+    },
+    "edit": "Isumassarsiaq aaqqissuutiguk",
+    "delete": "Isumassarsiaq peeruk",
+    "addNewIntroBoxText": "Isumassarsiamik ilanngussiniaraanni ilisarnaat qulliup peeriatut isikkulik toorneqassaaq"
+  },
+
+  "short_word": {
+    "in": "Isersimavoq"
+  },
+
+  "category": {
+    "new": "Attavik nutaaq",
+    "select": "Attavimmik toqqaagit"
+  },
+
+  "categories": {
+    "all": "Attaviit tamarmiusut",
+    "the_all": "Attaviit tamarmiusut"
+  },
+
+  "point": {
+    "report": "Nalunaarutigiuk",
+    "againstAdded": "Akerliuneq ilanngunneqarpoq",
+    "forAdded": "Isumaqataaneq ilanngunneqarpoq",
+    "confirmDelete": "Isumassarsiamik peerserusunnerit uppernarsaruk",
+    "theseAreFor": "Isumaqataaneq",
+    "theseAreAgainst": "Akerliuneq",
+    "point": "Tunngavilersuut",
+    "for": "Isumaqataanerit tunngavilersoruk",
+    "against": "Akerliunerit tunngavilersoruk",
+    "add_up": "Isumaqataaneq ilanngutiguk",
+    "add_down": "Akerliuneq ilanngutiguk",
+    "helpful": "Tapersiinerit takutinniarlugu taasigit",
+    "not_helpful": "Akerliunerit takutinniarlugu taasigit",
+    "addNewsStory": "Nutaarsiassamik ilanngussigit",
+    "postNewsStory": "Nutaarsiassanik ilanngussigit",
+    "addComment": "Oqaaseqaatit..",
+    "postComment": "Nassiussigit",
+    "comments": "Oqaaseqaatit",
+    "howToWrite": "Isumaqataalluni akerliullunilu tunngavilersuutit pitsaanerpaat eqqartortigit aaqqiissutissanillu isumaliuteqarluta",
+    "commentToShort": "Allatat naappallaaqaaq!"
+  },
+
+  "news": "Nutaarsiassat",
+
+  "uploading": {
+    "inProgress": "Aaneqarpoq"
+  },
+
+  "notice": {
+    "ok": "Ok",
+    "feature_not_implemented_a": "Saqqummiunnialersaagaq Your Priorities 6.0-ip read-onlyani suli ilanngunneqarsimanngilaq.",
+    "feature_not_implemented_b": "Isummernerit pillugu ilisitikkisigut :-)",
+    "welcome_a": "Saqqummiunnialersaakkat Your Priorities 6.0-imi read-only-mi taama isikkoqarpoq. Saqqummiutsinnagu isummat tusarusunnarpoq.",
+    "welcome_b": "Massakkut Chrome-innakkoorpoq 2015-imili Q1-imi browserit anginerit atorsinnaalissavai. ",
+    "welcome_heading": "Your Priorities 6.0-ip teknologia pillugu nassuiaammut tikilluarit!",
+    "continue": "Saqqummiunneqannginnerani takussutissiamukarit",
+    "deleteConfirmation": "Eqimattaq una peerusuppiuk?"
+  },
+
+  "maps": {
+    "searchInput": "Adressi",
+    "search": "Ujarliut"
+  },
+
+  "group": {
+    "showWhoPostedPosts": "Nassitsisut kinaasusiat takujuk",
+    "locationHidden": "Sumiissusersiut atorunnaarsiguk",
+    "group": "Eqimattaq",
+    "admins": "Eqimattanik aaqqissuisut",
+    "users": "Eqimattani atuisut",
+    "new": "Eqimattamik nutaamik pilersitsigit",
+    "edit": "Eqimattaq aaqqissuutiguk",
+    "invite": "Ikinngut qaaqqujuk",
+    "invite_to_group": "Ikinngut eqimattanut qaaqqujuk",
+    "share_group": "Eqimattaq siammerteruk",
+    "delete": "Eqimattaq peeruk",
+    "objectives": "Anguniakkat",
+    "public": "Eqimattaq tamanut ammasoq",
+    "closed": "Eqimattaq matoqqasoq",
+    "secret": "Eqimattaq isertortoq",
+    "openToCommunity": "Ataatsimoorfimmut ammasoq",
+    "canVote": "Taasisinnaatitaavutit",
+    "canAddNewPosts": "Isumassarsianut nutaanut ammavoq",
+    "config": "Config",
+    "update": "Eqimattaq nutarteruk"
+  },
+
+  "membership": {
+    "joined": "Ilanngupputit",
+    "left": "Qimappat"
+  },
+
+  "menu": {
+    "my_pages": "Profiilera",
+    "about": "Pillugu",
+    "help": "Ikiortissannik",
+    "settings": "Iliuuserineqarsinnaasut"
+
+  },
+
+  "users": {
+    "removeAdmin": "Aqutsisuunermik atorunnaarsitsineq",
+    "addAdmin": "Aqutsisut ilaneqarput",
+    "removeUser": "Atuisoq peeruk",
+    "inviteUser": "Atuisussamik qaaqqusineq",
+    "email": "emaili",
+    "removeFromOrganization": "Peeruk",
+    "addToOrganization": "Katitigaaneq",
+    "selectOrganization": "Katitigaaneq toqqaguk"
+  },
+
+  "user": {
+    "loginCompleteFor": "Uunga isissutissaq",
+    "acceptInvite": "Peqataaqqusaanermut akuersineq",
+    "hasSentYouAndInvitation": "... peqataaqqusilluni qaaqqusisuuvoq",
+    "acceptInviteInstructions": "Qaaqqusissummik akuersinermi ataani tuugassaq toorneqassaaq",
+    "setEmail": "Emailadressit kontomut ilannguguk ",
+    "linkAccount": "Konto attaveqarfigiuk",
+    "setEmailInfo": "Emailadressit kontomut ilannguguk ",
+    "existsLinkAccountInfo": "Emailkontonnut attaveqalerniarlutit isissutissat allaguk",
+    "logoutCompleteFor": "...anisiguk",
+    "loggedInWithSaml": "SAML-imi isissutit atorlugu iserputit",
+    "loggedInWithFacebook": "Facebookimi profilit atorlugu iserputit",
+    "facebookLogin": "Facebookimut isissutissaq",
+    "info":"Paasissutissat",
+    "notifications": "Ilisimatitsissutit",
+    "name": "Atit tamaasa",
+    "email": "Emaili",
+    "edit": "Atuisoq allanngortiteruk",
+    "password": "Isissutissaq",
+    "forgotPassword": "Nutaamik isissutissaliorit",
+    "forgotPasswordInstructions": "Emailinnut iseruit linkimik isissutissannik nutaanik imalimmik nassissavatsigit",
+    "forgotPasswordEmailHasBeenSent": "Isissutissamik atorunnaarsitsisussaq nutaamillu isissutissaliornissamut ilitsersuut emailikkut nassiunneqarput",
+    "resetPassword": "Isissutissat atorunnaarsiguk",
+    "resetPasswordInstructions": "Isissutissat nutaaq allaguk - eqqoriaruminaatsuussaaq",
+    "login": "Isissutissaq",
+    "create": "Atuisumik pilersitsigit",
+    "cancel": "Atorunnaarsitsineq",
+    "logout": "Anineq",
+    "newPassword": "Isissutissaq nutaaq",
+    "register": "Atuisoq nutaaq",
+    "alreadyRegisterred": "Emaili taanna nalunaarsugaareerpoq. Pisariaqartikkukku nutaamik isissutissaliorsinnaavutit.",
+    "registrationError": "Nalunaarsuineq iluatsinngitsoorpoq",
+    "loginError": "Iserniarnerit iluatsinngitsoorpoq",
+    "completeForm": "Immersugassaq eqqortumik immersoruk",
+    "loginNotAuthorized": "Emaili imaluunniit isissutissaq kukkuvoq"
+  },
+
+  "other": "Allat",
+
+  "socialMedia": "Social media",
+
+  "location": {
+    "set": "Sumiissutsit nalunaarutigiuk"
+  },
+  "image": {
+    "upload": "Assit nuisiguk",
+    "logo": {
+      "upload": "Ilisarnaatit nuisiguk"
+    },
+    "header": {
+      "upload": "Qulequttat nuisiguk"
+    },
+    "profile": {
+      "upload": "Profilivit assitassaa nuisiguk"
+    }
+  },
+  "theme": {
+    "choose": "Sammisamik toqqaagit"
+  }
+}
