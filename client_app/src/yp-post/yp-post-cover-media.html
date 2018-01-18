@@ -93,9 +93,9 @@
 
     <div class="mapCanvas">
       <template is="dom-if" if="[[noneActive]]">
-        <div hidden$="[[uploadedDefaultPostImageId]]">
-          <iron-image  header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
-        </div>
+        <iron-image header-mode$="[[headerMode]]" sizing="cover" hidden$="[[defaultPostImageEnabled]]"
+                    class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+
         <template is="dom-if" if="[[defaultPostImageEnabled]]" restamp>
           <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="/api/groups/[[defaultImageGroupId]]/default_post_image/[[uploadedDefaultPostImageId]]" on-tap="goToPost"></iron-image>
         </template>
@@ -134,9 +134,8 @@
         </template>
 
         <template is="dom-if" if="[[mapActive]]">
-          <div hidden$="[[mapActivated]]">
-            <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&size=432x243&zoom=[[zoomLevel]]&maptype=[[mapType]]&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[staticMapsApiKey]]"></iron-image>
-          </div>
+          <iron-image on-tap="goToPost" class="main-image pointer" hidden$="[[mapActivated]]"
+                      sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&size=432x243&zoom=[[zoomLevel]]&maptype=[[mapType]]&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[staticMapsApiKey]]"></iron-image>
 
           <template is="dom-if" if="[[mapActivated]]">
             <google-map id="coverMediaMap" class="map"

@@ -239,7 +239,7 @@
           Polymer.dom(document).querySelector('yp-app').getDialogAsync("userEdit", function (dialog) {
             dialog.setup(window.appUser.user, false, null, true);
             dialog.open('edit', { userId: window.appUser.user.id });
-          });
+          }.bind(this));
         },
 
         _forgotPassword: function (event, detail) {
