@@ -43,9 +43,9 @@
       }
 
       #toolbar {
-        background-color: var(--accent-color);
+        background-color: #F00;
         color: var(--text-primary_color);
-        max-height: 70px;
+        max-height: 70px !important;
       }
 
       #dismissBtn {
@@ -116,7 +116,7 @@
 
       #scroller {
         @apply(--paper-fullscreen-dialog-content);
-        padding: 16px;
+        padding: 8px;
       }
 
       .scrollerContainer {
@@ -125,7 +125,14 @@
 
       @media (max-width: 600px) {
         paper-dialog > * {
-          padding: 0 0;
+          padding: 0;
+          margin: 0;
+          background-color: #FFF;
+        }
+
+        :host {
+          max-height: 100% !important;
+          height: 100% !important;
         }
       }
 
@@ -159,6 +166,13 @@
         font-weight: bold;
       }
 
+      .titleHeaderMobile {
+        font-size: 20px;
+        padding-left: 12px;
+        padding-top: 6px;
+        font-weight: bold;
+      }
+
       #formErrorDialog {
         padding: 12px;
       }
@@ -175,6 +189,21 @@
         font-weight: bold;
       }
 
+      .outerMobile {
+        background-color: #FFF;
+        padding: 0;
+        margin: 0;
+      }
+
+      .smallHeader {
+        background-color: var(--accent-color);
+        color: #FFF;
+        margin: 0;
+        padding: 8px;
+        vertical-align: center;
+        max-height: 70px !important;
+      }
+
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -186,20 +215,18 @@
       <iron-media-query query="(max-height: 640px)" query-matches="{{smallHeight}}"></iron-media-query>
       <template is="dom-if" if="opened" restamp>
         <template is="dom-if" if="[[narrow]]" restamp>
-          <app-header-layout main id="headerPanel" class="no-padding" mode="{{mode}}">
-            <app-toolbar id="toolbar">
+          <div class="outerMobile">
+            <div class="layout horizontal smallHeader">
               <paper-icon-button id="dismissBtn" icon="close" class="closeIconNarrow" dialog-dismiss></paper-icon-button>
-              <div class="layout horizontal title flex">
-                <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
-                <h2>[[title]]</h2>
-              </div>
+              <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
+              <div class="titleHeaderMobile">[[title]]</div>
               <template is="dom-if" if="[[!useNextTabAction]]">
                 <paper-button id="submit1" on-tap="_submit"><span class="smallButtonText">[[saveText]]</span></paper-button>
               </template>
               <template is="dom-if" if="[[useNextTabAction]]">
                 <paper-button on-tap="_nextTab"><span class="smallButtonText">[[nextActionText]]</span></paper-button>
               </template>
-            </app-toolbar>
+            </div>
             <div id="scroller">
               <iron-form id="form" content-type="application/json" method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
                 <form name="ypForm" method="[[method]]" action="[[action]]">
@@ -207,9 +234,10 @@
                 </form>
               </iron-form>
             </div>
-          </app-header-layout>
-          <paper-spinner id="spinner"></paper-spinner>
+            <paper-spinner id="spinner"></paper-spinner>
+          </div>
         </template>
+
 
         <template is="dom-if" if="[[!narrow]]" restamp>
           <div class="layout horizontal bigHeader">
