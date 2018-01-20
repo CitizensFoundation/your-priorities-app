@@ -1,9 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/juicy-html/juicy-html.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 
 <link rel="import" href="../yp-post/yp-post-cover-media.html">
 <link rel="import" href="../yp-post/yp-post-behaviors.html">
@@ -178,7 +178,9 @@
         <div class="post-name mainContainerItem" is-ie11$="[[isIE11]]">[[activity.Post.name]]</div>
       </div>
       <div class="layout vertical center-center descriptionOuter">
-        <div id="description" class="description mainContainerItem" is-ie11$="[[isIE11]]"></div>
+        <div id="description" class="description mainContainerItem" is-ie11$="[[isIE11]]">
+          <template is="jucy-html" html="[[activity.Post.description]]"></template>
+        </div>
         <template is="dom-if" if="[[hasGroupHeader]]">
           <div class="groupTitle layout horizontal center-center">[[groupTitle]]</div>
         </template>
@@ -201,8 +203,7 @@
       properties: {
 
         activity: {
-          type: Object,
-          observer: '_activityChanged'
+          type: Object
         },
 
         postId: {
@@ -229,21 +230,7 @@
 
       _isIE11: function () {
         return /Trident.*rv[ :]*11\./.test(navigator.userAgent);
-      },
-
-      _activityChanged: function (activity) {
-        var post = activity.Post;
-        if (post && post.description) { this.async(function () {
-            var description = this.$$("#description");
-            if (description) {
-              description.innerHTML = this.addLinksAndEmjois(post.description);
-            } else {
-              console.error("Can't find community description element");
-            }
-          });
-        }
       }
-
     });
   </script>
 </dom-module>

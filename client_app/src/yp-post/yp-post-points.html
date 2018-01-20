@@ -297,8 +297,6 @@
                 </template>
               </div>
             </div>
-
-
           </div>
         </div>
       </template>
@@ -352,7 +350,8 @@
         is: 'yp-post-points',
 
         behaviors: [
-          Polymer.appHelpers
+          Polymer.appHelpers,
+          Polymer.YpLinkifyAndEmjoi
         ],
 
         properties: {
@@ -484,6 +483,7 @@
             return 500;
           }
         },
+
         listeners: {
           'yp-point-deleted': '_pointDeleted'
         },
@@ -507,13 +507,12 @@
         },
 
         _newPointsResponse: function (event, detail) {
-          var points = detail.response;
+          var points = this._preProcessPoints(detail.response);
           points.forEach(function (point) {
             this._insertNewPoint(point);
           }.bind(this));
 
           this._updateCounterInfo();
-          this._setLatestPointAtDate();
         },
 
         _pointDeleted: function () {
@@ -604,7 +603,7 @@
         },
 
         _response: function (event, detail) {
-          var points = detail.response;
+          var points = this._preProcessPoints(detail.response);
           this.removeElementsByClass(this, 'inserted-outside-list');
 
           if (points.length > 0) {
@@ -621,7 +620,6 @@
 
           this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
           this._updateCounterInfo();
-          this._setLatestPointAtDate();
           this._scrollPointIntoView();
         },
 
@@ -650,12 +648,14 @@
           }
         },
 
-        _setLatestPointAtDate: function () {
-          this.points.forEach(function (point) {
+        _preProcessPoints: function (points) {
+          points.forEach(function (point) {
             if (!this.latestPointCreatedAt || point.created_at > this.latestPointCreatedAt) {
               this.set('latestPointCreatedAt', point.created_at);
             }
+            point.latestContent = this.addLinksAndEmjois(point.PointRevisions[point.PointRevisions.length-1].content);
           }.bind(this));
+          return points;
         },
 
         _updateCounterInfo: function () {
@@ -685,7 +685,7 @@
 
         _newPointResponse: function (event, detail) {
           this.set('addPointDisabled', false);
-          var point = detail.response;
+          var point = this._preProcessPoints([detail.response])[0];
           if (point.value > 0) {
             this.newPointTextCombined = this.t("point.forAdded") + " " + this.truncate(point.content, 21);
             this.set("textValueUp", "");
@@ -698,7 +698,6 @@
           this.set('post.counter_points', this.post.counter_points + 1);
           this.$.newPointToast.show();
           this._updateCounterInfo();
-          this._setLatestPointAtDate();
         },
 
         addPointUp: function () {

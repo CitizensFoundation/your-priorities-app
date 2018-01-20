@@ -477,8 +477,9 @@
 
       _submit: function () {
         if (this.confirmationText) {
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
-          dialog.open(this.confirmationText, this._reallySubmit.bind(this));
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+            dialog.open(this.confirmationText, this._reallySubmit.bind(this));
+          }.bind(this));
         } else {
           this._reallySubmit();
         }

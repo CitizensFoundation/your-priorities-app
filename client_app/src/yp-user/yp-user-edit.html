@@ -167,14 +167,16 @@
     },
 
     _deleteUser: function () {
-      var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
-      dialog.open(this.t('areYouSureYouWantToDeleteUser'), this._deleteUserFinalWarning.bind(this));
+      Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+        dialog.open(this.t('areYouSureYouWantToDeleteUser'), this._deleteUserFinalWarning.bind(this));
+      }.bind(this));
     },
 
     _deleteUserFinalWarning: function () {
       this.async(function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
-        dialog.open(this.t('areYouReallySureYouWantToDeleteUser'), this._deleteUserForReals.bind(this));
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('areYouReallySureYouWantToDeleteUser'), this._deleteUserForReals.bind(this));
+        }.bind(this));
       });
     },
 

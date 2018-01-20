@@ -12,6 +12,7 @@
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-point/yp-point-news-story-edit.html">
@@ -184,8 +185,8 @@
           </template>
         </iron-list>
         <div class="layout horizontal center-center spinnerContainer">
-          <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
           <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner on-response="_activityDeletedResponse"></yp-ajax>
+          <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
         </div>
       </div>
       <div class="layout vertical self-start recommendedPosts" not-active$="[[noRecommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
@@ -219,7 +220,8 @@
         Polymer.YpScrollTabBehavior,
         Polymer.ypLoggedInUserBehavior,
         Polymer.AccessHelpers,
-        Polymer.ypIronListBehavior
+        Polymer.ypIronListBehavior,
+        Polymer.YpLinkifyAndEmjoi
       ],
 
       properties: {
@@ -325,6 +327,20 @@
         }
       },
 
+      listeners: {
+        'yp-point-deleted': '_pointDeleted'
+      },
+
+      _pointDeleted: function (event, detail) {
+        for (var i = 0; i < this.activities.length; i++) {
+          if (this.activities[i].Point) {
+            if (this.activities[i].Point.id==detail.pointId) {
+              this._removeActivityId(this.activities[i].id);
+            }
+          }
+        }
+      },
+
       _hasLoggedInUser: function (user) {
         if (user) {
           return true;
@@ -371,14 +387,23 @@
 
 
       _activityDeletedResponse: function (event, detail) {
-        var activityId = detail.response.activityId;
-        this.set('activities', __.filter(this.activities, function(o) { return (o.id!=activityId) }));
+        this._removeActivityId(detail.response.activityId);
+      },
+
+      _removeActivityId: function (activityId) {
+        for (var i = 0; i < this.activities.length; i++) {
+          if (this.activities[i].id == activityId) {
+            this.splice('activities', i, 1);
+          }
+        }
+        this.$$("#ironList").fire("iron-resize");
       },
 
       _deleteActivity: function (event, detail) {
         this.set('activityIdToDelete', detail.id);
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
-        dialog.open(this.t('activity.confirmDelete'), this._reallyDelete.bind(this));
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('activity.confirmDelete'), this._reallyDelete.bind(this));
+        }.bind(this));
       },
 
       _reallyDelete: function () {
@@ -485,8 +510,20 @@
         }
       },
 
+      _preProcessActivities: function (activities) {
+        for (var i = 0; i < activities.length; i++) {
+          if (activities[i].Point) {
+            activities[i].Point.latestContent = this.addLinksAndEmjois(activities[i].Point.PointRevisions[activities[i].Point.PointRevisions.length-1].content);
+          }
+          if (activities[i].Post) {
+            activities[i].Post.description = this.addLinksAndEmjois(activities[i].Post.description);
+          }
+        }
+        return activities;
+      },
+
       _activitiesResponse: function (event, detail) {
-        var activities = detail.response.activities;
+        var activities = this._preProcessActivities(detail.response.activities);
 
         if (detail.response.oldestProcessedActivityAt) {
           this.set('oldestProcessedActivityAt', detail.response.oldestProcessedActivityAt);
@@ -494,13 +531,13 @@
           console.warn("Have not set oldestProcessedActivityAt");
         }
 
-        activities.forEach(function(activity) {
+        for (var i = 0; i < activities.length; i++) {
           if (this.$.ajax.url.indexOf('afterDate') > -1) {
-            this.unshift('activities', activity);
+            this.unshift('activities', activities[i]);
           } else {
-            this.push('activities', activity);
+            this.push('activities', activities[i]);
           }
-        }.bind(this));
+        }
 
         console.info("Activities length: "+activities.length);
         if (activities.length>0) {
@@ -529,9 +566,6 @@
         this.async(function () {
           this.$.ironList.fire('iron-resize');
         });
-        this.async(function () {
-          this.$.ironList.fire('iron-resize');
-        }, 100);
       },
 
       fireResize: function () {

@@ -2,6 +2,7 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/juicy-html/juicy-html.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
@@ -59,7 +60,9 @@
         <a href$="[[embedData.url]]" class="container" target="_blank">
           <div class="layout vertical center-center">
             <iron-image sizing="contain" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
-            <div id="embedHtml" hidden$="[[!embedData.html]]"></div>
+            <div id="embedHtml" hidden$="[[!embedData.html]]">
+              <template is="juicy-html" html="[[embedData]]"></template>
+            </div>
           </div>
           <div class="layout vertical">
             <div class="title">
@@ -84,14 +87,7 @@
 
         embedData: {
           type: Object,
-          notify: true,
-          observer: '_embedDataChanged'
-        }
-      },
-
-      _embedDataChanged: function (newValue) {
-        if (newValue && newValue.html && newValue.html != '') {
-          this.$$("#embedHtml").innerHTML = newValue.html;
+          notify: true
         }
       }
     })

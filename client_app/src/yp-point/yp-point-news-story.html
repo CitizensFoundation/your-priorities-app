@@ -76,6 +76,7 @@
 
     <div class="layout vertical">
       <div id="content" class="story">
+        [[point.latestContent]]
       </div>
       <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
       <div class="layout horizontal">
@@ -179,17 +180,6 @@
           this.user = point.PointRevisions[0].User;
         } else {
           this.user = null;
-        }
-
-        if (point && point.content) {
-          this.async(function () {
-            var content = this.$$("#content");
-            if (content) {
-              content.innerHTML = this.addLinksAndEmjois(point.content);
-            } else {
-              console.error("Can't find point content element");
-            }
-          });
         }
 
         this.set('open', false);
