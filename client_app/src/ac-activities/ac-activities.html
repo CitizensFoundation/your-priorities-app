@@ -12,6 +12,7 @@
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-point/yp-point-news-story-edit.html">
@@ -219,7 +220,8 @@
         Polymer.YpScrollTabBehavior,
         Polymer.ypLoggedInUserBehavior,
         Polymer.AccessHelpers,
-        Polymer.ypIronListBehavior
+        Polymer.ypIronListBehavior,
+        Polymer.YpLinkifyAndEmjoi
       ],
 
       properties: {
@@ -372,7 +374,11 @@
 
       _activityDeletedResponse: function (event, detail) {
         var activityId = detail.response.activityId;
+        var a = this.activities;
         this.set('activities', __.filter(this.activities, function(o) { return (o.id!=activityId) }));
+        var b = this.activities;
+        this.$$("#ironList").fire("iron-resize");
+        debugger;
       },
 
       _deleteActivity: function (event, detail) {
@@ -485,8 +491,20 @@
         }
       },
 
+      _preProcessActivities: function (activities) {
+        for (var i = 0; i < activities.length; i++) {
+          if (activities[i].Point) {
+            activities[i].Point.latestContent = this.addLinksAndEmjois(activities[i].Point.PointRevisions[activities[i].Point.PointRevisions.length-1].content);
+          }
+          if (activities[i].Post) {
+            activities[i].Post.description = this.addLinksAndEmjois(activities[i].Post.description);
+          }
+        }
+        return activities;
+      },
+
       _activitiesResponse: function (event, detail) {
-        var activities = detail.response.activities;
+        var activities = this._preProcessActivities(detail.response.activities);
 
         if (detail.response.oldestProcessedActivityAt) {
           this.set('oldestProcessedActivityAt', detail.response.oldestProcessedActivityAt);

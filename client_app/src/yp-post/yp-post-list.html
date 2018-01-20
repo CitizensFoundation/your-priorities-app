@@ -459,9 +459,9 @@
         if (!this.posts) {
           this.set('posts', posts);
         } else {
-          posts.forEach(function(post) {
-            this.push('posts', post);
-          }.bind(this));
+          for (var i = 0; i < posts.length; i++) {
+            this.push('posts', posts[i]);
+          }
         }
 
         if (posts.length==0 && (this.posts==null || this.posts.length==0)) {
