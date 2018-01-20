@@ -6,11 +6,11 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+<link rel="import" href="../../bower_components/juicy-html/juicy-html.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
@@ -118,13 +118,15 @@
       </div>
 
       <div class="point-content">
-        <span hidden$="[[!latestContent.name]]">
-          <span>[[latestContent.name]]</span>.
+        <span hidden$="[[!point.name]]">
+          <span>[[point.name]]</span>.
         </span>
-        <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded"></div>
+        <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded">
+          <template is="juicy-html" html="[[point.latestContent]]"></template>
+        </div>
         <template is="dom-if" if="[[isEditing]]" restamp>
           <div class="layout vertical">
-            <paper-textarea id="pointContentEditor" char-counter maxlength="500" value="{{latestContent}}"></paper-textarea>
+            <paper-textarea id="pointContentEditor" char-counter maxlength="500" value="{{editText}}"></paper-textarea>
             <div class="horizontal end-justified layout">
               <emoji-selector id="pointEmojiSelector"></emoji-selector>
             </div>
@@ -179,10 +181,6 @@
           computed: '_canEditPoint(point, gotAdminRights, loggedInUser)'
         },
 
-        latestContent: {
-          type: String
-        },
-
         user: {
           type: Object,
           value: null
@@ -212,19 +210,21 @@
         pointUrl: {
           type: String,
           computed: '_pointUrl(point)'
-        }
+        },
+
+        editText: String
       },
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpLinkifyAndEmjoi,
         Polymer.AccessHelpers,
         Polymer.ypLoggedInUserBehavior,
-        Polymer.ypGotAdminRightsBehavior
+        Polymer.ypGotAdminRightsBehavior,
+        Polymer.YpLinkifyAndEmjoi
       ],
 
-      _isEditingChanged: function () {
-        this._updateEmojiBindings();
+      _isEditingChanged: function (value) {
+        this._updateEmojiBindings(value);
         this.async(function () {
           this.fire('iron-resize');
         });
@@ -254,21 +254,20 @@
             if (point && emoji) {
               emoji.inputTarget = point;
             } else {
-              console.warn("Wide: Can't bind point edit emojis :(");
+              console.error("Wide: Can't bind point edit emojis :(");
             }
           }.bind(this), 500);
         }
       },
 
       _cancelEdit: function () {
-        this._setlatestContent(this.point);
+        //this._setlatestContent(this.point);
         this.set('isEditing', false);
       },
 
       _saveEdit: function () {
-        this._updateLatestContentHTML();
         this.$$("#editPointAjax").url = "/api/points/"+this.point.id;
-        this.$$("#editPointAjax").body = { content: this.latestContent };
+        this.$$("#editPointAjax").body = { content: this.editText };
         this.$$("#editPointAjax").generateRequest();
       },
 
@@ -285,7 +284,9 @@
 
       _editResponse: function (event, detail) {
         if (detail.response) {
-          this.set('point', detail.response);
+          var point = detail.response;
+          point.latestContent = this.addLinksAndEmjois(point.PointRevisions[point.PointRevisions.length-1].content);
+          this.set('point', point);
         }
         this.set('isEditing', false);
       },
@@ -313,6 +314,7 @@
 
       _editPoint: function () {
         if (this._hasPointAccess(this.point)) {
+          this.set('editText', this.point.PointRevisions[this.point.PointRevisions.length-1].content);
           this.set('isEditing', true);
         }
       },
@@ -326,31 +328,11 @@
         return isEligible && window.appUser && window.appUser.user && window.appUser.user.id==point.user_id;
       },
 
-      _setlatestContent: function (point) {
-        this.set('latestContent', point.PointRevisions[point.PointRevisions.length-1].content);
-      },
-
       _pointChanged: function(point, oldValue) {
         if (point) {
           this.set('user', this.point.User);
-          this._setlatestContent(point);
         } else {
           this.set('user', null);
-          this.set('latestContent', null);
-        }
-        this._updateLatestContentHTML();
-      },
-
-      _updateLatestContentHTML: function () {
-        if (this.latestContent) {
-          this.async(function () {
-            var content = this.$$("#pointContent");
-            if (content) {
-              content.innerHTML = this.addLinksAndEmjois(this.latestContent);
-            } else {
-              console.error("Can't find pointContent element");
-            }
-          });
         }
       },
 

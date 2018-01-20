@@ -16,6 +16,7 @@
     "iron-scroll-threshold": "PolymerElements/iron-scroll-threshold#2.x",
     "iron-jsonp-library": "PolymerElements/iron-jsonp-library#2.x",
     "iron-autogrow-textarea": "CitizensFoundation/iron-autogrow-textarea",
+    "juicy-html": "Juicy/juicy-html#2.x",
     "paper-toast": "PolymerElements/paper-toast#2.x",
     "paper-tabs": "PolymerElements/paper-tabs#2.x",
     "paper-fab": "PolymerElements/paper-fab#2.x",
