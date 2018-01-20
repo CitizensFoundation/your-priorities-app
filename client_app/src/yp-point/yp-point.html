@@ -272,8 +272,9 @@
       },
 
       _deletePoint: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("confirmationDialog");
-        dialog.open(this.t('point.confirmDelete'), this._reallyDeletePoint.bind(this));
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('point.confirmDelete'), this._reallyDeletePoint.bind(this));
+        }.bind(this));
       },
 
       _reallyDeletePoint: function () {
@@ -294,6 +295,7 @@
       _deleteResponse: function () {
         this.fire("yp-point-deleted", { pointId: this.point.id });
         this.set('point', null);
+
       },
 
       _reportPoint: function () {
