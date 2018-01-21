@@ -157,6 +157,9 @@
           width: 310px;
         }
 
+        iron-list {
+          width: 300px;
+        }
       }
 
       .mobilePaperTextArea {
@@ -207,7 +210,6 @@
     <template is="dom-if" if="[[largeMode]]">
       <div class="layout vertical topContainer">
         <div class="main-container">
-
           <div class="point">
             <template is="dom-if" if="[[!post.Group.configuration.alternativePointForHeader]]">
               <div class="pointMainHeader layout horizontal center-center">
@@ -333,11 +335,15 @@
         </div>
       </paper-material>
       <div class="layout vertical center-center">
-        <template is="dom-repeat" initial-count="14" items="[[points]]" as="point">
-          <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
-            <yp-point point="[[point]]"></yp-point>
-          </paper-material>
-        </template>
+        <iron-list id="ironListMobile" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
+          <template>
+            <div class="item" tabindex$="[[tabIndex]]">
+              <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
+                <yp-point point="[[point]]"></yp-point>
+              </paper-material>
+            </div>
+          </template>
+        </iron-list>
       </div>
     </template>
 
@@ -469,6 +475,22 @@
           addPointDisabled: {
             type: Boolean,
             value: false
+          },
+
+          mobileScrollOffset: {
+            type: Number,
+            computed: '_mobileScrollOffset(largeMode,post)'
+          }
+        },
+
+        _mobileScrollOffset: function (large, post) {
+          if (!large && post) {
+            var element = this.$$("#ironListMobile");
+            if (element) {
+              return element.getBoundingClientRect().top;
+            } else {
+              console.error("Can't find mobile list element");
+            }
           }
         },
 
@@ -620,6 +642,9 @@
           } else {
             this.set('upPoints', null);
             this.set('downPoints', null);
+          }
+
+          if (!this.largeMode) {
             this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
           }
 
