@@ -17,60 +17,65 @@
 
     attached: function () {
       this.async(function () {
-        this.resetSize();
-        window.addEventListener("resize", this.resetSizeWithDelay.bind(this));
+        this.resetListSize();
+        window.addEventListener("resize", this.resetListSizeWithDelay.bind(this));
       }.bind(this));
     },
 
     detached: function() {
-      window.removeEventListener("resize", this.resetSizeWithDelay);
+      window.removeEventListener("resize", this.resetListSizeWithDelay);
     },
 
     _wideChanged: function () {
-      this.resetSize();
+      this.resetListSize();
     },
 
-    resetSizeWithDelay: function () {
+    resetListSizeWithDelay: function () {
       clearTimeout(this.resizeTimer);
       this.resizeTimer = setTimeout(function() {
-        this.resetSize();
+        this.resetListSize();
       }.bind(this), 250);
     },
 
-    resetSize: function () {
-      var skipHeight = true;
-      var list = this.$$("#ironList");
-      var windowHeight = window.innerHeight;
-      var windowWidth = window.innerWidth;
+    resetListSize: function (ironListId) {
+      if (!ironListId) {
+        ironListId = "#ironList";
+      }
+      var list = this.$$(ironListId);
       if (list) {
-        var height;
-        if (this.wide) {
-          height = windowHeight - (this.wideListOffset ? this.wideListOffset : 415);
-        } else {
-          height = windowHeight - 300;
-          windowWidth = windowWidth - 16;
-        }
+        var skipHeight = true;
+        var windowHeight = window.innerHeight;
+        var windowWidth = window.innerWidth;
+        if (list) {
+          var height;
+          if (this.wide) {
+            height = windowHeight - (this.wideListOffset ? this.wideListOffset : 415);
+          } else {
+            height = windowHeight - 300;
+            windowWidth = windowWidth - 16;
+          }
 
-        if (!skipHeight) {
-          list.style.height = height + 'px';
-        }
+          if (!skipHeight) {
+            list.style.height = height + 'px';
+          }
 
-        if (!this.skipIronListWidth) {
-          list.style.width = windowWidth + 'px';
-        } else {
-          console.log("Skipping setting iron-list width");
-        }
-        this.async(function () {
-          list.updateViewportBoundaries();
+          if (!this.skipIronListWidth) {
+            list.style.width = windowWidth + 'px';
+          } else {
+            console.log("Skipping setting iron-list width");
+          }
           this.async(function () {
-            list.notifyResize();
-          })
-        });
-      } else {
-        console.error("Can't find iron list, waiting");
-        this.async(function () {
-          this.resetSize();
-        },1500);
+            list.updateViewportBoundaries();
+            this.async(function () {
+              list.notifyResize();
+            })
+          });
+        } else {
+          console.error("Can't find iron list, waiting");
+          this.async(function () {
+            this.resetListSize();
+          },1500);
+        }
       }
     }
   };
