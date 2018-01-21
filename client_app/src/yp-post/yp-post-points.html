@@ -577,6 +577,8 @@
         _postChanged: function (newPost) {
           // Remove any manually inserted points when the list is updated
           this.set('points', null);
+          this.set('upPoints', null);
+          this.set('downPoints', null);
           if (newPost) {
             if (this.host) {
               this.$.ajax.url = this.host+'/api/posts/' + newPost.id + '/points';
@@ -616,11 +618,10 @@
               return x.value < 0;
             }));
           } else {
-            this.set('upPoints', []);
-            this.set('downPoints', []);
+            this.set('upPoints', null);
+            this.set('downPoints', null);
+            this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
           }
-
-          this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
 
           this._updateCounterInfo();
           this._scrollPointIntoView();
@@ -682,8 +683,9 @@
             } else if (point.value < 0) {
               this.unshift('downPoints', point);
             }
+          } else {
+            this.unshift('points', point);
           }
-          this.unshift('points', point);
         },
 
         _newPointResponse: function (event, detail) {
