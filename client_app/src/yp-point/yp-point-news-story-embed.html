@@ -2,7 +2,6 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
-<link rel="import" href="../../bower_components/juicy-html/juicy-html.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
@@ -61,7 +60,7 @@
           <div class="layout vertical center-center">
             <iron-image sizing="contain" src$="[[embedData.thumbnail_url]]" hidden$="[[embedData.html]]"></iron-image>
             <div id="embedHtml" hidden$="[[!embedData.html]]">
-              <template is="juicy-html" html="[[embedData]]"></template>
+              <div inner-h-t-m-l="{{embedData}}"></div>
             </div>
           </div>
           <div class="layout vertical">

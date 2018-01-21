@@ -76,7 +76,7 @@
 
     <div class="layout vertical">
       <div id="content" class="story">
-        [[point.latestContent]]
+        <div inner-h-t-m-l="[[point.latestContent]]"></div>
       </div>
       <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
       <div class="layout horizontal">
@@ -139,8 +139,7 @@
       },
 
       behaviors: [
-        Polymer.appHelpers,
-        Polymer.YpLinkifyAndEmjoi
+        Polymer.appHelpers
       ],
 
       _setOpenToValue: function () {

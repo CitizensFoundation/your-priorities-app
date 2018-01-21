@@ -6,7 +6,6 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
-<link rel="import" href="../../bower_components/juicy-html/juicy-html.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
@@ -14,7 +13,8 @@
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
-
+<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
+s
 <link rel="import" href="yp-point-actions.html">
 
 <dom-module id="yp-point">
@@ -122,7 +122,7 @@
           <span>[[point.name]]</span>.
         </span>
         <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded">
-          <template is="juicy-html" html="[[point.latestContent]]"></template>
+          <div inner-h-t-m-l="{{point.latestContent}}"></div>
         </div>
         <template is="dom-if" if="[[isEditing]]" restamp>
           <div class="layout vertical">
