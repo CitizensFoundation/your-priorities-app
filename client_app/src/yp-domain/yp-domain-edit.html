@@ -121,6 +121,25 @@
              <input type="hidden" name="themeId" value="[[themeId]]">
              <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
              <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+
+
+             <paper-input id="appHomeScreenShortName"
+                          name="appHomeScreenShortName"
+                          type="text"
+                          label="[[t('appHomeScreenShortName')]]"
+                          value="{{domain.appHomeScreenShortName}}"
+                          maxlength="12" style="width: 200px;">
+             </paper-input>
+
+             <div class="layout vertical additionalSettings half">
+               <yp-file-upload id="appHomeScreenIconImageUpload" raised="true"
+                               multi="false" target="/api/images?itemType=app-home-screen-icon"
+                               method="POST" on-success="_appHomeScreenIconImageUploaded">
+                 <iron-icon class="icon" icon="photo-camera"></iron-icon>
+                 <span>[[t('appHomeScreenIconImageUpload')]]</span>
+               </yp-file-upload>
+             </div>
+
            </section>
 
            <section class="sectionMargin">
@@ -259,6 +278,11 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _appHomeScreenIconImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('domain.configuration.appHomeScreenIconImageId', image.id);
+    },
 
     _updateEmojiBindings: function () {
       this.async(function () {

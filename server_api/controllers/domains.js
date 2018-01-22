@@ -391,6 +391,8 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
 
       domain.set('configuration.customUserRegistrationText', (req.body.customUserRegistrationText && req.body.customUserRegistrationText!="") ? req.body.customUserRegistrationText : null);
       domain.set('configuration.downloadFacebookImagesForUser', (req.body.downloadFacebookImagesForUser && req.body.downloadFacebookImagesForUser!="") ? true : false);
+      domain.set('configuration.appHomeScreenIconImageId', (req.body.appHomeScreenIconImageId && req.body.appHomeScreenIconImageId!=null)? req.body.appHomeScreenIconImageId : null);
+      domain.set('configuration.appHomeScreenShortName', (req.body.appHomeScreenShortName && req.body.appHomeScreenShortName!=null)? req.body.appHomeScreenShortName : null);
 
       domain.name = req.body.name;
       domain.description = req.body.description;

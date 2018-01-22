@@ -281,7 +281,7 @@
 
     _appHomeScreenIconImageUploaded: function (event, detail) {
       var image = JSON.parse(detail.xhr.response);
-      this.set('community.appHomeScreenIconImageId', image.id);
+      this.set('community.configuration.appHomeScreenIconImageId', image.id);
     },
 
     _updateEmojiBindings: function () {
