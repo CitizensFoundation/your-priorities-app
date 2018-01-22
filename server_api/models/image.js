@@ -112,6 +112,51 @@ module.exports = function(sequelize, DataTypes) {
               quality: 99
             }
           ]
+        } else if (itemType && itemType === 'app-home-screen-icon') {
+          versions = [
+            {
+              maxWidth: 192,
+              maxHeight: 192,
+              format: 'png',
+              suffix: '-192',
+              quality: 99
+            },
+            {
+              maxWidth: 180,
+              maxHeight: 180,
+              format: 'png',
+              suffix: '-180',
+              quality: 99
+            },
+            {
+              maxWidth: 152,
+              maxHeight: 152,
+              format: 'png',
+              suffix: '-152',
+              quality: 99
+            },
+            {
+              maxWidth: 144,
+              maxHeight: 144,
+              format: 'png',
+              suffix: '-144',
+              quality: 99
+            },
+            {
+              maxWidth: 96,
+              maxHeight: 96,
+              format: 'png',
+              suffix: '-96',
+              quality: 99
+            },
+            {
+              maxWidth: 48,
+              maxHeight: 48,
+              format: 'png',
+              suffix: '-48',
+              quality: 99
+            }
+          ]
         } else if (itemType && itemType === 'organization-logo') {
           versions = [
             {

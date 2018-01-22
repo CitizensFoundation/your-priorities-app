@@ -189,6 +189,23 @@
                       class="mainInput">
       </paper-textarea>
 
+      <paper-input id="appHomeScreenShortName"
+                   name="appHomeScreenShortName"
+                   type="text"
+                   label="[[t('appHomeScreenShortName')]]"
+                   value="{{community.appHomeScreenShortName}}"
+                   maxlength="12" style="width: 200px;">
+      </paper-input>
+
+      <div class="layout vertical additionalSettings half">
+        <yp-file-upload id="appHomeScreenIconImageUpload" raised="true"
+                        multi="false" target="/api/images?itemType=app-home-screen-icon"
+                        method="POST" on-success="_appHomeScreenIconImageUploaded">
+          <iron-icon class="icon" icon="photo-camera"></iron-icon>
+          <span>[[t('appHomeScreenIconImageUpload')]]</span>
+        </yp-file-upload>
+      </div>
+
     </yp-edit-dialog>
   </template>
 
@@ -244,6 +261,10 @@
         type: String
       },
 
+      uploadedAppIconImageId: {
+        type: String
+      },
+
       status: String,
 
       themeId: {
@@ -255,6 +276,11 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _appHomeScreenIconImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('community.appHomeScreenIconImageId', image.id);
+    },
 
     _updateEmojiBindings: function () {
       this.async(function () {
@@ -313,6 +339,7 @@
       this.set('uploadedHeaderImageId', null);
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
+      this.$.appHomeScreenIconImageUpload.clear();
     },
 
     setup: function (community, newNotEdit, refreshFunction) {

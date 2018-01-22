@@ -149,6 +149,10 @@ if (!FORCE_PRODUCTION && app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_app/build/bundled')));
 }
 
+app.get('/sitemap.xml', function (req, res) {
+  generateSitemap(req, res);
+});
+
 var bearerCallback = function (req, token) {
   return console.log('The user has tried to authenticate with a bearer token');
 };
@@ -260,10 +264,6 @@ app.use(function (req, res, next) {
     res.set("Cache-Control", "no-cache,no-store");
   }
   next();
-});
-
-app.get('/sitemap.xml', function (req, res) {
-  generateSitemap(req, res);
 });
 
 app.use('/domain', index);
