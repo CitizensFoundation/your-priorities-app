@@ -91,6 +91,7 @@
         <paper-textarea id="description"
                         name="description"
                         value="{{community.description}}"
+                        always-float-label="[[community.description]]"
                         label="[[t('description')]]"
                         char-counter
                         rows="2"
@@ -182,6 +183,7 @@
       <paper-textarea id="welcomeHTML"
                       name="welcomeHTML"
                       value="{{community.configuration.welcomeHTML}}"
+                      always-float-label="[[community.configuration.welcomeHTML]]"
                       label="[[t('welcomeHTML')]]"
                       rows="2"
                       max-rows="5"

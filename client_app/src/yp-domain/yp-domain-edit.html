@@ -78,6 +78,7 @@
              <paper-textarea id="description"
                              name="description"
                              value="{{domain.description}}"
+                             always-float-label="[[domain.description]]"
                              label="[[t('Description')]]"
                              char-counter
                              rows="2"
@@ -186,6 +187,7 @@
              <paper-textarea id="samlCert"
                              name="samlCert"
                              value="{{domain.secret_api_keys.saml.cert}}"
+                             always-float-label="[[domain.secret_api_keys.saml.cert]]"
                              label="SAML Verification Certificate Chain"
                              char-counter
                              rows="2"
