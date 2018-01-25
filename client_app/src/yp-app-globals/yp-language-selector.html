@@ -26,13 +26,13 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="layout vertical">
-    <paper-dropdown-menu label="Select language" selected="{{selectedLocale}}" attr-for-selected="name">
-      <paper-listbox slot="dropdown-content" selected="{{selectedLocale}}"  attr-for-selected="name">
-        <template is="dom-repeat" items="[[languages]]">
-          <paper-item name="[[item.language]]">[[item.name]]</paper-item>
-        </template>
-      </paper-listbox>
-    </paper-dropdown-menu>
+      <paper-dropdown-menu label="Select language" selected="{{selectedLocale}}" attr-for-selected="name">
+        <paper-listbox slot="dropdown-content" selected="{{selectedLocale}}"  attr-for-selected="name">
+          <template is="dom-repeat" items="[[languages]]">
+            <paper-item name="[[item.language]]">[[item.name]]</paper-item>
+          </template>
+        </paper-listbox>
+      </paper-dropdown-menu>
   </template>
 
   <script>
@@ -56,6 +56,7 @@
             kl: 'Greenlandic',
             nl: 'Dutch',
             no: 'Norwegian',
+            pt_BR: 'Portuguese (Brazil)',
             hu: 'Hungarian',
             zh_TW: 'Chinese (TW)',
             sr: 'Serbian',
