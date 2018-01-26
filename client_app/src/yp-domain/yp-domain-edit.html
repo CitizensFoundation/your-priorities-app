@@ -121,13 +121,13 @@
              <input type="hidden" name="themeId" value="[[themeId]]">
              <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
              <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-
+             <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
 
              <paper-input id="appHomeScreenShortName"
                           name="appHomeScreenShortName"
                           type="text"
                           label="[[t('appHomeScreenShortName')]]"
-                          value="{{domain.appHomeScreenShortName}}"
+                          value="{{domain.configuration.appHomeScreenShortName}}"
                           maxlength="12" style="width: 200px;">
              </paper-input>
 
@@ -272,7 +272,9 @@
 
       status: {
         type: String
-      }
+      },
+
+      appHomeScreenIconImageId: String
     },
 
     observers: [
@@ -281,7 +283,7 @@
 
     _appHomeScreenIconImageUploaded: function (event, detail) {
       var image = JSON.parse(detail.xhr.response);
-      this.set('domain.configuration.appHomeScreenIconImageId', image.id);
+      this.set('appHomeScreenIconImageId', image.id);
     },
 
     _updateEmojiBindings: function () {

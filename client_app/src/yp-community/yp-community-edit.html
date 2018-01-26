@@ -135,6 +135,7 @@
 
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+      <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
 
       <div class="layout horizontal config">
         <paper-dropdown-menu label="[[t('status.select')]]">
@@ -272,7 +273,9 @@
       themeId: {
         type: String,
         value: null
-      }
+      },
+
+      appHomeScreenIconImageId: String
     },
 
     observers: [
@@ -281,7 +284,7 @@
 
     _appHomeScreenIconImageUploaded: function (event, detail) {
       var image = JSON.parse(detail.xhr.response);
-      this.set('community.configuration.appHomeScreenIconImageId', image.id);
+      this.set('appHomeScreenIconImageId', image.id);
     },
 
     _updateEmojiBindings: function () {
@@ -298,6 +301,7 @@
 
     _getExampleHostname: function (hostname) {
       if (hostname) {
+        return hostname + '.' + window.appGlobals.domain.domain_name;
         return hostname + '.' + window.appGlobals.domain.domain_name;
       } else {
         return 'your-hostname.' + window.appGlobals.domain.domain_name;

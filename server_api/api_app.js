@@ -46,6 +46,7 @@ var legacyPages = require('./controllers/legacyPages');
 var nonSPArouter = require('./controllers/nonSpa');
 
 var generateSitemap = require('./utils/sitemap_generator');
+var generateManifest = require('./utils/manifest_generator');
 
 var models = require('./models');
 var auth = require('./authorization');
@@ -151,6 +152,10 @@ if (!FORCE_PRODUCTION && app.get('env') === 'development') {
 
 app.get('/sitemap.xml', function (req, res) {
   generateSitemap(req, res);
+});
+
+app.get('/manifest.json', function (req, res) {
+  generateManifest(req, res);
 });
 
 var bearerCallback = function (req, token) {
