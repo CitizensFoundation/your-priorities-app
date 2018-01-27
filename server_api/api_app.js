@@ -46,6 +46,7 @@ var legacyPages = require('./controllers/legacyPages');
 var nonSPArouter = require('./controllers/nonSpa');
 
 var generateSitemap = require('./utils/sitemap_generator');
+var generateManifest = require('./utils/manifest_generator');
 
 var models = require('./models');
 var auth = require('./authorization');
@@ -148,6 +149,14 @@ if (!FORCE_PRODUCTION && app.get('env') === 'development') {
 } else {
   app.use(express.static(path.join(__dirname, '../client_app/build/bundled')));
 }
+
+app.get('/sitemap.xml', function (req, res) {
+  generateSitemap(req, res);
+});
+
+app.get('/manifest.json', function (req, res) {
+  generateManifest(req, res);
+});
 
 var bearerCallback = function (req, token) {
   return console.log('The user has tried to authenticate with a bearer token');
@@ -260,10 +269,6 @@ app.use(function (req, res, next) {
     res.set("Cache-Control", "no-cache,no-store");
   }
   next();
-});
-
-app.get('/sitemap.xml', function (req, res) {
-  generateSitemap(req, res);
 });
 
 app.use('/domain', index);

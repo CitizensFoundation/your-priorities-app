@@ -90,6 +90,7 @@
       <paper-textarea id="objectives"
                       name="objectives"
                       value="{{group.objectives}}"
+                      always-float-label="[[group.objectives]]"
                       label="[[t('group.objectives')]]"
                       char-counter
                       rows="2"
@@ -377,6 +378,7 @@
     _openCategoryEdit: function (event) {
       window.appGlobals.activity('open', 'category.new');
       Polymer.dom(document).querySelector('yp-app').getDialogAsync("categoryEdit", function (dialog) {
+        debugger;
         dialog.setup(this.group, false, this._refreshCategories.bind(this), event.model.category);
         dialog.open("edit", {categoryId: event.model.category.id});
       }.bind(this));

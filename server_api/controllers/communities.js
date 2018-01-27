@@ -274,9 +274,13 @@ var updateCommunityConfigParameters = function (req, community) {
   }
 
   community.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
+
   if (req.body.status && req.body.status!="") {
     community.status = req.body.status;
   }
+
+  community.set('configuration.appHomeScreenIconImageId', (req.body.appHomeScreenIconImageId && req.body.appHomeScreenIconImageId!=null)? req.body.appHomeScreenIconImageId : null);
+  community.set('configuration.appHomeScreenShortName', (req.body.appHomeScreenShortName && req.body.appHomeScreenShortName!=null)? req.body.appHomeScreenShortName : null);
 };
 
 router.delete('/:communityId/:activityId/delete_activity', auth.can('edit community'), function(req, res) {

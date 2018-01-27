@@ -78,6 +78,7 @@
              <paper-textarea id="description"
                              name="description"
                              value="{{domain.description}}"
+                             always-float-label="[[domain.description]]"
                              label="[[t('Description')]]"
                              char-counter
                              rows="2"
@@ -120,6 +121,25 @@
              <input type="hidden" name="themeId" value="[[themeId]]">
              <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
              <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+             <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
+
+             <paper-input id="appHomeScreenShortName"
+                          name="appHomeScreenShortName"
+                          type="text"
+                          label="[[t('appHomeScreenShortName')]]"
+                          value="{{domain.configuration.appHomeScreenShortName}}"
+                          maxlength="12" style="width: 200px;">
+             </paper-input>
+
+             <div class="layout vertical additionalSettings half">
+               <yp-file-upload id="appHomeScreenIconImageUpload" raised="true"
+                               multi="false" target="/api/images?itemType=app-home-screen-icon"
+                               method="POST" on-success="_appHomeScreenIconImageUploaded">
+                 <iron-icon class="icon" icon="photo-camera"></iron-icon>
+                 <span>[[t('appHomeScreenIconImageUpload')]]</span>
+               </yp-file-upload>
+             </div>
+
            </section>
 
            <section class="sectionMargin">
@@ -186,6 +206,7 @@
              <paper-textarea id="samlCert"
                              name="samlCert"
                              value="{{domain.secret_api_keys.saml.cert}}"
+                             always-float-label="[[domain.secret_api_keys.saml.cert]]"
                              label="SAML Verification Certificate Chain"
                              char-counter
                              rows="2"
@@ -251,12 +272,19 @@
 
       status: {
         type: String
-      }
+      },
+
+      appHomeScreenIconImageId: String
     },
 
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _appHomeScreenIconImageUploaded: function (event, detail) {
+      var image = JSON.parse(detail.xhr.response);
+      this.set('appHomeScreenIconImageId', image.id);
+    },
 
     _updateEmojiBindings: function () {
       this.async(function () {
