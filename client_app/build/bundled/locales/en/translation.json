@@ -1,4 +1,6 @@
 {
+  "appHomeScreenShortName": "Phone homescreen name",
+  "appHomeScreenIconImageUpload": "Upload phone homescreen icon",
   "allowAnonymousAutoLogin": "Allow anonymous auto login",
   "later": "Not now",
   "disableDebate": "Disable debate",
