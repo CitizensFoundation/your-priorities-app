@@ -35,7 +35,6 @@
         max-width: 1024px;
         width: 100%;
         @apply(--paper-fullscreen-dialog);
-        background-color: var(--accent-color);
       }
 
       [main] {
@@ -157,6 +156,7 @@
         width: 32px;
         height: 32px;
         padding-right: 8px;
+        margin-top: 7px;
       }
 
       .titleHeader {
@@ -168,8 +168,8 @@
 
       .titleHeaderMobile {
         font-size: 20px;
-        padding-left: 12px;
-        padding-top: 6px;
+        padding-left: 2px;
+        margin-top: 12px;
         font-weight: bold;
       }
 
@@ -187,6 +187,7 @@
 
       .smallButtonText {
         font-weight: bold;
+        font-size: 17px;
       }
 
       .outerMobile {
@@ -220,6 +221,7 @@
               <paper-icon-button id="dismissBtn" icon="close" class="closeIconNarrow" dialog-dismiss></paper-icon-button>
               <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
               <div class="titleHeaderMobile">[[title]]</div>
+              <div class="flex"></div>
               <template is="dom-if" if="[[!useNextTabAction]]">
                 <paper-button id="submit1" on-tap="_submit"><span class="smallButtonText">[[saveText]]</span></paper-button>
               </template>

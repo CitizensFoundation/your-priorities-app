@@ -14,6 +14,7 @@
 <link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-detect-old-ios.html">
 
 <link rel="import" href="../ac-activities/ac-activities.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
@@ -72,10 +73,10 @@
         <yp-community-large-card id="communityCard" slot="largeCard" class="largeCard card" community="[[community]]" on-update-community="_refreshAjax"></yp-community-large-card>
       </template>
 
-      <paper-tabs  apple$="[[isApple]]" id="paper_tabs" slot="tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
+      <paper-tabs id="paper_tabs" apple$="[[isOldiOs]]" slot="tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
         <paper-tab name="groups" class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
         <paper-tab name="news" class="tab">[[t('news')]]</paper-tab>
-        <div hidden$="[[locationHidden]]"><paper-tab name="map" class="tab">[[t('posts.map')]]</paper-tab></div>
+        <paper-tab name="map" class="tab" hidden$="[[locationHidden]]">[[t('posts.map')]]</paper-tab>
       </paper-tabs>
 
       <iron-pages class="tabPages" slot="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
@@ -135,7 +136,8 @@
         Polymer.CollectionHelpers,
         Polymer.AccessHelpers,
         Polymer.YpNewsTabSelected,
-        Polymer.ypLoggedInUserBehavior
+        Polymer.ypLoggedInUserBehavior,
+        Polymer.ypDetectOldiOs
       ],
 
       properties: {
@@ -182,9 +184,9 @@
           value: false
         },
 
-        isApple: {
+        isOldiOs: {
           type: Boolean,
-          computed: '_isApple(communityId)'
+          computed: '_isOldiOs(communityId)'
         },
 
         useNormalHeader: {
@@ -197,10 +199,6 @@
         '_routeIdChanged(idRouteData.id)',
         '_routeTabChanged(tabRouteData.tabName)'
       ],
-
-      _isApple: function () {
-        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      },
 
       _userLoggedIn: function (user) {
         if (user) {

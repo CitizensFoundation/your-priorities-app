@@ -190,7 +190,6 @@
   }
 
   window.addEventListener('WebComponentsReady', function(e) {
-    console.error("WebComponentsReady");
     onSplashClick();
   });
 })(document);
