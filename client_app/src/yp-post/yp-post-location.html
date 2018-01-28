@@ -71,7 +71,7 @@
     <google-map id="map" zoom="[[mapZoom]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" map="{{map}}"
                 libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events
                 on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers>
-      <google-map-marker latitude="[[defaultLatitude]]" longitude="[[defaultLongitude]]"
+      <google-map-marker slot="markers" latitude="[[defaultLatitude]]" longitude="[[defaultLongitude]]"
                          id="marker"></google-map-marker>
     </google-map>
 

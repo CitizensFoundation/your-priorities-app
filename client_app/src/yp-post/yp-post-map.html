@@ -111,7 +111,7 @@
         <paper-material id="mapContainer" elevation="2" class="mapContainer">
           <google-map id="map" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" fit-to-markers>
             <template is="dom-repeat" items="[[posts]]" as="post">
-              <google-map-marker latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"
+              <google-map-marker slot="markers" latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"
                                  click-events class="marker" on-google-map-marker-click="markerClick">
               </google-map-marker>
             </template>
