@@ -47,7 +47,14 @@
       .container {
         width: 100%;
         height: 100%;
-        min-height: 300px;
+      }
+
+      yp-language-selector {
+        margin-top: 8px;
+      }
+
+      paper-checkbox {
+        margin-top: 4px;
       }
     </style>
 
@@ -55,167 +62,154 @@
 
     <yp-edit-dialog double-width id="editDialog" title="[[editHeaderText]]" icon="cloud-queue" action="[[action]]" method="[[method]]"
                     params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <div>
+        <paper-input id="name"
+                     name="name"
+                     type="text"
+                     label="[[t('Name')]]"
+                     value="{{domain.name}}"
+                     maxlength="60"
+                     char-counter class="mainInput">
+        </paper-input>
 
-       <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-         <paper-tab><span>[[t('domain.info')]]</span></paper-tab>
-         <paper-tab>[[t('domain.settings')]]</paper-tab>
-         <paper-tab>[[t('domain.apis')]]</paper-tab>
-       </paper-tabs>
+        <paper-textarea id="description"
+                        name="description"
+                        value="{{domain.description}}"
+                        always-float-label="[[domain.description]]"
+                        label="[[t('Description')]]"
+                        char-counter
+                        rows="2"
+                        max-rows="5"
+                        maxlength="300" class="mainInput">
+        </paper-textarea>
 
-       <div class="layout vertical wrap container">
-         <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
+        <div class="horizontal end-justified layout">
+          <emoji-selector id="emojiSelectorDescription"></emoji-selector>
+        </div>
 
-           <section>
-             <paper-input id="name"
-                          name="name"
-                          type="text"
-                          label="[[t('Name')]]"
-                          value="{{domain.name}}"
-                          maxlength="60"
-                          char-counter class="mainInput">
-             </paper-input>
+        <div class="layout vertical">
+          <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
+        </div>
 
-             <paper-textarea id="description"
-                             name="description"
-                             value="{{domain.description}}"
-                             always-float-label="[[domain.description]]"
-                             label="[[t('Description')]]"
-                             char-counter
-                             rows="2"
-                             max-rows="5"
-                             maxlength="300" class="mainInput">
-             </paper-textarea>
-             <div class="horizontal end-justified layout">
-               <emoji-selector id="emojiSelectorDescription"></emoji-selector>
-             </div>
+        <div class="layout vertical additionalSettings">
+          <yp-file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
+            <span> [[t('image.logo.upload')]] - 864 x 486</span><br>
+          </yp-file-upload>
+        </div>
 
-             <div class="layout vertical">
-               <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
-             </div>
+        <div class="layout vertical additionalSettings">
+          <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-header" method="POST" on-success="_headerImageUploaded">
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
+            <span> [[t('image.header.upload')]] - 1920 x 600</span><br>
+          </yp-file-upload>
+        </div>
 
-             <div class="layout vertical additionalSettings">
-               <yp-file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
-                 <iron-icon class="icon" icon="photo-camera"></iron-icon>
-                 <span>[[t('image.logo.upload')]]</span><br>
-                 <span class="imageSizeInfo">864 x 486</span>
-               </yp-file-upload>
-             </div>
+        <paper-input id="customUserRegistrationText"
+                     name="customUserRegistrationText"
+                     type="text"
+                     label="[[t('customUserRegistrationText')]]"
+                     value="{{domain.configuration.customUserRegistrationText}}"
+                     maxlength="256"
+                     char-counter>
+        </paper-input>
 
-             <div class="layout vertical additionalSettings">
-               <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-header" method="POST" on-success="_headerImageUploaded">
-                 <iron-icon class="icon" icon="photo-camera"></iron-icon>
-                 <span>[[t('image.header.upload')]]</span><br>
-                 <span class="imageSizeInfo">1920 x 600</span>
-               </yp-file-upload>
-             </div>
+        <paper-input id="appHomeScreenShortName"
+                     name="appHomeScreenShortName"
+                     type="text"
+                     label="[[t('appHomeScreenShortName')]]"
+                     value="{{domain.configuration.appHomeScreenShortName}}"
+                     maxlength="12" style="width: 200px;">
+        </paper-input>
 
-             <paper-input id="customUserRegistrationText"
-                          name="customUserRegistrationText"
-                          type="text"
-                          label="[[t('customUserRegistrationText')]]"
-                          value="{{domain.configuration.customUserRegistrationText}}"
-                          maxlength="256"
-                          char-counter>
-             </paper-input>
+        <div class="layout vertical additionalSettings half">
+          <yp-file-upload id="appHomeScreenIconImageUpload" raised="true"
+                          multi="false" target="/api/images?itemType=app-home-screen-icon"
+                          method="POST" on-success="_appHomeScreenIconImageUploaded">
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
+            <span>[[t('appHomeScreenIconImageUpload')]]</span>
+          </yp-file-upload>
+        </div>
 
-             <input type="hidden" name="themeId" value="[[themeId]]">
-             <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
-             <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-             <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
+        <input type="hidden" name="themeId" value="[[themeId]]">
+        <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
+        <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+        <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
 
-             <paper-input id="appHomeScreenShortName"
-                          name="appHomeScreenShortName"
-                          type="text"
-                          label="[[t('appHomeScreenShortName')]]"
-                          value="{{domain.configuration.appHomeScreenShortName}}"
-                          maxlength="12" style="width: 200px;">
-             </paper-input>
+        <br>
 
-             <div class="layout vertical additionalSettings half">
-               <yp-file-upload id="appHomeScreenIconImageUpload" raised="true"
-                               multi="false" target="/api/images?itemType=app-home-screen-icon"
-                               method="POST" on-success="_appHomeScreenIconImageUploaded">
-                 <iron-icon class="icon" icon="photo-camera"></iron-icon>
-                 <span>[[t('appHomeScreenIconImageUpload')]]</span>
-               </yp-file-upload>
-             </div>
+        <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{domain.default_locale}}"></yp-language-selector>
 
-           </section>
+        <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
 
-           <section class="sectionMargin">
-             <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
-             <paper-checkbox name="downloadFacebookImagesForUser" checked$="{{domain.configuration.downloadFacebookImagesForUser}}">[[t('downloadFacebookImagesForUser')]]</paper-checkbox>
-             <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{domain.default_locale}}"></yp-language-selector>
-           </section>
+        <paper-input id="facebookClientId"
+                     name="facebookClientId"
+                     type="text"
+                     label="Facebook Client Id"
+                     value="{{domain.secret_api_keys.facebook.client_id}}"
+                     maxlength="60"
+                     char-counter class="mainInput">
+        </paper-input>
 
-           <section>
-             <paper-input id="facebookClientId"
-                          name="facebookClientId"
-                          type="text"
-                          label="Facebook Client Id"
-                          value="{{domain.secret_api_keys.facebook.client_id}}"
-                          maxlength="60"
-                          char-counter class="mainInput">
-             </paper-input>
+        <paper-input id="facebookClientSecret"
+                     name="facebookClientSecret"
+                     type="text"
+                     label="Facebook Client Secret"
+                     value="{{domain.secret_api_keys.facebook.client_secret}}"
+                     maxlength="60"
+                     char-counter class="mainInput">
+        </paper-input>
 
-             <paper-input id="facebookClientSecret"
-                          name="facebookClientSecret"
-                          type="text"
-                          label="Facebook Client Secret"
-                          value="{{domain.secret_api_keys.facebook.client_secret}}"
-                          maxlength="60"
-                          char-counter class="mainInput">
-             </paper-input>
+        <paper-input id="googleClientId"
+                     name="googleClientId"
+                     type="text"
+                     label="Google Client Id"
+                     value="{{domain.secret_api_keys.google.client_id}}"
+                     maxlength="60"
+                     char-counter class="mainInput">
+        </paper-input>
 
-             <paper-input id="googleClientId"
-                          name="googleClientId"
-                          type="text"
-                          label="Google Client Id"
-                          value="{{domain.secret_api_keys.google.client_id}}"
-                          maxlength="60"
-                          char-counter class="mainInput">
-             </paper-input>
+        <paper-input id="googleClientSecret"
+                     name="googleClientSecret"
+                     type="text"
+                     label="Google Client Secret"
+                     value="{{domain.secret_api_keys.google.client_secret}}"
+                     maxlength="60"
+                     char-counter class="mainInput">
+        </paper-input>
 
-             <paper-input id="googleClientSecret"
-                          name="googleClientSecret"
-                          type="text"
-                          label="Google Client Secret"
-                          value="{{domain.secret_api_keys.google.client_secret}}"
-                          maxlength="60"
-                          char-counter class="mainInput">
-             </paper-input>
+        <paper-input id="samlEntryPoint"
+                     name="samlEntryPoint"
+                     type="text"
+                     label="SAML EntryPoint"
+                     value="{{domain.secret_api_keys.saml.entryPoint}}"
+                     maxlength="100"
+                     char-counter class="mainInput">
+        </paper-input>
 
-             <paper-input id="samlEntryPoint"
-                          name="samlEntryPoint"
-                          type="text"
-                          label="SAML EntryPoint"
-                          value="{{domain.secret_api_keys.saml.entryPoint}}"
-                          maxlength="100"
-                          char-counter class="mainInput">
-             </paper-input>
+        <paper-input id="samlCallbackUrl"
+                     name="samlCallbackUrl"
+                     type="text"
+                     label="SAML CallbackUrl"
+                     value="{{domain.secret_api_keys.saml.callbackUrl}}"
+                     maxlength="100"
+                     char-counter class="mainInput">
+        </paper-input>
 
-             <paper-input id="samlCallbackUrl"
-                          name="samlCallbackUrl"
-                          type="text"
-                          label="SAML CallbackUrl"
-                          value="{{domain.secret_api_keys.saml.callbackUrl}}"
-                          maxlength="100"
-                          char-counter class="mainInput">
-             </paper-input>
-
-             <paper-textarea id="samlCert"
-                             name="samlCert"
-                             value="{{domain.secret_api_keys.saml.cert}}"
-                             always-float-label="[[domain.secret_api_keys.saml.cert]]"
-                             label="SAML Verification Certificate Chain"
-                             char-counter
-                             rows="2"
-                             max-rows="5"
-                             maxlength="20000" class="mainInput">
-             </paper-textarea>
-           </section>
-         </neon-animated-pages>
-       </div>
+        <paper-textarea id="samlCert"
+                        name="samlCert"
+                        value="{{domain.secret_api_keys.saml.cert}}"
+                        always-float-label="[[domain.secret_api_keys.saml.cert]]"
+                        label="SAML Verification Certificate Chain"
+                        char-counter
+                        rows="2"
+                        max-rows="5"
+                        maxlength="20000" class="mainInput">
+        </paper-textarea>
+        <div class="layout vertical">
+          <paper-checkbox name="downloadFacebookImagesForUser" checked$="{{domain.configuration.downloadFacebookImagesForUser}}">[[t('downloadFacebookImagesForUser')]]</paper-checkbox>
+        </div>
+      </div>
     </yp-edit-dialog>
   </template>
 

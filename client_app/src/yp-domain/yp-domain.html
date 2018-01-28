@@ -10,6 +10,7 @@
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
+<link rel="import" href="../yp-behaviors/yp-detect-old-ios.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 
 <link rel="import" href="../yp-community/yp-community-collection-behaviors.html">
@@ -78,6 +79,11 @@
       .minHeightSection {
         min-height: 450px;
       }
+
+      #paper_tabs[apple] {
+        margin-top: 42px;
+        margin-bottom: 8px;
+      }
     </style>
 
 
@@ -85,7 +91,7 @@
 
       <yp-domain-large-card id="domainCard" slot="largeCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refreshAjax"></yp-domain-large-card>
 
-      <paper-tabs id="paper_tabs" slot="tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
+      <paper-tabs id="paper_tabs" apple$="[[isOldiOs]]" slot="tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
         <paper-tab name="communities" class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
         <paper-tab name="news" class="tab">[[t('news')]]</paper-tab>
       </paper-tabs>
@@ -145,7 +151,8 @@
         Polymer.CollectionHelpers,
         Polymer.AccessHelpers,
         Polymer.YpNewsTabSelected,
-        Polymer.ypLoggedInUserBehavior
+        Polymer.ypLoggedInUserBehavior,
+        Polymer.ypDetectOldiOs
       ],
 
       properties: {
@@ -189,6 +196,11 @@
         otherSocialMediaActive: {
           type: Boolean,
           value: false
+        },
+
+        isOldiOs: {
+          type: Boolean,
+          computed: '_isOldiOs(domainId)'
         }
       },
 

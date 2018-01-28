@@ -192,7 +192,7 @@
       </div>
 
       <template is="dom-if" if="[[!disableNewPosts]]" restamp>
-        <div class="largeAddButton layout horizontal center-center" is-apple$="[[isApple]]" is-ipad$="[[isIpad]]">
+        <div class="largeAddButton layout horizontal center-center" is-apple$="[[isOldiOs]]" is-ipad$="[[isIpad]]">
           <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
         </div>
       </template>
@@ -333,7 +333,8 @@
       behaviors: [
         Polymer.appHelpers,
         Polymer.ypThemeBehavior,
-        Polymer.YpNewsTabSelected
+        Polymer.YpNewsTabSelected,
+        Polymer.ypDetectOldiOs
       ],
 
       listeners: {
@@ -436,9 +437,9 @@
           computed: '_isTabFailed(selectedTab)'
         },
 
-        isApple: {
+        isOldiOs: {
           type: Boolean,
-          computed: '_isApple(groupId)'
+          computed: '_isOldiOs(groupId)'
         },
 
         isIpad: {
@@ -480,10 +481,6 @@
         } else {
           console.error("Cant find tab "+tabId);
         }
-      },
-
-      _isApple: function () {
-        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       },
 
       _isIpad: function () {
