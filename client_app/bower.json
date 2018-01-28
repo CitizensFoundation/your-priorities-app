@@ -1,8 +1,6 @@
 {
   "name": "your-priorities-app",
   "version": "7.0.2",
-  "_comment": "rbjarnason/iron-list#v117",
-  "_comment1": "PolymerElements/iron-list#2.x",
   "dependencies": {
     "polymer": "polymer/polymer#2.x",
     "iron-form": "rbjarnason/iron-form#add-put-support",
