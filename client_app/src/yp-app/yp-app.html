@@ -695,6 +695,7 @@
           }
           dialog.open(page.title[pageLocale], page.content[pageLocale]);
         }.bind(this));
+        this.$$("paper-listbox").select(null);
       },
 
       _getLocalizePageTitle: function (page) {
