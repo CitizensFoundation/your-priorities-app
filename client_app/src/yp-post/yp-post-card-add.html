@@ -4,7 +4,7 @@
 <link rel="import" href="../../bower_components/iron-image/iron-image.html" >
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
@@ -23,7 +23,7 @@
         min-height: 80px;
         height: 100%;
         margin-top: 8px;
-        padding: 8px;
+        padding: 16px;
         background-color: var(--accent-color);
         color: #FFF;
         font-size: 16px;
@@ -31,7 +31,7 @@
         margin-bottom: 8px;
       }
 
-      paper-icon-button {
+      iron-icon {
         height: 80px;
         width: 80px;
         color: #FFF;
@@ -57,18 +57,23 @@
 
       .addText {
         padding-left: 0;
+        padding-right: 8px;
       }
 
       iron-icon {
         width: 64px;
         height: 64px;
-        padding-right: 64px;
+        margin-right: 8px;
+        margin-left: 0;
       }
 
       .addNewIdeaText {
         font-size: 26px;
         width: 100%;
         color: #FFF;
+      }
+      .closed {
+        font-size: 20px;
       }
 
       @media (max-width: 832px) {
@@ -83,10 +88,11 @@
         .postCard {
           max-width: 250px;
           width: 250px;
-          minx-height: 68px;
           margin-left: 0;
           margin-right: 0;
           margin-bottom: 4px;
+          padding: 8px;
+          min-height: 64px;
         }
 
         .addNewIdeaText {
@@ -94,22 +100,40 @@
           width: 100%;
         }
 
-        paper-icon-button {
-          height: 68px;
-          width: 68px;
+        iron-icon {
+          height: 48px;
+          width: 48px;
+        }
+
+        .closed {
+          font-size: 19px;
         }
 
       }
+
+      paper-card[disabled] {
+        background-color: #888;
+        cursor: initial;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="layout vertical center-center">
-      <paper-card elevation="[[elevation]]" class="postCard" on-tap="_newPost" >
+      <paper-card disabled$="[[disabled]]" elevation="[[elevation]]" class="postCard" on-tap="_newPost" >
         <div class="layout horizontal center-center addNewIdeaText">
-          <paper-icon-button icon="lightbulb-outline"></paper-icon-button>
-          <div class="flex addText">
+          <iron-icon icon="lightbulb-outline"></iron-icon>
+          <div class="flex addText" hidden$="[[disabled]]">
             [[t('post.add_new')]]
           </div>
+          <div class="flex addText closed" hidden$="[[!disabled]]">
+            [[t('closedForNewPosts')]]
+          </div>
+
         </div>
       </paper-card>
     </div>
@@ -122,11 +146,17 @@
       properties: {
         elevation: {
           type: Number
+        },
+
+        disabled: {
+          type: Boolean
         }
       },
 
       _newPost: function () {
-        this.fire('new-post');
+        if (!this.disabled) {
+          this.fire('new-post');
+        }
       },
 
       behaviors: [
