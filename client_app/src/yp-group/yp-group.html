@@ -192,11 +192,9 @@
         <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-card-large>
       </div>
 
-      <template is="dom-if" if="[[!disableNewPosts]]" restamp>
-        <div class="largeAddButton layout horizontal center-center" is-apple$="[[isOldiOs]]" is-ipad$="[[isIpad]]">
-          <yp-post-card-add on-new-post="_newPost" elevation="2"></yp-post-card-add>
-        </div>
-      </template>
+      <div class="largeAddButton layout horizontal center-center" is-apple$="[[isOldiOs]]" is-ipad$="[[isIpad]]">
+        <yp-post-card-add disabled="[[disableNewPosts]]" on-new-post="_newPost" elevation="2"></yp-post-card-add>
+      </div>
 
       <div class="layout horizontal center-center tabContainer" hide$="[[group.configuration.hideAllTabs]]">
         <paper-tabs scrollable$="[[!wideWidth]]" id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>

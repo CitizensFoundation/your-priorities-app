@@ -146,7 +146,7 @@
           <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
           <paper-menu-button class="edit" hidden$="[[!checkCommunityAccess(community)]]">
             <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-            <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection" selected="{{selectedMenuItem}}">
+            <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
               <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
               <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
             </paper-listbox>
@@ -196,7 +196,8 @@
           this._openEdit();
         else if (detail.item.id=="deleteMenuItem")
           this._openDelete();
-        this.selectedMenuItem = null;
+
+        this.$$("paper-listbox").select(null);
       },
 
       _openDelete: function () {
