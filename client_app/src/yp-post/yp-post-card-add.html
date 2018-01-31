@@ -72,8 +72,10 @@
         width: 100%;
         color: #FFF;
       }
+
       .closed {
-        font-size: 20px;
+        font-size: 18px;
+        padding: 8px;
       }
 
       @media (max-width: 832px) {
@@ -82,6 +84,21 @@
           margin-left: 64px;
           margin-right: 64px;
         }
+      }
+
+      paper-card[disabled] {
+        background-color: #888;
+        cursor: initial;
+        max-width: 250px;
+        width: 220px;
+        padding: 8px;
+        margin-top: 0;
+        min-height: initial;
+      }
+
+      iron-icon[disabled] {
+        height: 36px;
+        width: 36px;
       }
 
       @media (max-width: 420px) {
@@ -106,14 +123,9 @@
         }
 
         .closed {
-          font-size: 19px;
+          font-size: 17px;
         }
 
-      }
-
-      paper-card[disabled] {
-        background-color: #888;
-        cursor: initial;
       }
 
       [hidden] {
@@ -126,7 +138,7 @@
     <div class="layout vertical center-center">
       <paper-card disabled$="[[disabled]]" elevation="[[elevation]]" class="postCard" on-tap="_newPost" >
         <div class="layout horizontal center-center addNewIdeaText">
-          <iron-icon icon="lightbulb-outline"></iron-icon>
+          <iron-icon disabled$="[[disabled]]" icon="lightbulb-outline"></iron-icon>
           <div class="flex addText" hidden$="[[disabled]]">
             [[t('post.add_new')]]
           </div>
