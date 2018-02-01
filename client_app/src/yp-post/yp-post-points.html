@@ -200,7 +200,6 @@
         --iron-list-items-container: {
         };
       }
-
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></lite-signal>
@@ -374,16 +373,12 @@
 
           downPoints: {
             type: Array,
-            value: function () {
-              return [];
-            }
+            value: []
           },
 
           upPoints: {
             type: Array,
-            value: function () {
-              return [];
-            }
+            value: []
           },
 
           textValueUp: {
@@ -632,7 +627,6 @@
           var points = this._preProcessPoints(detail.response);
           this.removeElementsByClass(this, 'inserted-outside-list');
 
-
           if (points.length > 0) {
             var upPoints = [];
             var downPoints = [];
@@ -647,8 +641,9 @@
             this.set('upPoints', upPoints);
             this.set('downPoints', downPoints);
           } else {
-            this.set('upPoints', null);
-            this.set('downPoints', null);
+            this.set('upPoints', []);
+            this.set('downPoints', []);
+            this.set('points', []);
           }
 
           if (!this.largeMode) {
