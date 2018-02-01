@@ -161,6 +161,10 @@
       .spinnerContainer {
         margin-top: 32px;
       }
+
+      :focus {
+        outline: none;
+      }
     </style>
     <div class="layout horizontal topLevelActivitiesContainer" wide$="[[wide]]">
       <div class="layout vertical self-start">
@@ -178,9 +182,9 @@
         <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]"
                    scroll-offset$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
-            <div class="layout vertical center-center">
+            <div tabindex$="[[tabIndex]]" class="layout vertical center-center">
               <ac-activity has-logged-in-user$="[[hasLoggedInUser]]" class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]"
-                           domain-id="[[domainId]]" tabindex$="[[tabIndex]]" on-ak-delete-activity="_deleteActivity"></ac-activity>
+                           domain-id="[[domainId]]" on-ak-delete-activity="_deleteActivity"></ac-activity>
             </div>
           </template>
         </iron-list>

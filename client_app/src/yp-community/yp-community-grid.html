@@ -42,13 +42,17 @@
       [hidden] {
         display: none !important;
       }
+
+      :focus {
+        outline: none;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
     <iron-list id="ironList" scroll-offset="350" items="[[activeCommunities]]" as="community" scroll-target="document" grid>
       <template>
-        <yp-community-card wide$="[[wide]]" class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+        <yp-community-card tabindex$="[[tabIndex]]" wide$="[[wide]]" class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
       </template>
     </iron-list>
   </template>
