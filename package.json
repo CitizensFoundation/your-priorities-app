@@ -21,7 +21,7 @@
     "ejs": "^2.3.4",
     "email-templates": "^2.0.1",
     "embedly": "^1.0.4",
-    "express": "^4.15.2",
+    "express": "^4.16.2",
     "express-generator": "^4.9.0",
     "express-session": "git+https://github.com/rbjarnason/session.git",
     "express-useragent": "^0.2.4",
@@ -57,7 +57,7 @@
     "randomstring": "^1.1.4",
     "request-ip": "^1.2.2",
     "s3-uploader": "^1.0.0",
-    "sequelize": "^3.30.3",
+    "sequelize": "^3.31.1",
     "sequelize-cli": "^2.4.0",
     "serve-favicon": "~2.1.6",
     "sitemap": "^1.9.0",
@@ -67,17 +67,21 @@
     "yamljs": "^0.2.7"
   },
   "devDependencies": {
+    "css-slam": "^2.0.2",
     "del": "^2.2.1",
-    "gulp": "gulpjs/gulp#4.0",
+    "gulp": "gulpjs/gulp#3.9",
+    "gulp-html-minifier": "^0.1.8",
     "gulp-if": "^2.0.1",
     "gulp-imagemin": "^3.0.1",
     "gulp-inject-version": "^1.0.1",
+    "gulp-uglify": "^3.0.0",
+    "gulp-version-append": "^0.2.0",
+    "gulp-version-html-imports": "git+https://github.com/rbjarnason/gulp-version-html-imports.git",
+    "jshint": "^2.9.5",
     "merge-stream": "^1.0.0",
     "plylog": "^0.4.0",
-    "polymer-build": "^0.4.0",
-    "jshint": "^2.9.4",
-    "gulp-version-append": "^0.2.0",
-    "gulp-version-html-imports": "git+https://github.com/rbjarnason/gulp-version-html-imports.git"
+    "polymer-build": "2.1.1",
+    "uglify": "^0.1.5"
   },
   "scripts": {
     "test": "gulp test:local",
@@ -88,6 +92,6 @@
     "node_modules"
   ],
   "engines": {
-    "node": "6.10.2"
+    "node": "8.9.4"
   }
 }
