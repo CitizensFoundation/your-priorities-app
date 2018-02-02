@@ -144,9 +144,12 @@
         margin-left: 8px;
       }
 
-
       [hidden] {
         display: none !important;
+      }
+
+      :focus {
+        outline: none;
       }
     </style>
 
@@ -183,8 +186,8 @@
     <div class="layout horizontal center-center">
       <iron-list id="ironList" scroll-offset="550" items="[[posts]]" as="post" scroll-target="document" grid>
         <template>
-          <div wide-padding$="[[wide]]" class="card layout vertical center-center">
-            <yp-post-card tabindex$="[[tabIndex]]" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+          <div tabindex$="[[tabIndex]]" wide-padding$="[[wide]]" class="card layout vertical center-center">
+            <yp-post-card class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
           </div>
         </template>
       </iron-list>

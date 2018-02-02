@@ -647,7 +647,29 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
           log.info('Post Deleted Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
           post.updateAllExternalCounters(req, 'down', 'counter_posts', function () {
             log.info('Post Deleted Counters updates', { context: 'delete', user: toJson(req.user) });
-            res.sendStatus(200);
+            models.Point.findAll({
+              attributes: ['id','deleted'],
+              where: {
+                post_id: postId
+              }
+            }).then(function (points) {
+              var pointIds = _.map(points, function (point) {
+                return point.id;
+              });
+              models.Point.update(
+                { deleted: true },
+                { where: {
+                    id: {
+                      $in: pointIds
+                    }
+                  }}
+              ).then(function () {
+                post.updateAllExternalCountersBy(req, 'down', 'counter_points', points.length, function () {
+                  log.info('Post Deleted Point Counters updates', { context: 'delete', user: toJson(req.user) });
+                  res.sendStatus(200);
+                });
+              });
+            });
           });
         });
       });
