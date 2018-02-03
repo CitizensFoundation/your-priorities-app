@@ -74,6 +74,7 @@
     "gulp-if": "^2.0.1",
     "gulp-imagemin": "^3.0.1",
     "gulp-inject-version": "^1.0.1",
+    "gulp-polymer-build-utils": "^1.5.0",
     "gulp-uglify": "^3.0.0",
     "gulp-version-append": "^0.2.0",
     "gulp-version-html-imports": "git+https://github.com/rbjarnason/gulp-version-html-imports.git",
@@ -81,6 +82,7 @@
     "merge-stream": "^1.0.0",
     "plylog": "^0.4.0",
     "polymer-build": "2.1.1",
+    "run-sequence": "^2.2.1",
     "uglify": "^0.1.5"
   },
   "scripts": {

@@ -13,7 +13,7 @@
   ],
 
   "builds": [{
-    "name": "bundled",
+    "name": "build",
     "bundle": true,
     "js": {"compile": true, "minify": true},
     "css": {"minify": true},
@@ -28,8 +28,12 @@
     "locales/**/*",
     "index_br.html",
     "index_bi.html",
-    "bower.json",
+    "bower.json"
+  ],
+
+  "extraDependencies": [
     "bower_components/i18next/i18next.min.js",
-    "bower_components/i18next-xhr-backend/i18nextXHRBackend.min.js"
+    "bower_components/i18next-xhr-backend/i18nextXHRBackend.min.js",
+    "bower_components/webcomponentsjs/webcomponents*.js"
   ]
 }
