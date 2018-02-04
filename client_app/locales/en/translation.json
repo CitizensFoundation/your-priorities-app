@@ -145,6 +145,10 @@
   },
 
   "pages": {
+    "editPageLocale": "Edit page locale",
+    "title": "Page title",
+    "content": "Page content",
+    "publish": "Publish",
     "addLocale": "Add locale",
     "unPublish": "UnPublish",
     "deletePage": "Delete",
@@ -364,6 +368,7 @@
   },
 
   "group": {
+    "pages": "Help pages (?)",
     "showWhoPostedPosts": "Show who posted posts",
     "locationHidden": "Disable location",
     "group": "Group",
@@ -400,6 +405,7 @@
   },
 
   "users": {
+    "userInvited": "User Invited",
     "removeAdmin": "Remove admin",
     "addAdmin": "Add admin",
     "removeUser": "Remove user",
