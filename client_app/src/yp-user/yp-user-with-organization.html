@@ -57,10 +57,14 @@
       [hidden] {
         display: none !important;
       }
+
+      .mainArea {
+        padding-right: 8px;
+      }
     </style>
 
     <template is="dom-if" if="[[user]]">
-      <div class="layout horizontal" title=[[userTitle]]>
+      <div class="layout horizontal mainArea" title=[[userTitle]]>
         <yp-user-image titleFromUser="[[userTitle]]" user="[[user]]" hidden$="[[hideImage]]"></yp-user-image>
         <div class="layout vertical">
           <div class="name" inverted$="[[inverted]]">
