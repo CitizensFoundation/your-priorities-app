@@ -3,9 +3,9 @@
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 
@@ -18,25 +18,13 @@
     <style include="iron-flex iron-flex-alignment">
 
       iron-list {
-        padding-bottom: 4px;
-        --iron-list-items-container: {
-          max-width: 800px;
-          margin: auto;
-          margin-top: 16px;
-          margin-bottom: 54px;
-        };
+        height: 100vh;
       }
 
       p {
         text-align: left;
       }
 
-
-      #scrollableRegion {
-        height: 100%;
-        overflow: visible;
-        @apply(--layout-flex);
-      }
 
       .notificationItem {
         margin-bottom: 8px;
@@ -59,33 +47,31 @@
       <paper-button on-tap="_markAllAsViewed">[[t('notificationMarkAllViewed')]]</paper-button>
     </div>
 
-    <div id="scrollableRegion">
-      <iron-list id="list" items="[[notifications]]" scroll-offset="150" as="notification">
-        <template>
-          <div class="layout vertical">
-            <p hidden>[[notification.type]] [[notification.id]] [[notification.AcActivities.length]] pId [[notification.AcActivities.0.Post.id]] v [[notification.AcActivities.0.Point.value]]</p>
-            <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
-              <ac-notification-list-post class="notificationItem" notification="[[notification]]"></ac-notification-list-post>
-            </template>
-            <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
-              <ac-notification-list-point class="notificationItem" notification="[[notification]]"></ac-notification-list-point>
-            </template>
-            <template is="dom-if" if="[[_notificationType(notification, 'notification.post.status.change')]]">
-              <ac-notification-list-general-item icon="language" notification="[[notification]]"></ac-notification-list-general-item>
-            </template>
-            <template is="dom-if" if="[[_notificationType(notification, 'notification.point.newsStory')]]">
-              <ac-notification-list-general-item icon="face" notification="[[notification]]"
-                                                 short-text="[[notification.AcActivities.0.Point.content]]">
-              </ac-notification-list-general-item>
-            </template>
-            <template is="dom-if" if="[[_notificationType(notification, 'notification.point.comment')]]">
-              <ac-notification-list-general-item icon="chat-bubble-outline"
-                                                 notification="[[notification]]" short-text="[[notification.AcActivities.0.Point.content]]"></ac-notification-list-general-item>
-            </template>
-          </div>
-        </template>
-      </iron-list>
-    </div>
+    <iron-list id="list" items="[[notifications]]" scroll-offset="150" as="notification" scroll-target="document">
+      <template>
+        <div class="layout vertical">
+          <p hidden>[[notification.type]] [[notification.id]] [[notification.AcActivities.length]] pId [[notification.AcActivities.0.Post.id]] v [[notification.AcActivities.0.Point.value]]</p>
+          <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
+            <ac-notification-list-post class="notificationItem" notification="[[notification]]"></ac-notification-list-post>
+          </template>
+          <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
+            <ac-notification-list-point class="notificationItem" notification="[[notification]]"></ac-notification-list-point>
+          </template>
+          <template is="dom-if" if="[[_notificationType(notification, 'notification.post.status.change')]]">
+            <ac-notification-list-general-item icon="language" notification="[[notification]]"></ac-notification-list-general-item>
+          </template>
+          <template is="dom-if" if="[[_notificationType(notification, 'notification.point.newsStory')]]">
+            <ac-notification-list-general-item icon="face" notification="[[notification]]"
+                                               short-text="[[notification.AcActivities.0.Point.content]]">
+            </ac-notification-list-general-item>
+          </template>
+          <template is="dom-if" if="[[_notificationType(notification, 'notification.point.comment')]]">
+            <ac-notification-list-general-item icon="chat-bubble-outline"
+                                               notification="[[notification]]" short-text="[[notification.AcActivities.0.Point.content]]"></ac-notification-list-general-item>
+          </template>
+        </div>
+      </template>
+    </iron-list>
 
     <div class="layout horizontal center-center">
       <yp-ajax id="loadNotificationsAjax" on-response="_loadNotificationsResponse"></yp-ajax>
@@ -109,7 +95,6 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpScrollTabBehavior,
         Polymer.ypLoggedInUserBehavior
       ],
 
@@ -150,6 +135,12 @@
         unViewedCount:  {
           type: Number,
           value: 0
+        },
+
+        moreToLoad: {
+          type: Boolean,
+          value: false,
+          notify: true
         }
       },
 
@@ -270,12 +261,12 @@
         }
 
         if (!this.notifications) {
-          this.set('notifications', []);
+          this.set('notifications', notifications);
+        } else {
+          notifications.forEach(function (notification) {
+            this.push('notifications', notification);
+          }.bind(this));
         }
-
-        notifications.forEach(function (notification) {
-          this.push('notifications', notification);
-        }.bind(this));
 
         this._finalizeAfterResponse(notifications);
 
@@ -403,7 +394,7 @@
           if (!this.latestProcessedNotificationAt || this.latestProcessedNotificationAt < notifications[0].updated_at) {
             this.set('latestProcessedNotificationAt', notifications[0].updated_at);
           }
-          this.setMoreToLoad();
+          this.set('moreToLoad', true);
         }
 
         this.$.list.fire('iron-resize');

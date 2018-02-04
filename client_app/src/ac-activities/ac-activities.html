@@ -8,7 +8,6 @@
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html">
@@ -27,7 +26,9 @@
       :host {
         height: 100%;
       }
+
       iron-list {
+        height: 100vh;
       }
 
       .addNewsBox {
@@ -179,8 +180,7 @@
             </yp-point-news-story-edit>
           </paper-material>
         </template>
-        <iron-list id="ironList" fire-resize-after-scrolling$="[[ironListResizeScrollThreshold]]"
-                   scroll-offset$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
+        <iron-list id="ironList" scroll-offset$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
             <div tabindex$="[[tabIndex]]" class="layout vertical center-center">
               <ac-activity has-logged-in-user$="[[hasLoggedInUser]]" class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]"
@@ -221,7 +221,6 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpScrollTabBehavior,
         Polymer.ypLoggedInUserBehavior,
         Polymer.AccessHelpers,
         Polymer.ypIronListBehavior,
