@@ -150,6 +150,11 @@
       :focus {
         outline: none;
       }
+
+      .largeAjax {
+        position: absolute;
+        bottom: 32px;
+      }
     </style>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -192,8 +197,7 @@
         </iron-list>
       </div>
 
-      <div class="layout horizontal center-center">
-        <H1>UHUHUH</H1>
+      <div class="layout horizontal center-center largeAjax">
         <yp-ajax id="ajax" large-spinner on-response="_postsResponse"></yp-ajax>
       </div>
     </div>
