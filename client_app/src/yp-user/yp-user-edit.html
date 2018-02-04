@@ -24,7 +24,6 @@
 
     <style include="iron-flex iron-flex-alignment">
       .container {
-        margin-top: 16px;
         height: 100%;
         min-height: 350px;
       }
@@ -40,65 +39,62 @@
       #deleteUser {
         margin-top: 16px;
       }
+
+      h2 {
+        padding-top: 16px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" double-width icon="face" action="[[action]]"
                     method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <div class="container">
-        <paper-tabs selected="{{selected}}" id="paper_tabs" focused>
-          <paper-tab><span>[[t('user.info')]]</span></paper-tab>
-          <paper-tab>[[t('user.notifications')]]</paper-tab>
-        </paper-tabs>
-
         <div class="layout vertical wrap container">
-          <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
-            <section>
-              <paper-input id="name"
-                           name="name"
-                           type="text"
-                           label="[[t('Name')]]"
-                           value="{{user.name}}"
-                           maxlength="50"
-                           char-counter>
-              </paper-input>
+          <paper-input id="name"
+                       name="name"
+                       type="text"
+                       label="[[t('Name')]]"
+                       value="{{user.name}}"
+                       maxlength="50"
+                       char-counter>
+          </paper-input>
 
-              <paper-input id="email"
-                           name="email"
-                           type="text"
-                           label="[[t('Email')]]"
-                           value="{{user.email}}">
-              </paper-input>
+          <paper-input id="email"
+                       name="email"
+                       type="text"
+                       label="[[t('Email')]]"
+                       value="{{user.email}}">
+          </paper-input>
 
-              <div class="layout vertical additionalSettings">
-                <yp-file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
-                  <iron-icon class="icon" icon="photo-camera"></iron-icon>
-                  <span>[[t('image.profile.upload')]]</span>
-                </yp-file-upload>
-              </div>
+          <div class="layout horizontal wrap">
+            <div class="layout vertical additionalSettings">
+              <yp-file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
+                <iron-icon class="icon" icon="photo-camera"></iron-icon>
+                <span>[[t('image.profile.upload')]]</span>
+              </yp-file-upload>
+            </div>
 
-              <div class="layout vertical additionalSettings" hidden>
-                <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
-                  <iron-icon class="icon" icon="photo-camera"></iron-icon>
-                  <span>[[t('image.header.upload')]]</span>
-                </yp-file-upload>
-              </div>
+            <div class="layout vertical additionalSettings" hidden>
+              <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
+                <iron-icon class="icon" icon="photo-camera"></iron-icon>
+                <span>[[t('image.header.upload')]]</span>
+              </yp-file-upload>
+            </div>
+          </div>
 
-              <yp-language-selector name="defaultLocale" selected-locale="{{user.default_locale}}"></yp-language-selector>
+          <yp-language-selector name="defaultLocale" selected-locale="{{user.default_locale}}"></yp-language-selector>
 
-              <paper-button id="deleteUser" raised on-tap="_deleteUser">[[t('deleteUser')]]</paper-button>
+          <paper-button id="deleteUser" raised on-tap="_deleteUser">[[t('deleteUser')]]</paper-button>
 
-              <yp-ajax id="deleteUserAjax" on-response="_deleteCompleted" method="DELETE" url="/api/users/delete_current_user"></yp-ajax>
+          <yp-ajax id="deleteUserAjax" on-response="_deleteCompleted" method="DELETE" url="/api/users/delete_current_user"></yp-ajax>
 
-              <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
-              <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-            </section>
+          <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
+          <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
-            <section>
-              <ac-notification-settings notifications-settings="{{notificationSettings}}"></ac-notification-settings>
-              <input type="hidden" name="notifications_settings" value="[[encodedUserNotificationSettings]]">
-            </section>
-          </neon-animated-pages>
+          <h2>[[t('user.notifications')]]</h2>
+
+          <ac-notification-settings notifications-settings="{{notificationSettings}}"></ac-notification-settings>
+          <input type="hidden" name="notifications_settings" value="[[encodedUserNotificationSettings]]">
         </div>
       </div>
     </yp-edit-dialog>
