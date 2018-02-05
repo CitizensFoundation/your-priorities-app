@@ -13,7 +13,7 @@
   ],
 
   "builds": [{
-    "name": "build",
+    "name": "bundled",
     "bundle": true,
     "js": {"compile": true, "minify": true},
     "css": {"minify": true},

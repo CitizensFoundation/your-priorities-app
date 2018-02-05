@@ -222,6 +222,10 @@
   "news": "Fréttaveita",
 
   "pages": {
+    "editPageLocale": "Breyta síður fyrir tungumál",
+    "title": "Nafn",
+    "content": "Efni",
+    "publish": "Gefa út",
     "addLocale": "Nýtt locale",
     "unPublish": "Afturkalla",
     "deletePage": "Eyða",
@@ -238,6 +242,7 @@
   "official": "Opinber ferli",
 
   "users": {
+    "userInvited": "Notanda boðið",
     "removeAdmin": "Eyða vefstjóra",
     "addAdmin": "Bæta við vefstjóra",
     "removeUser": "Eyða notanda",
@@ -412,6 +417,7 @@
   "next": "áfram",
 
   "group": {
+    "pages": "Hjálparsíður (?)",
     "showWhoPostedPosts": "Birta hugmyndasmið",
     "locationHidden": "Ekki nota staðsetningu",
     "group": "Hópur",
