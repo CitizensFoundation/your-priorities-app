@@ -81,7 +81,7 @@
       }
 
       .description {
-        font-size: 19px;
+        font-size: 18px;
         padding: 8px;
         cursor: pointer;
       }
@@ -208,7 +208,7 @@
       },
 
       _shortDescription: function (post) {
-        return this.truncate(this.trim(post.description), 80, '...');
+        return this.truncate(this.trim(post.description), 100, '...');
       },
 
       _hasPostAccess: function(post, gotAdminRights) {

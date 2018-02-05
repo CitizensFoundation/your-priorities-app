@@ -70,6 +70,10 @@
     });
   };
 
+  var isMobileScreen = function () {
+    return window.innerWidth<420;
+  };
+
   var setupBetterReykjavikSplash = function () {
     splashCore = document.createElement("div");
     splashCore.id = "splashCore";
@@ -136,12 +140,15 @@
   var hostname = window.location.hostname;
   if (hostname.indexOf('betrireykjavik') > -1) {
     setupLocale('is');
-    setupBetterReykjavikSplash();
+    if (isMobileScreen())
+      setupBetterReykjavikSplash();
   } else if (hostname.indexOf('betraisland') > -1) {
     setupLocale('is');
-    setupBetterIcelandSplash();
+    if (isMobileScreen())
+      setupBetterIcelandSplash();
   } else {
-    setupYourPrioritiesSplash();
+    if (isMobileScreen())
+      setupYourPrioritiesSplash();
     if (hostname.indexOf('forbrukerradet') > -1) {
       setupLocale('no');
     } else if (hostname.indexOf('bolja-pula') > -1) {

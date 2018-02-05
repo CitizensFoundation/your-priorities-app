@@ -9,7 +9,6 @@
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-behaviors/yp-scroll-tab-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html">
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
@@ -58,8 +57,8 @@
       }
 
       iron-list {
+        height: 100vh;
       }
-
 
       yp-ajax {
         padding-top: 48px;
@@ -151,6 +150,11 @@
       :focus {
         outline: none;
       }
+
+      .largeAjax {
+        position: absolute;
+        bottom: 32px;
+      }
     </style>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -182,19 +186,20 @@
           </paper-material>
         </div>
       </template>
-    </div>
-    <div class="layout horizontal center-center">
-      <iron-list id="ironList" scroll-offset="550" items="[[posts]]" as="post" scroll-target="document" grid>
-        <template>
-          <div tabindex$="[[tabIndex]]" wide-padding$="[[wide]]" class="card layout vertical center-center">
-            <yp-post-card class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
-          </div>
-        </template>
-      </iron-list>
-    </div>
 
-    <div class="layout horizontal center-center">
-      <yp-ajax id="ajax" large-spinner on-response="_postsResponse"></yp-ajax>
+      <div class="layout horizontal center-center">
+        <iron-list id="ironList" scroll-offset="550" items="[[posts]]" as="post" scroll-target="document" grid>
+          <template>
+            <div tabindex$="[[tabIndex]]" wide-padding$="[[wide]]" class="card layout vertical center-center">
+              <yp-post-card class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+            </div>
+          </template>
+        </iron-list>
+      </div>
+
+      <div class="layout horizontal center-center largeAjax">
+        <yp-ajax id="ajax" large-spinner on-response="_postsResponse"></yp-ajax>
+      </div>
     </div>
   </template>
 
@@ -205,7 +210,6 @@
 
       behaviors: [
         Polymer.appHelpers,
-        Polymer.YpScrollTabBehavior,
         Polymer.ypIronListBehavior
       ],
 
@@ -491,7 +495,7 @@
         });
 
         if (posts.length>0 && posts.length!=this.postsCount) {
-          this.setMoreToLoad();
+          this.set('moreToLoad', true);
         }
 
         document.dispatchEvent(
