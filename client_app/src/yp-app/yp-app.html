@@ -26,7 +26,7 @@
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 
-<link rel="import" href="yp-app-user-drawer.html">
+<link rel="import" href="../ac-notifications/ac-notification-list.html">
 <link rel="import" href="yp-app-nav-drawer.html">
 <link rel="import" href="../yp-dialog-container/yp-dialog-container.html">
 <link rel="import" href="../yp-user/yp-user-image.html">
@@ -239,7 +239,7 @@
 
       <app-drawer id="drawer" slot="drawer" align="end" position="right" opened="{{userDrawerOpened}}" swipe-open>
         <div style="height: 100%; overflow: auto;">
-          <yp-app-user-drawer id="ypDrawer" user="[[user]]" opened="[[userDrawerOpened]]" route="[[route]]"></yp-app-user-drawer>
+          <ac-notification-list id="acNotificationsList" user="[[user]]" opened="[[userDrawerOpened]]" route="[[route]]"></ac-notification-list>
         </div>
       </app-drawer>
 

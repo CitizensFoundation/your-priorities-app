@@ -3,11 +3,13 @@
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
+<link rel="import" href="../yp-user/yp-user-info.html">
 
 <link rel="import" href="ac-notification-list-post.html">
 <link rel="import" href="ac-notification-list-point.html">
@@ -16,15 +18,18 @@
 <dom-module id="ac-notification-list">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      :host {
+        margin: 0;
+        height: 100vh;
+      }
 
       iron-list {
-        height: 100vh;
+        flex: 1 1 auto;
       }
 
       p {
         text-align: left;
       }
-
 
       .notificationItem {
         margin-bottom: 8px;
@@ -40,52 +45,75 @@
       [hidden] {
         display: none !important;
       }
+
+      #material {
+        z-index: 1000;
+        margin: 0 !important;
+        padding: 8px;
+        height: 95vh;
+      }
+      
+      .notificationHeader {
+        font-size: 18px;
+        color: var(--accent-color);
+        padding-top: 8px;
+      }
+
+      #notificationsList {
+        width: 100% !important;
+        overflow: hidden;
+      }
     </style>
+    <iron-scroll-threshold lower-threshold="300" on-lower-threshold="_loadMoreData" id="threshold">
+      <div elevation="2" id="material">
+        <template is="dom-if" if="[[user]]">
+          <yp-user-info on-open-user-edit="_openEdit" user="{{user}}"></yp-user-info>
+          <div class="notificationHeader layout horizontal center-center">
+            [[t('notifications')]]
+          </div>
+          <div hidden$="[[!unViewedCount]]" class="unViewedCount layout vertical center-center">
+            <div>[[unViewedCount]] [[t('unviewed')]]</div>
+            <paper-button on-tap="_markAllAsViewed">[[t('notificationMarkAllViewed')]]</paper-button>
+          </div>
 
-    <div hidden$="[[!unViewedCount]]" class="unViewedCount layout vertical center-center">
-      <div>[[unViewedCount]] [[t('unviewed')]]</div>
-      <paper-button on-tap="_markAllAsViewed">[[t('notificationMarkAllViewed')]]</paper-button>
-    </div>
+          <iron-list id="list" items="[[notifications]]" scroll-offset="300" as="notification" scroll-target="threshold" >
+            <template>
+              <div tabindex$="[[tabIndex]]" class="layout vertical">
+                <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
+                  <ac-notification-list-post class="notificationItem" notification="[[notification]]"></ac-notification-list-post>
+                </template>
+                <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
+                  <ac-notification-list-point class="notificationItem" notification="[[notification]]"></ac-notification-list-point>
+                </template>
+                <template is="dom-if" if="[[_notificationType(notification, 'notification.post.status.change')]]">
+                  <ac-notification-list-general-item icon="language" notification="[[notification]]"></ac-notification-list-general-item>
+                </template>
+                <template is="dom-if" if="[[_notificationType(notification, 'notification.point.newsStory')]]">
+                  <ac-notification-list-general-item icon="face" notification="[[notification]]"
+                                                     short-text="[[notification.AcActivities.0.Point.content]]">
+                  </ac-notification-list-general-item>
+                </template>
+                <template is="dom-if" if="[[_notificationType(notification, 'notification.point.comment')]]">
+                  <ac-notification-list-general-item icon="chat-bubble-outline"
+                                                     notification="[[notification]]" short-text="[[notification.AcActivities.0.Point.content]]"></ac-notification-list-general-item>
+                </template>
+              </div>
+            </template>
+          </iron-list>
+        </template>
+      </div>
+    </iron-scroll-threshold>
 
-    <iron-list id="list" items="[[notifications]]" scroll-offset="150" as="notification" scroll-target="document">
-      <template>
-        <div class="layout vertical">
-          <p hidden>[[notification.type]] [[notification.id]] [[notification.AcActivities.length]] pId [[notification.AcActivities.0.Post.id]] v [[notification.AcActivities.0.Point.value]]</p>
-          <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
-            <ac-notification-list-post class="notificationItem" notification="[[notification]]"></ac-notification-list-post>
-          </template>
-          <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
-            <ac-notification-list-point class="notificationItem" notification="[[notification]]"></ac-notification-list-point>
-          </template>
-          <template is="dom-if" if="[[_notificationType(notification, 'notification.post.status.change')]]">
-            <ac-notification-list-general-item icon="language" notification="[[notification]]"></ac-notification-list-general-item>
-          </template>
-          <template is="dom-if" if="[[_notificationType(notification, 'notification.point.newsStory')]]">
-            <ac-notification-list-general-item icon="face" notification="[[notification]]"
-                                               short-text="[[notification.AcActivities.0.Point.content]]">
-            </ac-notification-list-general-item>
-          </template>
-          <template is="dom-if" if="[[_notificationType(notification, 'notification.point.comment')]]">
-            <ac-notification-list-general-item icon="chat-bubble-outline"
-                                               notification="[[notification]]" short-text="[[notification.AcActivities.0.Point.content]]"></ac-notification-list-general-item>
-          </template>
-        </div>
-      </template>
-    </iron-list>
-
-    <div class="layout horizontal center-center">
+    <div class="layout horizontal center-center" hidden>
       <yp-ajax id="loadNotificationsAjax" on-response="_loadNotificationsResponse"></yp-ajax>
       <yp-ajax id="loadNewNotificationsAjax" dispatch-error on-error="_newNotificationsError" on-response="_loadNewNotificationsResponse"></yp-ajax>
       <yp-ajax id="setAsViewedAjax" method="PUT" url="/api/notifications/setIdsViewed" on-response="_setAsViewedResponse"></yp-ajax>
       <yp-ajax id="markAllAsViewedAjax" method="PUT" url="/api/notifications/markAllViewed" on-response="_setAsMarkAllViewedResponse"></yp-ajax>
-
-      <template is="dom-if" if="[[moreToLoad]]" restamp>
-        <paper-button on-tap="_loadMoreData" id="loadMoreButton">[[t('more')]]</paper-button>
-      </template>
     </div>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+    <lite-signal on-lite-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></lite-signal>
   </template>
 
   <script>
@@ -131,7 +159,6 @@
         },
 
         timer: Object,
-        opened: Boolean,
         unViewedCount:  {
           type: Number,
           value: 0
@@ -141,7 +168,37 @@
           type: Boolean,
           value: false,
           notify: true
+        },
+
+        opened: {
+          type: Boolean,
+          observer: '_openedChanged'
+        },
+
+        route: {
+          type: String,
+          observer: 'routeChanged'
         }
+      },
+
+      _openedChanged: function (open) {
+        if (open) {
+          this.async(function () {
+            this.markCurrentAsViewed();
+          }.bind(this), 25);
+        }
+      },
+
+      _openEdit: function () {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("userEdit", function (dialog) {
+          dialog.setup(this.user, false, null);
+          dialog.open('edit', {userId: this.user.id});
+        }.bind(this));
+      },
+
+      _clearScrollThreshold: function () {
+        this.$$("#threshold").clearTriggers();
+        console.info("Clearing scrolling triggers for notifications");
       },
 
       _markAllAsViewed: function () {
@@ -397,14 +454,13 @@
           this.set('moreToLoad', true);
         }
 
-        this.$.list.fire('iron-resize');
-
         this.async(function () {
-          this.$.list.fire('iron-resize');
+          this.$$("#list").fire('iron-resize');
         }, 100);
       },
 
       _loadMoreData: function () {
+        this._clearScrollThreshold();
         if (this.oldestProcessedNotificationAt) {
           this.set('moreToLoad', false);
           this.$.loadNotificationsAjax.url = this.url + '?beforeDate='+this.oldestProcessedNotificationAt;
