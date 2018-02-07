@@ -80,7 +80,7 @@
       </div>
       <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
       <div class="layout horizontal">
-        <yp-point-actions point="[[point]]"></yp-point-actions>
+        <yp-point-actions point="[[point]]" hide-sharing></yp-point-actions>
         <div class="layout horizontal start-justified">
           <div class="layout horizontal center-center withPointer" hidden$="[[!commentsCount]]" on-tap="_setOpenToValue">
             <div class="commentText">[[t('point.comments')]]</div>

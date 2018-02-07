@@ -52,7 +52,7 @@
         padding: 8px;
         height: 95vh;
       }
-      
+
       .notificationHeader {
         font-size: 18px;
         color: var(--accent-color);
@@ -62,6 +62,10 @@
       #notificationsList {
         width: 100% !important;
         overflow: hidden;
+      }
+
+      :focus {
+        outline: none;
       }
     </style>
     <iron-scroll-threshold lower-threshold="300" on-lower-threshold="_loadMoreData" id="threshold">

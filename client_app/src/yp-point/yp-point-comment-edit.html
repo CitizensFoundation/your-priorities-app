@@ -81,13 +81,13 @@
                           maxlength="200">
           </paper-textarea>
           <div class="layout horizontal">
-            <paper-button raised on-tap="_sendComment">[[t('point.postComment')]]</paper-button>
+            <paper-button id="submitButton" raised on-tap="_sendComment">[[t('point.postComment')]]</paper-button>
           </div>
         </div>
       </div>
 
       <div class="layout horizontal center-center">
-        <yp-ajax id="postCommentAjax" method="POST" on-response="_newsCommentResponse"></yp-ajax>
+        <yp-ajax id="postCommentAjax" method="POST" on-error="_responseError" on-response="_newsCommentResponse"></yp-ajax>
       </div>
 
     </div>
@@ -123,12 +123,27 @@
         Polymer.ypLoggedInUserBehavior
       ],
 
+      observers: [
+        '_commentContentChanged(comment.*)'
+      ],
+
       ready: function () {
         this._reset();
       },
 
+      _commentContentChanged: function (change) {
+        if (change.value && change.value.length % 7 === 2) {
+          this.fire('iron-resize');
+        }
+      },
+
+      _responseError: function () {
+        this.$$("#submitButton").disabled = false;
+      },
+
       _reset: function () {
         this.set('comment', { content: '' });
+        this.$$("#submitButton").disabled = false;
       },
 
       _sendComment: function () {
@@ -137,9 +152,11 @@
           if (this.point) {
             body = { point_id: this.point.id };
             this.$.postCommentAjax.url = '/api/points/'+this.point.id+'/comment';
+            this.$$("#submitButton").disabled = true;
           } else if (this.image) {
             body = { image_id: this.image.id };
             this.$.postCommentAjax.url = '/api/images/'+this.image.id+'/comment';
+            this.$$("#submitButton").disabled = true;
           } else {
             console.error("Can't find send ids");
           }
