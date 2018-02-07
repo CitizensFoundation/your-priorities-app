@@ -162,6 +162,10 @@
         Polymer.IronResizableBehavior
       ],
 
+      listeners: {
+        'yp-point-deleted': '_refresh'
+      },
+
       _openChanged: function (newOpenValue) {
         if (newOpenValue) {
           this.$.commentsListAjax.generateRequest();
@@ -176,14 +180,16 @@
         this.set('open', true);
         this.async(function () {
           this.notifyResize();
-        },50);
+          this.fire('iron-resize');
+        },20);
       },
 
       _setClosed: function () {
         this.set('open', false);
         this.async(function () {
+          this.fire('iron-resize');
           this.notifyResize();
-        },50);
+        },20);
       },
 
       generateRequest: function () {
@@ -221,11 +227,13 @@
       _commentsResponse: function (event, detail) {
         var comment = detail.response;
         this.set('comments', comment);
-        this.$$("#list").fire('iron-resize');
         if (comment && comment.length>0) {
           this.$$("#list").scrollToIndex(comment.length-1);
         }
         this.notifyResize();
+        this.async(function () {
+          this.$$("#list").fire('iron-resize');
+        });
       }
     });
   </script>

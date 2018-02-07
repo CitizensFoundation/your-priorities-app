@@ -55,6 +55,10 @@
       [hidden] {
         display: none !important;
       }
+
+      #deleteButton {
+        color: #bbb;
+      }
     </style>
 
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
@@ -69,12 +73,12 @@
         <div class="comment">
           [[point.content]]
           <div class="layout horizontal" hidden$="[[!point]]">
-            <yp-point-actions point="[[point]]"></yp-point-actions>
+            <yp-point-actions point="[[point]]" hide-sharing></yp-point-actions>
             <paper-icon-button hidden hiddedn$="[[!loggedInUser]]" title$="[[t('point.report')]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
             <template is="dom-if" if="[[hasPointAccess]]">
               <div class="layout horizontal self-end" hidden$="">
                 <yp-ajax id="deletePointAjax" method="DELETE" on-response="_deleteResponse"></yp-ajax>
-                <paper-icon-button title$="[[t('delete')]]" icon="clear" on-tap="_deletePoint"></paper-icon-button>
+                <paper-icon-button id="deleteButton" title$="[[t('delete')]]" icon="clear" on-tap="_deletePoint"></paper-icon-button>
               </div>
             </template>
           </div>
@@ -139,6 +143,7 @@
 
       _deleteResponse: function () {
         this.fire("yp-point-deleted", { pointId: this.point.id });
+        this.fire("iron-resize");
         this.set('point', null);
       },
 
