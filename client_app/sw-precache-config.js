@@ -7,7 +7,7 @@ module.exports = {
     '/index_bi.html',
     '/manifest_bi.json'
   ],
-  navigateFallback: '/index.html',
+  navigateFallback: '/index_yp.html',
   runtimeCaching: [{
     urlPattern: /\/(.*)/,
     handler: 'networkFirst'
