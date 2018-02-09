@@ -184,6 +184,7 @@
   "name": "Nafn",
   "description": "Lýsing",
   "domain": {
+    "pages": "Síður",
     "createOrganization": "Búa til samtök",
     "edit": "Breyta vef",
     "info": "Upplýsingar",

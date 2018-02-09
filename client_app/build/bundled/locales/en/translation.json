@@ -201,6 +201,7 @@
   "name": "Name",
 
   "domain": {
+    "pages": "Pages",
     "createOrganization": "Create organization",
     "edit": "Edit domain",
     "info": "Settings",
