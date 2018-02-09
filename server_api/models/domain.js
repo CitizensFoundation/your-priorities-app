@@ -161,7 +161,7 @@ module.exports = function(sequelize, DataTypes) {
                 callbackDomainName = domain.domain_name;
               }
             } else {
-              callbackDomainName = req.headers.host; //domain.domain_name;
+              callbackDomainName = 'login.'+domain.domain_name;
             }
             
             if (false && domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.google)) {
