@@ -491,7 +491,8 @@
     },
 
     _facebookLogin: function () {
-      var url = '/api/users/auth/facebook',
+      var domainName = window.location.hostname.split('.').slice(-2).join('.');
+      var url = 'https://login.'+domainName+'/api/users/auth/facebook',
         width = 1000,
         height = 650,
         top = (window.outerHeight - height) / 2,
