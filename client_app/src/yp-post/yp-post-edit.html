@@ -545,12 +545,12 @@
         if (this.t) {
           if (this.newPost) {
             this.editHeaderText = this.t('post.new');
-            this.toastText = this.t('post.toast.created');
+            this.toastText = this.t('postCreated');
             this.set('saveText', this.t('create'));
           } else {
             this.set('saveText', this.t('save'));
             this.editHeaderText = this.t('post.edit');
-            this.toastText = this.t('post.toast.updated');
+            this.toastText = this.t('postUpdated');
           }
         }
       }.bind(this), 20);

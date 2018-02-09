@@ -1,4 +1,7 @@
 {
+  "inputError": "Not valid",
+  "postCreated": "Idea created",
+  "postUpdated": "Idea updated",
   "closedForNewPosts": "Closed for new ideas",
   "appHomeScreenShortName": "Phone homescreen name",
   "appHomeScreenIconImageUpload": "Upload phone homescreen icon",

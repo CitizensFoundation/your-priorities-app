@@ -272,63 +272,65 @@
             <paper-tab>[[t('user.register')]]</paper-tab>
           </paper-tabs>
 
-          <form is="iron-form" id="form">
-            <span hidden$="[[!registerMode]]">
-              <div hidden$="[[!customUserRegistrationText]]" class="customUserRegistrationText">
-                [[customUserRegistrationText]]
+          <iron-form id="form">
+            <form name="loginForm">
+              <span hidden$="[[!registerMode]]">
+                <div hidden$="[[!customUserRegistrationText]]" class="customUserRegistrationText">
+                  [[customUserRegistrationText]]
+                </div>
+              </span>
+
+              <div class="layout vertical center-center socialMediaLogin" hidden$="[[!hasAdditionalAuthMethods]]">
+                <div class="layout horizontal center-center">
+
+                  <template is="dom-if" if="[[hasAnonymousLogin]]">
+                    <paper-button raised on-tap="anonymousLogin">[[t('participateAnonymously')]]</paper-button>
+                  </template>
+
+                  <template is="dom-if" if="[[hasFacebookLogin]]">
+                    <div class="btn-auth btn-facebook cursor" on-tap="_facebookLogin" hidden$="[[disableFacebookLoginForGroup]]">
+                      [[t('user.facebookLogin')]]
+                    </div>
+                  </template>
+                  <template is="dom-if" if="[[hasSamlLogin]]">
+                    <div class="islandIs cursor" on-tap="_islandIsLogin">
+                      <img width="80" height="18" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
+                    </div>
+                  </template>
+                </div>
               </div>
-            </span>
 
-            <div class="layout vertical center-center socialMediaLogin" hidden$="[[!hasAdditionalAuthMethods]]">
-              <div class="layout horizontal center-center">
-
-                <template is="dom-if" if="[[hasAnonymousLogin]]">
-                  <paper-button raised on-tap="anonymousLogin">[[t('participateAnonymously')]]</paper-button>
-                </template>
-
-                <template is="dom-if" if="[[hasFacebookLogin]]">
-                  <div class="btn-auth btn-facebook cursor" on-tap="_facebookLogin" hidden$="[[disableFacebookLoginForGroup]]">
-                    [[t('user.facebookLogin')]]
-                  </div>
-                </template>
-                <template is="dom-if" if="[[hasSamlLogin]]">
-                  <div class="islandIs cursor" on-tap="_islandIsLogin">
-                    <img width="80" height="18" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
-                  </div>
-                </template>
+              <div class="orContainer" hidden$="[[!hasAdditionalAuthMethods]]">
+                <div class="strike">
+                  <span>[[t('or')]]</span>
+                </div>
               </div>
-            </div>
 
-            <div class="orContainer" hidden$="[[!hasAdditionalAuthMethods]]">
-              <div class="strike">
-                <span>[[t('or')]]</span>
-              </div>
-            </div>
+              <paper-input id="name"
+                           type="text"
+                           label="[[t('user.name')]]"
+                           value="{{name}}"
+                           hidden$="[[!registerMode]]"
+                           maxlength="50"
+                           char-counter>
+              </paper-input>
 
-            <paper-input id="name"
-                         type="text"
-                         label="[[t('user.name')]]"
-                         value="{{name}}"
-                         hidden$="[[!registerMode]]"
-                         maxlength="50"
-                         char-counter>
-            </paper-input>
+              <paper-input id="email"
+                           type="text"
+                           label="[[t('user.email')]]"
+                           value="{{email}}"
+                           pattern="[[emailValidationPattern]]"
+                           error-message="[[emailErrorMessage]]">
+              </paper-input>
 
-            <paper-input id="email"
-                         type="text"
-                         label="[[t('user.email')]]"
-                         value="{{email}}"
-                         pattern="[[emailValidationPattern]]"
-                         error-message="[[emailErrorMessage]]">
-            </paper-input>
-
-            <paper-input id="password"
-                         type="password"
-                         label="[[t('user.password')]]"
-                         value="{{password}}"
-                         error-message="[[passwordErrorMessage]]">
-            </paper-input>
-          </form>
+              <paper-input id="password"
+                           type="password"
+                           label="[[t('user.password')]]"
+                           value="{{password}}"
+                           error-message="[[passwordErrorMessage]]">
+              </paper-input>
+            </form>
+          </iron-form>
           <div class="buttons">
             <paper-spinner active class="mainSpinner" hide$="[[!userSpinner]]"></paper-spinner>
             <yp-ajax id="loginAjax" dispatch-error on-error="_loginError" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
@@ -635,8 +637,8 @@
     },
 
     _setTexts: function () {
-      this.emailErrorMessage = this.t('user.email.error');
-      this.passwordErrorMessage = this.t('user.password.error');
+      this.emailErrorMessage = this.t('inputError');
+      this.passwordErrorMessage = this.t('inputError');
       if (this.registerMode===1) {
         this.header = this.t('user.registerHeader');
         this.set('submitText',this.t('user.create'));
@@ -658,7 +660,7 @@
 
     _validateAndSend: function(e) {
       window.appGlobals.sendLoginAndSignupToAnalytics(null, this.registerMode ? 'Signup Submit' : 'Login Submit', 'Email');
-      if (this.$$("#form").checkValidity() && this.email && this.password){
+      if (this.$$("#form").validate() && this.email && this.password){
         if (this.registerMode) {
           this.$$("#registerAjax").body = this.credentials;
           this.$$("#registerAjax").generateRequest();
