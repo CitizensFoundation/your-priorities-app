@@ -6,27 +6,6 @@ html(lang='en')
         meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
     body
         p
-            button.close(onclick='window.close()') Smelltu hér til að halda áfram / Press here to continue
+            button.close(onclick='window.close()') Press here to continue / Smelltu hér til að halda áfram
         script(type='text/javascript').
-            var iOSInApp = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream && /FBAN/.test(navigator.userAgent);
-            if (iOSInApp) {
-                window.location = "/";
-            } else {
-                try {
-                    if (window && window.opener) {
-                        window.opener.focus();
-                        if (window.opener.appUser) {
-                            window.opener.appUser.loginFromFacebook();
-                            window.close();
-                        } else {
-                            window.close();
-                        }
-                    } else {
-                        window.close();
-                    }
-                }
-                catch (err) {
-                    window.close();
-                }
-
-            }
+            window.close();

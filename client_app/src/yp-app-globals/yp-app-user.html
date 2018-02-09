@@ -323,49 +323,42 @@
           this.checkLogin();
         },
 
-        _pollForLoginAjax: function () {
-          if (this.isPollingForLogin===true) {
-            this.$.pollForLoginAjax.generateRequest();
-          }
-        },
-
         cancelLoginPolling: function () {
+          this.pollingStartedAt = null;
           console.log("Cancel polling");
-          this.set('isPollingForLogin', false);
         },
 
         _closeAllPopups: function () {
           if (this.facebookPopupWindow) {
             try {
               this.facebookPopupWindow.close();
-              this.facebookPopupWindow = null;
             } catch (error) {
               console.error(error);
-              this.facebookPopupWindow = null;
             }
+            this.facebookPopupWindow = null;
           }
           if (this.samlPopupWindow) {
             try {
               this.samlPopupWindow.close();
-              this.samlPopupWindow = null;
             } catch (error) {
               console.error(error);
-              this.samlPopupWindow = null;
             }
+            this.samlPopupWindow = null;
           }
         },
 
         _pollForLoginResponse: function (event, detail) {
           console.log("Got polling for login response");
-          if (this.isPollingForLogin===true) {
-            if (detail.response===0 && this.isPollingForLogin===true && this.pollingStartedAt) {
+          if (this.pollingStartedAt) {
+            if (detail.response===0 && this.pollingStartedAt) {
               var timeSpent = (new Date() - this.pollingStartedAt);
               if (timeSpent<1*60*1000) {
                 this.async(function () {
-                  this._pollForLoginAjax();
-                }.bind(this), 1900)
+                  this.$.pollForLoginAjax.generateRequest();
+                }.bind(this), 1500)
               } else {
-                console.log("Timeout in polling");
+                this.pollingStartedAt = null;
+                console.error("Timeout in login polling");
               }
             } else if (detail.response.name) {
               this.cancelLoginPolling();
@@ -383,13 +376,11 @@
           }
         },
 
-        startPollingForLoginIfNeeded: function () {
-          var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-          if (iOS) {
-            this.set('isPollingForLogin', true);
-            this.pollingStartedAt = Date.now();
-            this._pollForLoginAjax();
-          }
+        startPollingForLogin: function () {
+          this.pollingStartedAt = Date.now();
+          this.async(function () {
+            this.$.pollForLoginAjax.generateRequest();
+          }, 1000);
         },
 
         loginFromFacebook: function () {
