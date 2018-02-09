@@ -509,7 +509,7 @@
         window.appUser.facebookPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
       }
       window.appUser.startPollingForLogin();
-      this.set('userSpinner', false);
+      this.set('userSpinner', true);
       window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Login Submit', 'Facebook');
     },
 
