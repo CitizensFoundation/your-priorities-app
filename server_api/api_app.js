@@ -110,6 +110,20 @@ app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.get('/*', function (req, res, next) {
+  if (req.url.indexOf("service-worker.js") > -1) {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
+    res.setHeader("Last-Modified", new Date(Date.now()).toUTCString());
+  }
+  next();
+});
+
+if (!FORCE_PRODUCTION && app.get('env') === 'development') {
+  app.use(express.static(path.join(__dirname, '../client_app')));
+} else {
+  app.use(express.static(path.join(__dirname, '../client_app/build/bundled')));
+}
+
 // Setup the current domain from the host
 app.use(function (req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
@@ -135,20 +149,6 @@ app.use(function (req, res, next) {
     next();
   }
 });
-
-app.get('/*', function (req, res, next) {
-  if (req.url.indexOf("service-worker.js") > -1) {
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
-    res.setHeader("Last-Modified", new Date(Date.now()).toUTCString());
-  }
-  next();
-});
-
-if (!FORCE_PRODUCTION && app.get('env') === 'development') {
-  app.use(express.static(path.join(__dirname, '../client_app')));
-} else {
-  app.use(express.static(path.join(__dirname, '../client_app/build/bundled')));
-}
 
 app.get('/sitemap.xml', function (req, res) {
   generateSitemap(req, res);
