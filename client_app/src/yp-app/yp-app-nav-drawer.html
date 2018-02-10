@@ -139,8 +139,7 @@
         },
 
         route: {
-          type: String,
-          observer: 'routeChanged'
+          type: String
         },
 
         myAdminGroups: {
@@ -235,9 +234,6 @@
           dialog.setup(this.user, false, null);
           dialog.open('edit', { userId: this.user.id });
         }.bind(this));
-      },
-
-      routeChanged: function(newValue, oldValue) {
       }
     });
   </script>

@@ -70,12 +70,12 @@ var generateManifest = function(req, res) {
         setupIconsFromDefault(seriesCallback)
       }
     }
-  ], function (error, icons) {
+  ], function (error, iconsResults) {
     if (error) {
       log.error("Error from generating manifest data", { err: error });
       res.status(500).end();
     } else {
-      manifest["icons"] = icons;
+      manifest["icons"] = iconsResults[0];
       if (req.ypCommunity.id && req.ypCommunity.configuration &&
         req.ypCommunity.configuration.appHomeScreenShortName) {
         manifest['short_name'] = req.ypCommunity.configuration.appHomeScreenShortName;
