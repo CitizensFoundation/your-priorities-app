@@ -560,9 +560,9 @@
             this.openUserNotificationsDialog();
           } else if (this.route.path.indexOf('/user/info_page') > -1) {
             this.openUserInfoPage(params[params.length-1]);
+            window.history.pushState({}, null, "/");
+            window.dispatchEvent(new CustomEvent('location-changed'));
           }
-          window.history.pushState({}, null, "/");
-          window.dispatchEvent(new CustomEvent('location-changed'));
         } else {
 
           var map = this._scrollPositionMap;
