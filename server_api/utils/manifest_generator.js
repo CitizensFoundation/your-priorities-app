@@ -40,8 +40,8 @@ var setupIconsFromImage = function (imageId, callback) {
       });
       callback(null, icons);
     }
-  }).catch(function (error) {
-    callback(error);
+  }).catch(function (error, results) {
+    callback(error, results);
   });
 };
 
