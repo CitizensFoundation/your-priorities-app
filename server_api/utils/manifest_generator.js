@@ -15,7 +15,7 @@ var setupIconsFromDefault = function(callback) {
       "type": "image/png"
     }
   ];
-  callback();
+  callback(null, icons);
 };
 
 var setupIconsFromImage = function (imageId, callback) {
