@@ -53,7 +53,7 @@
           <div class="layout horizontal">
             <paper-radio-group id="notificationFrequencyGroup" name="frequency" attr-for-selected="enum-value" class="frequency" selected="{{frequency}}">
               <template is="dom-repeat" items="[[availableFrequencies]]">
-                <paper-radio-button enum-value$="[[item.enumValue]]">[[item.name]]</paper-radio-button>
+                <paper-radio-button disabled$="[[_isDelayed(item)]]" enum-value$="[[item.enumValue]]">[[item.name]]</paper-radio-button>
               </template>
             </paper-radio-group>
           </div>
@@ -143,6 +143,10 @@
           this.set('method', value.method);
           this.set('frequency', value.frequency);
         }
+      },
+
+      _isDelayed: function (item) {
+        return item.enumValue>0;
       },
 
       _getAvailableFrequencies: function (language, method) {
