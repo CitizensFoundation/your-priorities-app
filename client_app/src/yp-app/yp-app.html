@@ -453,7 +453,7 @@
         'yp-set-home-link': '_setHomeLink',
         'yp-redirect-to': '_redirectTo',
         'yp-set-number-of-un-viewed-notifications': '_setNumberOfUnViewedNotifications',
-        'yp-close-right-drawer': '_closeLeftDrawer',
+        'yp-close-right-drawer': '_closeRightDrawer',
         'yp-refresh-group': '_refreshGroup',
         'yp-refresh-community': '_refreshCommunity',
         'yp-refresh-domain': '_refreshDomain'
@@ -478,8 +478,10 @@
         }
       },
 
-      _closeLeftDrawer: function () {
-        this.$$("#drawer").close();
+      _closeRightDrawer: function () {
+        this.async(function () {
+          this.$$("#drawer").close();
+        }, 100);
       },
 
       _translatedPages: function (pages, language) {

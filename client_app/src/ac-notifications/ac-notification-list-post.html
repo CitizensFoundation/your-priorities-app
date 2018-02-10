@@ -146,6 +146,7 @@
           window.appGlobals.activity('open', 'post', postUrl);
           this.async(function () {
             this.redirectTo(postUrl);
+            this.fire('yp-close-right-drawer');
           });
         }
       },
