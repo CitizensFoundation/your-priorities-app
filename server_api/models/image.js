@@ -115,6 +115,27 @@ module.exports = function(sequelize, DataTypes) {
         } else if (itemType && itemType === 'app-home-screen-icon') {
           versions = [
             {
+              maxWidth: 512,
+              maxHeight: 512,
+              format: 'png',
+              suffix: '-512',
+              quality: 99
+            },
+            {
+              maxWidth: 384,
+              maxHeight: 384,
+              format: 'png',
+              suffix: '-384',
+              quality: 99
+            },
+            {
+              maxWidth: 256,
+              maxHeight: 256,
+              format: 'png',
+              suffix: '-256',
+              quality: 99
+            },
+            {
               maxWidth: 192,
               maxHeight: 192,
               format: 'png',

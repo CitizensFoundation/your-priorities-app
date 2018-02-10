@@ -4,9 +4,10 @@ var async = require('async');
 var icons = [];
 var manifest = {
   "display": "standalone",
-  "start_url": "/?utm_source=homescreen",
+  "start_url": "./?utm_source=web_app_manifest",
   "theme_color": "#103458",
-  "background_color": "#cfd8dc"
+  "background_color": "#cfd8dc",
+  "orientation": "portrait"
 };
 
 var setupIconsFromDefault = function(callback) {
@@ -36,7 +37,7 @@ var setupIconsFromImage = function (imageId, callback) {
       callback("generateManifest: Can't find image from imageId")
     } else {
       var formats = JSON.parse(image.formats);
-      [192,180,152,144,96,48].forEach(function (size, index) {
+      [512,384,256,192,180,152,144,96,48].forEach(function (size, index) {
         var stringSize = size.toString();
         icons.push({
           "src": formats[index],
