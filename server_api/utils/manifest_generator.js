@@ -1,14 +1,6 @@
 var models = require("../models");
 var _ = require("lodash");
 var async = require('async');
-var icons = [];
-var manifest = {
-  "display": "standalone",
-  "start_url": "./?utm_source=web_app_manifest",
-  "theme_color": "#103458",
-  "background_color": "#cfd8dc",
-  "orientation": "portrait"
-};
 
 var setupIconsFromDefault = function(callback) {
   icons = [
@@ -27,6 +19,7 @@ var setupIconsFromDefault = function(callback) {
 };
 
 var setupIconsFromImage = function (imageId, callback) {
+  var icons = [];
 
   models.Image.find({
     where: {
@@ -45,7 +38,7 @@ var setupIconsFromImage = function (imageId, callback) {
           "sizes": stringSize+"x"+stringSize
         });
       });
-      callback();
+      callback(null, icons);
     }
   }).catch(function (error) {
     callback(error);
@@ -53,6 +46,14 @@ var setupIconsFromImage = function (imageId, callback) {
 };
 
 var generateManifest = function(req, res) {
+  var manifest = {
+    "display": "standalone",
+    "start_url": "./?utm_source=web_app_manifest",
+    "theme_color": "#103458",
+    "background_color": "#cfd8dc",
+    "orientation": "portrait"
+  };
+
   var shortName, name;
 
   var domainId = req.ypDomain.id;
@@ -69,7 +70,7 @@ var generateManifest = function(req, res) {
         setupIconsFromDefault(seriesCallback)
       }
     }
-  ], function (error) {
+  ], function (error, icons) {
     if (error) {
       log.error("Error from generating manifest data", { err: error });
       res.status(500).end();
