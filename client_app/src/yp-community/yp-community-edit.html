@@ -196,7 +196,7 @@
                    name="appHomeScreenShortName"
                    type="text"
                    label="[[t('appHomeScreenShortName')]]"
-                   value="{{community.appHomeScreenShortName}}"
+                   value="{{community.configuration.appHomeScreenShortName}}"
                    maxlength="12" style="width: 200px;">
       </paper-input>
 
@@ -343,6 +343,7 @@
       this.set('community', { name: '', description: '', access: 0 });
       this.set('uploadedLogoImageId', null);
       this.set('uploadedHeaderImageId', null);
+      this.set('appHomeScreenIconImageId', null);
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
       this.$.appHomeScreenIconImageUpload.clear();
