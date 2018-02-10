@@ -250,6 +250,14 @@ var getCommunity = function(req, done) {
   });
 };
 
+var truthValueFromBody = function(bodyParameter) {
+  if (bodyParameter && bodyParameter!="") {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 var updateCommunityConfigParameters = function (req, community) {
   if (!community.configuration) {
     community.set('configuration', {});
@@ -279,7 +287,10 @@ var updateCommunityConfigParameters = function (req, community) {
     community.status = req.body.status;
   }
 
-  community.set('configuration.appHomeScreenIconImageId', (req.body.appHomeScreenIconImageId && req.body.appHomeScreenIconImageId!=null)? req.body.appHomeScreenIconImageId : null);
+  if (truthValueFromBody(req.body.appHomeScreenIconImageId)) {
+    community.set('configuration.appHomeScreenIconImageId', req.body.appHomeScreenIconImageId);
+  }
+
   community.set('configuration.appHomeScreenShortName', (req.body.appHomeScreenShortName && req.body.appHomeScreenShortName!=null)? req.body.appHomeScreenShortName : null);
 };
 
