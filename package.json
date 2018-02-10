@@ -10,6 +10,7 @@
     "body-parser": "^1.9.3",
     "bunyan": "^1.5.1",
     "bunyan-prettystream": "git+https://github.com/rbjarnason/node-bunyan-prettystream.git",
+    "compression": "^1.7.1",
     "concat-stream": "^1.5.2",
     "connect-redis": "^3.0.2",
     "connect-roles": "^3.1.2",

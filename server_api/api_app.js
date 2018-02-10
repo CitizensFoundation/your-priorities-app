@@ -14,6 +14,7 @@ var ConnectRoles = require('connect-roles');
 var RedisStore = require('connect-redis')(session);
 var useragent = require('express-useragent');
 var requestIp = require('request-ip');
+var compression = require('compression');
 
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
@@ -80,6 +81,7 @@ if (app.get('env') != 'development' && !process.env.DISABLE_FORCE_HTTPS) {
   });
 }
 
+app.use(compression());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
