@@ -1,9 +1,14 @@
-# Your Priorities Version 6
+# Your Priorities Version 7
 
-## Live server
+## Examples of live servers running Your Priorities
 https://yrpri.org/
+https://betraisland.is/
+https://betrireykjavik.is/
+https://mineideer.forbrukerradet.no/
+https://consultation.parlement-ouvert.fr/group/4 (v6.7)
+https://yrpr.e-dem.nl (v6.3)
 
-## To run
+## How to run
 
 ```
 # Git clone with the Active Citizen submodule library
@@ -13,7 +18,7 @@ git submodule init
 git submodule update
 
 # In app root folder
-npm install
+yarn install
 cd client_app
 bower install (make sure to always select the packages required by your-priorities-app)
 
@@ -151,11 +156,6 @@ Our mission is to bring people together to debate and prioritize innovative idea
 to improve their communities.
 ```
 [http://www.citizens.is/](http://www.citizens.is/)
-
-## Other live servers
-https://betrireykjavik.is/
-
-https://betraisland.is/
 
 ## The Team
 - Robert Bjarnason
