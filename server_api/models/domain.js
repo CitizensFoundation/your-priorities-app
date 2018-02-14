@@ -161,7 +161,11 @@ module.exports = function(sequelize, DataTypes) {
                 callbackDomainName = domain.domain_name;
               }
             } else {
-              callbackDomainName = 'login.'+domain.domain_name;
+              if (domain.domain_name=='forbrukerradet.no') {
+                callbackDomainName = 'mineideer.'+domain.domain_name;
+              } else {
+                callbackDomainName = 'login.'+domain.domain_name;
+              }
             }
             
             if (false && domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.google)) {
