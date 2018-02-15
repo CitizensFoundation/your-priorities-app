@@ -640,7 +640,7 @@
             }
 
             if (this.post.Group.configuration && this.post.Group.configuration.defaultLocale!=null) {
-              this.changeLocaleIfNeeded(this.post.Group.configuration.defaultLocale);
+              window.appGlobals.changeLocaleIfNeeded(this.post.Group.configuration.defaultLocale);
             }
 
             if (this.post.Group.configuration && this.post.Group.configuration.locationHidden!=undefined) {

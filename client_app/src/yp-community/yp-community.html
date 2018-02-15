@@ -364,7 +364,7 @@
           }
 
           if (this.community.default_locale!=null) {
-            this.changeLocaleIfNeeded(this.community.default_locale);
+            window.appGlobals.changeLocaleIfNeeded(this.community.default_locale);
           }
 
           if (this.community.configuration && this.community.configuration.alternativeHeader && this.community.configuration.alternativeHeader!="") {

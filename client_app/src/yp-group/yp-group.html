@@ -685,7 +685,7 @@
           });
 
           if (this.group.configuration.defaultLocale!=null) {
-            this.changeLocaleIfNeeded(this.group.configuration.defaultLocale);
+            window.appGlobals.changeLocaleIfNeeded(this.group.configuration.defaultLocale);
           }
 
           window.appGlobals.setCommunityAnalyticsTracker(this.group.Community.google_analytics_code);

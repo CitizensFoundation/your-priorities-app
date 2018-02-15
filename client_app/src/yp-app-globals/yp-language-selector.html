@@ -107,7 +107,7 @@
         if (locale) {
           this.set('value', locale);
           if (!this.noUserEvents) {
-            this.changeLocaleIfNeeded(locale, true);
+            window.appGlobals.changeLocaleIfNeeded(locale, true);
             localStorage.setItem('yp-user-locale', locale);
             if (window.appUser && window.appUser.user) {
               window.appUser.setLocale(locale);

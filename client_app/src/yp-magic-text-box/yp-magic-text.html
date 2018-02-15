@@ -1,0 +1,183 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<script src="../../bower_components/twemoji-min/2/twemoji.min.js"></script>
+<script type="text/javascript" src="sanitize-html.min.js"></script>
+
+<dom-module id="yp-magic-text">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      #textContent {
+        margin: 0;
+        padding: 0;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+    <div class="layout vertical">
+      <div id="textContent" inner-h-t-m-l="[[finalContent]]"></div>
+      <template is="dom-if" if="haveTranslatedContent">
+        <div class="layout horizontal ">
+          <div>{{t('automaticTranslation')}}</div>
+          <paper-button class="originalButton" on-tap="_showOriginal" hidden$="[[!showingOriginal]]">{{t('showOriginal')}}</paper-button>
+          <paper-button class="originalButton" on-tap="_showTranslation" hidden$="[[showingOriginal]]">{{t('showTranslation')}}</paper-button>
+        </div>
+      </template>
+    </div>
+
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
+  </template>
+
+
+  <script>
+
+    class YpMagicTextBox extends Polymer.Element {
+      static get is() { return 'yp-magic-text'; }
+
+      static get properties() {
+        return {
+
+          groupId: Number,
+          communityId: Number,
+          domainId: Number,
+
+          originalContent: {
+            type: String
+          },
+
+          contentId: {
+            type: String,
+            value: null
+          },
+
+          contentType: {
+            type: String,
+            value: ""
+          },
+
+          originalLocale: {
+            type: String
+          },
+
+          processedContent: {
+            type: String,
+            value: null
+          },
+
+          finalContent: {
+            type: String,
+            value: null
+          },
+
+          autoTranslate: {
+            type: Boolean,
+            value: false
+          },
+
+          haveTranslatedContent: {
+            type: Boolean,
+            computed: '_haveTranslatedContent(locale, originalLocale, autoTranslate)'
+          }
+        }
+      }
+
+      _haveTranslatedContent(locale, originalLocale, autoTranslate) {
+        return autoTranslate && (originalLocale!==locale)
+      }
+
+      _autoTranslateEvent(event, detail) {
+        if (detail===true) {
+          this.set('autoTranslate', true);
+        } else {
+          this.set('autoTranslate', false);
+        }
+      }
+
+      _originalContentChanged(newValue) {
+        if (newValue) {
+          this.processedContent = this.originalContent;
+          if (this.autoTranslate===true) {
+            if (window.appGlobals.autoTranslateCache && this.contentId &&
+                window.appGlobals.autoTranslateCache[this.contentType+this.contentId]) {
+              this.set('processedContent', window.appGlobals.autoTranslateCache[this.contentType+this.contentId]);
+              this._finalize();
+            } else {
+              if (this.groupId) {
+                this.$.getTranslationAjax.url = "/api/groups/"+this.groupId+"/translatedContent";
+              } else if (this.communityId) {
+                this.$.getTranslationAjax.url = "/api/communities/"+this.groupId+"/translatedContent";
+              } else if (this.domainId) {
+                this.$.getTranslationAjax.url = "/api/domains/"+this.domainId+"/translatedContent";
+              } else {
+                console.error("No valid source for magic text-box");
+              }
+              this.$.getTranslationAjax.params = {
+                contentType: this.contentType,
+                contentId: this.contentId,
+                selectedLocale: window.appGlobals.locale
+              };
+              this.$.getTranslationAjax.generateRequest();
+            }
+          } else {
+            this._finalize();
+          }
+        } else {
+          this.set('finalContent', null);
+          this.set('processedContent', null);
+          this.set('contentId', null);
+          this.set('contentType', "");
+        }
+      }
+
+      _getTranslationResponse(event, detail) {
+        if (detail.response.content) {
+          this.processedContent = detail.response.content;
+          this.set('originalLocale', detail.response.originalLocale);
+          this._finalize();
+        } else {
+          console.error("No content for magic text")
+        }
+      }
+
+      _finalize() {
+        if (!this.textOnly) {
+          _linksEmojisAndFinalize()
+        }
+        this.set('finalContent', this.processedContent);
+      }
+
+      _linksEmojisAndFinalize () {
+        this.processedContent = sanitizeHtml(this.processedContent, {
+          allowedTags: [ 'b', 'i', 'em', 'strong'] });
+        this.processedContent = linkifyStr(this.processedContent, {
+          format: function (value, type) {
+            if (type === 'url' && value.length > 34) {
+              value = value.slice(0, 35) + '…';
+            }
+            return value;
+          },
+          ignoreTags: [
+            'b',
+            'i',
+            'em',
+            'strong'
+          ]
+        });
+        this.set('this.processedContent', twemoji.parse(this.processedContent).
+                 replace(/&amp\;quot\;/g,"\"").
+                 replace(/class=\"emoji\" /g,'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" '));
+      }
+
+      constructor() {
+        super();
+      }
+    }
+
+    customElements.define(YpMagicTextBox.is, YpMagicTextBox);
+  </script>
+</dom-module>

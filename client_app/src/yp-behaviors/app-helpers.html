@@ -19,15 +19,6 @@
 <script>
   window.__ = _.noConflict();
 
-  Array.prototype.chunk = function(chunkSize) {
-    var array=this;
-    return [].concat.apply([],
-      array.map(function(elem,i) {
-        return i%chunkSize ? [] : [array.slice(i,i+chunkSize)];
-      })
-    );
-  };
-
   /** @polymerBehavior Polymer.appHelpers */
   Polymer.appHelpers = {
 
@@ -45,11 +36,6 @@
       loadedLanguage: {
         type: String,
         value: null
-      },
-
-      languageLoadingInProgress: {
-        type: Boolean,
-        value: false
       }
     },
 
@@ -70,46 +56,6 @@
       }
     },
 
-    changeLocaleIfNeededAfterWait: function (locale, force) {
-      console.log("changeLocaleIfNeeded "+locale);
-      if (locale && this.language!=locale) {
-        if (force || !localStorage.getItem('yp-user-locale')) {
-          i18next.changeLanguage(locale, function(loaded) {
-            if (!window.i18nTranslation) {
-              window.i18nTranslation = i18next;
-            }
-            console.log("i18n init loaded "+loaded);
-            moment.locale(locale);
-            console.log("Changed language to "+locale);
-            document.dispatchEvent(
-              new CustomEvent("lite-signal", {
-                bubbles: true,
-                compose: true,
-                detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale}  }
-              })
-            );
-
-          });
-        }
-      }
-    },
-
-    changeLocaleIfNeeded: function (locale, force) {
-      if (typeof i18next !== 'undefined') {
-        this.changeLocaleIfNeededAfterWait(locale, force)
-      } else {
-        this.async(function () {
-          this.changeLocaleIfNeededAfterWait(locale, force)
-        }, 1000);
-      }
-    },
-
-    redirectTo: function (path) {
-      //this.fire("yp-redirect-to", { path: path });
-      window.history.pushState({}, null, path);
-      window.dispatchEvent(new CustomEvent('location-changed'));
-    },
-
     _translate: function (language) {
       return function() {
         var key = arguments[0];
@@ -125,24 +71,10 @@
       };
     },
 
-    getPostLink: function (post) {
-      return "/post/"+post.id;
-    },
-
-    _googleMapsApiKey: function () {
-      if (window.location.hostname.indexOf('localhost') > -1) {
-        return null;
-      } else {
-        return window.googleMapsApiKey;
-      }
-    },
-
-    fromTime: function (timeValue) {
-      return moment(timeValue).fromNow();
-    },
-
-    fromLongTime: function (timeValue) {
-      return moment(timeValue).format();
+    redirectTo: function (path) {
+      //this.fire("yp-redirect-to", { path: path });
+      window.history.pushState({}, null, path);
+      window.dispatchEvent(new CustomEvent('location-changed'));
     },
 
     goToPost: function (postIdIn, pointId) {
@@ -189,16 +121,6 @@
       }
     },
 
-    getImageFormatNextUrl: function(images, formatId) {
-      if (images && images.length>1) {
-        var formats = JSON.parse(images[images.length-2].formats);
-        if (formats && formats.length>0)
-          return formats[formatId];
-      } else {
-        return "";
-      }
-    },
-
     removeClass: function(element, classToRemove) {
       var newClassName = "";
       var classes = element.className.split(" ");
@@ -216,22 +138,6 @@
       } else {
         return "0";
       }
-    },
-
-    getRandomNumber: function (value) {
-      return Math.floor((Math.random() * value) + 1);
-    },
-
-    getRandomFromArray: function(items) {
-      return items[Math.floor(Math.random()*items.length)];
-    },
-
-    padNumber: function (value) {
-      return ('000' + value).substr(-3);
-    },
-
-    splitArray: function (a, n) {
-      return a.chunk(n);
     },
 
     truncate: function (input, length, killwords, end) {
@@ -256,17 +162,8 @@
       return input;
     },
 
-    capitalize: function (string) {
-      string = string.toLowerCase();
-      return string.charAt(0).toUpperCase() + string.slice(1);
-    },
-
     trim: function(input){
       return input.replace(/^\s*|\s*$/g, '');
-    },
-
-    s3bucketName: function () {
-      return window.s3bucketName;
     }
   };
 </script>

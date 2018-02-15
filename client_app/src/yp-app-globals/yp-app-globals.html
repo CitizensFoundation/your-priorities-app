@@ -115,6 +115,40 @@
           originalQueryParameters: Object
         },
 
+        changeLocaleIfNeededAfterWait: function (locale, force) {
+          console.log("changeLocaleIfNeeded "+locale);
+          if (locale && this.language!=locale) {
+            if (force || !localStorage.getItem('yp-user-locale')) {
+              i18next.changeLanguage(locale, function(loaded) {
+                if (!window.i18nTranslation) {
+                  window.i18nTranslation = i18next;
+                }
+                console.log("i18n init loaded "+loaded);
+                moment.locale(locale);
+                console.log("Changed language to "+locale);
+                document.dispatchEvent(
+                  new CustomEvent("lite-signal", {
+                    bubbles: true,
+                    compose: true,
+                    detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale}  }
+                  })
+                );
+
+              });
+            }
+          }
+        },
+
+        changeLocaleIfNeeded: function (locale, force) {
+          if (typeof i18next !== 'undefined') {
+            this.changeLocaleIfNeededAfterWait(locale, force)
+          } else {
+            this.async(function () {
+              this.changeLocaleIfNeededAfterWait(locale, force)
+            }, 1000);
+          }
+        },
+
         parseQueryString: function () {
           var query = (window.location.search || '?').substr(1),
             map   = {};

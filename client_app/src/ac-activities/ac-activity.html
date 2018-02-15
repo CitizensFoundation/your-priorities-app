@@ -204,6 +204,14 @@
         }
       },
 
+      fromTime: function (timeValue) {
+        return moment(timeValue).fromNow();
+      },
+
+      fromLongTime: function (timeValue) {
+        return moment(timeValue).format();
+      },
+
       _isOldSafariOrIe: function (wide) {
         return /^((?!chrome|android).)*safari/i.test(navigator.userAgent) &&
           !(/10/i.test(navigator.userAgent)) &&
