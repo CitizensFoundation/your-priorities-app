@@ -25,7 +25,7 @@
       }
 
       .descriptionOuter {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
         color: var(--primary-color-more-darker, #424242);
         margin: 0;
         padding-left: 16px;
@@ -81,7 +81,7 @@
       .postCard {
         width: 200px;
         background-color: #fff;
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
       }
 
       @media (max-width: 960px) {
@@ -92,7 +92,7 @@
         .postCard {
           height: 100%;
           width: 420px;
-          @apply(--layout-wrap);
+          @apply --layout-wrap;
         }
 
         yp-post-cover-media {
