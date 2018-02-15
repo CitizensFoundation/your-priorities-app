@@ -14,7 +14,8 @@
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
-s
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+
 <link rel="import" href="yp-point-actions.html">
 
 <dom-module id="yp-point">
@@ -220,7 +221,8 @@ s
         Polymer.AccessHelpers,
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypGotAdminRightsBehavior,
-        Polymer.YpLinkifyAndEmjoi
+        Polymer.YpLinkifyAndEmjoi,
+        Polymer.ypGotoBehavior
       ],
 
       _isEditingChanged: function (value) {

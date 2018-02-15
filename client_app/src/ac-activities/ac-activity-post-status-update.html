@@ -4,6 +4,7 @@
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <dom-module id="ac-activity-post-status-update">
   <template>
@@ -56,7 +57,8 @@
 
       behaviors: [
         Polymer.ypLanguageBehavior,
-        Polymer.YpLinkifyAndEmjoi
+        Polymer.YpLinkifyAndEmjoi,
+        Polymer.ypGotoBehavior
       ],
 
       properties: {
