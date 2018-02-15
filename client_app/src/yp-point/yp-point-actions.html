@@ -7,7 +7,8 @@
 <link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-remove-class-behavior.html">
 
 <dom-module id="yp-point-actions">
 
@@ -99,7 +100,8 @@
       is: 'yp-point-actions',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.ypLanguageBehavior,
+        Polymer.ypRemoveClassBehavior
       ],
 
       properties: {

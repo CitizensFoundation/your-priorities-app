@@ -3,7 +3,9 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-card-mouse-behavior.html">
+
 <link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html">
 <link rel="import" href="yp-community-card.html">
 
@@ -62,8 +64,9 @@
       is: 'yp-community-grid',
 
       behaviors: [
-        Polymer.appHelpers,
-        Polymer.ypIronListBehavior
+        Polymer.ypLanguageBehavior,
+        Polymer.ypIronListBehavior,
+        Polymer.ypCardMouseBehavior
       ],
 
       properties: {

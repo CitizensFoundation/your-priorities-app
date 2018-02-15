@@ -5,12 +5,14 @@
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/collection-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
 <link rel="import" href="../yp-behaviors/yp-detect-old-ios.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 
 <link rel="import" href="../yp-community/yp-community-collection-behaviors.html">
@@ -145,14 +147,15 @@
       is: 'yp-domain',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.ypLanguageBehavior,
         Polymer.ypThemeBehavior,
         Polymer.CommunityCollectionBehaviors,
         Polymer.CollectionHelpers,
         Polymer.AccessHelpers,
         Polymer.YpNewsTabSelected,
         Polymer.ypLoggedInUserBehavior,
-        Polymer.ypDetectOldiOs
+        Polymer.ypDetectOldiOs,
+        Polymer.ypGotoBehavior
       ],
 
       properties: {

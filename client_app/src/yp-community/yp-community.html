@@ -9,11 +9,13 @@
 
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/collection-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-detect-old-ios.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
 
 <link rel="import" href="../ac-activities/ac-activities.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
@@ -129,14 +131,16 @@
       is: 'yp-community',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.ypLanguageBehavior,
         Polymer.GroupCollectionBehaviors,
         Polymer.ypThemeBehavior,
         Polymer.CollectionHelpers,
         Polymer.AccessHelpers,
         Polymer.YpNewsTabSelected,
         Polymer.ypLoggedInUserBehavior,
-        Polymer.ypDetectOldiOs
+        Polymer.ypDetectOldiOs,
+        Polymer.ypGotoBehavior,
+        Polymer.ypImageFormatsBehavior
       ],
 
       properties: {

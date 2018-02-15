@@ -6,10 +6,11 @@
 <link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-user/yp-user-info.html">
+<link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
 
 <link rel="import" href="ac-notification-list-post.html">
 <link rel="import" href="ac-notification-list-point.html">
@@ -126,8 +127,9 @@
       is: 'ac-notification-list',
 
       behaviors: [
-        Polymer.appHelpers,
-        Polymer.ypLoggedInUserBehavior
+        Polymer.ypLanguageBehavior,
+        Polymer.ypLoggedInUserBehavior,
+        Polymer.ypTruncateBehavior
       ],
 
       properties: {

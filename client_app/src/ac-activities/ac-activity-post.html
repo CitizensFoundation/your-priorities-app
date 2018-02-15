@@ -2,12 +2,15 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+
 <link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 
 <link rel="import" href="../yp-post/yp-post-cover-media.html">
 <link rel="import" href="../yp-post/yp-post-behaviors.html">
 <link rel="import" href="../yp-group/yp-group-behaviors.html">
+<link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
 
 <link rel="import" href="yp-activity-group-title-behavior.html">
 
@@ -194,10 +197,12 @@
       is: 'ac-activity-post',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.ypLanguageBehavior,
         Polymer.YpPostBehavior,
         Polymer.YpLinkifyAndEmjoi,
-        Polymer.ypActivityGroupTitleBehavior
+        Polymer.ypActivityGroupTitleBehavior,
+        Polymer.ypTruncateBehavior,
+        Polymer.ypImageFormatsBehavior
       ],
 
       properties: {

@@ -9,7 +9,7 @@
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="app-helpers.html">
+<link rel="import" href="yp-language-behavior.html">
 <!--
 `emoji-selector` is a `paper-input-addon` component (see Polymer.PaperInput)
 that lets you select an emoji from a list and insert it into a text field.
@@ -208,7 +208,7 @@ the category tabs.
     is: 'emoji-selector',
 
     behaviors: [
-      Polymer.appHelpers
+      Polymer.ypLanguageBehavior
     ],
 
     properties: {

@@ -16,11 +16,15 @@
 
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
 <link rel="import" href="../ac-activities/ac-activities.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-number-format-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
 
 <link rel="import" href="yp-post-header.html">
 <link rel="import" href="yp-post-points.html">
@@ -391,9 +395,13 @@
         is: 'yp-post',
 
         behaviors: [
-          Polymer.appHelpers,
+          Polymer.ypLanguageBehavior,
           Polymer.ypThemeBehavior,
-          Polymer.YpNewsTabSelected
+          Polymer.YpNewsTabSelected,
+          Polymer.ypGotoBehavior,
+          Polymer.ypImageFormatsBehavior,
+          Polymer.ypNumberFormatBehavior,
+          Polymer.ypTruncateBehavior
         ],
 
         properties: {

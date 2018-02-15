@@ -21,10 +21,13 @@
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 
+<link rel="import" href="../yp-behaviors/yp-lodash-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-moment-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-app-globals/yp-app-globals.html">
 <link rel="import" href="../yp-app-globals/yp-app-user.html">
-<link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <link rel="import" href="../ac-notifications/ac-notification-list.html">
 <link rel="import" href="yp-app-nav-drawer.html">
@@ -317,8 +320,9 @@
       is: 'yp-app',
 
       behaviors: [
-        Polymer.appHelpers,
-        Polymer.ypThemeBehavior
+        Polymer.ypLanguageBehavior,
+        Polymer.ypThemeBehavior,
+        Polymer.ypGotoBehavior
       ],
 
       properties: {

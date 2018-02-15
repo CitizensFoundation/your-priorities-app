@@ -2,7 +2,8 @@
 
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <link rel="import" href="../yp-session/yp-session.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
@@ -26,7 +27,8 @@
         is: 'yp-app-globals',
 
         behaviors: [
-          Polymer.appHelpers
+          Polymer.ypLanguageBehavior,
+          Polymer.ypGotoBehavior
         ],
 
         properties: {

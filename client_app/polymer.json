@@ -11,7 +11,9 @@
     "src/yp-user/yp-user.html",
     "src/yp-app/yp-view-404.html"
   ],
-
+  "lint": {
+    "rules": ["polymer-2"]
+  },
   "builds": [{
     "name": "bundled",
     "bundle": true,

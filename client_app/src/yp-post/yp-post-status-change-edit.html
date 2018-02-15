@@ -3,7 +3,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-official-status-options.html">
 
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
@@ -61,7 +61,7 @@
     is: 'yp-post-status-change-edit',
 
     behaviors: [
-      Polymer.appHelpers,
+      Polymer.ypLanguageBehavior,
       Polymer.ypEditDialogBehavior,
       Polymer.ypOfficialStatusOptions
     ],
